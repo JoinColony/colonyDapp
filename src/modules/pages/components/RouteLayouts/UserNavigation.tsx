@@ -1,28 +1,16 @@
 import React, { useMemo, useEffect } from 'react';
-import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
-import { useParams } from 'react-router-dom';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
-import Icon from '~core/Icon';
 import MaskedAddress from '~core/MaskedAddress';
-import MemberReputation from '~core/MemberReputation';
 import { MiniSpinnerLoader } from '~core/Preloaders';
-import { Tooltip } from '~core/Popover';
 
 import { GasStationPopover } from '~users/GasStation';
-import UserTokenActivationButton from '~users/UserTokenActivationButton';
 import { readyTransactionsCount } from '~users/GasStation/transactionGroup';
 import AvatarDropdown from '~users/AvatarDropdown';
-import InboxPopover from '~users/Inbox/InboxPopover';
 import { ConnectWalletPopover } from '~users/ConnectWalletWizard';
 
-import {
-  useUserNotificationsQuery,
-  useLoggedInUser,
-  useUserBalanceWithLockQuery,
-  useColonyFromNameQuery,
-  Colony,
-} from '~data/index';
+import { useLoggedInUser } from '~data/index';
 import { useSelector } from '~utils/hooks';
 import { useAutoLogin, getLastWallet } from '~utils/autoLogin';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
@@ -59,34 +47,7 @@ const displayName = 'pages.NavigationWrapper.UserNavigation';
 
 const UserNavigation = () => {
   const { walletAddress, ethereal, networkId } = useLoggedInUser();
-  const { colonyName } = useParams<{
-    colonyName: string;
-  }>();
   const dispatch = useDispatch();
-
-  const { data: colonyData } = useColonyFromNameQuery({
-    variables: { name: colonyName, address: '' },
-  });
-
-  const { data } = useUserNotificationsQuery({
-    variables: { address: walletAddress },
-  });
-
-  const {
-    data: userData,
-    loading: userDataLoading,
-  } = useUserBalanceWithLockQuery({
-    variables: {
-      address: walletAddress,
-      tokenAddress: colonyData?.processedColony?.nativeTokenAddress || '',
-      colonyAddress: colonyData?.colonyAddress || '',
-    },
-  });
-
-  const notifications = (data && data.user && data.user.notifications) || [];
-  const hasUnreadNotifications = notifications.some(
-    (notification) => !notification.read,
-  );
 
   const transactionAndMessageGroups = useSelector(
     groupedTransactionsAndMessages,
@@ -100,20 +61,15 @@ const UserNavigation = () => {
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
   const userCanNavigate = !ethereal && isNetworkAllowed;
 
-  const userLock = userData?.user.userLock;
-  const nativeToken = userLock?.nativeToken;
-
   const { type: lastWalletType, address: lastWalletAddress } = getLastWallet();
   const attemptingAutoLogin = useAutoLogin();
   const previousWalletConnected = lastWalletType && lastWalletAddress;
 
-  const { formatMessage } = useIntl();
-
   useEffect(() => {
-    if (!userDataLoading && !ethereal) {
+    if (!ethereal) {
       dispatch({ type: 'USER_CONNECTED', payload: { isUserConnected: true } });
     }
-  }, [userDataLoading, userLock, dispatch, ethereal]);
+  }, [dispatch, ethereal]);
 
   return (
     <div className={styles.main}>
@@ -134,32 +90,6 @@ const UserNavigation = () => {
           <FormattedMessage {...MSG.wrongNetworkAlert} />
         </div>
       )}
-      {userCanNavigate && colonyData?.colonyAddress && (
-        <Tooltip
-          content={formatMessage(MSG.userReputationTooltip)}
-          placement="bottom-start"
-          popperProps={{
-            modifiers: [
-              {
-                name: 'offset',
-                options: {
-                  offset: [0, 8],
-                },
-              },
-            ],
-          }}
-        >
-          <div>
-            <div className={styles.reputation}>
-              <MemberReputation
-                walletAddress={walletAddress}
-                colonyAddress={colonyData?.colonyAddress}
-                showIconTitle={false}
-              />
-            </div>
-          </div>
-        </Tooltip>
-      )}
       {ethereal && (
         <ConnectWalletPopover>
           {({ isOpen, toggle, ref }) => (
@@ -178,19 +108,12 @@ const UserNavigation = () => {
           )}
         </ConnectWalletPopover>
       )}
-      {previousWalletConnected && attemptingAutoLogin && userDataLoading ? (
+      {previousWalletConnected && attemptingAutoLogin ? (
         <div className={styles.walletAutoLogin}>
           <MiniSpinnerLoader title={MSG.walletAutologin} />
         </div>
       ) : (
         <div className={styles.buttonsWrapper}>
-          {userCanNavigate && nativeToken && userLock && (
-            <UserTokenActivationButton
-              nativeToken={nativeToken}
-              userLock={userLock}
-              colonyAddress={colonyData?.colonyAddress || ''}
-            />
-          )}
           {userCanNavigate && (
             <GasStationPopover
               transactionAndMessageGroups={transactionAndMessageGroups}
@@ -218,33 +141,7 @@ const UserNavigation = () => {
           )}
         </div>
       )}
-      {userCanNavigate && (
-        <InboxPopover notifications={notifications}>
-          {({ isOpen, toggle, ref }) => (
-            <button
-              type="button"
-              className={styles.notificationsButton}
-              ref={ref}
-              onClick={toggle}
-            >
-              <div
-                className={`${styles.notificationsIcon} ${
-                  isOpen ? styles.notificationsIconActive : ''
-                }`}
-              >
-                <Icon name="envelope" title={MSG.inboxTitle} />
-                {hasUnreadNotifications && (
-                  <span className={styles.notificationsHighlight} />
-                )}
-              </div>
-            </button>
-          )}
-        </InboxPopover>
-      )}
-      <AvatarDropdown
-        onlyLogout={!isNetworkAllowed}
-        colony={colonyData?.processedColony as Colony}
-      />
+      <AvatarDropdown onlyLogout={!isNetworkAllowed} />
     </div>
   );
 };

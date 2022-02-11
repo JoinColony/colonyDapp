@@ -6,17 +6,12 @@ import NavLink from '~core/NavLink';
 import ExternalLink from '~core/ExternalLink';
 import { FEEDBACK, HELP } from '~externalUrls';
 
-import { Colony } from '~data/index';
 import DropdownMenu, {
   DropdownMenuSection,
   DropdownMenuItem,
 } from '~core/DropdownMenu';
 import { ActionTypes } from '~redux/index';
-import {
-  USER_EDIT_ROUTE,
-  CREATE_COLONY_ROUTE,
-  CREATE_USER_ROUTE,
-} from '~routes/index';
+import { USER_EDIT_ROUTE, CREATE_USER_ROUTE } from '~routes/index';
 
 import styles from './AvatarDropdownPopover.css';
 
@@ -60,7 +55,6 @@ interface Props {
   username?: string | null;
   walletConnected?: boolean;
   onlyLogout?: boolean;
-  colony: Colony;
 }
 
 const displayName = 'users.AvatarDropdown.AvatarDropdownPopover';
@@ -70,7 +64,6 @@ const AvatarDropdownPopover = ({
   username,
   walletConnected = false,
   onlyLogout = false,
-  colony,
 }: Props) => {
   const renderUserSection = useCallback(() => {
     return (
@@ -80,9 +73,7 @@ const AvatarDropdownPopover = ({
             <NavLink
               to={{
                 pathname: CREATE_USER_ROUTE,
-                state: colony?.colonyName
-                  ? { colonyURL: `/colony/${colony?.colonyName}` }
-                  : {},
+                state: { colonyURL: `/landing` },
               }}
               text={MSG.buttonGetStarted}
             />
@@ -108,15 +99,7 @@ const AvatarDropdownPopover = ({
         )}
       </DropdownMenuSection>
     );
-  }, [colony, username]);
-
-  const renderColonySection = () => (
-    <DropdownMenuSection separator>
-      <DropdownMenuItem>
-        <NavLink to={CREATE_COLONY_ROUTE} text={MSG.createColony} />
-      </DropdownMenuItem>
-    </DropdownMenuSection>
-  );
+  }, [username]);
 
   const renderHelperSection = () => (
     <DropdownMenuSection separator>
@@ -157,7 +140,6 @@ const AvatarDropdownPopover = ({
       {!onlyLogout ? (
         <>
           {renderUserSection()}
-          {renderColonySection()}
           {renderHelperSection()}
           {renderMetaSection()}
         </>

@@ -2,7 +2,6 @@ import React, { ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { RouteComponentProps } from '~pages/RouteLayouts';
-import SubscribedColoniesList from '~dashboard/SubscribedColoniesList';
 import SimpleNav from '../SimpleNav';
 import HistoryNavigation from '../HistoryNavigation';
 
@@ -45,11 +44,6 @@ const Default = ({
           />
         )}
         <div className={styles.content}>
-          {hasSubscribedColonies && (
-            <div className={styles.coloniesList}>
-              <SubscribedColoniesList />
-            </div>
-          )}
           <div className={styles.children}>{children}</div>
         </div>
       </SimpleNav>

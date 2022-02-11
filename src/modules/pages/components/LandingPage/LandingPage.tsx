@@ -3,12 +3,10 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import NavLink from '~core/NavLink';
 import Icon from '~core/Icon';
-import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 import Heading from '~core/Heading';
-import { SpinnerLoader } from '~core/Preloaders';
 
-import { CREATE_COLONY_ROUTE } from '~routes/index';
-import { useLoggedInUser, useMetaColonyQuery } from '~data/index';
+import { CREATE_USER_ROUTE } from '~routes/index';
+import { useLoggedInUser } from '~data/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
 
 import styles from './LandingPage.css';
@@ -16,30 +14,22 @@ import styles from './LandingPage.css';
 const MSG = defineMessages({
   callToAction: {
     id: 'pages.LandingPage.callToAction',
-    defaultMessage: 'Welcome, what would you like to do?',
+    defaultMessage: 'Welcome',
   },
   wrongNetwork: {
     id: 'pages.LandingPage.wrongNetwork',
     defaultMessage: `You're connected to the wrong network. Please connect to the appriopriate Ethereum network.`,
   },
-  createColony: {
-    id: 'pages.LandingPage.createColony',
-    defaultMessage: 'Create a colony',
-  },
-  exploreColony: {
-    id: 'pages.LandingPage.exploreColony',
-    defaultMessage: 'Explore the {colonyName}',
+  createUser: {
+    id: 'pages.LandingPage.createUser',
+    defaultMessage: 'Register a username',
   },
 });
-
-const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 
 const displayName = 'pages.LandingPage';
 
 const LandingPage = () => {
-  const { networkId, ethereal } = useLoggedInUser();
-
-  const { data, loading } = useMetaColonyQuery();
+  const { networkId, ethereal, username } = useLoggedInUser();
 
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
@@ -61,46 +51,16 @@ const LandingPage = () => {
           )}
         </div>
         <ul>
-          {(ethereal || isNetworkAllowed) && (
+          {!username && isNetworkAllowed && (
             <li className={styles.item}>
-              <NavLink to={CREATE_COLONY_ROUTE} className={styles.itemLink}>
+              <NavLink to={CREATE_USER_ROUTE} className={styles.itemLink}>
                 <Icon
                   className={styles.itemIcon}
                   name="circle-plus"
-                  title={MSG.createColony}
+                  title={MSG.createUser}
                 />
                 <span className={styles.itemTitle}>
-                  <FormattedMessage {...MSG.createColony} />
-                </span>
-              </NavLink>
-            </li>
-          )}
-          {loading && !data?.processedMetaColony && (
-            <li className={styles.itemLoading}>
-              <SpinnerLoader appearance={{ size: 'medium' }} />
-            </li>
-          )}
-          {data?.processedMetaColony && (
-            <li className={styles.item}>
-              <NavLink
-                to={`/colony/${data?.processedMetaColony.colonyName}`}
-                className={styles.itemLink}
-              >
-                <ColonyAvatar
-                  className={styles.itemIcon}
-                  colonyAddress={data?.processedMetaColony?.colonyAddress}
-                  colony={data?.processedMetaColony}
-                  size="xl"
-                />
-                <span className={styles.itemTitle}>
-                  <FormattedMessage
-                    {...MSG.exploreColony}
-                    values={{
-                      colonyName:
-                        data?.processedMetaColony.displayName ||
-                        data?.processedMetaColony.colonyName,
-                    }}
-                  />
+                  <FormattedMessage {...MSG.createUser} />
                 </span>
               </NavLink>
             </li>

@@ -86,6 +86,7 @@ export const useWalletAutoLogin = (
             method: WalletMethod.Ganache,
             privateKey,
           });
+          setLoading(false);
           return;
         } catch (error) {
           log.error(error);

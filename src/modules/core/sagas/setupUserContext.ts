@@ -1,6 +1,5 @@
 import { all, call, fork, put } from 'redux-saga/effects';
 import { formatEther } from 'ethers/utils';
-import userflow from 'userflow.js';
 
 import { WalletMethod } from '~immutable/index';
 import { createAddress } from '~utils/web3';
@@ -11,7 +10,7 @@ import {
   ContextModule,
 } from '~context/index';
 import { putError } from '~utils/saga/effects';
-import { log } from '~utils/debug';
+// import { log } from '~utils/debug';
 import { setLastWallet } from '~utils/autoLogin';
 import {
   refetchUserNotifications,
@@ -127,10 +126,6 @@ export default function* setupUserContext(
 
     const colonyManager = yield call(reinitializeColonyManager);
 
-    if (method !== WalletMethod.Ethereal && process.env.USERFLOW_TOKEN) {
-      yield userflow.identify(walletAddress);
-    }
-
     yield call(getGasPrices);
 
     const ens = TEMP_getContext(ContextModule.ENS);
@@ -156,7 +151,7 @@ export default function* setupUserContext(
 
       yield refetchUserNotifications(walletAddress);
     } catch (caughtError) {
-      log.verbose(`Could not find username for ${walletAddress}`);
+      // log.verbose(`Could not find username for ${walletAddress}`);
     }
 
     const balance = yield colonyManager.provider.getBalance(walletAddress);

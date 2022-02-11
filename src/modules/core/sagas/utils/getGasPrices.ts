@@ -4,7 +4,7 @@ import { call, put, select } from 'redux-saga/effects';
 
 import { GasPricesProps } from '~immutable/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
-import { log } from '~utils/debug';
+// import { log } from '~utils/debug';
 import { DEFAULT_NETWORK } from '~constants';
 import { ETH_GAS_STATION, XDAI_GAS_STATION } from '~externalUrls';
 
@@ -127,9 +127,9 @@ const fetchGasPrices = async (
 
     return defaultGasPrices;
   } catch (caughtError) {
-    log.warn(
-      `Could not get ${DEFAULT_NETWORK} network gas prices: ${caughtError.message}`,
-    );
+    // log.warn(
+    //   `Could not get ${DEFAULT_NETWORK} network gas prices: ${caughtError.message}`,
+    // );
     // Default values
     return {
       ...defaultGasPrices,

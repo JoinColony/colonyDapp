@@ -4,46 +4,26 @@ import { defineMessages } from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
 
 import { WalletMethod } from '~immutable/index';
-import CreateColonyWizard from '~dashboard/CreateColonyWizard';
 import CreateUserWizard from '~dashboard/CreateUserWizard';
-import ColonyHome from '~dashboard/ColonyHome';
-import ColonyMembers from '~dashboard/ColonyMembers';
 import FourOFour from '~dashboard/FourOFour';
-import Inbox from '~users/Inbox';
-import Wallet from '~dashboard/Wallet';
 import ConnectWalletWizard from '~users/ConnectWalletWizard';
 import UserProfile from '~users/UserProfile';
 import UserProfileEdit from '~users/UserProfileEdit';
 import { NavBar, Plain, SimpleNav, Default } from '~pages/RouteLayouts/index';
-import { ColonyBackText } from '~pages/BackTexts';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import LadingPage from '~pages/LandingPage';
-import ActionsPage from '~dashboard/ActionsPage';
 
 import appLoadingContext from '~context/appLoadingState';
-import ColonyFunding from '~dashboard/ColonyFunding';
 import { useLoggedInUser } from '~data/index';
 import { ActionTypes } from '~redux/index';
 
 import {
-  COLONY_EVENTS_ROUTE,
-  COLONY_EXTENSIONS_ROUTE,
-  COLONY_EXTENSION_DETAILS_ROUTE,
-  COLONY_EXTENSION_SETUP_ROUTE,
-  COLONY_FUNDING_ROUTE,
-  COLONY_HOME_ROUTE,
   CONNECT_ROUTE,
-  CREATE_COLONY_ROUTE,
   CREATE_USER_ROUTE,
-  INBOX_ROUTE,
   NOT_FOUND_ROUTE,
   USER_EDIT_ROUTE,
   USER_ROUTE,
-  WALLET_ROUTE,
   LANDING_PAGE_ROUTE,
-  MEMBERS_ROUTE,
-  ACTIONS_PAGE_ROUTE,
-  COIN_MACHINE_ROUTE,
 } from './routeConstants';
 
 import AlwaysAccesibleRoute from './AlwaysAccesibleRoute';
@@ -118,33 +98,6 @@ const Routes = () => {
           component={CreateUserWizard}
           layout={Plain}
         />
-        <WalletRequiredRoute
-          isConnected={isConnected}
-          didClaimProfile={didClaimProfile}
-          path={CREATE_COLONY_ROUTE}
-          component={CreateColonyWizard}
-          layout={Plain}
-        />
-        <WalletRequiredRoute
-          isConnected={isConnected}
-          didClaimProfile={didClaimProfile}
-          path={WALLET_ROUTE}
-          component={Wallet}
-          layout={SimpleNav}
-          routeProps={{
-            hasBackLink: false,
-          }}
-        />
-        <WalletRequiredRoute
-          isConnected={isConnected}
-          didClaimProfile={didClaimProfile}
-          path={INBOX_ROUTE}
-          component={Inbox}
-          layout={SimpleNav}
-          routeProps={{
-            hasBackLink: false,
-          }}
-        />
 
         <AlwaysAccesibleRoute
           path={LANDING_PAGE_ROUTE}
@@ -153,30 +106,6 @@ const Routes = () => {
           routeProps={{
             hasBackLink: false,
           }}
-        />
-        <AlwaysAccesibleRoute
-          exact
-          path={[
-            COLONY_HOME_ROUTE,
-            COLONY_EVENTS_ROUTE,
-            COLONY_EXTENSIONS_ROUTE,
-            COLONY_EXTENSION_DETAILS_ROUTE,
-            COLONY_EXTENSION_SETUP_ROUTE,
-          ]}
-          component={ColonyHome}
-          layout={Default}
-          routeProps={{ hasBackLink: false }}
-        />
-        <AlwaysAccesibleRoute
-          exact
-          path={COLONY_FUNDING_ROUTE}
-          component={ColonyFunding}
-          layout={Default}
-          routeProps={({ colonyName }) => ({
-            backText: ColonyBackText,
-            backRoute: `/colony/${colonyName}`,
-            hasSubscribedColonies: false,
-          })}
         />
         <AlwaysAccesibleRoute
           path={USER_ROUTE}
@@ -195,35 +124,6 @@ const Routes = () => {
             backRoute: `/user/${username}`,
           }}
         />
-        <AlwaysAccesibleRoute
-          exact
-          path={MEMBERS_ROUTE}
-          component={ColonyMembers}
-          layout={Default}
-          routeProps={({ colonyName }) => ({
-            backText: ColonyBackText,
-            backRoute: `/colony/${colonyName}`,
-            hasSubscribedColonies: false,
-          })}
-        />
-        <AlwaysAccesibleRoute
-          exact
-          path={ACTIONS_PAGE_ROUTE}
-          component={ActionsPage}
-          layout={NavBar}
-          routeProps={({ colonyName }) => ({
-            backText: '',
-            backRoute: `/colony/${colonyName}`,
-          })}
-        />
-        <AlwaysAccesibleRoute
-          exact
-          path={COIN_MACHINE_ROUTE}
-          component={ColonyHome}
-          layout={Default}
-          routeProps={{ hasBackLink: false }}
-        />
-
         {/*
          * Redirect anything else that's not found to the 404 route
          */}
