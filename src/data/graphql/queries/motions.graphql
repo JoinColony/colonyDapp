@@ -323,7 +323,7 @@ query StakeAmountsForMotion($colonyAddress: String!, $userAddress: String!, $mot
 
 query ClaimableStakedMotions($colonyAddress: String!, $walletAddress: String!) {
   claimableStakedMotions(colonyAddress: $colonyAddress, walletAddress: $walletAddress) @client {
-    motionIds
+    unclaimedMotionStakeEvents
   }
 }
 
