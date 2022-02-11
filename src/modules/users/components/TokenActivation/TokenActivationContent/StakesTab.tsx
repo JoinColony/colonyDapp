@@ -25,6 +25,7 @@ const StakesTab = ({ colonyAddress, walletAddress }: StakesTabProps) => {
       colonyAddress: colonyAddress?.toLowerCase(),
       walletAddress: walletAddress?.toLowerCase(),
     },
+    fetchPolicy: 'network-only',
   });
 
   return (
