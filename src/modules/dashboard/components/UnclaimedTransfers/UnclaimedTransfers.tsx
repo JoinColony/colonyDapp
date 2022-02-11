@@ -27,6 +27,7 @@ const MSG = defineMessages({
 const UnclaimedTransfers = ({ colony }: Props) => {
   const { data, error, loading } = useColonyTransfersQuery({
     variables: { address: colony.colonyAddress },
+    fetchPolicy: 'network-only',
   });
   if (error) console.warn(error);
 

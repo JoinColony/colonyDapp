@@ -66,7 +66,8 @@ const ColonyEvents = ({
     },
     onSubscriptionData: ({ subscriptionData: { data: newSubscriptionData } }) =>
       setStreamedEvents([
-        ...new Set([...streamedEvents, ...(newSubscriptionData?.events || [])]),
+        ...streamedEvents,
+        ...(newSubscriptionData?.events || []),
       ]),
   });
 
@@ -90,11 +91,17 @@ const ColonyEvents = ({
     setDataPage(dataPage + 1);
   }, [dataPage]);
 
+  /* Remove duplicate events */
+  const mappedEvents = events?.map((event) => event.id);
+  const uniqueEvents = events?.filter(
+    (event, index) => mappedEvents.indexOf(event.id) === index,
+  );
+
   const filteredEvents = useMemo(
     () =>
       !ethDomainId
-        ? events
-        : events?.filter(
+        ? uniqueEvents
+        : uniqueEvents?.filter(
             (event) =>
               Number(event.domainId) === ethDomainId ||
               /* when no specific domain in the event it is displayed in Root */
@@ -102,7 +109,7 @@ const ColonyEvents = ({
                 event.domainId === null &&
                 event.fundingPot === undefined),
           ),
-    [ethDomainId, events],
+    [ethDomainId, uniqueEvents],
   );
 
   const sortedEvents = useMemo(
