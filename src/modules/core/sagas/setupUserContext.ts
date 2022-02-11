@@ -13,14 +13,14 @@ import { putError } from '~utils/saga/effects';
 // import { log } from '~utils/debug';
 import { setLastWallet } from '~utils/autoLogin';
 import {
-  refetchUserNotifications,
+  // refetchUserNotifications,
   SetLoggedInUserDocument,
   SetLoggedInUserMutation,
   SetLoggedInUserMutationVariables,
   LoggedInUserQuery,
   LoggedInUserQueryVariables,
   LoggedInUserDocument,
-  updateNetworkContracts,
+  // updateNetworkContracts,
 } from '~data/index';
 
 import setupResolvers from '~context/setupResolvers';
@@ -28,17 +28,15 @@ import AppLoadingState from '~context/appLoadingState';
 import { authenticate, clearToken } from '../../../api';
 
 import ENS from '../../../lib/ENS';
-import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas } from '../../users/sagas';
 import { createUserWithSecondAttempt } from '../../users/sagas/utils';
 import { getGasPrices, reinitializeColonyManager } from './utils';
 import setupOnBeforeUnload from './setupOnBeforeUnload';
-import { setupUserBalanceListener } from './setupUserBalanceListener';
+// import { setupUserBalanceListener } from './setupUserBalanceListener';
 
 function* setupContextDependentSagas() {
   const appLoadingState: typeof AppLoadingState = AppLoadingState;
   yield all([
-    call(setupDashboardSagas),
     call(setupUsersSagas),
     /**
      * We've loaded all the context sagas, so we can proceed with redering
@@ -139,7 +137,7 @@ export default function* setupUserContext(
     yield fork(setupContextDependentSagas);
 
     // Start a forked task to listen for user balance events
-    yield fork(setupUserBalanceListener, walletAddress);
+    // yield fork(setupUserBalanceListener, walletAddress);
 
     let username;
     try {
@@ -149,7 +147,7 @@ export default function* setupUserContext(
       );
       username = ENS.stripDomainParts('user', domain);
 
-      yield refetchUserNotifications(walletAddress);
+      // yield refetchUserNotifications(walletAddress);
     } catch (caughtError) {
       // log.verbose(`Could not find username for ${walletAddress}`);
     }
@@ -189,7 +187,7 @@ export default function* setupUserContext(
     /*
      * Get the network contract values from the resolver
      */
-    yield updateNetworkContracts();
+    // yield updateNetworkContracts();
 
     setupOnBeforeUnload();
 
