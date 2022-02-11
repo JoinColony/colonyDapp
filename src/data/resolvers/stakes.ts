@@ -150,7 +150,7 @@ export const stakesResolvers = ({
           ) || [];
 
         return {
-          motionIds: finalizedUnclaimedMotions,
+          unclaimedMotionStakeEvents: finalizedUnclaimedMotions,
         };
       } catch (error) {
         console.error(error);

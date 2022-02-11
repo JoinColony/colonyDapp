@@ -313,7 +313,8 @@ export type QueryBannedUsersArgs = {
 
 
 export type QueryClaimableStakedMotionsArgs = {
-  motionIds: Array<Scalars['Int']>;
+  colonyAddress: Scalars['String'];
+  walletAddress: Scalars['String'];
 };
 
 
@@ -1326,8 +1327,28 @@ export type StakeAmounts = {
   requiredStake: Scalars['String'];
 };
 
+export type ParsedMotionStakedEventValues = {
+  amount: Scalars['String'];
+  motionId: Scalars['String'];
+  stakeAmount: Scalars['String'];
+  staker: Scalars['String'];
+  vote: Scalars['Int'];
+};
+
+export type ParsedMotionStakedEvent = {
+  address: Scalars['String'];
+  blockNumber: Scalars['Int'];
+  hash: Scalars['String'];
+  index: Scalars['String'];
+  name: Scalars['String'];
+  signature: Scalars['String'];
+  timestamp: Scalars['Int'];
+  topic: Scalars['String'];
+  values: ParsedMotionStakedEventValues;
+};
+
 export type ClaimableMotions = {
-  motionIds: Array<Scalars['Int']>;
+  unclaimedMotionStakeEvents: Array<ParsedMotionStakedEvent>;
 };
 
 export type MotionObjectionAnnotation = {
@@ -2447,7 +2468,7 @@ export type ClaimableStakedMotionsQueryVariables = Exact<{
 }>;
 
 
-export type ClaimableStakedMotionsQuery = { claimableStakedMotions: Pick<ClaimableMotions, 'motionIds'> };
+export type ClaimableStakedMotionsQuery = { claimableStakedMotions: Pick<ClaimableMotions, 'unclaimedMotionStakeEvents'> };
 
 export type MotionObjectionAnnotationQueryVariables = Exact<{
   motionId: Scalars['Int'];
@@ -6681,7 +6702,7 @@ export type StakeAmountsForMotionQueryResult = Apollo.QueryResult<StakeAmountsFo
 export const ClaimableStakedMotionsDocument = gql`
     query ClaimableStakedMotions($colonyAddress: String!, $walletAddress: String!) {
   claimableStakedMotions(colonyAddress: $colonyAddress, walletAddress: $walletAddress) @client {
-    motionIds
+    unclaimedMotionStakeEvents
   }
 }
     `;
