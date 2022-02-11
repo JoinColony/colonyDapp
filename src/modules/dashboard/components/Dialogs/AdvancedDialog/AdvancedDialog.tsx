@@ -83,6 +83,14 @@ const MSG = defineMessages({
     defaultMessage:
       'Want to interact with DeFi, or govern an external smart contract?',
   },
+  manageWhitelistTitle: {
+    id: 'dashboard.AdvancedDialog.manageWhitelistTitle',
+    defaultMessage: 'Manage whitelist',
+  },
+  manageWhitelistDescription: {
+    id: 'dashboard.AdvancedDialog.manageWhitelistDescription',
+    defaultMessage: 'Get warned when taking an action to addresses not on the whitelist.',
+  },
 });
 
 interface CustomWizardDialogProps extends ActionDialogProps {
@@ -90,6 +98,7 @@ interface CustomWizardDialogProps extends ActionDialogProps {
   nextStepRecovery: string;
   nextStepEditDetails: string;
   nextStepVersionUpgrade: string;
+  nextStepManageWhitelist: string;
   prevStep: string;
   colony: Colony;
 }
@@ -107,6 +116,7 @@ const AdvancedDialog = ({
   nextStepRecovery,
   nextStepEditDetails,
   nextStepVersionUpgrade,
+  nextStepManageWhitelist,
   colony,
   colony: { version: colonyVersion },
   isVotingExtensionEnabled,
@@ -183,6 +193,17 @@ const AdvancedDialog = ({
       description: MSG.makeArbitraryTransactionDescription,
       icon: 'emoji-dna',
       comingSoon: true,
+    },
+    {
+      title: MSG.manageWhitelistTitle,
+      description: MSG.manageWhitelistDescription,
+      icon: 'emoji-whitelist',
+      permissionRequired: !hasRootPermission,
+      permissionInfoText: MSG.permissionsText,
+      permissionInfoTextValues: {
+        permissionsList: <FormattedMessage {...MSG.upgradePermissionsList} />,
+      },
+      onClick: () => callStep(nextStepManageWhitelist),
     },
   ];
   return (
