@@ -8,7 +8,15 @@ const setupResolvers = (
   context: Required<Context>,
 ) => {
   resolvers.forEach((setupResolver) =>
-    apolloClient.addResolvers(setupResolver(context)),
+    apolloClient.addResolvers(
+      setupResolver({
+        ...context,
+        colonyManager: {
+          getClient: () => {},
+          networkClient: {},
+        },
+      }),
+    ),
   );
 };
 

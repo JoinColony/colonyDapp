@@ -97,7 +97,7 @@ function* userLogout() {
     /*
      *  1. Destroy instances of colonyJS in the colonyManager? Probably.
      */
-    TEMP_removeContext(ContextModule.ColonyManager);
+    // TEMP_removeContext(ContextModule.ColonyManager);
 
     /*
      *  2. The purser wallet is reset

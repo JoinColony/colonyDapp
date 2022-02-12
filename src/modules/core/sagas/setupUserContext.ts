@@ -20,6 +20,9 @@ import {
   LoggedInUserQuery,
   LoggedInUserQueryVariables,
   LoggedInUserDocument,
+  UserQuery,
+  UserQueryVariables,
+  UserDocument,
   // updateNetworkContracts,
 } from '~data/index';
 
@@ -27,10 +30,10 @@ import setupResolvers from '~context/setupResolvers';
 import AppLoadingState from '~context/appLoadingState';
 import { authenticate, clearToken } from '../../../api';
 
-import ENS from '../../../lib/ENS';
+// import ENS from '../../../lib/ENS';
 import { getWallet, setupUsersSagas } from '../../users/sagas';
-import { createUserWithSecondAttempt } from '../../users/sagas/utils';
-import { getGasPrices, reinitializeColonyManager } from './utils';
+// import { createUserWithSecondAttempt } from '../../users/sagas/utils';
+import { getProvider } from './utils';
 import setupOnBeforeUnload from './setupOnBeforeUnload';
 // import { setupUserBalanceListener } from './setupUserBalanceListener';
 
@@ -92,6 +95,7 @@ export default function* setupUserContext(
       // @ts-ignore
       walletNetworkId = window.ethereum.networkVersion;
     }
+
     /*
      * @NOTE Detecting Ganache via it's network id is a bit iffy
      * It's randomized on start so we can reliably count on it.
@@ -122,9 +126,9 @@ export default function* setupUserContext(
 
     yield call(setLastWallet, method, walletAddress);
 
-    const colonyManager = yield call(reinitializeColonyManager);
+    // const colonyManager = yield call(reinitializeColonyManager);
 
-    yield call(getGasPrices);
+    // yield call(getGasPrices);
 
     const ens = TEMP_getContext(ContextModule.ENS);
 
@@ -141,32 +145,50 @@ export default function* setupUserContext(
 
     let username;
     try {
-      const domain = yield ens.getDomain(
-        walletAddress,
-        colonyManager.networkClient,
-      );
-      username = ENS.stripDomainParts('user', domain);
+      if (method !== WalletMethod.Ethereal) {
+        const { data: usernameData } = yield apolloClient.query<
+          UserQuery,
+          UserQueryVariables
+        >({
+          query: UserDocument,
+          variables: {
+            address: walletAddress,
+          },
+        });
+
+        username = usernameData?.user?.profile?.username;
+      }
+
+      // const domain = yield ens.getDomain(
+      //   walletAddress,
+      //   colonyManager.networkClient,
+      // );
+      // username = ENS.stripDomainParts(
+      //   'user',
+      //   process.env.COLONY_NETWORK_ENS_NAME || 'joincolony.eth',
+      // );
 
       // yield refetchUserNotifications(walletAddress);
     } catch (caughtError) {
       // log.verbose(`Could not find username for ${walletAddress}`);
     }
 
-    const balance = yield colonyManager.provider.getBalance(walletAddress);
+    const provider = getProvider();
+    const balance = yield provider.getBalance(walletAddress);
 
     // @TODO refactor setupUserContext for graphql
     // @BODY eventually we want to move everything to resolvers, so all of this has to happen outside of sagas. There is no need to have a separate state or anything, just set it up in an aync function (instead of WALLET_CREATE), then call this function
     const ipfsWithFallback = TEMP_getContext(ContextModule.IPFSWithFallback);
     const userContext = {
       apolloClient,
-      colonyManager,
+      // colonyManager,
       ens,
       wallet,
       ipfsWithFallback,
     };
     yield setupResolvers(apolloClient, userContext);
 
-    yield createUserWithSecondAttempt(username, true);
+    // yield createUserWithSecondAttempt(username, true);
 
     yield apolloClient.mutate<
       SetLoggedInUserMutation,

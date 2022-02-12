@@ -1,7 +1,7 @@
 import { ApolloClient as ApolloClientClass } from '@apollo/client';
 import { PurserWallet } from '@purser/core';
 
-import ColonyManagerClass from '~lib/ColonyManager';
+// import ColonyManagerClass from '~lib/ColonyManager';
 
 import ENSClass from '~lib/ENS';
 
@@ -11,7 +11,7 @@ import ipfsWithFallback from './ipfsWithFallbackContext';
 
 export enum ContextModule {
   Wallet = 'wallet',
-  ColonyManager = 'colonyManager',
+  // ColonyManager = 'colonyManager',
   IPFS = 'ipfs',
   ApolloClient = 'apolloClient',
   ENS = 'ens',
@@ -26,7 +26,7 @@ export interface IpfsWithFallbackSkeleton {
 
 export interface Context {
   [ContextModule.Wallet]?: PurserWallet;
-  [ContextModule.ColonyManager]?: ColonyManagerClass;
+  // [ContextModule.ColonyManager]?: ColonyManagerClass;
   // @todo type the client cache properly
   [ContextModule.ApolloClient]?: ApolloClientClass<object>;
   [ContextModule.ENS]?: ENSClass;
@@ -36,7 +36,7 @@ export interface Context {
 /* Eventually the whole context will live in the newContext (not in sagas anymore). This becomes more important as we move away from redux and redux-saga entirely */
 const TEMP_newContext: Context = {
   [ContextModule.ApolloClient]: apolloClient,
-  [ContextModule.ColonyManager]: undefined,
+  // [ContextModule.ColonyManager]: undefined,
   [ContextModule.ENS]: ens,
   [ContextModule.Wallet]: undefined,
   [ContextModule.IPFSWithFallback]: ipfsWithFallback,

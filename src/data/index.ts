@@ -26,25 +26,25 @@ import {
   loggedInUserResolvers,
   initialCache as loggedInUser,
 } from './resolvers/loggedInUser';
-import { colonyResolvers } from './resolvers/colony';
+// import { colonyResolvers } from './resolvers/colony';
 import { userResolvers } from './resolvers/user';
-import { tokenResolvers } from './resolvers/token';
+// import { tokenResolvers } from './resolvers/token';
 import {
-  networkContractsResolvers,
+  // networkContractsResolvers,
   initialCache as networkContracts,
 } from './resolvers/networkContracts';
-import { colonyActionsResolvers } from './resolvers/colonyActions';
-import { metaColonyResolvers } from './resolvers/metacolony';
-import { eventsResolvers } from './resolvers/events';
-import { recoveryModeResolvers } from './resolvers/recovery';
-import { extensionsResolvers } from './resolvers/extensions';
-import { motionsResolvers } from './resolvers/motions';
+// import { colonyActionsResolvers } from './resolvers/colonyActions';
+// import { metaColonyResolvers } from './resolvers/metacolony';
+// import { eventsResolvers } from './resolvers/events';
+// import { recoveryModeResolvers } from './resolvers/recovery';
+// import { extensionsResolvers } from './resolvers/extensions';
+// import { motionsResolvers } from './resolvers/motions';
 /*
  * @TODO This needs to be merged with the motions resolvers
  */
-import { stakesResolvers } from './resolvers/stakes';
-import { whitelistResolvers } from './resolvers/whitelist';
-import { coinMachineResolvers } from './resolvers/coinMachine';
+// import { stakesResolvers } from './resolvers/stakes';
+// import { whitelistResolvers } from './resolvers/whitelist';
+// import { coinMachineResolvers } from './resolvers/coinMachine';
 
 import { FixedToken } from '../types';
 
@@ -61,20 +61,20 @@ export { default as cache } from './cache';
 export { default as cacheUpdates } from './cacheUpdates';
 export { default as typeDefs } from './graphql/typeDefs';
 export const resolvers: ResolverFactory[] = [
-  colonyResolvers,
+  // colonyResolvers,
   loggedInUserResolvers,
   userResolvers,
-  tokenResolvers,
-  networkContractsResolvers,
-  colonyActionsResolvers,
-  metaColonyResolvers,
-  eventsResolvers,
-  recoveryModeResolvers,
-  extensionsResolvers,
-  motionsResolvers,
-  stakesResolvers,
-  whitelistResolvers,
-  coinMachineResolvers,
+  // tokenResolvers,
+  // networkContractsResolvers,
+  // colonyActionsResolvers,
+  // metaColonyResolvers,
+  // eventsResolvers,
+  // recoveryModeResolvers,
+  // extensionsResolvers,
+  // motionsResolvers,
+  // stakesResolvers,
+  // whitelistResolvers,
+  // coinMachineResolvers,
 ];
 
 // export all the generated types and helpers

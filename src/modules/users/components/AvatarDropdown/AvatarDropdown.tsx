@@ -14,7 +14,7 @@ import styles, {
   verticalOffset,
 } from './AvatarDropdown.css';
 
-const UserAvatar = HookedUserAvatar();
+const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
 interface Props {
   onlyLogout?: boolean;

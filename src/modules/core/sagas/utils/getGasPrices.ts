@@ -1,15 +1,16 @@
-import { ColonyNetworkClient, Network } from '@colony/colony-js';
+import { Network } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
 import { call, put, select } from 'redux-saga/effects';
 
 import { GasPricesProps } from '~immutable/index';
-import { ContextModule, TEMP_getContext } from '~context/index';
+// import { ContextModule, TEMP_getContext } from '~context/index';
 // import { log } from '~utils/debug';
 import { DEFAULT_NETWORK } from '~constants';
 import { ETH_GAS_STATION, XDAI_GAS_STATION } from '~externalUrls';
 
 import { gasPrices as gasPricesSelector } from '../../selectors';
 import { updateGasPrices } from '../../actionCreators';
+import getProvider from './getProvider';
 
 interface EthGasStationAPIResponse {
   average: number;
@@ -34,9 +35,7 @@ interface BlockscoutGasStationAPIResponse {
 
 const DEFAULT_GAS_PRICE = bigNumberify('1000000000');
 
-const fetchGasPrices = async (
-  networkClient: ColonyNetworkClient,
-): Promise<GasPricesProps> => {
+const fetchGasPrices = async (): Promise<GasPricesProps> => {
   let networkGasPrice = DEFAULT_GAS_PRICE;
 
   const defaultGasPrices = {
@@ -53,7 +52,8 @@ const fetchGasPrices = async (
   };
 
   try {
-    networkGasPrice = await networkClient.provider.getGasPrice();
+    const provider = getProvider();
+    networkGasPrice = await provider.getGasPrice();
 
     let response;
 
@@ -145,9 +145,9 @@ export default function* getGasPrices() {
     return cachedPrices;
   }
 
-  const { networkClient } = TEMP_getContext(ContextModule.ColonyManager);
+  // const { networkClient } = TEMP_getContext(ContextModule.ColonyManager);
 
-  const gasPrices: GasPricesProps = yield call(fetchGasPrices, networkClient);
+  const gasPrices: GasPricesProps = yield call(fetchGasPrices);
 
   yield put(updateGasPrices(gasPrices));
 
