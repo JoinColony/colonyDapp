@@ -10,3 +10,13 @@
   composes: inlineEllipsis from '~styles/text.css';
   margin: 15px 0;
 }
+
+.toggle {
+  margin-bottom: 20px;
+}
+
+.inputFieldSet p {
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+  color: var(--danger);
+}
