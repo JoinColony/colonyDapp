@@ -1,3 +1,18 @@
 query UserBalance($address: String!) {
   userBalance(address: $address) @client
 }
+
+query UserByName($username: String!) {
+  userByName(username: $username) {
+    id
+    profile {
+      username
+      walletAddress
+      displayName
+      bio
+      location
+      website
+      avatarHash
+    }
+  }
+}

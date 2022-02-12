@@ -1,25 +1,15 @@
 import React from 'react';
-import { defineMessages } from 'react-intl';
 
-import { AnyUser, useLoggedInUser } from '~data/index';
+import { AnyUser } from '~data/index';
 
 import CopyableAddress from '~core/CopyableAddress';
 import ExternalLink from '~core/ExternalLink';
 import Heading from '~core/Heading';
-import Icon from '~core/Icon';
-import Link from '~core/Link';
 import UserMention from '~core/UserMention';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { stripProtocol } from '~utils/strings';
 
 import styles from './UserMeta.css';
-
-const MSG = defineMessages({
-  editProfileTitle: {
-    id: 'users.UserProfile.UserMeta.editProfileTitle',
-    defaultMessage: 'Edit Profile',
-  },
-});
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
@@ -35,7 +25,6 @@ const UserMeta = ({
   },
   user,
 }: Props) => {
-  const { walletAddress: currentUserWalletAddress } = useLoggedInUser();
   return (
     <div className={styles.main}>
       <div data-test="userProfileAvatar">
@@ -54,11 +43,6 @@ const UserMeta = ({
             text={displayName}
             data-test="userProfileName"
           />
-        )}
-        {currentUserWalletAddress === walletAddress && (
-          <Link className={styles.profileLink} to="/edit-profile">
-            <Icon name="settings" title={MSG.editProfileTitle} />
-          </Link>
         )}
       </div>
       <div className={styles.usernameContainer}>

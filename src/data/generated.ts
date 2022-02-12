@@ -290,6 +290,7 @@ export type Query = {
   user: User;
   userAddress: Scalars['String'];
   userBalance: Scalars['String'];
+  userByName: User;
   userReputation: Scalars['String'];
   userReputationForTopDomains: Array<UserDomainReputation>;
   userWhitelistStatus: UserWhitelistStatus;
@@ -646,6 +647,11 @@ export type QueryUserAddressArgs = {
 
 export type QueryUserBalanceArgs = {
   address: Scalars['String'];
+};
+
+
+export type QueryUserByNameArgs = {
+  username: Scalars['String'];
 };
 
 
@@ -2666,6 +2672,16 @@ export type UserBalanceQueryVariables = Exact<{
 
 
 export type UserBalanceQuery = Pick<Query, 'userBalance'>;
+
+export type UserByNameQueryVariables = Exact<{
+  username: Scalars['String'];
+}>;
+
+
+export type UserByNameQuery = { userByName: (
+    Pick<User, 'id'>
+    & { profile: Pick<UserProfile, 'username' | 'walletAddress' | 'displayName' | 'bio' | 'location' | 'website' | 'avatarHash'> }
+  ) };
 
 export type WhitelistedUsersQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -7420,6 +7436,48 @@ export function useUserBalanceLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type UserBalanceQueryHookResult = ReturnType<typeof useUserBalanceQuery>;
 export type UserBalanceLazyQueryHookResult = ReturnType<typeof useUserBalanceLazyQuery>;
 export type UserBalanceQueryResult = Apollo.QueryResult<UserBalanceQuery, UserBalanceQueryVariables>;
+export const UserByNameDocument = gql`
+    query UserByName($username: String!) {
+  userByName(username: $username) {
+    id
+    profile {
+      username
+      walletAddress
+      displayName
+      bio
+      location
+      website
+      avatarHash
+    }
+  }
+}
+    `;
+
+/**
+ * __useUserByNameQuery__
+ *
+ * To run a query within a React component, call `useUserByNameQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserByNameQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserByNameQuery({
+ *   variables: {
+ *      username: // value for 'username'
+ *   },
+ * });
+ */
+export function useUserByNameQuery(baseOptions?: Apollo.QueryHookOptions<UserByNameQuery, UserByNameQueryVariables>) {
+        return Apollo.useQuery<UserByNameQuery, UserByNameQueryVariables>(UserByNameDocument, baseOptions);
+      }
+export function useUserByNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserByNameQuery, UserByNameQueryVariables>) {
+          return Apollo.useLazyQuery<UserByNameQuery, UserByNameQueryVariables>(UserByNameDocument, baseOptions);
+        }
+export type UserByNameQueryHookResult = ReturnType<typeof useUserByNameQuery>;
+export type UserByNameLazyQueryHookResult = ReturnType<typeof useUserByNameLazyQuery>;
+export type UserByNameQueryResult = Apollo.QueryResult<UserByNameQuery, UserByNameQueryVariables>;
 export const WhitelistedUsersDocument = gql`
     query WhitelistedUsers($colonyAddress: String!) {
   whitelistedUsers(colonyAddress: $colonyAddress) @client {

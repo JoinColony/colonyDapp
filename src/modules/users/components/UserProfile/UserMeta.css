@@ -9,6 +9,7 @@
   composes: multiLineEllipsis from '~styles/text.css';
   display: flex;
   align-items: center;
+  margin-top: 40px;
 }
 
 .profileLink:nth-child(2) {
