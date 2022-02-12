@@ -31,7 +31,6 @@ import {
   SubgraphUserMotionTokenEventsDocument,
 } from '~data/generated';
 import { parseSubgraphEvent } from '~utils/events';
-import getProvider from '../../modules/core/sagas/utils/getProvider';
 
 import { getToken } from './token';
 import { getProcessedColony } from './colony';
@@ -191,6 +190,7 @@ export const userResolvers = ({
   ens,
   apolloClient,
   ipfsWithFallback,
+  provider,
 }: Required<Context>): Resolvers => ({
   Query: {
     async userAddress(_, { name }): Promise<Address> {
@@ -309,7 +309,6 @@ export const userResolvers = ({
       return ENS.stripDomainParts('user', domain);
     },
     async userBalance(_, { address }): Promise<BigNumber> {
-      const provider = getProvider();
       return provider.getBalance(address);
     },
   },

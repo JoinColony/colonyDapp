@@ -1,5 +1,6 @@
 import { ApolloClient as ApolloClientClass } from '@apollo/client';
 import { PurserWallet } from '@purser/core';
+import { Provider as EthersProvider } from 'ethers/providers';
 
 // import ColonyManagerClass from '~lib/ColonyManager';
 
@@ -8,6 +9,7 @@ import ENSClass from '~lib/ENS';
 import ens from './ensContext';
 import apolloClient from './apolloClient';
 import ipfsWithFallback from './ipfsWithFallbackContext';
+import getProvider from '../modules/core/sagas/utils/getProvider';
 
 export enum ContextModule {
   Wallet = 'wallet',
@@ -17,6 +19,7 @@ export enum ContextModule {
   ENS = 'ens',
   Pinata = 'pinataClient',
   IPFSWithFallback = 'ipfsWithFallback',
+  Provider = 'provider',
 }
 
 export interface IpfsWithFallbackSkeleton {
@@ -31,6 +34,7 @@ export interface Context {
   [ContextModule.ApolloClient]?: ApolloClientClass<object>;
   [ContextModule.ENS]?: ENSClass;
   [ContextModule.IPFSWithFallback]?: IpfsWithFallbackSkeleton;
+  [ContextModule.Provider]?: EthersProvider;
 }
 
 /* Eventually the whole context will live in the newContext (not in sagas anymore). This becomes more important as we move away from redux and redux-saga entirely */
@@ -40,6 +44,7 @@ const TEMP_newContext: Context = {
   [ContextModule.ENS]: ens,
   [ContextModule.Wallet]: undefined,
   [ContextModule.IPFSWithFallback]: ipfsWithFallback,
+  [ContextModule.Provider]: getProvider(),
 };
 
 export const TEMP_setContext = <K extends keyof Context>(
