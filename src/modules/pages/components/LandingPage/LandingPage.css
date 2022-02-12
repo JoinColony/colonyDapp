@@ -12,6 +12,7 @@
 
 .title {
   margin-bottom: 22px;
+  width: 400px;
 }
 
 .title h3 {
@@ -63,4 +64,8 @@
 .itemLoading {
   composes: itemLink;
   text-align: center;
+}
+
+.yourAccount {
+  margin: 20px 0;
 }

@@ -5,3 +5,4 @@ export const itemLink: string;
 export const itemIcon: string;
 export const itemTitle: string;
 export const itemLoading: string;
+export const yourAccount: string;

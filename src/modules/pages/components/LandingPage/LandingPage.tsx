@@ -6,7 +6,13 @@ import Icon from '~core/Icon';
 import Heading from '~core/Heading';
 
 import { CREATE_USER_ROUTE } from '~routes/index';
-import { useLoggedInUser, useTopUsersLazyQuery, AnyUser } from '~data/index';
+import {
+  useLoggedInUser,
+  useTopUsersLazyQuery,
+  AnyUser,
+  useContractUserByNameLazyQuery,
+  useUserByNameLazyQuery,
+} from '~data/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import FriendlyName from '~core/FriendlyName';
@@ -35,6 +41,10 @@ const MSG = defineMessages({
     defaultMessage:
       'While fully decentralized, you have to manually explore user accounts',
   },
+  yourAccount: {
+    id: 'pages.LandingPage.yourAccount',
+    defaultMessage: 'Your account',
+  },
 });
 
 const displayName = 'pages.LandingPage';
@@ -47,16 +57,71 @@ const LandingPage = () => {
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
   const [loadTopUsers, { data: topUsersData }] = useTopUsersLazyQuery();
+  const [loadUserByName, { data: userDataByName }] = useUserByNameLazyQuery();
+  const [
+    loadContractUserByName,
+    { data: contractUserDataByName },
+  ] = useContractUserByNameLazyQuery();
 
   useEffect(() => {
     if (username && isNetworkAllowed) {
-      loadTopUsers();
+      if (!decentralized) {
+        loadTopUsers();
+        loadUserByName({
+          variables: {
+            username,
+          },
+        });
+      } else {
+        loadContractUserByName({
+          variables: {
+            username,
+          },
+        });
+      }
     }
-  }, [isNetworkAllowed, loadTopUsers, username]);
+  }, [
+    decentralized,
+    isNetworkAllowed,
+    loadContractUserByName,
+    loadTopUsers,
+    loadUserByName,
+    username,
+  ]);
+
+  const currentUser = decentralized
+    ? contractUserDataByName?.contractUserByName
+    : userDataByName?.userByName;
 
   return (
     <div className={styles.main}>
       <div>
+        {username && isNetworkAllowed && (
+          <>
+            <Heading
+              text={MSG.yourAccount}
+              appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+            />
+            <ul className={styles.yourAccount}>
+              <li className={styles.item} key={currentUser?.id}>
+                <NavLink to={`/user/${username}`} className={styles.itemLink}>
+                  <UserAvatar
+                    className={styles.itemIcon}
+                    address={currentUser?.profile?.walletAddress as string}
+                    notSet={false}
+                    size="xs"
+                  />
+                  <span className={styles.itemTitle}>
+                    <FriendlyName
+                      user={currentUser as AnyUser}
+                      autoShrinkAddress
+                    />
+                  </span>
+                </NavLink>
+              </li>
+            </ul>
+          </>
+        )}
         <div className={styles.title}>
           {ethereal && isNetworkAllowed && (
             <Heading
@@ -102,24 +167,26 @@ const LandingPage = () => {
             isNetworkAllowed &&
             !decentralized &&
             topUsersData?.topUsers &&
-            topUsersData.topUsers.map((user) => (
-              <li className={styles.item} key={user?.id}>
-                <NavLink
-                  to={`/user/${user?.profile?.username}`}
-                  className={styles.itemLink}
-                >
-                  <UserAvatar
-                    className={styles.itemIcon}
-                    address={user?.profile?.walletAddress as string}
-                    notSet={false}
-                    size="xs"
-                  />
-                  <span className={styles.itemTitle}>
-                    <FriendlyName user={user as AnyUser} autoShrinkAddress />
-                  </span>
-                </NavLink>
-              </li>
-            ))}
+            topUsersData.topUsers
+              .filter((user) => user?.profile.username !== username)
+              .map((user) => (
+                <li className={styles.item} key={user?.id}>
+                  <NavLink
+                    to={`/user/${user?.profile?.username}`}
+                    className={styles.itemLink}
+                  >
+                    <UserAvatar
+                      className={styles.itemIcon}
+                      address={user?.profile?.walletAddress as string}
+                      notSet={false}
+                      size="xs"
+                    />
+                    <span className={styles.itemTitle}>
+                      <FriendlyName user={user as AnyUser} autoShrinkAddress />
+                    </span>
+                  </NavLink>
+                </li>
+              ))}
         </ul>
       </div>
     </div>
