@@ -70,10 +70,8 @@ export const numberFormatter = ({
       ? formatUnits(value, unit || 0)
       : moveDecimal(value.toString(10), -(unit || 0));
 
-  if (useSmallNumberDefault) {
-    if (convertedNum < 0.00001 && convertedNum > 0) {
-      return SMALL_TOKEN_AMOUNT_FORMAT;
-    }
+  if (useSmallNumberDefault && convertedNum < 0.00001 && convertedNum > 0) {
+    return SMALL_TOKEN_AMOUNT_FORMAT;
   }
 
   const formatType =
