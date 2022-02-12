@@ -9,6 +9,7 @@ import { GasStationPopover } from '~users/GasStation';
 import { readyTransactionsCount } from '~users/GasStation/transactionGroup';
 import AvatarDropdown from '~users/AvatarDropdown';
 import { ConnectWalletPopover } from '~users/ConnectWalletWizard';
+import Tag from '~core/Tag';
 
 import { useLoggedInUser } from '~data/index';
 import { useSelector } from '~utils/hooks';
@@ -41,12 +42,25 @@ const MSG = defineMessages({
     id: 'pages.NavigationWrapper.UserNavigation.userReputationTooltip',
     defaultMessage: 'This is your share of the reputation in this colony',
   },
+  centralizedLabel: {
+    id: 'pages.NavigationWrapper.UserNavigation.centralizedLabel',
+    defaultMessage: 'Centralized Mode',
+  },
+  decentralizedLabel: {
+    id: 'pages.NavigationWrapper.UserNavigation.decentralizedLabel',
+    defaultMessage: 'Decentralized Mode',
+  },
 });
 
 const displayName = 'pages.NavigationWrapper.UserNavigation';
 
 const UserNavigation = () => {
-  const { walletAddress, ethereal, networkId } = useLoggedInUser();
+  const {
+    walletAddress,
+    ethereal,
+    networkId,
+    decentralized,
+  } = useLoggedInUser();
   const dispatch = useDispatch();
 
   const transactionAndMessageGroups = useSelector(
@@ -73,6 +87,12 @@ const UserNavigation = () => {
 
   return (
     <div className={styles.main}>
+      <div className={styles.dcstatus}>
+        <Tag
+          appearance={{ theme: decentralized ? 'danger' : 'primary' }}
+          text={decentralized ? MSG.decentralizedLabel : MSG.centralizedLabel}
+        />
+      </div>
       {userCanNavigate && (
         <div
           className={styles.networkInfo}

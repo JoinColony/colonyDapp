@@ -93,6 +93,10 @@ const LandingPage = () => {
     ? contractUserDataByName?.contractUserByName
     : userDataByName?.userByName;
 
+  const otherCentralizedUsers = topUsersData?.topUsers?.filter(
+    (user) => user?.profile.username !== username,
+  );
+
   return (
     <div className={styles.main}>
       <div>
@@ -135,12 +139,15 @@ const LandingPage = () => {
               appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
             />
           )}
-          {username && isNetworkAllowed && !decentralized && (
-            <Heading
-              text={MSG.exploreAccounts}
-              appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
-            />
-          )}
+          {username &&
+            isNetworkAllowed &&
+            !decentralized &&
+            !!otherCentralizedUsers?.length && (
+              <Heading
+                text={MSG.exploreAccounts}
+                appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+              />
+            )}
           {username && isNetworkAllowed && decentralized && (
             <Heading
               text={MSG.manuallyExplore}
@@ -166,27 +173,24 @@ const LandingPage = () => {
           {username &&
             isNetworkAllowed &&
             !decentralized &&
-            topUsersData?.topUsers &&
-            topUsersData.topUsers
-              .filter((user) => user?.profile.username !== username)
-              .map((user) => (
-                <li className={styles.item} key={user?.id}>
-                  <NavLink
-                    to={`/user/${user?.profile?.username}`}
-                    className={styles.itemLink}
-                  >
-                    <UserAvatar
-                      className={styles.itemIcon}
-                      address={user?.profile?.walletAddress as string}
-                      notSet={false}
-                      size="xs"
-                    />
-                    <span className={styles.itemTitle}>
-                      <FriendlyName user={user as AnyUser} autoShrinkAddress />
-                    </span>
-                  </NavLink>
-                </li>
-              ))}
+            otherCentralizedUsers?.map((user) => (
+              <li className={styles.item} key={user?.id}>
+                <NavLink
+                  to={`/user/${user?.profile?.username}`}
+                  className={styles.itemLink}
+                >
+                  <UserAvatar
+                    className={styles.itemIcon}
+                    address={user?.profile?.walletAddress as string}
+                    notSet={false}
+                    size="xs"
+                  />
+                  <span className={styles.itemTitle}>
+                    <FriendlyName user={user as AnyUser} autoShrinkAddress />
+                  </span>
+                </NavLink>
+              </li>
+            ))}
         </ul>
       </div>
     </div>

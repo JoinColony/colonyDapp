@@ -13,3 +13,4 @@ export const buttonsWrapper: string;
 export const readyTransactionsCount: string;
 export const reputation: string;
 export const walletAutoLogin: string;
+export const dcstatus: string;
