@@ -285,6 +285,7 @@ export type Query = {
   token: Token;
   tokenInfo: TokenInfo;
   tokens: Array<Token>;
+  topUsers: Array<Maybe<User>>;
   transactionMessages: TransactionMessages;
   transactionMessagesCount: TransactionMessagesCount;
   user: User;
@@ -621,6 +622,11 @@ export type QueryTokenInfoArgs = {
 
 export type QueryTokensArgs = {
   addresses?: Maybe<Array<Scalars['String']>>;
+};
+
+
+export type QueryTopUsersArgs = {
+  limit?: Maybe<Scalars['Int']>;
 };
 
 
@@ -2682,6 +2688,16 @@ export type UserByNameQuery = { userByName: (
     Pick<User, 'id'>
     & { profile: Pick<UserProfile, 'username' | 'walletAddress' | 'displayName' | 'bio' | 'location' | 'website' | 'avatarHash'> }
   ) };
+
+export type TopUsersQueryVariables = Exact<{
+  limit?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type TopUsersQuery = { topUsers: Array<Maybe<(
+    Pick<User, 'id'>
+    & { profile: Pick<UserProfile, 'username' | 'walletAddress' | 'displayName' | 'bio' | 'location' | 'website' | 'avatarHash'> }
+  )>> };
 
 export type WhitelistedUsersQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -7478,6 +7494,48 @@ export function useUserByNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type UserByNameQueryHookResult = ReturnType<typeof useUserByNameQuery>;
 export type UserByNameLazyQueryHookResult = ReturnType<typeof useUserByNameLazyQuery>;
 export type UserByNameQueryResult = Apollo.QueryResult<UserByNameQuery, UserByNameQueryVariables>;
+export const TopUsersDocument = gql`
+    query TopUsers($limit: Int) {
+  topUsers(limit: $limit) {
+    id
+    profile {
+      username
+      walletAddress
+      displayName
+      bio
+      location
+      website
+      avatarHash
+    }
+  }
+}
+    `;
+
+/**
+ * __useTopUsersQuery__
+ *
+ * To run a query within a React component, call `useTopUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTopUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTopUsersQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useTopUsersQuery(baseOptions?: Apollo.QueryHookOptions<TopUsersQuery, TopUsersQueryVariables>) {
+        return Apollo.useQuery<TopUsersQuery, TopUsersQueryVariables>(TopUsersDocument, baseOptions);
+      }
+export function useTopUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TopUsersQuery, TopUsersQueryVariables>) {
+          return Apollo.useLazyQuery<TopUsersQuery, TopUsersQueryVariables>(TopUsersDocument, baseOptions);
+        }
+export type TopUsersQueryHookResult = ReturnType<typeof useTopUsersQuery>;
+export type TopUsersLazyQueryHookResult = ReturnType<typeof useTopUsersLazyQuery>;
+export type TopUsersQueryResult = Apollo.QueryResult<TopUsersQuery, TopUsersQueryVariables>;
 export const WhitelistedUsersDocument = gql`
     query WhitelistedUsers($colonyAddress: String!) {
   whitelistedUsers(colonyAddress: $colonyAddress) @client {

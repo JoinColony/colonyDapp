@@ -10,7 +10,7 @@ import {
 import ENS from '~lib/ENS';
 import {
   getLoggedInUser,
-  refetchUserNotifications,
+  // refetchUserNotifications,
   SetLoggedInUserMutation,
   SetLoggedInUserMutationVariables,
   SetLoggedInUserDocument,
@@ -31,7 +31,6 @@ function* usernameCreate({
   meta,
   payload: { username: givenUsername },
 }: Action<ActionTypes.USERNAME_CREATE>) {
-  const { walletAddress } = yield getLoggedInUser();
   const txChannel = yield call(getTxChannel, id);
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
   try {
@@ -57,8 +56,6 @@ function* usernameCreate({
     yield createUserWithSecondAttempt(username);
 
     yield put(transactionLoadRelated(id, false));
-
-    yield refetchUserNotifications(walletAddress);
 
     yield put<AllActions>({
       type: ActionTypes.USERNAME_CREATE_SUCCESS,

@@ -1,14 +1,13 @@
 import { call, put, take } from 'redux-saga/effects';
 import { TransactionResponse } from 'ethers/providers';
 import type { ContractClient, TransactionOverrides } from '@colony/colony-js';
-import { ClientType } from '@colony/colony-js';
 
 import { ActionTypes } from '~redux/index';
 import { selectAsJS } from '~utils/saga/effects';
 import { mergePayload } from '~utils/actions';
 import { TRANSACTION_STATUSES, TransactionRecord } from '~immutable/index';
-import { ContextModule, TEMP_getContext } from '~context/index';
 import { Action } from '~redux/types/actions';
+import { getNetworkClient } from '../utils';
 
 import { transactionSendError } from '../../actionCreators';
 import { oneTransaction } from '../../selectors';
@@ -48,19 +47,12 @@ export default function* sendTransaction({
 }: Action<ActionTypes.TRANSACTION_SEND>) {
   const transaction: TransactionRecord = yield selectAsJS(oneTransaction, id);
 
-  const { status, context, identifier } = transaction;
+  const { status } = transaction;
 
   if (status !== TRANSACTION_STATUSES.READY) {
     throw new Error('Transaction is not ready to send.');
   }
-  const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
-
-  let contextClient: ContractClient;
-  if (context === ClientType.TokenClient) {
-    contextClient = yield colonyManager.getTokenClient(identifier as string);
-  } else {
-    contextClient = yield colonyManager.getClient(context, identifier);
-  }
+  const contextClient: ContractClient = yield getNetworkClient();
 
   if (!contextClient) {
     throw new Error('Context client failed to instantiate');

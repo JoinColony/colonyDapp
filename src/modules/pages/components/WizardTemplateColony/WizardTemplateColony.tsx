@@ -1,13 +1,13 @@
 import React, { ReactNode, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { parseEther } from 'ethers/utils';
+import { formatEther, parseEther } from 'ethers/utils';
 import { Redirect } from 'react-router-dom';
 
 import Numeral from '~core/Numeral';
 import QRCode from '~core/QRCode';
 import CopyableAddress from '~core/CopyableAddress';
 import { HistoryNavigation } from '~pages/RouteLayouts';
-import { useLoggedInUser } from '~data/index';
+import { useLoggedInUser, useUserBalanceQuery } from '~data/index';
 import { DEFAULT_NETWORK_TOKEN } from '~constants';
 import { LANDING_PAGE_ROUTE } from '~routes/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
@@ -34,9 +34,18 @@ const WizardTemplateColony = ({
   previousStep,
   hideQR = false,
 }: Props) => {
-  const { balance, walletAddress, networkId } = useLoggedInUser();
+  const { walletAddress, networkId } = useLoggedInUser();
+  const { data: balanceData } = useUserBalanceQuery({
+    variables: {
+      address: walletAddress,
+    },
+    fetchPolicy: 'network-only',
+  });
+
   const customHandler = useCallback(() => previousStep(), [previousStep]);
-  const ethBalance = parseEther(balance);
+  const ethBalance = parseEther(
+    formatEther(balanceData?.userBalance?.toString() || 0),
+  );
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
   if (!isNetworkAllowed) {

@@ -16,3 +16,18 @@ query UserByName($username: String!) {
     }
   }
 }
+
+query TopUsers($limit: Int) {
+  topUsers(limit: $limit) {
+    id
+    profile {
+      username
+      walletAddress
+      displayName
+      bio
+      location
+      website
+      avatarHash
+    }
+  }
+}

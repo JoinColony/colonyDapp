@@ -41,6 +41,10 @@
   width: 340px;
 }
 
+.itemLink div {
+  display: inline-block;
+}
+
 .itemIcon {
   display: inline-block;
   margin: 0 15px 3px 0;

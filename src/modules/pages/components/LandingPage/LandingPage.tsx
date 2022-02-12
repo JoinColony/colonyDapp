@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import NavLink from '~core/NavLink';
@@ -6,8 +6,10 @@ import Icon from '~core/Icon';
 import Heading from '~core/Heading';
 
 import { CREATE_USER_ROUTE } from '~routes/index';
-import { useLoggedInUser } from '~data/index';
+import { useLoggedInUser, useTopUsersLazyQuery, AnyUser } from '~data/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
+import HookedUserAvatar from '~users/HookedUserAvatar';
+import FriendlyName from '~core/FriendlyName';
 
 import styles from './LandingPage.css';
 
@@ -24,20 +26,34 @@ const MSG = defineMessages({
     id: 'pages.LandingPage.createUser',
     defaultMessage: 'Register a username',
   },
+  exploreAccounts: {
+    id: 'pages.LandingPage.exploreAccounts',
+    defaultMessage: 'Explore other accounts',
+  },
 });
 
 const displayName = 'pages.LandingPage';
+
+const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
 const LandingPage = () => {
   const { networkId, ethereal, username } = useLoggedInUser();
 
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
+  const [loadTopUsers, { data: topUsersData }] = useTopUsersLazyQuery();
+
+  useEffect(() => {
+    if (username && isNetworkAllowed) {
+      loadTopUsers();
+    }
+  }, [isNetworkAllowed, loadTopUsers, username]);
+
   return (
     <div className={styles.main}>
       <div>
         <div className={styles.title}>
-          {(ethereal || isNetworkAllowed) && (
+          {ethereal && isNetworkAllowed && (
             <Heading
               text={MSG.callToAction}
               appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
@@ -46,6 +62,12 @@ const LandingPage = () => {
           {!ethereal && !isNetworkAllowed && (
             <Heading
               text={MSG.wrongNetwork}
+              appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+            />
+          )}
+          {username && isNetworkAllowed && (
+            <Heading
+              text={MSG.exploreAccounts}
               appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
             />
           )}
@@ -65,6 +87,27 @@ const LandingPage = () => {
               </NavLink>
             </li>
           )}
+          {username &&
+            isNetworkAllowed &&
+            topUsersData?.topUsers &&
+            topUsersData.topUsers.map((user) => (
+              <li className={styles.item} key={user?.id}>
+                <NavLink
+                  to={`/user/${user?.profile?.username}`}
+                  className={styles.itemLink}
+                >
+                  <UserAvatar
+                    className={styles.itemIcon}
+                    address={user?.profile?.walletAddress as string}
+                    notSet={false}
+                    size="xs"
+                  />
+                  <span className={styles.itemTitle}>
+                    <FriendlyName user={user as AnyUser} autoShrinkAddress />
+                  </span>
+                </NavLink>
+              </li>
+            ))}
         </ul>
       </div>
     </div>

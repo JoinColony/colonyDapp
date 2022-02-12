@@ -11,7 +11,11 @@ import DropdownMenu, {
   DropdownMenuItem,
 } from '~core/DropdownMenu';
 import { ActionTypes } from '~redux/index';
-import { USER_EDIT_ROUTE, CREATE_USER_ROUTE } from '~routes/index';
+import {
+  USER_EDIT_ROUTE,
+  CREATE_USER_ROUTE,
+  LANDING_PAGE_ROUTE,
+} from '~routes/index';
 
 import styles from './AvatarDropdownPopover.css';
 
@@ -48,6 +52,10 @@ const MSG = defineMessages({
     id: 'users.AvatarDropdown.AvatarDropdownPopover.buttonConnect',
     defaultMessage: 'Connect Wallet',
   },
+  landingPage: {
+    id: 'users.AvatarDropdown.AvatarDropdownPopover.ladingPage',
+    defaultMessage: 'Landing Page',
+  },
 });
 
 interface Props {
@@ -68,6 +76,9 @@ const AvatarDropdownPopover = ({
   const renderUserSection = useCallback(() => {
     return (
       <DropdownMenuSection separator>
+        <DropdownMenuItem>
+          <NavLink to={LANDING_PAGE_ROUTE} text={MSG.landingPage} />
+        </DropdownMenuItem>
         {!username && (
           <DropdownMenuItem>
             <NavLink
