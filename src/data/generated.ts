@@ -289,6 +289,7 @@ export type Query = {
   transactionMessagesCount: TransactionMessagesCount;
   user: User;
   userAddress: Scalars['String'];
+  userBalance: Scalars['String'];
   userReputation: Scalars['String'];
   userReputationForTopDomains: Array<UserDomainReputation>;
   userWhitelistStatus: UserWhitelistStatus;
@@ -640,6 +641,11 @@ export type QueryUserArgs = {
 
 export type QueryUserAddressArgs = {
   name: Scalars['String'];
+};
+
+
+export type QueryUserBalanceArgs = {
+  address: Scalars['String'];
 };
 
 
@@ -2653,6 +2659,13 @@ export type SubgraphPayoutClaimedEventsQuery = { payoutClaimedEvents: Array<(
       ) }
     ) }
   )> };
+
+export type UserBalanceQueryVariables = Exact<{
+  address: Scalars['String'];
+}>;
+
+
+export type UserBalanceQuery = Pick<Query, 'userBalance'>;
 
 export type WhitelistedUsersQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -7376,6 +7389,37 @@ export function useSubgraphPayoutClaimedEventsLazyQuery(baseOptions?: Apollo.Laz
 export type SubgraphPayoutClaimedEventsQueryHookResult = ReturnType<typeof useSubgraphPayoutClaimedEventsQuery>;
 export type SubgraphPayoutClaimedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphPayoutClaimedEventsLazyQuery>;
 export type SubgraphPayoutClaimedEventsQueryResult = Apollo.QueryResult<SubgraphPayoutClaimedEventsQuery, SubgraphPayoutClaimedEventsQueryVariables>;
+export const UserBalanceDocument = gql`
+    query UserBalance($address: String!) {
+  userBalance(address: $address) @client
+}
+    `;
+
+/**
+ * __useUserBalanceQuery__
+ *
+ * To run a query within a React component, call `useUserBalanceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserBalanceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserBalanceQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useUserBalanceQuery(baseOptions?: Apollo.QueryHookOptions<UserBalanceQuery, UserBalanceQueryVariables>) {
+        return Apollo.useQuery<UserBalanceQuery, UserBalanceQueryVariables>(UserBalanceDocument, baseOptions);
+      }
+export function useUserBalanceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserBalanceQuery, UserBalanceQueryVariables>) {
+          return Apollo.useLazyQuery<UserBalanceQuery, UserBalanceQueryVariables>(UserBalanceDocument, baseOptions);
+        }
+export type UserBalanceQueryHookResult = ReturnType<typeof useUserBalanceQuery>;
+export type UserBalanceLazyQueryHookResult = ReturnType<typeof useUserBalanceLazyQuery>;
+export type UserBalanceQueryResult = Apollo.QueryResult<UserBalanceQuery, UserBalanceQueryVariables>;
 export const WhitelistedUsersDocument = gql`
     query WhitelistedUsers($colonyAddress: String!) {
   whitelistedUsers(colonyAddress: $colonyAddress) @client {

@@ -1,5 +1,5 @@
 import { all, call, fork, put } from 'redux-saga/effects';
-import { formatEther } from 'ethers/utils';
+import { bigNumberify, formatEther } from 'ethers/utils';
 
 import { WalletMethod } from '~immutable/index';
 import { createAddress } from '~utils/web3';
@@ -33,7 +33,7 @@ import { authenticate, clearToken } from '../../../api';
 // import ENS from '../../../lib/ENS';
 import { getWallet, setupUsersSagas } from '../../users/sagas';
 // import { createUserWithSecondAttempt } from '../../users/sagas/utils';
-import { getProvider } from './utils';
+// import { getProvider } from './utils';
 import setupOnBeforeUnload from './setupOnBeforeUnload';
 // import { setupUserBalanceListener } from './setupUserBalanceListener';
 
@@ -173,8 +173,10 @@ export default function* setupUserContext(
       // log.verbose(`Could not find username for ${walletAddress}`);
     }
 
-    const provider = getProvider();
-    const balance = yield provider.getBalance(walletAddress);
+    // if (method !== WalletMethod.Ethereal) {
+    //   const provider = getProvider();
+    //   balance = yield provider.getBalance(walletAddress);
+    // }
 
     // @TODO refactor setupUserContext for graphql
     // @BODY eventually we want to move everything to resolvers, so all of this has to happen outside of sagas. There is no need to have a separate state or anything, just set it up in an aync function (instead of WALLET_CREATE), then call this function
@@ -197,7 +199,7 @@ export default function* setupUserContext(
       mutation: SetLoggedInUserDocument,
       variables: {
         input: {
-          balance: formatEther(balance),
+          balance: formatEther(bigNumberify(0)),
           username,
           walletAddress,
           ethereal: method === WalletMethod.Ethereal,

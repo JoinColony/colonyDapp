@@ -1,5 +1,6 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import { formatEther } from 'ethers/utils';
 
 import CopyableAddress from '~core/CopyableAddress';
 import Heading from '~core/Heading';
@@ -7,7 +8,7 @@ import Icon from '~core/Icon';
 import Link from '~core/Link';
 import Numeral from '~core/Numeral';
 import { WALLET_ROUTE } from '~routes/index';
-import { useLoggedInUser } from '~data/index';
+import { useLoggedInUser, useUserBalanceQuery } from '~data/index';
 import { DEFAULT_NETWORK_TOKEN } from '~constants';
 
 import styles from './GasStationHeader.css';
@@ -27,6 +28,12 @@ const displayName = 'users.GasStation.GasStationHeader';
 
 const GasStationHeader = ({ close }: Props) => {
   const { balance, walletAddress } = useLoggedInUser();
+  const { data: balanceData } = useUserBalanceQuery({
+    variables: {
+      address: walletAddress,
+    },
+    fetchPolicy: 'network-only',
+  });
   return (
     <div className={styles.main}>
       <div className={styles.walletDetails}>
@@ -41,7 +48,11 @@ const GasStationHeader = ({ close }: Props) => {
         </div>
         <div>
           <Numeral
-            value={balance}
+            value={
+              balanceData?.userBalance
+                ? formatEther(balanceData.userBalance)
+                : balance
+            }
             suffix={` ${DEFAULT_NETWORK_TOKEN.symbol}`}
           />
         </div>
