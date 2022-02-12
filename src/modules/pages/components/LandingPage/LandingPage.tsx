@@ -30,6 +30,11 @@ const MSG = defineMessages({
     id: 'pages.LandingPage.exploreAccounts',
     defaultMessage: 'Explore other accounts',
   },
+  manuallyExplore: {
+    id: 'pages.LandingPage.manuallyExplore',
+    defaultMessage:
+      'While fully decentralized, you have to manually explore user accounts',
+  },
 });
 
 const displayName = 'pages.LandingPage';
@@ -37,7 +42,7 @@ const displayName = 'pages.LandingPage';
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
 const LandingPage = () => {
-  const { networkId, ethereal, username } = useLoggedInUser();
+  const { networkId, ethereal, username, decentralized } = useLoggedInUser();
 
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
@@ -65,9 +70,15 @@ const LandingPage = () => {
               appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
             />
           )}
-          {username && isNetworkAllowed && (
+          {username && isNetworkAllowed && !decentralized && (
             <Heading
               text={MSG.exploreAccounts}
+              appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+            />
+          )}
+          {username && isNetworkAllowed && decentralized && (
+            <Heading
+              text={MSG.manuallyExplore}
               appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
             />
           )}
@@ -89,6 +100,7 @@ const LandingPage = () => {
           )}
           {username &&
             isNetworkAllowed &&
+            !decentralized &&
             topUsersData?.topUsers &&
             topUsersData.topUsers.map((user) => (
               <li className={styles.item} key={user?.id}>

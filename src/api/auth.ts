@@ -4,6 +4,10 @@ import { createAddress } from '~utils/web3';
 import { log } from '~utils/debug';
 
 const TOKEN_STORAGE = 'colony-server-token';
+const STORAGE_KEY = 'dsettings';
+const decentralizedStorage = JSON.parse(
+  localStorage.getItem(STORAGE_KEY) as string,
+);
 
 const postRequest = async (path: string, data: object, kyc = false) => {
   const URL = kyc
@@ -63,6 +67,10 @@ export const clearToken = (walletAddress: string) => {
 };
 
 export const authenticate = async (wallet) => {
+  if (decentralizedStorage?.enabled) {
+    return '';
+  }
+
   try {
     const token = getToken(wallet.address);
 

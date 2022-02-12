@@ -8,17 +8,17 @@ import { DEFAULT_NETWORK } from '~constants';
 /*
  * Return an initialized Provider instance.
  */
-const getProvider = (): Provider => {
+const getProvider = (customRPC?: string): Provider => {
   const network = DEFAULT_NETWORK as Network;
 
   if (network === Network.Local) {
-    return new ExtendedJsonRpcProvider();
+    return new ExtendedJsonRpcProvider(customRPC || 'http://localhost:8545');
   }
   if (network === Network.Xdai) {
-    return new ExtendedJsonRpcProvider(process.env.RPC_URL);
+    return new ExtendedJsonRpcProvider(customRPC || process.env.RPC_URL);
   }
   if (network === Network.XdaiFork) {
-    return new ExtendedJsonRpcProvider(process.env.RPC_URL);
+    return new ExtendedJsonRpcProvider(customRPC || process.env.RPC_URL);
   }
   return new ExtendedInfuraProvider(network, process.env.INFURA_ID);
 };

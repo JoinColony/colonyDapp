@@ -248,6 +248,8 @@ export type Query = {
   colonyMembersWithReputation?: Maybe<Array<Scalars['String']>>;
   colonyName: Scalars['String'];
   colonyReputation?: Maybe<Scalars['String']>;
+  contractUser: ContractUser;
+  contractUserByName: ContractUser;
   currentPeriodTokens: CurrentPeriodTokens;
   domain: SubgraphUnusedDomain;
   domainBalance: Scalars['String'];
@@ -421,6 +423,16 @@ export type QueryColonyNameArgs = {
 export type QueryColonyReputationArgs = {
   address: Scalars['String'];
   domainId?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryContractUserArgs = {
+  address: Scalars['String'];
+};
+
+
+export type QueryContractUserByNameArgs = {
+  username: Scalars['String'];
 };
 
 
@@ -892,6 +904,8 @@ export type LoggedInUser = {
   walletAddress: Scalars['String'];
   ethereal: Scalars['Boolean'];
   networkId?: Maybe<Scalars['Int']>;
+  customRPC?: Maybe<Scalars['String']>;
+  decentralized?: Maybe<Scalars['Boolean']>;
 };
 
 export type SugraphEventProcessedValues = {
@@ -1381,6 +1395,16 @@ export type SubgraphTransaction = {
   block: SubgraphBlock;
 };
 
+export type ContractUserProfile = {
+  username?: Maybe<Scalars['String']>;
+  walletAddress: Scalars['String'];
+};
+
+export type ContractUser = {
+  id: Scalars['String'];
+  profile: ContractUserProfile;
+};
+
 export type WhitelistPolicy = {
   useApprovals: Scalars['Boolean'];
   agreementHash: Scalars['String'];
@@ -1589,7 +1613,7 @@ export type UnBanUserTransactionMessagesMutation = Pick<Mutation, 'unbanUserTran
 export type LoggedInUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type LoggedInUserQuery = { loggedInUser: Pick<LoggedInUser, 'walletAddress' | 'balance' | 'username' | 'ethereal' | 'networkId'> };
+export type LoggedInUserQuery = { loggedInUser: Pick<LoggedInUser, 'walletAddress' | 'balance' | 'username' | 'ethereal' | 'networkId' | 'customRPC' | 'decentralized'> };
 
 export type UserQueryVariables = Exact<{
   address: Scalars['String'];
@@ -2699,6 +2723,26 @@ export type TopUsersQuery = { topUsers: Array<Maybe<(
     & { profile: Pick<UserProfile, 'username' | 'walletAddress' | 'displayName' | 'bio' | 'location' | 'website' | 'avatarHash'> }
   )>> };
 
+export type ContractUserQueryVariables = Exact<{
+  address?: Maybe<Scalars['String']>;
+}>;
+
+
+export type ContractUserQuery = { contractUser: (
+    Pick<ContractUser, 'id'>
+    & { profile: Pick<ContractUserProfile, 'username' | 'walletAddress'> }
+  ) };
+
+export type ContractUserByNameQueryVariables = Exact<{
+  username: Scalars['String'];
+}>;
+
+
+export type ContractUserByNameQuery = { contractUserByName: (
+    Pick<ContractUser, 'id'>
+    & { profile: Pick<ContractUserProfile, 'username' | 'walletAddress'> }
+  ) };
+
 export type WhitelistedUsersQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
 }>;
@@ -3525,6 +3569,8 @@ export const LoggedInUserDocument = gql`
     username
     ethereal
     networkId
+    customRPC
+    decentralized
   }
 }
     `;
@@ -7536,6 +7582,80 @@ export function useTopUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<T
 export type TopUsersQueryHookResult = ReturnType<typeof useTopUsersQuery>;
 export type TopUsersLazyQueryHookResult = ReturnType<typeof useTopUsersLazyQuery>;
 export type TopUsersQueryResult = Apollo.QueryResult<TopUsersQuery, TopUsersQueryVariables>;
+export const ContractUserDocument = gql`
+    query ContractUser($address: String) {
+  contractUser(address: $address) @client {
+    id
+    profile {
+      username
+      walletAddress
+    }
+  }
+}
+    `;
+
+/**
+ * __useContractUserQuery__
+ *
+ * To run a query within a React component, call `useContractUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useContractUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useContractUserQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useContractUserQuery(baseOptions?: Apollo.QueryHookOptions<ContractUserQuery, ContractUserQueryVariables>) {
+        return Apollo.useQuery<ContractUserQuery, ContractUserQueryVariables>(ContractUserDocument, baseOptions);
+      }
+export function useContractUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ContractUserQuery, ContractUserQueryVariables>) {
+          return Apollo.useLazyQuery<ContractUserQuery, ContractUserQueryVariables>(ContractUserDocument, baseOptions);
+        }
+export type ContractUserQueryHookResult = ReturnType<typeof useContractUserQuery>;
+export type ContractUserLazyQueryHookResult = ReturnType<typeof useContractUserLazyQuery>;
+export type ContractUserQueryResult = Apollo.QueryResult<ContractUserQuery, ContractUserQueryVariables>;
+export const ContractUserByNameDocument = gql`
+    query ContractUserByName($username: String!) {
+  contractUserByName(username: $username) @client {
+    id
+    profile {
+      username
+      walletAddress
+    }
+  }
+}
+    `;
+
+/**
+ * __useContractUserByNameQuery__
+ *
+ * To run a query within a React component, call `useContractUserByNameQuery` and pass it any options that fit your needs.
+ * When your component renders, `useContractUserByNameQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useContractUserByNameQuery({
+ *   variables: {
+ *      username: // value for 'username'
+ *   },
+ * });
+ */
+export function useContractUserByNameQuery(baseOptions?: Apollo.QueryHookOptions<ContractUserByNameQuery, ContractUserByNameQueryVariables>) {
+        return Apollo.useQuery<ContractUserByNameQuery, ContractUserByNameQueryVariables>(ContractUserByNameDocument, baseOptions);
+      }
+export function useContractUserByNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ContractUserByNameQuery, ContractUserByNameQueryVariables>) {
+          return Apollo.useLazyQuery<ContractUserByNameQuery, ContractUserByNameQueryVariables>(ContractUserByNameDocument, baseOptions);
+        }
+export type ContractUserByNameQueryHookResult = ReturnType<typeof useContractUserByNameQuery>;
+export type ContractUserByNameLazyQueryHookResult = ReturnType<typeof useContractUserByNameLazyQuery>;
+export type ContractUserByNameQueryResult = Apollo.QueryResult<ContractUserByNameQuery, ContractUserByNameQueryVariables>;
 export const WhitelistedUsersDocument = gql`
     query WhitelistedUsers($colonyAddress: String!) {
   whitelistedUsers(colonyAddress: $colonyAddress) @client {

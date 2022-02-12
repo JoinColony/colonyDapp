@@ -33,6 +33,8 @@ export default gql`
     walletAddress: String!
     ethereal: Boolean!
     networkId: Int
+    customRPC: String
+    decentralized: Boolean
   }
 
   type SugraphEventProcessedValues {

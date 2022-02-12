@@ -37,6 +37,11 @@ export interface Context {
   [ContextModule.Provider]?: EthersProvider;
 }
 
+const STORAGE_KEY = 'dsettings';
+const decentralizedStorage = JSON.parse(
+  localStorage.getItem(STORAGE_KEY) as string,
+);
+
 /* Eventually the whole context will live in the newContext (not in sagas anymore). This becomes more important as we move away from redux and redux-saga entirely */
 const TEMP_newContext: Context = {
   [ContextModule.ApolloClient]: apolloClient,
@@ -44,7 +49,9 @@ const TEMP_newContext: Context = {
   [ContextModule.ENS]: ens,
   [ContextModule.Wallet]: undefined,
   [ContextModule.IPFSWithFallback]: ipfsWithFallback,
-  [ContextModule.Provider]: getProvider(),
+  [ContextModule.Provider]: getProvider(
+    decentralizedStorage?.enabled ? decentralizedStorage?.customRPC : undefined,
+  ),
 };
 
 export const TEMP_setContext = <K extends keyof Context>(

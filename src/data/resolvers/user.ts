@@ -5,7 +5,13 @@ import {
   ROOT_DOMAIN_ID,
   getBlockTime,
   getLogs,
+  getColonyNetworkClient,
+  Network,
+  colonyNetworkAddresses,
 } from '@colony/colony-js';
+import { EthersSigner } from '@purser/signer-ethers';
+import namehash from 'eth-ens-namehash-ms';
+
 import { BigNumber, bigNumberify } from 'ethers/utils';
 import { AddressZero, HashZero } from 'ethers/constants';
 import Decimal from 'decimal.js';
@@ -24,7 +30,7 @@ import {
   UserLock,
   UserToken,
 } from '~data/index';
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID, DEFAULT_NETWORK } from '~constants';
 import {
   SubgraphUserMotionTokenEventsQuery,
   SubgraphUserMotionTokenEventsQueryVariables,
@@ -59,6 +65,26 @@ const getUserReputation = async (
     rootHash,
   );
   return reputationAmount;
+};
+
+interface LocalContractABI {
+  networks: Record<string, { address: string }>;
+}
+
+const getLocalContractAddress = (contractName: string) => {
+  // process.env.DEV is set by the QA server in case we want to have a debug build. We don't have access to the compiled contracts hen
+  if (process.env.NODE_ENV === 'development' && !process.env.DEV) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires, max-len, global-require, import/no-dynamic-require
+      const contractABI: LocalContractABI = require(`~lib/colonyNetwork/build/contracts/${contractName}.json`);
+      return Object.values(contractABI.networks)[0].address;
+    } catch {
+      throw new Error(
+        `Could not get local contract address for ${contractName}. Please deploy contracts first`,
+      );
+    }
+  }
+  return undefined;
 };
 
 const getUserStakedBalance = async (
@@ -191,6 +217,7 @@ export const userResolvers = ({
   apolloClient,
   ipfsWithFallback,
   provider,
+  wallet,
 }: Required<Context>): Resolvers => ({
   Query: {
     async userAddress(_, { name }): Promise<Address> {
@@ -310,6 +337,114 @@ export const userResolvers = ({
     },
     async userBalance(_, { address }): Promise<BigNumber> {
       return provider.getBalance(address);
+    },
+    async contractUser(_, { address }): Promise<any> {
+      try {
+        const network = DEFAULT_NETWORK as Network;
+
+        const signer = new EthersSigner({ purserWallet: wallet, provider });
+
+        let reputationOracleUrl = new URL(
+          `/reputation`,
+          window.location.origin,
+        );
+
+        let networkClientInstance;
+        if (
+          process.env.NODE_ENV === 'development' &&
+          DEFAULT_NETWORK === Network.Local
+        ) {
+          reputationOracleUrl = new URL(`/reputation`, 'http://localhost:3001');
+          networkClientInstance = getColonyNetworkClient(network, signer, {
+            networkAddress: getLocalContractAddress('EtherRouter'),
+            reputationOracleEndpoint: reputationOracleUrl.href,
+          });
+        } else {
+          networkClientInstance = getColonyNetworkClient(network, signer, {
+            /*
+             * Manually set the network address to instantiate the network client
+             * This is usefull for networks where we have two deployments (like xDAI)
+             * and we want to be able to differentiate between them
+             */
+            networkAddress:
+              process.env.NETWORK_CONTRACT_ADDRESS ||
+              colonyNetworkAddresses[network],
+            reputationOracleEndpoint: reputationOracleUrl.href,
+          });
+        }
+
+        // eslint-disable-next-line max-len
+        const domain = await networkClientInstance.lookupRegisteredENSDomainWithNetworkPatches(
+          address,
+        );
+        const username = ENS.stripDomainParts('user', domain);
+        return {
+          __typename: 'ContractUser',
+          id: address,
+          profile: {
+            __typename: 'ContractUserProfile',
+            walletAddress: address,
+            username,
+          },
+        };
+      } catch (error) {
+        //
+      }
+      return null;
+    },
+    async contractUserByName(_, { username }): Promise<any> {
+      try {
+        const network = DEFAULT_NETWORK as Network;
+
+        const signer = new EthersSigner({ purserWallet: wallet, provider });
+
+        let reputationOracleUrl = new URL(
+          `/reputation`,
+          window.location.origin,
+        );
+
+        let networkClientInstance;
+        if (
+          process.env.NODE_ENV === 'development' &&
+          DEFAULT_NETWORK === Network.Local
+        ) {
+          reputationOracleUrl = new URL(`/reputation`, 'http://localhost:3001');
+          networkClientInstance = getColonyNetworkClient(network, signer, {
+            networkAddress: getLocalContractAddress('EtherRouter'),
+            reputationOracleEndpoint: reputationOracleUrl.href,
+          });
+        } else {
+          networkClientInstance = getColonyNetworkClient(network, signer, {
+            /*
+             * Manually set the network address to instantiate the network client
+             * This is usefull for networks where we have two deployments (like xDAI)
+             * and we want to be able to differentiate between them
+             */
+            networkAddress:
+              process.env.NETWORK_CONTRACT_ADDRESS ||
+              colonyNetworkAddresses[network],
+            reputationOracleEndpoint: reputationOracleUrl.href,
+          });
+        }
+
+        const usernameHash = `${username}.user.${process.env.COLONY_NETWORK_ENS_NAME}`;
+        const userAddress = await networkClientInstance.addr(
+          namehash.hash(usernameHash),
+        );
+
+        return {
+          __typename: 'ContractUser',
+          id: userAddress,
+          profile: {
+            __typename: 'ContractUserProfile',
+            walletAddress: userAddress,
+            username,
+          },
+        };
+      } catch (error) {
+        //
+      }
+      return null;
     },
   },
   User: {

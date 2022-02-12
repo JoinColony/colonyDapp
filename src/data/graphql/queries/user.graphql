@@ -31,3 +31,23 @@ query TopUsers($limit: Int) {
     }
   }
 }
+
+query ContractUser($address: String) {
+  contractUser(address: $address) @client {
+    id
+    profile {
+      username
+      walletAddress
+    }
+  }
+}
+
+query ContractUserByName($username: String!) {
+  contractUserByName(username: $username) @client {
+    id
+    profile {
+      username
+      walletAddress
+    }
+  }
+}

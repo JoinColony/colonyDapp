@@ -10,6 +10,8 @@ query LoggedInUser {
     username
     ethereal
     networkId
+    customRPC
+    decentralized
   }
 }
 

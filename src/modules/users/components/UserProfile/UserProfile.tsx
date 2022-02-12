@@ -4,7 +4,14 @@ import { isAddress } from '~utils/web3';
 
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import ProfileTemplate from '~pages/ProfileTemplate';
-import { useUserLazyQuery, useUserByNameLazyQuery, AnyUser } from '~data/index';
+import {
+  useUserLazyQuery,
+  useUserByNameLazyQuery,
+  AnyUser,
+  useLoggedInUser,
+  useContractUserLazyQuery,
+  useContractUserByNameLazyQuery,
+} from '~data/index';
 
 import UserMeta from './UserMeta';
 import UserProfileSpinner from './UserProfileSpinner';
@@ -20,6 +27,7 @@ const UserProfile = ({
     params: { username: usernameOrAddress },
   },
 }: Props) => {
+  const { decentralized } = useLoggedInUser();
   const loadByAddress = isAddress(usernameOrAddress);
 
   const [
@@ -30,12 +38,34 @@ const UserProfile = ({
     loadUserByName,
     { data: userDataByName, error: userErrorByName },
   ] = useUserByNameLazyQuery();
+  const [
+    loadContractUserByAddress,
+    { data: contractUserDataByAddress, error: contractUserErrorByAddress },
+  ] = useContractUserLazyQuery();
+  const [
+    loadContractUserByName,
+    { data: contractUserDataByName, error: contractUserErrorByName },
+  ] = useContractUserByNameLazyQuery();
 
   useEffect(() => {
     if (loadByAddress) {
-      loadUserByAddress({
+      if (decentralized) {
+        loadContractUserByAddress({
+          variables: {
+            address: usernameOrAddress,
+          },
+        });
+      } else {
+        loadUserByAddress({
+          variables: {
+            address: usernameOrAddress,
+          },
+        });
+      }
+    } else if (decentralized) {
+      loadContractUserByName({
         variables: {
-          address: usernameOrAddress,
+          username: usernameOrAddress,
         },
       });
     } else {
@@ -45,22 +75,46 @@ const UserProfile = ({
         },
       });
     }
-  }, [loadByAddress, loadUserByAddress, loadUserByName, usernameOrAddress]);
+  }, [
+    decentralized,
+    loadByAddress,
+    loadContractUserByAddress,
+    loadContractUserByName,
+    loadUserByAddress,
+    loadUserByName,
+    usernameOrAddress,
+  ]);
 
-  if (userErrorByAddress || userErrorByName) {
+  if (
+    userErrorByAddress ||
+    userErrorByName ||
+    contractUserErrorByAddress ||
+    contractUserErrorByName
+  ) {
     return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
   if (
-    (loadByAddress && !userDataByAddress?.user) ||
-    (!userDataByAddress && !userDataByName?.userByName)
+    (decentralized &&
+      loadByAddress &&
+      !contractUserDataByAddress?.contractUser) ||
+    (decentralized &&
+      !loadByAddress &&
+      !contractUserDataByName?.contractUserByName) ||
+    (!decentralized && loadByAddress && !userDataByAddress?.user) ||
+    (!decentralized && !loadByAddress && !userDataByName?.userByName)
   ) {
     return <UserProfileSpinner />;
   }
 
-  const user = loadByAddress
-    ? userDataByAddress?.user
-    : userDataByName?.userByName;
+  let user;
+  if (decentralized) {
+    user = loadByAddress
+      ? contractUserDataByAddress?.contractUser
+      : contractUserDataByName?.contractUserByName;
+  } else {
+    user = loadByAddress ? userDataByAddress?.user : userDataByName?.userByName;
+  }
 
   return (
     <ProfileTemplate asideContent={<UserMeta user={user as AnyUser} />}>

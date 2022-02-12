@@ -2,11 +2,16 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import LoadingTemplate from '~pages/LoadingTemplate';
+import { useLoggedInUser } from '~data/index';
 
 const MSG = defineMessages({
   loadingText: {
     id: 'ViewUserProfile.UserProfile.loadingText',
-    defaultMessage: 'Fetching a user profile',
+    defaultMessage: 'Fetching user profile from server',
+  },
+  loadingTextDecentralized: {
+    id: 'ViewUserProfile.UserProfile.loadingText',
+    defaultMessage: 'Fetching user profile from contracts',
   },
   loaderDescription: {
     id: 'ViewUserProfile.UserProfile.loaderDescription',
@@ -14,6 +19,15 @@ const MSG = defineMessages({
   },
 });
 
-const Spinner = () => <LoadingTemplate loadingText={MSG.loadingText} />;
+const Spinner = () => {
+  const { decentralized } = useLoggedInUser();
+  return (
+    <LoadingTemplate
+      loadingText={
+        decentralized ? MSG.loadingTextDecentralized : MSG.loadingText
+      }
+    />
+  );
+};
 
 export default Spinner;

@@ -30,10 +30,10 @@ import setupResolvers from '~context/setupResolvers';
 import AppLoadingState from '~context/appLoadingState';
 import { authenticate, clearToken } from '../../../api';
 
-// import ENS from '../../../lib/ENS';
+import ENS from '../../../lib/ENS';
 import { getWallet, setupUsersSagas } from '../../users/sagas';
 // import { createUserWithSecondAttempt } from '../../users/sagas/utils';
-import { getProvider } from './utils';
+import { getProvider, getNetworkClient } from './utils';
 import setupOnBeforeUnload from './setupOnBeforeUnload';
 // import { setupUserBalanceListener } from './setupUserBalanceListener';
 
@@ -73,6 +73,8 @@ export default function* setupUserContext(
         loggedInUser: {
           walletAddress: etherealWalletAddress,
           ethereal: isWalletTypeEthereal,
+          customRPC,
+          decentralized,
         },
       },
     } = yield apolloClient.query<LoggedInUserQuery, LoggedInUserQueryVariables>(
@@ -143,45 +145,34 @@ export default function* setupUserContext(
     // Start a forked task to listen for user balance events
     // yield fork(setupUserBalanceListener, walletAddress);
 
+    let provider = TEMP_getContext(ContextModule.Provider);
+    if (!provider) {
+      provider = getProvider(decentralized ? customRPC : undefined);
+      TEMP_setContext(ContextModule.Provider, provider);
+    }
+
     let username;
     try {
       if (method !== WalletMethod.Ethereal) {
-        const { data: usernameData } = yield apolloClient.query<
-          UserQuery,
-          UserQueryVariables
-        >({
-          query: UserDocument,
-          variables: {
-            address: walletAddress,
-          },
-        });
-
-        username = usernameData?.user?.profile?.username;
+        if (decentralized) {
+          const networkClient = yield getNetworkClient();
+          const domain = yield ens.getDomain(walletAddress, networkClient);
+          username = ENS.stripDomainParts('user', domain);
+        } else {
+          const { data: usernameData } = yield apolloClient.query<
+            UserQuery,
+            UserQueryVariables
+          >({
+            query: UserDocument,
+            variables: {
+              address: walletAddress,
+            },
+          });
+          username = usernameData?.user?.profile?.username;
+        }
       }
-
-      // const domain = yield ens.getDomain(
-      //   walletAddress,
-      //   colonyManager.networkClient,
-      // );
-      // username = ENS.stripDomainParts(
-      //   'user',
-      //   process.env.COLONY_NETWORK_ENS_NAME || 'joincolony.eth',
-      // );
-
-      // yield refetchUserNotifications(walletAddress);
     } catch (caughtError) {
       // log.verbose(`Could not find username for ${walletAddress}`);
-    }
-
-    // if (method !== WalletMethod.Ethereal) {
-    //   const provider = getProvider();
-    //   balance = yield provider.getBalance(walletAddress);
-    // }
-
-    let provider = TEMP_getContext(ContextModule.Provider);
-    if (!provider) {
-      provider = getProvider();
-      TEMP_setContext(ContextModule.Provider, provider);
     }
 
     // @TODO refactor setupUserContext for graphql

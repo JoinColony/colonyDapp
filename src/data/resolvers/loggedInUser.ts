@@ -7,6 +7,11 @@ import { LoggedInUserDocument } from '../generated';
 // Move this to a utils file if used somewhere else as well
 const assignDefined = assignWith((objValue, srcValue) => srcValue || objValue);
 
+const STORAGE_KEY = 'dsettings';
+const decentralizedStorage = JSON.parse(
+  localStorage.getItem(STORAGE_KEY) as string,
+);
+
 export const initialCache = {
   loggedInUser: {
     __typename: 'LoggedInUser',
@@ -17,6 +22,8 @@ export const initialCache = {
     ethereal: true,
     networkId: 1,
     isNetworkAllowed: true,
+    customRPC: decentralizedStorage?.customRPC || null,
+    decentralized: decentralizedStorage?.enabled || false,
   },
 };
 

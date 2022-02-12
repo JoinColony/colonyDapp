@@ -33,6 +33,8 @@ function* usernameCreate({
 }: Action<ActionTypes.USERNAME_CREATE>) {
   const txChannel = yield call(getTxChannel, id);
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+  const { decentralized } = yield getLoggedInUser();
+
   try {
     // Normalize again, just to be sure
     const username = ENS.normalize(givenUsername);
@@ -53,7 +55,9 @@ function* usernameCreate({
 
     yield put(transactionLoadRelated(id, true));
 
-    yield createUserWithSecondAttempt(username);
+    if (!decentralized) {
+      yield createUserWithSecondAttempt(username);
+    }
 
     yield put(transactionLoadRelated(id, false));
 

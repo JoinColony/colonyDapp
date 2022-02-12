@@ -1,6 +1,11 @@
 import appErrorStateContext, { AppErrorType } from './appErrorState';
 import { getApolloUri } from './apolloClient';
 
+const STORAGE_KEY = 'dsettings';
+const decentralizedStorage = JSON.parse(
+  localStorage.getItem(STORAGE_KEY) as string,
+);
+
 const checkServerConnection = (forceUpdate) => {
   let errorAlreadyExists = false;
   if (
@@ -54,7 +59,10 @@ const checkServerWebsocketConnection = (forceUpdate) => {
 };
 
 const checkProviderConnection = (forceUpdate) => {
-  const providerURL = process.env.RPC_URL || 'http://localhost:8545/';
+  const providerURL = decentralizedStorage?.enabled
+    ? decentralizedStorage?.customRPC
+    : process.env.RPC_URL || 'http://localhost:8545/';
+
   let errorAlreadyExists = false;
   if (
     appErrorStateContext
@@ -102,8 +110,10 @@ const checkProviderConnection = (forceUpdate) => {
 };
 
 const checkConnections = (forceUpdate) => {
-  checkServerConnection(forceUpdate);
-  checkServerWebsocketConnection(forceUpdate);
+  if (!decentralizedStorage?.enabled) {
+    checkServerConnection(forceUpdate);
+    checkServerWebsocketConnection(forceUpdate);
+  }
   checkProviderConnection(forceUpdate);
 };
 
