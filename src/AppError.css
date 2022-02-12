@@ -1,0 +1,14 @@
+.main {
+  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+  position: absolute;
+  top: 0;
+  overflow: auto;
+  background: var(--gradient-default);
+}
+
+.mainContent {
+  margin-top: 160px;
+  padding-bottom: var(--pad-large);
+  text-align: center;
+  color: var(--danger);
+}

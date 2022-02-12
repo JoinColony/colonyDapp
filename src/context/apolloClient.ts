@@ -8,7 +8,7 @@ import { ContextModule, TEMP_getContext } from '~context/index';
 
 import { getToken } from '../api/auth';
 
-const getApolloUri = (
+export const getApolloUri = (
   url: string = process.env.SERVER_ENDPOINT || '',
   useWebsocket = false,
 ): string => {

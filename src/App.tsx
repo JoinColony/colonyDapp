@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { StoreContext } from 'redux-react-hook';
@@ -15,6 +15,9 @@ import motionMessages from './i18n/en-motions';
 import systemMessages from './i18n/en-system-messages';
 import Routes from './routes';
 import apolloClient from './context/apolloClient';
+import checkConnections from './context/checkConnections';
+import appErrorStateContext from './context/appErrorState';
+import AppError from './AppError';
 
 // @ts-ignore
 if (!Intl.RelativeTimeFormat) {
@@ -28,32 +31,42 @@ interface Props {
   store: any;
 }
 
-const App = ({ store }: Props) => (
-  <IntlProvider
-    locale="en"
-    defaultLocale="en"
-    messages={{
-      ...messages,
-      ...actionMessages,
-      ...eventsMessages,
-      ...systemMessages,
-      ...motionMessages,
-    }}
-  >
-    <ApolloProvider client={apolloClient}>
-      <StoreContext.Provider value={store}>
-        <ReduxProvider store={store}>
-          <BrowserRouter>
-            <DialogProvider>
-              <div className={layout.stretch}>
-                <Routes />
-              </div>
-            </DialogProvider>
-          </BrowserRouter>
-        </ReduxProvider>
-      </StoreContext.Provider>
-    </ApolloProvider>
-  </IntlProvider>
-);
+const App = ({ store }: Props) => {
+  const [, forceUpdate] = useState({});
+  checkConnections(forceUpdate);
+
+  const appHasErrors = appErrorStateContext.getErrors();
+  if (appHasErrors?.length) {
+    return <AppError errors={appHasErrors} />;
+  }
+
+  return (
+    <IntlProvider
+      locale="en"
+      defaultLocale="en"
+      messages={{
+        ...messages,
+        ...actionMessages,
+        ...eventsMessages,
+        ...systemMessages,
+        ...motionMessages,
+      }}
+    >
+      <ApolloProvider client={apolloClient}>
+        <StoreContext.Provider value={store}>
+          <ReduxProvider store={store}>
+            <BrowserRouter>
+              <DialogProvider>
+                <div className={layout.stretch}>
+                  <Routes />
+                </div>
+              </DialogProvider>
+            </BrowserRouter>
+          </ReduxProvider>
+        </StoreContext.Provider>
+      </ApolloProvider>
+    </IntlProvider>
+  );
+};
 
 export default App;

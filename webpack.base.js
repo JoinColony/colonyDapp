@@ -63,6 +63,7 @@ const config = {
         include: [
           path.resolve(__dirname, 'src', 'modules'),
           path.resolve(__dirname, 'src', 'styles'),
+          path.resolve(__dirname, 'src'),
         ],
         use: [
           'style-loader',
