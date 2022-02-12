@@ -42,19 +42,19 @@ const webSocketLink = new WebSocketLink({
   },
 });
 
-const subgraphHttpLink = createHttpLink({
-  uri: getApolloUri(process.env.SUBGRAPH_ENDPOINT),
-});
+// const subgraphHttpLink = createHttpLink({
+//   uri: getApolloUri(process.env.SUBGRAPH_ENDPOINT),
+// });
 
-const subgraphWebSocketLink = new WebSocketLink({
-  uri: getApolloUri(
-    process.env.SUBGRAPH_WS_ENDPOINT || process.env.SUBGRAPH_ENDPOINT,
-    true,
-  ),
-  options: {
-    reconnect: true,
-  },
-});
+// const subgraphWebSocketLink = new WebSocketLink({
+//   uri: getApolloUri(
+//     process.env.SUBGRAPH_WS_ENDPOINT || process.env.SUBGRAPH_ENDPOINT,
+//     true,
+//   ),
+//   options: {
+//     reconnect: true,
+//   },
+// });
 
 const authLink = setContext((_, { headers }) => {
   const wallet = TEMP_getContext(ContextModule.Wallet);
@@ -82,34 +82,8 @@ export default new ApolloClient({
         definition.operation === 'subscription'
       );
     },
-    /*
-     * If it's a subscription
-     */
-    split(
-      ({ operationName }) => operationName.startsWith('Subgraph'),
-      /*
-       * If it's name starts with Subgraph go to The Graph's WS endpoint
-       */
-      subgraphWebSocketLink,
-      /*
-       * Otherwise go to our server's WS endpoint
-       */
-      webSocketLink,
-    ),
-    /*
-     * Else if it's a query (or mutation)
-     */
-    split(
-      ({ operationName }) => operationName.startsWith('Subgraph'),
-      /*
-       * If it's name starts with Subgraph go to The Graph's HTTP endpoint
-       */
-      subgraphHttpLink,
-      /*
-       * Otherwise go to our server's HTTP endpoint
-       */
-      authLink.concat(httpLink),
-    ),
+    webSocketLink,
+    authLink.concat(httpLink),
   ),
   cache,
   typeDefs,
