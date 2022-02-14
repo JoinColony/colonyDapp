@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
+import { useClaimableStakedMotionsQuery } from '~data/generated';
 
-import TokensTab, { TokensTabProps } from './TokensTab';
+import TokensTab, { TokensTabProps } from '../TokensTab/TokensTab';
 import StakesTab from '../StakesTab/StakesTab';
 
 import styles from './TokenActivationContent.css';
@@ -20,8 +21,25 @@ const MSG = defineMessages({
 });
 
 const TokenActivationContent = (props: TokensTabProps) => {
+  // const [claimsCount, setClaimsCount] = useState<number>(0);
   const [tabIndex, setTabIndex] = useState<number>(0);
-  const { colonyAddress, walletAddress } = props;
+  const { colonyAddress, walletAddress, token } = props;
+
+  const { data: unclaimedMotions, loading } = useClaimableStakedMotionsQuery({
+    variables: {
+      colonyAddress: colonyAddress?.toLowerCase(),
+      walletAddress: walletAddress?.toLowerCase(),
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  const claimsCount =
+    unclaimedMotions?.claimableStakedMotions?.claimableStakedMotions.length ||
+    0;
+  // console.log(
+  //   'unclaimedMotions?.claimableStakedMotions?.claimableStakedMotions: ',
+  //   unclaimedMotions?.claimableStakedMotions,
+  // );
 
   return (
     <div className={styles.main}>
@@ -41,7 +59,9 @@ const TokenActivationContent = (props: TokensTabProps) => {
           <Tab selectedClassName={styles.tabSelected} className={styles.tab}>
             <div className={styles.stakesTabTitle}>
               <FormattedMessage {...MSG.stakes} />
-              <div className={styles.dot}>4</div>
+              {claimsCount > 0 && (
+                <div className={styles.dot}>{claimsCount}</div>
+              )}
             </div>
           </Tab>
         </TabList>
@@ -49,13 +69,7 @@ const TokenActivationContent = (props: TokensTabProps) => {
           <TokensTab {...props} />
         </TabPanel>
         <TabPanel className={styles.tabContainer}>
-          <StakesTab
-            {...{
-              colonyAddress,
-              walletAddress,
-            }}
-          />
-          <StakesTab />
+          <StakesTab {...{ unclaimedMotions, loading, token }} />
         </TabPanel>
       </Tabs>
     </div>

@@ -1,13 +1,9 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import { UserToken } from '~data/index';
-import { getFormattedTokenValue } from '~utils/tokens';
-import ExternalLink from '~core/ExternalLink';
-import { CM_LEARN_MORE } from '~externalUrls';
+import Link from '~core/Link';
 
 import styles from './StakesTab.css';
-import tokenStyles from '../TokenActivationContent/TokenActivationContent.css';
 
 const MSG = defineMessages({
   motionUrl: {
@@ -16,43 +12,31 @@ const MSG = defineMessages({
   },
 });
 
-interface Props {
-  token?: UserToken;
-  item: number;
-  key?: number;
+interface StakesListItemProps {
+  stakedAmount?: string;
+  tokenSymbol?: string;
+  colonyName?: string;
+  txHash?: string;
 }
 
-const StakesListItem = ({ token, item }: Props) => {
-  const [totalTokensWidth, setTotalTokensWidth] = useState(0);
-  const widthLimit = 164;
-
-  const targetRef = useRef<HTMLParagraphElement>(null);
-  useLayoutEffect(() => {
-    if (targetRef?.current && totalTokensWidth === 0) {
-      setTotalTokensWidth(targetRef?.current?.offsetWidth);
-    }
-  }, [totalTokensWidth]);
-
-  const totalTokens = item;
-  const formattedTotalAmount = getFormattedTokenValue(
-    totalTokens,
-    token?.decimals,
-  );
-
-  const tokenSymbolStyle =
-    totalTokensWidth <= widthLimit
-      ? tokenStyles.tokenSymbol
-      : tokenStyles.tokenSymbolSmall;
+const StakesListItem = ({
+  stakedAmount,
+  tokenSymbol,
+  colonyName,
+  txHash,
+}: StakesListItemProps) => {
   return (
     <li className={styles.stakesListItem}>
       <div>
-        <p ref={targetRef} className={tokenSymbolStyle}>
-          {formattedTotalAmount} <span>{token?.symbol}</span>
+        <p>
+          <span>
+            {stakedAmount} {tokenSymbol}
+          </span>
         </p>
-        <ExternalLink
+        <Link
           className={styles.link}
           text={MSG.motionUrl}
-          href={CM_LEARN_MORE}
+          to={`/colony/${colonyName}/tx/${txHash}`}
         />
       </div>
     </li>
