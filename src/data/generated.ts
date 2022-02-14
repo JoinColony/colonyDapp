@@ -45,7 +45,7 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
   }
 };
       export default result;
-    
+
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -2468,7 +2468,11 @@ export type ClaimableStakedMotionsQueryVariables = Exact<{
 }>;
 
 
+<<<<<<< HEAD
 export type ClaimableStakedMotionsQuery = { claimableStakedMotions: Pick<ClaimableMotions, 'unclaimedMotionStakeEvents'> };
+=======
+export type ClaimableStakedMotionsQuery = { claimableStakedMotions: Pick<ClaimableMotions, 'claimableStakedMotions'> };
+>>>>>>> WIP:updaing dialog & query
 
 export type MotionObjectionAnnotationQueryVariables = Exact<{
   motionId: Scalars['Int'];
@@ -6702,7 +6706,11 @@ export type StakeAmountsForMotionQueryResult = Apollo.QueryResult<StakeAmountsFo
 export const ClaimableStakedMotionsDocument = gql`
     query ClaimableStakedMotions($colonyAddress: String!, $walletAddress: String!) {
   claimableStakedMotions(colonyAddress: $colonyAddress, walletAddress: $walletAddress) @client {
+<<<<<<< HEAD
     unclaimedMotionStakeEvents
+=======
+    claimableStakedMotions
+>>>>>>> WIP:updaing dialog & query
   }
 }
     `;

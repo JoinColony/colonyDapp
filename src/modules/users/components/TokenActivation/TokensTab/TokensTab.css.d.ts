@@ -28,5 +28,3 @@ export const balanceInfoWithdrawLocked: string;
 export const balanceAmount: string;
 export const claimsContainer: string;
 export const noClaims: string;
-export const stakesTabTitle: string;
-export const dot: string;
