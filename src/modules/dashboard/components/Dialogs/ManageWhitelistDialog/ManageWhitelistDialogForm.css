@@ -1,8 +1,19 @@
 .noPermissionMessage {
-  vertical-align: bottom;
   margin-bottom: 20px;
+  vertical-align: bottom;
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   line-height: 18px;
   color: var(--danger);
+}
+
+.tabsListContainer {
+  height: 42px;
+  border-bottom: 1px solid var(--temp-grey-13);
+}
+
+.tabsList {
+  display: flex;
+  height: 100%;
+  width: 100%;
 }

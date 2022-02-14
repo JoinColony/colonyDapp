@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { ColonyRole } from '@colony/colony-js';
 import { FormikProps } from 'formik';
@@ -9,6 +9,7 @@ import { Annotations } from '~core/Fields';
 import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
+import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 
 import { useLoggedInUser, Colony } from '~data/index';
 import { useTransformer } from '~utils/hooks';
@@ -33,6 +34,14 @@ const MSG = defineMessages({
     defaultMessage: `You do not have the {roleRequired} permission required
       to take this action.`,
   },
+  addAddress: {
+    id: `dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.addAddress`,
+    defaultMessage: 'Add address',
+  },
+  whitelisted: {
+    id: 'dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.whitelisted',
+    defaultMessage: 'Whitelisted',
+  },
 });
 
 interface Props {
@@ -45,6 +54,7 @@ const ManageWhitelistDialogForm = ({
   colony,
 }: Props & FormikProps<FormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
+  const [tabIndex, setTabIndex] = useState<number>(0);
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
@@ -65,6 +75,32 @@ const ManageWhitelistDialogForm = ({
           <PermissionRequiredInfo requiredRoles={[ColonyRole.Root]} />
         </DialogSection>
       )}
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <Tabs
+          selectedIndex={tabIndex}
+          onSelect={(newIndex) => {
+            setTabIndex(newIndex);
+          }}
+        >
+          <TabList
+            className={styles.tabsList}
+            containerClassName={styles.tabsListContainer}
+          >
+            <Tab>
+              <FormattedMessage {...MSG.addAddress} />
+            </Tab>
+            <Tab>
+              <FormattedMessage {...MSG.whitelisted} />
+            </Tab>
+          </TabList>
+          <TabPanel>
+            <h2>Please implement this content in separate component</h2>
+          </TabPanel>
+          <TabPanel>
+            <h2>Please implement this content in separate component</h2>
+          </TabPanel>
+        </Tabs>
+      </DialogSection>
       <DialogSection>
         <Annotations
           label={MSG.annotation}

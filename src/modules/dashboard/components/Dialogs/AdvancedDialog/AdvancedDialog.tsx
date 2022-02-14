@@ -89,7 +89,8 @@ const MSG = defineMessages({
   },
   manageWhitelistDescription: {
     id: 'dashboard.AdvancedDialog.manageWhitelistDescription',
-    defaultMessage: 'Get warned when taking an action to addresses not on the whitelist.',
+    defaultMessage:
+      'Get warned when taking an action to addresses not on the whitelist.',
   },
 });
 
