@@ -14,7 +14,7 @@ import {
   getTokenDecimalsWithFallback,
 } from '~utils/tokens';
 
-import styles from './TokenActivationContent.css';
+import styles from './TokensTab.css';
 import ChangeTokenStateForm from './ChangeTokenStateForm';
 import TokenTooltip from './TokenTooltip';
 import SmallTokenAmountMessage from './SmallTokenAmountMessage';

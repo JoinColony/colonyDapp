@@ -19,7 +19,7 @@ import { Address } from '~types/index';
 import { pipe, mapPayload } from '~utils/actions';
 import { getFormattedTokenValue } from '~utils/tokens';
 
-import styles from './TokenActivationContent.css';
+import styles from './TokensTab.css';
 
 const MSG = defineMessages({
   tokenActivation: {
