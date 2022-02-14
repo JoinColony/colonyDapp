@@ -1,5 +1,11 @@
 [
   {
+    "address": "0xc9B6218AffE8Aba68a13899Cbf7cF7f14DDd304C",
+    "decimals": 18,
+    "name": "Colony Network Token on xDai",
+    "symbol": "CLNY"
+  },
+  {
     "address": "0xb7d311e2eb55f2f68a9440da38e7989210b9a05e",
     "decimals": 18,
     "name": "STAKE on xDai",
