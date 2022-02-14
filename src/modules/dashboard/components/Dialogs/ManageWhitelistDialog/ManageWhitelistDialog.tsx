@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 import Dialog, { DialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 
-import { Colony, useLoggedInUser } from '~data/index';
+import { Colony } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
