@@ -20,6 +20,7 @@
 }
 
 .claimStakesContainer {
+  composes: mainDivider;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -34,13 +35,12 @@
   color: var(--dark);
 }
 
-.stakesList {
+/* .stakesList {
   display: flex;
   flex-direction: column;
   width: 100%;
-  background: var(--grey-blue-2);
-}
 
+  /* background: var(--grey-blue-2); */ */
 .stakesListItem {
   display: flex;
   justify-content: space-between;
@@ -50,11 +50,12 @@
   height: 63px;
   width: 100%;
   border: 1px solid var(--drop-shadow);
-  border-radius: var(--radius-normal);
-  background: var(--colony-light-blue);
+  border-radius: var(--radius-small);
+  background: var(--colony-white);
   font-size: var(--size-normal);
   font-weight: var(--weight-bold);
-  box-shadow: var(--box-shadow-medium);
+  box-shadow: 0px 2px 11px var(--drop-shadow);
+  outline: 0;
 }
 
 .link {
@@ -69,6 +70,18 @@
 }
 
 .stakesListItem:hover {
-  background: var(--drop-shadow);
+  background: var(--colony-light-blue);
   cursor: pointer;
+}
+
+.noClaims {
+  padding: 18px 16px 19px 16px;
+  text-align: center;
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 18px;
 }
