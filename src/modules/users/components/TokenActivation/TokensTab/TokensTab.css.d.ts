@@ -1,10 +1,4 @@
-export const main: string;
-export const tabsListContainer: string;
-export const tabsList: string;
-export const tab: string;
-export const tabSelected: string;
-export const tabContainer: string;
-
+export const mainDivider: string;
 export const totalTokensContainer: string;
 export const tokenSymbol: string;
 export const tokenSymbolSmall: string;
@@ -34,7 +28,5 @@ export const balanceInfoWithdrawLocked: string;
 export const balanceAmount: string;
 export const claimsContainer: string;
 export const noClaims: string;
-export const claimsContent: string;
-export const claimAllButtonSection: string;
 export const stakesTabTitle: string;
 export const dot: string;
