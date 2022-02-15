@@ -7,10 +7,10 @@ import React, {
 } from 'react';
 import { AddressZero } from 'ethers/constants';
 
+import { defineMessages } from 'react-intl';
 import { createAddress } from '~utils/web3';
 import UserMention from '~core/UserMention';
 import { ListGroupItem } from '~core/ListGroup';
-import CopyableAddress from '~core/CopyableAddress';
 import { AnyUser, Colony, useUser } from '~data/index';
 import { ENTER } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
@@ -18,6 +18,9 @@ import { getMainClasses } from '~utils/css';
 import MemberReputation from '~core/MemberReputation';
 
 import styles from './MembersListItem.css';
+import InvisibleCopyableAddress from '~core/InvisibleCopyableAddress';
+import MaskedAddress from '~core/MaskedAddress';
+import IconTooltip from '~core/IconTooltip';
 
 interface Props<U> {
   extraItemContent?: (user: U) => ReactNode;
@@ -26,8 +29,16 @@ interface Props<U> {
   showUserInfo: boolean;
   showUserReputation: boolean;
   domainId: number | undefined;
+  isWhiteListed?: boolean;
   user: U;
 }
+
+const MSG = defineMessages({
+  whitelistedTooltip: {
+    id: 'core.MembersList.MembersListItem.whitelistedTooltip',
+    defaultMessage: `Address added to whitelist`,
+  },
+});
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
@@ -42,6 +53,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
     showUserInfo,
     showUserReputation,
     user,
+    isWhiteListed,
   } = props;
   const {
     profile: { walletAddress },
@@ -127,7 +139,22 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
             </span>
           )}
           <div className={styles.address}>
-            <CopyableAddress>{walletAddress}</CopyableAddress>
+            <InvisibleCopyableAddress address={walletAddress}>
+              <MaskedAddress address={walletAddress} />
+            </InvisibleCopyableAddress>
+            {isWhiteListed && (
+              <IconTooltip
+                icon="check-mark"
+                tooltipText={MSG.whitelistedTooltip}
+                iconSize="13px"
+                tooltipClassName={styles.whitelistedIconTooltip}
+                tooltipPopperProps={{
+                  placement: 'top',
+                  strategy: 'fixed',
+                }}
+                className={styles.whitelistedIcon}
+              />
+            )}
           </div>
         </div>
         {renderedExtraItemContent && <div>{renderedExtraItemContent}</div>}
