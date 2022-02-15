@@ -10,11 +10,13 @@ import moveDecimal from 'move-decimal-point';
 import sortBy from 'lodash/sortBy';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
+import { isConfusing } from 'unicode-confusables';
 
 import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
 import PermissionsLabel from '~core/PermissionsLabel';
 import Button from '~core/Button';
+import ConfusableWarning from '~core/ConfusableWarning';
 import { ItemDataType } from '~core/OmniPicker';
 import { ActionDialogProps } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
@@ -435,6 +437,12 @@ const CreatePaymentDialogForm = ({
             itemDataTest="paymentRecipientItem"
           />
         </div>
+        {values.recipient && isConfusing(values.recipient.profile.username) && (
+          <ConfusableWarning
+            walletAddress={values.recipient.profile.walletAddress}
+            colonyAddress={colonyAddress}
+          />
+        )}
       </DialogSection>
       <DialogSection>
         <div className={styles.tokenAmount}>

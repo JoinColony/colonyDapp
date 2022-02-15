@@ -11,7 +11,7 @@ import { ActionForm } from '~core/Fields';
 
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
-import { useMembersSubscription, useNetworkContracts } from '~data/index';
+import { AnyUser, useMembersSubscription, useNetworkContracts } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 import { WizardDialogType } from '~utils/hooks';
@@ -32,8 +32,8 @@ const MSG = defineMessages({
 export interface FormValues {
   forceAction: boolean;
   domainId: string;
-  recipient: Address;
-  amount: string; // Amount the receiver finally gets, the initiator pays this plus network fee
+  recipient: AnyUser;
+  amount: string;
   tokenAddress: Address;
   annotation: string;
   motionDomainId: string;
