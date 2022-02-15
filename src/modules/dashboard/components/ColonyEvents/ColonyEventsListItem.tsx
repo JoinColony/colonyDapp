@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import {
   FormattedDateParts,
   FormattedMessage,
@@ -20,7 +20,7 @@ import {
   getTokenDecimalsWithFallback,
   getFormattedTokenValue,
 } from '~utils/tokens';
-import { useUser, Colony } from '~data/index';
+import { useUser, Colony, useTokenInfoLazyQuery } from '~data/index';
 import { createAddress } from '~utils/web3';
 import { FormattedEvent, ColonyAndExtensionsEvents } from '~types/index';
 import { getAssignmentEventDescriptorsIds } from '~utils/colonyActions';
@@ -109,10 +109,21 @@ const ColonyEventsListItem = ({
     ({ ethDomainId }) => ethDomainId === parseInt(newDomainId, 10),
   );
 
-  const token = tokens.find(({ address }) => address === tokenAddress);
   const colonyNativeToken = tokens.find(
     ({ address }) => address === nativeTokenAddress,
   );
+
+  const [fetchTokenInfo, { data: tokenData }] = useTokenInfoLazyQuery();
+
+  useEffect(() => {
+    if (tokenAddress) {
+      fetchTokenInfo({ variables: { address: tokenAddress } });
+    }
+  }, [fetchTokenInfo, tokenAddress]);
+
+  const tokenDecimals =
+    tokenData?.tokenInfo?.decimals || colonyNativeToken?.decimals;
+  const symbol = tokenData?.tokenInfo?.symbol || colonyNativeToken?.symbol;
 
   const getEventListTitleMessageDescriptor = useMemo(() => {
     if (
@@ -161,10 +172,12 @@ const ColonyEventsListItem = ({
     amount: (
       <Numeral
         value={amount}
-        unit={getTokenDecimalsWithFallback(decimals || token?.decimals)}
+        unit={getTokenDecimalsWithFallback(
+          tokenDecimals || colonyNativeToken?.decimals,
+        )}
       />
     ),
-    tokenSymbol: token?.symbol || colonyNativeToken?.symbol,
+    tokenSymbol: symbol || colonyNativeToken?.symbol,
     domain: domain?.name || '',
     newDomain: newDomain?.name || '',
     transactionHash,
