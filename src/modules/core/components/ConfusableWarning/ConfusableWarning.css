@@ -1,0 +1,36 @@
+.warningContainer {
+  margin-top: 20px;
+  padding: 20px 15px;
+  border-radius: var(--radius-normal);
+  background-color: color-mod(var(--danger) alpha(15%));
+}
+
+.warningText {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--dark);
+}
+
+.warningLabel {
+  color: var(--danger);
+}
+
+.reputationContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+  margin-bottom: 33px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.reputationLabel {
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
+
+.noReputation {
+  margin-bottom: 15px;
+  margin-top: 0;
+}
