@@ -11,7 +11,7 @@ import { ActionForm } from '~core/Fields';
 
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
-import { useMembersSubscription } from '~data/index';
+import { AnyUser, useMembersSubscription } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 import { WizardDialogType } from '~utils/hooks';
@@ -32,7 +32,7 @@ const MSG = defineMessages({
 export interface FormValues {
   forceAction: boolean;
   domainId: string;
-  recipient: Address;
+  recipient: AnyUser;
   amount: string;
   tokenAddress: Address;
   annotation: string;
