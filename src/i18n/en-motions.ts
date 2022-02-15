@@ -21,8 +21,6 @@ const motionsMessageDescriptors = {
           one {pt}
           other {pts}
         } reputation reward}
-        other {Generic motion we don't have information about}
-        {Smite {recipient} with a {reputationPenalty} reputation penalty}
       ${ColonyMotions.UnlockTokenMotion} {Unlock native token {tokenSymbol}}
       other {Generic motion we don't have information about}
     }`,
