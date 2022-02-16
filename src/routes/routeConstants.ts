@@ -1,3 +1,6 @@
+// @NOTE: While adding or modifying a route here make sure you
+// also modify the document title hook at src/utils/hooks/useTitle.ts
+
 export const CONNECT_ROUTE = '/connect';
 export const COLONY_HOME_ROUTE = '/colony/:colonyName';
 export const COLONY_EVENTS_ROUTE = `${COLONY_HOME_ROUTE}/events`;
