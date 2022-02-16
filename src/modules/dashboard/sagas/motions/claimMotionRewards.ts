@@ -12,6 +12,9 @@ import {
   ClaimableStakedMotionsDocument,
   ClaimableStakedMotionsQuery,
   ClaimableStakedMotionsQueryVariables,
+  UserBalanceWithLockDocument,
+  UserBalanceWithLockQuery,
+  UserBalanceWithLockQueryVariables,
 } from '~data/generated';
 
 import {
@@ -36,6 +39,10 @@ function* claimMotionRewards({
     // eslint-disable-next-line max-len
     const votingReputationClient: ExtensionClient = yield colonyManager.getClient(
       ClientType.VotingReputationClient,
+      colonyAddress,
+    );
+    const colonyClient = yield colonyManager.getClient(
+      ClientType.ColonyClient,
       colonyAddress,
     );
 
@@ -170,6 +177,19 @@ function* claimMotionRewards({
       variables: {
         colonyAddress: colonyAddress.toLowerCase(),
         walletAddress: userAddress.toLowerCase(),
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    yield apolloClient.query<
+      UserBalanceWithLockQuery,
+      UserBalanceWithLockQueryVariables
+    >({
+      query: UserBalanceWithLockDocument,
+      variables: {
+        colonyAddress: colonyAddress.toLowerCase(),
+        address: userAddress.toLowerCase(),
+        tokenAddress: colonyClient.tokenClient.address.toLowerCase(),
       },
       fetchPolicy: 'network-only',
     });
