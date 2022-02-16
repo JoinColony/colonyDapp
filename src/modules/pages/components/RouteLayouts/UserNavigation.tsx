@@ -163,7 +163,7 @@ const UserNavigation = () => {
             <UserTokenActivationButton
               nativeToken={nativeToken}
               userLock={userLock}
-              colonyAddress={colonyData?.colonyAddress || ''}
+              colony={colonyData?.processedColony}
               walletAddress={walletAddress}
             />
           )}
