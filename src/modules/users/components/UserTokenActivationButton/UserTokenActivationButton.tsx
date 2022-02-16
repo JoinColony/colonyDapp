@@ -6,7 +6,7 @@ import { TokenActivationPopover } from '~users/TokenActivation';
 import { getFormattedTokenValue } from '~utils/tokens';
 import Numeral from '~core/Numeral';
 
-import { UserLock, UserToken } from '~data/index';
+import { FullColonyFragment, UserLock, UserToken } from '~data/index';
 import { Address } from '~types/index';
 
 import styles from './UserTokenActivationButton.css';
@@ -16,14 +16,14 @@ const displayName = 'users.UserTokenActivationButton';
 interface Props {
   userLock: UserLock;
   nativeToken: UserToken;
-  colonyAddress: Address;
+  colony?: FullColonyFragment;
   walletAddress: Address;
 }
 
 const UserTokenActivationButton = ({
   nativeToken,
   userLock,
-  colonyAddress,
+  colony,
   walletAddress,
 }: Props) => {
   const inactiveBalance = bigNumberify(nativeToken?.balance || 0);
@@ -47,7 +47,7 @@ const UserTokenActivationButton = ({
       totalTokens={totalBalance}
       lockedTokens={lockedBalance}
       token={nativeToken}
-      colonyAddress={colonyAddress}
+      colony={colony}
       walletAddress={walletAddress}
       isPendingBalanceZero={isPendingBalanceZero}
     >
