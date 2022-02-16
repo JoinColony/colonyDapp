@@ -12,11 +12,11 @@ import styles from './TokenActivationContent.css';
 
 const MSG = defineMessages({
   tabTitle: {
-    id: 'users.TokenActivation.TokenActivationContent.ClaimsTab.noClaims',
+    id: 'users.TokenActivation.TokenActivationContent.StakesTab.tabTitle',
     defaultMessage: 'Your stakes',
   },
   noClaims: {
-    id: 'users.TokenActivation.TokenActivationContent.ClaimsTab.noClaims',
+    id: 'users.TokenActivation.TokenActivationContent.StakesTab.noClaims',
     defaultMessage: 'There are no stakes to claim.',
   },
 });
