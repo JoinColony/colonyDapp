@@ -31,14 +31,18 @@ const ClaimAllButton = ({
   userAddress,
   colonyAddress,
 }: Props) => {
-  const motionIds = unclaimedMotionStakeEvents.map((motionStakeEvent) =>
-    bigNumberify(motionStakeEvent.values.motionId),
-  );
+  const uniqueMotionIds = [
+    ...new Set(
+      unclaimedMotionStakeEvents.map(
+        (motionStakeEvent) => motionStakeEvent.values.motionId,
+      ),
+    ),
+  ];
   const transform = useCallback(
     mapPayload(() => ({
       colonyAddress,
       userAddress,
-      motionIds: [...new Set([...motionIds])],
+      motionIds: uniqueMotionIds.map((motionId) => bigNumberify(motionId)),
     })),
     [],
   );
