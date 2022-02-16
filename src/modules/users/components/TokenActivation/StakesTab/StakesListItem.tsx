@@ -33,11 +33,13 @@ const StakesListItem = ({
             {stakedAmount} {tokenSymbol}
           </span>
         </p>
-        <Link
-          className={styles.link}
-          text={MSG.motionUrl}
-          to={`/colony/${colonyName}/tx/${txHash}`}
-        />
+        {colonyName && txHash && (
+          <Link
+            className={styles.link}
+            text={MSG.motionUrl}
+            to={`/colony/${colonyName}/tx/${txHash}`}
+          />
+        )}
       </div>
     </li>
   );

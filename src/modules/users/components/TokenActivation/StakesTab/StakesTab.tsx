@@ -1,13 +1,14 @@
 import React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
-import Button from '~core/Button';
-import { ActionForm } from '~core/Fields';
-import { ActionTypes } from '~redux/index';
+import { Address } from '~types/index';
 import { SpinnerLoader } from '~core/Preloaders';
-import { ClaimableStakedMotionsQuery, UserToken } from '~data/generated';
-import { getFormattedTokenValue } from '~utils/tokens';
+import { useClaimableStakedMotionsQuery, UserToken } from '~data/generated';
 
+import { getFormattedTokenValue } from '~utils/tokens';
+import { FullColonyFragment } from '~data/index';
+
+import ClaimAllButton from './ClaimAllButton';
 import StakesListItem from './StakesListItem';
 
 import styles from './StakesTab.css';
@@ -28,62 +29,67 @@ const MSG = defineMessages({
 });
 
 export interface StakesTabProps {
-  unclaimedMotions: ClaimableStakedMotionsQuery | undefined;
-  loading: boolean;
+  colony?: FullColonyFragment;
+  walletAddress: Address;
   token: UserToken;
 }
 
-const StakesTab = ({ unclaimedMotions, loading, token }: StakesTabProps) => {
-  const getStakedAmount = (stakeAmount: number, userToken: UserToken) => {
-    return getFormattedTokenValue(stakeAmount, userToken.decimals);
-  };
+const StakesTab = ({ colony, walletAddress, token }: StakesTabProps) => {
+  const { data, loading } = useClaimableStakedMotionsQuery({
+    variables: {
+      colonyAddress: colony?.colonyAddress.toLowerCase() || '',
+      walletAddress: walletAddress?.toLowerCase(),
+    },
+    fetchPolicy: 'network-only',
+  });
 
-  const claimableStakedMotions = unclaimedMotions?.claimableStakedMotions;
+  if (loading) {
+    return (
+      <div className={styles.loader}>
+        <SpinnerLoader appearance={{ size: 'medium' }} />
+      </div>
+    );
+  }
 
   return (
-    <div className={styles.container}>
-      <ActionForm
-        initialValues={{}}
-        submit={ActionTypes.COLONY_MOTION_CLAIM}
-        error={ActionTypes.COLONY_MOTION_CLAIM_ERROR}
-        success={ActionTypes.COLONY_MOTION_CLAIM_SUCCESS}
-      >
+    <div className={styles.stakesContainer}>
+      {(data?.claimableStakedMotions.unclaimedMotionStakeEvents?.length || 0) >
+      0 ? (
         <div className={styles.claimStakesContainer}>
-          <FormattedMessage {...MSG.yourStakes} />
-          <Button
-            appearance={{ theme: 'primary', size: 'medium' }}
-            text={MSG.buttonText}
-            // onClick=
-          />
-        </div>
-      </ActionForm>
-      {loading ? (
-        <div className={styles.loader}>
-          <SpinnerLoader appearance={{ size: 'medium' }} />
+          <div className={styles.claimAllButtonSection}>
+            <FormattedMessage {...MSG.yourStakes} />
+            {/* {claimsCount > 0 && (
+                <div className={styles.dot}>{claimsCount}</div> */}
+            {data?.claimableStakedMotions.unclaimedMotionStakeEvents && (
+              <ClaimAllButton
+                unclaimedMotionStakeEvents={
+                  data.claimableStakedMotions.unclaimedMotionStakeEvents
+                }
+                userAddress={walletAddress}
+                colonyAddress={colony?.colonyAddress || ''}
+              />
+            )}
+          </div>
+          <ul>
+            {data?.claimableStakedMotions.unclaimedMotionStakeEvents.map(
+              (motion) => (
+                <StakesListItem
+                  stakedAmount={getFormattedTokenValue(
+                    motion.values.stakeAmount,
+                    token.decimals,
+                  )}
+                  tokenSymbol={token.symbol}
+                  colonyName={colony?.colonyName}
+                  txHash="" // {motion.hash}
+                  key={motion.values.motionId}
+                />
+              ),
+            )}
+          </ul>
         </div>
       ) : (
-        <div>
-          {unclaimedMotions &&
-          unclaimedMotions.claimableStakedMotions?.claimableStakedMotions
-            .length > 0 ? (
-            <ul>
-              {claimableStakedMotions?.claimableStakedMotions.map(
-                (motion, id) => (
-                  <StakesListItem
-                    stakedAmount={getStakedAmount(motion.stakedAmount, token)}
-                    tokenSymbol={token.symbol}
-                    colonyName=""
-                    txHash=""
-                    key={id}
-                  />
-                ),
-              )}
-            </ul>
-          ) : (
-            <div className={styles.noClaims}>
-              <FormattedMessage {...MSG.noClaims} />
-            </div>
-          )}
+        <div className={styles.noClaims}>
+          <FormattedMessage {...MSG.noClaims} />
         </div>
       )}
     </div>
