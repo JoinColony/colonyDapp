@@ -4,12 +4,19 @@ import { FormattedMessage, defineMessages } from 'react-intl';
 import { SpinnerLoader } from '~core/Preloaders';
 import { Address } from '~types/index';
 import { useClaimableStakedMotionsQuery } from '~data/generated';
+import Heading from '~core/Heading';
+
+import ClaimAllButton from './ClaimAllButton';
 
 import styles from './TokenActivationContent.css';
 
 const MSG = defineMessages({
+  tabTitle: {
+    id: 'users.TokenActivation.TokenActivationContent.StakesTab.tabTitle',
+    defaultMessage: 'Your stakes',
+  },
   noClaims: {
-    id: 'users.TokenActivation.TokenActivationContent.ClaimsTab.noClaims',
+    id: 'users.TokenActivation.TokenActivationContent.StakesTab.noClaims',
     defaultMessage: 'There are no stakes to claim.',
   },
 });
@@ -20,7 +27,7 @@ export interface StakesTabProps {
 }
 
 const StakesTab = ({ colonyAddress, walletAddress }: StakesTabProps) => {
-  const { data: unclaimedMotions, loading } = useClaimableStakedMotionsQuery({
+  const { data, loading } = useClaimableStakedMotionsQuery({
     variables: {
       colonyAddress: colonyAddress?.toLowerCase(),
       walletAddress: walletAddress?.toLowerCase(),
@@ -30,20 +37,35 @@ const StakesTab = ({ colonyAddress, walletAddress }: StakesTabProps) => {
 
   return (
     <div className={styles.claimsContainer}>
-      <div className={styles.noClaims}>
-        {loading ? (
-          <SpinnerLoader appearance={{ size: 'medium' }} />
-        ) : (
-          <>
-            {unclaimedMotions &&
-            unclaimedMotions.claimableStakedMotions?.motionIds.length > 0 ? (
+      {loading ? (
+        <SpinnerLoader appearance={{ size: 'medium' }} />
+      ) : (
+        <>
+          {data &&
+          data.claimableStakedMotions?.unclaimedMotionStakeEvents.length > 0 ? (
+            <div className={styles.claimsContent}>
+              <div className={styles.claimAllButtonSection}>
+                <Heading
+                  appearance={{ size: 'normal', margin: 'none', theme: 'dark' }}
+                  text={MSG.tabTitle}
+                />
+                <ClaimAllButton
+                  unclaimedMotionStakeEvents={
+                    data.claimableStakedMotions.unclaimedMotionStakeEvents
+                  }
+                  userAddress={walletAddress}
+                  colonyAddress={colonyAddress}
+                />
+              </div>
               <span>[Claimable stakes appear here]</span>
-            ) : (
+            </div>
+          ) : (
+            <div className={styles.noClaims}>
               <FormattedMessage {...MSG.noClaims} />
-            )}
-          </>
-        )}
-      </div>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 };

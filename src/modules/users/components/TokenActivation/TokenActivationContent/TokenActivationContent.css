@@ -270,7 +270,7 @@
 .claimsContainer {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   height: 442px;
   width: 100%;
   font-size: var(--size-smallish);
@@ -280,5 +280,37 @@
 
 .noClaims {
   padding: 18px 16px 19px 16px;
+  text-align: center;
+}
+
+.claimsContent {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 15px 0;
+  width: 100%;
+}
+
+.claimAllButtonSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  align-self: flex-end;
+  margin-bottom: 20px;
+  padding-right: 12px;
+  padding-left: 21px;
+  width: 100%;
+}
+
+.claimAllButtonSection button {
+  width: 100px;
+  font-size: var(--size-small);
+}
+
+.claimAllButtonSection h4 {
+  font-size: var(--size-smallish);
+}
+
+.claimsContent span {
   text-align: center;
 }

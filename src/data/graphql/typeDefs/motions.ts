@@ -47,8 +47,28 @@ export default gql`
     requiredStake: String!
   }
 
+  type ParsedMotionStakedEventValues {
+    amount: String!
+    motionId: String!
+    stakeAmount: String!
+    staker: String!
+    vote: Int!
+  }
+
+  type ParsedMotionStakedEvent {
+    address: String!
+    blockNumber: Int!
+    hash: String!
+    index: String!
+    name: String!
+    signature: String!
+    timestamp: Int!
+    topic: String!
+    values: ParsedMotionStakedEventValues!
+  }
+
   type ClaimableMotions {
-    motionIds: [Int!]!
+    unclaimedMotionStakeEvents: [ParsedMotionStakedEvent!]!
   }
 
   type MotionObjectionAnnotation {
@@ -112,7 +132,10 @@ export default gql`
       userAddress: String!
       motionId: Int!
     ): StakeAmounts!
-    claimableStakedMotions(motionIds: [Int!]!): ClaimableMotions!
+    claimableStakedMotions(
+      colonyAddress: String!
+      walletAddress: String!
+    ): ClaimableMotions!
     motionObjectionAnnotation(
       motionId: Int!
       colonyAddress: String!

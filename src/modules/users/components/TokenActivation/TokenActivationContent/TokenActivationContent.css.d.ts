@@ -34,3 +34,5 @@ export const balanceInfoWithdrawLocked: string;
 export const balanceAmount: string;
 export const claimsContainer: string;
 export const noClaims: string;
+export const claimsContent: string;
+export const claimAllButtonSection: string;
