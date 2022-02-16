@@ -1,18 +1,12 @@
-
-.container {
+.stakesContainer {
   display: flex;
-  flex-direction: column;
-  justify-content: top;
-  align-items: center;
+  justify-content: center;
+  align-items: flex-start;
   height: 442px;
   width: 100%;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--dark);
-}
-
-.container > form {
-  width: 100%;
 }
 
 .mainDivider {
@@ -35,12 +29,6 @@
   color: var(--dark);
 }
 
-/* .stakesList {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-
-  /* background: var(--grey-blue-2); */ */
 .stakesListItem {
   display: flex;
   justify-content: space-between;
@@ -84,4 +72,28 @@
   justify-content: center;
   align-items: center;
   margin-top: 18px;
+}
+
+.claimAllButtonSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  align-self: flex-end;
+  margin-bottom: 20px;
+  padding-right: 12px;
+  padding-left: 21px;
+  width: 100%;
+}
+
+.claimAllButtonSection button {
+  width: 100px;
+  font-size: var(--size-small);
+}
+
+.claimAllButtonSection h4 {
+  font-size: var(--size-smallish);
+}
+
+.stakesContent span {
+  text-align: center;
 }

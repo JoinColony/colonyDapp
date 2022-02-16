@@ -41,6 +41,10 @@
   width: 100%;
 }
 
+.mainDivider {
+  border-bottom: 1px solid var(--temp-grey-13);
+}
+
 .totalTokensContainer {
   composes: mainDivider;
   display: flex;
@@ -263,86 +267,20 @@
   line-height: 18px;
 }
 
-.claimsContainer {
+.stakesTabTitle {
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  height: 442px;
-  width: 100%;
-  font-size: var(--size-smallish);
-  font-weight: var(--weight-bold);
-  color: var(--dark);
-}
-
-.noClaims {
-  padding: 18px 16px 19px 16px;
-  text-align: center;
-}
-
-.claimsContent {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  padding: 15px 0;
-  width: 100%;
-}
-
-.claimAllButtonSection {
-  display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  align-self: flex-end;
-  margin-bottom: 20px;
-  padding-right: 12px;
-  padding-left: 21px;
+  padding-right: 21px;
+  padding-left: 30px;
   width: 100%;
 }
 
-.claimAllButtonSection button {
-  width: 100px;
-  font-size: var(--size-small);
-}
-
-.claimAllButtonSection h4 {
-  font-size: var(--size-smallish);
-}
-
-.claimsContent span {
-  text-align: center;
-
-  .stakesTabTitle {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding-right: 21px;
-    padding-left: 30px;
-    width: 100%;
-  }
-
-  .dot {
-    height: 20px;
-    width: 20px;
-    border-radius: 50%;
-    background-color: var(--pink);
-    color: var(--text-invert);
-  }
-
-  .stakesTabTitle {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding-right: 21px;
-    padding-left: 30px;
-    width: 100%;
-  }
-
-  .dot {
-    height: 20px;
-    width: 20px;
-    border-radius: 50%;
-    background-color: var(--pink);
-    color: var(--text-invert);
-  }
+.dot {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background-color: var(--pink);
+  color: var(--text-invert);
 }

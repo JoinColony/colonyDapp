@@ -6,6 +6,7 @@ import { SMALL_TOKEN_AMOUNT_FORMAT } from '~constants';
 import Icon from '~core/Icon';
 import InfoPopover from '~core/InfoPopover';
 import TokenIcon from '~dashboard/HookedTokenIcon';
+import { FullColonyFragment } from '~data/index';
 
 import { UserToken } from '~data/generated';
 import { Address } from '~types/index';
@@ -70,7 +71,7 @@ export interface TokensTabProps {
   lockedTokens: BigNumber;
   isPendingBalanceZero: boolean;
   token: UserToken;
-  colonyAddress: Address;
+  colony?: FullColonyFragment;
   walletAddress: Address;
 }
 
@@ -80,7 +81,7 @@ const TokensTab = ({
   totalTokens,
   lockedTokens,
   token,
-  colonyAddress,
+  colony,
   isPendingBalanceZero,
 }: TokensTabProps) => {
   const targetRef = useRef<HTMLParagraphElement>(null);
@@ -220,7 +221,7 @@ const TokensTab = ({
         activeTokens={activeTokens}
         inactiveTokens={inactiveTokens}
         lockedTokens={lockedTokens}
-        colonyAddress={colonyAddress}
+        colonyAddress={colony?.colonyAddress || ''}
         hasLockedTokens={hasLockedTokens}
       />
     </>
