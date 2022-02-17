@@ -2,7 +2,9 @@ import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 import { useApolloClient } from '@apollo/client';
+import { isConfusing } from 'unicode-confusables';
 
+import ConfusableWarning from '~core/ConfusableWarning';
 import { WizardProps } from '~core/Wizard';
 import { ActionForm, Input } from '~core/Fields';
 import Heading from '~core/Heading';
@@ -149,6 +151,7 @@ const StepUserName = ({ wizardValues, nextStep }: Props) => {
                   formattingOptions={{ lowercase: true, blocks: [100] }}
                   disabled={!isNetworkAllowed || isSubmitting}
                 />
+                {username && isConfusing(username) && <ConfusableWarning />}
                 <div className={styles.buttons}>
                   <Button
                     appearance={{ theme: 'primary', size: 'large' }}
