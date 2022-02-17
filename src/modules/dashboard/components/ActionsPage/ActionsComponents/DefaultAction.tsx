@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import Decimal from 'decimal.js';
 
 import Tag, { Appearance as TagAppareance } from '~core/Tag';
@@ -35,6 +35,7 @@ import { ipfsDataFetcher } from '../../../../core/fetchers';
 import DetailsWidget from '../DetailsWidget';
 
 import styles from './DefaultAction.css';
+import { useTitle } from '~utils/hooks/useTitle';
 
 const displayName = 'dashboard.ActionsPage.DefaultAction';
 
@@ -177,7 +178,35 @@ const DefaultAction = ({
     isSmiteAction: new Decimal(reputationChange).isNegative(),
   };
 
+  const actionAndEventValuesForDocumentTitle = {
+    actionType,
+    initiator:
+      initiator.profile?.displayName ??
+      initiator.profile?.username ??
+      initiator.profile?.walletAddress,
+    recipient:
+      recipient.profile?.displayName ??
+      recipient.profile?.username ??
+      recipient.profile?.walletAddress,
+    amount: decimalAmount,
+    tokenSymbol: symbol,
+    newVersion,
+    oldVersion,
+    fromDomain: actionAndEventValues.fromDomain?.name,
+    toDomain: actionAndEventValues.toDomain?.name,
+    roles: roleTitle,
+    reputationChange: actionAndEventValues.reputationChange,
+  };
+
   const motionStyles = MOTION_TAG_MAP[MotionState.Forced];
+
+  const { formatMessage } = useIntl();
+  useTitle(
+    `${formatMessage(
+      { id: roleMessageDescriptorId || 'action.title' },
+      actionAndEventValuesForDocumentTitle,
+    )} | Action | Colony - ${colony.displayName ?? colony.colonyName ?? ``}`,
+  );
 
   return (
     <div className={styles.main}>
