@@ -1,29 +1,24 @@
-describe('Colony dapp landing simple login', () => {
-  it('logins to the existing account', () => {
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.visit('/landing')
+import { buildUser } from '../support/generate';
+
+describe.skip('Colony dapp landing simple login', () => {
+  it('logins the existing account', () => {
+    cy.login()
       .get('.UserNavigation_connectWalletButton_3agv3_Lz')
-      .click()
-      .get('[data-test="hubOptions"] > :nth-child(2)')
-      .click()
-      .get('.Button_themePrimary_3aiuKGRF')
-      .click()
-      /* add proper condition to wait for */
-      .wait(3000)
-      .get('.UserNavigation_connectWalletButton_3agv3_Lz')
-      .should('not.exist');
+      .should('not.exist')
+      .assertHome();
   });
 });
 
-describe('Claim new user name', () => {
-  it('logs in new user', () => {
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
+describe.skip('Claim new user name', () => {
+  it('logs in new user', { defaultCommandTimeout: 8000 }, () => {
+    const user = buildUser();
+
     cy.visit('/')
-      // Click connect wallet button
-      .get('.UserNavigation_connectWalletButton_3agv3_Lz')
-      .click()
-      // select Ganache account
-      .get('[data-test="hubOptions"] > :nth-child(2)')
+      .contains(/connect wallet/i)
+      .click();
+
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.contains(/ganache/i)
       .click()
       // click on drowpdown with accounts
       .get('.Select_activeOption_1sMcrZHH > span')
@@ -31,7 +26,7 @@ describe('Claim new user name', () => {
       // select last account
       /*
         This will work only the first time as the username will be already created.
-        Other option to test it confitionally?
+        Other option to test it conditionally?
       */
       .get('#privateKey-listbox-entry-4 > .SelectOption_value_1zTMGGfo')
       .click()
@@ -46,7 +41,7 @@ describe('Claim new user name', () => {
       .click()
       .get('.Input_container_17sAGJ_F')
       .click()
-      .type('user')
+      .type(user.username)
       .get('[data-test="claimUsernameConfirm"]')
       .click()
       .wait(4000);
