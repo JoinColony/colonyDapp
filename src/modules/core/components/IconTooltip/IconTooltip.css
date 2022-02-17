@@ -1,9 +1,12 @@
-@value normalIcon: 14px;
+@value tinyIcon: 11px;
+@value smallIcon: 12px;
+@value mediumIcon: 14px;
+@value largeIcon: 15px;
+@value hugeIcon: 16px;
+@value massiveIcon: 18px;
 
 .main {
   display: block;
-  height: normalIcon;
-  width: normalIcon;
   position: relative;
 }
 
@@ -17,8 +20,6 @@
 }
 
 .icon {
-  height: normalIcon;
-  width: normalIcon;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -36,4 +37,34 @@
 .tooltipWrapper {
   width: 250px;
   text-align: left;
+}
+
+.main.sizeTiny, .main.sizeTiny .icon {
+  height: tinyIcon;
+  width: tinyIcon;
+}
+
+.main.sizeSmall, .main.sizeSmall .icon {
+  height: smallIcon;
+  width: smallIcon;
+}
+
+.main.sizeMedium, .main.sizeMedium .icon {
+  height: mediumIcon;
+  width: mediumIcon;
+}
+
+.main.sizeLarge, .main.sizeLarge .icon {
+  height: largeIcon;
+  width: largeIcon;
+}
+
+.main.sizeHuge, .main.sizeHuge .icon {
+  height: hugeIcon;
+  width: hugeIcon;
+}
+
+.main.sizeMassive, .main.sizeMassive .icon {
+  height: massiveeIcon;
+  width: massiveeIcon;
 }

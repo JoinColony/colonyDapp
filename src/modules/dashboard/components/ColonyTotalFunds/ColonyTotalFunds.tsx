@@ -121,7 +121,7 @@ const ColonyTotalFunds = ({
                   icon="lock"
                   tooltipText={{ id: 'tooltip.lockedToken' }}
                   className={styles.tokenLockWrapper}
-                  iconSize="15px"
+                  appearance={{ size: 'large' }}
                 />
               )}
             <span className={styles.caretContainer}>

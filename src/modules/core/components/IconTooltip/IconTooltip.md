@@ -6,5 +6,8 @@
   icon="lock"
   tooltipText={{ id: 'tooltip.lockedToken' }}
   className={styles.tokenLockWrapper}
+  apeparance={
+    size: 'medium'
+  }
 />
 ```
