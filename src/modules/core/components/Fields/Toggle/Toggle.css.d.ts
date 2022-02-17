@@ -1,6 +1,7 @@
 export const toggleHeight: string;
 export const toggleWidth: string;
 export const container: string;
+export const checkboxContainer: string;
 export const delegate: string;
 export const toggle: string;
 export const toggleDisabled: string;
