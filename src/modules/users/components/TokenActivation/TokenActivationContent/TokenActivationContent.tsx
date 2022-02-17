@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
+import { useClaimableStakedMotionsQuery } from '~data/generated';
 
 import TokensTab, { TokensTabProps } from '../TokensTab/TokensTab';
 import StakesTab from '../StakesTab/StakesTab';
@@ -21,8 +22,19 @@ const MSG = defineMessages({
 
 const TokenActivationContent = (props: TokensTabProps) => {
   const [tabIndex, setTabIndex] = useState<number>(0);
-  const { colony, walletAddress, token } = props;
+  const { colony, walletAddress } = props;
 
+  const { data: unclaimedMotions, loading } = useClaimableStakedMotionsQuery({
+    variables: {
+      colonyAddress: colony?.colonyAddress.toLowerCase() || '',
+      walletAddress: walletAddress?.toLowerCase(),
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  const claimsCount =
+    unclaimedMotions?.claimableStakedMotions.unclaimedMotionStakeEvents
+      .length || 0;
   return (
     <div className={styles.main}>
       <Tabs
@@ -41,6 +53,9 @@ const TokenActivationContent = (props: TokensTabProps) => {
           <Tab selectedClassName={styles.tabSelected} className={styles.tab}>
             <div className={styles.stakesTabTitle}>
               <FormattedMessage {...MSG.stakes} />
+              {claimsCount > 0 && (
+                <div className={styles.dot}>{claimsCount}</div>
+              )}
             </div>
           </Tab>
         </TabList>
@@ -49,11 +64,12 @@ const TokenActivationContent = (props: TokensTabProps) => {
         </TabPanel>
         <TabPanel className={styles.tabContainer}>
           <StakesTab
-            {...{
-              colony,
-              walletAddress,
-              token,
-            }}
+            {...props}
+            unclaimedMotionStakeEvents={
+              unclaimedMotions?.claimableStakedMotions
+                ?.unclaimedMotionStakeEvents
+            }
+            isLoadingMotions={loading}
           />
         </TabPanel>
       </Tabs>
