@@ -15,6 +15,7 @@ import DialogForm from './ManageWhitelistDialogForm';
 
 export interface FormValues {
   annotation: string;
+  whitelistStatus: boolean;
 }
 
 interface CustomWizardDialogProps {
@@ -55,6 +56,7 @@ const ManageWhitelistDialog = ({
     <ActionForm
       initialValues={{
         annotation: undefined,
+        whitelistStatus: true,
       }}
       submit={ActionTypes.COLONY_ACTION_GENERIC}
       error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
@@ -64,7 +66,7 @@ const ManageWhitelistDialog = ({
       transform={transform}
     >
       {(formValues: FormikProps<FormValues>) => (
-        <Dialog cancel={cancel}>
+        <Dialog cancel={cancel} noOverflow={false}>
           <DialogForm
             {...formValues}
             colony={colony}

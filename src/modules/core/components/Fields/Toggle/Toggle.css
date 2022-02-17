@@ -3,12 +3,18 @@
 
 .container {
   display: flex;
+  align-items: center;
   position: relative;
 }
 
 .container label {
   margin-right: 6px;
+  margin-bottom: 0;
   width: fit-content;
+}
+
+.checkboxContainer {
+  height: toggleHeight;
 }
 
 .delegate {
