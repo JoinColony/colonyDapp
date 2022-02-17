@@ -17,3 +17,16 @@
   height: 100%;
   width: 100%;
 }
+
+.toggleContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tooltip {
+  width: 200px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+}
