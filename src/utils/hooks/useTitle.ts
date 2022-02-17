@@ -1,3 +1,11 @@
+// When called without an argument (from `Routes.tsx`) this hook
+// parses the window location URL to set the title. If called
+// with an argument `title` (from any component), it sets the
+// document title to `title` - this might be especially useful
+// when you want to manipulate the title even when the route
+// remains same (for example, when multiple dialogue boxes can
+// be present on the same route.)
+
 import { useLocation, matchPath } from 'react-router-dom';
 import { useEffect } from 'react';
 import { defineMessages, useIntl, MessageDescriptor } from 'react-intl';
@@ -172,7 +180,7 @@ const getMessageAndValues = (locationPath: string): MessageWithValues => {
   return { msg: routeMessages[matchedRoute], values };
 };
 
-export const useTitle = () => {
+export const useTitle = (title?: string) => {
   const location = useLocation().pathname;
   const { formatMessage } = useIntl();
   const { msg, values } = getMessageAndValues(location);
@@ -191,9 +199,13 @@ export const useTitle = () => {
     : colonyENSName;
 
   return useEffect(() => {
-    document.title = formatMessage(msg, {
-      ...values,
-      colonyName: colonyDisplayName,
-    });
+    const titleToSet =
+      title ||
+      formatMessage(msg, {
+        ...values,
+        colonyName: colonyDisplayName,
+      });
+
+    document.title = titleToSet;
   });
 };
