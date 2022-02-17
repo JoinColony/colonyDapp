@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import { defineMessages } from 'react-intl';
+import classnames from 'classnames';
 
 import Icon from '~core/Icon';
 
@@ -21,6 +22,8 @@ interface Props {
   children: ReactNode;
   /** Determines if the Dialog can be dismissed */
   isDismissable?: boolean;
+  /** Determines if the Dialog should allow elements to overflow */
+  noOverflow?: boolean;
 }
 
 const displayName = 'Dialog';
@@ -29,12 +32,15 @@ const Dialog = ({
   children,
   cancel,
   isDismissable = true,
+  noOverflow = true,
   ...props
 }: Props) => (
   <Modal
     {...props}
     role="dialog"
-    className={styles.modal}
+    className={classnames(styles.modal, {
+      [styles.overflowEnabled]: !noOverflow,
+    })}
     onRequestClose={cancel}
     isOpen
   >
@@ -53,7 +59,13 @@ const Dialog = ({
         </button>
       </div>
     )}
-    <div className={styles.main}>{children}</div>
+    <div
+      className={classnames(styles.main, {
+        [styles.overflowEnabled]: !noOverflow,
+      })}
+    >
+      {children}
+    </div>
   </Modal>
 );
 
