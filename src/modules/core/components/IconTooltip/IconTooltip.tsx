@@ -49,7 +49,10 @@ const IconTooltip = ({
 }: Props) => (
   <div className={cx(getMainClasses(appearance, styles), className)}>
     <Tooltip
-      appearance={{ theme: appearance.theme, size: 'medium' }}
+      appearance={{
+        theme: appearance.theme ? appearance.theme : 'dark',
+        size: 'medium',
+      }}
       content={
         typeof tooltipText === 'string' ? (
           tooltipText
