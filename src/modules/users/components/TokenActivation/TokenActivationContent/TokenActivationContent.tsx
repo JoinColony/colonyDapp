@@ -32,9 +32,11 @@ const TokenActivationContent = (props: TokensTabProps) => {
     fetchPolicy: 'network-only',
   });
 
-  const claimsCount =
-    unclaimedMotions?.claimableStakedMotions.unclaimedMotionStakeEvents
-      .length || 0;
+  const claimsCount = unclaimedMotions?.claimableStakedMotions
+    ? unclaimedMotions?.claimableStakedMotions?.unclaimedMotionStakeEvents
+        .length
+    : 0;
+
   return (
     <div className={styles.main}>
       <Tabs
