@@ -437,12 +437,16 @@ const CreatePaymentDialogForm = ({
             itemDataTest="paymentRecipientItem"
           />
         </div>
-        {values.recipient && isConfusing(values.recipient.profile.username) && (
-          <ConfusableWarning
-            walletAddress={values.recipient.profile.walletAddress}
-            colonyAddress={colonyAddress}
-          />
-        )}
+        {values.recipient &&
+          isConfusing(
+            values.recipient.profile.username ||
+              values.recipient.profile.displayName,
+          ) && (
+            <ConfusableWarning
+              walletAddress={values.recipient.profile.walletAddress}
+              colonyAddress={colonyAddress}
+            />
+          )}
       </DialogSection>
       <DialogSection>
         <div className={styles.tokenAmount}>
