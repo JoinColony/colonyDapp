@@ -1,6 +1,7 @@
 import React from 'react';
 import { FormattedMessage, MessageDescriptor } from 'react-intl';
 import { PopperProps } from 'react-popper';
+import cx from 'classnames';
 
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
@@ -9,9 +10,15 @@ import { getMainClasses } from '~utils/css';
 
 import styles from './IconTooltip.css';
 
+export interface Appearance {
+  size: 'tiny' | 'small' | 'medium' | 'large' | 'huge' | 'massive';
+  theme?: 'dark' | 'grey'; // Used for styling the tooltip theme
+}
+
 interface Props {
   icon: string;
-  iconSize?: string;
+  /** Appearance object */
+  appearance?: Appearance;
   iconClassName?: string;
   /** Customise the tooltip message */
   tooltipText: string | MessageDescriptor;
@@ -28,7 +35,7 @@ const displayName = 'IconTooltip';
 
 const IconTooltip = ({
   icon,
-  iconSize = styles.normalIcon,
+  appearance = { size: 'medium', theme: 'dark' },
   iconClassName = styles.icon,
   tooltipText,
   tooltipTextValues,
@@ -40,12 +47,9 @@ const IconTooltip = ({
   className,
   showArrow,
 }: Props) => (
-  <div
-    className={className || getMainClasses({}, styles)}
-    style={{ width: iconSize, height: iconSize }}
-  >
+  <div className={cx(getMainClasses(appearance, styles), className)}>
     <Tooltip
-      appearance={{ theme: 'dark', size: 'medium' }}
+      appearance={{ theme: appearance.theme, size: 'medium' }}
       content={
         typeof tooltipText === 'string' ? (
           tooltipText
@@ -60,12 +64,7 @@ const IconTooltip = ({
       popperProps={tooltipPopperProps}
     >
       <div className={styles.iconWrap}>
-        <Icon
-          className={iconClassName}
-          name={icon}
-          title=""
-          style={{ width: iconSize, height: iconSize }}
-        />
+        <Icon className={iconClassName} name={icon} title="" />
       </div>
     </Tooltip>
   </div>

@@ -42,7 +42,7 @@ const TokenItem = ({
             icon="lock"
             tooltipText={{ id: 'tooltip.lockedToken' }}
             className={styles.tokenLockWrapper}
-            iconSize="12px"
+            appearance={{ size: 'small' }}
           />
         )}
       </span>
