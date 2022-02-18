@@ -25,8 +25,9 @@
 }
 
 .tooltip {
+  padding: 5px;
   width: 200px;
-  font-size: var(--size-small);
+  font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   line-height: 18px;
 }
