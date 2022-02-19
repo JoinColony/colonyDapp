@@ -10,6 +10,8 @@
   "main": "index.js",
   "scripts": {
     "contracts:deploy": "scripts/deploy_contracts.js",
+    "cy:run": "cypress run",
+    "cy:open": "cypress open",
     "dev": "scripts/start_all.js --foreground --skip-graph-node --skip-subgraph",
     "dev:heavy": "scripts/start_all.js --foreground",
     "ganache": "scripts/start_ganache.js",
