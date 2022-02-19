@@ -25,9 +25,8 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 Cypress.Commands.add('login', () => {
-  cy.visit('/landing')
-    .contains(/connect wallet/i)
-    .click();
+  cy.visit('/landing');
+  cy.findByText(/connect wallet/i).click();
   // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.contains(/ganache/i)
     .click()
