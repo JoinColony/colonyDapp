@@ -8,7 +8,7 @@ describe(
 
       cy.login();
 
-      cy.visit('/colony/a');
+      cy.visit(`/colony/${Cypress.config().colony.name}`);
       cy.contains(/new action/i, { timeout: 60000 }).click();
       // needs to include 2 expressions, otherwise it will try opeining the link from the home page
       cy.contains(/manage funds/i && /the tools/i).click();
@@ -25,7 +25,7 @@ describe(
       cy.contains(/confirm/i)
         .click()
         .wait(20000);
-      cy.url().should('contains', `${Cypress.config().baseUrl}/colony/a/tx/0x`);
+      cy.url().should('contains', `${Cypress.config().baseUrl}/colony/${Cypress.config().colony.name}/tx/0x`);
 
       cy.get('.DefaultAction_heading_2QNZ4BBa').should(
         'have.text',
