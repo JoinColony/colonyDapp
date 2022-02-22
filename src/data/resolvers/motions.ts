@@ -47,6 +47,13 @@ import {
   SubgraphMotionRewardClaimedEventsQuery,
   SubgraphMotionRewardClaimedEventsQueryVariables,
   SubgraphMotionRewardClaimedEventsDocument,
+  // MotionsTxHashesQuery,
+  // MotionsTxHashesQueryVariables,
+  // MotionsTxHashesDocument
+  SubgraphMotionsSubscription,
+  SubgraphMotionsSubscriptionVariables,
+  SubgraphMotionsDocument,
+  // SubgraphMotionsSubscriptionDocument,
   UserReputationQuery,
   UserReputationQueryVariables,
   UserReputationDocument,
@@ -61,6 +68,7 @@ import { availableRoles } from '~dialogs/PermissionManagementDialog';
 import { DEFAULT_NETWORK_TOKEN } from '~constants';
 
 import { ProcessedEvent } from './colonyActions';
+import { subscription } from '../../lib/colonyServer/src/graphql/resolvers/Subscription';
 
 const getMotionEvents = (
   isSystemEvents: boolean,
@@ -988,6 +996,36 @@ export const motionsResolvers = ({
     },
     async motionTimeoutPeriods(_, { colonyAddress, motionId }) {
       return getTimeoutPeriods(colonyManager, colonyAddress, motionId);
+    },
+    async motionsTxHashes(_, { motionIds, colonyAddress }) {
+      try {
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+
+        const data = await apolloClient.subscribe<
+          SubgraphMotionsSubscription,
+          SubgraphMotionsSubscriptionVariables
+        >({
+          query: SubgraphMotionsDocument,
+          variables: {
+            /*
+             * Subgraph addresses are not checksummed
+             */
+            // motionIds,
+            extensionAddress: votingReputationClient.address.toLowerCase(),
+            colonyAddress: colonyAddress.toLowerCase(),
+          },
+          fetchPolicy: 'network-only',
+        });
+        console.log('resolver data: ', data);
+        return 'data';
+      } catch (error) {
+        console.error('Could not fetch the TxHashes for the motion IDs');
+        console.error(error);
+        return null;
+      }
     },
   },
   Motion: {

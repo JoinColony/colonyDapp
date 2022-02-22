@@ -20,6 +20,11 @@ export default gql`
     vote: Int!
   }
 
+  type MotionIdTxHash {
+    motionId: String!
+    transactionHash: String!
+  }
+
   type MotionVoteResults {
     currentUserVoteSide: Int!
     yayVotes: String!
@@ -145,5 +150,9 @@ export default gql`
       motionId: Int!
       colonyAddress: String!
     ): MotionTimeoutPeriods!
+    motionsTxHashes(
+      motionIds: [String]
+      colonyAddress: String!
+    ): [MotionIdTxHash]
   }
 `;

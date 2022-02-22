@@ -6,7 +6,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 import { ParsedMotionStakedEvent, UserToken } from '~data/generated';
 
 import { getFormattedTokenValue } from '~utils/tokens';
-import { FullColonyFragment } from '~data/index';
+import { FullColonyFragment, useMotionsTxHashesQuery } from '~data/index';
 
 import ClaimAllButton from './ClaimAllButton';
 import StakesListItem from './StakesListItem';
@@ -43,6 +43,16 @@ const StakesTab = ({
   walletAddress,
   token,
 }: StakesTabProps) => {
+  const { data } = useMotionsTxHashesQuery({
+    variables: {
+      motionIds: ['1', '2'],
+      colonyAddress: colony?.colonyAddress || '',
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  console.log('data: ', data);
+
   if (isLoadingMotions) {
     return (
       <div className={styles.loader}>

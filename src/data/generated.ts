@@ -271,6 +271,7 @@ export type Query = {
   motionVoteResults: MotionVoteResults;
   motionVoterReward: MotionVoterReward;
   motionsSystemMessages: Array<SystemMessage>;
+  motionsTxHashes?: Maybe<Array<Maybe<MotionIdTxHash>>>;
   networkContracts: NetworkContracts;
   networkExtensionVersion: Array<Maybe<ColonyExtensionVersion>>;
   processedColony: ProcessedColony;
@@ -558,6 +559,12 @@ export type QueryMotionVoterRewardArgs = {
 
 export type QueryMotionsSystemMessagesArgs = {
   motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+};
+
+
+export type QueryMotionsTxHashesArgs = {
+  motionIds?: Maybe<Array<Maybe<Scalars['String']>>>;
   colonyAddress: Scalars['String'];
 };
 
@@ -1301,6 +1308,11 @@ export type MotionVoteReveal = {
   vote: Scalars['Int'];
 };
 
+export type MotionIdTxHash = {
+  motionId: Scalars['String'];
+  transactionHash: Scalars['String'];
+};
+
 export type MotionVoteResults = {
   currentUserVoteSide: Scalars['Int'];
   yayVotes: Scalars['String'];
@@ -1760,6 +1772,14 @@ export type NetworkContractsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type NetworkContractsQuery = { networkContracts: Pick<NetworkContracts, 'version' | 'feeInverse'> };
+
+export type MotionsTxHashesQueryVariables = Exact<{
+  motionIds?: Maybe<Array<Scalars['String']>>;
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type MotionsTxHashesQuery = Pick<Query, 'motionsTxHashes'>;
 
 export type ColonyActionQueryVariables = Exact<{
   transactionHash: Scalars['String'];
@@ -4196,6 +4216,38 @@ export function useNetworkContractsLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type NetworkContractsQueryHookResult = ReturnType<typeof useNetworkContractsQuery>;
 export type NetworkContractsLazyQueryHookResult = ReturnType<typeof useNetworkContractsLazyQuery>;
 export type NetworkContractsQueryResult = Apollo.QueryResult<NetworkContractsQuery, NetworkContractsQueryVariables>;
+export const MotionsTxHashesDocument = gql`
+    query MotionsTxHashes($motionIds: [String!], $colonyAddress: String!) {
+  motionsTxHashes(motionIds: $MotionIds, colonyAddress: $colonyAddress) @client
+}
+    `;
+
+/**
+ * __useMotionsTxHashesQuery__
+ *
+ * To run a query within a React component, call `useMotionsTxHashesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionsTxHashesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionsTxHashesQuery({
+ *   variables: {
+ *      motionIds: // value for 'motionIds'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useMotionsTxHashesQuery(baseOptions?: Apollo.QueryHookOptions<MotionsTxHashesQuery, MotionsTxHashesQueryVariables>) {
+        return Apollo.useQuery<MotionsTxHashesQuery, MotionsTxHashesQueryVariables>(MotionsTxHashesDocument, baseOptions);
+      }
+export function useMotionsTxHashesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionsTxHashesQuery, MotionsTxHashesQueryVariables>) {
+          return Apollo.useLazyQuery<MotionsTxHashesQuery, MotionsTxHashesQueryVariables>(MotionsTxHashesDocument, baseOptions);
+        }
+export type MotionsTxHashesQueryHookResult = ReturnType<typeof useMotionsTxHashesQuery>;
+export type MotionsTxHashesLazyQueryHookResult = ReturnType<typeof useMotionsTxHashesLazyQuery>;
+export type MotionsTxHashesQueryResult = Apollo.QueryResult<MotionsTxHashesQuery, MotionsTxHashesQueryVariables>;
 export const ColonyActionDocument = gql`
     query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
   colonyAction(transactionHash: $transactionHash, colonyAddress: $colonyAddress) @client {
