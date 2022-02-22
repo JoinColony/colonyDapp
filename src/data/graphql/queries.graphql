@@ -196,6 +196,11 @@ query NetworkContracts {
   }
 }
 
+query MotionsTxHashes($motionIds: [String!], $colonyAddress: String!) {
+  motionsTxHashes(motionIds: $MotionIds, colonyAddress: $colonyAddress) @client
+}
+
+
 query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
   colonyAction(transactionHash: $transactionHash, colonyAddress: $colonyAddress) @client {
     hash
