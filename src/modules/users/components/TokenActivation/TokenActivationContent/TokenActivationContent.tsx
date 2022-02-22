@@ -4,18 +4,18 @@ import { FormattedMessage, defineMessages } from 'react-intl';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { useClaimableStakedMotionsQuery } from '~data/generated';
 
-import TokensTab, { TokensTabProps } from '../TokensTab/TokensTab';
+import TokensTab, { TokensTabProps } from '../TokensTab';
 import StakesTab from '../StakesTab/StakesTab';
 
 import styles from './TokenActivationContent.css';
 
 const MSG = defineMessages({
   yourTokens: {
-    id: 'users.TokenActivation.TokenActivationContent.yourTokens',
+    id: 'TokenActivation.TokenActivationContent.yourTokens',
     defaultMessage: 'Your tokens',
   },
   stakes: {
-    id: 'users.TokenActivation.TokenActivationContent.stakes',
+    id: 'TokenActivation.TokenActivationContent.stakes',
     defaultMessage: 'Stakes',
   },
 });
