@@ -7,11 +7,11 @@ import styles from './SmallTokenAmountMessage.css';
 
 const MSG = defineMessage({
   smallAmountHidden: {
-    id: `users.TokenActivation.TokenActivationContent.SmallTokenAmountMessage.smallAmountHidden`,
+    id: `TokenActivation.TokensTab.SmallTokenAmountMessage.smallAmountHidden`,
     defaultMessage: 'Residual balance hidden',
   },
   tooltipText: {
-    id: `users.TokenActivation.TokenActivationContent.SmallTokenAmountMessage.tooltipText`,
+    id: `TokenActivation.TokensTab.SmallTokenAmountMessage.tooltipText`,
     defaultMessage: `There is a small token balance remaining that we couldn’t display. Please click the max button to select the entire balance.`,
   },
 });

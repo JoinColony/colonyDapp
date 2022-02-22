@@ -7,7 +7,7 @@ import styles from './StakesTab.css';
 
 const MSG = defineMessages({
   motionUrl: {
-    id: 'users.TokenActivation.TokenActivationContent.StakesListItem.motionUrl',
+    id: 'TokenActivation.StakesTab.StakesListItem.motionUrl',
     defaultMessage: 'Go to motion',
   },
 });
