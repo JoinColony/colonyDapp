@@ -10,12 +10,11 @@ import { ActionTypes } from '~redux/actionTypes';
 import { Address } from '~types/index';
 import { mapPayload } from '~utils/actions';
 
-const displayName =
-  'users.TokenActivation.TokenActivationContent.ClaimsTab.ClaimAllButton';
+const displayName = 'TokenActivation.StakesTab.ClaimAllButton';
 
 const MSG = defineMessages({
   claimAll: {
-    id: `users.TokenActivation.TokenActivationContent.ClaimsTab.ClaimAllButton.claimAll`,
+    id: `TokenActivation.StakesTab.ClaimAllButton.claimAll`,
     defaultMessage: 'Claim all',
   },
 });

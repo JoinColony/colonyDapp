@@ -15,15 +15,15 @@ import styles from './StakesTab.css';
 
 const MSG = defineMessages({
   yourStakes: {
-    id: 'users.TokenActivation.TokenActivationContent.StakesTab.yourStakes',
+    id: 'TokenActivation.StakesTab.yourStakes',
     defaultMessage: 'Your stakes',
   },
   noClaims: {
-    id: 'users.TokenActivation.TokenActivationContent.ClaimsTab.noClaims',
+    id: 'TokenActivation.StakesTab.noClaims',
     defaultMessage: 'There are no stakes to claim.',
   },
   buttonText: {
-    id: 'users.TokenActivation.TokenActivationContent.StakesTab.buttonText',
+    id: 'TokenActivation.StakesTab.buttonText',
     defaultMessage: 'Claim all',
   },
 });
