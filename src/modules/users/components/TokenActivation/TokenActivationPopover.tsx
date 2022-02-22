@@ -5,7 +5,7 @@ import Popover, { PopoverChildFn } from '~core/Popover';
 import { removeValueUnits } from '~utils/css';
 
 import TokenActivationContent from './TokenActivationContent/index';
-import { TokensTabProps } from './TokensTab/TokensTab';
+import { TokensTabProps } from './TokensTab';
 import { verticalOffset } from './TokenActivationPopover.css';
 
 interface Props extends TokensTabProps {
