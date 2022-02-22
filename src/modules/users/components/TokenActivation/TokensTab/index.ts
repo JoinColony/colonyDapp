@@ -1,1 +1,1 @@
-export { default } from './TokensTab';
+export { default, TokensTabProps } from './TokensTab';
