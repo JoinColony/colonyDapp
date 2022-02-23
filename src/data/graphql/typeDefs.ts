@@ -66,6 +66,16 @@ export default gql`
     processedValues: SugraphEventProcessedValues!
   }
 
+  type SubgraphMotion {
+    fundamentalChainId: String!
+    transaction: SubgraphTransaction!
+    address: String!
+    name: String!
+    args: String!
+    timestamp: String!
+    associatedColony: SubgraphColony!
+  }
+
   type ParsedEvent {
     type: String!
     name: String!
