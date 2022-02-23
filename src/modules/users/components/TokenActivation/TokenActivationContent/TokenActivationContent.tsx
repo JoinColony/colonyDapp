@@ -5,7 +5,7 @@ import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { useClaimableStakedMotionsQuery } from '~data/generated';
 
 import TokensTab, { TokensTabProps } from '../TokensTab';
-import StakesTab from '../StakesTab/StakesTab';
+import StakesTab from '../StakesTab';
 
 import styles from './TokenActivationContent.css';
 
