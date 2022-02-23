@@ -101,7 +101,7 @@ const ManageWhitelistDialogForm = ({
           </TabPanel>
           <TabPanel>
             <ManageWhitelistActiveToggle
-              whitelistStatusValue={values.whitelistStatus}
+              isWhiletlistActivated={values.isWhiletlistActivated}
             />
           </TabPanel>
         </Tabs>

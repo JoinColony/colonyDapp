@@ -11,7 +11,7 @@ const displayName = `dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.M
 const MSG = defineMessages({
   toggleLabel: {
     id: `dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.ManageWhitelistActiveToggle.toggleLabel`,
-    defaultMessage: `{whitelistStatusValue, select,
+    defaultMessage: `{isWhiletlistActivated, select,
       true {Active}
       other {Inactive}
     }`,
@@ -31,10 +31,10 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  whitelistStatusValue: boolean;
+  isWhiletlistActivated: boolean;
 }
 
-const ManageWhitelistActiveToggle = ({ whitelistStatusValue }: Props) => (
+const ManageWhitelistActiveToggle = ({ isWhiletlistActivated }: Props) => (
   <>
     <div className={styles.toggleContainer}>
       <Heading
@@ -43,13 +43,13 @@ const ManageWhitelistActiveToggle = ({ whitelistStatusValue }: Props) => (
       />
       <Toggle
         label={MSG.toggleLabel}
-        labelValues={{ whitelistStatusValue }}
-        name="whitelistStatus"
+        labelValues={{ isWhiletlistActivated }}
+        name="isWhiletlistActivated"
         tooltipText={MSG.tooltipText}
         tooltipClassName={styles.tooltip}
       />
     </div>
-    {!whitelistStatusValue && (
+    {!isWhiletlistActivated && (
       <div className={styles.warningContainer}>
         <p className={styles.warningText}>
           <FormattedMessage
