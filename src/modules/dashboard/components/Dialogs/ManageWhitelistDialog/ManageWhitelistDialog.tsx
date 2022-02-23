@@ -15,7 +15,7 @@ import DialogForm from './ManageWhitelistDialogForm';
 
 export interface FormValues {
   annotation: string;
-  whitelistStatus: boolean;
+  isWhiletlistActivated: boolean;
 }
 
 interface CustomWizardDialogProps {
@@ -56,7 +56,7 @@ const ManageWhitelistDialog = ({
     <ActionForm
       initialValues={{
         annotation: undefined,
-        whitelistStatus: true,
+        isWhiletlistActivated: true,
       }}
       submit={ActionTypes.COLONY_ACTION_GENERIC}
       error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
