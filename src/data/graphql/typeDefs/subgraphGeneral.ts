@@ -28,6 +28,13 @@ export default gql`
       orderDirection: String
       block: ToBlockInput
     ): [SubgraphEvent!]!
+    motions(
+      skip: Int
+      first: Int
+      orderBy: String
+      orderDirection: String
+      where: MotionsFilter!
+    ): [SubgraphMotion!]!
     domain(id: Int!, block: SubgraphMetaBlock): SubgraphUnusedDomain!
   }
 `;
