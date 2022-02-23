@@ -60,9 +60,11 @@ exports[`Select component Renders initial component 1`] = `
                 htmlFor="someStaticId"
                 id="someStaticId-label"
               >
-                <span>
-                  Select me
-                </span>
+                <div>
+                  <span>
+                    Select me
+                  </span>
+                </div>
               </label>
             </InputLabel>
             <div>
