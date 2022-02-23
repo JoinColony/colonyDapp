@@ -48,6 +48,7 @@ import {
 
 import AlwaysAccesibleRoute from './AlwaysAccesibleRoute';
 import WalletRequiredRoute from './WalletRequiredRoute';
+import { useTitle } from '~utils/hooks/useTitle';
 
 const MSG = defineMessages({
   userProfileEditBack: {
@@ -76,6 +77,8 @@ const Routes = () => {
 
   const isConnected = !!walletAddress && !ethereal;
   const didClaimProfile = !!username;
+
+  useTitle();
 
   /**
    * @NOTE Memoized Switch

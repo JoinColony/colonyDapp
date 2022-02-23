@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useCallback } from 'react';
 import { bigNumberify } from 'ethers/utils';
-import { FormattedMessage, defineMessages } from 'react-intl';
+import { FormattedMessage, defineMessages, useIntl } from 'react-intl';
 import classnames from 'classnames';
 import Decimal from 'decimal.js';
 
@@ -61,6 +61,7 @@ import CountDownTimer from '../CountDownTimer';
 
 import styles from './DefaultAction.css';
 import motionSpecificStyles from './DefaultMotion.css';
+import { useTitle } from '~utils/hooks/useTitle';
 
 const MSG = defineMessages({
   or: {
@@ -333,6 +334,26 @@ const DefaultMotion = ({
     isSmiteAction: new Decimal(reputationChange).isNegative(),
   };
 
+  const actionAndEventValuesForDocumentTitle = {
+    actionType,
+    newVersion,
+    recipient:
+      recipient.profile?.displayName ??
+      recipient.profile?.username ??
+      recipient.profile?.walletAddress,
+    amount: decimalAmount,
+    tokenSymbol: symbol,
+    initiator:
+      initiator.profile?.displayName ??
+      initiator.profile?.username ??
+      initiator.profile?.walletAddress,
+    reputationChange: actionAndEventValues.reputationChange,
+
+    fromDomain: actionAndEventValues.fromDomain?.name,
+    toDomain: actionAndEventValues.toDomain?.name,
+    roles: roleTitle,
+  };
+
   const motionState = motionStatusData?.motionStatus;
   const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
   const isStakingPhase =
@@ -349,6 +370,15 @@ const DefaultMotion = ({
   );
 
   const hasBanner = !shouldDisplayMotion(currentStake, requiredStake);
+
+  const { formatMessage } = useIntl();
+  useTitle(
+    `${formatMessage(
+      { id: roleMessageDescriptorId || 'action.title' },
+      actionAndEventValuesForDocumentTitle,
+    )} | Motion | Colony - ${colony.displayName ?? colony.colonyName ?? ``}`,
+  );
+
   return (
     <div className={styles.main}>
       <StakeRequiredBanner stakeRequired={hasBanner} />
