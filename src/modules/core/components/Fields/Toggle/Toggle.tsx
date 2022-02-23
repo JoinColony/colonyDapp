@@ -24,6 +24,7 @@ interface Props {
   disabled?: boolean;
   tooltipText?: string | MessageDescriptor;
   tooltipTextValues?: SimpleMessageValues;
+  tooltipClassName?: string;
   elementOnly?: boolean;
   /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
   tooltipPopperProps?: Omit<PopperProps, 'children'>;
@@ -39,6 +40,7 @@ const Toggle = ({
   elementOnly = false,
   tooltipTextValues,
   tooltipText,
+  tooltipClassName,
   tooltipPopperProps = {
     placement: 'right-start',
     modifiers: [
@@ -75,7 +77,7 @@ const Toggle = ({
           appearance={{ colorSchema: 'grey' }}
         />
       )}
-      <div>
+      <div className={styles.checkboxContainer}>
         <input
           name={name}
           type="checkbox"
@@ -96,6 +98,7 @@ const Toggle = ({
           tooltipText={tooltipText}
           tooltipPopperProps={tooltipPopperProps}
           tooltipTextValues={tooltipTextValues}
+          tooltipClassName={tooltipClassName}
         />
       )}
     </div>

@@ -17,6 +17,8 @@ import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot } from '~modules/users/checks';
 
 import { FormValues } from './ManageWhitelistDialog';
+import ManageWhitelistActiveToggle from './ManageWhitelistActiveToggle';
+
 import styles from './ManageWhitelistDialogForm.css';
 
 const MSG = defineMessages({
@@ -52,6 +54,7 @@ interface Props {
 const ManageWhitelistDialogForm = ({
   back,
   colony,
+  values,
 }: Props & FormikProps<FormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const [tabIndex, setTabIndex] = useState<number>(0);
@@ -97,7 +100,9 @@ const ManageWhitelistDialogForm = ({
             <h2>Please implement this content in separate component</h2>
           </TabPanel>
           <TabPanel>
-            <h2>Please implement this content in separate component</h2>
+            <ManageWhitelistActiveToggle
+              isWhiletlistActivated={values.isWhiletlistActivated}
+            />
           </TabPanel>
         </Tabs>
       </DialogSection>
