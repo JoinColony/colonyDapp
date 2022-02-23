@@ -196,8 +196,8 @@ query NetworkContracts {
   }
 }
 
-query MotionsTxHashes($motionIds: [String!], $colonyAddress: String!) {
-  motionsTxHashes(motionIds: $MotionIds, colonyAddress: $colonyAddress) @client
+query MotionsTxHashes($motionIds: [String!]!, $colonyAddress: String!) {
+  motionsTxHashes(motionIds: $motionIds, colonyAddress: $colonyAddress) @client
 }
 
 

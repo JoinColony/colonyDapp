@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import { Address } from '~types/index';
@@ -45,13 +45,36 @@ const StakesTab = ({
 }: StakesTabProps) => {
   const { data } = useMotionsTxHashesQuery({
     variables: {
-      motionIds: ['1', '2'],
+      motionIds: ['7', '3'],
       colonyAddress: colony?.colonyAddress || '',
     },
     fetchPolicy: 'network-only',
   });
 
-  console.log('data: ', data);
+  console.log('StakesTab motionsTx: ', data?.motionsTxHashes);
+  console.log('unclaimedMotionStakeEvents: ', unclaimedMotionStakeEvents);
+
+  // const motionIds = useMemo(
+  //   () =>
+  //     unclaimedMotionStakeEvents &&
+  //     unclaimedMotionStakeEvents.map((item) => ({ ...accum, item.values.motionId }),
+  //       {},
+  //     ),
+  //   [unclaimedMotionStakeEvents],
+  // );
+
+  const motionIdTxHash = useMemo(
+    () =>
+      data &&
+      data.motionsTxHashes?.reduce(
+        (accum, item) => ({
+          ...accum,
+          [item?.fundamentalChainId]: item?.transaction.hash,
+        }),
+        {},
+      ),
+    [data],
+  );
 
   if (isLoadingMotions) {
     return (
@@ -83,7 +106,11 @@ const StakesTab = ({
                 tokenSymbol={token.symbol}
                 colonyName={colony?.colonyName}
                 // This hash is incorrect. I suspect the ID should be used.
-                txHash={motion.hash}
+                txHash={
+                  motionIdTxHash && motionIdTxHash[motion.values.motionId]
+                }
+                // data?.motionsTxHashes?.findIndex((element) => element?.motionId === "motion.values.motionId).transaction.hash
+                // }
                 key={motion.values.motionId}
               />
             ))}
