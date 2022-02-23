@@ -20,11 +20,6 @@ export default gql`
     vote: Int!
   }
 
-  type MotionIdTxHash {
-    motionId: String!
-    transactionHash: String!
-  }
-
   type MotionVoteResults {
     currentUserVoteSide: Int!
     yayVotes: String!
@@ -94,6 +89,11 @@ export default gql`
     timeLeftToEscalate: Int!
   }
 
+  type MotionsTxHash {
+    motionId: String!
+    transactionHash: String!
+  }
+
   extend type Query {
     eventsForMotion(motionId: Int!, colonyAddress: String!): [ParsedEvent!]!
     motionStakes(
@@ -151,8 +151,15 @@ export default gql`
       colonyAddress: String!
     ): MotionTimeoutPeriods!
     motionsTxHashes(
-      motionIds: [String]
+      motionIds: [String!]!
       colonyAddress: String!
-    ): [MotionIdTxHash]
+    ): [MotionsTxHash]
+    SubgraphMotionsTx(
+      skip: Int
+      first: Int
+      orderBy: String
+      orderDirection: String
+      where: MotionsFilter!
+    ): [MotionsTxHash!]!
   }
 `;

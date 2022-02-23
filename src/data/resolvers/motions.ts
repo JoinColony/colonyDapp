@@ -50,10 +50,9 @@ import {
   // MotionsTxHashesQuery,
   // MotionsTxHashesQueryVariables,
   // MotionsTxHashesDocument
-  SubgraphMotionsSubscription,
-  SubgraphMotionsSubscriptionVariables,
-  SubgraphMotionsDocument,
-  // SubgraphMotionsSubscriptionDocument,
+  SubgraphMotionsTxQuery,
+  SubgraphMotionsTxQueryVariables,
+  SubgraphMotionsTxDocument,
   UserReputationQuery,
   UserReputationQueryVariables,
   UserReputationDocument,
@@ -68,7 +67,7 @@ import { availableRoles } from '~dialogs/PermissionManagementDialog';
 import { DEFAULT_NETWORK_TOKEN } from '~constants';
 
 import { ProcessedEvent } from './colonyActions';
-import { subscription } from '../../lib/colonyServer/src/graphql/resolvers/Subscription';
+// import { subscription } from '../../lib/colonyServer/src/graphql/resolvers/Subscription';
 
 const getMotionEvents = (
   isSystemEvents: boolean,
@@ -1004,23 +1003,22 @@ export const motionsResolvers = ({
           colonyAddress,
         );
 
-        const data = await apolloClient.subscribe<
-          SubgraphMotionsSubscription,
-          SubgraphMotionsSubscriptionVariables
+        const { data } = await apolloClient.query<
+          SubgraphMotionsTxQuery,
+          SubgraphMotionsTxQueryVariables
         >({
-          query: SubgraphMotionsDocument,
+          query: SubgraphMotionsTxDocument,
           variables: {
             /*
              * Subgraph addresses are not checksummed
              */
-            // motionIds,
+            motionIds,
             extensionAddress: votingReputationClient.address.toLowerCase(),
             colonyAddress: colonyAddress.toLowerCase(),
           },
           fetchPolicy: 'network-only',
         });
-        console.log('resolver data: ', data);
-        return 'data';
+        return data?.motionsTx;
       } catch (error) {
         console.error('Could not fetch the TxHashes for the motion IDs');
         console.error(error);

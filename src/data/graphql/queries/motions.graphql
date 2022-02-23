@@ -30,6 +30,25 @@ query SubgraphMotionEvents($colonyAddress: String!, $motionId: String!, $extensi
   }
 }
 
+query SubgraphMotionsTx($skip: Int = 0, $first: Int = 1000, $motionIds: [String!]!, $colonyAddress: String!, $extensionAddress: String!) {
+  motionsTx: motions(
+    skip: $skip,
+    first: $first,
+    where: {
+      fundamentalChainId_in: $motionIds
+      associatedColony: $colonyAddress,
+      extensionAddress: $extensionAddress,
+    },
+    orderBy: "fundamentalChainId",
+    orderDirection: "asc"
+  ) {
+      fundamentalChainId
+      transaction {
+        hash: id
+    }
+  }
+}
+
 query SubgraphMotionSystemEvents($colonyAddress: String!, $motionId: String!, $extensionAddress: String!, $sortDirection: String = asc) {
   motionSystemEvents: events(
     orderBy: "timestamp",
