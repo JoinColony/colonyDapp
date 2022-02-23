@@ -7,3 +7,5 @@ ganache-accounts.json
 /dist
 /styleguide
 .dappPids.json
+test-results/
+playwright-report/
