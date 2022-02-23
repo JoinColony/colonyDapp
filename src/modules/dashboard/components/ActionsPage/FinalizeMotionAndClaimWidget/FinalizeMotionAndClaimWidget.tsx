@@ -323,17 +323,15 @@ const FinalizeMotionAndClaimWidget = ({
             <>
               <div className={styles.itemWithForcedBorder}>
                 <div className={styles.label}>
-                  <div>
-                    <FormattedMessage {...MSG.finalizeLabel} />
-                    <QuestionMarkTooltip
-                      tooltipText={MSG.finalizeTooltip}
-                      className={styles.help}
-                      tooltipClassName={styles.tooltip}
-                      tooltipPopperProps={{
-                        placement: 'right',
-                      }}
-                    />
-                  </div>
+                  <FormattedMessage {...MSG.finalizeLabel} />
+                  <QuestionMarkTooltip
+                    tooltipText={MSG.finalizeTooltip}
+                    className={styles.help}
+                    tooltipClassName={styles.tooltip}
+                    tooltipPopperProps={{
+                      placement: 'right',
+                    }}
+                  />
                 </div>
                 <div className={styles.value}>
                   <Button

@@ -70,7 +70,7 @@ const InputLabel = ({
     >
       <span className={styles.labelText}>{labelText}</span>
       {helpText && <span className={styles.help}>{helpText}</span>}
-      {extra && <span className={styles.extra}>{extra}</span>}
+      {extra && <span>{extra}</span>}
     </label>
   );
 };
