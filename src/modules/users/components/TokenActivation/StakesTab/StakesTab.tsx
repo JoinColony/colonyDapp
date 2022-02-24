@@ -43,38 +43,22 @@ const StakesTab = ({
   walletAddress,
   token,
 }: StakesTabProps) => {
+  // extract flat array of motionIds
+  const motionIds = useMemo(
+    () =>
+      unclaimedMotionStakeEvents &&
+      unclaimedMotionStakeEvents.map((item) => item.values.motionId),
+    [unclaimedMotionStakeEvents],
+  );
+
+  // get TX hashes for the motionIds
   const { data } = useMotionsTxHashesQuery({
     variables: {
-      motionIds: ['7', '3'],
+      motionIds: motionIds || [],
       colonyAddress: colony?.colonyAddress || '',
     },
     fetchPolicy: 'network-only',
   });
-
-  console.log('StakesTab motionsTx: ', data?.motionsTxHashes);
-  console.log('unclaimedMotionStakeEvents: ', unclaimedMotionStakeEvents);
-
-  // const motionIds = useMemo(
-  //   () =>
-  //     unclaimedMotionStakeEvents &&
-  //     unclaimedMotionStakeEvents.map((item) => ({ ...accum, item.values.motionId }),
-  //       {},
-  //     ),
-  //   [unclaimedMotionStakeEvents],
-  // );
-
-  const motionIdTxHash = useMemo(
-    () =>
-      data &&
-      data.motionsTxHashes?.reduce(
-        (accum, item) => ({
-          ...accum,
-          [item?.fundamentalChainId]: item?.transaction.hash,
-        }),
-        {},
-      ),
-    [data],
-  );
 
   if (isLoadingMotions) {
     return (
@@ -105,12 +89,10 @@ const StakesTab = ({
                 )}
                 tokenSymbol={token.symbol}
                 colonyName={colony?.colonyName}
-                // This hash is incorrect. I suspect the ID should be used.
                 txHash={
-                  motionIdTxHash && motionIdTxHash[motion.values.motionId]
+                  data?.motionsTxHashes &&
+                  data?.motionsTxHashes[motion.values.motionId]
                 }
-                // data?.motionsTxHashes?.findIndex((element) => element?.motionId === "motion.values.motionId).transaction.hash
-                // }
                 key={motion.values.motionId}
               />
             ))}
