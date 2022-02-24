@@ -227,7 +227,7 @@ export type MutationUnsubscribeFromColonyArgs = {
 };
 
 export type Query = {
-  SubgraphMotionsTx: Array<MotionsTxHash>;
+  SubgraphMotionsTx: Array<MotionTxHash>;
   actionsThatNeedAttention: Array<Maybe<ActionThatNeedsAttention>>;
   bannedUsers: Array<Maybe<BannedUser>>;
   claimableStakedMotions: ClaimableMotions;
@@ -273,7 +273,7 @@ export type Query = {
   motionVoterReward: MotionVoterReward;
   motions: Array<SubgraphMotion>;
   motionsSystemMessages: Array<SystemMessage>;
-  motionsTxHashes?: Maybe<Array<Maybe<MotionsTxHash>>>;
+  motionsTxHashes: Array<MotionTxHash>;
   networkContracts: NetworkContracts;
   networkExtensionVersion: Array<Maybe<ColonyExtensionVersion>>;
   processedColony: ProcessedColony;
@@ -1407,7 +1407,7 @@ export type MotionTimeoutPeriods = {
   timeLeftToSubmit: Scalars['Int'];
 };
 
-export type MotionsTxHash = {
+export type MotionTxHash = {
   motionId: Scalars['String'];
   transactionHash: Scalars['String'];
 };
@@ -2295,7 +2295,7 @@ export type SubgraphMotionsTxQueryVariables = Exact<{
 
 
 export type SubgraphMotionsTxQuery = { motionsTx: Array<(
-    Pick<SubgraphMotion, 'fundamentalChainId'>
+    { motionId: SubgraphMotion['fundamentalChainId'] }
     & { transaction: { hash: SubgraphTransaction['id'] } }
   )> };
 
@@ -6080,7 +6080,7 @@ export type SubgraphMotionEventsQueryResult = Apollo.QueryResult<SubgraphMotionE
 export const SubgraphMotionsTxDocument = gql`
     query SubgraphMotionsTx($skip: Int = 0, $first: Int = 1000, $motionIds: [String!]!, $colonyAddress: String!, $extensionAddress: String!) {
   motionsTx: motions(skip: $skip, first: $first, where: {fundamentalChainId_in: $motionIds, associatedColony: $colonyAddress, extensionAddress: $extensionAddress}, orderBy: "fundamentalChainId", orderDirection: "asc") {
-    fundamentalChainId
+    motionId: fundamentalChainId
     transaction {
       hash: id
     }
