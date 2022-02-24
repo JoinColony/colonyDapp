@@ -46,6 +46,73 @@ export const numberFormatter = ({
   abreviateOverMillion = true,
   useSmallNumberDefault = true,
 }: FunctionArgs): string => {
+  numbro.registerLanguage({
+    languageTag: 'en-GB',
+    delimiters: {
+      thousands: ',',
+      decimal: '.',
+    },
+    abbreviations: {
+      thousand: 'K',
+      million: 'M',
+      billion: 'B',
+      trillion: 'T',
+    },
+    ordinal: (number) => {
+      const b = number % 10;
+      if (Math.round((number % 100) / 10) === 1) {
+        return 'th';
+      }
+      if (b === 1) {
+        return 'st';
+      }
+      if (b === 2) {
+        return 'st';
+      }
+      if (b === 3) {
+        return 'rd';
+      }
+      return 'th';
+    },
+    currency: {
+      symbol: '',
+      position: 'prefix',
+      code: '',
+    },
+    currencyFormat: {
+      thousandSeparated: true,
+      totalLength: 4,
+      spaceSeparated: false,
+      spaceSeparatedCurrency: false,
+      average: true,
+    },
+    formats: {
+      fourDigits: {
+        totalLength: 4,
+        spaceSeparated: false,
+        average: true,
+      },
+      fullWithTwoDecimals: {
+        output: 'currency',
+        thousandSeparated: true,
+        spaceSeparated: false,
+        mantissa: 2,
+      },
+      fullWithTwoDecimalsNoCurrency: {
+        mantissa: 2,
+        thousandSeparated: true,
+      },
+      fullWithNoDecimals: {
+        output: 'currency',
+        thousandSeparated: true,
+        spaceSeparated: false,
+        mantissa: 0,
+      },
+    },
+  });
+
+  numbro.setLanguage('en-GB');
+
   const defaultFormat = {
     // totalLength: reducedOutput ? 5 : 0,
     trimMantissa: true,
@@ -57,12 +124,13 @@ export const numberFormatter = ({
   };
 
   const aboveMillionFormat = {
-    mantissa: 1,
-    optionalMantissa: true,
+    mantissa: 5,
+    trimMantissa: true,
     average: true,
     lowPrecision: true,
-    totalLength: 2,
+    totalLength: 6,
     spaceSeparated: false,
+    thousandSeparated: useSeparator,
   };
 
   const convertedNum =
