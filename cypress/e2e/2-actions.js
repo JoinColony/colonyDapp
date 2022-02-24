@@ -35,6 +35,11 @@ describe(
         'have.text',
         annotationText,
       );
+
+      /*
+        todo: go to the main page and check that the funds increased for the minted amount.
+        Need to get the tokens amount before the start of the operation.
+      */
     });
   },
 );
