@@ -4,6 +4,7 @@ import moveDecimal from 'move-decimal-point';
 
 import { BigNumber, formatUnits } from 'ethers/utils';
 import { SMALL_TOKEN_AMOUNT_FORMAT } from '~constants';
+import { numbroCustomLanguage } from './numbroCustomLanguage';
 
 export interface FunctionArgs {
   /** Should use separator (e.g. for thousands ',') */
@@ -46,71 +47,7 @@ export const numberFormatter = ({
   abreviateOverMillion = true,
   useSmallNumberDefault = true,
 }: FunctionArgs): string => {
-  numbro.registerLanguage({
-    languageTag: 'en-GB',
-    delimiters: {
-      thousands: ',',
-      decimal: '.',
-    },
-    abbreviations: {
-      thousand: 'K',
-      million: 'M',
-      billion: 'B',
-      trillion: 'T',
-    },
-    ordinal: (number) => {
-      const b = number % 10;
-      if (Math.round((number % 100) / 10) === 1) {
-        return 'th';
-      }
-      if (b === 1) {
-        return 'st';
-      }
-      if (b === 2) {
-        return 'st';
-      }
-      if (b === 3) {
-        return 'rd';
-      }
-      return 'th';
-    },
-    currency: {
-      symbol: '',
-      position: 'prefix',
-      code: '',
-    },
-    currencyFormat: {
-      thousandSeparated: true,
-      totalLength: 4,
-      spaceSeparated: false,
-      spaceSeparatedCurrency: false,
-      average: true,
-    },
-    formats: {
-      fourDigits: {
-        totalLength: 4,
-        spaceSeparated: false,
-        average: true,
-      },
-      fullWithTwoDecimals: {
-        output: 'currency',
-        thousandSeparated: true,
-        spaceSeparated: false,
-        mantissa: 2,
-      },
-      fullWithTwoDecimalsNoCurrency: {
-        mantissa: 2,
-        thousandSeparated: true,
-      },
-      fullWithNoDecimals: {
-        output: 'currency',
-        thousandSeparated: true,
-        spaceSeparated: false,
-        mantissa: 0,
-      },
-    },
-  });
-
+  numbro.registerLanguage(numbroCustomLanguage);
   numbro.setLanguage('en-GB');
 
   const defaultFormat = {
