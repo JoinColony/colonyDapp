@@ -80,7 +80,7 @@ const StakesTab = ({
               colonyAddress={colony?.colonyAddress || ''}
             />
           </div>
-          <ul>
+          <ul className={styles.stakesList}>
             {unclaimedMotionStakeEvents?.map((motion) => (
               <StakesListItem
                 stakedAmount={getFormattedTokenValue(
