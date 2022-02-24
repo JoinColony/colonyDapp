@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { getMainClasses } from '~utils/css';
-import { useTransformer } from '~utils/hooks';
 import { COMMENT_MODERATION } from '~immutable/index';
 
 import { TransactionMeta } from '~dashboard/ActionsPage';
@@ -10,12 +8,8 @@ import UserMention from '~core/UserMention';
 import FriendlyName from '~core/FriendlyName';
 import Tag from '~core/Tag';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import { AnyUser, Colony, useLoggedInUser } from '~data/index';
+import { AnyUser, Colony } from '~data/index';
 import TextDecorator from '~lib/TextDecorator';
-import { userHasRole } from '~modules/users/checks';
-import { getUserRolesForDomain } from '~modules/transformers';
-
-import CommentActions from './Actions';
 
 import styles from './Comment.css';
 
@@ -36,7 +30,7 @@ export interface Props {
   appearance?: Appearance;
   comment?: string;
   commentMeta?: CommentMeta;
-  colony: Colony;
+  colony?: Colony;
   user?: AnyUser | null;
   annotation?: boolean;
   createdAt?: Date | number;
@@ -50,37 +44,15 @@ const Comment = ({
   appearance = { theme: 'primary' },
   comment,
   commentMeta,
-  colony,
   user,
   createdAt,
   annotation = false,
   showControls = false,
   disableHover = false,
 }: Props) => {
-  const { walletAddress } = useLoggedInUser();
-  const rootRoles = useTransformer(getUserRolesForDomain, [
-    colony,
-    walletAddress,
-    ROOT_DOMAIN_ID,
-  ]);
+  const permission = COMMENT_MODERATION.NONE;
 
-  // Check for permissions for comment actions
-  let permission = COMMENT_MODERATION.NONE;
-
-  // Check for permissions to edit own comment
-  // if (user?.profile.walletAddress === walletAddress) {
-  //   permission = COMMENT_MODERATION.CAN_EDIT;
-  // }
-
-  // Check for permissions to moderate
-  if (
-    userHasRole(rootRoles, ColonyRole.Root) ||
-    userHasRole(rootRoles, ColonyRole.Administration)
-  ) {
-    permission = COMMENT_MODERATION.CAN_MODERATE;
-  }
-
-  const [hoverState, setHoverState] = useState<boolean>(false);
+  const [hoverState] = useState<boolean>(false);
 
   const { Decorate } = new TextDecorator({
     username: (usernameWithAtSign) => (
@@ -106,7 +78,6 @@ const Comment = ({
     >
       <div className={styles.avatar}>
         <UserAvatar
-          colony={colony}
           size="xs"
           address={user?.profile.walletAddress || ''}
           user={user as AnyUser}
@@ -138,24 +109,6 @@ const Comment = ({
         <div className={styles.text}>
           <Decorate>{comment}</Decorate>
         </div>
-      </div>
-      <div className={styles.actions}>
-        {showControls && permission !== COMMENT_MODERATION.NONE && user && (
-          <CommentActions
-            permission={permission}
-            fullComment={{
-              appearance,
-              comment,
-              commentMeta,
-              colony,
-              user,
-              createdAt,
-              annotation,
-              showControls,
-            }}
-            onHoverActiveState={setHoverState}
-          />
-        )}
       </div>
     </div>
   );

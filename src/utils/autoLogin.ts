@@ -55,6 +55,7 @@ export const useWalletAutoLogin = (
             createAddress(wallet.address) === createAddress(lastWalletAddress)
           ) {
             await login({ method: WalletMethod.MetaMask });
+            setLoading(false);
             return;
           }
         } catch (error) {

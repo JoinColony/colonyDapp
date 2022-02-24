@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
-import { isAddress } from '~utils/web3';
 
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import ProfileTemplate from '~pages/ProfileTemplate';
@@ -12,9 +11,11 @@ import {
   useContractUserLazyQuery,
   useContractUserByNameLazyQuery,
 } from '~data/index';
+import { isAddress } from '~utils/web3';
 
 import UserMeta from './UserMeta';
 import UserProfileSpinner from './UserProfileSpinner';
+import UserProfileComments from '../UserProfileComments';
 
 import styles from './UserProfile.css';
 
@@ -118,7 +119,9 @@ const UserProfile = ({
 
   return (
     <ProfileTemplate asideContent={<UserMeta user={user as AnyUser} />}>
-      <section className={styles.sectionContainer} />
+      <section className={styles.sectionContainer}>
+        <UserProfileComments user={user} />
+      </section>
     </ProfileTemplate>
   );
 };
