@@ -42,10 +42,11 @@ query SubgraphMotionsTx($skip: Int = 0, $first: Int = 1000, $motionIds: [String!
     orderBy: "fundamentalChainId",
     orderDirection: "asc"
   ) {
-      fundamentalChainId
+      motionId: fundamentalChainId
       transaction {
         hash: id
     }
+
   }
 }
 

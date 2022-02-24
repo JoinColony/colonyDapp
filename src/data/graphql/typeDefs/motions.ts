@@ -89,7 +89,7 @@ export default gql`
     timeLeftToEscalate: Int!
   }
 
-  type MotionsTxHash {
+  type MotionTxHash {
     motionId: String!
     transactionHash: String!
   }
@@ -153,13 +153,13 @@ export default gql`
     motionsTxHashes(
       motionIds: [String!]!
       colonyAddress: String!
-    ): [MotionsTxHash]
+    ): [MotionTxHash!]!
     SubgraphMotionsTx(
       skip: Int
       first: Int
       orderBy: String
       orderDirection: String
       where: MotionsFilter!
-    ): [MotionsTxHash!]!
+    ): [MotionTxHash!]!
   }
 `;

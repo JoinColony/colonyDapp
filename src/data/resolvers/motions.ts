@@ -47,9 +47,6 @@ import {
   SubgraphMotionRewardClaimedEventsQuery,
   SubgraphMotionRewardClaimedEventsQueryVariables,
   SubgraphMotionRewardClaimedEventsDocument,
-  // MotionsTxHashesQuery,
-  // MotionsTxHashesQueryVariables,
-  // MotionsTxHashesDocument
   SubgraphMotionsTxQuery,
   SubgraphMotionsTxQueryVariables,
   SubgraphMotionsTxDocument,
@@ -1018,7 +1015,18 @@ export const motionsResolvers = ({
           },
           fetchPolicy: 'network-only',
         });
-        return data?.motionsTx;
+
+        // extract only motionId & txHash for easy access
+        const motionIdTxHash =
+          data &&
+          data?.motionsTx.reduce(
+            (accum, item) => ({
+              ...accum,
+              [item?.motionId]: item?.transaction.hash,
+            }),
+            {},
+          );
+        return motionIdTxHash;
       } catch (error) {
         console.error('Could not fetch the TxHashes for the motion IDs');
         console.error(error);
