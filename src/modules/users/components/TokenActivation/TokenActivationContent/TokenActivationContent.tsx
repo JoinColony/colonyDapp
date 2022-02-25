@@ -22,7 +22,7 @@ const MSG = defineMessages({
 
 const TokenActivationContent = (props: TokensTabProps) => {
   const [tabIndex, setTabIndex] = useState<number>(0);
-  const { colony, walletAddress } = props;
+  const { colony, walletAddress, setIsPopoverOpen } = props;
 
   const { data: unclaimedMotions, loading } = useClaimableStakedMotionsQuery({
     variables: {
@@ -72,6 +72,7 @@ const TokenActivationContent = (props: TokensTabProps) => {
                 ?.unclaimedMotionStakeEvents
             }
             isLoadingMotions={loading}
+            setIsPopoverOpen={setIsPopoverOpen}
           />
         </TabPanel>
       </Tabs>
