@@ -1,4 +1,4 @@
-import React, { ReactElement, useMemo, useState } from 'react';
+import React, { ReactElement, useMemo, useState, useCallback } from 'react';
 
 import Popover, { PopoverChildFn } from '~core/Popover';
 
@@ -32,6 +32,18 @@ const TokenActivationPopover = ({ children, ...otherProps }: Props) => {
     return [0, removeValueUnits(verticalOffset)];
   }, []);
 
+  const handleSetIsPopoverOpen3 = useCallback(() => {
+    setIsOpen(true);
+    setIsOpen(false);
+    console.log('handleSetIsPopoverOpen called');
+  }, []);
+
+  const handleSetIsPopoverOpen = () => {
+    setIsOpen(true);
+    setIsOpen(false);
+    console.log('handleSetIsPopoverOpen called');
+  };
+
   return (
     <Popover
       appearance={{ theme: 'grey' }}
@@ -39,7 +51,12 @@ const TokenActivationPopover = ({ children, ...otherProps }: Props) => {
       placement="bottom"
       isOpen={isOpen}
       onClose={() => setIsOpen(false)}
-      content={() => <TokenActivationContent {...otherProps} />}
+      content={() => (
+        <TokenActivationContent
+          {...otherProps}
+          setIsPopoverOpen={handleSetIsPopoverOpen}
+        />
+      )}
       popperProps={{
         modifiers: [
           {
