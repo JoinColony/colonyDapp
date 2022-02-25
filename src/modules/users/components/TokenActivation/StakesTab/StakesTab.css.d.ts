@@ -1,6 +1,6 @@
 export const stakesContainer: string;
 export const stakesListItem: string;
-export const link: string;
+export const falseLink: string;
 export const noClaims: string;
 export const loader: string;
 export const claimAllButtonSection: string;
