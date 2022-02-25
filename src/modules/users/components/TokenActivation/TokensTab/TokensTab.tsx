@@ -73,6 +73,8 @@ export interface TokensTabProps {
   token: UserToken;
   colony?: FullColonyFragment;
   walletAddress: Address;
+  // setIsPopoverOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsPopoverOpen: () => void;
 }
 
 const TokensTab = ({

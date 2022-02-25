@@ -1,5 +1,5 @@
-import React from 'react';
-import { defineMessages } from 'react-intl';
+import React, { MouseEvent } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Link from '~core/Link';
 
@@ -11,12 +11,13 @@ const MSG = defineMessages({
     defaultMessage: 'Go to motion',
   },
 });
-
 interface StakesListItemProps {
   stakedAmount?: string;
   tokenSymbol?: string;
   colonyName?: string;
   txHash?: string;
+  // setIsPopoverOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsPopoverOpen: () => void;
 }
 
 const StakesListItem = ({
@@ -24,23 +25,43 @@ const StakesListItem = ({
   tokenSymbol,
   colonyName,
   txHash,
+  setIsPopoverOpen,
 }: StakesListItemProps) => {
+  // const handleSyntheticEvent = useCallback(() => {
+  //   // setIsPopoverOpen(false);
+  //   console.log('got here');
+  // }, [setIsPopoverOpen]);
+  const clickHandler = (e: React.MouseEvent) => {
+    console.log('ClickHandler called');
+    setIsPopoverOpen();
+  };
   return (
-    <li className={styles.stakesListItem}>
-      <div>
-        <p>
-          <span>
-            {stakedAmount} {tokenSymbol}
-          </span>
-        </p>
-        {colonyName && txHash && (
+    <li>
+      <Link to={`/colony/${colonyName}/tx/${txHash}`}>
+        <div
+          role="button"
+          onClick={clickHandler}
+          onKeyPress={clickHandler}
+          tabIndex={0}
+        >
+          <p>
+            <span>
+              {stakedAmount} {tokenSymbol}
+            </span>
+          </p>
+          <div className={styles.falseLink}>
+            <FormattedMessage {...MSG.motionUrl} />
+          </div>
+
+          {/* {colonyName && txHash && (
           <Link
             className={styles.link}
             text={MSG.motionUrl}
             to={`/colony/${colonyName}/tx/${txHash}`}
           />
-        )}
-      </div>
+        )} */}
+        </div>
+      </Link>
     </li>
   );
 };

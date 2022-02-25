@@ -34,6 +34,7 @@ export interface StakesTabProps {
   colony?: FullColonyFragment;
   walletAddress: Address;
   token: UserToken;
+  setIsPopoverOpen: () => void;
 }
 
 const StakesTab = ({
@@ -42,6 +43,7 @@ const StakesTab = ({
   colony,
   walletAddress,
   token,
+  setIsPopoverOpen,
 }: StakesTabProps) => {
   // extract flat array of motionIds
   const motionIds = useMemo(
@@ -93,6 +95,7 @@ const StakesTab = ({
                   data?.motionsTxHashes &&
                   data?.motionsTxHashes[motion.values.motionId]
                 }
+                setIsPopoverOpen={setIsPopoverOpen}
                 key={motion.values.motionId}
               />
             ))}
