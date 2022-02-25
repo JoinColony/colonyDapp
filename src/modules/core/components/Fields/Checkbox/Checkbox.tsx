@@ -4,6 +4,7 @@ import React, {
   useState,
   useCallback,
   useMemo,
+  useEffect,
 } from 'react';
 import { MessageDescriptor } from 'react-intl';
 import { nanoid } from 'nanoid';
@@ -45,6 +46,8 @@ interface Props {
   name: string;
   /** Standard input field property */
   onChange?: Function;
+  /** Just to check what is a default value of checkbox */
+  getDefaultValue?: Function;
   /** Input field value */
   value: string;
   /**  Text for the checkbox tooltip */
@@ -81,6 +84,7 @@ const Checkbox = ({
   tooltipText,
   tooltipPopperProps,
   dataTest,
+  getDefaultValue,
 }: Props) => {
   const [inputId] = useState<string>(nanoid());
 
@@ -93,7 +97,7 @@ const Checkbox = ({
         push(value);
       }
       if (onChange) {
-        onChange(e);
+        onChange({...e, isChecked: !(idx >= 0)});
       }
     },
     [name, onChange, push, remove, value, values],
@@ -127,6 +131,12 @@ const Checkbox = ({
     ),
     [disabled, handleOnChange, inputId, isChecked, name, dataTest],
   );
+
+  useEffect(() => {
+    if (getDefaultValue) {
+      getDefaultValue(isChecked);
+    }
+  }, []);
 
   return (
     <label className={classNames} htmlFor={elementOnly ? inputId : undefined}>
