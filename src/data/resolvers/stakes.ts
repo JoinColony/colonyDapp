@@ -1,17 +1,18 @@
 import { Resolvers } from '@apollo/client';
-import { ClientType, Extension } from '@colony/colony-js';
+import {
+  ClientType,
+  Extension,
+  MotionState as NetworkMotionState,
+} from '@colony/colony-js';
 
 import { Context } from '~context/index';
 import { getMotionRequiredStake, MotionVote } from '~utils/colonyMotions';
+import { parseSubgraphEvent } from '~utils/events';
 import {
   SubgraphUserMotionTokenEventsDocument,
   SubgraphUserMotionTokenEventsQuery,
   SubgraphUserMotionTokenEventsQueryVariables,
-  MotionFinalizedDocument,
-  MotionFinalizedQuery,
-  MotionFinalizedQueryVariables,
 } from '~data/generated';
-import { parseSubgraphEvent } from '~utils/events';
 
 export const stakesResolvers = ({
   colonyManager,
@@ -102,7 +103,7 @@ export const stakesResolvers = ({
           data?.motionRewardClaimedEvents || []
         ).map(parseSubgraphEvent);
 
-        /* Get array of claimable motionIds */
+        /* Get array of staked motionIds */
         /* Remove duplicate motionIds */
         const mappedMotionIds = motionStakedEvents?.map(
           (event) => event.values?.motionId,
@@ -122,35 +123,33 @@ export const stakesResolvers = ({
               (event) => !mappedClaimedIds.includes(event.values?.motionId),
             ) || [];
 
-        /* Get the status of unclaimed motions */
-        const getFinalizedUnclaimedMotions = await Promise.all(
-          unclaimedMotions.map(async (motion) => {
-            const { data: finalizedUnclaimedMotion } = await apolloClient.query<
-              MotionFinalizedQuery,
-              MotionFinalizedQueryVariables
-            >({
-              query: MotionFinalizedDocument,
-              variables: {
-                colonyAddress: colonyAddress?.toLowerCase(),
-                motionId: motion.values.motionId,
-              },
-              fetchPolicy: 'network-only',
-            });
-            if (finalizedUnclaimedMotion?.motionFinalized) {
-              return motion.values.motionId;
+        /* Return finalized and failed claimable motions */
+        const motionStates = await Promise.all(
+          unclaimedMotions?.map(async (event) => {
+            try {
+              const motionStatus = await votingReputationClient.getMotionState(
+                event.values.motionId,
+              );
+              if (
+                motionStatus === NetworkMotionState.Finalized ||
+                motionStatus === NetworkMotionState.Failed
+              ) {
+                return event.values.motionId;
+              }
+              return undefined;
+            } catch (error) {
+              return undefined;
             }
-            return '';
-          }),
+          }) || [],
         );
 
-        /* Filter out unfinalized motions */
-        const finalizedUnclaimedMotions =
-          motionStakedEvents?.filter((event) =>
-            getFinalizedUnclaimedMotions.includes(event.values?.motionId),
+        const claimableUnclaimedMotions =
+          unclaimedMotions?.filter((event) =>
+            motionStates.includes(event.values?.motionId),
           ) || [];
 
         return {
-          unclaimedMotionStakeEvents: finalizedUnclaimedMotions,
+          unclaimedMotionStakeEvents: claimableUnclaimedMotions,
         };
       } catch (error) {
         console.error(error);
