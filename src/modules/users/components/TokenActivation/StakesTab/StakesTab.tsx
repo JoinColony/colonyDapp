@@ -90,7 +90,7 @@ const StakesTab = ({
                   token.decimals,
                 )}
                 tokenSymbol={token.symbol}
-                colonyName={colony?.colonyName}
+                colonyName={colony?.colonyName || ''}
                 txHash={
                   data?.motionsTxHashes &&
                   data?.motionsTxHashes[motion.values.motionId]

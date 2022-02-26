@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Dispatch, SetStateAction } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
@@ -20,7 +20,11 @@ const MSG = defineMessages({
   },
 });
 
-const TokenActivationContent = (props: TokensTabProps) => {
+interface TokenActivationContentProps extends TokensTabProps {
+  setIsPopoverOpen: Dispatch<SetStateAction<boolean>>;
+}
+
+const TokenActivationContent = (props: TokenActivationContentProps) => {
   const [tabIndex, setTabIndex] = useState<number>(0);
   const { colony, walletAddress, setIsPopoverOpen } = props;
 
