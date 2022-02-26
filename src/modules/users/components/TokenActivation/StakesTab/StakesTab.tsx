@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, Dispatch, SetStateAction } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import { Address } from '~types/index';
@@ -34,7 +34,7 @@ export interface StakesTabProps {
   colony?: FullColonyFragment;
   walletAddress: Address;
   token: UserToken;
-  setIsPopoverOpen: () => void;
+  setIsPopoverOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 const StakesTab = ({
