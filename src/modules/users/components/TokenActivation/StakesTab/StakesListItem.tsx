@@ -12,10 +12,10 @@ const MSG = defineMessages({
   },
 });
 interface StakesListItemProps {
-  stakedAmount?: string;
-  tokenSymbol?: string;
-  colonyName?: string;
-  txHash?: string;
+  stakedAmount: string;
+  tokenSymbol: string;
+  colonyName: string;
+  txHash: string;
   setIsPopoverOpen: Dispatch<SetStateAction<boolean>>;
 }
 
