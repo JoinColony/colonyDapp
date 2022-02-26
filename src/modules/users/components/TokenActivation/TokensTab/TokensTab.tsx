@@ -1,4 +1,11 @@
-import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  Dispatch,
+  SetStateAction,
+} from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { BigNumber } from 'ethers/utils';
 
@@ -73,8 +80,7 @@ export interface TokensTabProps {
   token: UserToken;
   colony?: FullColonyFragment;
   walletAddress: Address;
-  // setIsPopoverOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsPopoverOpen: () => void;
+  setIsPopoverOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 const TokensTab = ({
