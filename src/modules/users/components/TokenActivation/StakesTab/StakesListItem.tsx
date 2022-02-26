@@ -1,4 +1,4 @@
-import React, { MouseEvent } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Link from '~core/Link';
@@ -16,8 +16,7 @@ interface StakesListItemProps {
   tokenSymbol?: string;
   colonyName?: string;
   txHash?: string;
-  // setIsPopoverOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsPopoverOpen: () => void;
+  setIsPopoverOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 const StakesListItem = ({
@@ -27,21 +26,14 @@ const StakesListItem = ({
   txHash,
   setIsPopoverOpen,
 }: StakesListItemProps) => {
-  // const handleSyntheticEvent = useCallback(() => {
-  //   // setIsPopoverOpen(false);
-  //   console.log('got here');
-  // }, [setIsPopoverOpen]);
-  const clickHandler = (e: React.MouseEvent) => {
-    console.log('ClickHandler called');
-    setIsPopoverOpen();
-  };
   return (
-    <li>
+    <li className={styles.stakesListItem}>
       <Link to={`/colony/${colonyName}/tx/${txHash}`}>
         <div
           role="button"
-          onClick={clickHandler}
-          onKeyPress={clickHandler}
+          // 'any' used to stop warnings about MouseEvent incompatible types
+          onClick={setIsPopoverOpen as any}
+          onKeyPress={setIsPopoverOpen as any}
           tabIndex={0}
         >
           <p>
