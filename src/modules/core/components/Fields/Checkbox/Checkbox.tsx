@@ -95,7 +95,7 @@ const Checkbox = ({
         push(value);
       }
       if (onChange) {
-        onChange({...e, isChecked: !(idx >= 0)});
+        onChange({ ...e, isChecked: !(idx >= 0) });
       }
     },
     [name, onChange, push, remove, value, values],
