@@ -64,7 +64,6 @@ import { availableRoles } from '~dialogs/PermissionManagementDialog';
 import { DEFAULT_NETWORK_TOKEN } from '~constants';
 
 import { ProcessedEvent } from './colonyActions';
-// import { subscription } from '../../lib/colonyServer/src/graphql/resolvers/Subscription';
 
 const getMotionEvents = (
   isSystemEvents: boolean,
@@ -1026,6 +1025,7 @@ export const motionsResolvers = ({
             }),
             {},
           );
+
         return motionIdTxHash;
       } catch (error) {
         console.error('Could not fetch the TxHashes for the motion IDs');

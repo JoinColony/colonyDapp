@@ -89,9 +89,17 @@ export default gql`
     timeLeftToEscalate: Int!
   }
 
-  type MotionTxHash {
-    motionId: String!
-    transactionHash: String!
+  type TxHash {
+    txHash: String!
+  }
+
+  type MotionTxHashMapTuple {
+    key: Int!
+    value: TxHash!
+  }
+
+  type MotionsTxHashes {
+    motionTxHash: [MotionTxHashMapTuple!]!
   }
 
   extend type Query {
@@ -153,13 +161,6 @@ export default gql`
     motionsTxHashes(
       motionIds: [String!]!
       colonyAddress: String!
-    ): [MotionTxHash!]!
-    SubgraphMotionsTx(
-      skip: Int
-      first: Int
-      orderBy: String
-      orderDirection: String
-      where: MotionsFilter!
-    ): [MotionTxHash!]!
+    ): MotionsTxHashes!
   }
 `;
