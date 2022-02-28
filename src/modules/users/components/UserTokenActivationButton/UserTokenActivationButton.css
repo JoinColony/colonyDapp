@@ -2,17 +2,22 @@
   padding: 0 8px;
   height: 26px;
   position: relative;
-  top: -0.1px;
   border: none;
   border-radius: var(--radius-normal);
   background: transparent;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
+  line-height: 26px;
   color: var(--dark);
   cursor: pointer;
 }
 
-.tokens:hover {
+.tokensNumber {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+}
+
+.tokens:hover, .tokensNumber:hover {
   z-index: 5;
   background-color: rgb(217, 216, 236);
   color: var(--colony-blue);

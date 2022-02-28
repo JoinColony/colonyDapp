@@ -63,6 +63,7 @@ const UserTokenActivationButton = ({
               }`}
             />
             <Numeral
+              className={styles.tokensNumber}
               suffix={` ${nativeToken?.symbol} `}
               value={formattedTotalBalance}
             />
