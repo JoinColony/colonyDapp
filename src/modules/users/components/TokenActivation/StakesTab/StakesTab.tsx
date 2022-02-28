@@ -28,7 +28,7 @@ const MSG = defineMessages({
   },
 });
 
-export interface StakesTabProps {
+export interface Props {
   unclaimedMotionStakeEvents?: Array<ParsedMotionStakedEvent>;
   isLoadingMotions: boolean;
   colony?: FullColonyFragment;
@@ -44,7 +44,7 @@ const StakesTab = ({
   walletAddress,
   token,
   setIsPopoverOpen,
-}: StakesTabProps) => {
+}: Props) => {
   // extract flat array of motionIds
   const motionIds = useMemo(
     () =>
