@@ -14,7 +14,7 @@ const displayName = 'TokenActivation.StakesTab.ClaimAllButton';
 
 const MSG = defineMessages({
   claimAll: {
-    id: `TokenActivation.StakesTab.ClaimAllButton.claimAll`,
+    id: `users.TokenActivation.StakesTab.ClaimAllButton.claimAll`,
     defaultMessage: 'Claim all',
   },
 });

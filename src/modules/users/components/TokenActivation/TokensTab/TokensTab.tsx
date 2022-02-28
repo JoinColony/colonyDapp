@@ -22,30 +22,30 @@ import SmallTokenAmountMessage from './SmallTokenAmountMessage';
 
 const MSG = defineMessages({
   active: {
-    id: 'TokenActivation.TokensTab.active',
+    id: 'users.TokenActivation.TokensTab.active',
     defaultMessage: 'Active',
   },
   activeLocked: {
-    id: 'TokenActivation.TokensTab.activeLocked',
+    id: 'users.TokenActivation.TokensTab.activeLocked',
     defaultMessage: 'Active',
   },
   staked: {
-    id: 'TokenActivation.TokensTab.staked',
+    id: 'users.TokenActivation.TokensTab.staked',
     defaultMessage: 'Staked',
   },
   inactive: {
-    id: 'TokenActivation.TokensTab.inactive',
+    id: 'users.TokenActivation.TokensTab.inactive',
     defaultMessage: 'Inactive',
   },
   activeTokensTooltip: {
-    id: 'TokenActivation.TokensTab.activeTokensTooltip',
+    id: 'users.TokenActivation.TokensTab.activeTokensTooltip',
     defaultMessage: `Tokens are “Active” when they’ve been deposited to a
       contract which lets them get ‘locked’ when you need to stake,
       or claim a share of Rewards. You can withdraw tokens back
       to your wallet any time, you just need to clear any locks first.`,
   },
   inactiveTokensTooltip: {
-    id: 'TokenActivation.TokensTab.inactiveTokensTooltip',
+    id: 'users.TokenActivation.TokensTab.inactiveTokensTooltip',
     defaultMessage: `Inactive tokens are contained in your own wallet.
       You need to “Activate” them to stake, or be eligible to receive Rewards.`,
   },
@@ -55,11 +55,11 @@ const MSG = defineMessages({
       before they can be deactivated.`,
   },
   pendingError: {
-    id: 'TokenActivation.TokensTab.pendingError',
+    id: 'users.TokenActivation.TokensTab.pendingError',
     defaultMessage: 'Error: balance pending!',
   },
   pendingErrorTooltip: {
-    id: 'TokenActivation.TokensTab.pendingErrorTooltip',
+    id: 'users.TokenActivation.TokensTab.pendingErrorTooltip',
     defaultMessage: 'Send any “Activate” transaction to claim pending balance.',
   },
 });
