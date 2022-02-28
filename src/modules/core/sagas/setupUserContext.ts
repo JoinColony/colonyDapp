@@ -76,6 +76,7 @@ export default function* setupUserContext(
           ethereal: isWalletTypeEthereal,
           customRPC,
           decentralized,
+          commentsEnabled,
         },
       },
     } = yield apolloClient.query<LoggedInUserQuery, LoggedInUserQueryVariables>(
@@ -178,44 +179,10 @@ export default function* setupUserContext(
       // log.verbose(`Could not find username for ${walletAddress}`);
     }
 
-    const chatClient = TEMP_getContext(ContextModule.ChatClient);
-    // yield chatClient.connectAnonymousUser();
-    // chatClient.canUse = true;
-    // try {
-    //   if (chatClient) {
-    //     chatClient.canUse = false;
-    //     yield chatClient?.disconnectUser();
-
-    //     if (method !== WalletMethod.Ethereal && username) {
-    //       yield chatClient.connectUser(
-    //         {
-    //           id: walletAddress,
-    //           username,
-    //           name: displayName || username || walletAddress,
-    //         },
-    //         chatClient.devToken(walletAddress),
-    //       );
-    //     } else {
-    //       chatClient.connectAnonymousUser();
-    //     }
-    //     setTimeout(() => {
-    //       chatClient.canUse = true;
-    //     }, 1000);
-    //   }
-    // } catch (error) {
-    //   console.log(error)
-    // }
-    // console.log(chatClient);
-    // // debugger
-
-    // console.log(chatClient);
-    // // debugger
-    // yield chatClient?.connectAnonymousUser();
-    // console.log(chatClient);
-    // setTimeout(() => {
-    //   chatClient.canUse = true;
-    // }, chatClient.cleaningIntervalRef);
-    // // debugger
+    let chatClient;
+    if (process.env.STREAM_API && !decentralized && commentsEnabled) {
+      chatClient = TEMP_getContext(ContextModule.ChatClient);
+    }
 
     // @TODO refactor setupUserContext for graphql
     // @BODY eventually we want to move everything to resolvers, so all of this has to happen outside of sagas. There is no need to have a separate state or anything, just set it up in an aync function (instead of WALLET_CREATE), then call this function

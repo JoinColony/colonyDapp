@@ -6,7 +6,11 @@ const getChatClient = () => {
     localStorage.getItem(STORAGE_KEY) as string,
   );
 
-  if (process.env.STREAM_API && !decentralizedStorage?.enabled) {
+  if (
+    process.env.STREAM_API &&
+    decentralizedStorage?.commentsEnabled &&
+    !decentralizedStorage?.enabled
+  ) {
     const client = StreamChat.getInstance(process.env.STREAM_API as string);
     if (!client.user) {
       client.connectAnonymousUser();
