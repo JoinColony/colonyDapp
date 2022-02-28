@@ -93,13 +93,9 @@ export default gql`
     txHash: String!
   }
 
-  type MotionTxHashMapTuple {
+  type MotionTxHashMap {
     key: Int!
     value: TxHash!
-  }
-
-  type MotionsTxHashes {
-    motionTxHash: [MotionTxHashMapTuple!]!
   }
 
   extend type Query {
@@ -161,6 +157,6 @@ export default gql`
     motionsTxHashes(
       motionIds: [String!]!
       colonyAddress: String!
-    ): MotionsTxHashes!
+    ): MotionTxHashMap!
   }
 `;
