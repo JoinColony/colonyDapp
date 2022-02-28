@@ -11,7 +11,7 @@ const MSG = defineMessages({
     defaultMessage: 'Go to motion',
   },
 });
-interface StakesListItemProps {
+interface Props {
   stakedAmount: string;
   tokenSymbol: string;
   colonyName: string;
@@ -25,7 +25,7 @@ const StakesListItem = ({
   colonyName,
   txHash,
   setIsPopoverOpen,
-}: StakesListItemProps) => {
+}: Props) => {
   return (
     <li className={styles.stakesListItem}>
       <Link to={`/colony/${colonyName}/tx/${txHash}`}>
@@ -44,14 +44,6 @@ const StakesListItem = ({
           <div className={styles.falseLink}>
             <FormattedMessage {...MSG.motionUrl} />
           </div>
-
-          {/* {colonyName && txHash && (
-          <Link
-            className={styles.link}
-            text={MSG.motionUrl}
-            to={`/colony/${colonyName}/tx/${txHash}`}
-          />
-        )} */}
         </div>
       </Link>
     </li>
