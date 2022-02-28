@@ -5,6 +5,43 @@
 }
 
 .main {
-  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
   padding-bottom: 15px;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.searchContainer {
+  position: relative;
+}
+
+.icon {
+  height: 20px;
+  width: 20px;
+  position: absolute;
+  right: 4px;
+  bottom: 7px;
+}
+
+.input {
+  padding: 4px;
+  height: 32px;
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--temp-grey-blue-7);
+  background-color: transparent;
+  font-size: var(--size-normal);
+  line-height: 32px;
+  color: var(--text);
+  outline: none;
+  letter-spacing: var(--spacing-normal);
+  transition: border-color 0.1s ease-in;
+
+  &:focus {
+    border-color: var(--primary);
+  }
+
+  &::placeholder {
+    font-size: var(--size-normal);
+    color: rgba(125, 125, 125, 1);
+    letter-spacing: var(--spacing-normal);
+  }
 }
