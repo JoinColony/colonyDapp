@@ -37,7 +37,6 @@ const UserCheckbox = ({ colony, walletAddress, name }: Props) => {
           className={styles.checkbox}
           onChange={(props) => setIsChecked(props.isChecked)}
           getDefaultValue={(checked) => setIsChecked(checked)}
-          disabled
         />
         <UserAvatar
           size="xs"
