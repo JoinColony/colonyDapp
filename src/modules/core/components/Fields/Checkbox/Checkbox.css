@@ -93,3 +93,27 @@
 .stateDisabled .checkbox .checkmark::after {
   background-color: var(--grey-5);
 }
+
+.delegate:focus + .checkbox,
+.checkbox:hover
+{
+  border: 1px solid var(--action-secondary);
+  outline-color: color-mod(var(--action-secondary) alpha(25%));
+}
+
+.delegate:focus + .checkbox .checkmark::before {
+  background-color: var(--action-secondary);
+}
+
+.delegate:focus + .checkbox .checkmark::after {
+  background-color: var(--action-secondary);
+}
+
+
+.checkbox:hover .checkmark::before {
+  background-color: var(--action-secondary);
+}
+
+.checkbox:hover .checkmark::after {
+  background-color: var(--action-secondary);
+}
