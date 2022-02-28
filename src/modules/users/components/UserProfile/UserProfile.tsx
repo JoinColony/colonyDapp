@@ -120,7 +120,7 @@ const UserProfile = ({
   return (
     <ProfileTemplate asideContent={<UserMeta user={user as AnyUser} />}>
       <section className={styles.sectionContainer}>
-        <UserProfileComments user={user} />
+        {process.env.STREAM_API && <UserProfileComments channelId={user.id} />}
       </section>
     </ProfileTemplate>
   );

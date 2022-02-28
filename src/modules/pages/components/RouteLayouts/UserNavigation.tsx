@@ -1,6 +1,5 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { useDispatch } from 'react-redux';
 
 import MaskedAddress from '~core/MaskedAddress';
 import { MiniSpinnerLoader } from '~core/Preloaders';
@@ -61,8 +60,6 @@ const UserNavigation = () => {
     networkId,
     decentralized,
   } = useLoggedInUser();
-  const dispatch = useDispatch();
-
   const transactionAndMessageGroups = useSelector(
     groupedTransactionsAndMessages,
   );
@@ -78,12 +75,6 @@ const UserNavigation = () => {
   const { type: lastWalletType, address: lastWalletAddress } = getLastWallet();
   const attemptingAutoLogin = useAutoLogin();
   const previousWalletConnected = lastWalletType && lastWalletAddress;
-
-  useEffect(() => {
-    if (!ethereal) {
-      dispatch({ type: 'USER_CONNECTED', payload: { isUserConnected: true } });
-    }
-  }, [dispatch, ethereal]);
 
   return (
     <div className={styles.main}>

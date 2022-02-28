@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StreamChat } from 'stream-chat';
+import { Channel as ChannelType } from 'stream-chat';
 import {
   Chat,
   Channel,
@@ -11,13 +11,15 @@ import { defineMessages } from 'react-intl';
 import Comment from '~core/Comment';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 
-import { useLoggedInUser, AnyUser } from '~data/index';
+import { ContextModule, TEMP_getContext } from '~context/index';
+import { useLoggedInUser } from '~data/index';
+
 import StreamCommentInput from './CommentInput';
 
 import styles from './UserProfileComments.css';
 
 interface Props {
-  user: AnyUser;
+  channelId: string;
 }
 
 const MSG = defineMessages({
@@ -29,50 +31,17 @@ const MSG = defineMessages({
 
 const displayName = 'users.UserProfileComments';
 
-const UserProfileComments = ({
-  user: {
-    profile: {
-      walletAddress,
-      username: userUsername,
-      displayName: userDisplayName,
-    },
-  },
-}: Props) => {
-  const { username, ethereal } = useLoggedInUser();
+const STREAM_CHANNEL_TYPE = 'user-cdapp-test';
 
-  const [chatClient, setChatClient] = useState<StreamChat | null>(null);
-
-  // @ts-ignore
-  useEffect(() => {
-    const initChat = async () => {
-      const client = StreamChat.getInstance('f7vp3aeqw6wq');
-
-      if (!ethereal && username) {
-        await client.connectUser(
-          {
-            id: walletAddress,
-            username: userUsername as string,
-            name: userDisplayName || userUsername || walletAddress,
-          },
-          client.devToken(walletAddress),
-        );
-      } else {
-        await client.connectAnonymousUser();
-      }
-      setChatClient(client);
-    };
-
-    initChat();
-
-    return () => chatClient?.disconnectUser();
-  }, [
-    chatClient,
-    ethereal,
-    userDisplayName,
-    userUsername,
+const UserProfileComments = ({ channelId }: Props) => {
+  const {
     username,
-    walletAddress,
-  ]);
+    ethereal,
+    walletAddress: userWalletAddress,
+  } = useLoggedInUser();
+
+  const chatClient = TEMP_getContext(ContextModule.ChatClient);
+  const [channel, setChannel] = useState<ChannelType | null>(null);
 
   const CustomMessage = () => {
     const { message } = useMessageContext();
@@ -97,11 +66,47 @@ const UserProfileComments = ({
     );
   };
 
-  if (!chatClient) {
+  useEffect(() => {
+    const getChannel = () => chatClient.channel(STREAM_CHANNEL_TYPE, channelId);
+    const interval = setInterval(async () => {
+      if (!ethereal && username) {
+        if (chatClient.user) {
+          if (chatClient.user?.id !== userWalletAddress) {
+            await chatClient.disconnectUser();
+            setChannel(null);
+            await chatClient.connectUser(
+              {
+                id: userWalletAddress,
+                username: username as string,
+                name: username || userWalletAddress,
+              },
+              chatClient.devToken(userWalletAddress),
+            );
+            clearInterval(interval);
+            setChannel(getChannel());
+          } else {
+            clearInterval(interval);
+            setChannel(getChannel());
+          }
+        }
+      } else if (!chatClient.user?.anon) {
+        /*
+         * @NOTE This case should actually disconnect the current user
+         * and log back the anon user
+         */
+        clearInterval(interval);
+        setChannel(getChannel());
+      }
+    }, 500);
+    /*
+     * Clear the timeout on unmount
+     */
+    return () => clearInterval(interval);
+  }, [channelId, chatClient, ethereal, userWalletAddress, username]);
+
+  if (!channel) {
     return <MiniSpinnerLoader loadingText={MSG.loading} />;
   }
-
-  const channel = chatClient.channel('user-cdapp-test', walletAddress);
 
   return (
     <div className={styles.main}>

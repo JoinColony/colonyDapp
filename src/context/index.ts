@@ -1,6 +1,7 @@
 import { ApolloClient as ApolloClientClass } from '@apollo/client';
 import { PurserWallet } from '@purser/core';
 import { Provider as EthersProvider } from 'ethers/providers';
+import { StreamChat } from 'stream-chat';
 
 // import ColonyManagerClass from '~lib/ColonyManager';
 
@@ -10,6 +11,7 @@ import ens from './ensContext';
 import apolloClient from './apolloClient';
 import ipfsWithFallback from './ipfsWithFallbackContext';
 import getProvider from '../modules/core/sagas/utils/getProvider';
+import getChatClient from './chatClient';
 
 export enum ContextModule {
   Wallet = 'wallet',
@@ -20,6 +22,7 @@ export enum ContextModule {
   Pinata = 'pinataClient',
   IPFSWithFallback = 'ipfsWithFallback',
   Provider = 'provider',
+  ChatClient = 'chatClient',
 }
 
 export interface IpfsWithFallbackSkeleton {
@@ -35,6 +38,7 @@ export interface Context {
   [ContextModule.ENS]?: ENSClass;
   [ContextModule.IPFSWithFallback]?: IpfsWithFallbackSkeleton;
   [ContextModule.Provider]?: EthersProvider;
+  [ContextModule.ChatClient]?: StreamChat;
 }
 
 const STORAGE_KEY = 'dsettings';
@@ -52,6 +56,7 @@ const TEMP_newContext: Context = {
   [ContextModule.Provider]: getProvider(
     decentralizedStorage?.enabled ? decentralizedStorage?.customRPC : undefined,
   ),
+  [ContextModule.ChatClient]: getChatClient(),
 };
 
 export const TEMP_setContext = <K extends keyof Context>(
