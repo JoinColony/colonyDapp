@@ -11,11 +11,11 @@ import styles from './TokenActivationContent.css';
 
 const MSG = defineMessages({
   yourTokens: {
-    id: 'TokenActivation.TokenActivationContent.yourTokens',
+    id: 'users.TokenActivation.TokenActivationContent.yourTokens',
     defaultMessage: 'Your tokens',
   },
   stakes: {
-    id: 'TokenActivation.TokenActivationContent.stakes',
+    id: 'users.TokenActivation.TokenActivationContent.stakes',
     defaultMessage: 'Stakes',
   },
 });
