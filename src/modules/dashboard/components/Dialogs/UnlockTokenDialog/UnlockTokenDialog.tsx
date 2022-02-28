@@ -1,42 +1,66 @@
 import { FormikProps } from 'formik';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import * as yup from 'yup';
 
-import Dialog, { DialogProps } from '~core/Dialog';
+import Dialog, { ActionDialogProps, DialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 import { ActionTypes } from '~redux/index';
-import { pipe, mergePayload, withMeta } from '~utils/actions';
-import { Colony } from '~data/index';
+import { RootMotionOperationNames } from '~redux/types/actions';
+import { pipe, withMeta, withKey, mapPayload } from '~utils/actions';
 import { WizardDialogType } from '~utils/hooks';
 
 import UnlockTokenForm from './UnlockTokenForm';
 
-interface CustomWizardDialogProps {
-  prevStep?: string;
-  colony: Colony;
+export interface FormValues {
+  forceAction: boolean;
+  annotation: string;
 }
 
 type Props = DialogProps &
   Partial<WizardDialogType<object>> &
-  CustomWizardDialogProps;
+  ActionDialogProps;
 
 const displayName = 'dashboard.UnlockTokenDialog';
 
+const validationSchema = yup.object().shape({
+  forceAction: yup.bool(),
+  annotation: yup.string().max(4000),
+});
+
 const UnlockTokenDialog = ({
-  colony: { colonyAddress },
+  colony: { colonyAddress, colonyName },
   colony,
+  isVotingExtensionEnabled,
   cancel,
   close,
   callStep,
   prevStep,
 }: Props) => {
+  const [isForce, setIsForce] = useState(false);
   const history = useHistory();
+
+  const getFormAction = useCallback(
+    (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
+      const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
+
+      return isVotingExtensionEnabled && !isForce
+        ? ActionTypes[`COLONY_ROOT_MOTION${actionEnd}`]
+        : ActionTypes[`COLONY_ACTION_UNLOCK_TOKEN${actionEnd}`];
+    },
+    [isVotingExtensionEnabled, isForce],
+  );
 
   const transform = useCallback(
     pipe(
-      mergePayload({
+      withKey(colonyAddress),
+      mapPayload(({ annotationMessage }) => ({
+        annotationMessage,
         colonyAddress,
-      }),
+        operationName: RootMotionOperationNames.UNLOCK_TOKEN,
+        motionParams: [],
+        colonyName,
+      })),
       withMeta({ history }),
     ),
     [colonyAddress],
@@ -44,22 +68,38 @@ const UnlockTokenDialog = ({
 
   return (
     <ActionForm
-      initialValues={{}}
-      submit={ActionTypes.COLONY_ACTION_UNLOCK_TOKEN}
-      error={ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_ERROR}
-      success={ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_SUCCESS}
+      initialValues={{
+        forceAction: false,
+        annotationMessage: undefined,
+        /*
+         * @NOTE That since this a root motion, and we don't actually make use
+         * of the motion domain selected (it's disabled), we don't need to actually
+         * pass the value over to the motion, since it will always be 1
+         */
+      }}
+      validationSchema={validationSchema}
+      submit={getFormAction('SUBMIT')}
+      error={getFormAction('ERROR')}
+      success={getFormAction('SUCCESS')}
       onSuccess={close}
       transform={transform}
     >
-      {(formValues: FormikProps<any>) => (
-        <Dialog cancel={cancel}>
-          <UnlockTokenForm
-            {...formValues}
-            colony={colony}
-            back={prevStep && callStep ? () => callStep(prevStep) : undefined}
-          />
-        </Dialog>
-      )}
+      {(formValues: FormikProps<FormValues>) => {
+        if (formValues.values.forceAction !== isForce) {
+          setIsForce(formValues.values.forceAction);
+        }
+
+        return (
+          <Dialog cancel={cancel}>
+            <UnlockTokenForm
+              {...formValues}
+              colony={colony}
+              back={prevStep && callStep ? () => callStep(prevStep) : undefined}
+              isVotingExtensionEnabled={isVotingExtensionEnabled}
+            />
+          </Dialog>
+        );
+      }}
     </ActionForm>
   );
 };

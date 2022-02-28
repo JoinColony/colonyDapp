@@ -6,6 +6,7 @@ const eventsMessageDescriptors = {
   'event.title': `{eventName, select,
       ${ColonyAndExtensionsEvents.OneTxPaymentMade} {{initiator} paid {amount} {tokenSymbol} from {fromDomain} to {recipient}}
       ${ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots} {{initiator} transferred {amount} {tokenSymbol} from the {fromDomain} to {toDomain}}
+      ${ColonyAndExtensionsEvents.TokenUnlocked} {The native token {tokenSymbol} was unlocked}
       ${ColonyAndExtensionsEvents.TokensMinted} {{initiator} minted {amount} {tokenSymbol} to {recipient}}
       ${ColonyAndExtensionsEvents.DomainAdded} {{initiator} added Team: {fromDomain}}
       ${ColonyAndExtensionsEvents.ColonyUpgraded} {This colony has upgraded to {newVersion}}
@@ -54,6 +55,7 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.FundingPotAdded} {Funding pot {fundingPot} added}
       ${ColonyAndExtensionsEvents.ColonyInitialised} {{agent} created a colony with token {tokenSymbol} at address {tokenAddress}}
       ${ColonyAndExtensionsEvents.OneTxPaymentMade} {{agent} created an OneTx payment}
+      ${ColonyAndExtensionsEvents.TokenUnlocked} {Unlocked the native token {tokenSymbol}}
       ${ColonyAndExtensionsEvents.TokensMinted} {{agent} minted {amount} {tokenSymbol}}
       ${ColonyAndExtensionsEvents.ColonyFundsClaimed} {{agent} claimed {amount} {tokenSymbol} for colony}
       ${ColonyAndExtensionsEvents.PaymentAdded} {{agent} added payment with id {paymentId}}

@@ -6,14 +6,20 @@ import { ColonyRole } from '@colony/colony-js';
 
 import Button from '~core/Button';
 import ExternalLink from '~core/ExternalLink';
-import { Colony, useLoggedInUser } from '~data/index';
-import DialogSection from '~core/Dialog/DialogSection';
-import { useTransformer } from '~utils/hooks';
+import { DialogSection, ActionDialogProps } from '~core/Dialog';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
+import Toggle from '~core/Fields/Toggle';
+import { Annotations } from '~core/Fields';
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot } from '~modules/users/checks';
+import NotEnoughReputation from '~dashboard/NotEnoughReputation';
+import MotionDomainSelect from '~dashboard/MotionDomainSelect';
+
+import { useLoggedInUser } from '~data/index';
+import { useTransformer } from '~utils/hooks';
+import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 
 import { TOKEN_UNLOCK_INFO } from '~externalUrls';
 
@@ -48,48 +54,74 @@ const MSG = defineMessages({
     id: 'dashboard.UnlockTokenDialog.UnlockTokenForm.unlockedDescription',
     defaultMessage: `Your colony’s native token has already been unlocked.`,
   },
+  annotation: {
+    id: `dashboard.UnlockTokenDialog.UnlockTokenForm.annotation`,
+    defaultMessage: "Explain why you're unlocking the native token (optional)",
+  },
 });
 
-interface Props {
-  colony: Colony;
-  back?: () => void;
-}
-
 const UnlockTokenForm = ({
-  colony: { isNativeTokenLocked },
+  colony: { isNativeTokenLocked, canColonyUnlockNativeToken, colonyAddress },
   colony,
+  isVotingExtensionEnabled,
   back,
   isSubmitting,
   isValid,
   handleSubmit,
-}: Props & FormikProps<any>) => {
+  values,
+}: ActionDialogProps & FormikProps<any>) => {
   const { walletAddress } = useLoggedInUser();
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   const hasRootPermission = hasRoot(allUserRoles);
   const canUserUnlockNativeToken =
-    hasRoot(allUserRoles) &&
-    colony.canColonyUnlockNativeToken &&
-    isNativeTokenLocked;
-  const requiredRoles: ColonyRole[] = [ColonyRole.Root];
+    hasRootPermission && canColonyUnlockNativeToken && isNativeTokenLocked;
+
+  const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
+    colonyAddress,
+    canUserUnlockNativeToken,
+    isVotingExtensionEnabled,
+    values.forceAction,
+  );
+
+  const inputDisabled =
+    !userHasPermission || onlyForceAction || !isNativeTokenLocked;
 
   return (
     <>
-      <DialogSection appearance={{ theme: 'heading' }}>
-        <Heading
-          appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
-          text={colony.isNativeTokenLocked ? MSG.title : MSG.unlockedTitle}
-        />
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <div className={styles.modalHeading}>
+          {isVotingExtensionEnabled && (
+            <div className={styles.motionVoteDomain}>
+              <MotionDomainSelect
+                colony={colony}
+                /*
+                 * @NOTE Always disabled since you can only create this motion in root
+                 */
+                disabled
+              />
+            </div>
+          )}
+          <div className={styles.headingContainer}>
+            <Heading
+              appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+              text={MSG.title}
+            />
+            {canUserUnlockNativeToken && isVotingExtensionEnabled && (
+              <Toggle label={{ id: 'label.force' }} name="forceAction" />
+            )}
+          </div>
+        </div>
       </DialogSection>
-      {!hasRootPermission && (
+      {!userHasPermission && isNativeTokenLocked && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div className={styles.wrapper}>
-            <PermissionRequiredInfo requiredRoles={requiredRoles} />
+            <PermissionRequiredInfo requiredRoles={[ColonyRole.Root]} />
           </div>
         </DialogSection>
       )}
       <DialogSection appearance={{ theme: 'sidePadding' }}>
-        {colony.isNativeTokenLocked ? (
+        {isNativeTokenLocked ? (
           <FormattedMessage {...MSG.description} />
         ) : (
           <div className={styles.unlocked}>
@@ -97,7 +129,7 @@ const UnlockTokenForm = ({
           </div>
         )}
       </DialogSection>
-      {colony.isNativeTokenLocked && (
+      {isNativeTokenLocked && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div className={styles.note}>
             <FormattedMessage {...MSG.note} />
@@ -109,7 +141,18 @@ const UnlockTokenForm = ({
           </div>
         </DialogSection>
       )}
-      {!hasRootPermission && (
+      {isNativeTokenLocked && (
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <Annotations
+            label={MSG.annotation}
+            name="annotationMessage"
+            disabled={inputDisabled}
+          />
+        </DialogSection>
+      )}
+      {/* tslint being stupid */}
+      {/* eslint-disable-next-line max-len */}
+      {!(hasRootPermission || isVotingExtensionEnabled) && isNativeTokenLocked && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div className={styles.noPermissionMessage}>
             <FormattedMessage
@@ -128,6 +171,7 @@ const UnlockTokenForm = ({
           </div>
         </DialogSection>
       )}
+      {onlyForceAction && isNativeTokenLocked && <NotEnoughReputation />}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
@@ -139,7 +183,7 @@ const UnlockTokenForm = ({
           onClick={() => handleSubmit()}
           text={{ id: 'button.confirm' }}
           loading={isSubmitting}
-          disabled={!isValid || !canUserUnlockNativeToken || isSubmitting}
+          disabled={!isValid || inputDisabled}
         />
       </DialogSection>
     </>

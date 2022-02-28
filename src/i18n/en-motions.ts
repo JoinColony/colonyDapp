@@ -21,7 +21,8 @@ const motionsMessageDescriptors = {
           one {pt}
           other {pts}
         } reputation reward}
-        other {Generic motion we don't have information about}
+      ${ColonyMotions.UnlockTokenMotion} {Unlock native token {tokenSymbol}}
+      other {Generic motion we don't have information about}
     }`,
   [`motion.${ColonyMotions.SetUserRolesMotion}.assign`]: `Assign the {roles} in {fromDomainName} to {recipient}`,
   [`motion.${ColonyMotions.SetUserRolesMotion}.remove`]: `Remove the {roles} in {fromDomainName} from {recipient}`,
@@ -37,6 +38,7 @@ const motionsMessageDescriptors = {
       ${ColonyMotions.VersionUpgradeMotion} {Version Upgrade}
       ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite}
       ${ColonyMotions.EmitDomainReputationRewardMotion} {Award}
+      ${ColonyMotions.UnlockTokenMotion} {Unlock Token}
       other {Generic}
     }`,
 };

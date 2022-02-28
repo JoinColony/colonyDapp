@@ -13,6 +13,7 @@ export enum ColonyActions {
   Payment = 'Payment',
   Recovery = 'Recovery',
   MoveFunds = 'MoveFunds',
+  UnlockToken = 'UnlockToken',
   MintTokens = 'MintTokens',
   CreateDomain = 'CreateDomain',
   VersionUpgrade = 'VersionUpgrade',
@@ -32,6 +33,7 @@ export enum ColonyAndExtensionsEvents {
   FundingPotAdded = 'FundingPotAdded',
   PaymentAdded = 'PaymentAdded',
   PayoutClaimed = 'PayoutClaimed',
+  TokenUnlocked = 'TokenUnlocked',
   TokensMinted = 'TokensMinted',
   SkillAdded = 'SkillAdded',
   DomainAdded = 'DomainAdded',
@@ -98,6 +100,7 @@ export enum ColonyAndExtensionsEvents {
   LogSetOwner = 'LogSetOwner',
   Approval = 'Approval',
   Transfer = 'Transfer',
+  Unlock = 'Unlock',
   /*
    * Extension: One Tx Payment events
    */

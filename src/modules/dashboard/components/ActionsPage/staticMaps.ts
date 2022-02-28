@@ -49,6 +49,7 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
   [ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots]: [
     ColonyRole.Funding,
   ],
+  [ColonyAndExtensionsEvents.TokenUnlocked]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.TokensMinted]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.DomainAdded]: [ColonyRole.Architecture],
   [ColonyAndExtensionsEvents.ColonyUpgraded]: [ColonyRole.Root],
@@ -76,6 +77,7 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyActions.Payment]: 'emoji-dollar-stack',
   [ColonyActions.Recovery]: 'emoji-alarm-lamp',
   [ColonyActions.MoveFunds]: 'emoji-world-globe',
+  [ColonyActions.UnlockToken]: 'emoji-padlock',
   [ColonyActions.MintTokens]: 'emoji-seed-sprout',
   [ColonyActions.CreateDomain]: 'emoji-crane',
   [ColonyActions.VersionUpgrade]: 'emoji-strong-person',
@@ -94,6 +96,7 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyMotions.SetUserRolesMotion]: 'emoji-crane',
   [ColonyMotions.EmitDomainReputationPenaltyMotion]: 'emoji-firebolt',
   [ColonyMotions.EmitDomainReputationRewardMotion]: 'emoji-shooting-star',
+  [ColonyMotions.UnlockTokenMotion]: 'emoji-padlock',
   [ColonyActions.Generic]: 'circle-check-primary',
 };
 
@@ -123,6 +126,7 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
   [ColonyActions.MoveFunds]: [
     ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots,
   ],
+  [ColonyActions.UnlockToken]: [ColonyAndExtensionsEvents.TokenUnlocked],
   [ColonyActions.MintTokens]: [ColonyAndExtensionsEvents.TokensMinted],
   [ColonyActions.CreateDomain]: [ColonyAndExtensionsEvents.DomainAdded],
   [ColonyActions.VersionUpgrade]: [ColonyAndExtensionsEvents.ColonyUpgraded],
@@ -141,6 +145,7 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
   [ColonyActions.EmitDomainReputationReward]: [
     ColonyAndExtensionsEvents.ArbitraryReputationUpdate,
   ],
+  [ColonyMotions.UnlockTokenMotion]: MOTION_EVENTS,
   [ColonyMotions.MintTokensMotion]: MOTION_EVENTS,
   [ColonyMotions.CreateDomainMotion]: MOTION_EVENTS,
   [ColonyMotions.EditDomainMotion]: MOTION_EVENTS,
@@ -167,6 +172,7 @@ export const EVENTS_REQUIRED_FOR_ACTION: ActionsEventsMap = {
   [ColonyActions.MoveFunds]: [
     ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots,
   ],
+  [ColonyActions.UnlockToken]: [ColonyAndExtensionsEvents.TokenUnlocked],
   [ColonyActions.MintTokens]: [ColonyAndExtensionsEvents.TokensMinted],
   /*
    * We track both configurations of this action (with metadata and without)
@@ -209,6 +215,7 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.ToDomain,
     ActionPageDetails.Amount,
   ],
+  [ColonyActions.UnlockToken]: [ActionPageDetails.Domain],
   [ColonyActions.MintTokens]: [ActionPageDetails.Amount],
   [ColonyActions.CreateDomain]: [
     ActionPageDetails.Domain,
@@ -271,4 +278,5 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.ToRecipient,
     ActionPageDetails.ReputationChange,
   ],
+  [ColonyMotions.UnlockTokenMotion]: [],
 };
