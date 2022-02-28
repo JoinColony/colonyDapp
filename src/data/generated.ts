@@ -227,7 +227,6 @@ export type MutationUnsubscribeFromColonyArgs = {
 };
 
 export type Query = {
-  SubgraphMotionsTx: Array<MotionTxHash>;
   actionsThatNeedAttention: Array<Maybe<ActionThatNeedsAttention>>;
   bannedUsers: Array<Maybe<BannedUser>>;
   claimableStakedMotions: ClaimableMotions;
@@ -273,7 +272,7 @@ export type Query = {
   motionVoterReward: MotionVoterReward;
   motions: Array<SubgraphMotion>;
   motionsSystemMessages: Array<SystemMessage>;
-  motionsTxHashes: Array<MotionTxHash>;
+  motionsTxHashes: MotionsTxHashes;
   networkContracts: NetworkContracts;
   networkExtensionVersion: Array<Maybe<ColonyExtensionVersion>>;
   processedColony: ProcessedColony;
@@ -301,15 +300,6 @@ export type Query = {
   whitelistAgreement: Scalars['String'];
   whitelistPolicies: WhitelistPolicy;
   whitelistedUsers: Array<Maybe<WhitelistedUser>>;
-};
-
-
-export type QuerySubgraphMotionsTxArgs = {
-  skip?: Maybe<Scalars['Int']>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Scalars['String']>;
-  orderDirection?: Maybe<Scalars['String']>;
-  where: MotionsFilter;
 };
 
 
@@ -1406,9 +1396,17 @@ export type MotionTimeoutPeriods = {
   timeLeftToSubmit: Scalars['Int'];
 };
 
-export type MotionTxHash = {
-  motionId: Scalars['String'];
-  transactionHash: Scalars['String'];
+export type TxHash = {
+  txHash: Scalars['String'];
+};
+
+export type MotionTxHashMapTuple = {
+  key: Scalars['Int'];
+  value: TxHash;
+};
+
+export type MotionsTxHashes = {
+  motionTxHash: Array<MotionTxHashMapTuple>;
 };
 
 export type UsersAndRecoveryApprovals = {
