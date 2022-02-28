@@ -272,7 +272,7 @@ export type Query = {
   motionVoterReward: MotionVoterReward;
   motions: Array<SubgraphMotion>;
   motionsSystemMessages: Array<SystemMessage>;
-  motionsTxHashes: MotionsTxHashes;
+  motionsTxHashes: MotionTxHashMap;
   networkContracts: NetworkContracts;
   networkExtensionVersion: Array<Maybe<ColonyExtensionVersion>>;
   processedColony: ProcessedColony;
@@ -1401,13 +1401,9 @@ export type TxHash = {
   txHash: Scalars['String'];
 };
 
-export type MotionTxHashMapTuple = {
+export type MotionTxHashMap = {
   key: Scalars['Int'];
   value: TxHash;
-};
-
-export type MotionsTxHashes = {
-  motionTxHash: Array<MotionTxHashMapTuple>;
 };
 
 export type UsersAndRecoveryApprovals = {
