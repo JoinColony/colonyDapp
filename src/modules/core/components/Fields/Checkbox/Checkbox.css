@@ -85,6 +85,7 @@
 
 .stateDisabled .checkbox {
   outline-color: color-mod(var(--text-disabled) alpha(25%));
+  border-color: transparent;
   background-color: var(--text-disabled);
 }
 
