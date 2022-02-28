@@ -30,7 +30,7 @@
   outline: 0;
 }
 
-a {
+.stakesListItem > a {
   height: 100%;
   width: 100%;
 }
