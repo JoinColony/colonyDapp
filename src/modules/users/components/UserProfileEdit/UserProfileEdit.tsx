@@ -70,6 +70,14 @@ const MSG = defineMessages({
     id: 'users.UserProfileEdit.settingsSaveWarning',
     defaultMessage: `Changing the settings from the centralized to decentralized mode will reload your app!`,
   },
+  lableEnableComments: {
+    id: 'users.UserProfileEdit.lableEnableComments',
+    defaultMessage: 'Enable Comments',
+  },
+  commentsSaveWarning: {
+    id: 'users.UserProfileEdit.commentsSaveWarning',
+    defaultMessage: `Changing the comments settings will reload your app!`,
+  },
 });
 
 const displayName = 'users.UserProfileEdit';
@@ -79,6 +87,7 @@ interface FormValues {
   bio?: string;
   website?: string;
   location?: string;
+  commentsEnabled?: boolean;
 }
 
 interface SettingsFormValues {
@@ -93,6 +102,8 @@ const validationSchema = yup.object({
   website: yup.string().url().nullable(),
 });
 
+const STORAGE_KEY = 'dsettings';
+
 const UserProfileEdit = () => {
   const {
     walletAddress,
@@ -100,17 +111,34 @@ const UserProfileEdit = () => {
     decentralized,
     username,
     customRPC,
+    commentsEnabled,
   } = useLoggedInUser();
 
   const [editUser] = useEditUserMutation();
   const onProfileSubmit = useCallback(
-    (profile: FormValues) => editUser({ variables: { input: profile } }),
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    ({ commentsEnabled: commentsEnabledValue, ...profile }: FormValues) => {
+      editUser({ variables: { input: profile } });
+    },
     [editUser],
   );
 
+  const onCommentsUpdate = useCallback((value, setSubmitting) => {
+    const currentSettings = localStorage.getItem(STORAGE_KEY);
+    const settings = currentSettings ? JSON.parse(currentSettings) : {};
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        ...settings,
+        commentsEnabled: !value,
+      }),
+    );
+    setTimeout(() => setSubmitting(false), 200);
+    window.location.reload();
+  }, []);
+
   const onSettingsSubmit = useCallback(
     (values: SettingsFormValues, { setSubmitting }) => {
-      const STORAGE_KEY = 'dsettings';
       localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
       setTimeout(() => setSubmitting(false), 200);
       if (decentralized !== values.enabled) {
@@ -153,11 +181,13 @@ const UserProfileEdit = () => {
                 bio: user.profile.bio || undefined,
                 website: user.profile.website || undefined,
                 location: user.profile.location || undefined,
+                commentsEnabled:
+                  typeof commentsEnabled === 'boolean' ? commentsEnabled : true,
               }}
               onSubmit={onProfileSubmit}
               validationSchema={validationSchema}
             >
-              {({ status, isSubmitting }) => (
+              {({ status, isSubmitting, setSubmitting }) => (
                 <div className={styles.main}>
                   <FieldSet>
                     <InputLabel label={MSG.labelWallet} />
@@ -177,6 +207,18 @@ const UserProfileEdit = () => {
                   {!decentralized && (
                     <>
                       <FieldSet className={styles.inputFieldSet}>
+                        <div className={styles.toggle}>
+                          <Toggle
+                            label={MSG.lableEnableComments}
+                            name="commentsEnabled"
+                            onChange={(value) =>
+                              onCommentsUpdate(value, setSubmitting)
+                            }
+                          />
+                          <p>
+                            <FormattedMessage {...MSG.commentsSaveWarning} />
+                          </p>
+                        </div>
                         <Input
                           label={MSG.labelName}
                           name="displayName"
@@ -221,7 +263,6 @@ const UserProfileEdit = () => {
               appearance={{ theme: 'dark', size: 'medium' }}
               text={MSG.headingSettings}
             />
-            {decentralized}
             <Form<SettingsFormValues>
               initialValues={{
                 enabled: decentralized || false,

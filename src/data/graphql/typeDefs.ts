@@ -35,6 +35,7 @@ export default gql`
     networkId: Int
     customRPC: String
     decentralized: Boolean
+    commentsEnabled: Boolean
   }
 
   type SugraphEventProcessedValues {

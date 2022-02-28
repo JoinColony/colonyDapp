@@ -28,7 +28,7 @@ const UserProfile = ({
     params: { username: usernameOrAddress },
   },
 }: Props) => {
-  const { decentralized } = useLoggedInUser();
+  const { decentralized, commentsEnabled } = useLoggedInUser();
   const loadByAddress = isAddress(usernameOrAddress);
 
   const [
@@ -120,7 +120,9 @@ const UserProfile = ({
   return (
     <ProfileTemplate asideContent={<UserMeta user={user as AnyUser} />}>
       <section className={styles.sectionContainer}>
-        {process.env.STREAM_API && <UserProfileComments channelId={user.id} />}
+        {process.env.STREAM_API && commentsEnabled && (
+          <UserProfileComments channelId={user.id} />
+        )}
       </section>
     </ProfileTemplate>
   );

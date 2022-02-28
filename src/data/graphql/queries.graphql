@@ -12,6 +12,7 @@ query LoggedInUser {
     networkId
     customRPC
     decentralized
+    commentsEnabled
   }
 }
 

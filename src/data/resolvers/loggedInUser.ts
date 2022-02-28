@@ -24,6 +24,10 @@ export const initialCache = {
     isNetworkAllowed: true,
     customRPC: decentralizedStorage?.customRPC || null,
     decentralized: decentralizedStorage?.enabled || false,
+    commentsEnabled:
+      typeof decentralizedStorage?.commentsEnabled === 'boolean'
+        ? decentralizedStorage.commentsEnabled
+        : true,
   },
 };
 

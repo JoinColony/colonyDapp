@@ -906,6 +906,7 @@ export type LoggedInUser = {
   networkId?: Maybe<Scalars['Int']>;
   customRPC?: Maybe<Scalars['String']>;
   decentralized?: Maybe<Scalars['Boolean']>;
+  commentsEnabled?: Maybe<Scalars['Boolean']>;
 };
 
 export type SugraphEventProcessedValues = {
@@ -1613,7 +1614,7 @@ export type UnBanUserTransactionMessagesMutation = Pick<Mutation, 'unbanUserTran
 export type LoggedInUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type LoggedInUserQuery = { loggedInUser: Pick<LoggedInUser, 'walletAddress' | 'balance' | 'username' | 'ethereal' | 'networkId' | 'customRPC' | 'decentralized'> };
+export type LoggedInUserQuery = { loggedInUser: Pick<LoggedInUser, 'walletAddress' | 'balance' | 'username' | 'ethereal' | 'networkId' | 'customRPC' | 'decentralized' | 'commentsEnabled'> };
 
 export type UserQueryVariables = Exact<{
   address: Scalars['String'];
@@ -3571,6 +3572,7 @@ export const LoggedInUserDocument = gql`
     networkId
     customRPC
     decentralized
+    commentsEnabled
   }
 }
     `;
