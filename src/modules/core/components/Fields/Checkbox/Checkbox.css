@@ -84,9 +84,9 @@
 }
 
 .stateDisabled .checkbox {
-  outline-color: color-mod(var(--text-disabled) alpha(25%));
   border-color: transparent;
   background-color: var(--text-disabled);
+  outline-color: color-mod(var(--text-disabled) alpha(25%));
 }
 
 .stateDisabled .checkbox .checkmark::before,
@@ -95,8 +95,7 @@
 }
 
 .delegate:focus + .checkbox,
-.checkbox:hover
-{
+.checkbox:hover {
   border: 1px solid var(--action-secondary);
   outline-color: color-mod(var(--action-secondary) alpha(25%));
 }
@@ -108,7 +107,6 @@
 .delegate:focus + .checkbox .checkmark::after {
   background-color: var(--action-secondary);
 }
-
 
 .checkbox:hover .checkmark::before {
   background-color: var(--action-secondary);
