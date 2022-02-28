@@ -1,16 +1,19 @@
 @value reputationColor: rgb(255, 176, 0);
 
 .reputationWrapper {
+  display: flex;
+  align-items: center;
   padding-right: 17px;
   position: relative;
 }
 
 .reputation {
-  display: block;
-  height: 26px;
+  display: inline-block;
+  height: 100%;
+  vertical-align: top;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
-  line-height: 26px;
+  line-height: 21px;
   color: reputationColor;
 }
 

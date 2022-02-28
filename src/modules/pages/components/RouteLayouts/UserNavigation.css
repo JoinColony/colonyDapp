@@ -13,6 +13,7 @@
   position: relative;
   border-radius: var(--radius-normal);
   background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
+  font-size: var(--size-smallish);
   line-height: 26px;
 }
 
@@ -115,8 +116,10 @@
 }
 
 .walletAddress > span {
+  display: block;
+  height: 100%;
   position: relative;
-  line-height: 24px;
+  line-height: 26px;
 }
 
 .walletAddress:hover {
