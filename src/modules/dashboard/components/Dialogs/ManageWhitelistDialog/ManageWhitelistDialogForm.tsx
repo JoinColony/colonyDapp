@@ -18,6 +18,7 @@ import { hasRoot } from '~modules/users/checks';
 
 import { FormValues } from './ManageWhitelistDialog';
 import ManageWhitelistActiveToggle from './ManageWhitelistActiveToggle';
+import WhitelistedAddresses from './WhitelistedAddresses';
 
 import styles from './ManageWhitelistDialogForm.css';
 
@@ -55,10 +56,10 @@ const ManageWhitelistDialogForm = ({
   back,
   colony,
   values,
+  values: { whitelistedAddresses },
 }: Props & FormikProps<FormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const [tabIndex, setTabIndex] = useState<number>(0);
-
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   const hasRegisteredProfile = !!username && !ethereal;
@@ -102,6 +103,10 @@ const ManageWhitelistDialogForm = ({
           <TabPanel>
             <ManageWhitelistActiveToggle
               isWhiletlistActivated={values.isWhiletlistActivated}
+            />
+            <WhitelistedAddresses
+              colony={colony}
+              whitelistedAddresses={whitelistedAddresses}
             />
           </TabPanel>
         </Tabs>

@@ -1,0 +1,10 @@
+.container {
+  max-height: 250px;
+  position: relative;
+  overflow: auto;
+}
+
+.main {
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+  padding-bottom: 15px;
+}
