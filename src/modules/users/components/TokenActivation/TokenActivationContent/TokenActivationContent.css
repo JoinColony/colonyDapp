@@ -282,5 +282,7 @@
   width: 20px;
   border-radius: 50%;
   background-color: var(--pink);
+  font-size: var(--size-small);
+  font-weight: var(--weight-normal);
   color: var(--text-invert);
 }
