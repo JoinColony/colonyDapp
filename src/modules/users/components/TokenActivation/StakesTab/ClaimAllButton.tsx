@@ -1,6 +1,6 @@
+import React, { useCallback, Dispatch, SetStateAction } from 'react';
 import { bigNumberify } from 'ethers/utils';
 import { FormikProps } from 'formik';
-import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import Button from '~core/Button';
@@ -23,12 +23,14 @@ interface Props {
   unclaimedMotionStakeEvents: ParsedMotionStakedEvent[];
   colonyAddress: Address;
   userAddress: Address;
+  setIsPopoverOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 const ClaimAllButton = ({
   unclaimedMotionStakeEvents,
   userAddress,
   colonyAddress,
+  setIsPopoverOpen,
 }: Props) => {
   const uniqueMotionIds = [
     ...new Set(
@@ -53,6 +55,8 @@ const ClaimAllButton = ({
       error={ActionTypes.COLONY_MOTION_CLAIM_ERROR}
       success={ActionTypes.COLONY_MOTION_CLAIM_SUCCESS}
       transform={transform}
+      onSuccess={setIsPopoverOpen}
+      onError={setIsPopoverOpen}
     >
       {({ handleSubmit, isSubmitting }: FormikProps<{}>) => (
         <Button
