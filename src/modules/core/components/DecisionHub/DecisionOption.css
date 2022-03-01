@@ -36,6 +36,7 @@
 
 .rowIcon {
   flex: 0 0 50px;
+  height: 16px;
   text-align: center;
 }
 

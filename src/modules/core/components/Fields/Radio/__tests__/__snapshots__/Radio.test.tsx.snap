@@ -43,12 +43,14 @@ exports[`Radio component Renders initial component 1`] = `
             htmlFor="halpHalp"
             id="halpHalp-label"
           >
-            <span>
-              awesome
-            </span>
-            <span>
-              halp
-            </span>
+            <div>
+              <span>
+                awesome
+              </span>
+              <span>
+                halp
+              </span>
+            </div>
           </label>
         </InputLabel>
       </span>

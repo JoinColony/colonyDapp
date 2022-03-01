@@ -5,6 +5,7 @@
 .widgetHeading {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 7px;
 }
 
@@ -40,6 +41,7 @@
 .help {
   margin-right: auto;
   margin-left: 8px;
+  height: 16px;
 }
 
 .tooltip {

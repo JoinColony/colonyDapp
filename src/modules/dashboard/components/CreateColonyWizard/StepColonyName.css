@@ -28,8 +28,7 @@
 }
 
 .iconContainer {
-  position: relative;
-  bottom: 5px;
+  height: 16px;
 }
 
 .tooltipContent {
