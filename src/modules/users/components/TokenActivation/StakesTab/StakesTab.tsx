@@ -80,6 +80,7 @@ const StakesTab = ({
               unclaimedMotionStakeEvents={unclaimedMotionStakeEvents}
               userAddress={walletAddress}
               colonyAddress={colony?.colonyAddress || ''}
+              setIsPopoverOpen={setIsPopoverOpen}
             />
           </div>
           <ul className={styles.stakesList}>
