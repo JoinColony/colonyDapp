@@ -10,6 +10,7 @@ import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
+import AddAddressesForm from './AddAddressesForm';
 
 import { useLoggedInUser, Colony, AnyUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
@@ -105,7 +106,7 @@ const ManageWhitelistDialogForm = ({
             </Tab>
           </TabList>
           <TabPanel>
-            <h2>Please implement this content in separate component</h2>
+            <AddAddressesForm colony={colony} />
           </TabPanel>
           <TabPanel>
             {(whitelistedUsers?.length && (
