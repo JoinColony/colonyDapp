@@ -1,6 +1,6 @@
 import { bigNumberify } from 'ethers/utils';
 
-describe('Colony can mint tokens via aciton', () => {
+describe('Colony can mint tokens via action', () => {
   it('mint native tokens', () => {
     const amountToMint = 10;
     const annotationText = 'Test annotation';
