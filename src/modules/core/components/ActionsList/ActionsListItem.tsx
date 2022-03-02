@@ -77,6 +77,7 @@ interface Props {
   item: FormattedAction;
   colony: Colony;
   handleOnClick?: (handlerProps: ClickHandlerProps) => void;
+  dataCy: string;
 }
 
 const ActionsListItem = ({
@@ -107,6 +108,7 @@ const ActionsListItem = ({
   },
   colony,
   handleOnClick,
+  dataCy,
 }: Props) => {
   const { formatMessage, formatNumber } = useIntl();
   const { data: metadataJSON } = useDataFetcher(
@@ -221,7 +223,7 @@ const ActionsListItem = ({
     : (x: any) => x;
 
   return (
-    <li>
+    <li data-cy={dataCy}>
       <div
         /*
          * @NOTE This is non-interactive element to appease the DOM Nesting Validator
