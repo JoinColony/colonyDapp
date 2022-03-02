@@ -24,17 +24,20 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-Cypress.Commands.add('login', () => {
-  cy.visit('/landing');
+Cypress.Commands.add("login", () => {
+  cy.visit("/landing");
   cy.findByText(/connect wallet/i).click();
+  cy.contains(/ganache/i).click();
   // eslint-disable-next-line cypress/no-unnecessary-waiting
-  cy.contains(/ganache/i)
-    .click()
-    .get('.Button_themePrimary_3aiuKGRF')
+  cy.findByText(/continue/i)
     .click()
     .wait(3000);
 });
 
-Cypress.Commands.add('assertHome', () => {
-  cy.url().should('eq', `${Cypress.config().baseUrl}/landing`);
+Cypress.Commands.add("assertHome", () => {
+  cy.url().should("eq", `${Cypress.config().baseUrl}/landing`);
+});
+
+Cypress.Commands.add("getBySel", (selector, ...args) => {
+  return cy.get(`[data-test=${selector}]`, ...args);
 });
