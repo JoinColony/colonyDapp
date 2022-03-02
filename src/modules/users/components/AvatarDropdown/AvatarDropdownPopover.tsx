@@ -49,10 +49,6 @@ const MSG = defineMessages({
     id: 'users.AvatarDropdown.AvatarDropdownPopover.link.signOut',
     defaultMessage: 'Sign Out',
   },
-  buttonConnect: {
-    id: 'users.AvatarDropdown.AvatarDropdownPopover.buttonConnect',
-    defaultMessage: 'Connect Wallet',
-  },
 });
 
 interface Props {
