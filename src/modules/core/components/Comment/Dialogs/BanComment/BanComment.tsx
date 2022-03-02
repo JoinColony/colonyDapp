@@ -166,6 +166,7 @@ const BanComment = ({
               textValues={{ unban }}
               loading={loading}
               onClick={handleSubmit}
+              data-cy="moderate-user-confirm-button"
             />
           </div>
         </div>

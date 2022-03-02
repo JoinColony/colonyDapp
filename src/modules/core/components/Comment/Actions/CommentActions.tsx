@@ -85,6 +85,7 @@ const CommentActions = ({
           })}
           onClick={() => setOpen(true)}
           type="button"
+          data-cy="comment-actions-button"
         >
           <Icon
             className={styles.actionsIcon}
