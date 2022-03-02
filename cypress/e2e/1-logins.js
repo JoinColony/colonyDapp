@@ -1,7 +1,7 @@
 import { buildUser } from '../support/generate';
 
 describe('Colony dapp landing simple login', () => {
-  it('logins the existing account', () => {
+  it.skip('logins the existing account', () => {
     cy.login()
       .get('.UserNavigation_connectWalletButton_3agv3_Lz')
       .should('not.exist')

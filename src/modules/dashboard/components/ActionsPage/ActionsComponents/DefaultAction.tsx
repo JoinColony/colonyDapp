@@ -231,7 +231,7 @@ const DefaultAction = ({
            * @NOTE Can't use `Heading` here since it uses `formmatedMessage` internally
            * for message descriptors, and that doesn't support our complex text values
            */}
-          <h1 className={styles.heading}>
+          <h1 className={styles.heading} data-test="actionHeading">
             <FormattedMessage
               id={roleMessageDescriptorId || 'action.title'}
               values={{

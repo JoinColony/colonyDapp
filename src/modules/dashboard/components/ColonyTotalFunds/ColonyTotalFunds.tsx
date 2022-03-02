@@ -107,6 +107,7 @@ const ColonyTotalFunds = ({
           className={styles.selectedTokenAmount}
           unit={getTokenDecimalsWithFallback(currentToken.decimals)}
           value={currentToken.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount}
+          data-test="colonyTotalFunds"
         />
         <ColonyTotalFundsPopover
           tokens={data.tokens}
