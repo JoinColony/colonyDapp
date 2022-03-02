@@ -116,10 +116,7 @@
 }
 
 .walletAddress > span {
-  display: block;
-  height: 100%;
-  position: relative;
-  line-height: 26px;
+  line-height: 24px;
 }
 
 .walletAddress:hover {
