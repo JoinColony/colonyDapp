@@ -203,7 +203,9 @@ const UserNavigation = () => {
                     ref={ref}
                     onClick={toggle}
                   >
-                    <MaskedAddress address={walletAddress} />
+                    <span>
+                      <MaskedAddress address={walletAddress} />
+                    </span>
                   </button>
                   {readyTransactions >= 1 && (
                     <span className={styles.readyTransactionsCount}>
