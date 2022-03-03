@@ -28,7 +28,6 @@ interface Props {
     handleOnClick?: (handlerProps: ClickHandlerProps) => void;
     colony: Colony;
     item: any;
-    dataCy: string;
   }>;
 }
 
@@ -45,7 +44,6 @@ const ActionsList = ({
         item={item}
         handleOnClick={handleItemClick}
         colony={colony}
-        dataCy="action-item"
       />
     ))}
   </ul>
