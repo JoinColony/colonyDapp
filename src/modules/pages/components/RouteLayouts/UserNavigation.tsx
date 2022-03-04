@@ -119,7 +119,7 @@ const UserNavigation = () => {
     <div className={styles.main}>
       {userCanNavigate && (
         <div
-          className={styles.networkInfo}
+          className={`${styles.elementWrapper} ${styles.networkInfo}`}
           title={
             isNetworkAllowed
               ? SUPPORTED_NETWORKS[networkId || 1].name
@@ -130,7 +130,7 @@ const UserNavigation = () => {
         </div>
       )}
       {!ethereal && !isNetworkAllowed && (
-        <div className={styles.wrongNetwork}>
+        <div className={`${styles.elementWrapper} ${styles.wrongNetwork}`}>
           <FormattedMessage {...MSG.wrongNetworkAlert} />
         </div>
       )}
@@ -149,14 +149,12 @@ const UserNavigation = () => {
             ],
           }}
         >
-          <div>
-            <div className={styles.reputation}>
-              <MemberReputation
-                walletAddress={walletAddress}
-                colonyAddress={colonyData?.colonyAddress}
-                showIconTitle={false}
-              />
-            </div>
+          <div className={`${styles.elementWrapper} ${styles.reputation}`}>
+            <MemberReputation
+              walletAddress={walletAddress}
+              colonyAddress={colonyData?.colonyAddress}
+              showIconTitle={false}
+            />
           </div>
         </Tooltip>
       )}
@@ -183,7 +181,7 @@ const UserNavigation = () => {
           <MiniSpinnerLoader title={MSG.walletAutologin} />
         </div>
       ) : (
-        <div className={styles.buttonsWrapper}>
+        <div className={`${styles.elementWrapper} ${styles.walletWrapper}`}>
           {userCanNavigate && nativeToken && userLock && (
             <UserTokenActivationButton
               nativeToken={nativeToken}
@@ -205,7 +203,9 @@ const UserNavigation = () => {
                     ref={ref}
                     onClick={toggle}
                   >
-                    <MaskedAddress address={walletAddress} />
+                    <span>
+                      <MaskedAddress address={walletAddress} />
+                    </span>
                   </button>
                   {readyTransactions >= 1 && (
                     <span className={styles.readyTransactionsCount}>

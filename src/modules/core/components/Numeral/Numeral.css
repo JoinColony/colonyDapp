@@ -12,6 +12,10 @@
   font-size: var(--size-small);
 }
 
+.sizeSmallish {
+  font-size: var(--size-smallish);
+}
+
 .sizeMedium {
   font-size: var(--size-medium);
 }

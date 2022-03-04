@@ -8,7 +8,7 @@ import styles from './Numeral.css';
 
 interface Appearance {
   theme: 'primary' | 'grey' | 'dark' | 'blue';
-  size?: 'medium' | 'large' | 'small';
+  size?: 'medium' | 'large' | 'small' | 'smallish';
   weight?: 'medium';
 }
 

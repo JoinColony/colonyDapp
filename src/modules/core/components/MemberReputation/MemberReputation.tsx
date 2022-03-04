@@ -75,7 +75,7 @@ const MemberReputation = ({
   }
 
   return (
-    <div>
+    <div className={styles.reputationWrapper}>
       {!userPercentageReputation && (
         <div className={styles.reputation}>— %</div>
       )}

@@ -5,6 +5,18 @@
   text-align: left;
 }
 
+.elementWrapper {
+  composes: flexContainerRow flexAlignCenter flexJustifyCenter from '~styles/layout.css';
+  margin-right: 12px;
+  padding: 1px 9px;
+  height: 26px;
+  position: relative;
+  border-radius: var(--radius-normal);
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
+  font-size: var(--size-smallish);
+  line-height: 26px;
+}
+
 .notificationsButton {
   composes: button from '~styles/reset.css';
 }
@@ -48,41 +60,31 @@
 }
 
 .connectWalletButton {
-  /*
-   * @NOTE We need to do border sizing shenanigans due to how the border color
-   * is required by spec to have opacity.
-   *
-   * Otherwise, the two colors will overlap and it will lead to an unexpected border color.
-   *
-   * For this, we remove the border (and compensate the size with padding), while in the
-   * active class (the one that has a different colored border), we remove the extra padding
-   * and set the border
-   */
   margin-right: 25px;
   padding: 4px 9px 5px 9px;
   border: 1px solid var(--temp-grey-blue-7);
   border-radius: var(--radius-tiny);
   background-color: transparent;
-  font-size: var(--size-small);
+  font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--temp-grey-blue-7);
   cursor: pointer;
 }
 
+.connectWalletButton:hover {
+  border-color: transparent;
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(25%));
+  color: var(--colony-blue);
+}
+
 .connectWalletButtonActive {
   composes: connectWalletButton;
-  padding: 5px 10px 6px 10px;
-  border: none;
-  border-color: color-mod(var(--temp-grey-blue-7) alpha(25%));
+  border-color: transparent;
   background-color: color-mod(var(--temp-grey-blue-7) alpha(25%));
   color: var(--colony-blue);
 }
 
 .networkInfo {
-  margin-right: 20px;
-  padding: 2px 7px 4px;
-  border-radius: 4px;
-  background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
   font-weight: var(--weight-bold);
   color: var(--grey-1);
   cursor: default;
@@ -98,7 +100,6 @@
   composes: networkInfo;
   padding: 4px 10px;
   background-color: var(--danger);
-  font-size: 13px;
   color: var(--colony-white);
 }
 
@@ -115,8 +116,8 @@
 }
 
 .walletAddress > span {
-  position: relative;
-  line-height: 24px;
+  display: block;
+  margin-top: -2px;
 }
 
 .walletAddress:hover {
@@ -130,14 +131,8 @@
   color: var(--colony-blue);
 }
 
-.buttonsWrapper {
-  composes: flexContainerRow flexAlignCenter flexJustifyCenter from '~styles/layout.css';
-  margin-right: 12px;
+.walletWrapper {
   padding: 1px;
-  height: 26px;
-  position: relative;
-  border-radius: var(--radius-normal);
-  background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
 }
 
 .readyTransactionsCount {
@@ -154,17 +149,6 @@
   text-align: center;
   color: var(--colony-white);
   box-shadow: 0px 2px 11px var(--drop-shadow);
-}
-
-.reputation {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 20px;
-  padding: 0 7px;
-  height: 26px;
-  border-radius: var(--radius-normal);
-  background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
 }
 
 .reputation:hover {

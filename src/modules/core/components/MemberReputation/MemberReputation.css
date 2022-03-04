@@ -1,20 +1,32 @@
 @value reputationColor: rgb(255, 176, 0);
 
+.reputationWrapper {
+  display: flex;
+  align-items: center;
+  padding-right: 17px;
+  height: 100%;
+  position: relative;
+}
+
 .reputation {
-  display: inline-block;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: reputationColor;
 }
 
 .icon {
-  display: inline-block;
-  margin-left: 3px;
   height: 11px;
   width: 11px;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translate(0, -50%);
 }
 
 .icon svg {
+  position: absolute;
+  top: 0;
+  left: 0;
   fill: transparent;
   stroke-width: 3px;
   stroke: reputationColor;
