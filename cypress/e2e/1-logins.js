@@ -11,7 +11,7 @@ describe('Colony dapp landing simple login', () => {
 
 describe('Claim new user name', () => {
   if (!Cypress.config().skipInitTests) {
-    it('logs in new user', { defaultCommandTimeout: 8000 }, () => {
+    it('logs in new user', () => {
       const user = buildUser();
 
       cy.visit('/')
