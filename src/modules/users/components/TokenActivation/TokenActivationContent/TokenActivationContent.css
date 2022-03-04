@@ -278,10 +278,11 @@
 }
 
 .dot {
+  padding-top: 1px;
   height: 20px;
   width: 20px;
   border-radius: 50%;
   background-color: var(--pink);
-  font-size: var(--size-small);
+  font-size: var(--size-tiny);
   color: var(--text-invert);
 }
