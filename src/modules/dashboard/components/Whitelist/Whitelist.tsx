@@ -15,7 +15,7 @@ import { canAdminister, hasRoot } from '~modules/users/checks';
 import { WhitelistPolicy } from '~types/index';
 
 import AgreementEmbed from './AgreementEmbed';
-import KYCUploadAddressesWidget from './UploadAddressesWidget/KYCUploadAddressesWidget';
+import KYCUploadAddressesWidget from './WhitelistAddresses/KYCUploadAddressesWidget';
 import WhitelistAddresses from './WhitelistAddresses';
 
 import styles from './Whitelist.css';

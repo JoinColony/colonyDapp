@@ -10,7 +10,7 @@ import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
-import AddAddressesForm from './AddAddressesForm';
+import UploadAddresses from '~core/UploadAddresses';
 
 import { useLoggedInUser, Colony, AnyUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
@@ -58,6 +58,8 @@ interface Props {
   back: () => void;
   colony: Colony;
   whitelistedUsers: AnyUser[];
+  showInput: boolean;
+  toggleShowInput: () => void;
 }
 
 const ManageWhitelistDialogForm = ({
@@ -65,13 +67,17 @@ const ManageWhitelistDialogForm = ({
   colony,
   values,
   whitelistedUsers,
+  errors,
+  isValid,
+  isSubmitting,
+  handleSubmit,
+  showInput,
+  toggleShowInput,
 }: Props & FormikProps<FormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const [tabIndex, setTabIndex] = useState<number>(TABS.ADD_ADDRESS);
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
-
   const hasRegisteredProfile = !!username && !ethereal;
-
   const userHasPermission = hasRegisteredProfile && hasRoot(allUserRoles);
 
   return (
@@ -106,7 +112,13 @@ const ManageWhitelistDialogForm = ({
             </Tab>
           </TabList>
           <TabPanel>
-            <AddAddressesForm colony={colony} />
+            <UploadAddresses
+              colony={colony}
+              errors={errors}
+              isSubmitting={isSubmitting}
+              showInput={showInput}
+              toggleShowInput={toggleShowInput}
+            />
           </TabPanel>
           <TabPanel>
             {(whitelistedUsers?.length && (
@@ -159,7 +171,15 @@ const ManageWhitelistDialogForm = ({
           appearance={{ theme: 'pink', size: 'large' }}
           text={{ id: 'button.confirm' }}
           style={{ width: styles.wideButton }}
-          disabled={tabIndex === TABS.WHITELISTED && !whitelistedUsers?.length}
+          disabled={
+            (tabIndex === TABS.WHITELISTED && !whitelistedUsers?.length) ||
+            !userHasPermission ||
+            !isValid ||
+            isSubmitting
+          }
+          type="submit"
+          loading={isSubmitting}
+          onClick={() => handleSubmit()}
         />
       </DialogSection>
     </>
