@@ -1,4 +1,5 @@
 export const stakesContainer: string;
+export const stakesList: string;
 export const stakesListItem: string;
 export const falseLink: string;
 export const noClaims: string;
