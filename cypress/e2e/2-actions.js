@@ -1,7 +1,7 @@
 import { bigNumberify } from 'ethers/utils';
 
 describe('Colony can mint tokens via aciton', () => {
-  it.skip('mint native tokens', () => {
+  it('mint native tokens', () => {
     const amountToMint = 10;
     const annotationText = 'Test annotation';
 
@@ -13,12 +13,12 @@ describe('Colony can mint tokens via aciton', () => {
       .invoke('text')
       .as('totalFunds');
 
-    cy.contains(/new action/i, { timeout: 120000 }).click();
+    cy.contains(/new action/i, { timeout: 60000 }).click();
     // needs to include 2 expressions, otherwise it will try opeining the link from the home page
     cy.contains(/manage funds/i && /the tools/i).click();
-    cy.contains(/mint tokens/i)
-      .click()
-      .get('input')
+    cy.findByText(/mint tokens/i).click();
+
+    cy.get('input')
       .click()
       .type(amountToMint)
       .get('textarea')
