@@ -17,9 +17,9 @@ import { canAdminister } from '~modules/users/checks';
 
 import AgreementDialog from '../AgreementDialog';
 
-import DownloadTemplate from './DownloadTemplate';
+// import DownloadTemplate from './DownloadTemplate';
 
-import styles from './UploadAddressesWidget.css';
+import styles from './KYCUploadAddressesWidget.css';
 
 const MSG = defineMessages({
   inputLabel: {
@@ -150,7 +150,7 @@ const KYCUploadAddressesWidget = ({
               appearance={{ colorSchema: 'grey' }}
             />
             <div className={styles.actionsSubContainer}>
-              {!showInput && <DownloadTemplate />}
+              {/* {!showInput && <DownloadTemplate />} */}
               <Button
                 appearance={{ theme: 'blue' }}
                 text={showInput ? MSG.upload : MSG.input}
