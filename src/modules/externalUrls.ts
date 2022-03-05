@@ -27,6 +27,7 @@ export const CM_DESCRIPTION = 'https://colony.gitbook.io/colony/';
  * Motions and Disputes
  */
 export const MD_OBJECTIONS_HELP = `https://colony.io/dev/docs/colonynetwork/whitepaper-tldr-objections-and-disputes#objections`;
+export const MD_REPUTATION_INFO = `https://colony.gitbook.io/colony/key-concepts/reputation`;
 
 /*
  * Token
