@@ -2,12 +2,12 @@
   margin: 40px 0;
 }
 
-.validationError {
+/* .validationError {
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   line-height: 18px;
   color: var(--danger);
-}
+} */
 
 .inputContainer {
   margin-bottom: 9px;
