@@ -221,7 +221,7 @@ const ActionsListItem = ({
     : (x: any) => x;
 
   return (
-    <li data-cy="action-item">
+    <li data-test="action-item">
       <div
         /*
          * @NOTE This is non-interactive element to appease the DOM Nesting Validator
