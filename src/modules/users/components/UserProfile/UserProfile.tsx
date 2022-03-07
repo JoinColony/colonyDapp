@@ -15,7 +15,7 @@ import { isAddress } from '~utils/web3';
 
 import UserMeta from './UserMeta';
 import UserProfileSpinner from './UserProfileSpinner';
-import UserProfileComments from '../UserProfileStreamComments';
+import UserProfilePubNumComments from '../UserProfilePubNumComments';
 
 import styles from './UserProfile.css';
 
@@ -120,9 +120,10 @@ const UserProfile = ({
   return (
     <ProfileTemplate asideContent={<UserMeta user={user as AnyUser} />}>
       <section className={styles.sectionContainer}>
-        {process.env.STREAM_API && !decentralized && commentsEnabled && (
-          <UserProfileComments channelId={user.id} />
-        )}
+        {process.env.PN_PUB_KEY &&
+          process.env.PN_SUB_KEY &&
+          !decentralized &&
+          commentsEnabled && <UserProfilePubNumComments channelId={user.id} />}
       </section>
     </ProfileTemplate>
   );

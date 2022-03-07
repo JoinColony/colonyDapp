@@ -178,9 +178,18 @@ export default function* setupUserContext(
       // log.verbose(`Could not find username for ${walletAddress}`);
     }
 
+    // let chatClient;
+    // if (process.env.STREAM_API && !decentralized && commentsEnabled) {
+    //   chatClient = TEMP_getContext(ContextModule.StreamChatClient);
+    // }
     let chatClient;
-    if (process.env.STREAM_API && !decentralized && commentsEnabled) {
-      chatClient = TEMP_getContext(ContextModule.StreamChatClient);
+    if (
+      process.env.PN_PUB_KEY &&
+      process.env.PN_SUB_KEY &&
+      !decentralized &&
+      commentsEnabled
+    ) {
+      chatClient = TEMP_getContext(ContextModule.PubNubChatClient);
     }
 
     // @TODO refactor setupUserContext for graphql
@@ -193,7 +202,7 @@ export default function* setupUserContext(
       wallet,
       ipfsWithFallback,
       provider,
-      streamChatClient: chatClient,
+      pubNubChatClient: chatClient,
     };
     yield setupResolvers(apolloClient, userContext);
 
