@@ -58,8 +58,8 @@ interface Props extends Omit<TextareaAutosizeProps, 'placeholder'> {
   /** Status text values */
   statusValues?: SimpleMessageValues;
 
-  /** Provides value for data-cy used on cypress testing */
-  dataCy?: string;
+  /** Provides value for data-test used on cypress testing */
+  dataTest?: string;
 }
 
 const displayName = 'TextareaAutoresize';
@@ -80,7 +80,7 @@ const TextareaAutoresize = ({
   placeholder: placeholderProp,
   status,
   statusValues,
-  dataCy,
+  dataTest,
   ...rest
 }: Props) => {
   const { formatMessage } = useIntl();
@@ -93,7 +93,7 @@ const TextareaAutoresize = ({
 
   const inputProps: TextareaAutosizeProps & {
     ref: ((ref: HTMLElement | null) => void) | undefined;
-    'data-cy': string | undefined;
+    'data-test': string | undefined;
   } = {
     'aria-invalid': error ? 'true' : undefined,
     className: getMainClasses(appearance, styles),
@@ -102,7 +102,7 @@ const TextareaAutoresize = ({
     minRows,
     placeholder,
     ref: innerRef,
-    'data-cy': dataCy,
+    'data-test': dataTest,
     title:
       typeof label === 'object' ? formatMessage(label, labelValues) : label,
     ...rest,
