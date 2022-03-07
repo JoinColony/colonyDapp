@@ -9,7 +9,6 @@ import {
   TEMP_setContext,
   ContextModule,
 } from '~context/index';
-// import getChatClient from '~context/chatClient';
 import { putError } from '~utils/saga/effects';
 // import { log } from '~utils/debug';
 import { setLastWallet } from '~utils/autoLogin';
@@ -181,7 +180,7 @@ export default function* setupUserContext(
 
     let chatClient;
     if (process.env.STREAM_API && !decentralized && commentsEnabled) {
-      chatClient = TEMP_getContext(ContextModule.ChatClient);
+      chatClient = TEMP_getContext(ContextModule.StreamChatClient);
     }
 
     // @TODO refactor setupUserContext for graphql
@@ -194,7 +193,7 @@ export default function* setupUserContext(
       wallet,
       ipfsWithFallback,
       provider,
-      chatClient,
+      streamChatClient: chatClient,
     };
     yield setupResolvers(apolloClient, userContext);
 

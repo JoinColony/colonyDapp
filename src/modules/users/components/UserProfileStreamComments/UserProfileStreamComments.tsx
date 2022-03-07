@@ -40,7 +40,7 @@ const UserProfileStreamComments = ({ channelId }: Props) => {
     walletAddress: userWalletAddress,
   } = useLoggedInUser();
 
-  const chatClient = TEMP_getContext(ContextModule.ChatClient);
+  const chatClient = TEMP_getContext(ContextModule.StreamChatClient);
   const [channel, setChannel] = useState<ChannelType | null>(null);
 
   const CustomMessage = () => {

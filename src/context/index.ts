@@ -11,7 +11,7 @@ import ens from './ensContext';
 import apolloClient from './apolloClient';
 import ipfsWithFallback from './ipfsWithFallbackContext';
 import getProvider from '../modules/core/sagas/utils/getProvider';
-import getChatClient from './chatClient';
+import getStreamChatClient from './streamChatClient';
 
 export enum ContextModule {
   Wallet = 'wallet',
@@ -22,7 +22,7 @@ export enum ContextModule {
   Pinata = 'pinataClient',
   IPFSWithFallback = 'ipfsWithFallback',
   Provider = 'provider',
-  ChatClient = 'chatClient',
+  StreamChatClient = 'streamChatClient',
 }
 
 export interface IpfsWithFallbackSkeleton {
@@ -38,7 +38,7 @@ export interface Context {
   [ContextModule.ENS]?: ENSClass;
   [ContextModule.IPFSWithFallback]?: IpfsWithFallbackSkeleton;
   [ContextModule.Provider]?: EthersProvider;
-  [ContextModule.ChatClient]?: StreamChat;
+  [ContextModule.StreamChatClient]?: StreamChat;
 }
 
 const STORAGE_KEY = 'dsettings';
@@ -56,7 +56,7 @@ const TEMP_newContext: Context = {
   [ContextModule.Provider]: getProvider(
     decentralizedStorage?.enabled ? decentralizedStorage?.customRPC : undefined,
   ),
-  [ContextModule.ChatClient]: getChatClient(),
+  [ContextModule.StreamChatClient]: getStreamChatClient(),
 };
 
 export const TEMP_setContext = <K extends keyof Context>(

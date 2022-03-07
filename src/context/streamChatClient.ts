@@ -1,6 +1,6 @@
 import { StreamChat } from 'stream-chat';
 
-const getChatClient = () => {
+const getStreamChatClient = () => {
   const STORAGE_KEY = 'dsettings';
   const decentralizedStorage = JSON.parse(
     localStorage.getItem(STORAGE_KEY) as string,
@@ -25,4 +25,4 @@ const getChatClient = () => {
   return undefined;
 };
 
-export default getChatClient;
+export default getStreamChatClient;
