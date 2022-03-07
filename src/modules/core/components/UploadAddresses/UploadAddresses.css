@@ -2,13 +2,6 @@
   margin: 40px 0;
 }
 
-/* .validationError {
-  font-size: var(--size-tiny);
-  font-weight: var(--weight-bold);
-  line-height: 18px;
-  color: var(--danger);
-} */
-
 .inputContainer {
   margin-bottom: 9px;
 }
@@ -38,10 +31,6 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-}
-
-.agreeemntButton {
-  margin-right: 30px;
 }
 
 .uploaderContainer {
