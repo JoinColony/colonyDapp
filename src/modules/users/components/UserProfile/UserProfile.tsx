@@ -15,7 +15,7 @@ import { isAddress } from '~utils/web3';
 
 import UserMeta from './UserMeta';
 import UserProfileSpinner from './UserProfileSpinner';
-import UserProfileComments from '../UserProfileComments';
+import UserProfileComments from '../UserProfileStreamComments';
 
 import styles from './UserProfile.css';
 
