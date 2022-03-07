@@ -4,12 +4,6 @@ import { defineMessages } from 'react-intl';
 import { InputLabel, Input } from '~core/Fields';
 import Button from '~core/Button';
 import CSVUploader from '~core/CSVUploader';
-import { Colony, useLoggedInUser } from '~data/index';
-import { useTransformer } from '~utils/hooks';
-import { getAllUserRoles } from '~modules/transformers';
-import { canAdminister } from '~modules/users/checks';
-
-// import AgreementDialog from '../AgreementDialog';
 
 import DownloadTemplate from './DownloadTemplate';
 
@@ -39,31 +33,22 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  colony: Colony;
-  // whitelistAgreementHash?: string | null;
-  errors?: any;
-  // isValid?: boolean;
-  isSubmitting?: boolean;
+  userHasPermission: boolean;
+  errors: any;
+  isSubmitting: boolean;
   showInput: boolean;
   toggleShowInput: () => void;
 }
 
 const UploadAddresses = ({
-  colony,
+  userHasPermission,
   errors,
   isSubmitting,
   showInput,
   toggleShowInput,
 }: Props) => {
-  // const toggleShowInput = () => setShowInput(!showInput);
   const [processingCSVData, setProcessingCSVData] = useState<boolean>(false);
 
-  const { walletAddress, username, ethereal } = useLoggedInUser();
-  const hasRegisteredProfile = !!username && !ethereal;
-  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
-  const userHasPermission = hasRegisteredProfile && canAdminister(allUserRoles);
-  console.log('UploadAddresses - isSubmitting: ', isSubmitting);
-  console.log('showInput: ', showInput);
   return (
     <>
       <div className={styles.actionsContainer}>
