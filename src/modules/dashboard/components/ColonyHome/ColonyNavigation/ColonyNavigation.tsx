@@ -79,6 +79,7 @@ const ColonyNavigation = ({ colony: { colonyAddress, colonyName } }: Props) => {
         linkTo: `/colony/${colonyName}/extensions`,
         showDot: hasNewExtensions,
         text: MSG.linkTextExtensions,
+        dataTest: 'extensions-navigation-button',
       },
     ];
     if (data?.processedColony?.installedExtensions) {
