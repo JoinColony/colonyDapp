@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { extensions, getExtensionHash } from '@colony/colony-js';
+import kebabCase from 'lodash/kebabCase';
 
 import BreadCrumb from '~core/BreadCrumb';
 import Heading from '~core/Heading';
@@ -147,6 +148,9 @@ const Extensions = ({ colonyAddress }: Props) => {
                 <ExtensionCard
                   key={extension.extensionId}
                   extension={extension}
+                  dataTest={`${kebabCase(
+                    extension.extensionId,
+                  )}-extension-card`}
                 />
               ))}
             </div>

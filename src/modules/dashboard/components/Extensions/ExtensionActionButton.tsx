@@ -64,6 +64,7 @@ const ExtensionActionButton = ({
         }}
         text={MSG.install}
         disabled={!isSupportedColonyVersion || !extensionCompatible}
+        data-test="install-extension-button"
       />
     );
   }
@@ -79,6 +80,7 @@ const ExtensionActionButton = ({
         onClick={handleEnableButtonClick}
         text={MSG.enable}
         disabled={!isSupportedColonyVersion}
+        data-test="enable-extension-button"
       />
     );
   }
