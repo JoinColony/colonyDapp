@@ -74,8 +74,8 @@ const ManageWhitelistDialogForm = ({
   showInput,
   toggleShowInput,
 }: Props & FormikProps<FormValues>) => {
-  const { walletAddress, username, ethereal } = useLoggedInUser();
   const [tabIndex, setTabIndex] = useState<number>(TABS.ADD_ADDRESS);
+  const { walletAddress, username, ethereal } = useLoggedInUser();
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
   const hasRegisteredProfile = !!username && !ethereal;
   const userHasPermission = hasRegisteredProfile && hasRoot(allUserRoles);
@@ -113,7 +113,7 @@ const ManageWhitelistDialogForm = ({
           </TabList>
           <TabPanel>
             <UploadAddresses
-              colony={colony}
+              userHasPermission={userHasPermission}
               errors={errors}
               isSubmitting={isSubmitting}
               showInput={showInput}
