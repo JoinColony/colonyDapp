@@ -13,6 +13,7 @@ interface Props {
   linkTo: string;
   showDot?: boolean;
   text: MessageDescriptor;
+  dataTest?: string;
 }
 
 const displayName = 'dashboard.ColonyHome.ColonyNavigation.NavItem';
@@ -24,6 +25,7 @@ const NavItem = ({
   linkTo,
   showDot = false,
   text: textProp,
+  dataTest,
 }: Props) => {
   const { formatMessage } = useIntl();
 
@@ -50,6 +52,7 @@ const NavItem = ({
       exact={exact}
       onKeyDown={handleLinkKeyDown}
       to={linkTo}
+      data-test={dataTest}
     >
       <span className={styles.text}>{text}</span>
       {extra && <span className={styles.extra}>{extra}</span>}

@@ -62,9 +62,19 @@ const ExtensionStatus = ({
   }
   return (
     <div className={styles.tagContainer}>
-      {!deprecatedOnly ? <Tag appearance={{ theme }} text={status} /> : null}
+      {!deprecatedOnly ? (
+        <Tag
+          appearance={{ theme }}
+          text={status}
+          data-test="extension-status-tag"
+        />
+      ) : null}
       {installedExtension && installedExtension.details.deprecated ? (
-        <Tag appearance={{ theme: 'danger' }} text={MSG.deprecated} />
+        <Tag
+          appearance={{ theme: 'danger' }}
+          text={MSG.deprecated}
+          data-test="extension-status-tag"
+        />
       ) : null}
     </div>
   );
