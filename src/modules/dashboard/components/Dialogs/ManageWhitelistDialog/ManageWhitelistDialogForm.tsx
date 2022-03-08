@@ -11,7 +11,7 @@ import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 
-import { useLoggedInUser, Colony } from '~data/index';
+import { useLoggedInUser, Colony, AnyUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot } from '~modules/users/checks';
@@ -50,13 +50,14 @@ const MSG = defineMessages({
 interface Props {
   back: () => void;
   colony: Colony;
+  whitelistedUsers: AnyUser[];
 }
 
 const ManageWhitelistDialogForm = ({
   back,
   colony,
   values,
-  values: { whitelistedAddresses },
+  whitelistedUsers,
 }: Props & FormikProps<FormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const [tabIndex, setTabIndex] = useState<number>(0);
@@ -106,7 +107,7 @@ const ManageWhitelistDialogForm = ({
             />
             <WhitelistedAddresses
               colony={colony}
-              whitelistedAddresses={whitelistedAddresses}
+              whitelistedUsers={whitelistedUsers}
             />
           </TabPanel>
         </Tabs>
