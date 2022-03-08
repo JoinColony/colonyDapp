@@ -11,8 +11,10 @@ import CSVUploaderItem from './CSVUploaderItem';
 interface Props {
   name: string;
   error?: string | MessageDescriptor;
+  status?: string | MessageDescriptor;
   processingData: boolean;
   setProcessingData: React.Dispatch<React.SetStateAction<boolean>>;
+  setHasFile?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const MIME_TYPES = ['text/csv'];
@@ -20,8 +22,10 @@ const MIME_TYPES = ['text/csv'];
 const CSVUploader = ({
   name,
   error,
+  status,
   processingData,
   setProcessingData,
+  setHasFile,
 }: Props) => {
   const [CSVFile, setCSVFile] = useState<File | null>(null);
   const [parsedCSV, setParsedCSV] = useState<ParseResult<unknown> | null>(null);
@@ -39,10 +43,13 @@ const CSVUploader = ({
         complete: setParsedCSV,
         header: true,
       });
+
+      if (setHasFile) setHasFile(true);
     } else if (!CSVFile && parsedCSV) {
       setParsedCSV(null);
+      if (setHasFile) setHasFile(false);
     }
-  }, [CSVFile, parsedCSV]);
+  }, [setHasFile, CSVFile, parsedCSV]);
 
   useEffect(() => {
     if (parsedCSV && value[0] && isNil(value[0].parsedData)) {
@@ -73,11 +80,12 @@ const CSVUploader = ({
         accept: MIME_TYPES,
       }}
       customErrorMessage={error}
-      inputStatusAppearance={{ theme: 'minimal', textSpace: 'wrap' }}
+      inputStatusAppearance={{ theme: 'fat', textSpace: 'wrap' }}
       itemComponent={CSVUploaderItem}
       handleError={handleUploadError}
       processingData={processingData}
       handleProcessingData={setProcessingData}
+      status={status}
     />
   );
 };
