@@ -36,7 +36,6 @@ const displayName = 'dashboard.ManageWhitelistDialog';
 
 const ManageWhitelistDialog = ({
   cancel,
-  close,
   callStep,
   prevStep,
   colony,
@@ -44,6 +43,8 @@ const ManageWhitelistDialog = ({
 }: Props) => {
   const [showInput, setShowInput] = useState<boolean>(true);
   const toggleShowInput = () => setShowInput(!showInput);
+  const [formSuccess, setFormSuccess] = useState<boolean>(false);
+  const toggleSubmitSuccess = () => setFormSuccess(!formSuccess);
 
   const history = useHistory();
 
@@ -56,12 +57,16 @@ const ManageWhitelistDialog = ({
     showInput ? validationSchemaInput : validationSchemaFile,
   );
 
+  const handleSubmitSuccess = useCallback(() => {
+    setFormSuccess(true);
+  }, [setFormSuccess]);
+
   const transform = useCallback(
     pipe(
       mapPayload(
         ({
           annotation: annotationMessage,
-          userAddresses: whitelistAddress,
+          whitelistAddress,
           whitelistCSVUploader,
         }) => {
           return {
@@ -99,6 +104,7 @@ const ManageWhitelistDialog = ({
 
   return (
     <ActionForm
+      validateOnChange
       initialValues={{
         annotation: undefined,
         isWhiletlistActivated: true,
@@ -107,12 +113,12 @@ const ManageWhitelistDialog = ({
         ),
         isSubmitting: false,
       }}
-      submit={ActionTypes.COLONY_ACTION_GENERIC}
-      error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
-      success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
+      submit={ActionTypes.WHITELIST_UPDATE}
+      error={ActionTypes.WHITELIST_UPDATE_ERROR}
+      success={ActionTypes.WHITELIST_UPDATE_SUCCESS}
       validationSchema={mergedSchemas}
-      onSuccess={close}
       transform={transform}
+      onSuccess={handleSubmitSuccess}
     >
       {(formValues: FormikProps<FormValues>) => (
         <Dialog cancel={cancel} noOverflow={false}>
@@ -123,6 +129,8 @@ const ManageWhitelistDialog = ({
             back={() => callStep(prevStep)}
             showInput={showInput}
             toggleShowInput={toggleShowInput}
+            submitSuccess={formSuccess}
+            toggleSubmitSuccess={toggleSubmitSuccess}
           />
         </Dialog>
       )}

@@ -11,7 +11,6 @@ import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import UploadAddresses from '~core/UploadAddresses';
-
 import { useLoggedInUser, Colony, AnyUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '~modules/transformers';
@@ -60,6 +59,8 @@ interface Props {
   whitelistedUsers: AnyUser[];
   showInput: boolean;
   toggleShowInput: () => void;
+  submitSuccess: boolean;
+  toggleSubmitSuccess: () => void;
 }
 
 const ManageWhitelistDialogForm = ({
@@ -73,6 +74,8 @@ const ManageWhitelistDialogForm = ({
   handleSubmit,
   showInput,
   toggleShowInput,
+  submitSuccess,
+  toggleSubmitSuccess,
 }: Props & FormikProps<FormValues>) => {
   const [tabIndex, setTabIndex] = useState<number>(TABS.ADD_ADDRESS);
   const { walletAddress, username, ethereal } = useLoggedInUser();
@@ -118,6 +121,8 @@ const ManageWhitelistDialogForm = ({
               isSubmitting={isSubmitting}
               showInput={showInput}
               toggleShowInput={toggleShowInput}
+              submitSuccess={submitSuccess}
+              toggleSubmitSuccess={toggleSubmitSuccess}
             />
           </TabPanel>
           <TabPanel>
