@@ -27,12 +27,6 @@
   margin-right: 0px;
 }
 
-.buttonsContainer {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-
 .uploaderContainer {
   margin-bottom: 28px;
 }
