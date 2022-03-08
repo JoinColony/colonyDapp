@@ -50,6 +50,7 @@ interface Props {
   getDefaultValue?: Function;
   /** Input field value */
   value: string;
+  showTooltipText: boolean;
   /**  Text for the checkbox tooltip */
   tooltipText?: string;
   /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
@@ -83,6 +84,7 @@ const Checkbox = ({
   tooltipText,
   tooltipPopperProps,
   getDefaultValue,
+  showTooltipText,
 }: Props) => {
   const [inputId] = useState<string>(nanoid());
 
@@ -137,7 +139,7 @@ const Checkbox = ({
 
   return (
     <label className={classNames} htmlFor={elementOnly ? inputId : undefined}>
-      {disabled && tooltipText ? (
+      {(disabled && tooltipText) || (showTooltipText && tooltipText) ? (
         <Tooltip
           appearance={{ theme: 'dark' }}
           content={tooltipText}
@@ -178,6 +180,7 @@ Checkbox.defaultProps = {
   checked: false,
   disabled: false,
   elementOnly: false,
+  showTooltipText: false,
 };
 
 export default asFieldArray()(Checkbox);
