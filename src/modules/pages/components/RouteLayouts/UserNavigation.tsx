@@ -210,7 +210,7 @@ const UserNavigation = () => {
                   </button>
                   {readyTransactions >= 1 && (
                     <span className={styles.readyTransactionsCount}>
-                      {readyTransactions}
+                      <span>{readyTransactions}</span>
                     </span>
                   )}
                 </>

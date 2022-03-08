@@ -144,11 +144,18 @@
   right: -10px;
   border-radius: 50px;
   background-color: var(--pink);
-  font-size: var(--size-tiny);
+  font-size: var(--size-unreadable);
   font-weight: 600;
   text-align: center;
   color: var(--colony-white);
   box-shadow: 0px 2px 11px var(--drop-shadow);
+}
+
+.readyTransactionsCount span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .reputation:hover {

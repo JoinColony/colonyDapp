@@ -1,9 +1,15 @@
 .stakesContainer {
-  height: 442px;
+  height: calc(551px - 42px);
   width: 100%;
+  overflow: hidden;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--dark);
+}
+
+.stakesContainer ul {
+  height: calc(100% - 63px);
+  overflow-y: scroll;
 }
 
 .stakesListItem {
@@ -11,10 +17,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1px;
-  padding-top: 12px;
-  padding-right: 12px;
-  padding-left: 16px;
-  height: 63px;
+  padding: 16px 21px 14px;
   width: 100%;
   border-radius: var(--radius-small);
   background: var(--colony-white);
@@ -27,12 +30,15 @@
 .stakesListItem > a {
   height: 100%;
   width: 100%;
+  line-height: 1;
 }
 
 .falseLink {
-  margin-top: 3px;
+  display: inline-block;
+  margin-top: 6px;
   font-size: var(--size-small);
   font-weight: var(--weight-bold);
+  line-height: 1;
   color: var(--dark-blue);
 
   &:hover {
