@@ -54,15 +54,21 @@ const ManageWhitelistDialog = ({
     [],
   );
 
-  const whitelistedAddresses = [
-    '0x9dF24e73f40b2a911Eb254A8825103723E13209C',
-    '0xd6Bf4Be334A4661e12a647b62EF1510a247dd625',
-    '0x9dF24e73f40b2a911Eb254A8825103723E13209C',
-    '0xd6Bf4Be334A4661e12a647b62EF1510a247dd625',
-    '0x9dF24e73f40b2a911Eb254A8825103723E13209C',
-    '0xd6Bf4Be334A4661e12a647b62EF1510a247dd625',
-    '0x9dF24e73f40b2a911Eb254A8825103723E13209C',
-    '0xd6Bf4Be334A4661e12a647b62EF1510a247dd625',
+  const whitelistedUsers = [
+    {
+      id: '0x9dF24e73f40b2a911Eb254A8825103723E13209C',
+      profile: {
+        walletAddress: '0x9dF24e73f40b2a911Eb254A8825103723E13209C',
+        username: 'alicja',
+      },
+    },
+    {
+      id: '0xd6Bf4Be334A4661e12a647b62EF1510a247dd625',
+      profile: {
+        walletAddress: '0xd6Bf4Be334A4661e12a647b62EF1510a247dd625',
+        username: 'jan',
+      },
+    },
   ]; // Feed with real data
 
   return (
@@ -70,7 +76,9 @@ const ManageWhitelistDialog = ({
       initialValues={{
         annotation: undefined,
         isWhiletlistActivated: true,
-        whitelistedAddresses,
+        whitelistedAddresses: whitelistedUsers.map(
+          (user) => user.profile.walletAddress,
+        ),
       }}
       submit={ActionTypes.COLONY_ACTION_GENERIC}
       error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
@@ -84,6 +92,7 @@ const ManageWhitelistDialog = ({
           <DialogForm
             {...formValues}
             colony={colony}
+            whitelistedUsers={whitelistedUsers}
             back={() => callStep(prevStep)}
           />
         </Dialog>

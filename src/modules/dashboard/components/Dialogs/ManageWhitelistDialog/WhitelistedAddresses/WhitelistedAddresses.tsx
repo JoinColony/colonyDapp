@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 
 import UserCheckbox from '~core/UserCheckbox';
-import { Colony } from '~data/index';
-import { Address } from '~types/index';
+import { Colony, AnyUser } from '~data/index';
 import Icon from '~core/Icon';
+import { filterUserSelection } from '~core/SingleUserPicker';
 
 import styles from './WhitelistedAddresses.css';
 
 interface Props {
   colony: Colony;
-  whitelistedAddresses: Address[];
+  whitelistedUsers: AnyUser[];
 }
 
 const MSG = defineMessages({
@@ -22,32 +22,42 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.ManageWhitelistDialog.WhitelistedAddresses';
 
-const WhitelistedAddresses = ({ colony, whitelistedAddresses }: Props) => {
-  const [addresses] = useState<Address[]>(whitelistedAddresses);
+const WhitelistedAddresses = ({ colony, whitelistedUsers }: Props) => {
+  const [users, setUsers] = useState<AnyUser[]>(whitelistedUsers);
   const { formatMessage } = useIntl();
 
-  const onChange = () => {
-    // @TODO, implement searching
-  };
+  const handleOnChange = useCallback(
+    (e) => {
+      if (e.target?.value) {
+        const [_, ...filteredUsers] = filterUserSelection(
+          whitelistedUsers,
+          e.target?.value,
+        );
+        setUsers(filteredUsers);
+      }
+    },
+    [whitelistedUsers, setUsers],
+  );
+
   return (
     <div className={styles.main}>
       <div className={styles.searchContainer}>
         <input
           name="warning"
           className={styles.input}
-          onChange={onChange}
+          onChange={handleOnChange}
           placeholder={formatMessage(MSG.search)}
         />
         <Icon className={styles.icon} name="search" title={MSG.search} />
       </div>
       <div className={styles.container}>
-        {(addresses || []).map((address) => {
+        {(users || []).map((user) => {
           return (
             <UserCheckbox
-              key={address}
+              key={user.profile?.walletAddress || user.id}
               colony={colony}
               name="whitelistedAddresses"
-              walletAddress={address}
+              walletAddress={user.profile?.walletAddress || user.id}
             />
           );
         })}
