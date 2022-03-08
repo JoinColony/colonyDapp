@@ -60,7 +60,9 @@ const TokenActivationContent = (props: TokenActivationContentProps) => {
             <div className={styles.stakesTabTitle}>
               <FormattedMessage {...MSG.stakes} />
               {claimsCount > 0 && (
-                <div className={styles.dot}>{claimsCount}</div>
+                <div className={styles.dot}>
+                  <span>{claimsCount}</span>
+                </div>
               )}
             </div>
           </Tab>

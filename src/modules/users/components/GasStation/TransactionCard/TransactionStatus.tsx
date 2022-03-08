@@ -83,7 +83,9 @@ const TransactionStatus = ({
        */}
       <div>
         {groupCount && status === TRANSACTION_STATUSES.READY && (
-          <span className={styles.counter}>{groupCount}</span>
+          <span className={styles.counter}>
+            <span>{groupCount}</span>
+          </span>
         )}
         {status === TRANSACTION_STATUSES.SUCCEEDED && !loadingRelated && (
           <span
