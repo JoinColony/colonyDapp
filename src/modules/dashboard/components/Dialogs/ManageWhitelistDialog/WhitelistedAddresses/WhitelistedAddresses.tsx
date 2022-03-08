@@ -15,8 +15,16 @@ interface Props {
 
 const MSG = defineMessages({
   search: {
-    id: 'dashboard.ManageWhitelistDialog.WhitelistedAddresses.search',
+    id: `dashboard.ManageWhitelistDialog.WhitelistedAddresses.search`,
     defaultMessage: 'Search...',
+  },
+  checkedTooltipText: {
+    id: `dashboard.ManageWhitelistDialog.WhitelistedAddresses.checkedTooltipText`,
+    defaultMessage: `User is added to the whitelist. Uncheck if you wish to remove this user`,
+  },
+  unCheckedTooltipText: {
+    id: `dashboard.ManageWhitelistDialog.WhitelistedAddresses.unCheckedTooltipText`,
+    defaultMessage: `User will be removed from the whitelist`,
   },
 });
 
@@ -58,6 +66,8 @@ const WhitelistedAddresses = ({ colony, whitelistedUsers }: Props) => {
               colony={colony}
               name="whitelistedAddresses"
               walletAddress={user.profile?.walletAddress || user.id}
+              checkedTooltipText={formatMessage(MSG.checkedTooltipText)}
+              unCheckedTooltipText={formatMessage(MSG.unCheckedTooltipText)}
             />
           );
         })}

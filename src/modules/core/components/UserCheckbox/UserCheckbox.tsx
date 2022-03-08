@@ -16,11 +16,19 @@ interface Props {
   colony: Colony;
   walletAddress: Address;
   name: string;
+  checkedTooltipText?: string;
+  unCheckedTooltipText?: string;
 }
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
-const UserCheckbox = ({ colony, walletAddress, name }: Props) => {
+const UserCheckbox = ({
+  colony,
+  walletAddress,
+  name,
+  checkedTooltipText,
+  unCheckedTooltipText,
+}: Props) => {
   const userProfile = useUser(createAddress(walletAddress || AddressZero));
   const [isChecked, setIsChecked] = useState<boolean>(false);
 
@@ -37,13 +45,30 @@ const UserCheckbox = ({ colony, walletAddress, name }: Props) => {
           className={styles.checkbox}
           onChange={(props) => setIsChecked(props.isChecked)}
           getDefaultValue={(checked) => setIsChecked(checked)}
+          tooltipText={isChecked ? checkedTooltipText : unCheckedTooltipText}
+          tooltipPopperProps={{
+            modifiers: [
+              {
+                name: 'offset',
+                options: {
+                  offset: [0, 12],
+                },
+              },
+              {
+                name: 'preventOverflow',
+                options: {
+                  padding: 14,
+                },
+              },
+            ],
+          }}
+          showTooltipText
         />
         <UserAvatar
           size="xs"
           colony={colony}
           address={walletAddress}
           user={userProfile}
-          showInfo
           notSet={false}
         />
         <div className={styles.usernameSection}>
