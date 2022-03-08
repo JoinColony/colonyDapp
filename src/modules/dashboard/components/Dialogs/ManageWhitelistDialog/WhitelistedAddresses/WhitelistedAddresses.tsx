@@ -29,7 +29,7 @@ const WhitelistedAddresses = ({ colony, whitelistedUsers }: Props) => {
   const handleOnChange = useCallback(
     (e) => {
       if (e.target?.value) {
-        const [_, ...filteredUsers] = filterUserSelection(
+        const [, ...filteredUsers] = filterUserSelection(
           whitelistedUsers,
           e.target?.value,
         );
