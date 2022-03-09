@@ -30,12 +30,12 @@ const MSG = defineMessages({
     id: `core.UploadAddresses.input`,
     defaultMessage: 'Input',
   },
-  whitelistedInputSuccess: {
-    id: 'dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.whitelisted',
+  inputSuccess: {
+    id: `core.UploadAddresses.whitelisted`,
     defaultMessage: `Address is whitelisted now. You can add another one or close modal.`,
   },
-  whitelistedFileSuccess: {
-    id: 'dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.whitelisted',
+  fileSuccess: {
+    id: `core.UploadAddresses.whitelisted`,
     defaultMessage: `File was added. You can add another one or close modal.`,
   },
 });
@@ -60,6 +60,7 @@ const UploadAddresses = ({
   toggleSubmitSuccess,
 }: Props) => {
   const [hasFile, setHasFile] = useState<boolean>(false);
+  const [previousState, setPreviousState] = useState<boolean>(true);
   const [processingCSVData, setProcessingCSVData] = useState<boolean>(false);
   const [touchedAfterSuccess, setTouchedAfterSuccess] = useState<boolean>(
     false,
@@ -76,6 +77,8 @@ const UploadAddresses = ({
   );
 
   const handleChange = useCallback(() => {
+    // This handles when to remove success messages from
+    // single address input
     if (submitSuccess) {
       setTouchedAfterSuccess(true);
       if (toggleSubmitSuccess) {
@@ -86,10 +89,28 @@ const UploadAddresses = ({
     }
   }, [submitSuccess, setTouchedAfterSuccess, toggleSubmitSuccess]);
 
-  const getStatus = useMemo(() => {
-    if (!submitSuccess || touchedAfterSuccess || !hasFile) return undefined;
-    return showInput ? MSG.whitelistedInputSuccess : MSG.whitelistedFileSuccess;
-  }, [hasFile, showInput, submitSuccess, touchedAfterSuccess]);
+  const statusMsg = useMemo(() => {
+    // input type changed, so no more success,
+    // this removes display of success msg.
+    // for single input & file
+    if (previousState !== showInput) {
+      setPreviousState(showInput);
+      if (submitSuccess && toggleSubmitSuccess) toggleSubmitSuccess();
+      return undefined;
+    }
+
+    if (!submitSuccess || (!showInput && !hasFile) || touchedAfterSuccess)
+      return undefined;
+    return showInput ? MSG.inputSuccess : MSG.fileSuccess;
+  }, [
+    hasFile,
+    previousState,
+    setPreviousState,
+    showInput,
+    submitSuccess,
+    toggleSubmitSuccess,
+    touchedAfterSuccess,
+  ]);
 
   return (
     <>
@@ -114,7 +135,7 @@ const UploadAddresses = ({
             name="whitelistAddress"
             appearance={{ colorSchema: 'grey', theme: 'fat' }}
             disabled={!userHasPermission || isSubmitting}
-            status={getStatus}
+            status={statusMsg}
             onChange={handleChange}
           />
         </div>
@@ -132,7 +153,7 @@ const UploadAddresses = ({
             }
             processingData={processingCSVData}
             setProcessingData={setProcessingCSVData}
-            status={getStatus}
+            status={statusMsg}
             setHasFile={handleSetHasFile}
           />
         </div>
