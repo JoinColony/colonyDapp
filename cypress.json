@@ -6,8 +6,8 @@
     "viewportWidth": 1250,
     "viewportHeight": 840,
     "colony": {
-        "name": "a",
-        "nativeToken": "A"
+        "name": "jaya",
+        "nativeToken": "JAY"
     },
     "skipInitTests": true
 }
