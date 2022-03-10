@@ -1,7 +1,4 @@
-describe(
-  'Comments in action page',
-  { defaultCommandTimeout: 10000 },
-  () => {
+describe('Comments in action page', () => {
     const commentText = 'Can I comment in this action?';
 
     beforeEach(() => {
