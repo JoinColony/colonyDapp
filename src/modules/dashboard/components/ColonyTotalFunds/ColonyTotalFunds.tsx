@@ -115,7 +115,7 @@ const ColonyTotalFunds = ({
           currentTokenAddress={currentTokenAddress}
         >
           <button className={styles.selectedTokenSymbol} type="button">
-            <span>{currentToken.symbol}</span>
+            <span data-test="colonyTokenSymbol">{currentToken.symbol}</span>
             {currentTokenAddress === nativeTokenAddress &&
               isNativeTokenLocked && (
                 <IconTooltip
