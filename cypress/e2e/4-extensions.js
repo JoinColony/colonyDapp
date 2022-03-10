@@ -63,7 +63,7 @@ describe(
       testExtensionManagementFlow(Extension.VotingReputation);
     });
 
-    it.only('User with permission can install, enable, deprecate, re-enable, and uninstall the Whitelist extension', () => {
+    it('User with permission can install, enable, deprecate, re-enable, and uninstall the Whitelist extension', () => {
       cy.getBySel('whitelist-extension-card', { timeout: 80000 }).click();
       testExtensionManagementFlow(Extension.Whitelist);
     });
