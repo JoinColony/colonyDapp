@@ -42,12 +42,15 @@ const ManageWhitelistDialog = ({
   colony: { colonyAddress },
 }: Props) => {
   const [showInput, setShowInput] = useState<boolean>(true);
-  const toggleShowInput = () => setShowInput(!showInput);
   const [formSuccess, setFormSuccess] = useState<boolean>(false);
-  const toggleSubmitSuccess = () => setFormSuccess(!formSuccess);
+
+  const handleToggleShowInput = useCallback(() => {
+    setShowInput((state) => !state);
+    // clear success msgs when switching inputs
+    setFormSuccess(false);
+  }, [setShowInput, setFormSuccess]);
 
   const history = useHistory();
-
   const validationSchema = yup.object().shape({
     annotation: yup.string().max(4000),
   });
@@ -56,10 +59,6 @@ const ManageWhitelistDialog = ({
     validationSchema,
     showInput ? validationSchemaInput : validationSchemaFile,
   );
-
-  const handleSubmitSuccess = useCallback(() => {
-    setFormSuccess(true);
-  }, [setFormSuccess]);
 
   const transform = useCallback(
     pipe(
@@ -118,7 +117,7 @@ const ManageWhitelistDialog = ({
       success={ActionTypes.WHITELIST_UPDATE_SUCCESS}
       validationSchema={mergedSchemas}
       transform={transform}
-      onSuccess={handleSubmitSuccess}
+      onSuccess={() => setFormSuccess(true)}
     >
       {(formValues: FormikProps<FormValues>) => (
         <Dialog cancel={cancel} noOverflow={false}>
@@ -128,9 +127,9 @@ const ManageWhitelistDialog = ({
             whitelistedUsers={whitelistedUsers}
             back={() => callStep(prevStep)}
             showInput={showInput}
-            toggleShowInput={toggleShowInput}
-            submitSuccess={formSuccess}
-            toggleSubmitSuccess={toggleSubmitSuccess}
+            toggleShowInput={handleToggleShowInput}
+            formSuccess={formSuccess}
+            setFormSuccess={setFormSuccess}
           />
         </Dialog>
       )}
