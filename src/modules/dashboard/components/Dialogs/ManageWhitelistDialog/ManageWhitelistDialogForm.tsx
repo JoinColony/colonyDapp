@@ -46,6 +46,14 @@ const MSG = defineMessages({
     id: 'dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.whitelisted',
     defaultMessage: 'Whitelisted',
   },
+  inputSuccess: {
+    id: `dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.inputSuccess`,
+    defaultMessage: `Address is whitelisted now. You can add another one or close modal.`,
+  },
+  fileSuccess: {
+    id: `dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.fileSuccess`,
+    defaultMessage: `File was added. You can add another one or close modal.`,
+  },
 });
 
 const TABS = {
@@ -59,8 +67,8 @@ interface Props {
   whitelistedUsers: AnyUser[];
   showInput: boolean;
   toggleShowInput: () => void;
-  submitSuccess: boolean;
-  toggleSubmitSuccess: () => void;
+  formSuccess: boolean;
+  setFormSuccess?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ManageWhitelistDialogForm = ({
@@ -74,8 +82,8 @@ const ManageWhitelistDialogForm = ({
   handleSubmit,
   showInput,
   toggleShowInput,
-  submitSuccess,
-  toggleSubmitSuccess,
+  formSuccess,
+  setFormSuccess,
 }: Props & FormikProps<FormValues>) => {
   const [tabIndex, setTabIndex] = useState<number>(TABS.ADD_ADDRESS);
   const { walletAddress, username, ethereal } = useLoggedInUser();
@@ -121,8 +129,10 @@ const ManageWhitelistDialogForm = ({
               isSubmitting={isSubmitting}
               showInput={showInput}
               toggleShowInput={toggleShowInput}
-              submitSuccess={submitSuccess}
-              toggleSubmitSuccess={toggleSubmitSuccess}
+              formSuccess={formSuccess}
+              setFormSuccess={setFormSuccess}
+              inputSuccessMsg={MSG.inputSuccess}
+              fileSuccessMsg={MSG.fileSuccess}
             />
           </TabPanel>
           <TabPanel>
