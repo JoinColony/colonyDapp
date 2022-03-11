@@ -9,7 +9,7 @@
 
 .stakesContainer ul {
   height: calc(100% - 63px);
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .stakesListItem {
