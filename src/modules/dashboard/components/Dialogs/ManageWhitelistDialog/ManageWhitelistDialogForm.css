@@ -1,3 +1,5 @@
+@value wideButton: 160px;
+
 .noPermissionMessage {
   margin-bottom: 20px;
   vertical-align: bottom;

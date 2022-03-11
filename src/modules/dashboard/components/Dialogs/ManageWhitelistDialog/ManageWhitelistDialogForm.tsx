@@ -145,8 +145,9 @@ const ManageWhitelistDialogForm = ({
           text={{ id: 'button.back' }}
         />
         <Button
-          appearance={{ theme: 'primary', size: 'large' }}
+          appearance={{ theme: 'pink', size: 'large' }}
           text={{ id: 'button.confirm' }}
+          style={{ width: styles.wideButton }}
         />
       </DialogSection>
     </>
