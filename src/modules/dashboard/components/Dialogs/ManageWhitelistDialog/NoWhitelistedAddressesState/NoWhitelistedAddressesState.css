@@ -1,0 +1,18 @@
+.main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  min-height: 200px;
+}
+
+.title {
+  margin-bottom: 20px;
+  font-size: var(--size-medium-l);
+  color: var(--dark);
+}
+
+.desc {
+  font-size: var(--size-normal);
+  color: var(--temp-grey-blue-7);
+}

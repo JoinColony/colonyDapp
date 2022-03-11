@@ -19,6 +19,7 @@ import { hasRoot } from '~modules/users/checks';
 import { FormValues } from './ManageWhitelistDialog';
 import ManageWhitelistActiveToggle from './ManageWhitelistActiveToggle';
 import WhitelistedAddresses from './WhitelistedAddresses';
+import NoWhitelistedAddressesState from './NoWhitelistedAddressesState';
 
 import styles from './ManageWhitelistDialogForm.css';
 
@@ -47,6 +48,11 @@ const MSG = defineMessages({
   },
 });
 
+const TABS = {
+  ADD_ADDRESS: 0,
+  WHITELISTED: 1,
+};
+
 interface Props {
   back: () => void;
   colony: Colony;
@@ -60,7 +66,7 @@ const ManageWhitelistDialogForm = ({
   whitelistedUsers,
 }: Props & FormikProps<FormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
-  const [tabIndex, setTabIndex] = useState<number>(0);
+  const [tabIndex, setTabIndex] = useState<number>(TABS.ADD_ADDRESS);
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   const hasRegisteredProfile = !!username && !ethereal;
@@ -102,13 +108,17 @@ const ManageWhitelistDialogForm = ({
             <h2>Please implement this content in separate component</h2>
           </TabPanel>
           <TabPanel>
-            <ManageWhitelistActiveToggle
-              isWhiletlistActivated={values.isWhiletlistActivated}
-            />
-            <WhitelistedAddresses
-              colony={colony}
-              whitelistedUsers={whitelistedUsers}
-            />
+            {(whitelistedUsers?.length && (
+              <>
+                <ManageWhitelistActiveToggle
+                  isWhiletlistActivated={values.isWhiletlistActivated}
+                />
+                <WhitelistedAddresses
+                  colony={colony}
+                  whitelistedUsers={whitelistedUsers}
+                />
+              </>
+            )) || <NoWhitelistedAddressesState />}
           </TabPanel>
         </Tabs>
       </DialogSection>
@@ -148,6 +158,7 @@ const ManageWhitelistDialogForm = ({
           appearance={{ theme: 'pink', size: 'large' }}
           text={{ id: 'button.confirm' }}
           style={{ width: styles.wideButton }}
+          disabled={tabIndex === TABS.WHITELISTED && !whitelistedUsers?.length}
         />
       </DialogSection>
     </>
