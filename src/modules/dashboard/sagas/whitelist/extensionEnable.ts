@@ -15,13 +15,12 @@ import { WhitelistPolicy } from '~types/index';
 
 import { getTxChannel } from '../../../core/sagas';
 
-import { ipfsUpload } from '../../../core/sagas/ipfs';
-
 import {
   refreshExtension,
   removeOldExtensionClients,
   setupEnablingGroupTransactions,
   Channel,
+  uploadIfpsAnnotation,
 } from '../utils';
 
 function* extensionEnable({
@@ -60,12 +59,10 @@ function* extensionEnable({
     /*
      * Upload whitelist policy to IPFS
      */
-    const agreementHash = yield call(
-      ipfsUpload,
-      JSON.stringify({
-        agreement: payload.agreement,
-      }),
-    );
+    let agreementHash = '';
+    if (payload.agreement) {
+      agreementHash = yield call(uploadIfpsAnnotation, payload.agreement);
+    }
 
     const {
       address,
