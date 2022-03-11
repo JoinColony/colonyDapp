@@ -42,6 +42,8 @@ const WhitelistedAddresses = ({ colony, whitelistedUsers }: Props) => {
           e.target?.value,
         );
         setUsers(filteredUsers);
+      } else {
+        setUsers(whitelistedUsers);
       }
     },
     [whitelistedUsers, setUsers],
