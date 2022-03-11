@@ -403,7 +403,6 @@ const FinalizeMotionAndClaimWidget = ({
                       <Numeral
                         value={userStake}
                         suffix={` ${nativeToken?.symbol}`}
-                        truncate={5}
                       />
                     </div>
                   </div>
@@ -420,7 +419,6 @@ const FinalizeMotionAndClaimWidget = ({
                       <Numeral
                         value={userWinnings}
                         suffix={` ${nativeToken?.symbol}`}
-                        truncate={5}
                       />
                     </div>
                   </div>
@@ -434,7 +432,6 @@ const FinalizeMotionAndClaimWidget = ({
                       <Numeral
                         value={userTotals}
                         suffix={` ${nativeToken?.symbol}`}
-                        truncate={5}
                       />
                     </div>
                   </div>
