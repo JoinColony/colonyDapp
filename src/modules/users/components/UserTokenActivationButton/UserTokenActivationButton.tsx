@@ -95,8 +95,8 @@ const UserTokenActivationButton = ({
                   }`}
                 />
                 <Numeral
-                  suffix={` ${nativeToken?.symbol} `}
                   value={formattedTotalBalance}
+                  suffix={nativeToken?.symbol}
                 />
               </div>
             </Tooltip>
@@ -108,5 +108,4 @@ const UserTokenActivationButton = ({
 };
 
 UserTokenActivationButton.displayName = displayName;
-
 export default UserTokenActivationButton;

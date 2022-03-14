@@ -390,7 +390,7 @@ const ActionsPageEvent = ({
                     >
                       <Numeral
                         value={decimalStakeAmount}
-                        suffix={` ${colonyNativeToken?.symbol}`}
+                        suffix={colonyNativeToken?.symbol}
                       />
                     </Tag>
                   </div>

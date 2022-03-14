@@ -5,7 +5,7 @@ import Decimal from 'decimal.js';
 import Icon from '~core/Icon';
 import DetailsWidgetUser from '~core/DetailsWidgetUser';
 import TransactionLink from '~core/TransactionLink';
-
+import Numeral from '~core/Numeral';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import { AnyUser, Colony } from '~data/index';
 import { ColonyActions, ColonyMotions } from '~types/index';
@@ -105,9 +105,11 @@ const DetailsWidget = ({
   /*
    * @NOTE These were already being passed along as React Components, all we
    * are doing here is wrapping them in a function call so we can render them
+   * Amount should have already been passed through <Numeral>
    */
   const Amount = () => values?.amount as ReactElement;
   const Symbol = () => values?.tokenSymbol as ReactElement;
+
   const detailsForAction = getDetailsForAction(actionType);
 
   return (
@@ -185,7 +187,7 @@ const DetailsWidget = ({
             <FormattedMessage {...MSG.value} />
           </div>
           <div className={styles.tokenContainer}>
-            {values.token && (
+            {values?.token && (
               <TokenIcon
                 token={values.token}
                 name={values.token.name || undefined}
@@ -219,7 +221,7 @@ const DetailsWidget = ({
             />
           </div>
           <div className={styles.value}>
-            {values?.reputationChange}{' '}
+            <Numeral value={values?.reputationChange || '0'} />{' '}
             {new Decimal(values?.reputationChange || '0').eq(1) ? 'pt' : 'pts'}
           </div>
         </div>
