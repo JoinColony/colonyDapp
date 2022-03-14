@@ -16,10 +16,7 @@ describe('Claim new user name', () => {
       */
       cy.claimNewUserName(0);
 
-      cy.url({ timeout: 10000 }).should(
-        'be.equal',
-        'http://localhost:9090/landing',
-      );
+      cy.url().should('be.equal', 'http://localhost:9090/landing');
     });
   }
 });
