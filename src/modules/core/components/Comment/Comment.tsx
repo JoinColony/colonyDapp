@@ -135,7 +135,7 @@ const Comment = ({
               </div>
             )}
         </div>
-        <div className={styles.text}>
+        <div className={styles.text} data-test="comment">
           <Decorate>{comment}</Decorate>
         </div>
       </div>

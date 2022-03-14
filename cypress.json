@@ -1,0 +1,13 @@
+{
+    "baseUrl": "http://localhost:9090",
+    "integrationFolder": "cypress/e2e",
+    "chromeWebSecurity": false,
+    "defaultCommandTimeout": 10000,
+    "viewportWidth": 1250,
+    "viewportHeight": 840,
+    "colony": {
+        "name": "a",
+        "nativeToken": "A"
+    },
+    "skipInitTests": true
+}

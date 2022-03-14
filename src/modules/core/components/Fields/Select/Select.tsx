@@ -303,6 +303,7 @@ const Select = ({
           onKeyDown={handleKeyDown}
           type="button"
           name={name}
+          data-test="selectButton"
         >
           <div className={styles.selectInner}>
             <div className={styles.activeOption}>{activeOptionDisplay}</div>
