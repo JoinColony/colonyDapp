@@ -166,7 +166,7 @@ const BanComment = ({
               textValues={{ unban }}
               loading={loading}
               onClick={handleSubmit}
-              data-test="moderate-user-confirm-button"
+              data-test="moderateUserConfirmButton"
             />
           </div>
         </div>

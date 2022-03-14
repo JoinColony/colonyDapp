@@ -163,7 +163,7 @@ const CommentInput = ({
               onKeyDown={(event) => handleKeyboardSubmit(event, handleSubmit)}
               innerRef={(ref) => setCommentBoxInputRef(ref)}
               disabled={isSubmitting || disabled}
-              dataTest="comment-input"
+              dataTest="commentInput"
             />
             {isSubmitting && (
               <div className={styles.submitting}>

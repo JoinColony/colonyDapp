@@ -4,9 +4,9 @@ describe('Comments in action page', () => {
   beforeEach(() => {
     cy.login();
     cy.visit(`/colony/${Cypress.config().colony.name}`);
-    cy.getBySel('action-item', { timeout: 60000 }).first().click();
+    cy.getBySel('actionItem', { timeout: 60000 }).first().click();
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.getBySel('comment-input', { timeout: 40000 })
+    cy.getBySel('commentInput', { timeout: 40000 })
       .click()
       .type(`${commentText}{enter}`)
       .wait(5000);
@@ -17,19 +17,19 @@ describe('Comments in action page', () => {
   });
 
   it('User with permissions can ban and unban users', () => {
-    cy.getBySel('comment-actions-button').last().click();
-    cy.getBySel('moderate-user-button').click();
+    cy.getBySel('commentActionsButton').last().click();
+    cy.getBySel('moderateUserButton').click();
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.getBySel('moderate-user-confirm-button').click().wait(5000);
+    cy.getBySel('moderateUserConfirmButton').click().wait(5000);
     cy.getBySel('comment')
       .last()
       .should('have.css', 'color')
       .and('eq', 'rgba(118, 116, 139, 0.8)');
 
-    cy.getBySel('comment-actions-button').last().click();
-    cy.getBySel('moderate-user-button').click();
+    cy.getBySel('commentActionsButton').last().click();
+    cy.getBySel('moderateUserButton').click();
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.getBySel('moderate-user-confirm-button').click().wait(5000);
+    cy.getBySel('moderateUserConfirmButton').click().wait(5000);
     cy.getBySel('comment')
       .last()
       .should('have.css', 'color')
@@ -37,19 +37,19 @@ describe('Comments in action page', () => {
   });
 
   it('User with permissions can delete and restore comments', () => {
-    cy.getBySel('comment-actions-button').last().click();
-    cy.getBySel('moderate-comment-button').click();
+    cy.getBySel('commentActionsButton').last().click();
+    cy.getBySel('moderateCommentButton').click();
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.getBySel('moderate-comment-confirm-button').click().wait(5000);
+    cy.getBySel('moderateCommentConfirmButton').click().wait(5000);
     cy.getBySel('comment')
       .last()
       .should('have.css', 'color')
       .and('eq', 'rgba(118, 116, 139, 0.8)');
 
-    cy.getBySel('comment-actions-button').last().click();
-    cy.getBySel('moderate-comment-button').click();
+    cy.getBySel('commentActionsButton').last().click();
+    cy.getBySel('moderateCommentButton').click();
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.getBySel('moderate-comment-confirm-button').click().wait(5000);
+    cy.getBySel('moderateCommentConfirmButton').click().wait(5000);
     cy.getBySel('comment')
       .last()
       .should('have.css', 'color')
