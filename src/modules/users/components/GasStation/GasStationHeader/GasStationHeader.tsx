@@ -61,7 +61,7 @@ const GasStationHeader = ({ close }: Props) => {
             className={styles.closeButton}
             onClick={close}
             type="button"
-            data-test="close-gas-station-button"
+            data-test="closeGasStationButton"
           >
             <Icon
               appearance={{ size: 'normal' }}
