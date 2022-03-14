@@ -99,6 +99,7 @@ const DeleteComment = ({ cancel, close, comment, undelete = false }: Props) => {
           style={{ width: styles.wideButton }}
           loading={loading}
           onClick={handleSubmit}
+          data-test="moderateCommentConfirmButton"
         />
       </DialogSection>
     </Dialog>
