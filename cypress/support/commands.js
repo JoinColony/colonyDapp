@@ -55,7 +55,7 @@ Cypress.Commands.add('claimNewUserName', (numberFromList) => {
     .click()
     // click on drowpdown with accounts
     // using this type of selector not to pollute Select component that is reused
-    .get('.Select_activeOption_1sMcrZHH > span')
+    .getBySel('selectButton')
     .click()
     // select last account
     /*
@@ -73,7 +73,7 @@ Cypress.Commands.add('claimNewUserName', (numberFromList) => {
   cy.findByText(/get started/i).click();
 
   // I don't think it's worth to add selector to the Input component as it is used multiple times on the page
-  cy.get('.Input_container_17sAGJ_F').click().type(user.username);
+  cy.get('input').click().type(user.username);
 
   cy.findByText(/continue/i).click();
 });
