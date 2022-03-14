@@ -97,7 +97,7 @@ const CommentActionsPopover = ({
           <Button
             appearance={{ theme: 'no-style' }}
             onClick={() => handleDeleteComment(commentDeleted)}
-            data-test="moderate-comment-button"
+            data-test="moderateCommentButton"
           >
             <div className={styles.actionButton}>
               <Icon
@@ -116,7 +116,7 @@ const CommentActionsPopover = ({
           <Button
             appearance={{ theme: 'no-style' }}
             onClick={() => handleBanUser(userBanned)}
-            data-test="moderate-user-button"
+            data-test="moderateUserButton"
           >
             <div className={styles.actionButton}>
               <Icon

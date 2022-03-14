@@ -202,7 +202,7 @@ const ActionsListItem = ({
 
   const stopPropagation = (event) => event.stopPropagation();
   return (
-    <li data-test="action-item">
+    <li data-test="actionItem">
       <div
         /*
          * @NOTE This is non-interactive element to appease the DOM Nesting Validator
