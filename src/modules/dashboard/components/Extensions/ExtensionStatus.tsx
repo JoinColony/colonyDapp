@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import kebabCase from 'lodash/kebabCase';
+import camelCase from 'lodash/camelCase';
 
 import Tag from '~core/Tag';
 
@@ -67,14 +67,14 @@ const ExtensionStatus = ({
         <Tag
           appearance={{ theme }}
           text={status}
-          data-test={`${kebabCase(status.defaultMessage)}-status-tag`}
+          data-test={`${camelCase(status.defaultMessage)}StatusTag`}
         />
       ) : null}
       {installedExtension && installedExtension.details.deprecated ? (
         <Tag
           appearance={{ theme: 'danger' }}
           text={MSG.deprecated}
-          data-test="deprecated-status-tag"
+          data-test="deprecatedStatusTag"
         />
       ) : null}
     </div>

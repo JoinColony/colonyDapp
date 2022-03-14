@@ -56,7 +56,7 @@ const ExtensionUninstallConfirmDialog = ({
               className={styles.input}
               onChange={onWarningInputChange}
               placeholder={formatMessage(ExtensionsMSG.warningPlaceholder)}
-              data-test="uninstall-warning-input"
+              data-test="uninstallWarningInput"
             />
           </div>
         </div>
@@ -77,7 +77,7 @@ const ExtensionUninstallConfirmDialog = ({
           text={{ id: 'button.confirm' }}
           style={{ width: styles.wideButton }}
           disabled={!isWarningInputValid}
-          data-test="uninstall-confirm-button"
+          data-test="uninstallConfirmButton"
         />
       </DialogSection>
     </Dialog>

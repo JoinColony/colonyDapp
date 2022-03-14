@@ -466,7 +466,7 @@ const ExtensionDetails = ({
                 text={MSG.buttonDeprecate}
                 values={{ colonyAddress, extensionId, isToDeprecate: true }}
                 disabled={!isSupportedColonyVersion || !isNetworkAllowed}
-                data-test="deprecate-extension-button"
+                data-test="deprecateExtensionButton"
               />
             </div>
           ) : null}
@@ -485,7 +485,7 @@ const ExtensionDetails = ({
                 text={MSG.buttonReEnable}
                 values={{ colonyAddress, extensionId, isToDeprecate: false }}
                 disabled={!isSupportedColonyVersion || !isNetworkAllowed}
-                data-test="reenable-extension-button"
+                data-test="reenableExtensionButton"
               />
               <DialogActionButton
                 dialog={ExtensionUninstallConfirmDialog}
@@ -500,7 +500,7 @@ const ExtensionDetails = ({
                 text={MSG.buttonUninstall}
                 values={{ colonyAddress, extensionId }}
                 disabled={!isSupportedColonyVersion || !isNetworkAllowed}
-                data-test="uninstall-extension-button"
+                data-test="uninstallExtensionButton"
               />
             </div>
           ) : null}

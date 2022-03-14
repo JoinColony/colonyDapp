@@ -545,7 +545,7 @@ const ExtensionSetup = ({
               !isValid ||
               Object.values(formikBag?.status || {}).some((value) => !!value)
             }
-            data-test="setup-extension-confirm-button"
+            data-test="setupExtensionConfirmButton"
           />
         </div>
       )}
