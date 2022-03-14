@@ -1,8 +1,8 @@
-import React, { HTMLAttributes } from 'react';
+import React, { HTMLAttributes, useEffect, useRef } from 'react';
 import { BigNumber } from 'ethers/utils';
 
 import { getMainClasses } from '~utils/css';
-import { numberFormatter } from '~utils/numbers';
+import { numberDisplayFormatter } from '~utils/numbers';
 
 import styles from './Numeral.css';
 
@@ -11,7 +11,6 @@ interface Appearance {
   size?: 'medium' | 'large' | 'small';
   weight?: 'medium';
 }
-
 export interface Props extends HTMLAttributes<HTMLSpanElement> {
   /** Appearance object */
   appearance?: Appearance;
@@ -25,17 +24,17 @@ export interface Props extends HTMLAttributes<HTMLSpanElement> {
   /** Suffix the value with this string */
   suffix?: string;
 
-  /** Number of decimals to show after comma */
-  truncate?: number;
+  /** Number of mantissa digits to show */
+  mantissa?: number;
+
+  /** Total length of number to show */
+  totalLength?: number;
 
   /** Number of decimals to format the number with, or unit from which to determine this (ether, gwei, etc.) */
   unit?: number | string;
 
   /** Actual value */
-  value: number | string | BigNumber;
-
-  /** Should large number be truncate to 5 figures */
-  reducedOutput?: boolean;
+  value: string | BigNumber | number;
 }
 
 const Numeral = ({
@@ -43,28 +42,36 @@ const Numeral = ({
   className,
   prefix,
   suffix,
-  truncate,
+  mantissa,
+  totalLength,
   unit,
   value,
-  reducedOutput = true,
   ...props
 }: Props) => {
-  const formattedNumber = numberFormatter({
+  // formattedNumber could contain HTML,
+  // use outputRef to reference as an html object
+  const outputRef = useRef<HTMLSpanElement>(null);
+  const formattedNumber = numberDisplayFormatter({
     unit,
     value,
-    prefix,
-    suffix,
-    truncate,
-    reducedOutput,
+    mantissa,
+    totalLength,
   });
+
+  useEffect(() => {
+    if (outputRef.current) {
+      outputRef.current.innerHTML = `${prefix ? `${prefix} ` : ''}
+        ${formattedNumber}
+        ${suffix ? ` ${suffix}` : ''}`;
+    }
+  }, [outputRef, formattedNumber, prefix, suffix]);
 
   return (
     <span
       className={className || getMainClasses(appearance, styles)}
       {...props}
-    >
-      {formattedNumber}
-    </span>
+      ref={outputRef}
+    />
   );
 };
 

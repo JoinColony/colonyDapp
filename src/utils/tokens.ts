@@ -1,7 +1,7 @@
 import { bigNumberify, BigNumberish } from 'ethers/utils';
 import Decimal from 'decimal.js';
 
-import { numberFormatter } from '~utils/numbers';
+import { minimalFormatter } from '~utils/numbers';
 import { TokenWithBalances } from '~data/index';
 import { DEFAULT_TOKEN_DECIMALS, SMALL_TOKEN_AMOUNT_FORMAT } from '~constants';
 
@@ -66,9 +66,7 @@ export const getFormattedTokenValue = (
     return SMALL_TOKEN_AMOUNT_FORMAT;
   }
 
-  return numberFormatter({
-    abreviateOverMillion: false,
-    suffix: '',
+  return minimalFormatter({
     value: decimalValue.toString(),
   });
 };
