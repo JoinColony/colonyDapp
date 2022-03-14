@@ -1,32 +1,26 @@
 import numbro from 'numbro';
-
 import moveDecimal from 'move-decimal-point';
 
-import { BigNumber, formatUnits } from 'ethers/utils';
-import { SMALL_TOKEN_AMOUNT_FORMAT } from '~constants';
+import { BigNumber } from 'ethers/utils';
+
 import { numbroCustomLanguage } from './numbroCustomLanguage';
 
+export const SMALL_TOKEN_AMOUNT_FORMAT = '0.00000...';
 export interface FunctionArgs {
   /** Should use separator (e.g. for thousands ',') */
   useSeparator?: boolean;
 
-  /** Prefix the value with this string */
-  prefix?: string;
-
-  /** Suffix the value with this string */
-  suffix?: string;
-
-  /** Number of decimals to show after comma */
-  truncate?: number;
-
   /** Number of decimals to format the number with, or unit from which to determine this (ether, gwei, etc.) */
   unit?: number | string;
 
-  /** Actual value */
-  value: number | string | BigNumber;
+  /** Number of mantissa digits to show */
+  mantissa?: number;
 
-  /** Should large number be truncate to 5 figures */
-  reducedOutput?: boolean;
+  /** Total length of number to show */
+  totalLength?: number;
+
+  /** Actual value */
+  value: number | BigNumber | string;
 
   /** Abreviate value once over a million */
   abreviateOverMillion?: boolean;
@@ -36,14 +30,24 @@ export interface FunctionArgs {
   useSmallNumberDefault?: boolean;
 }
 
-export const numberFormatter = ({
+// handle very large numbers
+const engineeringNotation = (n: number, format: {}) => {
+  const decimals = Math.floor(Math.log10(n));
+  const shift = decimals - (decimals % 3);
+  // Note this toLocaleString loses precision.
+  const formattedNum = moveDecimal(
+    n.toLocaleString('fullwide', { useGrouping: false }),
+    -shift,
+  );
+  return `${numbro(formattedNum).format(format)}×10<sup>${shift}</sup>`;
+};
+
+export const numberDisplayFormatter = ({
   unit,
   value,
-  prefix,
-  suffix,
-  truncate = 5,
+  mantissa = 5,
+  totalLength = 6,
   useSeparator = true,
-  // reducedOutput = true,
   abreviateOverMillion = true,
   useSmallNumberDefault = true,
 }: FunctionArgs): string => {
@@ -51,30 +55,28 @@ export const numberFormatter = ({
   numbro.setLanguage('en-GB');
 
   const defaultFormat = {
-    // totalLength: reducedOutput ? 5 : 0,
     trimMantissa: true,
     optionalMantissa: true,
-    mantissa: truncate,
+    mantissa,
     spaceSeparated: false,
     thousandSeparated: useSeparator,
     average: false,
+    totalLength,
   };
 
   const aboveMillionFormat = {
-    mantissa: 5,
     trimMantissa: true,
+    mantissa,
+    totalLength,
     average: true,
     lowPrecision: true,
-    totalLength: 6,
     spaceSeparated: false,
     thousandSeparated: useSeparator,
   };
 
-  const convertedNum =
-    typeof unit === 'string'
-      ? formatUnits(value, unit || 0)
-      : moveDecimal(value.toString(10), -(unit || 0));
+  const convertedNum = moveDecimal(value.toString(10), -(unit || 0));
 
+  // handle very small numbers
   if (useSmallNumberDefault && convertedNum < 0.00001 && convertedNum > 0) {
     return SMALL_TOKEN_AMOUNT_FORMAT;
   }
@@ -88,7 +90,27 @@ export const numberFormatter = ({
     return value.toString();
   }
 
-  return `${prefix ? `${prefix} ` : ''}
-    ${numbro(convertedNum).format(formatType)}
-    ${suffix ? ` ${suffix}` : ''}`;
+  return abreviateOverMillion && convertedNum >= 1000000000000000
+    ? engineeringNotation(Number(convertedNum), formatType)
+    : numbro(convertedNum).format(formatType);
+};
+
+export const minimalFormatter = ({ unit, value }: FunctionArgs): string => {
+  numbro.registerLanguage(numbroCustomLanguage);
+  numbro.setLanguage('en-GB');
+
+  const minimalFormat = {
+    mantissa: 5,
+    optionalMantissa: true,
+    spaceSeparated: false,
+    thousandSeparated: false,
+    average: false,
+  };
+
+  const convertedNum = moveDecimal(value.toString(10), -(unit || 0));
+
+  if (!numbro.validate(convertedNum, minimalFormat)) {
+    return value.toString();
+  }
+  return numbro(convertedNum).format(minimalFormat);
 };
