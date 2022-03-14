@@ -126,7 +126,7 @@ const GroupedTotalStake = ({
                 requiredStake: (
                   <Numeral
                     value={formattedRequiredStake}
-                    suffix={` ${tokenSymbol}`}
+                    suffix={tokenSymbol}
                   />
                 ),
               }}
@@ -153,7 +153,7 @@ const GroupedTotalStake = ({
                 requiredStake: (
                   <Numeral
                     value={formattedRequiredStake}
-                    suffix={` ${tokenSymbol}`}
+                    suffix={tokenSymbol}
                   />
                 ),
               }}

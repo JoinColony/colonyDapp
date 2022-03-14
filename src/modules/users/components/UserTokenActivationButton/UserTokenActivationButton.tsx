@@ -2,10 +2,8 @@ import React from 'react';
 import { bigNumberify } from 'ethers/utils';
 
 import { TokenActivationPopover } from '~users/TokenActivation';
-
 import { getFormattedTokenValue } from '~utils/tokens';
 import Numeral from '~core/Numeral';
-
 import { UserLock, UserToken } from '~data/index';
 import { Address } from '~types/index';
 
@@ -63,8 +61,8 @@ const UserTokenActivationButton = ({
               }`}
             />
             <Numeral
-              suffix={` ${nativeToken?.symbol} `}
               value={formattedTotalBalance}
+              suffix={nativeToken?.symbol}
             />
           </button>
         </>

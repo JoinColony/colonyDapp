@@ -207,7 +207,7 @@ const ChangeTokenStateForm = ({
                     tokenBalance: (
                       <Numeral
                         value={tokenBalance}
-                        suffix={` ${token?.symbol}`}
+                        suffix={token?.symbol}
                         className={styles.balanceAmount}
                       />
                     ),
@@ -232,7 +232,7 @@ const ChangeTokenStateForm = ({
                       lockedTokens: (
                         <Numeral
                           value={formattedLockedTokens}
-                          suffix={` ${token?.symbol}`}
+                          suffix={token?.symbol}
                           className={styles.balanceAmount}
                         />
                       ),

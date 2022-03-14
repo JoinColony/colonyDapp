@@ -390,10 +390,7 @@ const FinalizeMotionAndClaimWidget = ({
                       </div>
                     </div>
                     <div className={styles.value}>
-                      <Numeral
-                        value={userStake}
-                        suffix={` ${nativeToken?.symbol}`}
-                      />
+                      <Numeral value={userStake} suffix={nativeToken?.symbol} />
                     </div>
                   </div>
                   <div className={styles.item}>
@@ -408,7 +405,7 @@ const FinalizeMotionAndClaimWidget = ({
                     <div className={styles.value}>
                       <Numeral
                         value={userWinnings}
-                        suffix={` ${nativeToken?.symbol}`}
+                        suffix={nativeToken?.symbol}
                       />
                     </div>
                   </div>
@@ -421,7 +418,7 @@ const FinalizeMotionAndClaimWidget = ({
                     <div className={styles.value}>
                       <Numeral
                         value={userTotals}
-                        suffix={` ${nativeToken?.symbol}`}
+                        suffix={nativeToken?.symbol}
                       />
                     </div>
                   </div>

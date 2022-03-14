@@ -40,10 +40,7 @@ const GasStationHeader = ({ close }: Props) => {
           <CopyableAddress>{walletAddress}</CopyableAddress>
         </div>
         <div>
-          <Numeral
-            value={balance}
-            suffix={` ${DEFAULT_NETWORK_TOKEN.symbol}`}
-          />
+          <Numeral value={balance} suffix={DEFAULT_NETWORK_TOKEN.symbol} />
         </div>
       </div>
       <div className={styles.actionsContainer}>

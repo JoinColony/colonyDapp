@@ -6,6 +6,7 @@ import { SMALL_TOKEN_AMOUNT_FORMAT } from '~constants';
 import Icon from '~core/Icon';
 import InfoPopover from '~core/InfoPopover';
 import TokenIcon from '~dashboard/HookedTokenIcon';
+import Numeral from '~core/Numeral';
 
 import { UserToken } from '~data/generated';
 import { Address } from '~types/index';
@@ -142,7 +143,7 @@ const TokensTab = ({
                 : styles.totalTokensSmall
             }
           >
-            {formattedTotalAmount} <span>{token?.symbol}</span>
+            <Numeral value={formattedTotalAmount} suffix={token.symbol} />
           </p>
         </div>
       </InfoPopover>
@@ -158,9 +159,7 @@ const TokensTab = ({
               />
             </TokenTooltip>
             <div className={styles.tokenNumbers}>
-              <span>
-                {formattedActiveTokens} {token.symbol}
-              </span>
+              <Numeral value={formattedActiveTokens} suffix={token.symbol} />
               {formattedActiveTokens === SMALL_TOKEN_AMOUNT_FORMAT && (
                 <SmallTokenAmountMessage />
               )}
@@ -174,9 +173,7 @@ const TokensTab = ({
           </li>
           <li>
             <div className={styles.tokenNumbersLocked}>
-              <span>
-                {formattedLockedTokens} {token.symbol}
-              </span>
+              <Numeral value={formattedLockedTokens} suffix={token.symbol} />
             </div>
           </li>
           <li>
@@ -187,9 +184,7 @@ const TokensTab = ({
               <FormattedMessage {...MSG.inactive} />
             </TokenTooltip>
             <div className={styles.tokenNumbersInactive}>
-              <span>
-                {formattedInactiveTokens} {token.symbol}
-              </span>
+              <Numeral value={formattedInactiveTokens} suffix={token.symbol} />
               {formattedInactiveTokens === SMALL_TOKEN_AMOUNT_FORMAT && (
                 <SmallTokenAmountMessage />
               )}
