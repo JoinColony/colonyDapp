@@ -6,6 +6,7 @@ import Decimal from 'decimal.js';
 
 import { ROOT_DOMAIN_ID, ColonyRoles } from '@colony/colony-js';
 
+import Numeral from '~core/Numeral';
 import { CommentInput } from '~core/Comment';
 import Heading from '~core/Heading';
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
@@ -267,6 +268,7 @@ const DefaultMotion = ({
     description: domainPurpose,
   };
   const decimalAmount = getFormattedTokenValue(amount, decimals);
+
   const actionAndEventValues = {
     actionType,
     newVersion,
@@ -287,7 +289,7 @@ const DefaultMotion = ({
         <FriendlyName user={recipient} autoShrinkAddress colony={colony} />
       </span>
     ),
-    amount: decimalAmount,
+    amount: <Numeral value={decimalAmount} />,
     token,
     tokenSymbol: <span>{symbol || '???'}</span>,
     initiator: (
@@ -329,6 +331,7 @@ const DefaultMotion = ({
       </div>
     ),
     spaceBreak: <br />,
+
     reputationChange: getFormattedTokenValue(
       new Decimal(reputationChange).abs().toString(),
       decimals,
@@ -350,7 +353,6 @@ const DefaultMotion = ({
       initiator.profile?.username ??
       initiator.profile?.walletAddress,
     reputationChange: actionAndEventValues.reputationChange,
-
     fromDomain: actionAndEventValues.fromDomain?.name,
     toDomain: actionAndEventValues.toDomain?.name,
     roles: roleTitle,

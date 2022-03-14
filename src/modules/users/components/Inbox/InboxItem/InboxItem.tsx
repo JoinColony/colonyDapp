@@ -196,7 +196,7 @@ const InboxItem = ({
                 values={{
                   amount: makeInboxDetail(amount, (value) => (
                     <Numeral
-                      suffix={` ${token ? token.symbol : ''}`}
+                      suffix={token ? token.symbol : ''}
                       value={value || '-'}
                     />
                   )),

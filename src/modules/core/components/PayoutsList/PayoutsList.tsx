@@ -76,7 +76,7 @@ const PayoutsList = ({
                   className={cx(styles.payoutNumber, {
                     [styles.native]: token.address === nativeTokenAddress,
                   })}
-                  suffix={` ${token.symbol} `}
+                  suffix={token.symbol}
                   unit={getTokenDecimalsWithFallback(token.decimals)}
                   value={bigNumberify(
                     moveDecimal(
@@ -107,7 +107,7 @@ const PayoutsList = ({
                     ),
                   )}
                   unit={getTokenDecimalsWithFallback(token.decimals)}
-                  suffix={` ${token.symbol} `}
+                  suffix={token.symbol}
                 />
               ))}
             </div>

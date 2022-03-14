@@ -116,7 +116,7 @@ const UnclaimedTransfersItem = ({
           <Numeral
             value={amount}
             unit={getTokenDecimalsWithFallback(token.decimals)}
-            suffix={` ${token.symbol}`}
+            suffix={token.symbol}
             className={styles.amount}
           />
           {tokenIsETH(token) && <EthUsd value={amount} unit="wei" />}

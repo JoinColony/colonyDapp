@@ -6,6 +6,7 @@ import Tag, { Appearance as TagAppareance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
 import { EventValue } from '~data/resolvers/colonyActions';
 import { parseDomainMetadata } from '~utils/colonyActions';
+import Numeral from '~core/Numeral';
 
 import ActionsPageFeed, {
   ActionsPageFeedItemWithIPFS,
@@ -104,7 +105,6 @@ const DefaultAction = ({
       ethDomainId: fromDomain,
     };
   }
-
   /*
    * There's a weird edge case where Apollo's caches screws with us and doesn't
    * fetch the latest domain (maybe network lag?)
@@ -127,6 +127,7 @@ const DefaultAction = ({
   });
 
   const decimalAmount = getFormattedTokenValue(amount, decimals);
+
   /*
    * @NOTE We need to convert the action type name into a forced camel-case string
    *
@@ -145,7 +146,7 @@ const DefaultAction = ({
         <FriendlyName user={recipient} autoShrinkAddress colony={colony} />
       </span>
     ),
-    amount: decimalAmount,
+    amount: <Numeral value={decimalAmount} />,
     token,
     tokenSymbol: <span>{symbol || '???'}</span>,
     decimals: getTokenDecimalsWithFallback(decimals),

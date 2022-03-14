@@ -4,6 +4,7 @@ import { bigNumberify } from 'ethers/utils';
 import { Share } from 'react-twitter-widgets';
 
 import Decimal from 'decimal.js';
+import Numeral from '~core/Numeral';
 import Heading from '~core/Heading';
 import TransactionLink from '~core/TransactionLink';
 import Button from '~core/Button';
@@ -304,7 +305,10 @@ const SaleStateWidget = ({
             <FormattedMessage {...MSG[`${state}AmountLabel`]} />
           </div>
           <div className={styles.value}>
-            {decimalAmount} {sellableToken?.symbol || '???'}
+            <Numeral
+              value={decimalAmount}
+              suffix={sellableToken?.symbol || '???'}
+            />
           </div>
         </div>
         <div className={styles.item}>
@@ -312,7 +316,7 @@ const SaleStateWidget = ({
             <FormattedMessage {...MSG.for} />
           </div>
           <div className={styles.value}>
-            {cost} {purchaseToken?.symbol || '???'}
+            <Numeral value={cost} suffix={purchaseToken?.symbol || '???'} />
           </div>
         </div>
       </div>

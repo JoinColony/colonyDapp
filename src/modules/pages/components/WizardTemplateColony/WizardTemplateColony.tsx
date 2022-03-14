@@ -61,7 +61,7 @@ const WizardTemplateColony = ({
               {ethBalance.isZero() ? (
                 <div className={styles.noMoney}>
                   <Numeral
-                    suffix={` ${DEFAULT_NETWORK_TOKEN.symbol}`}
+                    suffix={DEFAULT_NETWORK_TOKEN.symbol}
                     unit="ether"
                     value={ethBalance}
                   />
@@ -69,7 +69,7 @@ const WizardTemplateColony = ({
               ) : (
                 <div className={styles.yeihMoney}>
                   <Numeral
-                    suffix={` ${DEFAULT_NETWORK_TOKEN.symbol}`}
+                    suffix={DEFAULT_NETWORK_TOKEN.symbol}
                     unit="ether"
                     value={ethBalance}
                   />
