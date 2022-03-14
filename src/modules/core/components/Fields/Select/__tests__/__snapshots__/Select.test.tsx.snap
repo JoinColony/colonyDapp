@@ -72,6 +72,7 @@ exports[`Select component Renders initial component 1`] = `
                 aria-haspopup="listbox"
                 aria-label="Select me"
                 className="undefined "
+                data-test="selectButton"
                 id="someStaticId"
                 name="foo"
                 onClick={[Function]}
