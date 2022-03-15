@@ -89,6 +89,7 @@ export interface Props extends Omit<InputComponentProps, 'placeholder'> {
 
   /** External on change hook */
   onChange?: (e: React.ChangeEvent<any>) => void;
+  dataTest?: string;
 }
 
 const Input = ({
@@ -113,6 +114,7 @@ const Input = ({
   maxLength,
   maxButtonParams,
   onChange,
+  dataTest,
 }: Props) => {
   const [id] = useState(idProp || nanoid());
   const { formatMessage } = useIntl();
@@ -135,6 +137,7 @@ const Input = ({
     disabled,
     maxLength,
     maxButtonParams,
+    'data-test': dataTest,
     onChange: (event) => {
       inputFieldProps.onChange(event);
       if (onChange) {

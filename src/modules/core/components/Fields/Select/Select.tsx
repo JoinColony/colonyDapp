@@ -80,6 +80,8 @@ export interface Props {
 
   /** Status text values for intl interpolation */
   statusValues?: SimpleMessageValues;
+
+  dataTest?: string;
 }
 
 const displayName = 'Select';
@@ -101,6 +103,7 @@ const Select = ({
   renderActiveOption,
   status,
   statusValues,
+  dataTest,
 }: Props) => {
   const [id] = useState<string>(idProp || nanoid());
   const [, { error, value }, { setValue }] = useField(name);
@@ -303,7 +306,7 @@ const Select = ({
           onKeyDown={handleKeyDown}
           type="button"
           name={name}
-          data-test="selectButton"
+          data-test={dataTest}
         >
           <div className={styles.selectInner}>
             <div className={styles.activeOption}>{activeOptionDisplay}</div>

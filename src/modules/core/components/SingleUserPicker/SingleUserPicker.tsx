@@ -96,6 +96,9 @@ interface Props extends WithOmnipickerInProps {
   onSelected?: (user: AnyUser) => void;
 
   value?: AnyUser;
+
+  dataTest?: string;
+  itemDataTest?: string;
 }
 
 interface EnhancedProps extends Props, WrappedComponentProps {}
@@ -124,6 +127,8 @@ const SingleUserPicker = ({
     <UserAvatar address={address} user={item} size="xs" />
   ),
   renderItem: renderItemProp,
+  dataTest,
+  itemDataTest,
 }: EnhancedProps) => {
   const [, { error, touched, value }, { setValue }] = useField<AnyUser | null>(
     name,
@@ -157,9 +162,10 @@ const SingleUserPicker = ({
           itemData={user}
           renderAvatar={renderAvatar}
           showMaskedAddress
+          dataTest={itemDataTest}
         />
       ),
-      [renderAvatar],
+      [renderAvatar, itemDataTest],
     );
 
   const labelAppearance = appearance
@@ -221,6 +227,7 @@ const SingleUserPicker = ({
               placeholder={placeholderText}
               hidden={!!value}
               ref={registerInputNode}
+              data-test={dataTest}
             />
             {error && appearance && appearance.direction === 'horizontal' && (
               <span className={styles.errorHorizontal}>{error}</span>
