@@ -138,6 +138,7 @@ const Checkbox = ({
     if (getDefaultValue) {
       getDefaultValue(isChecked);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
