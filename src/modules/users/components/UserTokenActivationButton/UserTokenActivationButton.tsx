@@ -15,7 +15,7 @@ const displayName = 'users.UserTokenActivationButton';
 
 const MSG = defineMessages({
   tooltip: {
-    id: 'pages.NavigationWrapper.UserNavigation.tooltip',
+    id: 'users.UserTokenActivationButton.tooltip',
     defaultMessage:
       'View and activate tokens for staking or claim any unclaimed stakes.',
   },
