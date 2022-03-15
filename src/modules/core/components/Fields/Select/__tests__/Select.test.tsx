@@ -24,6 +24,7 @@ const DEFAULT_PROPS = {
     },
   ],
   connect: false,
+  'data-test': 'selectButton',
 };
 
 describe('Select component', () => {
