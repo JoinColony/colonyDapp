@@ -57,6 +57,8 @@ export interface Props
 
   /** Pass params to a max button - implemented only in Cleave options */
   maxButtonParams?: MaxButtonParams;
+
+  'data-test'?: string;
 }
 
 const InputComponent = ({

@@ -50,6 +50,8 @@ interface Props {
 
   /** Toggle if to set the domain dropdown in a disabled state (won't open) */
   disabled?: boolean;
+
+  dataTest?: string;
 }
 
 const displayName = 'DomainDropdown';
@@ -66,6 +68,7 @@ const DomainDropdown = ({
   showAllDomains = true,
   showDescription = true,
   disabled = false,
+  dataTest,
 }: Props) => {
   const handleSubmit = useCallback(
     (domainId: number) => {
@@ -154,6 +157,7 @@ const DomainDropdown = ({
       optionsFooter={footerComponent}
       renderActiveOption={renderActiveOptionFn}
       disabled={disabled}
+      dataTest={dataTest}
     />
   );
 };

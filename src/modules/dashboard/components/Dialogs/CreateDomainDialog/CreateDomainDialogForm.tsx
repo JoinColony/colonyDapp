@@ -128,6 +128,7 @@ const CreateDomainDialogForm = ({
               appearance={{ colorSchema: 'grey', theme: 'fat' }}
               disabled={inputDisabled}
               maxLength={20}
+              dataTest="domainNameInput"
             />
           </div>
           <ColorSelect
@@ -146,6 +147,7 @@ const CreateDomainDialogForm = ({
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
           disabled={inputDisabled}
           maxLength={90}
+          dataTest="domainPurposeInput"
         />
       </DialogSection>
       <DialogSection>
@@ -153,6 +155,7 @@ const CreateDomainDialogForm = ({
           label={MSG.annotation}
           name="annotationMessage"
           disabled={inputDisabled}
+          dataTest="createDomainAnnotation"
         />
       </DialogSection>
       {!userHasPermission && (
@@ -190,6 +193,7 @@ const CreateDomainDialogForm = ({
           onClick={() => handleSubmit()}
           loading={isSubmitting}
           disabled={inputDisabled || !isValid}
+          data-test="createDomainConfirmButton"
         />
       </DialogSection>
     </>
