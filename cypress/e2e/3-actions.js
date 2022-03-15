@@ -114,7 +114,7 @@ describe('User can create actions via UAC', () => {
       expect(amount).to.eq((prevColonyFunds - amountToPay).toString());
     });
   });
-  it.only('Can create teams', () => {
+  it('Can create teams', () => {
     const annotationText = 'Test annotation';
     const domainName = 'Cats';
     const domainPurpose = 'Only cats allowed';
@@ -136,6 +136,53 @@ describe('User can create actions via UAC', () => {
     cy.getBySel('actionHeading', { timeout: 70000 }).should(
       'have.text',
       `New team: ${domainName}`,
+    );
+
+    cy.url().should(
+      'contains',
+      `${Cypress.config().baseUrl}/colony/${
+        Cypress.config().colony.name
+      }/tx/0x`,
+    );
+
+    cy.getBySel('comment').should('have.text', annotationText);
+
+    cy.getBySel('backButton').click();
+
+    cy.getBySel('colonyDomainSelector', { timeout: 15000 }).click();
+    cy.getBySel('domainDropdownItemName')
+      .last()
+      .should('have.text', domainName);
+    cy.getBySel('domainDropdownItemPurpose')
+      .last()
+      .should('have.text', domainPurpose);
+  });
+  it.only('Can edit teams', () => {
+    const annotationText = 'Test annotation';
+    const domainName = 'Dolphins';
+    const domainPurpose = 'This team has been taken over by dolphins';
+
+    cy.login();
+
+    cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+    cy.getBySel('new-action-button', { timeout: 90000 }).click();
+    cy.getBySel('index-modal-item').eq(2).click();
+    cy.getBySel('index-modal-item').eq(1).click();
+
+    cy.getBySel('domainIdSelector').click();
+    cy.getBySel('domainIdItem').last().click();
+    cy.getBySel('domainNameInput').clear();
+    cy.getBySel('domainNameInput').click().type(domainName);
+    cy.getBySel('domainPurposeInput').clear();
+    cy.getBySel('domainPurposeInput').click().type(domainPurpose);
+    cy.getBySel('editDomainAnnotation').click().type(annotationText);
+
+    cy.getBySel('editDomainConfirmButton').click();
+
+    cy.getBySel('actionHeading', { timeout: 100000 }).should(
+      'have.text',
+      `${domainName} team details edited`,
     );
 
     cy.url().should(
