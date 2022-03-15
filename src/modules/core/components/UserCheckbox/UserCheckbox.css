@@ -1,0 +1,55 @@
+
+.main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 14px 0;
+  padding: 5px;
+  height: 40px;
+  border-radius: var(--radius-tiny);
+}
+
+.notChecked {
+  background-color: color-mod(var(--pink) alpha(14%));
+}
+
+.user {
+  display: flex;
+  align-items: center;
+}
+
+.usernameSection {
+  margin-left: 6px;
+  padding: 0;
+}
+
+.displayName {
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  color: var(--grey-1);
+}
+
+.displayName + .username {
+  margin-left: 5px;
+}
+
+.username > span {
+  font-size: var(--size-normal);
+}
+
+.address {
+  display: flex;
+  align-items: center;
+  line-height: 13px;
+}
+
+.address span {
+  font-size: var(--size-small);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.checkbox {
+  margin-right: 10px;
+  margin-top: 5px;
+}

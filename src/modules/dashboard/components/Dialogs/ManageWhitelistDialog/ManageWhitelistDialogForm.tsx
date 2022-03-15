@@ -11,13 +11,15 @@ import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 
-import { useLoggedInUser, Colony } from '~data/index';
+import { useLoggedInUser, Colony, AnyUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot } from '~modules/users/checks';
 
 import { FormValues } from './ManageWhitelistDialog';
 import ManageWhitelistActiveToggle from './ManageWhitelistActiveToggle';
+import WhitelistedAddresses from './WhitelistedAddresses';
+import NoWhitelistedAddressesState from './NoWhitelistedAddressesState';
 
 import styles from './ManageWhitelistDialogForm.css';
 
@@ -46,19 +48,25 @@ const MSG = defineMessages({
   },
 });
 
+const TABS = {
+  ADD_ADDRESS: 0,
+  WHITELISTED: 1,
+};
+
 interface Props {
   back: () => void;
   colony: Colony;
+  whitelistedUsers: AnyUser[];
 }
 
 const ManageWhitelistDialogForm = ({
   back,
   colony,
   values,
+  whitelistedUsers,
 }: Props & FormikProps<FormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
-  const [tabIndex, setTabIndex] = useState<number>(0);
-
+  const [tabIndex, setTabIndex] = useState<number>(TABS.ADD_ADDRESS);
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   const hasRegisteredProfile = !!username && !ethereal;
@@ -100,9 +108,17 @@ const ManageWhitelistDialogForm = ({
             <h2>Please implement this content in separate component</h2>
           </TabPanel>
           <TabPanel>
-            <ManageWhitelistActiveToggle
-              isWhiletlistActivated={values.isWhiletlistActivated}
-            />
+            {(whitelistedUsers?.length && (
+              <>
+                <ManageWhitelistActiveToggle
+                  isWhiletlistActivated={values.isWhiletlistActivated}
+                />
+                <WhitelistedAddresses
+                  colony={colony}
+                  whitelistedUsers={whitelistedUsers}
+                />
+              </>
+            )) || <NoWhitelistedAddressesState />}
           </TabPanel>
         </Tabs>
       </DialogSection>
@@ -139,8 +155,10 @@ const ManageWhitelistDialogForm = ({
           text={{ id: 'button.back' }}
         />
         <Button
-          appearance={{ theme: 'primary', size: 'large' }}
+          appearance={{ theme: 'pink', size: 'large' }}
           text={{ id: 'button.confirm' }}
+          style={{ width: styles.wideButton }}
+          disabled={tabIndex === TABS.WHITELISTED && !whitelistedUsers?.length}
         />
       </DialogSection>
     </>
