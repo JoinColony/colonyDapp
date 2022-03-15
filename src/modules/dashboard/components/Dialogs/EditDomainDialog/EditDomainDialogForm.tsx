@@ -224,6 +224,8 @@ const EditDomainDialogForm = ({
               name="domainId"
               appearance={{ theme: 'grey', width: 'fluid' }}
               disabled={isSubmitting}
+              dataTest="domainIdSelector"
+              itemDataTest="domainIdItem"
             />
           </div>
           <ColorSelect
@@ -242,6 +244,7 @@ const EditDomainDialogForm = ({
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
           disabled={inputDisabled}
           maxLength={20}
+          dataTest="domainNameInput"
         />
       </DialogSection>
       <DialogSection>
@@ -251,6 +254,7 @@ const EditDomainDialogForm = ({
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
           disabled={inputDisabled}
           maxLength={90}
+          dataTest="domainPurposeInput"
         />
       </DialogSection>
       <DialogSection>
@@ -258,6 +262,7 @@ const EditDomainDialogForm = ({
           label={MSG.annotation}
           name="annotationMessage"
           disabled={inputDisabled}
+          dataTest="editDomainAnnotation"
         />
       </DialogSection>
       {!userHasPermission && (
@@ -298,6 +303,7 @@ const EditDomainDialogForm = ({
           onClick={() => handleSubmit()}
           loading={isSubmitting}
           disabled={inputDisabled || !isValid}
+          data-test="editDomainConfirmButton"
         />
       </DialogSection>
     </>

@@ -81,7 +81,11 @@ export interface Props {
   /** Status text values for intl interpolation */
   statusValues?: SimpleMessageValues;
 
+  /** Provides value for data-test prop in select button used on cypress testing */
   dataTest?: string;
+
+  /** Provides value for data-test prop in select items used on cypress testing */
+  itemDataTest?: string;
 }
 
 const displayName = 'Select';
@@ -104,6 +108,7 @@ const Select = ({
   status,
   statusValues,
   dataTest,
+  itemDataTest,
 }: Props) => {
   const [id] = useState<string>(idProp || nanoid());
   const [, { error, value }, { setValue }] = useField(name);
@@ -326,6 +331,7 @@ const Select = ({
             onClick={checkOption}
             appearance={appearance}
             name={name}
+            dataTest={itemDataTest}
           />
         )}
       </div>
