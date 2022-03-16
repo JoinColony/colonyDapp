@@ -20,13 +20,12 @@ describe('Create a new colony', () => {
       cy.findByText(/continue/i).click();
       cy.findByText(/continue/i).click();
 
-      cy.url().should('eq', `${Cypress.config().baseUrl}/colony/${name}`, {
-        timeout: 120000,
-      });
-      cy.getBySel('colonyTokenSymbol', { timeout: 60000 }).should(
+      cy.getBySel('colonyTokenSymbol', { timeout: 120000 }).should(
         'have.text',
         nativeToken,
       );
+
+      cy.url().should('eq', `${Cypress.config().baseUrl}/colony/${name}`);
     });
   }
 });
