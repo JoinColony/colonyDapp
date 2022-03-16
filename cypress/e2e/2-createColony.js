@@ -5,20 +5,18 @@ describe('Create a new colony', () => {
 
       cy.login();
 
-      cy.findByText(/create a colony/i).click();
+      cy.getBySel('createColony').click();
 
       cy.get('input').first().click().type(name);
       cy.get('input').last().click().type(name);
 
-      cy.findByText(/continue/i).click();
-
-      cy.findByText(/create a new token/i).click();
+      cy.getBySel('claimColonyNameConfirm').click();
+      cy.getBySel('createNewToken').click();
 
       cy.get('input').first().click().type(nativeToken);
       cy.get('input').last().click().type(nativeToken);
-
-      cy.findByText(/continue/i).click();
-      cy.findByText(/continue/i).click();
+      cy.getBySel('definedTokenConfirm').click();
+      cy.getBySel('userInputConfirm').click();
 
       cy.getBySel('colonyTokenSymbol', { timeout: 120000 }).should(
         'have.text',
