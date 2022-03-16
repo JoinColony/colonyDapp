@@ -38,7 +38,6 @@
 
 .tooltip {
   width: 237px;
-  font-size: var(--size-small);
-  font-weight: var(--weight-bold);
+  font-size: var(--size-tiny);
   text-align: left;
 }
