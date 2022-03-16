@@ -38,6 +38,8 @@ export interface Props {
   name: string;
   /** Html input `id` attribute */
   inputId?: string;
+  /** Provides value for data-test used on cypress testing */
+  dataTest?: string;
 }
 
 const displayName = 'CustomRadio';
@@ -54,6 +56,7 @@ const CustomRadio = ({
   description,
   descriptionValues,
   icon,
+  dataTest,
 }: Props) => {
   const [, { error }, { setValue }] = useField(name);
   const inputRef = useRef<string>(inputId || nanoid());
@@ -86,6 +89,7 @@ const CustomRadio = ({
         name={name}
         id={inputRef.current}
         className={styles.input}
+        data-test={dataTest}
       />
       {icon && (
         <div className={styles.icon}>

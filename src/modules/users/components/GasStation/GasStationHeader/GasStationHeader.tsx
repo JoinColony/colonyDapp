@@ -57,7 +57,12 @@ const GasStationHeader = ({ close }: Props) => {
           </div>
         </Link>
         {close && (
-          <button className={styles.closeButton} onClick={close} type="button">
+          <button
+            className={styles.closeButton}
+            onClick={close}
+            type="button"
+            data-test="closeGasStationButton"
+          >
             <Icon
               appearance={{ size: 'normal' }}
               name="close"

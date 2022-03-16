@@ -32,6 +32,7 @@ const ColonyPolicySelector = ({ name, title, options }: Props) => {
         options={options}
         currentlyCheckedValue={inputFieldProps.value}
         name="policy"
+        dataTest="policySelector"
       />
     </div>
   );

@@ -1,5 +1,6 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import camelCase from 'lodash/camelCase';
 
 import Tag from '~core/Tag';
 
@@ -62,9 +63,19 @@ const ExtensionStatus = ({
   }
   return (
     <div className={styles.tagContainer}>
-      {!deprecatedOnly ? <Tag appearance={{ theme }} text={status} /> : null}
+      {!deprecatedOnly ? (
+        <Tag
+          appearance={{ theme }}
+          text={status}
+          data-test={`${camelCase(status.defaultMessage)}StatusTag`}
+        />
+      ) : null}
       {installedExtension && installedExtension.details.deprecated ? (
-        <Tag appearance={{ theme: 'danger' }} text={MSG.deprecated} />
+        <Tag
+          appearance={{ theme: 'danger' }}
+          text={MSG.deprecated}
+          data-test="deprecatedStatusTag"
+        />
       ) : null}
     </div>
   );

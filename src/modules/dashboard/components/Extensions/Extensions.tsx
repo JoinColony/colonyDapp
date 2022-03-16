@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { extensions, getExtensionHash } from '@colony/colony-js';
+import camelCase from 'lodash/camelCase';
 
 import BreadCrumb from '~core/BreadCrumb';
 import Heading from '~core/Heading';
@@ -147,6 +148,7 @@ const Extensions = ({ colonyAddress }: Props) => {
                 <ExtensionCard
                   key={extension.extensionId}
                   extension={extension}
+                  dataTest={`${camelCase(extension.extensionId)}ExtensionCard`}
                 />
               ))}
             </div>

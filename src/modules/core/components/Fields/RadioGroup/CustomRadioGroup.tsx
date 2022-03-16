@@ -20,6 +20,8 @@ interface Props {
   name: string;
   /** Disable the input */
   disabled?: boolean;
+  /** Provides value for data-test used on cypress testing */
+  dataTest?: string;
 }
 
 const displayName = 'CustomRadioGroup';
@@ -30,6 +32,7 @@ const CustomRadioGroup = ({
   name,
   appearance = { direction: 'horizontal' },
   disabled,
+  dataTest,
 }: Props) => {
   return (
     <div className={getMainClasses(appearance, styles)}>
@@ -56,6 +59,7 @@ const CustomRadioGroup = ({
             key={value}
             appearance={{ ...optionApperance, direction: appearance.direction }}
             disabled={disabled}
+            dataTest={dataTest}
             {...rest}
           />
         ),
