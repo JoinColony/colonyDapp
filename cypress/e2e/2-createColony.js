@@ -11,7 +11,7 @@ describe('Create a new colony', () => {
       cy.get('input').last().click().type(name);
 
       cy.getBySel('claimColonyNameConfirm').click();
-      cy.getBySel('createNewToken').click();
+      cy.getBySel('createNewToken', { timeout: 20000 }).click();
 
       cy.get('input').first().click().type(nativeToken);
       cy.get('input').last().click().type(nativeToken);
