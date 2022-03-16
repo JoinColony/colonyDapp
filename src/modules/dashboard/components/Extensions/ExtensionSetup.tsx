@@ -311,9 +311,9 @@ const ExtensionSetup = ({
   );
 
   if (
-    installedExtension.details.deprecated ||
-    (installedExtension.details.initialized &&
-      !installedExtension.details.missingPermissions.length)
+    installedExtension.details?.deprecated ||
+    (installedExtension.details?.initialized &&
+      !installedExtension.details?.missingPermissions.length)
   ) {
     return <Redirect to={`/colony/${colonyName}/extensions/${extensionId}`} />;
   }
@@ -321,8 +321,8 @@ const ExtensionSetup = ({
   // This is a special case that should not happen. Used to recover the
   // missing permission transactions
   if (
-    installedExtension.details.initialized &&
-    installedExtension.details.missingPermissions.length
+    installedExtension.details?.initialized &&
+    installedExtension.details?.missingPermissions.length
   ) {
     return (
       <div className={styles.main}>

@@ -56,19 +56,16 @@ function* colonyExtensionEnable({
       throw new Error('Extension not installed');
     }
 
-    const {
-      address,
-      details: { initialized, missingPermissions },
-    } = data.colonyExtension;
+    const { address, details } = data.colonyExtension;
 
-    if (!initialized && extension.initializationParams) {
+    if (!details?.initialized && extension.initializationParams) {
       const initParams = modifyParams(extension.initializationParams, payload);
 
       const additionalChannels: {
         setUserRolesWithProofs?: Channel;
       } = {};
-      if (missingPermissions.length) {
-        const bytes32Roles = intArrayToBytes32(missingPermissions);
+      if (details?.missingPermissions.length) {
+        const bytes32Roles = intArrayToBytes32(details.missingPermissions);
         additionalChannels.setUserRolesWithProofs = {
           context: ClientType.ColonyClient,
           params: [address, ROOT_DOMAIN_ID, bytes32Roles],

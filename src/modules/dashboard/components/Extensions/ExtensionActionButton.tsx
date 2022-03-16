@@ -69,11 +69,11 @@ const ExtensionActionButton = ({
     );
   }
 
-  if (installedExtension.details.deprecated) {
+  if (installedExtension.details?.deprecated) {
     return null;
   }
 
-  if (!installedExtension.details.initialized) {
+  if (!installedExtension.details?.initialized) {
     return (
       <Button
         appearance={{ theme: 'primary', size: 'medium' }}
@@ -84,7 +84,7 @@ const ExtensionActionButton = ({
       />
     );
   }
-  if (installedExtension.details.missingPermissions.length) {
+  if (installedExtension.details?.missingPermissions.length) {
     return (
       <ActionButton
         button={IconButton}

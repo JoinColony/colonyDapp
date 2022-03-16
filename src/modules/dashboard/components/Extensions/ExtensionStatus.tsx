@@ -49,13 +49,13 @@ const ExtensionStatus = ({
 
   if (!installedExtension) {
     status = MSG.notInstalled;
-  } else if (!installedExtension.details.initialized) {
+  } else if (!installedExtension.details?.initialized) {
     status = MSG.notEnabled;
     theme = 'golden';
-  } else if (installedExtension.details.missingPermissions.length) {
+  } else if (installedExtension.details?.missingPermissions.length) {
     status = MSG.missingPermissions;
     theme = 'danger';
-  } else if (installedExtension.details.initialized) {
+  } else if (installedExtension.details?.initialized) {
     status = MSG.enabled;
     theme = 'primary';
   } else {
@@ -70,7 +70,7 @@ const ExtensionStatus = ({
           data-test={`${camelCase(status.defaultMessage)}StatusTag`}
         />
       ) : null}
-      {installedExtension && installedExtension.details.deprecated ? (
+      {installedExtension && installedExtension.details?.deprecated ? (
         <Tag
           appearance={{ theme: 'danger' }}
           text={MSG.deprecated}
