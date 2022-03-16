@@ -88,12 +88,9 @@ const ColonyDomainSelector = ({
     [getDomainColor],
   );
   const oneTxPaymentExtension = data?.processedColony?.installedExtensions.find(
-    ({
-      details: { initialized, missingPermissions },
-      extensionId: extensionName,
-    }) =>
-      initialized &&
-      !missingPermissions.length &&
+    ({ details, extensionId: extensionName }) =>
+      details?.initialized &&
+      !details?.missingPermissions.length &&
       extensionName === Extension.OneTxPayment,
   );
   const mustUpgradeOneTx = oneTxMustBeUpgraded(oneTxPaymentExtension);
