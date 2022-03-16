@@ -41,12 +41,9 @@ const ExtensionUpgrade = ({ colony: { colonyName, colonyAddress } }: Props) => {
     colonyNameEntry === colonyName && extensionId === Extension.OneTxPayment;
 
   const oneTxPaymentExtension = data?.processedColony?.installedExtensions.find(
-    ({
-      details: { initialized, missingPermissions },
-      extensionId: extensionName,
-    }) =>
-      initialized &&
-      !missingPermissions.length &&
+    ({ details, extensionId: extensionName }) =>
+      details?.initialized &&
+      !details?.missingPermissions.length &&
       extensionName === Extension.OneTxPayment,
   );
   const mustUpgrade = oneTxMustBeUpgraded(oneTxPaymentExtension);

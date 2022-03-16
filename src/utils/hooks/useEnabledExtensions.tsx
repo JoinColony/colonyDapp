@@ -26,13 +26,13 @@ export const useEnabledExtensions = ({ colonyAddress }: Props) => {
 
   const isVotingExtensionEnabled = !!(
     installedVotingExtension &&
-    installedVotingExtension.details.initialized &&
-    !installedVotingExtension.details.deprecated
+    installedVotingExtension.details?.initialized &&
+    !installedVotingExtension.details?.deprecated
   );
   const isOneTxPaymentExtensionEnabled = !!(
     installedOneTxPaymentExtension &&
-    installedOneTxPaymentExtension.details.initialized &&
-    !installedOneTxPaymentExtension.details.deprecated
+    installedOneTxPaymentExtension.details?.initialized &&
+    !installedOneTxPaymentExtension.details?.deprecated
   );
 
   const installedExtensionsAddresses = installedExtensions.map((extension) =>
@@ -40,8 +40,8 @@ export const useEnabledExtensions = ({ colonyAddress }: Props) => {
   );
   const isWhitelistExtensionEnabled = !!(
     installedWhitelistExtension &&
-    installedWhitelistExtension.details.initialized &&
-    !installedWhitelistExtension.details.deprecated
+    installedWhitelistExtension.details?.initialized &&
+    !installedWhitelistExtension.details?.deprecated
   );
 
   return {

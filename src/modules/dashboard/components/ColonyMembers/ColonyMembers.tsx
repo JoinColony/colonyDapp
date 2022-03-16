@@ -110,12 +110,9 @@ const ColonyMembers = () => {
 
   // eslint-disable-next-line max-len
   const oneTxPaymentExtension = colonyExtensions?.processedColony?.installedExtensions.find(
-    ({
-      details: { initialized, missingPermissions },
-      extensionId: extensionName,
-    }) =>
-      initialized &&
-      !missingPermissions.length &&
+    ({ details, extensionId: extensionName }) =>
+      details?.initialized &&
+      !details?.missingPermissions.length &&
       extensionName === Extension.OneTxPayment,
   );
   const mustUpgradeOneTx = oneTxMustBeUpgraded(oneTxPaymentExtension);
