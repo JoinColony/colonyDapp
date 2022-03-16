@@ -126,6 +126,7 @@ const ColonyDomainSelector = ({
         showAllDomains
         showDescription
         dataTest="colonyDomainSelector"
+        itemDataTest="colonyDomainSelectorItem"
       />
     </Form>
   );
