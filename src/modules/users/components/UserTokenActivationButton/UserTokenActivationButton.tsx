@@ -20,7 +20,6 @@ const MSG = defineMessages({
       'View and activate tokens for staking or claim any unclaimed stakes.',
   },
 });
-
 interface Props {
   userLock: UserLock;
   nativeToken: UserToken;
@@ -77,6 +76,16 @@ const UserTokenActivationButton = ({
                   <FormattedMessage {...MSG.tooltip} />
                 </div>
               }
+              popperProps={{
+                modifiers: [
+                  {
+                    name: 'offset',
+                    options: {
+                      offset: [120, 10],
+                    },
+                  },
+                ],
+              }}
             >
               <div>
                 <span
