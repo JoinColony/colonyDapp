@@ -52,6 +52,8 @@ interface Props {
   disabled?: boolean;
 
   dataTest?: string;
+
+  itemDataTest?: string;
 }
 
 const displayName = 'DomainDropdown';
@@ -69,6 +71,7 @@ const DomainDropdown = ({
   showDescription = true,
   disabled = false,
   dataTest,
+  itemDataTest,
 }: Props) => {
   const handleSubmit = useCallback(
     (domainId: number) => {
@@ -158,6 +161,7 @@ const DomainDropdown = ({
       renderActiveOption={renderActiveOptionFn}
       disabled={disabled}
       dataTest={dataTest}
+      itemDataTest={itemDataTest}
     />
   );
 };
