@@ -235,7 +235,7 @@ const FileUpload = ({
       <div
         className={dropzoneClassName}
         {...getRootProps()}
-        data-test="avatarUpload"
+        data-test="fileUpload"
       >
         <input {...getInputProps()} />
         {maxFileLimitNotMet && renderPlaceholder}
