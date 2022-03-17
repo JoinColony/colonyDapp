@@ -115,3 +115,16 @@ Cypress.Commands.add('checkUrlAfterAction', (colonyName) => {
     { timeout: 30000 },
   );
 });
+
+Cypress.Commands.add('changeColonyname', (colonyName, newName) => {
+  cy.getBySel('newAction', { timeout: 60000 }).click();
+  cy.getBySel('advancedDialogIndexItem').click();
+  cy.getBySel('updateColonyDialogIndexItem').click();
+  cy.get('input').last().click().clear().type(newName);
+});
+
+Cypress.Commands.add('checkColonyName', (colonyName) => {
+  cy.getBySel('colonyTitle', { timeout: 60000 }).then((name) => {
+    expect(name.text()).to.equal(colonyName);
+  });
+});
