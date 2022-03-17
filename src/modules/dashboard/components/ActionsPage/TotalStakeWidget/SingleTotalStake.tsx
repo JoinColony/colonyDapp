@@ -5,6 +5,7 @@ import { bigNumberify } from 'ethers/utils';
 
 import Heading from '~core/Heading';
 import ProgressBar from '~core/ProgressBar';
+import Numeral from '~core/Numeral';
 import { getFormattedTokenValue } from '~utils/tokens';
 
 import styles from './TotalStakeWidget.css';
@@ -83,7 +84,9 @@ const SingleTotalStake = ({
             {...MSG.stakeProgress}
             values={{
               totalPercentage: formattedTotalPercentage,
-              requiredStake: `${requiredStakeDisplay} ${tokenSymbol}`,
+              requiredStake: (
+                <Numeral value={requiredStakeDisplay} suffix={tokenSymbol} />
+              ),
             }}
           />
         </span>
@@ -102,7 +105,9 @@ const SingleTotalStake = ({
             {...MSG.userStake}
             values={{
               userPercentage: formattedUserStakePercentage,
-              userStake: `${userStakeDisplay} ${tokenSymbol}`,
+              userStake: (
+                <Numeral value={userStakeDisplay} suffix={tokenSymbol} />
+              ),
             }}
           />
         </p>

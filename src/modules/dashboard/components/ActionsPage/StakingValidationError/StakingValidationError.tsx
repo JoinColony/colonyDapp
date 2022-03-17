@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineMessage, FormattedMessage } from 'react-intl';
 
-import { SimpleMessageValues } from '~types/index';
+import { UniversalMessageValues } from '~types/index';
 
 import styles from './StakingValidationError.css';
 
@@ -12,7 +12,7 @@ interface Props {
     | 'stakeMoreTokens'
     | 'cantStakeMore'
     | 'stakeMoreReputation';
-  errorValues?: SimpleMessageValues;
+  errorValues?: UniversalMessageValues;
 }
 
 const stakeValidationMSG = defineMessage({
