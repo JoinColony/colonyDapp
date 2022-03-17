@@ -100,3 +100,10 @@ Cypress.Commands.add('createColony', (colony, useNewToken) => {
 
   cy.getBySel('userInputConfirm').click();
 });
+
+Cypress.Commands.add('getColonyTokenAddress', (colonyName) => {
+  cy.login();
+  cy.visit(`/colony/${colonyName}`);
+  cy.getBySel('colonyMenu', { timeout: 60000 }).click();
+  cy.getBySel('nativeTokenAddress').invoke('text').as('existingTokenAddress');
+});

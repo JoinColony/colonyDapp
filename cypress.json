@@ -10,8 +10,7 @@
         "nativeToken": "JAY"
     },
     "colony2": {
-        "name": "sirius",
-        "nativeToken": "SIR"
+        "name": "sirius"
     },
     "skipInitTests": true
 }
