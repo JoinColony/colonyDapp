@@ -177,6 +177,7 @@ const AdvancedDialog = ({
         permissionsList: <FormattedMessage {...MSG.upgradePermissionsList} />,
       },
       onClick: () => callStep(nextStepEditDetails),
+      dataTest: 'updateColonyDialogIndexItem',
     },
     {
       title: MSG.makeArbitraryTransactionTitle,

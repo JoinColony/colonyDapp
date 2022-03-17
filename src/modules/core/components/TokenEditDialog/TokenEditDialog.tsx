@@ -247,6 +247,7 @@ const TokenEditDialog = ({
           }
           type="submit"
           style={{ width: styles.wideButton }}
+          data-test="confirm"
         />
       </DialogSection>
     </>
