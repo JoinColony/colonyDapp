@@ -106,6 +106,7 @@ const ColonyActionsDialog = ({
       description: MSG.advancedDesc,
       icon: 'emoji-smiley-nerd',
       onClick: () => callStep(nextStepAdvanced),
+      dataTest: 'advancedDialogIndexItem',
     },
   ];
   return (

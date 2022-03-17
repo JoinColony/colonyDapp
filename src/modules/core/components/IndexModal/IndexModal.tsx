@@ -24,6 +24,7 @@ export interface ItemShape {
   permissionRequired?: boolean;
   permissionInfoText?: MessageDescriptor;
   permissionInfoTextValues?: UniversalMessageValues;
+  dataTest?: string;
 }
 
 interface Props extends DialogProps {
