@@ -107,3 +107,11 @@ Cypress.Commands.add('getColonyTokenAddress', (colonyName) => {
   cy.getBySel('colonyMenu', { timeout: 60000 }).click();
   cy.getBySel('nativeTokenAddress').invoke('text').as('existingTokenAddress');
 });
+
+Cypress.Commands.add('checkUrlAfterAction', (colonyName) => {
+  cy.url().should(
+    'contains',
+    `${Cypress.config().baseUrl}/colony/${colonyName}/tx/0x`,
+    { timeout: 30000 },
+  );
+});
