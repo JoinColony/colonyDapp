@@ -73,7 +73,10 @@ const ColonySubscriptionInfoPopover = ({
         <span className={styles.nativeTokenTitle}>
           <FormattedMessage {...MSG.nativeTokenTitle} />
         </span>
-        <span className={styles.nativeTokenAddress}>
+        <span
+          className={styles.nativeTokenAddress}
+          data-test="nativeTokenAddress"
+        >
           <MaskedAddress address={nativeTokenAddress} full />
         </span>
       </div>

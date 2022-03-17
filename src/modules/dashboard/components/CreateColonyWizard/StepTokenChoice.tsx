@@ -81,6 +81,7 @@ const options = [
     subtitle: MSG.selectTokenSubtitle,
     icon: 'question-mark',
     tooltip: MSG.tooltipSelect,
+    dataTest: 'useExistingToken',
   },
 ];
 
