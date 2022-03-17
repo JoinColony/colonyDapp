@@ -22,12 +22,7 @@ describe('Create a new colony', () => {
       } = Cypress.config().colony;
       const { name } = Cypress.config().colony2;
 
-      cy.login();
-      cy.visit(`/colony/${existingColony}`);
-      cy.getBySel('colonyMenu', { timeout: 60000 }).click();
-      cy.getBySel('nativeTokenAddress')
-        .invoke('text')
-        .as('existingTokenAddress');
+      cy.getColonyTokenAddress(existingColony);
 
       cy.createColony(Cypress.config().colony2, false);
 
