@@ -203,7 +203,7 @@ exports[`FileUpload component Renders initial component 1`] = `
                         }
                       }
                     >
-                      Drag or
+                      Drag or 
                       <span>
                         <FormattedMessage
                           defaultMessage="browse"
