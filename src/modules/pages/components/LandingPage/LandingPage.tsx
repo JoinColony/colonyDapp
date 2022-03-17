@@ -63,11 +63,7 @@ const LandingPage = () => {
         <ul>
           {(ethereal || isNetworkAllowed) && (
             <li className={styles.item}>
-              <NavLink
-                to={CREATE_COLONY_ROUTE}
-                className={styles.itemLink}
-                data-test="createColony"
-              >
+              <NavLink to={CREATE_COLONY_ROUTE} className={styles.itemLink}>
                 <Icon
                   className={styles.itemIcon}
                   name="circle-plus"
