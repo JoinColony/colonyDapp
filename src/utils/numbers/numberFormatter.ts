@@ -86,6 +86,11 @@ export const numberDisplayFormatter = ({
       ? aboveMillionFormat
       : defaultFormat;
 
+  // protect against Numbro's use of averages & abbreviation
+  // when totalLength is set. Example: 400,000 is formatted to 400k.
+  formatType.totalLength =
+    formatType === defaultFormat && convertedNum.length <= 6 ? 0 : totalLength;
+
   if (!numbro.validate(convertedNum, formatType)) {
     return value.toString();
   }
