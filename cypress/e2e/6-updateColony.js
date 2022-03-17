@@ -10,6 +10,7 @@ describe('Colony can be updated', () => {
 
     const filePath = 'cypress/fixtures/images/jaya-the-beast.png';
     cy.getBySel('fileUpload').selectFile(filePath, { action: 'drag-drop' });
+    cy.getBySel('fileUpload').trigger('drop', { force: true });
 
     cy.get('textarea').click().type(annotationText);
     cy.getBySel('confirmButton').click();
