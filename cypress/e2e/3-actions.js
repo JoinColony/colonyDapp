@@ -204,6 +204,46 @@ describe('User can create actions via UAC', () => {
       .last()
       .should('have.text', domainPurpose);
   });
+  it('Can smite users', () => {
+    const amountToSmite = 10;
+    const annotationText =
+      'You have been a naughty boy, time for your punishment';
+    let smoteUser;
+
+    cy.login();
+
+    cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+    cy.getBySel('new-action-button', { timeout: 90000 }).click();
+    cy.getBySel('index-modal-item').eq(3).click();
+    cy.getBySel('index-modal-item').eq(1).click();
+
+    cy.getBySel('smiteRecipientSelector').click({ force: true });
+    cy.getBySel('smiteRecipientSelectorItem').last().click();
+    cy.getBySel('smiteRecipientName').then(($value) => {
+      smoteUser = $value.text();
+    });
+    cy.getBySel('smiteAmountInput').click().type(amountToSmite);
+
+    cy.getBySel('smiteAnnotation').click().type(annotationText);
+
+    cy.getBySel('smiteConfirmButton').click();
+
+    cy.getBySel('actionHeading', { timeout: 100000 }).then(($value) => {
+      expect($value.text()).to.eq(
+        `Smite ${smoteUser} with a ${amountToSmite} pts reputation penalty`,
+      );
+    });
+
+    cy.url().should(
+      'contains',
+      `${Cypress.config().baseUrl}/colony/${
+        Cypress.config().colony.name
+      }/tx/0x`,
+    );
+
+    cy.getBySel('comment').should('have.text', annotationText);
+  });
   it('Can transfer funds', () => {
     const amountToTransfer = 2;
     const annotationText = 'I want to transfer these funds just because';

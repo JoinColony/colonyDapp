@@ -99,6 +99,7 @@ interface Props extends WithOmnipickerInProps {
 
   dataTest?: string;
   itemDataTest?: string;
+  valueDataTest?: string;
 }
 
 interface EnhancedProps extends Props, WrappedComponentProps {}
@@ -129,6 +130,7 @@ const SingleUserPicker = ({
   renderItem: renderItemProp,
   dataTest,
   itemDataTest,
+  valueDataTest,
 }: EnhancedProps) => {
   const [, { error, touched, value }, { setValue }] = useField<AnyUser | null>(
     name,
@@ -212,6 +214,7 @@ const SingleUserPicker = ({
                   onFocus={handleActiveUserClick}
                   tabIndex={0}
                   disabled={disabled}
+                  data-test={valueDataTest}
                 >
                   {value.profile.displayName ||
                     value.profile.username ||
