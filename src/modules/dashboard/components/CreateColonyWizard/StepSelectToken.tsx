@@ -217,6 +217,7 @@ const StepSelectToken = ({
                   (!dirty && !stepCompleted) ||
                   isLoadingAddress
                 }
+                data-test="definedTokenConfirm"
               />
             </div>
           </div>
