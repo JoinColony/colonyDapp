@@ -1,25 +1,39 @@
 describe('Colony can be updated', () => {
-  it('can update colony details', () => {
+  it.only('can update colony details', () => {
     const annotationText = 'Test annotation';
+    const colonyName = Cypress.config().colony.name;
     const newName = 'plushka';
 
     cy.login();
-
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
-
-    cy.getBySel('newAction', { timeout: 60000 }).click();
-    cy.getBySel('advancedDialogIndexItem').click();
-    cy.getBySel('updateColonyDialogIndexItem').click();
+    cy.visit(`/colony/${colonyName}`);
+    cy.changeColonyname(colonyName, newName);
 
     const filePath = 'cypress/fixtures/images/jaya-the-beast.png';
     cy.getBySel('fileUpload').selectFile(filePath, { action: 'drag-drop' });
 
-    cy.get('input').last().click().type(newName);
     cy.get('textarea').click().type(annotationText);
-    cy.contains(/confirm/i).click();
+    cy.getBySel('confirmButton').click();
+
+    cy.getBySel('actionHeading', { timeout: 60000 }).should(
+      'have.text',
+      `Colony details changed`,
+    );
+    cy.checkUrlAfterAction(colonyName);
+    cy.getBySel('backButton').click();
+
+    cy.checkColonyName(newName);
+
+    // change the colony name back
+    cy.changeColonyname(newName, colonyName);
+    cy.getBySel('confirmButton').click();
+    cy.checkUrlAfterAction(colonyName);
+
+    cy.getBySel('backButton').click();
+
+    cy.checkColonyName(colonyName);
   });
 
-  it.only('can update colony tokens', () => {
+  it('can update colony tokens', () => {
     const {
       name: existingColony,
       nativeToken: existingToken,

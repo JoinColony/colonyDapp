@@ -41,6 +41,7 @@ const ColonyTitle = ({
               margin: 'none',
             }}
             text={colonyDisplayName || colonyName || MSG.fallbackColonyName}
+            data-test="colonyTitle"
           />
         </div>
         <div className={styles.colonyMenu}>
