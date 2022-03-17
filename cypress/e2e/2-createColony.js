@@ -5,18 +5,7 @@ describe('Create a new colony', () => {
 
       cy.login();
 
-      cy.getBySel('createColony').click();
-
-      cy.get('input').first().click().type(name);
-      cy.get('input').last().click().type(name);
-
-      cy.getBySel('claimColonyNameConfirm').click();
-      cy.getBySel('createNewToken', { timeout: 20000 }).click();
-
-      cy.get('input').first().click().type(nativeToken);
-      cy.get('input').last().click().type(nativeToken);
-      cy.getBySel('definedTokenConfirm').click();
-      cy.getBySel('userInputConfirm').click();
+      cy.createColony(Cypress.config().colony, true);
 
       cy.getBySel('colonyTokenSymbol', { timeout: 120000 }).should(
         'have.text',
@@ -26,7 +15,7 @@ describe('Create a new colony', () => {
       cy.url().should('eq', `${Cypress.config().baseUrl}/colony/${name}`);
     });
 
-    it.only('creates a new colony with existing token', () => {
+    it('creates a new colony with existing token', () => {
       const {
         nativeToken: existingToken,
         name: existingColony,
@@ -40,20 +29,7 @@ describe('Create a new colony', () => {
         .invoke('text')
         .as('existingTokenAddress');
 
-      cy.getBySel('createColony').click();
-
-      cy.get('input').first().click().type(name);
-      cy.get('input').last().click().type(name);
-
-      cy.getBySel('claimColonyNameConfirm').click();
-      cy.getBySel('useExistingToken', { timeout: 20000 }).click();
-
-      cy.get('@existingTokenAddress').then((address) => {
-        cy.get('input').click().type(address);
-        cy.getBySel('definedTokenConfirm').click();
-      });
-
-      cy.getBySel('userInputConfirm').click();
+      cy.createColony(Cypress.config().colony2, false);
 
       cy.getBySel('colonyTokenSymbol', { timeout: 120000 }).should(
         'have.text',

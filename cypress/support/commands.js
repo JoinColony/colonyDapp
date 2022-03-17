@@ -77,3 +77,26 @@ Cypress.Commands.add('claimNewUserName', (numberFromList) => {
 
   cy.findByText(/continue/i).click();
 });
+
+Cypress.Commands.add('createColony', (colony, useNewToken) => {
+  cy.getBySel('createColony').click();
+
+  cy.get('input').first().click().type(colony.name);
+  cy.get('input').last().click().type(colony.name);
+  cy.getBySel('claimColonyNameConfirm').click();
+
+  cy.getBySel(useNewToken ? 'createNewToken' : 'useExistingToken').click();
+
+  if (useNewToken) {
+    cy.get('input').first().click().type(colony.nativeToken);
+    cy.get('input').last().click().type(colony.nativeToken);
+  } else {
+    cy.get('@existingTokenAddress').then((address) => {
+      cy.get('input').click().type(address);
+    });
+  }
+
+  cy.getBySel('definedTokenConfirm').click();
+
+  cy.getBySel('userInputConfirm').click();
+});
