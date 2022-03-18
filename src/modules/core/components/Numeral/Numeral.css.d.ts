@@ -8,3 +8,4 @@ export const themeGrey: string;
 export const themeDark: string;
 export const themeBlue: string;
 export const weightMedium: string;
+export const numeral: string;
