@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
@@ -9,6 +9,11 @@ import { ActionForm } from '~core/Fields';
 import { Colony } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
+import {
+  mergeSchemas,
+  validationSchemaInput,
+  validationSchemaFile,
+} from '~utils/whitelistValidation';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 import { Address } from '~types/index';
 
@@ -31,24 +36,49 @@ const displayName = 'dashboard.ManageWhitelistDialog';
 
 const ManageWhitelistDialog = ({
   cancel,
-  close,
   callStep,
   prevStep,
   colony,
+  colony: { colonyAddress },
 }: Props) => {
-  const history = useHistory();
+  const [showInput, setShowInput] = useState<boolean>(true);
+  const [formSuccess, setFormSuccess] = useState<boolean>(false);
 
+  const handleToggleShowInput = useCallback(() => {
+    setShowInput((state) => !state);
+    // clear success msgs when switching inputs
+    setFormSuccess(false);
+  }, [setShowInput, setFormSuccess]);
+
+  const history = useHistory();
   const validationSchema = yup.object().shape({
     annotation: yup.string().max(4000),
   });
 
+  const mergedSchemas = mergeSchemas(
+    validationSchema,
+    showInput ? validationSchemaInput : validationSchemaFile,
+  );
+
   const transform = useCallback(
     pipe(
-      mapPayload(({ annotation: annotationMessage }) => {
-        return {
-          annotationMessage,
-        };
-      }),
+      mapPayload(
+        ({
+          annotation: annotationMessage,
+          whitelistAddress,
+          whitelistCSVUploader,
+        }) => {
+          return {
+            annotationMessage,
+            userAddresses:
+              whitelistAddress !== undefined
+                ? [whitelistAddress]
+                : whitelistCSVUploader[0].parsedData,
+            colonyAddress,
+            status: true,
+          };
+        },
+      ),
       withMeta({ history }),
     ),
     [],
@@ -73,19 +103,21 @@ const ManageWhitelistDialog = ({
 
   return (
     <ActionForm
+      validateOnChange
       initialValues={{
         annotation: undefined,
         isWhiletlistActivated: true,
         whitelistedAddresses: whitelistedUsers.map(
           (user) => user.profile.walletAddress,
         ),
+        isSubmitting: false,
       }}
-      submit={ActionTypes.COLONY_ACTION_GENERIC}
-      error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
-      success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
-      validationSchema={validationSchema}
-      onSuccess={close}
+      submit={ActionTypes.WHITELIST_UPDATE}
+      error={ActionTypes.WHITELIST_UPDATE_ERROR}
+      success={ActionTypes.WHITELIST_UPDATE_SUCCESS}
+      validationSchema={mergedSchemas}
       transform={transform}
+      onSuccess={() => setFormSuccess(true)}
     >
       {(formValues: FormikProps<FormValues>) => (
         <Dialog cancel={cancel} noOverflow={false}>
@@ -94,6 +126,10 @@ const ManageWhitelistDialog = ({
             colony={colony}
             whitelistedUsers={whitelistedUsers}
             back={() => callStep(prevStep)}
+            showInput={showInput}
+            toggleShowInput={handleToggleShowInput}
+            formSuccess={formSuccess}
+            setFormSuccess={setFormSuccess}
           />
         </Dialog>
       )}

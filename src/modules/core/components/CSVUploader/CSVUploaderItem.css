@@ -1,6 +1,7 @@
 .main {
   display: flex;
   justify-content: space-between;
+  height: 20px;
   width: 100%;
 }
 

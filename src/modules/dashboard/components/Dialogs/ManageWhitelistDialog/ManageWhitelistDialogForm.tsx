@@ -10,7 +10,7 @@ import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
-
+import UploadAddresses from '~core/UploadAddresses';
 import { useLoggedInUser, Colony, AnyUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '~modules/transformers';
@@ -46,6 +46,14 @@ const MSG = defineMessages({
     id: 'dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.whitelisted',
     defaultMessage: 'Whitelisted',
   },
+  inputSuccess: {
+    id: `dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.inputSuccess`,
+    defaultMessage: `Address is whitelisted now. You can add another one or close modal.`,
+  },
+  fileSuccess: {
+    id: `dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.fileSuccess`,
+    defaultMessage: `File was added. You can add another one or close modal.`,
+  },
 });
 
 const TABS = {
@@ -57,6 +65,10 @@ interface Props {
   back: () => void;
   colony: Colony;
   whitelistedUsers: AnyUser[];
+  showInput: boolean;
+  toggleShowInput: () => void;
+  formSuccess: boolean;
+  setFormSuccess?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ManageWhitelistDialogForm = ({
@@ -64,13 +76,19 @@ const ManageWhitelistDialogForm = ({
   colony,
   values,
   whitelistedUsers,
+  errors,
+  isValid,
+  isSubmitting,
+  handleSubmit,
+  showInput,
+  toggleShowInput,
+  formSuccess,
+  setFormSuccess,
 }: Props & FormikProps<FormValues>) => {
-  const { walletAddress, username, ethereal } = useLoggedInUser();
   const [tabIndex, setTabIndex] = useState<number>(TABS.ADD_ADDRESS);
+  const { walletAddress, username, ethereal } = useLoggedInUser();
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
-
   const hasRegisteredProfile = !!username && !ethereal;
-
   const userHasPermission = hasRegisteredProfile && hasRoot(allUserRoles);
 
   return (
@@ -105,7 +123,17 @@ const ManageWhitelistDialogForm = ({
             </Tab>
           </TabList>
           <TabPanel>
-            <h2>Please implement this content in separate component</h2>
+            <UploadAddresses
+              userHasPermission={userHasPermission}
+              errors={errors}
+              isSubmitting={isSubmitting}
+              showInput={showInput}
+              toggleShowInput={toggleShowInput}
+              formSuccess={formSuccess}
+              setFormSuccess={setFormSuccess}
+              inputSuccessMsg={MSG.inputSuccess}
+              fileSuccessMsg={MSG.fileSuccess}
+            />
           </TabPanel>
           <TabPanel>
             {(whitelistedUsers?.length && (
@@ -158,7 +186,15 @@ const ManageWhitelistDialogForm = ({
           appearance={{ theme: 'pink', size: 'large' }}
           text={{ id: 'button.confirm' }}
           style={{ width: styles.wideButton }}
-          disabled={tabIndex === TABS.WHITELISTED && !whitelistedUsers?.length}
+          disabled={
+            (tabIndex === TABS.WHITELISTED && !whitelistedUsers?.length) ||
+            !userHasPermission ||
+            !isValid ||
+            isSubmitting
+          }
+          type="submit"
+          loading={isSubmitting}
+          onClick={() => handleSubmit()}
         />
       </DialogSection>
     </>

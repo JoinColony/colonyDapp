@@ -15,7 +15,7 @@ import { canAdminister, hasRoot } from '~modules/users/checks';
 import { WhitelistPolicy } from '~types/index';
 
 import AgreementEmbed from './AgreementEmbed';
-import UploadAddressesWidget from './UploadAddressesWidget';
+import UploadAddressesExtensionWidget from './WhitelistAddresses/UploadAddressesExtensionWidget';
 import WhitelistAddresses from './WhitelistAddresses';
 
 import styles from './Whitelist.css';
@@ -88,8 +88,9 @@ const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
     return (
       <div>
         {kycBasedPolicies && (
-          <UploadAddressesWidget
+          <UploadAddressesExtensionWidget
             colony={colony}
+            userHasPermission={canAdministerWhitelist}
             whitelistAgreementHash={
               whitelistPolicies?.whitelistPolicies?.agreementHash
             }
