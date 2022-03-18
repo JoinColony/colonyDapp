@@ -22,10 +22,10 @@ const actionsMessageDescriptors = {
       ${ColonyActions.EditDomain} {{fromDomain} team details edited}
       ${ColonyMotions.EditDomainMotion} {Edit {fromDomain} team details}
       ${ColonyActions.Recovery} {Recovery mode activated by {initiator}}
-      ${ColonyActions.EmitDomainReputationPenalty} {Smite {recipient} with a {reputationChange} {reputationChange, plural, one {pt} other {pts}} reputation penalty}
-      ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite {recipient} with a {reputationChange} {reputationChange, plural, one {pt} other {pts}} reputation penalty}
-      ${ColonyActions.EmitDomainReputationReward} {Award {recipient} with a {reputationChange} {reputationChange, plural, one {pt} other {pts}} reputation reward}
-      ${ColonyMotions.EmitDomainReputationRewardMotion} {Award {recipient} with a {reputationChange} {reputationChange, plural, one {pt} other {pts}} reputation reward}
+      ${ColonyActions.EmitDomainReputationPenalty} {Smite {recipient} with a {reputationChangeNumeral} {reputationChange, plural, one {pt} other {pts}} reputation penalty}
+      ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite {recipient} with a {reputationChangeNumeral} {reputationChange, plural, one {pt} other {pts}} reputation penalty}
+      ${ColonyActions.EmitDomainReputationReward} {Award {recipient} with a {reputationChangeNumeral} {reputationChange, plural, one {pt} other {pts}} reputation reward}
+      ${ColonyMotions.EmitDomainReputationRewardMotion} {Award {recipient} with a {reputationChangeNumeral} {reputationChange, plural, one {pt} other {pts}} reputation reward}
       other {Generic action we don't have information about}
     }`,
   [`action.${ColonyActions.SetUserRoles}.assign`]: `Assign the {roles} in {fromDomain} to {recipient}`,

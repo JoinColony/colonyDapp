@@ -124,7 +124,10 @@ const ColonyEventsListItem = ({
   const tokenDecimals =
     tokenData?.tokenInfo?.decimals || colonyNativeToken?.decimals;
   const symbol = tokenData?.tokenInfo?.symbol || colonyNativeToken?.symbol;
-
+  const formattedReputationChange = getFormattedTokenValue(
+    new Decimal(amount || '0').abs().toString(),
+    decimals,
+  );
   const getEventListTitleMessageDescriptor = useMemo(() => {
     if (
       eventName === ColonyAndExtensionsEvents.ColonyRoleSet ||
@@ -197,10 +200,8 @@ const ColonyEventsListItem = ({
     voteSide: <FormattedMessage {...MSG.voteSide} values={{ vote }} />,
     activePeriod,
     currentPeriod,
-    reputationChange: getFormattedTokenValue(
-      new Decimal(amount || '0').abs().toString(),
-      decimals,
-    ),
+    reputationChange: formattedReputationChange,
+    reputationChangeNumeral: <Numeral value={formattedReputationChange} />,
     isSmiteAction: new Decimal(amount).isNegative(),
   };
 

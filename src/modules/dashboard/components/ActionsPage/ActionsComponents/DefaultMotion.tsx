@@ -246,6 +246,7 @@ const DefaultMotion = ({
   )
     .div(bigNumberify(10).pow(18))
     .toNumber();
+
   const totalVotedReputationValue = bigNumberify(
     votingStateData?.votingState?.totalVotedReputation || 0,
   )
@@ -268,6 +269,11 @@ const DefaultMotion = ({
     color: domainColor,
     description: domainPurpose,
   };
+
+  const formattedReputationChange = getFormattedTokenValue(
+    new Decimal(reputationChange).abs().toString(),
+    decimals,
+  );
 
   const { feeInverse: networkFeeInverse } = useNetworkContracts();
   const feePercentage = networkFeeInverse
@@ -345,10 +351,8 @@ const DefaultMotion = ({
     ),
     spaceBreak: <br />,
 
-    reputationChange: getFormattedTokenValue(
-      new Decimal(reputationChange).abs().toString(),
-      decimals,
-    ),
+    reputationChange: formattedReputationChange,
+    reputationChangeNumeral: <Numeral value={formattedReputationChange} />,
     isSmiteAction: new Decimal(reputationChange).isNegative(),
   };
 
@@ -366,6 +370,7 @@ const DefaultMotion = ({
       initiator.profile?.username ??
       initiator.profile?.walletAddress,
     reputationChange: actionAndEventValues.reputationChange,
+    reputationChangeNumeral: actionAndEventValues.reputationChangeNumeral,
     fromDomain: actionAndEventValues.fromDomain?.name,
     toDomain: actionAndEventValues.toDomain?.name,
     roles: roleTitle,
