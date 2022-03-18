@@ -75,6 +75,11 @@
   cursor: default;
 }
 
+.main:disabled:hover {
+  border-color: disabledBackground;
+  background-color: disabledBackground;
+}
+
 /*
  * Arranging buttons relative to other elements
  */

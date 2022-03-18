@@ -60,12 +60,13 @@ function* extensionEnable({
     /*
      * Upload whitelist policy to IPFS
      */
-    const agreementHash = yield call(
-      ipfsUpload,
-      JSON.stringify({
-        agreement: payload.agreement,
-      }),
-    );
+    let agreementHash = '';
+    if (payload.agreement) {
+      agreementHash = yield call(
+        ipfsUpload,
+        JSON.stringify({ agreement: payload.agreement }),
+      );
+    }
 
     const {
       address,

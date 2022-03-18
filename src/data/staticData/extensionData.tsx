@@ -34,7 +34,7 @@ export interface ExtensionInitParams {
   title: string | MessageDescriptor;
   fieldName?: string | MessageDescriptor;
   description?: string | MessageDescriptor;
-  defaultValue: string | number;
+  defaultValue?: string | number;
   paramName: string;
   validation: object;
   type: ExtensionParamType;
@@ -726,7 +726,7 @@ const extensions: { [key: string]: ExtensionData } = {
           then: yup.string().required().min(100),
           otherwise: false,
         }),
-        defaultValue: '',
+        defaultValue: undefined,
         title: MSG.agreementTitle,
         description: MSG.agreementDescription,
         type: ExtensionParamType.Textarea,
