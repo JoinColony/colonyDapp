@@ -127,7 +127,10 @@ const DefaultAction = ({
   });
 
   const decimalAmount = getFormattedTokenValue(amount, decimals);
-
+  const formattedReputationChange = getFormattedTokenValue(
+    new Decimal(reputationChange).abs().toString(),
+    decimals,
+  );
   /*
    * @NOTE We need to convert the action type name into a forced camel-case string
    *
@@ -172,10 +175,8 @@ const DefaultAction = ({
       />
     ),
     roles,
-    reputationChange: getFormattedTokenValue(
-      new Decimal(reputationChange).abs().toString(),
-      decimals,
-    ),
+    reputationChange: formattedReputationChange,
+    reputationChangeNumeral: <Numeral value={formattedReputationChange} />,
     isSmiteAction: new Decimal(reputationChange).isNegative(),
   };
 
@@ -197,6 +198,7 @@ const DefaultAction = ({
     toDomain: actionAndEventValues.toDomain?.name,
     roles: roleTitle,
     reputationChange: actionAndEventValues.reputationChange,
+    reputationChangeNumeral: actionAndEventValues.reputationChangeNumeral,
   };
 
   const motionStyles = MOTION_TAG_MAP[MotionState.Forced];

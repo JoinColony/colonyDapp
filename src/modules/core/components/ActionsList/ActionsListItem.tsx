@@ -194,6 +194,10 @@ const ActionsListItem = ({
 
   const decimals = tokenData?.tokenInfo?.decimals || colonyTokenDecimals;
   const symbol = tokenData?.tokenInfo?.symbol || colonyTokenSymbol;
+  const formattedReputationChange = getFormattedTokenValue(
+    new Decimal(reputationChange || '0').abs().toString(),
+    decimals,
+  );
 
   const isMotionFinished =
     motionState === MotionState.Passed ||
@@ -300,9 +304,9 @@ const ActionsListItem = ({
                   toDomain: toDomain?.name || '',
                   roles: roleTitle,
                   newVersion: newVersion || '0',
-                  reputationChange: getFormattedTokenValue(
-                    new Decimal(reputationChange || '0').abs().toString(),
-                    decimals,
+                  reputationChange: formattedReputationChange,
+                  reputationChangeNumeral: (
+                    <Numeral value={formattedReputationChange} />
                   ),
                 }}
               />
