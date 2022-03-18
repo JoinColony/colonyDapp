@@ -204,6 +204,45 @@ describe('User can create actions via UAC', () => {
       .last()
       .should('have.text', domainPurpose);
   });
+  it('Can award users', () => {
+    const amountToAward = 10;
+    const annotationText = 'You have been a good boy, time for your reward';
+    let rewardedUser;
+
+    cy.login();
+
+    cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+    cy.getBySel('new-action-button', { timeout: 90000 }).click();
+    cy.getBySel('index-modal-item').eq(3).click();
+    cy.getBySel('index-modal-item').eq(0).click();
+
+    cy.getBySel('reputationRecipientSelector').click({ force: true });
+    cy.getBySel('reputationRecipientSelectorItem').last().click();
+    cy.getBySel('reputationRecipientName').then(($value) => {
+      rewardedUser = $value.text();
+    });
+    cy.getBySel('reputationAmountInput').click().type(amountToAward);
+
+    cy.getBySel('reputationAnnotation').click().type(annotationText);
+
+    cy.getBySel('reputationConfirmButton').click();
+
+    cy.getBySel('actionHeading', { timeout: 100000 }).then(($value) => {
+      expect($value.text()).to.eq(
+        `Award ${rewardedUser} with a ${amountToAward} pts reputation reward`,
+      );
+    });
+
+    cy.url().should(
+      'contains',
+      `${Cypress.config().baseUrl}/colony/${
+        Cypress.config().colony.name
+      }/tx/0x`,
+    );
+
+    cy.getBySel('comment').should('have.text', annotationText);
+  });
   it('Can smite users', () => {
     const amountToSmite = 10;
     const annotationText =
@@ -218,16 +257,16 @@ describe('User can create actions via UAC', () => {
     cy.getBySel('index-modal-item').eq(3).click();
     cy.getBySel('index-modal-item').eq(1).click();
 
-    cy.getBySel('smiteRecipientSelector').click({ force: true });
-    cy.getBySel('smiteRecipientSelectorItem').last().click();
-    cy.getBySel('smiteRecipientName').then(($value) => {
+    cy.getBySel('reputationRecipientSelector').click({ force: true });
+    cy.getBySel('reputationRecipientSelectorItem').last().click();
+    cy.getBySel('reputationRecipientName').then(($value) => {
       smoteUser = $value.text();
     });
-    cy.getBySel('smiteAmountInput').click().type(amountToSmite);
+    cy.getBySel('reputationAmountInput').click().type(amountToSmite);
 
-    cy.getBySel('smiteAnnotation').click().type(annotationText);
+    cy.getBySel('reputationAnnotation').click().type(annotationText);
 
-    cy.getBySel('smiteConfirmButton').click();
+    cy.getBySel('reputationConfirmButton').click();
 
     cy.getBySel('actionHeading', { timeout: 100000 }).then(($value) => {
       expect($value.text()).to.eq(

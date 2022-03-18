@@ -322,9 +322,9 @@ const ManageReputationDialogForm = ({
             renderAvatar={supRenderAvatar}
             placeholder={MSG.userPickerPlaceholder}
             disabled={inputDisabled}
-            dataTest="smiteRecipientSelector"
-            itemDataTest="smiteRecipientSelectorItem"
-            valueDataTest="smiteRecipientName"
+            dataTest="reputationRecipientSelector"
+            itemDataTest="reputationRecipientSelectorItem"
+            valueDataTest="reputationRecipientName"
           />
         </div>
       </DialogSection>
@@ -372,7 +372,7 @@ const ManageReputationDialogForm = ({
                 : undefined
             }
             disabled={inputDisabled}
-            dataTest="smiteAmountInput"
+            dataTest="reputationAmountInput"
           />
           <div className={styles.percentageSign}>pts</div>
           <p className={styles.inputText}>
@@ -398,7 +398,7 @@ const ManageReputationDialogForm = ({
           }}
           name="annotation"
           disabled={inputDisabled}
-          dataTest="smiteAnnotation"
+          dataTest="reputationAnnotation"
         />
       </DialogSection>
       {!userHasPermission && (
@@ -438,7 +438,7 @@ const ManageReputationDialogForm = ({
           loading={isSubmitting}
           disabled={!isValid || inputDisabled}
           style={{ width: styles.wideButton }}
-          data-test="smiteConfirmButton"
+          data-test="reputationConfirmButton"
         />
       </DialogSection>
     </>
