@@ -66,13 +66,10 @@ const Numeral = ({
     }
   }, [outputRef, formattedNumber, prefix, suffix]);
 
-  return (
-    <span
-      className={className || getMainClasses(appearance, styles)}
-      {...props}
-      ref={outputRef}
-    />
-  );
+  const classNames = className
+    ? `${styles.numeral} ${className}`
+    : `${styles.numeral} ${getMainClasses(appearance, styles)}`;
+  return <span className={classNames} {...props} ref={outputRef} />;
 };
 
 export default Numeral;
