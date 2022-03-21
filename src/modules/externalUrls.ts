@@ -44,3 +44,9 @@ export const WALLET_CONNECT_XDAI = `https://colony.gitbook.io/colony/get-started
  * Recovery Mode
  */
 export const RECOVERY_HELP = `https://colony.gitbook.io/colony/advanced-features/recovery-mode`;
+
+/*
+ * Network Health
+ */
+
+export const NETWORK_HEALTH = `https://colony.gitbook.io/colony/get-started/understanding-the-interface/network-health`;
