@@ -337,7 +337,7 @@ const ManageReputationDialogForm = ({
               name="domainId"
               appearance={{ theme: 'grey', width: 'fluid' }}
               renderActiveOption={renderActiveOption}
-              disabled={inputDisabled}
+              disabled={!userHasPermission}
             />
           </div>
         </div>
