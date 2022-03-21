@@ -29,6 +29,7 @@ interface Props {
   className?: string;
   iconTitle?: string;
   showArrow?: boolean;
+  dataTest?: string;
 }
 
 const displayName = 'IconTooltip';
@@ -46,8 +47,12 @@ const IconTooltip = ({
   tooltipClassName = styles.tooltipWrapper,
   className,
   showArrow,
+  dataTest,
 }: Props) => (
-  <div className={cx(getMainClasses(appearance, styles), className)}>
+  <div
+    className={cx(getMainClasses(appearance, styles), className)}
+    data-test={dataTest}
+  >
     <Tooltip
       appearance={{
         theme: appearance.theme ? appearance.theme : 'dark',
