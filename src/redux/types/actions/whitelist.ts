@@ -9,6 +9,20 @@ import {
 } from './index';
 
 export type WhitelistActionTypes =
+  | UniqueActionType<
+      ActionTypes.WHITELIST_ADD,
+      {
+        colonyAddress: Address;
+        whiteListAddresses: [Address];
+        annotationMessage: string;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.WHITELIST_ADD_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.WHITELIST_ADD_SUCCESS,
+      MetaWithHistory<object>
+    >
   | UniqueActionType<ActionTypes.WHITELIST_ENABLE, any, WithKey>
   | UniqueActionType<ActionTypes.WHITELIST_ENABLE_SUCCESS, object, object>
   | ErrorActionType<ActionTypes.WHITELIST_ENABLE_ERROR, object>
