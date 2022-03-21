@@ -134,7 +134,9 @@ const DefaultMotion = ({
     return Object.values(MOTION_TAG_MAP).reduce((acc, object) => {
       const { theme, colorSchema } = object as TagAppearance;
       acc[object.tagName] = (
-        <Tag text={object.name} appearance={{ theme, colorSchema }} />
+        <span>
+          <Tag text={object.name} appearance={{ theme, colorSchema }} />
+        </span>
       );
       return acc;
     }, {} as any);
