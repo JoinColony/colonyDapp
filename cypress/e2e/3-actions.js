@@ -341,4 +341,37 @@ describe('User can create actions via UAC', () => {
       );
     });
   });
+  it.only('Can unlock the native token', () => {
+    const annotationText = 'Time to unlock the token';
+
+    cy.login();
+
+    cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+    cy.getBySel('new-action-button', { timeout: 60000 }).click();
+    cy.getBySel('index-modal-item').eq(1).click();
+    cy.getBySel('index-modal-item').eq(5).click();
+
+    cy.getBySel('unlockTokenAnnotation').click().type(annotationText);
+
+    cy.getBySel('unlockTokenConfirmButton').click();
+
+    cy.getBySel('actionHeading', { timeout: 100000 }).should(
+      'include.text',
+      `Unlock native token ${Cypress.config().colony.nativeToken}`,
+    );
+
+    cy.url().should(
+      'contains',
+      `${Cypress.config().baseUrl}/colony/${
+        Cypress.config().colony.name
+      }/tx/0x`,
+    );
+
+    cy.getBySel('comment').should('have.text', annotationText);
+
+    cy.getBySel('backButton').click();
+
+    cy.getBySel('lockIconTooltip', { timeout: 15000 }).should('not.exist');
+  });
 });
