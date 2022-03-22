@@ -21,31 +21,30 @@ import {
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
-import { updateColonyDisplayCache, uploadIfpsAnnotation } from '../utils';
+import { uploadIfpsAnnotation } from '../utils';
 
 function* manageVerifiedRecipients({
   payload: {
     colonyAddress,
     colonyName,
     colonyDisplayName,
-    colonyAvatarImage,
-    colonyAvatarHash,
-    hasAvatarChanged,
     whiteListAddresses = [],
     annotationMessage,
   },
   meta: { id: metaId },
   meta,
-}: Action<ActionTypes.VERIFIED_RECIPIENTS_MANAGE>) {
+}: Action<ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE>) {
   let txChannel;
   try {
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
     /*
-     * Validate the required values for the payment
+     * Validate the required values for the transaction
      */
     if (!colonyDisplayName && colonyDisplayName !== null) {
-      throw new Error('A colony name is required in order to edit the colony');
+      throw new Error(
+        `A colony name is required in order to add whitelist addresses to the colony`,
+      );
     }
 
     txChannel = yield call(getTxChannel, metaId);
@@ -106,15 +105,15 @@ function* manageVerifiedRecipients({
      * This cuts down on some transaction signing wait time, since IPFS uplaods
      * tend to be on the slower side :(
      */
-    let colonyAvatarIpfsHash = null;
-    if (colonyAvatarImage && hasAvatarChanged) {
-      colonyAvatarIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          image: colonyAvatarImage,
-        }),
-      );
-    }
+    // let colonyAvatarIpfsHash = null;
+    // if (colonyAvatarImage && hasAvatarChanged) {
+    //   colonyAvatarIpfsHash = yield call(
+    //     ipfsUpload,
+    //     JSON.stringify({
+    //       image: colonyAvatarImage,
+    //     }),
+    //   );
+    // }
 
     /*
      * Upload colony metadata to IPFS
@@ -124,9 +123,6 @@ function* manageVerifiedRecipients({
       ipfsUpload,
       JSON.stringify({
         colonyDisplayName,
-        colonyAvatarHash: hasAvatarChanged
-          ? colonyAvatarIpfsHash
-          : colonyAvatarHash,
         whiteListAddresses,
       }),
     );
@@ -188,20 +184,21 @@ function* manageVerifiedRecipients({
      * Update apollo's cache for the current colony to reflect the recently
      * made changes
      */
-    yield updateColonyDisplayCache(
-      colonyAddress,
-      colonyDisplayName,
-      colonyAvatarIpfsHash,
-      colonyAvatarImage as string | null,
-    );
+    // yield updateColonyDisplayCache(
+    //   colonyAddress,
+    //   colonyDisplayName,
+    //   null,
+    //   null,
+    // );
 
     yield put<AllActions>({
-      type: ActionTypes.VERIFIED_RECIPIENTS_MANAGE_SUCCESS,
+      type: ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE_SUCCESS,
+      payload: {},
       meta,
     });
   } catch (error) {
     return yield putError(
-      ActionTypes.VERIFIED_RECIPIENTS_MANAGE_ERROR,
+      ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE_ERROR,
       error,
       meta,
     );
@@ -213,7 +210,7 @@ function* manageVerifiedRecipients({
 
 export default function* manageVerifiedRecipientsSaga() {
   yield takeEvery(
-    ActionTypes.VERIFIED_RECIPIENTS_MANAGE,
+    ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE,
     manageVerifiedRecipients,
   );
 }

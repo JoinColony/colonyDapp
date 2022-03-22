@@ -39,7 +39,7 @@ const ManageWhitelistDialog = ({
   callStep,
   prevStep,
   colony,
-  colony: { colonyAddress },
+  colony: { colonyAddress, colonyName },
 }: Props) => {
   const [showInput, setShowInput] = useState<boolean>(true);
   const [formSuccess, setFormSuccess] = useState<boolean>(false);
@@ -69,13 +69,14 @@ const ManageWhitelistDialog = ({
           whitelistCSVUploader,
         }) => {
           return {
-            annotationMessage,
-            userAddresses:
+            colonyAddress,
+            colonyName,
+            colonyDisplayName: colony.displayName,
+            whiteListAddresses:
               whitelistAddress !== undefined
                 ? [whitelistAddress]
                 : whitelistCSVUploader[0].parsedData,
-            colonyAddress,
-            status: true,
+            annotationMessage,
           };
         },
       ),
@@ -112,9 +113,9 @@ const ManageWhitelistDialog = ({
         ),
         isSubmitting: false,
       }}
-      submit={ActionTypes.WHITELIST_UPDATE}
-      error={ActionTypes.WHITELIST_UPDATE_ERROR}
-      success={ActionTypes.WHITELIST_UPDATE_SUCCESS}
+      submit={ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE}
+      error={ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE_ERROR}
+      success={ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE_SUCCESS}
       validationSchema={mergedSchemas}
       transform={transform}
       onSuccess={() => setFormSuccess(true)}

@@ -113,6 +113,23 @@ export type ColonyActionTypes =
     >
   | ErrorActionType<ActionTypes.COLONY_EXTENSION_UNINSTALL_ERROR, object>
   | UniqueActionType<
+      ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE,
+      {
+        colonyAddress: Address;
+        colonyName: string;
+        colonyDisplayName: string;
+        whiteListAddresses: Address[];
+        annotationMessage?: string;
+      },
+      WithKey
+    >
+  | ErrorActionType<ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE_ERROR, object>
+  | UniqueActionType<
+      ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE_SUCCESS,
+      object,
+      object
+    >
+  | UniqueActionType<
       ActionTypes.WHITELIST_UPDATE,
       { userAddresses: [Address]; colonyAddress: Address; status: boolean },
       WithKey
