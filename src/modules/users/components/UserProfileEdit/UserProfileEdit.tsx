@@ -129,23 +129,23 @@ const UserProfileEdit = () => {
               <Input
                 label={MSG.labelName}
                 name="displayName"
-                data-test="userSettingsName"
+                dataTest="userSettingsName"
               />
               <Textarea
                 label={MSG.labelBio}
                 name="bio"
                 maxLength={160}
-                data-test="userSettingsBio"
+                dataTest="userSettingsBio"
               />
               <Input
                 label={MSG.labelWebsite}
                 name="website"
-                data-test="userSettingsWebsite"
+                dataTest="userSettingsWebsite"
               />
               <Input
                 label={MSG.labelLocation}
                 name="location"
-                data-test="userSettingsLocation"
+                dataTest="userSettingsLocation"
               />
             </FieldSet>
             <FieldSet>
@@ -153,7 +153,7 @@ const UserProfileEdit = () => {
                 type="submit"
                 text={{ id: 'button.save' }}
                 loading={isSubmitting}
-                data-test="userSettingsSubmit"
+                dataTest="userSettingsSubmit"
               />
             </FieldSet>
             <FormStatus status={status} />

@@ -57,7 +57,6 @@ export interface Props
 
   /** Pass params to a max button - implemented only in Cleave options */
   maxButtonParams?: MaxButtonParams;
-
   /** Testing */
   dataTest?: string;
 }
