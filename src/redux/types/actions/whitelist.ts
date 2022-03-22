@@ -10,17 +10,22 @@ import {
 
 export type WhitelistActionTypes =
   | UniqueActionType<
-      ActionTypes.WHITELIST_ADD,
+      ActionTypes.VERIFIED_RECIPIENTS_MANAGE,
       {
         colonyAddress: Address;
-        whiteListAddresses: [Address];
-        annotationMessage: string;
+        colonyName: string;
+        colonyDisplayName: string;
+        colonyAvatarImage?: string;
+        colonyAvatarHash?: string;
+        hasAvatarChanged?: boolean;
+        whiteListAddresses: Address[];
+        annotationMessage?: string;
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.WHITELIST_ADD_ERROR, object>
+  | ErrorActionType<ActionTypes.VERIFIED_RECIPIENTS_MANAGE_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.WHITELIST_ADD_SUCCESS,
+      ActionTypes.VERIFIED_RECIPIENTS_MANAGE_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<ActionTypes.WHITELIST_ENABLE, any, WithKey>

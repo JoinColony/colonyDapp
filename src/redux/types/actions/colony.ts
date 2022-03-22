@@ -113,17 +113,6 @@ export type ColonyActionTypes =
     >
   | ErrorActionType<ActionTypes.COLONY_EXTENSION_UNINSTALL_ERROR, object>
   | UniqueActionType<
-      ActionTypes.WHITELIST_ADD,
-      {
-        colonyAddress: Address;
-        whiteListAddresses: [Address];
-        annotationMessage: string;
-      },
-      WithKey
-    >
-  | UniqueActionType<ActionTypes.WHITELIST_ADD_SUCCESS, object, object>
-  | ErrorActionType<ActionTypes.WHITELIST_ADD_ERROR, object>
-  | UniqueActionType<
       ActionTypes.WHITELIST_UPDATE,
       { userAddresses: [Address]; colonyAddress: Address; status: boolean },
       WithKey
