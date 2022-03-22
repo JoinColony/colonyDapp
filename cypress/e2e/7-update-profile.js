@@ -1,5 +1,3 @@
-import { Extension } from '@colony/colony-js';
-
 describe(
   'Colony user can update their profile',
   () => {
@@ -11,33 +9,35 @@ describe(
 
     beforeEach(() => {
       cy.login();
-      cy.visit(`/colony/${Cypress.config().colony.name}`);
+      cy.visit(`/landing`);
+      cy.getBySel('avatarDropdown').click();
+      cy.getBySel('userProfileSettings').click();
     });
 
     it('User with permission can update their profile fields', () => {
-      cy.visit(`/edit-profile`, { timeout: 40000 }).wait(5000);
       // Add all fields and save
-      cy.getBySel('userSettingsName').click().type(userSettingsName);
+      cy.getBySel('userSettingsName', { timeout: 40000 }).click().type(userSettingsName);
       cy.getBySel('userSettingsBio').click().type(userSettingsBio);
       cy.getBySel('userSettingsWebsite').click().type(userSettingsWebsite);
       cy.getBySel('userSettingsLocation').click().type(userSettingsLocation);
       cy.getBySel('userSettingsSubmit').click();
 
       // Reload the profile page
-      cy.visit(`/edit-profile`, { timeout: 40000 });
+      cy.reload();
+      cy.getBySel('avatarDropdown').click();
+      cy.getBySel('userProfileSettings').click();
 
       // Check all the fields saved
-      cy.getBySel('userSettingsName').should('have.text', userSettingsName);
-      cy.getBySel('userSettingsBio').should('have.text', userSettingsBio);
-      cy.getBySel('userSettingsWebsite').should('have.text', userSettingsWebsite);
-      cy.getBySel('userSettingsLocation').should('have.text', userSettingsLocation);
+      cy.getBySel('userSettingsName', { timeout: 40000 }).should('have.value', userSettingsName);
+      cy.getBySel('userSettingsBio').should('have.value', userSettingsBio);
+      cy.getBySel('userSettingsWebsite').should('have.value', userSettingsWebsite);
+      cy.getBySel('userSettingsLocation').should('have.value', userSettingsLocation);
     });
 
     it('User with permission can upload and remove profile picture', () => {
-      cy.visit(`/edit-profile`, { timeout: 40000 });
-      cy.getBySel('avatarUploaderChoose').selectFile(profilePicturePath, { action: 'drag-drop' });
-      cy.getBySel('avatarUploaderChoose').trigger('drop', { force: true });
-      cy.getBySel('avatarUploaderRemove').click();
+      cy.getBySel('avatarUploaderDrop', { timeout: 40000 }).selectFile(profilePicturePath, { action: 'drag-drop' });
+      cy.getBySel('avatarUploaderDrop').trigger('drop', { force: true });
+      cy.getBySel('avatarUploaderRemove', { timeout: 40000 }).click();
     });
   },
 );

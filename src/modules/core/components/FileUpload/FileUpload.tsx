@@ -98,6 +98,8 @@ interface Props {
   processingData?: boolean;
 
   handleProcessingData?: (...args: any) => void;
+  /** Testing */
+  dataTest?: string;
 }
 
 const validateFile: ValidateFileFn = (value) =>
@@ -130,6 +132,7 @@ const FileUpload = ({
   customErrorMessage,
   inputStatusAppearance,
   processingData,
+  dataTest,
   handleProcessingData,
 }: AsFieldArrayEnhancedProps<Props> & ForwardedRefProps) => {
   const files = useMemo(() => getIn(values, name) || [], [name, values]);
@@ -235,7 +238,7 @@ const FileUpload = ({
       <div
         className={dropzoneClassName}
         {...getRootProps()}
-        data-test="fileUpload"
+        data-test={dataTest}
       >
         <input {...getInputProps()} />
         {maxFileLimitNotMet && renderPlaceholder}
