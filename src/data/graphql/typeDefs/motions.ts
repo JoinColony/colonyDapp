@@ -47,6 +47,30 @@ export default gql`
     requiredStake: String!
   }
 
+  type ParsedMotionStakedEventValues {
+    amount: String!
+    motionId: String!
+    stakeAmount: String!
+    staker: String!
+    vote: Int!
+  }
+
+  type ParsedMotionStakedEvent {
+    address: String!
+    blockNumber: Int!
+    hash: String!
+    index: String!
+    name: String!
+    signature: String!
+    timestamp: Int!
+    topic: String!
+    values: ParsedMotionStakedEventValues!
+  }
+
+  type ClaimableMotions {
+    unclaimedMotionStakeEvents: [ParsedMotionStakedEvent!]!
+  }
+
   type MotionObjectionAnnotation {
     address: String!
     metadata: String!
@@ -63,6 +87,15 @@ export default gql`
     timeLeftToSubmit: Int!
     timeLeftToReveal: Int!
     timeLeftToEscalate: Int!
+  }
+
+  type TxHash {
+    txHash: String!
+  }
+
+  type MotionTxHashMap {
+    key: Int!
+    value: TxHash!
   }
 
   extend type Query {
@@ -108,6 +141,10 @@ export default gql`
       userAddress: String!
       motionId: Int!
     ): StakeAmounts!
+    claimableStakedMotions(
+      colonyAddress: String!
+      walletAddress: String!
+    ): ClaimableMotions!
     motionObjectionAnnotation(
       motionId: Int!
       colonyAddress: String!
@@ -117,5 +154,9 @@ export default gql`
       motionId: Int!
       colonyAddress: String!
     ): MotionTimeoutPeriods!
+    motionsTxHashes(
+      motionIds: [String!]!
+      colonyAddress: String!
+    ): MotionTxHashMap!
   }
 `;

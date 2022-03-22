@@ -19,36 +19,36 @@ import { Address } from '~types/index';
 import { pipe, mapPayload } from '~utils/actions';
 import { getFormattedTokenValue } from '~utils/tokens';
 
-import styles from './TokenActivationContent.css';
+import styles from './TokensTab.css';
 
 const MSG = defineMessages({
   tokenActivation: {
-    id: `users.TokenActivation.TokenActivationContent.ChangeTokenStateForm.tokenActivation`,
+    id: `TokenActivation.TokensTab.ChangeTokenStateForm.tokenActivation`,
     defaultMessage: 'Token activation',
   },
   activate: {
-    id: `users.TokenActivation.TokenActivationContent.ChangeTokenStateForm.activate`,
+    id: `TokenActivation.TokensTab.ChangeTokenStateForm.activate`,
     defaultMessage: 'Activate',
   },
   deactivate: {
-    id: `users.TokenActivation.TokenActivationContent.ChangeTokenStateForm.deactivate`,
+    id: `TokenActivation.TokensTab.ChangeTokenStateForm.deactivate`,
     defaultMessage: 'Deactivate',
   },
   balance: {
-    id: `users.TokenActivation.TokenActivationContent.ChangeTokenStateForm.balance`,
+    id: `TokenActivation.TokensTab.ChangeTokenStateForm.balance`,
     defaultMessage: 'balance: {tokenBalance}',
   },
   locked: {
-    id: `users.TokenActivation.TokenActivationContent.ChangeTokenStateForm.locked`,
+    id: `TokenActivation.TokensTab.ChangeTokenStateForm.locked`,
     defaultMessage: 'Locked: {lockedTokens}',
   },
   lockedTooltip: {
-    id: `users.TokenActivation.TokenActivationContent.ChangeTokenStateForm.lockedTooltip`,
+    id: `TokenActivation.TokensTab.ChangeTokenStateForm.lockedTooltip`,
     defaultMessage: `You have unclaimed transactions which must be claimed
     before these tokens can be withdrawn.`,
   },
   max: {
-    id: `users.TokenActivation.TokenActivationContent.ChangeTokenStateForm.max`,
+    id: `TokenActivation.TokensTab.ChangeTokenStateForm.max`,
     defaultMessage: 'Max',
   },
 });

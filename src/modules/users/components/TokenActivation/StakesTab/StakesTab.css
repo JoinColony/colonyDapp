@@ -1,0 +1,89 @@
+.stakesContainer {
+  height: calc(551px - 42px);
+  width: 100%;
+  overflow: hidden;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.stakesContainer ul {
+  height: calc(100% - 63px);
+  overflow-y: auto;
+}
+
+.stakesListItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1px;
+  padding: 16px 21px 14px;
+  width: 100%;
+  border-radius: var(--radius-small);
+  background: var(--colony-white);
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  box-shadow: 0px 2px 11px var(--drop-shadow);
+  outline: 0;
+}
+
+.stakesListItem > a {
+  height: 100%;
+  width: 100%;
+  line-height: 1;
+}
+
+.falseLink {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+  line-height: 1;
+  color: var(--dark-blue);
+
+  &:hover {
+    text-decoration: underline;
+    color: var(--dark-blue);
+  }
+}
+
+.stakesListItem:hover {
+  background: var(--colony-light-blue);
+  cursor: pointer;
+}
+
+.noClaims {
+  padding: 18px 16px 19px 16px;
+  text-align: center;
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 477px;
+}
+
+.claimAllButtonSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  align-self: flex-end;
+  padding-right: 12px;
+  padding-left: 21px;
+  height: 63px;
+  width: 100%;
+}
+
+.claimAllButtonSection button {
+  width: 100px;
+  font-size: var(--size-small);
+}
+
+.claimAllButtonSection h4 {
+  font-size: var(--size-smallish);
+}
+
+.stakesContent span {
+  text-align: center;
+}

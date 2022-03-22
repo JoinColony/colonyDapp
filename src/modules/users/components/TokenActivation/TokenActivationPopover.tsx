@@ -4,9 +4,8 @@ import Popover, { PopoverChildFn } from '~core/Popover';
 
 import { removeValueUnits } from '~utils/css';
 
-import TokenActivationContent, {
-  TokensTabProps,
-} from './TokenActivationContent/index';
+import TokenActivationContent from './TokenActivationContent';
+import { TokensTabProps } from './TokensTab';
 import { verticalOffset } from './TokenActivationPopover.css';
 
 interface Props extends TokensTabProps {
@@ -40,7 +39,9 @@ const TokenActivationPopover = ({ children, ...otherProps }: Props) => {
       placement="bottom"
       isOpen={isOpen}
       onClose={() => setIsOpen(false)}
-      content={() => <TokenActivationContent {...otherProps} />}
+      content={() => (
+        <TokenActivationContent {...otherProps} setIsPopoverOpen={setIsOpen} />
+      )}
       popperProps={{
         modifiers: [
           {

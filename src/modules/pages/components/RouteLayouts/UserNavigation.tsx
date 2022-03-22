@@ -186,7 +186,8 @@ const UserNavigation = () => {
             <UserTokenActivationButton
               nativeToken={nativeToken}
               userLock={userLock}
-              colonyAddress={colonyData?.colonyAddress || ''}
+              colony={colonyData?.processedColony}
+              walletAddress={walletAddress}
             />
           )}
           {userCanNavigate && (
@@ -209,7 +210,7 @@ const UserNavigation = () => {
                   </button>
                   {readyTransactions >= 1 && (
                     <span className={styles.readyTransactionsCount}>
-                      {readyTransactions}
+                      <span>{readyTransactions}</span>
                     </span>
                   )}
                 </>

@@ -8,13 +8,21 @@
   padding-top: 2px;
   height: 20px;
   width: 20px;
+  position: relative;
   border-radius: 50%;
   background-color: var(--pink);
-  font-size: var(--size-tiny);
+  font-size: var(--size-unreadable);
   font-weight: 600;
   text-align: center;
   color: white;
   box-shadow: 0 0 6px color-mod(var(--grey-5) alpha(60%));
+}
+
+.counter span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .completed {

@@ -35,3 +35,9 @@
 .dotInactive {
   background-color: var(--pink);
 }
+
+.tooltip {
+  width: 237px;
+  font-size: var(--size-tiny);
+  text-align: left;
+}

@@ -47,6 +47,9 @@ import {
   SubgraphMotionRewardClaimedEventsQuery,
   SubgraphMotionRewardClaimedEventsQueryVariables,
   SubgraphMotionRewardClaimedEventsDocument,
+  SubgraphMotionsTxQuery,
+  SubgraphMotionsTxQueryVariables,
+  SubgraphMotionsTxDocument,
   UserReputationQuery,
   UserReputationQueryVariables,
   UserReputationDocument,
@@ -988,6 +991,47 @@ export const motionsResolvers = ({
     },
     async motionTimeoutPeriods(_, { colonyAddress, motionId }) {
       return getTimeoutPeriods(colonyManager, colonyAddress, motionId);
+    },
+    async motionsTxHashes(_, { motionIds, colonyAddress }) {
+      try {
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+
+        const { data } = await apolloClient.query<
+          SubgraphMotionsTxQuery,
+          SubgraphMotionsTxQueryVariables
+        >({
+          query: SubgraphMotionsTxDocument,
+          variables: {
+            /*
+             * Subgraph addresses are not checksummed
+             */
+            motionIds,
+            extensionAddress: votingReputationClient.address.toLowerCase(),
+            colonyAddress: colonyAddress.toLowerCase(),
+          },
+          fetchPolicy: 'network-only',
+        });
+
+        // extract only motionId & txHash for easy access
+        const motionIdTxHash =
+          data &&
+          data?.motionsTx.reduce(
+            (accum, item) => ({
+              ...accum,
+              [item?.motionId]: item?.transaction.hash,
+            }),
+            {},
+          );
+
+        return motionIdTxHash;
+      } catch (error) {
+        console.error('Could not fetch the TxHashes for the motion IDs');
+        console.error(error);
+        return null;
+      }
     },
   },
   Motion: {

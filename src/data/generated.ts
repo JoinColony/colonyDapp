@@ -229,6 +229,7 @@ export type MutationUnsubscribeFromColonyArgs = {
 export type Query = {
   actionsThatNeedAttention: Array<Maybe<ActionThatNeedsAttention>>;
   bannedUsers: Array<Maybe<BannedUser>>;
+  claimableStakedMotions: ClaimableMotions;
   coinMachineBoughtTokens: BoughtTokens;
   coinMachineCurrentPeriodMaxUserPurchase: Scalars['String'];
   coinMachineCurrentPeriodPrice: Scalars['String'];
@@ -269,7 +270,9 @@ export type Query = {
   motionUserVoteRevealed: MotionVoteReveal;
   motionVoteResults: MotionVoteResults;
   motionVoterReward: MotionVoterReward;
+  motions: Array<SubgraphMotion>;
   motionsSystemMessages: Array<SystemMessage>;
+  motionsTxHashes: MotionTxHashMap;
   networkContracts: NetworkContracts;
   networkExtensionVersion: Array<Maybe<ColonyExtensionVersion>>;
   processedColony: ProcessedColony;
@@ -308,6 +311,12 @@ export type QueryActionsThatNeedAttentionArgs = {
 
 export type QueryBannedUsersArgs = {
   colonyAddress: Scalars['String'];
+};
+
+
+export type QueryClaimableStakedMotionsArgs = {
+  colonyAddress: Scalars['String'];
+  walletAddress: Scalars['String'];
 };
 
 
@@ -549,8 +558,23 @@ export type QueryMotionVoterRewardArgs = {
 };
 
 
+export type QueryMotionsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Scalars['String']>;
+  orderDirection?: Maybe<Scalars['String']>;
+  where: MotionsFilter;
+};
+
+
 export type QueryMotionsSystemMessagesArgs = {
   motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+};
+
+
+export type QueryMotionsTxHashesArgs = {
+  motionIds: Array<Scalars['String']>;
   colonyAddress: Scalars['String'];
 };
 
@@ -905,6 +929,16 @@ export type SubgraphEvent = {
   timestamp: Scalars['String'];
   associatedColony: SubgraphColony;
   processedValues: SugraphEventProcessedValues;
+};
+
+export type SubgraphMotion = {
+  fundamentalChainId: Scalars['String'];
+  transaction: SubgraphTransaction;
+  address: Scalars['String'];
+  name: Scalars['String'];
+  args: Scalars['String'];
+  timestamp: Scalars['String'];
+  associatedColony: SubgraphColony;
 };
 
 export type ParsedEvent = {
@@ -1321,6 +1355,30 @@ export type StakeAmounts = {
   requiredStake: Scalars['String'];
 };
 
+export type ParsedMotionStakedEventValues = {
+  amount: Scalars['String'];
+  motionId: Scalars['String'];
+  stakeAmount: Scalars['String'];
+  staker: Scalars['String'];
+  vote: Scalars['Int'];
+};
+
+export type ParsedMotionStakedEvent = {
+  address: Scalars['String'];
+  blockNumber: Scalars['Int'];
+  hash: Scalars['String'];
+  index: Scalars['String'];
+  name: Scalars['String'];
+  signature: Scalars['String'];
+  timestamp: Scalars['Int'];
+  topic: Scalars['String'];
+  values: ParsedMotionStakedEventValues;
+};
+
+export type ClaimableMotions = {
+  unclaimedMotionStakeEvents: Array<ParsedMotionStakedEvent>;
+};
+
 export type MotionObjectionAnnotation = {
   address: Scalars['String'];
   metadata: Scalars['String'];
@@ -1337,6 +1395,15 @@ export type MotionTimeoutPeriods = {
   timeLeftToReveal: Scalars['Int'];
   timeLeftToStake: Scalars['Int'];
   timeLeftToSubmit: Scalars['Int'];
+};
+
+export type TxHash = {
+  txHash: Scalars['String'];
+};
+
+export type MotionTxHashMap = {
+  key: Scalars['Int'];
+  value: TxHash;
 };
 
 export type UsersAndRecoveryApprovals = {
@@ -1729,6 +1796,14 @@ export type NetworkContractsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type NetworkContractsQuery = { networkContracts: Pick<NetworkContracts, 'version' | 'feeInverse'> };
+
+export type MotionsTxHashesQueryVariables = Exact<{
+  motionIds: Array<Scalars['String']>;
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type MotionsTxHashesQuery = Pick<Query, 'motionsTxHashes'>;
 
 export type ColonyActionQueryVariables = Exact<{
   transactionHash: Scalars['String'];
@@ -2204,6 +2279,20 @@ export type SubgraphMotionEventsQuery = { motionEvents: Array<(
     ) }
   )> };
 
+export type SubgraphMotionsTxQueryVariables = Exact<{
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  motionIds: Array<Scalars['String']>;
+  colonyAddress: Scalars['String'];
+  extensionAddress: Scalars['String'];
+}>;
+
+
+export type SubgraphMotionsTxQuery = { motionsTx: Array<(
+    { motionId: SubgraphMotion['fundamentalChainId'] }
+    & { transaction: { hash: SubgraphTransaction['id'] } }
+  )> };
+
 export type SubgraphMotionSystemEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   motionId: Scalars['String'];
@@ -2431,6 +2520,14 @@ export type StakeAmountsForMotionQuery = { stakeAmountsForMotion: (
     Pick<StakeAmounts, 'requiredStake'>
     & { totalStaked: Pick<StakeSidesAmounts, 'YAY' | 'NAY'>, userStake: Pick<StakeSidesAmounts, 'YAY' | 'NAY'> }
   ) };
+
+export type ClaimableStakedMotionsQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  walletAddress: Scalars['String'];
+}>;
+
+
+export type ClaimableStakedMotionsQuery = { claimableStakedMotions: Pick<ClaimableMotions, 'unclaimedMotionStakeEvents'> };
 
 export type MotionObjectionAnnotationQueryVariables = Exact<{
   motionId: Scalars['Int'];
@@ -4157,6 +4254,38 @@ export function useNetworkContractsLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type NetworkContractsQueryHookResult = ReturnType<typeof useNetworkContractsQuery>;
 export type NetworkContractsLazyQueryHookResult = ReturnType<typeof useNetworkContractsLazyQuery>;
 export type NetworkContractsQueryResult = Apollo.QueryResult<NetworkContractsQuery, NetworkContractsQueryVariables>;
+export const MotionsTxHashesDocument = gql`
+    query MotionsTxHashes($motionIds: [String!]!, $colonyAddress: String!) {
+  motionsTxHashes(motionIds: $motionIds, colonyAddress: $colonyAddress) @client
+}
+    `;
+
+/**
+ * __useMotionsTxHashesQuery__
+ *
+ * To run a query within a React component, call `useMotionsTxHashesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionsTxHashesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionsTxHashesQuery({
+ *   variables: {
+ *      motionIds: // value for 'motionIds'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useMotionsTxHashesQuery(baseOptions?: Apollo.QueryHookOptions<MotionsTxHashesQuery, MotionsTxHashesQueryVariables>) {
+        return Apollo.useQuery<MotionsTxHashesQuery, MotionsTxHashesQueryVariables>(MotionsTxHashesDocument, baseOptions);
+      }
+export function useMotionsTxHashesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionsTxHashesQuery, MotionsTxHashesQueryVariables>) {
+          return Apollo.useLazyQuery<MotionsTxHashesQuery, MotionsTxHashesQueryVariables>(MotionsTxHashesDocument, baseOptions);
+        }
+export type MotionsTxHashesQueryHookResult = ReturnType<typeof useMotionsTxHashesQuery>;
+export type MotionsTxHashesLazyQueryHookResult = ReturnType<typeof useMotionsTxHashesLazyQuery>;
+export type MotionsTxHashesQueryResult = Apollo.QueryResult<MotionsTxHashesQuery, MotionsTxHashesQueryVariables>;
 export const ColonyActionDocument = gql`
     query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
   colonyAction(transactionHash: $transactionHash, colonyAddress: $colonyAddress) @client {
@@ -5942,6 +6071,46 @@ export function useSubgraphMotionEventsLazyQuery(baseOptions?: Apollo.LazyQueryH
 export type SubgraphMotionEventsQueryHookResult = ReturnType<typeof useSubgraphMotionEventsQuery>;
 export type SubgraphMotionEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionEventsLazyQuery>;
 export type SubgraphMotionEventsQueryResult = Apollo.QueryResult<SubgraphMotionEventsQuery, SubgraphMotionEventsQueryVariables>;
+export const SubgraphMotionsTxDocument = gql`
+    query SubgraphMotionsTx($skip: Int = 0, $first: Int = 1000, $motionIds: [String!]!, $colonyAddress: String!, $extensionAddress: String!) {
+  motionsTx: motions(skip: $skip, first: $first, where: {fundamentalChainId_in: $motionIds, associatedColony: $colonyAddress, extensionAddress: $extensionAddress}, orderBy: "fundamentalChainId", orderDirection: "asc") {
+    motionId: fundamentalChainId
+    transaction {
+      hash: id
+    }
+  }
+}
+    `;
+
+/**
+ * __useSubgraphMotionsTxQuery__
+ *
+ * To run a query within a React component, call `useSubgraphMotionsTxQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphMotionsTxQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubgraphMotionsTxQuery({
+ *   variables: {
+ *      skip: // value for 'skip'
+ *      first: // value for 'first'
+ *      motionIds: // value for 'motionIds'
+ *      colonyAddress: // value for 'colonyAddress'
+ *      extensionAddress: // value for 'extensionAddress'
+ *   },
+ * });
+ */
+export function useSubgraphMotionsTxQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphMotionsTxQuery, SubgraphMotionsTxQueryVariables>) {
+        return Apollo.useQuery<SubgraphMotionsTxQuery, SubgraphMotionsTxQueryVariables>(SubgraphMotionsTxDocument, baseOptions);
+      }
+export function useSubgraphMotionsTxLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphMotionsTxQuery, SubgraphMotionsTxQueryVariables>) {
+          return Apollo.useLazyQuery<SubgraphMotionsTxQuery, SubgraphMotionsTxQueryVariables>(SubgraphMotionsTxDocument, baseOptions);
+        }
+export type SubgraphMotionsTxQueryHookResult = ReturnType<typeof useSubgraphMotionsTxQuery>;
+export type SubgraphMotionsTxLazyQueryHookResult = ReturnType<typeof useSubgraphMotionsTxLazyQuery>;
+export type SubgraphMotionsTxQueryResult = Apollo.QueryResult<SubgraphMotionsTxQuery, SubgraphMotionsTxQueryVariables>;
 export const SubgraphMotionSystemEventsDocument = gql`
     query SubgraphMotionSystemEvents($colonyAddress: String!, $motionId: String!, $extensionAddress: String!, $sortDirection: String = asc) {
   motionSystemEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {name_in: ["MotionStaked(uint256,address,uint256,uint256)", "MotionVoteSubmitted(uint256,address)", "MotionVoteRevealed(uint256,address,uint256)"], associatedColony: $colonyAddress, address: $extensionAddress, args_contains: $motionId}) {
@@ -6662,6 +6831,40 @@ export function useStakeAmountsForMotionLazyQuery(baseOptions?: Apollo.LazyQuery
 export type StakeAmountsForMotionQueryHookResult = ReturnType<typeof useStakeAmountsForMotionQuery>;
 export type StakeAmountsForMotionLazyQueryHookResult = ReturnType<typeof useStakeAmountsForMotionLazyQuery>;
 export type StakeAmountsForMotionQueryResult = Apollo.QueryResult<StakeAmountsForMotionQuery, StakeAmountsForMotionQueryVariables>;
+export const ClaimableStakedMotionsDocument = gql`
+    query ClaimableStakedMotions($colonyAddress: String!, $walletAddress: String!) {
+  claimableStakedMotions(colonyAddress: $colonyAddress, walletAddress: $walletAddress) @client {
+    unclaimedMotionStakeEvents
+  }
+}
+    `;
+
+/**
+ * __useClaimableStakedMotionsQuery__
+ *
+ * To run a query within a React component, call `useClaimableStakedMotionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useClaimableStakedMotionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useClaimableStakedMotionsQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      walletAddress: // value for 'walletAddress'
+ *   },
+ * });
+ */
+export function useClaimableStakedMotionsQuery(baseOptions?: Apollo.QueryHookOptions<ClaimableStakedMotionsQuery, ClaimableStakedMotionsQueryVariables>) {
+        return Apollo.useQuery<ClaimableStakedMotionsQuery, ClaimableStakedMotionsQueryVariables>(ClaimableStakedMotionsDocument, baseOptions);
+      }
+export function useClaimableStakedMotionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ClaimableStakedMotionsQuery, ClaimableStakedMotionsQueryVariables>) {
+          return Apollo.useLazyQuery<ClaimableStakedMotionsQuery, ClaimableStakedMotionsQueryVariables>(ClaimableStakedMotionsDocument, baseOptions);
+        }
+export type ClaimableStakedMotionsQueryHookResult = ReturnType<typeof useClaimableStakedMotionsQuery>;
+export type ClaimableStakedMotionsLazyQueryHookResult = ReturnType<typeof useClaimableStakedMotionsLazyQuery>;
+export type ClaimableStakedMotionsQueryResult = Apollo.QueryResult<ClaimableStakedMotionsQuery, ClaimableStakedMotionsQueryVariables>;
 export const MotionObjectionAnnotationDocument = gql`
     query MotionObjectionAnnotation($motionId: Int!, $colonyAddress: String!) {
   motionObjectionAnnotation(motionId: $motionId, colonyAddress: $colonyAddress) @client {
