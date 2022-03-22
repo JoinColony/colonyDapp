@@ -285,6 +285,7 @@ const PermissionManagementDialog = ({
                       ) ||
                       isSubmitting
                     }
+                    data-test="permissionConfirmButton"
                   />
                 </DialogSection>
               </div>

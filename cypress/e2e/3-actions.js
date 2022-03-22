@@ -341,7 +341,7 @@ describe('User can create actions via UAC', () => {
       );
     });
   });
-  it.only('Can unlock the native token', () => {
+  it('Can unlock the native token', () => {
     const annotationText = 'Time to unlock the token';
 
     cy.login();
@@ -373,5 +373,39 @@ describe('User can create actions via UAC', () => {
     cy.getBySel('backButton').click();
 
     cy.getBySel('lockIconTooltip', { timeout: 15000 }).should('not.exist');
+  });
+  it.only('Can manage permissions', () => {
+    const annotationText = 'Time to unlock the token';
+
+    cy.login();
+
+    cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+    cy.getBySel('new-action-button', { timeout: 70000 }).click();
+    cy.getBySel('index-modal-item').eq(4).click();
+    cy.getBySel('index-modal-item').eq(0).click();
+
+    cy.getBySel('permissionUserSelector').click({ force: true });
+    cy.getBySel('permissionUserSelectorItem').last().click();
+    cy.getBySel('permission').eq(1).click({force: true});
+    cy.getBySel('permission').eq(2).click({force: true});
+    cy.getBySel('permission').eq(3).click({force: true});
+    cy.getBySel('permissionAnnotation').click().type(annotationText);
+
+    cy.getBySel('permissionConfirmButton').click();
+
+    cy.getBySel('actionHeading', { timeout: 100000 }).should(
+      'contains',
+      `Assign the administration, funding, architecture permissions in Root to`,
+    );
+
+    cy.url().should(
+      'contains',
+      `${Cypress.config().baseUrl}/colony/${
+        Cypress.config().colony.name
+      }/tx/0x`,
+    );
+
+    cy.getBySel('comment').should('have.text', annotationText);
   });
 });
