@@ -155,7 +155,11 @@ const StakingSlider = ({
           {...(isObjection ? MSG.descriptionObject : MSG.descriptionStake)}
         />
       </p>
-      <Numeral value={displayStake} suffix={nativeToken?.symbol} />
+      <Numeral
+        className={styles.amount}
+        value={displayStake}
+        suffix={nativeToken?.symbol}
+      />
       <div className={styles.sliderContainer}>
         <Slider
           name="amount"
