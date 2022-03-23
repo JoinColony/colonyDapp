@@ -116,9 +116,9 @@ export type ColonyActionTypes =
       ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE,
       {
         colonyAddress: Address;
-        colonyName: string;
         colonyDisplayName: string;
-        whiteListAddresses: Address[];
+        colonyAvatarHash: string;
+        verifiedAddresses: Address[];
         annotationMessage?: string;
       },
       WithKey

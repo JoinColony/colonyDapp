@@ -39,7 +39,7 @@ const ManageWhitelistDialog = ({
   callStep,
   prevStep,
   colony,
-  colony: { colonyAddress, colonyName },
+  colony: { colonyAddress, avatarHash },
 }: Props) => {
   const [showInput, setShowInput] = useState<boolean>(true);
   const [formSuccess, setFormSuccess] = useState<boolean>(false);
@@ -70,9 +70,9 @@ const ManageWhitelistDialog = ({
         }) => {
           return {
             colonyAddress,
-            colonyName,
             colonyDisplayName: colony.displayName,
-            whiteListAddresses:
+            colonyAvatarHash: avatarHash,
+            verifiedAddresses:
               whitelistAddress !== undefined
                 ? [whitelistAddress]
                 : whitelistCSVUploader[0].parsedData,

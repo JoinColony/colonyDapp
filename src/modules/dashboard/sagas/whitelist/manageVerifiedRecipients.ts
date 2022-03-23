@@ -3,9 +3,9 @@ import { ClientType } from '@colony/colony-js';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
-  ColonyFromNameDocument,
-  ColonyFromNameQuery,
-  ColonyFromNameQueryVariables,
+  ProcessedColonyQuery,
+  ProcessedColonyQueryVariables,
+  ProcessedColonyDocument,
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom } from '~utils/saga/effects';
@@ -26,9 +26,9 @@ import { uploadIfpsAnnotation } from '../utils';
 function* manageVerifiedRecipients({
   payload: {
     colonyAddress,
-    colonyName,
     colonyDisplayName,
-    whiteListAddresses = [],
+    colonyAvatarHash,
+    verifiedAddresses = [],
     annotationMessage,
   },
   meta: { id: metaId },
@@ -99,31 +99,14 @@ function* manageVerifiedRecipients({
 
     /*
      * Upload colony metadata to IPFS
-     *
-     * @NOTE Only (re)upload the avatar if it has changed, otherwise just use
-     * the old hash.
-     * This cuts down on some transaction signing wait time, since IPFS uplaods
-     * tend to be on the slower side :(
-     */
-    // let colonyAvatarIpfsHash = null;
-    // if (colonyAvatarImage && hasAvatarChanged) {
-    //   colonyAvatarIpfsHash = yield call(
-    //     ipfsUpload,
-    //     JSON.stringify({
-    //       image: colonyAvatarImage,
-    //     }),
-    //   );
-    // }
-
-    /*
-     * Upload colony metadata to IPFS
      */
     let colonyMetadataIpfsHash = null;
     colonyMetadataIpfsHash = yield call(
       ipfsUpload,
       JSON.stringify({
         colonyDisplayName,
-        whiteListAddresses,
+        colonyAvatarHash,
+        verifiedAddresses,
       }),
     );
 
@@ -172,24 +155,16 @@ function* manageVerifiedRecipients({
     /*
      * Update the colony object cache
      */
-    yield apolloClient.query<ColonyFromNameQuery, ColonyFromNameQueryVariables>(
-      {
-        query: ColonyFromNameDocument,
-        variables: { name: colonyName || '', address: colonyAddress },
-        fetchPolicy: 'network-only',
+    yield apolloClient.query<
+      ProcessedColonyQuery,
+      ProcessedColonyQueryVariables
+    >({
+      query: ProcessedColonyDocument,
+      variables: {
+        address: colonyAddress,
       },
-    );
-
-    /*
-     * Update apollo's cache for the current colony to reflect the recently
-     * made changes
-     */
-    // yield updateColonyDisplayCache(
-    //   colonyAddress,
-    //   colonyDisplayName,
-    //   null,
-    //   null,
-    // );
+      fetchPolicy: 'network-only',
+    });
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE_SUCCESS,
