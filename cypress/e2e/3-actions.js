@@ -374,22 +374,22 @@ describe('User can create actions via UAC', () => {
 
     cy.getBySel('lockIconTooltip', { timeout: 15000 }).should('not.exist');
   });
-  it.only('Can manage permissions', () => {
+  it('Can manage permissions', () => {
     const annotationText = 'Time to unlock the token';
 
     cy.login();
 
     cy.visit(`/colony/${Cypress.config().colony.name}`);
 
-    cy.getBySel('new-action-button', { timeout: 70000 }).click();
+    cy.getBySel('new-action-button', { timeout: 60000 }).click();
     cy.getBySel('index-modal-item').eq(4).click();
     cy.getBySel('index-modal-item').eq(0).click();
 
     cy.getBySel('permissionUserSelector').click({ force: true });
     cy.getBySel('permissionUserSelectorItem').last().click();
-    cy.getBySel('permission').eq(1).click({force: true});
-    cy.getBySel('permission').eq(2).click({force: true});
-    cy.getBySel('permission').eq(3).click({force: true});
+    cy.getBySel('permission').eq(1).click({ force: true });
+    cy.getBySel('permission').eq(2).click({ force: true });
+    cy.getBySel('permission').eq(3).click({ force: true });
     cy.getBySel('permissionAnnotation').click().type(annotationText);
 
     cy.getBySel('permissionConfirmButton').click();
@@ -407,5 +407,55 @@ describe('User can create actions via UAC', () => {
     );
 
     cy.getBySel('comment').should('have.text', annotationText);
+  });
+  it('Can enable recovery mode', () => {
+    const storageSlot = '0x05';
+    const storageSlotValue =
+      '0x0000000000000000000000000000000000000000000000000000000000000002';
+    const annotationText = 'We have to recover what we have lost';
+
+    cy.login();
+
+    cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+    cy.getBySel('new-action-button', { timeout: 70000 }).click();
+    cy.getBySel('index-modal-item').eq(4).click();
+    cy.getBySel('index-modal-item').eq(1).click();
+
+    cy.getBySel('recoveryAnnotation').click().type(annotationText);
+
+    cy.getBySel('recoveryConfirmButton').click();
+
+    cy.getBySel('actionHeading', { timeout: 100000 }).contains(
+      'Recovery mode activated by',
+    );
+
+    cy.url().should(
+      'contains',
+      `${Cypress.config().baseUrl}/colony/${
+        Cypress.config().colony.name
+      }/tx/0x`,
+    );
+
+    cy.getBySel('comment').should('have.text', annotationText);
+
+    cy.getBySel('storageSlotInput').click().type(storageSlot);
+    cy.getBySel('storageSlotValueInput').click().type(storageSlotValue);
+    cy.getBySel('storageSlotSubmitButton').click();
+
+    cy.getBySel('newSlotValueEvent', { timeout: 40000 }).should(
+      'have.text',
+      storageSlotValue,
+    );
+
+    cy.getBySel('approveExitButton').click();
+
+    cy.getBySel('closeGasStationButton').click();
+
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.getBySel('reactivateColonyButton', { timeout: 40000 })
+      .click()
+      .wait(20000)
+      .should('not.exist');
   });
 });

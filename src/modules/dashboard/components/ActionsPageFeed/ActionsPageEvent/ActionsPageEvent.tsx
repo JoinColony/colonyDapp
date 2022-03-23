@@ -84,6 +84,7 @@ interface Props {
   colony: Colony;
   children?: ReactNode;
   rootHash?: string;
+  dataTest?: string;
 }
 
 interface DomainMetadata {
@@ -104,6 +105,7 @@ const ActionsPageEvent = ({
   colony,
   children,
   rootHash,
+  dataTest,
 }: Props) => {
   let metadataJSON;
   const [metdataIpfsHash, setMetdataIpfsHash] = useState<string | undefined>(
@@ -328,7 +330,7 @@ const ActionsPageEvent = ({
     colonyNativeToken?.decimals,
   );
   return (
-    <div className={styles.main}>
+    <div className={styles.main} data-test={dataTest}>
       <div className={styles.wrapper}>
         <div className={styles.status}>
           <TransactionStatus status={STATUS.Succeeded} showTooltip={false} />

@@ -206,7 +206,7 @@ const RecoveryAction = ({
            * @NOTE Can't use `Heading` here since it uses `formmatedMessage` internally
            * for message descriptors, and that doesn't support our complex text values
            */}
-          <h1 className={styles.heading}>
+          <h1 className={styles.heading} data-test="actionHeading">
             <FormattedMessage
               id="action.title"
               values={{
@@ -271,6 +271,7 @@ const RecoveryAction = ({
                       }}
                       emmitedBy={emmitedBy}
                       colony={colony}
+                      dataTest="recoveryActionEvent"
                     >
                       {name ===
                         ColonyAndExtensionsEvents.RecoveryStorageSlotSet && (
@@ -282,7 +283,10 @@ const RecoveryAction = ({
                               tagName="p"
                               {...MSG.newSlotValue}
                             />
-                            <div className={recoverySpecificStyles.slotValue}>
+                            <div
+                              className={recoverySpecificStyles.slotValue}
+                              data-test="newSlotValueEvent"
+                            >
                               {((eventValues as unknown) as EventValues)
                                 ?.toValue || fallbackStorageSlotValue}
                             </div>
