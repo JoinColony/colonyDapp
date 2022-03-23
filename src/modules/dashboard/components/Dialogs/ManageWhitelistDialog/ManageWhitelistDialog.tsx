@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 import Dialog, { DialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 
-import { Colony } from '~data/index';
+import { Colony, useVerifiedUsersQuery } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
 import {
@@ -51,6 +51,12 @@ const ManageWhitelistDialog = ({
   }, [setShowInput, setFormSuccess]);
 
   const history = useHistory();
+  const { data } = useVerifiedUsersQuery({
+    variables: {
+      verifiedAddresses: colony.whitelistedAddresses,
+    },
+  });
+
   const validationSchema = yup.object().shape({
     annotation: yup.string().max(4000),
   });

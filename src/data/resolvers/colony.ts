@@ -95,6 +95,7 @@ export const getProcessedColony = async (
   let avatarHash: string | null = null;
   let avatarObject: { image: string | null } | null = { image: null };
   let tokenAddresses: Array<Address> = [];
+  let whitelistedAddresses: Array<Address> = [];
 
   const prevIpfsHash = metadataHistory.slice(-1).pop();
   const ipfsHash = metadata || prevIpfsHash?.metadata || null;
@@ -120,10 +121,12 @@ export const getProcessedColony = async (
         colonyDisplayName = null,
         colonyAvatarHash = null,
         colonyTokens = [],
+        verifiedAddresses = [],
       } = JSON.parse(ipfsMetadata);
       displayName = colonyDisplayName;
       avatarHash = colonyAvatarHash;
       tokenAddresses = colonyTokens;
+      whitelistedAddresses = verifiedAddresses;
 
       /*
        * Fetch the colony's avatar
@@ -165,6 +168,7 @@ export const getProcessedColony = async (
       ? [...tokenAddresses, token.tokenAddress].map(createAddress)
       : [],
     extensionAddresses: colonyExtensions.map(({ address }) => address),
+    whitelistedAddresses,
   };
 };
 
@@ -374,6 +378,31 @@ export const colonyResolvers = ({
         console.error(error);
         return null;
       }
+    },
+    async verifiedUsers(_, { verifiedAddresses }) {
+      const users = await Promise.all(
+        verifiedAddresses.map(async (address) => {
+          let username;
+          try {
+            const ensResult = await ens.getDomain(address, networkClient);
+            username = ENS.stripDomainParts('user', ensResult);
+          } catch (error) {
+            username = '';
+            console.error(error);
+          }
+
+          return {
+            id: address,
+            profile: {
+              avatarHash: '',
+              username,
+              walletAddress: address,
+            },
+          };
+        }),
+      );
+
+      return users;
     },
   },
   ProcessedColony: {
