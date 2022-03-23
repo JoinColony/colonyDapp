@@ -291,6 +291,7 @@ export default gql`
       tokenAddress: String!
       domainId: Int!
     ): String!
+    verifiedUsers(verifiedAddresses: [String]): [User]!
   }
 
   extend type Mutation {
@@ -441,5 +442,6 @@ export default gql`
     events: [NetworkEvent!]!
     isDeploymentFinished: Boolean!
     installedExtensions: [ColonyExtension!]!
+    whitelistedAddresses: [String]!
   }
 `;
