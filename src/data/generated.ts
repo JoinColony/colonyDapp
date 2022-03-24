@@ -298,7 +298,7 @@ export type Query = {
   userReputationForTopDomains: Array<UserDomainReputation>;
   userWhitelistStatus: UserWhitelistStatus;
   username: Scalars['String'];
-  verifiedUsers: Array<Maybe<User>>;
+  verifiedUsers: Array<User>;
   votingState: VotingState;
   whitelistAgreement: Scalars['String'];
   whitelistPolicies: WhitelistPolicy;
@@ -706,7 +706,7 @@ export type QueryUsernameArgs = {
 
 
 export type QueryVerifiedUsersArgs = {
-  verifiedAddresses?: Maybe<Array<Maybe<Scalars['String']>>>;
+  verifiedAddresses: Array<Maybe<Scalars['String']>>;
 };
 
 

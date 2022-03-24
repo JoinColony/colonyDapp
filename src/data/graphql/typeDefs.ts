@@ -291,7 +291,7 @@ export default gql`
       tokenAddress: String!
       domainId: Int!
     ): String!
-    verifiedUsers(verifiedAddresses: [String]): [User]!
+    verifiedUsers(verifiedAddresses: [String]!): [User!]!
   }
 
   extend type Mutation {
