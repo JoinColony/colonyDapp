@@ -9,7 +9,6 @@ describe(
 
     beforeEach(() => {
       cy.login();
-      cy.visit(`/landing`);
       cy.getBySel('avatarDropdown').click();
       cy.getBySel('userProfileSettings').click();
     });
