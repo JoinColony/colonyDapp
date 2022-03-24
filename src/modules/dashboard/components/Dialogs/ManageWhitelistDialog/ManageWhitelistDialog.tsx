@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
@@ -6,7 +6,11 @@ import { useHistory } from 'react-router-dom';
 import Dialog, { DialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 
-import { Colony, useVerifiedUsersQuery } from '~data/index';
+import {
+  Colony,
+  useVerifiedUsersQuery,
+  useColonyFromNameQuery,
+} from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
 import {
@@ -19,6 +23,10 @@ import { Address } from '~types/index';
 
 import DialogForm from './ManageWhitelistDialogForm';
 
+export enum TABS {
+  ADD_ADDRESS = 0,
+  WHITELISTED = 1,
+}
 export interface FormValues {
   annotation: string;
   isWhiletlistActivated: boolean;
@@ -39,10 +47,11 @@ const ManageWhitelistDialog = ({
   callStep,
   prevStep,
   colony,
-  colony: { colonyAddress, avatarHash },
+  colony: { colonyAddress, avatarHash, colonyName },
 }: Props) => {
   const [showInput, setShowInput] = useState<boolean>(true);
   const [formSuccess, setFormSuccess] = useState<boolean>(false);
+  const [tabIndex, setTabIndex] = useState<number>(TABS.ADD_ADDRESS);
 
   const handleToggleShowInput = useCallback(() => {
     setShowInput((state) => !state);
@@ -51,20 +60,49 @@ const ManageWhitelistDialog = ({
   }, [setShowInput, setFormSuccess]);
 
   const history = useHistory();
+
+  /* We don't close the dialog after submitting data
+  => need a way for a refreshed colony to be reflected */
+  const { data: colonyData } = useColonyFromNameQuery({
+    variables: { name: colonyName, address: colonyAddress },
+  });
+
   const { data } = useVerifiedUsersQuery({
     variables: {
-      verifiedAddresses: colony.whitelistedAddresses,
+      verifiedAddresses:
+        colonyData?.processedColony?.whitelistedAddresses || [],
     },
+    fetchPolicy: 'network-only',
   });
+
+  const addressesList = useMemo(
+    () =>
+      (data?.verifiedUsers || []).map((user) => user?.profile.walletAddress),
+    [data],
+  );
 
   const validationSchema = yup.object().shape({
     annotation: yup.string().max(4000),
   });
 
+  const addressesValidationSchema = useMemo(() => {
+    if (tabIndex === TABS.WHITELISTED) {
+      return yup.object({
+        whitelistedAddresses: yup.array().ensure().of(yup.string().address()),
+      });
+    }
+    return showInput ? validationSchemaInput : validationSchemaFile;
+  }, [tabIndex, showInput]);
+
   const mergedSchemas = mergeSchemas(
     validationSchema,
-    showInput ? validationSchemaInput : validationSchemaFile,
+    addressesValidationSchema,
   );
+
+  const handleTabChange = (index) => {
+    setFormSuccess(false);
+    setTabIndex(index);
+  };
 
   const transform = useCallback(
     pipe(
@@ -72,23 +110,32 @@ const ManageWhitelistDialog = ({
         ({
           annotation: annotationMessage,
           whitelistAddress,
+          whitelistedAddresses,
           whitelistCSVUploader,
         }) => {
+          let verifiedAddresses;
+          if (tabIndex === TABS.WHITELISTED) {
+            verifiedAddresses = whitelistedAddresses;
+          } else {
+            verifiedAddresses =
+              whitelistAddress !== undefined
+                ? [...new Set([...addressesList, whitelistAddress])]
+                : whitelistCSVUploader[0]?.parsedData;
+          }
+
           return {
             colonyAddress,
             colonyDisplayName: colony.displayName,
             colonyAvatarHash: avatarHash,
-            verifiedAddresses:
-              whitelistAddress !== undefined
-                ? [whitelistAddress]
-                : whitelistCSVUploader[0].parsedData,
+            verifiedAddresses,
             annotationMessage,
+            colonyName,
           };
         },
       ),
       withMeta({ history }),
     ),
-    [],
+    [tabIndex],
   );
 
   return (
@@ -97,9 +144,10 @@ const ManageWhitelistDialog = ({
       initialValues={{
         annotation: undefined,
         isWhiletlistActivated: true,
-        whitelistedAddresses: data?.verifiedUsers.map(
-          (user) => user?.profile.walletAddress,
-        ),
+        whitelistedAddresses: addressesList,
+        // data?.verifiedUsers.map(
+        //   (user) => user?.profile.walletAddress,
+        // ),
         isSubmitting: false,
       }}
       submit={ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE}
@@ -107,7 +155,12 @@ const ManageWhitelistDialog = ({
       success={ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE_SUCCESS}
       validationSchema={mergedSchemas}
       transform={transform}
-      onSuccess={() => setFormSuccess(true)}
+      enableReinitialize
+      onSuccess={() => {
+        if (tabIndex === TABS.ADD_ADDRESS) {
+          setFormSuccess(true);
+        }
+      }}
     >
       {(formValues: FormikProps<FormValues>) => (
         <Dialog cancel={cancel} noOverflow={false}>
@@ -119,7 +172,9 @@ const ManageWhitelistDialog = ({
             showInput={showInput}
             toggleShowInput={handleToggleShowInput}
             formSuccess={formSuccess}
-            setFormSuccess={setFormSuccess}
+            setFormSuccess={(isSuccess) => setFormSuccess(isSuccess)}
+            tabIndex={tabIndex}
+            setTabIndex={handleTabChange}
           />
         </Dialog>
       )}

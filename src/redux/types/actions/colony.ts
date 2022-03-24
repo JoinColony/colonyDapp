@@ -122,6 +122,7 @@ export type ColonyActionTypes =
         verifiedAddresses: Address[];
         colonyTokens: Address[];
         annotationMessage?: string;
+        colonyName: string;
       },
       WithKey
     >
