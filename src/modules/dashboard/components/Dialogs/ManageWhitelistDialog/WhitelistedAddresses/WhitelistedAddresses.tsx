@@ -70,6 +70,7 @@ const WhitelistedAddresses = ({ colony, whitelistedUsers }: Props) => {
               walletAddress={user.profile?.walletAddress || user.id}
               checkedTooltipText={formatMessage(MSG.checkedTooltipText)}
               unCheckedTooltipText={formatMessage(MSG.unCheckedTooltipText)}
+              showDisplayName={false}
             />
           );
         })}

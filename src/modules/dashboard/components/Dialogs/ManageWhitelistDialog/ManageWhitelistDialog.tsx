@@ -91,31 +91,14 @@ const ManageWhitelistDialog = ({
     [],
   );
 
-  const whitelistedUsers = [
-    {
-      id: '0x9dF24e73f40b2a911Eb254A8825103723E13209C',
-      profile: {
-        walletAddress: '0x9dF24e73f40b2a911Eb254A8825103723E13209C',
-        username: 'alicja',
-      },
-    },
-    {
-      id: '0xd6Bf4Be334A4661e12a647b62EF1510a247dd625',
-      profile: {
-        walletAddress: '0xd6Bf4Be334A4661e12a647b62EF1510a247dd625',
-        username: 'jan',
-      },
-    },
-  ]; // Feed with real data
-
   return (
     <ActionForm
       validateOnChange
       initialValues={{
         annotation: undefined,
         isWhiletlistActivated: true,
-        whitelistedAddresses: whitelistedUsers.map(
-          (user) => user.profile.walletAddress,
+        whitelistedAddresses: data?.verifiedUsers.map(
+          (user) => user?.profile.walletAddress,
         ),
         isSubmitting: false,
       }}
@@ -131,7 +114,7 @@ const ManageWhitelistDialog = ({
           <DialogForm
             {...formValues}
             colony={colony}
-            whitelistedUsers={whitelistedUsers}
+            whitelistedUsers={data?.verifiedUsers || []}
             back={() => callStep(prevStep)}
             showInput={showInput}
             toggleShowInput={handleToggleShowInput}
