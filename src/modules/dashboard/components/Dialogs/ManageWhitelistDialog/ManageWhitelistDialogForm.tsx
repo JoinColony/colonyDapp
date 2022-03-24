@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { ColonyRole } from '@colony/colony-js';
 import { FormikProps } from 'formik';
+import isEqual from 'lodash/isEqual';
 
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
@@ -16,7 +17,7 @@ import { useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot } from '~modules/users/checks';
 
-import { FormValues } from './ManageWhitelistDialog';
+import { FormValues, TABS } from './ManageWhitelistDialog';
 import ManageWhitelistActiveToggle from './ManageWhitelistActiveToggle';
 import WhitelistedAddresses from './WhitelistedAddresses';
 import NoWhitelistedAddressesState from './NoWhitelistedAddressesState';
@@ -56,11 +57,6 @@ const MSG = defineMessages({
   },
 });
 
-const TABS = {
-  ADD_ADDRESS: 0,
-  WHITELISTED: 1,
-};
-
 interface Props {
   back: () => void;
   colony: Colony;
@@ -68,7 +64,9 @@ interface Props {
   showInput: boolean;
   toggleShowInput: () => void;
   formSuccess: boolean;
-  setFormSuccess?: React.Dispatch<React.SetStateAction<boolean>>;
+  setFormSuccess: (isSuccess: boolean) => void;
+  tabIndex: TABS;
+  setTabIndex: (index: TABS) => void;
 }
 
 const ManageWhitelistDialogForm = ({
@@ -84,12 +82,24 @@ const ManageWhitelistDialogForm = ({
   toggleShowInput,
   formSuccess,
   setFormSuccess,
+  tabIndex,
+  setTabIndex,
 }: Props & FormikProps<FormValues>) => {
-  const [tabIndex, setTabIndex] = useState<number>(TABS.ADD_ADDRESS);
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
   const hasRegisteredProfile = !!username && !ethereal;
   const userHasPermission = hasRegisteredProfile && hasRoot(allUserRoles);
+
+  const addressesList = useMemo(() => whitelistedUsers.map((user) => user.id), [
+    whitelistedUsers,
+  ]);
+
+  const hasTokensListChanged = useCallback(
+    (addresses: string[]) => {
+      return !isEqual(addresses?.sort(), addressesList?.sort());
+    },
+    [addressesList],
+  );
 
   return (
     <>
@@ -130,7 +140,7 @@ const ManageWhitelistDialogForm = ({
               showInput={showInput}
               toggleShowInput={toggleShowInput}
               formSuccess={formSuccess}
-              setFormSuccess={setFormSuccess}
+              setFormSuccess={(isSuccess) => setFormSuccess(isSuccess)}
               inputSuccessMsg={MSG.inputSuccess}
               fileSuccessMsg={MSG.fileSuccess}
             />
@@ -187,7 +197,8 @@ const ManageWhitelistDialogForm = ({
           text={{ id: 'button.confirm' }}
           style={{ width: styles.wideButton }}
           disabled={
-            (tabIndex === TABS.WHITELISTED && !whitelistedUsers?.length) ||
+            (tabIndex === TABS.WHITELISTED &&
+              !hasTokensListChanged(values.whitelistedAddresses)) ||
             !userHasPermission ||
             !isValid ||
             isSubmitting
