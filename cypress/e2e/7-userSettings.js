@@ -55,9 +55,11 @@ describe('Colony user can update their settings', () => {
     // Upload the avatar image
     cy.getBySel('avatarUploaderDrop', { timeout: 40000 })
       .get('input[type="file"]')
-      .selectFile(profilePicturePath, { force: true });
-    // Remove the avatar image
-    cy.getBySel('avatarUploaderRemove', { timeout: 40000 }).click();
+      .selectFile(profilePicturePath, { force: true })
+      .then(() => {
+        // Remove the avatar image
+        cy.getBySel('avatarUploaderRemove', { timeout: 40000 }).click();
+      });
   });
 
   it('User can add token type to their wallet', () => {
