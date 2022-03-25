@@ -115,7 +115,6 @@ export type ColonyActionTypes =
   | UniqueActionType<
       ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE,
       {
-        colonyName: Address;
         colonyAddress: Address;
         colonyDisplayName: string;
         colonyAvatarHash: string;
