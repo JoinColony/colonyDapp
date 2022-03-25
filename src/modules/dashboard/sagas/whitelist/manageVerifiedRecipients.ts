@@ -3,9 +3,9 @@ import { ClientType } from '@colony/colony-js';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
-  ProcessedColonyQuery,
-  ProcessedColonyQueryVariables,
-  ProcessedColonyDocument,
+  ColonyFromNameQuery,
+  ColonyFromNameQueryVariables,
+  ColonyFromNameDocument,
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom } from '~utils/saga/effects';
@@ -25,10 +25,12 @@ import { uploadIfpsAnnotation } from '../utils';
 
 function* manageVerifiedRecipients({
   payload: {
+    colonyName,
     colonyAddress,
     colonyDisplayName,
     colonyAvatarHash,
     verifiedAddresses = [],
+    colonyTokens = [],
     annotationMessage,
   },
   meta: { id: metaId },
@@ -107,6 +109,7 @@ function* manageVerifiedRecipients({
         colonyDisplayName,
         colonyAvatarHash,
         verifiedAddresses,
+        colonyTokens,
       }),
     );
 
@@ -155,16 +158,16 @@ function* manageVerifiedRecipients({
     /*
      * Update the colony object cache
      */
-    yield apolloClient.query<
-      ProcessedColonyQuery,
-      ProcessedColonyQueryVariables
-    >({
-      query: ProcessedColonyDocument,
-      variables: {
-        address: colonyAddress,
+    yield apolloClient.query<ColonyFromNameQuery, ColonyFromNameQueryVariables>(
+      {
+        query: ColonyFromNameDocument,
+        variables: {
+          name: colonyName,
+          address: colonyAddress,
+        },
+        fetchPolicy: 'network-only',
       },
-      fetchPolicy: 'network-only',
-    });
+    );
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE_SUCCESS,
