@@ -216,6 +216,7 @@ const UserTokenEditDialogForm = ({
                 }
                 type="submit"
                 style={{ width: styles.wideButton }}
+                dataTest="tokenEditSubmit"
               />
             </DialogSection>
           </>

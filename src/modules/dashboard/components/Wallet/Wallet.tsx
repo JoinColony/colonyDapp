@@ -83,6 +83,7 @@ const Wallet = () => {
             appearance={{ theme: 'blue', size: 'small' }}
             text={MSG.linkEditToken}
             onClick={editTokens}
+            dataTest="editUserTokens"
           />
         </p>
         <p className={styles.linkText}>

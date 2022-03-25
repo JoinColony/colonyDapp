@@ -202,6 +202,7 @@ const UserNavigation = () => {
                     }
                     ref={ref}
                     onClick={toggle}
+                    data-test="gasStationPopover"
                   >
                     <span>
                       <MaskedAddress address={walletAddress} />
