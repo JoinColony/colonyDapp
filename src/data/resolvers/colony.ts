@@ -36,6 +36,9 @@ import {
   SubgraphLatestSyncedBlockQuery,
   SubgraphLatestSyncedBlockQueryVariables,
   SubgraphLatestSyncedBlockDocument,
+  UserQuery,
+  UserQueryVariables,
+  UserDocument,
 } from '~data/index';
 
 import { createAddress } from '~utils/web3';
@@ -383,18 +386,31 @@ export const colonyResolvers = ({
       const users = await Promise.all(
         verifiedAddresses.map(async (address) => {
           let username;
+          let avatarHash;
           try {
-            const ensResult = await ens.getDomain(address, networkClient);
-            username = ENS.stripDomainParts('user', ensResult);
+            const { data } = await apolloClient.query<
+              UserQuery,
+              UserQueryVariables
+            >({
+              query: UserDocument,
+              variables: {
+                address,
+              },
+              fetchPolicy: 'network-only',
+            });
+
+            username = data?.user.profile.username;
+            avatarHash = data?.user.profile.avatarHash;
           } catch (error) {
+            // silent error. Means the user doesn't have a username
             username = '';
-            console.error(error);
+            avatarHash = '';
           }
 
           return {
             id: address,
             profile: {
-              avatarHash: '',
+              avatarHash,
               username,
               walletAddress: address,
             },
