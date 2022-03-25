@@ -44,7 +44,7 @@ const GasStationHeader = ({ close }: Props) => {
         </div>
       </div>
       <div className={styles.actionsContainer}>
-        <Link to={WALLET_ROUTE}>
+        <Link to={WALLET_ROUTE} data-test="userWallet">
           <div className={styles.goToWalletIcon}>
             <Icon
               appearance={{ size: 'medium' }}

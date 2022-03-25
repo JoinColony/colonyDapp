@@ -22,7 +22,7 @@ interface Props {
 
 const TokenItem = ({ token, disabled = false }: Props) => {
   return (
-    <div className={styles.main}>
+    <div className={styles.main} data-test="tokenEditItem">
       <div className={styles.tokenChoice}>
         <Checkbox
           name="selectedTokenAddresses"
