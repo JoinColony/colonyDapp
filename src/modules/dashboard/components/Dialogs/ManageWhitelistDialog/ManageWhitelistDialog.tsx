@@ -47,7 +47,13 @@ const ManageWhitelistDialog = ({
   callStep,
   prevStep,
   colony,
-  colony: { colonyAddress, avatarHash, colonyName },
+  colony: {
+    colonyAddress,
+    avatarHash,
+    colonyName,
+    tokenAddresses,
+    nativeTokenAddress,
+  },
 }: Props) => {
   const [showInput, setShowInput] = useState<boolean>(true);
   const [formSuccess, setFormSuccess] = useState<boolean>(false);
@@ -135,6 +141,9 @@ const ManageWhitelistDialog = ({
             verifiedAddresses,
             annotationMessage,
             colonyName,
+            colonyTokens: tokenAddresses.filter(
+              (tokenAddres) => tokenAddres !== nativeTokenAddress,
+            ),
           };
         },
       ),
