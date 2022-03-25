@@ -75,7 +75,7 @@ const ManageWhitelistDialog = ({
     fetchPolicy: 'network-only',
   });
 
-  const addressesList = useMemo(
+  const storedVerifiedRecipients = useMemo(
     () =>
       (data?.verifiedUsers || []).map((user) => user?.profile.walletAddress),
     [data],
@@ -119,8 +119,13 @@ const ManageWhitelistDialog = ({
           } else {
             verifiedAddresses =
               whitelistAddress !== undefined
-                ? [...new Set([...addressesList, whitelistAddress])]
-                : whitelistCSVUploader[0]?.parsedData;
+                ? [...new Set([...storedVerifiedRecipients, whitelistAddress])]
+                : [
+                    ...new Set([
+                      ...storedVerifiedRecipients,
+                      whitelistCSVUploader[0].parsedData,
+                    ]),
+                  ];
           }
 
           return {
@@ -144,7 +149,7 @@ const ManageWhitelistDialog = ({
       initialValues={{
         annotation: undefined,
         isWhiletlistActivated: true,
-        whitelistedAddresses: addressesList,
+        whitelistedAddresses: storedVerifiedRecipients,
         // data?.verifiedUsers.map(
         //   (user) => user?.profile.walletAddress,
         // ),
