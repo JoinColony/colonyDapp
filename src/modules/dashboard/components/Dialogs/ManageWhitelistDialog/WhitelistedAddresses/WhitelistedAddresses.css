@@ -22,6 +22,10 @@
   bottom: 7px;
 }
 
+.icon > svg > use {
+  transform: scale(5, 5);
+}
+
 .input {
   padding: 4px;
   height: 32px;
