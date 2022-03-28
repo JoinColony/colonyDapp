@@ -193,7 +193,10 @@ const ManageWhitelistDialogForm = ({
           text={{ id: 'button.back' }}
         />
         <Button
-          appearance={{ theme: 'pink', size: 'large' }}
+          appearance={{
+            theme: tabIndex === TABS.ADD_ADDRESS ? 'primary' : 'pink',
+            size: 'large',
+          }}
           text={{ id: 'button.confirm' }}
           style={{ width: styles.wideButton }}
           disabled={
