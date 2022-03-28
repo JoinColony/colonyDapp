@@ -51,8 +51,10 @@ interface Props {
   /** Toggle if to set the domain dropdown in a disabled state (won't open) */
   disabled?: boolean;
 
+  /** Provides value for data-test prop in select button used on cypress testing */
   dataTest?: string;
 
+  /** Provides value for data-test prop in select items used on cypress testing */
   itemDataTest?: string;
 }
 

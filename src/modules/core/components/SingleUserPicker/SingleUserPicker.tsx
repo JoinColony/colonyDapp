@@ -97,8 +97,13 @@ interface Props extends WithOmnipickerInProps {
 
   value?: AnyUser;
 
+  /** Provides value for data-test prop in the input used on cypress testing */
   dataTest?: string;
+
+  /** Provides value for data-test prop in the item list component used on cypress testing */
   itemDataTest?: string;
+
+  /** Provides value for data-test prop in the value of the input used on cypress testing */
   valueDataTest?: string;
 }
 
