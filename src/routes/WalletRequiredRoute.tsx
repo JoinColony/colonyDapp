@@ -50,11 +50,15 @@ const WalletRequiredRoute = ({
   const locationPath = location && `${location.pathname}${location.search}`;
   return (
     <Route
+      path={path}
       render={(
         props: ReactRouterComponentProps<
           {},
           StaticContext,
-          { redirectTo?: string; colonyURL?: string }
+          {
+            redirectTo?: string;
+            colonyURL?: string;
+          }
         >,
       ) => {
         /**
@@ -153,7 +157,8 @@ const WalletRequiredRoute = ({
                 to={{
                   pathname: CREATE_USER_ROUTE,
                   state: {
-                    redirectTo: colonyURL || locationPath,
+                    ...props.location.state,
+                    redirectTo: colonyURL || redirectTo || locationPath,
                   },
                 }}
               />
@@ -182,6 +187,7 @@ const WalletRequiredRoute = ({
             />
           );
         }
+
         /**
          * Catch all component render
          *

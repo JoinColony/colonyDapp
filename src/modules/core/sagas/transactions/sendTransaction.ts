@@ -2,6 +2,8 @@ import { call, put, take } from 'redux-saga/effects';
 import { TransactionResponse } from 'ethers/providers';
 import type { ContractClient, TransactionOverrides } from '@colony/colony-js';
 import { ClientType } from '@colony/colony-js';
+import { Contract } from 'ethers';
+import abis from '@colony/colony-js/lib-esm/abis';
 
 import { ActionTypes } from '~redux/index';
 import { selectAsJS } from '~utils/saga/effects';
@@ -9,6 +11,7 @@ import { mergePayload } from '~utils/actions';
 import { TRANSACTION_STATUSES, TransactionRecord } from '~immutable/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { Action } from '~redux/types/actions';
+import { ExtendedReduxContext } from '~types/index';
 
 import { transactionSendError } from '../../actionCreators';
 import { oneTransaction } from '../../selectors';
@@ -58,6 +61,26 @@ export default function* sendTransaction({
   let contextClient: ContractClient;
   if (context === ClientType.TokenClient) {
     contextClient = yield colonyManager.getTokenClient(identifier as string);
+  } else if (
+    context === ((ExtendedReduxContext.WrappedToken as unknown) as ClientType)
+  ) {
+    // @ts-ignore
+    const wrappedTokenAbi = abis.WrappedToken.default.abi;
+    contextClient = new Contract(
+      identifier || '',
+      wrappedTokenAbi,
+      colonyManager.signer,
+    );
+  } else if (
+    context === ((ExtendedReduxContext.VestingSimple as unknown) as ClientType)
+  ) {
+    // @ts-ignore
+    const vestingSimpleAbi = abis.vestingSimple.default.abi;
+    contextClient = new Contract(
+      identifier || '',
+      vestingSimpleAbi,
+      colonyManager.signer,
+    );
   } else {
     contextClient = yield colonyManager.getClient(context, identifier);
   }

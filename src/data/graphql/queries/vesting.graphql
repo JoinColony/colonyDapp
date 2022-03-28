@@ -1,0 +1,35 @@
+query UnwrapTokenForMetacolony($userAddress: String!) {
+  unwrapTokenForMetacolony(userAddress: $userAddress) @client {
+    wrappedToken {
+      address,
+      decimals,
+      name,
+      symbol,
+      balance,
+    }
+    unwrappedToken {
+      address,
+      decimals,
+      name,
+      symbol,
+      balance,
+    }
+  }
+}
+
+query ClaimTokensFromMetacolony($userAddress: String!) {
+  claimTokensFromMetacolony(userAddress: $userAddress) @client {
+    grantsToken {
+      address,
+      decimals,
+      name,
+      symbol,
+      balance,
+    }
+    grants {
+      totalAllocation
+      claimable
+      claimed
+    }
+  }
+}

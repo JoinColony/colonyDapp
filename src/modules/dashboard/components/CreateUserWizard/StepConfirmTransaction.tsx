@@ -2,7 +2,6 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 import { Redirect, useHistory } from 'react-router-dom';
 
-import { LANDING_PAGE_ROUTE } from '~routes/index';
 import { useSelector } from '~utils/hooks';
 import { useLoggedInUser } from '~data/index';
 
@@ -13,6 +12,8 @@ import {
 } from '~users/GasStation/transactionGroup';
 import Heading from '~core/Heading';
 import GasStationContent from '~users/GasStation/GasStationContent';
+import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
+
 import styles from './StepConfirmTransaction.css';
 
 const MSG = defineMessages({
@@ -28,14 +29,26 @@ const displayName = 'dashboard.CreateUserWizard.StepConfirmTransaction';
 const StepConfirmTransaction = () => {
   const { username } = useLoggedInUser();
   const transactionGroups = useSelector(groupedTransactions);
-  const { location } = useHistory<{ colonyURL?: string }>();
+  const { location } = useHistory<{
+    colonyURL?: string;
+    redirectTo?: string;
+  }>();
 
   if (username) {
     if (location?.state?.colonyURL) {
       return <Redirect to={location.state.colonyURL} />;
     }
 
-    return <Redirect to={LANDING_PAGE_ROUTE} />;
+    return (
+      <Redirect
+        to={{
+          pathname: location.state.redirectTo || LANDING_PAGE_ROUTE,
+          state: {
+            ...location.state,
+          },
+        }}
+      />
+    );
   }
 
   const colonyTransaction = findTransactionGroupByKey(

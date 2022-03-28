@@ -19,6 +19,7 @@ import { ColonyBackText } from '~pages/BackTexts';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import LadingPage from '~pages/LandingPage';
 import ActionsPage from '~dashboard/ActionsPage';
+import { ClaimTokensPage, UnwrapTokensPage } from '~dashboard/Vesting';
 
 import appLoadingContext from '~context/appLoadingState';
 import ColonyFunding from '~dashboard/ColonyFunding';
@@ -44,6 +45,8 @@ import {
   MEMBERS_ROUTE,
   ACTIONS_PAGE_ROUTE,
   COIN_MACHINE_ROUTE,
+  UNWRAP_TOKEN_ROUTE,
+  CLAIM_TOKEN_ROUTE,
 } from './routeConstants';
 
 import AlwaysAccesibleRoute from './AlwaysAccesibleRoute';
@@ -225,6 +228,24 @@ const Routes = () => {
           component={ColonyHome}
           layout={Default}
           routeProps={{ hasBackLink: false }}
+        />
+        <AlwaysAccesibleRoute
+          path={UNWRAP_TOKEN_ROUTE}
+          component={UnwrapTokensPage}
+          layout={NavBar}
+          routeProps={({ colonyName }) => ({
+            backText: ColonyBackText,
+            backRoute: `/colony/${colonyName}`,
+          })}
+        />
+        <AlwaysAccesibleRoute
+          path={CLAIM_TOKEN_ROUTE}
+          component={ClaimTokensPage}
+          layout={NavBar}
+          routeProps={({ colonyName }) => ({
+            backText: ColonyBackText,
+            backRoute: `/colony/${colonyName}`,
+          })}
         />
 
         {/*

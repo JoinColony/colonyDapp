@@ -1,11 +1,14 @@
 import { call, put } from 'redux-saga/effects';
 import { bigNumberify } from 'ethers/utils';
 import { ClientType, ContractClient } from '@colony/colony-js';
+import { Contract } from 'ethers';
+import abis from '@colony/colony-js/lib-esm/abis';
 
 import { ActionTypes, Action } from '~redux/index';
 import { selectAsJS } from '~utils/saga/effects';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { TransactionRecordProps } from '~immutable/index';
+import { ExtendedReduxContext } from '~types/index';
 
 import { oneTransaction } from '../../selectors';
 import {
@@ -41,6 +44,27 @@ export default function* estimateGasCost({
     let contextClient: ContractClient;
     if (context === ClientType.TokenClient) {
       contextClient = yield colonyManager.getTokenClient(identifier as string);
+    } else if (
+      context === ((ExtendedReduxContext.WrappedToken as unknown) as ClientType)
+    ) {
+      // @ts-ignore
+      const wrappedTokenAbi = abis.WrappedToken.default.abi;
+      contextClient = new Contract(
+        identifier || '',
+        wrappedTokenAbi,
+        colonyManager.signer,
+      );
+    } else if (
+      context ===
+      ((ExtendedReduxContext.VestingSimple as unknown) as ClientType)
+    ) {
+      // @ts-ignore
+      const vestingSimpleAbi = abis.vestingSimple.default.abi;
+      contextClient = new Contract(
+        identifier || '',
+        vestingSimpleAbi,
+        colonyManager.signer,
+      );
     } else {
       contextClient = yield colonyManager.getClient(context, identifier);
     }

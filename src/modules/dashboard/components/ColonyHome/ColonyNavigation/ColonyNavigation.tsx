@@ -25,6 +25,14 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.ColonyNavigation.linkTextCoinMachine',
     defaultMessage: 'Buy Tokens',
   },
+  linkTextUnwrapTokens: {
+    id: 'dashboard.ColonyHome.ColonyNavigation.linkTextUnwrapTokens',
+    defaultMessage: 'Unwrap Tokens',
+  },
+  linkTextClaimTokens: {
+    id: 'dashboard.ColonyHome.ColonyNavigation.linkTextClaimTokens',
+    defaultMessage: 'Claim Tokens',
+  },
   comingSoonMessage: {
     id: 'dashboard.ColonyNavigation.comingSoonMessage',
     defaultMessage: 'Coming Soon',
@@ -55,7 +63,7 @@ const ColonyNavigation = ({ colony: { colonyAddress, colonyName } }: Props) => {
   const hasNewExtensions = false;
 
   const items = useMemo<ComponentProps<typeof NavItem>[]>(() => {
-    const navigationItems = [
+    const navigationItems: ComponentProps<typeof NavItem>[] = [
       {
         linkTo: `/colony/${colonyName}`,
         showDot: hasNewActions,
@@ -96,6 +104,7 @@ const ColonyNavigation = ({ colony: { colonyAddress, colonyName } }: Props) => {
         });
       }
     }
+
     return navigationItems;
   }, [colonyName, hasNewActions, hasNewEvents, hasNewExtensions, data]);
 

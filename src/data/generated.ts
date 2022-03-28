@@ -229,6 +229,7 @@ export type MutationUnsubscribeFromColonyArgs = {
 export type Query = {
   actionsThatNeedAttention: Array<Maybe<ActionThatNeedsAttention>>;
   bannedUsers: Array<Maybe<BannedUser>>;
+  claimTokensFromMetacolony: GrantsAllocation;
   claimableStakedMotions: ClaimableMotions;
   coinMachineBoughtTokens: BoughtTokens;
   coinMachineCurrentPeriodMaxUserPurchase: Scalars['String'];
@@ -290,6 +291,7 @@ export type Query = {
   tokens: Array<Token>;
   transactionMessages: TransactionMessages;
   transactionMessagesCount: TransactionMessagesCount;
+  unwrapTokenForMetacolony: TokenUnwrapping;
   user: User;
   userAddress: Scalars['String'];
   userReputation: Scalars['String'];
@@ -311,6 +313,11 @@ export type QueryActionsThatNeedAttentionArgs = {
 
 export type QueryBannedUsersArgs = {
   colonyAddress: Scalars['String'];
+};
+
+
+export type QueryClaimTokensFromMetacolonyArgs = {
+  userAddress: Scalars['String'];
 };
 
 
@@ -654,6 +661,11 @@ export type QueryTransactionMessagesArgs = {
 
 export type QueryTransactionMessagesCountArgs = {
   colonyAddress: Scalars['String'];
+};
+
+
+export type QueryUnwrapTokenForMetacolonyArgs = {
+  userAddress: Scalars['String'];
 };
 
 
@@ -1428,6 +1440,22 @@ export type SubgraphBlock = {
 export type SubgraphTransaction = {
   id: Scalars['String'];
   block: SubgraphBlock;
+};
+
+export type TokenUnwrapping = {
+  wrappedToken: UserToken;
+  unwrappedToken: UserToken;
+};
+
+export type Grants = {
+  totalAllocation: Scalars['String'];
+  claimable: Scalars['String'];
+  claimed: Scalars['String'];
+};
+
+export type GrantsAllocation = {
+  grantsToken: UserToken;
+  grants: Grants;
 };
 
 export type WhitelistPolicy = {
@@ -2750,6 +2778,20 @@ export type SubgraphPayoutClaimedEventsQuery = { payoutClaimedEvents: Array<(
       ) }
     ) }
   )> };
+
+export type UnwrapTokenForMetacolonyQueryVariables = Exact<{
+  userAddress: Scalars['String'];
+}>;
+
+
+export type UnwrapTokenForMetacolonyQuery = { unwrapTokenForMetacolony: { wrappedToken: Pick<UserToken, 'address' | 'decimals' | 'name' | 'symbol' | 'balance'>, unwrappedToken: Pick<UserToken, 'address' | 'decimals' | 'name' | 'symbol' | 'balance'> } };
+
+export type ClaimTokensFromMetacolonyQueryVariables = Exact<{
+  userAddress: Scalars['String'];
+}>;
+
+
+export type ClaimTokensFromMetacolonyQuery = { claimTokensFromMetacolony: { grantsToken: Pick<UserToken, 'address' | 'decimals' | 'name' | 'symbol' | 'balance'>, grants: Pick<Grants, 'totalAllocation' | 'claimable' | 'claimed'> } };
 
 export type WhitelistedUsersQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -7579,6 +7621,96 @@ export function useSubgraphPayoutClaimedEventsLazyQuery(baseOptions?: Apollo.Laz
 export type SubgraphPayoutClaimedEventsQueryHookResult = ReturnType<typeof useSubgraphPayoutClaimedEventsQuery>;
 export type SubgraphPayoutClaimedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphPayoutClaimedEventsLazyQuery>;
 export type SubgraphPayoutClaimedEventsQueryResult = Apollo.QueryResult<SubgraphPayoutClaimedEventsQuery, SubgraphPayoutClaimedEventsQueryVariables>;
+export const UnwrapTokenForMetacolonyDocument = gql`
+    query UnwrapTokenForMetacolony($userAddress: String!) {
+  unwrapTokenForMetacolony(userAddress: $userAddress) @client {
+    wrappedToken {
+      address
+      decimals
+      name
+      symbol
+      balance
+    }
+    unwrappedToken {
+      address
+      decimals
+      name
+      symbol
+      balance
+    }
+  }
+}
+    `;
+
+/**
+ * __useUnwrapTokenForMetacolonyQuery__
+ *
+ * To run a query within a React component, call `useUnwrapTokenForMetacolonyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUnwrapTokenForMetacolonyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUnwrapTokenForMetacolonyQuery({
+ *   variables: {
+ *      userAddress: // value for 'userAddress'
+ *   },
+ * });
+ */
+export function useUnwrapTokenForMetacolonyQuery(baseOptions?: Apollo.QueryHookOptions<UnwrapTokenForMetacolonyQuery, UnwrapTokenForMetacolonyQueryVariables>) {
+        return Apollo.useQuery<UnwrapTokenForMetacolonyQuery, UnwrapTokenForMetacolonyQueryVariables>(UnwrapTokenForMetacolonyDocument, baseOptions);
+      }
+export function useUnwrapTokenForMetacolonyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UnwrapTokenForMetacolonyQuery, UnwrapTokenForMetacolonyQueryVariables>) {
+          return Apollo.useLazyQuery<UnwrapTokenForMetacolonyQuery, UnwrapTokenForMetacolonyQueryVariables>(UnwrapTokenForMetacolonyDocument, baseOptions);
+        }
+export type UnwrapTokenForMetacolonyQueryHookResult = ReturnType<typeof useUnwrapTokenForMetacolonyQuery>;
+export type UnwrapTokenForMetacolonyLazyQueryHookResult = ReturnType<typeof useUnwrapTokenForMetacolonyLazyQuery>;
+export type UnwrapTokenForMetacolonyQueryResult = Apollo.QueryResult<UnwrapTokenForMetacolonyQuery, UnwrapTokenForMetacolonyQueryVariables>;
+export const ClaimTokensFromMetacolonyDocument = gql`
+    query ClaimTokensFromMetacolony($userAddress: String!) {
+  claimTokensFromMetacolony(userAddress: $userAddress) @client {
+    grantsToken {
+      address
+      decimals
+      name
+      symbol
+      balance
+    }
+    grants {
+      totalAllocation
+      claimable
+      claimed
+    }
+  }
+}
+    `;
+
+/**
+ * __useClaimTokensFromMetacolonyQuery__
+ *
+ * To run a query within a React component, call `useClaimTokensFromMetacolonyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useClaimTokensFromMetacolonyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useClaimTokensFromMetacolonyQuery({
+ *   variables: {
+ *      userAddress: // value for 'userAddress'
+ *   },
+ * });
+ */
+export function useClaimTokensFromMetacolonyQuery(baseOptions?: Apollo.QueryHookOptions<ClaimTokensFromMetacolonyQuery, ClaimTokensFromMetacolonyQueryVariables>) {
+        return Apollo.useQuery<ClaimTokensFromMetacolonyQuery, ClaimTokensFromMetacolonyQueryVariables>(ClaimTokensFromMetacolonyDocument, baseOptions);
+      }
+export function useClaimTokensFromMetacolonyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ClaimTokensFromMetacolonyQuery, ClaimTokensFromMetacolonyQueryVariables>) {
+          return Apollo.useLazyQuery<ClaimTokensFromMetacolonyQuery, ClaimTokensFromMetacolonyQueryVariables>(ClaimTokensFromMetacolonyDocument, baseOptions);
+        }
+export type ClaimTokensFromMetacolonyQueryHookResult = ReturnType<typeof useClaimTokensFromMetacolonyQuery>;
+export type ClaimTokensFromMetacolonyLazyQueryHookResult = ReturnType<typeof useClaimTokensFromMetacolonyLazyQuery>;
+export type ClaimTokensFromMetacolonyQueryResult = Apollo.QueryResult<ClaimTokensFromMetacolonyQuery, ClaimTokensFromMetacolonyQueryVariables>;
 export const WhitelistedUsersDocument = gql`
     query WhitelistedUsers($colonyAddress: String!) {
   whitelistedUsers(colonyAddress: $colonyAddress) @client {

@@ -8,6 +8,7 @@ import colonyExtensionSagas from './extensions';
 import motionSagas from './motions';
 import coinMachineSagas from './coinMachine';
 import whitelistSagas from './whitelist';
+import vestingSagas from './vesting';
 
 export default function* setupDashboardSagas() {
   yield all([
@@ -19,5 +20,6 @@ export default function* setupDashboardSagas() {
     call(motionSagas),
     call(coinMachineSagas),
     call(whitelistSagas),
+    call(vestingSagas),
   ]);
 }
