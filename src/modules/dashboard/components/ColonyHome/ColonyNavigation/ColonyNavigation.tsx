@@ -3,7 +3,6 @@ import { defineMessages } from 'react-intl';
 import { Extension } from '@colony/colony-js';
 
 import { useColonyExtensionsQuery, Colony } from '~data/index';
-import { METACOLONY_ENS } from '~constants';
 
 import NavItem from './NavItem';
 
@@ -104,25 +103,6 @@ const ColonyNavigation = ({ colony: { colonyAddress, colonyName } }: Props) => {
           text: MSG.linkTextCoinMachine,
         });
       }
-    }
-
-    if (colonyName === METACOLONY_ENS) {
-      navigationItems.push(
-        ...[
-          {
-            linkTo: `/colony/${colonyName}/unwrap-tokens`,
-            showDot: false,
-            text: MSG.linkTextUnwrapTokens,
-            disabled: true,
-          },
-          {
-            linkTo: `/colony/${colonyName}/claim-tokens`,
-            showDot: false,
-            text: MSG.linkTextClaimTokens,
-            disabled: true,
-          },
-        ],
-      );
     }
 
     return navigationItems;
