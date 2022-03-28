@@ -429,8 +429,8 @@ const CreatePaymentDialogForm = ({
             renderAvatar={supRenderAvatar}
             disabled={inputDisabled}
             placeholder={MSG.userPickerPlaceholder}
-            dataTest="payment-recipient-picker"
-            itemDataTest="payment-recipient-item"
+            dataTest="paymentRecipientPicker"
+            itemDataTest="paymentRecipientItem"
           />
         </div>
       </DialogSection>
@@ -457,7 +457,7 @@ const CreatePaymentDialogForm = ({
                * This is needed for our custom error state to work
                */
               forcedFieldError={customAmountError}
-              dataTest="payment-amount-input"
+              dataTest="paymentAmountInput"
             />
             {networkFeeInverse &&
               values.amount &&
@@ -528,7 +528,7 @@ const CreatePaymentDialogForm = ({
           label={MSG.annotation}
           name="annotation"
           disabled={inputDisabled}
-          dataTest="payment-annotation"
+          dataTest="paymentAnnotation"
         />
       </DialogSection>
       {!userHasPermission && (
@@ -584,7 +584,7 @@ const CreatePaymentDialogForm = ({
            */
           disabled={!isValid || !!customAmountError || inputDisabled}
           style={{ width: styles.wideButton }}
-          data-test="payment-confirm-button"
+          data-test="paymentConfirmButton"
         />
       </DialogSection>
     </>
