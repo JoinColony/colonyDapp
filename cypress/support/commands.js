@@ -117,7 +117,7 @@ Cypress.Commands.add('checkUrlAfterAction', (colonyName) => {
 });
 
 Cypress.Commands.add('changeColonyname', (colonyName, newName) => {
-  cy.getBySel('newAction', { timeout: 60000 }).click();
+  cy.getBySel('newActionButton', { timeout: 60000 }).click();
   cy.getBySel('advancedDialogIndexItem').click();
   cy.getBySel('updateColonyDialogIndexItem').click();
   cy.get('input').last().click().clear().type(newName);

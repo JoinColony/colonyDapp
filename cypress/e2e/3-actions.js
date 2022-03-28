@@ -79,17 +79,17 @@ describe('User can create actions via UAC', () => {
       prevColonyFunds = amount;
     });
 
-    cy.getBySel('new-action-button', { timeout: 60000 }).click();
-    cy.getBySel('index-modal-item').eq(0).click();
-    cy.getBySel('index-modal-item').eq(0).click();
+    cy.getBySel('newActionButton', { timeout: 60000 }).click();
+    cy.getBySel('indexModalItem').eq(0).click();
+    cy.getBySel('indexModalItem').eq(0).click();
 
-    cy.getBySel('payment-recipient-picker').click().type(accounts[1]);
-    cy.getBySel('payment-recipient-item').first().click();
+    cy.getBySel('paymentRecipientPicker').click().type(accounts[1]);
+    cy.getBySel('paymentRecipientItem').first().click();
 
-    cy.getBySel('payment-amount-input').click().type(amountToPay);
+    cy.getBySel('paymentAmountInput').click().type(amountToPay);
 
-    cy.getBySel('payment-annotation').click().type(annotationText);
-    cy.getBySel('payment-confirm-button').click();
+    cy.getBySel('paymentAnnotation').click().type(annotationText);
+    cy.getBySel('paymentConfirmButton').click();
 
     cy.getBySel('actionHeading', { timeout: 70000 }).should(
       'have.text',
@@ -123,9 +123,9 @@ describe('User can create actions via UAC', () => {
 
     cy.visit(`/colony/${Cypress.config().colony.name}`);
 
-    cy.getBySel('new-action-button', { timeout: 60000 }).click();
-    cy.getBySel('index-modal-item').eq(2).click();
-    cy.getBySel('index-modal-item').eq(0).click();
+    cy.getBySel('newActionButton', { timeout: 60000 }).click();
+    cy.getBySel('indexModalItem').eq(2).click();
+    cy.getBySel('indexModalItem').eq(0).click();
 
     cy.getBySel('domainNameInput').click().type(domainName);
     cy.getBySel('domainPurposeInput').click().type(domainPurpose);
@@ -166,9 +166,9 @@ describe('User can create actions via UAC', () => {
 
     cy.visit(`/colony/${Cypress.config().colony.name}`);
 
-    cy.getBySel('new-action-button', { timeout: 90000 }).click();
-    cy.getBySel('index-modal-item').eq(2).click();
-    cy.getBySel('index-modal-item').eq(1).click();
+    cy.getBySel('newActionButton', { timeout: 90000 }).click();
+    cy.getBySel('indexModalItem').eq(2).click();
+    cy.getBySel('indexModalItem').eq(1).click();
 
     cy.getBySel('domainIdSelector').click();
     cy.getBySel('domainIdItem').last().click();
@@ -213,9 +213,9 @@ describe('User can create actions via UAC', () => {
 
     cy.visit(`/colony/${Cypress.config().colony.name}`);
 
-    cy.getBySel('new-action-button', { timeout: 90000 }).click();
-    cy.getBySel('index-modal-item').eq(3).click();
-    cy.getBySel('index-modal-item').eq(0).click();
+    cy.getBySel('newActionButton', { timeout: 90000 }).click();
+    cy.getBySel('indexModalItem').eq(3).click();
+    cy.getBySel('indexModalItem').eq(0).click();
 
     cy.getBySel('reputationRecipientSelector').click({ force: true });
     cy.getBySel('reputationRecipientSelectorItem').last().click();
@@ -253,9 +253,9 @@ describe('User can create actions via UAC', () => {
 
     cy.visit(`/colony/${Cypress.config().colony.name}`);
 
-    cy.getBySel('new-action-button', { timeout: 90000 }).click();
-    cy.getBySel('index-modal-item').eq(3).click();
-    cy.getBySel('index-modal-item').eq(1).click();
+    cy.getBySel('newActionButton', { timeout: 90000 }).click();
+    cy.getBySel('indexModalItem').eq(3).click();
+    cy.getBySel('indexModalItem').eq(1).click();
 
     cy.getBySel('reputationRecipientSelector').click({ force: true });
     cy.getBySel('reputationRecipientSelectorItem').last().click();
@@ -298,9 +298,9 @@ describe('User can create actions via UAC', () => {
       prevColonyFunds = $text.text().split(',').join('');
     });
 
-    cy.getBySel('new-action-button', { timeout: 60000 }).click();
-    cy.getBySel('index-modal-item').eq(1).click();
-    cy.getBySel('index-modal-item').eq(0).click();
+    cy.getBySel('newActionButton', { timeout: 60000 }).click();
+    cy.getBySel('indexModalItem').eq(1).click();
+    cy.getBySel('indexModalItem').eq(0).click();
 
     cy.getBySel('domainIdSelector').first().click();
     cy.getBySel('domainIdItem').first().click();
