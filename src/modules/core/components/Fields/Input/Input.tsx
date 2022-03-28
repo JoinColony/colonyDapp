@@ -137,7 +137,7 @@ const Input = ({
     disabled,
     maxLength,
     maxButtonParams,
-    'data-test': dataTest,
+    dataTest,
     onChange: (event) => {
       inputFieldProps.onChange(event);
       if (onChange) {
