@@ -170,7 +170,7 @@
     "localforage": "^1.7.3",
     "lodash": "^4.17.15",
     "move-decimal-point": "^0.0.4",
-    "nanoid": "^3.0.0",
+    "nanoid": "^3.1.31",
     "p-event": "^4.1.0",
     "papaparse": "^5.3.1",
     "prop-types": "^15.6.2",
