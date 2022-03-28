@@ -229,11 +229,8 @@ export type MutationUnsubscribeFromColonyArgs = {
 export type Query = {
   actionsThatNeedAttention: Array<Maybe<ActionThatNeedsAttention>>;
   bannedUsers: Array<Maybe<BannedUser>>;
-<<<<<<< HEAD
-  claimableStakedMotions: ClaimableMotions;
-=======
   claimTokensFromMetacolony: GrantsAllocation;
->>>>>>> Add: `claimTokensFromMetacolony` resolver
+  claimableStakedMotions: ClaimableMotions;
   coinMachineBoughtTokens: BoughtTokens;
   coinMachineCurrentPeriodMaxUserPurchase: Scalars['String'];
   coinMachineCurrentPeriodPrice: Scalars['String'];
@@ -319,14 +316,14 @@ export type QueryBannedUsersArgs = {
 };
 
 
-<<<<<<< HEAD
+export type QueryClaimTokensFromMetacolonyArgs = {
+  userAddress: Scalars['String'];
+};
+
+
 export type QueryClaimableStakedMotionsArgs = {
   colonyAddress: Scalars['String'];
   walletAddress: Scalars['String'];
-=======
-export type QueryClaimTokensFromMetacolonyArgs = {
-  userAddress: Scalars['String'];
->>>>>>> Add: `claimTokensFromMetacolony` resolver
 };
 
 
@@ -8246,23 +8243,8 @@ export function useCommentCountSubscription(baseOptions?: Apollo.SubscriptionHoo
 export type CommentCountSubscriptionHookResult = ReturnType<typeof useCommentCountSubscription>;
 export type CommentCountSubscriptionResult = Apollo.SubscriptionResult<CommentCountSubscription>;
 export const CommentsDocument = gql`
-<<<<<<< HEAD
-<<<<<<< HEAD
     subscription Comments($transactionHash: String!, $limit: Int = 100) {
   transactionMessages(transactionHash: $transactionHash, limit: $limit) {
-=======
-<<<<<<< HEAD
-    subscription Comments($transactionHash: String!) {
-  transactionMessages(transactionHash: $transactionHash) {
-=======
-    subscription Comments($transactionHash: String!, $limit: Int = 100) {
-  transactionMessages(transactionHash: $transactionHash, limit: $limit) {
->>>>>>> a9f43a385... Add: `unwrapTokenForMetacolony` vesting query
->>>>>>> Add: `unwrapTokenForMetacolony` vesting query
-=======
-    subscription Comments($transactionHash: String!) {
-  transactionMessages(transactionHash: $transactionHash) {
->>>>>>> Chore: re-generate graphql hooks after cherry-pick
     transactionHash
     messages {
       ...TransactionMessage
