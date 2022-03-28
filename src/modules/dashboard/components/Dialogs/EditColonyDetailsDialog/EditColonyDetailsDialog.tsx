@@ -38,6 +38,7 @@ const EditColonyDetailsDialog = ({
     avatarHash,
     tokenAddresses,
     nativeTokenAddress,
+    whitelistedAddresses,
   },
   colony,
   isVotingExtensionEnabled,
@@ -84,6 +85,7 @@ const EditColonyDetailsDialog = ({
           colonyTokens: tokenAddresses.filter(
             (tokenAddres) => tokenAddres !== nativeTokenAddress,
           ),
+          verifiedAddresses: whitelistedAddresses,
           annotationMessage,
         }),
       ),

@@ -129,7 +129,7 @@ const ManageWhitelistDialog = ({
                 : [
                     ...new Set([
                       ...storedVerifiedRecipients,
-                      whitelistCSVUploader[0].parsedData,
+                      ...whitelistCSVUploader[0].parsedData,
                     ]),
                   ];
           }
@@ -159,9 +159,6 @@ const ManageWhitelistDialog = ({
         annotation: undefined,
         isWhiletlistActivated: true,
         whitelistedAddresses: storedVerifiedRecipients,
-        // data?.verifiedUsers.map(
-        //   (user) => user?.profile.walletAddress,
-        // ),
         isSubmitting: false,
       }}
       submit={ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE}

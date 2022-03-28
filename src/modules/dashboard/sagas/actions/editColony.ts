@@ -33,6 +33,7 @@ function* editColonyAction({
     hasAvatarChanged,
     colonyTokens = [],
     annotationMessage,
+    verifiedAddresses,
   },
   meta: { id: metaId, history },
   meta,
@@ -128,15 +129,7 @@ function* editColonyAction({
           ? colonyAvatarIpfsHash
           : colonyAvatarHash,
         colonyTokens,
-        verifiedAddresses: [
-          '0x770656997ae1c8ab0250571ca1dff5c5a3c37700',
-          '0xcefc8f187ecdaf156515897e0156cbdaf61a286a',
-          '0x9c8a0fec96b8879aab72077a37e31d9ec1c336a1',
-          '0xc9af26615659127cd153388293a44c2d2a645d49',
-          '0xb77d57f4959eafa0339424b83fcfaf9c15407461',
-          '0x7a22720465c19441700ea46b7be169e8550b8db3',
-          '0x14cb353810b9f816ae9778038e7b24d280013592',
-        ],
+        verifiedAddresses,
       }),
     );
 
