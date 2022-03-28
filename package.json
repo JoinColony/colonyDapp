@@ -168,7 +168,7 @@
     "jwt-decode": "^2.2.0",
     "linkify-it": "^3.0.0",
     "localforage": "^1.7.3",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "move-decimal-point": "^0.0.4",
     "nanoid": "^3.1.31",
     "p-event": "^4.1.0",
