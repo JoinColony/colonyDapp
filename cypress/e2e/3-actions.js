@@ -348,9 +348,9 @@ describe('User can create actions via UAC', () => {
 
     cy.visit(`/colony/${Cypress.config().colony.name}`);
 
-    cy.getBySel('new-action-button', { timeout: 60000 }).click();
-    cy.getBySel('index-modal-item').eq(1).click();
-    cy.getBySel('index-modal-item').eq(5).click();
+    cy.getBySel('newActionButton', { timeout: 60000 }).click();
+    cy.getBySel('indexModalItem').eq(1).click();
+    cy.getBySel('indexModalItem').eq(5).click();
 
     cy.getBySel('unlockTokenAnnotation').click().type(annotationText);
 
@@ -374,16 +374,16 @@ describe('User can create actions via UAC', () => {
 
     cy.getBySel('lockIconTooltip', { timeout: 15000 }).should('not.exist');
   });
-  it('Can manage permissions', () => {
+  it.only('Can manage permissions', () => {
     const annotationText = 'Time to unlock the token';
 
     cy.login();
 
     cy.visit(`/colony/${Cypress.config().colony.name}`);
 
-    cy.getBySel('new-action-button', { timeout: 60000 }).click();
-    cy.getBySel('index-modal-item').eq(4).click();
-    cy.getBySel('index-modal-item').eq(0).click();
+    cy.getBySel('newActionButton', { timeout: 60000 }).click();
+    cy.getBySel('indexModalItem').eq(4).click();
+    cy.getBySel('indexModalItem').eq(0).click();
 
     cy.getBySel('permissionUserSelector').click({ force: true });
     cy.getBySel('permissionUserSelectorItem').last().click();
@@ -394,9 +394,8 @@ describe('User can create actions via UAC', () => {
 
     cy.getBySel('permissionConfirmButton').click();
 
-    cy.getBySel('actionHeading', { timeout: 100000 }).should(
-      'contains',
-      `Assign the administration, funding, architecture permissions in Root to`,
+    cy.getBySel('actionHeading', { timeout: 100000 }).contains(
+      'Assign the administration, funding, architecture permissions in Root to',
     );
 
     cy.url().should(
@@ -418,9 +417,9 @@ describe('User can create actions via UAC', () => {
 
     cy.visit(`/colony/${Cypress.config().colony.name}`);
 
-    cy.getBySel('new-action-button', { timeout: 70000 }).click();
-    cy.getBySel('index-modal-item').eq(4).click();
-    cy.getBySel('index-modal-item').eq(1).click();
+    cy.getBySel('newActionButton', { timeout: 70000 }).click();
+    cy.getBySel('indexModalItem').eq(4).click();
+    cy.getBySel('indexModalItem').eq(1).click();
 
     cy.getBySel('recoveryAnnotation').click().type(annotationText);
 
