@@ -24,7 +24,7 @@
   text-align: right;
 }
 
-.domainPotBalance {
+.domainPotBalance, .networkFee {
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   text-align: right;

@@ -4,6 +4,7 @@ export const tokenAmountSelect: string;
 export const tokenAmountContainer: string;
 export const tokenAmountUsd: string;
 export const domainPotBalance: string;
+export const networkFee: string;
 export const domainSelects: string;
 export const tokenAmountInputContainer: string;
 export const singleUserContainer: string;

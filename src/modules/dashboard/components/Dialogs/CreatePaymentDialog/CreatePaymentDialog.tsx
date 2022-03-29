@@ -11,12 +11,12 @@ import { ActionForm } from '~core/Fields';
 
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
-import { useMembersSubscription } from '~data/index';
+import { useMembersSubscription, useNetworkContracts } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 import { WizardDialogType } from '~utils/hooks';
 
-import DialogForm from './CreatePaymentDialogForm';
+import DialogForm, { calculateFee } from './CreatePaymentDialogForm';
 
 const MSG = defineMessages({
   amountZero: {
@@ -33,7 +33,7 @@ export interface FormValues {
   forceAction: boolean;
   domainId: string;
   recipient: Address;
-  amount: string;
+  amount: string; // Amount the receiver finally gets, the initiator pays this plus network fee
   tokenAddress: Address;
   annotation: string;
   motionDomainId: string;
@@ -93,6 +93,8 @@ const CreatePaymentDialog = ({
     variables: { colonyAddress },
   });
 
+  const { feeInverse: networkFeeInverse } = useNetworkContracts();
+
   const transform = useCallback(
     pipe(
       mapPayload((payload) => {
@@ -114,6 +116,10 @@ const CreatePaymentDialog = ({
           selectedToken && selectedToken.decimals,
         );
 
+        const amountWithFees = networkFeeInverse
+          ? calculateFee(amount, networkFeeInverse, decimals).totalToPay
+          : amount;
+
         return {
           colonyName,
           colonyAddress,
@@ -121,7 +127,7 @@ const CreatePaymentDialog = ({
           domainId,
           singlePayment: {
             tokenAddress,
-            amount,
+            amount: amountWithFees, // NOTE: The contract only sees this amount
             decimals,
           },
           annotationMessage,
