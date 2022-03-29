@@ -505,7 +505,7 @@ const DefaultMotion = ({
       <hr className={styles.dividerTop} />
       <div className={styles.container}>
         <div className={styles.content}>
-          <h1 className={styles.heading}>
+          <h1 className={styles.heading} data-test="actionHeading">
             <FormattedMessage
               id={roleMessageDescriptorId || 'motion.title'}
               values={{

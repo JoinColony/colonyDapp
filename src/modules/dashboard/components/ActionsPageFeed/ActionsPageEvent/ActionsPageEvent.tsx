@@ -336,7 +336,7 @@ const ActionsPageEvent = ({
           <TransactionStatus status={STATUS.Succeeded} showTooltip={false} />
         </div>
         <div className={styles.content}>
-          <div className={styles.text}>
+          <div className={styles.text} data-test="actionsEventText">
             <FormattedMessage
               id={getEventTitleMessageDescriptor}
               values={{

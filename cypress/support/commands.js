@@ -24,6 +24,10 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
+import { bigNumberify } from 'ethers/utils';
+
+import { Extension } from '@colony/colony-js';
+
 import { buildUser } from './generate';
 
 Cypress.Commands.add('login', () => {
@@ -127,4 +131,78 @@ Cypress.Commands.add('checkColonyName', (colonyName) => {
   cy.getBySel('colonyTitle', { timeout: 60000 }).then((name) => {
     expect(name.text()).to.equal(colonyName);
   });
+});
+Cypress.Commands.add('mintTokens', (isMotion) => {
+  const amountToMint = 10;
+  const annotationText = 'Test annotation';
+
+  cy.login();
+
+  cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+  cy.getBySel('colonyTotalFunds', { timeout: 60000 })
+    .invoke('text')
+    .as('totalFunds');
+
+  cy.contains(/new action/i, { timeout: 60000 }).click();
+  // needs to include 2 expressions, otherwise it will try opeining the link from the home page
+  cy.contains(/manage funds/i && /the tools/i).click();
+  cy.findByText(/mint tokens/i).click();
+
+  cy.get('input')
+    .last()
+    .click()
+    .type(amountToMint)
+    .get('textarea')
+    .click()
+    .type(annotationText);
+
+  cy.contains(/confirm/i).click();
+
+  cy.getBySel('actionHeading', { timeout: 60000 }).should(
+    'have.text',
+    `Mint ${amountToMint} ${Cypress.config().colony.nativeToken}`,
+  );
+  cy.getBySel('comment').should('have.text', annotationText);
+
+  cy.url().should(
+    'contains',
+    `${Cypress.config().baseUrl}/colony/${Cypress.config().colony.name}/tx/0x`,
+  );
+
+  if (isMotion) {
+    cy.getBySel('stakeRequiredBanner').should('exist');
+    cy.getBySel('motionStatusTag').should('have.text', 'Staking');
+    cy.getBySel('actionsEventText').should('contains', 'created a Motion');
+  } else {
+    cy.getBySel('backButton').click();
+
+    cy.get('@totalFunds').then(($totalFunds) => {
+      const totalFunds = bigNumberify($totalFunds.split(',').join(''))
+        .add(amountToMint)
+        .toString();
+
+      cy.getBySel('colonyTotalFunds', { timeout: 15000 }).then(($text) => {
+        const text = $text.text().split(',').join('');
+        expect(text).to.eq(totalFunds);
+      });
+    });
+  }
+});
+
+Cypress.Commands.add('installExtension', () => {
+  // Can install extension
+  cy.getBySel('installExtensionButton').click();
+  cy.getBySel('disabledStatusTag', { timeout: 30000 }).should('exist');
+});
+
+Cypress.Commands.add('enableExtension', (extensionId) => {
+  // Can enable extension
+  cy.getBySel('closeGasStationButton').click();
+  cy.getBySel('enableExtensionButton').click();
+  if (extensionId === Extension.Whitelist) {
+    cy.getBySel('policySelector').eq(1).click({ force: true });
+  }
+  cy.getBySel('setupExtensionConfirmButton').click();
+  cy.getBySel('enabledStatusTag', { timeout: 30000 }).should('exist');
 });
