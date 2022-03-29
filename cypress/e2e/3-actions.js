@@ -342,8 +342,6 @@ describe('User can create actions via UAC', () => {
     });
   });
   it('Can unlock the native token', () => {
-    const annotationText = 'Time to unlock the token';
-
     cy.login();
 
     cy.visit(`/colony/${Cypress.config().colony.name}`);
@@ -351,8 +349,6 @@ describe('User can create actions via UAC', () => {
     cy.getBySel('newActionButton', { timeout: 60000 }).click();
     cy.getBySel('indexModalItem').eq(1).click();
     cy.getBySel('indexModalItem').eq(5).click();
-
-    cy.getBySel('unlockTokenAnnotation').click().type(annotationText);
 
     cy.getBySel('unlockTokenConfirmButton').click();
 
@@ -368,14 +364,12 @@ describe('User can create actions via UAC', () => {
       }/tx/0x`,
     );
 
-    cy.getBySel('comment').should('have.text', annotationText);
-
     cy.getBySel('backButton').click();
 
     cy.getBySel('lockIconTooltip', { timeout: 15000 }).should('not.exist');
   });
   it.only('Can manage permissions', () => {
-    const annotationText = 'Time to unlock the token';
+    const annotationText = 'I am giving you the power to do things';
 
     cy.login();
 
