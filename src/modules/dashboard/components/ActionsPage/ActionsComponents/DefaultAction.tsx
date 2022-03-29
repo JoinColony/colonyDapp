@@ -212,7 +212,7 @@ const DefaultAction = ({
     <div className={styles.main}>
       {isVotingExtensionEnabled && (
         <div className={styles.upperContainer}>
-          <p className={styles.tagWrapper}>
+          <p className={styles.tagWrapper} data-test="motionStatusTag">
             <Tag
               text={motionStyles.name}
               appearance={{

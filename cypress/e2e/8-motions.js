@@ -1,13 +1,29 @@
 import Decimal from 'decimal.js';
-import ganacheAccounts from '~lib/colonyNetwork/ganache-accounts.json';
+import { Extension } from '@colony/colony-js';
 
+import ganacheAccounts from '~lib/colonyNetwork/ganache-accounts.json';
 import { splitAddress } from '~utils/strings';
 import { createAddress } from '~utils/web3';
 
-describe('User can create actions via UAC', () => {
-  it('Can mint native tokens', () => {
-    cy.mintTokens(false);
+describe.only('User can create actions via UAC', () => {
+  it('Installs & enables voting extensions', () => {
+    cy.login();
+    cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+    // install & enable voting reputaiton extension
+    cy.getBySel('extensionsNavigationButton', { timeout: 60000 }).click({
+      force: true,
+    });
+
+    cy.getBySel('votingReputationExtensionCard', { timeout: 80000 }).click();
+    cy.installExtension();
+    cy.enableExtension(Extension.VotingReputation);
   });
+
+  it.only('Can mint native tokens', () => {
+    cy.mintTokens(true);
+  });
+
   it('Can make payment', () => {
     const amountToPay = 10;
     const annotationText = 'Test annotation';
@@ -30,8 +46,8 @@ describe('User can create actions via UAC', () => {
     });
 
     cy.getBySel('newActionButton', { timeout: 60000 }).click();
-    cy.getBySel('expenditureDialogIndexItem').click();
-    cy.getBySel('paymentDialogIndexItem').click();
+    cy.getBySel('indexModalItem').eq(0).click();
+    cy.getBySel('indexModalItem').eq(0).click();
 
     cy.getBySel('paymentRecipientPicker').click().type(accounts[1]);
     cy.getBySel('paymentRecipientItem').first().click();
@@ -74,8 +90,8 @@ describe('User can create actions via UAC', () => {
     cy.visit(`/colony/${Cypress.config().colony.name}`);
 
     cy.getBySel('newActionButton', { timeout: 60000 }).click();
-    cy.getBySel('domainsDialogIndexItem').click();
-    cy.getBySel('createDomainDialogIndexItem').click();
+    cy.getBySel('indexModalItem').eq(2).click();
+    cy.getBySel('indexModalItem').eq(0).click();
 
     cy.getBySel('domainNameInput').click().type(domainName);
     cy.getBySel('domainPurposeInput').click().type(domainPurpose);
@@ -117,8 +133,8 @@ describe('User can create actions via UAC', () => {
     cy.visit(`/colony/${Cypress.config().colony.name}`);
 
     cy.getBySel('newActionButton', { timeout: 90000 }).click();
-    cy.getBySel('domainsDialogIndexItem').click();
-    cy.getBySel('editDomainDialogIndexItem').click();
+    cy.getBySel('indexModalItem').eq(2).click();
+    cy.getBySel('indexModalItem').eq(1).click();
 
     cy.getBySel('domainIdSelector').click();
     cy.getBySel('domainIdItem').last().click();
@@ -164,8 +180,8 @@ describe('User can create actions via UAC', () => {
     cy.visit(`/colony/${Cypress.config().colony.name}`);
 
     cy.getBySel('newActionButton', { timeout: 90000 }).click();
-    cy.getBySel('reputationDialogIndexItem').click();
-    cy.getBySel('awardReputationDialogIndexItem').click();
+    cy.getBySel('indexModalItem').eq(3).click();
+    cy.getBySel('indexModalItem').eq(0).click();
 
     cy.getBySel('reputationRecipientSelector').click({ force: true });
     cy.getBySel('reputationRecipientSelectorItem').last().click();
@@ -204,8 +220,8 @@ describe('User can create actions via UAC', () => {
     cy.visit(`/colony/${Cypress.config().colony.name}`);
 
     cy.getBySel('newActionButton', { timeout: 90000 }).click();
-    cy.getBySel('reputationDialogIndexItem').click();
-    cy.getBySel('smiteReputationDialogIndexItem').click();
+    cy.getBySel('indexModalItem').eq(3).click();
+    cy.getBySel('indexModalItem').eq(1).click();
 
     cy.getBySel('reputationRecipientSelector').click({ force: true });
     cy.getBySel('reputationRecipientSelectorItem').last().click();
@@ -242,15 +258,15 @@ describe('User can create actions via UAC', () => {
 
     cy.visit(`/colony/${Cypress.config().colony.name}`);
 
-    cy.getBySel('colonyDomainSelector', { timeout: 90000 }).click();
+    cy.getBySel('colonyDomainSelector', { timeout: 60000 }).click();
     cy.getBySel('colonyDomainSelectorItem').last().click();
     cy.getBySel('colonyFundingNativeTokenValue').then(($text) => {
       prevColonyFunds = $text.text().split(',').join('');
     });
 
-    cy.getBySel('newActionButton', { timeout: 90000 }).click();
-    cy.getBySel('fundsDialogIndexItem').click();
-    cy.getBySel('transferFundsDialogIndexItem').click();
+    cy.getBySel('newActionButton', { timeout: 60000 }).click();
+    cy.getBySel('indexModalItem').eq(1).click();
+    cy.getBySel('indexModalItem').eq(0).click();
 
     cy.getBySel('domainIdSelector').first().click();
     cy.getBySel('domainIdItem').first().click();
@@ -290,115 +306,5 @@ describe('User can create actions via UAC', () => {
         (parseInt(prevColonyFunds, 10) + amountToTransfer).toString(),
       );
     });
-  });
-  it('Can unlock the native token', () => {
-    cy.login();
-
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
-
-    cy.getBySel('newActionButton', { timeout: 60000 }).click();
-    cy.getBySel('fundsDialogIndexItem').click();
-    cy.getBySel('unlockTokenDialogIndexItem').click();
-
-    cy.getBySel('unlockTokenConfirmButton').click();
-
-    cy.getBySel('actionHeading', { timeout: 100000 }).should(
-      'include.text',
-      `Unlock native token ${Cypress.config().colony.nativeToken}`,
-    );
-
-    cy.url().should(
-      'contains',
-      `${Cypress.config().baseUrl}/colony/${
-        Cypress.config().colony.name
-      }/tx/0x`,
-    );
-
-    cy.getBySel('backButton').click();
-
-    cy.getBySel('lockIconTooltip', { timeout: 15000 }).should('not.exist');
-  });
-  it('Can manage permissions', () => {
-    const annotationText = 'I am giving you the power to do things';
-
-    cy.login();
-
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
-
-    cy.getBySel('newActionButton', { timeout: 60000 }).click();
-    cy.getBySel('advancedDialogIndexItem').click();
-    cy.getBySel('managePermissionsDialogIndexItem').click();
-
-    cy.getBySel('permissionUserSelector').click({ force: true });
-    cy.getBySel('permissionUserSelectorItem').last().click();
-    cy.getBySel('permission').eq(1).click({ force: true });
-    cy.getBySel('permission').eq(2).click({ force: true });
-    cy.getBySel('permission').eq(3).click({ force: true });
-    cy.getBySel('permissionAnnotation').click().type(annotationText);
-
-    cy.getBySel('permissionConfirmButton').click();
-
-    cy.getBySel('actionHeading', { timeout: 100000 }).contains(
-      'Assign the administration, funding, architecture permissions in Root to',
-    );
-
-    cy.url().should(
-      'contains',
-      `${Cypress.config().baseUrl}/colony/${
-        Cypress.config().colony.name
-      }/tx/0x`,
-    );
-
-    cy.getBySel('comment').should('have.text', annotationText);
-  });
-  it('Can enable recovery mode', () => {
-    const storageSlot = '0x05';
-    const storageSlotValue =
-      '0x0000000000000000000000000000000000000000000000000000000000000002';
-    const annotationText = 'We have to recover what we have lost';
-
-    cy.login();
-
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
-
-    cy.getBySel('newActionButton', { timeout: 70000 }).click();
-    cy.getBySel('advancedDialogIndexItem').click();
-    cy.getBySel('recoveryDialogIndexItem').click();
-
-    cy.getBySel('recoveryAnnotation').click().type(annotationText);
-
-    cy.getBySel('recoveryConfirmButton').click();
-
-    cy.getBySel('actionHeading', { timeout: 100000 }).contains(
-      'Recovery mode activated by',
-    );
-
-    cy.url().should(
-      'contains',
-      `${Cypress.config().baseUrl}/colony/${
-        Cypress.config().colony.name
-      }/tx/0x`,
-    );
-
-    cy.getBySel('comment').should('have.text', annotationText);
-
-    cy.getBySel('storageSlotInput').click().type(storageSlot);
-    cy.getBySel('storageSlotValueInput').click().type(storageSlotValue);
-    cy.getBySel('storageSlotSubmitButton').click();
-
-    cy.getBySel('newSlotValueEvent', { timeout: 40000 }).should(
-      'have.text',
-      storageSlotValue,
-    );
-
-    cy.getBySel('approveExitButton').click();
-
-    cy.getBySel('closeGasStationButton').click();
-
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.getBySel('reactivateColonyButton', { timeout: 40000 })
-      .click()
-      .wait(20000)
-      .should('not.exist');
   });
 });
