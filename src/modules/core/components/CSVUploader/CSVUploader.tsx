@@ -52,7 +52,7 @@ const CSVUploader = ({
   }, [setHasFile, CSVFile, parsedCSV]);
 
   useEffect(() => {
-    if (parsedCSV && value[0] && isNil(value[0].parsedData)) {
+    if (parsedCSV && value?.[0] && isNil(value[0].parsedData)) {
       if (parsedCSV.meta.fields?.length === 1) {
         const validAddresses = parsedCSV.data.flatMap(
           (CSVRow: Record<string, any>) => {
