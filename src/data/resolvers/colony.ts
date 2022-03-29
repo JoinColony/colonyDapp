@@ -12,8 +12,6 @@ import {
   getHistoricColonyRoles,
   formatColonyRoles,
 } from '@colony/colony-js';
-import { Contract } from 'ethers';
-import { abi as tokenAuthorityABI } from '@colony/colony-js/lib-esm/contracts/deploy/TokenAuthority.json';
 
 import { Color } from '~core/ColorTag';
 
@@ -410,23 +408,21 @@ export const colonyResolvers = ({
         ClientType.ColonyClient,
         colonyAddress,
       );
-      const { tokenClient } = colonyClient;
-      const tokenAuthorityAddress = tokenClient.authority();
-      const tokenAuthorityContract = new Contract(
-        tokenAuthorityAddress,
-        tokenAuthorityABI,
-        colonyManager.signer,
-      );
-      const mintSighash = tokenClient.interface.functions.mint.sighash;
-
-      // fetch whether the colony is allowed to mint tokens
+      const { tokenClient, provider } = colonyClient;
       let canMintNativeToken = true;
+      /*
+       * Fetch whether the colony can mint their token by estimating
+       * the gas to do so. If it throws an error, it can't
+       */
       try {
-        canMintNativeToken = await tokenAuthorityContract.canCall(
-          colonyAddress,
-          tokenClient.address,
-          mintSighash,
-        );
+        await provider.estimateGas({
+          from: colonyAddress,
+          to: tokenClient.address,
+          /*
+           * The mint method (overloaded version) encoded with 1 as the first parameter
+           */
+          data: tokenClient.interface.functions['mint(uint256)'].encode([1]),
+        });
       } catch (error) {
         canMintNativeToken = false;
       }
