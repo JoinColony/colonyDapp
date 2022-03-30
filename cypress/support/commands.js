@@ -25,6 +25,9 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 import { Extension } from '@colony/colony-js';
+import Decimal from 'decimal.js';
+
+import { splitAddress } from '~utils/strings';
 
 import { buildUser } from './generate';
 
@@ -133,6 +136,23 @@ Cypress.Commands.add('checkMotion', () => {
   cy.getBySel('actionsEventText').should('include.text', 'created a Motion');
 });
 
+Cypress.Commands.add('installExtension', () => {
+  // Can install extension
+  cy.getBySel('installExtensionButton').click();
+  cy.getBySel('disabledStatusTag', { timeout: 30000 }).should('exist');
+});
+
+Cypress.Commands.add('enableExtension', (extensionId) => {
+  // Can enable extension
+  cy.getBySel('closeGasStationButton').click();
+  cy.getBySel('enableExtensionButton').click();
+  if (extensionId === Extension.Whitelist) {
+    cy.getBySel('policySelector').eq(1).click({ force: true });
+  }
+  cy.getBySel('setupExtensionConfirmButton').click();
+  cy.getBySel('enabledStatusTag', { timeout: 30000 }).should('exist');
+});
+
 Cypress.Commands.add('mintTokens', (amountToMint, isMotion) => {
   const annotationText = isMotion
     ? 'Test motion annotation'
@@ -146,7 +166,8 @@ Cypress.Commands.add('mintTokens', (amountToMint, isMotion) => {
     .invoke('text')
     .as('totalFunds');
 
-  cy.contains(/new action/i, { timeout: 60000 }).click();
+  cy.getBySel('newActionButton', { timeout: 90000 }).click();
+  // !TODO update selectors
   // needs to include 2 expressions, otherwise it will try opeining the link from the home page
   cy.contains(/manage funds/i && /the tools/i).click();
   cy.findByText(/mint tokens/i).click();
@@ -173,19 +194,122 @@ Cypress.Commands.add('mintTokens', (amountToMint, isMotion) => {
   );
 });
 
-Cypress.Commands.add('installExtension', () => {
-  // Can install extension
-  cy.getBySel('installExtensionButton').click();
-  cy.getBySel('disabledStatusTag', { timeout: 30000 }).should('exist');
+Cypress.Commands.add('makePayment', (amountToPay, address, isMotion) => {
+  const annotationText = isMotion
+    ? 'Test motion annotation'
+    : 'Test annotation';
+
+  const cutAddress = splitAddress(address);
+  const paidAmount = isMotion
+    ? amountToPay
+    : new Decimal(amountToPay).sub(
+        new Decimal(1.0001).div(100).mul(amountToPay),
+      );
+
+  cy.login();
+
+  cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+  cy.getBySel('colonyTotalFunds', { timeout: 60000 })
+    .invoke('text')
+    .as('totalFunds');
+
+  cy.getBySel('newActionButton', { timeout: 60000 }).click();
+  cy.getBySel('indexModalItem').eq(0).click();
+  cy.getBySel('indexModalItem').eq(0).click();
+
+  cy.getBySel('paymentRecipientPicker').click().type(address);
+  cy.getBySel('paymentRecipientItem').first().click();
+
+  cy.getBySel('paymentAmountInput').click().type(amountToPay);
+
+  cy.getBySel('paymentAnnotation').click().type(annotationText);
+  cy.getBySel('paymentConfirmButton').click();
+
+  cy.getBySel('actionHeading', { timeout: 80000 }).should(
+    'have.text',
+    `Pay ${cutAddress.header}${cutAddress.start}...${
+      cutAddress.end
+    } ${paidAmount.toString()} ${Cypress.config().colony.nativeToken}`,
+  );
+  cy.getBySel('comment').should('have.text', annotationText);
+
+  cy.url().should(
+    'contains',
+    `${Cypress.config().baseUrl}/colony/${Cypress.config().colony.name}/tx/0x`,
+  );
 });
 
-Cypress.Commands.add('enableExtension', (extensionId) => {
-  // Can enable extension
-  cy.getBySel('closeGasStationButton').click();
-  cy.getBySel('enableExtensionButton').click();
-  if (extensionId === Extension.Whitelist) {
-    cy.getBySel('policySelector').eq(1).click({ force: true });
-  }
-  cy.getBySel('setupExtensionConfirmButton').click();
-  cy.getBySel('enabledStatusTag', { timeout: 30000 }).should('exist');
+Cypress.Commands.add('createTeam', (domainName, domainPurpose, isMotion) => {
+  const annotationText = isMotion
+    ? 'Test motion annotation'
+    : 'Test annotation';
+
+  cy.login();
+
+  cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+  cy.getBySel('newActionButton', { timeout: 60000 }).click();
+  cy.getBySel('indexModalItem').eq(2).click();
+  cy.getBySel('indexModalItem').eq(0).click();
+
+  cy.getBySel('domainNameInput').click().type(domainName);
+  cy.getBySel('domainPurposeInput').click().type(domainPurpose);
+  cy.getBySel('createDomainAnnotation').click().type(annotationText);
+
+  cy.getBySel('createDomainConfirmButton').click();
+
+  cy.getBySel('actionHeading', { timeout: 70000 }).should(
+    'have.text',
+    `New team: ${domainName}`,
+  );
+
+  cy.url().should(
+    'contains',
+    `${Cypress.config().baseUrl}/colony/${Cypress.config().colony.name}/tx/0x`,
+  );
+
+  cy.getBySel('comment').should('have.text', annotationText);
+});
+
+Cypress.Commands.add('updateTeam', (domainName, domainPurpose, isMotion) => {
+  const annotationText = isMotion
+    ? 'Test motion annotation'
+    : 'Test annotation';
+
+  cy.login();
+
+  cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+  cy.getBySel('newActionButton', { timeout: 90000 }).click();
+  cy.getBySel('indexModalItem').eq(2).click();
+  cy.getBySel('indexModalItem').eq(1).click();
+
+  cy.getBySel('domainIdSelector').click();
+  cy.getBySel('domainIdItem').last().click();
+  cy.getBySel('domainNameInput').invoke('val').as('domaniName');
+
+  cy.getBySel('domainNameInput').clear();
+  cy.getBySel('domainNameInput').click().type(domainName);
+  cy.getBySel('domainPurposeInput').clear();
+  cy.getBySel('domainPurposeInput').click().type(domainPurpose);
+  cy.getBySel('editDomainAnnotation').click().type(annotationText);
+
+  cy.getBySel('editDomainConfirmButton').click();
+
+  cy.get('@domaniName').then((oldName) => {
+    cy.getBySel('actionHeading', { timeout: 100000 }).should(
+      'have.text',
+      isMotion
+        ? `Edit ${oldName} team details`
+        : `${domainName} team details edited`,
+    );
+  });
+
+  cy.url().should(
+    'contains',
+    `${Cypress.config().baseUrl}/colony/${Cypress.config().colony.name}/tx/0x`,
+  );
+
+  cy.getBySel('comment').should('have.text', annotationText);
 });
