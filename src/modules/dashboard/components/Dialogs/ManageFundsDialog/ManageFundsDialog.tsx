@@ -184,6 +184,7 @@ const ManageFundsDialog = ({
           <FormattedMessage {...MSG.manageTokensPermissionsList} />
         ),
       },
+      dataTest: 'unlockTokenDialogIndexItem',
     },
   ];
   const filteredItems = useMemo(() => {
