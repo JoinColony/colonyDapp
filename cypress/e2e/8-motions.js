@@ -21,7 +21,10 @@ describe.only('User can create actions via UAC', () => {
   });
 
   it.only('Can mint native tokens', () => {
-    cy.mintTokens(true);
+    const amountToMint = 10;
+    cy.mintTokens(amountToMint, true);
+
+    cy.checkMotion();
   });
 
   it('Can make payment', () => {
