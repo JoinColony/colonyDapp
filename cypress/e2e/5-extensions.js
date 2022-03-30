@@ -42,19 +42,19 @@ describe('Colony extensions', () => {
     });
   });
 
-  it(`User with permission can install, enable, deprecate, re-enable, 
+  it(`User with permission can install, enable, deprecate, re-enable,
   and uninstall the Voting Reputation extension`, () => {
     cy.getBySel('votingReputationExtensionCard', { timeout: 80000 }).click();
     testExtensionManagementFlow(Extension.VotingReputation);
   });
 
-  it(`User with permission can install, enable, deprecate, re-enable, 
+  it(`User with permission can install, enable, deprecate, re-enable,
   and uninstall the Whitelist extension`, () => {
     cy.getBySel('whitelistExtensionCard', { timeout: 80000 }).click();
     testExtensionManagementFlow(Extension.Whitelist);
   });
 
-  it(`User with permission can install, enable, deprecate, re-enable, 
+  it(`User with permission can install, enable, deprecate, re-enable,
   and uninstall the Coin Machine extension`, () => {
     cy.getBySel('coinMachineExtensionCard', { timeout: 80000 }).click();
     testExtensionManagementFlow(Extension.CoinMachine);

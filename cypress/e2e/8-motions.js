@@ -53,7 +53,7 @@ describe('User can create actions via UAC', () => {
     cy.checkMotion();
   });
 
-  it.only('Can transfer funds', () => {
+  it('Can transfer funds', () => {
     const amountToTransfer = 2;
 
     cy.transferFunds(amountToTransfer, true);
@@ -63,81 +63,17 @@ describe('User can create actions via UAC', () => {
 
   it('Can award users', () => {
     const amountToAward = 10;
-    const annotationText = 'You have been a good boy, time for your reward';
-    let rewardedUser;
 
-    cy.login();
+    cy.awardRep(amountToAward, true);
 
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
-
-    cy.getBySel('newActionButton', { timeout: 90000 }).click();
-    cy.getBySel('indexModalItem').eq(3).click();
-    cy.getBySel('indexModalItem').eq(0).click();
-
-    cy.getBySel('reputationRecipientSelector').click({ force: true });
-    cy.getBySel('reputationRecipientSelectorItem').last().click();
-    cy.getBySel('reputationRecipientName').then(($value) => {
-      rewardedUser = $value.text();
-    });
-    cy.getBySel('reputationAmountInput').click().type(amountToAward);
-
-    cy.getBySel('reputationAnnotation').click().type(annotationText);
-
-    cy.getBySel('reputationConfirmButton').click();
-
-    cy.getBySel('actionHeading', { timeout: 100000 }).then(($value) => {
-      expect($value.text()).to.eq(
-        `Award ${rewardedUser} with a ${amountToAward} pts reputation reward`,
-      );
-    });
-
-    cy.url().should(
-      'contains',
-      `${Cypress.config().baseUrl}/colony/${
-        Cypress.config().colony.name
-      }/tx/0x`,
-    );
-
-    cy.getBySel('comment').should('have.text', annotationText);
+    cy.checkMotion();
   });
+
   it('Can smite users', () => {
     const amountToSmite = 10;
-    const annotationText =
-      'You have been a naughty boy, time for your punishment';
-    let smoteUser;
 
-    cy.login();
+    cy.smiteUser(amountToSmite, true);
 
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
-
-    cy.getBySel('newActionButton', { timeout: 90000 }).click();
-    cy.getBySel('indexModalItem').eq(3).click();
-    cy.getBySel('indexModalItem').eq(1).click();
-
-    cy.getBySel('reputationRecipientSelector').click({ force: true });
-    cy.getBySel('reputationRecipientSelectorItem').last().click();
-    cy.getBySel('reputationRecipientName').then(($value) => {
-      smoteUser = $value.text();
-    });
-    cy.getBySel('reputationAmountInput').click().type(amountToSmite);
-
-    cy.getBySel('reputationAnnotation').click().type(annotationText);
-
-    cy.getBySel('reputationConfirmButton').click();
-
-    cy.getBySel('actionHeading', { timeout: 100000 }).then(($value) => {
-      expect($value.text()).to.eq(
-        `Smite ${smoteUser} with a ${amountToSmite} pts reputation penalty`,
-      );
-    });
-
-    cy.url().should(
-      'contains',
-      `${Cypress.config().baseUrl}/colony/${
-        Cypress.config().colony.name
-      }/tx/0x`,
-    );
-
-    cy.getBySel('comment').should('have.text', annotationText);
+    cy.checkMotion();
   });
 });
