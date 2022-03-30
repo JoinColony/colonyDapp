@@ -37,7 +37,7 @@ const StakesListItem = ({
           onKeyPress={setIsPopoverOpen as any}
           tabIndex={0}
         >
-          <Numeral value={stakedAmount} unit={tokenSymbol} />
+          <Numeral value={stakedAmount} suffix={tokenSymbol} />
           <div className={styles.falseLink}>
             <FormattedMessage {...MSG.motionUrl} />
           </div>
