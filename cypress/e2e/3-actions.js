@@ -1,13 +1,29 @@
 import Decimal from 'decimal.js';
-import ganacheAccounts from '~lib/colonyNetwork/ganache-accounts.json';
+import { bigNumberify } from 'ethers/utils';
 
+import ganacheAccounts from '~lib/colonyNetwork/ganache-accounts.json';
 import { splitAddress } from '~utils/strings';
 import { createAddress } from '~utils/web3';
 
 describe('User can create actions via UAC', () => {
   it('Can mint native tokens', () => {
-    cy.mintTokens(false);
+    const amountToMint = 10;
+    cy.mintTokens(amountToMint, false);
+
+    cy.getBySel('backButton').click();
+
+    cy.get('@totalFunds').then(($totalFunds) => {
+      const totalFunds = bigNumberify($totalFunds.split(',').join(''))
+        .add(amountToMint)
+        .toString();
+
+      cy.getBySel('colonyTotalFunds', { timeout: 15000 }).then(($text) => {
+        const text = $text.text().split(',').join('');
+        expect(text).to.eq(totalFunds);
+      });
+    });
   });
+
   it('Can make payment', () => {
     const amountToPay = 10;
     const annotationText = 'Test annotation';

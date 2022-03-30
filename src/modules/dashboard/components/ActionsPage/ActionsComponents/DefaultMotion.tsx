@@ -410,7 +410,7 @@ const DefaultMotion = ({
         }`}
       >
         {motionState && (
-          <p className={styles.tagWrapper}>
+          <p className={styles.tagWrapper} data-test="motionStatusTag">
             <Tag
               text={motionStyles.name}
               appearance={{

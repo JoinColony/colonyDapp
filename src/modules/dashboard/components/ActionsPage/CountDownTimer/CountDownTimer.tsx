@@ -196,7 +196,7 @@ const CountDownTimer = ({
   }
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} data-test="countDownTimer">
       <FormattedMessage {...MSG.title} values={{ motionState: state }} />
       <span className={styles.time}>
         <TimerValue splitTime={splitTime} />
