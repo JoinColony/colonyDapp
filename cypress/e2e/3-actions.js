@@ -283,7 +283,7 @@ describe('User can create actions via UAC', () => {
 
     cy.getBySel('comment').should('have.text', annotationText);
   });
-  it.only('Can transfer funds', () => {
+  it('Can transfer funds', () => {
     const amountToTransfer = 2;
     const annotationText = 'I want to transfer these funds just because';
     let prevColonyFunds;
@@ -347,8 +347,8 @@ describe('User can create actions via UAC', () => {
     cy.visit(`/colony/${Cypress.config().colony.name}`);
 
     cy.getBySel('newActionButton', { timeout: 60000 }).click();
-    cy.getBySel('indexModalItem').eq(1).click();
-    cy.getBySel('indexModalItem').eq(5).click();
+    cy.getBySel('fundsDialogIndexItem').click();
+    cy.getBySel('unlockTokenDialogIndexItem').click();
 
     cy.getBySel('unlockTokenConfirmButton').click();
 
@@ -368,7 +368,7 @@ describe('User can create actions via UAC', () => {
 
     cy.getBySel('lockIconTooltip', { timeout: 15000 }).should('not.exist');
   });
-  it.only('Can manage permissions', () => {
+  it('Can manage permissions', () => {
     const annotationText = 'I am giving you the power to do things';
 
     cy.login();
@@ -376,8 +376,8 @@ describe('User can create actions via UAC', () => {
     cy.visit(`/colony/${Cypress.config().colony.name}`);
 
     cy.getBySel('newActionButton', { timeout: 60000 }).click();
-    cy.getBySel('indexModalItem').eq(4).click();
-    cy.getBySel('indexModalItem').eq(0).click();
+    cy.getBySel('advancedDialogIndexItem').click();
+    cy.getBySel('managePermissionsDialogIndexItem').click();
 
     cy.getBySel('permissionUserSelector').click({ force: true });
     cy.getBySel('permissionUserSelectorItem').last().click();
@@ -412,8 +412,8 @@ describe('User can create actions via UAC', () => {
     cy.visit(`/colony/${Cypress.config().colony.name}`);
 
     cy.getBySel('newActionButton', { timeout: 70000 }).click();
-    cy.getBySel('indexModalItem').eq(4).click();
-    cy.getBySel('indexModalItem').eq(1).click();
+    cy.getBySel('advancedDialogIndexItem').click();
+    cy.getBySel('recoveryDialogIndexItem').click();
 
     cy.getBySel('recoveryAnnotation').click().type(annotationText);
 
