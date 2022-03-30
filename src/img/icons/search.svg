@@ -1,8 +1,22 @@
-<svg version="1.1" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
- <g transform="translate(-102.91 -146.4)">
-  <g transform="matrix(.33389 0 0 .33632 102.21 145.7)" fill="none" opacity=".65" stroke="#76748b" stroke-linecap="round" stroke-linejoin="round" stroke-width=".83333">
-   <path d="m9.1667 15.833c3.6819 0 6.6666-2.9847 6.6666-6.6666 0-3.6819-2.9847-6.6667-6.6666-6.6667-3.6819 0-6.6667 2.9848-6.6667 6.6667 0 3.6819 2.9848 6.6666 6.6667 6.6666z"/>
-   <path d="m17.5 17.5-3.625-3.625"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   viewBox="0 0 30 30">
+  <g transform="matrix(5.6697746,0,0,5.6313974,-583.45866,-824.43653)">
+    <g
+       transform="matrix(0.33389,0,0,0.33632,102.21,145.7)"
+       fill="none"
+       opacity="0.65"
+       stroke="#76748b"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       stroke-width="0.83333">
+      <path
+        d="m 9.1667,15.833 c 3.6819,0 6.6666,-2.9847 6.6666,-6.6666 0,-3.6819 -2.9847,-6.6667 -6.6666,-6.6667 -3.6819,0 -6.6667,2.9848 -6.6667,6.6667 0,3.6819 2.9848,6.6666 6.6667,6.6666 z"
+      />
+      <path
+        d="M 17.5,17.5 13.875,13.875"
+      />
+    </g>
   </g>
- </g>
 </svg>
