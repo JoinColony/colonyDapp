@@ -102,6 +102,7 @@ const ExpendituresDialog = ({
         permissionsList: <FormattedMessage {...MSG.paymentPermissionsList} />,
       },
       onClick: () => callStep(nextStep),
+      dataTest: 'paymentDialogIndexItem',
     },
     {
       title: MSG.taskTitle,

@@ -80,8 +80,8 @@ describe('User can create actions via UAC', () => {
     });
 
     cy.getBySel('newActionButton', { timeout: 60000 }).click();
-    cy.getBySel('indexModalItem').eq(0).click();
-    cy.getBySel('indexModalItem').eq(0).click();
+    cy.getBySel('expenditureDialogIndexItem').click();
+    cy.getBySel('paymentDialogIndexItem').click();
 
     cy.getBySel('paymentRecipientPicker').click().type(accounts[1]);
     cy.getBySel('paymentRecipientItem').first().click();
@@ -124,8 +124,8 @@ describe('User can create actions via UAC', () => {
     cy.visit(`/colony/${Cypress.config().colony.name}`);
 
     cy.getBySel('newActionButton', { timeout: 60000 }).click();
-    cy.getBySel('indexModalItem').eq(2).click();
-    cy.getBySel('indexModalItem').eq(0).click();
+    cy.getBySel('domainsDialogIndexItem').click();
+    cy.getBySel('createDomainDialogIndexItem').click();
 
     cy.getBySel('domainNameInput').click().type(domainName);
     cy.getBySel('domainPurposeInput').click().type(domainPurpose);
@@ -167,8 +167,8 @@ describe('User can create actions via UAC', () => {
     cy.visit(`/colony/${Cypress.config().colony.name}`);
 
     cy.getBySel('newActionButton', { timeout: 90000 }).click();
-    cy.getBySel('indexModalItem').eq(2).click();
-    cy.getBySel('indexModalItem').eq(1).click();
+    cy.getBySel('domainsDialogIndexItem').click();
+    cy.getBySel('editDomainDialogIndexItem').click();
 
     cy.getBySel('domainIdSelector').click();
     cy.getBySel('domainIdItem').last().click();
@@ -214,8 +214,8 @@ describe('User can create actions via UAC', () => {
     cy.visit(`/colony/${Cypress.config().colony.name}`);
 
     cy.getBySel('newActionButton', { timeout: 90000 }).click();
-    cy.getBySel('indexModalItem').eq(3).click();
-    cy.getBySel('indexModalItem').eq(0).click();
+    cy.getBySel('reputationDialogIndexItem').click();
+    cy.getBySel('awardReputationDialogIndexItem').click();
 
     cy.getBySel('reputationRecipientSelector').click({ force: true });
     cy.getBySel('reputationRecipientSelectorItem').last().click();
@@ -254,8 +254,8 @@ describe('User can create actions via UAC', () => {
     cy.visit(`/colony/${Cypress.config().colony.name}`);
 
     cy.getBySel('newActionButton', { timeout: 90000 }).click();
-    cy.getBySel('indexModalItem').eq(3).click();
-    cy.getBySel('indexModalItem').eq(1).click();
+    cy.getBySel('reputationDialogIndexItem').click();
+    cy.getBySel('smiteReputationDialogIndexItem').click();
 
     cy.getBySel('reputationRecipientSelector').click({ force: true });
     cy.getBySel('reputationRecipientSelectorItem').last().click();
@@ -283,7 +283,7 @@ describe('User can create actions via UAC', () => {
 
     cy.getBySel('comment').should('have.text', annotationText);
   });
-  it('Can transfer funds', () => {
+  it.only('Can transfer funds', () => {
     const amountToTransfer = 2;
     const annotationText = 'I want to transfer these funds just because';
     let prevColonyFunds;
@@ -292,15 +292,15 @@ describe('User can create actions via UAC', () => {
 
     cy.visit(`/colony/${Cypress.config().colony.name}`);
 
-    cy.getBySel('colonyDomainSelector', { timeout: 60000 }).click();
+    cy.getBySel('colonyDomainSelector', { timeout: 90000 }).click();
     cy.getBySel('colonyDomainSelectorItem').last().click();
     cy.getBySel('colonyFundingNativeTokenValue').then(($text) => {
       prevColonyFunds = $text.text().split(',').join('');
     });
 
-    cy.getBySel('newActionButton', { timeout: 60000 }).click();
-    cy.getBySel('indexModalItem').eq(1).click();
-    cy.getBySel('indexModalItem').eq(0).click();
+    cy.getBySel('newActionButton', { timeout: 90000 }).click();
+    cy.getBySel('fundsDialogIndexItem').click();
+    cy.getBySel('transferFundsDialogIndexItem').click();
 
     cy.getBySel('domainIdSelector').first().click();
     cy.getBySel('domainIdItem').first().click();
