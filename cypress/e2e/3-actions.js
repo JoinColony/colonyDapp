@@ -283,7 +283,7 @@ describe('User can create actions via UAC', () => {
 
     cy.getBySel('comment').should('have.text', annotationText);
   });
-  it.only('Can transfer funds', () => {
+  it('Can transfer funds', () => {
     const amountToTransfer = 2;
     const annotationText = 'I want to transfer these funds just because';
     let prevColonyFunds;
