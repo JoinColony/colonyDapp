@@ -24,8 +24,6 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-import { bigNumberify } from 'ethers/utils';
-
 import { Extension } from '@colony/colony-js';
 
 import { buildUser } from './generate';
@@ -127,14 +125,18 @@ Cypress.Commands.add('changeColonyname', (colonyName, newName) => {
   cy.get('input').last().click().clear().type(newName);
 });
 
-Cypress.Commands.add('checkColonyName', (colonyName) => {
-  cy.getBySel('colonyTitle', { timeout: 60000 }).then((name) => {
-    expect(name.text()).to.equal(colonyName);
-  });
+Cypress.Commands.add('checkMotion', () => {
+  cy.getBySel('stakeRequiredBanner').should('exist');
+  cy.getBySel('motionStatusTag').should('have.text', 'Staking');
+  cy.getBySel('stakingWidget').should('exist');
+  cy.getBySel('countDownTimer').should('include.text', 'Time left to stake');
+  cy.getBySel('actionsEventText').should('include.text', 'created a Motion');
 });
-Cypress.Commands.add('mintTokens', (isMotion) => {
-  const amountToMint = 10;
-  const annotationText = 'Test annotation';
+
+Cypress.Commands.add('mintTokens', (amountToMint, isMotion) => {
+  const annotationText = isMotion
+    ? 'Test motion annotation'
+    : 'Test annotation';
 
   cy.login();
 
@@ -169,25 +171,6 @@ Cypress.Commands.add('mintTokens', (isMotion) => {
     'contains',
     `${Cypress.config().baseUrl}/colony/${Cypress.config().colony.name}/tx/0x`,
   );
-
-  if (isMotion) {
-    cy.getBySel('stakeRequiredBanner').should('exist');
-    cy.getBySel('motionStatusTag').should('have.text', 'Staking');
-    cy.getBySel('actionsEventText').should('contains', 'created a Motion');
-  } else {
-    cy.getBySel('backButton').click();
-
-    cy.get('@totalFunds').then(($totalFunds) => {
-      const totalFunds = bigNumberify($totalFunds.split(',').join(''))
-        .add(amountToMint)
-        .toString();
-
-      cy.getBySel('colonyTotalFunds', { timeout: 15000 }).then(($text) => {
-        const text = $text.text().split(',').join('');
-        expect(text).to.eq(totalFunds);
-      });
-    });
-  }
 });
 
 Cypress.Commands.add('installExtension', () => {
