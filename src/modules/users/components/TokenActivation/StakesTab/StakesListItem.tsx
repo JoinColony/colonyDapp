@@ -2,6 +2,7 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Link from '~core/Link';
+import Numeral from '~core/Numeral';
 
 import styles from './StakesTab.css';
 
@@ -36,9 +37,7 @@ const StakesListItem = ({
           onKeyPress={setIsPopoverOpen as any}
           tabIndex={0}
         >
-          <div>
-            {stakedAmount} {tokenSymbol}
-          </div>
+          <Numeral value={stakedAmount} unit={tokenSymbol} />
           <div className={styles.falseLink}>
             <FormattedMessage {...MSG.motionUrl} />
           </div>
