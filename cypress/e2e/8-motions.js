@@ -44,11 +44,19 @@ describe('User can create actions via UAC', () => {
     cy.checkMotion();
   });
 
-  it.only('Can edit teams', () => {
+  it('Can edit teams', () => {
     const domainName = 'Dolphins';
     const domainPurpose = 'This team has been taken over by dolphins';
 
     cy.updateTeam(domainName, domainPurpose, true);
+
+    cy.checkMotion();
+  });
+
+  it.only('Can transfer funds', () => {
+    const amountToTransfer = 2;
+
+    cy.transferFunds(amountToTransfer, true);
 
     cy.checkMotion();
   });
@@ -131,63 +139,5 @@ describe('User can create actions via UAC', () => {
     );
 
     cy.getBySel('comment').should('have.text', annotationText);
-  });
-  it('Can transfer funds', () => {
-    const amountToTransfer = 2;
-    const annotationText = 'I want to transfer these funds just because';
-    let prevColonyFunds;
-
-    cy.login();
-
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
-
-    cy.getBySel('colonyDomainSelector', { timeout: 60000 }).click();
-    cy.getBySel('colonyDomainSelectorItem').last().click();
-    cy.getBySel('colonyFundingNativeTokenValue').then(($text) => {
-      prevColonyFunds = $text.text().split(',').join('');
-    });
-
-    cy.getBySel('newActionButton', { timeout: 60000 }).click();
-    cy.getBySel('indexModalItem').eq(1).click();
-    cy.getBySel('indexModalItem').eq(0).click();
-
-    cy.getBySel('domainIdSelector').first().click();
-    cy.getBySel('domainIdItem').first().click();
-
-    cy.getBySel('domainIdSelector').last().click();
-    cy.getBySel('domainIdItem').last().click();
-
-    cy.getBySel('transferAmountInput').click().type(amountToTransfer);
-
-    cy.getBySel('transferFundsAnnotation').click().type(annotationText);
-
-    cy.getBySel('transferFundsConfirmButton').click();
-
-    cy.getBySel('actionHeading', { timeout: 100000 }).should(
-      'include.text',
-      `Move ${amountToTransfer} ${
-        Cypress.config().colony.nativeToken
-      } from Root to `,
-    );
-
-    cy.url().should(
-      'contains',
-      `${Cypress.config().baseUrl}/colony/${
-        Cypress.config().colony.name
-      }/tx/0x`,
-    );
-
-    cy.getBySel('comment').should('have.text', annotationText);
-
-    cy.getBySel('backButton').click();
-
-    cy.getBySel('colonyDomainSelector', { timeout: 15000 }).click();
-    cy.getBySel('colonyDomainSelectorItem').last().click();
-    cy.getBySel('colonyFundingNativeTokenValue').then(($text) => {
-      const amount = $text.text().split(',').join('');
-      expect(amount).to.eq(
-        (parseInt(prevColonyFunds, 10) + amountToTransfer).toString(),
-      );
-    });
   });
 });
