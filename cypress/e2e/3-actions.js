@@ -28,7 +28,7 @@ describe('User can create actions via UAC', () => {
       ([address]) => address,
     );
 
-    cy.makePayment(amountToPay, createAddress(accounts[1]), true);
+    cy.makePayment(amountToPay, createAddress(accounts[1]), false);
 
     cy.getBySel('backButton').click();
 
@@ -223,7 +223,7 @@ describe('User can create actions via UAC', () => {
     cy.smiteUser(amountToSmite, false);
   });
 
-  it.only('Make payment from a subdomain', () => {
+  it('Make payment from a subdomain', () => {
     const amountToPay = 10;
     const accounts = Object.entries(ganacheAccounts.private_keys).map(
       ([address]) => address,
