@@ -167,10 +167,8 @@ Cypress.Commands.add('mintTokens', (amountToMint, isMotion) => {
     .as('totalFunds');
 
   cy.getBySel('newActionButton', { timeout: 90000 }).click();
-  // !TODO update selectors
-  // needs to include 2 expressions, otherwise it will try opeining the link from the home page
-  cy.contains(/manage funds/i && /the tools/i).click();
-  cy.findByText(/mint tokens/i).click();
+  cy.getBySel('fundsDialogIndexItem').click();
+  cy.getBySel('mintTokensDialogItem').click();
 
   cy.get('input')
     .last()
@@ -180,7 +178,7 @@ Cypress.Commands.add('mintTokens', (amountToMint, isMotion) => {
     .click()
     .type(annotationText);
 
-  cy.contains(/confirm/i).click();
+  cy.getBySel('mintConfirmButton').click();
 
   cy.getBySel('actionHeading', { timeout: 60000 }).should(
     'have.text',
