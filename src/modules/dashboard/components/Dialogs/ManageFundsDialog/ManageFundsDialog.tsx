@@ -146,6 +146,7 @@ const ManageFundsDialog = ({
         ),
       },
       onClick: () => callStep(nextStepMintTokens),
+      dataTest: 'mintTokensDialogItem',
     },
     {
       title: MSG.manageTokensTitle,

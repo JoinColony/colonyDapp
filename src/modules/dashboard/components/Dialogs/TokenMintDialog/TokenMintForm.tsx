@@ -179,6 +179,7 @@ const TokenMintForm = ({
           loading={isSubmitting}
           disabled={!isValid || inputDisabled}
           style={{ width: styles.wideButton }}
+          data-test="mintConfirmButton"
         />
       </DialogSection>
     </>
