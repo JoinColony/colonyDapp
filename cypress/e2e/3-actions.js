@@ -65,7 +65,7 @@ describe('User can create actions via UAC', () => {
     const domainName = 'Dolphins';
     const domainPurpose = 'This team has been taken over by dolphins';
 
-    cy.updateTeam(domainName, domainPurpose, false);
+    cy.editTeam(domainName, domainPurpose, false);
 
     cy.getBySel('backButton').click();
 

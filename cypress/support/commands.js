@@ -217,8 +217,8 @@ Cypress.Commands.add(
       .as('totalFunds');
 
     cy.getBySel('newActionButton', { timeout: 60000 }).click();
-    cy.getBySel('indexModalItem').eq(0).click();
-    cy.getBySel('indexModalItem').eq(0).click();
+    cy.getBySel('expenditureDialogIndexItem').click();
+    cy.getBySel('paymentDialogIndexItem').click();
 
     if (isSubdomain) {
       cy.getBySel('domainIdSelector').click();
@@ -260,8 +260,8 @@ Cypress.Commands.add('createTeam', (domainName, domainPurpose, isMotion) => {
   cy.visit(`/colony/${Cypress.config().colony.name}`);
 
   cy.getBySel('newActionButton', { timeout: 60000 }).click();
-  cy.getBySel('indexModalItem').eq(2).click();
-  cy.getBySel('indexModalItem').eq(0).click();
+  cy.getBySel('domainsDialogIndexItem').click();
+  cy.getBySel('createDomainDialogIndexItem').click();
 
   cy.getBySel('domainNameInput').click().type(domainName);
   cy.getBySel('domainPurposeInput').click().type(domainPurpose);
@@ -282,7 +282,7 @@ Cypress.Commands.add('createTeam', (domainName, domainPurpose, isMotion) => {
   cy.getBySel('comment').should('have.text', annotationText);
 });
 
-Cypress.Commands.add('updateTeam', (domainName, domainPurpose, isMotion) => {
+Cypress.Commands.add('editTeam', (domainName, domainPurpose, isMotion) => {
   const annotationText = isMotion
     ? 'Test motion annotation'
     : 'Test annotation';
@@ -292,8 +292,8 @@ Cypress.Commands.add('updateTeam', (domainName, domainPurpose, isMotion) => {
   cy.visit(`/colony/${Cypress.config().colony.name}`);
 
   cy.getBySel('newActionButton', { timeout: 90000 }).click();
-  cy.getBySel('indexModalItem').eq(2).click();
-  cy.getBySel('indexModalItem').eq(1).click();
+  cy.getBySel('domainsDialogIndexItem').click();
+  cy.getBySel('editDomainDialogIndexItem').click();
 
   cy.getBySel('domainIdSelector').click();
   cy.getBySel('domainIdItem').last().click();
@@ -341,8 +341,8 @@ Cypress.Commands.add('transferFunds', (amountToTransfer, isMotion) => {
     .as('teamFunds');
 
   cy.getBySel('newActionButton', { timeout: 60000 }).click();
-  cy.getBySel('indexModalItem').eq(1).click();
-  cy.getBySel('indexModalItem').eq(0).click();
+  cy.getBySel('fundsDialogIndexItem').click();
+  cy.getBySel('transferFundsDialogIndexItem').click();
 
   cy.getBySel('domainIdSelector').first().click();
   cy.getBySel('domainIdItem').first().click();
@@ -383,8 +383,8 @@ Cypress.Commands.add('awardRep', (amountToAward, isMotion) => {
   cy.visit(`/colony/${Cypress.config().colony.name}`);
 
   cy.getBySel('newActionButton', { timeout: 90000 }).click();
-  cy.getBySel('indexModalItem').eq(3).click();
-  cy.getBySel('indexModalItem').eq(0).click();
+  cy.getBySel('reputationDialogIndexItem').click();
+  cy.getBySel('awardReputationDialogIndexItem').click();
 
   cy.getBySel('reputationRecipientSelector').click({ force: true });
   cy.getBySel('reputationRecipientSelectorItem').last().click();
@@ -425,8 +425,8 @@ Cypress.Commands.add('smiteUser', (amountToSmite, isMotion) => {
   cy.visit(`/colony/${Cypress.config().colony.name}`);
 
   cy.getBySel('newActionButton', { timeout: 90000 }).click();
-  cy.getBySel('indexModalItem').eq(3).click();
-  cy.getBySel('indexModalItem').eq(1).click();
+  cy.getBySel('reputationDialogIndexItem').click();
+  cy.getBySel('smiteReputationDialogIndexItem').click();
 
   cy.getBySel('reputationRecipientSelector').click({ force: true });
   cy.getBySel('reputationRecipientSelectorItem').last().click();
