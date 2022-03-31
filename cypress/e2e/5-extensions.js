@@ -2,17 +2,10 @@ import { Extension } from '@colony/colony-js';
 
 const testExtensionManagementFlow = (extensionId) => {
   // Can install extension
-  cy.getBySel('installExtensionButton').click();
-  cy.getBySel('disabledStatusTag', { timeout: 30000 }).should('exist');
+  cy.installExtension();
 
   // Can enable extension
-  cy.getBySel('closeGasStationButton').click();
-  cy.getBySel('enableExtensionButton').click();
-  if (extensionId === Extension.Whitelist) {
-    cy.getBySel('policySelector').eq(1).click({ force: true });
-  }
-  cy.getBySel('setupExtensionConfirmButton').click();
-  cy.getBySel('enabledStatusTag', { timeout: 30000 }).should('exist');
+  cy.enableExtension(extensionId);
 
   // Can deprecate extension
   cy.getBySel('deprecateExtensionButton').click();
