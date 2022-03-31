@@ -341,4 +341,114 @@ describe('User can create actions via UAC', () => {
       );
     });
   });
+  it('Can unlock the native token', () => {
+    cy.login();
+
+    cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+    cy.getBySel('newActionButton', { timeout: 60000 }).click();
+    cy.getBySel('fundsDialogIndexItem').click();
+    cy.getBySel('unlockTokenDialogIndexItem').click();
+
+    cy.getBySel('unlockTokenConfirmButton').click();
+
+    cy.getBySel('actionHeading', { timeout: 100000 }).should(
+      'include.text',
+      `Unlock native token ${Cypress.config().colony.nativeToken}`,
+    );
+
+    cy.url().should(
+      'contains',
+      `${Cypress.config().baseUrl}/colony/${
+        Cypress.config().colony.name
+      }/tx/0x`,
+    );
+
+    cy.getBySel('backButton').click();
+
+    cy.getBySel('lockIconTooltip', { timeout: 15000 }).should('not.exist');
+  });
+  it('Can manage permissions', () => {
+    const annotationText = 'I am giving you the power to do things';
+
+    cy.login();
+
+    cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+    cy.getBySel('newActionButton', { timeout: 60000 }).click();
+    cy.getBySel('advancedDialogIndexItem').click();
+    cy.getBySel('managePermissionsDialogIndexItem').click();
+
+    cy.getBySel('permissionUserSelector').click({ force: true });
+    cy.getBySel('permissionUserSelectorItem').last().click();
+    cy.getBySel('permission').eq(1).click({ force: true });
+    cy.getBySel('permission').eq(2).click({ force: true });
+    cy.getBySel('permission').eq(3).click({ force: true });
+    cy.getBySel('permissionAnnotation').click().type(annotationText);
+
+    cy.getBySel('permissionConfirmButton').click();
+
+    cy.getBySel('actionHeading', { timeout: 100000 }).contains(
+      'Assign the administration, funding, architecture permissions in Root to',
+    );
+
+    cy.url().should(
+      'contains',
+      `${Cypress.config().baseUrl}/colony/${
+        Cypress.config().colony.name
+      }/tx/0x`,
+    );
+
+    cy.getBySel('comment').should('have.text', annotationText);
+  });
+  it('Can enable recovery mode', () => {
+    const storageSlot = '0x05';
+    const storageSlotValue =
+      '0x0000000000000000000000000000000000000000000000000000000000000002';
+    const annotationText = 'We have to recover what we have lost';
+
+    cy.login();
+
+    cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+    cy.getBySel('newActionButton', { timeout: 70000 }).click();
+    cy.getBySel('advancedDialogIndexItem').click();
+    cy.getBySel('recoveryDialogIndexItem').click();
+
+    cy.getBySel('recoveryAnnotation').click().type(annotationText);
+
+    cy.getBySel('recoveryConfirmButton').click();
+
+    cy.getBySel('actionHeading', { timeout: 100000 }).contains(
+      'Recovery mode activated by',
+    );
+
+    cy.url().should(
+      'contains',
+      `${Cypress.config().baseUrl}/colony/${
+        Cypress.config().colony.name
+      }/tx/0x`,
+    );
+
+    cy.getBySel('comment').should('have.text', annotationText);
+
+    cy.getBySel('storageSlotInput').click().type(storageSlot);
+    cy.getBySel('storageSlotValueInput').click().type(storageSlotValue);
+    cy.getBySel('storageSlotSubmitButton').click();
+
+    cy.getBySel('newSlotValueEvent', { timeout: 40000 }).should(
+      'have.text',
+      storageSlotValue,
+    );
+
+    cy.getBySel('approveExitButton').click();
+
+    cy.getBySel('closeGasStationButton').click();
+
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.getBySel('reactivateColonyButton', { timeout: 40000 })
+      .click()
+      .wait(20000)
+      .should('not.exist');
+  });
 });

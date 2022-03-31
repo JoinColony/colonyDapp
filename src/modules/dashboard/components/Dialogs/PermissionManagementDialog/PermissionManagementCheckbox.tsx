@@ -52,6 +52,7 @@ interface Props {
   disabled: boolean;
   role: ColonyRole;
   domainId: number;
+  dataTest: string;
 }
 
 const displayName =
@@ -62,6 +63,7 @@ const PermissionManagementCheckbox = ({
   disabled,
   role,
   domainId,
+  dataTest,
 }: Props) => {
   const roleNameMessage = { id: `role.${role}` };
   const roleDescriptionMessage = useMemo(
@@ -109,6 +111,7 @@ const PermissionManagementCheckbox = ({
           },
         ],
       }}
+      dataTest={dataTest}
     >
       <span className={styles.permissionChoiceDescription}>
         <PermissionsLabel

@@ -57,6 +57,7 @@ interface Props {
   push: (value: string) => void;
   /** @ignore injected by `asFieldArray` */
   remove: (value: string) => void;
+  dataTest?: string;
 }
 
 const displayName = 'Checkbox';
@@ -79,6 +80,7 @@ const Checkbox = ({
   value,
   tooltipText,
   tooltipPopperProps,
+  dataTest,
 }: Props) => {
   const [inputId] = useState<string>(nanoid());
 
@@ -116,6 +118,7 @@ const Checkbox = ({
           onChange={handleOnChange}
           aria-disabled={disabled}
           aria-checked={isChecked}
+          data-test={dataTest}
         />
         <span className={styles.checkbox}>
           <span className={styles.checkmark} />

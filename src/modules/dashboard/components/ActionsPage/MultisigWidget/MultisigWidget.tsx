@@ -226,6 +226,7 @@ const MultisigWidget = ({
                 transform={transform}
                 text={{ id: 'button.approve' }}
                 disabled={hasAlreadyApproved}
+                data-test="approveExitButton"
               />
             </div>
           </Tooltip>

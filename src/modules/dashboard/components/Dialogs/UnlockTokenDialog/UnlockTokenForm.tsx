@@ -147,6 +147,7 @@ const UnlockTokenForm = ({
             label={MSG.annotation}
             name="annotationMessage"
             disabled={inputDisabled}
+            dataTest="unlockTokenAnnotation"
           />
         </DialogSection>
       )}
@@ -184,6 +185,7 @@ const UnlockTokenForm = ({
           text={{ id: 'button.confirm' }}
           loading={isSubmitting}
           disabled={!isValid || inputDisabled}
+          data-test="unlockTokenConfirmButton"
         />
       </DialogSection>
     </>
