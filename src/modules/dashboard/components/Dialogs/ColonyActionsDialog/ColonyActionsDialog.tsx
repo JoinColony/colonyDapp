@@ -82,24 +82,28 @@ const ColonyActionsDialog = ({
       description: MSG.createExpenditureDesc,
       icon: 'emoji-bag-money-sign',
       onClick: () => callStep(nextStepExpenditure),
+      dataTest: 'expenditureDialogIndexItem',
     },
     {
       title: MSG.manageFunds,
       description: MSG.manageFundsDesc,
       icon: 'emoji-money-wings',
       onClick: () => callStep(nextStepManageFunds),
+      dataTest: 'fundsDialogIndexItem',
     },
     {
       title: MSG.manageDomains,
       description: MSG.manageDomainsDesc,
       icon: 'emoji-crane',
       onClick: () => callStep(nextStepManageDomains),
+      dataTest: 'domainsDialogIndexItem',
     },
     {
       title: MSG.manageReputation,
       description: MSG.manageReputationDesc,
       icon: 'emoji-firebolt',
       onClick: () => callStep(nextStepManageReputation),
+      dataTest: 'reputationDialogIndexItem',
     },
     {
       title: MSG.advanced,

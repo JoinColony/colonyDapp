@@ -132,6 +132,7 @@ const ManageFundsDialog = ({
         permissionsList: <FormattedMessage {...MSG.paymentPermissionsList} />,
       },
       onClick: () => callStep(nextStepTransferFunds),
+      dataTest: 'transferFundsDialogIndexItem',
     },
     {
       title: MSG.mintTokensTitle,

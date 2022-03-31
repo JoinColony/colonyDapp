@@ -97,7 +97,10 @@ const DomainDropdownItem = ({
           <div className={styles.color}>
             <ColorTag color={color} />
           </div>
-          <div className={styles.headingWrapper}>
+          <div
+            className={styles.headingWrapper}
+            data-test="domainDropdownItemName"
+          >
             <Heading
               appearance={{ margin: 'none', size: 'normal', theme: 'dark' }}
               text={name}
@@ -110,7 +113,11 @@ const DomainDropdownItem = ({
           )}
         </div>
         {description && showDescription && (
-          <Paragraph className={styles.description} title={description}>
+          <Paragraph
+            className={styles.description}
+            title={description}
+            data-test="domainDropdownItemPurpose"
+          >
             {description}
           </Paragraph>
         )}

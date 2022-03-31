@@ -27,6 +27,7 @@ interface Props {
    * Same as showAddress, just display a masked (shortened) address instead
    */
   showMaskedAddress?: boolean;
+  dataTest?: string;
 }
 const ItemDefault = ({
   walletAddress,
@@ -45,11 +46,13 @@ const ItemDefault = ({
   renderAvatar,
   showAddress,
   showMaskedAddress,
+  dataTest,
 }: Props) => (
   <span
     className={cx(styles.main, {
       [styles.showAddress]: showAddress || showMaskedAddress,
     })}
+    data-test={dataTest}
   >
     {renderAvatar(userAddress, itemData)}
     <span className={styles.dataContainer}>

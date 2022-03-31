@@ -76,6 +76,7 @@ const ManageDomainsDialog = ({
         permissionRequired: <FormattedMessage {...MSG.domainPermissionsList} />,
       },
       onClick: () => callStep(nextStep),
+      dataTest: 'createDomainDialogIndexItem',
     },
     {
       title: MSG.editDomainTitle,
@@ -86,6 +87,7 @@ const ManageDomainsDialog = ({
         permissionRequired: <FormattedMessage {...MSG.domainPermissionsList} />,
       },
       onClick: () => callStep(nextStepEdit),
+      dataTest: 'editDomainDialogIndexItem',
     },
   ];
 

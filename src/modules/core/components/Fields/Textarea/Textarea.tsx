@@ -55,6 +55,7 @@ export interface Props {
   statusValues?: SimpleMessageValues;
   /** Disabled status of Textarea */
   disabled?: boolean;
+  dataTest?: string;
 }
 
 const displayName = 'Textarea';
@@ -76,6 +77,7 @@ const Textarea = ({
   status,
   statusValues,
   disabled,
+  dataTest,
 }: Props) => {
   const { formatMessage } = useIntl();
   const [id] = useState(idProp || nanoid());
@@ -114,6 +116,7 @@ const Textarea = ({
           value={value}
           aria-disabled={disabled}
           disabled={disabled}
+          data-test={dataTest}
         />
         {maxLength && (
           <span

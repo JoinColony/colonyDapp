@@ -125,6 +125,8 @@ const ColonyDomainSelector = ({
         renderActiveOptionFn={renderActiveOption}
         showAllDomains
         showDescription
+        dataTest="colonyDomainSelector"
+        itemDataTest="colonyDomainSelectorItem"
       />
     </Form>
   );
