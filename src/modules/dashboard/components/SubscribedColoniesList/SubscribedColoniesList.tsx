@@ -67,7 +67,11 @@ const SubscribedColoniesList = () => {
       </div>
       {(ethereal || isNetworkAllowed) && (
         <div className={`${styles.item} ${styles.newColonyItem}`}>
-          <NavLink className={styles.itemLink} to={CREATE_COLONY_ROUTE}>
+          <NavLink
+            className={styles.itemLink}
+            to={CREATE_COLONY_ROUTE}
+            data-test="createColony"
+          >
             <Icon
               className={styles.newColonyIcon}
               name="circle-plus"

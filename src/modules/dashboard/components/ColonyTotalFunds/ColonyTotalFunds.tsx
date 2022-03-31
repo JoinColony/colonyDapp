@@ -141,6 +141,7 @@ const ColonyTotalFunds = ({
           <Link
             className={styles.manageFundsLink}
             to={`/colony/${colonyName}/funds`}
+            data-test="manageFunds"
           >
             <Icon
               className={styles.rightArrowDisplay}

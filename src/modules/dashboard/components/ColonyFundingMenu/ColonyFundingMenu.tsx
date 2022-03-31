@@ -165,6 +165,7 @@ const ColonyFundingMenu = ({
             !isDeploymentFinished ||
             mustUpgradeOneTx
           }
+          data-test="manageTokens"
         />
       </li>
     </ul>

@@ -39,6 +39,7 @@ const IndexModalItem = ({
     permissionRequired = false,
     permissionInfoText = MSG.permissionsMessageFallback,
     permissionInfoTextValues,
+    dataTest,
   },
 }: Props) => {
   const triggerOnClick = useCallback(() => {
@@ -57,6 +58,7 @@ const IndexModalItem = ({
       role="button"
       onKeyPress={triggerOnClick}
       tabIndex={0}
+      data-test={dataTest}
     >
       <div>
         <Paragraph className={styles.title}>

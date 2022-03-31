@@ -232,7 +232,11 @@ const FileUpload = ({
           extra={extra}
         />
       )}
-      <div className={dropzoneClassName} {...getRootProps()}>
+      <div
+        className={dropzoneClassName}
+        {...getRootProps()}
+        data-test="fileUpload"
+      >
         <input {...getInputProps()} />
         {maxFileLimitNotMet && renderPlaceholder}
         {files && files.length > 0 && (

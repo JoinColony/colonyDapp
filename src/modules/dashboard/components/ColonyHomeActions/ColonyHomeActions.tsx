@@ -289,6 +289,7 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
             !colony?.isDeploymentFinished ||
             mustUpgradeOneTx
           }
+          data-test="newAction"
         />
       )}
     </>

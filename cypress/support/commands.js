@@ -77,3 +77,54 @@ Cypress.Commands.add('claimNewUserName', (numberFromList) => {
 
   cy.findByText(/continue/i).click();
 });
+
+Cypress.Commands.add('createColony', (colony, useNewToken) => {
+  cy.getBySel('createColony').click();
+
+  cy.get('input').first().click().type(colony.name);
+  cy.get('input').last().click().type(colony.name);
+  cy.getBySel('claimColonyNameConfirm').click();
+
+  cy.getBySel(useNewToken ? 'createNewToken' : 'useExistingToken').click();
+
+  if (useNewToken) {
+    cy.get('input').first().click().type(colony.nativeToken);
+    cy.get('input').last().click().type(colony.nativeToken);
+  } else {
+    cy.get('@existingTokenAddress').then((address) => {
+      cy.get('input').click().type(address);
+    });
+  }
+
+  cy.getBySel('definedTokenConfirm').click();
+
+  cy.getBySel('userInputConfirm').click();
+});
+
+Cypress.Commands.add('getColonyTokenAddress', (colonyName) => {
+  cy.login();
+  cy.visit(`/colony/${colonyName}`);
+  cy.getBySel('colonyMenu', { timeout: 60000 }).click();
+  cy.getBySel('nativeTokenAddress').invoke('text').as('existingTokenAddress');
+});
+
+Cypress.Commands.add('checkUrlAfterAction', (colonyName) => {
+  cy.url().should(
+    'contains',
+    `${Cypress.config().baseUrl}/colony/${colonyName}/tx/0x`,
+    { timeout: 30000 },
+  );
+});
+
+Cypress.Commands.add('changeColonyname', (colonyName, newName) => {
+  cy.getBySel('newAction', { timeout: 60000 }).click();
+  cy.getBySel('advancedDialogIndexItem').click();
+  cy.getBySel('updateColonyDialogIndexItem').click();
+  cy.get('input').last().click().clear().type(newName);
+});
+
+Cypress.Commands.add('checkColonyName', (colonyName) => {
+  cy.getBySel('colonyTitle', { timeout: 60000 }).then((name) => {
+    expect(name.text()).to.equal(colonyName);
+  });
+});
