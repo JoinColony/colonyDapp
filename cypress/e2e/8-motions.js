@@ -48,7 +48,7 @@ describe('User can create actions via UAC', () => {
     const domainName = 'Dolphins';
     const domainPurpose = 'This team has been taken over by dolphins';
 
-    cy.updateTeam(domainName, domainPurpose, true);
+    cy.editTeam(domainName, domainPurpose, true);
 
     cy.checkMotion();
   });
