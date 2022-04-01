@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import { AddressZero } from 'ethers/constants';
+import { usePopperTooltip } from 'react-popper-tooltip';
 import { Checkbox } from '~core/Fields';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { createAddress } from '~utils/web3';
@@ -9,6 +10,7 @@ import { Address } from '~types/index';
 import InvisibleCopyableAddress from '~core/InvisibleCopyableAddress';
 import MaskedAddress from '~core/MaskedAddress';
 import UserMention from '~core/UserMention';
+import tooltipStyles from './tooltip.css';
 
 import styles from './UserCheckbox.css';
 
@@ -33,37 +35,42 @@ const UserCheckbox = ({
   const [isChecked, setIsChecked] = useState<boolean>(false);
 
   const {
+    getArrowProps,
+    getTooltipProps,
+    setTooltipRef,
+    setTriggerRef,
+    visible,
+  } = usePopperTooltip({ placement: 'right' }) as any;
+
+  const {
     profile: { displayName, username },
   } = userProfile;
 
   return (
     <div className={`${styles.main} ${!isChecked && styles.notChecked}`}>
       <div className={styles.user}>
-        <Checkbox
-          name={name}
-          value={walletAddress}
-          className={styles.checkbox}
-          onChange={(props) => setIsChecked(props.isChecked)}
-          getDefaultValue={(checked) => setIsChecked(checked)}
-          tooltipText={isChecked ? checkedTooltipText : unCheckedTooltipText}
-          tooltipPopperProps={{
-            modifiers: [
-              {
-                name: 'offset',
-                options: {
-                  offset: [0, 12],
-                },
-              },
-              {
-                name: 'preventOverflow',
-                options: {
-                  padding: 14,
-                },
-              },
-            ],
-          }}
-          showTooltipText
-        />
+        <div ref={setTriggerRef}>
+          <Checkbox
+            name={name}
+            value={walletAddress}
+            className={styles.checkbox}
+            onChange={(props) => setIsChecked(props.isChecked)}
+            getDefaultValue={(checked) => setIsChecked(checked)}
+          />
+          {visible && (
+            <div
+              ref={setTooltipRef}
+              {...getTooltipProps({
+                className: tooltipStyles.tooltipContainer,
+              })}
+            >
+              {isChecked ? checkedTooltipText : unCheckedTooltipText}
+              <div
+                {...getArrowProps({ className: tooltipStyles.tooltipArrow })}
+              />
+            </div>
+          )}
+        </div>
         <UserAvatar
           size="xs"
           colony={colony}
