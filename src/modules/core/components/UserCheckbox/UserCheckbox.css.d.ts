@@ -1,3 +1,5 @@
+export const tooltipBg: string;
+export const light: string;
 export const main: string;
 export const notChecked: string;
 export const user: string;
@@ -6,3 +8,4 @@ export const displayName: string;
 export const username: string;
 export const address: string;
 export const checkbox: string;
+export const tooltipContainer: string;
