@@ -3,7 +3,7 @@ import { Extension } from '@colony/colony-js';
 import ganacheAccounts from '~lib/colonyNetwork/ganache-accounts.json';
 import { createAddress } from '~utils/web3';
 
-describe('User can create actions via UAC', () => {
+describe('User can create motions via UAC', () => {
   it('Installs & enables voting extensions', () => {
     cy.login();
     cy.visit(`/colony/${Cypress.config().colony.name}`);
