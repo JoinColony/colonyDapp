@@ -121,6 +121,12 @@ Cypress.Commands.add('checkUrlAfterAction', (colonyName) => {
   );
 });
 
+Cypress.Commands.add('checkColonyName', (colonyName) => {
+  cy.getBySel('colonyTitle', { timeout: 60000 }).then((name) => {
+    expect(name.text()).to.equal(colonyName);
+  });
+});
+
 Cypress.Commands.add('changeColonyname', (colonyName, newName) => {
   cy.getBySel('newActionButton', { timeout: 60000 }).click();
   cy.getBySel('advancedDialogIndexItem').click();
@@ -449,4 +455,27 @@ Cypress.Commands.add('smiteUser', (amountToSmite, isMotion) => {
   );
 
   cy.getBySel('comment').should('have.text', annotationText);
+});
+
+Cypress.Commands.add('editColonyDetails', (newName, isMotion) => {
+  const annotationText = isMotion
+    ? 'Test motion annotation'
+    : 'Test annotation';
+  const colonyName = Cypress.config().colony.name;
+
+  cy.login();
+  cy.visit(`/colony/${colonyName}`);
+  cy.changeColonyname(colonyName, newName);
+
+  const filePath = 'cypress/fixtures/images/jaya-the-beast.png';
+  cy.get('input[type="file"]').selectFile(filePath, { force: true });
+
+  cy.get('textarea').click().type(annotationText);
+  cy.getBySel('confirmButton').click();
+
+  cy.getBySel('actionHeading', { timeout: 60000 }).should(
+    'have.text',
+    isMotion ? 'Change colony details' : 'Colony details changed',
+  );
+  cy.checkUrlAfterAction(colonyName);
 });

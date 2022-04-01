@@ -1,24 +1,8 @@
 describe('Colony can be updated', () => {
-  it('can update colony details', () => {
-    const annotationText = 'Test annotation';
-    const colonyName = Cypress.config().colony.name;
+  it.only('can update colony details', () => {
     const newName = 'plushka';
 
-    cy.login();
-    cy.visit(`/colony/${colonyName}`);
-    cy.changeColonyname(colonyName, newName);
-
-    const filePath = 'cypress/fixtures/images/jaya-the-beast.png';
-    cy.get('input[type="file"]').selectFile(filePath, { force: true });
-
-    cy.get('textarea').click().type(annotationText);
-    cy.getBySel('confirmButton').click();
-
-    cy.getBySel('actionHeading', { timeout: 60000 }).should(
-      'have.text',
-      `Colony details changed`,
-    );
-    cy.checkUrlAfterAction(colonyName);
+    cy.editColonyDetails(newName, false);
     cy.getBySel('backButton').click();
 
     cy.checkColonyName(newName);
