@@ -300,6 +300,7 @@ const DefaultMotion = ({
             walletAddress={actionInitiator}
             colonyAddress={colony.colonyAddress}
             rootHash={rootHash || undefined}
+            domainId={motionDomain}
           />
         </div>
       </>

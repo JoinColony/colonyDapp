@@ -51,6 +51,7 @@ const MemberReputation = ({
       address: AddressZero,
       colonyAddress,
       domainId,
+      rootHash,
     },
     fetchPolicy: 'cache-and-network',
   });
