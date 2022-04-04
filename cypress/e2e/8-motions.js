@@ -3,6 +3,8 @@ import { Extension } from '@colony/colony-js';
 import ganacheAccounts from '~lib/colonyNetwork/ganache-accounts.json';
 import { createAddress } from '~utils/web3';
 
+import createdColony from '../fixtures/colony.json';
+
 describe('User can create motions via UAC', () => {
   it('Installs & enables voting extensions', () => {
     cy.login();
@@ -73,6 +75,23 @@ describe('User can create motions via UAC', () => {
     const amountToSmite = 10;
 
     cy.smiteUser(amountToSmite, true);
+
+    cy.checkMotion();
+  });
+
+  it('Can edit colony details', () => {
+    const newName = 'solntse';
+
+    cy.editColonyDetails(newName, true);
+
+    cy.checkMotion();
+  });
+
+  it.only('Can update tokens', () => {
+    const { name: existingColonyName } = Cypress.config().colony;
+    cy.login();
+
+    cy.updateTokens(existingColonyName, createdColony.name, true);
 
     cy.checkMotion();
   });
