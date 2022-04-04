@@ -13,26 +13,8 @@ describe('Colony can be updated', () => {
       name: existingColony,
       nativeToken: existingToken,
     } = Cypress.config().colony;
-    cy.getColonyTokenAddress(existingColony);
 
-    const colony = { name: 'feola', nativeToken: 'FEOL' };
-
-    cy.createColony(colony, true);
-
-    cy.getBySel('manageFunds', { timeout: 60000 }).click();
-    cy.getBySel('manageTokens', { timeout: 30000 }).click();
-
-    cy.get('@existingTokenAddress').then((address) => {
-      cy.get('input').last().click().type(address);
-    });
-    cy.getBySel('confirm').click();
-
-    cy.getBySel('actionHeading', { timeout: 60000 }).should(
-      'have.text',
-      `Colony details changed`,
-    );
-
-    cy.checkUrlAfterAction(colony.name);
+    cy.updateTokens(existingColony);
 
     cy.getBySel('backButton').click();
 

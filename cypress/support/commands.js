@@ -479,3 +479,26 @@ Cypress.Commands.add('editColonyDetails', (newName, isMotion) => {
   );
   cy.checkUrlAfterAction(colonyName);
 });
+
+Cypress.Commands.add('updateTokens', (existingColony) => {
+  cy.getColonyTokenAddress(existingColony);
+
+  const colony = { name: 'feola', nativeToken: 'FEOL' };
+
+  cy.createColony(colony, true);
+
+  cy.getBySel('manageFunds', { timeout: 60000 }).click();
+  cy.getBySel('manageTokens', { timeout: 30000 }).click();
+
+  cy.get('@existingTokenAddress').then((address) => {
+    cy.get('input').last().click().type(address);
+  });
+  cy.getBySel('confirm').click();
+
+  cy.getBySel('actionHeading', { timeout: 60000 }).should(
+    'have.text',
+    `Colony details changed`,
+  );
+
+  cy.checkUrlAfterAction(colony.name);
+});
