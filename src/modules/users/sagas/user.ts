@@ -1,6 +1,7 @@
 import { call, fork, put, takeLatest } from 'redux-saga/effects';
 import { ClientType, TokenLockingClient } from '@colony/colony-js';
 import { BigNumber } from 'ethers/utils';
+import toast from '~core/toast/toast';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import {
@@ -96,7 +97,9 @@ function* userAvatarUpload({
         address: walletAddress,
       },
     });
+    toast.success('Profile picture has been updated.');
   } catch (error) {
+    toast.error('Profile settings were not able to be updated. Try again.');
     return yield putError(ActionTypes.USER_AVATAR_UPLOAD_ERROR, error, meta);
   }
   return null;
