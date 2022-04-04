@@ -160,6 +160,7 @@ const ManageFundsDialog = ({
         ),
       },
       onClick: () => callStep(nextStepManageTokens),
+      dataTest: 'manageTokensDialogItem',
     },
     {
       title: MSG.rewardPayoutTitle,

@@ -84,6 +84,7 @@ Cypress.Commands.add('claimNewUserName', (numberFromList) => {
 });
 
 Cypress.Commands.add('createColony', (colony, useNewToken) => {
+  cy.visit('/landing');
   cy.getBySel('createColony').click();
 
   cy.get('input').first().click().type(colony.name);
@@ -107,7 +108,6 @@ Cypress.Commands.add('createColony', (colony, useNewToken) => {
 });
 
 Cypress.Commands.add('getColonyTokenAddress', (colonyName) => {
-  cy.login();
   cy.visit(`/colony/${colonyName}`);
   cy.getBySel('colonyMenu', { timeout: 60000 }).click();
   cy.getBySel('nativeTokenAddress').invoke('text').as('existingTokenAddress');
@@ -480,25 +480,27 @@ Cypress.Commands.add('editColonyDetails', (newName, isMotion) => {
   cy.checkUrlAfterAction(colonyName);
 });
 
-Cypress.Commands.add('updateTokens', (existingColony) => {
-  cy.getColonyTokenAddress(existingColony);
+Cypress.Commands.add(
+  'updateTokens',
+  (updatedColonyName, tokenProviderColonyName, isMotion) => {
+    cy.getColonyTokenAddress(tokenProviderColonyName);
 
-  const colony = { name: 'feola', nativeToken: 'FEOL' };
+    cy.visit(`/colony/${updatedColonyName}`);
 
-  cy.createColony(colony, true);
+    cy.getBySel('newActionButton', { timeout: 90000 }).click();
+    cy.getBySel('fundsDialogIndexItem').click();
+    cy.getBySel('manageTokensDialogItem').click();
 
-  cy.getBySel('manageFunds', { timeout: 60000 }).click();
-  cy.getBySel('manageTokens', { timeout: 30000 }).click();
+    cy.get('@existingTokenAddress').then((address) => {
+      cy.get('input').last().click().type(address);
+    });
+    cy.getBySel('confirm').click();
 
-  cy.get('@existingTokenAddress').then((address) => {
-    cy.get('input').last().click().type(address);
-  });
-  cy.getBySel('confirm').click();
+    cy.getBySel('actionHeading', { timeout: 60000 }).should(
+      'have.text',
+      isMotion ? 'Change colony details' : `Colony details changed`,
+    );
 
-  cy.getBySel('actionHeading', { timeout: 60000 }).should(
-    'have.text',
-    `Colony details changed`,
-  );
-
-  cy.checkUrlAfterAction(colony.name);
-});
+    cy.checkUrlAfterAction(updatedColonyName);
+  },
+);
