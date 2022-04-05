@@ -101,28 +101,15 @@ describe('User can create actions via UAC', () => {
       );
     });
   });
-  it('Can unlock the native token', () => {
+  it.only('Can unlock the native token', () => {
+    const colony = { name: 'haha', nativeToken: 'HAH' };
     cy.login();
+    cy.createColony(colony, true);
+    cy.url().should('eq', `${Cypress.config().baseUrl}/colony/${colony.name}`, {
+      timeout: 90000,
+    });
 
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
-
-    cy.getBySel('newActionButton', { timeout: 60000 }).click();
-    cy.getBySel('fundsDialogIndexItem').click();
-    cy.getBySel('unlockTokenDialogIndexItem').click();
-
-    cy.getBySel('unlockTokenConfirmButton').click();
-
-    cy.getBySel('actionHeading', { timeout: 100000 }).should(
-      'include.text',
-      `Unlock native token ${Cypress.config().colony.nativeToken}`,
-    );
-
-    cy.url().should(
-      'contains',
-      `${Cypress.config().baseUrl}/colony/${
-        Cypress.config().colony.name
-      }/tx/0x`,
-    );
+    cy.unlockToken(colony, false);
 
     cy.getBySel('backButton').click();
 

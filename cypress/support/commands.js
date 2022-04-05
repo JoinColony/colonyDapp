@@ -504,3 +504,21 @@ Cypress.Commands.add(
     cy.checkUrlAfterAction(updatedColonyName);
   },
 );
+
+Cypress.Commands.add('unlockToken', (colony, isMotion) => {
+  cy.getBySel('newActionButton', { timeout: 60000 }).click();
+  cy.getBySel('fundsDialogIndexItem').click();
+  cy.getBySel('unlockTokenDialogIndexItem').click();
+
+  cy.getBySel('unlockTokenConfirmButton').click();
+
+  cy.getBySel('actionHeading', { timeout: 100000 }).should(
+    'include.text',
+    `Unlock native token ${colony.nativeToken}`,
+  );
+
+  cy.url().should(
+    'contains',
+    `${Cypress.config().baseUrl}/colony/${colony.name}/tx/0x`,
+  );
+});
