@@ -1,7 +1,7 @@
 import numbro from 'numbro';
 import moveDecimal from 'move-decimal-point';
 
-import { BigNumber } from 'ethers/utils';
+import { BigNumber, formatUnits } from 'ethers/utils';
 
 import { numbroCustomLanguage } from './numbroCustomLanguage';
 
@@ -74,7 +74,10 @@ export const numberDisplayFormatter = ({
     thousandSeparated: useSeparator,
   };
 
-  const convertedNum = moveDecimal(value.toString(10), -(unit || 0));
+  const convertedNum =
+    typeof unit === 'string'
+      ? formatUnits(value, unit)
+      : moveDecimal(value.toString(10), -(unit || 0));
 
   // handle very small numbers
   if (useSmallNumberDefault && convertedNum < 0.00001 && convertedNum > 0) {
