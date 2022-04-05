@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 
 import UserCheckbox from '~core/UserCheckbox';
@@ -33,6 +33,12 @@ const displayName = 'dashboard.ManageWhitelistDialog.WhitelistedAddresses';
 const WhitelistedAddresses = ({ colony, whitelistedUsers }: Props) => {
   const [users, setUsers] = useState<AnyUser[]>(whitelistedUsers);
   const { formatMessage } = useIntl();
+
+  useEffect(() => {
+    if (whitelistedUsers?.length) {
+      setUsers(whitelistedUsers);
+    }
+  }, [whitelistedUsers]);
 
   const handleOnChange = useCallback(
     (e) => {
