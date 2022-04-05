@@ -101,15 +101,15 @@ describe('User can create actions via UAC', () => {
       );
     });
   });
-  it.only('Can unlock the native token', () => {
-    const colony = { name: 'haha', nativeToken: 'HAH' };
+  it('Can unlock the native token', () => {
+    const colony = { name: 'sirius', nativeToken: 'SIRS' };
     cy.login();
     cy.createColony(colony, true);
     cy.url().should('eq', `${Cypress.config().baseUrl}/colony/${colony.name}`, {
       timeout: 90000,
     });
 
-    cy.unlockToken(colony, false);
+    cy.unlockToken(colony);
 
     cy.getBySel('backButton').click();
 
