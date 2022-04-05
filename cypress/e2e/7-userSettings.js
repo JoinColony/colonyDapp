@@ -62,6 +62,7 @@ describe('Colony user can update their settings', () => {
       });
   });
 
+  // This requires that the native token is not already added
   it('User can add token type to their wallet', () => {
     cy.visit(`/colony/${Cypress.config().colony.name}`);
     // Get the colony's native token
@@ -71,7 +72,13 @@ describe('Colony user can update their settings', () => {
       .as('colonyTokenAddress');
     cy.getBySel('gasStationPopover').click();
     cy.getBySel('userWallet').click();
+    // Get the number of tokens
+    cy.getBySel('userTokenCards')
+      .find(`[data-test="tokenCardItem"]`)
+      .then((elm) => elm.length)
+      .as('tokenCardCount');
     cy.getBySel('editUserTokens').click();
+    // Add the new token
     cy.get('@colonyTokenAddress').then((colonyTokenAddress) => {
       cy.getBySel('tokenSelectorInput')
         .click()
@@ -79,17 +86,33 @@ describe('Colony user can update their settings', () => {
         .type(colonyTokenAddress);
     });
     cy.getBySel('tokenEditSubmit').click();
+    // Check the number of tokens has increased by one
+    cy.get('@tokenCardCount').then((tokenCardCount) => {
+      cy.getBySel('userTokenCards')
+        .find(`[data-test="tokenCardItem"]`)
+        .should('have.length', tokenCardCount + 1);
+    });
   });
 
-  it('User can remove token type from their wallet', () => {
+  it.only('User can remove token type from their wallet', () => {
     cy.getBySel('gasStationPopover', { timeout: 40000 }).click();
     cy.getBySel('userWallet').click();
+    cy.getBySel('userTokenCards')
+      .find(`[data-test="tokenCardItem"]`)
+      .then((elm) => elm.length)
+      .as('tokenCardCount');
     cy.getBySel('editUserTokens').click();
-    cy.getBySel('tokenEditItem')
-      .eq(1)
-      .get('label')
-      .get('[type="checkbox"]')
-      .uncheck({ force: true });
+    cy.get('@tokenCardCount').then((tokenCardCount) => {
+      cy.getBySel('tokenEditItem')
+        .eq(tokenCardCount - 1)
+        .find('label')
+        .click();
+    });
     cy.getBySel('tokenEditSubmit').click();
+    cy.get('@tokenCardCount').then((tokenCardCount) => {
+      cy.getBySel('userTokenCards')
+        .find(`[data-test="tokenCardItem"]`)
+        .should('have.length', tokenCardCount - 1);
+    });
   });
 });
