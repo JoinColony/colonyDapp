@@ -3,6 +3,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { StoreContext } from 'redux-react-hook';
 import { IntlProvider } from 'react-intl';
+import { injectStyle } from 'react-toastify/dist/inject-style';
 import { ApolloProvider } from '@apollo/client';
 
 import layout from '~styles/layout.css';
@@ -15,6 +16,9 @@ import motionMessages from './i18n/en-motions';
 import systemMessages from './i18n/en-system-messages';
 import Routes from './routes';
 import apolloClient from './context/apolloClient';
+
+// CALL IT ONCE IN YOUR APP - react-toastify/dist/inject-style
+injectStyle();
 
 // @ts-ignore
 if (!Intl.RelativeTimeFormat) {
