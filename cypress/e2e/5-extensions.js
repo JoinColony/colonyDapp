@@ -1,29 +1,18 @@
 import { Extension } from '@colony/colony-js';
 
 const testExtensionManagementFlow = (extensionId) => {
-  // Can install extension
   cy.installExtension();
 
-  // Can enable extension
   cy.enableExtension(extensionId);
 
-  // Can deprecate extension
-  cy.getBySel('deprecateExtensionButton').click();
-  cy.getBySel('confirmButton').click();
-  cy.getBySel('deprecatedStatusTag', { timeout: 30000 }).should('exist');
+  cy.deprecateExtension();
 
   // Can re-enable extension
   cy.getBySel('reenableExtensionButton').click();
   cy.getBySel('confirmButton').click();
   cy.getBySel('enabledStatusTag', { timeout: 30000 }).should('exist');
 
-  // Can uninstall extension
-  cy.getBySel('deprecateExtensionButton').click();
-  cy.getBySel('confirmButton').click();
-  cy.getBySel('uninstallExtensionButton', { timeout: 20000 }).click();
-  cy.getBySel('uninstallWarningInput').click().type('I UNDERSTAND');
-  cy.getBySel('uninstallConfirmButton').click();
-  cy.getBySel('notInstalledStatusTag', { timeout: 30000 }).should('exist');
+  cy.uninstallExtension();
 };
 
 describe('Colony extensions', () => {
