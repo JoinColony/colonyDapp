@@ -155,7 +155,7 @@ exports[`FileUpload component Renders initial component 1`] = `
               </InputLabel>
               <div
                 className=""
-                data-test="fileUpload"
+                data-test={[string]}
                 onBlur={[Function]}
                 onClick={[Function]}
                 onDragEnter={[Function]}
