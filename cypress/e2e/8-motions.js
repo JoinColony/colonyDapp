@@ -87,12 +87,24 @@ describe('User can create motions via UAC', () => {
     cy.checkMotion();
   });
 
-  it.only('Can update tokens', () => {
+  it('Can update tokens', () => {
     const { name: existingColonyName } = Cypress.config().colony;
     cy.login();
 
     cy.updateTokens(existingColonyName, createdColony.name, true);
 
     cy.checkMotion();
+  });
+  it.only('Can unlock the native token', () => {
+    const { colony } = Cypress.config();
+    cy.login();
+
+    cy.visit(`/colony/${colony.name}`);
+
+    cy.unlockToken(colony);
+
+    cy.getBySel('backButton').click();
+
+    cy.getBySel('lockIconTooltip', { timeout: 15000 }).should('not.exist');
   });
 });
