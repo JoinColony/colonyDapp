@@ -42,7 +42,7 @@ jobs:
     - name: npm
       run: npm i -g npm@8 --registry=https://registry.npmjs.org
 
-    - run: npm install
+    - run: npm install --legacy-peer-deps
     - run: npm run typecheck
     - run: npm run lint:ci
     - run: npm run stylelint:ci
