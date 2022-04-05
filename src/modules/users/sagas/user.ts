@@ -1,8 +1,9 @@
 import { call, fork, put, takeLatest } from 'redux-saga/effects';
+import { defineMessages } from 'react-intl';
 import { ClientType, TokenLockingClient } from '@colony/colony-js';
 import { BigNumber } from 'ethers/utils';
-import toast from '~core/toast/toast';
 
+import toast from '~core/toast/toast';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import {
   TEMP_getContext,
@@ -43,6 +44,21 @@ import {
 } from '../../core/sagas/transactions';
 import { createUserWithSecondAttempt } from './utils';
 
+const MSG = defineMessages({
+  toastAvatarRemoveSuccess: {
+    id: 'users.sagas.user.toastAvatarRemoveSuccess',
+    defaultMessage: 'Profile picture has been removed.',
+  },
+  toastAvatarUpdateSuccess: {
+    id: 'users.sagas.user.toastAvatarRemoveSuccess',
+    defaultMessage: 'Profile picture has been updated.',
+  },
+  toastAvatarError: {
+    id: 'users.UserProfileEdit.toastError',
+    defaultMessage: 'Profile picture was not able to be updated. Try again.',
+  },
+});
+
 function* userAvatarRemove({ meta }: Action<ActionTypes.USER_AVATAR_REMOVE>) {
   try {
     const { walletAddress } = yield getLoggedInUser();
@@ -57,7 +73,9 @@ function* userAvatarRemove({ meta }: Action<ActionTypes.USER_AVATAR_REMOVE>) {
       payload: { address: walletAddress },
       meta,
     });
+    toast.success(MSG.toastAvatarRemoveSuccess);
   } catch (error) {
+    toast.error(MSG.toastAvatarError);
     return yield putError(ActionTypes.USER_AVATAR_REMOVE_ERROR, error, meta);
   }
   return null;
@@ -97,9 +115,9 @@ function* userAvatarUpload({
         address: walletAddress,
       },
     });
-    toast.success('Profile picture has been updated.');
+    toast.success(MSG.toastAvatarUpdateSuccess);
   } catch (error) {
-    toast.error('Profile settings were not able to be updated. Try again.');
+    toast.error(MSG.toastAvatarError);
     return yield putError(ActionTypes.USER_AVATAR_UPLOAD_ERROR, error, meta);
   }
   return null;

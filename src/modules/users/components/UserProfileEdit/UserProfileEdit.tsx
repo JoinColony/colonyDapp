@@ -1,9 +1,8 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 import { Redirect } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import { injectStyle } from 'react-toastify/dist/inject-style';
 
 import CopyableAddress from '~core/CopyableAddress';
 import UserMention from '~core/UserMention';
@@ -17,6 +16,7 @@ import {
   Textarea,
 } from '~core/Fields';
 import Button from '~core/Button';
+import toast from '~core/toast/toast';
 import ProfileTemplate from '~pages/ProfileTemplate';
 import { useLoggedInUser, useUser, useEditUserMutation } from '~data/index';
 import { LANDING_PAGE_ROUTE } from '~routes/index';
@@ -24,9 +24,6 @@ import { LANDING_PAGE_ROUTE } from '~routes/index';
 import UserProfileSpinner from '../UserProfile/UserProfileSpinner';
 import Sidebar from './Sidebar';
 import styles from './UserProfileEdit.css';
-
-// CALL IT ONCE IN YOUR APP - react-toastify/dist/inject-style
-injectStyle();
 
 const MSG = defineMessages({
   heading: {
@@ -57,6 +54,14 @@ const MSG = defineMessages({
     id: 'users.UserProfileEdit.labelLocation',
     defaultMessage: 'Location',
   },
+  toastSuccess: {
+    id: 'users.UserProfileEdit.toastSuccess',
+    defaultMessage: 'Profile settings have been updated.',
+  },
+  toastError: {
+    id: 'users.UserProfileEdit.toastError',
+    defaultMessage: 'Profile settings were not able to be updated. Try again.',
+  },
 });
 
 const displayName = 'users.UserProfileEdit';
@@ -76,14 +81,21 @@ const validationSchema = yup.object({
 });
 
 const UserProfileEdit = () => {
-  const { walletAddress, ethereal } = useLoggedInUser();
-
-  const [editUser] = useEditUserMutation();
+  const [editUser, { data, loading, error }] = useEditUserMutation();
   const onSubmit = useCallback(
     (profile: FormValues) => editUser({ variables: { input: profile } }),
     [editUser],
   );
 
+  useEffect(() => {
+    if (!loading && data) {
+      toast.success(MSG.toastSuccess);
+    } else if (!loading && error) {
+      toast.error(MSG.toastError);
+    }
+  }, [data, loading, error]);
+
+  const { walletAddress, ethereal } = useLoggedInUser();
   const user = useUser(walletAddress);
 
   if (!user) {
