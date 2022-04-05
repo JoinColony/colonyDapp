@@ -131,6 +131,7 @@ const Extensions = ({ colonyAddress }: Props) => {
                   key={extension.extensionId}
                   extension={extension}
                   installedExtension={installedExtensions[idx]}
+                  dataTest={`${camelCase(extension.extensionId)}ExtensionCard`}
                 />
               ))}
             </div>

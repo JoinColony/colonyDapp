@@ -143,13 +143,11 @@ Cypress.Commands.add('checkMotion', () => {
 });
 
 Cypress.Commands.add('installExtension', () => {
-  // Can install extension
   cy.getBySel('installExtensionButton').click();
   cy.getBySel('disabledStatusTag', { timeout: 30000 }).should('exist');
 });
 
 Cypress.Commands.add('enableExtension', (extensionId) => {
-  // Can enable extension
   cy.getBySel('closeGasStationButton').click();
   cy.getBySel('enableExtensionButton').click();
   if (extensionId === Extension.Whitelist) {
@@ -157,6 +155,21 @@ Cypress.Commands.add('enableExtension', (extensionId) => {
   }
   cy.getBySel('setupExtensionConfirmButton').click();
   cy.getBySel('enabledStatusTag', { timeout: 30000 }).should('exist');
+});
+
+Cypress.Commands.add('deprecateExtension', () => {
+  cy.getBySel('deprecateExtensionButton').click();
+  cy.getBySel('confirmButton').click();
+  cy.getBySel('deprecatedStatusTag', { timeout: 30000 }).should('exist');
+});
+
+Cypress.Commands.add('uninstallExtension', () => {
+  cy.getBySel('deprecateExtensionButton').click();
+  cy.getBySel('confirmButton').click();
+  cy.getBySel('uninstallExtensionButton', { timeout: 20000 }).click();
+  cy.getBySel('uninstallWarningInput').click().type('I UNDERSTAND');
+  cy.getBySel('uninstallConfirmButton').click();
+  cy.getBySel('notInstalledStatusTag', { timeout: 30000 }).should('exist');
 });
 
 Cypress.Commands.add('mintTokens', (amountToMint, isMotion) => {
@@ -505,7 +518,7 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('unlockToken', (colony, isMotion) => {
+Cypress.Commands.add('unlockToken', (colony) => {
   cy.getBySel('newActionButton', { timeout: 60000 }).click();
   cy.getBySel('fundsDialogIndexItem').click();
   cy.getBySel('unlockTokenDialogIndexItem').click();
@@ -521,4 +534,40 @@ Cypress.Commands.add('unlockToken', (colony, isMotion) => {
     'contains',
     `${Cypress.config().baseUrl}/colony/${colony.name}/tx/0x`,
   );
+});
+
+Cypress.Commands.add('managePermissions', (colonyName, isMotion) => {
+  const annotationText = 'I am giving you the power to do things';
+
+  cy.login();
+
+  cy.visit(`/colony/${colonyName}`);
+
+  cy.getBySel('newActionButton', { timeout: 60000 }).click();
+  cy.getBySel('advancedDialogIndexItem').click();
+  cy.getBySel('managePermissionsDialogIndexItem').click();
+
+  if (!isMotion) {
+    cy.getBySel('permissionUserSelector').click({ force: true });
+    cy.getBySel('permissionUserSelectorItem').last().click();
+  }
+  cy.getBySel('permission').eq(1).click({ force: true });
+  cy.getBySel('permission').eq(2).click({ force: true });
+  cy.getBySel('permission').eq(3).click({ force: true });
+  cy.getBySel('permissionAnnotation').click().type(annotationText);
+
+  cy.getBySel('permissionConfirmButton').click();
+
+  cy.getBySel('actionHeading', { timeout: 100000 }).contains(
+    isMotion
+      ? 'Remove the administration, architecture, funding permissions'
+      : `Assign the administration, funding, architecture permissions in Root to`,
+  );
+
+  cy.url().should(
+    'contains',
+    `${Cypress.config().baseUrl}/colony/${Cypress.config().colony.name}/tx/0x`,
+  );
+
+  cy.getBySel('comment').should('have.text', annotationText);
 });

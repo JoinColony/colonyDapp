@@ -95,7 +95,8 @@ describe('User can create motions via UAC', () => {
 
     cy.checkMotion();
   });
-  it.only('Can unlock the native token', () => {
+
+  it('Can unlock the native token', () => {
     const { colony } = Cypress.config();
     cy.login();
 
@@ -106,5 +107,26 @@ describe('User can create motions via UAC', () => {
     cy.getBySel('backButton').click();
 
     cy.getBySel('lockIconTooltip', { timeout: 15000 }).should('not.exist');
+  });
+
+  it('Can manage permissions', () => {
+    const { colony } = Cypress.config();
+
+    cy.managePermissions(colony.name, true);
+
+    cy.checkMotion();
+  });
+
+  it.only('Disables & deprecates voting extensions', () => {
+    cy.login();
+    cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+    // deprecate & unistall voting reputaiton extension
+    cy.getBySel('extensionsNavigationButton', { timeout: 60000 }).click({
+      force: true,
+    });
+    cy.getBySel('votingReputationExtensionCard', { timeout: 80000 }).click();
+
+    cy.uninstallExtension();
   });
 });
