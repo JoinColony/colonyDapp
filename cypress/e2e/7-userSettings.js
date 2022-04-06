@@ -94,7 +94,7 @@ describe('Colony user can update their settings', () => {
     });
   });
 
-  it.only('User can remove token type from their wallet', () => {
+  it('User can remove token type from their wallet', () => {
     cy.getBySel('gasStationPopover', { timeout: 40000 }).click();
     cy.getBySel('userWallet').click();
     cy.getBySel('userTokenCards')
