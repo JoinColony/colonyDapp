@@ -30,7 +30,10 @@ const displayName = 'dashboard.ActionsPage.StakeRequiredBanner';
 
 const StakeRequiredBanner = ({ stakeRequired }: Props) => {
   return stakeRequired ? (
-    <div className={styles.stakeRequiredBannerContainer}>
+    <div
+      className={styles.stakeRequiredBannerContainer}
+      data-test="stakeRequiredBanner"
+    >
       <Alert
         appearance={{
           theme: 'pinky',

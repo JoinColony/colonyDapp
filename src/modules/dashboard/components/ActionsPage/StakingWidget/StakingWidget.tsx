@@ -212,7 +212,7 @@ const StakingWidget = ({
   const canBeStaked = isObjection ? canUserStakeNay : canUserStakeYay;
 
   return (
-    <div className={styles.main}>
+    <div className={styles.main} data-test="stakingWidget">
       <ActionForm
         initialValues={{
           amount: 0,

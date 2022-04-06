@@ -362,6 +362,8 @@ const CreatePaymentDialogForm = ({
               appearance={{ theme: 'grey', width: 'fluid' }}
               onChange={handleFromDomainChange}
               disabled={isSubmitting}
+              dataTest="domainIdSelector"
+              itemDataTest="domainIdItem"
             />
             {!!tokenAddress && (
               <div className={styles.domainPotBalance}>

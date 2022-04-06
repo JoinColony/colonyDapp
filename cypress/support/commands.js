@@ -24,6 +24,11 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
+import { Extension } from '@colony/colony-js';
+import Decimal from 'decimal.js';
+
+import { splitAddress } from '~utils/strings';
+
 import { buildUser } from './generate';
 
 Cypress.Commands.add('login', () => {
@@ -123,8 +128,325 @@ Cypress.Commands.add('changeColonyname', (colonyName, newName) => {
   cy.get('input').last().click().clear().type(newName);
 });
 
-Cypress.Commands.add('checkColonyName', (colonyName) => {
-  cy.getBySel('colonyTitle', { timeout: 60000 }).then((name) => {
-    expect(name.text()).to.equal(colonyName);
+Cypress.Commands.add('checkMotion', () => {
+  cy.getBySel('stakeRequiredBanner').should('exist');
+  cy.getBySel('motionStatusTag').should('have.text', 'Staking');
+  cy.getBySel('stakingWidget').should('exist');
+  cy.getBySel('countDownTimer').should('include.text', 'Time left to stake');
+  cy.getBySel('actionsEventText').should('include.text', 'created a Motion');
+});
+
+Cypress.Commands.add('installExtension', () => {
+  // Can install extension
+  cy.getBySel('installExtensionButton').click();
+  cy.getBySel('disabledStatusTag', { timeout: 30000 }).should('exist');
+});
+
+Cypress.Commands.add('enableExtension', (extensionId) => {
+  // Can enable extension
+  cy.getBySel('closeGasStationButton').click();
+  cy.getBySel('enableExtensionButton').click();
+  if (extensionId === Extension.Whitelist) {
+    cy.getBySel('policySelector').eq(1).click({ force: true });
+  }
+  cy.getBySel('setupExtensionConfirmButton').click();
+  cy.getBySel('enabledStatusTag', { timeout: 30000 }).should('exist');
+});
+
+Cypress.Commands.add('mintTokens', (amountToMint, isMotion) => {
+  const annotationText = isMotion
+    ? 'Test motion annotation'
+    : 'Test annotation';
+
+  cy.login();
+
+  cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+  cy.getBySel('colonyTotalFunds', { timeout: 60000 })
+    .invoke('text')
+    .as('totalFunds');
+
+  cy.getBySel('newActionButton', { timeout: 90000 }).click();
+  cy.getBySel('fundsDialogIndexItem').click();
+  cy.getBySel('mintTokensDialogItem').click();
+
+  cy.get('input')
+    .last()
+    .click()
+    .type(amountToMint)
+    .get('textarea')
+    .click()
+    .type(annotationText);
+
+  cy.getBySel('mintConfirmButton').click();
+
+  cy.getBySel('actionHeading', { timeout: 60000 }).should(
+    'have.text',
+    `Mint ${amountToMint} ${Cypress.config().colony.nativeToken}`,
+  );
+  cy.getBySel('comment').should('have.text', annotationText);
+
+  cy.url().should(
+    'contains',
+    `${Cypress.config().baseUrl}/colony/${Cypress.config().colony.name}/tx/0x`,
+  );
+});
+
+Cypress.Commands.add(
+  'makePayment',
+  (amountToPay, address, isMotion, isSubdomain) => {
+    const annotationText = isMotion
+      ? 'Test motion annotation'
+      : 'Test annotation';
+
+    const cutAddress = splitAddress(address);
+    const paidAmount = isMotion
+      ? amountToPay
+      : new Decimal(amountToPay).sub(
+          new Decimal(1.0001).div(100).mul(amountToPay),
+        );
+
+    cy.login();
+
+    cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+    cy.getBySel('colonyTotalFunds', { timeout: 60000 })
+      .invoke('text')
+      .as('totalFunds');
+
+    cy.getBySel('newActionButton', { timeout: 60000 }).click();
+    cy.getBySel('expenditureDialogIndexItem').click();
+    cy.getBySel('paymentDialogIndexItem').click();
+
+    if (isSubdomain) {
+      cy.getBySel('domainIdSelector').click();
+      cy.getBySel('domainIdItem').last().click();
+    }
+
+    cy.getBySel('paymentRecipientPicker').click().type(address);
+    cy.getBySel('paymentRecipientItem').first().click();
+
+    cy.getBySel('paymentAmountInput').click().type(amountToPay);
+
+    cy.getBySel('paymentAnnotation').click().type(annotationText);
+    cy.getBySel('paymentConfirmButton').click();
+
+    cy.getBySel('actionHeading', { timeout: 80000 }).should(
+      'have.text',
+      `Pay ${cutAddress.header}${cutAddress.start}...${
+        cutAddress.end
+      } ${paidAmount.toString()} ${Cypress.config().colony.nativeToken}`,
+    );
+    cy.getBySel('comment').should('have.text', annotationText);
+
+    cy.url().should(
+      'contains',
+      `${Cypress.config().baseUrl}/colony/${
+        Cypress.config().colony.name
+      }/tx/0x`,
+    );
+  },
+);
+
+Cypress.Commands.add('createTeam', (domainName, domainPurpose, isMotion) => {
+  const annotationText = isMotion
+    ? 'Test motion annotation'
+    : 'Test annotation';
+
+  cy.login();
+
+  cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+  cy.getBySel('newActionButton', { timeout: 60000 }).click();
+  cy.getBySel('domainsDialogIndexItem').click();
+  cy.getBySel('createDomainDialogIndexItem').click();
+
+  cy.getBySel('domainNameInput').click().type(domainName);
+  cy.getBySel('domainPurposeInput').click().type(domainPurpose);
+  cy.getBySel('createDomainAnnotation').click().type(annotationText);
+
+  cy.getBySel('createDomainConfirmButton').click();
+
+  cy.getBySel('actionHeading', { timeout: 70000 }).should(
+    'have.text',
+    `New team: ${domainName}`,
+  );
+
+  cy.url().should(
+    'contains',
+    `${Cypress.config().baseUrl}/colony/${Cypress.config().colony.name}/tx/0x`,
+  );
+
+  cy.getBySel('comment').should('have.text', annotationText);
+});
+
+Cypress.Commands.add('editTeam', (domainName, domainPurpose, isMotion) => {
+  const annotationText = isMotion
+    ? 'Test motion annotation'
+    : 'Test annotation';
+
+  cy.login();
+
+  cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+  cy.getBySel('newActionButton', { timeout: 90000 }).click();
+  cy.getBySel('domainsDialogIndexItem').click();
+  cy.getBySel('editDomainDialogIndexItem').click();
+
+  cy.getBySel('domainIdSelector').click();
+  cy.getBySel('domainIdItem').last().click();
+  cy.getBySel('domainNameInput').invoke('val').as('domaniName');
+
+  cy.getBySel('domainNameInput').clear();
+  cy.getBySel('domainNameInput').click().type(domainName);
+  cy.getBySel('domainPurposeInput').clear();
+  cy.getBySel('domainPurposeInput').click().type(domainPurpose);
+  cy.getBySel('editDomainAnnotation').click().type(annotationText);
+
+  cy.getBySel('editDomainConfirmButton').click();
+
+  cy.get('@domaniName').then((oldName) => {
+    cy.getBySel('actionHeading', { timeout: 100000 }).should(
+      'have.text',
+      isMotion
+        ? `Edit ${oldName} team details`
+        : `${domainName} team details edited`,
+    );
   });
+
+  cy.url().should(
+    'contains',
+    `${Cypress.config().baseUrl}/colony/${Cypress.config().colony.name}/tx/0x`,
+  );
+
+  cy.getBySel('comment').should('have.text', annotationText);
+});
+
+Cypress.Commands.add('transferFunds', (amountToTransfer, isMotion) => {
+  const annotationText = isMotion
+    ? 'Test motion annotation'
+    : 'Test annotation';
+
+  cy.login();
+
+  cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+  cy.getBySel('colonyDomainSelector', { timeout: 60000 }).click();
+  cy.getBySel('colonyDomainSelectorItem').last().click();
+
+  cy.getBySel('colonyFundingNativeTokenValue', { timeout: 60000 })
+    .invoke('text')
+    .as('teamFunds');
+
+  cy.getBySel('newActionButton', { timeout: 60000 }).click();
+  cy.getBySel('fundsDialogIndexItem').click();
+  cy.getBySel('transferFundsDialogIndexItem').click();
+
+  cy.getBySel('domainIdSelector').first().click();
+  cy.getBySel('domainIdItem').first().click();
+
+  cy.getBySel('domainIdSelector').last().click();
+  cy.getBySel('domainIdItem').last().click();
+
+  cy.getBySel('transferAmountInput').click().type(amountToTransfer);
+
+  cy.getBySel('transferFundsAnnotation').click().type(annotationText);
+
+  cy.getBySel('transferFundsConfirmButton').click();
+
+  cy.getBySel('actionHeading', { timeout: 100000 }).should(
+    'include.text',
+    `Move ${amountToTransfer} ${
+      Cypress.config().colony.nativeToken
+    } from Root to `,
+  );
+
+  cy.url().should(
+    'contains',
+    `${Cypress.config().baseUrl}/colony/${Cypress.config().colony.name}/tx/0x`,
+  );
+
+  cy.getBySel('comment').should('have.text', annotationText);
+});
+
+Cypress.Commands.add('awardRep', (amountToAward, isMotion) => {
+  const annotationText = isMotion
+    ? 'Test motion annotation'
+    : 'Test annotation';
+
+  let rewardedUser;
+
+  cy.login();
+
+  cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+  cy.getBySel('newActionButton', { timeout: 90000 }).click();
+  cy.getBySel('reputationDialogIndexItem').click();
+  cy.getBySel('awardReputationDialogIndexItem').click();
+
+  cy.getBySel('reputationRecipientSelector').click({ force: true });
+  cy.getBySel('reputationRecipientSelectorItem').last().click();
+
+  cy.getBySel('reputationRecipientName').invoke('val').as('userName');
+  cy.getBySel('reputationRecipientName').then(($value) => {
+    rewardedUser = $value.text();
+  });
+  cy.getBySel('reputationAmountInput').click().type(amountToAward);
+
+  cy.getBySel('reputationAnnotation').click().type(annotationText);
+
+  cy.getBySel('reputationConfirmButton').click();
+
+  cy.getBySel('actionHeading', { timeout: 100000 }).then(($value) => {
+    expect($value.text()).to.eq(
+      `Award ${rewardedUser} with a ${amountToAward} pts reputation reward`,
+    );
+  });
+
+  cy.url().should(
+    'contains',
+    `${Cypress.config().baseUrl}/colony/${Cypress.config().colony.name}/tx/0x`,
+  );
+
+  cy.getBySel('comment').should('have.text', annotationText);
+});
+
+Cypress.Commands.add('smiteUser', (amountToSmite, isMotion) => {
+  const annotationText = isMotion
+    ? 'Test motion annotation'
+    : 'Test annotation';
+
+  let smoteUser;
+
+  cy.login();
+
+  cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+  cy.getBySel('newActionButton', { timeout: 90000 }).click();
+  cy.getBySel('reputationDialogIndexItem').click();
+  cy.getBySel('smiteReputationDialogIndexItem').click();
+
+  cy.getBySel('reputationRecipientSelector').click({ force: true });
+  cy.getBySel('reputationRecipientSelectorItem').last().click();
+  cy.getBySel('reputationRecipientName').then(($value) => {
+    smoteUser = $value.text();
+  });
+  cy.getBySel('reputationAmountInput').click().type(amountToSmite);
+
+  cy.getBySel('reputationAnnotation').click().type(annotationText);
+
+  cy.getBySel('reputationConfirmButton').click();
+
+  cy.getBySel('actionHeading', { timeout: 100000 }).then(($value) => {
+    expect($value.text()).to.eq(
+      `Smite ${smoteUser} with a ${amountToSmite} pts reputation penalty`,
+    );
+  });
+
+  cy.url().should(
+    'contains',
+    `${Cypress.config().baseUrl}/colony/${Cypress.config().colony.name}/tx/0x`,
+  );
+
+  cy.getBySel('comment').should('have.text', annotationText);
 });
