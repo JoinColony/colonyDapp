@@ -18,14 +18,14 @@ describe('User can create motions via UAC', () => {
     cy.enableExtension(Extension.VotingReputation);
   });
 
-  it('Can mint native tokens', () => {
+  it('Can mint native tokens - motion', () => {
     const amountToMint = 10;
     cy.mintTokens(amountToMint, true);
 
     cy.checkMotion();
   });
 
-  it('Can make payment', () => {
+  it('Can make payment - motion', () => {
     const amountToPay = 10;
     const accounts = Object.entries(ganacheAccounts.private_keys).map(
       ([address]) => address,
@@ -35,7 +35,7 @@ describe('User can create motions via UAC', () => {
     cy.checkMotion();
   });
 
-  it('Can create teams', () => {
+  it('Can create teams - motion', () => {
     const domainName = 'Cats';
     const domainPurpose = 'Only cats allowed';
 
@@ -44,7 +44,7 @@ describe('User can create motions via UAC', () => {
     cy.checkMotion();
   });
 
-  it('Can edit teams', () => {
+  it('Can edit teams - motion', () => {
     const domainName = 'Dolphins';
     const domainPurpose = 'This team has been taken over by dolphins';
 
@@ -53,7 +53,7 @@ describe('User can create motions via UAC', () => {
     cy.checkMotion();
   });
 
-  it('Can transfer funds', () => {
+  it('Can transfer funds - motion', () => {
     const amountToTransfer = 2;
 
     cy.transferFunds(amountToTransfer, true);
@@ -61,7 +61,7 @@ describe('User can create motions via UAC', () => {
     cy.checkMotion();
   });
 
-  it('Can award users', () => {
+  it('Can award users - motion', () => {
     const amountToAward = 10;
 
     cy.awardRep(amountToAward, true);
@@ -69,7 +69,7 @@ describe('User can create motions via UAC', () => {
     cy.checkMotion();
   });
 
-  it('Can smite users', () => {
+  it('Can smite users - motion', () => {
     const amountToSmite = 10;
 
     cy.smiteUser(amountToSmite, true);
