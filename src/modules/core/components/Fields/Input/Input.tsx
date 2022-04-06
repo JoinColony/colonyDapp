@@ -89,6 +89,7 @@ export interface Props extends Omit<InputComponentProps, 'placeholder'> {
 
   /** External on change hook */
   onChange?: (e: React.ChangeEvent<any>) => void;
+  /** Testing */
   dataTest?: string;
 }
 
@@ -113,8 +114,8 @@ const Input = ({
   forcedFieldError,
   maxLength,
   maxButtonParams,
-  onChange,
   dataTest,
+  onChange,
 }: Props) => {
   const [id] = useState(idProp || nanoid());
   const { formatMessage } = useIntl();

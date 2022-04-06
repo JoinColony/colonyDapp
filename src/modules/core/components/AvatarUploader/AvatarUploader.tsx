@@ -119,6 +119,7 @@ const AvatarUploader = ({
           itemComponent={AvatarUploadItem}
           upload={upload}
           handleError={handleError}
+          dataTest="avatarUploaderDrop"
         >
           {renderOverlay()}
         </FileUpload>
@@ -129,12 +130,12 @@ const AvatarUploader = ({
               text={{ id: 'button.remove' }}
               onClick={remove}
               disabled={!isSet}
-              data-test="avatarUploaderRemove"
+              dataTest="avatarUploaderRemove"
             />
             <Button
               text={{ id: 'button.choose' }}
               onClick={choose}
-              data-test="avatarUploaderChoose"
+              dataTest="avatarUploaderChoose"
             />
           </div>
         )}

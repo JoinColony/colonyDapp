@@ -175,6 +175,7 @@ const TokenSelector = ({
         forcedFieldError={
           tokenSelectorHasError ? MSG.statusNotFound : undefined
         }
+        dataTest="tokenSelectorInput"
       />
     </div>
   );

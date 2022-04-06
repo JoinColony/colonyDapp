@@ -35,10 +35,10 @@ const TokenCardList = ({
   tokens,
   nativeTokenLocked,
 }: Props) => (
-  <div className={styles.tokenCardContainer}>
+  <div className={styles.tokenCardContainer} data-test="userTokenCards">
     <CardList appearance={appearance}>
       {tokens.map((token) => (
-        <div key={token.address}>
+        <div key={token.address} data-test="tokenCardItem">
           {'processedBalances' in token && (
             <TokenCard
               domainId={domainId}
