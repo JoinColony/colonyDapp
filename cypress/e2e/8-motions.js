@@ -117,7 +117,7 @@ describe('User can create motions via UAC', () => {
     cy.checkMotion();
   });
 
-  it.only('Disables & deprecates voting extensions', () => {
+  it('Disables & deprecates voting extensions', () => {
     cy.login();
     cy.visit(`/colony/${Cypress.config().colony.name}`);
 
