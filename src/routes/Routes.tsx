@@ -195,8 +195,9 @@ const Routes = () => {
         <AlwaysAccesibleRoute
           path={USER_EDIT_ROUTE}
           component={UserProfileEdit}
-          layout={NavBar}
+          layout={Default}
           routeProps={{
+            hasSubscribedColonies: false,
             backText: MSG.userProfileEditBack,
             backRoute: `/user/${username}`,
           }}
