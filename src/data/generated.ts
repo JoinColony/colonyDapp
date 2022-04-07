@@ -154,6 +154,8 @@ export type Mutation = {
   createUser?: Maybe<User>;
   deleteTransactionMessage: Scalars['Boolean'];
   editUser?: Maybe<User>;
+  faunaCreateUser: User;
+  faunaEditUser: User;
   markAllNotificationsAsRead: Scalars['Boolean'];
   markNotificationAsRead: Scalars['Boolean'];
   sendTransactionMessage: Scalars['Boolean'];
@@ -183,6 +185,16 @@ export type MutationDeleteTransactionMessageArgs = {
 
 
 export type MutationEditUserArgs = {
+  input: EditUserInput;
+};
+
+
+export type MutationFaunaCreateUserArgs = {
+  createUserInput: CreateUserInput;
+};
+
+
+export type MutationFaunaEditUserArgs = {
   input: EditUserInput;
 };
 
@@ -2264,6 +2276,26 @@ export type FaunaUserByAddressQuery = { faunaUserByAddress?: Maybe<(
     Pick<User, 'id'>
     & { profile: Pick<UserProfile, 'username' | 'walletAddress' | 'displayName' | 'avatarHash'> }
   )> };
+
+export type FaunaCreateUserMutationVariables = Exact<{
+  createUserInput: CreateUserInput;
+}>;
+
+
+export type FaunaCreateUserMutation = { faunaCreateUser: (
+    Pick<User, 'id'>
+    & { profile: Pick<UserProfile, 'username' | 'walletAddress' | 'displayName' | 'avatarHash'> }
+  ) };
+
+export type FaunaEditUserMutationVariables = Exact<{
+  input: EditUserInput;
+}>;
+
+
+export type FaunaEditUserMutation = { faunaEditUser: (
+    Pick<User, 'id'>
+    & { profile: Pick<UserProfile, 'avatarHash' | 'bio' | 'displayName' | 'location' | 'website'> }
+  ) };
 
 export type ColonyMembersQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -6112,6 +6144,83 @@ export function useFaunaUserByAddressLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type FaunaUserByAddressQueryHookResult = ReturnType<typeof useFaunaUserByAddressQuery>;
 export type FaunaUserByAddressLazyQueryHookResult = ReturnType<typeof useFaunaUserByAddressLazyQuery>;
 export type FaunaUserByAddressQueryResult = Apollo.QueryResult<FaunaUserByAddressQuery, FaunaUserByAddressQueryVariables>;
+export const FaunaCreateUserDocument = gql`
+    mutation FaunaCreateUser($createUserInput: CreateUserInput!) {
+  faunaCreateUser(input: $createUserInput) @client {
+    id
+    profile {
+      username
+      walletAddress
+      displayName
+      avatarHash
+    }
+  }
+}
+    `;
+export type FaunaCreateUserMutationFn = Apollo.MutationFunction<FaunaCreateUserMutation, FaunaCreateUserMutationVariables>;
+
+/**
+ * __useFaunaCreateUserMutation__
+ *
+ * To run a mutation, you first call `useFaunaCreateUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useFaunaCreateUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [faunaCreateUserMutation, { data, loading, error }] = useFaunaCreateUserMutation({
+ *   variables: {
+ *      createUserInput: // value for 'createUserInput'
+ *   },
+ * });
+ */
+export function useFaunaCreateUserMutation(baseOptions?: Apollo.MutationHookOptions<FaunaCreateUserMutation, FaunaCreateUserMutationVariables>) {
+        return Apollo.useMutation<FaunaCreateUserMutation, FaunaCreateUserMutationVariables>(FaunaCreateUserDocument, baseOptions);
+      }
+export type FaunaCreateUserMutationHookResult = ReturnType<typeof useFaunaCreateUserMutation>;
+export type FaunaCreateUserMutationResult = Apollo.MutationResult<FaunaCreateUserMutation>;
+export type FaunaCreateUserMutationOptions = Apollo.BaseMutationOptions<FaunaCreateUserMutation, FaunaCreateUserMutationVariables>;
+export const FaunaEditUserDocument = gql`
+    mutation FaunaEditUser($input: EditUserInput!) {
+  faunaEditUser(input: $input) @client {
+    id
+    profile {
+      avatarHash
+      bio
+      displayName
+      location
+      website
+    }
+  }
+}
+    `;
+export type FaunaEditUserMutationFn = Apollo.MutationFunction<FaunaEditUserMutation, FaunaEditUserMutationVariables>;
+
+/**
+ * __useFaunaEditUserMutation__
+ *
+ * To run a mutation, you first call `useFaunaEditUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useFaunaEditUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [faunaEditUserMutation, { data, loading, error }] = useFaunaEditUserMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useFaunaEditUserMutation(baseOptions?: Apollo.MutationHookOptions<FaunaEditUserMutation, FaunaEditUserMutationVariables>) {
+        return Apollo.useMutation<FaunaEditUserMutation, FaunaEditUserMutationVariables>(FaunaEditUserDocument, baseOptions);
+      }
+export type FaunaEditUserMutationHookResult = ReturnType<typeof useFaunaEditUserMutation>;
+export type FaunaEditUserMutationResult = Apollo.MutationResult<FaunaEditUserMutation>;
+export type FaunaEditUserMutationOptions = Apollo.BaseMutationOptions<FaunaEditUserMutation, FaunaEditUserMutationVariables>;
 export const ColonyMembersDocument = gql`
     query ColonyMembers($colonyAddress: String!) {
   subscribedUsers(colonyAddress: $colonyAddress) {

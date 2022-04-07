@@ -34,3 +34,30 @@ query FaunaUserByAddress($address: String!) {
     }
   }
 }
+
+mutation FaunaCreateUser(
+  $createUserInput: CreateUserInput!
+) {
+  faunaCreateUser(input: $createUserInput) @client {
+    id
+    profile {
+      username
+      walletAddress
+      displayName
+      avatarHash
+    }
+  }
+}
+
+mutation FaunaEditUser($input: EditUserInput!) {
+  faunaEditUser(input: $input) @client {
+    id
+    profile {
+      avatarHash
+      bio
+      displayName
+      location
+      website
+    }
+  }
+}

@@ -9,9 +9,15 @@ import {
   Map,
   Match,
   Index,
+  Create,
 } from 'faunadb';
 
 import { Context } from '~context/index';
+import {
+  LoggedInUserQuery,
+  LoggedInUserQueryVariables,
+  LoggedInUserDocument,
+} from '../index';
 
 enum Collections {
   Users = 'users',
@@ -32,6 +38,7 @@ const baseUserProfile = {
 
 export const faunaResolvers = ({
   faunaClient,
+  apolloClient,
 }: Required<Context>): Resolvers => ({
   Query: {
     async faunaTopUsers(_, { limit }) {
@@ -66,6 +73,32 @@ export const faunaResolvers = ({
     async faunaUserByAddress(_, { address }) {
       const { data }: { data: Record<string, any> } = await faunaClient.query(
         Get(Match(Index(Indexes.UsersByAddress), address)),
+      );
+      return {
+        __typename: 'User',
+        id: data.walletAddress,
+        profile: {
+          ...baseUserProfile,
+          ...data,
+        },
+      };
+    },
+  },
+  Mutation: {
+    async faunaCreateUser(_, { input }) {
+      const { data: apolloData } = await apolloClient.query<
+        LoggedInUserQuery,
+        LoggedInUserQueryVariables
+      >({
+        query: LoggedInUserDocument,
+      });
+      const { data }: { data: Record<string, any> } = await faunaClient.query(
+        Create(Collection(Collections.Users), {
+          data: {
+            ...input,
+            walletAddress: apolloData?.loggedInUser?.walletAddress,
+          },
+        }),
       );
       return {
         __typename: 'User',

@@ -6,4 +6,9 @@ export default gql`
     faunaUserByName(username: String!): User
     faunaUserByAddress(address: String!): User
   }
+
+  extend type Mutation {
+    faunaCreateUser(createUserInput: CreateUserInput!): User!
+    faunaEditUser(input: EditUserInput!): User!
+  }
 `;

@@ -1,20 +1,11 @@
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
-  CreateUserDocument,
-  CreateUserMutation,
-  CreateUserMutationVariables,
-  SubscribeToColonyMutation,
-  SubscribeToColonyMutationVariables,
-  SubscribeToColonyDocument,
-  MetaColonyQuery,
-  MetaColonyQueryVariables,
-  MetaColonyDocument,
-  UserAddressQuery,
-  UserAddressQueryVariables,
-  UserAddressDocument,
-  UserQuery,
-  UserQueryVariables,
-  UserDocument,
+  FaunaCreateUserDocument,
+  FaunaCreateUserMutation,
+  FaunaCreateUserMutationVariables,
+  FaunaUserByNameQuery,
+  FaunaUserByNameQueryVariables,
+  FaunaUserByNameDocument,
 } from '~data/index';
 import { log } from '~utils/debug';
 
@@ -33,27 +24,17 @@ export function* createUserWithSecondAttempt(
 
     if (reattempt) {
       try {
-        const { data: userAddressData } = yield apolloClient.query<
-          UserAddressQuery,
-          UserAddressQueryVariables
-        >({
-          query: UserAddressDocument,
-          variables: {
-            name: username,
-          },
-        });
-
         const { data: potentialUserData } = yield apolloClient.query<
-          UserQuery,
-          UserQueryVariables
+          FaunaUserByNameQuery,
+          FaunaUserByNameQueryVariables
         >({
-          query: UserDocument,
+          query: FaunaUserByNameDocument,
           variables: {
-            address: userAddressData?.userAddress,
+            username,
           },
         });
 
-        user = potentialUserData?.user;
+        user = potentialUserData?.faunaUserByName;
       } catch (error) {
         log.verbose(
           `User with username ${username} was not found, attempting to create a new entry`,
@@ -67,54 +48,33 @@ export function* createUserWithSecondAttempt(
        * Create an entry for the user in the database
        */
       const { data: userData } = yield apolloClient.mutate<
-        CreateUserMutation,
-        CreateUserMutationVariables
+        FaunaCreateUserMutation,
+        FaunaCreateUserMutationVariables
       >({
-        mutation: CreateUserDocument,
+        mutation: FaunaCreateUserDocument,
         variables: {
           createUserInput: { username },
         },
       });
 
-      user = userData?.createUser;
+      user = userData?.faunaCreateUser;
 
-      if (!userData?.createUser?.profile?.username) {
+      if (!user?.profile?.username) {
         const { data: userDataSecondAttempt } = yield apolloClient.mutate<
-          CreateUserMutation,
-          CreateUserMutationVariables
+          FaunaCreateUserMutation,
+          FaunaCreateUserMutationVariables
         >({
-          mutation: CreateUserDocument,
+          mutation: FaunaCreateUserDocument,
           variables: {
             createUserInput: { username },
           },
         });
 
-        if (!userDataSecondAttempt?.createUser?.profile?.username) {
+        if (!userDataSecondAttempt?.faunaCreateUser?.profile?.username) {
           throw new Error(`Apollo 'CreateUser' mutation failed`);
         }
 
-        user = userDataSecondAttempt.createUser;
-      }
-
-      const { data: metaColonyData } = yield apolloClient.query<
-        MetaColonyQuery,
-        MetaColonyQueryVariables
-      >({
-        query: MetaColonyDocument,
-      });
-
-      if (metaColonyData?.processedMetaColony?.colonyName) {
-        yield apolloClient.mutate<
-          SubscribeToColonyMutation,
-          SubscribeToColonyMutationVariables
-        >({
-          mutation: SubscribeToColonyDocument,
-          variables: {
-            input: {
-              colonyAddress: metaColonyData.processedMetaColony.colonyAddress,
-            },
-          },
-        });
+        user = userDataSecondAttempt.faunaCreateUser;
       }
     }
     return user;
