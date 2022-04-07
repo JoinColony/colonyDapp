@@ -65,6 +65,7 @@ const ColonyNavigation = ({ colony: { colonyAddress, colonyName } }: Props) => {
         linkTo: `/colony/${colonyName}/events`,
         showDot: hasNewEvents,
         text: MSG.linkTextEvents,
+        dataTest: 'eventsNavigationButton',
       },
       {
         exact: false,

@@ -183,6 +183,7 @@ const RevealWidget = ({
                 }
                 onClick={() => handleSubmit()}
                 loading={isSubmitting}
+                dataTest="revealButton"
               />
             }
           />

@@ -172,6 +172,7 @@ const Slider = ({
           height: sizes.height,
           backgroundImage: `linear-gradient(90deg, #76748B 0% ${gradientPercentage}%, transparent ${gradientPercentage}%)`,
         }}
+        data-test="slider"
       />
     </div>
   );

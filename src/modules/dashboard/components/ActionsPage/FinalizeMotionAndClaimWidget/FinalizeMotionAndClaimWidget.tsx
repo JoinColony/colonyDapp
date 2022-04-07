@@ -334,6 +334,7 @@ const FinalizeMotionAndClaimWidget = ({
                     }
                     onClick={() => handleSubmit()}
                     loading={isSubmitting}
+                    dataTest="finalizeButton"
                   />
                 </div>
               </div>

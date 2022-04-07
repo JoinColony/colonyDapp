@@ -126,6 +126,7 @@ const RaiseObjectionDialogForm = ({
               userActivatedTokens.lt(decimalAmount) ||
               isSubmitting
             }
+            dataTest="objectDialogStakeButton"
           />
         </span>
       </DialogSection>

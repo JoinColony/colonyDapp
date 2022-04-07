@@ -1,3 +1,4 @@
+import { bigNumberify } from 'ethers/utils';
 import { Extension } from '@colony/colony-js';
 
 import ganacheAccounts from '~lib/colonyNetwork/ganache-accounts.json';
@@ -115,6 +116,66 @@ describe('User can create motions via UAC', () => {
     cy.managePermissions(colony.name, true);
 
     cy.checkMotion();
+  });
+
+  it('Can claim tokens', () => {
+    cy.login();
+    cy.visit(`/colony/${Cypress.config().colony.name}`);
+    // // activate tokens
+    cy.getBySel('tokenActivationButton', { timeout: 120000 }).click();
+    cy.getBySel('inputMaxButton').click();
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.getBySel('tokenActivationConfirm').click().wait(10000);
+  });
+
+  it('Can create, stake, vote, finalise motion & claim tokens', () => {
+    const amountToMint = 10;
+    cy.mintTokens(amountToMint, true);
+
+    cy.checkMotion();
+
+    cy.stakeMax('stakeWidgetStakeButton');
+
+    cy.getBySel('stakeWidgetObjectButton').click();
+
+    cy.stakeMax('objectDialogStakeButton');
+
+    // to close the gas station
+    cy.getBySel('actionHeading').click();
+
+    cy.get('input[type="radio"]').first().click({ force: true });
+    cy.getBySel('voteButton').click();
+
+    cy.getBySel('revealButton').click();
+    cy.getBySel('motionStatusTag', { timeout: 20000 }).should(
+      'have.text',
+      'Passed',
+    );
+
+    // to close the gas station
+    cy.getBySel('actionHeading').click();
+
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.getBySel('finalizeButton').click().wait(5000);
+
+    cy.getBySel('backButton').click();
+
+    cy.getBySel('eventsNavigationButton').click({
+      force: true,
+    });
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.getBySel('claimForColonyButton', { timeout: 100000 }).click().wait(5000);
+
+    cy.get('@totalFunds').then(($totalFunds) => {
+      const totalFunds = bigNumberify($totalFunds.split(',').join(''))
+        .add(amountToMint)
+        .toString();
+
+      cy.getBySel('colonyTotalFunds', { timeout: 15000 }).then(($text) => {
+        const text = $text.text().split(',').join('');
+        expect(text).to.eq(totalFunds);
+      });
+    });
   });
 
   it('Disables & deprecates voting extensions', () => {

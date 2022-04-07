@@ -159,6 +159,7 @@ const InputComponent = ({
               );
             }
           }}
+          dataTest="inputMaxButton"
         />
         <Cleave
           {...props}

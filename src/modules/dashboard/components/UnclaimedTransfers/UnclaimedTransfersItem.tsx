@@ -129,6 +129,7 @@ const UnclaimedTransfersItem = ({
           success={ActionTypes.COLONY_CLAIM_TOKEN_SUCCESS}
           transform={transform}
           disabled={!isNetworkAllowed || !hasRegisteredProfile}
+          dataTest="claimForColonyButton"
         />
       </div>
     </li>

@@ -55,6 +55,7 @@ const UserTokenActivationButton = ({
             className={styles.tokens}
             onClick={toggle}
             ref={ref}
+            data-test="tokenActivationButton"
           >
             <span
               className={`${styles.dot} ${
