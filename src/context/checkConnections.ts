@@ -1,5 +1,5 @@
 import appErrorStateContext, { AppErrorType } from './appErrorState';
-import { getApolloUri } from './apolloClient';
+// import { getApolloUri } from './apolloClient';
 
 const STORAGE_KEY = 'dsettings';
 const decentralizedStorage = JSON.parse(
@@ -36,27 +36,27 @@ const checkServerConnection = (forceUpdate) => {
     });
 };
 
-const checkServerWebsocketConnection = (forceUpdate) => {
-  let errorAlreadyExists = false;
-  if (
-    appErrorStateContext
-      .getErrors()
-      .find(({ type }) => type === AppErrorType.ServerWebsocketConnection)
-  ) {
-    errorAlreadyExists = true;
-  }
-  const webSocket = new WebSocket(
-    getApolloUri(`${process.env.SERVER_ENDPOINT}/graphql`, true),
-  );
-  if (webSocket.readyState === WebSocket.CLOSED) {
-    appErrorStateContext.addError({
-      type: AppErrorType.ServerWebsocketConnection,
-    });
-    if (!errorAlreadyExists) {
-      forceUpdate();
-    }
-  }
-};
+// const checkServerWebsocketConnection = (forceUpdate) => {
+//   let errorAlreadyExists = false;
+//   if (
+//     appErrorStateContext
+//       .getErrors()
+//       .find(({ type }) => type === AppErrorType.ServerWebsocketConnection)
+//   ) {
+//     errorAlreadyExists = true;
+//   }
+//   const webSocket = new WebSocket(
+//     getApolloUri(`${process.env.SERVER_ENDPOINT}/graphql`, true),
+//   );
+//   if (webSocket.readyState === WebSocket.CLOSED) {
+//     appErrorStateContext.addError({
+//       type: AppErrorType.ServerWebsocketConnection,
+//     });
+//     if (!errorAlreadyExists) {
+//       forceUpdate();
+//     }
+//   }
+// };
 
 const checkProviderConnection = (forceUpdate) => {
   const providerURL = decentralizedStorage?.enabled
@@ -112,7 +112,7 @@ const checkProviderConnection = (forceUpdate) => {
 const checkConnections = (forceUpdate) => {
   if (!decentralizedStorage?.enabled) {
     checkServerConnection(forceUpdate);
-    checkServerWebsocketConnection(forceUpdate);
+    // checkServerWebsocketConnection(forceUpdate);
   }
   checkProviderConnection(forceUpdate);
 };
