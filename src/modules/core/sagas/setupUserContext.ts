@@ -64,6 +64,7 @@ export default function* setupUserContext(
   } = action;
   try {
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+    const faunaClient = TEMP_getContext(ContextModule.FaunaClient);
 
     /*
      * Get the "old" wallet address, and if it's ethereal, remove it's authetication
@@ -195,6 +196,7 @@ export default function* setupUserContext(
       ipfsWithFallback,
       provider,
       chatClient,
+      faunaClient,
     };
     yield setupResolvers(apolloClient, userContext);
 

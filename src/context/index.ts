@@ -2,6 +2,7 @@ import { ApolloClient as ApolloClientClass } from '@apollo/client';
 import { PurserWallet } from '@purser/core';
 import { Provider as EthersProvider } from 'ethers/providers';
 import { StreamChat } from 'stream-chat';
+import { Client as FaunaDbClient } from 'faunadb';
 
 // import ColonyManagerClass from '~lib/ColonyManager';
 
@@ -12,6 +13,7 @@ import apolloClient from './apolloClient';
 import ipfsWithFallback from './ipfsWithFallbackContext';
 import getProvider from '../modules/core/sagas/utils/getProvider';
 import getChatClient from './chatClient';
+import faunaClient from './faunaClient';
 
 export enum ContextModule {
   Wallet = 'wallet',
@@ -23,6 +25,7 @@ export enum ContextModule {
   IPFSWithFallback = 'ipfsWithFallback',
   Provider = 'provider',
   ChatClient = 'chatClient',
+  FaunaClient = 'faunaClient',
 }
 
 export interface IpfsWithFallbackSkeleton {
@@ -39,6 +42,7 @@ export interface Context {
   [ContextModule.IPFSWithFallback]?: IpfsWithFallbackSkeleton;
   [ContextModule.Provider]?: EthersProvider;
   [ContextModule.ChatClient]?: StreamChat;
+  [ContextModule.FaunaClient]?: FaunaDbClient;
 }
 
 const STORAGE_KEY = 'dsettings';
@@ -57,6 +61,7 @@ const TEMP_newContext: Context = {
     decentralizedStorage?.enabled ? decentralizedStorage?.customRPC : undefined,
   ),
   [ContextModule.ChatClient]: getChatClient(),
+  [ContextModule.FaunaClient]: faunaClient,
 };
 
 export const TEMP_setContext = <K extends keyof Context>(
