@@ -10,6 +10,8 @@ import {
   Match,
   Index,
   Create,
+  Update,
+  Select,
 } from 'faunadb';
 
 import { Context } from '~context/index';
@@ -99,6 +101,38 @@ export const faunaResolvers = ({
             walletAddress: apolloData?.loggedInUser?.walletAddress,
           },
         }),
+      );
+      return {
+        __typename: 'User',
+        id: data.walletAddress,
+        profile: {
+          ...baseUserProfile,
+          ...data,
+        },
+      };
+    },
+    async faunaEditUser(_, { input }) {
+      const { data: apolloData } = await apolloClient.query<
+        LoggedInUserQuery,
+        LoggedInUserQueryVariables
+      >({
+        query: LoggedInUserDocument,
+      });
+      const { data }: { data: Record<string, any> } = await faunaClient.query(
+        Update(
+          Select(
+            'ref',
+            Get(
+              Match(
+                Index(Indexes.UsersByAddress),
+                apolloData?.loggedInUser?.walletAddress || '',
+              ),
+            ),
+          ),
+          {
+            data: { ...input },
+          },
+        ),
       );
       return {
         __typename: 'User',

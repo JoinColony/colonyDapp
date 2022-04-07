@@ -16,7 +16,11 @@ import {
 } from '~core/Fields';
 import Button from '~core/Button';
 import ProfileTemplate from '~pages/ProfileTemplate';
-import { useLoggedInUser, useUser, useEditUserMutation } from '~data/index';
+import {
+  useLoggedInUser,
+  useUser,
+  useFaunaEditUserMutation,
+} from '~data/index';
 import { LANDING_PAGE_ROUTE } from '~routes/index';
 import { Tabs, Tab, TabList, TabPanel } from '~core/Tabs';
 import Toggle from '~core/Fields/Toggle';
@@ -114,7 +118,7 @@ const UserProfileEdit = () => {
     commentsEnabled,
   } = useLoggedInUser();
 
-  const [editUser] = useEditUserMutation();
+  const [editUser] = useFaunaEditUserMutation();
   const onProfileSubmit = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ({ commentsEnabled: commentsEnabledValue, ...profile }: FormValues) => {
