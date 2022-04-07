@@ -256,6 +256,9 @@ export type Query = {
   domains: Array<SubgraphDomain>;
   events: Array<SubgraphEvent>;
   eventsForMotion: Array<ParsedEvent>;
+  faunaTopUsers: Array<Maybe<User>>;
+  faunaUserByAddress?: Maybe<User>;
+  faunaUserByName?: Maybe<User>;
   getRecoveryRequiredApprovals: Scalars['Int'];
   getRecoveryStorageSlot: Scalars['String'];
   historicColonyRoles: Array<ProcessedRoles>;
@@ -472,6 +475,21 @@ export type QueryEventsArgs = {
 export type QueryEventsForMotionArgs = {
   motionId: Scalars['Int'];
   colonyAddress: Scalars['String'];
+};
+
+
+export type QueryFaunaTopUsersArgs = {
+  limit: Scalars['Int'];
+};
+
+
+export type QueryFaunaUserByAddressArgs = {
+  address: Scalars['String'];
+};
+
+
+export type QueryFaunaUserByNameArgs = {
+  username: Scalars['String'];
 };
 
 
@@ -2215,6 +2233,36 @@ export type SubgraphExtensionEventsQuery = { extensionInstalledEvents: Array<(
         & { number: SubgraphBlock['id'] }
       ) }
     ) }
+  )> };
+
+export type FaunaTopUsersQueryVariables = Exact<{
+  limit?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type FaunaTopUsersQuery = { faunaTopUsers: Array<Maybe<(
+    Pick<User, 'id'>
+    & { profile: Pick<UserProfile, 'username' | 'walletAddress' | 'displayName' | 'avatarHash'> }
+  )>> };
+
+export type FaunaUserByNameQueryVariables = Exact<{
+  username: Scalars['String'];
+}>;
+
+
+export type FaunaUserByNameQuery = { faunaUserByName?: Maybe<(
+    Pick<User, 'id'>
+    & { profile: Pick<UserProfile, 'username' | 'walletAddress' | 'displayName' | 'avatarHash'> }
+  )> };
+
+export type FaunaUserByAddressQueryVariables = Exact<{
+  address: Scalars['String'];
+}>;
+
+
+export type FaunaUserByAddressQuery = { faunaUserByAddress?: Maybe<(
+    Pick<User, 'id'>
+    & { profile: Pick<UserProfile, 'username' | 'walletAddress' | 'displayName' | 'avatarHash'> }
   )> };
 
 export type ColonyMembersQueryVariables = Exact<{
@@ -5947,6 +5995,123 @@ export function useSubgraphExtensionEventsLazyQuery(baseOptions?: Apollo.LazyQue
 export type SubgraphExtensionEventsQueryHookResult = ReturnType<typeof useSubgraphExtensionEventsQuery>;
 export type SubgraphExtensionEventsLazyQueryHookResult = ReturnType<typeof useSubgraphExtensionEventsLazyQuery>;
 export type SubgraphExtensionEventsQueryResult = Apollo.QueryResult<SubgraphExtensionEventsQuery, SubgraphExtensionEventsQueryVariables>;
+export const FaunaTopUsersDocument = gql`
+    query FaunaTopUsers($limit: Int = 10) {
+  faunaTopUsers(limit: $limit) @client {
+    id
+    profile {
+      username
+      walletAddress
+      displayName
+      avatarHash
+    }
+  }
+}
+    `;
+
+/**
+ * __useFaunaTopUsersQuery__
+ *
+ * To run a query within a React component, call `useFaunaTopUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFaunaTopUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFaunaTopUsersQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useFaunaTopUsersQuery(baseOptions?: Apollo.QueryHookOptions<FaunaTopUsersQuery, FaunaTopUsersQueryVariables>) {
+        return Apollo.useQuery<FaunaTopUsersQuery, FaunaTopUsersQueryVariables>(FaunaTopUsersDocument, baseOptions);
+      }
+export function useFaunaTopUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FaunaTopUsersQuery, FaunaTopUsersQueryVariables>) {
+          return Apollo.useLazyQuery<FaunaTopUsersQuery, FaunaTopUsersQueryVariables>(FaunaTopUsersDocument, baseOptions);
+        }
+export type FaunaTopUsersQueryHookResult = ReturnType<typeof useFaunaTopUsersQuery>;
+export type FaunaTopUsersLazyQueryHookResult = ReturnType<typeof useFaunaTopUsersLazyQuery>;
+export type FaunaTopUsersQueryResult = Apollo.QueryResult<FaunaTopUsersQuery, FaunaTopUsersQueryVariables>;
+export const FaunaUserByNameDocument = gql`
+    query FaunaUserByName($username: String!) {
+  faunaUserByName(username: $username) @client {
+    id
+    profile {
+      username
+      walletAddress
+      displayName
+      avatarHash
+    }
+  }
+}
+    `;
+
+/**
+ * __useFaunaUserByNameQuery__
+ *
+ * To run a query within a React component, call `useFaunaUserByNameQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFaunaUserByNameQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFaunaUserByNameQuery({
+ *   variables: {
+ *      username: // value for 'username'
+ *   },
+ * });
+ */
+export function useFaunaUserByNameQuery(baseOptions?: Apollo.QueryHookOptions<FaunaUserByNameQuery, FaunaUserByNameQueryVariables>) {
+        return Apollo.useQuery<FaunaUserByNameQuery, FaunaUserByNameQueryVariables>(FaunaUserByNameDocument, baseOptions);
+      }
+export function useFaunaUserByNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FaunaUserByNameQuery, FaunaUserByNameQueryVariables>) {
+          return Apollo.useLazyQuery<FaunaUserByNameQuery, FaunaUserByNameQueryVariables>(FaunaUserByNameDocument, baseOptions);
+        }
+export type FaunaUserByNameQueryHookResult = ReturnType<typeof useFaunaUserByNameQuery>;
+export type FaunaUserByNameLazyQueryHookResult = ReturnType<typeof useFaunaUserByNameLazyQuery>;
+export type FaunaUserByNameQueryResult = Apollo.QueryResult<FaunaUserByNameQuery, FaunaUserByNameQueryVariables>;
+export const FaunaUserByAddressDocument = gql`
+    query FaunaUserByAddress($address: String!) {
+  faunaUserByAddress(address: $address) @client {
+    id
+    profile {
+      username
+      walletAddress
+      displayName
+      avatarHash
+    }
+  }
+}
+    `;
+
+/**
+ * __useFaunaUserByAddressQuery__
+ *
+ * To run a query within a React component, call `useFaunaUserByAddressQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFaunaUserByAddressQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFaunaUserByAddressQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useFaunaUserByAddressQuery(baseOptions?: Apollo.QueryHookOptions<FaunaUserByAddressQuery, FaunaUserByAddressQueryVariables>) {
+        return Apollo.useQuery<FaunaUserByAddressQuery, FaunaUserByAddressQueryVariables>(FaunaUserByAddressDocument, baseOptions);
+      }
+export function useFaunaUserByAddressLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FaunaUserByAddressQuery, FaunaUserByAddressQueryVariables>) {
+          return Apollo.useLazyQuery<FaunaUserByAddressQuery, FaunaUserByAddressQueryVariables>(FaunaUserByAddressDocument, baseOptions);
+        }
+export type FaunaUserByAddressQueryHookResult = ReturnType<typeof useFaunaUserByAddressQuery>;
+export type FaunaUserByAddressLazyQueryHookResult = ReturnType<typeof useFaunaUserByAddressLazyQuery>;
+export type FaunaUserByAddressQueryResult = Apollo.QueryResult<FaunaUserByAddressQuery, FaunaUserByAddressQueryVariables>;
 export const ColonyMembersDocument = gql`
     query ColonyMembers($colonyAddress: String!) {
   subscribedUsers(colonyAddress: $colonyAddress) {

@@ -1,0 +1,36 @@
+query FaunaTopUsers($limit: Int = 10) {
+  faunaTopUsers(limit: $limit) @client {
+    id
+    profile {
+      username
+      walletAddress
+      displayName
+      avatarHash
+    }
+  }
+}
+
+query FaunaUserByName($username: String!) {
+  faunaUserByName(username: $username) @client {
+    id
+    profile {
+      username
+      walletAddress
+      displayName
+      avatarHash
+    }
+  }
+}
+
+
+query FaunaUserByAddress($address: String!) {
+  faunaUserByAddress(address: $address) @client {
+    id
+    profile {
+      username
+      walletAddress
+      displayName
+      avatarHash
+    }
+  }
+}

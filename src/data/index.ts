@@ -27,12 +27,13 @@ import {
   initialCache as loggedInUser,
 } from './resolvers/loggedInUser';
 // import { colonyResolvers } from './resolvers/colony';
-import { userResolvers } from './resolvers/user';
+// import { userResolvers } from './resolvers/user';
 // import { tokenResolvers } from './resolvers/token';
 import {
   // networkContractsResolvers,
   initialCache as networkContracts,
 } from './resolvers/networkContracts';
+import { faunaResolvers } from './resolvers/fauna';
 // import { colonyActionsResolvers } from './resolvers/colonyActions';
 // import { metaColonyResolvers } from './resolvers/metacolony';
 // import { eventsResolvers } from './resolvers/events';
@@ -63,7 +64,8 @@ export { default as typeDefs } from './graphql/typeDefs';
 export const resolvers: ResolverFactory[] = [
   // colonyResolvers,
   loggedInUserResolvers,
-  userResolvers,
+  // userResolvers,
+  faunaResolvers,
   // tokenResolvers,
   // networkContractsResolvers,
   // colonyActionsResolvers,

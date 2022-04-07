@@ -4,8 +4,8 @@ import { Redirect } from 'react-router-dom';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import ProfileTemplate from '~pages/ProfileTemplate';
 import {
-  useUserLazyQuery,
-  useUserByNameLazyQuery,
+  useFaunaUserByAddressLazyQuery,
+  useFaunaUserByNameLazyQuery,
   AnyUser,
   useLoggedInUser,
   useContractUserLazyQuery,
@@ -34,11 +34,11 @@ const UserProfile = ({
   const [
     loadUserByAddress,
     { data: userDataByAddress, error: userErrorByAddress },
-  ] = useUserLazyQuery();
+  ] = useFaunaUserByAddressLazyQuery();
   const [
     loadUserByName,
     { data: userDataByName, error: userErrorByName },
-  ] = useUserByNameLazyQuery();
+  ] = useFaunaUserByNameLazyQuery();
   const [
     loadContractUserByAddress,
     { data: contractUserDataByAddress, error: contractUserErrorByAddress },
@@ -102,8 +102,10 @@ const UserProfile = ({
     (decentralized &&
       !loadByAddress &&
       !contractUserDataByName?.contractUserByName) ||
-    (!decentralized && loadByAddress && !userDataByAddress?.user) ||
-    (!decentralized && !loadByAddress && !userDataByName?.userByName)
+    (!decentralized &&
+      loadByAddress &&
+      !userDataByAddress?.faunaUserByAddress) ||
+    (!decentralized && !loadByAddress && !userDataByName?.faunaUserByName)
   ) {
     return <UserProfileSpinner />;
   }
@@ -114,7 +116,9 @@ const UserProfile = ({
       ? contractUserDataByAddress?.contractUser
       : contractUserDataByName?.contractUserByName;
   } else {
-    user = loadByAddress ? userDataByAddress?.user : userDataByName?.userByName;
+    user = loadByAddress
+      ? userDataByAddress?.faunaUserByAddress
+      : userDataByName?.faunaUserByName;
   }
 
   return (

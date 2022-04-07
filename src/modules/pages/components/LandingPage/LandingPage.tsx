@@ -8,10 +8,10 @@ import Heading from '~core/Heading';
 import { CREATE_USER_ROUTE } from '~routes/index';
 import {
   useLoggedInUser,
-  useTopUsersLazyQuery,
   AnyUser,
   useContractUserByNameLazyQuery,
-  useUserByNameLazyQuery,
+  useFaunaTopUsersLazyQuery,
+  useFaunaUserByNameLazyQuery,
 } from '~data/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
 import HookedUserAvatar from '~users/HookedUserAvatar';
@@ -56,8 +56,11 @@ const LandingPage = () => {
 
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
-  const [loadTopUsers, { data: topUsersData }] = useTopUsersLazyQuery();
-  const [loadUserByName, { data: userDataByName }] = useUserByNameLazyQuery();
+  const [loadTopUsers, { data: topUsersData }] = useFaunaTopUsersLazyQuery();
+  const [
+    loadUserByName,
+    { data: userDataByName },
+  ] = useFaunaUserByNameLazyQuery();
   const [
     loadContractUserByName,
     { data: contractUserDataByName },
@@ -91,9 +94,9 @@ const LandingPage = () => {
 
   const currentUser = decentralized
     ? contractUserDataByName?.contractUserByName
-    : userDataByName?.userByName;
+    : userDataByName?.faunaUserByName;
 
-  const otherCentralizedUsers = topUsersData?.topUsers?.filter(
+  const otherCentralizedUsers = topUsersData?.faunaTopUsers?.filter(
     (user) => user?.profile.username !== username,
   );
 

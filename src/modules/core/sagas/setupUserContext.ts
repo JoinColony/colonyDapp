@@ -21,9 +21,12 @@ import {
   LoggedInUserQuery,
   LoggedInUserQueryVariables,
   LoggedInUserDocument,
-  UserQuery,
-  UserQueryVariables,
-  UserDocument,
+  // UserQuery,
+  // UserQueryVariables,
+  // UserDocument,
+  FaunaUserByAddressQuery,
+  FaunaUserByAddressQueryVariables,
+  FaunaUserByAddressDocument,
   // updateNetworkContracts,
 } from '~data/index';
 
@@ -164,15 +167,15 @@ export default function* setupUserContext(
           username = ENS.stripDomainParts('user', domain);
         } else {
           const { data: usernameData } = yield apolloClient.query<
-            UserQuery,
-            UserQueryVariables
+            FaunaUserByAddressQuery,
+            FaunaUserByAddressQueryVariables
           >({
-            query: UserDocument,
+            query: FaunaUserByAddressDocument,
             variables: {
               address: walletAddress,
             },
           });
-          username = usernameData?.user?.profile?.username;
+          username = usernameData?.faunaUserByAddress?.profile?.username;
           // displayName = usernameData?.user?.profile?.displayName;
         }
       }

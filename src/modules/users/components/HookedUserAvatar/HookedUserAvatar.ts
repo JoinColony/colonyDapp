@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client';
 
-import { AnyUser, UserDocument } from '~data/index';
+import { AnyUser, FaunaUserByAddressDocument } from '~data/index';
 import UserAvatar, { Props as UserAvatarProps } from '~core/UserAvatar';
 import useUserAvatarImageFromIPFS from '~utils/hooks/useUserAvatarImageFromIPFS';
 import { withHooks } from '~utils/hoc';
@@ -19,15 +19,12 @@ export default withHooks<
   };
   const { fetchUser } = hookParams || { fetchUser: true };
   if (fetchUser) {
-    const { data } = useQuery(UserDocument, { variables: { address } });
+    const { data } = useQuery(FaunaUserByAddressDocument, {
+      variables: { address },
+    });
     if (data) result.user = data.user;
   }
-  const avatarHash =
-    result.user && result.user.profile
-      ? result.user.profile.avatarHash
-      : undefined;
-
-  const imageObject = useUserAvatarImageFromIPFS(avatarHash as string);
+  const imageObject = useUserAvatarImageFromIPFS();
   result.avatarURL = imageObject?.image;
 
   return result;
