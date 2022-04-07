@@ -253,6 +253,7 @@ const StakingWidget = ({
                   userActivatedTokens.lt(getDecimalStake(values.amount))
                 }
                 text={MSG.stakeButton}
+                dataTest="stakeWidgetStakeButton"
               />
               <span
                 className={
@@ -280,6 +281,7 @@ const StakingWidget = ({
                           })
                         : handleWidgetState(true)
                     }
+                    dataTest="stakeWidgetObjectButton"
                   />
                 )}
               </span>

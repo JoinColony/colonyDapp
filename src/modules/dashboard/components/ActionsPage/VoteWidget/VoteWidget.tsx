@@ -191,6 +191,7 @@ const VoteWidget = ({
                 }
                 onClick={() => handleSubmit()}
                 loading={isSubmitting}
+                dataTest="voteButton"
               />
             }
           />
