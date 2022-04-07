@@ -49,6 +49,22 @@ Cypress.Commands.add('getBySel', (selector, ...args) => {
   return cy.get(`[data-test=${selector}]`, ...args);
 });
 
+Cypress.Commands.add('stakeMax', (buttonSlector) => {
+  const currentValue = 0;
+  const targetValue = 100;
+  const increment = 1;
+  const steps = (targetValue - currentValue) / increment;
+  const arrows = '{rightarrow}'.repeat(steps);
+
+  cy.get('.rc-slider-handle')
+    .last()
+    .should('have.attr', 'aria-valuenow', currentValue)
+    .type(arrows);
+
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  cy.getBySel(buttonSlector).click().wait(10000);
+});
+
 Cypress.Commands.add('claimNewUserName', (numberFromList) => {
   const user = buildUser();
 
@@ -173,10 +189,6 @@ Cypress.Commands.add('uninstallExtension', () => {
 });
 
 Cypress.Commands.add('mintTokens', (amountToMint, isMotion) => {
-  const annotationText = isMotion
-    ? 'Test motion annotation'
-    : 'Test annotation';
-
   cy.login();
 
   cy.visit(`/colony/${Cypress.config().colony.name}`);
@@ -189,13 +201,7 @@ Cypress.Commands.add('mintTokens', (amountToMint, isMotion) => {
   cy.getBySel('fundsDialogIndexItem').click();
   cy.getBySel('mintTokensDialogItem').click();
 
-  cy.get('input')
-    .last()
-    .click()
-    .type(amountToMint)
-    .get('textarea')
-    .click()
-    .type(annotationText);
+  cy.get('input').last().click().type(amountToMint);
 
   cy.getBySel('mintConfirmButton').click();
 
@@ -203,7 +209,6 @@ Cypress.Commands.add('mintTokens', (amountToMint, isMotion) => {
     'have.text',
     `Mint ${amountToMint} ${Cypress.config().colony.nativeToken}`,
   );
-  cy.getBySel('comment').should('have.text', annotationText);
 
   cy.url().should(
     'contains',
