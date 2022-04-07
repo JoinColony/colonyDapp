@@ -474,3 +474,7 @@ query ColonyHistoricRoles($colonyAddress: String!, $blockNumber: Int!) {
     }
   }
 }
+
+query VerifiedUsers($verifiedAddresses: [String]!) {
+  verifiedUsers(verifiedAddresses: $verifiedAddresses) @client
+}

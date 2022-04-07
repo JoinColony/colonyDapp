@@ -35,7 +35,7 @@ interface Props {
   showInput: boolean;
   toggleShowInput: () => void;
   formSuccess?: boolean;
-  setFormSuccess?: React.Dispatch<React.SetStateAction<boolean>>;
+  setFormSuccess?: (isSuccess: boolean) => void;
   inputSuccessMsg?: MessageDescriptor | undefined;
   fileSuccessMsg?: MessageDescriptor | undefined;
 }

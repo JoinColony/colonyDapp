@@ -18,6 +18,7 @@ interface Props {
   name: string;
   checkedTooltipText?: string;
   unCheckedTooltipText?: string;
+  showDisplayName?: boolean;
 }
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
@@ -28,6 +29,7 @@ const UserCheckbox = ({
   name,
   checkedTooltipText,
   unCheckedTooltipText,
+  showDisplayName = true,
 }: Props) => {
   const userProfile = useUser(createAddress(walletAddress || AddressZero));
   const [isChecked, setIsChecked] = useState<boolean>(false);
@@ -72,7 +74,7 @@ const UserCheckbox = ({
           notSet={false}
         />
         <div className={styles.usernameSection}>
-          {displayName && (
+          {displayName && showDisplayName && (
             <span className={styles.displayName} title={displayName}>
               {displayName}
             </span>

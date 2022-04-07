@@ -3,12 +3,12 @@ import { ClientType } from '@colony/colony-js';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
-  ColonyFromNameDocument,
   ColonyFromNameQuery,
   ColonyFromNameQueryVariables,
+  ColonyFromNameDocument,
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
-import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
+import { putError, takeFrom } from '~utils/saga/effects';
 
 import {
   createTransaction,
@@ -21,32 +21,32 @@ import {
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
-import { updateColonyDisplayCache, uploadIfpsAnnotation } from '../utils';
+import { uploadIfpsAnnotation } from '../utils';
 
-function* editColonyAction({
+function* manageVerifiedRecipients({
   payload: {
-    colonyAddress,
     colonyName,
+    colonyAddress,
     colonyDisplayName,
-    colonyAvatarImage,
     colonyAvatarHash,
-    hasAvatarChanged,
+    verifiedAddresses = [],
     colonyTokens = [],
     annotationMessage,
-    verifiedAddresses,
   },
-  meta: { id: metaId, history },
+  meta: { id: metaId },
   meta,
-}: Action<ActionTypes.COLONY_ACTION_EDIT_COLONY>) {
+}: Action<ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE>) {
   let txChannel;
   try {
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
     /*
-     * Validate the required values for the payment
+     * Validate the required values for the transaction
      */
     if (!colonyDisplayName && colonyDisplayName !== null) {
-      throw new Error('A colony name is required in order to edit the colony');
+      throw new Error(
+        `A colony name is required in order to add whitelist addresses to the colony`,
+      );
     }
 
     txChannel = yield call(getTxChannel, metaId);
@@ -101,35 +101,15 @@ function* editColonyAction({
 
     /*
      * Upload colony metadata to IPFS
-     *
-     * @NOTE Only (re)upload the avatar if it has changed, otherwise just use
-     * the old hash.
-     * This cuts down on some transaction signing wait time, since IPFS uplaods
-     * tend to be on the slower side :(
-     */
-    let colonyAvatarIpfsHash = null;
-    if (colonyAvatarImage && hasAvatarChanged) {
-      colonyAvatarIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          image: colonyAvatarImage,
-        }),
-      );
-    }
-
-    /*
-     * Upload colony metadata to IPFS
      */
     let colonyMetadataIpfsHash = null;
     colonyMetadataIpfsHash = yield call(
       ipfsUpload,
       JSON.stringify({
         colonyDisplayName,
-        colonyAvatarHash: hasAvatarChanged
-          ? colonyAvatarIpfsHash
-          : colonyAvatarHash,
-        colonyTokens,
+        colonyAvatarHash,
         verifiedAddresses,
+        colonyTokens,
       }),
     );
 
@@ -181,33 +161,22 @@ function* editColonyAction({
     yield apolloClient.query<ColonyFromNameQuery, ColonyFromNameQueryVariables>(
       {
         query: ColonyFromNameDocument,
-        variables: { name: colonyName || '', address: colonyAddress },
+        variables: {
+          name: colonyName,
+          address: colonyAddress,
+        },
         fetchPolicy: 'network-only',
       },
     );
 
-    /*
-     * Update apollo's cache for the current colony to reflect the recently
-     * made changes
-     */
-    yield updateColonyDisplayCache(
-      colonyAddress,
-      colonyDisplayName,
-      colonyAvatarIpfsHash,
-      colonyAvatarImage as string | null,
-    );
-
     yield put<AllActions>({
-      type: ActionTypes.COLONY_ACTION_EDIT_COLONY_SUCCESS,
+      type: ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE_SUCCESS,
+      payload: {},
       meta,
     });
-
-    if (colonyName) {
-      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
-    }
   } catch (error) {
     return yield putError(
-      ActionTypes.COLONY_ACTION_EDIT_COLONY_ERROR,
+      ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE_ERROR,
       error,
       meta,
     );
@@ -217,6 +186,9 @@ function* editColonyAction({
   return null;
 }
 
-export default function* editColonyActionSaga() {
-  yield takeEvery(ActionTypes.COLONY_ACTION_EDIT_COLONY, editColonyAction);
+export default function* manageVerifiedRecipientsSaga() {
+  yield takeEvery(
+    ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE,
+    manageVerifiedRecipients,
+  );
 }

@@ -293,6 +293,7 @@ export type Query = {
   userReputationForTopDomains: Array<UserDomainReputation>;
   userWhitelistStatus: UserWhitelistStatus;
   username: Scalars['String'];
+  verifiedUsers: Array<User>;
   votingState: VotingState;
   whitelistAgreement: Scalars['String'];
   whitelistPolicies: WhitelistPolicy;
@@ -665,6 +666,11 @@ export type QueryUserWhitelistStatusArgs = {
 
 export type QueryUsernameArgs = {
   address: Scalars['String'];
+};
+
+
+export type QueryVerifiedUsersArgs = {
+  verifiedAddresses: Array<Maybe<Scalars['String']>>;
 };
 
 
@@ -1190,6 +1196,7 @@ export type ProcessedColony = {
   events: Array<NetworkEvent>;
   isDeploymentFinished: Scalars['Boolean'];
   installedExtensions: Array<ColonyExtension>;
+  whitelistedAddresses: Array<Maybe<Scalars['String']>>;
 };
 
 export type SaleToken = {
@@ -1432,7 +1439,7 @@ export type TokensFragment = (
 
 export type DomainFieldsFragment = Pick<ProcessedDomain, 'id' | 'color' | 'description' | 'ethDomainId' | 'name' | 'ethParentDomainId'>;
 
-export type ColonyProfileFragment = Pick<ProcessedColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL' | 'extensionAddresses'>;
+export type ColonyProfileFragment = Pick<ProcessedColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL' | 'extensionAddresses' | 'whitelistedAddresses'>;
 
 export type FullColonyFragment = (
   Pick<ProcessedColony, 'version' | 'canColonyMintNativeToken' | 'canColonyUnlockNativeToken' | 'isInRecoveryMode' | 'isNativeTokenLocked' | 'isDeploymentFinished'>
@@ -1937,6 +1944,13 @@ export type ColonyHistoricRolesQuery = { historicColonyRoles: Array<(
     Pick<ProcessedRoles, 'address'>
     & { domains: Array<Pick<ProcessedRoleDomain, 'domainId' | 'roles'>> }
   )> };
+
+export type VerifiedUsersQueryVariables = Exact<{
+  verifiedAddresses: Array<Maybe<Scalars['String']>>;
+}>;
+
+
+export type VerifiedUsersQuery = Pick<Query, 'verifiedUsers'>;
 
 export type SubgraphAnnotationEventsQueryVariables = Exact<{
   transactionHash: Scalars['String'];
@@ -2872,6 +2886,7 @@ export const ColonyProfileFragmentDoc = gql`
   avatarHash
   avatarURL
   extensionAddresses
+  whitelistedAddresses
 }
     `;
 export const TokensFragmentDoc = gql`
@@ -4999,6 +5014,37 @@ export function useColonyHistoricRolesLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type ColonyHistoricRolesQueryHookResult = ReturnType<typeof useColonyHistoricRolesQuery>;
 export type ColonyHistoricRolesLazyQueryHookResult = ReturnType<typeof useColonyHistoricRolesLazyQuery>;
 export type ColonyHistoricRolesQueryResult = Apollo.QueryResult<ColonyHistoricRolesQuery, ColonyHistoricRolesQueryVariables>;
+export const VerifiedUsersDocument = gql`
+    query VerifiedUsers($verifiedAddresses: [String]!) {
+  verifiedUsers(verifiedAddresses: $verifiedAddresses) @client
+}
+    `;
+
+/**
+ * __useVerifiedUsersQuery__
+ *
+ * To run a query within a React component, call `useVerifiedUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVerifiedUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVerifiedUsersQuery({
+ *   variables: {
+ *      verifiedAddresses: // value for 'verifiedAddresses'
+ *   },
+ * });
+ */
+export function useVerifiedUsersQuery(baseOptions?: Apollo.QueryHookOptions<VerifiedUsersQuery, VerifiedUsersQueryVariables>) {
+        return Apollo.useQuery<VerifiedUsersQuery, VerifiedUsersQueryVariables>(VerifiedUsersDocument, baseOptions);
+      }
+export function useVerifiedUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VerifiedUsersQuery, VerifiedUsersQueryVariables>) {
+          return Apollo.useLazyQuery<VerifiedUsersQuery, VerifiedUsersQueryVariables>(VerifiedUsersDocument, baseOptions);
+        }
+export type VerifiedUsersQueryHookResult = ReturnType<typeof useVerifiedUsersQuery>;
+export type VerifiedUsersLazyQueryHookResult = ReturnType<typeof useVerifiedUsersLazyQuery>;
+export type VerifiedUsersQueryResult = Apollo.QueryResult<VerifiedUsersQuery, VerifiedUsersQueryVariables>;
 export const SubgraphAnnotationEventsDocument = gql`
     query SubgraphAnnotationEvents($transactionHash: String!, $sortDirection: String = asc) {
   annotationEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {name_contains: "Annotation", args_contains: $transactionHash}) {
