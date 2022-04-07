@@ -3,6 +3,8 @@ import { Extension } from '@colony/colony-js';
 import ganacheAccounts from '~lib/colonyNetwork/ganache-accounts.json';
 import { createAddress } from '~utils/web3';
 
+import createdColony from '../fixtures/colony.json';
+
 describe('User can create motions via UAC', () => {
   it('Installs & enables voting extensions', () => {
     cy.login();
@@ -75,5 +77,56 @@ describe('User can create motions via UAC', () => {
     cy.smiteUser(amountToSmite, true);
 
     cy.checkMotion();
+  });
+
+  it('Can edit colony details', () => {
+    const newName = 'solntse';
+
+    cy.editColonyDetails(newName, true);
+
+    cy.checkMotion();
+  });
+
+  it('Can update tokens', () => {
+    const { name: existingColonyName } = Cypress.config().colony;
+    cy.login();
+
+    cy.updateTokens(existingColonyName, createdColony.name, true);
+
+    cy.checkMotion();
+  });
+
+  it('Can unlock the native token', () => {
+    const { colony } = Cypress.config();
+    cy.login();
+
+    cy.visit(`/colony/${colony.name}`);
+
+    cy.unlockToken(colony);
+
+    cy.getBySel('backButton').click();
+
+    cy.getBySel('lockIconTooltip', { timeout: 15000 }).should('not.exist');
+  });
+
+  it('Can manage permissions', () => {
+    const { colony } = Cypress.config();
+
+    cy.managePermissions(colony.name, true);
+
+    cy.checkMotion();
+  });
+
+  it('Disables & deprecates voting extensions', () => {
+    cy.login();
+    cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+    // deprecate & unistall voting reputaiton extension
+    cy.getBySel('extensionsNavigationButton', { timeout: 60000 }).click({
+      force: true,
+    });
+    cy.getBySel('votingReputationExtensionCard', { timeout: 80000 }).click();
+
+    cy.uninstallExtension();
   });
 });

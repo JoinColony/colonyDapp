@@ -5,7 +5,7 @@ import { createAddress } from '~utils/web3';
 
 describe('User can create actions via UAC', () => {
   it('Can mint native tokens', () => {
-    const amountToMint = 10;
+    const amountToMint = 10000;
     cy.mintTokens(amountToMint, false);
 
     cy.getBySel('backButton').click();
@@ -102,65 +102,44 @@ describe('User can create actions via UAC', () => {
     });
   });
   it('Can unlock the native token', () => {
+    const colony = { name: 'sirius', nativeToken: 'SIRS' };
     cy.login();
+    cy.createColony(colony, true);
+    cy.url().should('eq', `${Cypress.config().baseUrl}/colony/${colony.name}`, {
+      timeout: 90000,
+    });
 
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
-
-    cy.getBySel('newActionButton', { timeout: 60000 }).click();
-    cy.getBySel('fundsDialogIndexItem').click();
-    cy.getBySel('unlockTokenDialogIndexItem').click();
-
-    cy.getBySel('unlockTokenConfirmButton').click();
-
-    cy.getBySel('actionHeading', { timeout: 100000 }).should(
-      'include.text',
-      `Unlock native token ${Cypress.config().colony.nativeToken}`,
-    );
-
-    cy.url().should(
-      'contains',
-      `${Cypress.config().baseUrl}/colony/${
-        Cypress.config().colony.name
-      }/tx/0x`,
-    );
+    cy.unlockToken(colony);
 
     cy.getBySel('backButton').click();
 
     cy.getBySel('lockIconTooltip', { timeout: 15000 }).should('not.exist');
   });
   it('Can manage permissions', () => {
-    const annotationText = 'I am giving you the power to do things';
-
-    cy.login();
-
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
-
-    cy.getBySel('newActionButton', { timeout: 60000 }).click();
-    cy.getBySel('advancedDialogIndexItem').click();
-    cy.getBySel('managePermissionsDialogIndexItem').click();
-
-    cy.getBySel('permissionUserSelector').click({ force: true });
-    cy.getBySel('permissionUserSelectorItem').last().click();
-    cy.getBySel('permission').eq(1).click({ force: true });
-    cy.getBySel('permission').eq(2).click({ force: true });
-    cy.getBySel('permission').eq(3).click({ force: true });
-    cy.getBySel('permissionAnnotation').click().type(annotationText);
-
-    cy.getBySel('permissionConfirmButton').click();
-
-    cy.getBySel('actionHeading', { timeout: 100000 }).contains(
-      'Assign the administration, funding, architecture permissions in Root to',
-    );
-
-    cy.url().should(
-      'contains',
-      `${Cypress.config().baseUrl}/colony/${
-        Cypress.config().colony.name
-      }/tx/0x`,
-    );
-
-    cy.getBySel('comment').should('have.text', annotationText);
+    const { colony } = Cypress.config();
+    cy.managePermissions(colony.name);
   });
+
+  it('Can award users', () => {
+    const amountToAward = 100;
+    cy.awardRep(amountToAward, false);
+  });
+
+  it('Can smite users', () => {
+    const amountToSmite = 10;
+
+    cy.smiteUser(amountToSmite, false);
+  });
+
+  it('Make payment from a subdomain', () => {
+    const amountToPay = 10;
+    const accounts = Object.entries(ganacheAccounts.private_keys).map(
+      ([address]) => address,
+    );
+
+    cy.makePayment(amountToPay, createAddress(accounts[1]), false, true);
+  });
+
   it('Can enable recovery mode', () => {
     const storageSlot = '0x05';
     const storageSlotValue =
@@ -210,25 +189,5 @@ describe('User can create actions via UAC', () => {
       .click()
       .wait(20000)
       .should('not.exist');
-  });
-
-  it('Can award users', () => {
-    const amountToAward = 100;
-    cy.awardRep(amountToAward, false);
-  });
-
-  it('Can smite users', () => {
-    const amountToSmite = 10;
-
-    cy.smiteUser(amountToSmite, false);
-  });
-
-  it('Make payment from a subdomain', () => {
-    const amountToPay = 10;
-    const accounts = Object.entries(ganacheAccounts.private_keys).map(
-      ([address]) => address,
-    );
-
-    cy.makePayment(amountToPay, createAddress(accounts[1]), false, true);
   });
 });

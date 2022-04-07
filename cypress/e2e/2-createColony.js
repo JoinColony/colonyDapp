@@ -22,6 +22,7 @@ describe('Create a new colony', () => {
       } = Cypress.config().colony;
       const { name } = Cypress.config().colony2;
 
+      cy.login();
       cy.getColonyTokenAddress(existingColony);
 
       cy.createColony(Cypress.config().colony2, false);

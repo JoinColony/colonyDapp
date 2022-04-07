@@ -84,6 +84,7 @@ Cypress.Commands.add('claimNewUserName', (numberFromList) => {
 });
 
 Cypress.Commands.add('createColony', (colony, useNewToken) => {
+  cy.visit('/landing');
   cy.getBySel('createColony').click();
 
   cy.get('input').first().click().type(colony.name);
@@ -107,7 +108,6 @@ Cypress.Commands.add('createColony', (colony, useNewToken) => {
 });
 
 Cypress.Commands.add('getColonyTokenAddress', (colonyName) => {
-  cy.login();
   cy.visit(`/colony/${colonyName}`);
   cy.getBySel('colonyMenu', { timeout: 60000 }).click();
   cy.getBySel('nativeTokenAddress').invoke('text').as('existingTokenAddress');
@@ -119,6 +119,12 @@ Cypress.Commands.add('checkUrlAfterAction', (colonyName) => {
     `${Cypress.config().baseUrl}/colony/${colonyName}/tx/0x`,
     { timeout: 30000 },
   );
+});
+
+Cypress.Commands.add('checkColonyName', (colonyName) => {
+  cy.getBySel('colonyTitle', { timeout: 60000 }).then((name) => {
+    expect(name.text()).to.equal(colonyName);
+  });
 });
 
 Cypress.Commands.add('changeColonyname', (colonyName, newName) => {
@@ -137,13 +143,11 @@ Cypress.Commands.add('checkMotion', () => {
 });
 
 Cypress.Commands.add('installExtension', () => {
-  // Can install extension
   cy.getBySel('installExtensionButton').click();
   cy.getBySel('disabledStatusTag', { timeout: 30000 }).should('exist');
 });
 
 Cypress.Commands.add('enableExtension', (extensionId) => {
-  // Can enable extension
   cy.getBySel('closeGasStationButton').click();
   cy.getBySel('enableExtensionButton').click();
   if (extensionId === Extension.Whitelist) {
@@ -151,6 +155,21 @@ Cypress.Commands.add('enableExtension', (extensionId) => {
   }
   cy.getBySel('setupExtensionConfirmButton').click();
   cy.getBySel('enabledStatusTag', { timeout: 30000 }).should('exist');
+});
+
+Cypress.Commands.add('deprecateExtension', () => {
+  cy.getBySel('deprecateExtensionButton').click();
+  cy.getBySel('confirmButton').click();
+  cy.getBySel('deprecatedStatusTag', { timeout: 30000 }).should('exist');
+});
+
+Cypress.Commands.add('uninstallExtension', () => {
+  cy.getBySel('deprecateExtensionButton').click();
+  cy.getBySel('confirmButton').click();
+  cy.getBySel('uninstallExtensionButton', { timeout: 20000 }).click();
+  cy.getBySel('uninstallWarningInput').click().type('I UNDERSTAND');
+  cy.getBySel('uninstallConfirmButton').click();
+  cy.getBySel('notInstalledStatusTag', { timeout: 30000 }).should('exist');
 });
 
 Cypress.Commands.add('mintTokens', (amountToMint, isMotion) => {
@@ -442,6 +461,108 @@ Cypress.Commands.add('smiteUser', (amountToSmite, isMotion) => {
       `Smite ${smoteUser} with a ${amountToSmite} pts reputation penalty`,
     );
   });
+
+  cy.url().should(
+    'contains',
+    `${Cypress.config().baseUrl}/colony/${Cypress.config().colony.name}/tx/0x`,
+  );
+
+  cy.getBySel('comment').should('have.text', annotationText);
+});
+
+Cypress.Commands.add('editColonyDetails', (newName, isMotion) => {
+  const annotationText = isMotion
+    ? 'Test motion annotation'
+    : 'Test annotation';
+  const colonyName = Cypress.config().colony.name;
+
+  cy.login();
+  cy.visit(`/colony/${colonyName}`);
+  cy.changeColonyname(colonyName, newName);
+
+  const filePath = 'cypress/fixtures/images/jaya-the-beast.png';
+  cy.get('input[type="file"]').selectFile(filePath, { force: true });
+
+  cy.get('textarea').click().type(annotationText);
+  cy.getBySel('confirmButton').click();
+
+  cy.getBySel('actionHeading', { timeout: 60000 }).should(
+    'have.text',
+    isMotion ? 'Change colony details' : 'Colony details changed',
+  );
+  cy.checkUrlAfterAction(colonyName);
+});
+
+Cypress.Commands.add(
+  'updateTokens',
+  (updatedColonyName, tokenProviderColonyName, isMotion) => {
+    cy.getColonyTokenAddress(tokenProviderColonyName);
+
+    cy.visit(`/colony/${updatedColonyName}`);
+
+    cy.getBySel('newActionButton', { timeout: 90000 }).click();
+    cy.getBySel('fundsDialogIndexItem').click();
+    cy.getBySel('manageTokensDialogItem').click();
+
+    cy.get('@existingTokenAddress').then((address) => {
+      cy.get('input').last().click().type(address);
+    });
+    cy.getBySel('confirm').click();
+
+    cy.getBySel('actionHeading', { timeout: 60000 }).should(
+      'have.text',
+      isMotion ? 'Change colony details' : `Colony details changed`,
+    );
+
+    cy.checkUrlAfterAction(updatedColonyName);
+  },
+);
+
+Cypress.Commands.add('unlockToken', (colony) => {
+  cy.getBySel('newActionButton', { timeout: 60000 }).click();
+  cy.getBySel('fundsDialogIndexItem').click();
+  cy.getBySel('unlockTokenDialogIndexItem').click();
+
+  cy.getBySel('unlockTokenConfirmButton').click();
+
+  cy.getBySel('actionHeading', { timeout: 100000 }).should(
+    'include.text',
+    `Unlock native token ${colony.nativeToken}`,
+  );
+
+  cy.url().should(
+    'contains',
+    `${Cypress.config().baseUrl}/colony/${colony.name}/tx/0x`,
+  );
+});
+
+Cypress.Commands.add('managePermissions', (colonyName, isMotion) => {
+  const annotationText = 'I am giving you the power to do things';
+
+  cy.login();
+
+  cy.visit(`/colony/${colonyName}`);
+
+  cy.getBySel('newActionButton', { timeout: 60000 }).click();
+  cy.getBySel('advancedDialogIndexItem').click();
+  cy.getBySel('managePermissionsDialogIndexItem').click();
+
+  if (!isMotion) {
+    cy.getBySel('permissionUserSelector').click({ force: true });
+    cy.getBySel('permissionUserSelectorItem').last().click();
+  }
+  cy.getBySel('permission').eq(1).click({ force: true });
+  cy.getBySel('permission').eq(2).click({ force: true });
+  cy.getBySel('permission').eq(3).click({ force: true });
+  cy.getBySel('permissionAnnotation').click().type(annotationText);
+
+  cy.getBySel('permissionConfirmButton').click();
+
+  cy.getBySel('actionHeading', { timeout: 100000 }).contains(
+    isMotion
+      ? 'Remove the administration, architecture, funding permissions'
+      : `Assign the administration, funding, architecture permissions in Root to`,
+  );
 
   cy.url().should(
     'contains',
