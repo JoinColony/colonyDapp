@@ -34,6 +34,7 @@ function* editColonyAction({
     colonyTokens = [],
     annotationMessage,
     verifiedAddresses,
+    isWhitelistActivated,
   },
   meta: { id: metaId, history },
   meta,
@@ -130,6 +131,7 @@ function* editColonyAction({
           : colonyAvatarHash,
         colonyTokens,
         verifiedAddresses,
+        isWhitelistActivated,
       }),
     );
 

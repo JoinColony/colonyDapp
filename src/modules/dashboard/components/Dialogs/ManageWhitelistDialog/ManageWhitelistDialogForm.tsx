@@ -1,8 +1,7 @@
-import React, { useCallback, useMemo } from 'react';
+import React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { ColonyRole } from '@colony/colony-js';
 import { FormikProps } from 'formik';
-import isEqual from 'lodash/isEqual';
 
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
@@ -110,7 +109,7 @@ const ManageWhitelistDialogForm = ({
           selectedIndex={tabIndex}
           onSelect={(newIndex) => {
             setTabIndex(newIndex);
-            resetForm({})
+            resetForm({});
           }}
         >
           <TabList
@@ -191,12 +190,7 @@ const ManageWhitelistDialogForm = ({
           }}
           text={{ id: 'button.confirm' }}
           style={{ width: styles.wideButton }}
-          disabled={
-            !dirty ||
-            !userHasPermission ||
-            !isValid ||
-            isSubmitting
-          }
+          disabled={!dirty || !userHasPermission || !isValid || isSubmitting}
           type="submit"
           loading={isSubmitting}
           onClick={() => handleSubmit()}
