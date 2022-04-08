@@ -67,8 +67,6 @@ const ManageWhitelistDialog = ({
 
   const history = useHistory();
 
-  /* We don't close the dialog after submitting data
-  => need a way for a refreshed colony to be reflected */
   const { data: colonyData } = useColonyFromNameQuery({
     variables: { name: colonyName, address: colonyAddress },
   });
@@ -78,7 +76,6 @@ const ManageWhitelistDialog = ({
       verifiedAddresses:
         colonyData?.processedColony?.whitelistedAddresses || [],
     },
-    fetchPolicy: 'network-only',
   });
 
   const storedVerifiedRecipients = useMemo(
