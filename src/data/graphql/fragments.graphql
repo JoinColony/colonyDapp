@@ -33,6 +33,7 @@ fragment ColonyProfile on ProcessedColony {
   avatarURL
   extensionAddresses
   whitelistedAddresses
+  isWhitelistActivated
 }
 
 fragment FullColony on ProcessedColony {

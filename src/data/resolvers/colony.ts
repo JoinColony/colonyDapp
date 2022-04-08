@@ -97,6 +97,7 @@ export const getProcessedColony = async (
   let avatarObject: { image: string | null } | null = { image: null };
   let tokenAddresses: Array<Address> = [];
   let whitelistedAddresses: Array<Address> = [];
+  let isWhitelistActivated = false;
 
   const prevIpfsHash = metadataHistory.slice(-1).pop();
   const ipfsHash = metadata || prevIpfsHash?.metadata || null;
@@ -123,11 +124,17 @@ export const getProcessedColony = async (
         colonyAvatarHash = null,
         colonyTokens = [],
         verifiedAddresses = [],
+        whitelistActivated = null,
       } = JSON.parse(ipfsMetadata);
       displayName = colonyDisplayName;
       avatarHash = colonyAvatarHash;
       tokenAddresses = colonyTokens;
       whitelistedAddresses = verifiedAddresses;
+      if (whitelistActivated) {
+        isWhitelistActivated = whitelistActivated;
+      } else if (whitelistActivated === null && verifiedAddresses.length > 0) {
+        isWhitelistActivated = true; // We want activate whitelist by default while uploading first address
+      }
 
       /*
        * Fetch the colony's avatar
@@ -170,6 +177,7 @@ export const getProcessedColony = async (
       : [],
     extensionAddresses: colonyExtensions.map(({ address }) => address),
     whitelistedAddresses,
+    isWhitelistActivated,
   };
 };
 
