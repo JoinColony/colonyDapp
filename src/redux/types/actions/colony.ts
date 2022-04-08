@@ -122,6 +122,7 @@ export type ColonyActionTypes =
         colonyTokens: Address[];
         annotationMessage?: string;
         colonyName: string;
+        isWhitelistActivated: boolean;
       },
       WithKey
     >

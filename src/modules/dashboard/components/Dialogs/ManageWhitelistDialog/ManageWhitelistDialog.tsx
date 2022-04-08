@@ -29,7 +29,7 @@ export enum TABS {
 }
 export interface FormValues {
   annotation: string;
-  isWhiletlistActivated: boolean;
+  isWhitelistActivated: boolean;
   whitelistedAddresses: Address[];
 }
 
@@ -115,10 +115,13 @@ const ManageWhitelistDialog = ({
           whitelistAddress,
           whitelistedAddresses,
           whitelistCSVUploader,
+          isWhitelistActivated,
         }) => {
           let verifiedAddresses;
+          let whitelistActivated = false;
           if (tabIndex === TABS.WHITELISTED) {
             verifiedAddresses = whitelistedAddresses;
+            whitelistActivated = isWhitelistActivated;
           } else {
             verifiedAddresses =
               whitelistAddress !== undefined
@@ -129,6 +132,9 @@ const ManageWhitelistDialog = ({
                       ...whitelistCSVUploader[0].parsedData,
                     ]),
                   ];
+            if (verifiedAddresses.length) {
+              whitelistActivated = true;
+            }
           }
 
           return {
@@ -136,6 +142,7 @@ const ManageWhitelistDialog = ({
             colonyDisplayName: colony.displayName,
             colonyAvatarHash: avatarHash,
             verifiedAddresses,
+            isWhitelistActivated: whitelistActivated,
             annotationMessage,
             colonyName,
             colonyTokens: tokenAddresses.filter(
@@ -154,7 +161,7 @@ const ManageWhitelistDialog = ({
       validateOnChange
       initialValues={{
         annotation: undefined,
-        isWhiletlistActivated: true,
+        isWhitelistActivated: colonyData?.processedColony?.isWhitelistActivated,
         whitelistedAddresses: storedVerifiedRecipients,
         isSubmitting: false,
       }}

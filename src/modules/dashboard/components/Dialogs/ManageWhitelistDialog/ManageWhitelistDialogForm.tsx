@@ -84,22 +84,13 @@ const ManageWhitelistDialogForm = ({
   setFormSuccess,
   tabIndex,
   setTabIndex,
+  resetForm,
+  dirty,
 }: Props & FormikProps<FormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
   const hasRegisteredProfile = !!username && !ethereal;
   const userHasPermission = hasRegisteredProfile && hasRoot(allUserRoles);
-
-  const addressesList = useMemo(() => whitelistedUsers.map((user) => user.id), [
-    whitelistedUsers,
-  ]);
-
-  const hasTokensListChanged = useCallback(
-    (addresses: string[]) => {
-      return !isEqual(addresses?.sort(), addressesList?.sort());
-    },
-    [addressesList],
-  );
 
   return (
     <>
@@ -119,6 +110,7 @@ const ManageWhitelistDialogForm = ({
           selectedIndex={tabIndex}
           onSelect={(newIndex) => {
             setTabIndex(newIndex);
+            resetForm({})
           }}
         >
           <TabList
@@ -149,7 +141,7 @@ const ManageWhitelistDialogForm = ({
             {(whitelistedUsers?.length && (
               <>
                 <ManageWhitelistActiveToggle
-                  isWhiletlistActivated={values.isWhiletlistActivated}
+                  isWhitelistActivated={values.isWhitelistActivated}
                 />
                 <WhitelistedAddresses
                   colony={colony}
@@ -200,8 +192,7 @@ const ManageWhitelistDialogForm = ({
           text={{ id: 'button.confirm' }}
           style={{ width: styles.wideButton }}
           disabled={
-            (tabIndex === TABS.WHITELISTED &&
-              !hasTokensListChanged(values.whitelistedAddresses)) ||
+            !dirty ||
             !userHasPermission ||
             !isValid ||
             isSubmitting

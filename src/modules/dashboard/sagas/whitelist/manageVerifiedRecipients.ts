@@ -32,6 +32,7 @@ function* manageVerifiedRecipients({
     verifiedAddresses = [],
     colonyTokens = [],
     annotationMessage,
+    isWhitelistActivated,
   },
   meta: { id: metaId },
   meta,
@@ -103,6 +104,7 @@ function* manageVerifiedRecipients({
      * Upload colony metadata to IPFS
      */
     let colonyMetadataIpfsHash = null;
+
     colonyMetadataIpfsHash = yield call(
       ipfsUpload,
       JSON.stringify({
@@ -110,6 +112,7 @@ function* manageVerifiedRecipients({
         colonyAvatarHash,
         verifiedAddresses,
         colonyTokens,
+        isWhitelistActivated,
       }),
     );
 
