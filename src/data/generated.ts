@@ -706,7 +706,7 @@ export type QueryUsernameArgs = {
 
 
 export type QueryVerifiedUsersArgs = {
-  verifiedAddresses: Array<Maybe<Scalars['String']>>;
+  verifiedAddresses: Array<Scalars['String']>;
 };
 
 
@@ -1242,7 +1242,7 @@ export type ProcessedColony = {
   events: Array<NetworkEvent>;
   isDeploymentFinished: Scalars['Boolean'];
   installedExtensions: Array<ColonyExtension>;
-  whitelistedAddresses: Array<Maybe<Scalars['String']>>;
+  whitelistedAddresses: Array<Scalars['String']>;
   isWhitelistActivated: Scalars['Boolean'];
 };
 
@@ -2050,7 +2050,7 @@ export type ColonyHistoricRolesQuery = { historicColonyRoles: Array<(
   )> };
 
 export type VerifiedUsersQueryVariables = Exact<{
-  verifiedAddresses: Array<Maybe<Scalars['String']>>;
+  verifiedAddresses: Array<Scalars['String']>;
 }>;
 
 
@@ -5188,7 +5188,7 @@ export type ColonyHistoricRolesQueryHookResult = ReturnType<typeof useColonyHist
 export type ColonyHistoricRolesLazyQueryHookResult = ReturnType<typeof useColonyHistoricRolesLazyQuery>;
 export type ColonyHistoricRolesQueryResult = Apollo.QueryResult<ColonyHistoricRolesQuery, ColonyHistoricRolesQueryVariables>;
 export const VerifiedUsersDocument = gql`
-    query VerifiedUsers($verifiedAddresses: [String]!) {
+    query VerifiedUsers($verifiedAddresses: [String!]!) {
   verifiedUsers(verifiedAddresses: $verifiedAddresses) @client
 }
     `;
