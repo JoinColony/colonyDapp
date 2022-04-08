@@ -432,6 +432,7 @@ export default gql`
     events: [NetworkEvent!]!
     isDeploymentFinished: Boolean!
     installedExtensions: [ColonyExtension!]!
-    whitelistedAddresses: [String!]!
+    whitelistedAddresses: [String]!
+    isWhitelistActivated: Boolean!
   }
 `;

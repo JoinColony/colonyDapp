@@ -1197,6 +1197,7 @@ export type ProcessedColony = {
   isDeploymentFinished: Scalars['Boolean'];
   installedExtensions: Array<ColonyExtension>;
   whitelistedAddresses: Array<Maybe<Scalars['String']>>;
+  isWhitelistActivated: Scalars['Boolean'];
 };
 
 export type SaleToken = {
@@ -1439,7 +1440,7 @@ export type TokensFragment = (
 
 export type DomainFieldsFragment = Pick<ProcessedDomain, 'id' | 'color' | 'description' | 'ethDomainId' | 'name' | 'ethParentDomainId'>;
 
-export type ColonyProfileFragment = Pick<ProcessedColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL' | 'extensionAddresses' | 'whitelistedAddresses'>;
+export type ColonyProfileFragment = Pick<ProcessedColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL' | 'extensionAddresses' | 'whitelistedAddresses' | 'isWhitelistActivated'>;
 
 export type FullColonyFragment = (
   Pick<ProcessedColony, 'version' | 'canColonyMintNativeToken' | 'canColonyUnlockNativeToken' | 'isInRecoveryMode' | 'isNativeTokenLocked' | 'isDeploymentFinished'>
@@ -2887,6 +2888,7 @@ export const ColonyProfileFragmentDoc = gql`
   avatarURL
   extensionAddresses
   whitelistedAddresses
+  isWhitelistActivated
 }
     `;
 export const TokensFragmentDoc = gql`
