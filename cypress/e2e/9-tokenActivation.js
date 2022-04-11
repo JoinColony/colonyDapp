@@ -8,7 +8,7 @@ describe('Token Activation & Deactivation', () => {
 
   it(`User can activate tokens`, () => {
     // Open Token Activation popover
-    const amountToActivate = 100;
+    const amountToActivate = 10;
     cy.getBySel('tokenActivationButton', { timeout: 120000 }).click();
 
     // Get the number of active tokens
@@ -35,7 +35,7 @@ describe('Token Activation & Deactivation', () => {
 
   it(`User can deactivate tokens`, () => {
     // Open Token Activation popover
-    const amountToDeactivate = 100;
+    const amountToDeactivate = 10;
     cy.getBySel('tokenActivationButton', { timeout: 120000 }).click();
 
     // Get the number of inactive tokens
