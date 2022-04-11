@@ -30,7 +30,6 @@ import Decimal from 'decimal.js';
 import { splitAddress } from '~utils/strings';
 
 import { buildUser } from './generate';
-import { Extension } from '@colony/colony-js';
 
 Cypress.Commands.add('login', () => {
   cy.visit('/landing');
