@@ -46,7 +46,6 @@ describe('Comments in action page', () => {
       .should('have.css', 'color')
       .and('eq', 'rgba(118, 116, 139, 0.8)');
 
-    // Deleting the comment
     cy.getBySel('commentActionsButton').last().click();
     cy.getBySel('moderateCommentButton').click();
     // eslint-disable-next-line cypress/no-unnecessary-waiting
