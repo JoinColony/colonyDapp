@@ -483,7 +483,6 @@ const CreatePaymentDialogForm = ({
                           unit={getTokenDecimalsWithFallback(
                             selectedToken && selectedToken.decimals,
                           )}
-                          truncate={3}
                         />
                       ),
                       symbol: (selectedToken && selectedToken.symbol) || '???',
