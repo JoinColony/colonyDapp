@@ -48,13 +48,13 @@ const MSG = defineMessages({
   rolesTooltip: {
     id: 'dashboard.ActionsPageFeed.ActionsPageEvent.rolesTooltip',
     defaultMessage: `{icon} {role, select,
-      0 {This permission allows users to put the colony in and out of 
+      0 {This permission allows users to put the colony in and out of
         recovery mode, and edit colony state while in recovery.}
       1 {This permission allows modify colony-wide parameters, upgrade the
         colony and manage permissions in Root Domain.}
-      3 {This permission allows users to create new domains, and manage 
+      3 {This permission allows users to create new domains, and manage
         permissions within those domains.}
-      5 {This permission allows users to transfer funds between domains and 
+      5 {This permission allows users to transfer funds between domains and
         into expenditures and payments.}
       6 {This permission allows an account to manipulate payments (tasks) in
         their domain and to raise disputes.}
@@ -390,7 +390,7 @@ const ActionsPageEvent = ({
                     >
                       <Numeral
                         value={decimalStakeAmount}
-                        suffix={` ${colonyNativeToken?.symbol}`}
+                        suffix={colonyNativeToken?.symbol}
                       />
                     </Tag>
                   </div>

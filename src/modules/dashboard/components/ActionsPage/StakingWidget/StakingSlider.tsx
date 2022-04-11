@@ -5,12 +5,14 @@ import { bigNumberify } from 'ethers/utils';
 
 import Heading from '~core/Heading';
 import Slider, { Appearance } from '~core/Slider';
+import Numeral from '~core/Numeral';
 import StakingValidationError from '~dashboard/ActionsPage/StakingValidationError';
 
 import { Colony, useLoggedInUser } from '~data/index';
 import { getFormattedTokenValue } from '~utils/tokens';
 
 import styles from './StakingWidget.css';
+import validationErrorStyles from '~dashboard/ActionsPage/StakingValidationError/StakingValidationError.css';
 
 export interface StakingAmounts {
   remainingToFullyYayStaked: string;
@@ -153,9 +155,11 @@ const StakingSlider = ({
           {...(isObjection ? MSG.descriptionObject : MSG.descriptionStake)}
         />
       </p>
-      <span
+      <Numeral
         className={styles.amount}
-      >{`${displayStake} ${nativeToken?.symbol}`}</span>
+        value={displayStake}
+        suffix={nativeToken?.symbol}
+      />
       <div className={styles.sliderContainer}>
         <Slider
           name="amount"
@@ -173,19 +177,41 @@ const StakingSlider = ({
         <StakingValidationError
           stakeType={errorStakeType}
           errorValues={{
-            minimumStake: `${displayStake} ${nativeToken?.symbol}`,
-            userActiveTokens: `${getFormattedTokenValue(
-              userActivatedTokens.toString(),
-              nativeToken?.decimals,
-            )} ${nativeToken?.symbol}`,
-            minimumReputation: `${getFormattedTokenValue(
-              minUserStake.toString(),
-              nativeToken?.decimals,
-            )}`,
-            userReputation: `${getFormattedTokenValue(
-              maxUserStake.toString(),
-              nativeToken?.decimals,
-            )}`,
+            minimumStake: (
+              <Numeral
+                className={validationErrorStyles.validationError}
+                value={displayStake}
+                suffix={nativeToken?.symbol}
+              />
+            ),
+            userActiveTokens: (
+              <Numeral
+                className={validationErrorStyles.validationError}
+                value={getFormattedTokenValue(
+                  userActivatedTokens.toString(),
+                  nativeToken?.decimals,
+                )}
+                suffix={nativeToken?.symbol}
+              />
+            ),
+            minimumReputation: (
+              <Numeral
+                className={validationErrorStyles.validationError}
+                value={getFormattedTokenValue(
+                  minUserStake.toString(),
+                  nativeToken?.decimals,
+                )}
+              />
+            ),
+            userReputation: (
+              <Numeral
+                className={validationErrorStyles.validationError}
+                value={getFormattedTokenValue(
+                  maxUserStake.toString(),
+                  nativeToken?.decimals,
+                )}
+              />
+            ),
           }}
         />
       )}

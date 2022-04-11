@@ -43,10 +43,7 @@ const UserTokens = ({ totalBalance, nativeToken }: Props) => {
       />
       <div className={styles.tokenAmount}>
         <TokenIcon token={nativeToken} name={nativeToken.name} size="xxs" />
-        <Numeral
-          suffix={` ${nativeToken.symbol} `}
-          value={formattedTotalBalance}
-        />
+        <Numeral value={formattedTotalBalance} suffix={nativeToken.symbol} />
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import { BigNumberish, bigNumberify } from 'ethers/utils';
 
-export { formatTokenValue } from './formatTokenValue';
-
+export { numberDisplayFormatter } from './numberFormatter';
+export { minimalFormatter } from './numberFormatter';
 /**
  * Return whether `a` is less than `b` where each are number-like values.
  */

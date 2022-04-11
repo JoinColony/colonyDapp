@@ -6,6 +6,7 @@ import Decimal from 'decimal.js';
 
 import { ROOT_DOMAIN_ID, ColonyRoles } from '@colony/colony-js';
 
+import Numeral from '~core/Numeral';
 import { CommentInput } from '~core/Comment';
 import Heading from '~core/Heading';
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
@@ -245,6 +246,7 @@ const DefaultMotion = ({
   )
     .div(bigNumberify(10).pow(18))
     .toNumber();
+
   const totalVotedReputationValue = bigNumberify(
     votingStateData?.votingState?.totalVotedReputation || 0,
   )
@@ -267,6 +269,11 @@ const DefaultMotion = ({
     color: domainColor,
     description: domainPurpose,
   };
+
+  const formattedReputationChange = getFormattedTokenValue(
+    new Decimal(reputationChange).abs().toString(),
+    decimals,
+  );
 
   const { feeInverse: networkFeeInverse } = useNetworkContracts();
   const feePercentage = networkFeeInverse
@@ -300,7 +307,7 @@ const DefaultMotion = ({
         <FriendlyName user={recipient} autoShrinkAddress colony={colony} />
       </span>
     ),
-    amount: decimalAmount,
+    amount: <Numeral value={decimalAmount} />,
     token,
     tokenSymbol: <span>{symbol || '???'}</span>,
     initiator: (
@@ -343,10 +350,9 @@ const DefaultMotion = ({
       </div>
     ),
     spaceBreak: <br />,
-    reputationChange: getFormattedTokenValue(
-      new Decimal(reputationChange).abs().toString(),
-      decimals,
-    ),
+
+    reputationChange: formattedReputationChange,
+    reputationChangeNumeral: <Numeral value={formattedReputationChange} />,
     isSmiteAction: new Decimal(reputationChange).isNegative(),
   };
 
@@ -364,7 +370,7 @@ const DefaultMotion = ({
       initiator.profile?.username ??
       initiator.profile?.walletAddress,
     reputationChange: actionAndEventValues.reputationChange,
-
+    reputationChangeNumeral: actionAndEventValues.reputationChangeNumeral,
     fromDomain: actionAndEventValues.fromDomain?.name,
     toDomain: actionAndEventValues.toDomain?.name,
     roles: roleTitle,

@@ -69,3 +69,10 @@
 .weightMedium {
   font-weight: var(--weight-bold);
 }
+
+.numeral > sup {
+  position: relative;
+  top: -0.8em;
+  vertical-align: baseline;
+  font-size: 0.7em;
+}

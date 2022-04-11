@@ -30,9 +30,6 @@ interface Props extends NumeralProps {
   /** Should the suffix be visible? */
   showSuffix?: boolean;
 
-  /** Number of decimals to show */
-  truncate?: number;
-
   /** Ether unit the number is notated in (e.g. 'ether' = 10^18 wei) */
   unit?: string;
 
@@ -46,7 +43,6 @@ const EthUsd = ({
   appearance,
   showPrefix = true,
   showSuffix = true,
-  truncate = 2,
   unit = 'ether',
   value,
   ...rest
@@ -101,7 +97,6 @@ const EthUsd = ({
       appearance={appearance}
       prefix={showPrefix && valueUsd ? '~ ' : ''}
       suffix={showSuffix ? ` ${suffixText}` : ''}
-      truncate={truncate}
       value={valueUsd || '-'}
       {...rest}
     />

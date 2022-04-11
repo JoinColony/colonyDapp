@@ -419,8 +419,7 @@ const BuyTokens = ({
                               amount: (
                                 <Numeral
                                   value={userPurchaseTokenBalance}
-                                  truncate={2}
-                                  suffix={` ${purchaseToken?.symbol}`}
+                                  suffix={purchaseToken?.symbol}
                                 />
                               ),
                             }}

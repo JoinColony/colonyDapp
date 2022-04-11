@@ -18,6 +18,7 @@ import Toggle from '~core/Fields/Toggle';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import PermissionsLabel from '~core/PermissionsLabel';
+import Numeral from '~core/Numeral';
 
 import { Address } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
@@ -44,14 +45,14 @@ import styles from './ManageReputationDialogForm.css';
 const MSG = defineMessages({
   title: {
     id: 'dashboard.ManageReputationContainer.ManageReputationDialogForm.title',
-    defaultMessage: `{isSmiteAction, select, 
+    defaultMessage: `{isSmiteAction, select,
       true {Smite}
-      false {Award} 
+      false {Award}
     }`,
   },
   team: {
     id: `dashboard.ManageReputationContainer.ManageReputationDialogForm.team`,
-    defaultMessage: `Team in which Reputation should be {isSmiteAction, select, 
+    defaultMessage: `Team in which Reputation should be {isSmiteAction, select,
       true {deducted}
       false {awarded}
     }`,
@@ -62,7 +63,7 @@ const MSG = defineMessages({
   },
   amount: {
     id: 'dashboard.ManageReputationContainer.ManageReputationDialogForm.amount',
-    defaultMessage: `Amount of reputation points to {isSmiteAction, select, 
+    defaultMessage: `Amount of reputation points to {isSmiteAction, select,
       true {deduct}
       false {award}
     }`,
@@ -376,7 +377,9 @@ const ManageReputationDialogForm = ({
               {...MSG.maxReputation}
               values={{
                 isSmiteAction,
-                userReputationAmount: formattedUserReputationAmount,
+                userReputationAmount: (
+                  <Numeral value={formattedUserReputationAmount} />
+                ),
                 userPercentageReputation:
                   userPercentageReputation === null
                     ? 0

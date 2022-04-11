@@ -4,6 +4,7 @@ import { bigNumberify } from 'ethers/utils';
 
 import { AnyToken } from '~data/index';
 import { getFormattedTokenValue } from '~utils/tokens';
+import Numeral from '~core/Numeral';
 
 import styles from './SoldTokensWidget.css';
 
@@ -54,11 +55,14 @@ const SoldTokensWidget = ({
     <FormattedMessage
       {...MSG.periodTokens}
       values={{
-        tokensBought: getFormattedTokenValue(
-          bigNumberify(tokensBought),
-          decimals,
+        tokensBought: (
+          <Numeral
+            value={getFormattedTokenValue(bigNumberify(tokensBought), decimals)}
+          />
         ),
-        tokensAvailable: getFormattedTokenValue(lowestUpperLimit, decimals),
+        tokensAvailable: (
+          <Numeral value={getFormattedTokenValue(lowestUpperLimit, decimals)} />
+        ),
       }}
     />
   );

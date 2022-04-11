@@ -188,7 +188,7 @@ const VoteDetails = ({
                             nativeToken?.decimals,
                           )}
                           appearance={{ theme: 'dark', size: 'small' }}
-                          suffix={` ${nativeToken?.symbol}`}
+                          suffix={nativeToken?.symbol}
                         />
                       ) : (
                         <>
@@ -206,7 +206,7 @@ const VoteDetails = ({
                               nativeToken?.decimals,
                             )}
                             appearance={{ theme: 'dark', size: 'small' }}
-                            suffix={` ${nativeToken?.symbol}`}
+                            suffix={nativeToken?.symbol}
                           />
                         </>
                       )}
@@ -225,7 +225,7 @@ const VoteDetails = ({
                           voterReward.motionVoterReward.reward,
                           nativeToken?.decimals,
                         )}
-                        suffix={` ${nativeToken?.symbol}`}
+                        suffix={nativeToken?.symbol}
                         appearance={{ theme: 'dark', size: 'small' }}
                       />
                     </>

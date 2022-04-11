@@ -196,8 +196,7 @@ const InboxItem = ({
                 values={{
                   amount: makeInboxDetail(amount, (value) => (
                     <Numeral
-                      suffix={` ${token ? token.symbol : ''}`}
-                      integerSeparator=""
+                      suffix={token ? token.symbol : ''}
                       value={value || '-'}
                     />
                   )),
@@ -269,7 +268,6 @@ const InboxItem = ({
                   {colonyName && <span className={styles.pipe}>|</span>}
                   <Numeral
                     suffix={` ${token ? token.symbol : ''}`}
-                    integerSeparator=""
                     value={amount || '-'}
                     appearance={{ size: 'small', theme: 'grey' }}
                   />

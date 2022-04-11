@@ -1,6 +1,7 @@
 import { bigNumberify, BigNumberish } from 'ethers/utils';
 import Decimal from 'decimal.js';
 
+import { minimalFormatter } from '~utils/numbers';
 import { TokenWithBalances } from '~data/index';
 import { DEFAULT_TOKEN_DECIMALS, SMALL_TOKEN_AMOUNT_FORMAT } from '~constants';
 
@@ -59,8 +60,13 @@ export const getFormattedTokenValue = (
     safeDecimals,
   );
 
+  // Testing Dev: add/remove to catch small numbers here
+  // or let numbro handle it in numberFormatter.
   if (decimalValue.lt(0.00001) && decimalValue.gt(0)) {
     return SMALL_TOKEN_AMOUNT_FORMAT;
   }
-  return decimalValue.toDP(5, Decimal.ROUND_DOWN).toString();
+
+  return minimalFormatter({
+    value: decimalValue.toString(),
+  });
 };

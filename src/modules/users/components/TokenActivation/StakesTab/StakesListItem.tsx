@@ -2,6 +2,7 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Link from '~core/Link';
+import Numeral from '~core/Numeral';
 
 import styles from './StakesTab.css';
 
@@ -37,7 +38,7 @@ const StakesListItem = ({
           tabIndex={0}
         >
           <div>
-            {stakedAmount} {tokenSymbol}
+            <Numeral value={stakedAmount} suffix={tokenSymbol} />
           </div>
           <div className={styles.falseLink}>
             <FormattedMessage {...MSG.motionUrl} />

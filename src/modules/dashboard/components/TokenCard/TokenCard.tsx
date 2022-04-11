@@ -90,7 +90,6 @@ const TokenCard = ({
       >
         <Numeral
           className={styles.balanceNumeral}
-          integerSeparator=""
           unit={getTokenDecimalsWithFallback(token.decimals)}
           value={balance || 0}
         />
