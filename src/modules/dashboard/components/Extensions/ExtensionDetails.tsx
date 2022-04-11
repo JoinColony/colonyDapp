@@ -224,7 +224,7 @@ const ExtensionDetails = ({
     installedExtension &&
     !installedExtension?.details?.deprecated;
   const extesionCanBeUninstalled =
-    extensionUninstallable && installedExtension?.details.deprecated;
+    extensionUninstallable && installedExtension?.details?.deprecated;
   const extensionCanBeUpgraded =
     hasRegisteredProfile &&
     !(extesionCanBeInstalled || extesionCanBeEnabled) &&
@@ -232,8 +232,8 @@ const ExtensionDetails = ({
 
   const extensionEnabled =
     installedExtension &&
-    installedExtension.details.initialized &&
-    !installedExtension.details.deprecated;
+    installedExtension.details?.initialized &&
+    !installedExtension.details?.deprecated;
 
   const extensionCompatible = extension?.currentVersion
     ? !extensionsIncompatibilityMap[extensionId][extension.currentVersion].find(
@@ -255,14 +255,16 @@ const ExtensionDetails = ({
           <span className={styles.installedBy}>
             <DetailsWidgetUser
               colony={colony}
-              walletAddress={installedExtension.details.installedBy}
+              walletAddress={installedExtension.details?.installedBy}
             />
           </span>
         ),
       },
       {
         label: MSG.dateInstalled,
-        value: <FormattedDate value={installedExtension.details.installedAt} />,
+        value: (
+          <FormattedDate value={installedExtension.details?.installedAt} />
+        ),
       },
       {
         label: MSG.versionInstalled,
@@ -396,8 +398,8 @@ const ExtensionDetails = ({
               component={() => {
                 if (
                   !canInstall ||
-                  (installedExtension?.details.initialized &&
-                    !installedExtension?.details.missingPermissions.length)
+                  (installedExtension?.details?.initialized &&
+                    !installedExtension?.details?.missingPermissions.length)
                 ) {
                   return <Redirect to={extensionUrl} />;
                 }
@@ -466,6 +468,7 @@ const ExtensionDetails = ({
                 text={MSG.buttonDeprecate}
                 values={{ colonyAddress, extensionId, isToDeprecate: true }}
                 disabled={!isSupportedColonyVersion || !isNetworkAllowed}
+                data-test="deprecateExtensionButton"
               />
             </div>
           ) : null}
@@ -484,6 +487,7 @@ const ExtensionDetails = ({
                 text={MSG.buttonReEnable}
                 values={{ colonyAddress, extensionId, isToDeprecate: false }}
                 disabled={!isSupportedColonyVersion || !isNetworkAllowed}
+                data-test="reenableExtensionButton"
               />
               <DialogActionButton
                 dialog={ExtensionUninstallConfirmDialog}
@@ -498,6 +502,7 @@ const ExtensionDetails = ({
                 text={MSG.buttonUninstall}
                 values={{ colonyAddress, extensionId }}
                 disabled={!isSupportedColonyVersion || !isNetworkAllowed}
+                data-test="uninstallExtensionButton"
               />
             </div>
           ) : null}

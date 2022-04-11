@@ -118,6 +118,7 @@ const RecoveryModeDialogForm = ({
           label={MSG.annotation}
           name="annotation"
           disabled={!userHasPermission || isSubmitting}
+          dataTest="recoveryAnnotation"
         />
       </DialogSection>
       {!userHasPermission && (
@@ -151,6 +152,7 @@ const RecoveryModeDialogForm = ({
           onClick={() => handleSubmit()}
           loading={isSubmitting}
           disabled={!userHasPermission || isSubmitting}
+          data-test="recoveryConfirmButton"
         />
       </DialogSection>
     </>

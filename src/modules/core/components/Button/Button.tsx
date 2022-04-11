@@ -62,6 +62,8 @@ export interface Props
 
   /** Values for loading text (react-intl interpolation) */
   textValues?: SimpleMessageValues;
+  /** Testing */
+  dataTest?: string;
 }
 
 /*
@@ -89,6 +91,7 @@ const Button = ({
   text,
   textValues,
   type = 'button',
+  dataTest,
   ...props
 }: Props) => {
   const { formatMessage } = useIntl();
@@ -116,6 +119,7 @@ const Button = ({
       title={titleText}
       type={type}
       ref={innerRef}
+      data-test={dataTest}
       {...props}
     >
       {buttonText || children}

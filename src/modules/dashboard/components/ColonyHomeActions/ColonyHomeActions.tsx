@@ -263,12 +263,9 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
   ]);
 
   const oneTxPaymentExtension = data?.processedColony?.installedExtensions.find(
-    ({
-      details: { initialized, missingPermissions },
-      extensionId: extensionName,
-    }) =>
-      initialized &&
-      !missingPermissions.length &&
+    ({ details, extensionId: extensionName }) =>
+      details?.initialized &&
+      !details?.missingPermissions.length &&
       extensionName === Extension.OneTxPayment,
   );
   const mustUpgradeOneTx = oneTxMustBeUpgraded(oneTxPaymentExtension);
@@ -292,6 +289,7 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
             !colony?.isDeploymentFinished ||
             mustUpgradeOneTx
           }
+          data-test="newActionButton"
         />
       )}
     </>

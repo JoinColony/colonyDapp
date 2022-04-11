@@ -141,6 +141,7 @@ const AdvancedDialog = ({
           <FormattedMessage {...MSG.managePermissionsPermissionList} />
         ),
       },
+      dataTest: 'managePermissionsDialogIndexItem',
     },
     {
       title: MSG.recoveryTitle,
@@ -155,6 +156,7 @@ const AdvancedDialog = ({
         permissionsList: <FormattedMessage {...MSG.recoveryPermissionsList} />,
       },
       disabled: !isSupportedColonyVersion,
+      dataTest: 'recoveryDialogIndexItem',
     },
     {
       title: MSG.upgradeTitle,
@@ -177,6 +179,7 @@ const AdvancedDialog = ({
         permissionsList: <FormattedMessage {...MSG.upgradePermissionsList} />,
       },
       onClick: () => callStep(nextStepEditDetails),
+      dataTest: 'updateColonyDialogIndexItem',
     },
     {
       title: MSG.makeArbitraryTransactionTitle,

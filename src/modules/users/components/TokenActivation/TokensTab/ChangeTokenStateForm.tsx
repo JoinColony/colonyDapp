@@ -252,6 +252,7 @@ const ChangeTokenStateForm = ({
                   values.amount.toString() === '.' ? 0 : values.amount || 0,
                 )
               }
+              dataTest="tokenActivationConfirm"
             />
           </div>
         )}

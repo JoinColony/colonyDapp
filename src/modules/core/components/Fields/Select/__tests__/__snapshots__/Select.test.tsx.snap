@@ -31,6 +31,7 @@ exports[`Select component Renders initial component 1`] = `
             }
           }
           connect={false}
+          data-test="selectButton"
           id="someStaticId"
           label="Select me"
           name="foo"

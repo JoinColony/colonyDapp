@@ -30,6 +30,9 @@ interface Props {
    * Ironic, no? A full "masked" address :)
    */
   full?: boolean;
+
+  /* Testing */
+  dataTest?: string;
 }
 
 /*
@@ -37,20 +40,33 @@ interface Props {
  * See: https://reactjs.org/docs/forwarding-refs.html#forwarding-refs-to-dom-components
  */
 const MaskedAddress = forwardRef(
-  ({ address, mask = '...', full = false }: Props, ref: RefObject<any>) => {
+  (
+    { address, mask = '...', full = false, dataTest }: Props,
+    ref: RefObject<any>,
+  ) => {
     const cutAddress: AddressElements | Error = splitAddress(address);
     if (cutAddress instanceof Error) {
       return <FormattedMessage {...MSG.wrongAddressFormat} />;
     }
     if (!full) {
       return (
-        <span className={styles.address} title={address} ref={ref}>
+        <span
+          className={styles.address}
+          title={address}
+          ref={ref}
+          data-test={dataTest}
+        >
           {`${cutAddress.header}${cutAddress.start}${mask}${cutAddress.end}`}
         </span>
       );
     }
     return (
-      <span className={styles.address} title={address} ref={ref}>
+      <span
+        className={styles.address}
+        title={address}
+        ref={ref}
+        data-test={dataTest}
+      >
         {cutAddress.header}
         {cutAddress.start}
         <span className={styles.middleSection}>{cutAddress.middle}</span>

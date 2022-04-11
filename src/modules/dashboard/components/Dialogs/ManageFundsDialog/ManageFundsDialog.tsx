@@ -132,6 +132,7 @@ const ManageFundsDialog = ({
         permissionsList: <FormattedMessage {...MSG.paymentPermissionsList} />,
       },
       onClick: () => callStep(nextStepTransferFunds),
+      dataTest: 'transferFundsDialogIndexItem',
     },
     {
       title: MSG.mintTokensTitle,
@@ -145,6 +146,7 @@ const ManageFundsDialog = ({
         ),
       },
       onClick: () => callStep(nextStepMintTokens),
+      dataTest: 'mintTokensDialogItem',
     },
     {
       title: MSG.manageTokensTitle,
@@ -158,6 +160,7 @@ const ManageFundsDialog = ({
         ),
       },
       onClick: () => callStep(nextStepManageTokens),
+      dataTest: 'manageTokensDialogItem',
     },
     {
       title: MSG.rewardPayoutTitle,
@@ -183,6 +186,7 @@ const ManageFundsDialog = ({
           <FormattedMessage {...MSG.manageTokensPermissionsList} />
         ),
       },
+      dataTest: 'unlockTokenDialogIndexItem',
     },
   ];
   const filteredItems = useMemo(() => {

@@ -73,6 +73,7 @@ const options = [
     subtitle: MSG.createTokenSubtitle,
     icon: 'question-mark',
     tooltip: MSG.tooltipCreate,
+    dataTest: 'createNewToken',
   },
   {
     value: 'select',
@@ -80,6 +81,7 @@ const options = [
     subtitle: MSG.selectTokenSubtitle,
     icon: 'question-mark',
     tooltip: MSG.tooltipSelect,
+    dataTest: 'useExistingToken',
   },
 ];
 

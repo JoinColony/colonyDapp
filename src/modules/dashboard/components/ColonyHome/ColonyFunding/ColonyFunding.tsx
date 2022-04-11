@@ -71,7 +71,7 @@ const ColonyFunding = ({ colony, currentDomainId }: Props) => {
         )}
       </Heading>
       {data && !isLoadingTokenBalances ? (
-        <ul>
+        <ul data-test="availableFunds">
           {data.tokens.map((token) => (
             <li key={token.address}>
               <InfoPopover

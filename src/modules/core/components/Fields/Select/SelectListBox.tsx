@@ -19,6 +19,7 @@ interface Props {
   name: string;
   onSelect: (idx: number) => void;
   onClick: () => void;
+  dataTest?: string;
 }
 
 const getOptionId = (name, idx) =>
@@ -34,6 +35,7 @@ const SelectListBox = ({
   onSelect,
   onClick,
   name,
+  dataTest,
 }: Props) => {
   const activeDescendantOption = options.find(
     (_, idx) => selectedOption === idx,
@@ -64,6 +66,7 @@ const SelectListBox = ({
           option={option}
           onSelect={onSelect}
           onClick={onClick}
+          dataTest={dataTest}
         />
       ))}
       {optionsFooter}

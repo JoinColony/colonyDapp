@@ -96,6 +96,15 @@ interface Props extends WithOmnipickerInProps {
   onSelected?: (user: AnyUser) => void;
 
   value?: AnyUser;
+
+  /** Provides value for data-test prop in the input used on cypress testing */
+  dataTest?: string;
+
+  /** Provides value for data-test prop in the item list component used on cypress testing */
+  itemDataTest?: string;
+
+  /** Provides value for data-test prop in the value of the input used on cypress testing */
+  valueDataTest?: string;
 }
 
 interface EnhancedProps extends Props, WrappedComponentProps {}
@@ -124,6 +133,9 @@ const SingleUserPicker = ({
     <UserAvatar address={address} user={item} size="xs" />
   ),
   renderItem: renderItemProp,
+  dataTest,
+  itemDataTest,
+  valueDataTest,
 }: EnhancedProps) => {
   const [, { error, touched, value }, { setValue }] = useField<AnyUser | null>(
     name,
@@ -157,9 +169,10 @@ const SingleUserPicker = ({
           itemData={user}
           renderAvatar={renderAvatar}
           showMaskedAddress
+          dataTest={itemDataTest}
         />
       ),
-      [renderAvatar],
+      [renderAvatar, itemDataTest],
     );
 
   const labelAppearance = appearance
@@ -206,6 +219,7 @@ const SingleUserPicker = ({
                   onFocus={handleActiveUserClick}
                   tabIndex={0}
                   disabled={disabled}
+                  data-test={valueDataTest}
                 >
                   {value.profile.displayName ||
                     value.profile.username ||
@@ -221,6 +235,7 @@ const SingleUserPicker = ({
               placeholder={placeholderText}
               hidden={!!value}
               ref={registerInputNode}
+              data-test={dataTest}
             />
             {error && appearance && appearance.direction === 'horizontal' && (
               <span className={styles.errorHorizontal}>{error}</span>

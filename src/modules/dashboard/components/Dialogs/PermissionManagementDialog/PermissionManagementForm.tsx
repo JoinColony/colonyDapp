@@ -286,6 +286,8 @@ const PermissionManagementForm = ({
             renderAvatar={supRenderAvatar}
             disabled={inputDisabled}
             placeholder={MSG.userPickerPlaceholder}
+            dataTest="permissionUserSelector"
+            itemDataTest="permissionUserSelectorItem"
           />
         </div>
       </DialogSection>
@@ -317,6 +319,7 @@ const PermissionManagementForm = ({
                 role={role}
                 asterisk={roleIsInherited}
                 domainId={domainId}
+                dataTest="permission"
               />
             );
           })}
@@ -325,6 +328,7 @@ const PermissionManagementForm = ({
           label={MSG.annotation}
           name="annotationMessage"
           disabled={inputDisabled}
+          dataTest="permissionAnnotation"
         />
       </DialogSection>
     </>

@@ -65,6 +65,7 @@ const UserTokenActivationButton = ({
             className={styles.tokens}
             onClick={toggle}
             ref={ref}
+            data-test="tokenActivationButton"
           >
             <Tooltip
               appearance={{ theme: 'dark', size: 'medium' }}

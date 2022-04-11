@@ -57,6 +57,8 @@ export interface Props
 
   /** Pass params to a max button - implemented only in Cleave options */
   maxButtonParams?: MaxButtonParams;
+  /** Testing */
+  dataTest?: string;
 }
 
 const InputComponent = ({
@@ -73,6 +75,7 @@ const InputComponent = ({
   maxLength,
   value,
   maxButtonParams,
+  dataTest,
   /* eslint-enable @typescript-eslint/no-unused-vars */
   ...props
 }: Props) => {
@@ -131,6 +134,7 @@ const InputComponent = ({
         options={formattingOptions}
         onChange={handleCleaveChange}
         placeholder={placeholder}
+        data-test={dataTest}
       />
     ) : (
       <div className={styles.inputContainer}>
@@ -155,6 +159,7 @@ const InputComponent = ({
               );
             }
           }}
+          dataTest="inputMaxButton"
         />
         <Cleave
           {...props}
@@ -165,6 +170,7 @@ const InputComponent = ({
           onChange={handleCleaveChange}
           placeholder={placeholder}
           onInit={(cleaveInstance) => setCleave(cleaveInstance)}
+          data-test={dataTest}
         />
       </div>
     );
@@ -177,6 +183,7 @@ const InputComponent = ({
       placeholder={placeholder}
       ref={innerRef}
       value={value || ''}
+      data-test={dataTest}
       {...props}
     />
   ) : (
@@ -191,6 +198,7 @@ const InputComponent = ({
         ref={innerRef}
         maxLength={maxLength}
         value={value || ''}
+        data-test={dataTest}
         {...props}
       />
       {maxLength && (

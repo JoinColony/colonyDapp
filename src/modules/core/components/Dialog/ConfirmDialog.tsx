@@ -78,6 +78,7 @@ const ConfirmDialog = ({
         onClick={onClick}
         text={confirmButtonText}
         style={{ width: styles.wideButton }}
+        data-test="confirmButton"
       />
     </DialogSection>
   </Dialog>

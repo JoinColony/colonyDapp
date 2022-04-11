@@ -107,6 +107,7 @@ const ColonyTotalFunds = ({
           className={styles.selectedTokenAmount}
           unit={getTokenDecimalsWithFallback(currentToken.decimals)}
           value={currentToken.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount}
+          data-test="colonyTotalFunds"
         />
         <ColonyTotalFundsPopover
           tokens={data.tokens}
@@ -114,7 +115,7 @@ const ColonyTotalFunds = ({
           currentTokenAddress={currentTokenAddress}
         >
           <button className={styles.selectedTokenSymbol} type="button">
-            <span>{currentToken.symbol}</span>
+            <span data-test="colonyTokenSymbol">{currentToken.symbol}</span>
             {currentTokenAddress === nativeTokenAddress &&
               isNativeTokenLocked && (
                 <IconTooltip
@@ -140,6 +141,7 @@ const ColonyTotalFunds = ({
           <Link
             className={styles.manageFundsLink}
             to={`/colony/${colonyName}/funds`}
+            data-test="manageFunds"
           >
             <Icon
               className={styles.rightArrowDisplay}

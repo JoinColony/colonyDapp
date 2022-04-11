@@ -76,6 +76,7 @@ const Avatar = ({
           }
           name={placeholderIcon}
           title={title}
+          data-test="avatar"
         />
       )}
     </figure>

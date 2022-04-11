@@ -1,5 +1,6 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import camelCase from 'lodash/camelCase';
 
 import Tag from '~core/Tag';
 
@@ -48,13 +49,13 @@ const ExtensionStatus = ({
 
   if (!installedExtension) {
     status = MSG.notInstalled;
-  } else if (!installedExtension.details.initialized) {
+  } else if (!installedExtension.details?.initialized) {
     status = MSG.notEnabled;
     theme = 'golden';
-  } else if (installedExtension.details.missingPermissions.length) {
+  } else if (installedExtension.details?.missingPermissions.length) {
     status = MSG.missingPermissions;
     theme = 'danger';
-  } else if (installedExtension.details.initialized) {
+  } else if (installedExtension.details?.initialized) {
     status = MSG.enabled;
     theme = 'primary';
   } else {
@@ -62,9 +63,19 @@ const ExtensionStatus = ({
   }
   return (
     <div className={styles.tagContainer}>
-      {!deprecatedOnly ? <Tag appearance={{ theme }} text={status} /> : null}
-      {installedExtension && installedExtension.details.deprecated ? (
-        <Tag appearance={{ theme: 'danger' }} text={MSG.deprecated} />
+      {!deprecatedOnly ? (
+        <Tag
+          appearance={{ theme }}
+          text={status}
+          data-test={`${camelCase(status.defaultMessage)}StatusTag`}
+        />
+      ) : null}
+      {installedExtension && installedExtension.details?.deprecated ? (
+        <Tag
+          appearance={{ theme: 'danger' }}
+          text={MSG.deprecated}
+          data-test="deprecatedStatusTag"
+        />
       ) : null}
     </div>
   );

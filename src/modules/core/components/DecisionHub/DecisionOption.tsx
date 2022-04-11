@@ -28,6 +28,7 @@ export interface DecisionOptionType {
   icon?: string;
   tooltip?: MessageDescriptor;
   disabled?: boolean;
+  dataTest?: string;
 }
 
 interface Appearance {
@@ -94,6 +95,7 @@ const DecisionOption = ({
     <Element
       className={getMainClasses(appearance, styles, { disabled: !!disabled })}
       {...(elmProps as any)}
+      data-test={option.dataTest}
     >
       <DecisionOptionIcon {...option} />
       <div className={styles.rowContent}>

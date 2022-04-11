@@ -110,6 +110,7 @@ const ApproveExitWidget = ({
           success={ActionTypes.COLONY_ACTION_RECOVERY_EXIT_SUCCESS}
           transform={transform}
           text={MSG.reactivateButton}
+          data-test="reactivateColonyButton"
         />
       </div>
     </div>

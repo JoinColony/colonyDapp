@@ -212,7 +212,7 @@ const StakingWidget = ({
   const canBeStaked = isObjection ? canUserStakeNay : canUserStakeYay;
 
   return (
-    <div className={styles.main}>
+    <div className={styles.main} data-test="stakingWidget">
       <ActionForm
         initialValues={{
           amount: 0,
@@ -253,6 +253,7 @@ const StakingWidget = ({
                   userActivatedTokens.lt(getDecimalStake(values.amount))
                 }
                 text={MSG.stakeButton}
+                dataTest="stakeWidgetStakeButton"
               />
               <span
                 className={
@@ -280,6 +281,7 @@ const StakingWidget = ({
                           })
                         : handleWidgetState(true)
                     }
+                    dataTest="stakeWidgetObjectButton"
                   />
                 )}
               </span>

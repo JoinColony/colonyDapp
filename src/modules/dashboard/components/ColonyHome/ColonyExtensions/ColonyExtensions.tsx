@@ -51,8 +51,8 @@ const ColonyExtensions = ({ colony: { colonyName, colonyAddress } }: Props) => {
         {data.processedColony.installedExtensions
           .filter(
             (extension) =>
-              extension.details.initialized &&
-              !extension.details.missingPermissions.length,
+              extension.details?.initialized &&
+              !extension.details?.missingPermissions.length,
           )
           .map((extension) => {
             const { address, extensionId } = extension;

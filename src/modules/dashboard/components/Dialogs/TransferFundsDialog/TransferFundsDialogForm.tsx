@@ -285,6 +285,8 @@ const TransferFundsDialogForm = ({
               appearance={{ theme: 'grey' }}
               onChange={() => validateForm()}
               disabled={inputDisabled}
+              dataTest="domainIdSelector"
+              itemDataTest="domainIdItem"
             />
             {!!tokenAddress && (
               <div className={styles.domainPotBalance}>
@@ -323,6 +325,8 @@ const TransferFundsDialogForm = ({
               appearance={{ theme: 'grey' }}
               onChange={() => validateForm()}
               disabled={inputDisabled}
+              dataTest="domainIdSelector"
+              itemDataTest="domainIdItem"
             />
             {!!tokenAddress && toDomainTokenBalance && !errors.toDomain && (
               <div className={styles.domainPotBalance}>
@@ -368,6 +372,7 @@ const TransferFundsDialogForm = ({
               }}
               disabled={inputDisabled}
               onChange={() => validateForm()}
+              dataTest="transferAmountInput"
             />
           </div>
           <div className={styles.tokenAmountContainer}>
@@ -404,6 +409,7 @@ const TransferFundsDialogForm = ({
           label={MSG.annotation}
           name="annotation"
           disabled={inputDisabled}
+          dataTest="transferFundsAnnotation"
         />
       </DialogSection>
       {!userHasPermission && (
@@ -442,6 +448,7 @@ const TransferFundsDialogForm = ({
           loading={isSubmitting}
           disabled={!isValid || inputDisabled}
           style={{ width: styles.wideButton }}
+          data-test="transferFundsConfirmButton"
         />
       </DialogSection>
     </>

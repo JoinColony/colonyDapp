@@ -289,6 +289,7 @@ const EditColonyDetailsDialogForm = ({
             !canValuesBeUpdate ||
             isSubmitting
           }
+          data-test="confirmButton"
         />
       </DialogSection>
     </>

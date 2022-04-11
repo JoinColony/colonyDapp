@@ -29,7 +29,10 @@ const TokenItem = ({
 
   return typeof balance === 'undefined' ? null : (
     <div className={styles.tokenItem}>
-      <span className={styles.tokenValue}>
+      <span
+        className={styles.tokenValue}
+        data-test={isTokenNative ? 'colonyFundingNativeTokenValue' : null}
+      >
         <Numeral
           unit={getTokenDecimalsWithFallback(decimals)}
           value={balance}
@@ -43,6 +46,7 @@ const TokenItem = ({
             tooltipText={{ id: 'tooltip.lockedToken' }}
             className={styles.tokenLockWrapper}
             appearance={{ size: 'small' }}
+            dataTest="lockIconTooltip"
           />
         )}
       </span>

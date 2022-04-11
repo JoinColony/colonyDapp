@@ -64,25 +64,27 @@ const ExtensionActionButton = ({
         }}
         text={MSG.install}
         disabled={!isSupportedColonyVersion || !extensionCompatible}
+        data-test="installExtensionButton"
       />
     );
   }
 
-  if (installedExtension.details.deprecated) {
+  if (installedExtension.details?.deprecated) {
     return null;
   }
 
-  if (!installedExtension.details.initialized) {
+  if (!installedExtension.details?.initialized) {
     return (
       <Button
         appearance={{ theme: 'primary', size: 'medium' }}
         onClick={handleEnableButtonClick}
         text={MSG.enable}
         disabled={!isSupportedColonyVersion}
+        data-test="enableExtensionButton"
       />
     );
   }
-  if (installedExtension.details.missingPermissions.length) {
+  if (installedExtension.details?.missingPermissions.length) {
     return (
       <ActionButton
         button={IconButton}

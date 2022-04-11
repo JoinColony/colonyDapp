@@ -23,6 +23,7 @@ interface Props {
   selected: boolean;
   onSelect: (idx: number) => void;
   onClick: () => void;
+  dataTest?: string;
 }
 
 const displayName = 'SelectOption';
@@ -36,6 +37,7 @@ const SelectOption = ({
   onSelect,
   option,
   selected,
+  dataTest,
 }: Props) => {
   const { formatMessage } = useIntl();
 
@@ -79,6 +81,7 @@ const SelectOption = ({
       onKeyPress={handleItemKeyPress}
       onMouseEnter={handleItemSelect}
       data-checked={checked}
+      data-test={dataTest}
     >
       <span title={label} className={styles.value}>
         {option.children || (

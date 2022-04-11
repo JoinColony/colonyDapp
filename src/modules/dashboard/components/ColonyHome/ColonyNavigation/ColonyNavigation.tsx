@@ -73,12 +73,14 @@ const ColonyNavigation = ({ colony: { colonyAddress, colonyName } }: Props) => {
         linkTo: `/colony/${colonyName}/events`,
         showDot: hasNewEvents,
         text: MSG.linkTextEvents,
+        dataTest: 'eventsNavigationButton',
       },
       {
         exact: false,
         linkTo: `/colony/${colonyName}/extensions`,
         showDot: hasNewExtensions,
         text: MSG.linkTextExtensions,
+        dataTest: 'extensionsNavigationButton',
       },
     ];
     if (data?.processedColony?.installedExtensions) {

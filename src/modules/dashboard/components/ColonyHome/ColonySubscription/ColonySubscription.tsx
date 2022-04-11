@@ -111,6 +111,7 @@ const ColonySubscription = ({
               onKeyDown={toggle}
               role="button"
               tabIndex={0}
+              data-test="colonyMenuPopover"
             >
               <Icon
                 className={styles.menuIcon}

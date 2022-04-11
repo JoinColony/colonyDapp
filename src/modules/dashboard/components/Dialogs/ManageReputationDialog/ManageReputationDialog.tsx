@@ -89,6 +89,7 @@ const ManageReputation = ({
         }).toLowerCase(),
       },
       onClick: () => callStep(nextStepAwardReputation),
+      dataTest: 'awardReputationDialogIndexItem',
     },
     {
       title: MSG.smiteReputationTitle,
@@ -102,6 +103,7 @@ const ManageReputation = ({
         }).toLowerCase(),
       },
       onClick: () => callStep(nextStepSmiteReputation),
+      dataTest: 'smiteReputationDialogIndexItem',
     },
   ];
   return (
