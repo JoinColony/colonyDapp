@@ -1,3 +1,5 @@
+@value tooltipBg: var(--dark);
+@value light: rgba(255, 255, 255, 1);
 
 .main {
   display: flex;
@@ -52,4 +54,14 @@
 .checkbox {
   margin-right: 10px;
   margin-top: 5px;
+}
+
+.tooltipContainer {
+  padding: 11px;
+  border: 0;
+  border-radius: var(--radius-normal);
+  background: tooltipBg;
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+  color: light;
 }
