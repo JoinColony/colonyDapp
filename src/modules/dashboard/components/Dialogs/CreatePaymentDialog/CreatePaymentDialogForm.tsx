@@ -32,6 +32,7 @@ import {
   useLoggedInUser,
   useTokenBalancesForDomainsLazyQuery,
   AnyUser,
+  useNetworkContracts,
 } from '~data/index';
 import {
   getBalanceFromToken,
@@ -63,6 +64,10 @@ const MSG = defineMessages({
   amount: {
     id: 'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.amount',
     defaultMessage: 'Amount',
+  },
+  fee: {
+    id: 'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.fee',
+    defaultMessage: 'Network fee: {fee} {symbol}',
   },
   token: {
     id: 'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.address',
@@ -113,6 +118,29 @@ const UserAvatar = HookedUserAvatar({ fetchUser: false });
 const supRenderAvatar = (address: Address, item: ItemDataType<AnyUser>) => (
   <UserAvatar address={address} user={item} size="xs" notSet={false} />
 );
+
+// NOTE: The equation to calculate totalToPay is as following (in Wei)
+// totalToPay = (receivedAmount + 1) * (feeInverse / (feeInverse -1))
+// The network adds 1 wei extra fee after the percentage calculation
+// For more info check out
+// https://github.com/JoinColony/colonyNetwork/blob/806e4d5750dc3a6b9fa80f6e007773b28327c90f/contracts/colony/ColonyFunding.sol#L656
+
+export const calculateFee = (
+  receivedAmount: string, // amount that the recipient finally receives
+  feeInverse: string,
+  decimals: number,
+): { feesInWei: string; totalToPay: string } => {
+  const amountInWei = moveDecimal(receivedAmount, decimals);
+  const totalToPayInWei = bigNumberify(amountInWei)
+    .add(1)
+    .mul(feeInverse)
+    .div(bigNumberify(feeInverse).sub(1));
+  const feesInWei = totalToPayInWei.sub(amountInWei);
+  return {
+    feesInWei: feesInWei.toString(),
+    totalToPay: moveDecimal(totalToPayInWei, -1 * decimals),
+  }; // NOTE: seems like moveDecimal does not have strict typing
+};
 
 const CreatePaymentDialogForm = ({
   back,
@@ -313,6 +341,8 @@ const CreatePaymentDialogForm = ({
 
   const inputDisabled = !canMakePayment || onlyForceAction || isSubmitting;
 
+  const { feeInverse: networkFeeInverse } = useNetworkContracts();
+
   return (
     <>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
@@ -427,6 +457,41 @@ const CreatePaymentDialogForm = ({
                */
               forcedFieldError={customAmountError}
             />
+            {networkFeeInverse &&
+              values.amount &&
+              values.amount !== '0' &&
+              values.amount !== '0.' &&
+              values.amount !== '.' && (
+                <div className={styles.networkFee}>
+                  <FormattedMessage
+                    {...MSG.fee}
+                    values={{
+                      fee: (
+                        <Numeral
+                          appearance={{
+                            size: 'small',
+                            theme: 'grey',
+                          }}
+                          value={
+                            calculateFee(
+                              values.amount,
+                              networkFeeInverse,
+                              getTokenDecimalsWithFallback(
+                                selectedToken?.decimals,
+                              ),
+                            ).feesInWei
+                          }
+                          unit={getTokenDecimalsWithFallback(
+                            selectedToken && selectedToken.decimals,
+                          )}
+                          truncate={3}
+                        />
+                      ),
+                      symbol: (selectedToken && selectedToken.symbol) || '???',
+                    }}
+                  />
+                </div>
+              )}
           </div>
           <div className={styles.tokenAmountContainer}>
             <div className={styles.tokenAmountSelect}>

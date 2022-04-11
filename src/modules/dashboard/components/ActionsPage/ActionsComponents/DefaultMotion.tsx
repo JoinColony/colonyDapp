@@ -46,6 +46,7 @@ import {
   useMotionStatusQuery,
   OneDomain,
   useColonyHistoricRolesQuery,
+  useNetworkContracts,
 } from '~data/index';
 
 import DetailsWidget from '../DetailsWidget';
@@ -266,7 +267,19 @@ const DefaultMotion = ({
     color: domainColor,
     description: domainPurpose,
   };
-  const decimalAmount = getFormattedTokenValue(amount, decimals);
+
+  const { feeInverse: networkFeeInverse } = useNetworkContracts();
+  const feePercentage = networkFeeInverse
+    ? bigNumberify(100).div(networkFeeInverse)
+    : null;
+
+  // In case it is a Payment Motion , calculate the payment the recipient gets, after network fees
+  const decimalAmount = getFormattedTokenValue(
+    feePercentage && actionType === ColonyMotions.PaymentMotion
+      ? bigNumberify(amount).mul(bigNumberify(100).sub(feePercentage)).div(100)
+      : amount,
+    decimals,
+  );
   const actionAndEventValues = {
     actionType,
     newVersion,

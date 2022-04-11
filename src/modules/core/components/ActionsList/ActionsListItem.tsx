@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback, useEffect } from 'react';
-import { bigNumberify } from 'ethers/utils';
+import { bigNumberify, BigNumberish } from 'ethers/utils';
 import {
   FormattedDateParts,
   FormattedMessage,
@@ -27,6 +27,7 @@ import {
   Colony,
   useColonyHistoricRolesQuery,
   useTokenInfoLazyQuery,
+  useNetworkContracts,
 } from '~data/index';
 import { createAddress } from '~utils/web3';
 import { FormattedAction, ColonyActions, ColonyMotions } from '~types/index';
@@ -201,6 +202,20 @@ const ActionsListItem = ({
     motionState === MotionState.FailedNoFinalizable;
 
   const stopPropagation = (event) => event.stopPropagation();
+
+  const { feeInverse: networkFeeInverse } = useNetworkContracts();
+  const feePercentage = networkFeeInverse
+    ? bigNumberify(100).div(networkFeeInverse)
+    : undefined;
+
+  // In case it is a Payment Motion or Action, calculate the payment the recipient gets, after network fees
+  const paymentReceivedFn = feePercentage
+    ? (paymentAmount: BigNumberish) =>
+        bigNumberify(paymentAmount)
+          .mul(bigNumberify(100).sub(feePercentage))
+          .div(100)
+    : (x: any) => x;
+
   return (
     <li>
       <div
@@ -290,7 +305,12 @@ const ActionsListItem = ({
                   ),
                   amount: (
                     <Numeral
-                      value={amount}
+                      value={
+                        actionType === ColonyActions.Payment ||
+                        actionType === ColonyMotions.PaymentMotion
+                          ? paymentReceivedFn(amount)
+                          : amount
+                      }
                       unit={getTokenDecimalsWithFallback(decimals)}
                     />
                   ),
