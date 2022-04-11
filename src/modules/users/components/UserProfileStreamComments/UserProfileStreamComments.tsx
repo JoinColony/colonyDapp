@@ -14,9 +14,9 @@ import { MiniSpinnerLoader } from '~core/Preloaders';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { useLoggedInUser } from '~data/index';
 
-import StreamCommentInput from './CommentInput';
+import StreamCommentInput from './StreamCommentInput';
 
-import styles from './UserProfileComments.css';
+import styles from './UserProfileStreamComments.css';
 
 interface Props {
   channelId: string;
@@ -24,23 +24,23 @@ interface Props {
 
 const MSG = defineMessages({
   loading: {
-    id: 'users.UserProfileComments.loading',
+    id: 'users.UserProfileStreamComments.loading',
     defaultMessage: 'Loading messages',
   },
 });
 
-const displayName = 'users.UserProfileComments';
+const displayName = 'users.UserProfileStreamComments';
 
 const STREAM_CHANNEL_TYPE = 'user-cdapp-test';
 
-const UserProfileComments = ({ channelId }: Props) => {
+const UserProfileStreamComments = ({ channelId }: Props) => {
   const {
     username,
     ethereal,
     walletAddress: userWalletAddress,
   } = useLoggedInUser();
 
-  const chatClient = TEMP_getContext(ContextModule.ChatClient);
+  const chatClient = TEMP_getContext(ContextModule.StreamChatClient);
   const [channel, setChannel] = useState<ChannelType | null>(null);
 
   const CustomMessage = () => {
@@ -125,6 +125,6 @@ const UserProfileComments = ({ channelId }: Props) => {
   );
 };
 
-UserProfileComments.displayName = displayName;
+UserProfileStreamComments.displayName = displayName;
 
-export default UserProfileComments;
+export default UserProfileStreamComments;

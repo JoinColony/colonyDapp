@@ -1,0 +1,45 @@
+.main {
+  padding: 10px 0 0 0;
+  width: 480px;
+  border-radius: 6px;
+  background-color: white;
+}
+
+.controls {
+  padding: 20px 20px 0;
+}
+
+:global(.pn-msg-list) {
+  padding: 0;
+  height: auto;
+  width: auto;
+  position: initial;
+  background: transparent !important;
+}
+
+:global(.pn-msg-list-scroller) {
+  display: block;
+  height: auto;
+  width: auto;
+  position: initial;
+  transform: none;
+}
+
+:global(.pn-msg-list__spacer) {
+  display: none;
+}
+
+:global(.pn-msg) {
+  display: block;
+  padding: 0;
+  height: auto;
+  position: initial;
+}
+
+:global(.pn-msg:hover) {
+  background: transparent;
+}
+
+:global(.pn-msg__actions) {
+  display: none;
+}

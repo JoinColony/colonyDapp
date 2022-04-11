@@ -19,25 +19,25 @@ import { SpinnerLoader } from '~core/Preloaders';
 
 import { ENTER } from '~types/index';
 
-import styles from './CommentInput.css';
+import styles from './StreamCommentInput.css';
 
-const displayName = 'core.Comment.CommentInput';
+const displayName = 'users.UserProfileStreamComments.StreamCommentInput';
 
 const MSG = defineMessages({
   commentInputPlaceholder: {
-    id: 'core.Comment.CommentInput.commentInputPlaceholder',
+    id: `users.UserProfileStreamComments.StreamCommentInput.commentInputPlaceholder`,
     defaultMessage: 'What would you like to say?',
   },
   commentInstuctions: {
-    id: 'core.Comment.CommentInput.commentInstuctions',
+    id: 'users.UserProfileStreamComments.StreamCommentInput.commentInstuctions',
     defaultMessage: `{sendCombo} to send {newLineCombo} for a new line`,
   },
   newLineCombo: {
-    id: 'core.Comment.CommentInput.newLineCombo',
+    id: 'users.UserProfileStreamComments.StreamCommentInput.newLineCombo',
     defaultMessage: 'Shift+Return',
   },
   sendCombo: {
-    id: 'core.Comment.CommentInput.sendCombo',
+    id: 'users.UserProfileStreamComments.StreamCommentInput.sendCombo',
     defaultMessage: 'Return',
   },
 });
@@ -76,7 +76,7 @@ const handleKeyboardSubmit = (
   return false;
 };
 
-const CommentInput = ({
+const StreamCommentInput = ({
   channel,
   callback,
   disabled,
@@ -179,6 +179,6 @@ const CommentInput = ({
   );
 };
 
-CommentInput.displayName = displayName;
+StreamCommentInput.displayName = displayName;
 
-export default CommentInput;
+export default StreamCommentInput;

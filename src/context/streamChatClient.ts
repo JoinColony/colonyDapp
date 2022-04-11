@@ -1,14 +1,19 @@
 import { StreamChat } from 'stream-chat';
 
-const getChatClient = () => {
+const getStreamChatClient = () => {
   const STORAGE_KEY = 'dsettings';
   const decentralizedStorage = JSON.parse(
     localStorage.getItem(STORAGE_KEY) as string,
   );
 
+  const commentsEnabled =
+    typeof decentralizedStorage?.commentsEnabled === 'boolean'
+      ? decentralizedStorage?.commentsEnabled
+      : true;
+
   if (
     process.env.STREAM_API &&
-    decentralizedStorage?.commentsEnabled &&
+    commentsEnabled &&
     !decentralizedStorage?.enabled
   ) {
     const client = StreamChat.getInstance(process.env.STREAM_API as string);
@@ -20,4 +25,4 @@ const getChatClient = () => {
   return undefined;
 };
 
-export default getChatClient;
+export default getStreamChatClient;

@@ -9,7 +9,6 @@ import {
   TEMP_setContext,
   ContextModule,
 } from '~context/index';
-// import getChatClient from '~context/chatClient';
 import { putError } from '~utils/saga/effects';
 // import { log } from '~utils/debug';
 import { setLastWallet } from '~utils/autoLogin';
@@ -183,9 +182,18 @@ export default function* setupUserContext(
       // log.verbose(`Could not find username for ${walletAddress}`);
     }
 
+    // let chatClient;
+    // if (process.env.STREAM_API && !decentralized && commentsEnabled) {
+    //   chatClient = TEMP_getContext(ContextModule.StreamChatClient);
+    // }
     let chatClient;
-    if (process.env.STREAM_API && !decentralized && commentsEnabled) {
-      chatClient = TEMP_getContext(ContextModule.ChatClient);
+    if (
+      process.env.PN_PUB_KEY &&
+      process.env.PN_SUB_KEY &&
+      !decentralized &&
+      commentsEnabled
+    ) {
+      chatClient = TEMP_getContext(ContextModule.PubNubChatClient);
     }
 
     // @TODO refactor setupUserContext for graphql
@@ -198,7 +206,7 @@ export default function* setupUserContext(
       wallet,
       ipfsWithFallback,
       provider,
-      chatClient,
+      pubNubChatClient: chatClient,
       faunaClient,
     };
     yield setupResolvers(apolloClient, userContext);

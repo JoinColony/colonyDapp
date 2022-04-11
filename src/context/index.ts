@@ -1,7 +1,8 @@
 import { ApolloClient as ApolloClientClass } from '@apollo/client';
 import { PurserWallet } from '@purser/core';
 import { Provider as EthersProvider } from 'ethers/providers';
-import { StreamChat } from 'stream-chat';
+// import { StreamChat } from 'stream-chat';
+import PubNub from 'pubnub';
 import { Client as FaunaDbClient } from 'faunadb';
 
 // import ColonyManagerClass from '~lib/ColonyManager';
@@ -12,7 +13,8 @@ import ens from './ensContext';
 import apolloClient from './apolloClient';
 import ipfsWithFallback from './ipfsWithFallbackContext';
 import getProvider from '../modules/core/sagas/utils/getProvider';
-import getChatClient from './chatClient';
+// import getStreamChatClient from './streamChatClient';
+import getPubNubChatClient from './getPubNubChat';
 import faunaClient from './faunaClient';
 
 export enum ContextModule {
@@ -24,7 +26,8 @@ export enum ContextModule {
   Pinata = 'pinataClient',
   IPFSWithFallback = 'ipfsWithFallback',
   Provider = 'provider',
-  ChatClient = 'chatClient',
+  // StreamChatClient = 'streamChatClient',
+  PubNubChatClient = 'pubNubChatClient',
   FaunaClient = 'faunaClient',
 }
 
@@ -41,7 +44,8 @@ export interface Context {
   [ContextModule.ENS]?: ENSClass;
   [ContextModule.IPFSWithFallback]?: IpfsWithFallbackSkeleton;
   [ContextModule.Provider]?: EthersProvider;
-  [ContextModule.ChatClient]?: StreamChat;
+  // [ContextModule.StreamChatClient]?: StreamChat;
+  [ContextModule.PubNubChatClient]?: PubNub;
   [ContextModule.FaunaClient]?: FaunaDbClient;
 }
 
@@ -60,7 +64,8 @@ const TEMP_newContext: Context = {
   [ContextModule.Provider]: getProvider(
     decentralizedStorage?.enabled ? decentralizedStorage?.customRPC : undefined,
   ),
-  [ContextModule.ChatClient]: getChatClient(),
+  // [ContextModule.StreamChatClient]: getStreamChatClient(),
+  [ContextModule.PubNubChatClient]: getPubNubChatClient(),
   [ContextModule.FaunaClient]: faunaClient,
 };
 
