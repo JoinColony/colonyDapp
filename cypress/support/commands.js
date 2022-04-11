@@ -189,6 +189,10 @@ Cypress.Commands.add('uninstallExtension', () => {
 });
 
 Cypress.Commands.add('mintTokens', (amountToMint, isMotion) => {
+  const annotationText = isMotion
+    ? 'Test motion annotation'
+    : 'Test annotation';
+
   cy.login();
 
   cy.visit(`/colony/${Cypress.config().colony.name}`);
@@ -203,12 +207,20 @@ Cypress.Commands.add('mintTokens', (amountToMint, isMotion) => {
 
   cy.get('input').last().click().type(amountToMint);
 
+  if (isMotion !== undefined) {
+    cy.get('textarea').click().type(annotationText);
+  }
+
   cy.getBySel('mintConfirmButton').click();
 
   cy.getBySel('actionHeading', { timeout: 60000 }).should(
     'have.text',
     `Mint ${amountToMint} ${Cypress.config().colony.nativeToken}`,
   );
+
+  if (isMotion !== undefined) {
+    cy.getBySel('comment').should('have.text', annotationText);
+  }
 
   cy.url().should(
     'contains',

@@ -118,7 +118,7 @@ describe('User can create motions via UAC', () => {
     cy.checkMotion();
   });
 
-  it('Can claim tokens', () => {
+  it('User can activate tokens', () => {
     cy.login();
     cy.visit(`/colony/${Cypress.config().colony.name}`);
     // // activate tokens
@@ -130,7 +130,7 @@ describe('User can create motions via UAC', () => {
 
   it('Can create, stake, vote, finalise motion & claim tokens', () => {
     const amountToMint = 10;
-    cy.mintTokens(amountToMint, true);
+    cy.mintTokens(amountToMint);
 
     cy.checkMotion();
 
