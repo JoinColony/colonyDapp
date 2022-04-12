@@ -60,9 +60,9 @@ const Numeral = ({
 
   useEffect(() => {
     if (outputRef.current) {
-      outputRef.current.innerHTML = `${prefix ? `${prefix} ` : ''}
-        ${formattedNumber}
-        ${suffix ? ` ${suffix}` : ''}`;
+      const prefixStr = prefix ? `${prefix} ` : '';
+      const suffixStr = suffix ? ` ${suffix}` : '';
+      outputRef.current.innerHTML = `${prefixStr}${formattedNumber}${suffixStr}`;
     }
   }, [outputRef, formattedNumber, prefix, suffix]);
 
