@@ -46,6 +46,7 @@ import { vestingResolvers } from './resolvers/vesting';
 import { stakesResolvers } from './resolvers/stakes';
 import { whitelistResolvers } from './resolvers/whitelist';
 import { coinMachineResolvers } from './resolvers/coinMachine';
+import { statusResolvers } from './resolvers/status';
 
 import { FixedToken } from '../types';
 
@@ -69,6 +70,7 @@ export const resolvers: ResolverFactory[] = [
   networkContractsResolvers,
   colonyActionsResolvers,
   metaColonyResolvers,
+  statusResolvers,
   eventsResolvers,
   recoveryModeResolvers,
   extensionsResolvers,

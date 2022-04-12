@@ -479,3 +479,20 @@ query ColonyHistoricRoles($colonyAddress: String!, $blockNumber: Int!) {
     }
   }
 }
+
+query LatestRpcBlock {
+  latestRpcBlock @client
+}
+
+
+query ColonyServerLiveness {
+  isServerAlive @client
+}
+
+query LatestSubgraphBlock {
+  justLatestSubgraphBlock @client
+ }
+
+query ReputationOracleLiveness {
+  isReputationOracleAlive @client
+}
