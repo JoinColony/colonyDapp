@@ -261,8 +261,8 @@ export type Query = {
   historicColonyRoles: Array<ProcessedRoles>;
   isReputationOracleAlive: Scalars['Boolean'];
   isServerAlive: Scalars['Boolean'];
-  justLatestSubgraphBlock: Scalars['Int'];
-  latestRpcBlock: Scalars['String'];
+  latestRpcBlock: Scalars['Int'];
+  latestSubgraphBlock: Scalars['Int'];
   legacyNumberOfRecoveryRoles: Scalars['Int'];
   loggedInUser: LoggedInUser;
   motionCurrentUserVoted: Scalars['Boolean'];
@@ -2058,7 +2058,7 @@ export type ColonyServerLivenessQuery = Pick<Query, 'isServerAlive'>;
 export type LatestSubgraphBlockQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type LatestSubgraphBlockQuery = Pick<Query, 'justLatestSubgraphBlock'>;
+export type LatestSubgraphBlockQuery = Pick<Query, 'latestSubgraphBlock'>;
 
 export type ReputationOracleLivenessQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -5256,7 +5256,7 @@ export type ColonyServerLivenessLazyQueryHookResult = ReturnType<typeof useColon
 export type ColonyServerLivenessQueryResult = Apollo.QueryResult<ColonyServerLivenessQuery, ColonyServerLivenessQueryVariables>;
 export const LatestSubgraphBlockDocument = gql`
     query LatestSubgraphBlock {
-  justLatestSubgraphBlock @client
+  latestSubgraphBlock @client
 }
     `;
 

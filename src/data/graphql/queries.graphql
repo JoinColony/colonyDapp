@@ -490,7 +490,7 @@ query ColonyServerLiveness {
 }
 
 query LatestSubgraphBlock {
-  justLatestSubgraphBlock @client
+  latestSubgraphBlock @client
  }
 
 query ReputationOracleLiveness {

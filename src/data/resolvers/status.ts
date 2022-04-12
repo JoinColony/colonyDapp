@@ -27,7 +27,6 @@ export const statusResolvers = ({
     async latestRpcBlock() {
       try {
         const latestBlock = await networkClient.provider.getBlock('latest');
-        // console.log(latestBlock.)
         return latestBlock.number.toString();
       } catch (error) {
         console.error(error);
@@ -43,7 +42,7 @@ export const statusResolvers = ({
         return null;
       }
     },
-    async justLatestSubgraphBlock() {
+    async latestSubgraphBlock() {
       try {
         const latestSubgraphBlock = await getLatestSubgraphBlock(apolloClient);
         return latestSubgraphBlock.valueOf();
