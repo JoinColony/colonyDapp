@@ -45,15 +45,7 @@
 }
 
 .elementWrapper {
-  composes: flexContainerRow flexAlignCenter flexJustifyCenter from '~styles/layout.css';
-  margin-right: 12px;
-  padding: 1px 9px;
-  height: 26px;
-  position: relative;
-  border-radius: var(--radius-normal);
-  background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
-  font-size: var(--size-smallish);
-  line-height: 26px;
+  composes: elementWrapper from '~pages/RouteLayouts/UserNavigation.css';
 }
 
 .networkInfo {
