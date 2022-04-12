@@ -1,7 +1,6 @@
 import cx from 'classnames';
 import React, { useState, useEffect } from 'react';
-import { useIntl, defineMessages } from 'react-intl';
-import { MiniSpinnerLoaderWrapper } from '~core/MiniSpinnerLoaderWrapper';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import styles from './NetworkStatus.css';
 import {
   useLatestRpcBlockQuery,
@@ -16,6 +15,11 @@ import ExternalLink from '~core/ExternalLink';
 import { NETWORK_HEALTH } from '~externalUrls';
 
 const MSG = defineMessages({
+  networkStatusButton: {
+    id: 'pages.NavigationWrapper.UserNavigation.networkStatusButton',
+    defaultMessage: `Network`,
+  },
+
   networkHealthHeader: {
     id: 'pages.NavigationWrapper.UserNavigation.networkHealthHeader',
     defaultMessage: `Network health is {networkHealth}`,
@@ -36,18 +40,20 @@ const MSG = defineMessages({
 });
 
 const NetworkStatus = () => {
-  type NetworkHealthType = 'healthy' | 'poor' | 'critical';
-  const [networkHealth, setNetworkHealth] = useState<NetworkHealthType>('poor');
+  enum NetworkHealthType {
+    Healthy = 'healthy',
+    Poor = 'poor',
+    Critical = 'critical',
+  }
+  const [networkHealth, setNetworkHealth] = useState<NetworkHealthType>(
+    NetworkHealthType.Healthy,
+  );
 
-  const networkCheckInterval = 10 * 1000; // 3 minutes
-
-  /* const TIMEOUT = 20 * 1000; // Timeout requests after 20 seconds */
-  const networkHealthLoadingTime = 1 * 2000; // Show the mini spinner loader for 2 seconds
+  const networkCheckInterval = 120 * 1000; // 2 minutes
 
   const {
     data: latestRpcBlock,
-    /* loading: latestRpcBlockLoading, */
-    /* error: latestRpcBlockError, */
+    error: latestRpcBlockError,
   } = useLatestRpcBlockQuery({
     pollInterval: networkCheckInterval,
   });
@@ -62,16 +68,17 @@ const NetworkStatus = () => {
 
   const {
     data: latestSubgraphBlock,
-    /* error: latestSubgraphBlockError, */
+    error: latestSubgraphBlockError,
   } = useLatestSubgraphBlockQuery({
     pollInterval: networkCheckInterval,
   });
 
-  const { formatMessage } = useIntl();
-
   useEffect(() => {
-    const networkCheckTwo = setInterval(async () => {
-      if (
+    const networkCheck = setInterval(async () => {
+      if (latestRpcBlockError) {
+        setNetworkHealth(NetworkHealthType.Critical);
+      } else if (
+        latestSubgraphBlockError ||
         !isReputationOracleAlive?.isReputationOracleAlive ||
         !isColonyServerAlive?.isServerAlive ||
         (latestRpcBlock &&
@@ -79,80 +86,80 @@ const NetworkStatus = () => {
           latestRpcBlock.latestRpcBlock >
             latestSubgraphBlock.latestSubgraphBlock)
       ) {
-        setNetworkHealth('poor');
+        setNetworkHealth(NetworkHealthType.Poor);
       } else {
         // If everything is okay, set health to healthy (to correct for the previous state)
-        setNetworkHealth('healthy');
+        setNetworkHealth(NetworkHealthType.Healthy);
       }
-      // @TODO the critical cases
     }, networkCheckInterval);
-    return () => clearInterval(networkCheckTwo);
+    return () => clearInterval(networkCheck);
   });
+
   return (
     <>
-      {networkHealth !== 'healthy' && (
+      {networkHealth !== NetworkHealthType.Healthy && (
         <div>
-          <MiniSpinnerLoaderWrapper milliseconds={networkHealthLoadingTime}>
-            <Popover
-              appearance={{ theme: 'grey' }}
-              showArrow={false}
-              placement="bottom-start"
-              content={() => (
-                <div className={styles.networkHealth}>
-                  <div className={styles.networkHealthHeading}>
-                    <span
-                      className={cx(
-                        styles[`networkHealthIcon-${networkHealth}`],
-                        styles.networkHealthIcon,
-                      )}
-                    >
-                      <Icon name="triangle-warning" />
-                    </span>
-                    <span>
-                      {formatMessage(MSG.networkHealthHeader, {
-                        networkHealth,
-                      })}
-                    </span>
-                  </div>
-                  <span className={styles.networkHealthDescription}>
-                    {formatMessage(MSG.networkHealthDescription, {
-                      networkHealth,
-                    })}
+          <Popover
+            appearance={{ theme: 'grey' }}
+            showArrow={false}
+            placement="bottom-start"
+            content={() => (
+              <div className={styles.networkHealth}>
+                <div className={styles.networkHealthHeading}>
+                  <span
+                    className={cx(
+                      styles[`networkHealthIcon-${networkHealth}`],
+                      styles.networkHealthIcon,
+                    )}
+                  >
+                    <Icon name="triangle-warning" />
                   </span>
-
-                  <ExternalLink
-                    text={{ id: 'text.learnMore' }}
-                    className={styles.link}
-                    href={NETWORK_HEALTH}
-                  />
+                  <span>
+                    <FormattedMessage
+                      {...MSG.networkHealthHeader}
+                      values={{ networkHealth }}
+                    />
+                  </span>
                 </div>
-              )}
-              popperProps={{
-                modifiers: [
-                  {
-                    name: 'offset',
-                    options: { offset: [0, 9] },
-                  },
-                ],
-              }}
-            >
-              <div
-                className={`${styles.elementWrapper}
+                <span className={styles.networkHealthDescription}>
+                  <FormattedMessage
+                    {...MSG.networkHealthDescription}
+                    values={{ networkHealth }}
+                  />
+                </span>
+
+                <ExternalLink
+                  text={{ id: 'text.learnMore' }}
+                  className={styles.link}
+                  href={NETWORK_HEALTH}
+                />
+              </div>
+            )}
+            popperProps={{
+              modifiers: [
+                {
+                  name: 'offset',
+                  options: { offset: [0, 9] },
+                },
+              ],
+            }}
+          >
+            <div
+              className={`${styles.elementWrapper}
                             ${styles.networkInfo}
                             ${styles.networkHealthHeading}`}
+            >
+              <span
+                className={cx(
+                  styles[`networkHealthIcon-${networkHealth}`],
+                  styles.networkHealthIcon,
+                )}
               >
-                <span
-                  className={cx(
-                    styles[`networkHealthIcon-${networkHealth}`],
-                    styles.networkHealthIcon,
-                  )}
-                >
-                  <Icon name="triangle-warning" />
-                </span>
-                Network
-              </div>
-            </Popover>
-          </MiniSpinnerLoaderWrapper>
+                <Icon name="triangle-warning" />
+              </span>
+              <FormattedMessage {...MSG.networkStatusButton} />
+            </div>
+          </Popover>
         </div>
       )}
     </>
