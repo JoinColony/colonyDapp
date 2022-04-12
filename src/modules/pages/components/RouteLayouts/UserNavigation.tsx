@@ -3,7 +3,6 @@ import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
-import { useApolloClient } from '@apollo/client';
 import cx from 'classnames';
 import Icon from '~core/Icon';
 import MaskedAddress from '~core/MaskedAddress';
@@ -24,19 +23,21 @@ import {
   useUserBalanceWithLockQuery,
   useColonyFromNameQuery,
   Colony,
+  useLatestRpcBlockQuery,
+  useColonyServerLivenessQuery,
+  useLatestSubgraphBlockQuery,
+  useReputationOracleLivenessQuery,
 } from '~data/index';
 import { useSelector } from '~utils/hooks';
 import { useAutoLogin, getLastWallet } from '~utils/autoLogin';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
-import { SUPPORTED_NETWORKS, DEFAULT_NETWORK, NETWORK_DATA } from '~constants';
+import { SUPPORTED_NETWORKS } from '~constants';
 
 import { groupedTransactionsAndMessages } from '../../../core/selectors';
 
 import styles from './UserNavigation.css';
-import { getLatestSubgraphBlock } from '~data/resolvers/colony';
 import { NETWORK_HEALTH } from '~externalUrls';
 import ExternalLink from '~core/ExternalLink';
-import { raceAgainstTimeout } from '~utils/async';
 import { MiniSpinnerLoaderWrapper } from '~core/MiniSpinnerLoaderWrapper';
 
 const MSG = defineMessages({
@@ -144,107 +145,66 @@ const UserNavigation = () => {
     'healthy',
   );
 
-  const networkCheckInterval = 180 * 1000; // 3 minutes
-  const serverEndpoint = process.env.SERVER_ENDPOINT;
-  const rpcEndpoint =
-    NETWORK_DATA[process.env.NETWORK || DEFAULT_NETWORK].rpcUrl;
-  const reputationOracleEndpoint =
-    process.env.NODE_ENV === 'development'
-      ? 'http://localhost:3001/reputation'
-      : `${window.location.origin}/reputation`;
+  const networkCheckInterval = 10 * 1000; // 3 minutes
 
-  const apolloClient = useApolloClient();
-  const TIMEOUT = 20 * 1000; // Timeout requests after 20 seconds
+  /* const TIMEOUT = 20 * 1000; // Timeout requests after 20 seconds */
   const networkHealthLoadingTime = 1 * 2000; // Show the mini spinner loader for 2 seconds
 
-  const networkNameForReputationOracle =
-    process.env.NODE_ENV === 'development'
-      ? 'local'
-      : NETWORK_DATA[
-          process.env.NETWORK || DEFAULT_NETWORK
-        ].shortName.toLowerCase(); // @TODO have to make sure this will work for other networks than xdai
+  const {
+    data: latestRpcBlock,
+    /* loading: latestRpcBlockLoading, */
+    /* error: latestRpcBlockError, */
+  } = useLatestRpcBlockQuery({
+    pollInterval: networkCheckInterval,
+  });
+
+  const { data: isColonyServerAlive } = useColonyServerLivenessQuery({
+    pollInterval: networkCheckInterval,
+  });
+
+  const { data: isReputationOracleAlive } = useReputationOracleLivenessQuery({
+    pollInterval: networkCheckInterval,
+  });
+
+  const {
+    data: latestSubgraphBlock,
+    /* error: latestSubgraphBlockError, */
+  } = useLatestSubgraphBlockQuery({
+    pollInterval: networkCheckInterval,
+  });
 
   useEffect(() => {
-    let latestBlockFromRpc: string;
-
-    const networkCheck = setInterval(async () => {
-      const rpcBlockResponsePromise = raceAgainstTimeout(
-        fetch(rpcEndpoint, {
-          method: 'POST',
-          body: JSON.stringify({
-            jsonrpc: '2.0',
-            method: 'eth_getBlockByNumber',
-            params: ['latest', false],
-            id: 1,
-          }),
-        }),
-        TIMEOUT,
-        new Error('Timeout reached trying to get latest block from RPC'),
-      );
-
-      // Is the server alive?
-      const serverResponsePromise = raceAgainstTimeout(
-        fetch(`${serverEndpoint}/liveness`),
-        TIMEOUT,
-        new Error('Timeout reached trying to reach server'),
-      );
-
-      const reputationOracleResponsePromise = raceAgainstTimeout(
-        fetch(`${reputationOracleEndpoint}/${networkNameForReputationOracle}`),
-        TIMEOUT,
-        new Error('Timeout reached trying to reach reputation oracle.'),
-      );
-
-      const latestBlockFromSubgraphPromise = raceAgainstTimeout(
-        getLatestSubgraphBlock(apolloClient),
-        TIMEOUT,
-        new Error('Timeout reached trying to get latest block from subgraph'),
-      );
-
-      try {
-        const [
-          rpcBlockResponse,
-          latestBlockFromSubgraph,
-          serverResponse,
-          reputationOracleResponse,
-        ] = await Promise.all([
-          rpcBlockResponsePromise,
-          latestBlockFromSubgraphPromise,
-          serverResponsePromise,
-          reputationOracleResponsePromise,
-        ]);
-
-        if (rpcBlockResponse.status !== 200) {
-          setNetworkHealth('critical');
-          return;
-        }
-        latestBlockFromRpc = await rpcBlockResponse
-          .json()
-          .then((r) => r.result.number); // this is in hex
-
-        // ? @TODO Reputation Oracle status is not enough - also check if it is behind
-
-        // @TODO Is IPFS endpoints alive?
-
-        if (
-          parseInt(latestBlockFromRpc, 16) > latestBlockFromSubgraph ||
-          serverResponse.status !== 200 ||
-          reputationOracleResponse.status !== 200
-        ) {
-          setNetworkHealth('poor');
-        } else {
-          // If everything is okay, set health to healthy (to correct for previous state)
-          setNetworkHealth('healthy');
-        }
-      } catch (err) {
+    const networkCheckTwo = setInterval(async () => {
+      /* console.log( latestRpcBlock?.latestRpcBlock)
+       *     console.log({isColonyServerAlive})
+       * console.log(isReputationOracleAlive?.isReputationOracleAlive)
+       * console.log({ latestSubgraphBlock}) */
+      if (
+        !isReputationOracleAlive?.isReputationOracleAlive ||
+        !isColonyServerAlive?.isServerAlive
+      ) {
         setNetworkHealth('poor');
       }
+      if (
+        latestRpcBlock &&
+        latestSubgraphBlock &&
+        parseInt(latestRpcBlock.latestRpcBlock, 10) >
+          latestSubgraphBlock.justLatestSubgraphBlock
+      ) {
+        setNetworkHealth('poor');
+      } else {
+        // If everything is okay, set health to healthy (to correct for previous state)
+        setNetworkHealth('healthy');
+      }
+      // @TODO the critical cases
     }, networkCheckInterval);
-    return () => clearInterval(networkCheck);
-  }, []);
+    return () => clearInterval(networkCheckTwo);
+  });
 
   return (
     <div className={styles.main}>
+      <p>{latestRpcBlock?.latestRpcBlock}</p>
+
       {networkHealth !== 'healthy' && (
         <div>
           <MiniSpinnerLoaderWrapper milliseconds={networkHealthLoadingTime}>
