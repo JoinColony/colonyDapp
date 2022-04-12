@@ -2,9 +2,9 @@ import gql from 'graphql-tag';
 
 export default gql`
   extend type Query {
-    latestRpcBlock: String!
+    latestRpcBlock: Int!
     isServerAlive: Boolean!
-    justLatestSubgraphBlock: Int!
+    latestSubgraphBlock: Int!
     isReputationOracleAlive: Boolean!
   }
 `;

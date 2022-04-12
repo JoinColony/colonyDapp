@@ -1,0 +1,69 @@
+
+.networkHealth {
+  composes: flexContainerColumn from '~styles/layout.css';
+  margin-top: 17px;
+  margin-right: 10px;
+  margin-left: 10px;
+  height: 124px;
+  width: 352px;
+  background-color: var(--grey-blue-2);
+}
+
+.networkHealthHeading {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--grey-1);
+}
+
+.networkHealthDescription {
+  margin-top: 9px;
+  font-size: var(--size-normal);
+}
+
+.link {
+  display: flex;
+  justify-content: right;
+  margin-top: 12px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+  color: var(--action-secondary);
+}
+
+.networkHealthIcon {
+  margin-right: 8px;
+}
+
+.networkHealthIcon-critical svg {
+  stroke: transparent;
+  fill: var(--pink);
+}
+
+.networkHealthIcon-poor svg {
+  stroke: transparent;
+  fill: var(--golden);
+}
+
+.elementWrapper {
+  composes: flexContainerRow flexAlignCenter flexJustifyCenter from '~styles/layout.css';
+  margin-right: 12px;
+  padding: 1px 9px;
+  height: 26px;
+  position: relative;
+  border-radius: var(--radius-normal);
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
+  font-size: var(--size-smallish);
+  line-height: 26px;
+}
+
+.networkInfo {
+  font-weight: var(--weight-bold);
+  color: var(--grey-1);
+  cursor: default;
+}
+
+.networkInfo:hover {
+  background-color: color-mod(var(--colony-blue) alpha(10%));
+  color: var(--colony-blue);
+  cursor: pointer;
+}
