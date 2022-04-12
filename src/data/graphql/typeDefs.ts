@@ -433,5 +433,6 @@ export default gql`
     isDeploymentFinished: Boolean!
     installedExtensions: [ColonyExtension!]!
     whitelistedAddresses: [String!]!
+    isWhitelistActivated: Boolean!
   }
 `;

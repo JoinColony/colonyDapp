@@ -99,6 +99,7 @@ export const getProcessedColony = async (
   let avatarObject: { image: string | null } | null = { image: null };
   let tokenAddresses: Array<Address> = [];
   let whitelistedAddresses: Array<Address> = [];
+  let whitelistActivated = false;
 
   const prevIpfsHash = metadataHistory.slice(-1).pop();
   const ipfsHash = metadata || prevIpfsHash?.metadata || null;
@@ -125,12 +126,16 @@ export const getProcessedColony = async (
         colonyAvatarHash = null,
         colonyTokens = [],
         verifiedAddresses = [],
+        isWhitelistActivated = null,
       } = JSON.parse(ipfsMetadata);
+
       displayName = colonyDisplayName;
       avatarHash = colonyAvatarHash;
       tokenAddresses = colonyTokens;
       whitelistedAddresses = verifiedAddresses;
-
+      if (isWhitelistActivated !== null) {
+        whitelistActivated = isWhitelistActivated;
+      }
       /*
        * Fetch the colony's avatar
        */
@@ -172,6 +177,7 @@ export const getProcessedColony = async (
       : [],
     extensionAddresses: colonyExtensions.map(({ address }) => address),
     whitelistedAddresses,
+    isWhitelistActivated: whitelistActivated,
   };
 };
 
