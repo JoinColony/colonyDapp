@@ -181,7 +181,12 @@ const ManageWhitelistDialogForm = ({
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
           onClick={back}
-          text={{ id: 'button.back' }}
+          text={{
+            id:
+              back.toString() === `() => callStep(prevStep)`
+                ? 'button.back'
+                : 'button.cancel',
+          }}
         />
         <Button
           appearance={{

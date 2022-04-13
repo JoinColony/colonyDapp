@@ -29,7 +29,6 @@ interface Props<U> {
   showUserInfo: boolean;
   showUserReputation: boolean;
   domainId: number | undefined;
-  isWhiteListed?: boolean;
   user: U;
 }
 
@@ -53,12 +52,12 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
     showUserInfo,
     showUserReputation,
     user,
-    isWhiteListed,
   } = props;
   const {
     profile: { walletAddress },
     banned = false,
-  } = user as AnyUser & { banned: boolean };
+    isWhitelisted = false,
+  } = user as AnyUser & { banned: boolean; isWhitelisted: boolean };
 
   const userProfile = useUser(createAddress(walletAddress || AddressZero));
 
@@ -142,7 +141,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
             <InvisibleCopyableAddress address={walletAddress}>
               <MaskedAddress address={walletAddress} />
             </InvisibleCopyableAddress>
-            {isWhiteListed && (
+            {isWhitelisted && (
               <IconTooltip
                 icon="check-mark"
                 tooltipText={MSG.whitelistedTooltip}
