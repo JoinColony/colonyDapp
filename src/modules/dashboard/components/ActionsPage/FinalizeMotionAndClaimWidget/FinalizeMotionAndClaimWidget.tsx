@@ -204,7 +204,7 @@ const FinalizeMotionAndClaimWidget = ({
     }
 
     return true;
-  }, [domainBalanceData, motionAmount, fromDomain]);
+  }, [domainBalanceData, motionAmount, fromDomain, actionType]);
 
   const nativeToken = tokens.find(
     ({ address }) => address === nativeTokenAddress,
