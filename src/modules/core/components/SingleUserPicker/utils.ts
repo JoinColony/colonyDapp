@@ -10,8 +10,12 @@ export const filterUserSelection = (data: AnyUser[], filterValue: string) => {
   }
 
   const filteredUsers = data.filter((user) => {
+    if (user.profile?.walletAddress) {
+      return false;
+    }
+
     const username = user.profile?.username || '';
-    const walletAddress = user.profile?.walletAddress || '';
+    const { walletAddress } = user.profile;
 
     return (
       username.toLowerCase().includes(filterValue.toLowerCase()) ||
