@@ -194,6 +194,7 @@ const FinalizeMotionAndClaimWidget = ({
     const domainBalance = bigNumberify(domainBalanceData?.domainBalance || '0');
 
     if (
+      actionType !== ColonyMotions.MintTokensMotion &&
       domainBalanceData !== undefined &&
       fromDomain !== undefined &&
       motionAmount !== undefined &&
