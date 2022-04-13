@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, MouseEventHandler } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
 import { ColonyVersion, Extension } from '@colony/colony-js';
@@ -28,6 +28,7 @@ import { hasRoot, canAdminister } from '~modules/users/checks';
 import { oneTxMustBeUpgraded } from '~modules/dashboard/checks';
 
 import styles from './ColonyMembers.css';
+import ManageWhitelistDialog from '~dashboard/Dialogs/ManageWhitelistDialog';
 
 const displayName = 'dashboard.ColonyMembers';
 
@@ -43,6 +44,10 @@ const MSG = defineMessages({
   unbanAddress: {
     id: 'dashboard.ColonyMembers.unbanAddress',
     defaultMessage: 'Unban address',
+  },
+  manageWhitelist: {
+    id: 'dashboard.ColonyMembers.manageWhitelist',
+    defaultMessage: 'Manage whitelist',
   },
   loadingText: {
     id: 'dashboard.ColonyMembers.loadingText',
@@ -108,6 +113,25 @@ const ColonyMembers = () => {
     });
   }, [openPermissionManagementDialog, colonyData, isVotingExtensionEnabled]);
 
+  const openToggleManageWhitelistDialog = useDialog(ManageWhitelistDialog);
+
+  const handleToggleWhitelistDialog = useCallback<
+    MouseEventHandler<HTMLButtonElement>
+  >(
+    (evt) => {
+      evt.stopPropagation();
+      /*
+       * We don't have, and can't inject all the required props that the component
+       * is expecting when using it in a wizard
+       */
+      // @ts-ignore
+      return openToggleManageWhitelistDialog({
+        colony: colonyData?.processedColony as Colony,
+      });
+    },
+    [openToggleManageWhitelistDialog, colonyData],
+  );
+
   // eslint-disable-next-line max-len
   const oneTxPaymentExtension = colonyExtensions?.processedColony?.installedExtensions.find(
     ({ details, extensionId: extensionName }) =>
@@ -128,6 +152,7 @@ const ColonyMembers = () => {
   const canAdministerComments =
     hasRegisteredProfile &&
     (hasRoot(currentUserRoles) || canAdminister(currentUserRoles));
+  const canManageWhitelist = hasRegisteredProfile && hasRoot(currentUserRoles);
 
   const controlsDisabled =
     !isSupportedColonyVersion ||
@@ -209,6 +234,17 @@ const ColonyMembers = () => {
                             colonyData?.processedColony?.colonyAddress,
                         })
                       }
+                    />
+                  </li>
+                </>
+              )}
+              {canManageWhitelist && (
+                <>
+                  <li>
+                    <Button
+                      appearance={{ theme: 'blue' }}
+                      text={MSG.manageWhitelist}
+                      onClick={handleToggleWhitelistDialog}
                     />
                   </li>
                 </>
