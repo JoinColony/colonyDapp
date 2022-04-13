@@ -15,6 +15,22 @@ describe('Create a new colony', () => {
       cy.url().should('eq', `${Cypress.config().baseUrl}/colony/${name}`);
     });
 
+    it('New user is created which joins the colony', () => {
+      /*
+        this will be the second address in the list;
+        can be changed to further order in the list if the test needs to be repeated
+      */
+      cy.claimNewUserName(1);
+
+      cy.url().should('be.equal', 'http://localhost:9090/landing');
+
+      cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+      cy.getBySel('joinColonyButton', { timeout: 100000 }).click();
+
+      cy.getBySel('joinColonyButton').should('not.exist');
+    });
+
     it('creates a new colony with existing token', () => {
       const {
         nativeToken: existingToken,
