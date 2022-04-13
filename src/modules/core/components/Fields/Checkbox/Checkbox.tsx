@@ -125,7 +125,7 @@ const Checkbox = ({
         </span>
       </>
     ),
-    [disabled, handleOnChange, inputId, isChecked, name],
+    [disabled, handleOnChange, inputId, isChecked, name, dataTest],
   );
 
   return (
