@@ -123,7 +123,7 @@ Cypress.Commands.add('createColony', (colony, useNewToken) => {
 
 Cypress.Commands.add('getColonyTokenAddress', (colonyName) => {
   cy.visit(`/colony/${colonyName}`);
-  cy.getBySel('colonyMenu', { timeout: 60000 }).click();
+  cy.getBySel('colonyMenuPopover', { timeout: 60000 }).click();
   cy.getBySel('nativeTokenAddress').invoke('text').as('existingTokenAddress');
 });
 
