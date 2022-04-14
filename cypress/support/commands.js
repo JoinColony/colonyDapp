@@ -25,7 +25,6 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 import { Extension } from '@colony/colony-js';
-import Decimal from 'decimal.js';
 
 import { splitAddress } from '~utils/strings';
 
@@ -38,7 +37,7 @@ const {
 
 Cypress.Commands.add('login', () => {
   cy.visit('/landing');
-  cy.findByText(/connect wallet/i).click();
+  cy.findByText(/connect wallet/i, { timeout: 30000 }).click();
   cy.contains(/ganache/i).click();
   // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.findByText(/continue/i)
@@ -233,11 +232,6 @@ Cypress.Commands.add(
       : 'Test annotation';
 
     const cutAddress = splitAddress(address);
-    const paidAmount = isMotion
-      ? amountToPay
-      : new Decimal(amountToPay).sub(
-          new Decimal(1.0001).div(100).mul(amountToPay),
-        );
 
     cy.login();
     cy.visit(`/colony/${colonyName}`);
@@ -267,7 +261,7 @@ Cypress.Commands.add(
       'have.text',
       `Pay ${cutAddress.header}${cutAddress.start}...${
         cutAddress.end
-      } ${paidAmount.toString()} ${Cypress.config().colony.nativeToken}`,
+      } ${amountToPay.toString()} ${Cypress.config().colony.nativeToken}`,
     );
     cy.getBySel('comment').should('have.text', annotationText);
 

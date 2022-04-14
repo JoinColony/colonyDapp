@@ -1,4 +1,4 @@
-import { bigNumberify } from 'ethers/utils';
+import Decimal from 'decimal.js';
 
 import ganacheAccounts from '~lib/colonyNetwork/ganache-accounts.json';
 import { createAddress } from '~utils/web3';
@@ -10,13 +10,13 @@ describe('User can create actions via UAC', () => {
   } = Cypress.config();
 
   it('Can mint native tokens', () => {
-    const amountToMint = 10000;
+    const amountToMint = 10;
     cy.mintTokens(amountToMint, false);
 
     cy.getBySel('backButton').click();
 
     cy.get('@totalFunds').then(($totalFunds) => {
-      const totalFunds = bigNumberify($totalFunds.split(',').join(''))
+      const totalFunds = new Decimal($totalFunds.split(',').join(''))
         .add(amountToMint)
         .toString();
 
@@ -29,17 +29,22 @@ describe('User can create actions via UAC', () => {
 
   it('Can make payment', () => {
     const amountToPay = 10;
+    const paidAmount = new Decimal(amountToPay).add(
+      new Decimal(1.0101).div(100).mul(amountToPay),
+    );
+
     const accounts = Object.entries(ganacheAccounts.private_keys).map(
       ([address]) => address,
     );
 
-    cy.makePayment(amountToPay, createAddress(accounts[1]), false);
+    cy.makePayment(amountToPay, createAddress(accounts[15]), false);
 
     cy.getBySel('backButton').click();
 
     cy.get('@totalFunds').then(($totalFunds) => {
-      const totalFunds = bigNumberify($totalFunds.split(',').join(''))
-        .sub(amountToPay)
+      const totalFunds = new Decimal($totalFunds.split(',').join(''))
+        .sub(paidAmount)
+        .toDecimalPlaces(3)
         .toString();
 
       cy.getBySel('colonyTotalFunds', { timeout: 15000 }).then(($text) => {
@@ -84,7 +89,7 @@ describe('User can create actions via UAC', () => {
   });
 
   it('Can transfer funds', () => {
-    const amountToTransfer = 1000;
+    const amountToTransfer = 100;
 
     cy.transferFunds(amountToTransfer, false);
 
@@ -94,7 +99,7 @@ describe('User can create actions via UAC', () => {
     cy.getBySel('colonyDomainSelectorItem').last().click();
 
     cy.get('@teamFunds').then(($teamFunds) => {
-      const teamFunds = bigNumberify($teamFunds.split(',').join(''))
+      const teamFunds = new Decimal($teamFunds.split(',').join(''))
         .add(amountToTransfer)
         .toString();
 
@@ -141,7 +146,7 @@ describe('User can create actions via UAC', () => {
       ([address]) => address,
     );
 
-    cy.makePayment(amountToPay, createAddress(accounts[1]), false, true);
+    cy.makePayment(amountToPay, createAddress(accounts[15]), false, true);
   });
 
   it('Can enable recovery mode', () => {
