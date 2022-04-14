@@ -75,10 +75,8 @@ Cypress.Commands.add('claimNewUserName', (numberFromList) => {
   cy.contains(/ganache/i)
     .click()
     // click on drowpdown with accounts
-    // using this type of selector not to pollute Select component that is reused
-    .getBySel('selectButton')
+    .getBySel('ganacheAccountSelect')
     .click()
-    // select last account
     /*
       This will once for each address from the dropdown as the username will be already created.
     */
