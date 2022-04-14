@@ -83,7 +83,7 @@ const StakesTab = ({
               setIsPopoverOpen={setIsPopoverOpen}
             />
           </div>
-          <ul>
+          <ul data-test="claimableMotionsList">
             {unclaimedMotionStakeEvents?.map((motion) => (
               <StakesListItem
                 stakedAmount={getFormattedTokenValue(

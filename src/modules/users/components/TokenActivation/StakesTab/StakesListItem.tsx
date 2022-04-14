@@ -36,6 +36,7 @@ const StakesListItem = ({
           onClick={setIsPopoverOpen as any}
           onKeyPress={setIsPopoverOpen as any}
           tabIndex={0}
+          data-test="goToMotion"
         >
           <div>
             <Numeral value={stakedAmount} suffix={tokenSymbol} />

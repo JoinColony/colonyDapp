@@ -508,6 +508,24 @@ Cypress.Commands.add('editColonyDetails', (newName, isMotion) => {
   cy.checkUrlAfterAction(colonyName);
 });
 
+Cypress.Commands.add('tokenActivation', (amountToActivate) => {
+  // Activate tokens
+  cy.getBySel('tokenActivationButton').click();
+
+  // Get the number of active tokens
+  cy.getBySel('activeTokens', { timeout: 60000 })
+    .invoke('text')
+    .as('activatedTokens');
+
+  if (amountToActivate) {
+    cy.getBySel('activateTokensInput').click().type(amountToActivate);
+  } else {
+    cy.getBySel('inputMaxButton').click();
+  }
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  cy.getBySel('tokenActivationConfirm').click().wait(10000);
+});
+
 Cypress.Commands.add(
   'updateTokens',
   (updatedColonyName, tokenProviderColonyName, isMotion) => {

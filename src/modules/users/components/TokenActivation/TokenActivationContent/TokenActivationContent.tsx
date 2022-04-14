@@ -53,11 +53,15 @@ const TokenActivationContent = (props: TokenActivationContentProps) => {
           className={styles.tabsList}
           containerClassName={styles.tabsListContainer}
         >
-          <Tab selectedClassName={styles.tabSelected} className={styles.tab}>
+          <Tab
+            selectedClassName={styles.tabSelected}
+            className={styles.tab}
+            data-test="yourTokensTab"
+          >
             <FormattedMessage {...MSG.yourTokens} />
           </Tab>
           <Tab selectedClassName={styles.tabSelected} className={styles.tab}>
-            <div className={styles.stakesTabTitle}>
+            <div className={styles.stakesTabTitle} data-test="stakesTab">
               <FormattedMessage {...MSG.stakes} />
               {claimsCount > 0 && (
                 <div className={styles.dot}>

@@ -390,6 +390,7 @@ const FinalizeMotionAndClaimWidget = ({
                     }
                     onClick={() => handleSubmit()}
                     loading={isSubmitting}
+                    dataTest="claimStakeButton"
                   />
                 </div>
               </div>
@@ -401,7 +402,7 @@ const FinalizeMotionAndClaimWidget = ({
                         <FormattedMessage {...MSG.stakeLabel} />
                       </div>
                     </div>
-                    <div className={styles.value}>
+                    <div className={styles.value} data-test="stakedValue">
                       <Numeral value={userStake} suffix={nativeToken?.symbol} />
                     </div>
                   </div>

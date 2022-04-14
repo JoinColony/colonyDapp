@@ -121,11 +121,8 @@ describe('User can create motions via UAC', () => {
   it('User can activate tokens', () => {
     cy.login();
     cy.visit(`/colony/${Cypress.config().colony.name}`);
-    // // activate tokens
-    cy.getBySel('tokenActivationButton', { timeout: 120000 }).click();
-    cy.getBySel('inputMaxButton').click();
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.getBySel('tokenActivationConfirm').click().wait(10000);
+    // Activate tokens
+    cy.tokenActivation();
   });
 
   it('Can create, stake, vote, finalise motion & claim tokens', () => {
@@ -176,6 +173,65 @@ describe('User can create motions via UAC', () => {
         expect(text).to.eq(totalFunds);
       });
     });
+  });
+
+  it.only('Claiming Stakes', () => {
+    cy.login();
+    cy.visit(`/colony/${Cypress.config().colony.name}`);
+
+    // Get amount of staked tokens
+    cy.getBySel('tokenActivationButton', { timeout: 120000 }).click();
+
+    // Get amount of staked tokens
+    cy.getBySel('stakedTokens', { timeout: 60000 })
+      .invoke('text')
+      .as('initialStakedTokens');
+
+    cy.getBySel('stakesTab').click();
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.getBySel('claimableMotionsList', { timeout: 200000 })
+      .wait(5000) // Wait is required to ensure hash is included
+      .find(`[data-test="goToMotion"]`)
+      .first()
+      .click();
+
+    // Get the staked value being claimed
+    cy.getBySel('stakedValue', { timeout: 60000 })
+      .invoke('text')
+      .as('stakedValue');
+
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.getBySel('claimStakeButton', { timeout: 200000 }).click().wait(30000);
+
+    // to close the gas station
+    cy.getBySel('actionHeading').click();
+
+    // Check that the active tokens are correct
+    cy.getBySel('tokenActivationButton', { timeout: 120000 }).click();
+
+    // function is required for `this` object to work
+    cy.getBySel('stakedTokens', { timeout: 60000 })
+      .invoke('text')
+      .as('nowStakedTokens')
+      .then(function () {
+        const initialStakedTokens = this.initialStakedTokens
+          .split(' ')[0]
+          .split(',')
+          .join('')
+          .split('.')[0];
+        const stakedValue = bigNumberify(
+          this.stakedValue.split(' ')[0].split(',').join('').split('.')[0],
+        );
+        const newStaked = this.nowStakedTokens
+          .split(' ')[0]
+          .split(',')
+          .join('')
+          .split('.')[0];
+        const expectedStaked = bigNumberify(initialStakedTokens)
+          .sub(stakedValue)
+          .toString();
+        expect(newStaked).to.eq(expectedStaked);
+      });
   });
 
   it('Disables & deprecates voting extensions', () => {
