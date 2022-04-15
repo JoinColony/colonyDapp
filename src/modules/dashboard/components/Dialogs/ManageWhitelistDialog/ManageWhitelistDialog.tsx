@@ -34,7 +34,7 @@ export interface FormValues {
 }
 
 interface CustomWizardDialogProps {
-  prevStep: string;
+  prevStep?: string;
   colony: Colony;
 }
 
@@ -183,13 +183,14 @@ const ManageWhitelistDialog = ({
             {...formValues}
             colony={colony}
             whitelistedUsers={data?.verifiedUsers || []}
-            back={() => callStep(prevStep)}
+            back={prevStep ? () => callStep(prevStep) : cancel}
             showInput={showInput}
             toggleShowInput={handleToggleShowInput}
             formSuccess={formSuccess}
             setFormSuccess={(isSuccess) => setFormSuccess(isSuccess)}
             tabIndex={tabIndex}
             setTabIndex={handleTabChange}
+            backButtonText={!prevStep ? 'button.cancel' : 'button.back'}
           />
         </Dialog>
       )}

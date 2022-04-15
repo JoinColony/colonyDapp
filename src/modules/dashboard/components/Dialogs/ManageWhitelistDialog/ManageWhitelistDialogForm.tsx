@@ -66,6 +66,7 @@ interface Props {
   setFormSuccess: (isSuccess: boolean) => void;
   tabIndex: TABS;
   setTabIndex: (index: TABS) => void;
+  backButtonText?: string;
 }
 
 const ManageWhitelistDialogForm = ({
@@ -85,6 +86,7 @@ const ManageWhitelistDialogForm = ({
   setTabIndex,
   resetForm,
   dirty,
+  backButtonText,
 }: Props & FormikProps<FormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
@@ -181,7 +183,7 @@ const ManageWhitelistDialogForm = ({
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
           onClick={back}
-          text={{ id: 'button.back' }}
+          text={{ id: backButtonText || 'button.back' }}
         />
         <Button
           appearance={{

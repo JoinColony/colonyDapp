@@ -19,6 +19,8 @@ import {
   useMembersSubscription,
   useLoggedInUser,
   BannedUsersQuery,
+  useColonyFromNameQuery,
+  useVerifiedUsersQuery,
 } from '~data/index';
 import {
   COLONY_TOTAL_BALANCE_DOMAIN_ID,
@@ -64,6 +66,7 @@ type Member = AnyUser & {
   roles: ColonyRole[];
   directRoles: ColonyRole[];
   banned: boolean;
+  isWhitelisted: boolean;
 };
 
 const displayName = 'dashboard.Members';
@@ -102,6 +105,28 @@ const Members = ({ colony: { colonyAddress }, colony, bannedUsers }: Props) => {
     ({ ethDomainId }) => ethDomainId === selectedDomainId,
   );
 
+  /*
+   * Identify users who are whitelisted
+   */
+
+  const { data: colonyData } = useColonyFromNameQuery({
+    variables: { name: colony.colonyName, address: colonyAddress },
+  });
+
+  const { data: verifiedAddresses } = useVerifiedUsersQuery({
+    variables: {
+      verifiedAddresses:
+        colonyData?.processedColony?.whitelistedAddresses || [],
+    },
+  });
+
+  const storedVerifiedRecipients = useMemo(
+    () =>
+      (verifiedAddresses?.verifiedUsers || []).map(
+        (user) => user?.profile.walletAddress,
+      ),
+    [verifiedAddresses],
+  );
   /*
    * NOTE If we can't find the domain based on the current selected doamain id,
    * it means that it doesn't exist.
@@ -297,11 +322,20 @@ const Members = ({ colony: { colonyAddress }, colony, bannedUsers }: Props) => {
       (rolesObject) =>
         createAddress(rolesObject.userAddress) === createAddress(walletAddress),
     );
+    const isWhitelisted = storedVerifiedRecipients.find(
+      (whitelistedUser) =>
+        whitelistedUser &&
+        createAddress(whitelistedUser) === createAddress(walletAddress),
+    );
     return {
       ...user,
       roles: domainRole ? domainRole.roles : [],
       directRoles: domainRole ? domainRole.directRoles : [],
       banned: canAdministerComments ? !!isUserBanned : false,
+      isWhitelisted:
+        isWhitelisted && colonyData?.processedColony?.isWhitelistActivated
+          ? !!isWhitelisted
+          : false,
     };
   });
 
