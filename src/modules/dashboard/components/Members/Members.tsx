@@ -332,7 +332,10 @@ const Members = ({ colony: { colonyAddress }, colony, bannedUsers }: Props) => {
       roles: domainRole ? domainRole.roles : [],
       directRoles: domainRole ? domainRole.directRoles : [],
       banned: canAdministerComments ? !!isUserBanned : false,
-      isWhitelisted: isWhitelisted ? !!isWhitelisted : false,
+      isWhitelisted:
+        isWhitelisted && colonyData?.processedColony?.isWhitelistActivated
+          ? !!isWhitelisted
+          : false,
     };
   });
 

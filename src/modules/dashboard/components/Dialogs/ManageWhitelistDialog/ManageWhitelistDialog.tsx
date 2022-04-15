@@ -190,6 +190,7 @@ const ManageWhitelistDialog = ({
             setFormSuccess={(isSuccess) => setFormSuccess(isSuccess)}
             tabIndex={tabIndex}
             setTabIndex={handleTabChange}
+            backButtonText={!prevStep ? 'button.cancel' : 'button.back'}
           />
         </Dialog>
       )}
