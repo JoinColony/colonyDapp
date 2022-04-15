@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, MouseEventHandler } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
 import { ColonyVersion, Extension } from '@colony/colony-js';
@@ -115,22 +115,12 @@ const ColonyMembers = () => {
 
   const openToggleManageWhitelistDialog = useDialog(ManageWhitelistDialog);
 
-  const handleToggleWhitelistDialog = useCallback<
-    MouseEventHandler<HTMLButtonElement>
-  >(
-    (evt) => {
-      evt.stopPropagation();
-      /*
-       * We don't have, and can't inject all the required props that the component
-       * is expecting when using it in a wizard
-       */
-      // @ts-ignore
-      return openToggleManageWhitelistDialog({
-        colony: colonyData?.processedColony as Colony,
-      });
-    },
-    [openToggleManageWhitelistDialog, colonyData],
-  );
+  const handleToggleWhitelistDialog = useCallback(() => {
+    // @ts-ignore
+    return openToggleManageWhitelistDialog({
+      colony: colonyData?.processedColony as Colony,
+    });
+  }, [openToggleManageWhitelistDialog, colonyData]);
 
   // eslint-disable-next-line max-len
   const oneTxPaymentExtension = colonyExtensions?.processedColony?.installedExtensions.find(
@@ -239,15 +229,13 @@ const ColonyMembers = () => {
                 </>
               )}
               {canManageWhitelist && (
-                <>
-                  <li>
-                    <Button
-                      appearance={{ theme: 'blue' }}
-                      text={MSG.manageWhitelist}
-                      onClick={handleToggleWhitelistDialog}
-                    />
-                  </li>
-                </>
+                <li>
+                  <Button
+                    appearance={{ theme: 'blue' }}
+                    text={MSG.manageWhitelist}
+                    onClick={handleToggleWhitelistDialog}
+                  />
+                </li>
               )}
             </ul>
           )}
