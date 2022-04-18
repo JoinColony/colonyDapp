@@ -12,24 +12,29 @@ describe('Colony can be updated', () => {
     cy.checkColonyName(newName);
   });
 
-  it('can update colony tokens', () => {
-    const {
-      name: existingColonyName,
-      nativeToken: existingToken,
-    } = Cypress.config().colony;
+  // Will run only once as we create a new colony
+  if (!Cypress.config().skipInitTests) {
+    it('can update colony tokens', () => {
+      const {
+        name: existingColonyName,
+        nativeToken: existingToken,
+      } = Cypress.config().colony;
 
-    cy.login();
-    cy.createColony(newColony, true);
-    cy.url().should('eq', `${baseUrl}/colony/${newColony.name}`, {
-      timeout: 90000,
+      cy.login();
+      cy.createColony(newColony, true);
+      cy.url().should('eq', `${baseUrl}/colony/${newColony.name}`, {
+        timeout: 90000,
+      });
+
+      cy.updateTokens(newColony.name, existingColonyName, false);
+
+      cy.getBySel('backButton').click();
+
+      cy.getBySel('availableFunds', { timeout: 60000 }).then(
+        (availableFunds) => {
+          expect(availableFunds.text()).to.contains(existingToken);
+        },
+      );
     });
-
-    cy.updateTokens(newColony.name, existingColonyName, false);
-
-    cy.getBySel('backButton').click();
-
-    cy.getBySel('availableFunds', { timeout: 60000 }).then((availableFunds) => {
-      expect(availableFunds.text()).to.contains(existingToken);
-    });
-  });
+  }
 });
