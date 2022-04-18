@@ -37,7 +37,7 @@ describe('Create a new colony', () => {
         name: existingColony,
       } = Cypress.config().colony;
 
-      const colony = { name: 'feola' };
+      const colony = { name: 'maya' };
 
       cy.login();
       cy.getColonyTokenAddress(existingColony);
