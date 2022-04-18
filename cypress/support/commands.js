@@ -327,7 +327,7 @@ Cypress.Commands.add('editTeam', (domainName, domainPurpose, isMotion) => {
     cy.getBySel('actionHeading', { timeout: 100000 }).should(
       'have.text',
       isMotion
-        ? `Edit ${oldName} team details`
+        ? `Edit ${domainName} team details`
         : `${domainName} team details edited`,
     );
   });
