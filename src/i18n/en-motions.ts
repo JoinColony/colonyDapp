@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { ColonyMotions } from '~types/index';
 
 const motionsMessageDescriptors = {
@@ -12,17 +13,9 @@ const motionsMessageDescriptors = {
       ${ColonyMotions.MoveFundsMotion}
         {Move {amount} {tokenSymbol} from {fromDomainName} to {toDomainName}}
       ${ColonyMotions.EmitDomainReputationPenaltyMotion}
-        {Smite {recipient} with a {reputationChangeNumeral}
-        {reputationChange, plural,
-          one {pt}
-          other {pts}
-        } reputation penalty}
+        {Smite {recipient} with a {reputationChangeNumeral} {reputationChange, plural, one {pt} other {pts}} reputation penalty}
       ${ColonyMotions.EmitDomainReputationRewardMotion}
-        {Award {recipient} with a {reputationChangeNumeral}
-        {reputationChange, plural,
-          one {pt}
-          other {pts}
-        } reputation reward}
+        {Award {recipient} with a {reputationChangeNumeral} {reputationChange, plural, one {pt} other {pts}} reputation reward}
       ${ColonyMotions.UnlockTokenMotion} {Unlock native token {tokenSymbol}}
       other {Generic motion we don't have information about}
     }`,

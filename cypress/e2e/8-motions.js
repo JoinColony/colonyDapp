@@ -34,7 +34,7 @@ describe('User can create motions via UAC', () => {
       ([address]) => address,
     );
 
-    cy.makePayment(amountToPay, createAddress(accounts[1]), true);
+    cy.makePayment(amountToPay, createAddress(accounts[15]), true);
     cy.checkMotion();
   });
 
