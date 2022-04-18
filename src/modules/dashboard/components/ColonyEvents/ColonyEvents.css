@@ -1,4 +1,18 @@
 .filter {
   display: inline-block;
-  margin-bottom: 7px;
+  margin-right: 10px;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+}
+
+.title {
+  flex-grow: 2;
+  font-weight: var(--weight-bold);
+}
+
+.link {
+  color: var(--colony-blue);
 }
