@@ -9,6 +9,7 @@ import ActionsList, {
 import { Select, Form } from '~core/Fields';
 import LoadMoreButton from '~core/LoadMoreButton';
 import { SpinnerLoader } from '~core/Preloaders';
+import Link from '~core/Link';
 
 import {
   Colony,
@@ -34,6 +35,15 @@ import {
 import styles from './ColonyActions.css';
 
 const MSG = defineMessages({
+  actionsTitle: {
+    id: 'dashboard.ColonyActions.actionsTitle',
+    defaultMessage: 'Actions',
+  },
+  transactionsLogLink: {
+    id: 'dashboard.ColonyActions.transactionsLogLink',
+    defaultMessage: 'Transactions log',
+  },
+
   labelFilter: {
     id: 'dashboard.ColonyActions.labelFilter',
     defaultMessage: 'Filter',
@@ -264,22 +274,34 @@ const ColonyActions = ({
     <div className={styles.main}>
       {sortedActionsData?.length ? (
         <>
-          <Form
-            initialValues={{ filter: SortOptions.NEWEST }}
-            onSubmit={() => undefined}
-          >
-            <div className={styles.filter}>
-              <Select
-                appearance={{ alignOptions: 'left', theme: 'alt' }}
-                elementOnly
-                label={MSG.labelFilter}
-                name="filter"
-                options={SortSelectOptions}
-                onChange={setActionsSortOption}
-                placeholder={MSG.placeholderFilter}
-              />
+          <div className={styles.bar}>
+            <div className={styles.title}>
+              <FormattedMessage {...MSG.actionsTitle} />
             </div>
-          </Form>
+
+            <div>
+              <Form
+                initialValues={{ filter: SortOptions.NEWEST }}
+                onSubmit={() => undefined}
+              >
+                <div className={styles.filter}>
+                  <Select
+                    appearance={{ alignOptions: 'left', theme: 'alt' }}
+                    elementOnly
+                    label={MSG.labelFilter}
+                    name="filter"
+                    options={SortSelectOptions}
+                    onChange={setActionsSortOption}
+                    placeholder={MSG.placeholderFilter}
+                  />
+                </div>
+              </Form>
+            </div>
+
+            <Link className={styles.link} to={`/colony/${colonyName}/events`}>
+              <FormattedMessage {...MSG.transactionsLogLink} />
+            </Link>
+          </div>
           <ActionsList
             items={paginatedActionData}
             handleItemClick={handleActionRedirect}
