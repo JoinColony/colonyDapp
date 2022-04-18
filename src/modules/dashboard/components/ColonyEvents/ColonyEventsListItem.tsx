@@ -292,18 +292,6 @@ const ColonyEventsListItem = ({
                 </>
               )}
             </FormattedDateParts>
-            {domain && (
-              <span className={styles.domain}>
-                {domain.name ? (
-                  domain.name
-                ) : (
-                  <FormattedMessage
-                    {...MSG.domain}
-                    values={{ domainId: domain.id }}
-                  />
-                )}
-              </span>
-            )}
             {transactionHash && (
               <TransactionLink
                 className={styles.blockscoutLink}
