@@ -7,6 +7,10 @@
   margin-right: 10px;
 }
 
+.filter span {
+  font-size: 12px;
+}
+
 .controls {
   margin-top: 22px;
   text-align: center;
@@ -27,9 +31,12 @@
 
 .title {
   flex-grow: 2;
+  font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
 }
 
 .link {
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
   color: var(--colony-blue);
 }
