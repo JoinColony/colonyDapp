@@ -33,7 +33,7 @@ const MessageCardStatus = ({ status }: Props) => (
     <Tooltip
       placement="top"
       /* Because it's in an overflow window */
-      popperProps={{ strategy: 'fixed' }}
+      popperOptions={{ strategy: 'fixed' }}
       showArrow
       content={
         <span className={styles.tooltip}>

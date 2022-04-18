@@ -266,7 +266,6 @@ const ColonyEventsListItem = ({
         </div>
         <div className={styles.content}>
           <Tooltip
-            appearance={{ size: 'medium', theme: 'dark' }}
             placement="bottom-start"
             showArrow={false}
             content={
@@ -277,7 +276,7 @@ const ColonyEventsListItem = ({
                 />
               </div>
             }
-            popperProps={{
+            popperOptions={{
               modifiers: [
                 {
                   name: 'offset',

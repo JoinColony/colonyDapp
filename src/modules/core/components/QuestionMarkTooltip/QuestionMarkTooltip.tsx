@@ -1,5 +1,5 @@
 import React from 'react';
-import { PopperProps } from 'react-popper';
+import { PopperOptions } from 'react-popper-tooltip';
 import { MessageDescriptor, FormattedMessage } from 'react-intl';
 
 import Icon from '~core/Icon';
@@ -12,7 +12,7 @@ interface Props {
   tooltipText: string | MessageDescriptor;
   tooltipTextValues?: SimpleMessageValues;
   /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
-  tooltipPopperProps?: Omit<PopperProps, 'children'>;
+  tooltipPopperProps?: PopperOptions;
   className?: string;
   tooltipClassName?: string;
   iconTitle?: string;
@@ -43,7 +43,6 @@ const QuestionMarkTooltip = ({
   return (
     <>
       <Tooltip
-        appearance={{ theme: 'dark' }}
         content={
           typeof tooltipText === 'string' ? (
             tooltipText
@@ -55,7 +54,7 @@ const QuestionMarkTooltip = ({
         }
         trigger="hover"
         showArrow={showArrow}
-        popperProps={tooltipPopperProps}
+        popperOptions={tooltipPopperProps}
       >
         <div className={className}>
           <Icon

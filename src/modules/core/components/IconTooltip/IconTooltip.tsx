@@ -1,6 +1,7 @@
 import React from 'react';
 import { FormattedMessage, MessageDescriptor } from 'react-intl';
-import { PopperProps } from 'react-popper';
+import { PopperOptions } from 'react-popper-tooltip';
+
 import cx from 'classnames';
 
 import Icon from '~core/Icon';
@@ -24,7 +25,7 @@ interface Props {
   tooltipText: string | MessageDescriptor;
   tooltipTextValues?: SimpleMessageValues;
   /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
-  tooltipPopperProps?: Omit<PopperProps, 'children'>;
+  tooltipPopperProps?: PopperOptions;
   tooltipClassName?: string;
   className?: string;
   iconTitle?: string;
@@ -54,10 +55,6 @@ const IconTooltip = ({
     data-test={dataTest}
   >
     <Tooltip
-      appearance={{
-        theme: appearance.theme ? appearance.theme : 'dark',
-        size: 'medium',
-      }}
       content={
         typeof tooltipText === 'string' ? (
           tooltipText
@@ -69,7 +66,7 @@ const IconTooltip = ({
       }
       trigger="hover"
       showArrow={showArrow}
-      popperProps={tooltipPopperProps}
+      popperOptions={tooltipPopperProps}
     >
       <div className={styles.iconWrap}>
         <Icon className={iconClassName} name={icon} title="" />

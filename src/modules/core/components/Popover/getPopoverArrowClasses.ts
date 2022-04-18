@@ -1,6 +1,6 @@
 import camelcase from 'camelcase';
-import { PopperProps } from 'react-popper';
 
+import { Placement as PlacementType } from '@popperjs/core';
 import { capitalize } from '~utils/strings';
 
 /**
@@ -22,7 +22,7 @@ import { capitalize } from '~utils/strings';
  */
 const getPopoverArrowClasses = (
   { theme = undefined }: any = {},
-  placement: PopperProps['placement'] = 'auto',
+  placement: PlacementType = 'auto',
   styleObject: { [k: string]: string } = {},
 ) => {
   /*

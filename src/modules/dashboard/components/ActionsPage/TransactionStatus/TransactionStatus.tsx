@@ -29,9 +29,8 @@ interface Props {
 
 const TransactionStatus = ({ status, showTooltip = true }: Props) => (
   <Tooltip
-    appearance={{ size: 'medium' }}
     placement="right"
-    trigger={showTooltip ? 'hover' : 'disabled'}
+    trigger={showTooltip ? 'hover' : null}
     content={
       <FormattedMessage {...MSG.transactionStatus} values={{ status }} />
     }

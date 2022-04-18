@@ -70,16 +70,15 @@ const UserTokenActivationButton = ({
             data-test={dataTest}
           >
             <Tooltip
-              appearance={{ theme: 'dark', size: 'medium' }}
               placement="bottom"
-              trigger={!isOpen ? 'hover' : 'disabled'}
+              trigger={!isOpen ? 'hover' : null}
               showArrow
               content={
                 <div className={styles.tooltip}>
                   <FormattedMessage {...MSG.tooltip} />
                 </div>
               }
-              popperProps={{
+              popperOptions={{
                 modifiers: [
                   {
                     name: 'offset',

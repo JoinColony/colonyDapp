@@ -1,5 +1,5 @@
 import React, { ReactNode, useMemo } from 'react';
-import { PopperProps } from 'react-popper';
+import { PopperOptions } from 'react-popper-tooltip';
 
 import Popover from '~core/Popover';
 import { AnyUser, AnyToken, Colony } from '~data/index';
@@ -32,7 +32,7 @@ export type Props = ContentProps & {
   /** Children elemnts or components to wrap the tooltip around */
   children?: ReactNode;
   /** Passed onto `Popover` component */
-  popperProps?: Omit<PopperProps, 'children'>;
+  popperProps?: PopperOptions;
   /** How the popover gets triggered */
   trigger?: 'hover' | 'click' | 'disabled';
   /** Show an arrow around on the side of the popover */

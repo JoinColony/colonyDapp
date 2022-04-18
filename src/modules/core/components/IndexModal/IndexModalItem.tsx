@@ -93,7 +93,6 @@ const IndexModalItem = ({
            * need some heavy duty refactoring in order to make it play nicely with
            * the Popover / Tooltip component.
            */
-          appearance={{ size: 'medium' }}
           placement="right"
           trigger="hover"
           content={

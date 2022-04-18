@@ -7,7 +7,8 @@ import React, {
 } from 'react';
 import { MessageDescriptor } from 'react-intl';
 import { nanoid } from 'nanoid';
-import { PopperProps } from 'react-popper';
+
+import { PopperOptions } from 'react-popper-tooltip';
 
 import InputLabel from '~core/Fields/InputLabel';
 import { Tooltip } from '~core/Popover';
@@ -50,7 +51,7 @@ interface Props {
   /**  Text for the checkbox tooltip */
   tooltipText?: string;
   /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
-  tooltipPopperProps?: Omit<PopperProps, 'children'>;
+  tooltipPopperProps?: PopperOptions;
   /** @ignore injected by `asFieldArray` */
   form: { [s: string]: any };
   /** @ignore injected by `asFieldArray` */
@@ -132,16 +133,11 @@ const Checkbox = ({
     <label className={classNames} htmlFor={elementOnly ? inputId : undefined}>
       {disabled && tooltipText ? (
         <Tooltip
-          appearance={{ theme: 'dark' }}
           content={tooltipText}
           placement="bottom"
-          popperProps={tooltipPopperProps}
+          popperOptions={tooltipPopperProps}
         >
-          {({ close, open, ref }) => (
-            <div ref={ref} onMouseEnter={open} onMouseLeave={close}>
-              {checkboxInputContent}
-            </div>
-          )}
+          <div>{checkboxInputContent}</div>
         </Tooltip>
       ) : (
         checkboxInputContent

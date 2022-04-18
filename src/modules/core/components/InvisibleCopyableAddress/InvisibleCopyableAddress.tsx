@@ -64,7 +64,6 @@ const InvisibleCopyableAddress = ({
     formatMessage(MSG.copyMessage);
   return (
     <Tooltip
-      appearance={{ size: 'medium' }}
       placement="right"
       trigger="hover"
       content={

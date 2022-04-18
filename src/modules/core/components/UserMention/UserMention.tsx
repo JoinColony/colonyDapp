@@ -1,5 +1,5 @@
 import React from 'react';
-import { PopperProps } from 'react-popper';
+import { PopperOptions } from 'react-popper-tooltip';
 
 import Link from '~core/Link';
 import InfoPopover, { Props as InfoPopoverProps } from '~core/InfoPopover';
@@ -25,7 +25,7 @@ interface Props {
   showInfo?: boolean;
 
   /** Passed on to the `Popper` component */
-  popperProps?: Omit<PopperProps, 'children'> & { showArrow?: boolean };
+  popperProps?: PopperOptions & { showArrow?: boolean };
 }
 
 const UserMention = ({

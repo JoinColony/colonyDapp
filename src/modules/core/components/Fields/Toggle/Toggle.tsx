@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useField } from 'formik';
-import { PopperProps } from 'react-popper';
+import { PopperOptions } from 'react-popper-tooltip';
 import { MessageDescriptor } from 'react-intl';
 
 import InputLabel from '~core/Fields/InputLabel';
@@ -26,7 +26,7 @@ interface Props {
   tooltipTextValues?: SimpleMessageValues;
   elementOnly?: boolean;
   /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
-  tooltipPopperProps?: Omit<PopperProps, 'children'>;
+  tooltipPopperProps?: PopperOptions;
   onChange?: (value: boolean) => any;
 }
 

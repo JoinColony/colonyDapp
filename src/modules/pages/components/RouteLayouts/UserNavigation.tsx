@@ -138,7 +138,7 @@ const UserNavigation = () => {
         <Tooltip
           content={formatMessage(MSG.userReputationTooltip)}
           placement="bottom-start"
-          popperProps={{
+          popperOptions={{
             modifiers: [
               {
                 name: 'offset',

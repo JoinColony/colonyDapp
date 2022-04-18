@@ -1,1 +1,2 @@
-export const container: string;
+export const tooltipContainer: string;
+export const tooltipArrow: string;
