@@ -36,7 +36,7 @@ describe('Create a new colony', () => {
     });
 
     it('creates a new colony with existing token', () => {
-      const newColony = { name: 'feola' };
+      const newColony = { name: 'maya' };
 
       cy.login();
       cy.getColonyTokenAddress(colonyName);
