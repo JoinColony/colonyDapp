@@ -36,19 +36,23 @@ describe('Create a new colony', () => {
         nativeToken: existingToken,
         name: existingColony,
       } = Cypress.config().colony;
-      const { name } = Cypress.config().colony2;
+
+      const colony = { name: 'feola' };
 
       cy.login();
       cy.getColonyTokenAddress(existingColony);
 
-      cy.createColony(Cypress.config().colony2, false);
+      cy.createColony(colony, false);
 
       cy.getBySel('colonyTokenSymbol', { timeout: 120000 }).should(
         'have.text',
         existingToken,
       );
 
-      cy.url().should('eq', `${Cypress.config().baseUrl}/colony/${name}`);
+      cy.url().should(
+        'eq',
+        `${Cypress.config().baseUrl}/colony/${colony.name}`,
+      );
     });
   }
 });
