@@ -106,20 +106,29 @@ describe('User can create actions via UAC', () => {
       );
     });
   });
-  it('Can unlock the native token', () => {
-    const colony = { name: 'sirius', nativeToken: 'SIRS' };
-    cy.login();
-    cy.createColony(colony, true);
-    cy.url().should('eq', `${Cypress.config().baseUrl}/colony/${colony.name}`, {
-      timeout: 90000,
+
+  /* needs to only work once */
+  if (!Cypress.config().skipInitTests) {
+    it('Can unlock the native token', () => {
+      const colony = { name: 'sirius', nativeToken: 'SIRS' };
+      cy.login();
+      cy.createColony(colony, true);
+      cy.url().should(
+        'eq',
+        `${Cypress.config().baseUrl}/colony/${colony.name}`,
+        {
+          timeout: 90000,
+        },
+      );
+
+      cy.unlockToken(colony);
+
+      cy.getBySel('backButton').click();
+
+      cy.getBySel('lockIconTooltip', { timeout: 15000 }).should('not.exist');
     });
+  }
 
-    cy.unlockToken(colony);
-
-    cy.getBySel('backButton').click();
-
-    cy.getBySel('lockIconTooltip', { timeout: 15000 }).should('not.exist');
-  });
   it('Can manage permissions', () => {
     const { colony } = Cypress.config();
     cy.managePermissions(colony.name);
