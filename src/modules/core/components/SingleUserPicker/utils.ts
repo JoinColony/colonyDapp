@@ -10,7 +10,7 @@ export const filterUserSelection = (data: AnyUser[], filterValue: string) => {
   }
 
   const filteredUsers = data.filter((user) => {
-    if (user.profile?.walletAddress) {
+    if (!user.profile?.walletAddress) {
       return false;
     }
 
