@@ -10,7 +10,7 @@ describe('User can create actions via UAC', () => {
   } = Cypress.config();
 
   it('Can mint native tokens', () => {
-    const amountToMint = 10;
+    const amountToMint = 400;
     cy.mintTokens(amountToMint, false);
 
     cy.getBySel('backButton').click();
