@@ -26,8 +26,9 @@ describe('Token Activation & Deactivation', () => {
         .toString();
 
       cy.getBySel('activeTokens', { timeout: 6000 }).then(($tokens) => {
-        const tokens = $tokens.text().split(' ')[0].split(',').join('');
-        expect(tokens).to.eq(activatedTokens);
+        const [activeTokensElement] = $tokens.split(' ');
+        const parsedActiveTokens = activeTokensElement.replaceAll(',', '');
+        expect(parsedActiveTokens).to.eq(activatedTokens);
       });
     });
   });
@@ -57,8 +58,9 @@ describe('Token Activation & Deactivation', () => {
         .toString();
 
       cy.getBySel('inactiveTokens', { timeout: 6000 }).then(($tokens) => {
-        const tokens = $tokens.text().split(' ')[0].split(',').join('');
-        expect(tokens).to.eq(deactivatedTokens);
+        const [activeTokensElement] = $tokens.split(' ');
+        const parsedActiveTokens = activeTokensElement.replaceAll(',', '');
+        expect(parsedActiveTokens).to.eq(deactivatedTokens);
       });
     });
   });
