@@ -1,6 +1,6 @@
-import Decimal from 'decimal.js';
 import { Extension } from '@colony/colony-js';
 import numbro from 'numbro';
+import Decimal from 'decimal.js';
 
 import ganacheAccounts from '~lib/colonyNetwork/ganache-accounts.json';
 import { createAddress } from '~utils/web3';
@@ -169,12 +169,15 @@ describe('User can create motions via UAC', () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.getBySel('claimForColonyButton', { timeout: 100000 }).click().wait(5000);
 
+    cy.reload();
+
     cy.get('@totalFunds').then(($totalFunds) => {
       const totalFunds = new Decimal($totalFunds.split(',').join(''))
         .add(amountToMint)
+        .toDecimalPlaces(3)
         .toString();
 
-      cy.getBySel('colonyTotalFunds', { timeout: 15000 }).then(($text) => {
+      cy.getBySel('colonyTotalFunds', { timeout: 150000 }).then(($text) => {
         const text = $text.text().split(',').join('');
         expect(text).to.eq(totalFunds);
       });
