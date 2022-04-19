@@ -1,5 +1,7 @@
 import newColony from '../fixtures/colony.json';
 
+const { baseUrl } = Cypress.config();
+
 describe('Colony can be updated', () => {
   it('can update colony details', () => {
     const newName = 'plushka';
@@ -18,11 +20,9 @@ describe('Colony can be updated', () => {
 
     cy.login();
     cy.createColony(newColony, true);
-    cy.url().should(
-      'eq',
-      `${Cypress.config().baseUrl}/colony/${newColony.name}`,
-      { timeout: 90000 },
-    );
+    cy.url().should('eq', `${baseUrl}/colony/${newColony.name}`, {
+      timeout: 90000,
+    });
 
     cy.updateTokens(newColony.name, existingColonyName, false);
 

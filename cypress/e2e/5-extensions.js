@@ -1,5 +1,9 @@
 import { Extension } from '@colony/colony-js';
 
+const {
+  colony: { name: colonyName },
+} = Cypress.config();
+
 const testExtensionManagementFlow = (extensionId) => {
   cy.installExtension();
 
@@ -18,7 +22,7 @@ const testExtensionManagementFlow = (extensionId) => {
 describe('Colony extensions', () => {
   beforeEach(() => {
     cy.login();
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
+    cy.visit(`/colony/${colonyName}`);
     cy.getBySel('extensionsNavigationButton', { timeout: 60000 }).click({
       force: true,
     });

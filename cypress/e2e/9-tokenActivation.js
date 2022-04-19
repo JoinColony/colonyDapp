@@ -1,9 +1,13 @@
-import { bigNumberify } from 'ethers/utils';
+import Decimal from 'decimal.js';
+
+const {
+  colony: { name: colonyName },
+} = Cypress.config();
 
 describe('Token Activation & Deactivation', () => {
   beforeEach(() => {
     cy.login();
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
+    cy.visit(`/colony/${colonyName}`);
   });
 
   it(`User can activate tokens`, () => {
@@ -15,13 +19,13 @@ describe('Token Activation & Deactivation', () => {
 
     // Check that the active tokens are correct
     cy.get('@activatedTokens').then(($activatedTokens) => {
-      const activatedTokens = bigNumberify(
-        $activatedTokens.split(' ')[0].split(',').join(''),
-      )
+      const [activatedTokensElement] = $activatedTokens.split(' ');
+      const parsedActivated = activatedTokensElement.replaceAll(',', '');
+      const activatedTokens = new Decimal(parsedActivated)
         .add(amountToActivate)
         .toString();
 
-      cy.getBySel('activeTokens', { timeout: 60000 }).then(($tokens) => {
+      cy.getBySel('activeTokens', { timeout: 6000 }).then(($tokens) => {
         const tokens = $tokens.text().split(' ')[0].split(',').join('');
         expect(tokens).to.eq(activatedTokens);
       });
@@ -31,10 +35,10 @@ describe('Token Activation & Deactivation', () => {
   it(`User can deactivate tokens`, () => {
     // Open Token Activation popover
     const amountToDeactivate = 10;
-    cy.getBySel('tokenActivationButton', { timeout: 120000 }).click();
+    cy.getBySel('tokenActivationButton', { timeout: 12000 }).click();
 
     // Get the number of inactive tokens
-    cy.getBySel('inactiveTokens', { timeout: 60000 })
+    cy.getBySel('inactiveTokens', { timeout: 6000 })
       .invoke('text')
       .as('deactivatedTokens');
 
@@ -42,17 +46,17 @@ describe('Token Activation & Deactivation', () => {
 
     cy.getBySel('activateTokensInput').click().type(amountToDeactivate);
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.getBySel('tokenActivationConfirm').click().wait(100000);
+    cy.getBySel('tokenActivationConfirm').click().wait(8000);
 
     // Check that the inactive tokens are correct
     cy.get('@deactivatedTokens').then(($deactivatedTokens) => {
-      const deactivatedTokens = bigNumberify(
-        $deactivatedTokens.split(' ')[0].split(',').join(''),
-      )
+      const [deactivatedTokensElement] = $deactivatedTokens.split(' ');
+      const parsedDeactivated = deactivatedTokensElement.replaceAll(',', '');
+      const deactivatedTokens = new Decimal(parsedDeactivated)
         .sub(amountToDeactivate)
         .toString();
 
-      cy.getBySel('inactiveTokens', { timeout: 60000 }).then(($tokens) => {
+      cy.getBySel('inactiveTokens', { timeout: 6000 }).then(($tokens) => {
         const tokens = $tokens.text().split(' ')[0].split(',').join('');
         expect(tokens).to.eq(deactivatedTokens);
       });

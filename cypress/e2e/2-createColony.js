@@ -1,3 +1,8 @@
+const {
+  colony: { name: colonyName },
+  baseUrl,
+} = Cypress.config();
+
 describe('Create a new colony', () => {
   if (!Cypress.config().skipInitTests) {
     it('creates a new colony with new token', () => {
@@ -12,7 +17,7 @@ describe('Create a new colony', () => {
         nativeToken,
       );
 
-      cy.url().should('eq', `${Cypress.config().baseUrl}/colony/${name}`);
+      cy.url().should('eq', `${baseUrl}/colony/${name}`);
     });
 
     it('New user is created which joins the colony', () => {
@@ -24,7 +29,7 @@ describe('Create a new colony', () => {
 
       cy.url().should('be.equal', 'http://localhost:9090/landing');
 
-      cy.visit(`/colony/${Cypress.config().colony.name}`);
+      cy.visit(`/colony/${colonyName}`);
 
       cy.getBySel('joinColonyButton', { timeout: 100000 }).click();
 
@@ -48,7 +53,7 @@ describe('Create a new colony', () => {
         existingToken,
       );
 
-      cy.url().should('eq', `${Cypress.config().baseUrl}/colony/${name}`);
+      cy.url().should('eq', `${baseUrl}/colony/${name}`);
     });
   }
 });

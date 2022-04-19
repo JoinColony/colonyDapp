@@ -1,3 +1,7 @@
+const {
+  colony: { name: colonyName },
+} = Cypress.config();
+
 describe('Colony user can update their settings', () => {
   const userSettingsName = 'ColonyFan';
   const userSettingsBio = 'I really like Colony';
@@ -64,7 +68,7 @@ describe('Colony user can update their settings', () => {
 
   // This requires that the native token is not already added
   it('User can add token type to their wallet', () => {
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
+    cy.visit(`/colony/${colonyName}`);
     // Get the colony's native token
     cy.getBySel('colonyMenuPopover', { timeout: 40000 }).click();
     cy.getBySel('nativeTokenAddress')

@@ -31,6 +31,10 @@ import { splitAddress } from '~utils/strings';
 
 import { buildUser } from './generate';
 
+const {
+  colony: { name: colonyName },
+} = Cypress.config();
+
 Cypress.Commands.add('login', () => {
   cy.visit('/landing');
   cy.findByText(/connect wallet/i).click();
@@ -121,27 +125,27 @@ Cypress.Commands.add('createColony', (colony, useNewToken) => {
   cy.getBySel('userInputConfirm').click();
 });
 
-Cypress.Commands.add('getColonyTokenAddress', (colonyName) => {
-  cy.visit(`/colony/${colonyName}`);
+Cypress.Commands.add('getColonyTokenAddress', (setColonyName) => {
+  cy.visit(`/colony/${setColonyName}`);
   cy.getBySel('colonyMenu', { timeout: 60000 }).click();
   cy.getBySel('nativeTokenAddress').invoke('text').as('existingTokenAddress');
 });
 
-Cypress.Commands.add('checkUrlAfterAction', (colonyName) => {
+Cypress.Commands.add('checkUrlAfterAction', (setColonyName) => {
   cy.url().should(
     'contains',
-    `${Cypress.config().baseUrl}/colony/${colonyName}/tx/0x`,
+    `${Cypress.config().baseUrl}/colony/${setColonyName}/tx/0x`,
     { timeout: 30000 },
   );
 });
 
-Cypress.Commands.add('checkColonyName', (colonyName) => {
+Cypress.Commands.add('checkColonyName', (setColonyName) => {
   cy.getBySel('colonyTitle', { timeout: 60000 }).then((name) => {
-    expect(name.text()).to.equal(colonyName);
+    expect(name.text()).to.equal(setColonyName);
   });
 });
 
-Cypress.Commands.add('changeColonyname', (colonyName, newName) => {
+Cypress.Commands.add('changeColonyname', (newName) => {
   cy.getBySel('newActionButton', { timeout: 60000 }).click();
   cy.getBySel('advancedDialogIndexItem').click();
   cy.getBySel('updateColonyDialogIndexItem').click();
@@ -192,8 +196,7 @@ Cypress.Commands.add('mintTokens', (amountToMint, isMotion) => {
     : 'Test annotation';
 
   cy.login();
-
-  cy.visit(`/colony/${Cypress.config().colony.name}`);
+  cy.visit(`/colony/${colonyName}`);
 
   cy.getBySel('colonyTotalFunds', { timeout: 60000 })
     .invoke('text')
@@ -241,8 +244,7 @@ Cypress.Commands.add(
         );
 
     cy.login();
-
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
+    cy.visit(`/colony/${colonyName}`);
 
     cy.getBySel('colonyTotalFunds', { timeout: 60000 })
       .invoke('text')
@@ -288,8 +290,7 @@ Cypress.Commands.add('createTeam', (domainName, domainPurpose, isMotion) => {
     : 'Test annotation';
 
   cy.login();
-
-  cy.visit(`/colony/${Cypress.config().colony.name}`);
+  cy.visit(`/colony/${colonyName}`);
 
   cy.getBySel('newActionButton', { timeout: 60000 }).click();
   cy.getBySel('domainsDialogIndexItem').click();
@@ -320,8 +321,7 @@ Cypress.Commands.add('editTeam', (domainName, domainPurpose, isMotion) => {
     : 'Test annotation';
 
   cy.login();
-
-  cy.visit(`/colony/${Cypress.config().colony.name}`);
+  cy.visit(`/colony/${colonyName}`);
 
   cy.getBySel('newActionButton', { timeout: 90000 }).click();
   cy.getBySel('domainsDialogIndexItem').click();
@@ -362,8 +362,7 @@ Cypress.Commands.add('transferFunds', (amountToTransfer, isMotion) => {
     : 'Test annotation';
 
   cy.login();
-
-  cy.visit(`/colony/${Cypress.config().colony.name}`);
+  cy.visit(`/colony/${colonyName}`);
 
   cy.getBySel('colonyDomainSelector', { timeout: 60000 }).click();
   cy.getBySel('colonyDomainSelectorItem').last().click();
@@ -411,8 +410,7 @@ Cypress.Commands.add('awardRep', (amountToAward, isMotion) => {
   let rewardedUser;
 
   cy.login();
-
-  cy.visit(`/colony/${Cypress.config().colony.name}`);
+  cy.visit(`/colony/${colonyName}`);
 
   cy.getBySel('newActionButton', { timeout: 90000 }).click();
   cy.getBySel('reputationDialogIndexItem').click();
@@ -453,8 +451,7 @@ Cypress.Commands.add('smiteUser', (amountToSmite, isMotion) => {
   let smoteUser;
 
   cy.login();
-
-  cy.visit(`/colony/${Cypress.config().colony.name}`);
+  cy.visit(`/colony/${colonyName}`);
 
   cy.getBySel('newActionButton', { timeout: 90000 }).click();
   cy.getBySel('reputationDialogIndexItem').click();
@@ -489,11 +486,10 @@ Cypress.Commands.add('editColonyDetails', (newName, isMotion) => {
   const annotationText = isMotion
     ? 'Test motion annotation'
     : 'Test annotation';
-  const colonyName = Cypress.config().colony.name;
 
   cy.login();
   cy.visit(`/colony/${colonyName}`);
-  cy.changeColonyname(colonyName, newName);
+  cy.changeColonyname(newName);
 
   const filePath = 'cypress/fixtures/images/jaya-the-beast.png';
   cy.get('input[type="file"]').selectFile(filePath, { force: true });
@@ -569,11 +565,10 @@ Cypress.Commands.add('unlockToken', (colony) => {
   );
 });
 
-Cypress.Commands.add('managePermissions', (colonyName, isMotion) => {
+Cypress.Commands.add('managePermissions', (isMotion) => {
   const annotationText = 'I am giving you the power to do things';
 
   cy.login();
-
   cy.visit(`/colony/${colonyName}`);
 
   cy.getBySel('newActionButton', { timeout: 60000 }).click();

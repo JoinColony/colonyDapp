@@ -1,4 +1,4 @@
-import { bigNumberify } from 'ethers/utils';
+import Decimal from 'decimal.js';
 import { Extension } from '@colony/colony-js';
 
 import ganacheAccounts from '~lib/colonyNetwork/ganache-accounts.json';
@@ -6,10 +6,14 @@ import { createAddress } from '~utils/web3';
 
 import createdColony from '../fixtures/colony.json';
 
+const {
+  colony: { name: colonyName },
+} = Cypress.config();
+
 describe('User can create motions via UAC', () => {
   it('Installs & enables voting extensions', () => {
     cy.login();
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
+    cy.visit(`/colony/${colonyName}`);
 
     // install & enable voting reputaiton extension
     cy.getBySel('extensionsNavigationButton', { timeout: 60000 }).click({
@@ -111,16 +115,14 @@ describe('User can create motions via UAC', () => {
   });
 
   it('Can manage permissions', () => {
-    const { colony } = Cypress.config();
-
-    cy.managePermissions(colony.name, true);
+    cy.managePermissions(true);
 
     cy.checkMotion();
   });
 
   it('User can activate tokens', () => {
     cy.login();
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
+    cy.visit(`/colony/${colonyName}`);
     // Activate tokens
     cy.tokenActivation();
   });
@@ -164,7 +166,7 @@ describe('User can create motions via UAC', () => {
     cy.getBySel('claimForColonyButton', { timeout: 100000 }).click().wait(5000);
 
     cy.get('@totalFunds').then(($totalFunds) => {
-      const totalFunds = bigNumberify($totalFunds.split(',').join(''))
+      const totalFunds = new Decimal($totalFunds.split(',').join(''))
         .add(amountToMint)
         .toString();
 
@@ -177,7 +179,7 @@ describe('User can create motions via UAC', () => {
 
   it('Claiming Stakes', () => {
     cy.login();
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
+    cy.visit(`/colony/${colonyName}`);
 
     // Get amount of staked tokens
     cy.getBySel('tokenActivationButton', { timeout: 12000 }).click();
@@ -214,20 +216,19 @@ describe('User can create motions via UAC', () => {
       .invoke('text')
       .as('nowStakedTokens')
       .then(function () {
-        const initialStakedTokens = this.initialStakedTokens
-          .split(' ')[0]
-          .split(',')
-          .join('')
-          .split('.')[0];
-        const stakedValue = bigNumberify(
-          this.stakedValue.split(' ')[0].split(',').join('').split('.')[0],
-        );
-        const newStaked = this.nowStakedTokens
-          .split(' ')[0]
-          .split(',')
-          .join('')
-          .split('.')[0];
-        const expectedStaked = bigNumberify(initialStakedTokens)
+        const [firstStakeTokensElement] = this.initialStakedTokens.split(' ');
+        const parsedStakedTokens = firstStakeTokensElement.replaceAll(',', '');
+        const initialStakedTokens = new Decimal(parsedStakedTokens);
+
+        const [stakedValueElement] = this.stakedValue.split(' ');
+        const parsedStakedValue = stakedValueElement.replaceAll(',', '');
+        const stakedValue = new Decimal(parsedStakedValue);
+
+        const [newStakedElement] = this.stakedValue.split(' ');
+        const parsedNewStaked = newStakedElement.replaceAll(',', '');
+        const newStaked = new Decimal(parsedNewStaked);
+
+        const expectedStaked = new Decimal(initialStakedTokens)
           .sub(stakedValue)
           .toString();
         expect(newStaked).to.eq(expectedStaked);
@@ -236,7 +237,7 @@ describe('User can create motions via UAC', () => {
 
   it('Disables & deprecates voting extensions', () => {
     cy.login();
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
+    cy.visit(`/colony/${colonyName}`);
 
     // deprecate & unistall voting reputaiton extension
     cy.getBySel('extensionsNavigationButton', { timeout: 60000 }).click({
