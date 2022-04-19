@@ -28,11 +28,7 @@ describe('User can create actions via UAC', () => {
       new Decimal(1.0101).div(100).mul(amountToPay),
     );
 
-    const accounts = Object.entries(ganacheAccounts.private_keys).map(
-      ([address]) => address,
-    );
-
-    cy.makePayment(amountToPay, createAddress(accounts[15]), false);
+    cy.makePayment(amountToPay, undefined, false);
 
     cy.getBySel('backButton').click();
 
@@ -110,16 +106,16 @@ describe('User can create actions via UAC', () => {
   /* needs to only work once */
   if (!Cypress.config().skipInitTests) {
     it('Can unlock the native token', () => {
+      const { baseUrl } = Cypress.config();
+
       const colony = { name: 'sirius', nativeToken: 'SIRS' };
+
       cy.login();
       cy.createColony(colony, true);
-      cy.url().should(
-        'eq',
-        `${Cypress.config().baseUrl}/colony/${colony.name}`,
-        {
-          timeout: 90000,
-        },
-      );
+
+      cy.url().should('eq', `${baseUrl}/colony/${colony.name}`, {
+        timeout: 90000,
+      });
 
       cy.unlockToken(colony);
 
@@ -155,6 +151,11 @@ describe('User can create actions via UAC', () => {
   });
 
   it('Can enable recovery mode', () => {
+    const {
+      baseUrl,
+      colony: { name },
+    } = Cypress.config();
+
     const storageSlot = '0x05';
     const storageSlotValue =
       '0x0000000000000000000000000000000000000000000000000000000000000002';
@@ -162,7 +163,7 @@ describe('User can create actions via UAC', () => {
 
     cy.login();
 
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
+    cy.visit(`/colony/${name}`);
 
     cy.getBySel('newActionButton', { timeout: 70000 }).click();
     cy.getBySel('advancedDialogIndexItem').click();
@@ -176,12 +177,7 @@ describe('User can create actions via UAC', () => {
       'Recovery mode activated by',
     );
 
-    cy.url().should(
-      'contains',
-      `${Cypress.config().baseUrl}/colony/${
-        Cypress.config().colony.name
-      }/tx/0x`,
-    );
+    cy.url().should('contains', `${baseUrl}/colony/${name}/tx/0x`);
 
     cy.getBySel('comment').should('have.text', annotationText);
 
