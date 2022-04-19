@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
@@ -11,7 +11,13 @@ import { ActionForm } from '~core/Fields';
 
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
-import { AnyUser, useMembersSubscription, useNetworkContracts } from '~data/index';
+import {
+  useVerifiedUsersQuery,
+  useColonyFromNameQuery,
+  AnyUser,
+  useMembersSubscription,
+  useNetworkContracts,
+} from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 import { WizardDialogType } from '~utils/hooks';
@@ -94,6 +100,41 @@ const CreatePaymentDialog = ({
   });
 
   const { feeInverse: networkFeeInverse } = useNetworkContracts();
+  const { data: colonyData } = useColonyFromNameQuery({
+    variables: { name: colonyName, address: colonyAddress },
+  });
+  const isWhiteListActive = colonyData?.processedColony?.isWhitelistActivated;
+
+  const { data } = useVerifiedUsersQuery({
+    variables: {
+      verifiedAddresses:
+        colonyData?.processedColony?.whitelistedAddresses || [],
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  const storedVerifiedRecipients = useMemo(
+    () =>
+      (data?.verifiedUsers || []).map((user) => user?.profile.walletAddress),
+    [data],
+  );
+
+  const filteredVerifiedRecipients = isWhiteListActive
+    ? (colonyMembers?.subscribedUsers || []).filter((member) =>
+        storedVerifiedRecipients.some(
+          (el) => el.toLowerCase() === member.id.toLowerCase(),
+        ),
+      )
+    : colonyMembers?.subscribedUsers || [];
+
+  const getIsUnverifiedRecipient = (walletAddress) => {
+    if (!walletAddress) return false;
+    return isWhiteListActive
+      ? !storedVerifiedRecipients.some(
+          (el) => el.toLowerCase() === walletAddress.toLowerCase(),
+        )
+      : false;
+  };
 
   const transform = useCallback(
     pipe(
@@ -167,6 +208,7 @@ const CreatePaymentDialog = ({
         if (formValues.values.forceAction !== isForce) {
           setIsForce(formValues.values.forceAction);
         }
+
         return (
           <Dialog cancel={cancel}>
             <DialogForm
@@ -174,8 +216,11 @@ const CreatePaymentDialog = ({
               colony={colony}
               isVotingExtensionEnabled={isVotingExtensionEnabled}
               back={() => callStep(prevStep)}
-              subscribedUsers={colonyMembers?.subscribedUsers || []}
+              subscribedUsers={filteredVerifiedRecipients}
               ethDomainId={ethDomainId}
+              showWhitelistWarning={getIsUnverifiedRecipient(
+                formValues.values?.recipient?.profile?.walletAddress,
+              )}
             />
           </Dialog>
         );

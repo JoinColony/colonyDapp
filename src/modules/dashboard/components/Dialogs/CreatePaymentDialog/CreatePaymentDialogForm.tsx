@@ -106,12 +106,17 @@ const MSG = defineMessages({
     payment.`,
   },
   userPickerPlaceholder: {
-    id: 'SingleUserPicker.userPickerPlaceholder',
+    id: `dashboard.CreatePaymentDialog.CreatePaymentDialogForm.userPickerPlaceholder`,
     defaultMessage: 'Search for a user or paste wallet address',
+  },
+  warningText: {
+    id: `dashboard.CreatePaymentDialog.CreatePaymentDialogForm.warningText`,
+    defaultMessage: `<span>Warning.</span> Warning. You are about to make a payment to an address not on the whitelist. Are you sure the address is correct?`,
   },
 });
 interface Props extends ActionDialogProps {
   subscribedUsers: AnyUser[];
+  showWhitelistWarning: boolean;
   ethDomainId?: number;
 }
 
@@ -156,6 +161,7 @@ const CreatePaymentDialogForm = ({
   isValid,
   values,
   ethDomainId: preselectedDomainId,
+  showWhitelistWarning,
 }: Props & FormikProps<FormValues>) => {
   const selectedDomain =
     preselectedDomainId === 0 || preselectedDomainId === undefined
@@ -437,6 +443,20 @@ const CreatePaymentDialogForm = ({
             itemDataTest="paymentRecipientItem"
           />
         </div>
+        {showWhitelistWarning && (
+          <div className={styles.warningContainer}>
+            <p className={styles.warningText}>
+              <FormattedMessage
+                {...MSG.warningText}
+                values={{
+                  span: (chunks) => (
+                    <span className={styles.warningLabel}>{chunks}</span>
+                  ),
+                }}
+              />
+            </p>
+          </div>
+        )}
         {values.recipient &&
           isConfusing(
             values.recipient.profile.username ||
