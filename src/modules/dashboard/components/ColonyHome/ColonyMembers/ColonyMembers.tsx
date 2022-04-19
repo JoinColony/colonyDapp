@@ -190,7 +190,7 @@ const ColonyMembers = ({
                 showInfo
                 notSet={false}
                 colony={colony}
-                popperProps={{
+                popperOptions={{
                   placement: 'bottom',
                   showArrow: false,
                   modifiers: [

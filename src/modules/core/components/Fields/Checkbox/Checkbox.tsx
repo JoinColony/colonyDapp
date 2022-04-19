@@ -51,7 +51,7 @@ interface Props {
   /**  Text for the checkbox tooltip */
   tooltipText?: string;
   /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
-  tooltipPopperProps?: PopperOptions;
+  tooltipPopperOptions?: PopperOptions;
   /** @ignore injected by `asFieldArray` */
   form: { [s: string]: any };
   /** @ignore injected by `asFieldArray` */
@@ -80,7 +80,7 @@ const Checkbox = ({
   remove,
   value,
   tooltipText,
-  tooltipPopperProps,
+  tooltipPopperOptions,
   dataTest,
 }: Props) => {
   const [inputId] = useState<string>(nanoid());
@@ -135,7 +135,7 @@ const Checkbox = ({
         <Tooltip
           content={tooltipText}
           placement="bottom"
-          popperOptions={tooltipPopperProps}
+          popperOptions={tooltipPopperOptions}
         >
           <div>{checkboxInputContent}</div>
         </Tooltip>

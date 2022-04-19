@@ -25,7 +25,7 @@ interface BaseProps {
   notSet?: boolean;
 
   /** Passed on to the `Popper` component */
-  popperProps?: PopperOptions & { showArrow?: boolean };
+  popperOptions?: PopperOptions & { showArrow?: boolean };
 
   /** If true the UserAvatar links to the user's profile */
   showLink?: boolean;
@@ -60,7 +60,7 @@ const UserAvatar = ({
   showInfo,
   showLink,
   notSet,
-  popperProps,
+  popperOptions,
   size,
   banned = false,
   user = {
@@ -71,10 +71,10 @@ const UserAvatar = ({
 }: Props) => {
   const username = getUsername(user);
   let popoverProps: InfoPopoverProps = {
-    popperProps,
+    popperOptions,
     trigger: showInfo ? 'click' : 'disabled',
     user,
-    showArrow: popperProps && popperProps.showArrow,
+    showArrow: popperOptions && popperOptions.showArrow,
   };
   if ('colony' in rest) {
     const { colony, domainId } = rest;

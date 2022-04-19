@@ -26,7 +26,7 @@ interface Props {
   tooltipTextValues?: SimpleMessageValues;
   elementOnly?: boolean;
   /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
-  tooltipPopperProps?: PopperOptions;
+  tooltipPopperOptions?: PopperOptions;
   onChange?: (value: boolean) => any;
 }
 
@@ -39,7 +39,7 @@ const Toggle = ({
   elementOnly = false,
   tooltipTextValues,
   tooltipText,
-  tooltipPopperProps = {
+  tooltipPopperOptions = {
     placement: 'right-start',
     modifiers: [
       {
@@ -94,7 +94,7 @@ const Toggle = ({
         <QuestionMarkTooltip
           className={styles.icon}
           tooltipText={tooltipText}
-          tooltipPopperProps={tooltipPopperProps}
+          tooltipPopperOptions={tooltipPopperOptions}
           tooltipTextValues={tooltipTextValues}
         />
       )}

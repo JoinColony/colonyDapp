@@ -246,7 +246,7 @@ const ColonyEventsListItem = ({
               user={agentUserProfile}
               notSet={false}
               showInfo
-              popperProps={{
+              popperOptions={{
                 showArrow: false,
                 placement: 'bottom',
                 modifiers: [

@@ -350,7 +350,7 @@ const BuyTokens = ({
       <QuestionMarkTooltip
         tooltipText={MSG.helpTooltip}
         className={styles.help}
-        tooltipPopperProps={{
+        tooltipPopperOptions={{
           placement: 'top',
         }}
         tooltipClassName={styles.tooltip}

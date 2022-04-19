@@ -265,7 +265,7 @@ const ActionsListItem = ({
               user={initiatorUserProfile}
               notSet={false}
               showInfo
-              popperProps={{
+              popperOptions={{
                 showArrow: false,
                 placement: 'bottom',
                 modifiers: [

@@ -78,7 +78,7 @@ const GasStationPopover = ({
         setOpen(false);
         setTxNeedsSigning(false);
       }}
-      popperProps={{
+      popperOptions={{
         modifiers: [
           {
             name: 'offset',

@@ -32,7 +32,7 @@ export type Props = ContentProps & {
   /** Children elemnts or components to wrap the tooltip around */
   children?: ReactNode;
   /** Passed onto `Popover` component */
-  popperProps?: PopperOptions;
+  popperOptions?: PopperOptions;
   /** How the popover gets triggered */
   trigger?: 'hover' | 'click' | 'disabled';
   /** Show an arrow around on the side of the popover */
@@ -44,7 +44,7 @@ const displayName = 'InfoPopover';
 
 const InfoPopover = ({
   children,
-  popperProps,
+  popperOptions,
   trigger = 'click',
   showArrow = true,
   banned = false,
@@ -82,7 +82,7 @@ const InfoPopover = ({
   return (
     <Popover
       content={renderContent}
-      popperProps={popperProps}
+      popperOptions={popperOptions}
       trigger={trigger}
       showArrow={showArrow}
     >

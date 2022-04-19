@@ -24,7 +24,6 @@ interface Props {
   placement?: PlacementType;
 
   /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
-  /* popperProps?: Omit<PopperProps, 'children'>; */
   popperOptions?: PopperOptions;
 
   /** Whether there should be an arrow on the tooltip */

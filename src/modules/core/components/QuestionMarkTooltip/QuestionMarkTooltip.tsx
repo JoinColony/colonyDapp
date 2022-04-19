@@ -12,7 +12,7 @@ interface Props {
   tooltipText: string | MessageDescriptor;
   tooltipTextValues?: SimpleMessageValues;
   /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
-  tooltipPopperProps?: PopperOptions;
+  tooltipPopperOptions?: PopperOptions;
   className?: string;
   tooltipClassName?: string;
   iconTitle?: string;
@@ -24,7 +24,7 @@ const QuestionMarkTooltip = ({
   iconTitle,
   tooltipClassName,
   tooltipTextValues,
-  tooltipPopperProps = {
+  tooltipPopperOptions = {
     placement: 'right-start',
     modifiers: [
       {
@@ -54,7 +54,7 @@ const QuestionMarkTooltip = ({
         }
         trigger="hover"
         showArrow={showArrow}
-        popperOptions={tooltipPopperProps}
+        popperOptions={tooltipPopperOptions}
       >
         <div className={className}>
           <Icon

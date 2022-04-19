@@ -15,7 +15,7 @@ const TokenTooltip = ({
   content,
   popperOffset,
 }: TokenTooltipProps) => {
-  const popperProps = {
+  const popperOptions = {
     modifiers: [
       {
         name: 'offset',
@@ -30,7 +30,7 @@ const TokenTooltip = ({
     <Tooltip
       placement="top-start"
       content={content}
-      popperOptions={popperProps}
+      popperOptions={popperOptions}
     >
       <div className={className}>{children}</div>
     </Tooltip>

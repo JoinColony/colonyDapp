@@ -95,7 +95,7 @@ const PermissionManagementCheckbox = ({
       name="roles"
       disabled={disabled}
       tooltipText={formattedTooltipText}
-      tooltipPopperProps={{
+      tooltipPopperOptions={{
         modifiers: [
           {
             name: 'offset',

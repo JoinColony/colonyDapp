@@ -329,7 +329,7 @@ const FinalizeMotionAndClaimWidget = ({
                       tooltipText={MSG.finalizeTooltip}
                       className={styles.help}
                       tooltipClassName={styles.tooltip}
-                      tooltipPopperProps={{
+                      tooltipPopperOptions={{
                         placement: 'right',
                       }}
                     />

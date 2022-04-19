@@ -25,7 +25,7 @@ interface Props {
   showInfo?: boolean;
 
   /** Passed on to the `Popper` component */
-  popperProps?: PopperOptions & { showArrow?: boolean };
+  popperOptions?: PopperOptions & { showArrow?: boolean };
 }
 
 const UserMention = ({
@@ -33,14 +33,14 @@ const UserMention = ({
   to,
   hasLink,
   showInfo,
-  popperProps,
+  popperOptions,
   ...props
 }: Props) => {
   const fallbackTo = to || `/user/${username}`;
   const popoverProps: Partial<InfoPopoverProps> = {
-    popperProps,
+    popperOptions,
     trigger: showInfo ? 'click' : 'disabled',
-    showArrow: popperProps && popperProps.showArrow,
+    showArrow: popperOptions && popperOptions.showArrow,
   };
 
   const { data: userAddressData } = useUserAddressQuery({
