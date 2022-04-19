@@ -233,7 +233,16 @@ Cypress.Commands.add(
       ? 'Test motion annotation'
       : 'Test annotation';
 
-    const cutAddress = splitAddress(address);
+    const {
+      colony: { nativeToken },
+    } = Cypress.config();
+
+    let recipient;
+
+    if (address !== undefined) {
+      const cutAddress = splitAddress(address);
+      recipient = `${cutAddress.header}${cutAddress.start}...${cutAddress.end}`;
+    }
 
     cy.login();
     cy.visit(`/colony/${colonyName}`);
@@ -250,21 +259,36 @@ Cypress.Commands.add(
       cy.getBySel('domainIdSelector').click();
       cy.getBySel('domainIdItem').last().click();
     }
+    if (address !== undefined) {
+      cy.getBySel('paymentRecipientPicker').click().type(address);
+      cy.getBySel('paymentRecipientItem').first().click();
 
-    cy.getBySel('paymentRecipientPicker').click().type(address);
-    cy.getBySel('paymentRecipientItem').first().click();
+      cy.getBySel('paymentAmountInput').click().type(amountToPay);
+      cy.getBySel('paymentAnnotation').click().type(annotationText);
+      cy.getBySel('paymentConfirmButton').click();
 
-    cy.getBySel('paymentAmountInput').click().type(amountToPay);
+      cy.getBySel('actionHeading', { timeout: 80000 }).should(
+        'have.text',
+        `Pay ${recipient} ${amountToPay.toString()} ${nativeToken}`,
+      );
+    } else {
+      cy.getBySel('paymentRecipientPicker').click();
+      cy.getBySel('paymentRecipientItem').first().click();
 
-    cy.getBySel('paymentAnnotation').click().type(annotationText);
-    cy.getBySel('paymentConfirmButton').click();
+      cy.getBySel('paymentRecipientName').then(($value) => {
+        recipient = $value.text();
 
-    cy.getBySel('actionHeading', { timeout: 80000 }).should(
-      'have.text',
-      `Pay ${cutAddress.header}${cutAddress.start}...${
-        cutAddress.end
-      } ${amountToPay.toString()} ${Cypress.config().colony.nativeToken}`,
-    );
+        cy.getBySel('paymentAmountInput').click().type(amountToPay);
+        cy.getBySel('paymentAnnotation').click().type(annotationText);
+        cy.getBySel('paymentConfirmButton').click();
+
+        cy.getBySel('actionHeading', { timeout: 80000 }).should(
+          'have.text',
+          `Pay ${recipient} ${amountToPay.toString()} ${nativeToken}`,
+        );
+      });
+    }
+
     cy.getBySel('comment').should('have.text', annotationText);
 
     cy.url().should('contains', `${baseUrl}/colony/${colonyName}/tx/0x`);
@@ -397,7 +421,6 @@ Cypress.Commands.add('awardRep', (amountToAward, isMotion) => {
   cy.getBySel('reputationRecipientSelector').click({ force: true });
   cy.getBySel('reputationRecipientSelectorItem').last().click();
 
-  cy.getBySel('reputationRecipientName').invoke('val').as('userName');
   cy.getBySel('reputationRecipientName').then(($value) => {
     rewardedUser = $value.text();
   });
