@@ -46,7 +46,7 @@ const UnclaimedTransfersItem = ({
     variables: { address: tokenAddress },
   });
 
-  const transform = useCallback(mergePayload({ colonyAddress, tokenAddress }), [
+  const transform = useCallback(mergePayload({ colonyAddress, tokenAddresses: [tokenAddress] }), [
     colonyAddress,
     tokenAddress,
   ]);

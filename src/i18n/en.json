@@ -153,6 +153,8 @@
     "transaction.ColonyClient.upgrade.description": "Colony Version Upgrade",
     "transaction.group.upgrade.title": "Colony Version Upgrade",
     "transaction.group.upgrade.description": "Colony Version Upgrade",
+    "transaction.group.claimIncomingFunds.title": "Claim Incoming Funds",
+    "transaction.group.claimIncomingFunds.description": "Claim Incoming Funds",
     "transaction.ColonyClient.claimColonyFunds.title": "Claim Pending Transactions",
     "transaction.ColonyClient.claimColonyFunds.description": "Claim Pending Transactions",
     "transaction.ColonyClient.moveFundsBetweenPotsWithProofs.title": "Move Funds Between Pots",
