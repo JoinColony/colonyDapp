@@ -33,11 +33,7 @@ describe('User can create actions via UAC', () => {
       new Decimal(1.0101).div(100).mul(amountToPay),
     );
 
-    const accounts = Object.entries(ganacheAccounts.private_keys).map(
-      ([address]) => address,
-    );
-
-    cy.makePayment(amountToPay, createAddress(accounts[15]), false);
+    cy.makePayment(amountToPay, undefined, false);
 
     cy.getBySel('backButton').click();
 
@@ -116,6 +112,7 @@ describe('User can create actions via UAC', () => {
   if (!Cypress.config().skipInitTests) {
     it('Can unlock the native token', () => {
       const colony = { name: 'sirius', nativeToken: 'SIRS' };
+
       cy.login();
       cy.createColony(colony, true);
       cy.url().should('eq', `${baseUrl}/colony/${colony.name}`, {
