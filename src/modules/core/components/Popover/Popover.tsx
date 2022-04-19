@@ -56,7 +56,7 @@ interface Props {
   openDelay?: number;
   /** Popover placement */
   placement?: Placement;
-  /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
+  /** Options to pass to the underlying PopperJS element. See here for more: https://popper.js.org/docs/v2/constructors/#options. */
   popperOptions?: PopperOptions;
   /** Whether the reference element should retain focus when popover is open (only for `HTMLInputElements`) */
   retainRefFocus?: boolean;

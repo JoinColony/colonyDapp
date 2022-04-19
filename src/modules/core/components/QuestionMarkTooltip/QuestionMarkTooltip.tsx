@@ -11,7 +11,7 @@ const displayName = 'QuestionMarkTooltip';
 interface Props {
   tooltipText: string | MessageDescriptor;
   tooltipTextValues?: SimpleMessageValues;
-  /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
+  /** Options to pass to the underlying PopperJS element. See here for more: https://popper.js.org/docs/v2/constructors/#options. */
   tooltipPopperOptions?: PopperOptions;
   className?: string;
   tooltipClassName?: string;

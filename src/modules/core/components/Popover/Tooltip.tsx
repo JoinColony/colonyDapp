@@ -23,7 +23,7 @@ interface Props {
   /** The tooltips' placement */
   placement?: PlacementType;
 
-  /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
+  /** Options to pass to the underlying PopperJS element. See here for more: https://popper.js.org/docs/v2/constructors/#options. */
   popperOptions?: PopperOptions;
 
   /** Whether there should be an arrow on the tooltip */
