@@ -37,11 +37,11 @@ const MSG = defineMessages({
   },
 
   transactionsLogTitle: {
-    id: 'dashboard.ColonyActions.transactionsLogTitle',
+    id: 'dashboard.ColonyEvents.transactionsLogTitle',
     defaultMessage: 'Transactions log',
   },
   actionsLink: {
-    id: 'dashboard.ColonyActions.actionsLink',
+    id: 'dashboard.ColonyEvents.actionsLink',
     defaultMessage: 'Back to actions',
   },
 });

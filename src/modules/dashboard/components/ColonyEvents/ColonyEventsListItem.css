@@ -5,7 +5,7 @@
 @value popoverWidth: 400px;
 @value popoverDistance: 10px;
 
-li:first-of-type {
+.listItem:first-of-type {
   border-top: 1px solid var(--temp-grey-13);
 }
 
@@ -63,7 +63,7 @@ li:first-of-type {
 
 .meta {
   font-size: var(--size-small);
-  font-weight: var(--weight-normal);
+  font-weight: var(--weight-bold);
   color: var(--temp-grey-blue-7);
   letter-spacing: var(--spacing-normal);
 }
@@ -79,6 +79,10 @@ li:first-of-type {
 }
 
 .titleDecoration {
+  color: var(--temp-grey-blue-7);
+}
+
+.titleDecorationUsername {
   color: var(--pink);
 }
 
@@ -86,9 +90,9 @@ li:first-of-type {
   font-size: var(--size-tiny);
 }
 
-.blockscoutLink {
-  margin-left: 10px;
+.blockExplorerLink {
+  margin-left: 16px;
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
-  color: color-mod(var(--action-secondary) alpha(85%));
+  color: var(--action-secondary);
 }

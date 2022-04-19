@@ -159,12 +159,24 @@ const ColonyEventsListItem = ({
   const eventMessageValues = {
     eventName,
     agent: (
-      <span className={styles.titleDecoration}>
+      <span
+        className={
+          agentUserProfile.profile.username
+            ? styles.titleDecorationUsername
+            : styles.titleDecoration
+        }
+      >
         <FriendlyName user={agentUserProfile} autoShrinkAddress />
       </span>
     ),
     recipient: (
-      <span className={styles.titleDecoration}>
+      <span
+        className={
+          recipientProfile.profile.username
+            ? styles.titleDecorationUsername
+            : styles.titleDecoration
+        }
+      >
         <FriendlyName
           user={recipientProfile}
           autoShrinkAddress
@@ -206,7 +218,7 @@ const ColonyEventsListItem = ({
   };
 
   return (
-    <li>
+    <li className={styles.listItem}>
       <div
         /*
          * @NOTE This is non-interactive element to appease the DOM Nesting Validator
@@ -294,7 +306,7 @@ const ColonyEventsListItem = ({
             </FormattedDateParts>
             {transactionHash && (
               <TransactionLink
-                className={styles.blockscoutLink}
+                className={styles.blockExplorerLink}
                 hash={transactionHash}
                 text={MSG.blockExplorer}
                 textValues={{

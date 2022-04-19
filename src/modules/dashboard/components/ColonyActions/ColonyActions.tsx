@@ -279,24 +279,22 @@ const ColonyActions = ({
               <FormattedMessage {...MSG.actionsTitle} />
             </div>
 
-            <div>
-              <Form
-                initialValues={{ filter: SortOptions.NEWEST }}
-                onSubmit={() => undefined}
-              >
-                <div className={styles.filter}>
-                  <Select
-                    appearance={{ alignOptions: 'left', theme: 'alt' }}
-                    elementOnly
-                    label={MSG.labelFilter}
-                    name="filter"
-                    options={SortSelectOptions}
-                    onChange={setActionsSortOption}
-                    placeholder={MSG.placeholderFilter}
-                  />
-                </div>
-              </Form>
-            </div>
+            <Form
+              initialValues={{ filter: SortOptions.NEWEST }}
+              onSubmit={() => undefined}
+            >
+              <div className={styles.filter}>
+                <Select
+                  appearance={{ alignOptions: 'left', theme: 'alt' }}
+                  elementOnly
+                  label={MSG.labelFilter}
+                  name="filter"
+                  options={SortSelectOptions}
+                  onChange={setActionsSortOption}
+                  placeholder={MSG.placeholderFilter}
+                />
+              </div>
+            </Form>
 
             <Link className={styles.link} to={`/colony/${colonyName}/events`}>
               <FormattedMessage {...MSG.transactionsLogLink} />
