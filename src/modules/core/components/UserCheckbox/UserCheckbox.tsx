@@ -34,7 +34,7 @@ const UserCheckbox = ({
   showDisplayName = true,
 }: Props) => {
   const userProfile = useUser(createAddress(walletAddress || AddressZero));
-  const [isChecked, setIsChecked] = useState<boolean>(false);
+  const [isChecked, setIsChecked] = useState<boolean>(true);
 
   const {
     getArrowProps,
@@ -57,7 +57,6 @@ const UserCheckbox = ({
             value={walletAddress}
             className={styles.checkbox}
             onChange={(props) => setIsChecked(props.isChecked)}
-            getDefaultValue={(checked) => setIsChecked(checked)}
           />
           {visible && (
             <div
