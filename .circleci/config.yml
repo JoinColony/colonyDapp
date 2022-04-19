@@ -54,6 +54,8 @@ jobs:
       - run:
           command: |
             sed -i 's/"skipInitTests": true/"skipInitTests": false/g' ./cypress.json
+      - run: 
+          command: wget http://127.0.0.1:3001/reputation/monitor/toggle 
       - run:
           command: yarn cy:run
       - store_artifacts:
