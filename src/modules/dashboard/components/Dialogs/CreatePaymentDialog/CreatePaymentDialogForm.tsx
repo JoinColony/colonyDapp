@@ -111,7 +111,7 @@ const MSG = defineMessages({
   },
   warningText: {
     id: `dashboard.CreatePaymentDialog.CreatePaymentDialogForm.warningText`,
-    defaultMessage: `<span>Warning.</span> Warning. You are about to make a payment to an address not on the whitelist. Are you sure the address is correct?`,
+    defaultMessage: `<span>Warning.</span> You are about to make a payment to an address not on the whitelist. Are you sure the address is correct?`,
   },
 });
 interface Props extends ActionDialogProps {
