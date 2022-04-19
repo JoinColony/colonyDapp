@@ -1,28 +1,30 @@
+import { AnyUser } from '~data/index';
+
 /*
 Extracts the required values to be used in the SingleUserPicker
 on selection
 */
-export const filterUserSelection = (data, filterValue) => {
+export const filterUserSelection = (data: AnyUser[], filterValue: string) => {
   if (!filterValue) {
     return data;
   }
 
-  const filtered = data.filter(
-    (user) =>
-      user &&
-      user.profile &&
-      user.profile.username &&
-      filterValue &&
-      (user.profile.username
-        .toLowerCase()
-        .includes(filterValue.toLowerCase()) ||
-        user.profile.walletAddress
-          .toLowerCase()
-          .includes(filterValue.toLowerCase()) ||
-        user.id.toLowerCase().includes(filterValue.toLowerCase())),
-  );
+  const filteredUsers = data.filter((user) => {
+    if (!user.profile?.walletAddress) {
+      return false;
+    }
 
-  const customValue = {
+    const username = user.profile?.username || '';
+    const { walletAddress } = user.profile;
+
+    return (
+      username.toLowerCase().includes(filterValue.toLowerCase()) ||
+      walletAddress.toLowerCase().includes(filterValue.toLowerCase()) ||
+      user.id.toLowerCase().includes(filterValue.toLowerCase())
+    );
+  });
+
+  const customUserValue: AnyUser = {
     id: 'filterValue',
     profile: {
       walletAddress: filterValue,
@@ -30,5 +32,5 @@ export const filterUserSelection = (data, filterValue) => {
     },
   };
 
-  return [customValue].concat(filtered);
+  return [customUserValue].concat(filteredUsers);
 };
