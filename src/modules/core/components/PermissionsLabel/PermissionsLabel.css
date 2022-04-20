@@ -34,11 +34,6 @@
   vertical-align: top;
 }
 
-.tooltip {
-  padding: 10px;
-  max-width: 280px;
-}
-
 .themeDefault {
   composes: main;
 }

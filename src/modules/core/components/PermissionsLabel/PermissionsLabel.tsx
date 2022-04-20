@@ -68,13 +68,13 @@ const PermissionsLabel = ({
     <Tooltip
       placement="top"
       content={
-        <div className={styles.tooltip}>
+        <>
           {infoMessage && infoMessage === 'string' ? (
             infoMessage
           ) : (
             <FormattedMessage {...infoMessage} values={infoMessageValues} />
           )}
-        </div>
+        </>
       }
       trigger={infoMessage ? 'hover' : null}
       showArrow
