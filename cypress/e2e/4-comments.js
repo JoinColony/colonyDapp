@@ -1,9 +1,8 @@
-const {
-  colony: { name: colonyName },
-} = Cypress.config();
-
 describe('Comments in action page', () => {
   const commentText = 'Can I comment in this action?';
+  const {
+    colony: { name: colonyName },
+  } = Cypress.config();
 
   beforeEach(() => {
     cy.login();

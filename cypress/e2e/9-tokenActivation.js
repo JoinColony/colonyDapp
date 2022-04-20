@@ -1,10 +1,14 @@
 import Decimal from 'decimal.js';
-
-const {
-  colony: { name: colonyName },
-} = Cypress.config();
+import numbro from 'numbro';
+import { numbroCustomLanguage } from '../../src/utils/numbers/numbroCustomLanguage';
 
 describe('Token Activation & Deactivation', () => {
+  const {
+    colony: { name: colonyName },
+  } = Cypress.config();
+  numbro.registerLanguage(numbroCustomLanguage);
+  numbro.setLanguage('en-GB');
+
   beforeEach(() => {
     cy.login();
     cy.visit(`/colony/${colonyName}`);
@@ -15,20 +19,21 @@ describe('Token Activation & Deactivation', () => {
     const amountToActivate = 10;
 
     // Activate tokens
-    cy.tokenActivation(amountToActivate);
+    cy.activateTokens(amountToActivate);
 
     // Check that the active tokens are correct
     cy.get('@activatedTokens').then(($activatedTokens) => {
       const [activatedTokensElement] = $activatedTokens.split(' ');
-      const parsedActivated = activatedTokensElement.replaceAll(',', '');
-      const activatedTokens = new Decimal(parsedActivated)
+      const parsedActivatedTokens = numbro.unformat(activatedTokensElement);
+      const activatedTokens = new Decimal(parsedActivatedTokens)
         .add(amountToActivate)
-        .toString();
+        .toFixed(0);
 
-      cy.getBySel('activeTokens', { timeout: 6000 }).then(($tokens) => {
-        const [activeTokensElement] = $tokens.split(' ');
-        const parsedActiveTokens = activeTokensElement.replaceAll(',', '');
-        expect(parsedActiveTokens).to.eq(activatedTokens);
+      cy.getBySel('activeTokens', { timeout: 60000 }).then(($tokens) => {
+        const [activeTokensElement] = $tokens.text().split(' ');
+        const parsedActiveTokens = numbro.unformat(activeTokensElement);
+        const fixActiveTokens = new Decimal(parsedActiveTokens).toFixed(0);
+        expect(fixActiveTokens).to.eq(activatedTokens);
       });
     });
   });
@@ -36,7 +41,7 @@ describe('Token Activation & Deactivation', () => {
   it(`User can deactivate tokens`, () => {
     // Open Token Activation popover
     const amountToDeactivate = 10;
-    cy.getBySel('tokenActivationButton', { timeout: 12000 }).click();
+    cy.getBySel('tokenActivationButton', { timeout: 20000 }).click();
 
     // Get the number of inactive tokens
     cy.getBySel('inactiveTokens', { timeout: 6000 })
@@ -47,20 +52,21 @@ describe('Token Activation & Deactivation', () => {
 
     cy.getBySel('activateTokensInput').click().type(amountToDeactivate);
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.getBySel('tokenActivationConfirm').click().wait(8000);
+    cy.getBySel('tokenActivationConfirm').click().wait(15000);
 
     // Check that the inactive tokens are correct
     cy.get('@deactivatedTokens').then(($deactivatedTokens) => {
-      const [deactivatedTokensElement] = $deactivatedTokens.split(' ');
-      const parsedDeactivated = deactivatedTokensElement.replaceAll(',', '');
-      const deactivatedTokens = new Decimal(parsedDeactivated)
-        .sub(amountToDeactivate)
-        .toString();
+      const [deactivedTokensElement] = $deactivatedTokens.split(' ');
+      const parsedDeactivatedTokens = numbro.unformat(deactivedTokensElement);
+      const deactivatedTokens = new Decimal(parsedDeactivatedTokens)
+        .add(amountToDeactivate)
+        .toFixed(0);
 
       cy.getBySel('inactiveTokens', { timeout: 6000 }).then(($tokens) => {
-        const [activeTokensElement] = $tokens.split(' ');
-        const parsedActiveTokens = activeTokensElement.replaceAll(',', '');
-        expect(parsedActiveTokens).to.eq(deactivatedTokens);
+        const [inactiveTokensElement] = $tokens.text().split(' ');
+        const parsedInactiveTokens = numbro.unformat(inactiveTokensElement);
+        const fixInactiveTokens = new Decimal(parsedInactiveTokens).toFixed(0);
+        expect(fixInactiveTokens).to.eq(deactivatedTokens);
       });
     });
   });

@@ -1,13 +1,12 @@
-const {
-  colony: { name: colonyName },
-} = Cypress.config();
-
 describe('Colony user can update their settings', () => {
   const userSettingsName = 'ColonyFan';
   const userSettingsBio = 'I really like Colony';
   const userSettingsWebsite = 'http://colony.io';
   const userSettingsLocation = 'Earth';
   const profilePicturePath = 'src/img/favicon.png';
+  const {
+    colony: { name: colonyName },
+  } = Cypress.config();
 
   beforeEach(() => {
     cy.login();

@@ -3,12 +3,12 @@ import { bigNumberify } from 'ethers/utils';
 import ganacheAccounts from '~lib/colonyNetwork/ganache-accounts.json';
 import { createAddress } from '~utils/web3';
 
-const {
-  colony: { name: colonyName },
-  baseUrl,
-} = Cypress.config();
-
 describe('User can create actions via UAC', () => {
+  const {
+    colony: { name: colonyName },
+    baseUrl,
+  } = Cypress.config();
+
   it('Can mint native tokens', () => {
     const amountToMint = 10000;
     cy.mintTokens(amountToMint, false);

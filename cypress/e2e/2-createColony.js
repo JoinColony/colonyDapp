@@ -1,9 +1,9 @@
-const {
-  colony: { name: colonyName },
-  baseUrl,
-} = Cypress.config();
-
 describe('Create a new colony', () => {
+  const {
+    colony: { name: colonyName },
+    baseUrl,
+  } = Cypress.config();
+
   if (!Cypress.config().skipInitTests) {
     it('creates a new colony with new token', () => {
       const { name, nativeToken } = Cypress.config().colony;

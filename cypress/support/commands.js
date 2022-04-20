@@ -33,6 +33,7 @@ import { buildUser } from './generate';
 
 const {
   colony: { name: colonyName },
+  baseUrl,
 } = Cypress.config();
 
 Cypress.Commands.add('login', () => {
@@ -46,7 +47,7 @@ Cypress.Commands.add('login', () => {
 });
 
 Cypress.Commands.add('assertHome', () => {
-  cy.url().should('eq', `${Cypress.config().baseUrl}/landing`);
+  cy.url().should('eq', `${baseUrl}/landing`);
 });
 
 Cypress.Commands.add('getBySel', (selector, ...args) => {
@@ -132,11 +133,9 @@ Cypress.Commands.add('getColonyTokenAddress', (setColonyName) => {
 });
 
 Cypress.Commands.add('checkUrlAfterAction', (setColonyName) => {
-  cy.url().should(
-    'contains',
-    `${Cypress.config().baseUrl}/colony/${setColonyName}/tx/0x`,
-    { timeout: 30000 },
-  );
+  cy.url().should('contains', `${baseUrl}/colony/${setColonyName}/tx/0x`, {
+    timeout: 30000,
+  });
 });
 
 Cypress.Commands.add('checkColonyName', (setColonyName) => {
@@ -223,10 +222,7 @@ Cypress.Commands.add('mintTokens', (amountToMint, isMotion) => {
     cy.getBySel('comment').should('have.text', annotationText);
   }
 
-  cy.url().should(
-    'contains',
-    `${Cypress.config().baseUrl}/colony/${Cypress.config().colony.name}/tx/0x`,
-  );
+  cy.url().should('contains', `${baseUrl}/colony/${colonyName}/tx/0x`);
 });
 
 Cypress.Commands.add(
@@ -275,12 +271,7 @@ Cypress.Commands.add(
     );
     cy.getBySel('comment').should('have.text', annotationText);
 
-    cy.url().should(
-      'contains',
-      `${Cypress.config().baseUrl}/colony/${
-        Cypress.config().colony.name
-      }/tx/0x`,
-    );
+    cy.url().should('contains', `${baseUrl}/colony/${colonyName}/tx/0x`);
   },
 );
 
@@ -307,10 +298,7 @@ Cypress.Commands.add('createTeam', (domainName, domainPurpose, isMotion) => {
     `New team: ${domainName}`,
   );
 
-  cy.url().should(
-    'contains',
-    `${Cypress.config().baseUrl}/colony/${Cypress.config().colony.name}/tx/0x`,
-  );
+  cy.url().should('contains', `${baseUrl}/colony/${colonyName}/tx/0x`);
 
   cy.getBySel('comment').should('have.text', annotationText);
 });
@@ -348,10 +336,7 @@ Cypress.Commands.add('editTeam', (domainName, domainPurpose, isMotion) => {
     );
   });
 
-  cy.url().should(
-    'contains',
-    `${Cypress.config().baseUrl}/colony/${Cypress.config().colony.name}/tx/0x`,
-  );
+  cy.url().should('contains', `${baseUrl}/colony/${colonyName}/tx/0x`);
 
   cy.getBySel('comment').should('have.text', annotationText);
 });
@@ -394,10 +379,7 @@ Cypress.Commands.add('transferFunds', (amountToTransfer, isMotion) => {
     } from Root to `,
   );
 
-  cy.url().should(
-    'contains',
-    `${Cypress.config().baseUrl}/colony/${Cypress.config().colony.name}/tx/0x`,
-  );
+  cy.url().should('contains', `${baseUrl}/colony/${colonyName}/tx/0x`);
 
   cy.getBySel('comment').should('have.text', annotationText);
 });
@@ -435,10 +417,7 @@ Cypress.Commands.add('awardRep', (amountToAward, isMotion) => {
     );
   });
 
-  cy.url().should(
-    'contains',
-    `${Cypress.config().baseUrl}/colony/${Cypress.config().colony.name}/tx/0x`,
-  );
+  cy.url().should('contains', `${baseUrl}/colony/${colonyName}/tx/0x`);
 
   cy.getBySel('comment').should('have.text', annotationText);
 });
@@ -474,10 +453,7 @@ Cypress.Commands.add('smiteUser', (amountToSmite, isMotion) => {
     );
   });
 
-  cy.url().should(
-    'contains',
-    `${Cypress.config().baseUrl}/colony/${Cypress.config().colony.name}/tx/0x`,
-  );
+  cy.url().should('contains', `${baseUrl}/colony/${colonyName}/tx/0x`);
 
   cy.getBySel('comment').should('have.text', annotationText);
 });
@@ -504,9 +480,9 @@ Cypress.Commands.add('editColonyDetails', (newName, isMotion) => {
   cy.checkUrlAfterAction(colonyName);
 });
 
-Cypress.Commands.add('tokenActivation', (amountToActivate) => {
+Cypress.Commands.add('activateTokens', (amountToActivate) => {
   // Activate tokens
-  cy.getBySel('tokenActivationButton').click();
+  cy.getBySel('tokenActivationButton', { timeout: 60000 }).click();
 
   // Get the number of active tokens
   cy.getBySel('activeTokens', { timeout: 60000 })
@@ -519,7 +495,7 @@ Cypress.Commands.add('tokenActivation', (amountToActivate) => {
     cy.getBySel('inputMaxButton').click();
   }
   // eslint-disable-next-line cypress/no-unnecessary-waiting
-  cy.getBySel('tokenActivationConfirm').click().wait(10000);
+  cy.getBySel('tokenActivationConfirm').click().wait(15000);
 });
 
 Cypress.Commands.add(
@@ -559,10 +535,7 @@ Cypress.Commands.add('unlockToken', (colony) => {
     `Unlock native token ${colony.nativeToken}`,
   );
 
-  cy.url().should(
-    'contains',
-    `${Cypress.config().baseUrl}/colony/${colony.name}/tx/0x`,
-  );
+  cy.url().should('contains', `${baseUrl}/colony/${colony.name}/tx/0x`);
 });
 
 Cypress.Commands.add('managePermissions', (isMotion) => {
@@ -592,10 +565,7 @@ Cypress.Commands.add('managePermissions', (isMotion) => {
       : `Assign the administration, funding, architecture permissions in Root to`,
   );
 
-  cy.url().should(
-    'contains',
-    `${Cypress.config().baseUrl}/colony/${Cypress.config().colony.name}/tx/0x`,
-  );
+  cy.url().should('contains', `${baseUrl}/colony/${colonyName}/tx/0x`);
 
   cy.getBySel('comment').should('have.text', annotationText);
 });

@@ -1,9 +1,5 @@
 import { Extension } from '@colony/colony-js';
 
-const {
-  colony: { name: colonyName },
-} = Cypress.config();
-
 const testExtensionManagementFlow = (extensionId) => {
   cy.installExtension();
 
@@ -20,6 +16,10 @@ const testExtensionManagementFlow = (extensionId) => {
 };
 
 describe('Colony extensions', () => {
+  const {
+    colony: { name: colonyName },
+  } = Cypress.config();
+
   beforeEach(() => {
     cy.login();
     cy.visit(`/colony/${colonyName}`);
