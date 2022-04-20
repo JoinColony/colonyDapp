@@ -25,23 +25,24 @@ const CloseButton = ({ closeToast }) => {
 const SuccessDot = () => <div className={styles.successDot} />;
 const ErrorDot = () => <div className={styles.errorDot} />;
 
+const defaultOptions = {
+  hideProgressBar: false,
+  autoClose: 5000,
+};
+
 const toast = {
-  success(msg, options = {}) {
+  success(msg, options = { ...defaultOptions }) {
     return reactToast.success(handleMsg(msg), {
       ...options,
-      hideProgressBar: false,
-      autoClose: 5000,
       closeButton: CloseButton,
       icon: SuccessDot,
       className: `${styles.toastifyToastContainerBottomLeft}
       ${styles.toastSuccess}`,
     });
   },
-  error(msg, options = {}) {
+  error(msg, options = { ...defaultOptions }) {
     return reactToast.error(handleMsg(msg), {
       ...options,
-      hideProgressBar: false,
-      autoClose: 5000,
       closeButton: CloseButton,
       icon: ErrorDot,
       className: `${styles.toastifyToastContainerBottomLeft}
