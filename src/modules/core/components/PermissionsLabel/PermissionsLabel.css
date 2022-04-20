@@ -7,14 +7,6 @@
   cursor: pointer;
 }
 
-.wrapper + .wrapper {
-  margin-left: 10px;
-}
-
-.wrapper:hover {
-  border-color: var(--primary);
-}
-
 .stateNoPointer {
   cursor: default;
 }

@@ -59,8 +59,8 @@ const Tooltip = ({
   );
 
   return (
-    <div>
-      <div ref={setTriggerRef}>{children}</div>
+    <>
+      <span ref={setTriggerRef}>{children}</span>
       {visible && (
         <div
           ref={setTooltipRef}
@@ -74,7 +74,7 @@ const Tooltip = ({
           {content}
         </div>
       )}
-    </div>
+    </>
   );
 };
 

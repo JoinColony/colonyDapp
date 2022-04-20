@@ -68,11 +68,15 @@
   margin-top: 30px;
 }
 
-.permissions div {
+/* The following gymnastics is cause we need to target the adjacent
+   children inside the Tooltiped component (which inserts wraps the
+   children in a span) */
+
+.permissions > span {
   margin-right: 7px;
 }
 
-.permissions div:last-child {
+.permissions > span:last-child {
   margin-right: 0px;
 }
 
