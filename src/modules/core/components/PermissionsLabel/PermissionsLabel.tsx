@@ -77,7 +77,7 @@ const PermissionsLabel = ({
         </div>
       }
       trigger={infoMessage ? 'hover' : null}
-      showArrow={false}
+      showArrow
       popperOptions={{
         modifiers: [
           {

@@ -267,7 +267,7 @@ const ColonyEventsListItem = ({
         <div className={styles.content}>
           <Tooltip
             placement="bottom-start"
-            showArrow={false}
+            showArrow
             content={
               <div className={styles.tooltip}>
                 <FormattedMessage
