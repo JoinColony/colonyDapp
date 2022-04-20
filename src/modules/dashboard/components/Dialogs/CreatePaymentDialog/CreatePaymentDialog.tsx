@@ -11,13 +11,7 @@ import { ActionForm } from '~core/Fields';
 
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
-import {
-  useVerifiedUsersQuery,
-  useColonyFromNameQuery,
-  AnyUser,
-  useMembersSubscription,
-  useNetworkContracts,
-} from '~data/index';
+import { AnyUser, useMembersSubscription, useNetworkContracts } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 import { WizardDialogType } from '~utils/hooks';
@@ -54,7 +48,13 @@ type Props = Required<DialogProps> &
 const displayName = 'dashboard.CreatePaymentDialog';
 
 const CreatePaymentDialog = ({
-  colony: { tokens = [], colonyAddress, nativeTokenAddress, colonyName },
+  colony: {
+    tokens = [],
+    colonyAddress,
+    nativeTokenAddress,
+    colonyName,
+    isWhitelistActivated,
+  },
   colony,
   isVotingExtensionEnabled,
   callStep,
@@ -100,37 +100,22 @@ const CreatePaymentDialog = ({
   });
 
   const { feeInverse: networkFeeInverse } = useNetworkContracts();
-  const { data: colonyData } = useColonyFromNameQuery({
-    variables: { name: colonyName, address: colonyAddress },
-  });
-  const isWhiteListActive = colonyData?.processedColony?.isWhitelistActivated;
 
-  const { data } = useVerifiedUsersQuery({
-    variables: {
-      verifiedAddresses:
-        colonyData?.processedColony?.whitelistedAddresses || [],
-    },
-    fetchPolicy: 'network-only',
-  });
+  const filteredVerifiedRecipients = useMemo(() => {
+    return isWhitelistActivated
+      ? (colonyMembers?.subscribedUsers || []).filter((member) =>
+          colony?.whitelistedAddresses.some(
+            (el) => el.toLowerCase() === member.id.toLowerCase(),
+          ),
+        )
+      : colonyMembers?.subscribedUsers || [];
+  }, [colonyMembers, colony, isWhitelistActivated]);
+  
 
-  const storedVerifiedRecipients = useMemo(
-    () =>
-      (data?.verifiedUsers || []).map((user) => user?.profile.walletAddress),
-    [data],
-  );
-
-  const filteredVerifiedRecipients = isWhiteListActive
-    ? (colonyMembers?.subscribedUsers || []).filter((member) =>
-        storedVerifiedRecipients.some(
-          (el) => el.toLowerCase() === member.id.toLowerCase(),
-        ),
-      )
-    : colonyMembers?.subscribedUsers || [];
-
-  const getIsUnverifiedRecipient = (walletAddress) => {
+  const showWarningForAddress = (walletAddress) => {
     if (!walletAddress) return false;
-    return isWhiteListActive
-      ? !storedVerifiedRecipients.some(
+    return isWhitelistActivated
+      ? !colony?.whitelistedAddresses.some(
           (el) => el.toLowerCase() === walletAddress.toLowerCase(),
         )
       : false;
@@ -218,7 +203,7 @@ const CreatePaymentDialog = ({
               back={() => callStep(prevStep)}
               subscribedUsers={filteredVerifiedRecipients}
               ethDomainId={ethDomainId}
-              showWhitelistWarning={getIsUnverifiedRecipient(
+              showWhitelistWarning={showWarningForAddress(
                 formValues.values?.recipient?.profile?.walletAddress,
               )}
             />
