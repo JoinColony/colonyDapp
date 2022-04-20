@@ -1,0 +1,45 @@
+.main {
+  margin-bottom: 40px;
+}
+
+.main h4 {
+  font-size: var(--size-smallish);
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.main a:hover, .main a:active {
+  text-decoration: underline;
+  color: var(--colony-blue);
+}
+
+.tokenBalance {
+  display: inline-block;
+  font-size: var(--size-normal);
+  line-height: var(--size-normal);
+  cursor: pointer;
+}
+
+.tokenItem {
+  composes: flexContainerRow flexAlignCenter from '~styles/layout.css';
+  flex-wrap: wrap;
+}
+
+.tokenValue {
+  margin-right: 4px;
+}
+
+.tokenSymbol {
+  composes: flexContainerRow flexAlignCenter from '~styles/layout.css';
+}
+
+.tokenLockWrapper {
+  display: block;
+  margin-left: 3px;
+  margin-top: 1px;
+  position: relative;
+}
+
+.tokenLockWrapper svg {
+  fill: var(--grey-3);
+}
