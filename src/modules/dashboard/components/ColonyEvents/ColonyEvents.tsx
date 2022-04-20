@@ -2,7 +2,6 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import ActionsList from '~core/ActionsList';
-import UnclaimedTransfers from '~dashboard/UnclaimedTransfers';
 import { SpinnerLoader } from '~core/Preloaders';
 import { Select, Form } from '~core/Fields';
 import LoadMoreButton from '~core/LoadMoreButton';
@@ -129,8 +128,6 @@ const ColonyEvents = ({
 
   return (
     <div>
-      <UnclaimedTransfers colony={colony} />
-
       <div className={styles.bar}>
         <div className={styles.title}>
           <FormattedMessage {...MSG.transactionsLogTitle} />
