@@ -58,6 +58,8 @@
   /*
    * Box Shadows
    */
+  --box-shadow-normal-primary: 0px 3px 12px color-mod(var(--primary) alpha(33%));
+  --box-shadow-normal-danger: 0px 3px 12px color-mod(var(--danger) alpha(33%));
   --box-shadow-medium: 0px 2px 11px var(--drop-shadow);
   --box-shadow-grey-blue-large: 0 0 20px -2px var(--temp-grey-blue-4);
 

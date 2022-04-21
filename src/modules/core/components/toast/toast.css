@@ -1,7 +1,7 @@
 /* sadly it was necessary to use `!important` to override values from Toastify */
 :root {
-  --toastify-color-success: rgba(104, 210, 210, 1) !important;
-  --toastify-color-error: rgba(248, 43, 101, 1) !important;
+  --toastify-color-success: var(--primary) !important;
+  --toastify-color-error: var(--danger) !important;
   --toastify-toast-width: 400px !important;
 }
 
@@ -17,21 +17,21 @@
   height: 50px;
   font-family: "Avenir Next", sans-serif !important;
   font-weight: 600;
+  color: var(--dark);
 }
 
 .toastifyToastContainerBottomLeft {
   composes: toastifyToast;
   bottom: 5em;
   border-radius: 4px;
-  color: rgba(60, 68, 77, 1);
 }
 
 .toastSuccess {
-  box-shadow: 0px 3px 12px rgba(104, 210, 210, 0.3) !important;
+  box-shadow: var(--box-shadow-normal-primary) !important;
 }
 
 .toastError {
-  box-shadow: 0px 3px 12px rgba(254, 94, 124, 0.3) !important;
+  box-shadow: var(--box-shadow-normal-danger) !important;
 }
 
 .closeIcon {
