@@ -181,12 +181,12 @@ describe('User can create motions via UAC', () => {
     });
   });
 
-  it.only('Claiming Stakes', () => {
+  it('Claiming Stakes', () => {
     cy.login();
     cy.visit(`/colony/${colonyName}`);
 
     // Get amount of staked tokens
-    cy.getBySel('tokenActivationButton', { timeout: 120000 }).click();
+    cy.getBySel('tokenActivationButton', { timeout: 12000 }).click();
 
     // Get amount of staked tokens
     cy.getBySel('stakedTokens', { timeout: 600000 })
@@ -195,31 +195,31 @@ describe('User can create motions via UAC', () => {
 
     cy.getBySel('stakesTab').click();
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.getBySel('claimableMotionsList', { timeout: 200000 })
-      .wait(8000) // Wait is required to ensure hash is included
+    cy.getBySel('claimableMotionsList', { timeout: 20000 })
+      .wait(2000) // Wait is required to ensure hash is included
       .find(`[data-test="goToMotion"]`)
       .first()
       .click();
 
     // Get the staked value being claimed
-    // We need a small wait to more reliably get the stakedValue
+    // We need a small wait to more reliably get the stakeBeingClaimed
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.getBySel('stakedValue', { timeout: 600000 })
+    cy.getBySel('stakedValue', { timeout: 60000 })
       .wait(2000)
       .invoke('text')
-      .as('stakedValue');
+      .as('stakeBeingClaimed');
 
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.getBySel('claimStakeButton', { timeout: 200000 }).click().wait(60000);
+    cy.getBySel('claimStakeButton', { timeout: 20000 }).click().wait(15000);
 
     // to close the gas station
     cy.getBySel('actionHeading').click();
 
     // Check that the active tokens are correct
-    cy.getBySel('tokenActivationButton', { timeout: 120000 }).click();
+    cy.getBySel('tokenActivationButton', { timeout: 12000 }).click();
 
     // function is required for `this` object to work
-    cy.getBySel('stakedTokens', { timeout: 60000 })
+    cy.getBySel('stakedTokens', { timeout: 6000 })
       .invoke('text')
       .as('newStakedTokens')
       .then(function () {
@@ -227,16 +227,16 @@ describe('User can create motions via UAC', () => {
         const parsedStakedTokens = numbro.unformat(initialStakedElement);
         const initialStakedTokens = new Decimal(parsedStakedTokens).toFixed(0);
 
-        const [stakedValueElement] = this.stakedValue.split(' ');
-        const parsedStakedValue = numbro.unformat(stakedValueElement);
-        const stakedValue = new Decimal(parsedStakedValue).toFixed(0);
+        const [stakeBeingClaimedElement] = this.stakeBeingClaimed.split(' ');
+        const parsedStakedValue = numbro.unformat(stakeBeingClaimedElement);
+        const stakeBeingClaimed = new Decimal(parsedStakedValue).toFixed(0);
 
         const [newStakedTokensElement] = this.newStakedTokens.split(' ');
         const parsedNewStaked = numbro.unformat(newStakedTokensElement);
         const newStaked = new Decimal(parsedNewStaked).toFixed(0);
 
         const expectedStaked = new Decimal(initialStakedTokens)
-          .sub(stakedValue)
+          .sub(stakeBeingClaimed)
           .toFixed(0);
         expect(newStaked).to.eq(expectedStaked);
       });
