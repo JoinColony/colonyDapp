@@ -102,11 +102,11 @@ const CreatePaymentDialog = ({
 
   /*
    * @NOTE This (extravagant) query retrieves the latest whitelist data.
-   * Whitelist data from colony obj can be stale.
+   * Whitelist data from colony prop can be stale.
    *
    * Add/remove to whitelist then navigating to payment dialog
    * without closing the modal will cause the whitelist data in
-   * colony obj to be out of date.
+   * colony prop to be outdated.
    */
   const { data: colonyData } = useColonyFromNameQuery({
     variables: { name: colonyName, address: colonyAddress },
