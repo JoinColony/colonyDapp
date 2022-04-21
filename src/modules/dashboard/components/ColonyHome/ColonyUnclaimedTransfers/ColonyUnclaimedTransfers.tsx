@@ -1,12 +1,22 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { useColonyTransfersQuery, Colony } from '~data/index';
 
+import {
+  useColonyTransfersQuery,
+  Colony,
+  useTokenQuery,
+  useLoggedInUser,
+} from '~data/index';
+
+import { ActionButton } from '~core/Button';
 import Heading from '~core/Heading';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 import Numeral from '~core/Numeral';
-import InfoPopover from '~core/InfoPopover';
+import Tooltip from '~core/Popover';
 
+import { ActionTypes } from '~redux/index';
+import { mergePayload } from '~utils/actions';
+import { checkIfNetworkIsAllowed } from '~utils/networks';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import styles from './ColonyUnclaimedTransfers.css';
@@ -26,17 +36,44 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyUnclaimedTransfers.title',
     defaultMessage: 'Loading token transfers...',
   },
+  claimButton: {
+    id: 'dashboard.ColonyUnclaimedTransfers.claimButton',
+    defaultMessage: 'Claim',
+  },
+  tooltip: {
+    id: 'dashboard.ColonyUnclaimedTransfers.tooltip',
+    defaultMessage: 'Click to claim incoming funds for this colony.',
+  },
+  more: {
+    id: 'dashboard.ColonyUnclaimedTransfers.more',
+    defaultMessage: ' more',
+  },
 });
 
-const ColonyUnclaimedTransfers = ({ colony }: Props) => {
+const ColonyUnclaimedTransfers = ({
+  colony,
+  colony: { colonyAddress },
+}: Props) => {
   const { data, error, loading } = useColonyTransfersQuery({
     variables: { address: colony.colonyAddress },
   });
-  if (error) console.warn(error);
-  console.log(
-    '🚀 ~ file: ColonyUnclaimedTransfers.tsx ~ line 37 ~ ColonyUnclaimedTransfers ~ data',
-    data,
+
+  const { networkId, ethereal, username } = useLoggedInUser();
+  const hasRegisteredProfile = !!username && !ethereal;
+  const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
+
+  const firstItem = data?.processedColony.unclaimedTransfers[1];
+
+  const { data: tokenData } = useTokenQuery({
+    variables: { address: firstItem?.token || '' },
+  });
+
+  const transform = useCallback(
+    mergePayload({ colonyAddress, tokenAddress: firstItem?.token || '' }),
+    [colonyAddress, firstItem],
   );
+
+  if (error) console.warn(error);
 
   if (loading) {
     return (
@@ -47,11 +84,9 @@ const ColonyUnclaimedTransfers = ({ colony }: Props) => {
     );
   }
 
-  const firstItem = data?.processedColony.unclaimedTransfers[1];
-  console.log(
-    '🚀 ~ file: ColonyUnclaimedTransfers.tsx ~ line 50 ~ ColonyUnclaimedTransfers ~ firstItem',
-    firstItem,
-  );
+  if (!tokenData) return null;
+
+  const { token } = tokenData;
 
   return (
     <>
@@ -62,23 +97,56 @@ const ColonyUnclaimedTransfers = ({ colony }: Props) => {
           </Heading>
           {data && (
             <ul>
-              <li>1st item</li>
-              {/* {data.tokens.map((token) => (
-                <li key={token.address}>
-                  <div className={styles.tokenItem}>
-                    <span className={styles.tokenValue}>
-                      <Numeral
-                        unit={getTokenDecimalsWithFallback(decimals)}
-                        value={balance}
-                      />
-                    </span>
-                    <span className={styles.tokenSymbol}>
-                      <span>{symbol}</span>
-                    </span>
-                  </div>
-                </li>
-              ))} */}
-              <li>+5 more</li>
+              <li className={styles.firstLineContainer}>
+                <div className={styles.tokenItem}>
+                  <span className={styles.tokenValue}>
+                    <Numeral
+                      unit={getTokenDecimalsWithFallback(token.decimals)}
+                      value={firstItem?.amount || ''}
+                    />
+                  </span>
+                  <span className={styles.tokenSymbol}>
+                    <span>{token.symbol}</span>
+                  </span>
+                </div>
+                <Tooltip
+                  appearance={{ theme: 'dark', size: 'medium' }}
+                  trigger="hover"
+                  content={
+                    <div className={styles.tooltip}>
+                      <FormattedMessage {...MSG.tooltip} />
+                    </div>
+                  }
+                  placement="top-start"
+                  popperProps={{
+                    modifiers: [
+                      {
+                        name: 'offset',
+                        options: {
+                          offset: [5, 8],
+                        },
+                      },
+                    ],
+                  }}
+                >
+                  <ActionButton
+                    text={MSG.claimButton}
+                    className={styles.button}
+                    submit={ActionTypes.COLONY_CLAIM_TOKEN}
+                    error={ActionTypes.COLONY_CLAIM_TOKEN_ERROR}
+                    success={ActionTypes.COLONY_CLAIM_TOKEN_SUCCESS}
+                    transform={transform}
+                    disabled={!isNetworkAllowed || !hasRegisteredProfile}
+                    dataTest="claimForColonyButton"
+                  />
+                </Tooltip>
+              </li>
+              <li>
+                <div className={styles.tokenItem}>
+                  +{data?.processedColony.unclaimedTransfers.length - 1}
+                  <FormattedMessage {...MSG.more} />
+                </div>
+              </li>
             </ul>
           )}
         </div>
