@@ -11,7 +11,11 @@ import { ActionForm } from '~core/Fields';
 
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
-import { AnyUser, useMembersSubscription, useNetworkContracts } from '~data/index';
+import {
+  AnyUser,
+  useMembersSubscription,
+  useNetworkContracts,
+} from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 import { WizardDialogType } from '~utils/hooks';
@@ -110,7 +114,6 @@ const CreatePaymentDialog = ({
         )
       : colonyMembers?.subscribedUsers || [];
   }, [colonyMembers, colony, isWhitelistActivated]);
-  
 
   const showWarningForAddress = (walletAddress) => {
     if (!walletAddress) return false;
