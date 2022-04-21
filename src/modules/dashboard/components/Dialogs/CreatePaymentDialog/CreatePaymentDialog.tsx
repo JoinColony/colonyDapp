@@ -12,6 +12,7 @@ import { ActionForm } from '~core/Fields';
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
 import {
+  useColonyFromNameQuery,
   AnyUser,
   useMembersSubscription,
   useNetworkContracts,
@@ -52,13 +53,7 @@ type Props = Required<DialogProps> &
 const displayName = 'dashboard.CreatePaymentDialog';
 
 const CreatePaymentDialog = ({
-  colony: {
-    tokens = [],
-    colonyAddress,
-    nativeTokenAddress,
-    colonyName,
-    isWhitelistActivated,
-  },
+  colony: { tokens = [], colonyAddress, nativeTokenAddress, colonyName },
   colony,
   isVotingExtensionEnabled,
   callStep,
@@ -105,20 +100,34 @@ const CreatePaymentDialog = ({
 
   const { feeInverse: networkFeeInverse } = useNetworkContracts();
 
+  /*
+   * @NOTE This (extravagant) query retrieves the latest whitelist data.
+   * Whitelist data from colony obj can be stale.
+   *
+   * Add/remove to whitelist then navigating to payment dialog
+   * without closing the modal will cause the whitelist data in
+   * colony obj to be out of date.
+   */
+  const { data: colonyData } = useColonyFromNameQuery({
+    variables: { name: colonyName, address: colonyAddress },
+  });
+  const isWhitelistActivated =
+    colonyData?.processedColony?.isWhitelistActivated;
+
   const filteredVerifiedRecipients = useMemo(() => {
     return isWhitelistActivated
       ? (colonyMembers?.subscribedUsers || []).filter((member) =>
-          colony?.whitelistedAddresses.some(
+          colonyData?.processedColony?.whitelistedAddresses.some(
             (el) => el.toLowerCase() === member.id.toLowerCase(),
           ),
         )
       : colonyMembers?.subscribedUsers || [];
-  }, [colonyMembers, colony, isWhitelistActivated]);
+  }, [colonyMembers, colonyData, isWhitelistActivated]);
 
   const showWarningForAddress = (walletAddress) => {
     if (!walletAddress) return false;
     return isWhitelistActivated
-      ? !colony?.whitelistedAddresses.some(
+      ? !colonyData?.processedColony?.whitelistedAddresses.some(
           (el) => el.toLowerCase() === walletAddress.toLowerCase(),
         )
       : false;
