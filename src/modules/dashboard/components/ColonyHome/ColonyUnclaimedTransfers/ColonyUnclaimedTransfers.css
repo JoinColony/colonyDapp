@@ -8,18 +8,6 @@
   letter-spacing: var(--spacing-medium);
 }
 
-.main a:hover, .main a:active {
-  text-decoration: underline;
-  color: var(--colony-blue);
-}
-
-.tokenBalance {
-  display: inline-block;
-  font-size: var(--size-normal);
-  line-height: var(--size-normal);
-  cursor: pointer;
-}
-
 .tokenItem {
   composes: flexContainerRow flexAlignCenter from '~styles/layout.css';
   flex-wrap: wrap;
@@ -33,13 +21,32 @@
   composes: flexContainerRow flexAlignCenter from '~styles/layout.css';
 }
 
-.tokenLockWrapper {
-  display: block;
-  margin-left: 3px;
-  margin-top: 1px;
-  position: relative;
+.firstLineContainer {
+  display: flex;
+  align-items: center;
 }
 
-.tokenLockWrapper svg {
-  fill: var(--grey-3);
+.button {
+  margin-left: 10px;
+  height: 18px;
+  width: 45px;
+  border: none;
+  border-radius: 5px;
+  background-color: color-mod(var(--action-secondary) alpha(16%));
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 11px;
+  color: var(--action-secondary);
+}
+
+.button:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.tooltip {
+  width: 166px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+  text-align: left;
 }
