@@ -55,6 +55,7 @@
 }
 
 .activeOption {
+  display: flex;
   height: 100%;
   overflow: hidden;
   font-weight: var(--weight-bold);

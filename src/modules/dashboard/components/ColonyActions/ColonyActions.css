@@ -4,7 +4,11 @@
 
 .filter {
   display: inline-block;
-  margin-bottom: 14px;
+  margin-right: 10px;
+}
+
+.filter span {
+  font-size: var(--size-small);
 }
 
 .controls {
@@ -18,4 +22,27 @@
 
 .loadingSpinner {
   margin-top: 100px;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+
+  /* The Select component (sorting dropdown) already has 10px top and bottom padding
+  So we are adding the rest as margins to follow the spec */
+  margin-top: 11px;
+  margin-bottom: 2px;
+}
+
+.title {
+  flex-grow: 2;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.link {
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+  color: var(--dark-blue);
 }

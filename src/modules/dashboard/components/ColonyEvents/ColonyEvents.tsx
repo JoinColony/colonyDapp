@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import ActionsList from '~core/ActionsList';
 import UnclaimedTransfers from '~dashboard/UnclaimedTransfers';
@@ -20,6 +20,8 @@ import { useTransformer } from '~utils/hooks';
 import ColonyEventsListItem from './ColonyEventsListItem';
 
 import styles from './ColonyEvents.css';
+import NavLink from '~core/NavLink';
+import Link from '~core/Link';
 
 const displayName = 'dashboard.ColonyEvents';
 
@@ -32,6 +34,15 @@ const MSG = defineMessages({
   labelFilter: {
     id: 'dashboard.ColonyEvents.labelFilter',
     defaultMessage: 'Filter',
+  },
+
+  transactionsLogTitle: {
+    id: 'dashboard.ColonyEvents.transactionsLogTitle',
+    defaultMessage: 'Transactions log',
+  },
+  actionsLink: {
+    id: 'dashboard.ColonyEvents.actionsLink',
+    defaultMessage: 'Back to actions',
   },
 });
 
@@ -119,22 +130,34 @@ const ColonyEvents = ({
   return (
     <div>
       <UnclaimedTransfers colony={colony} />
-      <Form
-        initialValues={{ filter: SortOptions.NEWEST }}
-        onSubmit={() => undefined}
-      >
-        <div className={styles.filter}>
-          <Select
-            appearance={{ alignOptions: 'left', theme: 'alt' }}
-            elementOnly
-            label={MSG.labelFilter}
-            name="filter"
-            options={SortSelectOptions}
-            onChange={setEventsSort}
-            placeholder={MSG.labelFilter}
-          />
+
+      <div className={styles.bar}>
+        <div className={styles.title}>
+          <FormattedMessage {...MSG.transactionsLogTitle} />
         </div>
-      </Form>
+        <Form
+          initialValues={{ filter: SortOptions.NEWEST }}
+          onSubmit={() => undefined}
+        >
+          <div className={styles.filter}>
+            <Select
+              appearance={{ alignOptions: 'left', theme: 'alt' }}
+              elementOnly
+              label={MSG.labelFilter}
+              name="filter"
+              options={SortSelectOptions}
+              onChange={setEventsSort}
+              placeholder={MSG.labelFilter}
+            />
+          </div>
+        </Form>
+
+        <NavLink to={`/colony/${colony.colonyName}`} />
+
+        <Link className={styles.link} to={`/colony/${colony.colonyName}`}>
+          <FormattedMessage {...MSG.actionsLink} />
+        </Link>
+      </div>
       {subgraphEventsLoading && !sortedEvents ? (
         <SpinnerLoader />
       ) : (

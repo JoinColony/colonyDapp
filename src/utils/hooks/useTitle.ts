@@ -79,7 +79,7 @@ const MSG = defineMessages({
 
   colonyEvents: {
     id: 'utils.hooks.useTitle.colonyEvents',
-    defaultMessage: `Events | Colony - {colonyName}`,
+    defaultMessage: `Transactions Log | Colony - {colonyName}`,
   },
 
   colonyFunds: {

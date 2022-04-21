@@ -5,18 +5,19 @@
 @value popoverWidth: 400px;
 @value popoverDistance: 10px;
 
+.listItem:first-of-type {
+  border-top: 1px solid var(--temp-grey-13);
+}
+
 .main {
   display: flex;
-  margin-bottom: 1px;
-  padding: 26px 20px;
-  height: 89px;
-  border-radius: var(--radius-large);
-  background-color: var(--colony-white);
+  align-items: center;
+  height: 51px;
+  border-bottom: 1px solid var(--temp-grey-13);
   font-size: mainTextSize;
   font-weight: var(--weight-bold);
   color: var(--dark);
   letter-spacing: var(--spacing-medium);
-  box-shadow: 0px 2px 11px var(--drop-shadow);
   outline: 0;
 }
 
@@ -31,8 +32,8 @@
 }
 
 .avatar > div > figure {
-  height: 41px;
-  width: 41px;
+  height: 32px;
+  width: 32px;
   border: 2px solid transparent;
   border-radius: 100%;
 }
@@ -42,7 +43,10 @@
 }
 
 .content {
-  flex: 1 1 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 
   /*
    * @NOTE Flex items won't shrink below their minimum content
@@ -58,46 +62,15 @@
 }
 
 .meta {
-  margin-top: 3px;
   font-size: var(--size-small);
-  font-weight: var(--weight-normal);
+  font-weight: var(--weight-bold);
   color: var(--temp-grey-blue-7);
   letter-spacing: var(--spacing-normal);
 }
 
-.separator::before {
-  display: inline-block;
-  margin: 0px 10px -2px;
-  height: 12px;
-  width: 1px;
-  background-color: var(--temp-grey-13);
-  content: '';
-}
-
 .day {
   margin-right: 4px;
-}
-
-.domain {
-  composes: separator;
-}
-
-.commentCount {
-  composes: separator;
-  display: inline-block;
-}
-
-.commentCountIcon {
-  display: inline-block;
-  margin: 0 5px 2px 0;
-  height: 13px;
-  width: 13px;
-  vertical-align: bottom;
-  stroke: none;
-}
-
-.commentCountIcon svg {
-  fill: color-mod(var(--dark) alpha(70%));
+  margin-left: 16px;
 }
 
 .userMention {
@@ -106,6 +79,10 @@
 }
 
 .titleDecoration {
+  color: var(--temp-grey-blue-7);
+}
+
+.titleDecorationUsername {
   color: var(--pink);
 }
 
@@ -113,9 +90,9 @@
   font-size: var(--size-tiny);
 }
 
-.blockscoutLink {
-  composes: separator;
+.blockExplorerLink {
+  margin-left: 16px;
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
-  color: color-mod(var(--action-secondary) alpha(85%));
+  color: var(--action-secondary);
 }
