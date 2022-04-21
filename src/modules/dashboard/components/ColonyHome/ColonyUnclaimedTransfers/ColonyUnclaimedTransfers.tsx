@@ -11,6 +11,7 @@ import {
 import { ActionButton } from '~core/Button';
 import Heading from '~core/Heading';
 import { MiniSpinnerLoader } from '~core/Preloaders';
+import NavLink from '~core/NavLink';
 import Numeral from '~core/Numeral';
 import Tooltip from '~core/Popover';
 
@@ -48,11 +49,15 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyUnclaimedTransfers.more',
     defaultMessage: ' more',
   },
+  unknownToken: {
+    id: 'dashboard.ColonyUnclaimedTransfers.unknownToken',
+    defaultMessage: 'Unknown Token',
+  },
 });
 
 const ColonyUnclaimedTransfers = ({
   colony,
-  colony: { colonyAddress },
+  colony: { colonyAddress, colonyName },
 }: Props) => {
   const { data, error, loading } = useColonyTransfersQuery({
     variables: { address: colony.colonyAddress },
@@ -62,7 +67,7 @@ const ColonyUnclaimedTransfers = ({
   const hasRegisteredProfile = !!username && !ethereal;
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
-  const firstItem = data?.processedColony.unclaimedTransfers[1];
+  const firstItem = data?.processedColony.unclaimedTransfers[0];
 
   const { data: tokenData } = useTokenQuery({
     variables: { address: firstItem?.token || '' },
@@ -84,75 +89,79 @@ const ColonyUnclaimedTransfers = ({
     );
   }
 
-  if (!tokenData) return null;
+  const token = tokenData?.token;
 
-  const { token } = tokenData;
-
-  return (
-    <>
-      {data && data.processedColony.unclaimedTransfers.length && (
-        <div className={styles.main}>
-          <Heading appearance={{ size: 'normal', weight: 'bold' }}>
-            <FormattedMessage {...MSG.title} />
-          </Heading>
-          {data && (
-            <ul>
-              <li className={styles.firstLineContainer}>
-                <div className={styles.tokenItem}>
-                  <span className={styles.tokenValue}>
-                    <Numeral
-                      unit={getTokenDecimalsWithFallback(token.decimals)}
-                      value={firstItem?.amount || ''}
-                    />
-                  </span>
-                  <span className={styles.tokenSymbol}>
-                    <span>{token.symbol}</span>
-                  </span>
+  return data && data.processedColony.unclaimedTransfers.length ? (
+    <div className={styles.main}>
+      <Heading appearance={{ size: 'normal', weight: 'bold' }}>
+        <NavLink to={`/colony/${colonyName}/funds`}>
+          <FormattedMessage {...MSG.title} />
+        </NavLink>
+      </Heading>
+      {data && (
+        <ul>
+          <li className={styles.firstLineContainer}>
+            <div className={styles.tokenItem}>
+              <span className={styles.tokenValue}>
+                <Numeral
+                  unit={getTokenDecimalsWithFallback(token?.decimals)}
+                  value={firstItem?.amount || ''}
+                />
+              </span>
+              <span className={styles.tokenSymbol}>
+                {token?.symbol ? (
+                  <span>{token?.symbol}</span>
+                ) : (
+                  <FormattedMessage {...MSG.unknownToken} />
+                )}
+              </span>
+            </div>
+            <Tooltip
+              appearance={{ theme: 'dark', size: 'medium' }}
+              trigger="hover"
+              content={
+                <div className={styles.tooltip}>
+                  <FormattedMessage {...MSG.tooltip} />
                 </div>
-                <Tooltip
-                  appearance={{ theme: 'dark', size: 'medium' }}
-                  trigger="hover"
-                  content={
-                    <div className={styles.tooltip}>
-                      <FormattedMessage {...MSG.tooltip} />
-                    </div>
-                  }
-                  placement="top-start"
-                  popperProps={{
-                    modifiers: [
-                      {
-                        name: 'offset',
-                        options: {
-                          offset: [5, 8],
-                        },
-                      },
-                    ],
-                  }}
-                >
-                  <ActionButton
-                    text={MSG.claimButton}
-                    className={styles.button}
-                    submit={ActionTypes.COLONY_CLAIM_TOKEN}
-                    error={ActionTypes.COLONY_CLAIM_TOKEN_ERROR}
-                    success={ActionTypes.COLONY_CLAIM_TOKEN_SUCCESS}
-                    transform={transform}
-                    disabled={!isNetworkAllowed || !hasRegisteredProfile}
-                    dataTest="claimForColonyButton"
-                  />
-                </Tooltip>
-              </li>
-              <li>
-                <div className={styles.tokenItem}>
-                  +{data?.processedColony.unclaimedTransfers.length - 1}
-                  <FormattedMessage {...MSG.more} />
-                </div>
-              </li>
-            </ul>
-          )}
-        </div>
+              }
+              /*
+                Not showing arrow here.
+                If the screen is narrow the tooltip gets moved and the arrow looks wacky.
+              */
+              showArrow={false}
+              placement="top-start"
+              popperProps={{
+                modifiers: [
+                  {
+                    name: 'offset',
+                    options: {
+                      offset: [5, 8],
+                    },
+                  },
+                ],
+              }}
+            >
+              <ActionButton
+                text={MSG.claimButton}
+                className={styles.button}
+                submit={ActionTypes.COLONY_CLAIM_TOKEN}
+                error={ActionTypes.COLONY_CLAIM_TOKEN_ERROR}
+                success={ActionTypes.COLONY_CLAIM_TOKEN_SUCCESS}
+                transform={transform}
+                disabled={!isNetworkAllowed || !hasRegisteredProfile}
+              />
+            </Tooltip>
+          </li>
+          <li>
+            <div className={styles.tokenItem}>
+              +{data?.processedColony.unclaimedTransfers.length - 1}
+              <FormattedMessage {...MSG.more} />
+            </div>
+          </li>
+        </ul>
       )}
-    </>
-  );
+    </div>
+  ) : null;
 };
 
 ColonyUnclaimedTransfers.displayName = displayName;
