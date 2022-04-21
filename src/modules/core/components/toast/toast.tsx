@@ -3,12 +3,13 @@ import React from 'react';
 import { toast as reactToast } from 'react-toastify';
 import { FormattedMessage, MessageDescriptor } from 'react-intl';
 
+import { SimpleMessageValues } from '~types/index';
 import Icon from '~core/Icon';
 
 import styles from './toast.css';
 
-const handleMsg = (msg: MessageDescriptor) => {
-  return <FormattedMessage {...msg} />;
+const handleMsg = (msg: MessageDescriptor, msgValues?: SimpleMessageValues) => {
+  return <FormattedMessage {...msg} values={msgValues} />;
 };
 
 const CloseButton = ({ closeToast }) => {
@@ -31,8 +32,12 @@ const defaultOptions = {
 };
 
 const toast = {
-  success(msg, options = { ...defaultOptions }) {
-    return reactToast.success(handleMsg(msg), {
+  success(
+    msg: MessageDescriptor,
+    msgValues?: SimpleMessageValues,
+    options = { ...defaultOptions },
+  ) {
+    return reactToast.success(handleMsg(msg, msgValues), {
       ...options,
       closeButton: CloseButton,
       icon: SuccessDot,
@@ -40,8 +45,12 @@ const toast = {
       ${styles.toastSuccess}`,
     });
   },
-  error(msg, options = { ...defaultOptions }) {
-    return reactToast.error(handleMsg(msg), {
+  error(
+    msg: MessageDescriptor,
+    msgValues?: SimpleMessageValues,
+    options = { ...defaultOptions },
+  ) {
+    return reactToast.error(handleMsg(msg, msgValues), {
       ...options,
       closeButton: CloseButton,
       icon: ErrorDot,

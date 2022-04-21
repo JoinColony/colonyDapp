@@ -3,6 +3,7 @@ import { defineMessages } from 'react-intl';
 import { ClientType, TokenLockingClient } from '@colony/colony-js';
 import { BigNumber } from 'ethers/utils';
 
+import { IPFSAvatarImage } from '~types/index';
 import toast from '~core/toast/toast';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import {
@@ -29,7 +30,6 @@ import {
 } from '~data/index';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { clearLastWallet } from '~utils/autoLogin';
-import { IPFSAvatarImage } from '~types/index';
 
 import { clearToken } from '../../../api/auth';
 import { ipfsUpload } from '../../core/sagas/ipfs';
@@ -45,13 +45,9 @@ import {
 import { createUserWithSecondAttempt } from './utils';
 
 const MSG = defineMessages({
-  toastAvatarRemoveSuccess: {
-    id: 'users.sagas.user.toastAvatarRemoveSuccess',
-    defaultMessage: 'Profile picture has been removed.',
-  },
-  toastAvatarUpdateSuccess: {
-    id: 'users.sagas.user.toastAvatarRemoveSuccess',
-    defaultMessage: 'Profile picture has been updated.',
+  toastAvatarSuccess: {
+    id: 'users.sagas.user.toastAvatarSuccess',
+    defaultMessage: 'Profile picture has been {action}.',
   },
   toastAvatarError: {
     id: 'users.UserProfileEdit.toastError',
@@ -73,7 +69,8 @@ function* userAvatarRemove({ meta }: Action<ActionTypes.USER_AVATAR_REMOVE>) {
       payload: { address: walletAddress },
       meta,
     });
-    toast.success(MSG.toastAvatarRemoveSuccess);
+
+    toast.success(MSG.toastAvatarSuccess, { action: 'removed' });
   } catch (error) {
     toast.error(MSG.toastAvatarError);
     return yield putError(ActionTypes.USER_AVATAR_REMOVE_ERROR, error, meta);
@@ -115,7 +112,7 @@ function* userAvatarUpload({
         address: walletAddress,
       },
     });
-    toast.success(MSG.toastAvatarUpdateSuccess);
+    toast.success(MSG.toastAvatarSuccess, { action: 'updated' });
   } catch (error) {
     toast.error(MSG.toastAvatarError);
     return yield putError(ActionTypes.USER_AVATAR_UPLOAD_ERROR, error, meta);
