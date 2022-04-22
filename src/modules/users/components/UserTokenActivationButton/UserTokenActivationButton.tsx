@@ -70,7 +70,7 @@ const UserTokenActivationButton = ({
             data-test={dataTest}
           >
             <Tooltip
-              placement="bottom"
+              placement="bottom-start"
               trigger={!isOpen ? 'hover' : null}
               showArrow
               content={
@@ -83,7 +83,7 @@ const UserTokenActivationButton = ({
                   {
                     name: 'offset',
                     options: {
-                      offset: [120, 10],
+                      offset: [-8, 8],
                     },
                   },
                 ],

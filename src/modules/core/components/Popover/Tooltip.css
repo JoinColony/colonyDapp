@@ -1,3 +1,6 @@
+/* This is mostly lifted from
+ * https://github.com/mohsinulhaq/react-popper-tooltip/blob/62633040d1d5616d879c2d237b116bd3d2e85e2a/src/styles.css */
+
 .tooltipContainer {
   --tooltipBackground: var(--dark);
   --tooltipBorder: var(--dark);
