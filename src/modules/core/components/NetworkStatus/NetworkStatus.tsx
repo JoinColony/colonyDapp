@@ -13,6 +13,7 @@ import Popover from '~core/Popover';
 import Icon from '~core/Icon';
 import ExternalLink from '~core/ExternalLink';
 import { NETWORK_HEALTH } from '~externalUrls';
+import { NetworkHealthType } from '~types/index';
 
 const MSG = defineMessages({
   networkStatusButton: {
@@ -35,16 +36,12 @@ const MSG = defineMessages({
       critical
         {You will have trouble performing actions and retrieving
         information from the chain. We are working to resolve this.}
-        other {Network is healthy.}}`,
+      other
+        {Network is healthy.}}`,
   },
 });
 
 const NetworkStatus = () => {
-  enum NetworkHealthType {
-    Healthy = 'healthy',
-    Poor = 'poor',
-    Critical = 'critical',
-  }
   const [networkHealth, setNetworkHealth] = useState<NetworkHealthType>(
     NetworkHealthType.Healthy,
   );
