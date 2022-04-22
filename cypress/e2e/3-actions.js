@@ -1,8 +1,5 @@
 import Decimal from 'decimal.js';
 
-import ganacheAccounts from '~lib/colonyNetwork/ganache-accounts.json';
-import { createAddress } from '~utils/web3';
-
 describe('User can create actions via UAC', () => {
   const {
     colony: { name: colonyName },
@@ -144,11 +141,8 @@ describe('User can create actions via UAC', () => {
 
   it('Make payment from a subdomain', () => {
     const amountToPay = 10;
-    const accounts = Object.entries(ganacheAccounts.private_keys).map(
-      ([address]) => address,
-    );
 
-    cy.makePayment(amountToPay, createAddress(accounts[15]), false, true);
+    cy.makePayment(amountToPay, undefined, false, true);
   });
 
   it('Can enable recovery mode', () => {
