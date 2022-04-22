@@ -2,7 +2,6 @@ query LatestRpcBlock {
   latestRpcBlock @client
 }
 
-
 query ColonyServerLiveness {
   isServerAlive @client
 }
