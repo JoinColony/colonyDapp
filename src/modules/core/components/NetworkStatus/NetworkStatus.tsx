@@ -49,7 +49,7 @@ const NetworkStatus = () => {
     NetworkHealthType.Healthy,
   );
 
-  const networkCheckInterval = 120 * 1000; // 2 minutes
+  const networkCheckInterval = 300 * 1000; // 5 minutes
 
   const {
     data: latestRpcBlock,
