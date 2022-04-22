@@ -37,8 +37,9 @@ const {
 
 Cypress.Commands.add('login', () => {
   cy.visit('/landing');
-  cy.findByText(/connect wallet/i, { timeout: 30000 }).click({
+  cy.findByText(/connect wallet/i, { timeout: 60000 }).click({
     timeout: 30000,
+    force: true,
   });
   cy.contains(/ganache/i).click();
   // eslint-disable-next-line cypress/no-unnecessary-waiting
