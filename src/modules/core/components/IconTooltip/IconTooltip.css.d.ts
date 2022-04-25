@@ -5,7 +5,6 @@ export const largeIcon: string;
 export const hugeIcon: string;
 export const massiveIcon: string;
 export const main: string;
-export const iconWrap: string;
 export const icon: string;
 export const tooltipWrapper: string;
 export const sizeTiny: string;

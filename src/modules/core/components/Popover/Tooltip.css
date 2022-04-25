@@ -71,7 +71,7 @@
 }
 
 .tooltipContainer[data-popper-placement*='top'] .tooltipArrow {
-  margin-bottom: -1rem;
+  margin-bottom: -0.9rem;
   bottom: 0;
   left: 0;
 }

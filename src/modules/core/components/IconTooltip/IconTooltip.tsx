@@ -44,6 +44,14 @@ const IconTooltip = ({
   /** Options to pass to the underlying PopperJS element. See here for more: https://popper.js.org/docs/v2/constructors/#options. */
   tooltipPopperOptions = {
     placement: 'top',
+    modifiers: [
+      {
+        name: 'offset',
+        options: {
+          offset: [0, 2],
+        },
+      },
+    ],
   },
   tooltipClassName = styles.tooltipWrapper,
   className,
@@ -68,9 +76,7 @@ const IconTooltip = ({
       showArrow={showArrow}
       popperOptions={tooltipPopperOptions}
     >
-      <div className={styles.iconWrap}>
-        <Icon className={iconClassName} name={icon} title="" />
-      </div>
+      <Icon className={iconClassName} name={icon} title="" />
     </Tooltip>
   </div>
 );
