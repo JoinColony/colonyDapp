@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { defineMessages } from 'react-intl';
+import React, { useCallback, useEffect, useState } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 import { Redirect } from 'react-router-dom';
 
@@ -52,6 +52,14 @@ const MSG = defineMessages({
     id: 'users.UserProfileEdit.labelLocation',
     defaultMessage: 'Location',
   },
+  toastSuccess: {
+    id: 'users.UserProfileEdit.toastSuccess',
+    defaultMessage: 'Profile settings have been updated.',
+  },
+  toastError: {
+    id: 'users.UserProfileEdit.toastError',
+    defaultMessage: 'Profile settings were not able to be updated. Try again.',
+  },
 });
 
 const displayName = 'users.UserProfileEdit';
@@ -71,6 +79,17 @@ const validationSchema = yup.object({
 });
 
 const UserProfileEdit = () => {
+  const [showSnackbar, setShowSnackbar] = useState<boolean>(false);
+  useEffect(() => {
+    if (showSnackbar) {
+      const timeout = setTimeout(() => setShowSnackbar(true), 200000);
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+    return undefined;
+  }, [showSnackbar]);
+
   const { walletAddress, ethereal } = useLoggedInUser();
 
   const [editUser] = useEditUserMutation();
@@ -108,7 +127,7 @@ const UserProfileEdit = () => {
         onSubmit={onSubmit}
         validationSchema={validationSchema}
       >
-        {({ status, isSubmitting }) => (
+        {({ status, isSubmitting, error }) => (
           <div className={styles.main}>
             <FieldSet>
               <InputLabel label={MSG.labelWallet} />
@@ -154,9 +173,22 @@ const UserProfileEdit = () => {
                 text={{ id: 'button.save' }}
                 loading={isSubmitting}
                 dataTest="userSettingsSubmit"
+                onClick={() => setShowSnackbar(true)}
               />
             </FieldSet>
             <FormStatus status={status} />
+            {showSnackbar && (
+              // <div
+              //   className={`${styles.snackbarContainer}
+              //     ${error ? `Error` : `Success`}`}
+              // >
+              <div className={styles.snackbarContainerSuccess}>
+                <div className={styles.snackbarDotSuccess} />
+                <p className={styles.snackbarText}>
+                  <FormattedMessage {...MSG.toastSuccess} />
+                </p>
+              </div>
+            )}
           </div>
         )}
       </Form>

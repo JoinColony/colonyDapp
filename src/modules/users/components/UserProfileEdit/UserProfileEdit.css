@@ -10,3 +10,48 @@
   composes: inlineEllipsis from '~styles/text.css';
   margin: 15px 0;
 }
+
+.snackbarContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 20px;
+  padding: 15px 15px 15px 14px;
+  width: 360px;
+  border-radius: var(--radius-normal);
+  background-color: var(--colony-white);
+}
+
+.snackbarContainerSuccess {
+  composes: snackbarContainer;
+  border: 1px solid var(--primary);
+}
+
+.snackbarContainerError {
+  composes: snackbarContainer;
+  border: 1px solid var(--danger);
+}
+
+.snackbarText {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.dot {
+  margin-right: 15px;
+  height: 10px;
+  min-width: 10px;
+  position: relative;
+  border-radius: 50%;
+}
+
+.snackbarDotSuccess {
+  composes: dot;
+  background-color: var(--primary);
+}
+
+.snackbarDotError {
+  composes: dot;
+  background-color: var(--danger);
+}
