@@ -16,24 +16,20 @@
 }
 
 .heading {
+  display: flex;
+  justify-content: space-between;
   align-self: flex-start;
+  width: 100%;
 }
 
-.help {
-  padding: 10px 0 0 0;
-
-  /*
-   * Needed to make the tooltip align better
-   */
-  width: 0;
-  position: absolute;
-  top: 1px;
-  right: 27px;
+.helpWrapper {
+  margin-top: -14px;
+  margin-right: -19px;
+  position: relative;
   cursor: pointer;
 }
 
 .tooltip {
-  padding: 4px;
   width: 250px;
   font-weight: var(--weight-bold);
 }
