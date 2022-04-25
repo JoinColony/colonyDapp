@@ -11,5 +11,4 @@ export const day: string;
 export const userMention: string;
 export const titleDecoration: string;
 export const titleDecorationUsername: string;
-export const tooltip: string;
 export const blockExplorerLink: string;

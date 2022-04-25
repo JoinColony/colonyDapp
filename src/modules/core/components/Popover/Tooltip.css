@@ -6,7 +6,6 @@
   --tooltipBorder: var(--dark);
 
   display: flex;
-  flex-direction: column;
   padding: 10px;
   position: relative;
   z-index: 9999;
@@ -17,7 +16,6 @@
   font-weight: var(--weight-bold);
   line-height: 18px;
   color: rgba(255, 255, 255, 1);
-  color: light;
   letter-spacing: 0.25px;
   transition: opacity 0.3s;
 }

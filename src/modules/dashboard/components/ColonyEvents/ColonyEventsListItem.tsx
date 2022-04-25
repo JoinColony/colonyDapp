@@ -269,7 +269,7 @@ const ColonyEventsListItem = ({
             placement="bottom-start"
             showArrow
             content={
-              <div className={styles.tooltip}>
+              <div>
                 <FormattedMessage
                   id={getEventListTitleMessageDescriptor}
                   values={eventMessageValues}
