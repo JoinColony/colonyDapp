@@ -1,9 +1,13 @@
 import { Resolvers } from '@apollo/client';
+import { ClientType, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { AddressZero } from 'ethers/constants';
 
 import { Context } from '~context/index';
 
 import { getLatestSubgraphBlock } from './colony';
 import { NETWORK_DATA, DEFAULT_NETWORK } from '~constants';
+import { PINATA_GATEWAY } from '~lib/pinata/constants';
+import { isDev } from '~utils/debug';
 
 const serverEndpoint = process.env.SERVER_ENDPOINT;
 
@@ -21,6 +25,7 @@ const networkNameForReputationOracle =
 
 export const statusResolvers = ({
   colonyManager: { networkClient },
+  colonyManager,
   apolloClient,
 }: Required<Context>): Resolvers => ({
   Query: {
@@ -51,13 +56,31 @@ export const statusResolvers = ({
         return null;
       }
     },
-
     async isReputationOracleAlive() {
       try {
+        const latestRootHash = await networkClient.getReputationRootHash();
+        const metaColonyAddress = await networkClient.getMetaColony();
+        const colonyClient = await colonyManager.getClient(
+          ClientType.ColonyClient,
+          metaColonyAddress,
+        );
+        const { skillId } = await colonyClient.getDomain(ROOT_DOMAIN_ID);
         const res = await fetch(
-          `${reputationOracleEndpoint}/${networkNameForReputationOracle}`,
+          `${reputationOracleEndpoint}/${networkNameForReputationOracle}/${latestRootHash}/${metaColonyAddress}/${skillId}/${AddressZero}/noProof`,
         );
         return res.status === 200;
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+    },
+    async isIPFSAlive() {
+      try {
+        if (!(isDev || process.env.DEV)) {
+          const res = await fetch(PINATA_GATEWAY);
+          return res.status === 200;
+        }
+        return true;
       } catch (error) {
         console.error(error);
         return null;
