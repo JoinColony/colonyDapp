@@ -6,5 +6,6 @@ export default gql`
     isServerAlive: Boolean!
     latestSubgraphBlock: Int!
     isReputationOracleAlive: Boolean!
+    isIPFSAlive: Boolean!
   }
 `;

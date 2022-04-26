@@ -13,3 +13,7 @@ query LatestSubgraphBlock {
 query ReputationOracleLiveness {
   isReputationOracleAlive @client
 }
+
+query IPFSLiveness {
+  isIPFSAlive @client
+}
