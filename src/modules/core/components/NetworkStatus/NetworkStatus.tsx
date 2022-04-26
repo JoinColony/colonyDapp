@@ -7,6 +7,7 @@ import {
   useColonyServerLivenessQuery,
   useLatestSubgraphBlockQuery,
   useReputationOracleLivenessQuery,
+  useIpfsLivenessQuery,
 } from '~data/index';
 
 import Popover from '~core/Popover';
@@ -63,6 +64,10 @@ const NetworkStatus = () => {
     pollInterval: networkCheckInterval,
   });
 
+  const { data: ipfsLivenessData } = useIpfsLivenessQuery({
+    pollInterval: networkCheckInterval,
+  });
+
   const {
     data: latestSubgraphBlock,
     error: latestSubgraphBlockError,
@@ -78,6 +83,7 @@ const NetworkStatus = () => {
         latestSubgraphBlockError ||
         !isReputationOracleAlive?.isReputationOracleAlive ||
         !isColonyServerAlive?.isServerAlive ||
+        !ipfsLivenessData?.isIPFSAlive ||
         (latestRpcBlock &&
           latestSubgraphBlock &&
           latestRpcBlock.latestRpcBlock >
@@ -90,7 +96,16 @@ const NetworkStatus = () => {
       }
     }, networkCheckInterval);
     return () => clearInterval(networkCheck);
-  });
+  }, [
+    latestRpcBlockError,
+    isReputationOracleAlive,
+    isColonyServerAlive,
+    ipfsLivenessData,
+    latestRpcBlock,
+    latestSubgraphBlock,
+    latestSubgraphBlockError,
+    networkCheckInterval,
+  ]);
 
   return (
     <>
