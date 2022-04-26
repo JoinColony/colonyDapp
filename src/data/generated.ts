@@ -259,6 +259,7 @@ export type Query = {
   getRecoveryRequiredApprovals: Scalars['Int'];
   getRecoveryStorageSlot: Scalars['String'];
   historicColonyRoles: Array<ProcessedRoles>;
+  isIPFSAlive: Scalars['Boolean'];
   isReputationOracleAlive: Scalars['Boolean'];
   isServerAlive: Scalars['Boolean'];
   latestRpcBlock: Scalars['Int'];
@@ -2766,6 +2767,11 @@ export type ReputationOracleLivenessQueryVariables = Exact<{ [key: string]: neve
 
 
 export type ReputationOracleLivenessQuery = Pick<Query, 'isReputationOracleAlive'>;
+
+export type IpfsLivenessQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type IpfsLivenessQuery = Pick<Query, 'isIPFSAlive'>;
 
 export type SubgraphColonyFundsClaimedEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -7671,6 +7677,36 @@ export function useReputationOracleLivenessLazyQuery(baseOptions?: Apollo.LazyQu
 export type ReputationOracleLivenessQueryHookResult = ReturnType<typeof useReputationOracleLivenessQuery>;
 export type ReputationOracleLivenessLazyQueryHookResult = ReturnType<typeof useReputationOracleLivenessLazyQuery>;
 export type ReputationOracleLivenessQueryResult = Apollo.QueryResult<ReputationOracleLivenessQuery, ReputationOracleLivenessQueryVariables>;
+export const IpfsLivenessDocument = gql`
+    query IPFSLiveness {
+  isIPFSAlive @client
+}
+    `;
+
+/**
+ * __useIpfsLivenessQuery__
+ *
+ * To run a query within a React component, call `useIpfsLivenessQuery` and pass it any options that fit your needs.
+ * When your component renders, `useIpfsLivenessQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useIpfsLivenessQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useIpfsLivenessQuery(baseOptions?: Apollo.QueryHookOptions<IpfsLivenessQuery, IpfsLivenessQueryVariables>) {
+        return Apollo.useQuery<IpfsLivenessQuery, IpfsLivenessQueryVariables>(IpfsLivenessDocument, baseOptions);
+      }
+export function useIpfsLivenessLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<IpfsLivenessQuery, IpfsLivenessQueryVariables>) {
+          return Apollo.useLazyQuery<IpfsLivenessQuery, IpfsLivenessQueryVariables>(IpfsLivenessDocument, baseOptions);
+        }
+export type IpfsLivenessQueryHookResult = ReturnType<typeof useIpfsLivenessQuery>;
+export type IpfsLivenessLazyQueryHookResult = ReturnType<typeof useIpfsLivenessLazyQuery>;
+export type IpfsLivenessQueryResult = Apollo.QueryResult<IpfsLivenessQuery, IpfsLivenessQueryVariables>;
 export const SubgraphColonyFundsClaimedEventsDocument = gql`
     query SubgraphColonyFundsClaimedEvents($colonyAddress: String!, $sortDirection: String = asc) {
   colonyFundsClaimedEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {name_contains: "ColonyFundsClaimed", address: $colonyAddress}) {
