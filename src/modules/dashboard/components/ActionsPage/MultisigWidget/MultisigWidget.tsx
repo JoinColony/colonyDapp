@@ -159,7 +159,7 @@ const MultisigWidget = ({
               placement="right"
               trigger="hover"
               content={
-                <div className={styles.tooltip}>
+                <div>
                   <FormattedMessage
                     {...MSG.approvedState}
                     values={{ approved: user.approvedRecoveryExit }}
@@ -212,7 +212,7 @@ const MultisigWidget = ({
             placement="right"
             trigger={hasAlreadyApproved ? 'hover' : null}
             content={
-              <div className={styles.tooltip}>
+              <div>
                 <FormattedMessage {...MSG.alreadyApprovedNotice} />
               </div>
             }

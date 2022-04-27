@@ -80,10 +80,6 @@
   color: var(--pink);
 }
 
-.tooltip {
-  padding: 8px 4px;
-}
-
 .loading {
   padding: 16px 0;
   border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
