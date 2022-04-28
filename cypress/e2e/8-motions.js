@@ -181,33 +181,53 @@ describe('User can create motions via UAC', () => {
     });
   });
 
-  it('Claiming Stakes', () => {
+  it.only('User can claim their stake', () => {
     cy.login();
     cy.visit(`/colony/${colonyName}`);
 
     // Get amount of staked tokens
-    cy.getBySel('tokenActivationButton', { timeout: 12000 }).click();
+    cy.getBySel('tokenActivationButton', { timeout: 120000 }).click();
 
     // Get amount of staked tokens
-    cy.getBySel('stakedTokens', { timeout: 600000 })
+    cy.getBySel('stakedTokens', { timeout: 60000 })
       .invoke('text')
       .as('initialStakedTokens');
 
     cy.getBySel('stakesTab').click();
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.getBySel('claimableMotionsList', { timeout: 20000 })
+    cy.getBySel('claimableMotionsList', { timeout: 120000 })
       .wait(2000) // Wait is required to ensure hash is included
       .find(`[data-test="goToMotion"]`)
       .first()
       .click();
 
-    // Get the staked value being claimed
-    // We need a small wait to more reliably get the stakeBeingClaimed
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.getBySel('stakedValue', { timeout: 60000 })
-      .wait(2000)
-      .invoke('text')
-      .as('stakeBeingClaimed');
+    // Get expected stake
+    cy.get('@initialStakedTokens').then(($initialStakedTokens) => {
+      const [initialStakedElement] = $initialStakedTokens.split(' ');
+      const parsedStakedTokens = numbro.unformat(initialStakedElement);
+      const initialStakedTokens = new Decimal(parsedStakedTokens).toFixed(0);
+
+      // Get the staked value being claimed
+      // We need a small wait to more reliably get the stakeBeingClaimed
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.getBySel('stakedValue', { timeout: 60000 })
+        .wait(2000)
+        .invoke('text')
+        .then(($stakedValue) => {
+          const [stakeBeingClaimedElement] = $stakedValue.split(' ');
+          const parsedStakedValue = numbro.unformat(stakeBeingClaimedElement);
+          const stakeBeingClaimed = new Decimal(parsedStakedValue).toFixed(0);
+
+          cy.log('initialStakedTokens', initialStakedTokens);
+          cy.log('stakeBeingClaimed', stakeBeingClaimed);
+          const expectedStaked = new Decimal(initialStakedTokens)
+            .sub(stakeBeingClaimed)
+            .toFixed(0);
+          cy.log('expectedStaked', expectedStaked);
+          cy.wrap(expectedStaked);
+        })
+        .as('expectedStaked');
+    });
 
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.getBySel('claimStakeButton', { timeout: 20000 }).click().wait(15000);
@@ -218,28 +238,19 @@ describe('User can create motions via UAC', () => {
     // Check that the active tokens are correct
     cy.getBySel('tokenActivationButton', { timeout: 12000 }).click();
 
-    // function is required for `this` object to work
-    cy.getBySel('stakedTokens', { timeout: 6000 })
-      .invoke('text')
-      .as('newStakedTokens')
-      .then(function () {
-        const [initialStakedElement] = this.initialStakedTokens.split(' ');
-        const parsedStakedTokens = numbro.unformat(initialStakedElement);
-        const initialStakedTokens = new Decimal(parsedStakedTokens).toFixed(0);
+    // Get expected stake and compare to current staked tokens after claiming
+    cy.get('@expectedStaked').then(($expectedStaked) => {
+      cy.log('$expectedStaked', $expectedStaked);
+      cy.getBySel('stakedTokens', { timeout: 6000 })
+        .invoke('text')
+        .then(($newStakedTokens) => {
+          const [newStakedTokensElement] = $newStakedTokens.split(' ');
+          const parsedNewStaked = numbro.unformat(newStakedTokensElement);
+          const newStaked = new Decimal(parsedNewStaked).toFixed(0);
 
-        const [stakeBeingClaimedElement] = this.stakeBeingClaimed.split(' ');
-        const parsedStakedValue = numbro.unformat(stakeBeingClaimedElement);
-        const stakeBeingClaimed = new Decimal(parsedStakedValue).toFixed(0);
-
-        const [newStakedTokensElement] = this.newStakedTokens.split(' ');
-        const parsedNewStaked = numbro.unformat(newStakedTokensElement);
-        const newStaked = new Decimal(parsedNewStaked).toFixed(0);
-
-        const expectedStaked = new Decimal(initialStakedTokens)
-          .sub(stakeBeingClaimed)
-          .toFixed(0);
-        expect(newStaked).to.eq(expectedStaked);
-      });
+          expect(newStaked).to.eq($expectedStaked);
+        });
+    });
   });
 
   it('Disables & deprecates voting extensions', () => {
