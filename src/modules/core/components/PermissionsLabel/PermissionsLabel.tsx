@@ -66,7 +66,6 @@ const PermissionsLabel = ({
 
   return (
     <Tooltip
-      placement="top"
       content={
         <div className={styles.tooltip}>
           {infoMessage && infoMessage === 'string' ? (
@@ -77,7 +76,6 @@ const PermissionsLabel = ({
         </div>
       }
       trigger={infoMessage ? 'hover' : null}
-      showArrow
       popperOptions={{
         modifiers: [
           {

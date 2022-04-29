@@ -90,10 +90,8 @@ const GroupedTransactionCard = ({
     >
       <div className={styles.description}>
         <Tooltip
-          placement="top"
-          showArrow
           content={
-            <span className={styles.tooltip}>
+            <span>
               <FormattedMessage {...MSG.hasDependentTx} />
             </span>
           }

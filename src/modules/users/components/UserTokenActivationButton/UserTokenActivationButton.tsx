@@ -72,7 +72,6 @@ const UserTokenActivationButton = ({
             <Tooltip
               placement="bottom-start"
               trigger={!isOpen ? 'hover' : null}
-              showArrow
               content={
                 <div className={styles.tooltip}>
                   <FormattedMessage {...MSG.tooltip} />

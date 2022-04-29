@@ -57,8 +57,6 @@
 
 .tooltipText {
   max-width: 195px;
-  font-size: var(--size-small);
-  font-weight: var(--weight-bold);
 }
 
 .tooltipText:first-child {
