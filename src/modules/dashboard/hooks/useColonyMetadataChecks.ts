@@ -28,9 +28,6 @@ const useColonyMetadataChecks = (
 ) => {
   let metadataJSON: string | null = null;
   const [metadataIpfsHash, setMetadataIpfsHash] = useState<string>('');
-  /*
-   * Default fallback, just use the current colony's values
-   */
   const [metadataChecks, setMetadataChecks] = useState<{
     [key: string]: boolean;
   }>({
