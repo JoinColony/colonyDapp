@@ -5,7 +5,11 @@ import Decimal from 'decimal.js';
 import Tag, { Appearance as TagAppareance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
 import { EventValue } from '~data/resolvers/colonyActions';
-import { parseDomainMetadata } from '~utils/colonyActions';
+import {
+  getSpecificActionValuesCheck,
+  parseColonyMetadata,
+  parseDomainMetadata,
+} from '~utils/colonyActions';
 import Numeral from '~core/Numeral';
 
 import ActionsPageFeed, {
@@ -82,10 +86,12 @@ const DefaultAction = ({
     actionType,
   );
 
-  const domainMetadataEvent = events.find(
-    (event) => event.name === ColonyAndExtensionsEvents.DomainMetadata,
+  const metadataEvent = events.find(
+    (event) =>
+      event.name === ColonyAndExtensionsEvents.DomainMetadata ||
+      event.name === ColonyAndExtensionsEvents.ColonyMetadata,
   );
-  const values = (domainMetadataEvent?.values as unknown) as EventValue;
+  const values = (metadataEvent?.values as unknown) as EventValue;
 
   const { data: metadataJSON } = useDataFetcher(
     ipfsDataFetcher,
@@ -94,16 +100,26 @@ const DefaultAction = ({
   );
 
   let domainMetadata;
+  let hasVerifiedAddressesChanged = false;
   if (metadataJSON) {
-    const { domainName, domainColor, domainPurpose } = parseDomainMetadata(
-      metadataJSON,
-    );
-    domainMetadata = {
-      name: domainName,
-      color: domainColor,
-      description: domainPurpose,
-      ethDomainId: fromDomain,
-    };
+    if (actionType === ColonyActions.ColonyEdit) {
+      const { verifiedAddressesChanged } = getSpecificActionValuesCheck(
+        ColonyAndExtensionsEvents.ColonyMetadata,
+        colonyAction,
+        parseColonyMetadata(metadataJSON),
+      );
+      hasVerifiedAddressesChanged = verifiedAddressesChanged;
+    } else if (actionType === ColonyActions.EditDomain) {
+      const { domainName, domainColor, domainPurpose } = parseDomainMetadata(
+        metadataJSON,
+      );
+      domainMetadata = {
+        name: domainName,
+        color: domainColor,
+        description: domainPurpose,
+        ethDomainId: fromDomain,
+      };
+    }
   }
   /*
    * There's a weird edge case where Apollo's caches screws with us and doesn't
@@ -236,7 +252,12 @@ const DefaultAction = ({
            */}
           <h1 className={styles.heading} data-test="actionHeading">
             <FormattedMessage
-              id={roleMessageDescriptorId || 'action.title'}
+              id={
+                (hasVerifiedAddressesChanged &&
+                  `action.${ColonyActions.ColonyEdit}.verifiedAddresses`) ||
+                roleMessageDescriptorId ||
+                'action.title'
+              }
               values={{
                 ...actionAndEventValues,
                 fromDomain: actionAndEventValues.fromDomain?.name,

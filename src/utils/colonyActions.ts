@@ -71,6 +71,7 @@ export const getValuesForActionType = (
       case ColonyActions.ColonyEdit: {
         return {
           initiator: values.agent,
+          metadata: values.metadata,
         };
       }
       case ColonyActions.MoveFunds: {
@@ -131,7 +132,12 @@ export const getValuesForActionType = (
 
 export const getColonyMetadataMessageDescriptorsIds = (
   actionType: ColonyAndExtensionsEvents,
-  { nameChanged, logoChanged, tokensChanged }: { [key: string]: boolean },
+  {
+    nameChanged,
+    logoChanged,
+    tokensChanged,
+    verifiedAddressesChanged,
+  }: { [key: string]: boolean },
 ) => {
   if (actionType === ColonyAndExtensionsEvents.ColonyMetadata) {
     if (nameChanged && logoChanged) {
@@ -145,6 +151,9 @@ export const getColonyMetadataMessageDescriptorsIds = (
     }
     if (tokensChanged) {
       return `event.${ColonyAndExtensionsEvents.ColonyMetadata}.tokens`;
+    }
+    if (verifiedAddressesChanged) {
+      return `event.${ColonyAndExtensionsEvents.ColonyMetadata}.verifiedAddresses`;
     }
   }
   return `event.${ColonyAndExtensionsEvents.ColonyMetadata}.fallback`;
@@ -200,6 +209,7 @@ export const parseColonyMetadata = (
   colonyDisplayName: string | null;
   colonyAvatarHash: string | null;
   colonyTokens: string[] | null;
+  verifiedAddresses: string[] | null;
 } => {
   try {
     if (jsonMetadata) {
@@ -207,11 +217,13 @@ export const parseColonyMetadata = (
         colonyDisplayName = null,
         colonyAvatarHash = null,
         colonyTokens = [],
+        verifiedAddresses = [],
       } = JSON.parse(jsonMetadata);
       return {
         colonyDisplayName,
         colonyAvatarHash,
         colonyTokens,
+        verifiedAddresses,
       };
     }
   } catch (error) {
@@ -222,6 +234,7 @@ export const parseColonyMetadata = (
     colonyDisplayName: null,
     colonyAvatarHash: null,
     colonyTokens: [],
+    verifiedAddresses: [],
   };
 };
 
@@ -256,7 +269,7 @@ export const parseDomainMetadata = (
   };
 };
 
-export const sortMetdataHistory = (colonyMetadata) =>
+export const sortMetadataHistory = (colonyMetadata) =>
   sortBy(colonyMetadata, [
     ({
       transaction: {
@@ -282,7 +295,8 @@ export const getSpecificActionValuesCheck = (
     domainName: currentDomainName,
     domainPurpose: currentDomainPurpose,
     domainColor: currentDomainColor,
-  }: ColonyAction,
+    verifiedAddresses: currentVerifiedAddresses,
+  }: Partial<ColonyAction>,
   {
     colonyDisplayName: prevColonyDisplayName,
     colonyAvatarHash: prevColonyAvatarHash,
@@ -290,6 +304,7 @@ export const getSpecificActionValuesCheck = (
     domainName: prevDomainName,
     domainPurpose: prevDomainPurpose,
     domainColor: prevDomainColor,
+    verifiedAddresses: prevVerifiedAddresses,
   }: {
     colonyDisplayName?: string | null;
     colonyAvatarHash?: string | null;
@@ -297,12 +312,15 @@ export const getSpecificActionValuesCheck = (
     domainName?: string | null;
     domainPurpose?: string | null;
     domainColor?: string | null;
+    verifiedAddresses?: string[] | null;
   },
 ): { [key: string]: boolean } => {
   switch (actionType) {
     case ColonyAndExtensionsEvents.ColonyMetadata: {
       const nameChanged = prevColonyDisplayName !== currentColonyDisplayName;
       const logoChanged = prevColonyAvatarHash !== currentColonyAvatarHash;
+      const verifiedAddressesChanged =
+        prevVerifiedAddresses !== currentVerifiedAddresses;
       /*
        * Tokens arrays might come from a subgraph query, in which case
        * they're not really "arrays", so we have to create a new instace of
@@ -310,12 +328,13 @@ export const getSpecificActionValuesCheck = (
        */
       const tokensChanged = !isEqual(
         prevColonyTokens ? prevColonyTokens.slice(0).sort() : [],
-        currentColonyTokens.slice(0).sort(),
+        currentColonyTokens?.slice(0).sort() || [],
       );
       return {
         nameChanged,
         logoChanged,
         tokensChanged,
+        verifiedAddressesChanged,
       };
     }
     case ColonyAndExtensionsEvents.DomainMetadata: {
