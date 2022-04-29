@@ -51,3 +51,7 @@
 .themeWhite .label {
   color: var(--colony-white);
 }
+
+.tooltip {
+  max-width: 280px;
+}

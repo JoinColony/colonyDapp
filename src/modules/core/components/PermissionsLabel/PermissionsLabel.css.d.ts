@@ -5,3 +5,4 @@ export const icon: string;
 export const themeDefault: string;
 export const themeSimple: string;
 export const themeWhite: string;
+export const tooltip: string;
