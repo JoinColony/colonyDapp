@@ -85,12 +85,12 @@ const MSG = defineMessages({
   },
   manageWhitelistTitle: {
     id: 'dashboard.AdvancedDialog.manageWhitelistTitle',
-    defaultMessage: 'Manage whitelist',
+    defaultMessage: 'Manage verified addresses',
   },
   manageWhitelistDescription: {
     id: 'dashboard.AdvancedDialog.manageWhitelistDescription',
     defaultMessage:
-      'Get warned when taking an action to addresses not on the whitelist.',
+      'Get warned when taking an action to addresses not on the verified list.',
   },
 });
 
