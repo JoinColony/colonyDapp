@@ -255,6 +255,8 @@ export const colonyActionsResolvers = ({
           motionState: null,
           motionDomain: null,
           rootHash: null,
+          isWhitelistActivated: false,
+          verifiedAddresses: [],
           ...actionValues,
         };
       }
