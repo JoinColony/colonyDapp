@@ -64,7 +64,7 @@ const TransactionStatus = ({
       /* Because it's in an overflow window */
       popperOptions={{ strategy: 'fixed' }}
       content={
-        <span className={styles.tooltip}>
+        <span>
           <FormattedMessage
             {...MSG.transactionState}
             values={{
