@@ -32,7 +32,7 @@ import { getFormattedTokenValue } from '~utils/tokens';
 import { MotionVote } from '~utils/colonyMotions';
 
 import { ipfsDataFetcher } from '../../../../core/fetchers';
-import { useColonyMetadataChecks } from '../../../hooks/useColonyMetadataChecks';
+import useColonyMetadataChecks from '../../../hooks/useColonyMetadataChecks';
 import { EventValues } from '../ActionsPageFeed';
 import { STATUS } from '../../ActionsPage/types';
 import { EVENT_ROLES_MAP } from '../../ActionsPage/staticMaps';

@@ -16,7 +16,7 @@ import Icon from '~core/Icon';
 import FriendlyName from '~core/FriendlyName';
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import CountDownTimer from '~dashboard/ActionsPage/CountDownTimer';
-import { useColonyMetadataChecks } from '~modules/dashboard/hooks/useColonyMetadataChecks';
+import useColonyMetadataChecks from '~modules/dashboard/hooks/useColonyMetadataChecks';
 
 import { getMainClasses, removeValueUnits } from '~utils/css';
 import {

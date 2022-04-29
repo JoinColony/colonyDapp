@@ -20,7 +20,7 @@ import { useDataFetcher } from '~utils/hooks';
  * Determine if the current medata is different from the previous one,
  * and in what way
  */
-export const useColonyMetadataChecks = (
+const useColonyMetadataChecks = (
   eventName: string,
   colony: Colony,
   transactionHash: string,
@@ -59,69 +59,70 @@ export const useColonyMetadataChecks = (
   }
   useEffect(() => {
     if (
-      (eventName === ColonyAndExtensionsEvents.ColonyMetadata ||
-        eventName === ColonyActions.ColonyEdit) &&
-      !!colonyMetadataHistory?.data?.colony
+      eventName === ColonyAndExtensionsEvents.ColonyMetadata ||
+      eventName === ColonyActions.ColonyEdit
     ) {
-      const {
-        data: {
-          colony: { metadataHistory },
-        },
-      } = colonyMetadataHistory;
-      const sortedMetadataHistory = sortMetadataHistory(metadataHistory);
-      const currentMetadataIndex = findLastIndex(
-        sortedMetadataHistory,
-        ({ transaction: { id: hash } }) => hash === transactionHash,
-      );
-      /*
-       * We have a previous metadata entry
-       */
-      if (currentMetadataIndex > 0) {
-        const prevMetadata = sortedMetadataHistory[currentMetadataIndex - 1];
-        if (prevMetadata) {
-          if (prevMetadata.metadata !== metadataIpfsHash) {
-            setMetadataIpfsHash(prevMetadata.metadata);
-          }
+      if (colonyMetadataHistory?.data?.colony) {
+        const {
+          data: {
+            colony: { metadataHistory },
+          },
+        } = colonyMetadataHistory;
+        const sortedMetadataHistory = sortMetadataHistory(metadataHistory);
+        const currentMetadataIndex = findLastIndex(
+          sortedMetadataHistory,
+          ({ transaction: { id: hash } }) => hash === transactionHash,
+        );
+        /*
+         * We have a previous metadata entry
+         */
+        if (currentMetadataIndex > 0) {
+          const prevMetadata = sortedMetadataHistory[currentMetadataIndex - 1];
+          if (prevMetadata) {
+            if (prevMetadata.metadata !== metadataIpfsHash) {
+              setMetadataIpfsHash(prevMetadata.metadata);
+            }
 
-          if (metadataJSON) {
-            const prevColonyMetadata = parseColonyMetadata(metadataJSON);
-            /*
-             * If we have a metadata json, parse into the expected values and then
-             * compare them agains the ones from the current action
-             *
-             * This should be the default case for a colony with metadata history
-             */
-            const newMetadataChecks = getSpecificActionValuesCheck(
-              ColonyAndExtensionsEvents.ColonyMetadata,
-              actionData,
-              prevColonyMetadata,
-            );
+            if (metadataJSON) {
+              const prevColonyMetadata = parseColonyMetadata(metadataJSON);
+              /*
+               * If we have a metadata json, parse into the expected values and then
+               * compare them agains the ones from the current action
+               *
+               * This should be the default case for a colony with metadata history
+               */
+              const newMetadataChecks = getSpecificActionValuesCheck(
+                ColonyAndExtensionsEvents.ColonyMetadata,
+                actionData,
+                prevColonyMetadata,
+              );
 
-            if (!isEqual(newMetadataChecks, metadataChecks)) {
-              setMetadataChecks(newMetadataChecks);
+              if (!isEqual(newMetadataChecks, metadataChecks)) {
+                setMetadataChecks(newMetadataChecks);
+              }
             }
           }
-        }
-      } else if (actionData) {
-        /*
-         * We don't have a previous metadata entry, so fall back to the current
-         * action's values if we can
-         */
-        const {
-          colonyDisplayName: actionColonyDisplayName,
-          colonyAvatarHash: actionColonyAvatarHash,
-          colonyTokens: actionColonyTokens,
-          verifiedAddresses: actionVerifiedAddresses,
-        } = actionData;
-        const newMetadataValues = {
-          nameChanged: !!actionColonyDisplayName,
-          logoChanged: !!actionColonyAvatarHash,
-          tokensChanged: !!actionColonyTokens?.length,
-          verifiedAddressesChanged: !!actionVerifiedAddresses?.length,
-        };
+        } else if (actionData) {
+          /*
+           * We don't have a previous metadata entry, so fall back to the current
+           * action's values if we can
+           */
+          const {
+            colonyDisplayName: actionColonyDisplayName,
+            colonyAvatarHash: actionColonyAvatarHash,
+            colonyTokens: actionColonyTokens,
+            verifiedAddresses: actionVerifiedAddresses,
+          } = actionData;
+          const newMetadataValues = {
+            nameChanged: !!actionColonyDisplayName,
+            logoChanged: !!actionColonyAvatarHash,
+            tokensChanged: !!actionColonyTokens?.length,
+            verifiedAddressesChanged: !!actionVerifiedAddresses?.length,
+          };
 
-        if (!isEqual(newMetadataValues, metadataChecks)) {
-          setMetadataChecks(newMetadataValues);
+          if (!isEqual(newMetadataValues, metadataChecks)) {
+            setMetadataChecks(newMetadataValues);
+          }
         }
       }
     }
@@ -129,6 +130,8 @@ export const useColonyMetadataChecks = (
     eventName,
     colonyMetadataHistory,
     transactionHash,
+    metadataChecks,
+    metadataIpfsHash,
     setMetadataIpfsHash,
     metadataJSON,
     actionData,
@@ -136,3 +139,5 @@ export const useColonyMetadataChecks = (
 
   return metadataChecks;
 };
+
+export default useColonyMetadataChecks;
