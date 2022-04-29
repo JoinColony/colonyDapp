@@ -1,6 +1,6 @@
+import { ColonyRole } from '@colony/colony-js';
 import sortBy from 'lodash/sortBy';
 import isEqual from 'lodash/isEqual';
-import { ColonyRole } from '@colony/colony-js';
 
 import {
   ColonyActions,
@@ -319,8 +319,10 @@ export const getSpecificActionValuesCheck = (
     case ColonyAndExtensionsEvents.ColonyMetadata: {
       const nameChanged = prevColonyDisplayName !== currentColonyDisplayName;
       const logoChanged = prevColonyAvatarHash !== currentColonyAvatarHash;
-      const verifiedAddressesChanged =
-        prevVerifiedAddresses !== currentVerifiedAddresses;
+      const verifiedAddressesChanged = !isEqual(
+        prevVerifiedAddresses,
+        currentVerifiedAddresses,
+      );
       /*
        * Tokens arrays might come from a subgraph query, in which case
        * they're not really "arrays", so we have to create a new instace of
