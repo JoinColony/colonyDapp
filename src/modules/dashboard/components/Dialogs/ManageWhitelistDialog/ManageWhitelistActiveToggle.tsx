@@ -18,11 +18,11 @@ const MSG = defineMessages({
   },
   headerTitle: {
     id: `dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.ManageWhitelistActiveToggle.headerTitle`,
-    defaultMessage: 'Whitelisted addresses',
+    defaultMessage: 'Verified addresses',
   },
   tooltipText: {
     id: `dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.ManageWhitelistActiveToggle.tooltipText`,
-    defaultMessage: `Whitelist is active by default once at least one address is added to the list. You can turn this feature “Off” to deactivate the whitelist. Use with caution.`,
+    defaultMessage: `Verified addresses is active by default once at least one address is added to the list. You can turn this feature “Off” to deactivate. Use with caution.`,
   },
   warningText: {
     id: `dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.ManageWhitelistActiveToggle.warningText`,

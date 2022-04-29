@@ -26,7 +26,7 @@ import styles from './ManageWhitelistDialogForm.css';
 const MSG = defineMessages({
   title: {
     id: 'dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.title',
-    defaultMessage: 'Manage whitelist',
+    defaultMessage: 'Manage verified addresses',
   },
   annotation: {
     id: `dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.annotation`,
@@ -44,11 +44,15 @@ const MSG = defineMessages({
   },
   whitelisted: {
     id: 'dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.whitelisted',
-    defaultMessage: 'Whitelisted',
+    defaultMessage: 'Verified addresses',
+  },
+  inputLabel: {
+    id: `dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.inputLabel`,
+    defaultMessage: `Add wallet address to verified address list.`,
   },
   inputSuccess: {
     id: `dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.inputSuccess`,
-    defaultMessage: `Address is whitelisted now. You can add another one or close modal.`,
+    defaultMessage: `Address is verified now. You can add another one or close modal.`,
   },
   fileSuccess: {
     id: `dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.fileSuccess`,
@@ -134,6 +138,7 @@ const ManageWhitelistDialogForm = ({
               toggleShowInput={toggleShowInput}
               formSuccess={formSuccess}
               setFormSuccess={(isSuccess) => setFormSuccess(isSuccess)}
+              inputLabelMsg={MSG.inputLabel}
               inputSuccessMsg={MSG.inputSuccess}
               fileSuccessMsg={MSG.fileSuccess}
             />

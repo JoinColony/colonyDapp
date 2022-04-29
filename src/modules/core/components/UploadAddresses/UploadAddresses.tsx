@@ -36,6 +36,7 @@ interface Props {
   toggleShowInput: () => void;
   formSuccess?: boolean;
   setFormSuccess?: (isSuccess: boolean) => void;
+  inputLabelMsg?: MessageDescriptor | undefined;
   inputSuccessMsg?: MessageDescriptor | undefined;
   fileSuccessMsg?: MessageDescriptor | undefined;
 }
@@ -48,6 +49,7 @@ const UploadAddresses = ({
   toggleShowInput,
   formSuccess,
   setFormSuccess,
+  inputLabelMsg = MSG.inputLabel,
   inputSuccessMsg,
   fileSuccessMsg,
 }: Props) => {
@@ -93,7 +95,7 @@ const UploadAddresses = ({
     <>
       <div className={styles.actionsContainer}>
         <InputLabel
-          label={showInput ? MSG.inputLabel : MSG.uploadLabel}
+          label={showInput ? inputLabelMsg : MSG.uploadLabel}
           appearance={{ colorSchema: 'grey' }}
         />
         <div className={styles.actionsSubContainer}>

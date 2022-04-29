@@ -6,7 +6,7 @@ import styles from './NoWhitelistedAddressesState.css';
 const MSG = defineMessages({
   title: {
     id: `dashboard.ManageWhitelistDialog.NoWhitelistedAddressesState.title`,
-    defaultMessage: 'There are no whitelisted addresses yet.',
+    defaultMessage: 'There are no verified addresses yet.',
   },
   desc: {
     id: `dashboard.ManageWhitelistDialog.NoWhitelistedAddressesState.desc`,
