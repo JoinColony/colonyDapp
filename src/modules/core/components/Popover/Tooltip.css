@@ -12,9 +12,9 @@
   border: 1px solid var(--tooltipBorder);
   border-radius: var(--radius-normal);
   background-color: var(--tooltipBackground);
-  font-size: var(--size-small);
+  font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
-  line-height: 18px;
+  line-height: 16px;
   color: rgba(255, 255, 255, 1);
   letter-spacing: 0.25px;
   transition: opacity 0.3s;
