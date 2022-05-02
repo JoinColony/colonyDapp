@@ -76,26 +76,22 @@ const NetworkStatus = () => {
   });
 
   useEffect(() => {
-    const networkCheck = setInterval(async () => {
-      if (latestRpcBlockError) {
-        setNetworkHealth(NetworkHealthType.Critical);
-      } else if (
-        latestSubgraphBlockError ||
-        !isReputationOracleAlive?.isReputationOracleAlive ||
-        !isColonyServerAlive?.isServerAlive ||
-        !ipfsLivenessData?.isIPFSAlive ||
-        (latestRpcBlock &&
-          latestSubgraphBlock &&
-          latestRpcBlock.latestRpcBlock >
-            latestSubgraphBlock.latestSubgraphBlock)
-      ) {
-        setNetworkHealth(NetworkHealthType.Poor);
-      } else {
-        // If everything is okay, set health to healthy (to correct for the previous state)
-        setNetworkHealth(NetworkHealthType.Healthy);
-      }
-    }, networkCheckInterval);
-    return () => clearInterval(networkCheck);
+    if (latestRpcBlockError) {
+      setNetworkHealth(NetworkHealthType.Critical);
+    } else if (
+      latestSubgraphBlockError ||
+      !isReputationOracleAlive?.isReputationOracleAlive ||
+      !isColonyServerAlive?.isServerAlive ||
+      !ipfsLivenessData?.isIPFSAlive ||
+      (latestRpcBlock &&
+        latestSubgraphBlock &&
+        latestRpcBlock.latestRpcBlock > latestSubgraphBlock.latestSubgraphBlock)
+    ) {
+      setNetworkHealth(NetworkHealthType.Poor);
+    } else {
+      // If everything is okay, set health to healthy (to correct for the previous state)
+      setNetworkHealth(NetworkHealthType.Healthy);
+    }
   }, [
     latestRpcBlockError,
     isReputationOracleAlive,
@@ -104,7 +100,6 @@ const NetworkStatus = () => {
     latestRpcBlock,
     latestSubgraphBlock,
     latestSubgraphBlockError,
-    networkCheckInterval,
   ]);
 
   return (
