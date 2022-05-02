@@ -93,7 +93,7 @@ const UserProfileEdit = () => {
 
   const { walletAddress, ethereal } = useLoggedInUser();
 
-  const [editUser] = useEditUserMutation();
+  const [editUser, { error }] = useEditUserMutation();
   const onSubmit = useCallback(
     (profile: FormValues) => editUser({ variables: { input: profile } }),
     [editUser],
@@ -128,7 +128,7 @@ const UserProfileEdit = () => {
         onSubmit={onSubmit}
         validationSchema={validationSchema}
       >
-        {({ status, isSubmitting, error }) => (
+        {({ status, isSubmitting, dirty, isValid }) => (
           <div className={styles.main}>
             <FieldSet>
               <InputLabel label={MSG.labelWallet} />
@@ -175,6 +175,7 @@ const UserProfileEdit = () => {
                 loading={isSubmitting}
                 dataTest="userSettingsSubmit"
                 onClick={() => setShowSnackbar(true)}
+                disabled={!dirty || !isValid}
               />
             </FieldSet>
             <FormStatus status={status} />

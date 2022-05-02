@@ -12,18 +12,18 @@ export const enum SnackbarType {
 
 interface Props {
   show: boolean;
-  setShow: (value: State) => void;
-  delay: number;
+  setShow: (value: boolean) => void;
   msg: MessageDescriptor;
-  type: Type;
+  type?: SnackbarType;
+  delay?: number;
 }
 
 const Snackbar = ({
   show,
   setShow,
-  delay = 3000,
   msg,
   type = SnackbarType.Success,
+  delay = 3000,
 }: Props) => {
   useEffect(() => {
     if (show) {
