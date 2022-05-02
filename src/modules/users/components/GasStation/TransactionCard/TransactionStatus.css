@@ -1,7 +1,10 @@
 .main {
   flex: 0 1 auto;
-  height: 100%;
   cursor: default;
+}
+
+.mainStatusReady {
+  height: 20px;
 }
 
 .counter {
@@ -33,15 +36,6 @@
   }
 }
 
-.spinner {
-  display: inline-block;
-
-  /*
-   * @NOTE We're using negative margins to better align the spinner with the link
-   */
-  margin-bottom: -3px;
-}
-
 .multisig {
   display: inline-block;
   margin-right: 5px;
@@ -67,4 +61,14 @@
 .tooltip {
   font-size: var(--size-normal);
   font-weight: var(--weight-normal);
+}
+
+.statusIconContainer {
+  height: 14px;
+  line-height: 14px;
+}
+
+.statusIconContainerReady {
+  height: 20px;
+  line-height: 20px;
 }

@@ -54,7 +54,7 @@ const MessageCardStatus = ({ status }: Props) => (
           <span className={styles.counter}>1</span>
         )}
         {status === TRANSACTION_STATUSES.PENDING && (
-          <div className={styles.spinner}>
+          <div>
             <SpinnerLoader appearance={{ size: 'small', theme: 'primary' }} />
           </div>
         )}

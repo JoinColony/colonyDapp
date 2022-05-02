@@ -47,6 +47,7 @@
 
 .description {
   flex: 1 1 auto;
+  line-height: 15px;
 }
 
 .cancelButton {
