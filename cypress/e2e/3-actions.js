@@ -139,12 +139,6 @@ describe('User can create actions via UAC', () => {
     cy.smiteUser(amountToSmite, false);
   });
 
-  it('Make payment from a subdomain', () => {
-    const amountToPay = 10;
-
-    cy.makePayment(amountToPay, undefined, false, true);
-  });
-
   it('Can enable recovery mode', () => {
     const storageSlot = '0x05';
     const storageSlotValue =
@@ -188,5 +182,11 @@ describe('User can create actions via UAC', () => {
       .click()
       .wait(20000)
       .should('not.exist');
+  });
+
+  it('Make payment from a subdomain', () => {
+    const amountToPay = 10;
+
+    cy.makePayment(amountToPay, undefined, false, true);
   });
 });
