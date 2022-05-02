@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 import { Redirect } from 'react-router-dom';
 
+import Snackbar, { SnackbarType } from '~core/Snackbar';
 import CopyableAddress from '~core/CopyableAddress';
 import UserMention from '~core/UserMention';
 import Heading from '~core/Heading';
@@ -177,18 +178,12 @@ const UserProfileEdit = () => {
               />
             </FieldSet>
             <FormStatus status={status} />
-            {showSnackbar && (
-              // <div
-              //   className={`${styles.snackbarContainer}
-              //     ${error ? `Error` : `Success`}`}
-              // >
-              <div className={styles.snackbarContainerSuccess}>
-                <div className={styles.snackbarDotSuccess} />
-                <p className={styles.snackbarText}>
-                  <FormattedMessage {...MSG.toastSuccess} />
-                </p>
-              </div>
-            )}
+            <Snackbar
+              show={showSnackbar}
+              setShow={setShowSnackbar}
+              msg={error ? MSG.toastError : MSG.toastSuccess}
+              type={error ? SnackbarType.Error : SnackbarType.Success}
+            />
           </div>
         )}
       </Form>

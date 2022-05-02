@@ -1,0 +1,56 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 20px;
+  padding: 15px 15px 15px 14px;
+  width: 360px;
+  border-radius: var(--radius-normal);
+  background-color: var(--colony-white);
+}
+
+.containerSuccess {
+  composes: container;
+  border: 1px solid var(--primary);
+}
+
+.containerError {
+  composes: container;
+  border: 1px solid var(--danger);
+}
+
+.msgText {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.dot {
+  margin-right: 15px;
+  height: 10px;
+  min-width: 10px;
+  position: relative;
+  border-radius: 50%;
+}
+
+.dotSuccess {
+  composes: dot;
+  background-color: var(--primary);
+}
+
+.dotError {
+  composes: dot;
+  background-color: var(--danger);
+}
+
+.fadeOut {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s linear 1s, opacity 200ms;
+}
+
+.fadeIn {
+  visibility: visible;
+  opacity: 1;
+  transition: visibility 0s linear 0s, opacity 200ms;
+}
