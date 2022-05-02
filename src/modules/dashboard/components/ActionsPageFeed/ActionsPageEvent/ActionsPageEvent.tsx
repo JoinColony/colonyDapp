@@ -50,8 +50,10 @@ const MSG = defineMessages({
     defaultMessage: `{icon} {role, select,
       0 {This permission allows users to put the colony in and out of
         recovery mode, and edit colony state while in recovery.}
-      1 {This permission allows modify colony-wide parameters, upgrade the
-        colony and manage permissions in Root Domain.}
+      1 {This permission allows you to modify colony-wide parameters, upgrade
+        the colony, and manage permissions in the Root Domain.}
+      2 {This permission allows you to resolve disputes, make state changes,
+        and punish bad behavior.}
       3 {This permission allows users to create new domains, and manage
         permissions within those domains.}
       5 {This permission allows users to transfer funds between domains and
