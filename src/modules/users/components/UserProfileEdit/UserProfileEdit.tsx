@@ -53,12 +53,12 @@ const MSG = defineMessages({
     id: 'users.UserProfileEdit.labelLocation',
     defaultMessage: 'Location',
   },
-  toastSuccess: {
-    id: 'users.UserProfileEdit.toastSuccess',
+  snackbarSuccess: {
+    id: 'users.UserProfileEdit.snackbarSuccess',
     defaultMessage: 'Profile settings have been updated.',
   },
-  toastError: {
-    id: 'users.UserProfileEdit.toastError',
+  snackbarError: {
+    id: 'users.UserProfileEdit.snackbarError',
     defaultMessage: 'Profile settings were not able to be updated. Try again.',
   },
 });
@@ -182,7 +182,7 @@ const UserProfileEdit = () => {
             <Snackbar
               show={showSnackbar}
               setShow={setShowSnackbar}
-              msg={error ? MSG.toastError : MSG.toastSuccess}
+              msg={error ? MSG.snackbarError : MSG.snackbarSuccess}
               type={error ? SnackbarType.Error : SnackbarType.Success}
             />
           </div>
