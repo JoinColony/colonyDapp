@@ -348,14 +348,12 @@ Cypress.Commands.add('editTeam', (domainName, domainPurpose, isMotion) => {
 
   cy.getBySel('editDomainConfirmButton').click();
 
-  cy.get('@domaniName').then((oldName) => {
-    cy.getBySel('actionHeading', { timeout: 100000 }).should(
-      'have.text',
-      isMotion
-        ? `Edit ${domainName} team details`
-        : `${domainName} team details edited`,
-    );
-  });
+  cy.getBySel('actionHeading', { timeout: 100000 }).should(
+    'have.text',
+    isMotion
+      ? `Edit ${domainName} team details`
+      : `${domainName} team details edited`,
+  );
 
   cy.url().should('contains', `${baseUrl}/colony/${colonyName}/tx/0x`);
 
@@ -420,7 +418,7 @@ Cypress.Commands.add('awardRep', (amountToAward, isMotion) => {
   cy.getBySel('awardReputationDialogIndexItem').click();
 
   cy.getBySel('reputationRecipientSelector').click({ force: true });
-  cy.getBySel('reputationRecipientSelectorItem').last().click();
+  cy.getBySel('reputationRecipientSelectorItem').first().click();
 
   cy.getBySel('reputationRecipientName').then(($value) => {
     rewardedUser = $value.text();
@@ -457,7 +455,7 @@ Cypress.Commands.add('smiteUser', (amountToSmite, isMotion) => {
   cy.getBySel('smiteReputationDialogIndexItem').click();
 
   cy.getBySel('reputationRecipientSelector').click({ force: true });
-  cy.getBySel('reputationRecipientSelectorItem').last().click();
+  cy.getBySel('reputationRecipientSelectorItem').first().click();
   cy.getBySel('reputationRecipientName').then(($value) => {
     smoteUser = $value.text();
   });
