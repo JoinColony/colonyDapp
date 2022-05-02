@@ -14,7 +14,6 @@
 
 .details {
   display: flex;
-  margin: 0 0 0 -5px;
 }
 
 .content {
@@ -33,6 +32,7 @@
 
 .roles {
   margin-right: 10px;
+  margin-left: -5px;
 }
 
 .meta {

@@ -429,10 +429,9 @@ const ActionsPageEvent = ({
             />
           </div>
           <div className={styles.details}>
-            <div className={styles.roles}>
-              {eventName &&
-                EVENT_ROLES_MAP[eventName] &&
-                EVENT_ROLES_MAP[eventName].map((role, index) => {
+            {eventName && EVENT_ROLES_MAP[eventName] && (
+              <div className={styles.roles}>
+                {EVENT_ROLES_MAP[eventName].map((role, index) => {
                   /* If it is a smite action, do not display the Root label
                     If it is an award action, do not display the Arbitration label */
                   if (
@@ -467,7 +466,8 @@ const ActionsPageEvent = ({
                     />
                   );
                 })}
-            </div>
+              </div>
+            )}
             {transactionHash && (
               <div className={styles.meta}>
                 <TransactionMeta
