@@ -23,6 +23,9 @@ const networkNameForReputationOracle =
         process.env.NETWORK || DEFAULT_NETWORK
       ].shortName.toLowerCase(); // NOTE: when adding new networks make sure this will work for it
 
+const initialReputationRootHash =
+  '0x0000000000000000000000000000000000000000000000000000000000000000';
+
 export const statusResolvers = ({
   colonyManager: { networkClient },
   colonyManager,
@@ -59,6 +62,14 @@ export const statusResolvers = ({
     async isReputationOracleAlive() {
       try {
         const latestRootHash = await networkClient.getReputationRootHash();
+
+        if (
+          latestRootHash === initialReputationRootHash &&
+          (isDev || process.env.DEV)
+        ) {
+          return true;
+        }
+
         const metaColonyAddress = await networkClient.getMetaColony();
         const colonyClient = await colonyManager.getClient(
           ClientType.ColonyClient,
