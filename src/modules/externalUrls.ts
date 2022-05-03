@@ -44,3 +44,8 @@ export const WALLET_CONNECT_XDAI = `https://colony.gitbook.io/colony/get-started
  * Recovery Mode
  */
 export const RECOVERY_HELP = `https://colony.gitbook.io/colony/advanced-features/recovery-mode`;
+
+/*
+ * Reputation & Smite
+ */
+export const REPUTATION_LEARN_MORE = `https://colony.gitbook.io/colony/key-concepts/reputation`;
