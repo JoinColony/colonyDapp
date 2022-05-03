@@ -4,6 +4,9 @@ describe('Colony user can update their settings', () => {
   const userSettingsWebsite = 'http://colony.io';
   const userSettingsLocation = 'Earth';
   const profilePicturePath = 'src/img/favicon.png';
+  const {
+    colony: { name: colonyName },
+  } = Cypress.config();
 
   beforeEach(() => {
     cy.login();
@@ -64,7 +67,7 @@ describe('Colony user can update their settings', () => {
 
   // This requires that the native token is not already added
   it('User can add token type to their wallet', () => {
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
+    cy.visit(`/colony/${colonyName}`);
     // Get the colony's native token
     cy.getBySel('colonyMenuPopover', { timeout: 40000 }).click();
     cy.getBySel('nativeTokenAddress')

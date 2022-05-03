@@ -161,7 +161,9 @@ const TokensTab = ({
               />
             </TokenTooltip>
             <div className={styles.tokenNumbers}>
-              <Numeral value={formattedActiveTokens} suffix={token.symbol} />
+              <span data-test="activeTokens">
+                <Numeral value={formattedActiveTokens} suffix={token.symbol} />
+              </span>
               {formattedActiveTokens === SMALL_TOKEN_AMOUNT_FORMAT && (
                 <SmallTokenAmountMessage />
               )}
@@ -175,7 +177,9 @@ const TokensTab = ({
           </li>
           <li>
             <div className={styles.tokenNumbersLocked}>
-              <Numeral value={formattedLockedTokens} suffix={token.symbol} />
+              <span data-test="stakedTokens">
+                <Numeral value={formattedLockedTokens} suffix={token.symbol} />
+              </span>
             </div>
           </li>
           <li>
@@ -186,7 +190,12 @@ const TokensTab = ({
               <FormattedMessage {...MSG.inactive} />
             </TokenTooltip>
             <div className={styles.tokenNumbersInactive}>
-              <Numeral value={formattedInactiveTokens} suffix={token.symbol} />
+              <span data-test="inactiveTokens">
+                <Numeral
+                  value={formattedInactiveTokens}
+                  suffix={token.symbol}
+                />
+              </span>
               {formattedInactiveTokens === SMALL_TOKEN_AMOUNT_FORMAT && (
                 <SmallTokenAmountMessage />
               )}

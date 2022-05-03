@@ -25,6 +25,7 @@ interface Props {
   nativeToken: UserToken;
   colony?: FullColonyFragment;
   walletAddress: Address;
+  dataTest: string;
 }
 
 const UserTokenActivationButton = ({
@@ -32,6 +33,7 @@ const UserTokenActivationButton = ({
   userLock,
   colony,
   walletAddress,
+  dataTest,
 }: Props) => {
   const inactiveBalance = bigNumberify(nativeToken?.balance || 0);
 
@@ -65,7 +67,7 @@ const UserTokenActivationButton = ({
             className={styles.tokens}
             onClick={toggle}
             ref={ref}
-            data-test="tokenActivationButton"
+            data-test={dataTest}
           >
             <Tooltip
               appearance={{ theme: 'dark', size: 'medium' }}

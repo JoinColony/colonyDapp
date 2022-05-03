@@ -159,6 +159,7 @@ const ChangeTokenStateForm = ({
             appearance={{ theme: !isActivate ? 'primary' : 'white' }}
             onClick={() => setIsActive(false)}
             text={MSG.deactivate}
+            dataTest="deactivateTokensToggle"
           />
         </div>
       </div>
@@ -191,6 +192,7 @@ const ChangeTokenStateForm = ({
                   maxAmount: unformattedTokenBalance,
                   fieldName: 'amount',
                 }}
+                dataTest="activateTokensInput"
               />
             </div>
             {!hasLockedTokens || isActivate ? (

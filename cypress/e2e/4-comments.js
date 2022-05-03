@@ -1,9 +1,12 @@
 describe('Comments in action page', () => {
   const commentText = 'Can I comment in this action?';
+  const {
+    colony: { name: colonyName },
+  } = Cypress.config();
 
   beforeEach(() => {
     cy.login();
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
+    cy.visit(`/colony/${colonyName}`);
     cy.getBySel('actionItem', { timeout: 60000 }).first().click();
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.getBySel('commentInput', { timeout: 40000 })

@@ -188,6 +188,7 @@ const UserNavigation = () => {
               userLock={userLock}
               colony={colonyData?.processedColony}
               walletAddress={walletAddress}
+              dataTest="tokenActivationButton"
             />
           )}
           {userCanNavigate && (

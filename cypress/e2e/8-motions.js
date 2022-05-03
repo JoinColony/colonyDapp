@@ -1,15 +1,23 @@
-import { bigNumberify } from 'ethers/utils';
+import Decimal from 'decimal.js';
 import { Extension } from '@colony/colony-js';
+import numbro from 'numbro';
 
 import ganacheAccounts from '~lib/colonyNetwork/ganache-accounts.json';
 import { createAddress } from '~utils/web3';
 
 import createdColony from '../fixtures/colony.json';
+import { numbroCustomLanguage } from '../../src/utils/numbers/numbroCustomLanguage';
 
 describe('User can create motions via UAC', () => {
+  const {
+    colony: { name: colonyName },
+  } = Cypress.config();
+  numbro.registerLanguage(numbroCustomLanguage);
+  numbro.setLanguage('en-GB');
+
   it('Installs & enables voting extensions', () => {
     cy.login();
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
+    cy.visit(`/colony/${colonyName}`);
 
     // install & enable voting reputaiton extension
     cy.getBySel('extensionsNavigationButton', { timeout: 60000 }).click({
@@ -111,21 +119,16 @@ describe('User can create motions via UAC', () => {
   });
 
   it('Can manage permissions', () => {
-    const { colony } = Cypress.config();
-
-    cy.managePermissions(colony.name, true);
+    cy.managePermissions(true);
 
     cy.checkMotion();
   });
 
   it('User can activate tokens', () => {
     cy.login();
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
-    // // activate tokens
-    cy.getBySel('tokenActivationButton', { timeout: 120000 }).click();
-    cy.getBySel('inputMaxButton').click();
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.getBySel('tokenActivationConfirm').click().wait(10000);
+    cy.visit(`/colony/${colonyName}`);
+    // Activate tokens
+    cy.activateTokens();
   });
 
   it('Can create, stake, vote, finalise motion & claim tokens', () => {
@@ -167,7 +170,7 @@ describe('User can create motions via UAC', () => {
     cy.getBySel('claimForColonyButton', { timeout: 100000 }).click().wait(5000);
 
     cy.get('@totalFunds').then(($totalFunds) => {
-      const totalFunds = bigNumberify($totalFunds.split(',').join(''))
+      const totalFunds = new Decimal($totalFunds.split(',').join(''))
         .add(amountToMint)
         .toString();
 
@@ -178,9 +181,81 @@ describe('User can create motions via UAC', () => {
     });
   });
 
+  it.only('User can claim their stake', () => {
+    cy.login();
+    cy.visit(`/colony/${colonyName}`);
+
+    // Get amount of staked tokens
+    cy.getBySel('tokenActivationButton', { timeout: 120000 }).click();
+
+    // Get amount of staked tokens
+    cy.getBySel('stakedTokens', { timeout: 60000 })
+      .invoke('text')
+      .as('initialStakedTokens');
+
+    cy.getBySel('stakesTab').click();
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.getBySel('claimableMotionsList', { timeout: 120000 })
+      .wait(2000) // Wait is required to ensure hash is included
+      .find(`[data-test="goToMotion"]`)
+      .first()
+      .click();
+
+    // Get expected stake
+    cy.get('@initialStakedTokens').then(($initialStakedTokens) => {
+      const [initialStakedElement] = $initialStakedTokens.split(' ');
+      const parsedStakedTokens = numbro.unformat(initialStakedElement);
+      const initialStakedTokens = new Decimal(parsedStakedTokens).toFixed(0);
+
+      // Get the staked value being claimed
+      // We need a small wait to more reliably get the stakeBeingClaimed
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.getBySel('stakedValue', { timeout: 60000 })
+        .wait(2000)
+        .invoke('text')
+        .then(($stakedValue) => {
+          const [stakeBeingClaimedElement] = $stakedValue.split(' ');
+          const parsedStakedValue = numbro.unformat(stakeBeingClaimedElement);
+          const stakeBeingClaimed = new Decimal(parsedStakedValue).toFixed(0);
+
+          cy.log('initialStakedTokens', initialStakedTokens);
+          cy.log('stakeBeingClaimed', stakeBeingClaimed);
+          const expectedStaked = new Decimal(initialStakedTokens)
+            .sub(stakeBeingClaimed)
+            .toFixed(0);
+          cy.log('expectedStaked', expectedStaked);
+          cy.wrap(expectedStaked);
+        })
+        .as('expectedStaked');
+    });
+
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.getBySel('claimStakeButton', { timeout: 20000 }).click().wait(15000);
+
+    // to close the gas station
+    cy.getBySel('actionHeading').click();
+
+    // Check that the active tokens are correct
+    cy.getBySel('tokenActivationButton', { timeout: 12000 }).click();
+
+    // Get expected stake and compare to current staked tokens after claiming
+    cy.get('@expectedStaked').then(($expectedStaked) => {
+      cy.log('$expectedStaked', $expectedStaked);
+      cy.getBySel('stakedTokens', { timeout: 6000 })
+        .invoke('text')
+        .then(($newStakedTokens) => {
+          const [newStakedTokensElement] = $newStakedTokens.split(' ');
+          const parsedNewStaked = numbro.unformat(newStakedTokensElement);
+          const newStaked = new Decimal(parsedNewStaked).toFixed(0);
+
+          expect(newStaked).to.eq($expectedStaked);
+        });
+    });
+  });
+
   it('Disables & deprecates voting extensions', () => {
     cy.login();
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
+    cy.visit(`/colony/${colonyName}`);
 
     // deprecate & unistall voting reputaiton extension
     cy.getBySel('extensionsNavigationButton', { timeout: 60000 }).click({
