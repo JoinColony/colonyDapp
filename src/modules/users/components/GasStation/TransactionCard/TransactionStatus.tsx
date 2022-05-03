@@ -75,7 +75,7 @@ const TransactionStatus = ({
           <FormattedMessage
             {...MSG.transactionState}
             values={{
-              status: TRANSACTION_STATUSES.READY,
+              status,
               groupCount: groupCount || 1,
             }}
           />
