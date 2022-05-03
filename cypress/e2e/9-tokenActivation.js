@@ -14,31 +14,6 @@ describe('Token Activation & Deactivation', () => {
     cy.visit(`/colony/${colonyName}`);
   });
 
-  it(`User can activate tokens`, () => {
-    // Open Token Activation popover
-    const amountToActivate = 10;
-
-    // Activate tokens - wait required for reliability
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.activateTokens(amountToActivate).wait(20000);
-
-    // Check that the active tokens are correct
-    cy.get('@activatedTokens').then(($activatedTokens) => {
-      const [activatedTokensElement] = $activatedTokens.split(' ');
-      const parsedActivatedTokens = numbro.unformat(activatedTokensElement);
-      const activatedTokens = new Decimal(parsedActivatedTokens)
-        .add(amountToActivate)
-        .toFixed(0);
-
-      cy.getBySel('activeTokens', { timeout: 60000 }).then(($tokens) => {
-        const [activeTokensElement] = $tokens.text().split(' ');
-        const parsedActiveTokens = numbro.unformat(activeTokensElement);
-        const fixActiveTokens = new Decimal(parsedActiveTokens).toFixed(0);
-        expect(fixActiveTokens).to.eq(activatedTokens);
-      });
-    });
-  });
-
   it(`User can deactivate tokens`, () => {
     // Open Token Activation popover
     const amountToDeactivate = 10;
@@ -68,6 +43,31 @@ describe('Token Activation & Deactivation', () => {
         const parsedInactiveTokens = numbro.unformat(inactiveTokensElement);
         const fixInactiveTokens = new Decimal(parsedInactiveTokens).toFixed(0);
         expect(fixInactiveTokens).to.eq(deactivatedTokens);
+      });
+    });
+  });
+
+  it(`User can activate tokens`, () => {
+    // Open Token Activation popover
+    const amountToActivate = 10;
+
+    // Activate tokens - wait required for reliability
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.activateTokens(amountToActivate).wait(20000);
+
+    // Check that the active tokens are correct
+    cy.get('@activatedTokens').then(($activatedTokens) => {
+      const [activatedTokensElement] = $activatedTokens.split(' ');
+      const parsedActivatedTokens = numbro.unformat(activatedTokensElement);
+      const activatedTokens = new Decimal(parsedActivatedTokens)
+        .add(amountToActivate)
+        .toFixed(0);
+
+      cy.getBySel('activeTokens', { timeout: 60000 }).then(($tokens) => {
+        const [activeTokensElement] = $tokens.text().split(' ');
+        const parsedActiveTokens = numbro.unformat(activeTokensElement);
+        const fixActiveTokens = new Decimal(parsedActiveTokens).toFixed(0);
+        expect(fixActiveTokens).to.eq(activatedTokens);
       });
     });
   });
