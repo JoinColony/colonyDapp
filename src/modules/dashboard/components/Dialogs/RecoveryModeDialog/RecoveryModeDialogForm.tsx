@@ -35,7 +35,7 @@ const MSG = defineMessages({
     id: `dashboard.RecoveryModeDialog.RecoveryModeDialogForm.leavingRecoveryModeDescription`,
     defaultMessage: `
     Leaving recovery requires the approval of a majority of members
-    holding the {roleRequired} permission. <a>Learn more.</a>`,
+    holding the {roleRequired} permission. <a>Learn more</a>`,
   },
   annotation: {
     id: 'dashboard.RecoveryModeDialog.RecoveryModeDialogForm.annotation',

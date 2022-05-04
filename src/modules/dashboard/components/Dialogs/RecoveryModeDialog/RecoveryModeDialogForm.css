@@ -23,6 +23,11 @@
   font-size: var(--size-small);
   font-weight: var(--weight-bold);
   color: var(--sky-blue);
+
+  &:hover {
+    text-decoration: underline;
+    color: var(--dark-blue);
+  }
 }
 
 .leavingRecoveryMessage {

@@ -18,7 +18,7 @@ const MSG = defineMessages({
   },
   description: {
     id: 'dashboard.ColonyHome.WrongNetworkDialog.description',
-    defaultMessage: 'Please connect to {networkName}. <a>Learn more.</a>',
+    defaultMessage: 'Please connect to {networkName}. <a>Learn more</a>',
   },
 });
 
@@ -46,7 +46,10 @@ const WrongNetworkDialog = ({ cancel }: DialogProps) => {
                 <>
                   {process.env.NETWORK === Network.Xdai ||
                     (process.env.NETWORK === Network.XdaiFork && (
-                      <ExternalLink href={WALLET_CONNECT_XDAI}>
+                      <ExternalLink
+                        className={styles.link}
+                        href={WALLET_CONNECT_XDAI}
+                      >
                         {chunks}
                       </ExternalLink>
                     ))}

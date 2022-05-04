@@ -29,7 +29,7 @@ const MSG = defineMessages({
     defaultMessage: `
     You are about to make an objection to the motion. If fully staked,
     it will immediately start a voting process to determine whether
-    the motion should pass. <a>Learn more.</a>`,
+    the motion should pass. <a>Learn more</a>`,
   },
   annotation: {
     id: 'dashboard.RaiseObjectionDialog.RaiseObjectionDialogForm.annotation',

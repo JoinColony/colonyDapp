@@ -33,7 +33,7 @@ const MSG = defineMessage({
      If you have the necessary permissions to
      take this action you can toggle “Force”
      in the top right to bypass the governance process.
-      <a>Learn more.</a>`,
+      <a>Learn more</a>`,
   },
 });
 
