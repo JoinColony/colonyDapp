@@ -431,7 +431,7 @@ const ActionsPageEvent = ({
           <div className={styles.details}>
             {eventName && EVENT_ROLES_MAP[eventName] && (
               <div className={styles.roles}>
-                {EVENT_ROLES_MAP[eventName].map((role, index) => {
+                {EVENT_ROLES_MAP[eventName]?.map((role: ColonyRole, index) => {
                   /* If it is a smite action, do not display the Root label
                     If it is an award action, do not display the Arbitration label */
                   if (
