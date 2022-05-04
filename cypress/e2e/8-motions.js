@@ -147,10 +147,14 @@ describe('User can create motions via UAC', () => {
     cy.getBySel('actionHeading').click();
 
     cy.getBySel('yesVoteButton', { timeout: 30000 }).click({ force: true });
-    cy.getBySel('voteButton').click();
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.getBySel('voteButton').click().wait(7000);
 
-    cy.getBySel('revealButton').click();
-    cy.getBySel('motionStatusTag', { timeout: 20000 }).should(
+    // to close the gas station
+    cy.getBySel('actionHeading').click();
+
+    cy.getBySel('revealButton', { timeout: 120000 }).click();
+    cy.getBySel('motionStatusTag', { timeout: 30000 }).should(
       'have.text',
       'Passed',
     );
