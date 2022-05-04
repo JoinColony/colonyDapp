@@ -1,17 +1,4 @@
-.main {
-  word-wrap: break-word;
-}
-
-.inputFieldSet {
-  max-width: 360px;
-}
-
-.usernameContainer {
-  composes: inlineEllipsis from '~styles/text.css';
-  margin: 15px 0;
-}
-
-.snackbarContainer {
+.container {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -22,17 +9,17 @@
   background-color: var(--colony-white);
 }
 
-.snackbarContainerSuccess {
-  composes: snackbarContainer;
+.containerSuccess {
+  composes: container;
   border: 1px solid var(--primary);
 }
 
-.snackbarContainerError {
-  composes: snackbarContainer;
+.containerError {
+  composes: container;
   border: 1px solid var(--danger);
 }
 
-.snackbarText {
+.msgText {
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--dark);
@@ -46,12 +33,24 @@
   border-radius: 50%;
 }
 
-.snackbarDotSuccess {
+.dotSuccess {
   composes: dot;
   background-color: var(--primary);
 }
 
-.snackbarDotError {
+.dotError {
   composes: dot;
   background-color: var(--danger);
+}
+
+.fadeOut {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s linear 1s, opacity 200ms;
+}
+
+.fadeIn {
+  visibility: visible;
+  opacity: 1;
+  transition: visibility 0s linear 0s, opacity 200ms;
 }
