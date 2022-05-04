@@ -8,8 +8,6 @@ import { Placement as PlacementType } from '@popperjs/core';
 
 import styles from './Tooltip.css';
 
-// @TODO import this from some library
-
 interface Props {
   /** Child element to trigger the popover */
   children: ReactNode;
