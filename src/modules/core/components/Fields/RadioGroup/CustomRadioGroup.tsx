@@ -49,6 +49,7 @@ const CustomRadioGroup = ({
           checked,
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           name: optionName,
+          dataTest: optionDataTest,
           ...rest
         }) => (
           <CustomRadio
@@ -59,7 +60,7 @@ const CustomRadioGroup = ({
             key={value}
             appearance={{ ...optionApperance, direction: appearance.direction }}
             disabled={disabled}
-            dataTest={dataTest}
+            dataTest={optionDataTest || dataTest}
             {...rest}
           />
         ),

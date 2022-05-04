@@ -146,7 +146,7 @@ describe('User can create motions via UAC', () => {
     // to close the gas station
     cy.getBySel('actionHeading').click();
 
-    cy.get('input[type="radio"]').first().click({ force: true });
+    cy.getBySel('yesVoteButton', { timeout: 30000 }).click({ force: true });
     cy.getBySel('voteButton').click();
 
     cy.getBySel('revealButton').click();
