@@ -61,12 +61,10 @@ const TransactionStatus = ({
       />
     )}
     <Tooltip
-      placement="top"
       /* Because it's in an overflow window */
-      popperProps={{ strategy: 'fixed' }}
-      showArrow
+      popperOptions={{ strategy: 'fixed' }}
       content={
-        <span className={styles.tooltip}>
+        <span>
           <FormattedMessage
             {...MSG.transactionState}
             values={{

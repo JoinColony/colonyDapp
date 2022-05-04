@@ -23,7 +23,7 @@ const ActionsPageSystemMessage = ({
   <div className={styles.main}>
     <div className={styles.wrapper}>
       <div className={styles.status}>
-        <TransactionStatus status={STATUS.SystemMessage} showTooltip={false} />
+        <TransactionStatus status={STATUS.SystemMessage} showTooltip />
       </div>
       <div className={styles.content}>
         <div className={styles.text}>

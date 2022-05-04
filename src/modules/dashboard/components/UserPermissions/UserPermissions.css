@@ -6,8 +6,16 @@
   white-space: nowrap;
 }
 
-.main > div {
+/* The following gymnastics is needed as to target the adjacent
+   children inside the Tooltiped component (which wraps the
+   children in a span) */
+
+.main > span > div {
   margin-left: 8px;
+}
+
+.main > span:first-child > div {
+  margin-left: 0px;
 }
 
 .paddingNone {

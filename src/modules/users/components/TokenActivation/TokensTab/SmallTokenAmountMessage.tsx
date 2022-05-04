@@ -25,7 +25,7 @@ const SmallTokenAmountMessage = () => (
       className={styles.tooltipIcon}
       tooltipText={MSG.tooltipText}
       tooltipClassName={styles.tooltip}
-      tooltipPopperProps={{
+      tooltipPopperOptions={{
         placement: 'right',
       }}
     />

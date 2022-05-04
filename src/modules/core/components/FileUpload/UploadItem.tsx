@@ -96,7 +96,7 @@ const UploadItem = ({
         <Tooltip
           placement="left"
           content={error || null}
-          trigger={error ? 'hover' : 'disabled'}
+          trigger={error ? 'hover' : null}
         >
           <span className={styles.itemIcon}>
             <Icon name="file" title={file.name} />

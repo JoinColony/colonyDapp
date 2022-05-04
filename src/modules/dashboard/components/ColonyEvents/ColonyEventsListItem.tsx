@@ -246,7 +246,7 @@ const ColonyEventsListItem = ({
               user={agentUserProfile}
               notSet={false}
               showInfo
-              popperProps={{
+              popperOptions={{
                 showArrow: false,
                 placement: 'bottom',
                 modifiers: [
@@ -266,18 +266,16 @@ const ColonyEventsListItem = ({
         </div>
         <div className={styles.content}>
           <Tooltip
-            appearance={{ size: 'medium', theme: 'dark' }}
             placement="bottom-start"
-            showArrow={false}
             content={
-              <div className={styles.tooltip}>
+              <div>
                 <FormattedMessage
                   id={getEventListTitleMessageDescriptor}
                   values={eventMessageValues}
                 />
               </div>
             }
-            popperProps={{
+            popperOptions={{
               modifiers: [
                 {
                   name: 'offset',

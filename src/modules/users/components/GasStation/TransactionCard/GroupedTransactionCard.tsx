@@ -90,14 +90,12 @@ const GroupedTransactionCard = ({
     >
       <div className={styles.description}>
         <Tooltip
-          placement="top"
-          showArrow
           content={
-            <span className={styles.tooltip}>
+            <span>
               <FormattedMessage {...MSG.hasDependentTx} />
             </span>
           }
-          trigger={hasDependency ? 'hover' : 'disabled'}
+          trigger={hasDependency ? 'hover' : null}
         >
           <div>
             {`${(group?.index || idx) + 1}. `}

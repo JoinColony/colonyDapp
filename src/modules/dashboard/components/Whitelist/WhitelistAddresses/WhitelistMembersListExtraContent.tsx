@@ -44,14 +44,13 @@ const WhitelistMembersListExtraContent = ({
   return (
     <div className={styles.container}>
       <Tooltip
-        appearance={{ theme: 'dark' }}
         content={
           <div className={styles.tooltip}>
             <FormattedMessage {...MSG.tooltipMessage} />
           </div>
         }
         trigger="hover"
-        popperProps={{
+        popperOptions={{
           modifiers: [
             {
               name: 'offset',

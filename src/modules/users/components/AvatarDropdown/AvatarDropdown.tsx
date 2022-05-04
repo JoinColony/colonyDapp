@@ -58,7 +58,7 @@ const AvatarDropdown = ({ onlyLogout = false, colony }: Props) => {
       )}
       trigger="click"
       showArrow={false}
-      popperProps={{
+      popperOptions={{
         modifiers: [
           {
             name: 'offset',

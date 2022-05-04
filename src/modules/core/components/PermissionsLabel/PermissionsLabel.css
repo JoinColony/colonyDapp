@@ -7,14 +7,6 @@
   cursor: pointer;
 }
 
-.wrapper + .wrapper {
-  margin-left: 10px;
-}
-
-.wrapper:hover {
-  border-color: var(--primary);
-}
-
 .stateNoPointer {
   cursor: default;
 }
@@ -42,11 +34,6 @@
   vertical-align: top;
 }
 
-.tooltip {
-  padding: 10px;
-  max-width: 280px;
-}
-
 .themeDefault {
   composes: main;
 }
@@ -63,4 +50,8 @@
 
 .themeWhite .label {
   color: var(--colony-white);
+}
+
+.tooltip {
+  max-width: 280px;
 }

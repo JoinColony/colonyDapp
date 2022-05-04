@@ -335,7 +335,7 @@ const ActionsPageEvent = ({
     <div className={styles.main} data-test={dataTest}>
       <div className={styles.wrapper}>
         <div className={styles.status}>
-          <TransactionStatus status={STATUS.Succeeded} showTooltip={false} />
+          <TransactionStatus status={STATUS.Succeeded} showTooltip />
         </div>
         <div className={styles.content}>
           <div className={styles.text} data-test="actionsEventText">

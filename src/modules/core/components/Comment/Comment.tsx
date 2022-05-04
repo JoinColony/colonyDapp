@@ -112,7 +112,7 @@ const Comment = ({
           user={user as AnyUser}
           showInfo
           notSet={false}
-          popperProps={{
+          popperOptions={{
             showArrow: false,
             placement: 'bottom',
           }}

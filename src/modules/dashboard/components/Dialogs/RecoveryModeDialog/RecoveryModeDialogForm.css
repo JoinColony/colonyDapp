@@ -5,7 +5,8 @@
   color: var(--dark);
 }
 
-.permissionLabel > div {
+/* The span is inserted by the Tooltipped component */
+.permissionLabel > span > div {
   vertical-align: bottom;
 }
 

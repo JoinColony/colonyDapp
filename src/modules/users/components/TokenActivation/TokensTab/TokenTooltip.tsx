@@ -15,7 +15,7 @@ const TokenTooltip = ({
   content,
   popperOffset,
 }: TokenTooltipProps) => {
-  const popperProps = {
+  const popperOptions = {
     modifiers: [
       {
         name: 'offset',
@@ -27,17 +27,12 @@ const TokenTooltip = ({
   };
 
   return (
-    <Tooltip placement="top-start" content={content} popperProps={popperProps}>
-      {({ close, open, ref }) => (
-        <div
-          className={className}
-          ref={ref}
-          onMouseEnter={open}
-          onMouseLeave={close}
-        >
-          {children}
-        </div>
-      )}
+    <Tooltip
+      placement="top-start"
+      content={content}
+      popperOptions={popperOptions}
+    >
+      <div className={className}>{children}</div>
     </Tooltip>
   );
 };

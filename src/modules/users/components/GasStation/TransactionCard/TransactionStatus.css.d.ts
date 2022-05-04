@@ -5,4 +5,3 @@ export const spinner: string;
 export const multisig: string;
 export const failed: string;
 export const interaction: string;
-export const tooltip: string;

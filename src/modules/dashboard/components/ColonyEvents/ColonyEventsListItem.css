@@ -59,6 +59,7 @@
 
 .title {
   composes: inlineEllipsis from '~styles/text.css';
+  max-width: 518px; /* This is required to prevent the title from overflowing */
 }
 
 .meta {
@@ -84,10 +85,6 @@
 
 .titleDecorationUsername {
   color: var(--pink);
-}
-
-.tooltip span {
-  font-size: var(--size-tiny);
 }
 
 .blockExplorerLink {

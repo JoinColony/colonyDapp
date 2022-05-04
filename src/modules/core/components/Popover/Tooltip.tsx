@@ -1,33 +1,28 @@
-import React, { ReactNode, useMemo } from 'react';
-import { PopperProps } from 'react-popper';
-
-import Popover from './Popover';
+import React, { ReactNode } from 'react';
 import {
-  PopoverTriggerType,
-  PopoverChildFn,
-  PopoverAppearanceType,
-} from './types';
+  usePopperTooltip,
+  TriggerType,
+  PopperOptions,
+} from 'react-popper-tooltip';
+import { Placement as PlacementType } from '@popperjs/core';
 
 import styles from './Tooltip.css';
 
 interface Props {
-  /** Appearance object */
-  appearance?: PopoverAppearanceType;
-
   /** Child element to trigger the popover */
-  children: ReactNode | PopoverChildFn;
+  children: ReactNode;
 
   /** The tooltips' content */
   content: ReactNode;
 
   /** How the popover gets triggered */
-  trigger?: PopoverTriggerType;
+  trigger?: TriggerType | TriggerType[] | null;
 
   /** The tooltips' placement */
-  placement?: PopperProps['placement'];
+  placement?: PlacementType;
 
-  /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
-  popperProps?: Omit<PopperProps, 'children'>;
+  /** Options to pass to the underlying PopperJS element. See here for more: https://popper.js.org/docs/v2/constructors/#options. */
+  popperOptions?: PopperOptions;
 
   /** Whether there should be an arrow on the tooltip */
   showArrow?: boolean;
@@ -37,32 +32,47 @@ interface Props {
 }
 
 const Tooltip = ({
-  appearance = {},
   children,
   content,
   placement = 'top',
-  popperProps,
+  popperOptions,
   showArrow = true,
   trigger = 'hover',
   isOpen,
 }: Props) => {
-  const renderedContent = useMemo(
-    () => <div className={styles.container}>{content}</div>,
-    [content],
+  const {
+    getArrowProps,
+    getTooltipProps,
+    setTooltipRef,
+    setTriggerRef,
+    visible,
+  } = usePopperTooltip(
+    {
+      delayShow: 200,
+      placement,
+      trigger: content ? trigger : null,
+      visible: isOpen,
+    },
+    popperOptions,
   );
+
   return (
-    <Popover
-      appearance={{ theme: 'dark', ...appearance }}
-      trigger={content ? trigger : 'disabled'}
-      openDelay={200}
-      content={renderedContent}
-      placement={placement}
-      popperProps={popperProps as PopperProps}
-      showArrow={showArrow}
-      isOpen={isOpen}
-    >
-      {children}
-    </Popover>
+    <>
+      <span ref={setTriggerRef}>{children}</span>
+      {visible && (
+        <div
+          ref={setTooltipRef}
+          {...getTooltipProps({ className: styles.tooltipContainer })}
+        >
+          <div
+            {...getArrowProps({
+              className: showArrow ? styles.tooltipArrow : '',
+            })}
+          />
+          {content}
+        </div>
+      )}
+    </>
   );
 };
 

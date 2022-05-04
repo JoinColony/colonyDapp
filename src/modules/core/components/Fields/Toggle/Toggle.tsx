@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useField } from 'formik';
-import { PopperProps } from 'react-popper';
+import { PopperOptions } from 'react-popper-tooltip';
 import { MessageDescriptor } from 'react-intl';
 
 import InputLabel from '~core/Fields/InputLabel';
@@ -25,8 +25,8 @@ interface Props {
   tooltipText?: string | MessageDescriptor;
   tooltipTextValues?: SimpleMessageValues;
   elementOnly?: boolean;
-  /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
-  tooltipPopperProps?: Omit<PopperProps, 'children'>;
+  /** Options to pass to the underlying PopperJS element. See here for more: https://popper.js.org/docs/v2/constructors/#options. */
+  tooltipPopperOptions?: PopperOptions;
   onChange?: (value: boolean) => any;
 }
 
@@ -39,7 +39,7 @@ const Toggle = ({
   elementOnly = false,
   tooltipTextValues,
   tooltipText,
-  tooltipPopperProps = {
+  tooltipPopperOptions = {
     placement: 'right-start',
     modifiers: [
       {
@@ -94,7 +94,7 @@ const Toggle = ({
         <QuestionMarkTooltip
           className={styles.icon}
           tooltipText={tooltipText}
-          tooltipPopperProps={tooltipPopperProps}
+          tooltipPopperOptions={tooltipPopperOptions}
           tooltipTextValues={tooltipTextValues}
         />
       )}

@@ -64,21 +64,10 @@ const PermissionRequiredInfo = ({ requiredRoles }: Props) => {
           <p className={styles.sectionLabel}>
             <FormattedMessage {...MSG.sectionLabel} />
           </p>
-          <Tooltip
-            appearance={{ theme: 'dark', size: 'medium' }}
-            content={tooltipText}
-            placement="right"
-          >
-            {({ close, open, ref }) => (
-              <div
-                ref={ref}
-                onMouseEnter={open}
-                onMouseLeave={close}
-                className={styles.labelIcon}
-              >
-                <Icon name="question-mark" title={MSG.title} />
-              </div>
-            )}
+          <Tooltip content={tooltipText} placement="right">
+            <div className={styles.labelIcon}>
+              <Icon name="question-mark" title={MSG.title} />
+            </div>
           </Tooltip>
 
           <div className={styles.permissionList}>

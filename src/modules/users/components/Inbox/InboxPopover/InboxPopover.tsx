@@ -49,7 +49,7 @@ const InboxPopover = ({ children, notifications }: Props) => {
       showArrow={false}
       isOpen={isOpen}
       onClose={() => setOpen(false)}
-      popperProps={{
+      popperOptions={{
         modifiers: [
           {
             name: 'offset',

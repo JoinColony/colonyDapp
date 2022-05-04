@@ -153,7 +153,7 @@ const UnwrapTokensPage = ({ match }: Props) => {
                 wrappedToken?.address ===
                 data?.processedColony?.nativeTokenAddress
               }
-              popperProps={{
+              popperOptions={{
                 placement: 'bottom',
               }}
             >

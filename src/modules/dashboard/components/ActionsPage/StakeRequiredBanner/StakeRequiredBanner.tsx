@@ -44,11 +44,10 @@ const StakeRequiredBanner = ({ stakeRequired }: Props) => {
         <div className={styles.stakeRequiredBanner}>
           <FormattedMessage {...MSG.stakeRequired} />
           <Tooltip
-            appearance={{ size: 'medium' }}
             placement="right"
             trigger="click"
             content={<FormattedMessage {...MSG.copyURLTooltip} />}
-            popperProps={{
+            popperOptions={{
               modifiers: [
                 {
                   name: 'offset',

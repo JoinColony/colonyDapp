@@ -453,7 +453,7 @@ const DefaultMotion = ({
                 className={motionSpecificStyles.helpProgressBar}
                 tooltipClassName={motionSpecificStyles.tooltip}
                 showArrow={false}
-                tooltipPopperProps={{
+                tooltipPopperOptions={{
                   placement: 'top-end',
                   modifiers: [
                     {
@@ -490,7 +490,7 @@ const DefaultMotion = ({
                   tooltipText={MSG.escalateTooltip}
                   className={motionSpecificStyles.helpEscalate}
                   tooltipClassName={motionSpecificStyles.tooltip}
-                  tooltipPopperProps={{
+                  tooltipPopperOptions={{
                     placement: 'right',
                   }}
                 />

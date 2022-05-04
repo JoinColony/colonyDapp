@@ -1,6 +1,121 @@
-.container {
-  padding: 5px 10px;
+/* This is mostly lifted from
+ * https://github.com/mohsinulhaq/react-popper-tooltip/blob/62633040d1d5616d879c2d237b116bd3d2e85e2a/src/styles.css */
+
+.tooltipContainer {
+  --tooltipBackground: var(--dark);
+  --tooltipBorder: var(--dark);
+
+  display: flex;
+  padding: 10px;
+  position: relative;
+  z-index: 9999;
+  border: 1px solid var(--tooltipBorder);
+  border-radius: var(--radius-normal);
+  background-color: var(--tooltipBackground);
   font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
   line-height: 16px;
-  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 1);
+  letter-spacing: 0.25px;
+  transition: opacity 0.3s;
+}
+
+.tooltipContainer[data-popper-interactive='false'] {
+  pointer-events: none;
+}
+
+.tooltipArrow {
+  height: 1rem;
+  width: 1rem;
+  position: absolute;
+  pointer-events: none;
+}
+
+.tooltipArrow::before {
+  display: block;
+  margin: auto;
+  height: 0;
+  width: 0;
+  border-style: solid;
+  content: '';
+}
+
+.tooltipArrow::after {
+  display: block;
+  margin: auto;
+  height: 0;
+  width: 0;
+  position: absolute;
+  border-style: solid;
+  content: '';
+}
+
+.tooltipContainer[data-popper-placement*='bottom'] .tooltipArrow {
+  margin-top: -0.4rem;
+  top: 0;
+  left: 0;
+}
+
+.tooltipContainer[data-popper-placement*='bottom'] .tooltipArrow::before {
+  position: absolute;
+  top: -1px;
+  border-color: transparent transparent var(--tooltipBorder) transparent;
+  border-width: 0 0.5rem 0.4rem 0.5rem;
+}
+
+.tooltipContainer[data-popper-placement*='bottom'] .tooltipArrow::after {
+  border-color: transparent transparent var(--tooltipBackground) transparent;
+  border-width: 0 0.5rem 0.4rem 0.5rem;
+}
+
+.tooltipContainer[data-popper-placement*='top'] .tooltipArrow {
+  margin-bottom: -0.9rem;
+  bottom: 0;
+  left: 0;
+}
+
+.tooltipContainer[data-popper-placement*='top'] .tooltipArrow::before {
+  position: absolute;
+  top: 1px;
+  border-color: var(--tooltipBorder) transparent transparent transparent;
+  border-width: 0.4rem 0.5rem 0 0.5rem;
+}
+
+.tooltipContainer[data-popper-placement*='top'] .tooltipArrow::after {
+  border-color: var(--tooltipBackground) transparent transparent transparent;
+  border-width: 0.4rem 0.5rem 0 0.5rem;
+}
+
+.tooltipContainer[data-popper-placement*='right'] .tooltipArrow {
+  margin-left: -0.7rem;
+  left: 0;
+}
+
+.tooltipContainer[data-popper-placement*='right'] .tooltipArrow::before {
+  border-color: transparent var(--tooltipBorder) transparent transparent;
+  border-width: 0.5rem 0.4rem 0.5rem 0;
+}
+
+.tooltipContainer[data-popper-placement*='right'] .tooltipArrow::after {
+  top: 0;
+  left: 6px;
+  border-color: transparent var(--tooltipBackground) transparent transparent;
+  border-width: 0.5rem 0.4rem 0.5rem 0;
+}
+
+.tooltipContainer[data-popper-placement*='left'] .tooltipArrow {
+  margin-right: -0.7rem;
+  right: 0;
+}
+
+.tooltipContainer[data-popper-placement*='left'] .tooltipArrow::before {
+  border-color: transparent transparent transparent var(--tooltipBorder);
+  border-width: 0.5rem 0 0.5rem 0.4em;
+}
+
+.tooltipContainer[data-popper-placement*='left'] .tooltipArrow::after {
+  top: 0;
+  left: 3px;
+  border-color: transparent transparent transparent var(--tooltipBackground);
+  border-width: 0.5rem 0 0.5rem 0.4em;
 }

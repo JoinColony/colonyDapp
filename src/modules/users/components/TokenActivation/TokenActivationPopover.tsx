@@ -42,7 +42,7 @@ const TokenActivationPopover = ({ children, ...otherProps }: Props) => {
       content={() => (
         <TokenActivationContent {...otherProps} setIsPopoverOpen={setIsOpen} />
       )}
-      popperProps={{
+      popperOptions={{
         modifiers: [
           {
             name: 'offset',

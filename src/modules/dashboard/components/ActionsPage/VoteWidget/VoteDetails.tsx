@@ -114,7 +114,7 @@ const VoteDetails = ({
               tooltipText={MSG.votingMethodTooltip}
               className={styles.help}
               tooltipClassName={styles.tooltip}
-              tooltipPopperProps={{
+              tooltipPopperOptions={{
                 placement: 'right',
               }}
             />
@@ -140,7 +140,7 @@ const VoteDetails = ({
                   tooltipText={MSG.reputationTeamTooltip}
                   className={styles.help}
                   tooltipClassName={styles.tooltip}
-                  tooltipPopperProps={{
+                  tooltipPopperOptions={{
                     placement: 'right',
                   }}
                 />
@@ -163,7 +163,7 @@ const VoteDetails = ({
                   tooltipText={MSG.rewardTooltip}
                   className={styles.help}
                   tooltipClassName={styles.tooltip}
-                  tooltipPopperProps={{
+                  tooltipPopperOptions={{
                     placement: 'right',
                   }}
                 />
@@ -245,7 +245,7 @@ const VoteDetails = ({
                 tooltipText={MSG.rulesTooltip}
                 className={styles.help}
                 tooltipClassName={styles.tooltip}
-                tooltipPopperProps={{
+                tooltipPopperOptions={{
                   placement: 'right',
                 }}
               />

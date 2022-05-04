@@ -13,7 +13,9 @@ import React, {
   MouseEvent,
 } from 'react';
 import { nanoid } from 'nanoid';
-import { usePopper, PopperProps } from 'react-popper';
+import { usePopper } from 'react-popper';
+import { PopperOptions } from 'react-popper-tooltip';
+
 import { Placement } from '@popperjs/core';
 import { Unionize } from 'utility-types';
 
@@ -54,8 +56,8 @@ interface Props {
   openDelay?: number;
   /** Popover placement */
   placement?: Placement;
-  /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
-  popperProps?: Omit<PopperProps, 'children'>;
+  /** Options to pass to the underlying PopperJS element. See here for more: https://popper.js.org/docs/v2/constructors/#options. */
+  popperOptions?: PopperOptions;
   /** Whether the reference element should retain focus when popover is open (only for `HTMLInputElements`) */
   retainRefFocus?: boolean;
   /** Whether there should be an arrow on the popover */
@@ -86,7 +88,7 @@ const Popover = ({
   onClose,
   openDelay,
   placement: placementProp = 'auto',
-  popperProps = {},
+  popperOptions = {},
   retainRefFocus,
   showArrow = true,
   trigger = 'click',
@@ -108,7 +110,7 @@ const Popover = ({
     {
       modifiers: [{ name: 'arrow', options: { element: arrowElement } }],
       placement: placementProp,
-      ...popperProps,
+      ...popperOptions,
     },
   );
 
