@@ -35,7 +35,7 @@ interface Props<U> {
 const MSG = defineMessages({
   whitelistedTooltip: {
     id: 'core.MembersList.MembersListItem.whitelistedTooltip',
-    defaultMessage: `Address added to whitelist`,
+    defaultMessage: `Added to verified address list`,
   },
 });
 
@@ -150,6 +150,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
                   placement: 'top',
                   strategy: 'fixed',
                 }}
+                appearance={{ size: 'medium' }}
                 className={styles.whitelistedIcon}
               />
             )}
