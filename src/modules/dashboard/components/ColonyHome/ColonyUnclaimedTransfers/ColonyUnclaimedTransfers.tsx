@@ -130,7 +130,7 @@ const ColonyUnclaimedTransfers = ({
               */
               showArrow={false}
               placement="top-start"
-              popperProps={{
+              popperOptions={{
                 modifiers: [
                   {
                     name: 'offset',
