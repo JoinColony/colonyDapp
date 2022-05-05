@@ -11,6 +11,7 @@ import { numbroCustomLanguage } from '../../src/utils/numbers/numbroCustomLangua
 describe('User can create motions via UAC', () => {
   const {
     colony: { name: colonyName },
+    colony,
   } = Cypress.config();
   numbro.registerLanguage(numbroCustomLanguage);
   numbro.setLanguage('en-GB');
@@ -97,19 +98,17 @@ describe('User can create motions via UAC', () => {
   });
 
   it('Can update tokens', () => {
-    const { name: existingColonyName } = Cypress.config().colony;
     cy.login();
 
-    cy.updateTokens(existingColonyName, createdColony.name, true);
+    cy.updateTokens(colonyName, createdColony.name, true);
 
     cy.checkMotion();
   });
 
   it('Can unlock the native token', () => {
-    const { colony } = Cypress.config();
     cy.login();
 
-    cy.visit(`/colony/${colony.name}`);
+    cy.visit(`/colony/${colonyName}`);
 
     cy.unlockToken(colony);
 

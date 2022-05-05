@@ -4,6 +4,7 @@ describe('User can create actions via UAC', () => {
   const {
     colony: { name: colonyName },
     baseUrl,
+    skipInitTests,
   } = Cypress.config();
 
   it('Can mint native tokens', () => {
@@ -106,7 +107,7 @@ describe('User can create actions via UAC', () => {
   });
 
   /* needs to only work once */
-  if (!Cypress.config().skipInitTests) {
+  if (!skipInitTests) {
     it('Can unlock the native token', () => {
       const colony = { name: 'sirius', nativeToken: 'SIRS' };
 

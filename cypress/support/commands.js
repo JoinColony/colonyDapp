@@ -31,7 +31,7 @@ import { splitAddress } from '~utils/strings';
 import { buildUser } from './generate';
 
 const {
-  colony: { name: colonyName },
+  colony: { name: colonyName, nativeToken },
   baseUrl,
 } = Cypress.config();
 
@@ -217,7 +217,7 @@ Cypress.Commands.add('mintTokens', (amountToMint, isMotion) => {
 
   cy.getBySel('actionHeading', { timeout: 60000 }).should(
     'have.text',
-    `Mint ${amountToMint} ${Cypress.config().colony.nativeToken}`,
+    `Mint ${amountToMint} ${nativeToken}`,
   );
 
   if (isMotion !== undefined) {
@@ -233,10 +233,6 @@ Cypress.Commands.add(
     const annotationText = isMotion
       ? 'Test motion annotation'
       : 'Test annotation';
-
-    const {
-      colony: { nativeToken },
-    } = Cypress.config();
 
     let recipient;
 
@@ -393,9 +389,7 @@ Cypress.Commands.add('transferFunds', (amountToTransfer, isMotion) => {
 
   cy.getBySel('actionHeading', { timeout: 100000 }).should(
     'include.text',
-    `Move ${amountToTransfer} ${
-      Cypress.config().colony.nativeToken
-    } from Root to `,
+    `Move ${amountToTransfer} ${nativeToken} from Root to `,
   );
 
   cy.url().should('contains', `${baseUrl}/colony/${colonyName}/tx/0x`);

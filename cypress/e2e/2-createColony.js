@@ -3,9 +3,10 @@ describe('Create a new colony', () => {
     colony,
     colony: { name: colonyName, nativeToken },
     baseUrl,
+    skipInitTests,
   } = Cypress.config();
 
-  if (!Cypress.config().skipInitTests) {
+  if (!skipInitTests) {
     it('creates a new colony with new token', () => {
       cy.login();
 
