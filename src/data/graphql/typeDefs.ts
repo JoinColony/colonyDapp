@@ -124,6 +124,8 @@ export default gql`
     motionDomain: Int!
     rootHash: String
     reputationChange: String!
+    isWhitelistActivated: Boolean!
+    verifiedAddresses: [String!]!
   }
 
   input NetworkContractsInput {

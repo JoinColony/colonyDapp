@@ -16,6 +16,7 @@ import Icon from '~core/Icon';
 import FriendlyName from '~core/FriendlyName';
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import CountDownTimer from '~dashboard/ActionsPage/CountDownTimer';
+import useColonyMetadataChecks from '~modules/dashboard/hooks/useColonyMetadataChecks';
 
 import { getMainClasses, removeValueUnits } from '~utils/css';
 import {
@@ -32,7 +33,7 @@ import {
 import { createAddress } from '~utils/web3';
 import { FormattedAction, ColonyActions, ColonyMotions } from '~types/index';
 import { useDataFetcher } from '~utils/hooks';
-import { parseDomainMetadata } from '~utils/colonyActions';
+import { parseColonyMetadata, parseDomainMetadata } from '~utils/colonyActions';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import {
@@ -128,6 +129,13 @@ const ActionsListItem = ({
 
   const [fetchTokenInfo, { data: tokenData }] = useTokenInfoLazyQuery();
 
+  const colonyObject = parseColonyMetadata(metadataJSON);
+  const colonyMetadataChecks = useColonyMetadataChecks(
+    actionType,
+    colony,
+    transactionHash,
+    { verifiedAddresses: colonyObject.verifiedAddresses || [] },
+  );
   useEffect(() => {
     if (transactionTokenAddress) {
       fetchTokenInfo({ variables: { address: transactionTokenAddress } });
@@ -284,7 +292,12 @@ const ActionsListItem = ({
           <div className={styles.titleWrapper}>
             <span className={styles.title}>
               <FormattedMessage
-                id={roleMessageDescriptorId || 'action.title'}
+                id={
+                  (colonyMetadataChecks.verifiedAddressesChanged &&
+                    `action.${ColonyActions.ColonyEdit}.verifiedAddresses`) ||
+                  roleMessageDescriptorId ||
+                  'action.title'
+                }
                 values={{
                   actionType,
                   initiator: (

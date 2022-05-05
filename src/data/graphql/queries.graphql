@@ -239,6 +239,8 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
     blockNumber
     rootHash
     reputationChange
+    isWhitelistActivated
+    verifiedAddresses
   }
 }
 

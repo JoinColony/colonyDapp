@@ -1007,6 +1007,8 @@ export type ColonyAction = {
   motionDomain: Scalars['Int'];
   rootHash?: Maybe<Scalars['String']>;
   reputationChange: Scalars['String'];
+  isWhitelistActivated: Scalars['Boolean'];
+  verifiedAddresses: Array<Scalars['String']>;
 };
 
 export type NetworkContractsInput = {
@@ -1848,7 +1850,7 @@ export type ColonyActionQueryVariables = Exact<{
 
 
 export type ColonyActionQuery = { colonyAction: (
-    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionState' | 'motionDomain' | 'blockNumber' | 'rootHash' | 'reputationChange'>
+    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionState' | 'motionDomain' | 'blockNumber' | 'rootHash' | 'reputationChange' | 'isWhitelistActivated' | 'verifiedAddresses'>
     & { events: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'transactionHash'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>> }
   ) };
 
@@ -4384,6 +4386,8 @@ export const ColonyActionDocument = gql`
     blockNumber
     rootHash
     reputationChange
+    isWhitelistActivated
+    verifiedAddresses
   }
 }
     `;
