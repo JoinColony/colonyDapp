@@ -187,7 +187,7 @@ describe('User can create motions via UAC', () => {
     });
   });
 
-  it.only('User can claim their stake', () => {
+  it('User can claim their stake', () => {
     cy.login();
     cy.visit(`/colony/${colonyName}`);
 
