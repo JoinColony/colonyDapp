@@ -90,7 +90,8 @@ subscription SubgraphEventsThatAreActions($skip: Int = 0, $first: Int = 1000, $c
         "ColonyUpgraded(uint256,uint256)",
         "RecoveryModeEntered(address)",
         "ArbitraryReputationUpdate(address,address,uint256,int256)",
-        "TokenUnlocked()"
+        "TokenUnlocked(address)",
+        "TokenUnlocked()",
       ]
     }) {
     id
