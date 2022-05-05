@@ -296,7 +296,11 @@ const ColonyActions = ({
               </div>
             </Form>
 
-            <Link className={styles.link} to={`/colony/${colonyName}/events`}>
+            <Link
+              className={styles.link}
+              to={`/colony/${colonyName}/events`}
+              data-test="transactionsLog"
+            >
               <FormattedMessage {...MSG.transactionsLogLink} />
             </Link>
           </div>

@@ -171,8 +171,11 @@ Cypress.Commands.add('enableExtension', (extensionId) => {
   cy.getBySel('enableExtensionButton').click();
   if (extensionId === Extension.Whitelist) {
     cy.getBySel('policySelector').eq(1).click({ force: true });
+    cy.getBySel('policySelector').eq(1).click({ force: true });
   }
-  cy.getBySel('setupExtensionConfirmButton').click();
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  cy.getBySel('setupExtensionConfirmButton').click().wait(7000);
+  cy.getBySel('closeGasStationButton').click();
   cy.getBySel('enabledStatusTag', { timeout: 30000 }).should('exist');
 });
 

@@ -166,9 +166,7 @@ describe('User can create motions via UAC', () => {
 
     cy.getBySel('backButton').click();
 
-    cy.getBySel('eventsNavigationButton').click({
-      force: true,
-    });
+    cy.getBySel('transactionsLog').click();
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.getBySel('claimForColonyButton', { timeout: 100000 }).click().wait(5000);
 
