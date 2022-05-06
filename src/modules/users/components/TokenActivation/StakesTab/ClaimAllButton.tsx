@@ -65,6 +65,7 @@ const ClaimAllButton = ({
           onClick={() => handleSubmit()}
           loading={isSubmitting}
           disabled={isSubmitting}
+          dataTest="claimAllStakesButton"
         />
       )}
     </ActionForm>

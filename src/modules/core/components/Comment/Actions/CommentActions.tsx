@@ -65,7 +65,7 @@ const CommentActions = ({
       placement="left"
       isOpen={isOpen}
       onClose={() => setOpen(false)}
-      popperProps={{
+      popperOptions={{
         modifiers: [
           {
             name: 'offset',

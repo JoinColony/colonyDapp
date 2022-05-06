@@ -28,11 +28,11 @@ interface Props {
   contentRef: Dispatch<SetStateAction<HTMLElement | null>>;
   contentValues?: SimpleMessageValues;
   onFocus: (evt: FocusEvent<HTMLElement>) => void;
-  popperAttributes: Record<string, object>;
+  popperAttributes: Record<string, object | undefined>;
   popperStyles: Record<string, CSSProperties>;
   retainRefFocus?: boolean;
   showArrow: boolean;
-  state: PopperJsState;
+  state: PopperJsState | null;
 }
 
 const displayName = 'PopoverWrapper';

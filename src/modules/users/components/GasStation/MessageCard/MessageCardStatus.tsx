@@ -31,12 +31,10 @@ const displayName = 'users.GasStation.MessageCard.MessageCardStatus';
 const MessageCardStatus = ({ status }: Props) => (
   <div className={styles.main}>
     <Tooltip
-      placement="top"
       /* Because it's in an overflow window */
-      popperProps={{ strategy: 'fixed' }}
-      showArrow
+      popperOptions={{ strategy: 'fixed' }}
       content={
-        <span className={styles.tooltip}>
+        <span>
           <FormattedMessage {...MSG.messageState} values={{ status }} />
         </span>
       }

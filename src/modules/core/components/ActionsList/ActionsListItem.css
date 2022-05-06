@@ -33,14 +33,15 @@
 }
 
 .avatar > div > figure {
-  height: 41px;
-  width: 41px;
+  height: 42px;
+  width: 42px;
   border: 2px solid transparent;
   border-radius: 100%;
 }
 
 .avatar:hover figure {
   border-color: var(--primary);
+  background: var(--primary);
 }
 
 .status::before {

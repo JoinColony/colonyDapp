@@ -1,9 +1,10 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 import { Redirect } from 'react-router-dom';
 import { isConfusing } from 'unicode-confusables';
 
+import Snackbar, { SnackbarType } from '~core/Snackbar';
 import CopyableAddress from '~core/CopyableAddress';
 import UserMention from '~core/UserMention';
 import Heading from '~core/Heading';
@@ -54,6 +55,14 @@ const MSG = defineMessages({
     id: 'users.UserProfileEdit.labelLocation',
     defaultMessage: 'Location',
   },
+  snackbarSuccess: {
+    id: 'users.UserProfileEdit.snackbarSuccess',
+    defaultMessage: 'Profile settings have been updated.',
+  },
+  snackbarError: {
+    id: 'users.UserProfileEdit.snackbarError',
+    defaultMessage: 'Profile settings were not able to be updated. Try again.',
+  },
 });
 
 const displayName = 'users.UserProfileEdit';
@@ -73,9 +82,20 @@ const validationSchema = yup.object({
 });
 
 const UserProfileEdit = () => {
+  const [showSnackbar, setShowSnackbar] = useState<boolean>(false);
+  useEffect(() => {
+    if (showSnackbar) {
+      const timeout = setTimeout(() => setShowSnackbar(true), 200000);
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+    return undefined;
+  }, [showSnackbar]);
+
   const { walletAddress, ethereal } = useLoggedInUser();
 
-  const [editUser] = useEditUserMutation();
+  const [editUser, { error }] = useEditUserMutation();
   const onSubmit = useCallback(
     (profile: FormValues) => editUser({ variables: { input: profile } }),
     [editUser],
@@ -110,7 +130,7 @@ const UserProfileEdit = () => {
         onSubmit={onSubmit}
         validationSchema={validationSchema}
       >
-        {({ status, isSubmitting, values }) => (
+        {({ status, isSubmitting, dirty, isValid, values }) => (
           <div className={styles.main}>
             <FieldSet>
               <InputLabel label={MSG.labelWallet} />
@@ -159,9 +179,17 @@ const UserProfileEdit = () => {
                 text={{ id: 'button.save' }}
                 loading={isSubmitting}
                 dataTest="userSettingsSubmit"
+                onClick={() => setShowSnackbar(true)}
+                disabled={!dirty || !isValid}
               />
             </FieldSet>
             <FormStatus status={status} />
+            <Snackbar
+              show={showSnackbar}
+              setShow={setShowSnackbar}
+              msg={error ? MSG.snackbarError : MSG.snackbarSuccess}
+              type={error ? SnackbarType.Error : SnackbarType.Success}
+            />
           </div>
         )}
       </Form>

@@ -346,15 +346,16 @@ const BuyTokens = ({
           text={MSG.title}
           textValues={{ tokenSymbol: sellableToken?.symbol }}
         />
+        <div className={styles.helpWrapper}>
+          <QuestionMarkTooltip
+            tooltipText={MSG.helpTooltip}
+            tooltipPopperOptions={{
+              placement: 'top',
+            }}
+            tooltipClassName={styles.tooltip}
+          />
+        </div>
       </div>
-      <QuestionMarkTooltip
-        tooltipText={MSG.helpTooltip}
-        className={styles.help}
-        tooltipPopperProps={{
-          placement: 'top',
-        }}
-        tooltipClassName={styles.tooltip}
-      />
       {isCurrentlyOnSale ? (
         <div className={styles.form}>
           <ActionForm

@@ -82,7 +82,7 @@ const DeleteComment = ({ cancel, close, comment, undelete = false }: Props) => {
         </div>
         {comment && (
           <div className={styles.comment}>
-            <Comment {...comment} />
+            <Comment disableHover {...comment} />
           </div>
         )}
       </DialogSection>

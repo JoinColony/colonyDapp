@@ -128,10 +128,6 @@
   }
 }
 
-.themeGrid > div {
-  align-items: flex-start;
-}
-
 .widthContent {
   width: min-content;
 }

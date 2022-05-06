@@ -1,6 +1,7 @@
 import React from 'react';
 import { FormattedMessage, MessageDescriptor } from 'react-intl';
-import { PopperProps } from 'react-popper';
+import { PopperOptions } from 'react-popper-tooltip';
+
 import cx from 'classnames';
 
 import Icon from '~core/Icon';
@@ -23,8 +24,8 @@ interface Props {
   /** Customise the tooltip message */
   tooltipText: string | MessageDescriptor;
   tooltipTextValues?: SimpleMessageValues;
-  /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
-  tooltipPopperProps?: Omit<PopperProps, 'children'>;
+  /** Options to pass to the underlying PopperJS element. See here for more: https://popper.js.org/docs/v2/constructors/#options. */
+  tooltipPopperOptions?: PopperOptions;
   tooltipClassName?: string;
   className?: string;
   iconTitle?: string;
@@ -40,9 +41,17 @@ const IconTooltip = ({
   iconClassName = styles.icon,
   tooltipText,
   tooltipTextValues,
-  /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
-  tooltipPopperProps = {
+  /** Options to pass to the underlying PopperJS element. See here for more: https://popper.js.org/docs/v2/constructors/#options. */
+  tooltipPopperOptions = {
     placement: 'top',
+    modifiers: [
+      {
+        name: 'offset',
+        options: {
+          offset: [0, 2],
+        },
+      },
+    ],
   },
   tooltipClassName = styles.tooltipWrapper,
   className,
@@ -54,10 +63,6 @@ const IconTooltip = ({
     data-test={dataTest}
   >
     <Tooltip
-      appearance={{
-        theme: appearance.theme ? appearance.theme : 'dark',
-        size: 'medium',
-      }}
       content={
         typeof tooltipText === 'string' ? (
           tooltipText
@@ -69,11 +74,9 @@ const IconTooltip = ({
       }
       trigger="hover"
       showArrow={showArrow}
-      popperProps={tooltipPopperProps}
+      popperOptions={tooltipPopperOptions}
     >
-      <div className={styles.iconWrap}>
-        <Icon className={iconClassName} name={icon} title="" />
-      </div>
+      <Icon className={iconClassName} name={icon} title="" />
     </Tooltip>
   </div>
 );

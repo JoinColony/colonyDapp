@@ -4,6 +4,11 @@ import ganacheAccounts from '~lib/colonyNetwork/ganache-accounts.json';
 import { createAddress } from '~utils/web3';
 
 describe('User can create actions via UAC', () => {
+  const {
+    colony: { name: colonyName },
+    baseUrl,
+  } = Cypress.config();
+
   it('Can mint native tokens', () => {
     const amountToMint = 10000;
     cy.mintTokens(amountToMint, false);
@@ -105,7 +110,7 @@ describe('User can create actions via UAC', () => {
     const colony = { name: 'sirius', nativeToken: 'SIRS' };
     cy.login();
     cy.createColony(colony, true);
-    cy.url().should('eq', `${Cypress.config().baseUrl}/colony/${colony.name}`, {
+    cy.url().should('eq', `${baseUrl}/colony/${colony.name}`, {
       timeout: 90000,
     });
 
@@ -116,8 +121,7 @@ describe('User can create actions via UAC', () => {
     cy.getBySel('lockIconTooltip', { timeout: 15000 }).should('not.exist');
   });
   it('Can manage permissions', () => {
-    const { colony } = Cypress.config();
-    cy.managePermissions(colony.name);
+    cy.managePermissions();
   });
 
   it('Can award users', () => {
@@ -147,8 +151,7 @@ describe('User can create actions via UAC', () => {
     const annotationText = 'We have to recover what we have lost';
 
     cy.login();
-
-    cy.visit(`/colony/${Cypress.config().colony.name}`);
+    cy.visit(`/colony/${colonyName}`);
 
     cy.getBySel('newActionButton', { timeout: 70000 }).click();
     cy.getBySel('advancedDialogIndexItem').click();
@@ -162,12 +165,7 @@ describe('User can create actions via UAC', () => {
       'Recovery mode activated by',
     );
 
-    cy.url().should(
-      'contains',
-      `${Cypress.config().baseUrl}/colony/${
-        Cypress.config().colony.name
-      }/tx/0x`,
-    );
+    cy.url().should('contains', `${baseUrl}/colony/${colonyName}/tx/0x`);
 
     cy.getBySel('comment').should('have.text', annotationText);
 

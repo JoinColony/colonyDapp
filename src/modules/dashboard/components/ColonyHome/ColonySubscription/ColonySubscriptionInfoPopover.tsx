@@ -85,7 +85,7 @@ const ColonySubscriptionInfoPopover = ({
     trigger="click"
     showArrow={false}
     placement="right"
-    popperProps={{
+    popperOptions={{
       modifiers: [
         {
           name: 'offset',

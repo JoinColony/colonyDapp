@@ -9,4 +9,3 @@ export const cancelDecision: string;
 export const stateFailed: string;
 export const stateIsShowingCancelConfirmation: string;
 export const failedDescription: string;
-export const tooltip: string;

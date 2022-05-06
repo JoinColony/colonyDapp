@@ -18,7 +18,7 @@ const MSG = defineMessages({
   },
   awardReputationTitle: {
     id: 'dashboard.ManageReputationDialog.awardReputationTitle',
-    defaultMessage: 'Award reputation',
+    defaultMessage: 'Award Reputation',
   },
   awardReputationDescription: {
     id: 'dashboard.ManageReputationDialog.awardReputationDescription',
@@ -31,12 +31,12 @@ const MSG = defineMessages({
   },
   smiteReputationTitle: {
     id: 'dashboard.ManageReputationDialog.smiteReputationTitle',
-    defaultMessage: 'Smite',
+    defaultMessage: 'Smite Reputation',
   },
   smiteReputationDescription: {
     id: 'dashboard.ManageReputationDialog.smiteReputationDescription',
     defaultMessage:
-      'Punish undesirable behaviour by deducting Reputation points.',
+      'Punish undesirable behaviour by deducting reputation points.',
   },
 });
 

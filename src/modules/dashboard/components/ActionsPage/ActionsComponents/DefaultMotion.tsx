@@ -243,27 +243,23 @@ const DefaultMotion = ({
 
   const threshold = bigNumberify(
     votingStateData?.votingState?.thresholdValue || 0,
-  )
-    .div(bigNumberify(10).pow(18))
-    .toNumber();
+  ).div(bigNumberify(10).pow(18));
 
   const totalVotedReputationValue = bigNumberify(
     votingStateData?.votingState?.totalVotedReputation || 0,
-  )
-    .div(bigNumberify(10).pow(18))
-    .toNumber();
+  ).div(bigNumberify(10).pow(18));
 
   const skillRepValue = bigNumberify(
     votingStateData?.votingState?.skillRep || 0,
-  )
-    .div(bigNumberify(10).pow(18))
-    .toNumber();
-
-  const currentReputationPercent =
-    (totalVotedReputationValue > 0 &&
-      Math.round((totalVotedReputationValue / skillRepValue) * 100)) ||
-    0;
-  const thresholdPercent = Math.round((threshold / skillRepValue) * 100);
+  ).div(bigNumberify(10).pow(18));
+  const currentReputationPercent = !totalVotedReputationValue.isZero()
+    ? Math.round(
+        totalVotedReputationValue.div(skillRepValue).mul(100).toNumber(),
+      )
+    : 0;
+  const thresholdPercent = !skillRepValue.isZero()
+    ? Math.round(threshold.div(skillRepValue).mul(100).toNumber())
+    : 0;
   const domainMetadata = {
     name: domainName,
     color: domainColor,
@@ -457,7 +453,7 @@ const DefaultMotion = ({
                 className={motionSpecificStyles.helpProgressBar}
                 tooltipClassName={motionSpecificStyles.tooltip}
                 showArrow={false}
-                tooltipPopperProps={{
+                tooltipPopperOptions={{
                   placement: 'top-end',
                   modifiers: [
                     {
@@ -494,7 +490,7 @@ const DefaultMotion = ({
                   tooltipText={MSG.escalateTooltip}
                   className={motionSpecificStyles.helpEscalate}
                   tooltipClassName={motionSpecificStyles.tooltip}
-                  tooltipPopperProps={{
+                  tooltipPopperOptions={{
                     placement: 'right',
                   }}
                 />

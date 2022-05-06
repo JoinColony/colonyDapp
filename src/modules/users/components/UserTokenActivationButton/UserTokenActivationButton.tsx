@@ -25,6 +25,7 @@ interface Props {
   nativeToken: UserToken;
   colony?: FullColonyFragment;
   walletAddress: Address;
+  dataTest: string;
 }
 
 const UserTokenActivationButton = ({
@@ -32,6 +33,7 @@ const UserTokenActivationButton = ({
   userLock,
   colony,
   walletAddress,
+  dataTest,
 }: Props) => {
   const inactiveBalance = bigNumberify(nativeToken?.balance || 0);
 
@@ -65,24 +67,22 @@ const UserTokenActivationButton = ({
             className={styles.tokens}
             onClick={toggle}
             ref={ref}
-            data-test="tokenActivationButton"
+            data-test={dataTest}
           >
             <Tooltip
-              appearance={{ theme: 'dark', size: 'medium' }}
-              placement="bottom"
-              trigger={!isOpen ? 'hover' : 'disabled'}
-              showArrow
+              placement="bottom-start"
+              trigger={!isOpen ? 'hover' : null}
               content={
                 <div className={styles.tooltip}>
                   <FormattedMessage {...MSG.tooltip} />
                 </div>
               }
-              popperProps={{
+              popperOptions={{
                 modifiers: [
                   {
                     name: 'offset',
                     options: {
-                      offset: [120, 10],
+                      offset: [-8, 8],
                     },
                   },
                 ],

@@ -37,7 +37,6 @@
 }
 
 .tooltip {
-  width: 237px;
-  font-size: var(--size-tiny);
+  width: 225px;
   text-align: left;
 }

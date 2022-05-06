@@ -146,10 +146,6 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
                 icon="check-mark"
                 tooltipText={MSG.whitelistedTooltip}
                 tooltipClassName={styles.whitelistedIconTooltip}
-                tooltipPopperProps={{
-                  placement: 'top',
-                  strategy: 'fixed',
-                }}
                 appearance={{ size: 'medium' }}
                 className={styles.whitelistedIcon}
               />

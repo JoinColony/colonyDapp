@@ -19,6 +19,8 @@ import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import PermissionsLabel from '~core/PermissionsLabel';
 import Numeral from '~core/Numeral';
+import ExternalLink from '~core/ExternalLink';
+import { REPUTATION_LEARN_MORE } from '~externalUrls';
 
 import { Address } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
@@ -46,8 +48,8 @@ const MSG = defineMessages({
   title: {
     id: 'dashboard.ManageReputationContainer.ManageReputationDialogForm.title',
     defaultMessage: `{isSmiteAction, select,
-      true {Smite}
-      false {Award}
+      true {Smite Reputation}
+      false {Award Reputation}
     }`,
   },
   team: {
@@ -92,6 +94,14 @@ const MSG = defineMessages({
       one {pt}
       other {pts}
     } ({userPercentageReputation}%)`,
+  },
+  warningTitle: {
+    id: `dashboard.ManageReputationContainer.ManageReputationDialogForm.warningTitle`,
+    defaultMessage: `Caution!`,
+  },
+  warningText: {
+    id: `dashboard.ManageReputationContainer.ManageReputationDialogForm.noPermission`,
+    defaultMessage: `Improper use of this feature can break your colony. <a>Learn more</a>`,
   },
 });
 
@@ -305,8 +315,31 @@ const ManageReputationDialogForm = ({
               />
             )}
           </div>
+          {!isSmiteAction && (
+            <div className={styles.warningContainer}>
+              <p className={styles.warningTitle}>
+                <FormattedMessage {...MSG.warningTitle} />
+              </p>
+              <p className={styles.warningText}>
+                <FormattedMessage
+                  {...MSG.warningText}
+                  values={{
+                    a: (chunks) => (
+                      <ExternalLink
+                        href={REPUTATION_LEARN_MORE}
+                        className={styles.link}
+                      >
+                        {chunks}
+                      </ExternalLink>
+                    ),
+                  }}
+                />
+              </p>
+            </div>
+          )}
         </div>
       </DialogSection>
+      {!isSmiteAction && <hr className={styles.divider} />}
       {!userHasPermission && (
         <DialogSection>
           <PermissionRequiredInfo requiredRoles={[ColonyRole.Arbitration]} />

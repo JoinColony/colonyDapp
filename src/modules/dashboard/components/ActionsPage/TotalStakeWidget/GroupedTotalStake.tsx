@@ -109,7 +109,7 @@ const GroupedTotalStake = ({
               className={styles.help}
               tooltipClassName={styles.tooltip}
               tooltipText={MSG.totalStakeTooltip}
-              tooltipPopperProps={{
+              tooltipPopperOptions={{
                 placement: 'right',
               }}
             />

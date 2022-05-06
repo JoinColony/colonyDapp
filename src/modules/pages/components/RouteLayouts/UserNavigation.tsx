@@ -138,7 +138,7 @@ const UserNavigation = () => {
         <Tooltip
           content={formatMessage(MSG.userReputationTooltip)}
           placement="bottom-start"
-          popperProps={{
+          popperOptions={{
             modifiers: [
               {
                 name: 'offset',
@@ -188,6 +188,7 @@ const UserNavigation = () => {
               userLock={userLock}
               colony={colonyData?.processedColony}
               walletAddress={walletAddress}
+              dataTest="tokenActivationButton"
             />
           )}
           {userCanNavigate && (

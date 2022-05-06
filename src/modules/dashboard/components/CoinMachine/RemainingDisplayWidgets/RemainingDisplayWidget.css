@@ -63,12 +63,10 @@
 
 .tooltipIcon {
   position: relative;
-  top: 2px;
+  top: 1px;
   right: -5px;
 }
 
 .tooltip {
-  padding: 5px;
   width: 260px;
-  font-weight: var(--weight-bold);
 }

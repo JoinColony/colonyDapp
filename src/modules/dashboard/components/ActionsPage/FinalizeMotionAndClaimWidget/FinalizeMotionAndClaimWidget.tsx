@@ -323,15 +323,17 @@ const FinalizeMotionAndClaimWidget = ({
             <>
               <div className={styles.itemWithForcedBorder}>
                 <div className={styles.label}>
-                  <FormattedMessage {...MSG.finalizeLabel} />
-                  <QuestionMarkTooltip
-                    tooltipText={MSG.finalizeTooltip}
-                    className={styles.help}
-                    tooltipClassName={styles.tooltip}
-                    tooltipPopperProps={{
-                      placement: 'right',
-                    }}
-                  />
+                  <div>
+                    <FormattedMessage {...MSG.finalizeLabel} />
+                    <QuestionMarkTooltip
+                      tooltipText={MSG.finalizeTooltip}
+                      className={styles.help}
+                      tooltipClassName={styles.tooltip}
+                      tooltipPopperOptions={{
+                        placement: 'right',
+                      }}
+                    />
+                  </div>
                 </div>
                 <div className={styles.value}>
                   <Button
@@ -388,6 +390,7 @@ const FinalizeMotionAndClaimWidget = ({
                     }
                     onClick={() => handleSubmit()}
                     loading={isSubmitting}
+                    dataTest="claimStakeButton"
                   />
                 </div>
               </div>
@@ -399,7 +402,7 @@ const FinalizeMotionAndClaimWidget = ({
                         <FormattedMessage {...MSG.stakeLabel} />
                       </div>
                     </div>
-                    <div className={styles.value}>
+                    <div className={styles.value} data-test="stakedValue">
                       <Numeral value={userStake} suffix={nativeToken?.symbol} />
                     </div>
                   </div>

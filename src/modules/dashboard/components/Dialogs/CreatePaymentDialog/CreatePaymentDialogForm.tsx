@@ -237,14 +237,21 @@ const CreatePaymentDialogForm = ({
     return null;
   }, [domainId, tokenAddress, tokenBalancesData]);
 
+  const { feeInverse: networkFeeInverse } = useNetworkContracts();
   useEffect(() => {
     if (selectedToken && amount) {
+      const decimals = getTokenDecimalsWithFallback(
+        selectedToken && selectedToken.decimals,
+      );
       const convertedAmount = bigNumberify(
         moveDecimal(
-          amount,
-          getTokenDecimalsWithFallback(selectedToken.decimals),
+          networkFeeInverse
+            ? calculateFee(amount, networkFeeInverse, decimals).totalToPay
+            : amount,
+          decimals,
         ),
       );
+
       if (
         fromDomainTokenBalance &&
         (fromDomainTokenBalance.lt(convertedAmount) ||
@@ -279,6 +286,7 @@ const CreatePaymentDialogForm = ({
     fromDomainTokenBalance,
     selectedToken,
     setCustomAmountError,
+    networkFeeInverse,
   ]);
 
   const userHasFundingPermission = userHasRole(
@@ -348,8 +356,6 @@ const CreatePaymentDialogForm = ({
   const canMakePayment = userHasPermission && isOneTxPaymentExtensionEnabled;
 
   const inputDisabled = !canMakePayment || onlyForceAction || isSubmitting;
-
-  const { feeInverse: networkFeeInverse } = useNetworkContracts();
 
   return (
     <>

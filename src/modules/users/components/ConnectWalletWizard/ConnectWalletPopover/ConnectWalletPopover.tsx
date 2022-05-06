@@ -45,7 +45,7 @@ const ConnectWalletPopover = ({ children }: Props) => {
       showArrow={false}
       isOpen={isOpen}
       onClose={() => setOpen(false)}
-      popperProps={{
+      popperOptions={{
         modifiers: [
           {
             name: 'offset',

@@ -84,3 +84,38 @@
   font-size: var(--size-medium);
   color: var(--dark);
 }
+
+.warningContainer {
+  margin: 20px 0 8px 0;
+}
+
+.warningTitle {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
+
+.warningText {
+  margin-top: 2px;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+  color: var(--dark);
+}
+
+.divider {
+  margin: 0px 0 6px 0;
+  height: 1px;
+  width: 100%;
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.link {
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+  color: var(--sky-blue);
+
+  &:hover {
+    text-decoration: underline;
+    color: var(--dark-blue);
+  }
+}

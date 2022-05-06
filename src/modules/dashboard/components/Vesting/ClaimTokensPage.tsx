@@ -156,7 +156,7 @@ const ClaimTokensPage = ({ match }: Props) => {
                 grantsToken?.address ===
                 data?.processedColony?.nativeTokenAddress
               }
-              popperProps={{
+              popperOptions={{
                 placement: 'bottom',
               }}
             >

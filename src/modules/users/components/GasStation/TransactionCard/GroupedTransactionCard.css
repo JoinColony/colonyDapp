@@ -94,8 +94,3 @@
   font-weight: var(--weight-bold);
   color: var(--danger);
 }
-
-.tooltip {
-  font-size: var(--size-normal);
-  font-weight: var(--weight-normal);
-}
