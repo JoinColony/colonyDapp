@@ -24,6 +24,11 @@
   grid-row: 1;
 }
 
+.navigationDark {
+  border-bottom-color: var(--temp-grey-15);
+  background-color: var(--temp-grey-14);
+}
+
 .history {
   order: 1;
   flex-grow: 1;

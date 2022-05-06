@@ -20,6 +20,7 @@ import {
   LANDING_PAGE_ROUTE,
   COLONY_HOME_ROUTE,
   COLONY_EVENTS_ROUTE,
+  COLONY_EXPENDITURE_ROUTE,
   ACTIONS_PAGE_ROUTE,
   COIN_MACHINE_ROUTE,
   USER_ROUTE,
@@ -28,6 +29,7 @@ import {
   COLONY_EXTENSION_DETAILS_ROUTE,
   COLONY_EXTENSIONS_ROUTE,
   COLONY_FUNDING_ROUTE,
+  EXPENDITURE_ROUTE,
 } from '~routes/routeConstants';
 import { SimpleMessageValues } from '~types/index';
 import { useColonyFromNameQuery } from '~data/index';
@@ -92,6 +94,11 @@ const MSG = defineMessages({
     defaultMessage: `Extensions | Colony - {colonyName}`,
   },
 
+  colonyExpenditure: {
+    id: 'utils.hooks.useTitle.colonyExpenditure',
+    defaultMessage: `Expenditure | Colony - {colonyName}`,
+  },
+
   colonyExtensionDetails: {
     id: 'utils.hooks.useTitle.colonyExtensionDetails',
     defaultMessage: `Extensions > {extensionId, select,
@@ -134,6 +141,10 @@ const MSG = defineMessages({
     id: 'utils.hooks.useTitle.fallbackTitle',
     defaultMessage: `Colony`,
   },
+  createExpenditure: {
+    id: 'utils.hooks.useTitle.createExpenditure',
+    defaultMessage: `Create Expenditure | Colony`,
+  },
 });
 
 interface MessageWithValues {
@@ -156,10 +167,12 @@ const routeMessages: Record<string, MessageDescriptor> = {
   [COLONY_EXTENSIONS_ROUTE]: MSG.colonyExtensions,
   [COLONY_EXTENSION_DETAILS_ROUTE]: MSG.colonyExtensionDetails,
   [COLONY_EXTENSION_SETUP_ROUTE]: MSG.colonyExtensionSetup,
+  [COLONY_EXPENDITURE_ROUTE]: MSG.colonyExpenditure,
   [MEMBERS_ROUTE]: MSG.colonyMembers,
   [USER_ROUTE]: MSG.userProfile,
   [ACTIONS_PAGE_ROUTE]: MSG.transactionDetails,
   [COIN_MACHINE_ROUTE]: MSG.buyTokens,
+  [EXPENDITURE_ROUTE]: MSG.createExpenditure,
   '/': MSG.fallbackTitle,
 };
 

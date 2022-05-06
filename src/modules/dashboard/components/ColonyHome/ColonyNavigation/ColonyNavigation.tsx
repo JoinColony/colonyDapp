@@ -21,6 +21,10 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.ColonyNavigation.linkTextExtensions',
     defaultMessage: 'Extensions',
   },
+  linkTextExpenditure: {
+    id: 'dashboard.ColonyHome.ColonyNavigation.linkTextExpenditure',
+    defaultMessage: 'Expenditures',
+  },
   linkTextCoinMachine: {
     id: 'dashboard.ColonyHome.ColonyNavigation.linkTextCoinMachine',
     defaultMessage: 'Buy Tokens',
@@ -74,6 +78,12 @@ const ColonyNavigation = ({ colony: { colonyAddress, colonyName } }: Props) => {
         showDot: hasNewExtensions,
         text: MSG.linkTextExtensions,
         dataTest: 'extensionsNavigationButton',
+      },
+      {
+        exact: false,
+        linkTo: `/colony/${colonyName}/expenditure`,
+        showDot: hasNewExtensions,
+        text: MSG.linkTextExpenditure,
       },
     ];
     if (data?.processedColony?.installedExtensions) {

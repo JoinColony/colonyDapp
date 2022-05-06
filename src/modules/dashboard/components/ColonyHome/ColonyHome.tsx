@@ -26,6 +26,7 @@ import styles from './ColonyHomeLayout.css';
 import {
   COLONY_EVENTS_ROUTE,
   COLONY_EXTENSIONS_ROUTE,
+  COLONY_EXPENDITURE_ROUTE,
   COLONY_EXTENSION_DETAILS_ROUTE,
   COLONY_EXTENSION_SETUP_ROUTE,
   COLONY_HOME_ROUTE,
@@ -136,6 +137,21 @@ const ColonyHome = ({ match, location }: Props) => {
                 showSidebar={false}
               >
                 <CoinMachine colony={colony} />
+              </ColonyHomeLayout>
+            )}
+          />
+          <Route
+            path={COLONY_EXPENDITURE_ROUTE}
+            component={() => (
+              <ColonyHomeLayout
+                colony={colony}
+                filteredDomainId={filteredDomainId}
+                onDomainChange={setDomainIdFilter}
+                ethDomainId={filteredDomainId}
+                showActions={false}
+                showExpenditure
+              >
+                <div />
               </ColonyHomeLayout>
             )}
           />
