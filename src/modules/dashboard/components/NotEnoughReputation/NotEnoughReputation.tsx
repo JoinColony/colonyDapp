@@ -56,9 +56,7 @@ const NotEnoughReputation = ({
           {...MSG.description}
           values={{
             a: (chunks) => (
-              <ExternalLink href={MD_REPUTATION_INFO} className={styles.link}>
-                {chunks}
-              </ExternalLink>
+              <ExternalLink href={MD_REPUTATION_INFO}>{chunks}</ExternalLink>
             ),
           }}
         />

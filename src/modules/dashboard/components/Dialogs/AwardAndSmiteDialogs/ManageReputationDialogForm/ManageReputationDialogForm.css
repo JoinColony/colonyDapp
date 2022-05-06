@@ -108,14 +108,3 @@
   width: 100%;
   background-color: color-mod(var(--temp-grey-blue-7) alpha(15%));
 }
-
-.link {
-  font-size: var(--size-small);
-  font-weight: var(--weight-bold);
-  color: var(--sky-blue);
-
-  &:hover {
-    text-decoration: underline;
-    color: var(--dark-blue);
-  }
-}

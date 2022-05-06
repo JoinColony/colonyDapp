@@ -5,14 +5,3 @@
 .modalContent {
   padding: 26px 0 32px;
 }
-
-.link {
-  font-size: var(--size-small);
-  font-weight: var(--weight-bold);
-  color: var(--sky-blue);
-
-  &:hover {
-    text-decoration: underline;
-    color: var(--dark-blue);
-  }
-}

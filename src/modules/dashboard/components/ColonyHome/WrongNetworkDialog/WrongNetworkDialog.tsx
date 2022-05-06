@@ -46,10 +46,7 @@ const WrongNetworkDialog = ({ cancel }: DialogProps) => {
                 <>
                   {process.env.NETWORK === Network.Xdai ||
                     (process.env.NETWORK === Network.XdaiFork && (
-                      <ExternalLink
-                        className={styles.link}
-                        href={WALLET_CONNECT_XDAI}
-                      >
+                      <ExternalLink href={WALLET_CONNECT_XDAI}>
                         {chunks}
                       </ExternalLink>
                     ))}
