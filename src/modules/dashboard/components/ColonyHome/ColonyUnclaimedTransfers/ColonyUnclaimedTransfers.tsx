@@ -10,7 +10,6 @@ import {
 
 import { ActionButton } from '~core/Button';
 import Heading from '~core/Heading';
-import { MiniSpinnerLoader } from '~core/Preloaders';
 import NavLink from '~core/NavLink';
 import Numeral from '~core/Numeral';
 import { Tooltip } from '~core/Popover';
@@ -59,7 +58,7 @@ const ColonyUnclaimedTransfers = ({
   colony,
   colony: { colonyAddress, colonyName },
 }: Props) => {
-  const { data, error, loading } = useColonyTransfersQuery({
+  const { data, error } = useColonyTransfersQuery({
     variables: { address: colony.colonyAddress },
   });
 
@@ -82,15 +81,6 @@ const ColonyUnclaimedTransfers = ({
   const extraClaims = (claimsLength || 0) - 1;
 
   if (error) console.warn(error);
-
-  if (loading) {
-    return (
-      <MiniSpinnerLoader
-        className={styles.main}
-        loadingText={MSG.loadingData}
-      />
-    );
-  }
 
   const token = tokenData?.token;
 
