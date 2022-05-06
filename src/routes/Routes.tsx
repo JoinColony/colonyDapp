@@ -29,6 +29,7 @@ import { ActionTypes } from '~redux/index';
 import {
   COLONY_EVENTS_ROUTE,
   COLONY_EXTENSIONS_ROUTE,
+  COLONY_EXPENDITURE_ROUTE,
   COLONY_EXTENSION_DETAILS_ROUTE,
   COLONY_EXTENSION_SETUP_ROUTE,
   COLONY_FUNDING_ROUTE,
@@ -47,11 +48,13 @@ import {
   COIN_MACHINE_ROUTE,
   UNWRAP_TOKEN_ROUTE,
   CLAIM_TOKEN_ROUTE,
+  EXPENDITURE_ROUTE,
 } from './routeConstants';
 
 import AlwaysAccesibleRoute from './AlwaysAccesibleRoute';
 import WalletRequiredRoute from './WalletRequiredRoute';
 import { useTitle } from '~utils/hooks/useTitle';
+import ExpenditurePage from '~modules/pages/ExpenditurePage';
 
 const MSG = defineMessages({
   userProfileEditBack: {
@@ -166,6 +169,7 @@ const Routes = () => {
             COLONY_HOME_ROUTE,
             COLONY_EVENTS_ROUTE,
             COLONY_EXTENSIONS_ROUTE,
+            COLONY_EXPENDITURE_ROUTE,
             COLONY_EXTENSION_DETAILS_ROUTE,
             COLONY_EXTENSION_SETUP_ROUTE,
           ]}
@@ -246,6 +250,16 @@ const Routes = () => {
           routeProps={({ colonyName }) => ({
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,
+          })}
+        />
+        <AlwaysAccesibleRoute
+          path={EXPENDITURE_ROUTE}
+          component={ExpenditurePage}
+          layout={NavBar}
+          routeProps={({ colonyName }) => ({
+            backText: '',
+            backRoute: `/colony/${colonyName}`,
+            withDarkerBackground: true,
           })}
         />
 

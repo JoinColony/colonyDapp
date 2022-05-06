@@ -1,0 +1,23 @@
+@value sidebarWidth: 449px;
+
+.main {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+}
+
+.mainContainer {
+  height: 100%;
+  width: 100%;
+  background-color: var(--colony-white);
+}
+
+.mainContent {
+  height: 100%;
+}
+
+.sidebar {
+  height: 100vh;
+  width: sidebarWidth;
+  background-color: var(--grey-blue-3);
+}
