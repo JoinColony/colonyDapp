@@ -9,3 +9,8 @@ export const inputText: string;
 export const activeItem: string;
 export const motionVoteDomain: string;
 export const percentageSign: string;
+export const warningContainer: string;
+export const warningTitle: string;
+export const warningText: string;
+export const divider: string;
+export const link: string;
