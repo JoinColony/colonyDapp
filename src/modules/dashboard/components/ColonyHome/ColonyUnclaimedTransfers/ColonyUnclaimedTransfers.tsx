@@ -79,7 +79,7 @@ const ColonyUnclaimedTransfers = ({
   );
 
   const claimsLength = data?.processedColony?.unclaimedTransfers?.length;
-  const extraClaims = claimsLength || 0 - 1;
+  const extraClaims = (claimsLength || 0) - 1;
 
   if (error) console.warn(error);
 
