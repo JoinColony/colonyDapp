@@ -2,6 +2,11 @@
   margin-bottom: 40px;
 }
 
+.main a:hover, .main a:active {
+  text-decoration: underline;
+  color: var(--colony-blue);
+}
+
 .main h4 {
   font-size: var(--size-smallish);
   color: var(--dark);

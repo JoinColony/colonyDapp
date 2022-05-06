@@ -30,27 +30,27 @@ interface Props {
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.ColonyUnclaimedTransfers.title',
+    id: 'dashboard.ColonyHome.ColonyUnclaimedTransfers.title',
     defaultMessage: 'Incoming funds',
   },
   loadingData: {
-    id: 'dashboard.ColonyUnclaimedTransfers.title',
+    id: 'dashboard.ColonyHome.ColonyUnclaimedTransfers.title',
     defaultMessage: 'Loading token transfers...',
   },
   claimButton: {
-    id: 'dashboard.ColonyUnclaimedTransfers.claimButton',
+    id: 'dashboard.ColonyHome.ColonyUnclaimedTransfers.claimButton',
     defaultMessage: 'Claim',
   },
   tooltip: {
-    id: 'dashboard.ColonyUnclaimedTransfers.tooltip',
+    id: 'dashboard.ColonyHome.ColonyUnclaimedTransfers.tooltip',
     defaultMessage: 'Click to claim incoming funds for this colony.',
   },
   more: {
-    id: 'dashboard.ColonyUnclaimedTransfers.more',
-    defaultMessage: ' more',
+    id: 'dashboard.ColonyHome.ColonyUnclaimedTransfers.more',
+    defaultMessage: '+ {extraClaims} more',
   },
   unknownToken: {
-    id: 'dashboard.ColonyUnclaimedTransfers.unknownToken',
+    id: 'dashboard.ColonyHome.ColonyUnclaimedTransfers.unknownToken',
     defaultMessage: 'Unknown Token',
   },
 });
@@ -78,6 +78,9 @@ const ColonyUnclaimedTransfers = ({
     [colonyAddress, firstItem],
   );
 
+  const claimsLength = data?.processedColony?.unclaimedTransfers?.length;
+  const extraClaims = claimsLength || 0 - 1;
+
   if (error) console.warn(error);
 
   if (loading) {
@@ -91,75 +94,74 @@ const ColonyUnclaimedTransfers = ({
 
   const token = tokenData?.token;
 
-  return data && data.processedColony.unclaimedTransfers.length ? (
+  return claimsLength ? (
     <div className={styles.main}>
       <Heading appearance={{ size: 'normal', weight: 'bold' }}>
         <NavLink to={`/colony/${colonyName}/funds`}>
           <FormattedMessage {...MSG.title} />
         </NavLink>
       </Heading>
-      {data && (
-        <ul>
-          <li className={styles.firstLineContainer}>
-            <div className={styles.tokenItem}>
-              <span className={styles.tokenValue}>
-                <Numeral
-                  unit={getTokenDecimalsWithFallback(token?.decimals)}
-                  value={firstItem?.amount || ''}
-                />
-              </span>
-              <span className={styles.tokenSymbol}>
-                {token?.symbol ? (
-                  <span>{token?.symbol}</span>
-                ) : (
-                  <FormattedMessage {...MSG.unknownToken} />
-                )}
-              </span>
-            </div>
-            <Tooltip
-              appearance={{ theme: 'dark', size: 'medium' }}
-              trigger="hover"
-              content={
-                <div className={styles.tooltip}>
-                  <FormattedMessage {...MSG.tooltip} />
-                </div>
-              }
-              /*
+      <ul>
+        <li className={styles.firstLineContainer}>
+          <div className={styles.tokenItem}>
+            <span className={styles.tokenValue}>
+              <Numeral
+                unit={getTokenDecimalsWithFallback(token?.decimals)}
+                value={firstItem?.amount || ''}
+              />
+            </span>
+            <span className={styles.tokenSymbol}>
+              {token?.symbol ? (
+                <span>{token?.symbol}</span>
+              ) : (
+                <FormattedMessage {...MSG.unknownToken} />
+              )}
+            </span>
+          </div>
+          <Tooltip
+            appearance={{ theme: 'dark', size: 'medium' }}
+            trigger="hover"
+            content={
+              <div className={styles.tooltip}>
+                <FormattedMessage {...MSG.tooltip} />
+              </div>
+            }
+            /*
                 Not showing arrow here.
                 If the screen is narrow the tooltip gets moved and the arrow looks wacky.
               */
-              showArrow={false}
-              placement="top-start"
-              popperOptions={{
-                modifiers: [
-                  {
-                    name: 'offset',
-                    options: {
-                      offset: [5, 8],
-                    },
+            showArrow={false}
+            placement="top"
+            popperOptions={{
+              modifiers: [
+                {
+                  name: 'offset',
+                  options: {
+                    offset: [0, 8],
                   },
-                ],
-              }}
-            >
-              <ActionButton
-                text={MSG.claimButton}
-                className={styles.button}
-                submit={ActionTypes.COLONY_CLAIM_TOKEN}
-                error={ActionTypes.COLONY_CLAIM_TOKEN_ERROR}
-                success={ActionTypes.COLONY_CLAIM_TOKEN_SUCCESS}
-                transform={transform}
-                disabled={!isNetworkAllowed || !hasRegisteredProfile}
-              />
-            </Tooltip>
-          </li>
+                },
+              ],
+            }}
+          >
+            <ActionButton
+              text={MSG.claimButton}
+              className={styles.button}
+              submit={ActionTypes.COLONY_CLAIM_TOKEN}
+              error={ActionTypes.COLONY_CLAIM_TOKEN_ERROR}
+              success={ActionTypes.COLONY_CLAIM_TOKEN_SUCCESS}
+              transform={transform}
+              disabled={!isNetworkAllowed || !hasRegisteredProfile}
+            />
+          </Tooltip>
+        </li>
+        {claimsLength > 1 && (
           <li>
             <div className={styles.tokenItem}>
-              +{data?.processedColony.unclaimedTransfers.length - 1}
-              <FormattedMessage {...MSG.more} />
+              <FormattedMessage {...MSG.more} values={{ extraClaims }} />
             </div>
           </li>
-        </ul>
-      )}
+        )}
+      </ul>
     </div>
   ) : null;
 };
