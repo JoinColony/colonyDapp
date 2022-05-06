@@ -13,7 +13,7 @@ import Heading from '~core/Heading';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 import NavLink from '~core/NavLink';
 import Numeral from '~core/Numeral';
-import Tooltip from '~core/Popover';
+import { Tooltip } from '~core/Popover';
 
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
@@ -119,25 +119,19 @@ const ColonyUnclaimedTransfers = ({
             </span>
           </div>
           <Tooltip
-            appearance={{ theme: 'dark', size: 'medium' }}
             trigger="hover"
             content={
               <div className={styles.tooltip}>
                 <FormattedMessage {...MSG.tooltip} />
               </div>
             }
-            /*
-                Not showing arrow here.
-                If the screen is narrow the tooltip gets moved and the arrow looks wacky.
-              */
-            showArrow={false}
             placement="top"
             popperOptions={{
               modifiers: [
                 {
                   name: 'offset',
                   options: {
-                    offset: [0, 8],
+                    offset: [0, 5],
                   },
                 },
               ],
