@@ -21,7 +21,7 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import styles from './ColonyUnclaimedTransfers.css';
 
-const displayName = 'dashboard.ColonyUnclaimedTransfers';
+const displayName = 'dashboard.ColonyHome.ColonyUnclaimedTransfers';
 
 interface Props {
   colony: Colony;
@@ -31,10 +31,6 @@ const MSG = defineMessages({
   title: {
     id: 'dashboard.ColonyHome.ColonyUnclaimedTransfers.title',
     defaultMessage: 'Incoming funds',
-  },
-  loadingData: {
-    id: 'dashboard.ColonyHome.ColonyUnclaimedTransfers.title',
-    defaultMessage: 'Loading token transfers...',
   },
   claimButton: {
     id: 'dashboard.ColonyHome.ColonyUnclaimedTransfers.claimButton',
