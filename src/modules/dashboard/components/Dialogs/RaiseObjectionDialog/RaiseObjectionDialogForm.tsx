@@ -78,9 +78,7 @@ const RaiseObjectionDialogForm = ({
           {...MSG.objectionDescription}
           values={{
             a: (chunks) => (
-              <ExternalLink href={MD_OBJECTIONS_HELP} className={styles.link}>
-                {chunks}
-              </ExternalLink>
+              <ExternalLink href={MD_OBJECTIONS_HELP}>{chunks}</ExternalLink>
             ),
           }}
         />

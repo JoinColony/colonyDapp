@@ -5,17 +5,6 @@
   color: var(--dark);
 }
 
-.link {
-  font-size: var(--size-small);
-  font-weight: var(--weight-bold);
-  color: var(--sky-blue);
-
-  &:hover {
-    text-decoration: underline;
-    color: var(--dark-blue);
-  }
-}
-
 .submitButton > button {
   width: 160px;
 }
