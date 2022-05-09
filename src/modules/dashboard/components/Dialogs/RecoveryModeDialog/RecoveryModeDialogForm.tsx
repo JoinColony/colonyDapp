@@ -15,6 +15,7 @@ import { useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '~modules/transformers';
 import { canEnterRecoveryMode } from '~modules/users/checks';
 
+import ExternalLink from '~core/ExternalLink';
 import { RECOVERY_HELP } from '~externalUrls';
 
 import { FormValues } from './RecoveryModeDialog';
@@ -100,14 +101,7 @@ const RecoveryModeDialogForm = ({
                 />
               ),
               a: (chunks) => (
-                <a
-                  href={RECOVERY_HELP}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.link}
-                >
-                  {chunks}
-                </a>
+                <ExternalLink href={RECOVERY_HELP}>{chunks}</ExternalLink>
               ),
             }}
           />
