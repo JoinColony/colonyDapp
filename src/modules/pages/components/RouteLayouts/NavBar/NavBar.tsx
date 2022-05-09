@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
+import classnames from 'classnames';
 
 import { getMainClasses } from '~utils/css';
 
@@ -42,9 +43,10 @@ const NavBar = ({
     <div className={className || getMainClasses({}, styles)}>
       <div className={styles.wrapper}>
         <nav
-          className={`${withDarkerBackground ? styles.navigationDark : ''} ${
-            styles.navigation
-          }`}
+          className={classnames(
+            styles.navigation,
+            withDarkerBackground && styles.navigationDark,
+          )}
         >
           {backLinkExists && (
             <div className={styles.history}>

@@ -1,6 +1,6 @@
 import React, { ReactChild, useEffect } from 'react';
 
-import { useHistory } from 'react-router';
+import { generatePath, useHistory } from 'react-router';
 import { defineMessages } from 'react-intl';
 import { useDialog } from '~core/Dialog';
 
@@ -24,6 +24,7 @@ import WrongNetworkDialog from './WrongNetworkDialog';
 
 import styles from './ColonyHomeLayout.css';
 import Button from '~core/Button';
+import { EXPENDITURE_ROUTE } from '~routes/routeConstants';
 
 const MSG = defineMessages({
   newExpenditure: {
@@ -107,7 +108,9 @@ const ColonyHomeLayout = ({
                     text={MSG.newExpenditure}
                     onClick={() =>
                       history.push(
-                        `/colony/${colony.colonyName}/create-expenditure`,
+                        generatePath(EXPENDITURE_ROUTE, {
+                          colonyName: colony.colonyName,
+                        }),
                       )
                     }
                   />
