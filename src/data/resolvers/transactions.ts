@@ -131,6 +131,7 @@ export const getColonyUnclaimedTransfers = async (
     variables: {
       colonyAddress: colonyClient.address.toLowerCase(),
     },
+    fetchPolicy: 'network-only',
   });
   const colonyFundsClaimedEvents =
     colonyFundsClaimedEventsData?.colonyFundsClaimedEvents || [];

@@ -63,13 +63,17 @@ const ColonyUnclaimedTransfers = ({
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
   const firstItem = data?.processedColony.unclaimedTransfers[0];
+  const tokenAddresses =
+    data?.processedColony.unclaimedTransfers.map(
+      (unclaimedTransfer) => unclaimedTransfer.token,
+    ) || [];
 
   const { data: tokenData } = useTokenQuery({
     variables: { address: firstItem?.token || '' },
   });
 
   const transform = useCallback(
-    mergePayload({ colonyAddress, tokenAddress: firstItem?.token || '' }),
+    mergePayload({ colonyAddress, tokenAddresses }),
     [colonyAddress, firstItem],
   );
 
