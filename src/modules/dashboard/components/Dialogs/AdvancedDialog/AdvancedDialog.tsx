@@ -85,12 +85,11 @@ const MSG = defineMessages({
   },
   manageWhitelistTitle: {
     id: 'dashboard.AdvancedDialog.manageWhitelistTitle',
-    defaultMessage: 'Manage verified addresses',
+    defaultMessage: 'Manage Address Book',
   },
   manageWhitelistDescription: {
     id: 'dashboard.AdvancedDialog.manageWhitelistDescription',
-    defaultMessage:
-      'Get warned when taking an action to addresses not on the verified list.',
+    defaultMessage: 'Add addresses you trust to your colony’s address book',
   },
 });
 
