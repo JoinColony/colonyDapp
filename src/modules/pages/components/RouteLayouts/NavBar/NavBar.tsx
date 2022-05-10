@@ -1,6 +1,5 @@
 import React, { ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
-import classnames from 'classnames';
 
 import { getMainClasses } from '~utils/css';
 
@@ -12,13 +11,9 @@ import styles from './NavBar.css';
 
 const displayName = 'pages.NavBar';
 
-interface NavBarRouteComponentProps extends RouteComponentProps {
-  withDarkerBackground?: boolean;
-}
-
 interface Props {
   children: ReactNode;
-  routeProps?: NavBarRouteComponentProps;
+  routeProps?: RouteComponentProps;
 }
 
 const NavBar = ({
@@ -28,7 +23,6 @@ const NavBar = ({
     backRoute,
     backText,
     backTextValues,
-    withDarkerBackground,
   } = {},
   children,
 }: Props) => {
@@ -42,12 +36,7 @@ const NavBar = ({
   return (
     <div className={className || getMainClasses({}, styles)}>
       <div className={styles.wrapper}>
-        <nav
-          className={classnames(
-            styles.navigation,
-            withDarkerBackground && styles.navigationDark,
-          )}
-        >
+        <nav className={styles.navigation}>
           {backLinkExists && (
             <div className={styles.history}>
               <HistoryNavigation

@@ -262,7 +262,6 @@ const Routes = () => {
             backRoute: generatePath(COLONY_EXPENDITURE_ROUTE, {
               colonyName,
             }),
-            withDarkerBackground: true,
           })}
         />
 
