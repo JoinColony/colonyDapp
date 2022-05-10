@@ -1,4 +1,5 @@
 export const sidebarWidth: string;
+export const navBarHeight: string;
 export const main: string;
 export const mainContainer: string;
 export const mainContent: string;

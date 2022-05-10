@@ -1,4 +1,5 @@
 @value sidebarWidth: 449px;
+@value navBarHeight: 70px;
 
 .main {
   display: flex;
@@ -17,7 +18,7 @@
 }
 
 .sidebar {
-  height: 100vh;
+  height: calc(100vh - navBarHeight);
   width: sidebarWidth;
   background-color: var(--grey-blue-3);
 }
