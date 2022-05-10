@@ -1,9 +1,10 @@
 import React, { KeyboardEvent, SyntheticEvent, useCallback } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
+import classNames from 'classnames';
 
 import { getMainClasses } from '~utils/css';
 
-import { SelectOption as SelectOptionType } from '../Select/types';
+import { Appearance, SelectOption as SelectOptionType } from '../Select/types';
 
 import styles from './SelectOption.css';
 
@@ -24,6 +25,8 @@ interface Props {
   onSelect: (idx: number) => void;
   onClick: () => void;
   dataTest?: string;
+  size?: Appearance['optionSize'];
+  unselectable?: boolean;
 }
 
 const displayName = 'SelectOption';
@@ -38,6 +41,8 @@ const SelectOption = ({
   option,
   selected,
   dataTest,
+  size,
+  unselectable,
 }: Props) => {
   const { formatMessage } = useIntl();
 
@@ -68,10 +73,13 @@ const SelectOption = ({
 
   return (
     <li
-      className={getMainClasses({}, styles, {
-        bordered: !!bordered,
-        isBasicLabel: !option.children,
-      })}
+      className={classNames(
+        getMainClasses({}, styles, {
+          bordered: !!bordered,
+          isBasicLabel: !option.children,
+        }),
+        unselectable && styles.unselectable,
+      )}
       aria-disabled={option.disabled}
       aria-selected={selected}
       id={id}
@@ -83,7 +91,10 @@ const SelectOption = ({
       data-checked={checked}
       data-test={dataTest}
     >
-      <span title={label} className={styles.value}>
+      <span
+        title={label}
+        className={classNames(styles.value, size === 'large' && styles.large)}
+      >
         {option.children || (
           <>
             {label}

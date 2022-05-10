@@ -10,6 +10,7 @@ import React, {
 import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 import { useField } from 'formik';
 import { nanoid } from 'nanoid';
+import classNames from 'classnames';
 
 import { getMainClasses } from '~utils/css';
 import { DOWN, ENTER, ESC, SimpleMessageValues, SPACE, UP } from '~types/index';
@@ -86,6 +87,8 @@ export interface Props {
 
   /** Provides value for data-test prop in select items used on cypress testing */
   itemDataTest?: string;
+
+  unselectable?: boolean;
 }
 
 const displayName = 'Select';
@@ -109,6 +112,7 @@ const Select = ({
   statusValues,
   dataTest,
   itemDataTest,
+  unselectable,
 }: Props) => {
   const [id] = useState<string>(idProp || nanoid());
   const [, { error, value }, { setValue }] = useField(name);
@@ -267,6 +271,8 @@ const Select = ({
           activeOption.label,
           activeOption.labelValues,
         );
+      } else if (activeOption.children) {
+        activeOptionLabel = activeOption.children;
       } else if (activeOption.labelElement) {
         activeOptionLabel = activeOption.labelElement;
       } else {
@@ -281,9 +287,14 @@ const Select = ({
   }, [checkedOption, formatMessage, options, placeholder, renderActiveOption]);
 
   const listboxId = `select-listbox-${id}`;
+  const containerClasses = classNames(styles.main, {
+    [styles.containerHorizontal]: appearance?.direction === 'horizontal',
+  });
+
+  const selectOptions = unselectable ? options.slice(0, -1) || [] : options;
 
   return (
-    <div className={styles.main} ref={wrapperRef}>
+    <div className={containerClasses} ref={wrapperRef}>
       <InputLabel
         inputId={id}
         label={label}
@@ -291,6 +302,7 @@ const Select = ({
         help={help}
         helpValues={helpValues}
         screenReaderOnly={elementOnly}
+        horizontal={appearance?.direction === 'horizontal'}
       />
       <div className={styles.inputWrapper}>
         <button
@@ -313,7 +325,12 @@ const Select = ({
           name={name}
           data-test={dataTest}
         >
-          <div className={styles.selectInner}>
+          <div
+            className={classNames(
+              styles.selectInner,
+              unselectable && styles.unselectable,
+            )}
+          >
             <div className={styles.activeOption}>{activeOptionDisplay}</div>
             <span className={styles.selectExpandContainer}>
               <Icon name="caret-down-small" title={MSG.expandIconHTMLTitle} />
@@ -325,13 +342,14 @@ const Select = ({
             checkedOption={checkedOption}
             selectedOption={selectedOption}
             listboxId={listboxId}
-            options={options}
+            options={selectOptions}
             optionsFooter={optionsFooter}
             onSelect={selectOption}
-            onClick={checkOption}
+            onClick={unselectable ? () => {} : checkOption}
             appearance={appearance}
             name={name}
             dataTest={itemDataTest}
+            unselectable={unselectable}
           />
         )}
       </div>

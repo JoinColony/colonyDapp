@@ -1,4 +1,6 @@
 export const baseTheme: string;
+export const static: string;
+export const unselectable: string;
 export const themeDefault: string;
 export const themeAlt: string;
 export const themeGrey: string;

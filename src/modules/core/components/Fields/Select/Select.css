@@ -17,10 +17,20 @@
   composes: field from '~styles/fields.css';
 }
 
+.containerHorizontal {
+  display: flex;
+  align-items: flex-start;
+}
+
 .selectInner {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.unselectable {
+  justify-content: flex-end;
+  font-weight: var(--weight-normal);
 }
 
 .inputWrapper {
@@ -70,6 +80,11 @@
 
 .select[aria-expanded="false"]:focus {
   outline-color: var(--colony-blue);
+}
+
+.unselectable[aria-expanded="true"] .activeOption,
+.unselectable[aria-expanded="true"]:focus {
+  color: var(--text);
 }
 
 /* themes */

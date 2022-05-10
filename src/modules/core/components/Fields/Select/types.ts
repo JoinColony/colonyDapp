@@ -11,6 +11,9 @@ export interface Appearance {
   size?: 'medium' | 'mediumLarge' | 'large';
   theme?: 'default' | 'alt' | 'grey' | 'grid';
   width?: 'content' | 'fluid' | 'strict';
+  direction?: 'horizontal';
+  optionSize?: 'default' | 'large';
+  listPosition?: 'static' | 'absolute';
 }
 
 export interface SelectOption {

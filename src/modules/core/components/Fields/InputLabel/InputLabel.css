@@ -29,6 +29,11 @@
   vertical-align: super;
 }
 
+.horizontal {
+  display: inline-block;
+  padding: 10px 0;
+}
+
 .colorSchemaDark .labelText {
   color: var(--grey-5);
 }

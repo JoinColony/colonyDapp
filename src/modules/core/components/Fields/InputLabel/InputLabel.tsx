@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import { MessageDescriptor, useIntl } from 'react-intl';
+import classNames from 'classnames';
 
 import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
@@ -40,6 +41,8 @@ interface Props {
 
   /** Should only be visible for screenreaders, but not for display users */
   screenReaderOnly?: boolean;
+
+  horizontal?: boolean;
 }
 
 const InputLabel = ({
@@ -51,6 +54,7 @@ const InputLabel = ({
   label: inputLabel,
   labelValues,
   screenReaderOnly = false,
+  horizontal,
 }: Props) => {
   const { formatMessage } = useIntl();
 
@@ -68,7 +72,14 @@ const InputLabel = ({
       id={inputId ? `${inputId}-label` : undefined}
       htmlFor={inputId || undefined}
     >
-      <span className={styles.labelText}>{labelText}</span>
+      <span
+        className={classNames(
+          styles.labelText,
+          horizontal && styles.horizontal,
+        )}
+      >
+        {labelText}
+      </span>
       {helpText && <span className={styles.help}>{helpText}</span>}
       {extra && <span className={styles.extra}>{extra}</span>}
     </label>
