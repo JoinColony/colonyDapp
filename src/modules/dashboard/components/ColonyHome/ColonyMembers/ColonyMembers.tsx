@@ -25,7 +25,7 @@ import styles from './ColonyMembers.css';
 const MSG = defineMessages({
   title: {
     id: 'dashboard.ColonyHome.ColonyMembers.title',
-    defaultMessage: `Members{hasCounter, select,
+    defaultMessage: `Contributors{hasCounter, select,
       true { ({count})}
       false {}
     }`,
