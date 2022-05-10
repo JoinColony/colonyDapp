@@ -193,7 +193,8 @@ const ActionsListItem = ({
         MotionState.Invalid
     ];
 
-  const decimals = tokenData?.tokenInfo?.decimals || colonyTokenDecimals;
+  const decimals =
+    tokenData?.tokenInfo?.decimals || Number(colonyTokenDecimals);
   const symbol = tokenData?.tokenInfo?.symbol || colonyTokenSymbol;
   const formattedReputationChange = getFormattedTokenValue(
     new Decimal(reputationChange || '0').abs().toString(),
