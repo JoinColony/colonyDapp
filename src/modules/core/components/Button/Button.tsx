@@ -21,6 +21,7 @@ export interface Appearance {
     | 'ghost'
     | 'underlinedBold'
     | 'blue'
+    | 'blueWithBackground'
     | 'no-style'
     | 'white'
     | 'dottedArea';
