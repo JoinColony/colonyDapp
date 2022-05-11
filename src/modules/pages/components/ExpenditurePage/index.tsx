@@ -1,1 +1,1 @@
-export { default } from './ExpenditureTemplate';
+export { default } from './ExpenditurePage';

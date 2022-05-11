@@ -2,15 +2,15 @@ import React, { ReactNode } from 'react';
 
 import { getMainClasses } from '~utils/css';
 
-import styles from './ExpenditureTemplate.css';
+import styles from './ExpenditurePage.css';
 
 interface Props {
   children: ReactNode;
 }
 
-const displayName = 'pages.ExpenditureTemplate';
+const displayName = 'pages.ExpenditurePage';
 
-const ExpenditureTemplate = ({ children }: Props) => {
+const ExpenditurePage = ({ children }: Props) => {
   return (
     <div className={getMainClasses({}, styles)}>
       <aside className={styles.sidebar} />
@@ -21,6 +21,6 @@ const ExpenditureTemplate = ({ children }: Props) => {
   );
 };
 
-ExpenditureTemplate.displayName = displayName;
+ExpenditurePage.displayName = displayName;
 
-export default ExpenditureTemplate;
+export default ExpenditurePage;
