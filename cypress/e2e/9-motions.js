@@ -8,7 +8,7 @@ import { createAddress } from '~utils/web3';
 import createdColony from '../fixtures/colony.json';
 import { numbroCustomLanguage } from '../../src/utils/numbers/numbroCustomLanguage';
 
-describe('User can create motions via UAC', () => {
+describe.only('User can create motions via UAC', () => {
   const {
     colony: { name: colonyName },
     colony,
@@ -52,15 +52,6 @@ describe('User can create motions via UAC', () => {
     const domainPurpose = 'Only cats allowed';
 
     cy.createTeam(domainName, domainPurpose, true);
-
-    cy.checkMotion();
-  });
-
-  it('Can edit teams - motion', () => {
-    const domainName = 'Dolphins';
-    const domainPurpose = 'This team has been taken over by dolphins';
-
-    cy.editTeam(domainName, domainPurpose, true);
 
     cy.checkMotion();
   });
@@ -119,6 +110,20 @@ describe('User can create motions via UAC', () => {
 
   it('Can manage permissions', () => {
     cy.managePermissions(true);
+
+    cy.checkMotion();
+  });
+
+  it.only('Disables reputation monitor', () => {
+    // turn off the reputation monitor to avoid race conditions
+    cy.request('http://127.0.0.1:3001/reputation/monitor/toggle');
+  });
+
+  it('Can edit teams - motion', () => {
+    const domainName = 'Dolphins';
+    const domainPurpose = 'This team has been taken over by dolphins';
+
+    cy.editTeam(domainName, domainPurpose, true);
 
     cy.checkMotion();
   });
