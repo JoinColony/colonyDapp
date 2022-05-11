@@ -143,7 +143,7 @@ const MSG = defineMessages({
   },
   createExpenditure: {
     id: 'utils.hooks.useTitle.createExpenditure',
-    defaultMessage: `Create Expenditure | Colony`,
+    defaultMessage: `Create Expenditure | Colony - {colonyName}`,
   },
 });
 
