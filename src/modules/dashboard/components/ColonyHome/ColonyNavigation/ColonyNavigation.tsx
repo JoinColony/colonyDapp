@@ -2,11 +2,13 @@ import React, { ComponentProps, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
 import { Extension } from '@colony/colony-js';
 
+import { generatePath } from 'react-router';
 import { useColonyExtensionsQuery, Colony } from '~data/index';
 
 import NavItem from './NavItem';
 
 import styles from './ColonyNavigation.css';
+import { COLONY_EXPENDITURE_ROUTE } from '~routes/routeConstants';
 
 const MSG = defineMessages({
   linkTextActions: {
@@ -81,7 +83,9 @@ const ColonyNavigation = ({ colony: { colonyAddress, colonyName } }: Props) => {
       },
       {
         exact: false,
-        linkTo: `/colony/${colonyName}/expenditure`,
+        linkTo: generatePath(COLONY_EXPENDITURE_ROUTE, {
+          colonyName,
+        }),
         showDot: hasNewExtensions,
         text: MSG.linkTextExpenditure,
       },

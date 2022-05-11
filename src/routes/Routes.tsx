@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { Route, Redirect, Switch } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
+import { generatePath } from 'react-router';
 
 import { WalletMethod } from '~immutable/index';
 import CreateColonyWizard from '~dashboard/CreateColonyWizard';
@@ -54,7 +55,7 @@ import {
 import AlwaysAccesibleRoute from './AlwaysAccesibleRoute';
 import WalletRequiredRoute from './WalletRequiredRoute';
 import { useTitle } from '~utils/hooks/useTitle';
-import ExpenditurePage from '~modules/pages/ExpenditurePage';
+import ExpenditurePage from '~pages/ExpenditurePage';
 
 const MSG = defineMessages({
   userProfileEditBack: {
@@ -258,8 +259,9 @@ const Routes = () => {
           layout={NavBar}
           routeProps={({ colonyName }) => ({
             backText: '',
-            backRoute: `/colony/${colonyName}`,
-            withDarkerBackground: true,
+            backRoute: generatePath(COLONY_EXPENDITURE_ROUTE, {
+              colonyName,
+            }),
           })}
         />
 

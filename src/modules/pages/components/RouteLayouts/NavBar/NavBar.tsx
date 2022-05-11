@@ -11,13 +11,9 @@ import styles from './NavBar.css';
 
 const displayName = 'pages.NavBar';
 
-interface NavBarRouteComponentProps extends RouteComponentProps {
-  withDarkerBackground?: boolean;
-}
-
 interface Props {
   children: ReactNode;
-  routeProps?: NavBarRouteComponentProps;
+  routeProps?: RouteComponentProps;
 }
 
 const NavBar = ({
@@ -27,7 +23,6 @@ const NavBar = ({
     backRoute,
     backText,
     backTextValues,
-    withDarkerBackground,
   } = {},
   children,
 }: Props) => {
@@ -41,11 +36,7 @@ const NavBar = ({
   return (
     <div className={className || getMainClasses({}, styles)}>
       <div className={styles.wrapper}>
-        <nav
-          className={`${withDarkerBackground ? styles.navigationDark : ''} ${
-            styles.navigation
-          }`}
-        >
+        <nav className={styles.navigation}>
           {backLinkExists && (
             <div className={styles.history}>
               <HistoryNavigation
