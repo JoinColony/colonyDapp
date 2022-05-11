@@ -5,3 +5,7 @@
   background-color: white;
   box-shadow: 0px 2px 11px rgb(62 118 244 / 14%);
 }
+
+.largeHeight {
+  max-height: 280px;
+}

@@ -1,6 +1,7 @@
 export const baseSelect: string;
 export const main: string;
 export const containerHorizontal: string;
+export const unselectableHorizontal: string;
 export const selectInner: string;
 export const unselectable: string;
 export const inputWrapper: string;

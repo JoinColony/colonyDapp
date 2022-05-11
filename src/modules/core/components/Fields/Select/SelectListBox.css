@@ -14,7 +14,7 @@
 }
 
 .static {
-  position: relative;
+  position: static;
 }
 
 .unselectable {

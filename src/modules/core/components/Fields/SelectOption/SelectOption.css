@@ -15,7 +15,6 @@
 
 .unselectable {
   padding: 0;
-  font-weight: var(--weight-normal);
 }
 
 .unselectable:hover {

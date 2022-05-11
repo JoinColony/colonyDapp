@@ -44,3 +44,7 @@
   border: 1px solid var(--grey-blue-0);
   border-radius: var(--radius-tiny);
 }
+
+.sizeSmall {
+  padding: 8px 0;
+}

@@ -1,6 +1,5 @@
 .main {
   display: block;
-  margin-bottom: 6px;
   width: 100%;
   position: relative;
   font-size: var(--size-smallish);
@@ -41,6 +40,11 @@
 .colorSchemaGrey .labelText {
   font-weight: var(--weight-bold);
   color: var(--dark);
+}
+
+.colorSchemaLightGrey .labelText {
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
 }
 
 .error, .help {

@@ -17,3 +17,7 @@
 .color {
   margin-right: 15px;
 }
+
+.withoutPadding {
+  padding: 0;
+}

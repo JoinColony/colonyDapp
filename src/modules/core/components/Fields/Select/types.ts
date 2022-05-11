@@ -14,6 +14,7 @@ export interface Appearance {
   direction?: 'horizontal';
   optionSize?: 'default' | 'large';
   listPosition?: 'static' | 'absolute';
+  colorSchema?: 'dark' | 'grey' | 'transparent' | 'info' | 'lightGrey';
 }
 
 export interface SelectOption {

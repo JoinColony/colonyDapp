@@ -9,3 +9,4 @@ export const borderNone: string;
 export const borderTop: string;
 export const borderBottom: string;
 export const borderGrey: string;
+export const sizeSmall: string;

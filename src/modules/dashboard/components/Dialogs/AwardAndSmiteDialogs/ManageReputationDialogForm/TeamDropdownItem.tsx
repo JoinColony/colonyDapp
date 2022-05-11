@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 
 import ColorTag, { Color } from '~core/ColorTag';
 import Heading from '~core/Heading';
@@ -12,6 +13,7 @@ interface Props {
   domain: OneDomain;
   colonyAddress: Address;
   user?: AnyUser;
+  withoutPadding?: boolean;
 }
 
 const displayName = `dashboard.SmiteDialog.TeamDropdownItem`;
@@ -20,9 +22,15 @@ const TeamDropdownItem = ({
   domain: { color = Color.LightPink, ethDomainId, name },
   colonyAddress,
   user,
+  withoutPadding,
 }: Props) => {
   return (
-    <div className={styles.main}>
+    <div
+      className={classNames(
+        styles.main,
+        withoutPadding && styles.withoutPadding,
+      )}
+    >
       <div className={styles.color}>
         <ColorTag color={color} />
       </div>

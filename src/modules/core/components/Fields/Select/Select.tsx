@@ -287,8 +287,10 @@ const Select = ({
   }, [checkedOption, formatMessage, options, placeholder, renderActiveOption]);
 
   const listboxId = `select-listbox-${id}`;
+
   const containerClasses = classNames(styles.main, {
     [styles.containerHorizontal]: appearance?.direction === 'horizontal',
+    [styles.unselectableHorizontal]: !!unselectable,
   });
 
   const selectOptions = unselectable ? options.slice(0, -1) || [] : options;
@@ -303,6 +305,7 @@ const Select = ({
         helpValues={helpValues}
         screenReaderOnly={elementOnly}
         horizontal={appearance?.direction === 'horizontal'}
+        appearance={{ colorSchema: appearance?.colorSchema }}
       />
       <div className={styles.inputWrapper}>
         <button

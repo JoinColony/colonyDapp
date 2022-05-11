@@ -9,10 +9,10 @@ import styles from './InputLabel.css';
 
 const displayName = 'InputLabel';
 
-interface Appearance {
+export interface Appearance {
   theme?: 'fat' | 'underlined' | 'minimal' | 'dotted';
   direction?: 'horizontal';
-  colorSchema?: 'dark' | 'grey' | 'transparent' | 'info';
+  colorSchema?: 'dark' | 'grey' | 'transparent' | 'info' | 'lightGrey';
   helpAlign?: 'right';
   size?: 'small' | 'medium';
 }
