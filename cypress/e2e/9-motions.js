@@ -8,7 +8,7 @@ import { createAddress } from '~utils/web3';
 import createdColony from '../fixtures/colony.json';
 import { numbroCustomLanguage } from '../../src/utils/numbers/numbroCustomLanguage';
 
-describe.only('User can create motions via UAC', () => {
+describe('User can create motions via UAC', () => {
   const {
     colony: { name: colonyName },
     colony,
@@ -114,7 +114,7 @@ describe.only('User can create motions via UAC', () => {
     cy.checkMotion();
   });
 
-  it.only('Disables reputation monitor', () => {
+  it('Disables reputation monitor', () => {
     // turn off the reputation monitor to avoid race conditions
     cy.request('http://127.0.0.1:3001/reputation/monitor/toggle');
   });
