@@ -9,8 +9,8 @@ import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 import sortBy from 'lodash/sortBy';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { isConfusing } from '@colony/unicode-confusables-noascii';
 import { AddressZero } from 'ethers/constants';
-import { isConfusing } from 'unicode-confusables';
 
 import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
