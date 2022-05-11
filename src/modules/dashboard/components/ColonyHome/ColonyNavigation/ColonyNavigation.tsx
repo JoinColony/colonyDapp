@@ -2,11 +2,13 @@ import React, { ComponentProps, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
 import { Extension } from '@colony/colony-js';
 
+import { generatePath } from 'react-router';
 import { useColonyExtensionsQuery, Colony } from '~data/index';
 
 import NavItem from './NavItem';
 
 import styles from './ColonyNavigation.css';
+import { COLONY_EXPENDITURE_ROUTE } from '~routes/routeConstants';
 
 const MSG = defineMessages({
   linkTextActions: {
@@ -20,6 +22,10 @@ const MSG = defineMessages({
   linkTextExtensions: {
     id: 'dashboard.ColonyHome.ColonyNavigation.linkTextExtensions',
     defaultMessage: 'Extensions',
+  },
+  linkTextExpenditure: {
+    id: 'dashboard.ColonyHome.ColonyNavigation.linkTextExpenditure',
+    defaultMessage: 'Expenditures',
   },
   linkTextCoinMachine: {
     id: 'dashboard.ColonyHome.ColonyNavigation.linkTextCoinMachine',
@@ -74,6 +80,14 @@ const ColonyNavigation = ({ colony: { colonyAddress, colonyName } }: Props) => {
         showDot: hasNewExtensions,
         text: MSG.linkTextExtensions,
         dataTest: 'extensionsNavigationButton',
+      },
+      {
+        exact: false,
+        linkTo: generatePath(COLONY_EXPENDITURE_ROUTE, {
+          colonyName,
+        }),
+        showDot: hasNewExtensions,
+        text: MSG.linkTextExpenditure,
       },
     ];
     if (data?.processedColony?.installedExtensions) {
