@@ -26,7 +26,11 @@ const MSG = defineMessages({
   },
   warningText: {
     id: `dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.ManageWhitelistActiveToggle.warningText`,
-    defaultMessage: `<span>Warning.</span> You have deactivated the address book. You acknowledge potential risks and consequences by clicking ‘Confirm’. `,
+    defaultMessage: `<span>Warning.</span>
+      You are deactivating your colony’s address book.
+      This is a list of addresses your colony has flagged as “safe”.
+      Now, instead, all addresses watching your colony will
+      appear in recipient selection menus. Be vigilant against spoof accounts.`,
   },
 });
 
