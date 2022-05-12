@@ -11,11 +11,13 @@ import { defineMessages } from 'react-intl';
 import { createAddress } from '~utils/web3';
 import UserMention from '~core/UserMention';
 import { ListGroupItem } from '~core/ListGroup';
+import MemberReputation from '~core/MemberReputation';
 import { AnyUser, Colony, useUser } from '~data/index';
 import { ENTER } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { getMainClasses } from '~utils/css';
-import MemberReputation from '~core/MemberReputation';
+
+import MemberActions from './Actions';
 
 import styles from './MembersListItem.css';
 import InvisibleCopyableAddress from '~core/InvisibleCopyableAddress';
@@ -113,16 +115,6 @@ const MembersListItem = <U extends AnyUser = AnyUser>({
         // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
         tabIndex={onRowClick ? 0 : undefined}
       >
-        {showUserReputation && (
-          <div className={styles.reputationSection}>
-            <MemberReputation
-              walletAddress={walletAddress}
-              colonyAddress={colony.colonyAddress}
-              domainId={domainId}
-              onReputationLoaded={setReputationLoaded}
-            />
-          </div>
-        )}
         <div className={styles.section}>
           <UserAvatar
             size="s"
@@ -162,6 +154,22 @@ const MembersListItem = <U extends AnyUser = AnyUser>({
           </div>
         </div>
         {renderedExtraItemContent && <div>{renderedExtraItemContent}</div>}
+        {showUserReputation && (
+          <div className={styles.reputationSection}>
+            <MemberReputation
+              walletAddress={walletAddress}
+              colonyAddress={colony.colonyAddress}
+              domainId={domainId}
+              onReputationLoaded={setReputationLoaded}
+              showReputationPoints
+            />
+          </div>
+        )}
+        <MemberActions
+          canAdministerComments={canAdministerComments}
+          colonyAddress={colony.colonyAddress}
+          userAddress={walletAddress}
+        />
       </div>
     </ListGroupItem>
   );

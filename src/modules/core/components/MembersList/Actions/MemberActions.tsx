@@ -17,15 +17,15 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  currentUserPermission: string;
   colonyAddress: string;
   userAddress: string;
+  canAdministerComments?: boolean;
 }
 
 const displayName = 'core.MemberList.MemberActions';
 
 const MemberActions = ({
-  currentUserPermission,
+  canAdministerComments,
   colonyAddress,
   userAddress,
 }: Props) => {
@@ -35,7 +35,7 @@ const MemberActions = ({
       content={({ close }) => (
         <MemberActionsPopover
           closePopover={close}
-          currentUserPermission={currentUserPermission}
+          canAdministerComments={canAdministerComments}
           colonyAddress={colonyAddress}
           userAddress={userAddress}
         />
