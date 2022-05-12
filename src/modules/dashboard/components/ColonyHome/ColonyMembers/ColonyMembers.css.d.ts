@@ -4,3 +4,4 @@ export const userAvatar: string;
 export const caretIconLink: string;
 export const loadingText: string;
 export const userBanned: string;
+export const tooltip: string;
