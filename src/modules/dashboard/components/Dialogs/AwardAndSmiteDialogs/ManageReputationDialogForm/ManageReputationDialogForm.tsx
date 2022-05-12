@@ -325,10 +325,7 @@ const ManageReputationDialogForm = ({
                   {...MSG.warningText}
                   values={{
                     a: (chunks) => (
-                      <ExternalLink
-                        href={REPUTATION_LEARN_MORE}
-                        className={styles.link}
-                      >
+                      <ExternalLink href={REPUTATION_LEARN_MORE}>
                         {chunks}
                       </ExternalLink>
                     ),

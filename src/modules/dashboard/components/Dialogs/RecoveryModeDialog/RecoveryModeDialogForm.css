@@ -19,12 +19,6 @@
   color: var(--danger);
 }
 
-.link {
-  font-size: var(--size-small);
-  font-weight: var(--weight-bold);
-  color: var(--sky-blue);
-}
-
 .leavingRecoveryMessage {
   composes: permissionLabel;
   padding-bottom: 20px;

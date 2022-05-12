@@ -39,6 +39,4 @@
 .link {
   margin-left: 5px;
   font-size: var(--size-tiny);
-  font-weight: var(--weight-bold);
-  color: var(--sky-blue);
 }

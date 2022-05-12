@@ -18,12 +18,6 @@
 .learnMore {
   margin-left: 8px;
   font-size: var(--size-tiny);
-  color: var(--colony-blue);
-}
-
-.learnMore:hover {
-  text-decoration: underline;
-  color: var(--colony-blue);
 }
 
 .grid {

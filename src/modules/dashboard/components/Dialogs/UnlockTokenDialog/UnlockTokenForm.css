@@ -30,12 +30,6 @@
 
 .learnMoreLink {
   margin-left: 4px;
-  font-size: var(--size-tiny);
-  color: var(--sky-blue);
-}
-
-.learnMoreLink:hover {
-  color: color-mod(var(--sky-blue) alpha(90%));
 }
 
 .unlocked {
