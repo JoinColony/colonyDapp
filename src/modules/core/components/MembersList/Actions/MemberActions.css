@@ -1,0 +1,40 @@
+.actionsButton {
+  padding: 0;
+  height: 18px;
+  width: 8px;
+  position: relative;
+  border: 1px solid transparent;
+  border-radius: var(--radius-small);
+  background: transparent;
+  cursor: pointer;
+}
+
+.actionsButton:focus {
+  outline: 0;
+}
+
+.activeDropdown,
+.actionsButton:hover {
+  border-color: var(--action-secondary);
+}
+
+.actionsIcon {
+  height: 10px;
+  width: 10px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  fill: var(--temp-grey-blue-7);
+}
+
+.actionsIcon svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.activeDropdown .actionsIcon,
+.actionsButton:hover .actionsIcon {
+  fill: var(--action-secondary);
+}
