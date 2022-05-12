@@ -3,7 +3,6 @@ import classNames from 'classnames';
 
 import CLNYIcon from '../../../../../img/tokens/CLNY.svg';
 import EtherIcon from '../../../../../img/tokens/ether.svg';
-import XDAIIcon from '../../../../../img/tokens/xDAI.svg';
 import styles from './CreatorData.css';
 
 export const balanceData = [
@@ -11,7 +10,9 @@ export const balanceData = [
     label: '25,000 CLNY',
     value: '25,000 CLNY',
     children: (
-      <div className={classNames(styles.label, styles.option)}>
+      <div
+        className={classNames(styles.label, styles.option, styles.firstOption)}
+      >
         <span className={styles.icon}>
           <CLNYIcon />
         </span>
@@ -28,18 +29,6 @@ export const balanceData = [
           <EtherIcon />
         </span>
         <span>15,000 ETH</span>
-      </div>
-    ),
-  },
-  {
-    label: '125,000 xDAI',
-    value: '125,000 xDAI',
-    children: (
-      <div className={styles.label}>
-        <span className={styles.icon}>
-          <XDAIIcon />
-        </span>
-        <span>125,000 xDAI</span>
       </div>
     ),
   },

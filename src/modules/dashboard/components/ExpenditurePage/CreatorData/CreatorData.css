@@ -27,7 +27,17 @@
   padding-top: 16px;
 }
 
+.firstOption {
+  padding-top: 8px;
+}
+
 .icon {
   margin-right: 4px;
+  margin-bottom: -5px;
   width: 16px;
+}
+
+.teamLabel {
+  font-size: 13px;
+  color: pink;
 }

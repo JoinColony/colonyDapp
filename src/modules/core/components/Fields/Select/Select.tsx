@@ -271,8 +271,6 @@ const Select = ({
           activeOption.label,
           activeOption.labelValues,
         );
-      } else if (activeOption.children) {
-        activeOptionLabel = activeOption.children;
       } else if (activeOption.labelElement) {
         activeOptionLabel = activeOption.labelElement;
       } else {
@@ -288,82 +286,147 @@ const Select = ({
 
   const listboxId = `select-listbox-${id}`;
 
-  const containerClasses = classNames(styles.main, {
-    [styles.containerHorizontal]: appearance?.direction === 'horizontal',
-    [styles.unselectableHorizontal]: !!unselectable,
-  });
-
-  const selectOptions = unselectable ? options.slice(0, -1) || [] : options;
-
-  return (
-    <div className={containerClasses} ref={wrapperRef}>
-      <InputLabel
-        inputId={id}
-        label={label}
-        labelValues={labelValues}
-        help={help}
-        helpValues={helpValues}
-        screenReaderOnly={elementOnly}
-        horizontal={appearance?.direction === 'horizontal'}
-        appearance={{ colorSchema: appearance?.colorSchema }}
-      />
-      <div className={styles.inputWrapper}>
-        <button
-          className={`${styles.select} ${getMainClasses(appearance, styles)}`}
-          aria-haspopup="listbox"
-          aria-controls={listboxId}
-          aria-expanded={isOpen}
-          aria-label={
-            typeof label === 'object'
-              ? formatMessage(label, labelValues)
-              : label
-          }
-          aria-disabled={disabled}
-          id={id}
-          tabIndex={0}
-          onClick={toggle}
-          onKeyUp={handleKeyUp}
-          onKeyDown={handleKeyDown}
-          type="button"
-          name={name}
-          data-test={dataTest}
-        >
-          <div
-            className={classNames(
-              styles.selectInner,
-              unselectable && styles.unselectable,
-            )}
-          >
-            <div className={styles.activeOption}>{activeOptionDisplay}</div>
-            <span className={styles.selectExpandContainer}>
-              <Icon name="caret-down-small" title={MSG.expandIconHTMLTitle} />
-            </span>
-          </div>
-        </button>
-        {isOpen && !!options.length && (
-          <SelectListBox
-            checkedOption={checkedOption}
-            selectedOption={selectedOption}
-            listboxId={listboxId}
-            options={selectOptions}
-            optionsFooter={optionsFooter}
-            onSelect={selectOption}
-            onClick={unselectable ? () => {} : checkOption}
-            appearance={appearance}
+  const selectWithLabel = useMemo(
+    () => (
+      <>
+        <InputLabel
+          inputId={id}
+          label={label}
+          labelValues={labelValues}
+          help={help}
+          helpValues={helpValues}
+          screenReaderOnly={elementOnly}
+          horizontal={appearance?.direction === 'horizontal'}
+          appearance={{ colorSchema: appearance?.colorSchema }}
+        />
+        <div className={styles.inputWrapper}>
+          <button
+            className={`${styles.select} ${getMainClasses(appearance, styles)}`}
+            aria-haspopup="listbox"
+            aria-controls={listboxId}
+            aria-expanded={isOpen}
+            aria-label={
+              typeof label === 'object'
+                ? formatMessage(label, labelValues)
+                : label
+            }
+            aria-disabled={disabled}
+            id={id}
+            tabIndex={0}
+            onClick={toggle}
+            onKeyUp={handleKeyUp}
+            onKeyDown={handleKeyDown}
+            type="button"
             name={name}
-            dataTest={itemDataTest}
-            unselectable={unselectable}
-          />
-        )}
-      </div>
-      {!elementOnly && (
+            data-test={dataTest}
+          >
+            <div
+              className={classNames(
+                styles.selectInner,
+                unselectable && styles.unselectable,
+              )}
+            >
+              <div className={styles.activeOption}>{activeOptionDisplay}</div>
+              <span className={styles.selectExpandContainer}>
+                <Icon name="caret-down-small" title={MSG.expandIconHTMLTitle} />
+              </span>
+            </div>
+          </button>
+          {isOpen && !!options.length && (
+            <SelectListBox
+              checkedOption={checkedOption}
+              selectedOption={selectedOption}
+              listboxId={listboxId}
+              options={options}
+              optionsFooter={optionsFooter}
+              onSelect={selectOption}
+              onClick={unselectable ? () => {} : checkOption}
+              appearance={appearance}
+              name={name}
+              dataTest={itemDataTest}
+              unselectable={unselectable}
+            />
+          )}
+        </div>
+      </>
+    ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      activeOptionDisplay,
+      appearance,
+      checkedOption,
+      dataTest,
+      disabled,
+      elementOnly,
+      formatMessage,
+      help,
+      helpValues,
+      id,
+      isOpen,
+      itemDataTest,
+      label,
+      labelValues,
+      listboxId,
+      name,
+      options,
+      optionsFooter,
+      selectedOption,
+      unselectable,
+    ],
+  );
+
+  const inputStatus = useMemo(() => {
+    if (elementOnly) {
+      return null;
+    }
+
+    if (appearance?.direction === 'horizontal') {
+      return !unselectable && (error || status) ? (
         <InputStatus
-          appearance={{ theme: 'minimal' }}
+          appearance={{
+            theme: 'minimal',
+            align: 'right',
+          }}
           status={status}
           statusValues={statusValues}
           error={error}
         />
+      ) : null;
+    }
+
+    return (
+      <InputStatus
+        appearance={{
+          theme: 'minimal',
+        }}
+        status={status}
+        statusValues={statusValues}
+        error={error}
+      />
+    );
+  }, [elementOnly, appearance, status, statusValues, error, unselectable]);
+
+  return (
+    <div
+      className={classNames(
+        styles.main,
+        appearance?.padding === 'none' && styles.withoutPadding,
       )}
+      ref={wrapperRef}
+    >
+      {appearance?.direction === 'horizontal' ? (
+        <div
+          className={classNames(
+            styles.containerHorizontal,
+            unselectable && styles.unselectableHorizontal,
+          )}
+        >
+          {selectWithLabel}
+        </div>
+      ) : (
+        selectWithLabel
+      )}
+      {inputStatus}
     </div>
   );
 };

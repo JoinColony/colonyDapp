@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { ReactNode, useCallback, useMemo } from 'react';
 import sortBy from 'lodash/sortBy';
 
 import { DialogSection } from '~core/Dialog';
-import { Form, Select } from '~core/Fields';
-import { filterUserSelection } from '~core/SingleUserPicker';
+import { Form, Select, SelectOption } from '~core/Fields';
+import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import { AnyUser, OneDomain } from '~data/index';
 
 import styles from './CreatorData.css';
@@ -11,8 +11,8 @@ import { Address } from '~types/index';
 import { ItemDataType } from '~core/OmniPicker';
 import UserAvatar from '~core/UserAvatar';
 import TeamDropdownItem from '~dashboard/Dialogs/AwardAndSmiteDialogs/ManageReputationDialogForm/TeamDropdownItem';
+import XDAIIcon from '../../../../../img/tokens/xDAI.svg';
 
-import UserPickerWithSearch from '~core/UserPickerWithSearch';
 import { balanceData, colonyAddress, domains, userData } from './consts';
 
 interface Props {
@@ -32,8 +32,6 @@ const CreatorData = () => {
             <TeamDropdownItem
               domain={domain as OneDomain}
               colonyAddress={colonyAddress}
-              withoutPadding
-              // user={(values.user as any) as AnyUser}
             />
           ),
           value: domain.ethDomainId.toString(),
@@ -44,17 +42,45 @@ const CreatorData = () => {
     [],
   );
 
+  const renderActiveOption = useCallback<
+    (option: SelectOption | undefined) => ReactNode
+  >((option) => {
+    const value = option ? option.value : undefined;
+    const domain = domains.find(
+      ({ ethDomainId }) => Number(value) === ethDomainId,
+    ) as OneDomain;
+    return (
+      <div className={styles.teamLabel}>
+        <TeamDropdownItem
+          domain={domain}
+          colonyAddress={colonyAddress}
+          appearance={{ theme: 'grey' }}
+          withoutPadding
+        />
+      </div>
+    );
+  }, []);
+
+  const renderBalanceActiveOption = useCallback<
+    (option: SelectOption | undefined) => ReactNode
+  >(
+    () => (
+      <div className={styles.label}>
+        <span className={styles.icon}>
+          <XDAIIcon />
+        </span>
+        <span>125,000 xDAI</span>
+      </div>
+    ),
+    [],
+  );
+
   return (
     <div className={styles.container}>
-      <Form
-        initialValues={{ input: '' }}
-        initialErrors={{}}
-        onSubmit={() => {}}
-      >
+      <Form initialValues={{}} initialErrors={{}} onSubmit={() => {}}>
         <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
           <Select
-            name="input"
-            placeholder="I'm wrong as well!"
+            name="expenditureType"
             label="Expenditure type"
             appearance={{
               theme: 'alt',
@@ -62,32 +88,32 @@ const CreatorData = () => {
               direction: 'horizontal',
               optionSize: 'large',
               colorSchema: 'lightGrey',
-              size: 'medium',
+              size: 'small',
+              width: 'content',
             }}
-            options={[
-              { label: 'Recurring', value: 'recurring' },
-              { label: 'Task', value: 'task' },
-              { label: 'Advanced', value: 'advanced' },
-            ]}
+            options={[{ label: 'Advanced', value: 'advanced' }]}
           />
         </DialogSection>
         <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
           <Select
             options={domainOptions}
             label="Team"
-            name="domainId"
+            name="team"
             appearance={{
               theme: 'alt',
               alignOptions: 'left',
               direction: 'horizontal',
               optionSize: 'large',
               colorSchema: 'lightGrey',
+              size: 'small',
+              padding: 'none',
             }}
+            renderActiveOption={renderActiveOption}
           />
         </DialogSection>
         <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
           <Select
-            name="input"
+            name="balance"
             label="Balance"
             appearance={{
               theme: 'alt',
@@ -95,15 +121,16 @@ const CreatorData = () => {
               direction: 'horizontal',
               listPosition: 'static',
               colorSchema: 'lightGrey',
+              size: 'small',
             }}
             options={balanceData}
+            renderActiveOption={renderBalanceActiveOption}
             unselectable
           />
         </DialogSection>
         <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
           <div className={styles.singleUserContainer}>
-            <UserPickerWithSearch
-              appearance={{ direction: 'horizontal' }}
+            <SingleUserPicker
               data={userData}
               label="Owner"
               name="owner"
@@ -112,6 +139,12 @@ const CreatorData = () => {
               dataTest="paymentRecipientPicker"
               itemDataTest="paymentRecipientItem"
               placeholder="Search"
+              appearance={{
+                direction: 'horizontal',
+                size: 'small',
+                colorSchema: 'lightGrey',
+              }}
+              hasSearch
             />
           </div>
         </DialogSection>

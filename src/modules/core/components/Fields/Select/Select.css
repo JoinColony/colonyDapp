@@ -26,6 +26,10 @@
   align-items: flex-start;
 }
 
+.withoutPadding {
+  padding: 0;
+}
+
 .selectInner {
   display: flex;
   justify-content: space-between;
@@ -160,6 +164,11 @@
 }
 
 /* sizes */
+
+.sizeSmall,
+.baseSelect.sizeSmall {
+  font-size: var(--size-smallish);
+}
 
 .sizeMedium,
 .baseSelect.sizeMedium {

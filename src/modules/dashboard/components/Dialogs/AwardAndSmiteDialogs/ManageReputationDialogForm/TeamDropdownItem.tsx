@@ -9,11 +9,15 @@ import MemberReputation from '~core/MemberReputation';
 
 import styles from './TeamDropdownItem.css';
 
+interface Appereance {
+  theme?: 'primary' | 'dark' | 'invert' | 'uppercase' | 'grey';
+}
 interface Props {
   domain: OneDomain;
   colonyAddress: Address;
   user?: AnyUser;
   withoutPadding?: boolean;
+  appearance?: Appereance;
 }
 
 const displayName = `dashboard.SmiteDialog.TeamDropdownItem`;
@@ -22,6 +26,7 @@ const TeamDropdownItem = ({
   domain: { color = Color.LightPink, ethDomainId, name },
   colonyAddress,
   user,
+  appearance,
   withoutPadding,
 }: Props) => {
   return (
@@ -36,7 +41,11 @@ const TeamDropdownItem = ({
       </div>
       <div className={styles.headingWrapper}>
         <Heading
-          appearance={{ margin: 'none', size: 'normal', theme: 'dark' }}
+          appearance={{
+            margin: 'none',
+            size: 'normal',
+            theme: appearance?.theme || 'dark',
+          }}
           text={name}
         />
       </div>
