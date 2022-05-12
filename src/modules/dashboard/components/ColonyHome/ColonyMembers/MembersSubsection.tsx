@@ -4,8 +4,10 @@ import Maybe from 'graphql/tsutils/Maybe';
 
 import NavLink from '~core/NavLink';
 import Heading from '~core/Heading';
-import HookedUserAvatar from '~users/HookedUserAvatar';
+import { Tooltip } from '~core/Popover';
 import Icon from '~core/Icon';
+
+import HookedUserAvatar from '~users/HookedUserAvatar';
 import useAvatarDisplayCounter from '~utils/hooks/useAvatarDisplayCounter';
 import { Colony, useLoggedInUser, BannedUser, UserProfile } from '~data/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
@@ -36,6 +38,14 @@ const MSG = defineMessages({
     defaultMessage: `Failed to fetch the colony's {isContributors, select,
       true { contributors }
       other { watchers }
+    }`,
+  },
+  tooltipText: {
+    id: 'dashboard.ColonyHome.ColonyMembers.MembersSubsection.tooltipText',
+    defaultMessage: `{isContributors, select,
+      true {Contributors are members of the Colony who have earned reputation.}
+      other { Watchers are members of the Colony
+         who currently don’t have reputation. }
     }`,
   },
 });
@@ -138,17 +148,28 @@ const MembersSubsection = ({
 
   return (
     <div className={styles.main}>
-      <NavLink to={membersPageRoute}>
-        <Heading
-          appearance={{ size: 'normal', weight: 'bold' }}
-          text={MSG.title}
-          textValues={{
-            count: members?.length,
-            hasCounter: true,
-            isContributors,
-          }}
-        />
-      </NavLink>
+      <Tooltip
+        content={
+          <div className={styles.tooltip}>
+            <FormattedMessage
+              {...MSG.tooltipText}
+              values={{ isContributors }}
+            />
+          </div>
+        }
+      >
+        <NavLink to={membersPageRoute}>
+          <Heading
+            appearance={{ size: 'normal', weight: 'bold' }}
+            text={MSG.title}
+            textValues={{
+              count: members?.length,
+              hasCounter: true,
+              isContributors,
+            }}
+          />
+        </NavLink>
+      </Tooltip>
       <ul className={styles.userAvatars}>
         {colonyMembersWithBanStatus
           .slice(0, avatarsDisplaySplitRules)
