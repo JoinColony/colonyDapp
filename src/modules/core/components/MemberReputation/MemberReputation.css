@@ -14,6 +14,16 @@
   color: reputationColor;
 }
 
+.reputationPointsContainer {
+  margin-left: 3px;
+  height: 23px;
+}
+
+.reputationPoints {
+  composes: reputation;
+  font-weight: var(--weight-normal);
+}
+
 .icon {
   height: 11px;
   width: 11px;
