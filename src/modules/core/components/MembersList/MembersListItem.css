@@ -1,7 +1,7 @@
 .main {
   display: flex;
   align-items: center;
-  overflow-y: auto;
+  padding-right: 15px;
 }
 
 .section {
@@ -15,7 +15,8 @@
 .usernameSection {
   composes: section;
   composes: inlineEllipsis from '~styles/text.css';
-  flex-grow: 1;
+  flex-grow: 0.5;
+  margin-right: auto;
 }
 
 .displayName {
@@ -34,6 +35,7 @@
 }
 
 .address span {
+  font-size: var(--size-normal);
   font-weight: 500;
 }
 
@@ -41,8 +43,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: 26px;
-  width: 69px;
+  margin-right: 20px;
 }
 
 .stateHasReputation {
