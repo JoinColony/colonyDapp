@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
-import { COMMENT_MODERATION } from '~immutable/index';
 import DropdownMenu, {
   DropdownMenuSection,
   DropdownMenuItem,
@@ -33,16 +32,16 @@ const MSG = defineMessages({
 
 interface Props {
   closePopover: () => void;
-  currentUserPermission: string;
   colonyAddress: string;
   userAddress: string;
+  canAdministerComments?: boolean;
 }
 
 const displayName = 'core.MembersList.MemberActionsPopover';
 
 const MemberActionsPopover = ({
   closePopover,
-  currentUserPermission,
+  canAdministerComments,
   colonyAddress,
   userAddress,
 }: Props) => {
@@ -100,7 +99,7 @@ const MemberActionsPopover = ({
 
   return (
     <DropdownMenu onClick={closePopover}>
-      {currentUserPermission === COMMENT_MODERATION.CAN_MODERATE && (
+      {canAdministerComments && (
         <>{renderModeratorOptions()}</>
       )}
       <>{renderUserActions()}</>
