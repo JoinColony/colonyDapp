@@ -79,3 +79,7 @@
   position: relative;
   float: right;
 }
+
+.tooltip {
+  width: 170px;
+}
