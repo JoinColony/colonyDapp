@@ -52,7 +52,7 @@ const MSG = defineMessages({
   },
   inputSuccess: {
     id: `dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.inputSuccess`,
-    defaultMessage: `Address is added. You can add another one or close modal.`,
+    defaultMessage: `Address was added. You can add another one or close modal.`,
   },
   fileSuccess: {
     id: `dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.fileSuccess`,
