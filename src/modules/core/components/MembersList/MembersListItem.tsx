@@ -35,7 +35,7 @@ interface Props<U> {
 const MSG = defineMessages({
   whitelistedTooltip: {
     id: 'core.MembersList.MembersListItem.whitelistedTooltip',
-    defaultMessage: `Added to verified address list`,
+    defaultMessage: `Added to address book`,
   },
 });
 

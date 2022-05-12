@@ -20,11 +20,11 @@ const MSG = defineMessages({
   },
   checkedTooltipText: {
     id: `dashboard.ManageWhitelistDialog.WhitelistedAddresses.checkedTooltipText`,
-    defaultMessage: `User is added to the verified address list. Uncheck to remove.`,
+    defaultMessage: `User is added to the address book. Uncheck to remove.`,
   },
   unCheckedTooltipText: {
     id: `dashboard.ManageWhitelistDialog.WhitelistedAddresses.unCheckedTooltipText`,
-    defaultMessage: `User will be removed from the verified address list.`,
+    defaultMessage: `User will be removed from the address book.`,
   },
 });
 
