@@ -92,3 +92,8 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.reputationPoints {
+  line-height: 18px;
+  color: var(--dark);
+}

@@ -3,6 +3,8 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import sortBy from 'lodash/sortBy';
 import { useParams } from 'react-router-dom';
+import { AddressZero } from 'ethers/constants';
+import Decimal from 'decimal.js';
 
 import MembersSection from './MembersSection';
 
@@ -12,6 +14,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 import Heading from '~core/Heading';
 import { Select, Form } from '~core/Fields';
 import { useTransformer } from '~utils/hooks';
+import { getFormattedTokenValue } from '~utils/tokens';
 import {
   Colony,
   useLoggedInUser,
@@ -23,6 +26,7 @@ import {
 import {
   COLONY_TOTAL_BALANCE_DOMAIN_ID,
   ALLDOMAINS_DOMAIN_SELECTION,
+  DEFAULT_TOKEN_DECIMALS,
 } from '~constants';
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot, canAdminister } from '~modules/users/checks';
@@ -48,6 +52,14 @@ const MSG = defineMessages({
   failedToFetch: {
     id: 'dashboard.Members.failedToFetch',
     defaultMessage: "Could not fetch the colony's members",
+  },
+  totalReputationTitle: {
+    id: 'dashboard.Members.totalReputationTitle',
+    defaultMessage: 'Total reputation in team',
+  },
+  reputationPoints: {
+    id: 'dashboard.Members.reputationPoints',
+    defaultMessage: '{teamReputationPoints} reputation points',
   },
 });
 
@@ -85,8 +97,26 @@ const Members = ({ colony: { colonyAddress, colonyName }, colony }: Props) => {
     parseInt(domainId, 10) || COLONY_TOTAL_BALANCE_DOMAIN_ID,
   );
 
+  const { data: totalReputation } = useUserReputationQuery({
+    variables: {
+      address: AddressZero,
+      colonyAddress,
+      domainId: selectedDomainId,
+    },
+    fetchPolicy: 'cache-and-network',
+  });
+
   const selectedDomain = colony.domains.find(
     ({ ethDomainId }) => ethDomainId === selectedDomainId,
+  );
+
+  const nativeToken = tokens.find(
+    ({ address }) => address === nativeTokenAddress,
+  );
+
+  const formattedTotalDomainRep = getFormattedTokenValue(
+    new Decimal(totalReputation?.userReputation || '0').abs().toString(),
+    nativeToken?.decimals || DEFAULT_TOKEN_DECIMALS,
   );
 
   /*
@@ -177,7 +207,6 @@ const Members = ({ colony: { colonyAddress, colonyName }, colony }: Props) => {
           />
         </Form>
       </div>
-
       {contributors.length ? (
         <MembersSection<ColonyContributor>
           isContributorsSection
