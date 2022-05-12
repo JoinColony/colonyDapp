@@ -47,7 +47,7 @@ const MSG = defineMessages({
   },
   manageWhitelist: {
     id: 'dashboard.ColonyMembers.manageWhitelist',
-    defaultMessage: 'Manage Address Book',
+    defaultMessage: 'Manage address book',
   },
   loadingText: {
     id: 'dashboard.ColonyMembers.loadingText',

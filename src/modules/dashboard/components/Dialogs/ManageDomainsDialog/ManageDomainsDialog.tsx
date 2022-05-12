@@ -37,22 +37,22 @@ const MSG = defineMessages({
   },
 
   manageWhitelistTitle: {
-    id: 'dashboard.AdvancedDialog.manageWhitelistTitle',
-    defaultMessage: 'Manage Address Book',
+    id: 'dashboard.ManageDomainsDialog.manageWhitelistTitle',
+    defaultMessage: 'Manage address book',
   },
   manageWhitelistDescription: {
-    id: 'dashboard.AdvancedDialog.manageWhitelistDescription',
+    id: 'dashboard.ManageDomainsDialog.manageWhitelistDescription',
     defaultMessage: 'Add addresses you trust to your colony’s address book',
   },
 
   permissionsText: {
-    id: 'dashboard.AdvancedDialog.permissionsText',
+    id: 'dashboard.ManageDomainsDialog.permissionsText',
     defaultMessage: `You must have the {permissionsList} permissions in the
       relevant teams, in order to take this action`,
   },
 
-  upgradePermissionsList: {
-    id: 'dashboard.AdvancedDialog.upgradePermissionsList',
+  manageWhitelistPermissionsList: {
+    id: 'dashboard.ManageDomainsDialog.manageWhitelistPermissionsList',
     defaultMessage: 'root',
   },
 });
@@ -119,7 +119,9 @@ const ManageDomainsDialog = ({
       permissionRequired: !hasRootPermission,
       permissionInfoText: MSG.permissionsText,
       permissionInfoTextValues: {
-        permissionsList: <FormattedMessage {...MSG.upgradePermissionsList} />,
+        permissionsList: (
+          <FormattedMessage {...MSG.manageWhitelistPermissionsList} />
+        ),
       },
       onClick: () => callStep(nextStepManageWhitelist),
     },

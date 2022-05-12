@@ -26,7 +26,7 @@ const MSG = defineMessages({
   },
   warningText: {
     id: `dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.ManageWhitelistActiveToggle.warningText`,
-    defaultMessage: `<span>Warning.</span> You have deactivated the whitelist. You acknowledge potential risks and consequences by clicking ‘Confirm’. `,
+    defaultMessage: `<span>Warning.</span> You have deactivated the address book. You acknowledge potential risks and consequences by clicking ‘Confirm’. `,
   },
 });
 

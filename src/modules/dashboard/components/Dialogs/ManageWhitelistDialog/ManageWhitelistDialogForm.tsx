@@ -26,7 +26,7 @@ import styles from './ManageWhitelistDialogForm.css';
 const MSG = defineMessages({
   title: {
     id: 'dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.title',
-    defaultMessage: 'Manage Address Book',
+    defaultMessage: 'Manage address book',
   },
   annotation: {
     id: `dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.annotation`,
@@ -48,7 +48,7 @@ const MSG = defineMessages({
   },
   inputLabel: {
     id: `dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.inputLabel`,
-    defaultMessage: `Add wallet address to verified address list.`,
+    defaultMessage: `Add wallet address to address book.`,
   },
   inputSuccess: {
     id: `dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.inputSuccess`,
