@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import Maybe from 'graphql/tsutils/Maybe';
 
@@ -125,29 +125,8 @@ const MembersSubsection = ({
     [members, bannedMembers, canAdministerComments],
   );
 
-  if (!members) {
-    return (
-      <div className={styles.main}>
-        <Heading
-          appearance={{ size: 'normal', weight: 'bold' }}
-          text={MSG.title}
-          textValues={{
-            isContributors,
-            hasCounter: false,
-          }}
-        />
-        <span className={styles.loadingText}>
-          <FormattedMessage
-            {...MSG.reputationFetchFailed}
-            values={{ isContributors }}
-          />
-        </span>
-      </div>
-    );
-  }
-
-  return (
-    <div className={styles.main}>
+  const setHeading = useCallback(
+    (hasCounter) => (
       <Tooltip
         content={
           <div className={styles.tooltip}>
@@ -164,12 +143,33 @@ const MembersSubsection = ({
             text={MSG.title}
             textValues={{
               count: members?.length,
-              hasCounter: true,
+              hasCounter,
               isContributors,
             }}
           />
         </NavLink>
       </Tooltip>
+    ),
+    [members, membersPageRoute, isContributors],
+  );
+
+  if (!members) {
+    return (
+      <div className={styles.main}>
+        {setHeading(false)}
+        <span className={styles.loadingText}>
+          <FormattedMessage
+            {...MSG.reputationFetchFailed}
+            values={{ isContributors }}
+          />
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.main}>
+      {setHeading(true)}
       <ul className={styles.userAvatars}>
         {colonyMembersWithBanStatus
           .slice(0, avatarsDisplaySplitRules)
