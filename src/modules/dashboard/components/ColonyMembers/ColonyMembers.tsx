@@ -1,11 +1,18 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { ColonyVersion, Extension } from '@colony/colony-js';
 
+import Decimal from 'decimal.js';
+import { AddressZero } from 'ethers/constants';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import { BanUserDialog } from '~core/Comment';
+import Heading from '~core/Heading';
+import {
+  COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  DEFAULT_TOKEN_DECIMALS,
+} from '~constants';
 
 import LoadingTemplate from '~pages/LoadingTemplate';
 import Members from '~dashboard/Members';
@@ -19,8 +26,10 @@ import {
   useColonyExtensionsQuery,
   useBannedUsersQuery,
   useLoggedInUser,
+  useUserReputationQuery,
 } from '~data/index';
 import { useTransformer } from '~utils/hooks';
+import { getFormattedTokenValue } from '~utils/tokens';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
@@ -54,6 +63,14 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyMembers.loadingText',
     defaultMessage: 'Loading Colony',
   },
+  totalReputationTitle: {
+    id: 'dashboard.ColonyMembers.totalReputationTitle',
+    defaultMessage: 'Total reputation in team',
+  },
+  reputationPoints: {
+    id: 'dashboard.ColonyMembers.reputationPoints',
+    defaultMessage: '{teamReputationPoints} reputation points',
+  },
 });
 
 const ColonyMembers = () => {
@@ -63,6 +80,9 @@ const ColonyMembers = () => {
     ethereal,
     walletAddress: currentUserWalletAddress,
   } = useLoggedInUser();
+  const { domainId } = useParams<{
+    domainId: string;
+  }>();
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
   const hasRegisteredProfile = !!username && !ethereal;
 
@@ -106,6 +126,30 @@ const ColonyMembers = () => {
     },
   });
 
+  const [selectedDomainId, setSelectedDomainId] = useState<number>(
+    /*
+     * @NOTE DomainId param sanitization
+     *
+     * We don't actually need to worry about sanitizing the domainId that's
+     * coming in from the params.
+     * The value that reaches us through the hook is being processes by `react-router`
+     * and will always be a string.
+     *
+     * So if we can change that string into a number, we use it as domain, otherwise
+     * we fall back to the "All Domains" selection
+     */
+    parseInt(domainId, 10) || COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  );
+
+  const { data: totalReputation } = useUserReputationQuery({
+    variables: {
+      address: AddressZero,
+      colonyAddress,
+      domainId: selectedDomainId,
+    },
+    fetchPolicy: 'cache-and-network',
+  });
+
   const openPermissionManagementDialog = useDialog(PermissionManagementDialog);
 
   const handlePermissionManagementDialog = useCallback(() => {
@@ -123,6 +167,18 @@ const ColonyMembers = () => {
       colony: colonyData?.processedColony as Colony,
     });
   }, [openToggleManageWhitelistDialog, colonyData]);
+  const selectedDomain = colonyData?.processedColony.domains.find(
+    ({ ethDomainId }) => ethDomainId === selectedDomainId,
+  );
+
+  const nativeToken = colonyData?.processedColony.tokens.find(
+    ({ address }) => address === colonyData?.processedColony.nativeTokenAddress,
+  );
+
+  const formattedTotalDomainRep = getFormattedTokenValue(
+    new Decimal(totalReputation?.userReputation || '0').abs().toString(),
+    nativeToken?.decimals || DEFAULT_TOKEN_DECIMALS,
+  );
 
   // eslint-disable-next-line max-len
   const oneTxPaymentExtension = colonyExtensions?.processedColony?.installedExtensions.find(
@@ -181,10 +237,26 @@ const ColonyMembers = () => {
             <Members
               colony={colonyData.processedColony}
               bannedUsers={bannedMembers?.bannedUsers || []}
+              selectedDomain={selectedDomain}
+              handleDomainChange={setSelectedDomainId}
             />
           )}
         </div>
         <aside className={styles.rightAside}>
+          <div className={styles.teamReputationPointsContainer}>
+            <Heading
+              text={MSG.totalReputationTitle}
+              appearance={{ size: 'normal', theme: 'dark' }}
+            />
+            <p className={styles.reputationPoints}>
+              <FormattedMessage
+                {...MSG.reputationPoints}
+                values={{
+                  teamReputationPoints: formattedTotalDomainRep,
+                }}
+              />
+            </p>
+          </div>
           <ul className={styles.controls}>
             <li>
               <InviteLinkButton
