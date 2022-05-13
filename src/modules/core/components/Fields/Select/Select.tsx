@@ -296,8 +296,10 @@ const Select = ({
           help={help}
           helpValues={helpValues}
           screenReaderOnly={elementOnly}
-          horizontal={appearance?.direction === 'horizontal'}
-          appearance={{ colorSchema: appearance?.colorSchema }}
+          appearance={{
+            colorSchema: appearance?.colorSchema,
+            direction: appearance?.direction,
+          }}
         />
         <div className={styles.inputWrapper}>
           <button

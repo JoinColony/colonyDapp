@@ -20,10 +20,15 @@
 .containerHorizontal {
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 .unselectableHorizontal {
   align-items: flex-start;
+}
+
+.unselectableHorizontal label {
+  padding-top: 14px;
 }
 
 .withoutPadding {

@@ -1,5 +1,6 @@
 .main {
   display: block;
+  margin-bottom: 6px;
   width: 100%;
   position: relative;
   font-size: var(--size-smallish);
@@ -28,11 +29,6 @@
   vertical-align: super;
 }
 
-.horizontal {
-  display: inline-block;
-  padding: 10px 0;
-}
-
 .colorSchemaDark .labelText {
   color: var(--grey-5);
 }
@@ -42,8 +38,7 @@
   color: var(--dark);
 }
 
-.colorSchemaLightGrey .labelText {
-  font-weight: var(--weight-bold);
+.colorSchemaLightGrey span {
   color: var(--temp-grey-blue-7);
 }
 
