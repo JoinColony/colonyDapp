@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 import CLNYIcon from '../../../../../img/tokens/CLNY.svg';
 import EtherIcon from '../../../../../img/tokens/ether.svg';
-import styles from './CreatorData.css';
+import styles from './TopParameters.css';
 
 export const balanceData = [
   {
