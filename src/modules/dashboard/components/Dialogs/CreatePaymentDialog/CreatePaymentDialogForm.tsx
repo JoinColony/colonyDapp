@@ -439,6 +439,7 @@ const CreatePaymentDialogForm = ({
             placeholder={MSG.userPickerPlaceholder}
             dataTest="paymentRecipientPicker"
             itemDataTest="paymentRecipientItem"
+            valueDataTest="paymentRecipientName"
           />
         </div>
       </DialogSection>

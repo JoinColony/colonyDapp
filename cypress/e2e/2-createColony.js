@@ -1,23 +1,23 @@
 describe('Create a new colony', () => {
   const {
-    colony: { name: colonyName },
+    colony,
+    colony: { name: colonyName, nativeToken },
     baseUrl,
+    skipInitTests,
   } = Cypress.config();
 
-  if (!Cypress.config().skipInitTests) {
+  if (!skipInitTests) {
     it('creates a new colony with new token', () => {
-      const { name, nativeToken } = Cypress.config().colony;
-
       cy.login();
 
-      cy.createColony(Cypress.config().colony, true);
+      cy.createColony(colony, true);
 
       cy.getBySel('colonyTokenSymbol', { timeout: 120000 }).should(
         'have.text',
         nativeToken,
       );
 
-      cy.url().should('eq', `${baseUrl}/colony/${name}`);
+      cy.url().should('eq', `${baseUrl}/colony/${colonyName}`);
     });
 
     it('New user is created which joins the colony', () => {
@@ -37,23 +37,19 @@ describe('Create a new colony', () => {
     });
 
     it('creates a new colony with existing token', () => {
-      const {
-        nativeToken: existingToken,
-        name: existingColony,
-      } = Cypress.config().colony;
-      const { name } = Cypress.config().colony2;
+      const newColony = { name: 'maya' };
 
       cy.login();
-      cy.getColonyTokenAddress(existingColony);
+      cy.getColonyTokenAddress(colonyName);
 
-      cy.createColony(Cypress.config().colony2, false);
+      cy.createColony(newColony, false);
 
       cy.getBySel('colonyTokenSymbol', { timeout: 120000 }).should(
         'have.text',
-        existingToken,
+        nativeToken,
       );
 
-      cy.url().should('eq', `${baseUrl}/colony/${name}`);
+      cy.url().should('eq', `${baseUrl}/colony/${newColony.name}`);
     });
   }
 });

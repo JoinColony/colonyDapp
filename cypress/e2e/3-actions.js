@@ -1,22 +1,20 @@
-import { bigNumberify } from 'ethers/utils';
-
-import ganacheAccounts from '~lib/colonyNetwork/ganache-accounts.json';
-import { createAddress } from '~utils/web3';
+import Decimal from 'decimal.js';
 
 describe('User can create actions via UAC', () => {
   const {
     colony: { name: colonyName },
     baseUrl,
+    skipInitTests,
   } = Cypress.config();
 
   it('Can mint native tokens', () => {
-    const amountToMint = 10000;
+    const amountToMint = 400;
     cy.mintTokens(amountToMint, false);
 
     cy.getBySel('backButton').click();
 
     cy.get('@totalFunds').then(($totalFunds) => {
-      const totalFunds = bigNumberify($totalFunds.split(',').join(''))
+      const totalFunds = new Decimal($totalFunds.split(',').join(''))
         .add(amountToMint)
         .toString();
 
@@ -29,17 +27,18 @@ describe('User can create actions via UAC', () => {
 
   it('Can make payment', () => {
     const amountToPay = 10;
-    const accounts = Object.entries(ganacheAccounts.private_keys).map(
-      ([address]) => address,
+    const paidAmount = new Decimal(amountToPay).add(
+      new Decimal(1.0101).div(100).mul(amountToPay),
     );
 
-    cy.makePayment(amountToPay, createAddress(accounts[1]), false);
+    cy.makePayment(amountToPay, undefined, false);
 
     cy.getBySel('backButton').click();
 
     cy.get('@totalFunds').then(($totalFunds) => {
-      const totalFunds = bigNumberify($totalFunds.split(',').join(''))
-        .sub(amountToPay)
+      const totalFunds = new Decimal($totalFunds.split(',').join(''))
+        .sub(paidAmount)
+        .toDecimalPlaces(3)
         .toString();
 
       cy.getBySel('colonyTotalFunds', { timeout: 15000 }).then(($text) => {
@@ -84,7 +83,7 @@ describe('User can create actions via UAC', () => {
   });
 
   it('Can transfer funds', () => {
-    const amountToTransfer = 1000;
+    const amountToTransfer = 100;
 
     cy.transferFunds(amountToTransfer, false);
 
@@ -94,7 +93,7 @@ describe('User can create actions via UAC', () => {
     cy.getBySel('colonyDomainSelectorItem').last().click();
 
     cy.get('@teamFunds').then(($teamFunds) => {
-      const teamFunds = bigNumberify($teamFunds.split(',').join(''))
+      const teamFunds = new Decimal($teamFunds.split(',').join(''))
         .add(amountToTransfer)
         .toString();
 
@@ -106,20 +105,26 @@ describe('User can create actions via UAC', () => {
       );
     });
   });
-  it('Can unlock the native token', () => {
-    const colony = { name: 'sirius', nativeToken: 'SIRS' };
-    cy.login();
-    cy.createColony(colony, true);
-    cy.url().should('eq', `${baseUrl}/colony/${colony.name}`, {
-      timeout: 90000,
+
+  /* needs to only work once */
+  if (!skipInitTests) {
+    it('Can unlock the native token', () => {
+      const colony = { name: 'sirius', nativeToken: 'SIRS' };
+
+      cy.login();
+      cy.createColony(colony, true);
+      cy.url().should('eq', `${baseUrl}/colony/${colony.name}`, {
+        timeout: 90000,
+      });
+
+      cy.unlockToken(colony);
+
+      cy.getBySel('backButton').click();
+
+      cy.getBySel('lockIconTooltip', { timeout: 15000 }).should('not.exist');
     });
+  }
 
-    cy.unlockToken(colony);
-
-    cy.getBySel('backButton').click();
-
-    cy.getBySel('lockIconTooltip', { timeout: 15000 }).should('not.exist');
-  });
   it('Can manage permissions', () => {
     cy.managePermissions();
   });
@@ -133,15 +138,6 @@ describe('User can create actions via UAC', () => {
     const amountToSmite = 10;
 
     cy.smiteUser(amountToSmite, false);
-  });
-
-  it('Make payment from a subdomain', () => {
-    const amountToPay = 10;
-    const accounts = Object.entries(ganacheAccounts.private_keys).map(
-      ([address]) => address,
-    );
-
-    cy.makePayment(amountToPay, createAddress(accounts[1]), false, true);
   });
 
   it('Can enable recovery mode', () => {
@@ -187,5 +183,11 @@ describe('User can create actions via UAC', () => {
       .click()
       .wait(20000)
       .should('not.exist');
+  });
+
+  it('Make payment from a subdomain', () => {
+    const amountToPay = 10;
+
+    cy.makePayment(amountToPay, undefined, false, true);
   });
 });
