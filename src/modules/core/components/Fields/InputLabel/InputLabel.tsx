@@ -68,7 +68,7 @@ const InputLabel = ({
       id={inputId ? `${inputId}-label` : undefined}
       htmlFor={inputId || undefined}
     >
-      <span className={labelText}>{labelText}</span>
+      <span className={styles.labelText}>{labelText}</span>
       {helpText && <span className={styles.help}>{helpText}</span>}
       {extra && <span className={styles.extra}>{extra}</span>}
     </label>
