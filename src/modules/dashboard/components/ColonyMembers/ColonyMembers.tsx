@@ -2,9 +2,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ColonyVersion, Extension } from '@colony/colony-js';
-
 import Decimal from 'decimal.js';
 import { AddressZero } from 'ethers/constants';
+
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import { BanUserDialog } from '~core/Comment';
