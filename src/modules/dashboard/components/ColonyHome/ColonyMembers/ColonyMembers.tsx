@@ -45,7 +45,10 @@ const ColonyMembers = ({
   } = useColonyMembersWithReputationQuery({
     variables: {
       colonyAddress,
-      domainId: currentDomainId,
+      domainId:
+        currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID
+          ? ROOT_DOMAIN_ID
+          : currentDomainId,
     },
   });
 
@@ -64,13 +67,17 @@ const ColonyMembers = ({
     },
   });
 
-  const subscribers = useMemo(
-    () =>
-      members?.subscribedUsers?.map(
-        ({ profile: { walletAddress } }) => walletAddress,
-      ),
-    [members],
-  );
+  const subscribers = useMemo(() => {
+    const allMembers = members?.subscribedUsers?.map(
+      ({ profile: { walletAddress } }) => walletAddress.toLowerCase(),
+    );
+
+    return (allMembers || []).filter(
+      (member) =>
+        membersWithReputation?.colonyMembersWithReputation?.indexOf(member) ===
+        -1,
+    );
+  }, [members, membersWithReputation]);
 
   if (
     loadingColonyMembersWithReputation ||
@@ -90,7 +97,7 @@ const ColonyMembers = ({
   return (
     <>
       <MembersSubsection
-        members={subscribers}
+        members={membersWithReputation?.colonyMembersWithReputation}
         bannedMembers={bannedMembers?.bannedUsers || []}
         colony={colony}
         isContributors
@@ -98,8 +105,8 @@ const ColonyMembers = ({
       {(currentDomainId === ROOT_DOMAIN_ID ||
         currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) && (
         <MembersSubsection
+          members={subscribers}
           bannedMembers={bannedMembers?.bannedUsers || []}
-          members={membersWithReputation?.colonyMembersWithReputation}
           colony={colony}
           maxAvatars={maxAvatars}
           isContributors={false}
