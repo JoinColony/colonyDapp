@@ -78,7 +78,7 @@ const MembersSubsection = ({
   isContributors,
   colony,
   currentDomainId = COLONY_TOTAL_BALANCE_DOMAIN_ID,
-  maxAvatars = 15,
+  maxAvatars = 12,
 }: Props) => {
   const {
     walletAddress: currentUserWalletAddress,
