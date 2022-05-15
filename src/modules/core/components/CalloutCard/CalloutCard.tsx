@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormattedMessage, MessageDescriptor } from 'react-intl';
 
-import { SimpleMessageValues } from '~types/index';
+import { ComplexMessageValues } from '~types/index';
 
 import { getMainClasses } from '~utils/css';
 import styles from './CalloutCard.css';
@@ -20,13 +20,13 @@ interface Props {
   label: MessageDescriptor | string;
 
   /** Values for context text (react-intl interpolation) */
-  labelValues?: SimpleMessageValues;
+  labelValues?: ComplexMessageValues;
 
   /** A string or a `messageDescriptor` that make up the cards's content */
   description?: MessageDescriptor | string;
 
   /** Values for context text (react-intl interpolation) */
-  descriptionValues?: SimpleMessageValues;
+  descriptionValues?: ComplexMessageValues;
 }
 
 const CalloutCard = ({

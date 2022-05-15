@@ -59,13 +59,13 @@ const ActionsPageFeedItemWithIPFS = ({
   if (!ipfsDataJSON) {
     return (
       <CalloutCard
-        label={...MSG.warningTitle}
+        label={MSG.warningTitle}
         labelValues={{
           span: (chunks) => (
             <span className={styles.noIPFSLabel}>{chunks}</span>
           ),
         }}
-        description={...MSG.warningText}
+        description={MSG.warningText}
         descriptionValues={{
           link: (
             <Link
