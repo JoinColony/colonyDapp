@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 import { Redirect } from 'react-router-dom';
-import { isConfusing } from 'unicode-confusables';
+import { isConfusing } from '@colony/unicode-confusables-noascii';
 
 import Snackbar, { SnackbarType } from '~core/Snackbar';
 import CopyableAddress from '~core/CopyableAddress';
