@@ -1,0 +1,34 @@
+.main {
+  padding: 9px 9px 10px 15px;
+  width: 100%;
+  position: relative;
+  border-radius: var(--radius-normal);
+  background-color: var(--colony-white);
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+}
+
+/* Theme */
+.themePrimary {
+  composes: main;
+  background-color: var(--primary);
+  color: var(--colony-white);
+}
+
+.themeInfo {
+  composes: main;
+  background-color: newInfoBlue;
+  color: var(--colony-white);
+}
+
+.themeDanger {
+  composes: main;
+  background-color: var(--danger);
+  color: var(--colony-white);
+}
+
+.themePinky {
+  composes: main;
+  background-color: color-mod(var(--pink) alpha(15%));
+  color: var(--dark);
+}
