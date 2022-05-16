@@ -84,7 +84,7 @@
 
 .titleContainer {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   margin-bottom: 35px;
   border-bottom: 1px solid var(--temp-grey-13);
@@ -99,4 +99,9 @@
 
 .asideBar {
   margin-left: 80px;
+}
+
+.titleSelect {
+  margin-left: 5px;
+  margin-bottom: 18px;
 }
