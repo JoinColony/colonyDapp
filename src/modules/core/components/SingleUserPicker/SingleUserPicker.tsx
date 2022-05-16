@@ -27,7 +27,7 @@ type AvatarRenderFn = (
   user?: ItemDataType<AnyUser>,
 ) => ReactNode;
 
-export const MSG = defineMessages({
+const MSG = defineMessages({
   selectMember: {
     id: 'SingleUserPicker.selectMember',
     defaultMessage: 'Select member',
@@ -53,8 +53,6 @@ export const MSG = defineMessages({
 interface Appearance {
   direction?: 'horizontal';
   width?: 'wide';
-  size?: 'small';
-  colorSchema?: 'dark' | 'grey' | 'transparent' | 'info' | 'lightGrey';
 }
 
 export interface Props extends WithOmnipickerInProps {
@@ -178,7 +176,7 @@ const SingleUserPicker = ({
     );
 
   const labelAppearance = appearance
-    ? { direction: appearance.direction, colorSchema: appearance.colorSchema }
+    ? { direction: appearance.direction }
     : undefined;
 
   const placeholderText =
