@@ -39,9 +39,10 @@ interface Props {
   colonyName: string;
 }
 
-const supRenderAvatar = (address: Address, item: ItemDataType<AnyUser>) => (
-  <UserAvatar address={address} user={item} size="xs" notSet={false} />
-);
+export const supRenderAvatar = (
+  address: Address,
+  item: ItemDataType<AnyUser>,
+) => <UserAvatar address={address} user={item} size="xs" notSet={false} />;
 
 const TopParameters = () => {
   const domainOptions = useMemo(

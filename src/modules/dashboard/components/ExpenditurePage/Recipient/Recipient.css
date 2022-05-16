@@ -1,0 +1,45 @@
+@value paddingRightLeft: 40px;
+
+.container {
+  padding: 0 paddingRightLeft;
+}
+
+.singleUserContainer label {
+  color: var(--dark);
+}
+
+.singleUserContainer > div {
+  padding-left: 0;
+}
+
+.valueContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 8px;
+}
+
+.valueContainer label {
+  margin-bottom: 0;
+  color: var(--temp-grey-blue-7);
+}
+
+.inputContainer {
+  margin-right: 8px;
+}
+
+.inputContainer input {
+  height: 42px;
+  width: 103px;
+}
+
+.delay {
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--temp-grey-blue-7);
+  letter-spacing: 0.5px;
+}
+
+.valueControlsContainer {
+  display: flex;
+}
