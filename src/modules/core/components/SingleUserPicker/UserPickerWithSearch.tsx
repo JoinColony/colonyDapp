@@ -14,7 +14,7 @@ interface Props
     'renderAvatar' | 'disabled' | 'appearance' | 'valueDataTest' | 'dataTest'
   > {
   omniPickerIsOpen?: boolean;
-  handleActiveUserClick: () => void;
+  handleActiveUserClick: VoidFunction;
   error?: string;
   handlePick: (user: AnyUser) => void;
   touched?: boolean;

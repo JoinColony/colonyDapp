@@ -15,6 +15,7 @@ import TeamDropdownItem from '~dashboard/Dialogs/AwardAndSmiteDialogs/ManageRepu
 import XDAIIcon from '../../../../../img/tokens/xDAI.svg';
 
 import { balanceData, colonyAddress, domains, userData } from './consts';
+import { Appearance } from '~core/Fields/Select/types';
 
 const MSG = defineMessages({
   defaultExpenditureTypeLabel: {
@@ -81,9 +82,7 @@ const TopParameters = () => {
     );
   }, []);
 
-  const renderBalanceActiveOption = useCallback<
-    (option: SelectOption | undefined) => ReactNode
-  >(
+  const renderBalanceActiveOption = useCallback(
     () => (
       <div className={styles.label}>
         <span className={styles.icon}>
@@ -95,6 +94,14 @@ const TopParameters = () => {
     [],
   );
 
+  const appareanceSettings: Appearance = {
+    theme: 'alt',
+    direction: 'horizontal',
+    optionSize: 'large',
+    colorSchema: 'lightGrey',
+    size: 'small',
+  };
+
   return (
     <div className={styles.container}>
       <Form initialValues={{}} initialErrors={{}} onSubmit={() => {}}>
@@ -103,15 +110,10 @@ const TopParameters = () => {
             name="expenditureType"
             label={MSG.defaultExpenditureTypeLabel}
             appearance={{
-              theme: 'alt',
-              alignOptions: 'left',
-              direction: 'horizontal',
-              optionSize: 'large',
-              colorSchema: 'lightGrey',
-              size: 'small',
+              ...appareanceSettings,
               width: 'content',
             }}
-            options={[{ label: 'Advanced', value: 'advanced' }]}
+            options={[{ label: 'Advanced payment', value: 'Advanced' }]}
           />
         </DialogSection>
         <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
@@ -120,12 +122,7 @@ const TopParameters = () => {
             label={MSG.defaultTeamLabel}
             name="team"
             appearance={{
-              theme: 'alt',
-              alignOptions: 'left',
-              direction: 'horizontal',
-              optionSize: 'large',
-              colorSchema: 'lightGrey',
-              size: 'small',
+              ...appareanceSettings,
               padding: 'none',
             }}
             renderActiveOption={renderActiveOption}
@@ -136,12 +133,9 @@ const TopParameters = () => {
             name="balance"
             label={MSG.defaultBalanceLabel}
             appearance={{
-              theme: 'alt',
-              alignOptions: 'right',
-              direction: 'horizontal',
+              ...appareanceSettings,
               listPosition: 'static',
-              colorSchema: 'lightGrey',
-              size: 'small',
+              optionSize: 'default',
             }}
             options={balanceData}
             renderActiveOption={renderBalanceActiveOption}
