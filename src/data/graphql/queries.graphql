@@ -466,8 +466,8 @@ query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
   colonyMembersWithReputation(colonyAddress: $colonyAddress, domainId: $domainId) @client
 }
 
-query ColonyContributors($colonyAddress: String!, $domainId: Int) {
-  colonyContributors(colonyAddress: $colonyAddress, domainId: $domainId) @client {
+query ColonyContributors($colonyAddress: String!, $colonyName: colonyName, $domainId: Int) {
+  colonyContributors(colonyAddress: $colonyAddress, colonyName: $colonyName, domainId: $domainId) @client {
     id
     directRoles
     roles
