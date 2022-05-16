@@ -245,6 +245,7 @@ export type Query = {
   colony: SubgraphColony;
   colonyAction: ColonyAction;
   colonyAddress: Scalars['String'];
+  colonyContributors: Array<ColonyContributor>;
   colonyDomain: ProcessedDomain;
   colonyExtension?: Maybe<ColonyExtension>;
   colonyMembersWithReputation?: Maybe<Array<Scalars['String']>>;
@@ -405,6 +406,12 @@ export type QueryColonyActionArgs = {
 
 export type QueryColonyAddressArgs = {
   name: Scalars['String'];
+};
+
+
+export type QueryColonyContributorsArgs = {
+  colonyAddress: Scalars['String'];
+  domainId?: Maybe<Scalars['Int']>;
 };
 
 
@@ -1105,6 +1112,13 @@ export type ActionThatNeedsAttention = {
 export type UserDomainReputation = {
   domainId: Scalars['Int'];
   reputationPercentage: Scalars['String'];
+};
+
+export type ColonyContributor = {
+  id: Scalars['String'];
+  directRoles: Array<Scalars['Int']>;
+  roles: Array<Scalars['Int']>;
+  profile: UserProfile;
 };
 
 export type ByColonyFilter = {
@@ -2021,6 +2035,17 @@ export type ColonyMembersWithReputationQueryVariables = Exact<{
 
 
 export type ColonyMembersWithReputationQuery = Pick<Query, 'colonyMembersWithReputation'>;
+
+export type ColonyContributorsQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  domainId?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type ColonyContributorsQuery = { colonyContributors: Array<(
+    Pick<ColonyContributor, 'id' | 'directRoles' | 'roles'>
+    & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
+  )> };
 
 export type ColonyReputationQueryVariables = Exact<{
   address: Scalars['String'];
@@ -5100,6 +5125,48 @@ export function useColonyMembersWithReputationLazyQuery(baseOptions?: Apollo.Laz
 export type ColonyMembersWithReputationQueryHookResult = ReturnType<typeof useColonyMembersWithReputationQuery>;
 export type ColonyMembersWithReputationLazyQueryHookResult = ReturnType<typeof useColonyMembersWithReputationLazyQuery>;
 export type ColonyMembersWithReputationQueryResult = Apollo.QueryResult<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>;
+export const ColonyContributorsDocument = gql`
+    query ColonyContributors($colonyAddress: String!, $domainId: Int) {
+  colonyContributors(colonyAddress: $colonyAddress, domainId: $domainId) @client {
+    id
+    directRoles
+    roles
+    profile {
+      avatarHash
+      displayName
+      username
+      walletAddress
+    }
+  }
+}
+    `;
+
+/**
+ * __useColonyContributorsQuery__
+ *
+ * To run a query within a React component, call `useColonyContributorsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyContributorsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyContributorsQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      domainId: // value for 'domainId'
+ *   },
+ * });
+ */
+export function useColonyContributorsQuery(baseOptions?: Apollo.QueryHookOptions<ColonyContributorsQuery, ColonyContributorsQueryVariables>) {
+        return Apollo.useQuery<ColonyContributorsQuery, ColonyContributorsQueryVariables>(ColonyContributorsDocument, baseOptions);
+      }
+export function useColonyContributorsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyContributorsQuery, ColonyContributorsQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyContributorsQuery, ColonyContributorsQueryVariables>(ColonyContributorsDocument, baseOptions);
+        }
+export type ColonyContributorsQueryHookResult = ReturnType<typeof useColonyContributorsQuery>;
+export type ColonyContributorsLazyQueryHookResult = ReturnType<typeof useColonyContributorsLazyQuery>;
+export type ColonyContributorsQueryResult = Apollo.QueryResult<ColonyContributorsQuery, ColonyContributorsQueryVariables>;
 export const ColonyReputationDocument = gql`
     query ColonyReputation($address: String!, $domainId: Int) {
   colonyReputation(address: $address, domainId: $domainId) @client
