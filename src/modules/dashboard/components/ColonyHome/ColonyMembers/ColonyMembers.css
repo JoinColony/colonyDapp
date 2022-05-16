@@ -53,7 +53,7 @@
   background-color: var(--colony-white);
 
   &:hover {
-    background-color: color-mod(var(--action-secondary), alpha(12%));
+    background-color: color-mod(var(--action-secondary) alpha(12%));
   }
 }
 
