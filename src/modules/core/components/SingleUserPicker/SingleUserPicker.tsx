@@ -21,7 +21,6 @@ import UserAvatar from '~core/UserAvatar';
 import ItemDefault from './ItemDefault';
 
 import styles from './SingleUserPicker.css';
-import UserPickerWithSearch from './UserPickerWithSearch';
 
 type AvatarRenderFn = (
   address: Address,
@@ -108,8 +107,6 @@ export interface Props extends WithOmnipickerInProps {
 
   /** Provides value for data-test prop in the value of the input used on cypress testing */
   valueDataTest?: string;
-
-  hasSearch?: boolean;
 }
 
 interface EnhancedProps extends Props, WrappedComponentProps {}
@@ -141,7 +138,6 @@ const SingleUserPicker = ({
   dataTest,
   itemDataTest,
   valueDataTest,
-  hasSearch,
 }: EnhancedProps) => {
   const [, { error, touched, value }, { setValue }] = useField<AnyUser | null>(
     name,
@@ -203,98 +199,64 @@ const SingleUserPicker = ({
             appearance={labelAppearance}
             screenReaderOnly={elementOnly}
           />
-          {hasSearch ? (
-            <UserPickerWithSearch
-              {...{
-                handleActiveUserClick,
-                handlePick,
-                inputProps,
-                openOmniPicker,
-                registerInputNode,
-                renderItem,
-                error,
-                omniPickerIsOpen,
-                placeholderText,
-                touched,
-                dataTest,
-                isResettable,
-                disabled,
-                appearance,
-                valueDataTest,
-                value,
-                renderAvatar,
-                OmniPicker,
-              }}
-            />
+          {value ? (
+            <div className={styles.avatarContainer}>
+              {renderAvatar(value.profile.walletAddress, value)}
+            </div>
           ) : (
-            <>
-              {value ? (
-                <div className={styles.avatarContainer}>
-                  {renderAvatar(value.profile.walletAddress, value)}
-                </div>
-              ) : (
-                <Icon
-                  className={omniPickerIsOpen ? styles.focusIcon : styles.icon}
-                  name="filled-circle-person"
-                  title={MSG.selectMember}
-                />
-              )}
-              <div className={styles.container}>
-                {
-                  /* eslint-disable jsx-a11y/click-events-have-key-events */
-                  value && (
-                    <button
-                      type="button"
-                      className={styles.recipientName}
-                      onClick={handleActiveUserClick}
-                      onFocus={handleActiveUserClick}
-                      tabIndex={0}
-                      disabled={disabled}
-                      data-test={valueDataTest}
-                    >
-                      {value.profile.displayName ||
-                        value.profile.username ||
-                        value.profile.walletAddress}
-                    </button>
-                  )
-                }
-                {/* eslint-enable jsx-a11y/click-events-have-key-events */}
-                <input
-                  disabled={disabled}
-                  className={
-                    touched && error ? styles.inputInvalid : styles.input
-                  }
-                  {...inputProps}
-                  placeholder={placeholderText}
-                  hidden={!!value}
-                  ref={registerInputNode}
-                  data-test={dataTest}
-                />
-                {error &&
-                  appearance &&
-                  appearance.direction === 'horizontal' && (
-                    <span className={styles.errorHorizontal}>{error}</span>
-                  )}
-                <div className={styles.omniPickerContainer}>
-                  <OmniPicker renderItem={renderItem} onPick={handlePick} />
-                </div>
-                {(!value || (value && !isResettable)) && (
-                  <Icon
-                    {...(disabled ? {} : { onClick: openOmniPicker })}
-                    className={classnames(styles.arrowIcon, {
-                      [styles.arrowIconActive]: omniPickerIsOpen,
-                    })}
-                    name="caret-down-small"
-                    title={omniPickerIsOpen ? MSG.openedCaret : MSG.closedCaret}
-                  />
-                )}
-              </div>
-            </>
+            <Icon
+              className={omniPickerIsOpen ? styles.focusIcon : styles.icon}
+              name="filled-circle-person"
+              title={MSG.selectMember}
+            />
           )}
+          <div className={styles.container}>
+            {
+              /* eslint-disable jsx-a11y/click-events-have-key-events */
+              value && (
+                <button
+                  type="button"
+                  className={styles.recipientName}
+                  onClick={handleActiveUserClick}
+                  onFocus={handleActiveUserClick}
+                  tabIndex={0}
+                  disabled={disabled}
+                  data-test={valueDataTest}
+                >
+                  {value.profile.displayName ||
+                    value.profile.username ||
+                    value.profile.walletAddress}
+                </button>
+              )
+            }
+            {/* eslint-enable jsx-a11y/click-events-have-key-events */}
+            <input
+              disabled={disabled}
+              className={touched && error ? styles.inputInvalid : styles.input}
+              {...inputProps}
+              placeholder={placeholderText}
+              hidden={!!value}
+              ref={registerInputNode}
+              data-test={dataTest}
+            />
+            {error && appearance && appearance.direction === 'horizontal' && (
+              <span className={styles.errorHorizontal}>{error}</span>
+            )}
+            <div className={styles.omniPickerContainer}>
+              <OmniPicker renderItem={renderItem} onPick={handlePick} />
+            </div>
+            {(!value || (value && !isResettable)) && (
+              <Icon
+                {...(disabled ? {} : { onClick: openOmniPicker })}
+                className={classnames(styles.arrowIcon, {
+                  [styles.arrowIconActive]: omniPickerIsOpen,
+                })}
+                name="caret-down-small"
+                title={omniPickerIsOpen ? MSG.openedCaret : MSG.closedCaret}
+              />
+            )}
+          </div>
         </div>
-        {error && hasSearch && (
-          <div className={styles.errorSearchType}>{error}</div>
-        )}
       </OmniPickerWrapper>
       {value && isResettable && (
         <Button
