@@ -17,13 +17,13 @@ interface Props {
   appearance?: Appearance;
 
   /** label text */
-  label: MessageDescriptor | string;
+  label: MessageDescriptor;
 
   /** Values for context text (react-intl interpolation) */
   labelValues?: ComplexMessageValues;
 
   /** A string or a `messageDescriptor` that make up the cards's content */
-  description?: MessageDescriptor | string;
+  description?: MessageDescriptor;
 
   /** Values for context text (react-intl interpolation) */
   descriptionValues?: ComplexMessageValues;
