@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 import { ColonyVersion, Extension } from '@colony/colony-js';
 import Decimal from 'decimal.js';
 import { AddressZero } from 'ethers/constants';
@@ -9,6 +9,7 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import { BanUserDialog } from '~core/Comment';
 import Heading from '~core/Heading';
+import Numeral from '~core/Numeral';
 import {
   COLONY_TOTAL_BALANCE_DOMAIN_ID,
   DEFAULT_TOKEN_DECIMALS,
@@ -61,10 +62,6 @@ const MSG = defineMessages({
   totalReputationTitle: {
     id: 'dashboard.ColonyMembers.totalReputationTitle',
     defaultMessage: 'Total reputation in team',
-  },
-  reputationPoints: {
-    id: 'dashboard.ColonyMembers.reputationPoints',
-    defaultMessage: '{teamReputationPoints} reputation points',
   },
 });
 
@@ -153,12 +150,13 @@ const ColonyMembers = () => {
     });
   }, [openPermissionManagementDialog, colonyData, isVotingExtensionEnabled]);
 
-  const selectedDomain = colonyData?.processedColony.domains.find(
+  const selectedDomain = colonyData?.processedColony?.domains?.find(
     ({ ethDomainId }) => ethDomainId === selectedDomainId,
   );
 
-  const nativeToken = colonyData?.processedColony.tokens.find(
-    ({ address }) => address === colonyData?.processedColony.nativeTokenAddress,
+  const nativeToken = colonyData?.processedColony?.tokens.find(
+    ({ address }) =>
+      address === colonyData?.processedColony?.nativeTokenAddress,
   );
 
   const formattedTotalDomainRep = getFormattedTokenValue(
@@ -234,11 +232,9 @@ const ColonyMembers = () => {
               appearance={{ size: 'normal', theme: 'dark' }}
             />
             <p className={styles.reputationPoints}>
-              <FormattedMessage
-                {...MSG.reputationPoints}
-                values={{
-                  teamReputationPoints: formattedTotalDomainRep,
-                }}
+              <Numeral
+                value={formattedTotalDomainRep}
+                suffix="reputation points"
               />
             </p>
           </div>
