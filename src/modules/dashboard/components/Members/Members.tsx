@@ -36,10 +36,7 @@ const MSG = defineMessages({
   },
   title: {
     id: 'dashboard.Members.title',
-    defaultMessage: `Members{domainLabel, select,
-      root {}
-      other {: {domainLabel}}
-    }`,
+    defaultMessage: `Members:`,
   },
   labelFilter: {
     id: 'dashboard.Members.labelFilter',
@@ -137,11 +134,6 @@ const Members = ({
       <div className={styles.titleContainer}>
         <Heading
           text={MSG.title}
-          textValues={{
-            domainLabel: selectedDomain
-              ? selectedDomain.name
-              : ALLDOMAINS_DOMAIN_SELECTION.name,
-          }}
           appearance={{ size: 'medium', theme: 'dark' }}
         />
         <Form
@@ -151,6 +143,7 @@ const Members = ({
           <Select
             appearance={{
               alignOptions: 'right',
+              size: 'mediumLarge',
               theme: 'alt',
             }}
             elementOnly
