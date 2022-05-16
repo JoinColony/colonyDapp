@@ -152,6 +152,7 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         prevStep: 'dashboard.ColonyActionsDialog',
         nextStep: 'dashboard.CreateDomainDialog',
         nextStepEdit: 'dashboard.EditDomainDialog',
+        nextStepManageWhitelist: 'dashboard.ManageWhitelistDialog',
         colony,
         isVotingExtensionEnabled,
       },
@@ -209,7 +210,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         nextStepRecovery: 'dashboard.RecoveryModeDialog',
         nextStepEditDetails: 'dashboard.EditColonyDetailsDialog',
         nextStepVersionUpgrade: 'dashboard.NetworkContractUpgradeDialog',
-        nextStepManageWhitelist: 'dashboard.ManageWhitelistDialog',
         colony,
         isVotingExtensionEnabled,
       },
@@ -233,7 +233,7 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
     {
       component: ManageWhitelistDialog,
       props: {
-        prevStep: 'dashboard.AdvancedDialog',
+        prevStep: 'dashboard.ManageDomainsDialog',
         colony,
       },
     },

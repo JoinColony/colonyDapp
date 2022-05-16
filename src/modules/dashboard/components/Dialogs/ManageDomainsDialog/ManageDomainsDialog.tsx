@@ -7,7 +7,7 @@ import IndexModal from '~core/IndexModal';
 import { Colony, useLoggedInUser } from '~data/index';
 import { WizardDialogType, useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '~modules/transformers';
-import { canArchitect } from '~modules/users/checks';
+import { canArchitect, hasRoot } from '~modules/users/checks';
 
 const MSG = defineMessages({
   dialogHeader: {
@@ -35,11 +35,32 @@ const MSG = defineMessages({
     id: 'dashboard.ManageDomainsDialog.domainPermissionsList',
     defaultMessage: 'administration',
   },
+
+  manageWhitelistTitle: {
+    id: 'dashboard.ManageDomainsDialog.manageWhitelistTitle',
+    defaultMessage: 'Manage address book',
+  },
+  manageWhitelistDescription: {
+    id: 'dashboard.ManageDomainsDialog.manageWhitelistDescription',
+    defaultMessage: 'Add addresses you trust to your colony’s address book',
+  },
+
+  permissionsText: {
+    id: 'dashboard.ManageDomainsDialog.permissionsText',
+    defaultMessage: `You must have the {permissionsList} permissions in the
+      relevant teams, in order to take this action`,
+  },
+
+  manageWhitelistPermissionsList: {
+    id: 'dashboard.ManageDomainsDialog.manageWhitelistPermissionsList',
+    defaultMessage: 'root',
+  },
 });
 
 interface CustomWizardDialogueProps extends ActionDialogProps {
   nextStep: string;
   nextStepEdit: string;
+  nextStepManageWhitelist: string;
   prevStep: string;
   colony: Colony;
 }
@@ -55,14 +76,15 @@ const ManageDomainsDialog = ({
   prevStep,
   nextStep,
   nextStepEdit,
+  nextStepManageWhitelist,
   colony,
   isVotingExtensionEnabled,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
-
   const hasRegisteredProfile = !!username && !ethereal;
+  const hasRootPermission = hasRegisteredProfile && hasRoot(allUserRoles);
   const canCreateEditDomain =
     hasRegisteredProfile && canArchitect(allUserRoles);
 
@@ -88,6 +110,20 @@ const ManageDomainsDialog = ({
       },
       onClick: () => callStep(nextStepEdit),
       dataTest: 'editDomainDialogIndexItem',
+    },
+
+    {
+      title: MSG.manageWhitelistTitle,
+      description: MSG.manageWhitelistDescription,
+      icon: 'emoji-whitelist',
+      permissionRequired: !hasRootPermission,
+      permissionInfoText: MSG.permissionsText,
+      permissionInfoTextValues: {
+        permissionsList: (
+          <FormattedMessage {...MSG.manageWhitelistPermissionsList} />
+        ),
+      },
+      onClick: () => callStep(nextStepManageWhitelist),
     },
   ];
 

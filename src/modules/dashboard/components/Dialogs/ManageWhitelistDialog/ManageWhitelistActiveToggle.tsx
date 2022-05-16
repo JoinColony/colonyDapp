@@ -18,15 +18,19 @@ const MSG = defineMessages({
   },
   headerTitle: {
     id: `dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.ManageWhitelistActiveToggle.headerTitle`,
-    defaultMessage: 'Verified addresses',
+    defaultMessage: 'Only show address book contacts as recipients',
   },
   tooltipText: {
     id: `dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.ManageWhitelistActiveToggle.tooltipText`,
-    defaultMessage: `Verified addresses is active by default once at least one address is added to the list. You can turn this feature “Off” to deactivate. Use with caution.`,
+    defaultMessage: `Address book is active by default once at least one address is added to the list. You can turn this feature “Off” to deactivate. Use with caution.`,
   },
   warningText: {
     id: `dashboard.ManageWhitelistDialog.ManageWhitelistDialogForm.ManageWhitelistActiveToggle.warningText`,
-    defaultMessage: `<span>Warning.</span> You have deactivated the whitelist. You acknowledge potential risks and consequences by clicking ‘Confirm’. `,
+    defaultMessage: `<span>Warning.</span>
+      You are deactivating your colony’s address book.
+      This is a list of addresses your colony has flagged as “safe”.
+      Now, instead, all addresses watching your colony will
+      appear in recipient selection menus. Be vigilant against spoof accounts.`,
   },
 });
 
