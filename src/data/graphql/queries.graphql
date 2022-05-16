@@ -466,6 +466,20 @@ query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
   colonyMembersWithReputation(colonyAddress: $colonyAddress, domainId: $domainId) @client
 }
 
+query ColonyContributors($colonyAddress: String!, $domainId: Int) {
+  colonyContributors(colonyAddress: $colonyAddress, domainId: $domainId) @client {
+    id
+    directRoles
+    roles
+    profile {
+      avatarHash
+      displayName
+      username
+      walletAddress
+    }
+  }
+}
+
 query ColonyReputation($address: String!, $domainId: Int) {
   colonyReputation(address: $address, domainId: $domainId) @client
 }

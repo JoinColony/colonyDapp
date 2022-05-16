@@ -248,11 +248,22 @@ export default gql`
     reputationPercentage: String!
   }
 
+  type ColonyContributor {
+    id: String!
+    directRoles: [Int!]!
+    roles: [Int!]!
+    profile: UserProfile!
+  }
+
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
     colonyName(address: String!): String!
     colonyReputation(address: String!, domainId: Int): String
+    colonyContributors(
+      colonyAddress: String!
+      domainId: Int
+    ): [ColonyContributor!]!
     colonyMembersWithReputation(
       colonyAddress: String!
       domainId: Int
