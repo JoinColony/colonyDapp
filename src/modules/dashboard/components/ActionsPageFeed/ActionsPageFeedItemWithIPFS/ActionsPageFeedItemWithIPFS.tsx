@@ -72,7 +72,7 @@ const ActionsPageFeedItemWithIPFS = ({
               to={location.pathname}
               text={MSG.reloadLink}
               className={styles.link}
-              onClick={() => window.location.reload(false)}
+              onClick={() => window.location.reload()}
             />
           ),
         }}
