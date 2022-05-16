@@ -2038,6 +2038,7 @@ export type ColonyMembersWithReputationQuery = Pick<Query, 'colonyMembersWithRep
 
 export type ColonyContributorsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
+  colonyName?: Maybe<ColonyName>;
   domainId?: Maybe<Scalars['Int']>;
 }>;
 
@@ -5126,8 +5127,8 @@ export type ColonyMembersWithReputationQueryHookResult = ReturnType<typeof useCo
 export type ColonyMembersWithReputationLazyQueryHookResult = ReturnType<typeof useColonyMembersWithReputationLazyQuery>;
 export type ColonyMembersWithReputationQueryResult = Apollo.QueryResult<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>;
 export const ColonyContributorsDocument = gql`
-    query ColonyContributors($colonyAddress: String!, $domainId: Int) {
-  colonyContributors(colonyAddress: $colonyAddress, domainId: $domainId) @client {
+    query ColonyContributors($colonyAddress: String!, $colonyName: colonyName, $domainId: Int) {
+  colonyContributors(colonyAddress: $colonyAddress, colonyName: $colonyName, domainId: $domainId) @client {
     id
     directRoles
     roles
@@ -5154,6 +5155,7 @@ export const ColonyContributorsDocument = gql`
  * const { data, loading, error } = useColonyContributorsQuery({
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
+ *      colonyName: // value for 'colonyName'
  *      domainId: // value for 'domainId'
  *   },
  * });
