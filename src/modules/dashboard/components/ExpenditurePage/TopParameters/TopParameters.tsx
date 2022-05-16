@@ -3,19 +3,17 @@ import sortBy from 'lodash/sortBy';
 
 import { defineMessages } from 'react-intl';
 import { DialogSection } from '~core/Dialog';
-import { Form, Select, SelectOption } from '~core/Fields';
-import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
-import { AnyUser, OneDomain } from '~data/index';
+import { Form, InputLabel, Select, SelectOption } from '~core/Fields';
+import { OneDomain, useLoggedInUser } from '~data/index';
 
 import styles from './TopParameters.css';
-import { Address } from '~types/index';
-import { ItemDataType } from '~core/OmniPicker';
 import UserAvatar from '~core/UserAvatar';
 import TeamDropdownItem from '~dashboard/Dialogs/AwardAndSmiteDialogs/ManageReputationDialogForm/TeamDropdownItem';
 import XDAIIcon from '../../../../../img/tokens/xDAI.svg';
 
-import { balanceData, colonyAddress, domains, userData } from './consts';
+import { balanceData, colonyAddress, domains } from './consts';
 import { Appearance } from '~core/Fields/Select/types';
+import { Appearance as DialogAppearance } from '~core/Dialog/DialogSection';
 
 const MSG = defineMessages({
   defaultExpenditureTypeLabel: {
@@ -40,11 +38,9 @@ interface Props {
   colonyName: string;
 }
 
-const supRenderAvatar = (address: Address, item: ItemDataType<AnyUser>) => (
-  <UserAvatar address={address} user={item} size="xs" notSet={false} />
-);
-
 const TopParameters = () => {
+  const { walletAddress, username } = useLoggedInUser();
+
   const domainOptions = useMemo(
     () =>
       sortBy(
@@ -102,10 +98,15 @@ const TopParameters = () => {
     size: 'small',
   };
 
+  const dialogSectionSettings: DialogAppearance = {
+    border: 'bottom',
+    size: 'small',
+  };
+
   return (
     <div className={styles.container}>
       <Form initialValues={{}} initialErrors={{}} onSubmit={() => {}}>
-        <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
+        <DialogSection appearance={dialogSectionSettings}>
           <Select
             name="expenditureType"
             label={MSG.defaultExpenditureTypeLabel}
@@ -116,7 +117,7 @@ const TopParameters = () => {
             options={[{ label: 'Advanced payment', value: 'Advanced' }]}
           />
         </DialogSection>
-        <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
+        <DialogSection appearance={dialogSectionSettings}>
           <Select
             options={domainOptions}
             label={MSG.defaultTeamLabel}
@@ -128,7 +129,7 @@ const TopParameters = () => {
             renderActiveOption={renderActiveOption}
           />
         </DialogSection>
-        <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
+        <DialogSection appearance={dialogSectionSettings}>
           <Select
             name="balance"
             label={MSG.defaultBalanceLabel}
@@ -142,24 +143,19 @@ const TopParameters = () => {
             unselectable
           />
         </DialogSection>
-        <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
-          <div className={styles.singleUserContainer}>
-            <SingleUserPicker
-              data={userData}
+        <DialogSection appearance={dialogSectionSettings}>
+          <div className={styles.userContainer}>
+            <InputLabel
               label={MSG.defaultOwnerLabel}
-              name="owner"
-              filter={filterUserSelection}
-              renderAvatar={supRenderAvatar}
-              dataTest="paymentRecipientPicker"
-              itemDataTest="paymentRecipientItem"
-              placeholder="Search"
               appearance={{
                 direction: 'horizontal',
-                size: 'small',
                 colorSchema: 'lightGrey',
               }}
-              hasSearch
             />
+            <div className={styles.userAvatarContainer}>
+              <UserAvatar address={walletAddress} size="xs" notSet={false} />
+              <div className={styles.userName}>@{username}</div>
+            </div>
           </div>
         </DialogSection>
       </Form>

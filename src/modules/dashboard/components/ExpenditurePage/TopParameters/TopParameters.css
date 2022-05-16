@@ -1,16 +1,32 @@
-@value paddingTopBottom: 70px;
-@value paddingRightLeft: 40px;
+@value paddingTopBottom: 75px;
+@value paddingRightLeft: 54px;
 
 .container {
   padding: paddingTopBottom paddingRightLeft;
+}
+
+.userContainer {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.userContainer label {
+  padding-top: 8px;
+}
+
+.userAvatarContainer {
+  display: flex;
 }
 
 .singleUserContainer label {
   color: var(--dark);
 }
 
-.singleUserContainer > div {
-  padding-left: 0;
+.userName {
+  margin-left: 8px;
+  font-weight: var(--weight-bold);
+  color: var(--pink);
 }
 
 .label {
@@ -39,5 +55,4 @@
 
 .teamLabel {
   font-size: 13px;
-  color: pink;
 }
