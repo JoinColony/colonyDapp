@@ -6,6 +6,8 @@ import { SpinnerLoader } from '~core/Preloaders';
 import Icon from '~core/Icon';
 import Button from '~core/Button';
 import Link from '~core/Link';
+import MaskedAddress from '~core/MaskedAddress';
+import InvisibleCopyableAddress from '~core/InvisibleCopyableAddress';
 
 import {
   useLoggedInUser,
@@ -23,9 +25,13 @@ import ColonySubscriptionInfoPopover from './ColonySubscriptionInfoPopover';
 import styles from './ColonySubscription.css';
 
 const MSG = defineMessages({
+  copyMessage: {
+    id: 'dashboard.ColonyHome.ColonySubscription.copyMessage',
+    defaultMessage: 'Click to copy colony address',
+  },
   joinColony: {
     id: 'dashboard.ColonyHome.ColonySubscription.joinColony',
-    defaultMessage: 'Join',
+    defaultMessage: 'Join this colony',
   },
   colonyMenuTitle: {
     id: 'dashboard.ColonyHome.ColonySubscription.colonyMenuTitle',
@@ -68,6 +74,8 @@ const ColonySubscription = ({
 
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
+  const colonyMenu = isSubscribed ? styles.colonySubscribed : '';
+
   return (
     <div className={styles.main}>
       {loadingSubscribe ||
@@ -76,53 +84,70 @@ const ColonySubscription = ({
             <SpinnerLoader appearance={{ theme: 'primary', size: 'small' }} />
           </div>
         ))}
-      {!isSubscribed && username && (
-        <Button
-          onClick={() => subscribe()}
-          appearance={{ theme: 'blue', size: 'small' }}
-          data-test="joinColonyButton"
-        >
-          <FormattedMessage {...MSG.joinColony} />
-        </Button>
-      )}
-      {!isSubscribed && !username && (
-        <Link
-          className={styles.createUserRedirect}
-          to={{
-            pathname: CREATE_USER_ROUTE,
-            state: { colonyURL: `/colony/${colonyName}` },
-          }}
-          text={MSG.joinColony}
-        />
-      )}
-      {isSubscribed && (
-        <ColonySubscriptionInfoPopover
-          colony={colony}
-          onUnsubscribe={() => unsubscribe()}
-          canUnsubscribe={isNetworkAllowed}
-        >
-          {({ isOpen, toggle, ref, id }) => (
-            <div
-              id={id}
-              ref={ref}
-              className={classnames(styles.menuIconContainer, {
-                [styles.menuActive]: isOpen,
-              })}
-              onClick={toggle}
-              onKeyDown={toggle}
-              role="button"
-              tabIndex={0}
-              data-test="colonyMenuPopover"
-            >
-              <Icon
-                className={styles.menuIcon}
-                name="three-dots-row"
-                title={MSG.colonyMenuTitle}
-              />
+      <div className={colonyMenu}>
+        {colonyAddress && (
+          <InvisibleCopyableAddress
+            address={colonyAddress}
+            copyMessage={MSG.copyMessage}
+          >
+            <div className={styles.colonyAddress}>
+              <MaskedAddress address={colonyAddress} />
             </div>
-          )}
-        </ColonySubscriptionInfoPopover>
-      )}
+          </InvisibleCopyableAddress>
+        )}
+        {isSubscribed && (
+          <ColonySubscriptionInfoPopover
+            colony={colony}
+            onUnsubscribe={() => unsubscribe()}
+            canUnsubscribe={isNetworkAllowed}
+          >
+            {({ isOpen, toggle, ref, id }) => (
+              <div
+                id={id}
+                ref={ref}
+                className={classnames(styles.menuIconContainer, {
+                  [styles.menuActive]: isOpen,
+                })}
+                onClick={toggle}
+                onKeyDown={toggle}
+                role="button"
+                tabIndex={0}
+                data-test="colonyMenuPopover"
+              >
+                <Icon
+                  className={styles.menuIcon}
+                  name="three-dots-row"
+                  title={MSG.colonyMenuTitle}
+                />
+              </div>
+            )}
+          </ColonySubscriptionInfoPopover>
+        )}
+        {!isSubscribed && (
+          <div className={styles.colonyJoin}>
+            {username && (
+              <Button
+                onClick={() => subscribe()}
+                appearance={{ theme: 'blue', size: 'small' }}
+                data-test="joinColonyButton"
+                className={styles.joinColonyBtn}
+              >
+                <FormattedMessage {...MSG.joinColony} />
+              </Button>
+            )}
+            {!username && (
+              <Link
+                className={styles.joinColonyBtn}
+                to={{
+                  pathname: CREATE_USER_ROUTE,
+                  state: { colonyURL: `/colony/${colonyName}` },
+                }}
+                text={MSG.joinColony}
+              />
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
