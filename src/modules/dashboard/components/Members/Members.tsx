@@ -140,18 +140,20 @@ const Members = ({
           initialValues={{ filter: currentDomainId.toString() }}
           onSubmit={() => {}}
         >
-          <Select
-            appearance={{
-              alignOptions: 'right',
-              size: 'mediumLarge',
-              theme: 'alt',
-            }}
-            elementOnly
-            label={MSG.labelFilter}
-            name="filter"
-            onChange={setFieldValue}
-            options={domainSelectOptions}
-          />
+          <div className={styles.titleSelect}>
+            <Select
+              appearance={{
+                alignOptions: 'right',
+                size: 'mediumLarge',
+                theme: 'alt',
+              }}
+              elementOnly
+              label={MSG.labelFilter}
+              name="filter"
+              onChange={setFieldValue}
+              options={domainSelectOptions}
+            />
+          </div>
         </Form>
       </div>
       {contributors.length ? (
