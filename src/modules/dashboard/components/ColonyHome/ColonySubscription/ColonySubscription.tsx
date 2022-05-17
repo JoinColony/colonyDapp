@@ -74,8 +74,6 @@ const ColonySubscription = ({
 
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
-  const colonyMenu = isSubscribed ? styles.colonySubscribed : '';
-
   return (
     <div className={styles.main}>
       {loadingSubscribe ||
@@ -84,7 +82,7 @@ const ColonySubscription = ({
             <SpinnerLoader appearance={{ theme: 'primary', size: 'small' }} />
           </div>
         ))}
-      <div className={colonyMenu}>
+      <div className={isSubscribed ? styles.colonySubscribed : ''}>
         {colonyAddress && (
           <InvisibleCopyableAddress
             address={colonyAddress}
@@ -130,14 +128,14 @@ const ColonySubscription = ({
                 onClick={() => subscribe()}
                 appearance={{ theme: 'blue', size: 'small' }}
                 data-test="joinColonyButton"
-                className={styles.joinColonyBtn}
+                className={styles.colonyJoinBtn}
               >
                 <FormattedMessage {...MSG.joinColony} />
               </Button>
             )}
             {!username && (
               <Link
-                className={styles.joinColonyBtn}
+                className={styles.colonyJoinBtn}
                 to={{
                   pathname: CREATE_USER_ROUTE,
                   state: { colonyURL: `/colony/${colonyName}` },
