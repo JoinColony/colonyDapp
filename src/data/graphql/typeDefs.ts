@@ -254,7 +254,19 @@ export default gql`
     id: String!
     directRoles: [Int!]!
     roles: [Int!]!
+    banned: Boolean!
     profile: UserProfile!
+  }
+
+  type Watcher {
+    id: String!
+    profile: UserProfile!
+    banned: Boolean!
+  }
+
+  type ContributorsAndWatchers {
+    contributors: [ColonyContributor!]!
+    watchers: [Watcher!]!
   }
 
   extend type Query {
@@ -262,10 +274,11 @@ export default gql`
     colonyAddress(name: String!): String!
     colonyName(address: String!): String!
     colonyReputation(address: String!, domainId: Int): String
-    colonyContributors(
+    contributorsAndWatchers(
       colonyAddress: String!
+      colonyName: String!
       domainId: Int
-    ): [ColonyContributor!]!
+    ): ContributorsAndWatchers
     colonyMembersWithReputation(
       colonyAddress: String!
       domainId: Int
