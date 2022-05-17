@@ -27,6 +27,10 @@
   position: relative;
 }
 
+.controls li {
+  width: fit-content;
+}
+
 .controls li + li {
   margin: 18px 0 0;
 }
