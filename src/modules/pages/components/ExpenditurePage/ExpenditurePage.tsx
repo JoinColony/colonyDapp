@@ -1,5 +1,5 @@
 import React from 'react';
-import Recipient from '~dashboard/ExpenditurePage/Recipient';
+import Payments from '~dashboard/ExpenditurePage/Payments';
 import TopParameters from '~dashboard/ExpenditurePage/TopParameters';
 
 import { getMainClasses } from '~utils/css';
@@ -13,7 +13,7 @@ const ExpenditurePage = () => {
     <div className={getMainClasses({}, styles)}>
       <aside className={styles.sidebar}>
         <TopParameters />
-        <Recipient />
+        <Payments />
       </aside>
       <div className={styles.mainContainer}>
         <main className={styles.mainContent} />

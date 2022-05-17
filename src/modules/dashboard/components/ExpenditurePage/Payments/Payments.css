@@ -1,0 +1,7 @@
+.recipientContainer {
+  border: 1px solid white;
+}
+
+.singleRecipient {
+  display: flex;
+}

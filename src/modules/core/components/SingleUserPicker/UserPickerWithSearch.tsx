@@ -55,14 +55,21 @@ const UserPickerWithSearch = ({
     <>
       <div className={localStyles.inputWithIcon}>
         {value ? (
-          <div className={styles.avatarContainer}>
+          /* eslint-disable jsx-a11y/click-events-have-key-events */
+          // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+          <div
+            className={styles.avatarContainer}
+            onClick={handleActiveUserClick}
+          >
             {renderAvatar(value.profile.walletAddress, value)}
           </div>
         ) : (
+          /* eslint-enable jsx-a11y/click-events-have-key-events */
           <Icon
             className={omniPickerIsOpen ? styles.focusIcon : localStyles.icon}
             name="filled-circle-person"
             title={MSG.selectMember}
+            onClick={handleActiveUserClick}
           />
         )}
         <div className={styles.container}>

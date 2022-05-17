@@ -6,3 +6,4 @@ export const inputWrapper: string;
 export const small: string;
 export const icon: string;
 export const omniPickerContainer: string;
+export const avatarContainer: string;

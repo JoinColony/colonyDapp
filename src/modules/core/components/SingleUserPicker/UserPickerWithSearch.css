@@ -72,6 +72,10 @@
   width: 26px;
 }
 
+.icon:hover {
+  cursor: pointer;
+}
+
 .omniPickerContainer {
   width: 100%;
   max-width: 330px;
@@ -79,4 +83,12 @@
   top: -6px;
   left: 100%;
   z-index: var(--z-index-nav);
+}
+
+.avatarContainer {
+  flex: 0 0 26px;
+}
+
+.avatarContainer:hover {
+  cursor: pointer;
 }
