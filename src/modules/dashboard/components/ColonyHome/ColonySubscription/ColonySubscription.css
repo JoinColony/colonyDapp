@@ -1,6 +1,5 @@
 .main {
   composes: flexContainerRow flexAlignCenter from '~styles/layout.css';
-  margin-top: -4px;
 }
 
 .spinnerContainer {
@@ -68,7 +67,7 @@
   left: 0;
 }
 
-.joinColonyBtn {
+.colonyJoinBtn {
   composes: flexItemCenter from '~styles/layout.css';
   display: block;
   padding: 10px 12px;
@@ -85,7 +84,7 @@
   outline: 0;
 }
 
-.joinColonyBtn:hover {
+.colonyJoinBtn:hover {
   background-color: color-mod(var(--action-secondary) alpha(25%));
   color: var(--action-secondary);
 }
