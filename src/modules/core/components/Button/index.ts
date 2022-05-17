@@ -1,4 +1,4 @@
-export { default, Props } from './Button';
+export { default, Props, Appearance as ButtonAppearance } from './Button';
 export { default as ActionButton } from './ActionButton';
 export { default as ConfirmButton } from './ConfirmButton';
 export { default as DottedAddButton } from './DottedAddButton';
