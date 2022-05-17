@@ -260,7 +260,7 @@ class OmniPicker extends Component<Props> {
           selected={selected}
           renderEmpty={renderEmpty}
           renderItem={renderItem}
-          {...{ height }}
+          height={height}
         >
           {children}
         </OmniPickerContent>

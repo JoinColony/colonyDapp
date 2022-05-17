@@ -8,7 +8,7 @@ import styles from './InputLabel.css';
 
 const displayName = 'InputLabel';
 
-export interface Appearance {
+interface Appearance {
   theme?: 'fat' | 'underlined' | 'minimal' | 'dotted';
   direction?: 'horizontal';
   colorSchema?: 'dark' | 'grey' | 'transparent' | 'info' | 'lightGrey';

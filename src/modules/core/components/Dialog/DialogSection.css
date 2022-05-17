@@ -45,6 +45,6 @@
   border-radius: var(--radius-tiny);
 }
 
-.sizeSmall {
-  padding: 8px 0;
+.marginsSmall {
+  padding: 2px 0;
 }

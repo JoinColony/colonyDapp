@@ -5,6 +5,10 @@
   padding: paddingTopBottom paddingRightLeft;
 }
 
+.container i {
+  margin-bottom: -4px;
+}
+
 .userContainer {
   display: flex;
   justify-content: space-between;
@@ -24,6 +28,8 @@
 }
 
 .userName {
+  display: flex;
+  align-items: center;
   margin-left: 8px;
   font-weight: var(--weight-bold);
   color: var(--pink);
@@ -39,20 +45,31 @@
 }
 
 .option {
-  padding-right: 20px;
-  padding-top: 16px;
+  margin-bottom: 12px;
+  padding: 16px 20px 0 0;
 }
 
 .firstOption {
-  padding-top: 8px;
+  padding: 8px 20px 0 0;
 }
 
 .icon {
   margin-right: 4px;
-  margin-bottom: -5px;
-  width: 16px;
+}
+
+.icon figure {
+  display: block;
 }
 
 .teamLabel {
   font-size: 13px;
+}
+
+.tokenIcon {
+  height: 18px;
+  width: 18px;
+}
+
+.symbol {
+  margin-left: 4px;
 }
