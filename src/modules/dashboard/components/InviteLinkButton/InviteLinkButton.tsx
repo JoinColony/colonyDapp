@@ -3,7 +3,9 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import copyToClipboard from 'copy-to-clipboard';
 
 import { Tooltip } from '~core/Popover';
-import Button from '~core/Button';
+import Button, { ButtonAppearance } from '~core/Button';
+
+import styles from './styles.css';
 
 const MSG = defineMessages({
   buttonText: {
@@ -21,11 +23,12 @@ const MSG = defineMessages({
 
 interface Props {
   colonyName: string;
+  buttonAppearance?: ButtonAppearance;
 }
 
 const displayName = 'dashboard.InviteLinkButton';
 
-const InviteLinkButton = ({ colonyName }: Props) => {
+const InviteLinkButton = ({ colonyName, buttonAppearance }: Props) => {
   const [copied, setCopied] = useState(false);
   const colonyURL = `${window.location.origin}/colony/${colonyName}`;
   const handleClipboardCopy = useCallback(() => {
@@ -50,12 +53,14 @@ const InviteLinkButton = ({ colonyName }: Props) => {
         <FormattedMessage {...MSG.copyLinkTooltip} values={{ copied }} />
       }
     >
-      <Button
-        text={MSG.buttonText}
-        appearance={{ theme: 'blueWithBackground' }}
-        onClick={handleClipboardCopy}
-        onKeyPress={handleClipboardCopy}
-      />
+      <div className={styles.inviteLinkButton}>
+        <Button
+          text={MSG.buttonText}
+          appearance={buttonAppearance}
+          onClick={handleClipboardCopy}
+          onKeyPress={handleClipboardCopy}
+        />
+      </div>
     </Tooltip>
   );
 };
