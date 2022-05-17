@@ -1,0 +1,14 @@
+.link {
+  font-weight: var(--weight-bold);
+  color: var(--sky-blue);
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.noIPFSLabel {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
