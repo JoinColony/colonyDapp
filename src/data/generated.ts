@@ -2061,7 +2061,7 @@ export type ColonyMembersWithReputationQuery = Pick<Query, 'colonyMembersWithRep
 
 export type ContributorsAndWatchersQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
-  colonyName?: Maybe<ColonyName>;
+  colonyName: Scalars['String'];
   domainId?: Maybe<Scalars['Int']>;
 }>;
 
@@ -5164,7 +5164,7 @@ export type ColonyMembersWithReputationQueryHookResult = ReturnType<typeof useCo
 export type ColonyMembersWithReputationLazyQueryHookResult = ReturnType<typeof useColonyMembersWithReputationLazyQuery>;
 export type ColonyMembersWithReputationQueryResult = Apollo.QueryResult<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>;
 export const ContributorsAndWatchersDocument = gql`
-    query ContributorsAndWatchers($colonyAddress: String!, $colonyName: colonyName, $domainId: Int) {
+    query ContributorsAndWatchers($colonyAddress: String!, $colonyName: String!, $domainId: Int) {
   contributorsAndWatchers(colonyAddress: $colonyAddress, colonyName: $colonyName, domainId: $domainId) @client {
     contributors {
       id
