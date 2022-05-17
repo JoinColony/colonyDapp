@@ -6,6 +6,7 @@ import NavLink from '~core/NavLink';
 import Heading from '~core/Heading';
 import { Tooltip } from '~core/Popover';
 import Icon from '~core/Icon';
+import InviteLinkButton from '~dashboard/InviteLinkButton';
 
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import useAvatarDisplayCounter from '~utils/hooks/useAvatarDisplayCounter';
@@ -133,30 +134,38 @@ const MembersSubsection = ({
 
   const setHeading = useCallback(
     (hasCounter) => (
-      <Tooltip
-        content={
-          <div className={styles.tooltip}>
-            <FormattedMessage
-              {...MSG.tooltipText}
-              values={{ isContributors }}
+      <div className={styles.heading}>
+        <Tooltip
+          content={
+            <div className={styles.tooltip}>
+              <FormattedMessage
+                {...MSG.tooltipText}
+                values={{ isContributors }}
+              />
+            </div>
+          }
+        >
+          <NavLink to={membersPageRoute}>
+            <Heading
+              appearance={{ size: 'normal', weight: 'bold' }}
+              text={MSG.title}
+              textValues={{
+                count: members?.length,
+                hasCounter,
+                isContributors,
+              }}
             />
-          </div>
-        }
-      >
-        <NavLink to={membersPageRoute}>
-          <Heading
-            appearance={{ size: 'normal', weight: 'bold' }}
-            text={MSG.title}
-            textValues={{
-              count: members?.length,
-              hasCounter,
-              isContributors,
-            }}
+          </NavLink>
+        </Tooltip>
+        {!isContributors && (
+          <InviteLinkButton
+            colonyName={colonyName}
+            buttonAppearance={{ theme: 'blueWithBackground' }}
           />
-        </NavLink>
-      </Tooltip>
+        )}
+      </div>
     ),
-    [members, membersPageRoute, isContributors],
+    [members, membersPageRoute, isContributors, colonyName],
   );
 
   if (!members) {
