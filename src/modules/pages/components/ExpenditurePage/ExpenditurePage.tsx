@@ -1,6 +1,5 @@
 import React from 'react';
-import TopParameters from '~dashboard/ExpenditurePage/TopParameters';
-
+import ExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings';
 import { getMainClasses } from '~utils/css';
 
 import styles from './ExpenditurePage.css';
@@ -11,7 +10,7 @@ const ExpenditurePage = () => {
   return (
     <div className={getMainClasses({}, styles)}>
       <aside className={styles.sidebar}>
-        <TopParameters />
+        <ExpenditureSettings />
       </aside>
       <div className={styles.mainContainer}>
         <main className={styles.mainContent} />

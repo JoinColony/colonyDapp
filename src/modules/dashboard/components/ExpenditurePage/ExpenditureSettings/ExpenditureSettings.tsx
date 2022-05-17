@@ -8,7 +8,7 @@ import { Form, InputLabel, Select, SelectOption } from '~core/Fields';
 import { OneDomain, useLoggedInUser } from '~data/index';
 import Numeral from '~core/Numeral';
 
-import styles from './TopParameters.css';
+import styles from './ExpenditureSettings.css';
 import UserAvatar from '~core/UserAvatar';
 import TeamDropdownItem from '~dashboard/Dialogs/AwardAndSmiteDialogs/ManageReputationDialogForm/TeamDropdownItem';
 import TokenIcon from '~dashboard/HookedTokenIcon';
@@ -47,7 +47,7 @@ interface Props {
   colonyName: string;
 }
 
-const TopParameters = () => {
+const ExpenditureSettings = () => {
   const { walletAddress, username } = useLoggedInUser();
 
   const domainOptions = useMemo(
@@ -221,4 +221,4 @@ const TopParameters = () => {
   );
 };
 
-export default TopParameters;
+export default ExpenditureSettings;
