@@ -23,7 +23,7 @@ interface Props {
   labelValues?: ComplexMessageValues;
 
   /** A string or a `messageDescriptor` that make up the cards's content */
-  description?: MessageDescriptor;
+  description: MessageDescriptor;
 
   /** Values for context text (react-intl interpolation) */
   descriptionValues?: ComplexMessageValues;

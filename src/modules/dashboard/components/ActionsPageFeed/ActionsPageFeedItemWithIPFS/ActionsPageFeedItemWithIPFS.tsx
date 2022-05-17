@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
 
@@ -43,8 +43,8 @@ const ActionsPageFeedItemWithIPFS = ({
     [hash],
   );
 
-  const getAnnotationMessage = useCallback(() => {
-    if (!annotation) {
+  const annotationMessage = useMemo(() => {
+    if (!annotation || !ipfsDataJSON) {
       return undefined;
     }
     const annotationObject = JSON.parse(ipfsDataJSON);
@@ -80,7 +80,6 @@ const ActionsPageFeedItemWithIPFS = ({
     );
   }
 
-  const annotationMessage = getAnnotationMessage();
   /*
    * This means that the annotation object is in a format we don't recognize
    */
