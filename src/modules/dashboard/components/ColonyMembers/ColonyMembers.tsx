@@ -11,6 +11,7 @@ import LoadingTemplate from '~pages/LoadingTemplate';
 import Members from '~dashboard/Members';
 import PermissionManagementDialog from '~dialogs/PermissionManagementDialog';
 import WrongNetworkDialog from '~dialogs/WrongNetworkDialog';
+import InviteLinkButton from '~dashboard/InviteLinkButton';
 
 import {
   useColonyFromNameQuery,
@@ -186,6 +187,12 @@ const ColonyMembers = () => {
         <aside className={styles.rightAside}>
           {!controlsDisabled && (
             <ul className={styles.controls}>
+              <li>
+                <InviteLinkButton
+                  colonyName={colonyName}
+                  buttonAppearance={{ theme: 'blue' }}
+                />
+              </li>
               <li>
                 <Button
                   appearance={{ theme: 'blue' }}
