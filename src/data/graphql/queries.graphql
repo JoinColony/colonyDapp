@@ -466,7 +466,7 @@ query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
   colonyMembersWithReputation(colonyAddress: $colonyAddress, domainId: $domainId) @client
 }
 
-query ContributorsAndWatchers($colonyAddress: String!, $colonyName: colonyName, $domainId: Int) {
+query ContributorsAndWatchers($colonyAddress: String!, $colonyName: String!, $domainId: Int) {
   contributorsAndWatchers(colonyAddress: $colonyAddress, colonyName: $colonyName, domainId: $domainId) @client {
     contributors {
       id
