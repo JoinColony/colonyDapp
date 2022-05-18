@@ -85,7 +85,7 @@ const Members = ({ colony: { colonyAddress, colonyName }, colony }: Props) => {
      */
     parseInt(domainId, 10) || COLONY_TOTAL_BALANCE_DOMAIN_ID,
   );
-  const [dataPage, setDataPage] = useState<number>(1);
+  const [dataPage, setDataPage] = useState<number>(10);
 
   const selectedDomain = colony.domains.find(
     ({ ethDomainId }) => ethDomainId === selectedDomainId,
@@ -205,6 +205,8 @@ const Members = ({ colony: { colonyAddress, colonyName }, colony }: Props) => {
           />
         </Form>
       </div>
+      {/* PLACEHOLDER */}
+      <div>CONTRIBUTORS</div>
       {contributors.length ? (
         <MembersList<ColonyContributor>
           colony={colony}
@@ -228,6 +230,8 @@ const Members = ({ colony: { colonyAddress, colonyName }, colony }: Props) => {
           isLoadingData={loadingMembers}
         />
       )}
+      {/* PLACEHOLDER */}
+      <div>WATCHERS</div>
       {watchers?.length && (
         <MembersList<ColonyWatcher>
           colony={colony}
