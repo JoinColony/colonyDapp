@@ -18,10 +18,6 @@
   padding: 8px 0;
 }
 
-.userContainer label {
-  padding-top: 8px;
-}
-
 .userAvatarContainer {
   display: flex;
 }
