@@ -9,14 +9,13 @@
   margin-bottom: -4px;
 }
 
-.userContainer {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 0;
+.settingsRow {
+  composes: flexContainerRow flexAlignCenter flexJustifyBetween from '~styles/layout.css';
 }
 
-.userContainer label {
-  padding-top: 8px;
+.userContainer {
+  composes: settingsRow;
+  padding: 8px 0;
 }
 
 .userAvatarContainer {
@@ -72,4 +71,16 @@
 
 .symbol {
   margin-left: 4px;
+}
+
+.activeItem {
+  display: flex;
+  align-items: center;
+  margin-right: 4px;
+}
+
+.activeItemLabel {
+  margin-left: 8px;
+  font-size: var(--size-normal);
+  color: var(--temp-grey-blue-7);
 }
