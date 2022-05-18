@@ -4,10 +4,13 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import Button from '~core/Button';
 import { DialogSection } from '~core/Dialog';
 import { Input, Select, TokenSymbolSelector } from '~core/Fields';
+import { ItemDataType } from '~core/OmniPicker';
 import { Tooltip } from '~core/Popover';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
-import { userData } from '../TopParameters/consts';
-import { supRenderAvatar } from '../TopParameters/TopParameters';
+import UserAvatar from '~core/UserAvatar';
+import { AnyUser } from '~data/index';
+import { Address } from '~types/index';
+import { userData } from '../ExpenditureSettings/consts';
 import { tokensData } from './consts';
 
 import styles from './Recipient.css';
@@ -38,6 +41,10 @@ const MSG = defineMessages({
   },
 });
 
+const supRenderAvatar = (address: Address, item: ItemDataType<AnyUser>) => (
+  <UserAvatar address={address} user={item} size="xs" notSet={false} />
+);
+
 interface Props {
   isExpanded: boolean;
   id: string;
@@ -62,7 +69,7 @@ const Recipient = ({ isExpanded, id }: Props) => {
     <div className={styles.container}>
       {isExpanded && (
         <>
-          <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
+          <DialogSection appearance={{ border: 'bottom', margins: 'small' }}>
             <div className={styles.singleUserContainer}>
               <SingleUserPicker
                 data={userData}
@@ -75,14 +82,14 @@ const Recipient = ({ isExpanded, id }: Props) => {
                 placeholder="Search"
                 appearance={{
                   direction: 'horizontal',
-                  size: 'small',
-                  colorSchema: 'lightGrey',
+                  // size: 'small',
+                  // colorSchema: 'lightGrey',
                 }}
-                hasSearch
+                // hasSearch
               />
             </div>
           </DialogSection>
-          <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
+          <DialogSection appearance={{ border: 'bottom', margins: 'small' }}>
             {tokens?.map((token) => (
               <div className={styles.valueContainer} key={token.id}>
                 <Input
@@ -113,7 +120,7 @@ const Recipient = ({ isExpanded, id }: Props) => {
               </div>
             ))}
           </DialogSection>
-          <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
+          <DialogSection appearance={{ border: 'bottom', margins: 'small' }}>
             <div className={styles.valueContainer}>
               <Tooltip
                 content={
