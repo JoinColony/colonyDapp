@@ -189,3 +189,22 @@
 .baseSelect.sizeLarge {
   font-size: var(--size-large);
 }
+
+.activeOptionColorBlue {
+  color: var(--action-secondary);
+
+  & .select[aria-expanded="true"] {
+    background-color: var(--action-secondary);
+  }
+}
+
+.activeOptionColorBlue svg {
+  fill: var(--action-secondary);
+  stroke: var(--action-secondary);
+}
+
+.activeOptionColorHighlighted.select[aria-expanded="true"] {
+  padding: 2px 0 2px 6px;
+  border-radius: 4px;
+  background-color: rgb(229, 230, 247);
+}

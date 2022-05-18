@@ -25,28 +25,3 @@ export const tokens = [
     symbol: 'MAT',
   },
 ];
-
-export const domains = [
-  {
-    color: 0,
-    description: null,
-    ethDomainId: 1,
-    ethParentDomainId: null,
-    id: '0xeabe562c979679dc4023dd23e8c6aa782448c2e7_domain_1',
-    name: 'Root',
-    colonyAddress: '0xEaBE562C979679DC4023dD23e8C6aa782448c2E7',
-    withoutPadding: true,
-  },
-  {
-    color: 1,
-    description: null,
-    ethDomainId: 2,
-    ethParentDomainId: 1,
-    id: '0xeabe562c979679dc4023dd23e8c6aa782448c2e7_domain_2',
-    name: 'Dev',
-    colonyAddress: '0xEaBE562C979679DC4023dD23e8C6aa782448c2E7',
-    withoutPadding: true,
-  },
-];
-
-export const colonyAddress = '0xEaBE562C979679DC4023dD23e8C6aa782448c2E7';

@@ -126,7 +126,7 @@ const ExpenditureSettings = () => {
     [activeToken],
   );
 
-  const balanceOptins = useMemo(
+  const balanceOptions = useMemo(
     () =>
       tokens.map((token, index) => ({
         label: token.name,
@@ -184,6 +184,7 @@ const ExpenditureSettings = () => {
               appearance={{
                 ...appareanceSettings,
                 width: 'content',
+                activeOptionColor: 'blue',
               }}
               options={[
                 {
@@ -212,6 +213,7 @@ const ExpenditureSettings = () => {
                   showDescription
                   dataTest="colonyDomainSelector"
                   itemDataTest="colonyDomainSelectorItem"
+                  appearance={{ activeOptionColor: 'highlighted' }}
                 />
               )}
             </div>
@@ -225,7 +227,7 @@ const ExpenditureSettings = () => {
                 listPosition: 'static',
                 optionSize: 'default',
               }}
-              options={balanceOptins}
+              options={balanceOptions}
               renderActiveOption={renderBalanceActiveOption}
               unselectable
             />
