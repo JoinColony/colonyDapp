@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import Maybe from 'graphql/tsutils/Maybe';
 
@@ -10,9 +10,15 @@ import InviteLinkButton from '~dashboard/InviteLinkButton';
 
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import useAvatarDisplayCounter from '~utils/hooks/useAvatarDisplayCounter';
-import { Colony, useLoggedInUser, BannedUser, UserProfile } from '~data/index';
+import {
+  Colony,
+  useLoggedInUser,
+  BannedUser,
+  UserProfile,
+  ColonyContributor,
+  ColonyWatcher,
+} from '~data/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
-import { Address } from '~types/index';
 import { useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot, canAdminister } from '~modules/users/checks';
@@ -36,7 +42,7 @@ const MSG = defineMessages({
   },
   reputationFetchFailed: {
     id: `dashboard.ColonyHome.ColonyMembers.MembersSubsection.reputationFetchFailed`,
-    defaultMessage: `Failed to fetch the colony's 
+    defaultMessage: `Failed to fetch the colony's
       {isContributorsSubsection, select,
         true { contributors }
         other { watchers }
@@ -69,8 +75,7 @@ interface Props {
   colony: Colony;
   currentDomainId?: number;
   maxAvatars?: number;
-  members: Maybe<string[]>;
-  bannedMembers?: BannedMember[];
+  members?: ColonyContributor[] | ColonyWatcher[];
   isContributorsSubsection: boolean;
 }
 
@@ -83,7 +88,6 @@ const MAX_AVATARS = 12;
 const MembersSubsection = ({
   colony: { colonyName },
   members,
-  bannedMembers,
   isContributorsSubsection,
   colony,
   currentDomainId = COLONY_TOTAL_BALANCE_DOMAIN_ID,
@@ -106,33 +110,13 @@ const MembersSubsection = ({
   const {
     avatarsDisplaySplitRules,
     remainingAvatarsCount,
-  } = useAvatarDisplayCounter(maxAvatars, members, false);
+  } = useAvatarDisplayCounter(maxAvatars, members || [], false);
 
   const BASE_MEMBERS_ROUTE = `/colony/${colonyName}/members`;
   const membersPageRoute =
     currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID
       ? BASE_MEMBERS_ROUTE
       : `${BASE_MEMBERS_ROUTE}/${currentDomainId}`;
-
-  const colonyMembersWithBanStatus = useMemo(
-    () =>
-      (members || []).map((walletAddress) => {
-        const isUserBanned = bannedMembers?.find(
-          ({
-            id: bannedUserWalletAddress,
-            banned,
-          }: {
-            id: Address;
-            banned: boolean;
-          }) => banned && bannedUserWalletAddress === walletAddress,
-        );
-        return {
-          walletAddress,
-          banned: canAdministerComments ? !!isUserBanned : false,
-        };
-      }),
-    [members, bannedMembers, canAdministerComments],
-  );
 
   const setHeading = useCallback(
     (hasCounter) => (
@@ -188,14 +172,14 @@ const MembersSubsection = ({
     <div className={styles.main}>
       {setHeading(true)}
       <ul className={styles.userAvatars}>
-        {colonyMembersWithBanStatus
+        {members
           .slice(0, avatarsDisplaySplitRules)
-          .map(({ walletAddress, banned }) => (
+          .map(({ profile: { walletAddress }, banned }) => (
             <li className={styles.userAvatar} key={walletAddress}>
               <UserAvatar
                 size="xs"
                 address={walletAddress}
-                banned={banned}
+                banned={canAdministerComments && banned}
                 showInfo
                 notSet={false}
                 colony={colony}
@@ -219,7 +203,7 @@ const MembersSubsection = ({
                   ],
                 }}
               />
-              {banned && (
+              {canAdministerComments && banned && (
                 <div className={styles.userBanned}>
                   <Icon
                     appearance={{ size: 'extraTiny' }}
