@@ -92,3 +92,11 @@
 .avatarContainer:hover {
   cursor: pointer;
 }
+
+.arrowIcon {
+  height: 24px;
+  width: 24px;
+  position: absolute;
+  top: 2px;
+  right: 0;
+}

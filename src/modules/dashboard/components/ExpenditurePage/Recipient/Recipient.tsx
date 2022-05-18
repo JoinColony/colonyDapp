@@ -82,10 +82,10 @@ const Recipient = ({ isExpanded, id }: Props) => {
                 placeholder="Search"
                 appearance={{
                   direction: 'horizontal',
-                  // size: 'small',
-                  // colorSchema: 'lightGrey',
+                  size: 'small',
+                  colorSchema: 'lightGrey',
                 }}
-                // hasSearch
+                hasSearch
               />
             </div>
           </DialogSection>
@@ -97,7 +97,6 @@ const Recipient = ({ isExpanded, id }: Props) => {
                   appearance={{
                     theme: 'underlined',
                     size: 'small',
-                    align: 'right',
                   }}
                   label={MSG.defaultValueLabel}
                 />
@@ -121,7 +120,7 @@ const Recipient = ({ isExpanded, id }: Props) => {
             ))}
           </DialogSection>
           <DialogSection appearance={{ border: 'bottom', margins: 'small' }}>
-            <div className={styles.valueContainer}>
+            <div className={styles.delayContainer}>
               <Tooltip
                 content={
                   <div>
@@ -135,17 +134,17 @@ const Recipient = ({ isExpanded, id }: Props) => {
                   <FormattedMessage {...MSG.defaultDelayInfo} />
                 </div>
               </Tooltip>
-              <div className={styles.valueControlsContainer}>
-                <div className={styles.inputContainer}>
-                  <Input
-                    name="delay"
-                    appearance={{
-                      colorSchema: 'grey',
-                      size: 'small',
-                    }}
-                    label=""
-                  />
-                </div>
+              <div className={styles.delayControlsContainer}>
+                {/* <div className={styles.inputContainer}> */}
+                <Input
+                  name="delay"
+                  appearance={{
+                    colorSchema: 'grey',
+                    size: 'small',
+                  }}
+                  label=""
+                />
+                {/* </div> */}
                 <Select
                   name="delayQuantity"
                   appearance={{ theme: 'grey' }}

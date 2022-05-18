@@ -1,8 +1,7 @@
-@value paddingTopBottom: 18px;
 @value paddingRightLeft: 54px;
 
 .recipientContainer {
-  padding: paddingTopBottom paddingRightLeft;
+  padding: 0 paddingRightLeft;
 }
 
 .payments {
@@ -16,6 +15,7 @@
   display: flex;
   align-items: center;
   min-height: 28px;
+  min-height: 40px;
   font-size: 13px;
   line-height: 18px;
   color: var(--dark);
@@ -29,6 +29,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 0;
   height: 16px;
   width: 16px;
   position: absolute;
@@ -43,7 +44,7 @@
 }
 
 .verticalDivider {
-  height: 67%;
+  height: calc(100% - 70px);
   position: absolute;
   top: 56px;
   left: -17px;
@@ -62,4 +63,30 @@
   display: flex;
   height: 10px;
   width: 10px;
+}
+
+.addRecipientLabel {
+  display: flex;
+  align-items: center;
+}
+
+.circlePlusIcon {
+  margin-right: 10px;
+  height: 16px;
+  width: 16px;
+}
+
+.circleSignWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
+  height: 16px;
+  width: 16px;
+  border: 1px solid var(--action-secondary);
+  border-radius: 50%;
+}
+
+.addRecipientWrapper {
+  margin-top: 9px;
 }

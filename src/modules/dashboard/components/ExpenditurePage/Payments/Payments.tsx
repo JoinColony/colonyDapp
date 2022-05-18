@@ -61,33 +61,31 @@ const Payments = () => {
         </div>
         {recipients.map((recipient, index) => (
           <div className={styles.singleRecipient}>
-            <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
+            <DialogSection appearance={{ border: 'bottom', margins: 'small' }}>
               <div className={styles.recipientLabel}>
                 {recipient.isExpanded ? (
+                  <>
+                    <Button
+                      type="button"
+                      onClick={() => onToogleButtonClick(recipient.id)}
+                      className={styles.signWrapper}
+                    >
+                      <span className={styles.minus} />
+                    </Button>
+                    <div className={styles.verticalDivider} />
+                  </>
+                ) : (
                   <Button
                     type="button"
                     onClick={() => onToogleButtonClick(recipient.id)}
-                    appearance={{ theme: 'blue' }}
-                  >
-                    <div
-                      className={styles.signWrapper}
-                      // onClick={() => onToogleButtonClick(recipient.id)}
-                    >
-                      <span className={styles.minus} />
-                    </div>
-                    <div className={styles.verticalDivider} />
-                  </Button>
-                ) : (
-                  <div
                     className={styles.signWrapper}
-                    // onClick={() => onToogleButtonClick(recipient.id)}
                   >
                     <Icon
                       name="plus"
                       className={styles.plus}
                       onClick={() => onToogleButtonClick(recipient.id)}
                     />
-                  </div>
+                  </Button>
                 )}
                 {index + 1}. <FormattedMessage {...MSG.recipient} />
               </div>
@@ -95,10 +93,17 @@ const Payments = () => {
             <Recipient isExpanded={recipient.isExpanded} id={recipient.id} />
           </div>
         ))}
+        <div className={styles.addRecipientWrapper}>
+          <Button onClick={addRecipient} appearance={{ theme: 'blue' }}>
+            <div className={styles.addRecipientLabel}>
+              <div className={styles.circleSignWrapper}>
+                <Icon name="plus" className={styles.plus} />
+              </div>
+              <FormattedMessage {...MSG.addRecipientLabel} />
+            </div>
+          </Button>
+        </div>
       </div>
-      <Button onClick={addRecipient} appearance={{ theme: 'blue' }}>
-        <FormattedMessage {...MSG.addRecipientLabel} />
-      </Button>
     </>
   );
 };

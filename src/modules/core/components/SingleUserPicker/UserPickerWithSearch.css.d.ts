@@ -7,3 +7,4 @@ export const small: string;
 export const icon: string;
 export const omniPickerContainer: string;
 export const avatarContainer: string;
+export const arrowIcon: string;

@@ -1,13 +1,36 @@
 import React, { ComponentType, ReactNode } from 'react';
 import classNames from 'classnames';
 
+import { defineMessages } from 'react-intl';
 import styles from './SingleUserPicker.css';
 import localStyles from './UserPickerWithSearch.css';
 import Icon from '~core/Icon';
-import { Props as SingleUserPickerProps, MSG } from './SingleUserPicker';
+import { Props as SingleUserPickerProps } from './SingleUserPicker';
 import { ItemDataType } from '~core/OmniPicker';
 import { AnyUser } from '~data/index';
 
+const MSG = defineMessages({
+  selectMember: {
+    id: 'SingleUserPicker.selectMember',
+    defaultMessage: 'Select member',
+  },
+  emptyMessage: {
+    id: 'SingleUserPicker.emptyMessage',
+    defaultMessage: 'No Colony members match that search.',
+  },
+  remove: {
+    id: 'SingleUserPicker.remove',
+    defaultMessage: 'Remove',
+  },
+  closedCaret: {
+    id: 'SingleUserPicker.closedCaret',
+    defaultMessage: 'Closed user picker',
+  },
+  openedCaret: {
+    id: 'SingleUserPicker.openedCaret',
+    defaultMessage: 'Opened user picker',
+  },
+});
 interface Props
   extends Pick<
     SingleUserPickerProps,
@@ -119,7 +142,7 @@ const UserPickerWithSearch = ({
         {(!value || (value && !isResettable)) && (
           <Icon
             {...(disabled ? {} : { onClick: openOmniPicker })}
-            className={classNames(styles.arrowIcon, {
+            className={classNames(localStyles.arrowIcon, {
               [styles.arrowIconActive]: omniPickerIsOpen,
             })}
             name="caret-down-small"
