@@ -45,8 +45,12 @@ const MSG = defineMessages({
     defaultMessage: `{isContributors, select,
       true {Contributors are members of the Colony who have earned reputation.}
       other { Watchers are members of the Colony
-         who currently don’t have reputation. }
+         who currently don’t have any reputation. }
     }`,
+  },
+  viewMore: {
+    id: 'dashboard.ColonyHome.ColonyMembers.MembersSubsection.viewMore',
+    defaultMessage: 'View more',
   },
 });
 
@@ -71,6 +75,8 @@ const UserAvatar = HookedUserAvatar({ fetchUser: true });
 
 const displayName = 'dashboard.ColonyHome.ColonyMembers.MembersSubsection';
 
+const MAX_AVATARS = 12;
+
 const MembersSubsection = ({
   colony: { colonyName },
   members,
@@ -78,7 +84,7 @@ const MembersSubsection = ({
   isContributors,
   colony,
   currentDomainId = COLONY_TOTAL_BALANCE_DOMAIN_ID,
-  maxAvatars = 12,
+  maxAvatars = MAX_AVATARS,
 }: Props) => {
   const {
     walletAddress: currentUserWalletAddress,
@@ -202,9 +208,6 @@ const MembersSubsection = ({
                   ],
                 }}
               />
-              {/*
-               * @TODO Replace with proper user banned icon
-               */}
               {banned && (
                 <div className={styles.userBanned}>
                   <Icon
@@ -217,9 +220,9 @@ const MembersSubsection = ({
             </li>
           ))}
         {!!remainingAvatarsCount && (
-          <li className={styles.caretIconLink}>
-            <NavLink to={membersPageRoute}>
-              <Icon appearance={{ size: 'medium' }} name="caret-right" />
+          <li className={styles.remaningAvatars}>
+            <NavLink to={membersPageRoute} title={MSG.viewMore}>
+              {remainingAvatarsCount < 99 ? remainingAvatarsCount : `>99`}
             </NavLink>
           </li>
         )}
