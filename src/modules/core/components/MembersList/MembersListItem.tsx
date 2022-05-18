@@ -27,26 +27,35 @@ interface Props<U> {
   showUserReputation: boolean;
   domainId: number | undefined;
   user: U;
+  canAdministerComments?: boolean;
 }
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
 const componentDisplayName = 'MembersList.MembersListItem';
 
-const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
-  const {
-    colony,
-    domainId,
-    extraItemContent,
-    onRowClick,
-    showUserInfo,
-    showUserReputation,
-    user,
-  } = props;
+const MembersListItem = <U extends AnyUser = AnyUser>({
+  colony,
+  domainId,
+  extraItemContent,
+  onRowClick,
+  showUserInfo,
+  showUserReputation,
+  user,
+  canAdministerComments,
+}: Props<U>) => {
   const {
     profile: { walletAddress },
     banned = false,
   } = user as AnyUser & { banned: boolean };
+
+  const isUserBanned = useMemo(
+    () =>
+      canAdministerComments !== undefined
+        ? canAdministerComments && banned
+        : banned,
+    [banned, canAdministerComments],
+  );
 
   const userProfile = useUser(createAddress(walletAddress || AddressZero));
 
@@ -112,7 +121,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
             showInfo={!onRowClick || showUserInfo}
             domainId={domainId}
             notSet={false}
-            banned={banned}
+            banned={isUserBanned}
           />
         </div>
         <div className={styles.usernameSection}>
