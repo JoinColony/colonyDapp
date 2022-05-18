@@ -41,10 +41,7 @@ const ColonyMembers = ({
     variables: {
       colonyAddress,
       colonyName,
-      domainId:
-        currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID
-          ? ROOT_DOMAIN_ID
-          : currentDomainId,
+      domainId: currentDomainId,
     },
   });
 
