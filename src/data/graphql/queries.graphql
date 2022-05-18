@@ -474,6 +474,7 @@ query ContributorsAndWatchers($colonyAddress: String!, $colonyName: String!, $do
       id
       directRoles
       roles
+      banned
       profile {
         avatarHash
         displayName
@@ -483,6 +484,7 @@ query ContributorsAndWatchers($colonyAddress: String!, $colonyName: String!, $do
     }
     watchers {
       id
+      banned
       profile {
         avatarHash
         displayName
