@@ -31,7 +31,6 @@
 .inputContainer {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
   align-items: center;
   position: relative;
 }
@@ -142,14 +141,6 @@
   color: var(--danger);
 }
 
-.errorSearchType {
-  margin-top: 10px;
-  padding-right: 24px;
-  font-size: var(--size-tiny);
-  text-align: right;
-  color: var(--danger);
-}
-
 .omniContainer {
   display: flex;
   align-items: center;
@@ -162,7 +153,7 @@
   width: 24px;
   position: absolute;
   top: 2px;
-  right: 0;
+  left: 298px;
 }
 
 .arrowIconActive svg {

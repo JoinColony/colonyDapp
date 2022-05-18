@@ -1,1 +1,1 @@
-export { default as TopParameters } from './TopParameters';
+export { default as ExpenditureSettings } from './ExpenditureSettings';

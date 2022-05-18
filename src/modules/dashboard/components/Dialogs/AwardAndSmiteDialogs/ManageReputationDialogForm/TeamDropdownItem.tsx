@@ -31,15 +31,18 @@ const TeamDropdownItem = ({
 }: Props) => {
   return (
     <div
-      className={classNames(
-        styles.main,
-        withoutPadding && styles.withoutPadding,
-      )}
+      className={classNames(styles.main, {
+        [styles.withoutPadding]: withoutPadding,
+      })}
     >
-      <div className={styles.color}>
+      <div
+        className={classNames(
+          withoutPadding ? styles.colorWithoutPadding : styles.color,
+        )}
+      >
         <ColorTag color={color} />
       </div>
-      <div className={styles.headingWrapper}>
+      <div className={classNames(!withoutPadding && styles.headingWrapper)}>
         <Heading
           appearance={{
             margin: 'none',

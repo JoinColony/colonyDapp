@@ -13,7 +13,6 @@ export const input: string;
 export const recipientName: string;
 export const omniPickerContainer: string;
 export const errorHorizontal: string;
-export const errorSearchType: string;
 export const omniContainer: string;
 export const arrowIcon: string;
 export const arrowIconActive: string;

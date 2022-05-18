@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { Form } from '~core/Fields';
 import Payments from '~dashboard/ExpenditurePage/Payments';
-import TopParameters from '~dashboard/ExpenditurePage/TopParameters';
+import ExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings';
 
 import { getMainClasses } from '~utils/css';
 
@@ -38,7 +38,7 @@ const ExpenditurePage = () => {
     <Form initialValues={initialValues} onSubmit={submit}>
       <div className={getMainClasses({}, styles)}>
         <aside className={styles.sidebar}>
-          <TopParameters />
+          <ExpenditureSettings />
           <Payments />
         </aside>
         <div className={styles.mainContainer}>
