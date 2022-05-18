@@ -1,6 +1,6 @@
-import React, { FC, useState, useMemo, useCallback } from 'react';
+import React, { FC, useState, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import sortBy from 'lodash/sortBy';
 import { useParams } from 'react-router-dom';
 
@@ -11,26 +11,19 @@ import UserPermissions from '~dashboard/UserPermissions';
 import Heading from '~core/Heading';
 import { Select, Form } from '~core/Fields';
 import { useTransformer } from '~utils/hooks';
-import { createAddress } from '~utils/web3';
 import {
-  AnyUser,
+  ColonyContributor,
+  ColonyWatcher,
   Colony,
-  useColonyMembersWithReputationQuery,
-  useMembersSubscription,
   useLoggedInUser,
   BannedUsersQuery,
-  useColonyFromNameQuery,
-  useVerifiedUsersQuery,
+  useContributorsAndWatchersQuery,
 } from '~data/index';
 import {
   COLONY_TOTAL_BALANCE_DOMAIN_ID,
   ALLDOMAINS_DOMAIN_SELECTION,
 } from '~constants';
-import { Address } from '~types/index';
-import {
-  getAllUserRolesForDomain,
-  getAllUserRoles,
-} from '~modules/transformers';
+import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot, canAdminister } from '~modules/users/checks';
 
 import styles from './Members.css';
@@ -62,18 +55,11 @@ interface Props {
   bannedUsers: BannedUsersQuery['bannedUsers'];
 }
 
-type Member = AnyUser & {
-  roles: ColonyRole[];
-  directRoles: ColonyRole[];
-  banned: boolean;
-  isWhitelisted: boolean;
-};
-
 const displayName = 'dashboard.Members';
 
-const ITEMS_PER_PAGE = 30;
+const ITEMS_PER_PAGE = 1;
 
-const Members = ({ colony: { colonyAddress }, colony, bannedUsers }: Props) => {
+const Members = ({ colony: { colonyAddress, colonyName }, colony }: Props) => {
   const { domainId } = useParams<{
     domainId: string;
   }>();
@@ -106,28 +92,6 @@ const Members = ({ colony: { colonyAddress }, colony, bannedUsers }: Props) => {
   );
 
   /*
-   * Identify users who are whitelisted
-   */
-
-  const { data: colonyData } = useColonyFromNameQuery({
-    variables: { name: colony.colonyName, address: colonyAddress },
-  });
-
-  const { data: verifiedAddresses } = useVerifiedUsersQuery({
-    variables: {
-      verifiedAddresses:
-        colonyData?.processedColony?.whitelistedAddresses || [],
-    },
-  });
-
-  const storedVerifiedRecipients = useMemo(
-    () =>
-      (verifiedAddresses?.verifiedUsers || []).map(
-        (user) => user?.profile.walletAddress,
-      ),
-    [verifiedAddresses],
-  );
-  /*
    * NOTE If we can't find the domain based on the current selected doamain id,
    * it means that it doesn't exist.
    * We then fall back to the to the "All Domains" selection
@@ -140,26 +104,21 @@ const Members = ({ colony: { colonyAddress }, colony, bannedUsers }: Props) => {
     selectedDomain || {};
 
   const {
-    data: allMembers,
-    loading: loadingAllMembers,
-  } = useMembersSubscription({
+    data: members,
+    loading: loadingMembers,
+  } = useContributorsAndWatchersQuery({
     variables: {
       colonyAddress,
+      colonyName,
+      domainId:
+        currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID
+          ? ROOT_DOMAIN_ID
+          : currentDomainId,
     },
   });
 
-  const {
-    data: membersWithReputation,
-    loading: loadingColonyMembersWithReputation,
-  } = useColonyMembersWithReputationQuery({
-    variables: {
-      colonyAddress,
-      domainId:
-        currentDomainId !== COLONY_TOTAL_BALANCE_DOMAIN_ID
-          ? currentDomainId
-          : ROOT_DOMAIN_ID,
-    },
-  });
+  const contributors = members?.contributorsAndWatchers?.contributors || [];
+  const watchers = members?.contributorsAndWatchers?.watchers || [];
 
   const currentUserRoles = useTransformer(getAllUserRoles, [
     colony,
@@ -168,69 +127,6 @@ const Members = ({ colony: { colonyAddress }, colony, bannedUsers }: Props) => {
   const canAdministerComments =
     hasRegisteredProfile &&
     (hasRoot(currentUserRoles) || canAdminister(currentUserRoles));
-
-  /*
-   * @NOTE Skelethon Users Array
-   *
-   * This is just  an array of user "profiles" that only contain the user's address.
-   * This will be passed down to `MembersListItem` where the final component will do
-   * the actual "full" profile fetching.
-   *
-   * We had to resort to this because otherwise we run into hook callback "hell" while
-   * trying to fetch user profiles in a queue for an array of addresses.
-   *
-   * The opposite is also not possible, to fetch all profiles at once using a query, since
-   * this time we need only the members in the colony that have reputation, and that comes
-   * from the reputation oracle, which will just return us a list of addresses (which can
-   * or cannot be subscribers to the colony).
-   */
-  const skelethonUsers = useMemo(() => {
-    let displayMembers =
-      membersWithReputation?.colonyMembersWithReputation?.map((walletAddress) =>
-        createAddress(walletAddress),
-      ) || [];
-    if (currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) {
-      const membersWithoutReputation =
-        allMembers?.subscribedUsers.map(({ profile: { walletAddress } }) =>
-          createAddress(walletAddress),
-        ) || [];
-      displayMembers = [
-        ...new Set([...displayMembers, ...membersWithoutReputation]),
-      ];
-    }
-
-    return displayMembers.map((walletAddress) => ({
-      id: walletAddress,
-      profile: { walletAddress },
-    }));
-  }, [allMembers, membersWithReputation, currentDomainId]);
-
-  const domainRoles = useTransformer(getAllUserRolesForDomain, [
-    colony,
-    /*
-     * If we have "All Domains" selected show the same permissions as on "Root"
-     */
-    currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID
-      ? ROOT_DOMAIN_ID
-      : currentDomainId,
-  ]);
-
-  const directDomainRoles = useTransformer(getAllUserRolesForDomain, [
-    colony,
-    /*
-     * If we have "All Domains" selected show the same permissions as on "Root"
-     */
-    currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID
-      ? ROOT_DOMAIN_ID
-      : currentDomainId,
-    true,
-  ]);
-
-  const inheritedDomainRoles = useTransformer(getAllUserRolesForDomain, [
-    colony,
-    ROOT_DOMAIN_ID,
-    true,
-  ]);
 
   const domainSelectOptions = sortBy(
     [...colony.domains, ALLDOMAINS_DOMAIN_SELECTION].map(
@@ -251,32 +147,7 @@ const Members = ({ colony: { colonyAddress }, colony, bannedUsers }: Props) => {
     setDataPage(dataPage + 1);
   }, [dataPage]);
 
-  const domainRolesArray = useMemo(() => {
-    return domainRoles
-      .sort(({ roles }) => (roles.includes(ColonyRole.Root) ? -1 : 1))
-      .filter(({ roles }) => !!roles.length)
-      .map(({ address, roles }) => {
-        const directUserRoles = directDomainRoles.find(
-          ({ address: userAddress }) => userAddress === address,
-        );
-        const rootRoles = inheritedDomainRoles.find(
-          ({ address: userAddress }) => userAddress === address,
-        );
-        const allUserRoles = [
-          ...new Set([
-            ...(directUserRoles?.roles || []),
-            ...(rootRoles?.roles || []),
-          ]),
-        ];
-        return {
-          userAddress: address,
-          roles,
-          directRoles: allUserRoles,
-        };
-      });
-  }, [directDomainRoles, domainRoles, inheritedDomainRoles]);
-
-  if (loadingAllMembers || loadingColonyMembersWithReputation) {
+  if (loadingMembers) {
     return (
       <div className={styles.main}>
         <SpinnerLoader
@@ -298,46 +169,12 @@ const Members = ({ colony: { colonyAddress }, colony, bannedUsers }: Props) => {
    * of the results, with the next waiting in line for a callback, but the current
    * timeframe doesn't allow for this, so I guess this is the "best" we can do for now
    */
-  const paginatedSkelethonUsers = skelethonUsers.slice(
+  const paginatedContributors = contributors.slice(
     0,
     ITEMS_PER_PAGE * dataPage,
   );
 
-  const members: Member[] = paginatedSkelethonUsers.map((user) => {
-    const {
-      profile: { walletAddress },
-    } = user;
-    const isUserBanned = bannedUsers.find(
-      ({
-        id: bannedUserWalletAddress,
-        banned,
-      }: {
-        id: Address;
-        banned: boolean;
-      }) =>
-        banned &&
-        createAddress(bannedUserWalletAddress) === createAddress(walletAddress),
-    );
-    const domainRole = domainRolesArray.find(
-      (rolesObject) =>
-        createAddress(rolesObject.userAddress) === createAddress(walletAddress),
-    );
-    const isWhitelisted = storedVerifiedRecipients.find(
-      (whitelistedUser) =>
-        whitelistedUser &&
-        createAddress(whitelistedUser) === createAddress(walletAddress),
-    );
-    return {
-      ...user,
-      roles: domainRole ? domainRole.roles : [],
-      directRoles: domainRole ? domainRole.directRoles : [],
-      banned: canAdministerComments ? !!isUserBanned : false,
-      isWhitelisted:
-        isWhitelisted && colonyData?.processedColony?.isWhitelistActivated
-          ? !!isWhitelisted
-          : false,
-    };
-  });
+  const paginatedWatchers = watchers.slice(0, ITEMS_PER_PAGE * dataPage);
 
   return (
     <div className={styles.main}>
@@ -368,8 +205,8 @@ const Members = ({ colony: { colonyAddress }, colony, bannedUsers }: Props) => {
           />
         </Form>
       </div>
-      {skelethonUsers.length ? (
-        <MembersList<Member>
+      {contributors.length ? (
+        <MembersList<ColonyContributor>
           colony={colony}
           extraItemContent={({ roles, directRoles, banned }) => (
             <UserPermissions
@@ -379,17 +216,33 @@ const Members = ({ colony: { colonyAddress }, colony, bannedUsers }: Props) => {
             />
           )}
           domainId={currentDomainId}
-          users={members}
+          users={paginatedContributors}
+          canAdministerComments={canAdministerComments}
         />
       ) : (
         <FormattedMessage {...MSG.failedToFetch} />
       )}
-      {ITEMS_PER_PAGE * dataPage < skelethonUsers.length && (
+      {ITEMS_PER_PAGE * dataPage < contributors.length && (
         <LoadMoreButton
           onClick={handleDataPagination}
-          isLoadingData={
-            loadingAllMembers || loadingColonyMembersWithReputation
-          }
+          isLoadingData={loadingMembers}
+        />
+      )}
+      {watchers?.length && (
+        <MembersList<ColonyWatcher>
+          colony={colony}
+          domainId={currentDomainId}
+          users={paginatedWatchers}
+          canAdministerComments={canAdministerComments}
+          extraItemContent={({ banned }) => (
+            <UserPermissions roles={[]} directRoles={[]} banned={banned} />
+          )}
+        />
+      )}
+      {ITEMS_PER_PAGE * dataPage < watchers.length && (
+        <LoadMoreButton
+          onClick={handleDataPagination}
+          isLoadingData={loadingMembers}
         />
       )}
     </div>

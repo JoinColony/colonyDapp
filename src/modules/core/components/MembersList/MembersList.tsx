@@ -14,6 +14,7 @@ interface Props<U> {
   domainId: number | undefined;
   users: U[];
   listGroupAppearance?: ListGroupAppearance;
+  canAdministerComments?: boolean;
 }
 
 const displayName = 'MembersList';
@@ -27,6 +28,7 @@ const MembersList = <U extends AnyUser = AnyUser>({
   domainId,
   users,
   listGroupAppearance,
+  canAdministerComments,
 }: Props<U>) => (
   <ListGroup appearance={listGroupAppearance}>
     {users.map((user) => (
@@ -39,6 +41,7 @@ const MembersList = <U extends AnyUser = AnyUser>({
         showUserReputation={showUserReputation}
         domainId={domainId}
         user={user}
+        canAdministerComments={canAdministerComments}
       />
     ))}
   </ListGroup>
