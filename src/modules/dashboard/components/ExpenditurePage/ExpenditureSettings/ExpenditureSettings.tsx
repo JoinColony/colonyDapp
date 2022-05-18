@@ -22,24 +22,24 @@ import UserMention from '~core/UserMention';
 
 const MSG = defineMessages({
   typeLabel: {
-    id: 'expenditures.settings.type.label',
+    id: 'dashboard.Expenditures.ExpenditureSettings.defaultExpenditureLabel',
     defaultMessage: 'Expenditure type',
   },
   teamLabel: {
-    id: 'expenditures.settings.team.label',
+    id: 'dashboard.Expenditures.ExpenditureSettings.defaultTeamLabel',
     defaultMessage: 'Team',
   },
   balanceLabel: {
-    id: 'expenditures.settings.balance.label',
+    id: 'dashboard.Expenditures.ExpenditureSettings.defaultBalanceLabel',
     defaultMessage: 'Balance',
   },
   ownerLabel: {
-    id: 'expenditures.settings.owner.label',
+    id: 'dashboard.Expenditures.ExpenditureSettings.defaultOwnerLabel',
     defaultMessage: 'Owner',
   },
   optionAdvanced: {
-    id: 'expenditures.settings.team.option.advanced',
-    defineMessages: 'Advanced payment',
+    id: 'dashboard.Expenditures.ExpenditureSettings.defaultAdvancedOption',
+    defaultMessage: 'Advanced payment',
   },
 });
 
@@ -155,6 +155,8 @@ const ExpenditureSettings = () => {
 
   return (
     <div className={styles.container}>
+      {/* eslint-disable-next-line no-warning-comments */}
+      {/* TODO: add submit handler and initial values */}
       <Form initialValues={{}} onSubmit={() => {}}>
         <DialogSection appearance={dialogSectionSettings}>
           <Select
@@ -166,9 +168,8 @@ const ExpenditureSettings = () => {
             }}
             options={[
               {
-                // eslint-disable-next-line no-warning-comments
-                label: 'Advanced payment', // TODO: change label to MSG.optionAdvanced
-                value: 'Advanced',
+                label: MSG.optionAdvanced,
+                value: 'advanced',
               },
             ]}
           />
