@@ -1,18 +1,23 @@
 import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { useField } from 'formik';
 import Button from '~core/Button';
 import Recipient from '../Recipient';
 
 import styles from './Payments.css';
-import { Recipient as RecipientType } from './types';
+import { DialogSection } from '~core/Dialog';
 import Icon from '~core/Icon';
 
 const MSG = defineMessages({
-  defaultRecipient: {
+  payments: {
+    id: 'Payments.defaultPayment',
+    defaultMessage: 'Payments',
+  },
+  recipient: {
     id: 'Payments.defaultRecipient',
     defaultMessage: 'Recipient',
   },
-  defaultAddRecipientLabel: {
+  addRecipientLabel: {
     id: 'Payments.defaultAddRecipientLabel',
     defaultMessage: 'Add recipient',
   },
@@ -20,59 +25,79 @@ const MSG = defineMessages({
 
 const newRecipient = {
   id: 0,
-  user: undefined,
+  recipient: undefined,
   value: undefined,
   delay: undefined,
   isExpanded: true,
 };
 
 const Payments = () => {
-  const [recipients, setRecipients] = useState<RecipientType[]>([
-    { ...newRecipient, id: '0' },
-  ]);
+  const [, { value: recipients }, { setValue }] = useField('payments');
   const [id, setId] = useState(1);
 
   const addRecipient = useCallback(() => {
-    setRecipients((value) => [...value, { ...newRecipient, id: String(id) }]);
+    setValue([...recipients, { ...newRecipient, id: String(id) }]);
     setId((idLocal) => idLocal + 1);
-  }, [id]);
+  }, [id, recipients, setValue]);
 
-  const onToogleButtonClick = useCallback((currId) => {
-    setRecipients((rec) =>
-      rec.map((recip) =>
-        recip.id === currId
-          ? { ...recip, isExpanded: !recip.isExpanded }
-          : recip,
-      ),
-    );
-  }, []);
+  const onToogleButtonClick = useCallback(
+    (currId) => {
+      setValue(
+        recipients.map((recip) =>
+          recip.id === currId
+            ? { ...recip, isExpanded: !recip.isExpanded }
+            : recip,
+        ),
+      );
+    },
+    [recipients, setValue],
+  );
 
   return (
     <>
       <div className={styles.recipientContainer}>
+        <div className={styles.payments}>
+          <FormattedMessage {...MSG.payments} />
+        </div>
         {recipients.map((recipient, index) => (
           <div className={styles.singleRecipient}>
-            {recipient.isExpanded ? (
-              <Icon
-                name="circle-minus"
-                title="Error"
-                appearance={{ size: 'medium' }}
-                onClick={() => onToogleButtonClick(recipient.id)}
-              />
-            ) : (
-              <Icon
-                name="circle-plus"
-                title="Error"
-                onClick={() => onToogleButtonClick(recipient.id)}
-              />
-            )}
-            {index + 1}. Recipient
-            <Recipient isExpanded={recipient.isExpanded} />
+            <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
+              <div className={styles.recipientLabel}>
+                {recipient.isExpanded ? (
+                  <Button
+                    type="button"
+                    onClick={() => onToogleButtonClick(recipient.id)}
+                    appearance={{ theme: 'blue' }}
+                  >
+                    <div
+                      className={styles.signWrapper}
+                      // onClick={() => onToogleButtonClick(recipient.id)}
+                    >
+                      <span className={styles.minus} />
+                    </div>
+                    <div className={styles.verticalDivider} />
+                  </Button>
+                ) : (
+                  <div
+                    className={styles.signWrapper}
+                    // onClick={() => onToogleButtonClick(recipient.id)}
+                  >
+                    <Icon
+                      name="plus"
+                      className={styles.plus}
+                      onClick={() => onToogleButtonClick(recipient.id)}
+                    />
+                  </div>
+                )}
+                {index + 1}. <FormattedMessage {...MSG.recipient} />
+              </div>
+            </DialogSection>
+            <Recipient isExpanded={recipient.isExpanded} id={recipient.id} />
           </div>
         ))}
       </div>
-      <Button onClick={addRecipient}>
-        <FormattedMessage {...MSG.defaultAddRecipientLabel} />
+      <Button onClick={addRecipient} appearance={{ theme: 'blue' }}>
+        <FormattedMessage {...MSG.addRecipientLabel} />
       </Button>
     </>
   );

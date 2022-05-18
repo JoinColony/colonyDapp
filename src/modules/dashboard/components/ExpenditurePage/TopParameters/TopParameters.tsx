@@ -3,7 +3,7 @@ import sortBy from 'lodash/sortBy';
 
 import { defineMessages } from 'react-intl';
 import { DialogSection } from '~core/Dialog';
-import { Form, Select, SelectOption } from '~core/Fields';
+import { Select, SelectOption } from '~core/Fields';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import { AnyUser, OneDomain } from '~data/index';
 
@@ -98,78 +98,76 @@ const TopParameters = () => {
 
   return (
     <div className={styles.container}>
-      <Form initialValues={{}} initialErrors={{}} onSubmit={() => {}}>
-        <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
-          <Select
-            name="expenditureType"
-            label={MSG.defaultExpenditureTypeLabel}
+      <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
+        <Select
+          name="expenditureType"
+          label={MSG.defaultExpenditureTypeLabel}
+          appearance={{
+            theme: 'alt',
+            alignOptions: 'left',
+            direction: 'horizontal',
+            optionSize: 'large',
+            colorSchema: 'lightGrey',
+            size: 'small',
+            width: 'content',
+          }}
+          options={[{ label: 'Advanced', value: 'advanced' }]}
+        />
+      </DialogSection>
+      <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
+        <Select
+          options={domainOptions}
+          label={MSG.defaultTeamLabel}
+          name="team"
+          appearance={{
+            theme: 'alt',
+            alignOptions: 'left',
+            direction: 'horizontal',
+            optionSize: 'large',
+            colorSchema: 'lightGrey',
+            size: 'small',
+            padding: 'none',
+          }}
+          renderActiveOption={renderActiveOption}
+        />
+      </DialogSection>
+      <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
+        <Select
+          name="balance"
+          label={MSG.defaultBalanceLabel}
+          appearance={{
+            theme: 'alt',
+            alignOptions: 'right',
+            direction: 'horizontal',
+            listPosition: 'static',
+            colorSchema: 'lightGrey',
+            size: 'small',
+          }}
+          options={balanceData}
+          renderActiveOption={renderBalanceActiveOption}
+          unselectable
+        />
+      </DialogSection>
+      <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
+        <div className={styles.singleUserContainer}>
+          <SingleUserPicker
+            data={userData}
+            label={MSG.defaultOwnerLabel}
+            name="owner"
+            filter={filterUserSelection}
+            renderAvatar={supRenderAvatar}
+            dataTest="paymentRecipientPicker"
+            itemDataTest="paymentRecipientItem"
+            placeholder="Search"
             appearance={{
-              theme: 'alt',
-              alignOptions: 'left',
               direction: 'horizontal',
-              optionSize: 'large',
-              colorSchema: 'lightGrey',
               size: 'small',
-              width: 'content',
-            }}
-            options={[{ label: 'Advanced', value: 'advanced' }]}
-          />
-        </DialogSection>
-        <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
-          <Select
-            options={domainOptions}
-            label={MSG.defaultTeamLabel}
-            name="team"
-            appearance={{
-              theme: 'alt',
-              alignOptions: 'left',
-              direction: 'horizontal',
-              optionSize: 'large',
               colorSchema: 'lightGrey',
-              size: 'small',
-              padding: 'none',
             }}
-            renderActiveOption={renderActiveOption}
+            hasSearch
           />
-        </DialogSection>
-        <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
-          <Select
-            name="balance"
-            label={MSG.defaultBalanceLabel}
-            appearance={{
-              theme: 'alt',
-              alignOptions: 'right',
-              direction: 'horizontal',
-              listPosition: 'static',
-              colorSchema: 'lightGrey',
-              size: 'small',
-            }}
-            options={balanceData}
-            renderActiveOption={renderBalanceActiveOption}
-            unselectable
-          />
-        </DialogSection>
-        <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
-          <div className={styles.singleUserContainer}>
-            <SingleUserPicker
-              data={userData}
-              label={MSG.defaultOwnerLabel}
-              name="owner"
-              filter={filterUserSelection}
-              renderAvatar={supRenderAvatar}
-              dataTest="paymentRecipientPicker"
-              itemDataTest="paymentRecipientItem"
-              placeholder="Search"
-              appearance={{
-                direction: 'horizontal',
-                size: 'small',
-                colorSchema: 'lightGrey',
-              }}
-              hasSearch
-            />
-          </div>
-        </DialogSection>
-      </Form>
+        </div>
+      </DialogSection>
     </div>
   );
 };

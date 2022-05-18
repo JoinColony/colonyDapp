@@ -1,5 +1,5 @@
-@value paddingTopBottom: 70px;
-@value paddingRightLeft: 40px;
+@value paddingTopBottom: 74px;
+@value paddingRightLeft: 54px;
 
 .container {
   padding: paddingTopBottom paddingRightLeft;

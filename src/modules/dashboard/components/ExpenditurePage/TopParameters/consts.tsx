@@ -36,7 +36,7 @@ export const balanceData = [
 
 export const userData = [
   {
-    id: 1,
+    id: '1',
     profile: {
       walletAddress: '0xae57767918BB7c53aa26dd89f12913f5233d08D2',
       username: 'Chris',
@@ -44,7 +44,7 @@ export const userData = [
     },
   },
   {
-    id: 2,
+    id: '2',
     profile: {
       walletAddress: '0x2C1d87E67b8D90d8A617adD3D1165f4B34C3838d',
       username: 'Elena',
@@ -52,7 +52,7 @@ export const userData = [
     },
   },
   {
-    id: 3,
+    id: '3',
     profile: {
       walletAddress: '0x1A2D59Be2B7d7D66C5e56E6F8463C58d3d762212',
       username: 'Thiago',
@@ -60,7 +60,7 @@ export const userData = [
     },
   },
   {
-    id: 4,
+    id: '4',
     profile: {
       walletAddress: '0x650e7CdF785ae9B83b2f806151C6C7A0df38034A',
       username: 'Alex',
@@ -68,7 +68,7 @@ export const userData = [
     },
   },
   {
-    id: 5,
+    id: '5',
     profile: {
       walletAddress: '0xF3d1052710d69707184F78bAee1FA523F41AFc4A',
       username: 'Collin',

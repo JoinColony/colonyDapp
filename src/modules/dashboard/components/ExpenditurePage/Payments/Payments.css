@@ -1,7 +1,65 @@
+@value paddingTopBottom: 18px;
+@value paddingRightLeft: 54px;
+
 .recipientContainer {
-  border: 1px solid white;
+  padding: paddingTopBottom paddingRightLeft;
+}
+
+.payments {
+  margin-bottom: 18px;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--dark);
+}
+
+.recipientLabel {
+  display: flex;
+  align-items: center;
+  min-height: 28px;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--dark);
 }
 
 .singleRecipient {
+  position: relative;
+}
+
+.signWrapper {
   display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 16px;
+  width: 16px;
+  position: absolute;
+  left: -23px;
+  border: 1px solid var(--temp-grey-blue-7);
+  border-radius: 2px;
+  opacity: 0.65;
+}
+
+.signWrapper:hover {
+  cursor: pointer;
+}
+
+.verticalDivider {
+  height: 67%;
+  position: absolute;
+  top: 56px;
+  left: -17px;
+  border-left: 1px solid var(--temp-grey-blue-7);
+  opacity: 0.25;
+}
+
+.minus {
+  height: 1px;
+  width: 70%;
+  border-bottom: 1px solid var(--dark);
+  opacity: 1;
+}
+
+.plus {
+  display: flex;
+  height: 10px;
+  width: 10px;
 }

@@ -1,7 +1,9 @@
-import React from 'react';
+import { useField } from 'formik';
+import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import Button from '~core/Button';
 import { DialogSection } from '~core/Dialog';
-import { Form, Input, Select, TokenSymbolSelector } from '~core/Fields';
+import { Input, Select, TokenSymbolSelector } from '~core/Fields';
 import { Tooltip } from '~core/Popover';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import { userData } from '../TopParameters/consts';
@@ -30,42 +32,61 @@ const MSG = defineMessages({
     F.ex. once the work is finished,  
     recipient has to wait before funds can be claimed. `,
   },
+  addTokenText: {
+    id: 'Recipient.addToken',
+    defaultMessage: 'Another token',
+  },
 });
 
 interface Props {
   isExpanded: boolean;
+  id: string;
 }
 
-const Recipient = ({ isExpanded }: Props) => {
+const newToken = {
+  id: 0,
+  amount: undefined,
+  tokenAddress: undefined,
+};
+
+const Recipient = ({ isExpanded, id }: Props) => {
+  const [, { value: tokens }, { setValue }] = useField('value');
+  const [valueId, setValueId] = useState(1);
+
+  const addToken = useCallback(() => {
+    setValue([...tokens, { ...newToken, id: String(valueId) }]);
+    setValueId((idLocal) => idLocal + 1);
+  }, [setValue, tokens, valueId]);
+
   return (
     <div className={styles.container}>
-      <Form initialValues={{}} initialErrors={{}} onSubmit={() => {}}>
-        {isExpanded && (
-          <>
-            <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
-              <div className={styles.singleUserContainer}>
-                <SingleUserPicker
-                  data={userData}
-                  label={MSG.defaultRecipientLabel}
-                  name="owner"
-                  filter={filterUserSelection}
-                  renderAvatar={supRenderAvatar}
-                  dataTest="paymentRecipientPicker"
-                  itemDataTest="paymentRecipientItem"
-                  placeholder="Search"
-                  appearance={{
-                    direction: 'horizontal',
-                    size: 'small',
-                    colorSchema: 'lightGrey',
-                  }}
-                  hasSearch
-                />
-              </div>
-            </DialogSection>
-            <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
-              <div className={styles.valueContainer}>
+      {isExpanded && (
+        <>
+          <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
+            <div className={styles.singleUserContainer}>
+              <SingleUserPicker
+                data={userData}
+                label={MSG.defaultRecipientLabel}
+                name={`recipient-${id}`}
+                filter={filterUserSelection}
+                renderAvatar={supRenderAvatar}
+                dataTest="paymentRecipientPicker"
+                itemDataTest="paymentRecipientItem"
+                placeholder="Search"
+                appearance={{
+                  direction: 'horizontal',
+                  size: 'small',
+                  colorSchema: 'lightGrey',
+                }}
+                hasSearch
+              />
+            </div>
+          </DialogSection>
+          <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
+            {tokens?.map((token) => (
+              <div className={styles.valueContainer} key={token.id}>
                 <Input
-                  name="value"
+                  name={`amount-${token.id}`}
                   appearance={{
                     theme: 'underlined',
                     size: 'small',
@@ -73,58 +94,67 @@ const Recipient = ({ isExpanded }: Props) => {
                   }}
                   label={MSG.defaultValueLabel}
                 />
-                <TokenSymbolSelector
-                  label=""
-                  tokens={tokensData}
-                  name="tokenAddress"
-                  elementOnly
-                  appearance={{ alignOptions: 'right', theme: 'grey' }}
-                />
-              </div>
-            </DialogSection>
-            <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
-              <div className={styles.valueContainer}>
-                <Tooltip
-                  content={
-                    <div>
-                      <FormattedMessage {...MSG.defaultTooltipMessage} />
-                    </div>
-                  }
-                  trigger="hover"
-                  placement="right-start"
-                >
-                  <div className="styles.delay">
-                    <FormattedMessage {...MSG.defaultDelayInfo} />
-                  </div>
-                </Tooltip>
-                <div className={styles.valueControlsContainer}>
-                  <div className={styles.inputContainer}>
-                    <Input
-                      name="delay"
-                      appearance={{
-                        colorSchema: 'grey',
-                        size: 'small',
-                      }}
-                      label=""
-                    />
-                  </div>
-                  <Select
-                    name="delayQuantity"
-                    appearance={{ theme: 'grey' }}
+                <div className={styles.tokenWrapper}>
+                  <TokenSymbolSelector
                     label=""
-                    options={[
-                      {
-                        label: 'hour',
-                        value: 'hour',
-                      },
-                    ]}
+                    tokens={tokensData}
+                    name={`tokenAddress-${token.id}`}
+                    elementOnly
+                    appearance={{ alignOptions: 'right', theme: 'grey' }}
                   />
+                  <Button
+                    type="button"
+                    onClick={addToken}
+                    appearance={{ theme: 'blue' }}
+                  >
+                    <FormattedMessage {...MSG.addTokenText} />
+                  </Button>
                 </div>
               </div>
-            </DialogSection>
-          </>
-        )}
-      </Form>
+            ))}
+          </DialogSection>
+          <DialogSection appearance={{ border: 'bottom', size: 'small' }}>
+            <div className={styles.valueContainer}>
+              <Tooltip
+                content={
+                  <div>
+                    <FormattedMessage {...MSG.defaultTooltipMessage} />
+                  </div>
+                }
+                trigger="hover"
+                placement="right-start"
+              >
+                <div className="styles.delay">
+                  <FormattedMessage {...MSG.defaultDelayInfo} />
+                </div>
+              </Tooltip>
+              <div className={styles.valueControlsContainer}>
+                <div className={styles.inputContainer}>
+                  <Input
+                    name="delay"
+                    appearance={{
+                      colorSchema: 'grey',
+                      size: 'small',
+                    }}
+                    label=""
+                  />
+                </div>
+                <Select
+                  name="delayQuantity"
+                  appearance={{ theme: 'grey' }}
+                  label=""
+                  options={[
+                    {
+                      label: 'hour',
+                      value: 'hour',
+                    },
+                  ]}
+                />
+              </div>
+            </div>
+          </DialogSection>
+        </>
+      )}
     </div>
   );
 };

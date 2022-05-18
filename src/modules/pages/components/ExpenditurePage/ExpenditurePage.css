@@ -18,7 +18,14 @@
 }
 
 .sidebar {
-  height: calc(100vh - navBarHeight);
+  min-height: calc(100vh - navBarHeight);
   width: sidebarWidth;
   background-color: var(--grey-blue-3);
+}
+
+.form {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
 }
