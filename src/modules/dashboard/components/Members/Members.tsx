@@ -110,10 +110,7 @@ const Members = ({ colony: { colonyAddress, colonyName }, colony }: Props) => {
     variables: {
       colonyAddress,
       colonyName,
-      domainId:
-        currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID
-          ? ROOT_DOMAIN_ID
-          : currentDomainId,
+      domainId: currentDomainId,
     },
   });
 
@@ -230,24 +227,29 @@ const Members = ({ colony: { colonyAddress, colonyName }, colony }: Props) => {
           isLoadingData={loadingMembers}
         />
       )}
-      {/* PLACEHOLDER */}
-      <div>WATCHERS</div>
-      {watchers?.length && (
-        <MembersList<ColonyWatcher>
-          colony={colony}
-          domainId={currentDomainId}
-          users={paginatedWatchers}
-          canAdministerComments={canAdministerComments}
-          extraItemContent={({ banned }) => (
-            <UserPermissions roles={[]} directRoles={[]} banned={banned} />
+      {(currentDomainId === ROOT_DOMAIN_ID ||
+        currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) && (
+        <>
+          {/* PLACEHOLDER */}
+          <div>WATCHERS</div>
+          {watchers?.length && (
+            <MembersList<ColonyWatcher>
+              colony={colony}
+              domainId={currentDomainId}
+              users={paginatedWatchers}
+              canAdministerComments={canAdministerComments}
+              extraItemContent={({ banned }) => (
+                <UserPermissions roles={[]} directRoles={[]} banned={banned} />
+              )}
+            />
           )}
-        />
-      )}
-      {ITEMS_PER_PAGE * dataPage < watchers.length && (
-        <LoadMoreButton
-          onClick={handleDataPagination}
-          isLoadingData={loadingMembers}
-        />
+          {ITEMS_PER_PAGE * dataPage < watchers.length && (
+            <LoadMoreButton
+              onClick={handleDataPagination}
+              isLoadingData={loadingMembers}
+            />
+          )}
+        </>
       )}
     </div>
   );
