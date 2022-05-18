@@ -256,7 +256,7 @@ export default gql`
     profile: UserProfile!
   }
 
-  type Watcher {
+  type ColonyWatcher {
     id: String!
     profile: UserProfile!
     banned: Boolean!
@@ -264,7 +264,7 @@ export default gql`
 
   type ContributorsAndWatchers {
     contributors: [ColonyContributor!]!
-    watchers: [Watcher!]!
+    watchers: [ColonyWatcher!]!
   }
 
   extend type Query {

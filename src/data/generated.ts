@@ -1123,7 +1123,7 @@ export type ColonyContributor = {
   profile: UserProfile;
 };
 
-export type Watcher = {
+export type ColonyWatcher = {
   id: Scalars['String'];
   profile: UserProfile;
   banned: Scalars['Boolean'];
@@ -1131,7 +1131,7 @@ export type Watcher = {
 
 export type ContributorsAndWatchers = {
   contributors: Array<ColonyContributor>;
-  watchers: Array<Watcher>;
+  watchers: Array<ColonyWatcher>;
 };
 
 export type ByColonyFilter = {
@@ -2057,10 +2057,10 @@ export type ContributorsAndWatchersQueryVariables = Exact<{
 
 
 export type ContributorsAndWatchersQuery = { contributorsAndWatchers?: Maybe<{ contributors: Array<(
-      Pick<ColonyContributor, 'id' | 'directRoles' | 'roles'>
+      Pick<ColonyContributor, 'id' | 'directRoles' | 'roles' | 'banned'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
     )>, watchers: Array<(
-      Pick<Watcher, 'id'>
+      Pick<ColonyWatcher, 'id' | 'banned'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
     )> }> };
 
@@ -5149,6 +5149,7 @@ export const ContributorsAndWatchersDocument = gql`
       id
       directRoles
       roles
+      banned
       profile {
         avatarHash
         displayName
@@ -5158,6 +5159,7 @@ export const ContributorsAndWatchersDocument = gql`
     }
     watchers {
       id
+      banned
       profile {
         avatarHash
         displayName
