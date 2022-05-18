@@ -1,24 +1,27 @@
 import React, { ReactNode, useCallback, useMemo } from 'react';
-import sortBy from 'lodash/sortBy';
 import classNames from 'classnames';
+import { useParams } from 'react-router';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { defineMessages } from 'react-intl';
 import { DialogSection } from '~core/Dialog';
 import { Form, InputLabel, Select, SelectOption } from '~core/Fields';
-import { OneDomain, useLoggedInUser } from '~data/index';
+import { useLoggedInUser, useColonyFromNameQuery } from '~data/index';
 import Numeral from '~core/Numeral';
 
 import styles from './ExpenditureSettings.css';
 import UserAvatar from '~core/UserAvatar';
-import TeamDropdownItem from '~dashboard/Dialogs/AwardAndSmiteDialogs/ManageReputationDialogForm/TeamDropdownItem';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 
-import { colonyAddress, domains, tokens as tokensData } from './consts';
+import { tokens as tokensData } from './consts';
 import { Appearance } from '~core/Fields/Select/types';
 import { Appearance as DialogAppearance } from '~core/Dialog/DialogSection';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import UserMention from '~core/UserMention';
+import DomainDropdown from '~core/DomainDropdown';
+import ColorTag, { Color } from '~core/ColorTag';
+import { SpinnerLoader } from '~core/Preloaders';
 
 const MSG = defineMessages({
   typeLabel: {
@@ -50,41 +53,54 @@ interface Props {
 const ExpenditureSettings = () => {
   const { walletAddress, username } = useLoggedInUser();
 
-  const domainOptions = useMemo(
-    () =>
-      sortBy(
-        domains.map((domain) => ({
-          children: (
-            <TeamDropdownItem
-              domain={domain as OneDomain}
-              colonyAddress={colonyAddress}
-            />
-          ),
-          value: domain.ethDomainId.toString(),
-          label: domain.name,
-        })),
-        ['value'],
-      ),
-    [],
+  const { colonyName } = useParams<{
+    colonyName: string;
+  }>();
+
+  const { data: colonyData, loading } = useColonyFromNameQuery({
+    variables: { address: '', name: colonyName },
+  });
+
+  const getDomainColor = useCallback<(domainId: string | undefined) => Color>(
+    (domainId) => {
+      const rootDomainColor: Color = Color.LightPink;
+      const defaultColor: Color = Color.Yellow;
+      if (domainId === String(ROOT_DOMAIN_ID)) {
+        return rootDomainColor;
+      }
+      if (!colonyData?.processedColony || !domainId) {
+        return defaultColor;
+      }
+      const domain = colonyData?.processedColony?.domains.find(
+        ({ ethDomainId }) => Number(domainId) === ethDomainId,
+      );
+      return domain ? domain.color : defaultColor;
+    },
+    [colonyData],
   );
 
   const renderActiveOption = useCallback<
-    (option: SelectOption | undefined) => ReactNode
-  >((option) => {
-    const value = option ? option.value : undefined;
-    const domain = domains.find(
-      ({ ethDomainId }) => Number(value) === ethDomainId,
-    ) as OneDomain;
-    return (
-      <div className={styles.teamLabel}>
-        <TeamDropdownItem
-          domain={domain}
-          colonyAddress={colonyAddress}
-          appearance={{ theme: 'grey' }}
-          withoutPadding
-        />
-      </div>
-    );
+    (option: SelectOption | undefined, label: string) => ReactNode
+  >(
+    (option, label) => {
+      const value = option ? option.value : undefined;
+      const color = getDomainColor(value);
+      return (
+        <div className={styles.activeItem}>
+          <ColorTag color={color} />{' '}
+          <div className={styles.activeItemLabel}>{label}</div>
+        </div>
+      );
+    },
+    [getDomainColor],
+  );
+
+  const filterDomains = useCallback((optionDomain) => {
+    const optionDomainId = parseInt(optionDomain.value, 10);
+    if (optionDomainId === 0) {
+      return false;
+    }
+    return true;
   }, []);
 
   const [activeToken, ...tokens] = tokensData;
@@ -157,67 +173,82 @@ const ExpenditureSettings = () => {
     <div className={styles.container}>
       {/* eslint-disable-next-line no-warning-comments */}
       {/* TODO: add submit handler and initial values */}
-      <Form initialValues={{}} onSubmit={() => {}}>
-        <DialogSection appearance={dialogSectionSettings}>
-          <Select
-            name="expenditure"
-            label={MSG.typeLabel}
-            appearance={{
-              ...appareanceSettings,
-              width: 'content',
-            }}
-            options={[
-              {
-                label: MSG.optionAdvanced,
-                value: 'advanced',
-              },
-            ]}
-          />
-        </DialogSection>
-        <DialogSection appearance={dialogSectionSettings}>
-          <Select
-            options={domainOptions}
-            label={MSG.teamLabel}
-            name="team"
-            appearance={{
-              ...appareanceSettings,
-              padding: 'none',
-            }}
-            renderActiveOption={renderActiveOption}
-          />
-        </DialogSection>
-        <DialogSection appearance={dialogSectionSettings}>
-          <Select
-            name="balance"
-            label={MSG.balanceLabel}
-            appearance={{
-              ...appareanceSettings,
-              listPosition: 'static',
-              optionSize: 'default',
-            }}
-            options={balanceOptins}
-            renderActiveOption={renderBalanceActiveOption}
-            unselectable
-          />
-        </DialogSection>
-        <DialogSection appearance={dialogSectionSettings}>
-          <div className={styles.userContainer}>
-            <InputLabel
-              label={MSG.ownerLabel}
+      {loading ? (
+        <SpinnerLoader appearance={{ size: 'medium' }} />
+      ) : (
+        <Form initialValues={{}} onSubmit={() => {}}>
+          <DialogSection appearance={dialogSectionSettings}>
+            <Select
+              name="expenditure"
+              label={MSG.typeLabel}
               appearance={{
-                direction: 'horizontal',
-                colorSchema: 'lightGrey',
+                ...appareanceSettings,
+                width: 'content',
               }}
+              options={[
+                {
+                  label: MSG.optionAdvanced,
+                  value: 'advanced',
+                },
+              ]}
             />
-            <div className={styles.userAvatarContainer}>
-              <UserAvatar address={walletAddress} size="xs" notSet={false} />
-              <div className={styles.userName}>
-                <UserMention username={username || ''} />
+          </DialogSection>
+          <DialogSection appearance={dialogSectionSettings}>
+            <div className={styles.settingsRow}>
+              <InputLabel
+                label={MSG.teamLabel}
+                appearance={{
+                  direction: 'horizontal',
+                  colorSchema: 'lightGrey',
+                }}
+              />
+              {colonyData && (
+                <DomainDropdown
+                  colony={colonyData?.processedColony}
+                  name="filteredDomainId"
+                  renderActiveOptionFn={renderActiveOption}
+                  filterOptionsFn={filterDomains}
+                  showAllDomains
+                  showDescription
+                  dataTest="colonyDomainSelector"
+                  itemDataTest="colonyDomainSelectorItem"
+                />
+              )}
+            </div>
+          </DialogSection>
+          <DialogSection appearance={dialogSectionSettings}>
+            <Select
+              name="balance"
+              label={MSG.balanceLabel}
+              appearance={{
+                ...appareanceSettings,
+                listPosition: 'static',
+                optionSize: 'default',
+              }}
+              options={balanceOptins}
+              renderActiveOption={renderBalanceActiveOption}
+              unselectable
+            />
+          </DialogSection>
+          <DialogSection appearance={dialogSectionSettings}>
+            <div className={styles.userContainer}>
+              <InputLabel
+                label={MSG.ownerLabel}
+                appearance={{
+                  direction: 'horizontal',
+                  colorSchema: 'lightGrey',
+                }}
+              />
+              <div className={styles.userAvatarContainer}>
+                <UserAvatar address={walletAddress} size="xs" notSet={false} />
+                <div className={styles.userName}>
+                  <UserMention username={username || ''} />
+                </div>
               </div>
             </div>
-          </div>
-        </DialogSection>
-      </Form>
+          </DialogSection>
+        </Form>
+      )}
     </div>
   );
 };

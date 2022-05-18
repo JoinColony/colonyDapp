@@ -1,6 +1,7 @@
 export const paddingTopBottom: string;
 export const paddingRightLeft: string;
 export const container: string;
+export const settingsRow: string;
 export const userContainer: string;
 export const userAvatarContainer: string;
 export const singleUserContainer: string;
@@ -12,3 +13,5 @@ export const icon: string;
 export const teamLabel: string;
 export const tokenIcon: string;
 export const symbol: string;
+export const activeItem: string;
+export const activeItemLabel: string;

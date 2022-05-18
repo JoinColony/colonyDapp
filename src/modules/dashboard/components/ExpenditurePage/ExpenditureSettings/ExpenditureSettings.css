@@ -9,9 +9,12 @@
   margin-bottom: -4px;
 }
 
+.settingsRow {
+  composes: flexContainerRow flexAlignCenter flexJustifyBetween from '~styles/layout.css';
+}
+
 .userContainer {
-  display: flex;
-  justify-content: space-between;
+  composes: settingsRow;
   padding: 8px 0;
 }
 
@@ -72,4 +75,16 @@
 
 .symbol {
   margin-left: 4px;
+}
+
+.activeItem {
+  display: flex;
+  align-items: center;
+  margin-right: 4px;
+}
+
+.activeItemLabel {
+  margin-left: 8px;
+  font-size: var(--size-normal);
+  color: var(--temp-grey-blue-7);
 }
