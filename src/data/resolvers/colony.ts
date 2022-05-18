@@ -417,7 +417,7 @@ export const colonyResolvers = ({
       >({
         query: BannedUsersDocument,
         variables: {
-          colonyAddress: colonyAddress.toLowerCase(),
+          colonyAddress,
         },
         fetchPolicy: 'network-only',
       });
