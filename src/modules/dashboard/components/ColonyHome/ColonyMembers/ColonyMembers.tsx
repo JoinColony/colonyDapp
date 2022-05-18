@@ -37,7 +37,7 @@ const ColonyMembers = ({
   colony: { colonyAddress },
   colony,
   currentDomainId = COLONY_TOTAL_BALANCE_DOMAIN_ID,
-  maxAvatars = 12,
+  maxAvatars,
 }: Props) => {
   const {
     data: membersWithReputation,
