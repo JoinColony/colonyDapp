@@ -11,6 +11,7 @@
 
 .settingsRow {
   composes: flexContainerRow flexAlignCenter flexJustifyBetween from '~styles/layout.css';
+  min-height: 41px;
 }
 
 .userContainer {
@@ -39,6 +40,7 @@
   justify-content: flex-end;
   align-items: center;
   padding: 0;
+  font-size: 14px;
   font-weight: var(--weight-normal);
   color: var(--dark);
 }
@@ -46,6 +48,7 @@
 .option {
   margin-bottom: 12px;
   padding: 16px 20px 0 0;
+  font-size: 14px;
 }
 
 .firstOption {
@@ -76,7 +79,7 @@
 .activeItem {
   display: flex;
   align-items: center;
-  margin-right: 4px;
+  margin-right: 2px;
 }
 
 .activeItemLabel {

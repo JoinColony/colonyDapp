@@ -20,3 +20,5 @@ export const sizeSmall: string;
 export const sizeMedium: string;
 export const sizeMediumLarge: string;
 export const sizeLarge: string;
+export const activeOptionColorBlue: string;
+export const activeOptionColorHighlighted: string;

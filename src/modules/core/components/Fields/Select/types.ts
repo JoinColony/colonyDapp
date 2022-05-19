@@ -16,6 +16,7 @@ export interface Appearance {
   listPosition?: 'static' | 'absolute';
   colorSchema?: 'dark' | 'grey' | 'transparent' | 'info' | 'lightGrey';
   padding?: 'default' | 'none';
+  activeOptionColor?: 'default' | 'blue' | 'highlighted';
 }
 
 export interface SelectOption {

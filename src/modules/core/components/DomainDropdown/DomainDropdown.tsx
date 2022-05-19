@@ -56,6 +56,10 @@ interface Props {
 
   /** Provides value for data-test prop in select items used on cypress testing */
   itemDataTest?: string;
+
+  appearance?: {
+    activeOptionColor?: 'default' | 'highlighted';
+  };
 }
 
 const displayName = 'DomainDropdown';
@@ -74,6 +78,7 @@ const DomainDropdown = ({
   disabled = false,
   dataTest,
   itemDataTest,
+  appearance,
 }: Props) => {
   const handleSubmit = useCallback(
     (domainId: number) => {
@@ -151,6 +156,7 @@ const DomainDropdown = ({
         size: 'mediumLarge',
         theme: 'alt',
         width: 'content',
+        activeOptionColor: appearance?.activeOptionColor,
       }}
       elementOnly
       label={MSG.labelDomainFilter}
