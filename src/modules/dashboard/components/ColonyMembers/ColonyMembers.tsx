@@ -184,68 +184,70 @@ const ColonyMembers = () => {
           )}
         </div>
         <aside className={styles.rightAside}>
-          {!controlsDisabled && (
-            <ul className={styles.controls}>
-              <li>
-                <InviteLinkButton
-                  colonyName={colonyName}
-                  buttonAppearance={{ theme: 'blue' }}
-                />
-              </li>
-              <li>
-                <Button
-                  appearance={{ theme: 'blue' }}
-                  text={MSG.editPermissions}
-                  onClick={handlePermissionManagementDialog}
-                  disabled={
-                    !isSupportedColonyVersion ||
-                    !isNetworkAllowed ||
-                    !hasRegisteredProfile ||
-                    !colonyData?.processedColony?.isDeploymentFinished ||
-                    mustUpgradeOneTx
-                  }
-                />
-              </li>
-              {canAdministerComments && (
-                <>
-                  <li>
-                    <Button
-                      appearance={{ theme: 'blue' }}
-                      text={MSG.banAddress}
-                      onClick={() =>
-                        openToggleBanningDialog({
-                          colonyAddress:
-                            colonyData?.processedColony?.colonyAddress,
-                        })
-                      }
-                    />
-                  </li>
-                  <li>
-                    <Button
-                      appearance={{ theme: 'blue' }}
-                      text={MSG.unbanAddress}
-                      onClick={() =>
-                        openToggleBanningDialog({
-                          isBanning: false,
-                          colonyAddress:
-                            colonyData?.processedColony?.colonyAddress,
-                        })
-                      }
-                    />
-                  </li>
-                </>
-              )}
-              {canManageWhitelist && (
+          <ul className={styles.controls}>
+            <li>
+              <InviteLinkButton
+                colonyName={colonyName}
+                buttonAppearance={{ theme: 'blue' }}
+              />
+            </li>
+            {!controlsDisabled && (
+              <>
                 <li>
                   <Button
                     appearance={{ theme: 'blue' }}
-                    text={MSG.manageWhitelist}
-                    onClick={handleToggleWhitelistDialog}
+                    text={MSG.editPermissions}
+                    onClick={handlePermissionManagementDialog}
+                    disabled={
+                      !isSupportedColonyVersion ||
+                      !isNetworkAllowed ||
+                      !hasRegisteredProfile ||
+                      !colonyData?.processedColony?.isDeploymentFinished ||
+                      mustUpgradeOneTx
+                    }
                   />
                 </li>
-              )}
-            </ul>
-          )}
+                {canAdministerComments && (
+                  <>
+                    <li>
+                      <Button
+                        appearance={{ theme: 'blue' }}
+                        text={MSG.banAddress}
+                        onClick={() =>
+                          openToggleBanningDialog({
+                            colonyAddress:
+                              colonyData?.processedColony?.colonyAddress,
+                          })
+                        }
+                      />
+                    </li>
+                    <li>
+                      <Button
+                        appearance={{ theme: 'blue' }}
+                        text={MSG.unbanAddress}
+                        onClick={() =>
+                          openToggleBanningDialog({
+                            isBanning: false,
+                            colonyAddress:
+                              colonyData?.processedColony?.colonyAddress,
+                          })
+                        }
+                      />
+                    </li>
+                  </>
+                )}
+                {canManageWhitelist && (
+                  <li>
+                    <Button
+                      appearance={{ theme: 'blue' }}
+                      text={MSG.manageWhitelist}
+                      onClick={handleToggleWhitelistDialog}
+                    />
+                  </li>
+                )}
+              </>
+            )}
+          </ul>
         </aside>
       </div>
     </div>
