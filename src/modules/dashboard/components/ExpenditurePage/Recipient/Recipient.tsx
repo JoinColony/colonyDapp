@@ -1,9 +1,10 @@
-import { useField } from 'formik';
-import React, { useCallback, useState } from 'react';
+import { FieldArray, useField } from 'formik';
+import React, { useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import Button from '~core/Button';
 import { DialogSection } from '~core/Dialog';
 import { Input, Select, TokenSymbolSelector } from '~core/Fields';
+import Icon from '~core/Icon';
 import { ItemDataType } from '~core/OmniPicker';
 import { Tooltip } from '~core/Popover';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
@@ -39,6 +40,14 @@ const MSG = defineMessages({
     id: 'Recipient.addToken',
     defaultMessage: 'Another token',
   },
+  removeTokenText: {
+    id: 'Recipient.removeToken',
+    defaultMessage: 'Discard',
+  },
+  maxText: {
+    id: 'Recipient.maxText',
+    defaultMessage: 'Max',
+  },
 });
 
 const supRenderAvatar = (address: Address, item: ItemDataType<AnyUser>) => (
@@ -48,6 +57,7 @@ const supRenderAvatar = (address: Address, item: ItemDataType<AnyUser>) => (
 interface Props {
   isExpanded: boolean;
   id: string;
+  index: number;
 }
 
 const newToken = {
@@ -56,14 +66,10 @@ const newToken = {
   tokenAddress: undefined,
 };
 
-const Recipient = ({ isExpanded, id }: Props) => {
-  const [, { value: tokens }, { setValue }] = useField('value');
+const Recipient = ({ isExpanded, id, index }: Props) => {
+  const [, { value }] = useField('recipients');
   const [valueId, setValueId] = useState(1);
-
-  const addToken = useCallback(() => {
-    setValue([...tokens, { ...newToken, id: String(valueId) }]);
-    setValueId((idLocal) => idLocal + 1);
-  }, [setValue, tokens, valueId]);
+  const tokens = value[id]?.value;
 
   return (
     <div className={styles.container}>
@@ -89,53 +95,82 @@ const Recipient = ({ isExpanded, id }: Props) => {
               />
             </div>
           </DialogSection>
-          <DialogSection appearance={{ border: 'bottom', margins: 'small' }}>
-            {tokens?.map((token) => (
-              <div className={styles.valueContainer} key={token.id}>
-                <Input
-                  name={`amount-${token.id}`}
-                  appearance={{
-                    theme: 'underlined',
-                    size: 'small',
-                  }}
-                  label={MSG.defaultValueLabel}
-                />
-                <div className={styles.tokenWrapper}>
-                  <TokenSymbolSelector
-                    label=""
-                    tokens={tokensData}
-                    name={`tokenAddress-${token.id}`}
-                    elementOnly
-                    appearance={{ alignOptions: 'right', theme: 'grey' }}
-                  />
-                  <Button
-                    type="button"
-                    onClick={addToken}
-                    appearance={{ theme: 'blue' }}
-                  >
-                    <FormattedMessage {...MSG.addTokenText} />
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </DialogSection>
+          <FieldArray
+            name={`recipients[${index}].value`}
+            render={(arrayHelpers) => (
+              <DialogSection
+                appearance={{ border: 'bottom', margins: 'small' }}
+              >
+                {tokens?.map((token, idx) => (
+                  <div className={styles.valueContainer} key={token.id}>
+                    <Input
+                      name={`recipients[${index}].value[${idx}].amount`}
+                      appearance={{
+                        theme: 'underlined',
+                        size: 'small',
+                      }}
+                      label={MSG.defaultValueLabel}
+                      placeholder="Not set"
+                    />
+                    <div className={styles.tokenWrapper}>
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          if (tokens?.length === 1) {
+                            return;
+                          }
+                          arrayHelpers.remove(idx);
+                        }}
+                        appearance={{ theme: 'blue' }}
+                      >
+                        <div className={styles.removeWrapper}>
+                          <FormattedMessage {...MSG.removeTokenText} />
+                        </div>
+                      </Button>
+                      <TokenSymbolSelector
+                        label=""
+                        tokens={tokensData}
+                        name={`recipients[${index}].value[${idx}].tokenAddress`}
+                        elementOnly
+                        appearance={{ alignOptions: 'right', theme: 'grey' }}
+                      />
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          arrayHelpers.push({
+                            ...newToken,
+                            id: String(valueId),
+                          });
+                          setValueId((idLocal) => idLocal + 1);
+                        }}
+                        appearance={{ theme: 'blue' }}
+                      >
+                        <FormattedMessage {...MSG.addTokenText} />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </DialogSection>
+            )}
+          />
           <DialogSection appearance={{ border: 'bottom', margins: 'small' }}>
             <div className={styles.delayContainer}>
-              <Tooltip
-                content={
-                  <div>
-                    <FormattedMessage {...MSG.defaultTooltipMessage} />
-                  </div>
-                }
-                trigger="hover"
-                placement="right-start"
-              >
-                <div className="styles.delay">
-                  <FormattedMessage {...MSG.defaultDelayInfo} />
-                </div>
-              </Tooltip>
+              <div className={styles.delay}>
+                <FormattedMessage {...MSG.defaultDelayInfo} />
+                <Tooltip
+                  content={
+                    <div>
+                      <FormattedMessage {...MSG.defaultTooltipMessage} />
+                    </div>
+                  }
+                  trigger="hover"
+                  placement="right-start"
+                >
+                  <Icon name="tooltip" />
+                </Tooltip>
+              </div>
+
               <div className={styles.delayControlsContainer}>
-                {/* <div className={styles.inputContainer}> */}
                 <Input
                   name="delay"
                   appearance={{
@@ -143,8 +178,8 @@ const Recipient = ({ isExpanded, id }: Props) => {
                     size: 'small',
                   }}
                   label=""
+                  elementOnly
                 />
-                {/* </div> */}
                 <Select
                   name="delayQuantity"
                   appearance={{ theme: 'grey' }}
@@ -155,6 +190,7 @@ const Recipient = ({ isExpanded, id }: Props) => {
                       value: 'hour',
                     },
                   ]}
+                  elementOnly
                 />
               </div>
             </div>

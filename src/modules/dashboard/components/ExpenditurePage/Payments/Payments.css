@@ -1,5 +1,9 @@
 @value paddingRightLeft: 54px;
 
+.paymentContainer {
+  padding-bottom: 80px;
+}
+
 .recipientContainer {
   padding: 0 paddingRightLeft;
 }
@@ -17,6 +21,7 @@
   min-height: 28px;
   min-height: 40px;
   font-size: 13px;
+  font-weight: var(--weight-bold);
   line-height: 18px;
   color: var(--dark);
 }

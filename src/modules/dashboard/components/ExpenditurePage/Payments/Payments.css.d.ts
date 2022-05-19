@@ -1,4 +1,5 @@
 export const paddingRightLeft: string;
+export const paymentContainer: string;
 export const recipientContainer: string;
 export const payments: string;
 export const recipientLabel: string;

@@ -6,3 +6,4 @@ export const delayContainer: string;
 export const delay: string;
 export const delayControlsContainer: string;
 export const tokenWrapper: string;
+export const removeWrapper: string;

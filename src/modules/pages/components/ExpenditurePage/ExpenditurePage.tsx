@@ -10,20 +10,19 @@ import styles from './ExpenditurePage.css';
 const displayName = 'pages.ExpenditurePage';
 
 const initialValues = {
-  payments: [
+  recipients: [
     {
-      id: 0,
+      id: '0',
       recipient: undefined,
-      value: undefined,
+      value: [
+        {
+          id: '0',
+          amount: undefined,
+          tokenAdress: undefined,
+        },
+      ],
       delay: undefined,
       isExpanded: true,
-    },
-  ],
-  value: [
-    {
-      id: 0,
-      amount: undefined,
-      tokenAdress: undefined,
     },
   ],
 };

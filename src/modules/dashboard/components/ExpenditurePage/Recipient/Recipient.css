@@ -47,19 +47,31 @@
 }
 
 .delay {
-  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
   font-size: 13px;
   color: var(--temp-grey-blue-7);
   letter-spacing: 0.5px;
 }
 
+.delay i {
+  margin-left: 6px;
+  height: 16px;
+  width: 16px;
+  background-color: white;
+}
+
 .delayControlsContainer {
   display: flex;
+  padding: 4px 0;
 }
 
 .delayControlsContainer input {
   margin-right: 8px;
-  height: 42px;
+
+  /* override style added in form component */
+  margin-bottom: -15px;
+  min-height: 44px;
   width: 103px;
 }
 
@@ -67,4 +79,11 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  font-size: 12px;
+}
+
+.removeWrapper {
+  margin-bottom: 4px;
+  font-weight: var(--weight-bold);
+  color: var(--colony-blue);
 }
