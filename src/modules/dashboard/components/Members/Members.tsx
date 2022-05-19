@@ -1,5 +1,5 @@
-import React, { FC, useCallback } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import React, { FC, useCallback, useState } from 'react';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import sortBy from 'lodash/sortBy';
 
@@ -46,6 +46,14 @@ const MSG = defineMessages({
     id: 'dashboard.Members.failedToFetch',
     defaultMessage: "Could not fetch the colony's members",
   },
+  search: {
+    id: 'dashboard.Members.search',
+    defaultMessage: 'Search',
+  },
+  searchPlaceholder: {
+    id: 'dashboard.Members.searchPlaceholder',
+    defaultMessage: 'Search ...',
+  },
 });
 
 interface Props {
@@ -69,6 +77,27 @@ const Members = ({
     ethereal,
   } = useLoggedInUser();
   const hasRegisteredProfile = !!username && !ethereal;
+
+  const { formatMessage } = useIntl();
+  const [selectedDomainId, setSelectedDomainId] = useState<number>(
+    /*
+     * @NOTE DomainId param sanitization
+     *
+     * We don't actually need to worry about sanitizing the domainId that's
+     * coming in from the params.
+     * The value that reaches us through the hook is being processes by `react-router`
+     * and will always be a string.
+     *
+     * So if we can change that string into a number, we use it as domain, otherwise
+     * we fall back to the "All Domains" selection
+     */
+    parseInt(domainId, 10) || COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  );
+  const [dataPage, setDataPage] = useState<number>(10);
+
+  const selectedDomain = colony.domains.find(
+    ({ ethDomainId }) => ethDomainId === selectedDomainId,
+  );
 
   /*
    * NOTE If we can't find the domain based on the current selected doamain id,
@@ -132,29 +161,64 @@ const Members = ({
   return (
     <div className={styles.main}>
       <div className={styles.titleContainer}>
-        <Heading
-          text={MSG.title}
-          appearance={{ size: 'medium', theme: 'dark' }}
-        />
-        <Form
-          initialValues={{ filter: currentDomainId.toString() }}
-          onSubmit={() => {}}
-        >
-          <div className={styles.titleSelect}>
-            <Select
-              appearance={{
-                alignOptions: 'right',
-                size: 'mediumLarge',
-                theme: 'alt',
-              }}
-              elementOnly
-              label={MSG.labelFilter}
-              name="filter"
-              onChange={setFieldValue}
-              options={domainSelectOptions}
-            />
-          </div>
-        </Form>
+        <div className={styles.titleLeft}>
+          <Heading
+            text={MSG.title}
+            appearance={{ size: 'medium', theme: 'dark' }}
+          />
+          <Form
+            initialValues={{ filter: currentDomainId.toString() }}
+            onSubmit={() => {}}
+          >
+            <div className={styles.titleSelect}>
+              <Select
+                appearance={{
+                  alignOptions: 'right',
+                  size: 'mediumLarge',
+                  theme: 'alt',
+                }}
+                elementOnly
+                label={MSG.labelFilter}
+                name="filter"
+                onChange={setFieldValue}
+                options={domainSelectOptions}
+              />
+            </div>
+          </Form>
+        </div>
+        <div className={styles.searchContainer}>
+          <input
+            name="search"
+            value={searchValue}
+            className={styles.input}
+            onChange={handleChange}
+            onMouseEnter={(e) => {
+              e.target.placeholder = formatMessage(MSG.searchPlaceholder);
+            }}
+            onMouseLeave={(e) => {
+              e.target.placeholder = '';
+            }}
+          />
+          {searchValue && (
+            <button
+              className={styles.clearButton}
+              onClick={handleClearSearch}
+              type="button"
+            >
+              <Icon
+                appearance={{ size: 'normal' }}
+                name="close"
+                title={{ id: 'button.close' }}
+              />
+            </button>
+          )}
+          <Icon
+            appearance={{ size: 'normal' }}
+            className={styles.icon}
+            name="search"
+            title={MSG.search}
+          />
+        </div>
       </div>
       {contributors.length ? (
         <MembersSection<ColonyContributor>
