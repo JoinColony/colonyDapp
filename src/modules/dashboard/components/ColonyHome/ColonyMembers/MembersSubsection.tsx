@@ -170,7 +170,7 @@ const MembersSubsection = ({
     [members, membersPageRoute, isContributorsSubsection, colonyName],
   );
 
-  if (members) {
+  if (!members) {
     return (
       <div className={styles.main}>
         {setHeading(false)}
