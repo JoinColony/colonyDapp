@@ -1,3 +1,7 @@
+.main {
+  margin-bottom: 10px;
+}
+
 .main h4 {
   font-size: var(--size-smallish);
   color: var(--dark);
