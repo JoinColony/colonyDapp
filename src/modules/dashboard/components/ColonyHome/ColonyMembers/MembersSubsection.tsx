@@ -22,7 +22,7 @@ import styles from './ColonyMembers.css';
 const MSG = defineMessages({
   title: {
     id: 'dashboard.ColonyHome.ColonyMembers.MembersSubsection.title',
-    defaultMessage: `{isContributors, select,
+    defaultMessage: `{isContributorsSubsection, select,
       true { Contributors }
       other { Watchers }
     } {hasCounter, select,
@@ -36,14 +36,16 @@ const MSG = defineMessages({
   },
   reputationFetchFailed: {
     id: `dashboard.ColonyHome.ColonyMembers.MembersSubsection.reputationFetchFailed`,
-    defaultMessage: `Failed to fetch the colony's {isContributors, select,
-      true { contributors }
-      other { watchers }
-    }`,
+    defaultMessage: `Failed to fetch the colony's 
+      {isContributorsSubsection, select,
+        true { contributors }
+        other { watchers }
+      }
+    `,
   },
   tooltipText: {
     id: 'dashboard.ColonyHome.ColonyMembers.MembersSubsection.tooltipText',
-    defaultMessage: `{isContributors, select,
+    defaultMessage: `{isContributorsSubsection, select,
       true {Contributors are members of the Colony who have earned reputation.}
       other { Watchers are members of the Colony
          who currently don’t have any reputation. }
@@ -69,7 +71,7 @@ interface Props {
   maxAvatars?: number;
   members: Maybe<string[]>;
   bannedMembers?: BannedMember[];
-  isContributors: boolean;
+  isContributorsSubsection: boolean;
 }
 
 const UserAvatar = HookedUserAvatar({ fetchUser: true });
@@ -82,7 +84,7 @@ const MembersSubsection = ({
   colony: { colonyName },
   members,
   bannedMembers,
-  isContributors,
+  isContributorsSubsection,
   colony,
   currentDomainId = COLONY_TOTAL_BALANCE_DOMAIN_ID,
   maxAvatars = MAX_AVATARS,
@@ -140,7 +142,7 @@ const MembersSubsection = ({
             <div className={styles.tooltip}>
               <FormattedMessage
                 {...MSG.tooltipText}
-                values={{ isContributors }}
+                values={{ isContributorsSubsection }}
               />
             </div>
           }
@@ -152,12 +154,12 @@ const MembersSubsection = ({
               textValues={{
                 count: members?.length,
                 hasCounter,
-                isContributors,
+                isContributorsSubsection,
               }}
             />
           </NavLink>
         </Tooltip>
-        {!isContributors && (
+        {!isContributorsSubsection && (
           <InviteLinkButton
             colonyName={colonyName}
             buttonAppearance={{ theme: 'blueWithBackground' }}
@@ -165,17 +167,17 @@ const MembersSubsection = ({
         )}
       </div>
     ),
-    [members, membersPageRoute, isContributors, colonyName],
+    [members, membersPageRoute, isContributorsSubsection, colonyName],
   );
 
-  if (!members) {
+  if (members) {
     return (
       <div className={styles.main}>
         {setHeading(false)}
         <span className={styles.loadingText}>
           <FormattedMessage
             {...MSG.reputationFetchFailed}
-            values={{ isContributors }}
+            values={{ isContributorsSubsection }}
           />
         </span>
       </div>

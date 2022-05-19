@@ -93,7 +93,7 @@ const ColonyMembers = ({
         members={subscribers}
         bannedMembers={bannedMembers?.bannedUsers || []}
         colony={colony}
-        isContributors
+        isContributorsSubsection
       />
       {(currentDomainId === ROOT_DOMAIN_ID ||
         currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) && (
@@ -102,7 +102,7 @@ const ColonyMembers = ({
           members={membersWithReputation?.colonyMembersWithReputation}
           colony={colony}
           maxAvatars={maxAvatars}
-          isContributors={false}
+          isContributorsSubsection={false}
         />
       )}
     </>
