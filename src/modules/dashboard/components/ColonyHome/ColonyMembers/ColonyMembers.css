@@ -93,3 +93,7 @@
 .heading > span:last-child {
   margin-left: 4px;
 }
+
+.heading > span:first-child {
+  margin-left: 0;
+}
