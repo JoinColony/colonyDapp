@@ -15,7 +15,6 @@
 }
 
 .rightAside {
-  display: flex;
   padding: 200px 0 20px 100px;
   width: 26.5%;
 }
@@ -25,8 +24,4 @@
   height: 100%;
   width: calc(100% - 60px);
   position: relative;
-}
-
-.controls li + li {
-  margin: 18px 0 0;
 }
