@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, ReactNode } from 'react';
 
 import { FormattedMessage, MessageDescriptor } from 'react-intl';
 import styles from './MembersSection.css';
@@ -11,22 +11,22 @@ import {
   ColonyContributor,
 } from '~data/index';
 
-import UserPermissions from '~dashboard/UserPermissions';
 import LoadMoreButton from '~core/LoadMoreButton';
 
 const displayName = 'dashboard.MembersSection';
 
-interface Props {
+interface Props<U> {
   title: MessageDescriptor;
   description?: MessageDescriptor;
   colony: Colony;
   currentDomainId: number;
   members: ColonyWatcher[] | ColonyContributor[];
   canAdministerComments: boolean;
+  membersListExtraItemContent: (user: U) => ReactNode;
 }
 
 const ITEMS_PER_SECTION = 10;
-const MembersSection = ({
+const MembersSection = <U extends ColonyWatcher | ColonyContributor>({
   title,
   description,
   colony: { colonyAddress },
@@ -34,8 +34,9 @@ const MembersSection = ({
   currentDomainId,
   members,
   canAdministerComments,
+  membersListExtraItemContent,
 }: // @NOTE Add another optional paramater called sortingParams/sortingFun to handle sorting
-Props) => {
+Props<U>) => {
   const [dataSection, setDataPage] = useState<number>(1);
 
   const paginatedMembers = members.slice(0, ITEMS_PER_SECTION * dataSection);
@@ -48,8 +49,6 @@ Props) => {
       colonyAddress,
     },
   });
-  // Runtime type check, the `roles` property only exists in Contributors
-  const memberKind = 'roles' in members?.[0] ? 'contributor' : 'watcher';
 
   return (
     <>
@@ -63,31 +62,13 @@ Props) => {
           </div>
         )}
       </div>
-      {memberKind === 'contributor' ? (
-        <MembersList<ColonyContributor>
-          colony={colony}
-          extraItemContent={({ roles, directRoles, banned }) => (
-            <UserPermissions
-              roles={roles}
-              directRoles={directRoles}
-              banned={banned}
-            />
-          )}
-          domainId={currentDomainId}
-          users={paginatedMembers as ColonyContributor[]}
-          canAdministerComments={canAdministerComments}
-        />
-      ) : (
-        <MembersList<ColonyWatcher>
-          colony={colony}
-          extraItemContent={({ banned }) => (
-            <UserPermissions roles={[]} directRoles={[]} banned={banned} />
-          )}
-          domainId={currentDomainId}
-          users={paginatedMembers as ColonyWatcher[]}
-          canAdministerComments={canAdministerComments}
-        />
-      )}
+      <MembersList
+        colony={colony}
+        extraItemContent={membersListExtraItemContent}
+        domainId={currentDomainId}
+        users={paginatedMembers}
+        canAdministerComments={canAdministerComments}
+      />
       {ITEMS_PER_SECTION * dataSection < members.length && (
         <LoadMoreButton
           onClick={handleDataPagination}
