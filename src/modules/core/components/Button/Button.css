@@ -312,6 +312,18 @@
   text-decoration: none;
 }
 
+.themeBlueWithBackground {
+  composes: themeBlue;
+  padding: 4px 10px;
+  height: 24px;
+  border-radius: 4px;
+}
+
+.themeBlueWithBackground:hover {
+  background-color: color-mod(var(--colony-blue) alpha(10%));
+  text-decoration: none;
+}
+
 .themeDottedArea {
   display: block;
   padding: 31.5px 25px;

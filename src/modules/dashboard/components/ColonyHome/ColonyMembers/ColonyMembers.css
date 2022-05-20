@@ -84,3 +84,17 @@
 .tooltip {
   width: 170px;
 }
+
+.heading {
+  display: flex;
+  align-items: flex-start;
+}
+
+.heading > span + span,
+.heading > span:last-child {
+  margin-left: 4px;
+}
+
+.heading > span:first-child {
+  margin-left: 0;
+}

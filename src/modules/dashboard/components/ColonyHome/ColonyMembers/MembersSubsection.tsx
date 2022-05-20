@@ -6,6 +6,7 @@ import NavLink from '~core/NavLink';
 import Heading from '~core/Heading';
 import { Tooltip } from '~core/Popover';
 import Icon from '~core/Icon';
+import InviteLinkButton from '~dashboard/InviteLinkButton';
 
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import useAvatarDisplayCounter from '~utils/hooks/useAvatarDisplayCounter';
@@ -21,7 +22,7 @@ import styles from './ColonyMembers.css';
 const MSG = defineMessages({
   title: {
     id: 'dashboard.ColonyHome.ColonyMembers.MembersSubsection.title',
-    defaultMessage: `{isContributors, select,
+    defaultMessage: `{isContributorsSubsection, select,
       true { Contributors }
       other { Watchers }
     } {hasCounter, select,
@@ -35,14 +36,16 @@ const MSG = defineMessages({
   },
   reputationFetchFailed: {
     id: `dashboard.ColonyHome.ColonyMembers.MembersSubsection.reputationFetchFailed`,
-    defaultMessage: `Failed to fetch the colony's {isContributors, select,
-      true { contributors }
-      other { watchers }
-    }`,
+    defaultMessage: `Failed to fetch the colony's 
+      {isContributorsSubsection, select,
+        true { contributors }
+        other { watchers }
+      }
+    `,
   },
   tooltipText: {
     id: 'dashboard.ColonyHome.ColonyMembers.MembersSubsection.tooltipText',
-    defaultMessage: `{isContributors, select,
+    defaultMessage: `{isContributorsSubsection, select,
       true {Contributors are members of the Colony who have earned reputation.}
       other { Watchers are members of the Colony
          who currently don’t have any reputation. }
@@ -68,7 +71,7 @@ interface Props {
   maxAvatars?: number;
   members: Maybe<string[]>;
   bannedMembers?: BannedMember[];
-  isContributors: boolean;
+  isContributorsSubsection: boolean;
 }
 
 const UserAvatar = HookedUserAvatar({ fetchUser: true });
@@ -81,7 +84,7 @@ const MembersSubsection = ({
   colony: { colonyName },
   members,
   bannedMembers,
-  isContributors,
+  isContributorsSubsection,
   colony,
   currentDomainId = COLONY_TOTAL_BALANCE_DOMAIN_ID,
   maxAvatars = MAX_AVATARS,
@@ -133,30 +136,38 @@ const MembersSubsection = ({
 
   const setHeading = useCallback(
     (hasCounter) => (
-      <Tooltip
-        content={
-          <div className={styles.tooltip}>
-            <FormattedMessage
-              {...MSG.tooltipText}
-              values={{ isContributors }}
+      <div className={styles.heading}>
+        <Tooltip
+          content={
+            <div className={styles.tooltip}>
+              <FormattedMessage
+                {...MSG.tooltipText}
+                values={{ isContributorsSubsection }}
+              />
+            </div>
+          }
+        >
+          <NavLink to={membersPageRoute}>
+            <Heading
+              appearance={{ size: 'normal', weight: 'bold' }}
+              text={MSG.title}
+              textValues={{
+                count: members?.length,
+                hasCounter,
+                isContributorsSubsection,
+              }}
             />
-          </div>
-        }
-      >
-        <NavLink to={membersPageRoute}>
-          <Heading
-            appearance={{ size: 'normal', weight: 'bold' }}
-            text={MSG.title}
-            textValues={{
-              count: members?.length,
-              hasCounter,
-              isContributors,
-            }}
+          </NavLink>
+        </Tooltip>
+        {!isContributorsSubsection && (
+          <InviteLinkButton
+            colonyName={colonyName}
+            buttonAppearance={{ theme: 'blueWithBackground' }}
           />
-        </NavLink>
-      </Tooltip>
+        )}
+      </div>
     ),
-    [members, membersPageRoute, isContributors],
+    [members, membersPageRoute, isContributorsSubsection, colonyName],
   );
 
   if (!members) {
@@ -166,7 +177,7 @@ const MembersSubsection = ({
         <span className={styles.loadingText}>
           <FormattedMessage
             {...MSG.reputationFetchFailed}
-            values={{ isContributors }}
+            values={{ isContributorsSubsection }}
           />
         </span>
       </div>
