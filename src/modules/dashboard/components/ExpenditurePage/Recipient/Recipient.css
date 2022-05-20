@@ -19,7 +19,7 @@
 
 .valueContainer {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
   padding-top: 8px;
 }
@@ -84,6 +84,14 @@
 
 .removeWrapper {
   margin-bottom: 4px;
+  height: 14px;
   font-weight: var(--weight-bold);
   color: var(--colony-blue);
+}
+
+.inputContainer {
+  margin-right: 20px;
+  padding-bottom: 26px;
+  width: 100%;
+  position: relative;
 }

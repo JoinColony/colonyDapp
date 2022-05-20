@@ -11,30 +11,32 @@ import { value } from '~dashboard/ActionsPage/DetailsWidget/DetailsWidget.css';
 
 const MSG = defineMessages({
   payments: {
-    id: 'Payments.defaultPayment',
+    id: 'dashboard.Expenditures.Payments.defaultPayment',
     defaultMessage: 'Payments',
   },
   recipient: {
-    id: 'Payments.defaultRecipient',
+    id: 'dashboard.Expenditures.Payments.defaultRrecipient',
     defaultMessage: 'Recipient',
   },
   addRecipientLabel: {
-    id: 'Payments.defaultAddRecipientLabel',
+    id: 'dashboard.Expenditures.Payments.addRecipientLabel',
     defaultMessage: 'Add recipient',
   },
 });
 
-const newRecipient = {
-  id: 0,
-  recipient: undefined,
-  value: [{ id: value.length + 1, amount: undefined, tokenAddress: undefined }],
-  delay: undefined,
-  isExpanded: true,
-};
-
 const Payments = () => {
   const [, { value: recipients }, { setValue }] = useField('recipients');
   const [id, setId] = useState(1);
+
+  const newRecipient = {
+    id: 0,
+    recipient: undefined,
+    value: [
+      { id: value.length + 1, amount: undefined, tokenAddress: undefined },
+    ],
+    delay: undefined,
+    isExpanded: true,
+  };
 
   const onToogleButtonClick = useCallback(
     (currId) => {
@@ -49,6 +51,17 @@ const Payments = () => {
     [recipients, setValue],
   );
 
+  const addRecipient = useCallback(
+    (push: (obj: any) => void) => {
+      push({
+        ...newRecipient,
+        id: String(id),
+      });
+      setId((idLocal) => idLocal + 1);
+    },
+    [id, newRecipient],
+  );
+
   return (
     <div className={styles.paymentContainer}>
       <div className={styles.recipientContainer}>
@@ -57,7 +70,7 @@ const Payments = () => {
         </div>
         <FieldArray
           name="recipients"
-          render={(arrayHelpers) => (
+          render={({ push, remove }) => (
             <>
               {recipients.map((recipient, index) => (
                 <div className={styles.singleRecipient}>
@@ -90,24 +103,21 @@ const Payments = () => {
                         </Button>
                       )}
                       {index + 1}. <FormattedMessage {...MSG.recipient} />
+                      {recipients.length > 1 && (
+                        <Icon
+                          name="trash"
+                          className={styles.deleteIcon}
+                          onClick={() => remove(index)}
+                        />
+                      )}
                     </div>
                   </DialogSection>
-                  <Recipient
-                    isExpanded={recipient.isExpanded}
-                    id={recipient.id}
-                    index={index}
-                  />
+                  <Recipient {...{ recipient, index }} />
                 </div>
               ))}
               <div className={styles.addRecipientWrapper}>
                 <Button
-                  onClick={() => {
-                    arrayHelpers.push({
-                      ...newRecipient,
-                      id: String(id),
-                    });
-                    setId((idLocal) => idLocal + 1);
-                  }}
+                  onClick={() => addRecipient(push)}
                   appearance={{ theme: 'blue' }}
                 >
                   <div className={styles.addRecipientLabel}>

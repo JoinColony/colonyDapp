@@ -5,7 +5,7 @@ import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { defineMessages } from 'react-intl';
 import { DialogSection } from '~core/Dialog';
-import { Form, InputLabel, Select, SelectOption } from '~core/Fields';
+import { InputLabel, Select, SelectOption } from '~core/Fields';
 import { useLoggedInUser, useColonyFromNameQuery } from '~data/index';
 import Numeral from '~core/Numeral';
 
@@ -171,12 +171,10 @@ const ExpenditureSettings = () => {
 
   return (
     <div className={styles.container}>
-      {/* eslint-disable-next-line no-warning-comments */}
-      {/* TODO: add submit handler and initial values */}
       {loading ? (
         <SpinnerLoader appearance={{ size: 'medium' }} />
       ) : (
-        <Form initialValues={{}} onSubmit={() => {}}>
+        <>
           <DialogSection appearance={dialogSectionSettings}>
             <Select
               name="expenditure"
@@ -249,7 +247,7 @@ const ExpenditureSettings = () => {
               </div>
             </div>
           </DialogSection>
-        </Form>
+        </>
       )}
     </div>
   );

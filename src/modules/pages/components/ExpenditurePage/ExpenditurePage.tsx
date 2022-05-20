@@ -41,9 +41,7 @@ const ExpenditurePage = () => {
           <Payments />
         </aside>
         <div className={styles.mainContainer}>
-          <main className={styles.mainContent}>
-            <button type="submit">Submit</button>
-          </main>
+          <main className={styles.mainContent} />
         </div>
       </div>
     </Form>
