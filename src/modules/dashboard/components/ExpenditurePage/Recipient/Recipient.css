@@ -50,15 +50,9 @@
   display: flex;
   align-items: center;
   font-size: 13px;
+  font-weight: var(--weight-bold);
   color: var(--temp-grey-blue-7);
   letter-spacing: 0.5px;
-}
-
-.delay i {
-  margin-left: 6px;
-  height: 16px;
-  width: 16px;
-  background-color: white;
 }
 
 .delayControlsContainer {
@@ -94,4 +88,23 @@
   padding-bottom: 26px;
   width: 100%;
   position: relative;
+}
+
+.questionIcon {
+  display: block;
+  margin-bottom: -3px;
+  margin-left: 6px;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background-color: white;
+  stroke: none;
+}
+
+.tooltip {
+  max-width: 218px;
+}
+
+.tooltipDescription {
+  margin-top: 8px;
 }

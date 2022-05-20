@@ -8,3 +8,6 @@ export const delayControlsContainer: string;
 export const tokenWrapper: string;
 export const removeWrapper: string;
 export const inputContainer: string;
+export const questionIcon: string;
+export const tooltip: string;
+export const tooltipDescription: string;

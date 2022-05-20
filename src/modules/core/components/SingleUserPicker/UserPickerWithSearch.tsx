@@ -81,7 +81,7 @@ const UserPickerWithSearch = ({
           /* eslint-disable jsx-a11y/click-events-have-key-events */
           // eslint-disable-next-line jsx-a11y/no-static-element-interactions
           <div
-            className={styles.avatarContainer}
+            className={localStyles.avatarContainer}
             onClick={handleActiveUserClick}
           >
             {renderAvatar(value.profile.walletAddress, value)}

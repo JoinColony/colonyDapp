@@ -29,12 +29,15 @@ const MSG = defineMessages({
     id: 'dashboard.Expenditures.Recipient.defaultDelayLabel',
     defaultMessage: 'Claim delay',
   },
-  tooltipMessage: {
-    id: 'dashboard.Expenditures.Recipient.tooltipMessage',
-    defaultMessage: `Security delay for claiming funds.
-
-    F.ex. once the work is finished,  
-    recipient has to wait before funds can be claimed. `,
+  tooltipMessageTitle: {
+    id: 'dashboard.Expenditures.Recipient.tooltipMessageTitle',
+    defaultMessage: 'Security delay for claiming funds.',
+  },
+  tooltipMessageDescription: {
+    id: 'dashboard.Expenditures.Recipient.tooltipMessageDescription',
+    defaultMessage:
+      // eslint-disable-next-line max-len
+      'F.ex. once the work is finished, recipient has to wait before funds can be claimed.',
   },
   addTokenText: {
     id: 'dashboard.Expenditures.Recipient.addTokenText',
@@ -197,14 +200,21 @@ const Recipient = ({ recipient, index }: Props) => {
                 <FormattedMessage {...MSG.defaultDelayLabel} />
                 <Tooltip
                   content={
-                    <div>
-                      <FormattedMessage {...MSG.tooltipMessage} />
+                    <div className={styles.tooltip}>
+                      <FormattedMessage {...MSG.tooltipMessageTitle} />
+                      {MSG.tooltipMessageDescription.defaultMessage && (
+                        <div className={styles.tooltipDescription}>
+                          <FormattedMessage
+                            {...MSG.tooltipMessageDescription}
+                          />
+                        </div>
+                      )}
                     </div>
                   }
                   trigger="hover"
                   placement="right-start"
                 >
-                  <Icon name="question-mark" />
+                  <Icon name="question-mark" className={styles.questionIcon} />
                 </Tooltip>
               </div>
 
@@ -220,7 +230,11 @@ const Recipient = ({ recipient, index }: Props) => {
                 />
                 <Select
                   name={`recipients[${index}].delay.time`}
-                  appearance={{ theme: 'grey' }}
+                  appearance={{
+                    theme: 'grey',
+                    optionSize: 'large',
+                    alignOptions: 'left',
+                  }}
                   label=""
                   options={[
                     {
