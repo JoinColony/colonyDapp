@@ -1,0 +1,19 @@
+.bar {
+  display: flex;
+  align-items: baseline;
+  margin-top: 25px;
+  margin-bottom: 13px;
+}
+
+.title {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.description {
+  margin-left: 9px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
