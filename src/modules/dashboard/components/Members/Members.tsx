@@ -6,6 +6,8 @@ import { useParams } from 'react-router-dom';
 
 import MembersSection from './MembersSection';
 
+import UserPermissions from '~dashboard/UserPermissions';
+
 import { SpinnerLoader } from '~core/Preloaders';
 import Heading from '~core/Heading';
 import { Select, Form } from '~core/Fields';
@@ -15,6 +17,8 @@ import {
   useLoggedInUser,
   BannedUsersQuery,
   useContributorsAndWatchersQuery,
+  ColonyContributor,
+  ColonyWatcher,
 } from '~data/index';
 import {
   COLONY_TOTAL_BALANCE_DOMAIN_ID,
@@ -188,12 +192,21 @@ const Members = ({ colony: { colonyAddress, colonyName }, colony }: Props) => {
       </div>
 
       {contributors.length ? (
-        <MembersSection
+        <MembersSection<ColonyContributor>
           colony={colony}
           currentDomainId={currentDomainId}
           title={MSG.contributorsTitle}
-          members={contributors}
+          members={contributors as ColonyContributor[]}
           canAdministerComments={canAdministerComments}
+          membersListExtraItemContent={({ roles, directRoles, banned }) => {
+            return (
+              <UserPermissions
+                roles={roles}
+                directRoles={directRoles}
+                banned={banned}
+              />
+            );
+          }}
         />
       ) : (
         <FormattedMessage {...MSG.failedToFetch} />
@@ -202,13 +215,16 @@ const Members = ({ colony: { colonyAddress, colonyName }, colony }: Props) => {
         currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) && (
         <>
           {watchers?.length && (
-            <MembersSection
+            <MembersSection<ColonyWatcher>
               colony={colony}
               currentDomainId={currentDomainId}
               title={MSG.watchersTitle}
               description={MSG.watchersDescription}
-              members={watchers}
+              members={watchers as ColonyWatcher[]}
               canAdministerComments={canAdministerComments}
+              membersListExtraItemContent={({ banned }) => (
+                <UserPermissions roles={[]} directRoles={[]} banned={banned} />
+              )}
             />
           )}
         </>
