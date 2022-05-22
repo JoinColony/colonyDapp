@@ -1,15 +1,12 @@
-import React, { FC, useCallback, useState } from 'react';
-import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
+import React, { FC, useCallback, useEffect, useState } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import sortBy from 'lodash/sortBy';
 
-import MembersSection from './MembersSection';
-
-import UserPermissions from '~dashboard/UserPermissions';
-
+import MembersList from '~core/MembersList';
 import { SpinnerLoader } from '~core/Preloaders';
-import Heading from '~core/Heading';
-import { Select, Form } from '~core/Fields';
+import LoadMoreButton from '~core/LoadMoreButton';
+import UserPermissions from '~dashboard/UserPermissions';
 import { useTransformer } from '~utils/hooks';
 import {
   Colony,
@@ -27,6 +24,10 @@ import {
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot, canAdminister } from '~modules/users/checks';
 
+import MembersTitle from './MembersTitle';
+import { filterMembers } from './filterMembers';
+import MembersSection from './MembersSection';
+
 import styles from './Members.css';
 
 const MSG = defineMessages({
@@ -34,25 +35,13 @@ const MSG = defineMessages({
     id: 'dashboard.Members.loading',
     defaultMessage: "Loading Colony's users...",
   },
-  title: {
-    id: 'dashboard.Members.title',
-    defaultMessage: `Members:`,
-  },
-  labelFilter: {
-    id: 'dashboard.Members.labelFilter',
-    defaultMessage: 'Filter',
-  },
   failedToFetch: {
     id: 'dashboard.Members.failedToFetch',
     defaultMessage: "Could not fetch the colony's members",
   },
-  search: {
-    id: 'dashboard.Members.search',
-    defaultMessage: 'Search',
-  },
-  searchPlaceholder: {
-    id: 'dashboard.Members.searchPlaceholder',
-    defaultMessage: 'Search ...',
+  noMemebersFound: {
+    id: 'dashboard.Members.noResultsFound',
+    defaultMessage: 'No members found',
   },
 });
 
@@ -62,7 +51,7 @@ interface Props {
   selectedDomain: DomainFieldsFragment | undefined;
   handleDomainChange: React.Dispatch<React.SetStateAction<number>>;
 }
-
+const ITEMS_PER_PAGE = 1;
 const displayName = 'dashboard.Members';
 
 const Members = ({
@@ -71,33 +60,17 @@ const Members = ({
   selectedDomain,
   handleDomainChange,
 }: Props) => {
+  const [searchValue, setSearchValue] = useState<string>('');
   const {
     walletAddress: currentUserWalletAddress,
     username,
     ethereal,
   } = useLoggedInUser();
   const hasRegisteredProfile = !!username && !ethereal;
-
-  const { formatMessage } = useIntl();
-  const [selectedDomainId, setSelectedDomainId] = useState<number>(
-    /*
-     * @NOTE DomainId param sanitization
-     *
-     * We don't actually need to worry about sanitizing the domainId that's
-     * coming in from the params.
-     * The value that reaches us through the hook is being processes by `react-router`
-     * and will always be a string.
-     *
-     * So if we can change that string into a number, we use it as domain, otherwise
-     * we fall back to the "All Domains" selection
-     */
-    parseInt(domainId, 10) || COLONY_TOTAL_BALANCE_DOMAIN_ID,
-  );
+  const [watchersConsidered, setWatchersConsidered] = useState<boolean>(true);
   const [dataPage, setDataPage] = useState<number>(10);
-
-  const selectedDomain = colony.domains.find(
-    ({ ethDomainId }) => ethDomainId === selectedDomainId,
-  );
+  const [contributors, setContributors] = useState<ColonyContributor[]>([]);
+  const [watchers, setWatchers] = useState<ColonyWatcher[]>([]);
 
   /*
    * NOTE If we can't find the domain based on the current selected doamain id,
@@ -111,6 +84,13 @@ const Members = ({
   const { ethDomainId: currentDomainId = COLONY_TOTAL_BALANCE_DOMAIN_ID } =
     selectedDomain || {};
 
+  useEffect(() => {
+    setWatchersConsidered(
+      currentDomainId === ROOT_DOMAIN_ID ||
+        currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID,
+    );
+  }, [currentDomainId]);
+
   const {
     data: members,
     loading: loadingMembers,
@@ -122,8 +102,10 @@ const Members = ({
     },
   });
 
-  const contributors = members?.contributorsAndWatchers?.contributors || [];
-  const watchers = members?.contributorsAndWatchers?.watchers || [];
+  useEffect(() => {
+    setContributors(members?.contributorsAndWatchers?.contributors || []);
+    setWatchers(members?.contributorsAndWatchers?.watchers || []);
+  }, [members]);
 
   const currentUserRoles = useTransformer(getAllUserRoles, [
     colony,
@@ -143,9 +125,35 @@ const Members = ({
     ['value'],
   );
 
-  const setFieldValue = useCallback(
-    (value) => handleDomainChange(parseInt(value, 10)),
-    [handleDomainChange],
+  const filterContributorsAndWatchers = useCallback(
+    (filterValue) => {
+      const filteredContributors = filterMembers(
+        members?.contributorsAndWatchers?.contributors || [],
+        filterValue,
+      );
+      setContributors(filteredContributors);
+
+      const filteredWatchers = filterMembers(
+        members?.contributorsAndWatchers?.watchers || [],
+        filterValue,
+      );
+      setWatchers(filteredWatchers);
+    },
+    [members],
+  );
+
+  const handleDataPagination = useCallback(() => {
+    setDataPage(dataPage + 1);
+  }, [dataPage]);
+
+  // handles search values & close button
+  const handleSearch = useCallback(
+    (event) => {
+      const value = event.target?.value || '';
+      setSearchValue(value);
+      filterContributorsAndWatchers(value);
+    },
+    [filterContributorsAndWatchers, setSearchValue],
   );
 
   if (loadingMembers) {
@@ -158,67 +166,110 @@ const Members = ({
       </div>
     );
   }
+
+  /*
+   * @NOTE Poor man's pagination
+   *
+   * We're not really doing proper pagination like we do for say... `ColonyEvents`,
+   * because our metadata server doesn't support skip, first, more, next, etc...
+   * query filters
+   *
+   * A proper solution for this would be to teach the server to return just part
+   * of the results, with the next waiting in line for a callback, but the current
+   * timeframe doesn't allow for this, so I guess this is the "best" we can do for now
+   */
+  const paginatedContributors =
+    contributors?.slice(0, ITEMS_PER_PAGE * dataPage) || [];
+
+  const paginatedWatchers = watchers?.slice(0, ITEMS_PER_PAGE * dataPage) || [];
+
+  const zeroResultsMsg = (isSearchResult: boolean) => {
+    const resultMsg = isSearchResult ? MSG.noMemebersFound : MSG.failedToFetch;
+    return (
+      <div className={styles.noResults}>
+        <FormattedMessage {...resultMsg} />
+      </div>
+    );
+  };
+
+  const hasNoMembers = () => {
+    if (!contributors?.length && !watchers?.length) {
+      return zeroResultsMsg(!!searchValue);
+    }
+    return null;
+  };
+
   return (
     <div className={styles.main}>
-      <div className={styles.titleContainer}>
-        <div className={styles.titleLeft}>
-          <Heading
-            text={MSG.title}
-            appearance={{ size: 'medium', theme: 'dark' }}
-          />
-          <Form
-            initialValues={{ filter: currentDomainId.toString() }}
-            onSubmit={() => {}}
-          >
-            <div className={styles.titleSelect}>
-              <Select
-                appearance={{
-                  alignOptions: 'right',
-                  size: 'mediumLarge',
-                  theme: 'alt',
-                }}
-                elementOnly
-                label={MSG.labelFilter}
-                name="filter"
-                onChange={setFieldValue}
-                options={domainSelectOptions}
+      <MembersTitle
+        currentDomainId={currentDomainId}
+        handleDomainChange={handleDomainChange}
+        domainSelectOptions={domainSelectOptions}
+        searchValue={searchValue}
+        setSearchValue={setSearchValue}
+        handleSearch={handleSearch}
+      />
+      <div>
+        {/* This needs attention!!!! - ready to be refactored in another PR
+        Either display no member message OR show contributors & watchers
+        components. - dan */}
+        {hasNoMembers()}
+        {/* PLACEHOLDER */}
+        <div>CONTRIBUTORS</div>
+        {contributors?.length ? (
+          <MembersList<ColonyContributor>
+            colony={colony}
+            extraItemContent={({ roles, directRoles, banned }) => (
+              <UserPermissions
+                roles={roles}
+                directRoles={directRoles}
+                banned={banned}
               />
-            </div>
-          </Form>
-        </div>
-        <div className={styles.searchContainer}>
-          <input
-            name="search"
-            value={searchValue}
-            className={styles.input}
-            onChange={handleChange}
-            onMouseEnter={(e) => {
-              e.target.placeholder = formatMessage(MSG.searchPlaceholder);
-            }}
-            onMouseLeave={(e) => {
-              e.target.placeholder = '';
-            }}
+            )}
+            domainId={currentDomainId}
+            users={paginatedContributors}
+            canAdministerComments={canAdministerComments}
           />
-          {searchValue && (
-            <button
-              className={styles.clearButton}
-              onClick={handleClearSearch}
-              type="button"
-            >
-              <Icon
-                appearance={{ size: 'normal' }}
-                name="close"
-                title={{ id: 'button.close' }}
+        ) : (
+          watchers?.length && zeroResultsMsg(!!searchValue)
+        )}
+
+        {ITEMS_PER_PAGE * dataPage < contributors?.length && (
+          <LoadMoreButton
+            onClick={handleDataPagination}
+            isLoadingData={loadingMembers}
+          />
+        )}
+        {watchersConsidered && (
+          <>
+            {/* PLACEHOLDER */}
+            <div>WATCHERS</div>
+            {watchers?.length ? (
+              <MembersList<ColonyWatcher>
+                colony={colony}
+                domainId={currentDomainId}
+                users={paginatedWatchers}
+                canAdministerComments={canAdministerComments}
+                extraItemContent={({ banned }) => (
+                  <UserPermissions
+                    roles={[]}
+                    directRoles={[]}
+                    banned={banned}
+                  />
+                )}
               />
-            </button>
-          )}
-          <Icon
-            appearance={{ size: 'normal' }}
-            className={styles.icon}
-            name="search"
-            title={MSG.search}
-          />
-        </div>
+            ) : (
+              contributors?.length && zeroResultsMsg(!!searchValue)
+            )}
+
+            {ITEMS_PER_PAGE * dataPage < watchers?.length && (
+              <LoadMoreButton
+                onClick={handleDataPagination}
+                isLoadingData={loadingMembers}
+              />
+            )}
+          </>
+        )}
       </div>
       {contributors.length ? (
         <MembersSection<ColonyContributor>
