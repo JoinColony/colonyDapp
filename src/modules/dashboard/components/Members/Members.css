@@ -4,6 +4,7 @@
 
 .main {
   margin-top: 20px;
+  min-width: 618px;
 }
 
 .main table .tableBody {
@@ -82,7 +83,7 @@
   background-color: var(--temp-grey-12);
 }
 
-.titleContainer {
+.noResults {
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -154,6 +155,8 @@
 
 .clearButton {
   composes: button from '~styles/reset.css';
+  justify-content: center;
+  align-items: center;
   position: absolute;
   top: 5px;
   right: 30px;
