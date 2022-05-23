@@ -49,19 +49,6 @@ const MSG = defineMessages({
     id: 'dashboard.Members.failedToFetch',
     defaultMessage: "Could not fetch the colony's members",
   },
-  contributorsTitle: {
-    id: 'dashboard.Members.contributorsTitle',
-    defaultMessage: 'Contributors',
-  },
-  watchersTitle: {
-    id: 'dashboard.Members.watchersTitle',
-    defaultMessage: 'Watchers',
-  },
-
-  watchersDescription: {
-    id: 'dashboard.Members.watchersDescription',
-    defaultMessage: "Members who don't currently have any reputation",
-  },
 });
 
 interface Props {
@@ -193,12 +180,12 @@ const Members = ({ colony: { colonyAddress, colonyName }, colony }: Props) => {
 
       {contributors.length ? (
         <MembersSection<ColonyContributor>
+          isContributorsSection
           colony={colony}
           currentDomainId={currentDomainId}
-          title={MSG.contributorsTitle}
           members={contributors as ColonyContributor[]}
           canAdministerComments={canAdministerComments}
-          membersListExtraItemContent={({ roles, directRoles, banned }) => {
+          extraItemContent={({ roles, directRoles, banned }) => {
             return (
               <UserPermissions
                 roles={roles}
@@ -216,13 +203,12 @@ const Members = ({ colony: { colonyAddress, colonyName }, colony }: Props) => {
         <>
           {watchers?.length && (
             <MembersSection<ColonyWatcher>
+              isContributorsSection={false}
               colony={colony}
               currentDomainId={currentDomainId}
-              title={MSG.watchersTitle}
-              description={MSG.watchersDescription}
               members={watchers as ColonyWatcher[]}
               canAdministerComments={canAdministerComments}
-              membersListExtraItemContent={({ banned }) => (
+              extraItemContent={({ banned }) => (
                 <UserPermissions roles={[]} directRoles={[]} banned={banned} />
               )}
             />
