@@ -4,6 +4,7 @@ import ListGroup, { ListGroupAppearance } from '~core/ListGroup';
 import { AnyUser, Colony } from '~data/index';
 
 import MembersListItem from './MembersListItem';
+import SortingRow from './SortingRow';
 
 interface Props<U> {
   colony: Colony;
@@ -30,21 +31,24 @@ const MembersList = <U extends AnyUser = AnyUser>({
   listGroupAppearance,
   canAdministerComments,
 }: Props<U>) => (
-  <ListGroup appearance={listGroupAppearance}>
-    {users.map((user) => (
-      <MembersListItem<U>
-        colony={colony}
-        extraItemContent={extraItemContent}
-        key={user.id}
-        onRowClick={onRowClick}
-        showUserInfo={showUserInfo}
-        showUserReputation={showUserReputation}
-        domainId={domainId}
-        user={user}
-        canAdministerComments={canAdministerComments}
-      />
-    ))}
-  </ListGroup>
+  <div>
+    <SortingRow />
+    <ListGroup appearance={listGroupAppearance}>
+      {users.map((user) => (
+        <MembersListItem<U>
+          colony={colony}
+          extraItemContent={extraItemContent}
+          key={user.id}
+          onRowClick={onRowClick}
+          showUserInfo={showUserInfo}
+          showUserReputation={showUserReputation}
+          domainId={domainId}
+          user={user}
+          canAdministerComments={canAdministerComments}
+        />
+      ))}
+    </ListGroup>
+  </div>
 );
 
 MembersList.displayName = displayName;
