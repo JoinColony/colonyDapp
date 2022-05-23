@@ -142,7 +142,7 @@ const NetworkStatus = () => {
                 />
               </div>
             )}
-            popperProps={{
+            popperOptions={{
               modifiers: [
                 {
                   name: 'offset',
