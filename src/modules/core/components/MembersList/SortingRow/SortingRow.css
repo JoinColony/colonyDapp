@@ -1,0 +1,26 @@
+.container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 15px;
+  padding-right: 34px;
+  gap: 75px;
+}
+
+.sortingButton {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+  cursor: pointer;
+}
+
+.sortingIcon {
+  height: 15px;
+  width: 30px;
+  position: relative;
+  top: -6px;
+  fill: var(--temp-grey-blue-7);
+}
