@@ -6,6 +6,7 @@
 }
 
 .container i {
+  /* The negative margin is used here to adjust the position of the caret icon */
   margin-bottom: -4px;
 }
 
@@ -40,7 +41,7 @@
   justify-content: flex-end;
   align-items: center;
   padding: 0;
-  font-size: 14px;
+  font-size: var(--size-normal);
   font-weight: var(--weight-normal);
   color: var(--dark);
 }
@@ -48,7 +49,7 @@
 .option {
   margin-bottom: 12px;
   padding: 16px 20px 0 0;
-  font-size: 14px;
+  font-size: var(--size-normal);
 }
 
 .firstOption {
@@ -61,10 +62,6 @@
 
 .icon figure {
   display: block;
-}
-
-.teamLabel {
-  font-size: 13px;
 }
 
 .tokenIcon {
