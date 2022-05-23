@@ -4,12 +4,7 @@ import { FormattedMessage, defineMessages } from 'react-intl';
 import styles from './MembersSection.css';
 
 import MembersList from '~core/MembersList';
-import {
-  Colony,
-  useMembersSubscription,
-  ColonyWatcher,
-  ColonyContributor,
-} from '~data/index';
+import { Colony, ColonyWatcher, ColonyContributor } from '~data/index';
 
 import LoadMoreButton from '~core/LoadMoreButton';
 
@@ -41,7 +36,6 @@ interface Props<U> {
 
 const ITEMS_PER_SECTION = 10;
 const MembersSection = <U extends ColonyWatcher | ColonyContributor>({
-  colony: { colonyAddress },
   colony,
   currentDomainId,
   members,
@@ -50,18 +44,12 @@ const MembersSection = <U extends ColonyWatcher | ColonyContributor>({
   isContributorsSection,
 }: // @NOTE Add another optional paramater called sortingParams/sortingFun to handle sorting
 Props<U>) => {
-  const [dataSection, setDataPage] = useState<number>(1);
+  const [dataPage, setDataPage] = useState<number>(1);
 
-  const paginatedMembers = members.slice(0, ITEMS_PER_SECTION * dataSection);
+  const paginatedMembers = members.slice(0, ITEMS_PER_SECTION * dataPage);
   const handleDataPagination = useCallback(() => {
-    setDataPage(dataSection + 1);
-  }, [dataSection]);
-
-  const { loading: loadingAllMembers } = useMembersSubscription({
-    variables: {
-      colonyAddress,
-    },
-  });
+    setDataPage(dataPage + 1);
+  }, [dataPage]);
 
   return (
     <>
@@ -86,11 +74,8 @@ Props<U>) => {
         users={paginatedMembers}
         canAdministerComments={canAdministerComments}
       />
-      {ITEMS_PER_SECTION * dataSection < members.length && (
-        <LoadMoreButton
-          onClick={handleDataPagination}
-          isLoadingData={loadingAllMembers}
-        />
+      {ITEMS_PER_SECTION * dataPage < members.length && (
+        <LoadMoreButton onClick={handleDataPagination} isLoadingData={false} />
       )}
     </>
   );
