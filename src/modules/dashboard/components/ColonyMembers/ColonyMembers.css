@@ -40,6 +40,11 @@
   margin-bottom: 50px;
 }
 
+.teamReputationPointsContainer h4 {
+  font-size: var(--size-smallish);
+  line-height: 18px;
+}
+
 .reputationPoints {
   line-height: 18px;
   color: var(--dark);
