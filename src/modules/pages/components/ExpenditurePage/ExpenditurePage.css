@@ -14,6 +14,9 @@
 }
 
 .mainContent {
+  display: flex;
+  justify-content: space-between;
+  padding: 70px 100px 70px 25px;
   height: 100%;
 }
 

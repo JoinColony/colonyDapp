@@ -1,0 +1,28 @@
+.mainContainer {
+  min-width: 400px;
+}
+
+.status {
+  font-size: 13px;
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.statusContainer {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(234, 234, 238, 255);
+}
+
+.icon {
+  margin-right: 20px;
+  height: 20px;
+  width: 20px;
+  fill: var(--temp-grey-blue-7);
+}
+
+.buttonsContainer {
+  display: flex;
+  align-items: center;
+}

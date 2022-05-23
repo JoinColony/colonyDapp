@@ -1,5 +1,6 @@
 import React from 'react';
 import ExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings';
+import Stages from '~dashboard/ExpenditurePage/Stages';
 import { getMainClasses } from '~utils/css';
 
 import styles from './ExpenditurePage.css';
@@ -13,7 +14,10 @@ const ExpenditurePage = () => {
         <ExpenditureSettings />
       </aside>
       <div className={styles.mainContainer}>
-        <main className={styles.mainContent} />
+        <main className={styles.mainContent}>
+          title
+          <Stages />
+        </main>
       </div>
     </div>
   );
