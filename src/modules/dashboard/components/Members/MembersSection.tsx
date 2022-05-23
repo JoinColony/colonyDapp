@@ -1,6 +1,6 @@
 import React, { useState, useCallback, ReactNode } from 'react';
 
-import { FormattedMessage, MessageDescriptor } from 'react-intl';
+import { FormattedMessage, defineMessages } from 'react-intl';
 import styles from './MembersSection.css';
 
 import MembersList from '~core/MembersList';
@@ -15,26 +15,39 @@ import LoadMoreButton from '~core/LoadMoreButton';
 
 const displayName = 'dashboard.MembersSection';
 
+const MSG = defineMessages({
+  contributorsTitle: {
+    id: 'dashboard.Members.contributorsTitle',
+    defaultMessage: 'Contributors',
+  },
+  watchersTitle: {
+    id: 'dashboard.Members.watchersTitle',
+    defaultMessage: 'Watchers',
+  },
+  watchersDescription: {
+    id: 'dashboard.Members.watchersDescription',
+    defaultMessage: "Members who don't currently have any reputation",
+  },
+});
+
 interface Props<U> {
-  title: MessageDescriptor;
-  description?: MessageDescriptor;
+  isContributorsSection: boolean;
   colony: Colony;
   currentDomainId: number;
   members: ColonyWatcher[] | ColonyContributor[];
   canAdministerComments: boolean;
-  membersListExtraItemContent: (user: U) => ReactNode;
+  extraItemContent: (user: U) => ReactNode;
 }
 
 const ITEMS_PER_SECTION = 10;
 const MembersSection = <U extends ColonyWatcher | ColonyContributor>({
-  title,
-  description,
   colony: { colonyAddress },
   colony,
   currentDomainId,
   members,
   canAdministerComments,
-  membersListExtraItemContent,
+  extraItemContent,
+  isContributorsSection,
 }: // @NOTE Add another optional paramater called sortingParams/sortingFun to handle sorting
 Props<U>) => {
   const [dataSection, setDataPage] = useState<number>(1);
@@ -54,17 +67,21 @@ Props<U>) => {
     <>
       <div className={styles.bar}>
         <div className={styles.title}>
-          <FormattedMessage {...title} />
+          <FormattedMessage
+            {...(isContributorsSection
+              ? MSG.contributorsTitle
+              : MSG.watchersTitle)}
+          />
         </div>
-        {description && (
+        {!isContributorsSection && (
           <div className={styles.description}>
-            <FormattedMessage {...description} />
+            <FormattedMessage {...MSG.watchersDescription} />
           </div>
         )}
       </div>
       <MembersList
         colony={colony}
-        extraItemContent={membersListExtraItemContent}
+        extraItemContent={extraItemContent}
         domainId={currentDomainId}
         users={paginatedMembers}
         canAdministerComments={canAdministerComments}
