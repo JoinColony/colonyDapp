@@ -3,9 +3,14 @@
 }
 
 .status {
-  font-size: 13px;
+  font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--dark);
+}
+
+.notSaved {
+  margin-left: 9px;
+  font-size: var(--size-tiny);
 }
 
 .statusContainer {
@@ -20,6 +25,10 @@
   height: 20px;
   width: 20px;
   fill: var(--temp-grey-blue-7);
+}
+
+.icon:hover {
+  cursor: pointer;
 }
 
 .buttonsContainer {
