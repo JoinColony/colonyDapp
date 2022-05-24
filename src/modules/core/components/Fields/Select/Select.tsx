@@ -10,7 +10,6 @@ import React, {
 import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 import { useField } from 'formik';
 import { nanoid } from 'nanoid';
-import classNames from 'classnames';
 
 import { getMainClasses } from '~utils/css';
 import { DOWN, ENTER, ESC, SimpleMessageValues, SPACE, UP } from '~types/index';
@@ -87,8 +86,6 @@ export interface Props {
 
   /** Provides value for data-test prop in select items used on cypress testing */
   itemDataTest?: string;
-
-  unselectable?: boolean;
 }
 
 const displayName = 'Select';
@@ -112,7 +109,6 @@ const Select = ({
   statusValues,
   dataTest,
   itemDataTest,
-  unselectable,
 }: Props) => {
   const [id] = useState<string>(idProp || nanoid());
   const [, { error, value }, { setValue }] = useField(name);
@@ -286,149 +282,67 @@ const Select = ({
 
   const listboxId = `select-listbox-${id}`;
 
-  const selectWithLabel = useMemo(
-    () => (
-      <>
-        <InputLabel
-          inputId={id}
-          label={label}
-          labelValues={labelValues}
-          help={help}
-          helpValues={helpValues}
-          screenReaderOnly={elementOnly}
-          appearance={{
-            colorSchema: appearance?.colorSchema,
-            direction: appearance?.direction,
-          }}
-        />
-        <div className={styles.inputWrapper}>
-          <button
-            className={`${styles.select} ${getMainClasses(appearance, styles)}`}
-            aria-haspopup="listbox"
-            aria-controls={listboxId}
-            aria-expanded={isOpen}
-            aria-label={
-              typeof label === 'object'
-                ? formatMessage(label, labelValues)
-                : label
-            }
-            aria-disabled={disabled}
-            id={id}
-            tabIndex={0}
-            onClick={toggle}
-            onKeyUp={handleKeyUp}
-            onKeyDown={handleKeyDown}
-            type="button"
+  return (
+    <div className={styles.main} ref={wrapperRef}>
+      <InputLabel
+        inputId={id}
+        label={label}
+        labelValues={labelValues}
+        help={help}
+        helpValues={helpValues}
+        screenReaderOnly={elementOnly}
+      />
+      <div className={styles.inputWrapper}>
+        <button
+          className={`${styles.select} ${getMainClasses(appearance, styles)}`}
+          aria-haspopup="listbox"
+          aria-controls={listboxId}
+          aria-expanded={isOpen}
+          aria-label={
+            typeof label === 'object'
+              ? formatMessage(label, labelValues)
+              : label
+          }
+          aria-disabled={disabled}
+          id={id}
+          tabIndex={0}
+          onClick={toggle}
+          onKeyUp={handleKeyUp}
+          onKeyDown={handleKeyDown}
+          type="button"
+          name={name}
+          data-test={dataTest}
+        >
+          <div className={styles.selectInner}>
+            <div className={styles.activeOption}>{activeOptionDisplay}</div>
+            <span className={styles.selectExpandContainer}>
+              <Icon name="caret-down-small" title={MSG.expandIconHTMLTitle} />
+            </span>
+          </div>
+        </button>
+        {isOpen && !!options.length && (
+          <SelectListBox
+            checkedOption={checkedOption}
+            selectedOption={selectedOption}
+            listboxId={listboxId}
+            options={options}
+            optionsFooter={optionsFooter}
+            onSelect={selectOption}
+            onClick={checkOption}
+            appearance={appearance}
             name={name}
-            data-test={dataTest}
-          >
-            <div
-              className={classNames(
-                styles.selectInner,
-                unselectable && styles.unselectable,
-              )}
-            >
-              <div className={styles.activeOption}>{activeOptionDisplay}</div>
-              <span className={styles.selectExpandContainer}>
-                <Icon name="caret-down-small" title={MSG.expandIconHTMLTitle} />
-              </span>
-            </div>
-          </button>
-          {isOpen && !!options.length && (
-            <SelectListBox
-              checkedOption={checkedOption}
-              selectedOption={selectedOption}
-              listboxId={listboxId}
-              options={options}
-              optionsFooter={optionsFooter}
-              onSelect={selectOption}
-              onClick={unselectable ? () => {} : checkOption}
-              appearance={appearance}
-              name={name}
-              dataTest={itemDataTest}
-              unselectable={unselectable}
-            />
-          )}
-        </div>
-      </>
-    ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      activeOptionDisplay,
-      appearance,
-      checkedOption,
-      dataTest,
-      disabled,
-      elementOnly,
-      formatMessage,
-      help,
-      helpValues,
-      id,
-      isOpen,
-      itemDataTest,
-      label,
-      labelValues,
-      listboxId,
-      name,
-      options,
-      optionsFooter,
-      selectedOption,
-      unselectable,
-    ],
-  );
-
-  const inputStatus = useMemo(() => {
-    if (elementOnly) {
-      return null;
-    }
-
-    if (appearance?.direction === 'horizontal') {
-      return !unselectable && (error || status) ? (
+            dataTest={itemDataTest}
+          />
+        )}
+      </div>
+      {!elementOnly && (
         <InputStatus
-          appearance={{
-            theme: 'minimal',
-            align: 'right',
-          }}
+          appearance={{ theme: 'minimal' }}
           status={status}
           statusValues={statusValues}
           error={error}
         />
-      ) : null;
-    }
-
-    return (
-      <InputStatus
-        appearance={{
-          theme: 'minimal',
-        }}
-        status={status}
-        statusValues={statusValues}
-        error={error}
-      />
-    );
-  }, [elementOnly, appearance, status, statusValues, error, unselectable]);
-
-  return (
-    <div
-      className={classNames(
-        styles.main,
-        appearance?.padding === 'none' && styles.withoutPadding,
       )}
-      ref={wrapperRef}
-    >
-      {appearance?.direction === 'horizontal' ? (
-        <div
-          className={classNames(
-            styles.containerHorizontal,
-            unselectable && styles.unselectableHorizontal,
-          )}
-        >
-          {selectWithLabel}
-        </div>
-      ) : (
-        selectWithLabel
-      )}
-      {inputStatus}
     </div>
   );
 };

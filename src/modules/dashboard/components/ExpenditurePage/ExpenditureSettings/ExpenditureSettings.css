@@ -15,6 +15,12 @@
   min-height: 41px;
 }
 
+.settingsRow button[aria-expanded="true"] {
+  padding: 2px 0 2px 6px;
+  border-radius: 4px;
+  background-color: rgb(229, 230, 247);
+}
+
 .userContainer {
   composes: settingsRow;
   padding: 8px 0;
@@ -82,5 +88,14 @@
 .activeItemLabel {
   margin-left: 8px;
   font-size: var(--size-normal);
-  color: var(--temp-grey-blue-7);
+  color: var(--text);
+}
+
+.blue button {
+  color: var(--action-secondary);
+}
+
+.blue svg {
+  fill: var(--action-secondary);
+  stroke: var(--action-secondary);
 }

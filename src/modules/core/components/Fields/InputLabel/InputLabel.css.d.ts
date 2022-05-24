@@ -6,7 +6,6 @@ export const directionHorizontal: string;
 export const colorSchemaDark: string;
 export const labelText: string;
 export const colorSchemaGrey: string;
-export const colorSchemaLightGrey: string;
 export const error: string;
 export const help: string;
 export const helpAlignRight: string;

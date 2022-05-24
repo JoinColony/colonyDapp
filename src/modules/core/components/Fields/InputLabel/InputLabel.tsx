@@ -11,7 +11,7 @@ const displayName = 'InputLabel';
 interface Appearance {
   theme?: 'fat' | 'underlined' | 'minimal' | 'dotted';
   direction?: 'horizontal';
-  colorSchema?: 'dark' | 'grey' | 'transparent' | 'info' | 'lightGrey';
+  colorSchema?: 'dark' | 'grey' | 'transparent' | 'info';
   helpAlign?: 'right';
   size?: 'small' | 'medium';
 }

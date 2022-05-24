@@ -6,7 +6,12 @@ export { default as FieldSet } from './FieldSet';
 export { default as Input } from './Input';
 export { default as InputLabel } from './InputLabel';
 export { default as InputStatus } from './InputStatus';
-export { default as Select, Appearance, SelectOption } from './Select';
+export {
+  default as Select,
+  Appearance,
+  SelectOption,
+  SelectHorizontal,
+} from './Select';
 export { default as TokenSymbolSelector } from './TokenSymbolSelector';
 export { default as Textarea, TextareaAutoresize } from './Textarea';
 export { default as Radio, CustomRadio, CustomRadioProps } from './Radio';
@@ -17,3 +22,5 @@ export { default as Toggle } from './Toggle';
 export { default as asFieldArray } from './asFieldArray';
 
 export { SingleLineEdit, MultiLineEdit } from './InlineEdit';
+
+export { default as FormSection } from './FormSection';

@@ -4,8 +4,13 @@ import { useParams } from 'react-router';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { defineMessages } from 'react-intl';
-import { DialogSection } from '~core/Dialog';
-import { Form, InputLabel, Select, SelectOption } from '~core/Fields';
+import {
+  Form,
+  InputLabel,
+  SelectHorizontal,
+  SelectOption,
+  FormSection,
+} from '~core/Fields';
 import { useLoggedInUser, useColonyFromNameQuery } from '~data/index';
 import Numeral from '~core/Numeral';
 
@@ -160,13 +165,11 @@ const ExpenditureSettings = () => {
     theme: 'alt',
     direction: 'horizontal',
     optionSize: 'large',
-    colorSchema: 'lightGrey',
     size: 'small',
   };
 
   const dialogSectionSettings: DialogAppearance = {
     border: 'bottom',
-    margins: 'small',
   };
 
   return (
@@ -177,30 +180,30 @@ const ExpenditureSettings = () => {
         <SpinnerLoader appearance={{ size: 'medium' }} />
       ) : (
         <Form initialValues={{}} onSubmit={() => {}}>
-          <DialogSection appearance={dialogSectionSettings}>
-            <Select
-              name="expenditure"
-              label={MSG.typeLabel}
-              appearance={{
-                ...appareanceSettings,
-                width: 'content',
-                activeOptionColor: 'blue',
-              }}
-              options={[
-                {
-                  label: MSG.optionAdvanced,
-                  value: 'advanced',
-                },
-              ]}
-            />
-          </DialogSection>
-          <DialogSection appearance={dialogSectionSettings}>
+          <FormSection appearance={dialogSectionSettings}>
+            <div className={styles.blue}>
+              <SelectHorizontal
+                name="expenditure"
+                label={MSG.typeLabel}
+                appearance={{
+                  ...appareanceSettings,
+                  width: 'content',
+                }}
+                options={[
+                  {
+                    label: MSG.optionAdvanced,
+                    value: 'advanced',
+                  },
+                ]}
+              />
+            </div>
+          </FormSection>
+          <FormSection appearance={dialogSectionSettings}>
             <div className={styles.settingsRow}>
               <InputLabel
                 label={MSG.teamLabel}
                 appearance={{
                   direction: 'horizontal',
-                  colorSchema: 'lightGrey',
                 }}
               />
               {colonyData && (
@@ -217,9 +220,9 @@ const ExpenditureSettings = () => {
                 />
               )}
             </div>
-          </DialogSection>
-          <DialogSection appearance={dialogSectionSettings}>
-            <Select
+          </FormSection>
+          <FormSection appearance={dialogSectionSettings}>
+            <SelectHorizontal
               name="balance"
               label={MSG.balanceLabel}
               appearance={{
@@ -231,14 +234,13 @@ const ExpenditureSettings = () => {
               renderActiveOption={renderBalanceActiveOption}
               unselectable
             />
-          </DialogSection>
-          <DialogSection appearance={dialogSectionSettings}>
+          </FormSection>
+          <FormSection appearance={dialogSectionSettings}>
             <div className={styles.userContainer}>
               <InputLabel
                 label={MSG.ownerLabel}
                 appearance={{
                   direction: 'horizontal',
-                  colorSchema: 'lightGrey',
                 }}
               />
               <div className={styles.userAvatarContainer}>
@@ -248,7 +250,7 @@ const ExpenditureSettings = () => {
                 </div>
               </div>
             </div>
-          </DialogSection>
+          </FormSection>
         </Form>
       )}
     </div>
