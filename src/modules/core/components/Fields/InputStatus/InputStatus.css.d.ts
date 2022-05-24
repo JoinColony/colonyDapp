@@ -7,4 +7,3 @@ export const themeFat: string;
 export const themeUnderlined: string;
 export const themeMinimal: string;
 export const textSpaceWrap: string;
-export const alignRight: string;

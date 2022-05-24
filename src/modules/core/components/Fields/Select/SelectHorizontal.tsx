@@ -9,9 +9,14 @@ import InputLabel from '../InputLabel';
 
 interface Props extends SelectProps {
   unselectable?: boolean;
+  optionSizeLarge?: boolean;
 }
 
-const SelectHorizontal = ({ unselectable, ...selectProps }: Props) => {
+const SelectHorizontal = ({
+  unselectable,
+  optionSizeLarge,
+  ...selectProps
+}: Props) => {
   const {
     status,
     statusValues,
@@ -30,6 +35,7 @@ const SelectHorizontal = ({ unselectable, ...selectProps }: Props) => {
       <div
         className={classNames(styles.horizontalWrapper, {
           [styles.unselectable]: unselectable,
+          [styles.optionSizeLarge]: optionSizeLarge,
         })}
       >
         <InputLabel

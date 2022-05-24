@@ -97,8 +97,6 @@ export interface Props {
 
   /** @ignore Will be injected by `withOmniPicker` */
   selected: number;
-
-  height?: 'small' | 'large';
 }
 
 class OmniPicker extends Component<Props> {
@@ -245,8 +243,6 @@ class OmniPicker extends Component<Props> {
       keyUsed,
       select,
       selected,
-      height,
-      children,
     } = this.props;
     return (
       <div className={styles.main} ref={this.registerElement}>
@@ -260,10 +256,7 @@ class OmniPicker extends Component<Props> {
           selected={selected}
           renderEmpty={renderEmpty}
           renderItem={renderItem}
-          height={height}
-        >
-          {children}
-        </OmniPickerContent>
+        />
         {position === 'bottom' && this.renderHeader()}
       </div>
     );

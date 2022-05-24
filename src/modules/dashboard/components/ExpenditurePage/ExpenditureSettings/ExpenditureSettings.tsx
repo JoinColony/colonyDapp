@@ -19,8 +19,6 @@ import UserAvatar from '~core/UserAvatar';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 
 import { tokens as tokensData } from './consts';
-import { Appearance } from '~core/Fields/Select/types';
-import { Appearance as DialogAppearance } from '~core/Dialog/DialogSection';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import UserMention from '~core/UserMention';
@@ -161,17 +159,6 @@ const ExpenditureSettings = () => {
     [tokens],
   );
 
-  const appareanceSettings: Appearance = {
-    theme: 'alt',
-    direction: 'horizontal',
-    optionSize: 'large',
-    size: 'small',
-  };
-
-  const dialogSectionSettings: DialogAppearance = {
-    border: 'bottom',
-  };
-
   return (
     <div className={styles.container}>
       {/* eslint-disable-next-line no-warning-comments */}
@@ -180,13 +167,13 @@ const ExpenditureSettings = () => {
         <SpinnerLoader appearance={{ size: 'medium' }} />
       ) : (
         <Form initialValues={{}} onSubmit={() => {}}>
-          <FormSection appearance={dialogSectionSettings}>
+          <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.blue}>
               <SelectHorizontal
                 name="expenditure"
                 label={MSG.typeLabel}
                 appearance={{
-                  ...appareanceSettings,
+                  theme: 'alt',
                   width: 'content',
                 }}
                 options={[
@@ -195,10 +182,11 @@ const ExpenditureSettings = () => {
                     value: 'advanced',
                   },
                 ]}
+                optionSizeLarge
               />
             </div>
           </FormSection>
-          <FormSection appearance={dialogSectionSettings}>
+          <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.settingsRow}>
               <InputLabel
                 label={MSG.teamLabel}
@@ -220,21 +208,21 @@ const ExpenditureSettings = () => {
               )}
             </div>
           </FormSection>
-          <FormSection appearance={dialogSectionSettings}>
-            <SelectHorizontal
-              name="balance"
-              label={MSG.balanceLabel}
-              appearance={{
-                ...appareanceSettings,
-                listPosition: 'static',
-                optionSize: 'default',
-              }}
-              options={balanceOptions}
-              renderActiveOption={renderBalanceActiveOption}
-              unselectable
-            />
+          <FormSection appearance={{ border: 'bottom' }}>
+            <div className={styles.balance}>
+              <SelectHorizontal
+                name="balance"
+                label={MSG.balanceLabel}
+                appearance={{
+                  theme: 'alt',
+                }}
+                options={balanceOptions}
+                renderActiveOption={renderBalanceActiveOption}
+                unselectable
+              />
+            </div>
           </FormSection>
-          <FormSection appearance={dialogSectionSettings}>
+          <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.userContainer}>
               <InputLabel
                 label={MSG.ownerLabel}

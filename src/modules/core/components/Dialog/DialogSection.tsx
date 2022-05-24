@@ -4,7 +4,7 @@ import { getMainClasses } from '~utils/css';
 
 import styles from './DialogSection.css';
 
-export interface Appearance {
+interface Appearance {
   theme?: 'heading' | 'sidePadding' | 'footer';
   align?: 'center' | 'right';
   border?: 'top' | 'bottom' | 'none';

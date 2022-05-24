@@ -8,6 +8,11 @@
   margin-bottom: 0;
 }
 
+.optionSizeLarge li {
+  min-height: 44px;
+  line-height: 44px;
+}
+
 .status {
   margin-right: 30px;
   text-align: right;

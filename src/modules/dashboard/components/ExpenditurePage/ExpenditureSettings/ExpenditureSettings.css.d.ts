@@ -15,3 +15,4 @@ export const symbol: string;
 export const activeItem: string;
 export const activeItemLabel: string;
 export const blue: string;
+export const balance: string;

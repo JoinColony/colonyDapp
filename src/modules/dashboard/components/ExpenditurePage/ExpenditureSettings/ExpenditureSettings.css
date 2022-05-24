@@ -99,3 +99,7 @@
   fill: var(--action-secondary);
   stroke: var(--action-secondary);
 }
+
+.balance ul {
+  position: static;
+}
