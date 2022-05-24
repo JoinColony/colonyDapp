@@ -216,7 +216,6 @@ const ExpenditureSettings = () => {
                   showDescription
                   dataTest="colonyDomainSelector"
                   itemDataTest="colonyDomainSelectorItem"
-                  appearance={{ activeOptionColor: 'highlighted' }}
                 />
               )}
             </div>
