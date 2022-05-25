@@ -85,11 +85,11 @@ const ExpenditureSettings = () => {
     (option: SelectOption | undefined, label: string) => ReactNode
   >(
     (option, label) => {
-      const value = option ? option.value : undefined;
+      const value = option?.value;
       const color = getDomainColor(value);
       return (
         <div className={styles.activeItem}>
-          <ColorTag color={color} />{' '}
+          <ColorTag color={color} />
           <div className={styles.activeItemLabel}>{label}</div>
         </div>
       );
@@ -99,7 +99,7 @@ const ExpenditureSettings = () => {
 
   const filterDomains = useCallback((optionDomain) => {
     const optionDomainId = parseInt(optionDomain.value, 10);
-    if (optionDomainId === 0) {
+    if (optionDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) {
       return false;
     }
     return true;
