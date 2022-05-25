@@ -1,6 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, ReactNode, useMemo } from 'react';
 import { defineMessages, MessageDescriptor } from 'react-intl';
 import copyToClipboard from 'copy-to-clipboard';
+
+import { Appearance } from '~core/Button';
 
 import Button from '../Button';
 
@@ -9,6 +11,8 @@ interface Props {
   text?: MessageDescriptor;
   /** Value to be copied to the clipboard */
   value: string;
+  children?: ReactNode;
+  appearance?: Appearance;
 }
 
 const MSG = defineMessages({
@@ -23,7 +27,12 @@ const MSG = defineMessages({
 
 const displayName = 'ClipboardCopy';
 
-const ClipboardCopy = ({ value, text = MSG.copyLabel }: Props) => {
+const ClipboardCopy = ({
+  value,
+  text,
+  children,
+  appearance = { size: 'small', theme: 'blue' },
+}: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
   const handleClipboardCopy = () => {
@@ -39,14 +48,22 @@ const ClipboardCopy = ({ value, text = MSG.copyLabel }: Props) => {
   useEffect(() => () => clearTimeout(userFeedbackTimer.current), [
     userFeedbackTimer,
   ]);
+
+  const buttonText = useMemo(
+    () => (children === undefined && text === undefined ? MSG.copyLabel : text),
+    [children, text],
+  );
+
   return (
     <Button
-      appearance={{ size: 'small', theme: 'blue' }}
+      appearance={appearance}
       disabled={valueIsCopied}
       onClick={handleClipboardCopy}
-      text={text}
+      text={buttonText}
       textValues={{ valueIsCopied }}
-    />
+    >
+      {children}
+    </Button>
   );
 };
 
