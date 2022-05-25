@@ -74,7 +74,7 @@
 
   &::placeholder {
     font-size: var(--size-normal);
-    color: rgba(--grey-4);
+    color: var(--grey-4);
     letter-spacing: var(--spacing-normal);
   }
 }
