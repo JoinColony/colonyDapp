@@ -7,6 +7,10 @@
   padding: 0 20px;
 }
 
+.dialogContainer section {
+  padding: 0;
+}
+
 .title {
   display: flex;
   justify-content: space-between;

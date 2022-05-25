@@ -76,9 +76,7 @@ const DraftConfirmDialog = ({ cancel, onClick, close }: Props) => {
   return (
     <Dialog cancel={cancel}>
       <div className={styles.dialogContainer}>
-        <DialogSection
-          appearance={{ theme: 'heading', border: 'bottom', margins: 'small' }}
-        >
+        <DialogSection appearance={{ theme: 'heading', border: 'bottom' }}>
           <Heading
             appearance={{ size: 'medium', margin: 'none' }}
             text="Stake to Create Expenditure"
@@ -103,7 +101,7 @@ const DraftConfirmDialog = ({ cancel, onClick, close }: Props) => {
             </div>
           </Heading>
         </DialogSection>
-        <DialogSection appearance={{ border: 'bottom', margins: 'small' }}>
+        <DialogSection appearance={{ border: 'bottom' }}>
           <div className={styles.stakeContainer}>
             <FormattedMessage {...MSG.stake} />{' '}
             <div className={styles.label}>
@@ -125,7 +123,7 @@ const DraftConfirmDialog = ({ cancel, onClick, close }: Props) => {
             </div>
           </div>
         </DialogSection>
-        <DialogSection appearance={{ margins: 'small' }}>
+        <DialogSection>
           <div className={styles.messageContainer}>
             <p className={styles.messageParagraph}>
               <FormattedMessage {...MSG.descriptionText} />
