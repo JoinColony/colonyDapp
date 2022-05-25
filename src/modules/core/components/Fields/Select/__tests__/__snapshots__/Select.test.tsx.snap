@@ -51,16 +51,8 @@ exports[`Select component Renders initial component 1`] = `
             ]
           }
         >
-          <div
-            className=""
-          >
+          <div>
             <InputLabel
-              appearance={
-                Object {
-                  "colorSchema": undefined,
-                  "direction": undefined,
-                }
-              }
               inputId="someStaticId"
               label="Select me"
             >
@@ -89,9 +81,7 @@ exports[`Select component Renders initial component 1`] = `
                 tabIndex={0}
                 type="button"
               >
-                <div
-                  className=""
-                >
+                <div>
                   <div>
                     <span>
                       Bar

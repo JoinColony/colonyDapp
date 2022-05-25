@@ -14,7 +14,6 @@ export interface Appearance {
   statusShema?: 'info';
   size?: 'small' | 'medium';
   textSpace?: 'wrap';
-  align?: 'right';
 }
 
 interface Props {

@@ -38,10 +38,6 @@
   color: var(--dark);
 }
 
-.colorSchemaLightGrey .labelText {
-  color: var(--temp-grey-blue-7);
-}
-
 .error, .help {
   display: inline-block;
   margin-left: 5px;

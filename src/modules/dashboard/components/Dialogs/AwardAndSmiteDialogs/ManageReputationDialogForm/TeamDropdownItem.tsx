@@ -1,5 +1,4 @@
 import React from 'react';
-import classNames from 'classnames';
 
 import ColorTag, { Color } from '~core/ColorTag';
 import Heading from '~core/Heading';
@@ -9,15 +8,10 @@ import MemberReputation from '~core/MemberReputation';
 
 import styles from './TeamDropdownItem.css';
 
-interface Appereance {
-  theme?: 'primary' | 'dark' | 'invert' | 'uppercase' | 'grey';
-}
 interface Props {
   domain: OneDomain;
   colonyAddress: Address;
   user?: AnyUser;
-  withoutPadding?: boolean;
-  appearance?: Appereance;
 }
 
 const displayName = `dashboard.SmiteDialog.TeamDropdownItem`;
@@ -26,29 +20,15 @@ const TeamDropdownItem = ({
   domain: { color = Color.LightPink, ethDomainId, name },
   colonyAddress,
   user,
-  appearance,
-  withoutPadding,
 }: Props) => {
   return (
-    <div
-      className={classNames(styles.main, {
-        [styles.withoutPadding]: withoutPadding,
-      })}
-    >
-      <div
-        className={classNames(
-          withoutPadding ? styles.colorWithoutPadding : styles.color,
-        )}
-      >
+    <div className={styles.main}>
+      <div className={styles.color}>
         <ColorTag color={color} />
       </div>
-      <div className={classNames(!withoutPadding && styles.headingWrapper)}>
+      <div className={styles.headingWrapper}>
         <Heading
-          appearance={{
-            margin: 'none',
-            size: 'normal',
-            theme: appearance?.theme || 'dark',
-          }}
+          appearance={{ margin: 'none', size: 'normal', theme: 'dark' }}
           text={name}
         />
       </div>

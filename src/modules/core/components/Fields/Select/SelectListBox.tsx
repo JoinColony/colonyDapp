@@ -1,5 +1,4 @@
 import React, { ReactNode } from 'react';
-import classNames from 'classnames';
 
 import { getMainClasses } from '~utils/css';
 
@@ -21,7 +20,6 @@ interface Props {
   onSelect: (idx: number) => void;
   onClick: () => void;
   dataTest?: string;
-  unselectable?: boolean;
 }
 
 const getOptionId = (name, idx) =>
@@ -38,7 +36,6 @@ const SelectListBox = ({
   onClick,
   name,
   dataTest,
-  unselectable,
 }: Props) => {
   const activeDescendantOption = options.find(
     (_, idx) => selectedOption === idx,
@@ -53,11 +50,7 @@ const SelectListBox = ({
     // eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex
     <ul
       tabIndex={-1}
-      className={classNames(
-        getMainClasses(appearance, styles),
-        appearance?.listPosition === 'static' && styles.static,
-        unselectable && styles.unselectable,
-      )}
+      className={getMainClasses(appearance, styles)}
       role="listbox"
       aria-activedescendant={getOptionId(name, activeDescendantIdx)}
       id={listboxId}
@@ -74,8 +67,6 @@ const SelectListBox = ({
           onSelect={onSelect}
           onClick={onClick}
           dataTest={dataTest}
-          size={appearance?.optionSize}
-          unselectable={unselectable}
         />
       ))}
       {optionsFooter}
