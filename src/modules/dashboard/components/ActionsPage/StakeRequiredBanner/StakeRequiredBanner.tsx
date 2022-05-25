@@ -3,6 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Alert from '~core/Alert';
 import ClipboardCopy from '~core/ClipboardCopy';
+import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
 
 import styles from './StakeRequiredBanner.css';
@@ -59,7 +60,13 @@ const StakeRequiredBanner = ({ stakeRequired }: Props) => {
             }}
           >
             <span className={styles.share}>
-              <ClipboardCopy value={window.location.href} text={MSG.shareUrl} />
+              <ClipboardCopy
+                value={window.location.href}
+                appearance={{ theme: 'white' }}
+              >
+                <FormattedMessage {...MSG.shareUrl} />
+                <Icon name="share" />
+              </ClipboardCopy>
             </span>
           </Tooltip>
         </div>

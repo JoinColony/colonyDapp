@@ -11,7 +11,25 @@
   padding: 9px 0;
 }
 
+.share {
+  position: absolute;
+  top: 11px;
+  right: 10px;
+}
+
 .share button {
-  margin-left: 4px;
-  font-size: var(--size-small);
+  padding-right: 6px;
+  padding-left: 10px;
+  border: 0px;
+  color: var(--action-secondary);
+  opacity: 1;
+}
+
+.share i {
+  margin-left: 19px;
+}
+
+.share svg {
+  fill: var(--action-secondary);
+  stroke: none;
 }
