@@ -144,6 +144,7 @@ const Recipient = ({ recipient, index }: Props) => {
                         }}
                         maxButtonParams={{
                           setFieldValue,
+                          // mock, needs to be changed to the actual value
                           maxAmount: '0',
                           fieldName: `recipients[${index}].value[${idx}].amount`,
                         }}

@@ -12,7 +12,7 @@ import { FormSection } from '~core/Fields';
 const MSG = defineMessages({
   payments: {
     id: 'dashboard.Expenditures.Payments.defaultPayment',
-    defaultMessage: 'Payments',
+    defaultMessage: 'Add payments',
   },
   recipient: {
     id: 'dashboard.Expenditures.Payments.defaultRrecipient',
@@ -41,10 +41,10 @@ const Payments = () => {
   const onToogleButtonClick = useCallback(
     (currId) => {
       setValue(
-        recipients.map((recip) =>
-          recip.id === currId
-            ? { ...recip, isExpanded: !recip.isExpanded }
-            : recip,
+        recipients.map((recipient) =>
+          recipient.id === currId
+            ? { ...recipient, isExpanded: !recipient.isExpanded }
+            : recipient,
         ),
       );
     },
@@ -100,7 +100,7 @@ const Payments = () => {
                           />
                         </Button>
                       )}
-                      {index + 1}. <FormattedMessage {...MSG.recipient} />
+                      {index + 1}: <FormattedMessage {...MSG.recipient} />
                       {recipients.length > 1 && (
                         <Icon
                           name="trash"

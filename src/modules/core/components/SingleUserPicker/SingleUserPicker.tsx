@@ -55,7 +55,7 @@ interface Appearance {
   width?: 'wide';
 }
 
-export interface Props extends WithOmnipickerInProps {
+interface Props extends WithOmnipickerInProps {
   /** Appearance object */
   appearance?: Appearance;
 

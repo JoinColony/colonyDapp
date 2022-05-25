@@ -9,8 +9,9 @@
 }
 
 .payments {
-  margin-bottom: 18px;
-  font-size: 13px;
+  margin-bottom: 8px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
   line-height: 18px;
   color: var(--dark);
 }
@@ -21,7 +22,7 @@
   justify-content: space-between;
   min-height: 28px;
   min-height: 40px;
-  font-size: 13px;
+  font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   line-height: 18px;
   color: var(--dark);
