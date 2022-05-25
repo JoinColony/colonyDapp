@@ -2,8 +2,13 @@ import { FieldArray, useFormikContext } from 'formik';
 import React, { useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import Button from '~core/Button';
-import { DialogSection } from '~core/Dialog';
-import { Input, Select, TokenSymbolSelector } from '~core/Fields';
+import {
+  FormSection,
+  Input,
+  InputLabel,
+  Select,
+  TokenSymbolSelector,
+} from '~core/Fields';
 import Icon from '~core/Icon';
 import { ItemDataType } from '~core/OmniPicker';
 import { Tooltip } from '~core/Popover';
@@ -95,32 +100,31 @@ const Recipient = ({ recipient, index }: Props) => {
     <div className={styles.container}>
       {isExpanded && (
         <>
-          <DialogSection appearance={{ border: 'bottom', margins: 'small' }}>
-            <div className={styles.singleUserContainer}>
-              <SingleUserPicker
-                data={userData}
-                label={MSG.defaultRecipientLabel}
-                name={`recipients[${index}].recipient`}
-                filter={filterUserSelection}
-                renderAvatar={supRenderAvatar}
-                dataTest="paymentRecipientPicker"
-                itemDataTest="paymentRecipientItem"
-                placeholder="Search"
-                appearance={{
-                  direction: 'horizontal',
-                  size: 'small',
-                  colorSchema: 'lightGrey',
-                }}
-                hasSearch
-              />
+          <FormSection appearance={{ border: 'bottom' }}>
+            <div className={styles.singleUserWithLabel}>
+              <InputLabel label={MSG.defaultRecipientLabel} />
+              <div className={styles.singleUserContainer}>
+                <SingleUserPicker
+                  data={userData}
+                  label={MSG.defaultRecipientLabel}
+                  name={`recipients[${index}].recipient`}
+                  filter={filterUserSelection}
+                  renderAvatar={supRenderAvatar}
+                  dataTest="paymentRecipientPicker"
+                  itemDataTest="paymentRecipientItem"
+                  placeholder="Search"
+                  appearance={{
+                    direction: 'horizontal',
+                  }}
+                  elementOnly
+                />
+              </div>
             </div>
-          </DialogSection>
+          </FormSection>
           <FieldArray
             name={`recipients[${index}].value`}
             render={(arrayHelpers) => (
-              <DialogSection
-                appearance={{ border: 'bottom', margins: 'small' }}
-              >
+              <FormSection appearance={{ border: 'bottom' }}>
                 {tokens?.map((token, idx) => (
                   <div className={styles.valueContainer} key={token.id}>
                     <div className={styles.inputContainer}>
@@ -191,10 +195,10 @@ const Recipient = ({ recipient, index }: Props) => {
                     </div>
                   </div>
                 ))}
-              </DialogSection>
+              </FormSection>
             )}
           />
-          <DialogSection appearance={{ border: 'bottom', margins: 'small' }}>
+          <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.delayContainer}>
               <div className={styles.delay}>
                 <FormattedMessage {...MSG.defaultDelayLabel} />
@@ -232,7 +236,6 @@ const Recipient = ({ recipient, index }: Props) => {
                   name={`recipients[${index}].delay.time`}
                   appearance={{
                     theme: 'grey',
-                    optionSize: 'large',
                     alignOptions: 'left',
                   }}
                   label=""
@@ -254,7 +257,7 @@ const Recipient = ({ recipient, index }: Props) => {
                 />
               </div>
             </div>
-          </DialogSection>
+          </FormSection>
         </>
       )}
     </div>

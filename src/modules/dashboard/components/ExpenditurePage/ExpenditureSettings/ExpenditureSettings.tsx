@@ -5,7 +5,6 @@ import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { defineMessages } from 'react-intl';
 import {
-  Form,
   InputLabel,
   SelectHorizontal,
   SelectOption,
@@ -164,7 +163,7 @@ const ExpenditureSettings = () => {
       {loading ? (
         <SpinnerLoader appearance={{ size: 'medium' }} />
       ) : (
-        <Form initialValues={{}} onSubmit={() => {}}>
+        <>
           <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.blue}>
               <SelectHorizontal
@@ -236,7 +235,7 @@ const ExpenditureSettings = () => {
               </div>
             </div>
           </FormSection>
-        </Form>
+        </>
       )}
     </div>
   );

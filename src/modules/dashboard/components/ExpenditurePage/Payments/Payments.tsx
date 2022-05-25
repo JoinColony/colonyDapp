@@ -5,9 +5,9 @@ import Button from '~core/Button';
 import Recipient from '../Recipient';
 
 import styles from './Payments.css';
-import { DialogSection } from '~core/Dialog';
 import Icon from '~core/Icon';
 import { value } from '~dashboard/ActionsPage/DetailsWidget/DetailsWidget.css';
+import { FormSection } from '~core/Fields';
 
 const MSG = defineMessages({
   payments: {
@@ -74,9 +74,7 @@ const Payments = () => {
             <>
               {recipients.map((recipient, index) => (
                 <div className={styles.singleRecipient}>
-                  <DialogSection
-                    appearance={{ border: 'bottom', margins: 'small' }}
-                  >
+                  <FormSection appearance={{ border: 'bottom' }}>
                     <div className={styles.recipientLabel}>
                       {recipient.isExpanded ? (
                         <>
@@ -111,7 +109,7 @@ const Payments = () => {
                         />
                       )}
                     </div>
-                  </DialogSection>
+                  </FormSection>
                   <Recipient {...{ recipient, index }} />
                 </div>
               ))}
