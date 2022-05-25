@@ -1,0 +1,41 @@
+.horizontalWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.horizontalWrapper > label {
+  margin-bottom: 0;
+}
+
+.optionSizeLarge li {
+  min-height: 44px;
+  line-height: 44px;
+}
+
+.status {
+  margin-right: 30px;
+  text-align: right;
+}
+
+.unselectable {
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+.unselectable label {
+  padding-top: 14px;
+}
+
+.unselectable ul {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.unselectable li {
+  padding: 0;
+}
+
+.withoutPadding {
+  padding: 0;
+}

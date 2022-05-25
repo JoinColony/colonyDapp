@@ -1,21 +1,19 @@
-import React, { ReactNode } from 'react';
-
+import React from 'react';
+import ExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings';
 import { getMainClasses } from '~utils/css';
 
 import styles from './ExpenditurePage.css';
 
-interface Props {
-  children: ReactNode;
-}
-
 const displayName = 'pages.ExpenditurePage';
 
-const ExpenditurePage = ({ children }: Props) => {
+const ExpenditurePage = () => {
   return (
     <div className={getMainClasses({}, styles)}>
-      <aside className={styles.sidebar} />
+      <aside className={styles.sidebar}>
+        <ExpenditureSettings />
+      </aside>
       <div className={styles.mainContainer}>
-        <main className={styles.mainContent}>{children}</main>
+        <main className={styles.mainContent} />
       </div>
     </div>
   );

@@ -1,0 +1,30 @@
+@value borderColor: var(--grey-blue-0);
+
+.main {
+  padding: 2px 0;
+}
+
+.alignRight {
+  text-align: right;
+}
+
+.alignCenter {
+  text-align: center;
+}
+
+.borderNone {
+  border-color: transparent;
+}
+
+.borderTop {
+  border-top: 1px solid borderColor;
+}
+
+.borderBottom {
+  border-bottom: 1px solid borderColor;
+}
+
+.borderGrey {
+  border: 1px solid var(--grey-blue-0);
+  border-radius: var(--radius-tiny);
+}
