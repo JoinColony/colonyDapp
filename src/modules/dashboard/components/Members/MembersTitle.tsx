@@ -18,7 +18,7 @@ const MSG = defineMessages({
   },
   searchPlaceholder: {
     id: 'dashboard.Members.MembersTitle.searchPlaceholder',
-    defaultMessage: 'Search ...',
+    defaultMessage: 'Search...',
   },
   labelFilter: {
     id: 'dashboard.Members.MembersTitle.labelFilter',
