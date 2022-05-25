@@ -4,8 +4,13 @@ import { useParams } from 'react-router';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { defineMessages } from 'react-intl';
-import { DialogSection } from '~core/Dialog';
-import { InputLabel, Select, SelectOption } from '~core/Fields';
+import {
+  Form,
+  InputLabel,
+  SelectHorizontal,
+  SelectOption,
+  FormSection,
+} from '~core/Fields';
 import { useLoggedInUser, useColonyFromNameQuery } from '~data/index';
 import Numeral from '~core/Numeral';
 
@@ -14,8 +19,6 @@ import UserAvatar from '~core/UserAvatar';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 
 import { tokens as tokensData } from './consts';
-import { Appearance } from '~core/Fields/Select/types';
-import { Appearance as DialogAppearance } from '~core/Dialog/DialogSection';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import UserMention from '~core/UserMention';
@@ -156,49 +159,37 @@ const ExpenditureSettings = () => {
     [tokens],
   );
 
-  const appareanceSettings: Appearance = {
-    theme: 'alt',
-    direction: 'horizontal',
-    optionSize: 'large',
-    colorSchema: 'lightGrey',
-    size: 'small',
-  };
-
-  const dialogSectionSettings: DialogAppearance = {
-    border: 'bottom',
-    margins: 'small',
-  };
-
   return (
     <div className={styles.container}>
       {loading ? (
         <SpinnerLoader appearance={{ size: 'medium' }} />
       ) : (
-        <>
-          <DialogSection appearance={dialogSectionSettings}>
-            <Select
-              name="expenditure"
-              label={MSG.typeLabel}
-              appearance={{
-                ...appareanceSettings,
-                width: 'content',
-                activeOptionColor: 'blue',
-              }}
-              options={[
-                {
-                  label: MSG.optionAdvanced,
-                  value: 'advanced',
-                },
-              ]}
-            />
-          </DialogSection>
-          <DialogSection appearance={dialogSectionSettings}>
+        <Form initialValues={{}} onSubmit={() => {}}>
+          <FormSection appearance={{ border: 'bottom' }}>
+            <div className={styles.blue}>
+              <SelectHorizontal
+                name="expenditure"
+                label={MSG.typeLabel}
+                appearance={{
+                  theme: 'alt',
+                  width: 'content',
+                }}
+                options={[
+                  {
+                    label: MSG.optionAdvanced,
+                    value: 'advanced',
+                  },
+                ]}
+                optionSizeLarge
+              />
+            </div>
+          </FormSection>
+          <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.settingsRow}>
               <InputLabel
                 label={MSG.teamLabel}
                 appearance={{
                   direction: 'horizontal',
-                  colorSchema: 'lightGrey',
                 }}
               />
               {colonyData && (
@@ -211,32 +202,30 @@ const ExpenditureSettings = () => {
                   showDescription
                   dataTest="colonyDomainSelector"
                   itemDataTest="colonyDomainSelectorItem"
-                  appearance={{ activeOptionColor: 'highlighted' }}
                 />
               )}
             </div>
-          </DialogSection>
-          <DialogSection appearance={dialogSectionSettings}>
-            <Select
-              name="balance"
-              label={MSG.balanceLabel}
-              appearance={{
-                ...appareanceSettings,
-                listPosition: 'static',
-                optionSize: 'default',
-              }}
-              options={balanceOptions}
-              renderActiveOption={renderBalanceActiveOption}
-              unselectable
-            />
-          </DialogSection>
-          <DialogSection appearance={dialogSectionSettings}>
+          </FormSection>
+          <FormSection appearance={{ border: 'bottom' }}>
+            <div className={styles.balance}>
+              <SelectHorizontal
+                name="balance"
+                label={MSG.balanceLabel}
+                appearance={{
+                  theme: 'alt',
+                }}
+                options={balanceOptions}
+                renderActiveOption={renderBalanceActiveOption}
+                unselectable
+              />
+            </div>
+          </FormSection>
+          <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.userContainer}>
               <InputLabel
                 label={MSG.ownerLabel}
                 appearance={{
                   direction: 'horizontal',
-                  colorSchema: 'lightGrey',
                 }}
               />
               <div className={styles.userAvatarContainer}>
@@ -246,8 +235,8 @@ const ExpenditureSettings = () => {
                 </div>
               </div>
             </div>
-          </DialogSection>
-        </>
+          </FormSection>
+        </Form>
       )}
     </div>
   );

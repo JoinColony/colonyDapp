@@ -1,23 +1,7 @@
 @value borderColor: var(--grey-blue-0);
 
 .main {
-  padding: 20px;
-}
-
-.themeHeading {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 32px 20px 20px;
-}
-
-.themeSidePadding {
-  padding: 0 20px;
-}
-
-.themeFooter {
-  padding: 20px;
-  background-color: color-mod(var(--temp-grey-blue-4) alpha(25%));
+  padding: 2px 0;
 }
 
 .alignRight {

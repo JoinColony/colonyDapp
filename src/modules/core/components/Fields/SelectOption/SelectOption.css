@@ -13,15 +13,6 @@
   outline: none;
 }
 
-.unselectable {
-  padding: 0;
-}
-
-.unselectable:hover {
-  background-color: transparent;
-  cursor: default;
-}
-
 .main[aria-checked="true"] {
   color: var(--primary);
   pointer-events: none;
@@ -60,8 +51,4 @@
 .value {
   composes: inlineEllipsis from '~styles/text.css';
   display: block;
-}
-
-.large {
-  padding: 6px 30px 6px 15px;
 }
