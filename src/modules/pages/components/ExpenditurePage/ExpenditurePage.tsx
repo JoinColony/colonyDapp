@@ -15,7 +15,7 @@ const ExpenditurePage = () => {
       </aside>
       <div className={styles.mainContainer}>
         <main className={styles.mainContent}>
-          title
+          <div />
           <Stages />
         </main>
       </div>
