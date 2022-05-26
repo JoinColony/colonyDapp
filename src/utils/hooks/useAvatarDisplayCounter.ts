@@ -1,9 +1,11 @@
-import Maybe from 'graphql/tsutils/Maybe';
 import { useMemo } from 'react';
+import Maybe from 'graphql/tsutils/Maybe';
+
+import { ColonyContributor, ColonyWatcher } from '~data/index';
 
 const useAvatarDisplayCounter = (
   maxAvatars: number,
-  members: Maybe<string[]>,
+  members: ColonyContributor[] | ColonyWatcher[] | Maybe<string[]>,
   isLastAvatarIncluded = true,
 ) => {
   const avatarsDisplaySplitRules = useMemo(() => {

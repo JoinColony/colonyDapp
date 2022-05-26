@@ -1,14 +1,9 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { defineMessages } from 'react-intl';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { MiniSpinnerLoader } from '~core/Preloaders';
-import {
-  Colony,
-  useColonyMembersWithReputationQuery,
-  useMembersSubscription,
-  useBannedUsersQuery,
-} from '~data/index';
+import { Colony, useContributorsAndWatchersQuery } from '~data/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 
 import styles from './ColonyMembers.css';
@@ -34,49 +29,23 @@ interface Props {
 const displayName = 'dashboard.ColonyHome.ColonyMembers';
 
 const ColonyMembers = ({
-  colony: { colonyAddress },
+  colony: { colonyAddress, colonyName },
   colony,
   currentDomainId = COLONY_TOTAL_BALANCE_DOMAIN_ID,
   maxAvatars,
 }: Props) => {
   const {
-    data: membersWithReputation,
-    loading: loadingColonyMembersWithReputation,
-  } = useColonyMembersWithReputationQuery({
+    data: members,
+    loading: loadingMembers,
+  } = useContributorsAndWatchersQuery({
     variables: {
       colonyAddress,
+      colonyName,
       domainId: currentDomainId,
     },
   });
 
-  const { data: members, loading: loadingMembers } = useMembersSubscription({
-    variables: {
-      colonyAddress,
-    },
-  });
-
-  const {
-    data: bannedMembers,
-    loading: loadingBannedUsers,
-  } = useBannedUsersQuery({
-    variables: {
-      colonyAddress,
-    },
-  });
-
-  const subscribers = useMemo(
-    () =>
-      members?.subscribedUsers?.map(
-        ({ profile: { walletAddress } }) => walletAddress,
-      ),
-    [members],
-  );
-
-  if (
-    loadingColonyMembersWithReputation ||
-    loadingMembers ||
-    loadingBannedUsers
-  ) {
+  if (loadingMembers) {
     return (
       <MiniSpinnerLoader
         className={styles.main}
@@ -90,16 +59,14 @@ const ColonyMembers = ({
   return (
     <>
       <MembersSubsection
-        members={subscribers}
-        bannedMembers={bannedMembers?.bannedUsers || []}
+        members={members?.contributorsAndWatchers?.contributors}
         colony={colony}
         isContributorsSubsection
       />
       {(currentDomainId === ROOT_DOMAIN_ID ||
         currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) && (
         <MembersSubsection
-          bannedMembers={bannedMembers?.bannedUsers || []}
-          members={membersWithReputation?.colonyMembersWithReputation}
+          members={members?.contributorsAndWatchers?.watchers}
           colony={colony}
           maxAvatars={maxAvatars}
           isContributorsSubsection={false}
