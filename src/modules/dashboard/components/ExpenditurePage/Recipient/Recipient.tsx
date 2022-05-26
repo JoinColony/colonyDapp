@@ -2,18 +2,13 @@ import { FieldArray, useFormikContext } from 'formik';
 import React, { useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import Button from '~core/Button';
-import {
-  FormSection,
-  Input,
-  InputLabel,
-  Select,
-  TokenSymbolSelector,
-} from '~core/Fields';
+import { FormSection, Input, Select, TokenSymbolSelector } from '~core/Fields';
 import Icon from '~core/Icon';
 import { ItemDataType } from '~core/OmniPicker';
 import { Tooltip } from '~core/Popover';
-import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
+import { filterUserSelection } from '~core/SingleUserPicker';
 import UserAvatar from '~core/UserAvatar';
+import UserPickerWithSearch from '~core/UserPickerWithSearch';
 import { AnyUser } from '~data/index';
 import { Address } from '~types/index';
 import { userData } from '../ExpenditureSettings/consts';
@@ -101,24 +96,17 @@ const Recipient = ({ recipient, index }: Props) => {
       {isExpanded && (
         <>
           <FormSection appearance={{ border: 'bottom' }}>
-            <div className={styles.singleUserWithLabel}>
-              <InputLabel label={MSG.defaultRecipientLabel} />
-              <div className={styles.singleUserContainer}>
-                <SingleUserPicker
-                  data={userData}
-                  label={MSG.defaultRecipientLabel}
-                  name={`recipients[${index}].recipient`}
-                  filter={filterUserSelection}
-                  renderAvatar={supRenderAvatar}
-                  dataTest="paymentRecipientPicker"
-                  itemDataTest="paymentRecipientItem"
-                  placeholder="Search"
-                  appearance={{
-                    direction: 'horizontal',
-                  }}
-                  elementOnly
-                />
-              </div>
+            <div className={styles.singleUserContainer}>
+              <UserPickerWithSearch
+                data={userData}
+                label={MSG.defaultRecipientLabel}
+                name={`recipients[${index}].recipient`}
+                filter={filterUserSelection}
+                renderAvatar={supRenderAvatar}
+                dataTest="paymentRecipientPicker"
+                itemDataTest="paymentRecipientItem"
+                placeholder="Search"
+              />
             </div>
           </FormSection>
           <FieldArray

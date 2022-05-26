@@ -1,0 +1,131 @@
+.main {
+  composes: field from '~styles/fields.css';
+  width: 100%;
+}
+
+.inputWithIcon {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 18px;
+  width: 80%;
+}
+
+.inputWithIcon:hover {
+  cursor: pointer;
+}
+
+.container input:disabled {
+  border-color: var(--text-disabled);
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  position: relative;
+}
+
+.icon {
+  flex: 0 0 28px;
+  margin-right: 5px;
+  height: 28px;
+  width: 28px;
+  position: relative;
+  fill: var(--action-secondary);
+}
+
+.icon:hover::after {
+  height: 38px;
+  width: 38px;
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  border-radius: 50%;
+  background-color: var(--action-secondary);
+  content: '';
+  opacity: 0.1;
+}
+
+.focusIcon {
+  composes: icon;
+}
+
+.baseInput {
+  height: 28px;
+  max-width: 332px;
+  vertical-align: baseline;
+  border: none;
+  background-color: transparent;
+  font-size: var(--size-normal);
+  text-align: left;
+  color: var(--colony-black);
+  outline: none;
+}
+
+.baseInput::placeholder {
+  color: var(--temp-grey-blue-7);
+  opacity: 0.65;
+}
+
+.inputInvalid {
+  border-color: var(--danger);
+}
+
+.input {
+  composes: baseInput;
+  width: 100%;
+}
+
+.inputWrapper {
+  padding: 17px 17px 0;
+  background-color: white;
+}
+
+.inputWrapper input {
+  border-bottom: 1px solid rgb(113, 213, 213);
+}
+
+.recipientName {
+  composes: baseInput;
+  overflow: hidden;
+  font-weight: var(--weight-bold);
+  text-overflow: ellipsis;
+  color: var(--danger);
+}
+
+.omniPickerContainer {
+  width: 100%;
+  max-width: 332px;
+  position: absolute;
+  top: -10px;
+  right: -332px;
+  z-index: var(--z-index-nav);
+  box-shadow: 0px 2px 11px rgb(62 118 244 / 14%);
+}
+
+.omniPickerContainer div {
+  box-shadow: none;
+}
+
+.error {
+  margin-top: 5px;
+  margin-right: 30px;
+  width: 100%;
+  font-size: var(--size-tiny);
+  text-align: right;
+  color: var(--danger);
+}
+
+.arrowIcon {
+  height: 24px;
+  width: 24px;
+  position: absolute;
+  top: 4px;
+  right: 0;
+  fill: var(--action-secondary);
+}
+
+.arrowIconActive svg {
+  transform: rotate(180deg);
+}

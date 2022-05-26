@@ -1,46 +1,5 @@
-@value paddingRightLeft: 40px;
-
-.singleUserWithLabel {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.singleUserWithLabel > label {
-  width: auto;
-}
-
 .singleUserContainer {
-  padding: 4px 0;
-}
-
-.singleUserContainer label {
-  color: var(--dark);
-}
-
-.singleUserContainer div {
-  padding-left: 0;
-}
-
-.singleUserContainer input {
-  width: 100px;
-  border-bottom: none;
-}
-
-/* selector targeting .OmniPickerContent_main class */
-.singleUserContainer input ~ div > div > div {
-  width: 300px;
-}
-
-.singleUserContainer button {
-  padding-right: 30px;
-  border-bottom: none;
-}
-
-.singleUserContainer i {
-  top: 6px;
-  right: 0;
-  left: unset;
+  padding: 6px 0;
 }
 
 .valueContainer {
