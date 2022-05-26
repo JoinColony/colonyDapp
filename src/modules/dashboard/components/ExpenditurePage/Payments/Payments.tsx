@@ -1,4 +1,6 @@
 import React, { useCallback, useState } from 'react';
+import classNames from 'classnames';
+
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FieldArray, useField } from 'formik';
 import Button from '~core/Button';
@@ -120,7 +122,13 @@ const Payments = () => {
                 >
                   <div className={styles.addRecipientLabel}>
                     <div className={styles.circleSignWrapper}>
-                      <Icon name="plus" className={styles.plus} />
+                      <Icon
+                        name="plus"
+                        className={classNames(
+                          styles.plus,
+                          styles.circlePlusIcon,
+                        )}
+                      />
                     </div>
                     <FormattedMessage {...MSG.addRecipientLabel} />
                   </div>

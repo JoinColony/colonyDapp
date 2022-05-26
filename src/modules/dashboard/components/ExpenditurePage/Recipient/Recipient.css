@@ -120,6 +120,13 @@
   position: relative;
 }
 
+.inputContainer button {
+  padding-left: 0;
+  right: unset;
+  bottom: 12px;
+  left: 0;
+}
+
 .questionIcon {
   display: block;
   margin-bottom: -3px;
