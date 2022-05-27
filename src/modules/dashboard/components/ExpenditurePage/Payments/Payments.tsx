@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import classNames from 'classnames';
 
 import { defineMessages, FormattedMessage } from 'react-intl';
@@ -8,8 +8,8 @@ import Recipient from '../Recipient';
 
 import styles from './Payments.css';
 import Icon from '~core/Icon';
-import { value } from '~dashboard/ActionsPage/DetailsWidget/DetailsWidget.css';
 import { FormSection } from '~core/Fields';
+import { newRecipient } from './consts';
 
 const MSG = defineMessages({
   payments: {
@@ -28,40 +28,18 @@ const MSG = defineMessages({
 
 const Payments = () => {
   const [, { value: recipients }, { setValue }] = useField('recipients');
-  const [id, setId] = useState(1);
-
-  const newRecipient = {
-    id: 0,
-    recipient: undefined,
-    value: [
-      { id: value.length + 1, amount: undefined, tokenAddress: undefined },
-    ],
-    delay: undefined,
-    isExpanded: true,
-  };
 
   const onToogleButtonClick = useCallback(
-    (currId) => {
+    (index) => {
       setValue(
-        recipients.map((recipient) =>
-          recipient.id === currId
+        recipients.map((recipient, idx) =>
+          index === idx
             ? { ...recipient, isExpanded: !recipient.isExpanded }
             : recipient,
         ),
       );
     },
     [recipients, setValue],
-  );
-
-  const addRecipient = useCallback(
-    (push: (obj: any) => void) => {
-      push({
-        ...newRecipient,
-        id: String(id),
-      });
-      setId((idLocal) => idLocal + 1);
-    },
-    [id, newRecipient],
   );
 
   return (
@@ -75,14 +53,18 @@ const Payments = () => {
           render={({ push, remove }) => (
             <>
               {recipients.map((recipient, index) => (
-                <div className={styles.singleRecipient}>
+                <div
+                  className={styles.singleRecipient}
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={index}
+                >
                   <FormSection appearance={{ border: 'bottom' }}>
                     <div className={styles.recipientLabel}>
                       {recipient.isExpanded ? (
                         <>
                           <Button
                             type="button"
-                            onClick={() => onToogleButtonClick(recipient.id)}
+                            onClick={() => onToogleButtonClick(index)}
                             className={styles.signWrapper}
                           >
                             <span className={styles.minus} />
@@ -92,13 +74,13 @@ const Payments = () => {
                       ) : (
                         <Button
                           type="button"
-                          onClick={() => onToogleButtonClick(recipient.id)}
+                          onClick={() => onToogleButtonClick(index)}
                           className={styles.signWrapper}
                         >
                           <Icon
                             name="plus"
                             className={styles.plus}
-                            onClick={() => onToogleButtonClick(recipient.id)}
+                            onClick={() => onToogleButtonClick(index)}
                           />
                         </Button>
                       )}
@@ -117,7 +99,7 @@ const Payments = () => {
               ))}
               <div className={styles.addRecipientWrapper}>
                 <Button
-                  onClick={() => addRecipient(push)}
+                  onClick={() => push(newRecipient)}
                   appearance={{ theme: 'blue' }}
                 >
                   <div className={styles.addRecipientLabel}>

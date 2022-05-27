@@ -1,4 +1,6 @@
 import React, { useCallback } from 'react';
+import * as yup from 'yup';
+
 import { Form } from '~core/Fields';
 import Payments from '~dashboard/ExpenditurePage/Payments';
 import ExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings';
@@ -6,26 +8,38 @@ import ExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings'
 import { getMainClasses } from '~utils/css';
 
 import styles from './ExpenditurePage.css';
+import { newRecipient } from '~dashboard/ExpenditurePage/Payments/consts';
 
 const displayName = 'pages.ExpenditurePage';
 
 const initialValues = {
-  recipients: [
-    {
-      id: '0',
-      recipient: undefined,
-      value: [
-        {
-          id: '0',
-          amount: undefined,
-          tokenAdress: undefined,
-        },
-      ],
-      delay: undefined,
-      isExpanded: true,
-    },
-  ],
+  expenditure: 'advanced',
+  recipients: [newRecipient],
 };
+
+const validationSchema = yup.object().shape({
+  expenditure: yup.string().required(),
+  recipients: yup.array(
+    yup.object().shape({
+      recipient: yup.object().required('User is required'),
+      value: yup
+        .array(
+          yup.object().shape({
+            amount: yup.number().required('Value is required'),
+            tokenAddress: yup.string().required('Token is required'),
+          }),
+        )
+        .min(1),
+      delay: yup
+        .object()
+        .shape({
+          amount: yup.string().required(),
+          time: yup.string().required('Delay is required'),
+        })
+        .required(),
+    }),
+  ),
+});
 
 const ExpenditurePage = () => {
   const submit = useCallback((values) => {
@@ -34,7 +48,13 @@ const ExpenditurePage = () => {
   }, []);
 
   return (
-    <Form initialValues={initialValues} onSubmit={submit}>
+    <Form
+      initialValues={initialValues}
+      onSubmit={submit}
+      validationSchema={validationSchema}
+      validateOnBlur={false}
+      validateOnChange={false}
+    >
       <div className={getMainClasses({}, styles)}>
         <aside className={styles.sidebar}>
           <ExpenditureSettings />

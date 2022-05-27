@@ -1,5 +1,5 @@
-import { FieldArray, useFormikContext } from 'formik';
-import React, { useState } from 'react';
+import { FieldArray, useField, useFormikContext } from 'formik';
+import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import Button from '~core/Button';
 import { FormSection, Input, Select, TokenSymbolSelector } from '~core/Fields';
@@ -12,6 +12,7 @@ import UserPickerWithSearch from '~core/UserPickerWithSearch';
 import { AnyUser } from '~data/index';
 import { Address } from '~types/index';
 import { userData } from '../ExpenditureSettings/consts';
+import { Recipient as RecipientType } from '../Payments/types';
 import { tokensData } from './consts';
 
 import styles from './Recipient.css';
@@ -64,32 +65,23 @@ const MSG = defineMessages({
 const supRenderAvatar = (address: Address, item: ItemDataType<AnyUser>) => (
   <UserAvatar address={address} user={item} size="xs" notSet={false} />
 );
-export interface Recipient {
-  id: number;
-  recipient?: AnyUser;
-  value: { id: number; amount?: number; tokenAddress?: number }[];
-  delay?: {
-    amount?: string;
-    token?: string;
-    id?: string;
-  };
-  isExpanded: boolean;
-}
 interface Props {
-  recipient: Recipient;
+  recipient: RecipientType;
   index: number;
 }
 
 const newToken = {
-  id: 0,
   amount: undefined,
   tokenAddress: undefined,
 };
 
 const Recipient = ({ recipient, index }: Props) => {
   const { setFieldValue } = useFormikContext();
-  const [valueId, setValueId] = useState(1);
   const { isExpanded, value: tokens } = recipient;
+  const [, { error: amountError }] = useField(
+    `recipients[${index}].delay.amount`,
+  );
+  const [, { error: timeError }] = useField(`recipients[${index}].delay.time`);
 
   return (
     <div className={styles.container}>
@@ -114,7 +106,7 @@ const Recipient = ({ recipient, index }: Props) => {
             render={(arrayHelpers) => (
               <FormSection appearance={{ border: 'bottom' }}>
                 {tokens?.map((token, idx) => (
-                  <div className={styles.valueContainer} key={token.id}>
+                  <div className={styles.valueContainer} key={idx}>
                     <div className={styles.inputContainer}>
                       <Input
                         name={`recipients[${index}].value[${idx}].amount`}
@@ -143,12 +135,7 @@ const Recipient = ({ recipient, index }: Props) => {
                         {tokens.length > 1 && (
                           <Button
                             type="button"
-                            onClick={() => {
-                              if (tokens?.length === 1) {
-                                return;
-                              }
-                              arrayHelpers.remove(idx);
-                            }}
+                            onClick={() => arrayHelpers.remove(idx)}
                             appearance={{ theme: 'dangerLink' }}
                           >
                             <FormattedMessage {...MSG.removeTokenText} />
@@ -159,19 +146,13 @@ const Recipient = ({ recipient, index }: Props) => {
                         label=""
                         tokens={tokensData}
                         name={`recipients[${index}].value[${idx}].tokenAddress`}
-                        elementOnly
                         appearance={{ alignOptions: 'right', theme: 'grey' }}
                       />
+                      {/* if last */}
                       {tokens.length === idx + 1 && (
                         <Button
                           type="button"
-                          onClick={() => {
-                            arrayHelpers.push({
-                              ...newToken,
-                              id: String(valueId),
-                            });
-                            setValueId((idLocal) => idLocal + 1);
-                          }}
+                          onClick={() => arrayHelpers.push(newToken)}
                           appearance={{ theme: 'blue' }}
                           disabled={
                             token.amount === undefined ||
@@ -219,6 +200,7 @@ const Recipient = ({ recipient, index }: Props) => {
                     size: 'small',
                   }}
                   label=""
+                  formattingOptions={{ numericOnly: true }}
                   elementOnly
                 />
                 <Select
@@ -246,6 +228,9 @@ const Recipient = ({ recipient, index }: Props) => {
                 />
               </div>
             </div>
+            {(amountError || timeError) && (
+              <div className={styles.error}>{timeError}</div>
+            )}
           </FormSection>
         </>
       )}

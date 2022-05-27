@@ -118,14 +118,12 @@ const UserPickerWithSearch = ({
   renderAvatar = (address: Address, item?: ItemDataType<AnyUser>) => (
     <UserAvatar address={address} user={item} size="xs" />
   ),
-  renderItem: renderItemProp,
+  renderItem,
   dataTest,
   itemDataTest,
   valueDataTest,
 }: EnhancedProps) => {
-  const [, { error, touched, value }, { setValue }] = useField<AnyUser | null>(
-    name,
-  );
+  const [, { error, value }, { setValue }] = useField<AnyUser | null>(name);
   const { formatMessage } = useIntl();
 
   const handleActiveUserClick = useCallback(() => {
@@ -141,20 +139,18 @@ const UserPickerWithSearch = ({
     },
     [onSelected, setValue],
   );
-  // Use custom render prop for item or the default one with the given renderAvatar function
-  const renderItem =
-    renderItemProp || // eslint-disable-next-line react-hooks/rules-of-hooks
-    useCallback(
-      (user: ItemDataType<AnyUser>) => (
-        <ItemDefault
-          itemData={user}
-          renderAvatar={renderAvatar}
-          showMaskedAddress
-          dataTest={itemDataTest}
-        />
-      ),
-      [renderAvatar, itemDataTest],
-    );
+
+  const defaultRenderItem = useCallback(
+    (user: ItemDataType<AnyUser>) => (
+      <ItemDefault
+        itemData={user}
+        renderAvatar={renderAvatar}
+        showMaskedAddress
+        dataTest={itemDataTest}
+      />
+    ),
+    [renderAvatar, itemDataTest],
+  );
 
   const placeholderText =
     !placeholder || typeof placeholder === 'string'
@@ -204,9 +200,7 @@ const UserPickerWithSearch = ({
               <div className={styles.inputWrapper}>
                 <input
                   disabled={disabled}
-                  className={
-                    touched && error ? styles.inputInvalid : styles.input
-                  }
+                  className={styles.input}
                   {...inputProps}
                   placeholder={placeholderText}
                   ref={registerInputNode}
@@ -215,7 +209,7 @@ const UserPickerWithSearch = ({
               </div>
             )}
             <OmniPicker
-              renderItem={renderItem}
+              renderItem={renderItem || defaultRenderItem}
               onPick={handlePick}
               height="large"
             />

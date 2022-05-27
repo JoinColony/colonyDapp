@@ -1,13 +1,10 @@
 export interface Recipient {
-  id: string;
-  user?: any;
-  value?: {
-    value: string;
-    token: any;
-  };
-  delay?: {
-    value: string;
+  id?: string;
+  user: AnyUser;
+  value: { amount?: number; tokenAddress?: number }[];
+  delay: {
+    amount: string;
     time: string;
   };
-  isExpanded: boolean;
+  isExpanded?: boolean;
 }

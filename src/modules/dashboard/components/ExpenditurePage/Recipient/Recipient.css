@@ -65,6 +65,11 @@
   font-size: 12px;
 }
 
+.tokenWrapper p {
+  /* override style added in form component */
+  margin-bottom: -15px;
+}
+
 .removeWrapper {
   margin-bottom: 4px;
   height: 14px;
@@ -103,4 +108,11 @@
 
 .tooltipDescription {
   margin-top: 8px;
+}
+
+.error {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  text-align: right;
+  color: var(--danger);
 }

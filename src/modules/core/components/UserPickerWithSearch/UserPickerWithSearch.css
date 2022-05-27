@@ -68,10 +68,6 @@
   opacity: 0.65;
 }
 
-.inputInvalid {
-  border-color: var(--danger);
-}
-
 .input {
   composes: baseInput;
   width: 100%;
@@ -113,6 +109,7 @@
   margin-right: 30px;
   width: 100%;
   font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
   text-align: right;
   color: var(--danger);
 }

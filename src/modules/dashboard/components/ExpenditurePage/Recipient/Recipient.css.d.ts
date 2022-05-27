@@ -10,3 +10,4 @@ export const inputContainer: string;
 export const questionIcon: string;
 export const tooltip: string;
 export const tooltipDescription: string;
+export const error: string;

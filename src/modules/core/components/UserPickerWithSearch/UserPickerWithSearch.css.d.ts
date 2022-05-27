@@ -4,7 +4,6 @@ export const container: string;
 export const icon: string;
 export const focusIcon: string;
 export const baseInput: string;
-export const inputInvalid: string;
 export const input: string;
 export const inputWrapper: string;
 export const recipientName: string;
