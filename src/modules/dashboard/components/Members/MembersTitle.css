@@ -38,6 +38,7 @@
 
   /* pull down to cover HR */
   margin-bottom: -1px;
+  padding-right: 35px;
   width: 300px;
   position: relative;
   border-bottom: 1px solid var(--temp-grey-13);
@@ -82,7 +83,8 @@
 .clearButton {
   composes: button from '~styles/reset.css';
   position: absolute;
-  top: 5px;
-  right: 30px;
+  top: 50%;
+  right: 21px;
   z-index: 2;
+  transform: translateY(-50%);
 }
