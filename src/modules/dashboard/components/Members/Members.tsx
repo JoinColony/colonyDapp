@@ -1,8 +1,7 @@
-import React, { FC, useState, useCallback } from 'react';
+import React, { FC, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import sortBy from 'lodash/sortBy';
-import { useParams } from 'react-router';
 
 import MembersSection from './MembersSection';
 
@@ -19,6 +18,7 @@ import {
   useContributorsAndWatchersQuery,
   ColonyContributor,
   ColonyWatcher,
+  DomainFieldsFragment,
 } from '~data/index';
 import {
   COLONY_TOTAL_BALANCE_DOMAIN_ID,
@@ -54,40 +54,24 @@ const MSG = defineMessages({
 interface Props {
   colony: Colony;
   bannedUsers: BannedUsersQuery['bannedUsers'];
+  selectedDomain: DomainFieldsFragment | undefined;
+  handleDomainChange: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const displayName = 'dashboard.Members';
 
-const Members = ({ colony: { colonyAddress, colonyName }, colony }: Props) => {
-  const { domainId } = useParams<{
-    domainId: string;
-  }>();
-
+const Members = ({
+  colony: { colonyAddress, colonyName },
+  colony,
+  selectedDomain,
+  handleDomainChange,
+}: Props) => {
   const {
     walletAddress: currentUserWalletAddress,
     username,
     ethereal,
   } = useLoggedInUser();
   const hasRegisteredProfile = !!username && !ethereal;
-
-  const [selectedDomainId, setSelectedDomainId] = useState<number>(
-    /*
-     * @NOTE DomainId param sanitization
-     *
-     * We don't actually need to worry about sanitizing the domainId that's
-     * coming in from the params.
-     * The value that reaches us through the hook is being processes by `react-router`
-     * and will always be a string.
-     *
-     * So if we can change that string into a number, we use it as domain, otherwise
-     * we fall back to the "All Domains" selection
-     */
-    parseInt(domainId, 10) || COLONY_TOTAL_BALANCE_DOMAIN_ID,
-  );
-
-  const selectedDomain = colony.domains.find(
-    ({ ethDomainId }) => ethDomainId === selectedDomainId,
-  );
 
   /*
    * NOTE If we can't find the domain based on the current selected doamain id,
@@ -134,8 +118,8 @@ const Members = ({ colony: { colonyAddress, colonyName }, colony }: Props) => {
   );
 
   const setFieldValue = useCallback(
-    (value) => setSelectedDomainId(parseInt(value, 10)),
-    [setSelectedDomainId],
+    (value) => handleDomainChange(parseInt(value, 10)),
+    [handleDomainChange],
   );
 
   if (loadingMembers) {
