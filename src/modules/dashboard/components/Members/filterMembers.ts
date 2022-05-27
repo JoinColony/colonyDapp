@@ -1,4 +1,7 @@
-export const filterMembers = (data, filterValue) => {
+export const filterMembers = (
+  data: ColonyContributor[] | ColonyWatcher[],
+  filterValue: string,
+) => {
   if (!filterValue) {
     return data;
   }
