@@ -16,7 +16,8 @@
 
 .rightAside {
   display: flex;
-  padding: 200px 0 20px 100px;
+  flex-direction: column;
+  padding: 153px 0 20px 85px;
   width: 26.5%;
 }
 
@@ -33,4 +34,18 @@
 
 .controls li + li {
   margin: 18px 0 0;
+}
+
+.teamReputationPointsContainer {
+  margin-bottom: 50px;
+}
+
+.teamReputationPointsContainer h4 {
+  font-size: var(--size-smallish);
+  line-height: 18px;
+}
+
+.reputationPoints {
+  line-height: 18px;
+  color: var(--dark);
 }
