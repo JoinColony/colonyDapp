@@ -18,7 +18,7 @@ interface Props {
 const stakeValidationMSG = defineMessage({
   tokens: {
     id: 'dashboard.ActionsPage.StakingValidationError.tokens',
-    defaultMessage: `The minimum stake requirement in this team is {minimumStake}. You only have {userActiveTokens} activated, so cannot provide the minimum stake. Please activate more tokens.`,
+    defaultMessage: `Activate more tokens to be eligible to stake.`,
   },
   reputation: {
     id: 'dashboard.ActionsPage.StakingValidationError.reputation',
@@ -40,11 +40,24 @@ const stakeValidationMSG = defineMessage({
 
 const displayName = 'StakingValidationError';
 
-const StakingValidationError = ({ stakeType, errorValues }: Props) => (
-  <div className={styles.validationError}>
-    <FormattedMessage {...stakeValidationMSG[stakeType]} values={errorValues} />
-  </div>
-);
+const StakingValidationError = ({ stakeType, errorValues }: Props) => {
+  if (stakeType === 'tokens') {
+    return (
+      <div>
+        <FormattedMessage {...stakeValidationMSG[stakeType]} />
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.validationError}>
+      <FormattedMessage
+        {...stakeValidationMSG[stakeType]}
+        values={errorValues}
+      />
+    </div>
+  );
+};
 
 StakingValidationError.displayName = displayName;
 

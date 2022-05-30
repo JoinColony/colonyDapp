@@ -40,6 +40,10 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.StakingWidget.objectButton',
     defaultMessage: 'Object',
   },
+  activateButton: {
+    id: 'dashboard.ActionsPage.StakingWidget.activateButton',
+    defaultMessage: 'Activate',
+  },
   stakingTooltip: {
     id: 'dashboard.ActionsPage.StakingWidget.stakingTooltip',
     defaultMessage: '[TO BE ADDED]',
@@ -285,6 +289,15 @@ const StakingWidget = ({
                   />
                 )}
               </span>
+              {!enoughTokens && (
+                <Button
+                  appearance={{
+                    theme: 'primary',
+                    size: 'medium',
+                  }}
+                  text={MSG.activateButton}
+                />
+              )}
             </div>
           </div>
         )}
