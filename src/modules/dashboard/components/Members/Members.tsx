@@ -4,20 +4,21 @@ import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import sortBy from 'lodash/sortBy';
 import { useParams } from 'react-router-dom';
 
-import MembersList from '~core/MembersList';
-import { SpinnerLoader } from '~core/Preloaders';
-import LoadMoreButton from '~core/LoadMoreButton';
+import MembersSection from './MembersSection';
+
 import UserPermissions from '~dashboard/UserPermissions';
+
+import { SpinnerLoader } from '~core/Preloaders';
 import Heading from '~core/Heading';
 import { Select, Form } from '~core/Fields';
 import { useTransformer } from '~utils/hooks';
 import {
-  ColonyContributor,
-  ColonyWatcher,
   Colony,
   useLoggedInUser,
   BannedUsersQuery,
   useContributorsAndWatchersQuery,
+  ColonyContributor,
+  ColonyWatcher,
 } from '~data/index';
 import {
   COLONY_TOTAL_BALANCE_DOMAIN_ID,
@@ -57,8 +58,6 @@ interface Props {
 
 const displayName = 'dashboard.Members';
 
-const ITEMS_PER_PAGE = 1;
-
 const Members = ({ colony: { colonyAddress, colonyName }, colony }: Props) => {
   const { domainId } = useParams<{
     domainId: string;
@@ -85,7 +84,6 @@ const Members = ({ colony: { colonyAddress, colonyName }, colony }: Props) => {
      */
     parseInt(domainId, 10) || COLONY_TOTAL_BALANCE_DOMAIN_ID,
   );
-  const [dataPage, setDataPage] = useState<number>(10);
 
   const selectedDomain = colony.domains.find(
     ({ ethDomainId }) => ethDomainId === selectedDomainId,
@@ -140,10 +138,6 @@ const Members = ({ colony: { colonyAddress, colonyName }, colony }: Props) => {
     [setSelectedDomainId],
   );
 
-  const handleDataPagination = useCallback(() => {
-    setDataPage(dataPage + 1);
-  }, [dataPage]);
-
   if (loadingMembers) {
     return (
       <div className={styles.main}>
@@ -154,25 +148,6 @@ const Members = ({ colony: { colonyAddress, colonyName }, colony }: Props) => {
       </div>
     );
   }
-
-  /*
-   * @NOTE Poor man's pagination
-   *
-   * We're not really doing proper pagination like we do for say... `ColonyEvents`,
-   * because our metadata server doesn't support skip, first, more, next, etc...
-   * query filters
-   *
-   * A proper solution for this would be to teach the server to return just part
-   * of the results, with the next waiting in line for a callback, but the current
-   * timeframe doesn't allow for this, so I guess this is the "best" we can do for now
-   */
-  const paginatedContributors = contributors.slice(
-    0,
-    ITEMS_PER_PAGE * dataPage,
-  );
-
-  const paginatedWatchers = watchers.slice(0, ITEMS_PER_PAGE * dataPage);
-
   return (
     <div className={styles.main}>
       <div className={styles.titleContainer}>
@@ -202,51 +177,40 @@ const Members = ({ colony: { colonyAddress, colonyName }, colony }: Props) => {
           />
         </Form>
       </div>
-      {/* PLACEHOLDER */}
-      <div>CONTRIBUTORS</div>
+
       {contributors.length ? (
-        <MembersList<ColonyContributor>
+        <MembersSection<ColonyContributor>
+          isContributorsSection
           colony={colony}
-          extraItemContent={({ roles, directRoles, banned }) => (
-            <UserPermissions
-              roles={roles}
-              directRoles={directRoles}
-              banned={banned}
-            />
-          )}
-          domainId={currentDomainId}
-          users={paginatedContributors}
+          currentDomainId={currentDomainId}
+          members={contributors as ColonyContributor[]}
           canAdministerComments={canAdministerComments}
+          extraItemContent={({ roles, directRoles, banned }) => {
+            return (
+              <UserPermissions
+                roles={roles}
+                directRoles={directRoles}
+                banned={banned}
+              />
+            );
+          }}
         />
       ) : (
         <FormattedMessage {...MSG.failedToFetch} />
       )}
-      {ITEMS_PER_PAGE * dataPage < contributors.length && (
-        <LoadMoreButton
-          onClick={handleDataPagination}
-          isLoadingData={loadingMembers}
-        />
-      )}
       {(currentDomainId === ROOT_DOMAIN_ID ||
         currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) && (
         <>
-          {/* PLACEHOLDER */}
-          <div>WATCHERS</div>
           {watchers?.length && (
-            <MembersList<ColonyWatcher>
+            <MembersSection<ColonyWatcher>
+              isContributorsSection={false}
               colony={colony}
-              domainId={currentDomainId}
-              users={paginatedWatchers}
+              currentDomainId={currentDomainId}
+              members={watchers as ColonyWatcher[]}
               canAdministerComments={canAdministerComments}
               extraItemContent={({ banned }) => (
                 <UserPermissions roles={[]} directRoles={[]} banned={banned} />
               )}
-            />
-          )}
-          {ITEMS_PER_PAGE * dataPage < watchers.length && (
-            <LoadMoreButton
-              onClick={handleDataPagination}
-              isLoadingData={loadingMembers}
             />
           )}
         </>
