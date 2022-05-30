@@ -1,7 +1,9 @@
-export const filterMembers = (
-  data: ColonyContributor[] | ColonyWatcher[],
+import { ColonyContributor, ColonyWatcher } from '~data/index';
+
+export const filterMembers = <M extends ColonyContributor | ColonyWatcher>(
+  data: M[],
   filterValue: string,
-) => {
+): M[] => {
   if (!filterValue) {
     return data;
   }

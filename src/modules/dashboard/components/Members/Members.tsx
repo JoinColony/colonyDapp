@@ -127,13 +127,13 @@ const Members = ({
 
   const filterContributorsAndWatchers = useCallback(
     (filterValue) => {
-      const filteredContributors = filterMembers(
+      const filteredContributors = filterMembers<ColonyContributor>(
         members?.contributorsAndWatchers?.contributors || [],
         filterValue,
       );
       setContributors(filteredContributors);
 
-      const filteredWatchers = filterMembers(
+      const filteredWatchers = filterMembers<ColonyWatcher>(
         members?.contributorsAndWatchers?.watchers || [],
         filterValue,
       );
@@ -155,6 +155,22 @@ const Members = ({
     },
     [filterContributorsAndWatchers, setSearchValue],
   );
+
+  const zeroResultsMsg = (isSearchResult: boolean) => {
+    const resultMsg = isSearchResult ? MSG.noMemebersFound : MSG.failedToFetch;
+    return (
+      <div className={styles.noResults}>
+        <FormattedMessage {...resultMsg} />
+      </div>
+    );
+  };
+
+  const hasNoMembers = useCallback(() => {
+    if (!contributors?.length && !watchers?.length) {
+      return zeroResultsMsg(!!searchValue);
+    }
+    return null;
+  }, [contributors, watchers, searchValue]);
 
   if (loadingMembers) {
     return (
@@ -182,22 +198,6 @@ const Members = ({
     contributors?.slice(0, ITEMS_PER_PAGE * dataPage) || [];
 
   const paginatedWatchers = watchers?.slice(0, ITEMS_PER_PAGE * dataPage) || [];
-
-  const zeroResultsMsg = (isSearchResult: boolean) => {
-    const resultMsg = isSearchResult ? MSG.noMemebersFound : MSG.failedToFetch;
-    return (
-      <div className={styles.noResults}>
-        <FormattedMessage {...resultMsg} />
-      </div>
-    );
-  };
-
-  const hasNoMembers = () => {
-    if (!contributors?.length && !watchers?.length) {
-      return zeroResultsMsg(!!searchValue);
-    }
-    return null;
-  };
 
   return (
     <div className={styles.main}>
