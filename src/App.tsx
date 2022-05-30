@@ -13,6 +13,7 @@ import actionMessages from './i18n/en-actions';
 import eventsMessages from './i18n/en-events';
 import motionMessages from './i18n/en-motions';
 import systemMessages from './i18n/en-system-messages';
+import expenditureMessages from './i18n/en-expenditure';
 import Routes from './routes';
 import apolloClient from './context/apolloClient';
 
@@ -38,6 +39,7 @@ const App = ({ store }: Props) => (
       ...eventsMessages,
       ...systemMessages,
       ...motionMessages,
+      ...expenditureMessages,
     }}
   >
     <ApolloProvider client={apolloClient}>
