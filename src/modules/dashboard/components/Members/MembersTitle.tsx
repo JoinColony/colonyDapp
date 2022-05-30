@@ -88,7 +88,6 @@ const MembersTitle = ({
           }}
           onMouseLeave={(e) => {
             (e.target as HTMLInputElement).placeholder = '';
-            // e.target.placeholder = '';
           }}
         />
         {searchValue && (
