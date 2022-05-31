@@ -61,6 +61,11 @@
   letter-spacing: var(--spacing-medium);
 }
 
+.minStakeAmount {
+  composes: amount;
+  color: var(--pink);
+}
+
 .sliderContainer {
   margin-left: 6px;
 }

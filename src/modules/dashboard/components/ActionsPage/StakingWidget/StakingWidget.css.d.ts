@@ -7,6 +7,7 @@ export const buttonGroup: string;
 export const buttonGroupAlignment: string;
 export const objectButton: string;
 export const amount: string;
+export const minStakeAmount: string;
 export const sliderContainer: string;
 export const help: string;
 export const tooltip: string;
