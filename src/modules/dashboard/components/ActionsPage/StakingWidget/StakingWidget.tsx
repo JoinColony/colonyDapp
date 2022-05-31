@@ -215,6 +215,8 @@ const StakingWidget = ({
 
   const canBeStaked = isObjection ? canUserStakeNay : canUserStakeYay;
 
+  const objectButtonStyles = enoughTokens ? styles.objectButton : '';
+
   return (
     <div className={styles.main} data-test="stakingWidget">
       <ActionForm
@@ -245,7 +247,11 @@ const StakingWidget = ({
               minUserStake={minUserStake}
               userActivatedTokens={userActivatedTokens}
             />
-            <div className={styles.buttonGroup}>
+            <div
+              className={`${styles.buttonGroup} ${
+                !enoughTokens ? styles.buttonGroupAlignment : ''
+              }`}
+            >
               <Button
                 appearance={{
                   theme: isObjection ? 'danger' : 'primary',
@@ -263,7 +269,7 @@ const StakingWidget = ({
                 className={
                   !bigNumberify(totalNAYStakes).isZero()
                     ? styles.backButtonWrapper
-                    : styles.objectButton
+                    : objectButtonStyles
                 }
               >
                 {isObjection || !bigNumberify(totalNAYStakes).isZero() ? (

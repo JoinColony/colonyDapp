@@ -35,8 +35,11 @@
 
 .buttonGroup {
   display: flex;
-  justify-content: space-between;
   margin-top: 30px;
+}
+
+.buttonGroupAlignment {
+  justify-content: space-between;
 }
 
 .buttonGroup button {

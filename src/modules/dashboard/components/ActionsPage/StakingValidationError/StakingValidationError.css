@@ -4,3 +4,15 @@
   font-weight: var(--weight-bold);
   color: var(--pink);
 }
+
+.tokenValidationError {
+  margin-top: 20px;
+  padding: 7px 0;
+  width: 100%;
+  border-radius: var(--radius-tiny);
+  background-color: var(--pink);
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  text-align: center;
+  color: rgba(255, 255, 255, 1);
+}

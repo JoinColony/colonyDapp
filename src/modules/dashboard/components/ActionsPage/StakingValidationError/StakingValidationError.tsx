@@ -43,7 +43,7 @@ const displayName = 'StakingValidationError';
 const StakingValidationError = ({ stakeType, errorValues }: Props) => {
   if (stakeType === 'tokens') {
     return (
-      <div>
+      <div className={styles.tokenValidationError}>
         <FormattedMessage {...stakeValidationMSG[stakeType]} />
       </div>
     );
