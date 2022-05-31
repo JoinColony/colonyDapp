@@ -12,16 +12,20 @@ const displayName = 'dashboard.MembersSection';
 
 const MSG = defineMessages({
   contributorsTitle: {
-    id: 'dashboard.Members.contributorsTitle',
+    id: 'dashboard.Members.MembersSection.contributorsTitle',
     defaultMessage: 'Contributors',
   },
   watchersTitle: {
-    id: 'dashboard.Members.watchersTitle',
+    id: 'dashboard.Members.MembersSection.watchersTitle',
     defaultMessage: 'Watchers',
   },
   watchersDescription: {
-    id: 'dashboard.Members.watchersDescription',
+    id: 'dashboard.Members.MembersSection.watchersDescription',
     defaultMessage: "Members who don't currently have any reputation",
+  },
+  noMemebersFound: {
+    id: 'dashboard.Members.MembersSection.noResultsFound',
+    defaultMessage: 'No members found',
   },
 });
 
@@ -67,13 +71,21 @@ Props<U>) => {
           </div>
         )}
       </div>
-      <MembersList
-        colony={colony}
-        extraItemContent={extraItemContent}
-        domainId={currentDomainId}
-        users={paginatedMembers}
-        canAdministerComments={canAdministerComments}
-      />
+      {members.length ? (
+        <div className={styles.membersList}>
+          <MembersList
+            colony={colony}
+            extraItemContent={extraItemContent}
+            domainId={currentDomainId}
+            users={paginatedMembers}
+            canAdministerComments={canAdministerComments}
+          />
+        </div>
+      ) : (
+        <div className={styles.noResults}>
+          <FormattedMessage {...MSG.noMemebersFound} />
+        </div>
+      )}
       {ITEMS_PER_SECTION * dataPage < members.length && (
         <LoadMoreButton onClick={handleDataPagination} isLoadingData={false} />
       )}
