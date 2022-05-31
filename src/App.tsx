@@ -7,6 +7,7 @@ import { ApolloProvider } from '@apollo/client';
 
 import layout from '~styles/layout.css';
 import { DialogProvider } from '~core/Dialog';
+import { TokenActivationProvider } from '~users/TokenActivationProvider';
 
 import messages from './i18n/en.json';
 import actionMessages from './i18n/en-actions';
@@ -45,9 +46,11 @@ const App = ({ store }: Props) => (
         <ReduxProvider store={store}>
           <BrowserRouter>
             <DialogProvider>
-              <div className={layout.stretch}>
-                <Routes />
-              </div>
+              <TokenActivationProvider>
+                <div className={layout.stretch}>
+                  <Routes />
+                </div>
+              </TokenActivationProvider>
             </DialogProvider>
           </BrowserRouter>
         </ReduxProvider>

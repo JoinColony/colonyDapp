@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { defineMessage, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
+import { TokenActivationContext } from '~users/TokenActivationProvider';
 import { UniversalMessageValues } from '~types/index';
 
 import styles from './StakingValidationError.css';
@@ -42,12 +43,17 @@ const stakeValidationMSG = defineMessage({
 const displayName = 'StakingValidationError';
 
 const StakingValidationError = ({ stakeType, errorValues }: Props) => {
+  const { setIsOpen: openTokenActivationPopover } = useContext(
+    TokenActivationContext,
+  );
+
   if (stakeType === 'tokens') {
     return (
       <Button
         text={stakeValidationMSG[stakeType]}
         appearance={{ theme: 'pink' }}
-        style={{ marginTop: '20px' }}
+        style={{ marginTop: '20px', fontSize: '11px' }}
+        onClick={() => openTokenActivationPopover(true)}
       />
     );
   }

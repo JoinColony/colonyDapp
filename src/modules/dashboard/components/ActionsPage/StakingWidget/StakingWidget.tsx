@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { defineMessages } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
 import * as yup from 'yup';
@@ -9,6 +9,7 @@ import Button from '~core/Button';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 import { useDialog } from '~core/Dialog';
 import RaiseObjectionDialog from '~dialogs/RaiseObjectionDialog';
+import { TokenActivationContext } from '~users/TokenActivationProvider';
 
 import {
   useLoggedInUser,
@@ -67,6 +68,9 @@ const StakingWidget = ({
   handleWidgetState,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
+  const { setIsOpen: openTokenActivationPopover } = useContext(
+    TokenActivationContext,
+  );
 
   const { data, loading } = useMotionStakesQuery({
     variables: {
@@ -302,6 +306,7 @@ const StakingWidget = ({
                     size: 'medium',
                   }}
                   text={MSG.activateButton}
+                  onClick={() => openTokenActivationPopover(true)}
                 />
               )}
             </div>
