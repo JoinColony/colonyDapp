@@ -17,3 +17,15 @@
   font-weight: var(--weight-bold);
   color: var(--temp-grey-blue-7);
 }
+
+.noResults {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 36px;
+  margin-bottom: 48px;
+}
+
+.membersList > ul {
+  box-shadow: none;
+}
