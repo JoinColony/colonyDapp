@@ -1,6 +1,7 @@
 import React from 'react';
 import { defineMessage, FormattedMessage } from 'react-intl';
 
+import Button from '~core/Button';
 import { UniversalMessageValues } from '~types/index';
 
 import styles from './StakingValidationError.css';
@@ -43,9 +44,11 @@ const displayName = 'StakingValidationError';
 const StakingValidationError = ({ stakeType, errorValues }: Props) => {
   if (stakeType === 'tokens') {
     return (
-      <div className={styles.tokenValidationError}>
-        <FormattedMessage {...stakeValidationMSG[stakeType]} />
-      </div>
+      <Button
+        text={stakeValidationMSG[stakeType]}
+        appearance={{ theme: 'pink' }}
+        style={{ marginTop: '20px' }}
+      />
     );
   }
 
