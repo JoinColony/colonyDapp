@@ -10,6 +10,7 @@ export * from './DefaultValues';
 export * from './RecordToJS';
 export * from './context';
 export * from './colonyActions';
+export * from './expenditureActions';
 export * from './colonyMotions';
 export * from './extensions';
 export * from './user';

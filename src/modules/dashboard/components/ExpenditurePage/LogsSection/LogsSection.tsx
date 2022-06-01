@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import styles from './LogsSection.css';
-import { logs } from './consts';
+import { logs, colony } from './consts';
 import Log from './Log';
 import { useLoggedInUser } from '~data/helpers';
-import { CommentInput } from '~core/Comment';
+import Comment, { CommentInput } from '~core/Comment';
 
 interface Props {
   colonyAddress: string;
@@ -14,12 +14,45 @@ const LogsSection = ({ colonyAddress }: Props) => {
   const { username: currentUserName, ethereal } = useLoggedInUser();
   // add logs fetching here
 
+  const renderLogs = useMemo(() => {
+    return logs.map((log) => {
+      if (log.type === 'action' && log.actionType) {
+        return <Log {...log} key={log.uniqueId} />;
+      }
+      const {
+        createdAt,
+        message,
+        sourceId,
+        deleted,
+        adminDelete,
+        userBanned,
+        initiator,
+      } = log;
+      if (log.type === 'comment') {
+        return (
+          <Comment
+            key={log.uniqueId}
+            createdAt={createdAt}
+            comment={message}
+            commentMeta={{
+              id: sourceId || '',
+              deleted,
+              adminDelete,
+              userBanned,
+            }}
+            colony={colony}
+            user={initiator}
+            showControls
+          />
+        );
+      }
+      return null;
+    });
+  }, []);
+
   return (
     <div className={styles.container}>
-      {logs.map((log, idx) => (
-        // eslint-disable-next-line react/no-array-index-key
-        <Log {...log} key={`${idx}_${logs.length}`} />
-      ))}
+      {renderLogs}
       {/*
        *  @NOTE A user can comment only if he has a wallet connected
        * and a registered user profile

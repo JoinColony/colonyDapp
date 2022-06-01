@@ -15,6 +15,7 @@ interface Props {
   blockExplorerName: string;
   transactionHash: string;
   amount: string;
+  changes?: any[];
 }
 
 const Log = ({
@@ -23,6 +24,7 @@ const Log = ({
   createdAt,
   transactionHash,
   amount,
+  changes,
 }: Props) => {
   return (
     <div className={styles.container}>
@@ -32,11 +34,16 @@ const Log = ({
           id={`expenditure.${actionType}`}
           values={{
             amount,
+            reputation: '70%',
             user: (
               <span className={styles.userDecoration}>
                 @<FriendlyName user={user} />
               </span>
             ),
+            changes:
+              changes?.map((change) => (
+                <FormattedMessage id={`expenditure.change${change.name}`} />
+              )) || '',
           }}
         />
         {transactionHash && (
