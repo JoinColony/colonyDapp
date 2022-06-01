@@ -38,7 +38,7 @@
 
   /* pull down to cover HR */
   margin-bottom: -1px;
-  padding-right: 35px;
+  padding-right: 42px;
   width: 300px;
   position: relative;
   border-bottom: 1px solid var(--temp-grey-13);
@@ -84,7 +84,7 @@
   composes: button from '~styles/reset.css';
   position: absolute;
   top: 50%;
-  right: 21px;
+  right: 25px;
   z-index: 2;
   transform: translateY(-50%);
 }
