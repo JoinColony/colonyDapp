@@ -47,10 +47,10 @@ const InviteLinkButton = ({ colonyName, buttonAppearance }: Props) => {
   }, [copied]);
   return (
     <Tooltip
-      placement="top-start"
-      trigger="hover"
       content={
-        <FormattedMessage {...MSG.copyLinkTooltip} values={{ copied }} />
+        <div className={styles.tooltip}>
+          <FormattedMessage {...MSG.copyLinkTooltip} values={{ copied }} />
+        </div>
       }
     >
       <div className={styles.inviteLinkButton}>
