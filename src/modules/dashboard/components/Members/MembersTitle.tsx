@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React, { useCallback, Dispatch, useRef, SetStateAction } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 
 import Heading from '~core/Heading';
@@ -48,6 +48,36 @@ const MembersTitle = ({
   handleSearch,
 }: Props) => {
   const { formatMessage } = useIntl();
+  const searchInput = useRef<HTMLInputElement>(null);
+  const handleFocusRef = useCallback(() => {
+    searchInput?.current?.focus();
+  }, [searchInput]);
+
+  const handleMouseEnterRef = useCallback(() => {
+    if (searchInput.current !== null) {
+      searchInput.current.placeholder = formatMessage(MSG.searchPlaceholder);
+    }
+  }, [formatMessage]);
+
+  const handleMouseLeaveRef = useCallback(() => {
+    if (searchInput.current !== null) {
+      searchInput.current.placeholder = '';
+    }
+  }, []);
+
+  const handleMouseEnter = useCallback(
+    (e) => {
+      (e.target as HTMLInputElement).placeholder = formatMessage(
+        MSG.searchPlaceholder,
+      );
+    },
+    [formatMessage],
+  );
+
+  const handleMouseLeave = useCallback((e) => {
+    (e.target as HTMLInputElement).placeholder = '';
+  }, []);
+
   return (
     <div className={styles.titleContainer}>
       <div className={styles.titleLeft}>
@@ -78,17 +108,12 @@ const MembersTitle = ({
       <div className={styles.searchContainer}>
         <input
           name="search"
+          ref={searchInput}
           value={searchValue}
           className={styles.input}
           onChange={handleSearch}
-          onMouseEnter={(e) => {
-            (e.target as HTMLInputElement).placeholder = formatMessage(
-              MSG.searchPlaceholder,
-            );
-          }}
-          onMouseLeave={(e) => {
-            (e.target as HTMLInputElement).placeholder = '';
-          }}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         />
         {searchValue && (
           <button
@@ -108,6 +133,9 @@ const MembersTitle = ({
           className={styles.icon}
           name="search"
           title={MSG.search}
+          onClick={handleFocusRef}
+          onMouseEnter={handleMouseEnterRef}
+          onMouseLeave={handleMouseLeaveRef}
         />
       </div>
     </div>
