@@ -17,7 +17,7 @@
   display: flex;
   justify-content: space-between;
   padding: 10px 0;
-  border-bottom: 1px solid rgba(234, 234, 238, 255);
+  border-bottom: 1px solid var(--temp-grey-6);
 }
 
 .icon {

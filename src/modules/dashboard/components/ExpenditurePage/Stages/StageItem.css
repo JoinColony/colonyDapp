@@ -18,7 +18,7 @@
   position: absolute;
   bottom: 24px;
   left: 3px;
-  border-left: 1px solid rgba(234, 234, 238, 255);
+  border-left: 1px solid var(--temp-grey-6);
 }
 
 .activeDot {

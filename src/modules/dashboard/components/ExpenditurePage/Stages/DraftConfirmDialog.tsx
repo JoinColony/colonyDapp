@@ -47,10 +47,6 @@ const MSG = defineMessages({
     Until expenditure is staked it won’t show up publicly on list. 
     It works like an anti-spam filter.`,
   },
-  tooltipContent: {
-    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.tooltipContent',
-    defaultMessage: 'message',
-  },
   cancelText: {
     id: 'dashboard.Expenditures.Stages.draftConfirmDialog.cancelText',
     defaultMessage: 'Cancel',
@@ -92,9 +88,12 @@ const DraftConfirmDialog = ({ cancel, onClick, close }: Props) => {
                 </div>
               </Form>
               <Tooltip
-                content={<FormattedMessage {...MSG.tooltipContent} />}
+                content={
+                  <div className={styles.tooltip}>
+                    <FormattedMessage id="tooltip.forceAction" />
+                  </div>
+                }
                 trigger="hover"
-                placement="bottom-end"
               >
                 <Icon name="question-mark" className={styles.questionIcon} />
               </Tooltip>
@@ -140,9 +139,9 @@ const DraftConfirmDialog = ({ cancel, onClick, close }: Props) => {
           onClick={() => cancel()}
           text={MSG.cancelText}
           style={{
-            color: styles.cancelColor,
-            fontWeight: 700,
-            fontSize: styles.buttonFontSize,
+            color: styles.textColor,
+            fontWeight: 400,
+            fontSize: styles.sizeNormal,
           }}
         />
         <Button

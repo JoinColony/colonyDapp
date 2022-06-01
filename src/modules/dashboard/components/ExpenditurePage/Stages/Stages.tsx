@@ -137,14 +137,17 @@ const Stages = () => {
               {/* Deleting the expenditure will be added in next PR */}
               <Icon name="trash" className={styles.icon} />
               {/* onClick has temporary action, needs to be submiting draft in the future */}
-              <Button onClick={handleSaveDraft}>
+              <Button onClick={handleSaveDraft} style={{ height: '29px' }}>
                 <FormattedMessage {...MSG.submitDraft} />
               </Button>
             </>
           ) : (
             <>
               <Icon name="share" className={styles.icon} />
-              <Button onClick={activeState?.buttonAction}>
+              <Button
+                onClick={activeState?.buttonAction}
+                className={styles.button}
+              >
                 {typeof activeState?.buttonText === 'string' ? (
                   activeState.buttonText
                 ) : (
