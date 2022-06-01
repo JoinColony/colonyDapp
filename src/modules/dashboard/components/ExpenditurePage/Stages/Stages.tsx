@@ -144,10 +144,7 @@ const Stages = () => {
           ) : (
             <>
               <Icon name="share" className={styles.icon} />
-              <Button
-                onClick={activeState?.buttonAction}
-                className={styles.button}
-              >
+              <Button onClick={activeState?.buttonAction}>
                 {typeof activeState?.buttonText === 'string' ? (
                   activeState.buttonText
                 ) : (
