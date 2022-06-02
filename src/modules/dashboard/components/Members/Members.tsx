@@ -1,15 +1,10 @@
-import React, { FC, useCallback } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import sortBy from 'lodash/sortBy';
 
-import MembersSection from './MembersSection';
-
-import UserPermissions from '~dashboard/UserPermissions';
-
 import { SpinnerLoader } from '~core/Preloaders';
-import Heading from '~core/Heading';
-import { Select, Form } from '~core/Fields';
+import UserPermissions from '~dashboard/UserPermissions';
 import { useTransformer } from '~utils/hooks';
 import {
   Colony,
@@ -27,6 +22,10 @@ import {
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot, canAdminister } from '~modules/users/checks';
 
+import MembersTitle from './MembersTitle';
+import { filterMembers } from './filterMembers';
+import MembersSection from './MembersSection';
+
 import styles from './Members.css';
 
 const MSG = defineMessages({
@@ -34,20 +33,13 @@ const MSG = defineMessages({
     id: 'dashboard.Members.loading',
     defaultMessage: "Loading Colony's users...",
   },
-  title: {
-    id: 'dashboard.Members.title',
-    defaultMessage: `Members{domainLabel, select,
-      root {}
-      other {: {domainLabel}}
-    }`,
-  },
-  labelFilter: {
-    id: 'dashboard.Members.labelFilter',
-    defaultMessage: 'Filter',
-  },
   failedToFetch: {
     id: 'dashboard.Members.failedToFetch',
     defaultMessage: "Could not fetch the colony's members",
+  },
+  noMemebersFound: {
+    id: 'dashboard.Members.noResultsFound',
+    defaultMessage: 'No members found',
   },
 });
 
@@ -66,12 +58,15 @@ const Members = ({
   selectedDomain,
   handleDomainChange,
 }: Props) => {
+  const [searchValue, setSearchValue] = useState<string>('');
   const {
     walletAddress: currentUserWalletAddress,
     username,
     ethereal,
   } = useLoggedInUser();
   const hasRegisteredProfile = !!username && !ethereal;
+  const [contributors, setContributors] = useState<ColonyContributor[]>([]);
+  const [watchers, setWatchers] = useState<ColonyWatcher[]>([]);
 
   /*
    * NOTE If we can't find the domain based on the current selected doamain id,
@@ -96,8 +91,10 @@ const Members = ({
     },
   });
 
-  const contributors = members?.contributorsAndWatchers?.contributors || [];
-  const watchers = members?.contributorsAndWatchers?.watchers || [];
+  useEffect(() => {
+    setContributors(members?.contributorsAndWatchers?.contributors || []);
+    setWatchers(members?.contributorsAndWatchers?.watchers || []);
+  }, [members]);
 
   const currentUserRoles = useTransformer(getAllUserRoles, [
     colony,
@@ -117,10 +114,75 @@ const Members = ({
     ['value'],
   );
 
-  const setFieldValue = useCallback(
-    (value) => handleDomainChange(parseInt(value, 10)),
-    [handleDomainChange],
+  const filterContributorsAndWatchers = useCallback(
+    (filterValue) => {
+      const filteredContributors = filterMembers<ColonyContributor>(
+        members?.contributorsAndWatchers?.contributors || [],
+        filterValue,
+      );
+      setContributors(filteredContributors);
+
+      const filteredWatchers = filterMembers<ColonyWatcher>(
+        members?.contributorsAndWatchers?.watchers || [],
+        filterValue,
+      );
+      setWatchers(filteredWatchers);
+    },
+    [members],
   );
+
+  // handles search values & close button
+  const handleSearch = useCallback(
+    (event) => {
+      const value = event.target?.value || '';
+      setSearchValue(value);
+      filterContributorsAndWatchers(value);
+    },
+    [filterContributorsAndWatchers, setSearchValue],
+  );
+
+  const membersContent = useMemo(() => {
+    const contributorsContent = (
+      <MembersSection<ColonyContributor>
+        isContributorsSection
+        colony={colony}
+        currentDomainId={currentDomainId}
+        members={contributors as ColonyContributor[]}
+        canAdministerComments={canAdministerComments}
+        extraItemContent={({ roles, directRoles, banned }) => {
+          return (
+            <UserPermissions
+              roles={roles}
+              directRoles={directRoles}
+              banned={banned}
+            />
+          );
+        }}
+      />
+    );
+
+    const watchersContent =
+      currentDomainId === ROOT_DOMAIN_ID ||
+      currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID ? (
+        <MembersSection<ColonyWatcher>
+          isContributorsSection={false}
+          colony={colony}
+          currentDomainId={currentDomainId}
+          members={watchers as ColonyWatcher[]}
+          canAdministerComments={canAdministerComments}
+          extraItemContent={({ banned }) => (
+            <UserPermissions roles={[]} directRoles={[]} banned={banned} />
+          )}
+        />
+      ) : null;
+
+    return (
+      <>
+        {contributorsContent}
+        {watchersContent}
+      </>
+    );
+  }, [canAdministerComments, colony, contributors, currentDomainId, watchers]);
 
   if (loadingMembers) {
     return (
@@ -132,71 +194,23 @@ const Members = ({
       </div>
     );
   }
+
   return (
     <div className={styles.main}>
-      <div className={styles.titleContainer}>
-        <Heading
-          text={MSG.title}
-          textValues={{
-            domainLabel: selectedDomain
-              ? selectedDomain.name
-              : ALLDOMAINS_DOMAIN_SELECTION.name,
-          }}
-          appearance={{ size: 'medium', theme: 'dark' }}
-        />
-        <Form
-          initialValues={{ filter: currentDomainId.toString() }}
-          onSubmit={() => {}}
-        >
-          <Select
-            appearance={{
-              alignOptions: 'right',
-              theme: 'alt',
-            }}
-            elementOnly
-            label={MSG.labelFilter}
-            name="filter"
-            onChange={setFieldValue}
-            options={domainSelectOptions}
-          />
-        </Form>
-      </div>
-      {contributors.length ? (
-        <MembersSection<ColonyContributor>
-          isContributorsSection
-          colony={colony}
-          currentDomainId={currentDomainId}
-          members={contributors as ColonyContributor[]}
-          canAdministerComments={canAdministerComments}
-          extraItemContent={({ roles, directRoles, banned }) => {
-            return (
-              <UserPermissions
-                roles={roles}
-                directRoles={directRoles}
-                banned={banned}
-              />
-            );
-          }}
-        />
+      <MembersTitle
+        currentDomainId={currentDomainId}
+        handleDomainChange={handleDomainChange}
+        domainSelectOptions={domainSelectOptions}
+        searchValue={searchValue}
+        setSearchValue={setSearchValue}
+        handleSearch={handleSearch}
+      />
+      {!contributors?.length && !watchers?.length ? (
+        <div className={styles.noResults}>
+          <FormattedMessage {...MSG.noMemebersFound} />
+        </div>
       ) : (
-        <FormattedMessage {...MSG.failedToFetch} />
-      )}
-      {(currentDomainId === ROOT_DOMAIN_ID ||
-        currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) && (
-        <>
-          {watchers?.length && (
-            <MembersSection<ColonyWatcher>
-              isContributorsSection={false}
-              colony={colony}
-              currentDomainId={currentDomainId}
-              members={watchers as ColonyWatcher[]}
-              canAdministerComments={canAdministerComments}
-              extraItemContent={({ banned }) => (
-                <UserPermissions roles={[]} directRoles={[]} banned={banned} />
-              )}
-            />
-          )}
-        </>
+        membersContent
       )}
     </div>
   );
