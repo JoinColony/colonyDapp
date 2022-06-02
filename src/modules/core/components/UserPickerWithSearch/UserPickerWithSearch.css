@@ -8,11 +8,22 @@
   justify-content: flex-end;
   align-items: center;
   padding-right: 18px;
-  width: 80%;
 }
 
 .inputWithIcon:hover {
   cursor: pointer;
+
+  & .icon::after {
+    height: 38px;
+    width: 38px;
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    border-radius: 50%;
+    background-color: var(--action-secondary);
+    content: '';
+    opacity: 0.1;
+  }
 }
 
 .container input:disabled {
@@ -22,17 +33,18 @@
 .container {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
   align-items: center;
   position: relative;
 }
 
 .icon {
-  flex: 0 0 28px;
+  flex: 0 0 30px;
   margin-right: 5px;
-  height: 28px;
-  width: 28px;
+  height: 30px;
+  width: 30px;
   position: relative;
-  fill: var(--action-secondary);
+  stroke: var(--action-secondary);
 }
 
 .icon:hover::after {
@@ -93,15 +105,8 @@
 .omniPickerContainer {
   width: 100%;
   max-width: 332px;
-  position: absolute;
-  top: -10px;
-  right: -332px;
   z-index: var(--z-index-nav);
   box-shadow: 0px 2px 11px rgb(62 118 244 / 14%);
-}
-
-.omniPickerContainer div {
-  box-shadow: none;
 }
 
 .error {

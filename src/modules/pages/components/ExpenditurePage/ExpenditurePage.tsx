@@ -25,8 +25,8 @@ const validationSchema = yup.object().shape({
       value: yup
         .array(
           yup.object().shape({
-            amount: yup.number().required('Value is required'),
-            tokenAddress: yup.string().required('Token is required'),
+            amount: yup.number().required(),
+            tokenAddress: yup.string().required(),
           }),
         )
         .min(1),

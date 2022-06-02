@@ -18,9 +18,14 @@
 }
 
 .sidebar {
-  min-height: calc(100vh - navBarHeight);
+  height: calc(100vh - navBarHeight);
   width: sidebarWidth;
+  overflow-y: auto;
   background-color: var(--grey-blue-3);
+}
+
+.sidebar::-webkit-scrollbar {
+  display: none;
 }
 
 .form {

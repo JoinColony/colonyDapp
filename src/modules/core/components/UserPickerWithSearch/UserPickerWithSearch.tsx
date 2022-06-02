@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback } from 'react';
+import React, { ReactNode, useCallback, useRef } from 'react';
 import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 import compose from 'recompose/compose';
 import classNames from 'classnames';
@@ -20,6 +20,7 @@ import UserAvatar from '~core/UserAvatar';
 
 import styles from './UserPickerWithSearch.css';
 import { ItemDefault } from '~core/SingleUserPicker';
+import Dropdown from './Dropdown';
 
 type AvatarRenderFn = (
   address: Address,
@@ -125,6 +126,7 @@ const UserPickerWithSearch = ({
 }: EnhancedProps) => {
   const [, { error, value }, { setValue }] = useField<AnyUser | null>(name);
   const { formatMessage } = useIntl();
+  const ref = useRef<HTMLDivElement>(null);
 
   const handleActiveUserClick = useCallback(() => {
     if (!disabled) {
@@ -169,13 +171,13 @@ const UserPickerWithSearch = ({
           appearance={{ direction: 'horizontal' }}
           screenReaderOnly={elementOnly}
         />
-        <div className={styles.inputWithIcon}>
+        <div className={styles.inputWithIcon} ref={ref}>
           {value ? (
             renderAvatar(value.profile.walletAddress, value)
           ) : (
             <Icon
               className={omniPickerIsOpen ? styles.focusIcon : styles.icon}
-              name="filled-circle-person"
+              name="circle-person"
               title={MSG.selectMember}
               onClick={openOmniPicker}
             />
@@ -195,25 +197,27 @@ const UserPickerWithSearch = ({
                 value.profile.walletAddress}
             </button>
           )}
-          <div className={styles.omniPickerContainer}>
-            {omniPickerIsOpen && (
-              <div className={styles.inputWrapper}>
-                <input
-                  disabled={disabled}
-                  className={styles.input}
-                  {...inputProps}
-                  placeholder={placeholderText}
-                  ref={registerInputNode}
-                  data-test={dataTest}
-                />
-              </div>
-            )}
-            <OmniPicker
-              renderItem={renderItem || defaultRenderItem}
-              onPick={handlePick}
-              height="large"
-            />
-          </div>
+          <Dropdown element={ref.current}>
+            <div className={styles.omniPickerContainer}>
+              {omniPickerIsOpen && (
+                <div className={styles.inputWrapper}>
+                  <input
+                    disabled={disabled}
+                    className={styles.input}
+                    {...inputProps}
+                    placeholder={placeholderText}
+                    ref={registerInputNode}
+                    data-test={dataTest}
+                  />
+                </div>
+              )}
+              <OmniPicker
+                renderItem={renderItem || defaultRenderItem}
+                onPick={handlePick}
+                height="large"
+              />
+            </div>
+          </Dropdown>
           <Icon
             {...(disabled ? {} : { onClick: openOmniPicker })}
             className={classNames(styles.arrowIcon, {

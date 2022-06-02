@@ -90,6 +90,7 @@ const Payments = () => {
                           name="trash"
                           className={styles.deleteIcon}
                           onClick={() => remove(index)}
+                          title="Delete recipient"
                         />
                       )}
                     </div>

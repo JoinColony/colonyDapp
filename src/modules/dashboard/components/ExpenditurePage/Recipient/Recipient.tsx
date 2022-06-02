@@ -2,7 +2,13 @@ import { FieldArray, useField, useFormikContext } from 'formik';
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import Button from '~core/Button';
-import { FormSection, Input, Select, TokenSymbolSelector } from '~core/Fields';
+import {
+  FormSection,
+  Input,
+  InputLabel,
+  Select,
+  TokenSymbolSelector,
+} from '~core/Fields';
 import Icon from '~core/Icon';
 import { ItemDataType } from '~core/OmniPicker';
 import { Tooltip } from '~core/Popover';
@@ -60,6 +66,10 @@ const MSG = defineMessages({
     id: 'dashboard.Expenditures.Recipient.monthsOptionLabel',
     defaultMessage: 'months',
   },
+  valueError: {
+    id: 'dashboard.Expenditures.Recipient.valueError',
+    defaultMessage: 'Value is required',
+  },
 });
 
 const supRenderAvatar = (address: Address, item: ItemDataType<AnyUser>) => (
@@ -78,6 +88,7 @@ const newToken = {
 const Recipient = ({ recipient, index }: Props) => {
   const { setFieldValue } = useFormikContext();
   const { isExpanded, value: tokens } = recipient;
+  const [, { error: tokenErrors }] = useField(`recipients[${index}].value`);
   const [, { error: amountError }] = useField(
     `recipients[${index}].delay.amount`,
   );
@@ -108,6 +119,7 @@ const Recipient = ({ recipient, index }: Props) => {
                 {tokens?.map((token, idx) => (
                   <div className={styles.valueContainer} key={idx}>
                     <div className={styles.inputContainer}>
+                      <InputLabel label={MSG.defaultValueLabel} />
                       <Input
                         name={`recipients[${index}].value[${idx}].amount`}
                         appearance={{
@@ -128,6 +140,7 @@ const Recipient = ({ recipient, index }: Props) => {
                           maxAmount: '0',
                           fieldName: `recipients[${index}].value[${idx}].amount`,
                         }}
+                        elementOnly
                       />
                     </div>
                     <div className={styles.tokenWrapper}>
@@ -142,12 +155,21 @@ const Recipient = ({ recipient, index }: Props) => {
                           </Button>
                         )}
                       </div>
-                      <TokenSymbolSelector
-                        label=""
-                        tokens={tokensData}
-                        name={`recipients[${index}].value[${idx}].tokenAddress`}
-                        appearance={{ alignOptions: 'right', theme: 'grey' }}
-                      />
+                      <div className={styles.tokenSelectorWrapper}>
+                        <TokenSymbolSelector
+                          label=""
+                          tokens={tokensData}
+                          // eslint-disable-next-line max-len
+                          name={`recipients[${index}].value[${idx}].tokenAddress`}
+                          appearance={{ alignOptions: 'right', theme: 'grey' }}
+                          elementOnly
+                        />
+                      </div>
+                      {tokenErrors?.[idx] && (
+                        <div className={styles.error}>
+                          <FormattedMessage {...MSG.valueError} />
+                        </div>
+                      )}
                       {/* if last */}
                       {tokens.length === idx + 1 && (
                         <Button
