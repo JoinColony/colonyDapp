@@ -44,22 +44,12 @@ const StakeRequiredBanner = ({ stakeRequired }: Props) => {
       >
         <div className={styles.stakeRequiredBanner}>
           <FormattedMessage {...MSG.stakeRequired} />
-          <Tooltip
-            placement="right"
-            trigger="click"
-            content={<FormattedMessage {...MSG.copyURLTooltip} />}
-            popperOptions={{
-              modifiers: [
-                {
-                  name: 'offset',
-                  options: {
-                    offset: [15, 10],
-                  },
-                },
-              ],
-            }}
-          >
-            <span className={styles.share}>
+          <span className={styles.share}>
+            <Tooltip
+              placement="left"
+              trigger="click"
+              content={<FormattedMessage {...MSG.copyURLTooltip} />}
+            >
               <ClipboardCopy
                 value={window.location.href}
                 appearance={{ theme: 'white' }}
@@ -67,8 +57,8 @@ const StakeRequiredBanner = ({ stakeRequired }: Props) => {
                 <FormattedMessage {...MSG.shareUrl} />
                 <Icon name="share" />
               </ClipboardCopy>
-            </span>
-          </Tooltip>
+            </Tooltip>
+          </span>
         </div>
       </Alert>
     </div>

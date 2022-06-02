@@ -3,7 +3,7 @@ import { defineMessage, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
 import { TokenActivationContext } from '~users/TokenActivationProvider';
-import { UniversalMessageValues } from '~types/index';
+import { UniversalMessageValues, PrimitiveType } from '~types/index';
 
 import styles from './StakingValidationError.css';
 
@@ -20,7 +20,7 @@ interface Props {
 const stakeValidationMSG = defineMessage({
   tokens: {
     id: 'dashboard.ActionsPage.StakingValidationError.tokens',
-    defaultMessage: `Activate more tokens to be eligible to stake.`,
+    defaultMessage: `Activate {leftToActivate} more {tokenSymbol} to be eligible to stake.`,
   },
   reputation: {
     id: 'dashboard.ActionsPage.StakingValidationError.reputation',
@@ -50,7 +50,11 @@ const StakingValidationError = ({ stakeType, errorValues }: Props) => {
   if (stakeType === 'tokens') {
     return (
       <Button
-        text={stakeValidationMSG[stakeType]}
+        text={stakeValidationMSG.tokens}
+        textValues={{
+          leftToActivate: errorValues?.leftToActivate as PrimitiveType,
+          tokenSymbol: 'A',
+        }}
         appearance={{ theme: 'pink' }}
         style={{ marginTop: '20px', fontSize: '11px' }}
         onClick={() => openTokenActivationPopover(true)}

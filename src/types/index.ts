@@ -46,7 +46,7 @@ export type ENSName = string;
 
 export type AddressOrENSName = Address | ENSName;
 
-type PrimitiveType = string | number | boolean | null | undefined | Date;
+export type PrimitiveType = string | number | boolean | null | undefined | Date;
 
 /**
  * For messages that cannot contain JSX - use with `Intl.formatMessage()`;

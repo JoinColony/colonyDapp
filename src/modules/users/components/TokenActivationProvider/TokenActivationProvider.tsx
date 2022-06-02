@@ -1,7 +1,7 @@
 import React, { createContext, useState, ReactNode } from 'react';
 
 export const TokenActivationContext = createContext<{
-  isOpen?: boolean;
+  isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
 }>({
   isOpen: false,

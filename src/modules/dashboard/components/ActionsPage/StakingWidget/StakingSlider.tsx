@@ -201,6 +201,16 @@ const StakingSlider = ({
         <StakingValidationError
           stakeType={errorStakeType}
           errorValues={{
+            leftToActivate: (
+              <Numeral
+                className={validationErrorStyles.validationErrorValues}
+                value={getFormattedTokenValue(
+                  new Decimal(minUserStake).sub(userActivatedTokens).toString(),
+                  nativeToken?.decimals,
+                )}
+              />
+            ),
+            tokenSymbol: nativeToken?.symbol,
             minimumStake: (
               <Numeral
                 className={validationErrorStyles.validationError}
