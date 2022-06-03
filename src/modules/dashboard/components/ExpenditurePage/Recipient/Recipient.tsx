@@ -17,7 +17,6 @@ import UserAvatar from '~core/UserAvatar';
 import UserPickerWithSearch from '~core/UserPickerWithSearch';
 import { AnyUser } from '~data/index';
 import { Address } from '~types/index';
-import { userData } from '../ExpenditureSettings/consts';
 import { Recipient as RecipientType } from '../Payments/types';
 import { tokensData } from './consts';
 
@@ -78,6 +77,8 @@ const supRenderAvatar = (address: Address, item: ItemDataType<AnyUser>) => (
 interface Props {
   recipient: RecipientType;
   index: number;
+  subscribedUsers: AnyUser[];
+  sidebarRef: HTMLElement | null;
 }
 
 const newToken = {
@@ -85,7 +86,12 @@ const newToken = {
   tokenAddress: undefined,
 };
 
-const Recipient = ({ recipient, index }: Props) => {
+const Recipient = ({
+  recipient,
+  index,
+  subscribedUsers,
+  sidebarRef,
+}: Props) => {
   const { setFieldValue } = useFormikContext();
   const { isExpanded, value: tokens } = recipient;
   const [, { error: tokenErrors }] = useField(`recipients[${index}].value`);
@@ -101,7 +107,7 @@ const Recipient = ({ recipient, index }: Props) => {
           <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.singleUserContainer}>
               <UserPickerWithSearch
-                data={userData}
+                data={subscribedUsers}
                 label={MSG.defaultRecipientLabel}
                 name={`recipients[${index}].recipient`}
                 filter={filterUserSelection}
@@ -109,6 +115,7 @@ const Recipient = ({ recipient, index }: Props) => {
                 dataTest="paymentRecipientPicker"
                 itemDataTest="paymentRecipientItem"
                 placeholder="Search"
+                sidebarRef={sidebarRef}
               />
             </div>
           </FormSection>

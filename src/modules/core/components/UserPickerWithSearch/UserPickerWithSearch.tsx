@@ -8,11 +8,7 @@ import { AnyUser } from '~data/index';
 import { Address, SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
 
-import {
-  ItemDataType,
-  withOmniPicker,
-  WrappedComponentProps,
-} from '../OmniPicker';
+import { ItemDataType, WrappedComponentAdditionalProps } from '../OmniPicker';
 import { Props as WithOmnipickerInProps } from '../OmniPicker/withOmniPicker';
 import { InputLabel } from '../Fields';
 import Icon from '../Icon';
@@ -21,6 +17,7 @@ import UserAvatar from '~core/UserAvatar';
 import styles from './UserPickerWithSearch.css';
 import { ItemDefault } from '~core/SingleUserPicker';
 import Dropdown from './Dropdown';
+import withAdditionalOmniPicker from '~core/OmniPicker/withAdditionalOmniPicker';
 
 type AvatarRenderFn = (
   address: Address,
@@ -94,9 +91,11 @@ interface Props extends WithOmnipickerInProps {
 
   /** Provides value for data-test prop in the value of the input used on cypress testing */
   valueDataTest?: string;
+
+  sidebarRef?: HTMLElement | null;
 }
 
-interface EnhancedProps extends Props, WrappedComponentProps {}
+interface EnhancedProps extends Props, WrappedComponentAdditionalProps {}
 
 const displayName = 'UserPickerWithSearch';
 
@@ -114,6 +113,7 @@ const UserPickerWithSearch = ({
   OmniPickerWrapper,
   onSelected,
   openOmniPicker,
+  toggleOmniPicker,
   placeholder,
   registerInputNode,
   renderAvatar = (address: Address, item?: ItemDataType<AnyUser>) => (
@@ -123,6 +123,8 @@ const UserPickerWithSearch = ({
   dataTest,
   itemDataTest,
   valueDataTest,
+  registerTriggerNode,
+  sidebarRef,
 }: EnhancedProps) => {
   const [, { error, value }, { setValue }] = useField<AnyUser | null>(name);
   const { formatMessage } = useIntl();
@@ -161,7 +163,7 @@ const UserPickerWithSearch = ({
 
   return (
     <OmniPickerWrapper className={getMainClasses({}, styles)}>
-      <div className={styles.container}>
+      <div className={styles.container} ref={ref}>
         <InputLabel
           inputId={inputProps.id}
           label={label}
@@ -171,7 +173,7 @@ const UserPickerWithSearch = ({
           appearance={{ direction: 'horizontal' }}
           screenReaderOnly={elementOnly}
         />
-        <div className={styles.inputWithIcon} ref={ref}>
+        <div className={styles.inputWithIcon} ref={registerTriggerNode}>
           {value ? (
             renderAvatar(value.profile.walletAddress, value)
           ) : (
@@ -179,7 +181,7 @@ const UserPickerWithSearch = ({
               className={omniPickerIsOpen ? styles.focusIcon : styles.icon}
               name="circle-person"
               title={MSG.selectMember}
-              onClick={openOmniPicker}
+              onClick={toggleOmniPicker}
             />
           )}
           {value && (
@@ -197,9 +199,13 @@ const UserPickerWithSearch = ({
                 value.profile.walletAddress}
             </button>
           )}
-          <Dropdown element={ref.current}>
+          <Dropdown element={ref.current} scrollContainer={sidebarRef}>
             <div className={styles.omniPickerContainer}>
-              {omniPickerIsOpen && (
+              <OmniPicker
+                renderItem={renderItem || defaultRenderItem}
+                onPick={handlePick}
+                height="large"
+              >
                 <div className={styles.inputWrapper}>
                   <input
                     disabled={disabled}
@@ -210,16 +216,11 @@ const UserPickerWithSearch = ({
                     data-test={dataTest}
                   />
                 </div>
-              )}
-              <OmniPicker
-                renderItem={renderItem || defaultRenderItem}
-                onPick={handlePick}
-                height="large"
-              />
+              </OmniPicker>
             </div>
           </Dropdown>
           <Icon
-            {...(disabled ? {} : { onClick: openOmniPicker })}
+            {...(disabled ? {} : { onClick: toggleOmniPicker })}
             className={classNames(styles.arrowIcon, {
               [styles.arrowIconActive]: omniPickerIsOpen,
             })}
@@ -235,6 +236,6 @@ const UserPickerWithSearch = ({
 
 UserPickerWithSearch.displayName = displayName;
 
-const enhance = compose<EnhancedProps, Props>(withOmniPicker());
+const enhance = compose<EnhancedProps, Props>(withAdditionalOmniPicker());
 
 export default enhance(UserPickerWithSearch);

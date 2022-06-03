@@ -34,3 +34,8 @@ export interface WrappedComponentProps extends InProps {
   omniPickerIsOpen: boolean;
   openOmniPicker: () => void;
 }
+
+export interface WrappedComponentAdditionalProps extends WrappedComponentProps {
+  toggleOmniPicker: (e: any) => void;
+  registerTriggerNode: (node: HTMLDivElement | null) => void;
+}

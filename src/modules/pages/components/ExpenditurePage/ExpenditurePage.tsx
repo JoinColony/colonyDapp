@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import * as yup from 'yup';
 
 import { Form } from '~core/Fields';
@@ -42,6 +42,7 @@ const validationSchema = yup.object().shape({
 });
 
 const ExpenditurePage = () => {
+  const sidebarRef = useRef<HTMLElement>(null);
   const submit = useCallback((values) => {
     // eslint-disable-next-line no-console
     console.log({ values });
@@ -56,9 +57,9 @@ const ExpenditurePage = () => {
       validateOnChange={false}
     >
       <div className={getMainClasses({}, styles)}>
-        <aside className={styles.sidebar}>
+        <aside className={styles.sidebar} ref={sidebarRef}>
           <ExpenditureSettings />
-          <Payments />
+          <Payments sidebarRef={sidebarRef.current} />
         </aside>
         <div className={styles.mainContainer}>
           <main className={styles.mainContent} />

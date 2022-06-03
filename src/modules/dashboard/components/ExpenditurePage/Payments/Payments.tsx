@@ -3,6 +3,7 @@ import classNames from 'classnames';
 
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FieldArray, useField } from 'formik';
+import { useParams } from 'react-router';
 import Button from '~core/Button';
 import Recipient from '../Recipient';
 
@@ -10,6 +11,10 @@ import styles from './Payments.css';
 import Icon from '~core/Icon';
 import { FormSection } from '~core/Fields';
 import { newRecipient } from './consts';
+import {
+  useColonyFromNameQuery,
+  useMembersSubscription,
+} from '~data/generated';
 
 const MSG = defineMessages({
   payments: {
@@ -26,8 +31,24 @@ const MSG = defineMessages({
   },
 });
 
-const Payments = () => {
+interface Props {
+  sidebarRef: HTMLElement | null;
+}
+
+const Payments = ({ sidebarRef }: Props) => {
   const [, { value: recipients }, { setValue }] = useField('recipients');
+  const { colonyName } = useParams<{
+    colonyName: string;
+  }>();
+
+  const { data: colonyData } = useColonyFromNameQuery({
+    variables: { address: '', name: colonyName },
+  });
+  const { colonyAddress } = colonyData || {};
+
+  const { data: colonyMembers } = useMembersSubscription({
+    variables: { colonyAddress: colonyAddress || '' },
+  });
 
   const onToogleButtonClick = useCallback(
     (index) => {
@@ -95,7 +116,14 @@ const Payments = () => {
                       )}
                     </div>
                   </FormSection>
-                  <Recipient {...{ recipient, index }} />
+                  <Recipient
+                    {...{
+                      recipient,
+                      index,
+                      sidebarRef,
+                    }}
+                    subscribedUsers={colonyMembers?.subscribedUsers || []}
+                  />
                 </div>
               ))}
               <div className={styles.addRecipientWrapper}>
