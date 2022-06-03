@@ -74,6 +74,7 @@ const NetworkStatus = () => {
   } = useLatestSubgraphBlockQuery({
     pollInterval: networkCheckInterval,
   });
+  const subgraphRpcDiff = 42;
 
   useEffect(() => {
     if (latestRpcBlockError) {
@@ -87,7 +88,8 @@ const NetworkStatus = () => {
       !ipfsLivenessData?.isIPFSAlive ||
       (latestRpcBlock &&
         latestSubgraphBlock &&
-        latestRpcBlock.latestRpcBlock > latestSubgraphBlock.latestSubgraphBlock)
+        latestRpcBlock.latestRpcBlock >
+          latestSubgraphBlock.latestSubgraphBlock + subgraphRpcDiff)
     ) {
       setNetworkHealth(NetworkHealthType.Poor);
       console.info(`Setting Network Status to Poor cause: `);
