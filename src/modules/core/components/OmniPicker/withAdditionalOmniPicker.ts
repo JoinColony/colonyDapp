@@ -93,8 +93,7 @@ const getClass = (WrappedComponent) => {
     };
 
     toggle = () => {
-      const { isOpen } = this.state;
-      this.setState({ isOpen: !isOpen });
+      this.setState(({ isOpen }) => ({ isOpen: !isOpen }));
     };
 
     close = (
