@@ -82,12 +82,6 @@
   color: var(--colony-blue);
 }
 
-.tokenSelectorWrapper div {
-  /* override style added in form component */
-
-  /* margin-bottom: -15px; */
-}
-
 .inputContainer {
   margin-right: 20px;
   padding-bottom: 26px;

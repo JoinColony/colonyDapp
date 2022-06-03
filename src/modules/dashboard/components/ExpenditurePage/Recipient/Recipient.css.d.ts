@@ -6,7 +6,6 @@ export const delay: string;
 export const delayControlsContainer: string;
 export const tokenWrapper: string;
 export const removeWrapper: string;
-export const tokenSelectorWrapper: string;
 export const inputContainer: string;
 export const questionIcon: string;
 export const tooltip: string;

@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import classNames from 'classnames';
 
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FieldArray, useField } from 'formik';
@@ -98,11 +97,7 @@ const Payments = ({ sidebarRef }: Props) => {
                           onClick={() => onToogleButtonClick(index)}
                           className={styles.signWrapper}
                         >
-                          <Icon
-                            name="plus"
-                            className={styles.plus}
-                            onClick={() => onToogleButtonClick(index)}
-                          />
+                          <span className={styles.plusSign} />
                         </Button>
                       )}
                       {index + 1}: <FormattedMessage {...MSG.recipient} />
@@ -132,15 +127,10 @@ const Payments = ({ sidebarRef }: Props) => {
                   appearance={{ theme: 'blue' }}
                 >
                   <div className={styles.addRecipientLabel}>
-                    <div className={styles.circleSignWrapper}>
-                      <Icon
-                        name="plus"
-                        className={classNames(
-                          styles.plus,
-                          styles.circlePlusIcon,
-                        )}
-                      />
-                    </div>
+                    <Icon
+                      name="circle-plus"
+                      className={styles.circlePlusIcon}
+                    />
                     <FormattedMessage {...MSG.addRecipientLabel} />
                   </div>
                 </Button>
