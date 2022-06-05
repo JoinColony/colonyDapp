@@ -1,7 +1,9 @@
 import { useField } from 'formik';
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import { Input } from '~core/Fields';
+import classNames from 'classnames';
+
+import { Input, Textarea } from '~core/Fields';
 
 import styles from './TitleDescriptionSection.css';
 
@@ -21,32 +23,45 @@ interface Props {
 }
 
 const TitleDescriptionSection = ({ isEditable }: Props) => {
-  const [, { value: title }] = useField('title');
-  const [, { value: description }] = useField('description');
+  const [, { value: title, error: inputError }] = useField('title');
+  const [, { value: description, error: descriptionError }] = useField(
+    'description',
+  );
 
   return (
     <div className={styles.container}>
       {/* "Exp - 25" is temporary value, needs to be changed to fetched value, id? */}
       <div className={styles.number}>Exp - 25</div>
-      <div className={styles.titleContainer}>
+      <div
+        className={classNames(
+          styles.titleContainer,
+          inputError && styles.error,
+        )}
+      >
         {isEditable ? (
           <Input
             name="title"
             placeholder={MSG.titlePlaceholder}
             appearance={{ theme: 'minimal' }}
             defaultValue={title}
+            elementOnly
           />
         ) : (
           <div className={styles.title}>{title}</div>
         )}
       </div>
-      <div className={styles.descriptionContainer}>
+      <div
+        className={classNames(
+          styles.descriptionContainer,
+          descriptionError && styles.error,
+        )}
+      >
         {isEditable ? (
-          <Input
+          <Textarea
             name="description"
             placeholder={MSG.descriptionPlaceholder}
-            appearance={{ theme: 'minimal' }}
-            defaultValue={title}
+            label=""
+            elementOnly
           />
         ) : (
           <div className={styles.description}>{description}</div>
