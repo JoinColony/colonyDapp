@@ -1,22 +1,54 @@
 .container {
   display: flex;
   align-items: baseline;
-  margin-bottom: 56px;
+  margin-bottom: 18px;
 }
 
 .dot {
-  margin-right: 25px;
   height: 10px;
   width: 10px;
   border-radius: 50%;
   background-color: var(--primary);
 }
 
+.dotContainer {
+  margin: 0 9px 0 25px;
+  width: 26px;
+}
+
 .messageWrapper {
-  /* margin-bottom: 56px; */
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
 }
 
 .userDecoration {
+  display: inline-block;
   font-weight: var(--weight-bold);
   color: var(--pink);
+}
+
+.reputationWrapper {
+  display: inline-block;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+}
+
+.reputationStarWrapper {
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+  padding-left: 20px;
+  position: relative;
+}
+
+.reputationWrapper i {
+  right: unset;
+  left: -16px;
+}
+
+.transactionMeta {
+  width: 100%;
 }

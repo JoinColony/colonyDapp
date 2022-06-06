@@ -2,6 +2,7 @@ export const logs = [
   {
     type: 'action',
     actionType: 'Staked',
+    colonyAddress: '0xA1e73506F3ef6dC19dc27B750ADF585FD0F30C63',
     user: {
       id: '1',
       profile: {
@@ -23,6 +24,7 @@ export const logs = [
   {
     type: 'action',
     actionType: 'ChangingTheExpenditure',
+    colonyAddress: '0xA1e73506F3ef6dC19dc27B750ADF585FD0F30C63',
     user: {
       id: '1',
       profile: {
@@ -42,7 +44,7 @@ export const logs = [
     changes: [
       {
         changeType: 'Recipient',
-        prevValue: 'Recipient 1',
+        prevValue: 'Payment 1',
         recipient: {
           id: '1',
           profile: {
@@ -122,7 +124,7 @@ export const colony = {
       domains: [
         {
           domainId: 1,
-          roles: '1',
+          roles: ['1'],
         },
       ],
     },

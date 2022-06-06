@@ -5,6 +5,7 @@ import { logs, colony } from './consts';
 import Log from './Log';
 import { useLoggedInUser } from '~data/helpers';
 import Comment, { CommentInput } from '~core/Comment';
+import { Colony } from '~data/index';
 
 interface Props {
   colonyAddress: string;
@@ -30,20 +31,22 @@ const LogsSection = ({ colonyAddress }: Props) => {
       } = log;
       if (log.type === 'comment') {
         return (
-          <Comment
-            key={log.uniqueId}
-            createdAt={createdAt}
-            comment={message}
-            commentMeta={{
-              id: sourceId || '',
-              deleted,
-              adminDelete,
-              userBanned,
-            }}
-            colony={colony}
-            user={initiator}
-            showControls
-          />
+          <div className={styles.comment}>
+            <Comment
+              key={log.uniqueId}
+              createdAt={createdAt}
+              comment={message}
+              commentMeta={{
+                id: sourceId || '',
+                deleted,
+                adminDelete,
+                userBanned,
+              }}
+              colony={(colony as unknown) as Colony}
+              user={initiator}
+              showControls
+            />
+          </div>
         );
       }
       return null;
@@ -58,7 +61,7 @@ const LogsSection = ({ colonyAddress }: Props) => {
        * and a registered user profile
        */}
       {currentUserName && !ethereal && (
-        <div>
+        <div className={styles.commentInput}>
           <CommentInput
             {...{
               colonyAddress,

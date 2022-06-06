@@ -1,3 +1,19 @@
 .container {
   padding: 0 25px;
 }
+
+.comment div {
+  padding: 0;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+}
+
+.commentInput {
+  margin-top: 29px;
+}
+
+.commentInput textarea::placeholder {
+  font-size: var(--size-smallish);
+  font-style: normal;
+  color: var(--text-disabled);
+}
