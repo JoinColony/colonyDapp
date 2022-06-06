@@ -9,6 +9,7 @@
   margin-right: 14px;
   height: 7px;
   width: 7px;
+  min-width: 7px;
   border: 1px solid var(--temp-grey-blue-7);
   border-radius: 50%;
 }
@@ -22,7 +23,7 @@
 }
 
 .activeDot {
-  border: none;
+  border: 1px solid var(--primary);
   background-color: var(--primary);
 }
 
