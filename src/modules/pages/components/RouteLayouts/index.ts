@@ -4,6 +4,7 @@ import { MessageDescriptor } from 'react-intl';
 import { SimpleMessageValues } from '~types/index';
 
 export { default as NavBar } from './NavBar';
+export { default as WrappedNavBar } from './NavBar/WrappedNavBar';
 export { default as SimpleNav } from './SimpleNav';
 export { default as Plain } from './Plain';
 export { default as Default } from './Default';

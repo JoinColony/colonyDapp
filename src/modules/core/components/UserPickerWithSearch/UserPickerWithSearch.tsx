@@ -199,26 +199,28 @@ const UserPickerWithSearch = ({
                 value.profile.walletAddress}
             </button>
           )}
-          <Dropdown element={ref.current} scrollContainer={sidebarRef}>
-            <div className={styles.omniPickerContainer}>
-              <OmniPicker
-                renderItem={renderItem || defaultRenderItem}
-                onPick={handlePick}
-                height="large"
-              >
-                <div className={styles.inputWrapper}>
-                  <input
-                    disabled={disabled}
-                    className={styles.input}
-                    {...inputProps}
-                    placeholder={placeholderText}
-                    ref={registerInputNode}
-                    data-test={dataTest}
-                  />
-                </div>
-              </OmniPicker>
-            </div>
-          </Dropdown>
+          {omniPickerIsOpen && (
+            <Dropdown element={ref.current} scrollContainer={sidebarRef}>
+              <div className={styles.omniPickerContainer}>
+                <OmniPicker
+                  renderItem={renderItem || defaultRenderItem}
+                  onPick={handlePick}
+                  height="large"
+                >
+                  <div className={styles.inputWrapper}>
+                    <input
+                      disabled={disabled}
+                      className={styles.input}
+                      {...inputProps}
+                      placeholder={placeholderText}
+                      ref={registerInputNode}
+                      data-test={dataTest}
+                    />
+                  </div>
+                </OmniPicker>
+              </div>
+            </Dropdown>
+          )}
           <Icon
             {...(disabled ? {} : { onClick: toggleOmniPicker })}
             className={classNames(styles.arrowIcon, {
