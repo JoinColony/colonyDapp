@@ -6,3 +6,4 @@ export const userDecoration: string;
 export const reputationWrapper: string;
 export const reputationStarWrapper: string;
 export const transactionMeta: string;
+export const change: string;

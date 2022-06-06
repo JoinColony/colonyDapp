@@ -1,7 +1,7 @@
 export const logs = [
   {
     type: 'action',
-    actionType: 'Staked',
+    actionType: 'ExpenditureStaked',
     colonyAddress: '0xA1e73506F3ef6dC19dc27B750ADF585FD0F30C63',
     user: {
       id: '1',
@@ -23,7 +23,7 @@ export const logs = [
   },
   {
     type: 'action',
-    actionType: 'ChangingTheExpenditure',
+    actionType: 'ExpenditureFunding',
     colonyAddress: '0xA1e73506F3ef6dC19dc27B750ADF585FD0F30C63',
     user: {
       id: '1',
@@ -33,8 +33,24 @@ export const logs = [
         displayName: 'Christian Maniewski',
       },
     },
-    values: {
-      amount: '10',
+    createdAt: 1653900557000,
+    blockExplorerName: 'Blockscout',
+    transactionHash:
+      '0x1785d214f0127279681354be8e23ad1a1501207432229db93a415c7a58427138',
+    funds: ['10.765 CLNY', '0.0500 xDai'],
+    uniqueId: '1',
+  },
+  {
+    type: 'action',
+    actionType: 'ExpenditureModified',
+    colonyAddress: '0xA1e73506F3ef6dC19dc27B750ADF585FD0F30C63',
+    user: {
+      id: '1',
+      profile: {
+        walletAddress: '0xae57767918BB7c53aa26dd89f12913f5233d08D2',
+        username: 'Chris',
+        displayName: 'Christian Maniewski',
+      },
     },
     createdAt: 1653900557000,
     blockExplorerName: 'Blockscout',
@@ -43,7 +59,7 @@ export const logs = [
     amount: '10.765 CLNY',
     changes: [
       {
-        changeType: 'Recipient',
+        changeType: 'recipient',
         prevValue: 'Payment 1',
         recipient: {
           id: '1',
@@ -55,11 +71,11 @@ export const logs = [
         },
       },
       {
-        changeType: 'Value',
+        changeType: 'value',
         currValue: '1.2345 wETH',
       },
       {
-        changeType: 'ClaimDelay',
+        changeType: 'claimDelay',
         currValue: '24 hours',
       },
     ],

@@ -11,11 +11,11 @@ import { ExpenditureActions } from './types';
 interface Props {
   actionType: ExpenditureActions | string;
   user: AnyUser;
-  values: any;
   createdAt: number;
   blockExplorerName: string;
   transactionHash: string;
-  amount: string;
+  amount?: string;
+  funds?: string[];
   changes?: any[];
   colonyAddress: string;
 }
@@ -28,6 +28,7 @@ const Log = ({
   amount,
   changes,
   colonyAddress,
+  funds,
 }: Props) => {
   return (
     <div className={styles.container}>
@@ -36,8 +37,9 @@ const Log = ({
       </div>
       <div className={styles.messageWrapper}>
         <FormattedMessage
-          id={`expenditure.${actionType}`}
+          id="systemMessage.title"
           values={{
+            name: actionType,
             amount,
             reputation: (
               <div className={styles.reputationStarWrapper}>
@@ -55,20 +57,30 @@ const Log = ({
               </span>
             ),
             changes:
-              changes?.map((change) => (
-                <FormattedMessage
-                  id="expenditure.change"
-                  values={{
-                    changeType: change.changeType,
-                    prevState: change.prevValue,
-                    recipient: (
-                      <span className={styles.userDecoration}>
-                        @<FriendlyName user={change.recipient} />
-                      </span>
-                    ),
-                    value: change.currValue,
-                  }}
-                />
+              changes?.map((change, index) => (
+                <div className={styles.change}>
+                  <FormattedMessage
+                    id={`systemMessage.change.${change.changeType}`}
+                    values={{
+                      prevState: change.prevValue,
+                      recipient: (
+                        <span className={styles.userDecoration}>
+                          @<FriendlyName user={change.recipient} />
+                        </span>
+                      ),
+                      value: change.currValue,
+                    }}
+                  />
+                  {index !== changes.length - 1 ? ',' : '.'}
+                  {index === changes.length - 2 && ' and '}
+                </div>
+              )) || '',
+            funds:
+              funds?.map((fund, index) => (
+                <div className={styles.change}>
+                  {fund}
+                  {index !== funds.length - 1 ? ',' : '.'}
+                </div>
               )) || '',
           }}
         />
