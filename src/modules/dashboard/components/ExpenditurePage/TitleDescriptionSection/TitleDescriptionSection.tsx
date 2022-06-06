@@ -3,7 +3,7 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 import classNames from 'classnames';
 
-import { Input, Textarea } from '~core/Fields';
+import { Input, TextareaAutoresize } from '~core/Fields';
 
 import styles from './TitleDescriptionSection.css';
 
@@ -57,10 +57,12 @@ const TitleDescriptionSection = ({ isEditable }: Props) => {
         )}
       >
         {isEditable ? (
-          <Textarea
+          <TextareaAutoresize
             name="description"
             placeholder={MSG.descriptionPlaceholder}
             label=""
+            minRows={1}
+            maxRows={100}
             elementOnly
           />
         ) : (
