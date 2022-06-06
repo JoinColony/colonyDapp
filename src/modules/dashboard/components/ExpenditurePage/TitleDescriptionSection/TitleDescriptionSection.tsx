@@ -62,7 +62,7 @@ const TitleDescriptionSection = ({ isEditable }: Props) => {
             placeholder={MSG.descriptionPlaceholder}
             label=""
             minRows={1}
-            maxRows={12}
+            maxRows={100}
             elementOnly
           />
         ) : (
