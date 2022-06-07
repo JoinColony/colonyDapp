@@ -1,3 +1,4 @@
+import { useFormikContext } from 'formik';
 import React, { useState } from 'react';
 import {
   defineMessages,
@@ -7,6 +8,8 @@ import {
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
+import { Stage } from './consts';
+import DeleteDraftDialog from './DeleteDraftDialog';
 import DraftConfirmDialog from './DraftConfirmDialog';
 import StageItem from './StageItem';
 
@@ -65,6 +68,10 @@ const MSG = defineMessages({
     id: 'dashboard.Expenditures.Stages.claimed',
     defaultMessage: 'Claimed',
   },
+  deleteDraft: {
+    id: 'dashboard.Expenditures.Stages.deleteDraft',
+    defaultMessage: 'Delete draft',
+  },
 });
 
 interface ActiveState {
@@ -72,12 +79,15 @@ interface ActiveState {
   label: string | MessageDescriptor;
   buttonText: string | MessageDescriptor;
   buttonAction: () => void;
+  stage: string;
 }
 
 const Stages = () => {
   const [activeState, setActiveState] = useState<ActiveState | null>(null);
+  const { resetForm } = useFormikContext() || {};
 
   const openDraftConfirmDialog = useDialog(DraftConfirmDialog);
+  const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
 
   const states = [
     {
@@ -85,30 +95,35 @@ const Stages = () => {
       label: MSG.draft,
       buttonText: MSG.lockValues,
       buttonAction: () => {},
+      stage: Stage.Draft,
     },
     {
       id: 2,
       label: MSG.locked,
       buttonText: MSG.escrowFunds,
       buttonAction: () => {},
+      stage: Stage.Locked,
     },
     {
       id: 3,
       label: MSG.funded,
       buttonText: MSG.releaseFunds,
       buttonAction: () => {},
+      stage: Stage.Funded,
     },
     {
       id: 4,
       label: MSG.released,
       buttonText: MSG.claim,
       buttonAction: () => {},
+      stage: Stage.Released,
     },
     {
       id: 5,
       label: MSG.claimed,
       buttonText: MSG.completed,
       buttonAction: () => {},
+      stage: Stage.Claimed,
     },
   ];
 
@@ -116,6 +131,17 @@ const Stages = () => {
     openDraftConfirmDialog({
       onClick: () => setActiveState(states[0]),
     });
+
+  const handleDeleteDraft = () =>
+    openDeleteDraftDialog({
+      onClick: () => {
+        resetForm?.();
+        if (activeState?.stage === Stage.Draft) {
+          // logic to delete a draft from database
+        }
+      },
+    });
+
   const activeIndex = states.findIndex((state) => state.id === activeState?.id);
 
   return (
@@ -134,9 +160,12 @@ const Stages = () => {
         <div className={styles.buttonsContainer}>
           {!activeState ? (
             <>
-              {/* Deleting the expenditure will be added in next PR */}
-              <Icon name="trash" className={styles.icon} />
-              {/* onClick has temporary action, needs to be submiting draft in the future */}
+              <Icon
+                name="trash"
+                className={styles.icon}
+                onClick={handleDeleteDraft}
+                title={MSG.deleteDraft}
+              />
               <Button onClick={handleSaveDraft} style={{ height: '29px' }}>
                 <FormattedMessage {...MSG.submitDraft} />
               </Button>
@@ -144,6 +173,14 @@ const Stages = () => {
           ) : (
             <>
               <Icon name="share" className={styles.icon} />
+              {activeState?.stage === Stage.Draft && (
+                <Icon
+                  name="trash"
+                  className={styles.icon}
+                  onClick={handleDeleteDraft}
+                  title={MSG.deleteDraft}
+                />
+              )}
               <Button
                 onClick={activeState?.buttonAction}
                 style={{ height: '29px' }}
