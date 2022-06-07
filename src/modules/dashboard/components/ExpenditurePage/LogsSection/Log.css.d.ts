@@ -7,3 +7,6 @@ export const reputationWrapper: string;
 export const reputationStarWrapper: string;
 export const transactionMeta: string;
 export const change: string;
+export const roles: string;
+export const tooltipIcon: string;
+export const details: string;

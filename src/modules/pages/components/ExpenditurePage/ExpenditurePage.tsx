@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router';
 import { Form } from '~core/Fields';
 import ExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings';
@@ -12,6 +12,8 @@ import styles from './ExpenditurePage.css';
 const displayName = 'pages.ExpenditurePage';
 
 const ExpenditurePage = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isEditable, setIsEditable] = useState(true);
   const { colonyName } = useParams<{
     transactionHash?: string;
     colonyName: string;
@@ -21,7 +23,7 @@ const ExpenditurePage = () => {
     variables: { name: colonyName, address: '' },
   });
 
-  return (
+  return isEditable ? (
     <Form onSubmit={() => {}} initialValues={{}}>
       <div className={getMainClasses({}, styles)}>
         <aside className={styles.sidebar}>
@@ -29,12 +31,28 @@ const ExpenditurePage = () => {
         </aside>
         <div className={styles.mainContainer}>
           <main className={styles.mainContent}>
-            <TitleDescriptionSection isEditable />
-            <LogsSection colonyAddress={data?.colonyAddress || ''} />
+            <TitleDescriptionSection isEditable={isEditable} />
+            <LogsSection
+              colonyAddress={data?.colonyAddress || ''}
+              isFormEditable={isEditable}
+            />
           </main>
         </div>
       </div>
     </Form>
+  ) : (
+    <div className={getMainClasses({}, styles)}>
+      <aside className={styles.sidebar} />
+      <div className={styles.mainContainer}>
+        <main className={styles.mainContent}>
+          <TitleDescriptionSection isEditable={isEditable} />
+          <LogsSection
+            colonyAddress={data?.colonyAddress || ''}
+            isFormEditable={isEditable}
+          />
+        </main>
+      </div>
+    </div>
   );
 };
 

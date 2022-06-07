@@ -12,12 +12,13 @@
 }
 
 .dotContainer {
-  margin: 0 9px 0 25px;
+  margin: 0 9px 0 22px;
   width: 26px;
 }
 
 .messageWrapper {
   display: flex;
+  align-items: center;
   flex: 1;
   flex-wrap: wrap;
   font-size: var(--size-tiny);
@@ -26,6 +27,7 @@
 
 .userDecoration {
   display: inline-block;
+  margin-right: 4px;
   font-weight: var(--weight-bold);
   color: var(--pink);
 }
@@ -36,12 +38,16 @@
   font-weight: var(--weight-bold);
 }
 
+.reputationWrapper > div {
+  padding-right: 0;
+}
+
 .reputationStarWrapper {
   display: flex;
   align-items: center;
   margin-left: 8px;
   padding-right: 4px;
-  padding-left: 16px;
+  padding-left: 10px;
   position: relative;
 }
 
@@ -56,4 +62,18 @@
 
 .change {
   margin-left: 4px;
+}
+
+.roles {
+  margin-right: 10px;
+}
+
+.tooltipIcon {
+  margin-bottom: 4px;
+}
+
+.details {
+  display: flex;
+  align-items: center;
+  width: 100%;
 }

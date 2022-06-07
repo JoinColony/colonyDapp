@@ -2,6 +2,7 @@ import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import FriendlyName from '~core/FriendlyName';
 import MemberReputation from '~core/MemberReputation';
+import PermissionsLabel from '~core/PermissionsLabel';
 import { TransactionMeta } from '~dashboard/ActionsPage';
 import { AnyUser } from '~data/index';
 
@@ -18,6 +19,7 @@ interface Props {
   funds?: string[];
   changes?: any[];
   colonyAddress: string;
+  role?: number;
 }
 
 const Log = ({
@@ -29,6 +31,7 @@ const Log = ({
   changes,
   colonyAddress,
   funds,
+  role,
 }: Props) => {
   return (
     <div className={styles.container}>
@@ -84,14 +87,37 @@ const Log = ({
               )) || '',
           }}
         />
-        {transactionHash && (
-          <div className={styles.transactionMeta}>
-            <TransactionMeta
-              transactionHash={transactionHash}
-              createdAt={new Date(createdAt)}
-            />
-          </div>
-        )}
+        <div className={styles.details}>
+          {/* Role is temporaily value, there should be added logic to adding it based on response from the API */}
+          {actionType && role && (
+            <div className={styles.roles}>
+              <PermissionsLabel
+                appearance={{ theme: 'simple' }}
+                permission={role}
+                minimal
+                infoMessageValues={{
+                  role,
+                  icon: (
+                    <div className={styles.tooltipIcon}>
+                      <PermissionsLabel
+                        permission={role}
+                        appearance={{ theme: 'white' }}
+                      />
+                    </div>
+                  ),
+                }}
+              />
+            </div>
+          )}
+          {transactionHash && (
+            <div className={styles.transactionMeta}>
+              <TransactionMeta
+                transactionHash={transactionHash}
+                createdAt={new Date(createdAt)}
+              />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
