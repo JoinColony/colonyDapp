@@ -181,10 +181,6 @@ const Recipient = ({
                           type="button"
                           onClick={() => arrayHelpers.push(newToken)}
                           appearance={{ theme: 'blue' }}
-                          disabled={
-                            token.amount === undefined ||
-                            token.tokenAddress === undefined
-                          }
                         >
                           <FormattedMessage {...MSG.addTokenText} />
                         </Button>
