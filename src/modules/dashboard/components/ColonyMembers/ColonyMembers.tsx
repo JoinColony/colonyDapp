@@ -7,7 +7,6 @@ import { useDialog } from '~core/Dialog';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import Members from '~dashboard/Members';
 import WrongNetworkDialog from '~dashboard/ColonyHome/WrongNetworkDialog';
-import InviteLinkButton from '~dashboard/InviteLinkButton';
 
 import { useColonyFromNameQuery, useLoggedInUser } from '~data/index';
 import { NOT_FOUND_ROUTE } from '~routes/index';

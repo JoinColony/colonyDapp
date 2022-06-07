@@ -16,6 +16,7 @@ import { checkIfNetworkIsAllowed } from '~utils/networks';
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot, canAdminister } from '~modules/users/checks';
 import { oneTxMustBeUpgraded } from '~modules/dashboard/checks';
+import InviteLinkButton from '~dashboard/InviteLinkButton';
 
 import styles from './MembersControls.css';
 
@@ -41,7 +42,7 @@ interface Props {
 }
 
 const MembersControls = ({
-  colony: { colonyAddress, version, isDeploymentFinished },
+  colony: { colonyAddress, version, isDeploymentFinished, colonyName },
   colony,
 }: Props) => {
   const {
@@ -108,6 +109,12 @@ const MembersControls = ({
 
   return !controlsDisabled ? (
     <ul className={styles.controls}>
+      <li>
+        <InviteLinkButton
+          colonyName={colonyName}
+          buttonAppearance={{ theme: 'blue' }}
+        />
+      </li>
       <li>
         <Button
           appearance={{ theme: 'blue' }}
