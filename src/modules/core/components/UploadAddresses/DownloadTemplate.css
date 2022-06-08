@@ -2,12 +2,4 @@
   margin-right: 11px;
   padding: 0;
   width: 120px;
-  font-size: var(--size-small);
-  font-weight: var(--weight-bold);
-  color: var(--colony-blue);
-}
-
-.link:hover {
-  text-decoration: underline;
-  color: var(--colony-blue);
 }

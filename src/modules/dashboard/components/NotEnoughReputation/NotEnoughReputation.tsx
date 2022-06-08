@@ -33,7 +33,7 @@ const MSG = defineMessage({
      If you have the necessary permissions to
      take this action you can toggle “Force”
      in the top right to bypass the governance process.
-      <a>Learn more.</a>`,
+      <a>Learn more</a>`,
   },
 });
 
@@ -56,9 +56,7 @@ const NotEnoughReputation = ({
           {...MSG.description}
           values={{
             a: (chunks) => (
-              <ExternalLink href={MD_REPUTATION_INFO} className={styles.link}>
-                {chunks}
-              </ExternalLink>
+              <ExternalLink href={MD_REPUTATION_INFO}>{chunks}</ExternalLink>
             ),
           }}
         />

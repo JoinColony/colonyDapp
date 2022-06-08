@@ -9,10 +9,11 @@
 .main {
   composes: button from "~styles/reset.css";
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   height: 38px;
   width: 199px;
+  position: relative;
   border-radius: 15px;
   font-size: var(--size-small);
   font-weight: var(--weight-bold);
@@ -33,5 +34,5 @@
 .buttonIcon {
   height: 28px;
   position: absolute;
-  left: 66px;
+  left: 0;
 }

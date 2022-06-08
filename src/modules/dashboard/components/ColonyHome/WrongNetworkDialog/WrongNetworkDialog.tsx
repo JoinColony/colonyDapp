@@ -18,7 +18,7 @@ const MSG = defineMessages({
   },
   description: {
     id: 'dashboard.ColonyHome.WrongNetworkDialog.description',
-    defaultMessage: 'Please connect to {networkName}. <a>Learn more.</a>',
+    defaultMessage: 'Please connect to {networkName}. <a>Learn more</a>',
   },
 });
 

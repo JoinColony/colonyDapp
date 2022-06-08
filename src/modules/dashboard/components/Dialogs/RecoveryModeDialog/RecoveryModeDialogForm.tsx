@@ -15,6 +15,7 @@ import { useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '~modules/transformers';
 import { canEnterRecoveryMode } from '~modules/users/checks';
 
+import ExternalLink from '~core/ExternalLink';
 import { RECOVERY_HELP } from '~externalUrls';
 
 import { FormValues } from './RecoveryModeDialog';
@@ -35,7 +36,7 @@ const MSG = defineMessages({
     id: `dashboard.RecoveryModeDialog.RecoveryModeDialogForm.leavingRecoveryModeDescription`,
     defaultMessage: `
     Leaving recovery requires the approval of a majority of members
-    holding the {roleRequired} permission. <a>Learn more.</a>`,
+    holding the {roleRequired} permission. <a>Learn more</a>`,
   },
   annotation: {
     id: 'dashboard.RecoveryModeDialog.RecoveryModeDialogForm.annotation',
@@ -100,14 +101,7 @@ const RecoveryModeDialogForm = ({
                 />
               ),
               a: (chunks) => (
-                <a
-                  href={RECOVERY_HELP}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.link}
-                >
-                  {chunks}
-                </a>
+                <ExternalLink href={RECOVERY_HELP}>{chunks}</ExternalLink>
               ),
             }}
           />

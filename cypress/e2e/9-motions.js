@@ -1,6 +1,6 @@
-import Decimal from 'decimal.js';
 import { Extension } from '@colony/colony-js';
 import numbro from 'numbro';
+import Decimal from 'decimal.js';
 
 import ganacheAccounts from '~lib/colonyNetwork/ganache-accounts.json';
 import { createAddress } from '~utils/web3';
@@ -11,6 +11,7 @@ import { numbroCustomLanguage } from '../../src/utils/numbers/numbroCustomLangua
 describe('User can create motions via UAC', () => {
   const {
     colony: { name: colonyName },
+    colony,
   } = Cypress.config();
   numbro.registerLanguage(numbroCustomLanguage);
   numbro.setLanguage('en-GB');
@@ -42,7 +43,7 @@ describe('User can create motions via UAC', () => {
       ([address]) => address,
     );
 
-    cy.makePayment(amountToPay, createAddress(accounts[1]), true);
+    cy.makePayment(amountToPay, createAddress(accounts[15]), true);
     cy.checkMotion();
   });
 
@@ -51,15 +52,6 @@ describe('User can create motions via UAC', () => {
     const domainPurpose = 'Only cats allowed';
 
     cy.createTeam(domainName, domainPurpose, true);
-
-    cy.checkMotion();
-  });
-
-  it('Can edit teams - motion', () => {
-    const domainName = 'Dolphins';
-    const domainPurpose = 'This team has been taken over by dolphins';
-
-    cy.editTeam(domainName, domainPurpose, true);
 
     cy.checkMotion();
   });
@@ -97,19 +89,17 @@ describe('User can create motions via UAC', () => {
   });
 
   it('Can update tokens', () => {
-    const { name: existingColonyName } = Cypress.config().colony;
     cy.login();
 
-    cy.updateTokens(existingColonyName, createdColony.name, true);
+    cy.updateTokens(colonyName, createdColony.name, true);
 
     cy.checkMotion();
   });
 
   it('Can unlock the native token', () => {
-    const { colony } = Cypress.config();
     cy.login();
 
-    cy.visit(`/colony/${colony.name}`);
+    cy.visit(`/colony/${colonyName}`);
 
     cy.unlockToken(colony);
 
@@ -120,6 +110,20 @@ describe('User can create motions via UAC', () => {
 
   it('Can manage permissions', () => {
     cy.managePermissions(true);
+
+    cy.checkMotion();
+  });
+
+  it('Disables reputation monitor', () => {
+    // turn off the reputation monitor to avoid race conditions
+    cy.request('http://127.0.0.1:3001/reputation/monitor/toggle');
+  });
+
+  it('Can edit teams - motion', () => {
+    const domainName = 'Dolphins';
+    const domainPurpose = 'This team has been taken over by dolphins';
+
+    cy.editTeam(domainName, domainPurpose, true);
 
     cy.checkMotion();
   });
@@ -146,11 +150,15 @@ describe('User can create motions via UAC', () => {
     // to close the gas station
     cy.getBySel('actionHeading').click();
 
-    cy.get('input[type="radio"]').first().click({ force: true });
-    cy.getBySel('voteButton').click();
+    cy.getBySel('yesVoteButton', { timeout: 30000 }).click({ force: true });
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.getBySel('voteButton').click().wait(7000);
 
-    cy.getBySel('revealButton').click();
-    cy.getBySel('motionStatusTag', { timeout: 20000 }).should(
+    // to close the gas station
+    cy.getBySel('actionHeading').click();
+
+    cy.getBySel('revealButton', { timeout: 120000 }).click();
+    cy.getBySel('motionStatusTag', { timeout: 30000 }).should(
       'have.text',
       'Passed',
     );
@@ -163,25 +171,26 @@ describe('User can create motions via UAC', () => {
 
     cy.getBySel('backButton').click();
 
-    cy.getBySel('eventsNavigationButton').click({
-      force: true,
-    });
+    cy.getBySel('transactionsLog').click();
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.getBySel('claimForColonyButton', { timeout: 100000 }).click().wait(5000);
+
+    cy.reload();
 
     cy.get('@totalFunds').then(($totalFunds) => {
       const totalFunds = new Decimal($totalFunds.split(',').join(''))
         .add(amountToMint)
+        .toDecimalPlaces(3)
         .toString();
 
-      cy.getBySel('colonyTotalFunds', { timeout: 15000 }).then(($text) => {
+      cy.getBySel('colonyTotalFunds', { timeout: 150000 }).then(($text) => {
         const text = $text.text().split(',').join('');
         expect(text).to.eq(totalFunds);
       });
     });
   });
 
-  it.only('User can claim their stake', () => {
+  it('User can claim their stake', () => {
     cy.login();
     cy.visit(`/colony/${colonyName}`);
 

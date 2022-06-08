@@ -127,6 +127,7 @@ const VoteWidget = ({
       icon: inputDisabled
         ? 'circle-thumbs-up-grey'
         : `circle-thumbs-up${checkedValue === '1' ? '' : '-outlined'}`,
+      dataTest: 'yesVoteButton',
     },
     {
       value: '0',

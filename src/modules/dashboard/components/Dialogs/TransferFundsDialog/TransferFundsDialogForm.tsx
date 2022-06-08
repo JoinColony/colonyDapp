@@ -125,7 +125,9 @@ const TransferFundsDialogForm = ({
   const toDomainId = values.toDomain
     ? parseInt(values.toDomain, 10)
     : undefined;
-
+  const toDomain = domains.find(
+    ({ ethDomainId }) => ethDomainId === toDomainId,
+  );
   const selectedToken = useMemo(
     () => tokens.find((token) => token.address === values.tokenAddress),
     [tokens, values.tokenAddress],
@@ -139,7 +141,14 @@ const TransferFundsDialogForm = ({
     fromDomainId,
   ]);
 
-  const canTransferFunds = userHasRole(fromDomainRoles, ColonyRole.Funding);
+  const toDomainRoles = useTransformer(getUserRolesForDomain, [
+    colony,
+    walletAddress,
+    toDomainId,
+  ]);
+  const hasRoleInFromDomain = userHasRole(fromDomainRoles, ColonyRole.Funding);
+  const hasRoleInToDomain = userHasRole(toDomainRoles, ColonyRole.Funding);
+  const canTransferFunds = hasRoleInFromDomain && hasRoleInToDomain;
 
   const requiredRoles: ColonyRole[] = [ColonyRole.Funding];
 
@@ -284,7 +293,7 @@ const TransferFundsDialogForm = ({
               name="fromDomain"
               appearance={{ theme: 'grey' }}
               onChange={() => validateForm()}
-              disabled={inputDisabled}
+              disabled={onlyForceAction || isSubmitting}
               dataTest="domainIdSelector"
               itemDataTest="domainIdItem"
             />
@@ -324,7 +333,7 @@ const TransferFundsDialogForm = ({
               name="toDomain"
               appearance={{ theme: 'grey' }}
               onChange={() => validateForm()}
-              disabled={inputDisabled}
+              disabled={onlyForceAction || isSubmitting}
               dataTest="domainIdSelector"
               itemDataTest="domainIdItem"
             />
@@ -424,7 +433,9 @@ const TransferFundsDialogForm = ({
                     name={{ id: `role.${ColonyRole.Funding}` }}
                   />
                 ),
-                domainName: fromDomain?.name,
+                domainName:
+                  (!hasRoleInFromDomain && fromDomain?.name) ||
+                  (!hasRoleInToDomain && toDomain?.name),
               }}
             />
           </span>
