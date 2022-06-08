@@ -33,17 +33,10 @@
 }
 
 .signWrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0;
   height: 16px;
   width: 16px;
   position: absolute;
   left: -23px;
-  border: 1px solid var(--temp-grey-blue-7);
-  border-radius: 2px;
-  opacity: 0.65;
 }
 
 .signWrapper:hover {
@@ -72,11 +65,19 @@
 }
 
 .circlePlusIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin-right: 10px;
-  height: 16px;
-  width: 16px;
+  height: 17px;
+  width: 17px;
   fill: var(--action-secondary);
   stroke: var(--action-secondary);
+}
+
+.circlePlusIcon svg {
+  height: 16px;
+  width: 16px;
 }
 
 .addRecipientWrapper {
@@ -91,29 +92,4 @@
 
 .deleteIcon:hover {
   cursor: pointer;
-}
-
-.plusSign {
-  position: relative;
-}
-
-.plusSign::after {
-  display: block;
-  height: 9px;
-  width: 1px;
-  position: absolute;
-  top: -4px;
-  left: 0px;
-  background-color: var(--dark);
-  content: " ";
-}
-
-.plusSign::before {
-  display: block;
-  height: 1px;
-  width: 9px;
-  position: absolute;
-  left: -4px;
-  background-color: var(--dark);
-  content: " ";
 }

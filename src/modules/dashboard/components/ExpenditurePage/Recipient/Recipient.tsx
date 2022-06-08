@@ -162,14 +162,16 @@ const Recipient = ({
                           </Button>
                         )}
                       </div>
-                      <TokenSymbolSelector
-                        label=""
-                        tokens={tokensData}
-                        // eslint-disable-next-line max-len
-                        name={`recipients[${index}].value[${idx}].tokenAddress`}
-                        appearance={{ alignOptions: 'right', theme: 'grey' }}
-                        elementOnly
-                      />
+                      <div>
+                        <TokenSymbolSelector
+                          label=""
+                          tokens={tokensData}
+                          // eslint-disable-next-line max-len
+                          name={`recipients[${index}].value[${idx}].tokenAddress`}
+                          appearance={{ alignOptions: 'right', theme: 'grey' }}
+                          elementOnly
+                        />
+                      </div>
                       {tokenErrors?.[idx] && (
                         <div className={styles.error}>
                           <FormattedMessage {...MSG.valueError} />
@@ -181,6 +183,7 @@ const Recipient = ({
                           type="button"
                           onClick={() => arrayHelpers.push(newToken)}
                           appearance={{ theme: 'blue' }}
+                          style={{ margin: '7px 0' }}
                         >
                           <FormattedMessage {...MSG.addTokenText} />
                         </Button>

@@ -6,7 +6,11 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  padding-top: 15px;
+  padding-top: 10px;
+}
+
+.valueContainer:not(:first-of-type) {
+  padding-top: 20px;
 }
 
 .valueContainer .container {
@@ -71,20 +75,22 @@
   font-size: 12px;
 }
 
-.tokenWrapper button {
-  margin: 3px 0;
-}
-
 .removeWrapper {
-  margin-bottom: 4px;
-  height: 14px;
+  margin-bottom: 6px;
+  height: 18px;
   font-weight: var(--weight-bold);
   color: var(--colony-blue);
+}
+
+.removeWrapper button {
+  height: unset;
+  line-height: 12px;
 }
 
 .inputContainer {
   margin-right: 20px;
   padding-bottom: 26px;
+  padding-top: 4px;
   width: 100%;
   position: relative;
 }

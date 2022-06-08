@@ -18,8 +18,8 @@
     height: 38px;
     width: 38px;
     position: absolute;
-    top: -4px;
-    left: -4px;
+    top: -5px;
+    left: -5px;
     border-radius: 50%;
     background-color: var(--action-secondary);
     content: '';
@@ -41,8 +41,8 @@
 
 .icon {
   margin-right: 5px;
-  height: 30px;
-  width: 30px;
+  height: 28px;
+  width: 28px;
   position: relative;
   stroke: var(--action-secondary);
 }

@@ -11,4 +11,3 @@ export const addRecipientLabel: string;
 export const circlePlusIcon: string;
 export const addRecipientWrapper: string;
 export const deleteIcon: string;
-export const plusSign: string;

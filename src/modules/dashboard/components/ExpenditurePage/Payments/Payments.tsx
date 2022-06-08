@@ -28,6 +28,14 @@ const MSG = defineMessages({
     id: 'dashboard.Expenditures.Payments.addRecipientLabel',
     defaultMessage: 'Add recipient',
   },
+  minusIconTitle: {
+    id: 'dashboard.Expenditures.Payments.minusIconTitle',
+    defaultMessage: 'Collapse a single recipient settings',
+  },
+  plusIconTitle: {
+    id: 'dashboard.Expenditures.Payments.plusIconTitle',
+    defaultMessage: 'Expand a single recipient settings',
+  },
 });
 
 interface Props {
@@ -82,23 +90,21 @@ const Payments = ({ sidebarRef }: Props) => {
                     <div className={styles.recipientLabel}>
                       {recipient.isExpanded ? (
                         <>
-                          <Button
-                            type="button"
+                          <Icon
+                            name="minus"
                             onClick={() => onToogleButtonClick(index)}
                             className={styles.signWrapper}
-                          >
-                            <span className={styles.minus} />
-                          </Button>
+                            title={MSG.minusIconTitle}
+                          />
                           <div className={styles.verticalDivider} />
                         </>
                       ) : (
-                        <Button
-                          type="button"
+                        <Icon
+                          name="plus"
                           onClick={() => onToogleButtonClick(index)}
                           className={styles.signWrapper}
-                        >
-                          <span className={styles.plusSign} />
-                        </Button>
+                          title={MSG.plusIconTitle}
+                        />
                       )}
                       {index + 1}: <FormattedMessage {...MSG.recipient} />
                       {recipients.length > 1 && (
@@ -130,6 +136,7 @@ const Payments = ({ sidebarRef }: Props) => {
                     <Icon
                       name="circle-plus"
                       className={styles.circlePlusIcon}
+                      viewBox="0 0 16 16"
                     />
                     <FormattedMessage {...MSG.addRecipientLabel} />
                   </div>
