@@ -3,6 +3,15 @@
   line-height: 0;
 }
 
+.main > figure {
+  border: 2px solid transparent;
+  border-radius: 100%;
+}
+
+.main:hover figure {
+  border-color: var(--primary);
+}
+
 .stateShowOnClick {
   cursor: pointer;
 }
