@@ -74,6 +74,9 @@
 
 .questionIcon {
   display: block;
+
+  /* next lines are used for the correct tooltip arrow placement */
+  margin-right: -20px;
   margin-bottom: -3px;
   margin-left: 11px;
   height: 16px;
@@ -81,16 +84,13 @@
   border-radius: 50%;
   background-color: white;
   stroke: none;
+  transform: translateX(-20px);
 }
 
 .toggleContainer {
   margin-bottom: -6px;
   margin-left: 4px;
-}
-
-.cancelButton {
-  font-weight: var(--weight-bold);
-  color: rgba(60, 68, 77, 0.65);
+  margin-right: 20px;
 }
 
 .messageParagraph {
@@ -98,5 +98,5 @@
 }
 
 .tooltip {
-  max-width: 200px;
+  max-width: 250px;
 }

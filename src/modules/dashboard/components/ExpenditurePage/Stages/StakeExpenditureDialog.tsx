@@ -10,8 +10,9 @@ import { Tooltip } from '~core/Popover';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import Button from '~core/Button';
-import styles from './DraftConfirmDialog.css';
+import styles from './StakeExpenditureDialog.css';
 
+// Mock Data for Staking token, needs to be replaced with native token.
 const activeToken = {
   address: '0x0000000000000000000000000000000000000000',
   balances: [{ amount: '0', domainId: 0 }],
@@ -63,7 +64,7 @@ interface Props {
   onClick?: () => void;
 }
 
-const DraftConfirmDialog = ({ cancel, onClick, close }: Props) => {
+const StakeExpenditureDialog = ({ cancel, onClick, close }: Props) => {
   const handleSubmit = useCallback(() => {
     onClick?.();
     close();
@@ -94,6 +95,7 @@ const DraftConfirmDialog = ({ cancel, onClick, close }: Props) => {
                   </div>
                 }
                 trigger="hover"
+                placement="top-end"
               >
                 <Icon name="question-mark" className={styles.questionIcon} />
               </Tooltip>
@@ -164,4 +166,4 @@ const DraftConfirmDialog = ({ cancel, onClick, close }: Props) => {
   );
 };
 
-export default DraftConfirmDialog;
+export default StakeExpenditureDialog;

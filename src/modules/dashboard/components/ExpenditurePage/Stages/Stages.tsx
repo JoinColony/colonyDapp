@@ -7,7 +7,7 @@ import {
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
-import DraftConfirmDialog from './DraftConfirmDialog';
+import StakeExpenditureDialog from './StakeExpenditureDialog';
 import StageItem from './StageItem';
 
 import styles from './Stages.css';
@@ -77,7 +77,7 @@ interface ActiveState {
 const Stages = () => {
   const [activeState, setActiveState] = useState<ActiveState | null>(null);
 
-  const openDraftConfirmDialog = useDialog(DraftConfirmDialog);
+  const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
 
   const states = [
     {

@@ -14,6 +14,5 @@ export const tokenIcon: string;
 export const symbol: string;
 export const questionIcon: string;
 export const toggleContainer: string;
-export const cancelButton: string;
 export const messageParagraph: string;
 export const tooltip: string;
