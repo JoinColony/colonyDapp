@@ -55,6 +55,10 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.StakingSlider.loading',
     defaultMessage: 'Loading staking values ...',
   },
+  minimumAmount: {
+    id: 'dashboard.ActionsPage.StakingSlider.minimumAmount',
+    defaultMessage: 'at least {minStake}',
+  },
 });
 
 const StakingSlider = ({
@@ -155,11 +159,31 @@ const StakingSlider = ({
           {...(isObjection ? MSG.descriptionObject : MSG.descriptionStake)}
         />
       </p>
-      <Numeral
-        className={styles.amount}
-        value={displayStake}
-        suffix={nativeToken?.symbol}
-      />
+      {errorStakeType === 'tokens' ? (
+        <span className={styles.minStakeAmount}>
+          <FormattedMessage
+            {...MSG.minimumAmount}
+            values={{
+              minStake: (
+                <Numeral
+                  className={styles.minStakeAmount}
+                  value={getFormattedTokenValue(
+                    minUserStake,
+                    nativeToken?.decimals,
+                  )}
+                  suffix={nativeToken?.symbol}
+                />
+              ),
+            }}
+          />
+        </span>
+      ) : (
+        <Numeral
+          className={styles.amount}
+          value={displayStake}
+          suffix={nativeToken?.symbol}
+        />
+      )}
       <div className={styles.sliderContainer}>
         <Slider
           name="amount"
@@ -177,6 +201,16 @@ const StakingSlider = ({
         <StakingValidationError
           stakeType={errorStakeType}
           errorValues={{
+            leftToActivate: (
+              <Numeral
+                className={validationErrorStyles.validationErrorValues}
+                value={getFormattedTokenValue(
+                  new Decimal(minUserStake).sub(userActivatedTokens).toString(),
+                  nativeToken?.decimals,
+                )}
+              />
+            ),
+            tokenSymbol: nativeToken?.symbol,
             minimumStake: (
               <Numeral
                 className={validationErrorStyles.validationError}
