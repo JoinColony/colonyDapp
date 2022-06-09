@@ -164,7 +164,7 @@ const ColonyMembers = () => {
       colony: colonyData?.processedColony as Colony,
     });
   }, [openToggleManageWhitelistDialog, colonyData]);
-  const selectedDomain = colonyData?.processedColony.domains.find(
+  const selectedDomain = colonyData?.processedColony.domains?.find(
     ({ ethDomainId }) => ethDomainId === selectedDomainId,
   );
 
