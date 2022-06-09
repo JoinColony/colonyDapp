@@ -256,12 +256,14 @@ export default gql`
     roles: [Int!]!
     banned: Boolean!
     profile: UserProfile!
+    isWhitelisted: Boolean!
   }
 
   type ColonyWatcher {
     id: String!
     profile: UserProfile!
     banned: Boolean!
+    isWhitelisted: Boolean!
   }
 
   type ContributorsAndWatchers {
