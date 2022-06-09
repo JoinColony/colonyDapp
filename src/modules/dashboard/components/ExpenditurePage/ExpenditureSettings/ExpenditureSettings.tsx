@@ -1,9 +1,10 @@
-import React, { ReactNode, useCallback, useMemo } from 'react';
+import React, { ReactNode, useCallback, useEffect, useMemo } from 'react';
 import classNames from 'classnames';
 import { useParams } from 'react-router';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { defineMessages } from 'react-intl';
+import { useField } from 'formik';
 import {
   InputLabel,
   SelectHorizontal,
@@ -48,12 +49,15 @@ const MSG = defineMessages({
   },
 });
 
-interface Props {
-  colonyName: string;
-}
-
 const ExpenditureSettings = () => {
-  const { walletAddress, username } = useLoggedInUser();
+  const [, , { setValue }] = useField('owner');
+  const owner = useLoggedInUser();
+  const { walletAddress, username } = owner;
+
+  useEffect(() => {
+    setValue(owner);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [owner]);
 
   const { colonyName } = useParams<{
     colonyName: string;
@@ -87,6 +91,9 @@ const ExpenditureSettings = () => {
     (option, label) => {
       const value = option?.value;
       const color = getDomainColor(value);
+      // eslint-disable-next-line no-console
+      console.log({ option, label });
+
       return (
         <div className={styles.activeItem}>
           <ColorTag color={color} />
