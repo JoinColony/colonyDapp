@@ -7,6 +7,7 @@ import Log from './Log';
 import { useLoggedInUser } from '~data/helpers';
 import Comment, { CommentInput } from '~core/Comment';
 import { Colony } from '~data/index';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Input } from '~core/Fields';
 import { TransactionMeta } from '~dashboard/ActionsPage';
 
@@ -26,7 +27,7 @@ interface Props {
   isFormEditable?: boolean;
 }
 
-const LogsSection = ({ colonyAddress, isFormEditable }: Props) => {
+const LogsSection = ({ colonyAddress }: Props) => {
   const { username: currentUserName, ethereal } = useLoggedInUser();
   // add logs fetching here
 
@@ -46,9 +47,8 @@ const LogsSection = ({ colonyAddress, isFormEditable }: Props) => {
       } = log;
       if (log.type === 'comment') {
         return (
-          <div className={styles.comment}>
+          <li className={styles.comment} key={log.uniqueId}>
             <Comment
-              key={log.uniqueId}
               createdAt={createdAt}
               comment={message}
               commentMeta={{
@@ -61,12 +61,12 @@ const LogsSection = ({ colonyAddress, isFormEditable }: Props) => {
               user={initiator}
               showControls
             />
-          </div>
+          </li>
         );
       }
       return null;
     });
-  }, [logs]);
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -83,37 +83,41 @@ const LogsSection = ({ colonyAddress, isFormEditable }: Props) => {
           </div>
         </div>
       ) : (
-        renderLogs
+        <ul>{renderLogs}</ul>
       )}
       {/*
        *  @NOTE A user can comment only if he has a wallet connected
        * and a registered user profile,
+       
        * also input is disabled when the form is editable
+       
+       * "isFormEditable" isn't change to false right now, so below code is commented.
        */}
       {currentUserName && !ethereal && (
-        <>
-          {isFormEditable ? (
-            <div className={styles.disabledComment}>
-              <Input
-                name="disabled"
-                placeholder={MSG.commentPlaceholder}
-                elementOnly
-                disabled
-              />
-            </div>
-          ) : (
-            <div className={styles.commentInput}>
-              <CommentInput
-                {...{
-                  colonyAddress,
-                  transactionHash:
-                    // eslint-disable-next-line max-len
-                    '0x1785d214f0127279681354be8e23ad1a1501207432229db93a415c7a58427138',
-                }}
-              />
-            </div>
-          )}
-        </>
+        // <>
+        //   {isFormEditable ? (
+        //     <div className={styles.disabledComment}>
+        //       <Input
+        //         name="disabled"
+        //         placeholder={MSG.commentPlaceholder}
+        //         elementOnly
+        //         disabled
+        //       />
+        //     </div>
+        //   ) : (
+        <div className={styles.commentInput}>
+          <CommentInput
+            {...{
+              colonyAddress,
+              transactionHash:
+                // temporary value, needs to be changed with CommentInput logic to add a comment
+                // eslint-disable-next-line max-len
+                '0x1785d214f0127279681354be8e23ad1a1501207432229db93a415c7a58427138',
+            }}
+          />
+        </div>
+        //   )}
+        // </>
       )}
     </div>
   );

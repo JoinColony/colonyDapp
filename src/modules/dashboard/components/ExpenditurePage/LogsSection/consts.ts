@@ -38,7 +38,7 @@ export const logs = [
     transactionHash:
       '0x1785d214f0127279681354be8e23ad1a1501207432229db93a415c7a58427138',
     funds: ['10.765 CLNY', '0.0500 xDai'],
-    uniqueId: '1',
+    uniqueId: '2',
   },
   {
     type: 'action',
@@ -79,7 +79,7 @@ export const logs = [
         currValue: '24 hours',
       },
     ],
-    uniqueId: '2',
+    uniqueId: '3',
   },
   {
     type: 'comment',
@@ -104,7 +104,7 @@ export const logs = [
     initiatorAddress: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
     sourceId: '6295b94a85b0d55cd8aaeda5',
     sourceType: 'db',
-    uniqueId: '3',
+    uniqueId: '4',
   },
 ];
 

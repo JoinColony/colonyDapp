@@ -34,7 +34,7 @@ const Log = ({
   role,
 }: Props) => {
   return (
-    <div className={styles.container}>
+    <li className={styles.container}>
       <div className={styles.dotContainer}>
         <div className={styles.dot} />
       </div>
@@ -61,7 +61,10 @@ const Log = ({
             ),
             changes:
               changes?.map((change, index) => (
-                <div className={styles.change}>
+                <div
+                  className={styles.change}
+                  key={`${index}_${changes?.length}`}
+                >
                   <FormattedMessage
                     id={`systemMessage.change.${change.changeType}`}
                     values={{
@@ -80,7 +83,10 @@ const Log = ({
               )) || '',
             funds:
               funds?.map((fund, index) => (
-                <div className={styles.change}>
+                <div
+                  className={styles.change}
+                  key={`${index}_${funds?.length}`}
+                >
                   {fund}
                   {index !== funds.length - 1 ? ',' : '.'}
                 </div>
@@ -119,7 +125,7 @@ const Log = ({
           )}
         </div>
       </div>
-    </div>
+    </li>
   );
 };
 

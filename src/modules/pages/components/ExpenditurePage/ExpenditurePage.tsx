@@ -31,7 +31,7 @@ const ExpenditurePage = () => {
         </aside>
         <div className={styles.mainContainer}>
           <main className={styles.mainContent}>
-            <TitleDescriptionSection isEditable={isEditable} />
+            <TitleDescriptionSection isEditable />
             <LogsSection
               colonyAddress={data?.colonyAddress || ''}
               isFormEditable={isEditable}
