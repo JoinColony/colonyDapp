@@ -50,6 +50,9 @@ import {
   BannedUsersQuery,
   BannedUsersQueryVariables,
   BannedUsersDocument,
+  // VerifiedUsersQuery,
+  // VerifiedUsersQueryVariables,
+  // VerifiedUsersDocument,
 } from '~data/index';
 
 import { createAddress } from '~utils/web3';
@@ -357,6 +360,7 @@ export const colonyResolvers = ({
         },
         fetchPolicy: 'network-only',
       });
+      const verifiedAddresses = colony?.processedColony.whitelistedAddresses;
 
       const domainRoles = getAllUserRolesForDomain(
         colony?.processedColony,
@@ -435,6 +439,17 @@ export const colonyResolvers = ({
         fetchPolicy: 'network-only',
       });
 
+      // const { data: verifiedUsers } = await apolloClient.query<
+      //   VerifiedUsersQuery,
+      //   VerifiedUsersQueryVariables
+      // >({
+      //   query: VerifiedUsersDo,
+      //   variables: {
+      //     colonyAddress,
+      //   },
+      //   fetchPolicy: 'network-only',
+      // });
+
       const contributors: any[] = [];
       const watchers: any[] = [];
 
@@ -442,6 +457,9 @@ export const colonyResolvers = ({
         const {
           profile: { walletAddress },
         } = user;
+        const isWhitelisted = verifiedAddresses?.includes(
+          createAddress(walletAddress),
+        );
 
         const isUserBanned = bannedUsers?.bannedUsers?.find(
           ({
@@ -475,14 +493,16 @@ export const colonyResolvers = ({
             roles: domainRole ? domainRole.roles : [],
             directRoles: domainRole ? domainRole.directRoles : [],
             banned: !!isUserBanned,
+            isWhitelisted,
           });
         } else {
-          watchers.push({ ...user, banned: !!isUserBanned });
+          watchers.push({ ...user, banned: !!isUserBanned, isWhitelisted });
         }
       });
 
       membersWithReputation.forEach((walletAddress) => {
         const address = createAddress(walletAddress);
+        const isWhitelisted = verifiedAddresses?.includes(address);
 
         const isUserBanned = bannedUsers?.bannedUsers?.find(
           ({
@@ -504,6 +524,7 @@ export const colonyResolvers = ({
           roles: [],
           directRoles: [],
           banned: !!isUserBanned,
+          isWhitelisted,
         });
       });
 
