@@ -53,3 +53,7 @@
   width: 166px;
   text-align: left;
 }
+
+.manageFundsLink {
+  color: var(--colony-blue);
+}
