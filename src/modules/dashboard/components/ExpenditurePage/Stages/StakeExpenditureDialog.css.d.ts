@@ -16,3 +16,4 @@ export const questionIcon: string;
 export const toggleContainer: string;
 export const messageParagraph: string;
 export const tooltip: string;
+export const buttonHeight: string;

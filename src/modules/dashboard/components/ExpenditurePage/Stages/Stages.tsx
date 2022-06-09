@@ -14,7 +14,7 @@ import styles from './Stages.css';
 
 const MSG = defineMessages({
   stages: {
-    id: 'dashboard.Expenditures.Stages.defaultText',
+    id: 'dashboard.Expenditures.Stages.stages',
     defaultMessage: 'Stages',
   },
   notSaved: {
@@ -121,7 +121,7 @@ const Stages = () => {
   return (
     <div className={styles.mainContainer}>
       <div className={styles.statusContainer}>
-        <span>
+        <div className={styles.stagesText}>
           <span className={styles.status}>
             <FormattedMessage {...MSG.stages} />
           </span>
@@ -130,14 +130,17 @@ const Stages = () => {
               <FormattedMessage {...MSG.notSaved} />
             </span>
           )}
-        </span>
+        </div>
         <div className={styles.buttonsContainer}>
           {!activeState ? (
             <>
               {/* Deleting the expenditure will be added in next PR */}
               <Icon name="trash" className={styles.icon} />
               {/* onClick has temporary action, needs to be submiting draft in the future */}
-              <Button onClick={handleSaveDraft} style={{ height: '29px' }}>
+              <Button
+                onClick={handleSaveDraft}
+                style={{ height: styles.buttonHeight }}
+              >
                 <FormattedMessage {...MSG.submitDraft} />
               </Button>
             </>
@@ -146,7 +149,7 @@ const Stages = () => {
               <Icon name="share" className={styles.icon} />
               <Button
                 onClick={activeState?.buttonAction}
-                style={{ height: '29px' }}
+                style={{ height: styles.buttonHeight }}
               >
                 {typeof activeState?.buttonText === 'string' ? (
                   activeState.buttonText
