@@ -14,11 +14,11 @@
 }
 
 .mainContent {
-  height: 100%;
+  min-height: calc(100vh - navBarHeight);
 }
 
 .sidebar {
-  height: calc(100vh - navBarHeight);
+  min-height: calc(100vh - navBarHeight);
   width: sidebarWidth;
   background-color: var(--grey-blue-3);
 }
