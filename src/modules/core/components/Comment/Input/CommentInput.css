@@ -33,9 +33,9 @@
 }
 
 .sendInstructions {
+  margin-top: 5px;
   position: absolute;
   right: 0;
-  margin-top: 5px;
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   text-align: right;
@@ -63,9 +63,9 @@
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   text-align: left;
+  white-space: nowrap;
   color: var(--temp-grey-0);
   opacity: 0;
-  white-space: nowrap;
   transition: opacity 0.2s linear;
 }
 

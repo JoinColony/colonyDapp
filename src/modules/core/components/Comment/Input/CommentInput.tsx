@@ -153,7 +153,12 @@ const CommentInput = ({
         validateOnMount
         validateOnBlur
       >
-        {({ values, isSubmitting, isValid, handleSubmit }: FormikProps<FormValues>) => {
+        {({
+          values,
+          isSubmitting,
+          isValid,
+          handleSubmit,
+        }: FormikProps<FormValues>) => {
           const { message } = values;
           return (
             <div className={styles.commentBox} ref={commentBoxRef}>
@@ -176,8 +181,7 @@ const CommentInput = ({
                   <SpinnerLoader />
                 </div>
               )}
-              <div
-                className={styles.inputMessage}>
+              <div className={styles.inputMessage}>
                 <div
                   className={
                     !isValid && message.length > 0
@@ -185,9 +189,7 @@ const CommentInput = ({
                       : styles.minCharactersWarningFadeOut
                   }
                 >
-                  <FormattedMessage
-                    {...MSG.minCharactersWarning}
-                  />
+                  <FormattedMessage {...MSG.minCharactersWarning} />
                 </div>
                 <div
                   className={
@@ -214,7 +216,7 @@ const CommentInput = ({
                 </div>
               </div>
             </div>
-          )
+          );
         }}
       </Form>
     </div>
