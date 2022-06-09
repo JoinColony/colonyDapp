@@ -9,9 +9,9 @@ import { getMainClasses } from '~utils/css';
 
 import styles from './ExpenditurePage.css';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/consts';
-// import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
-// import { recipients } from './consts';
+import { recipients } from './consts';
+import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -47,7 +47,7 @@ const initialValues = {
 // });
 
 const ExpenditurePage = () => {
-  const [isFormEditable, setFormEditable] = useState(true);
+  const [isFormEditable, setFormEditable] = useState(false);
   const [formValues, setFormValues] = useState<typeof initialValues>();
   const sidebarRef = useRef<HTMLElement>(null);
   const submit = useCallback((values) => {
@@ -93,7 +93,7 @@ const ExpenditurePage = () => {
         <LockedExpenditureSettings
           {...{ owner, expenditure, team: filteredDomainId }}
         />
-        {/* <LockedPayments recipients={recipients} /> */}
+        <LockedPayments recipients={recipients} />
       </aside>
       <div className={styles.mainContainer}>
         <main className={styles.mainContent} />

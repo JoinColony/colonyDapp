@@ -1,14 +1,17 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { FormSection, Input, InputLabel, Select } from '~core/Fields';
-import Icon from '~core/Icon';
-import { Tooltip } from '~core/Popover';
+import { FormSection, InputLabel } from '~core/Fields';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
 import { Recipient as RecipientType } from '../Payments/types';
+import TokenIcon from '~dashboard/HookedTokenIcon';
+import { tokensData as tokens } from './consts';
 
 import styles from './LockedRecipient.css';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import Numeral from '~core/Numeral';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 
 const MSG = defineMessages({
   defaultRecipientLabel: {
@@ -66,12 +69,12 @@ interface Props {
 const LockedRecipient = ({ recipient }: Props) => {
   const {
     isExpanded,
-    value: tokens,
     user: { walletAddress, username },
+    delay,
   } = recipient;
 
   return (
-    <div className={styles.container}>
+    <div>
       {isExpanded && (
         <>
           <FormSection appearance={{ border: 'bottom' }}>
@@ -91,80 +94,45 @@ const LockedRecipient = ({ recipient }: Props) => {
             </div>
           </FormSection>
           <FormSection appearance={{ border: 'bottom' }}>
-            {tokens?.map((token, idx) => (
-              <div className={styles.valueContainer} key={idx}>
-                <div className={styles.inputContainer}>
-                  <InputLabel label={MSG.defaultValueLabel} />
-                  {token.amount}
-                  {/* {token.tokenAddress && (
-                    <TokenIcon
-                      token="0"
-                      name={undefined}
-                      size="xxs"
+            <div className={styles.itemContainer}>
+              <InputLabel
+                label={MSG.defaultValueLabel}
+                appearance={{
+                  direction: 'horizontal',
+                }}
+              />
+              <div className={styles.tokens}>
+                {tokens?.map((token, idx) => (
+                  <div className={styles.valueAmount} key={idx}>
+                    <span className={styles.icon}>
+                      <TokenIcon
+                        className={styles.tokenIcon}
+                        token={token}
+                        name={token.name || token.address}
+                      />
+                    </span>
+
+                    <Numeral
+                      unit={getTokenDecimalsWithFallback(token.decimals)}
+                      value={
+                        token.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount
+                      }
                     />
-                  )} */}
-                </div>
+                    <span className={styles.symbol}>{token.symbol}</span>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </FormSection>
           <FormSection appearance={{ border: 'bottom' }}>
-            <div className={styles.delayContainer}>
+            <div className={styles.itemContainer}>
               <div className={styles.delay}>
                 <FormattedMessage {...MSG.defaultDelayLabel} />
-                <Tooltip
-                  content={
-                    <div className={styles.tooltip}>
-                      <FormattedMessage {...MSG.tooltipMessageTitle} />
-                      {MSG.tooltipMessageDescription.defaultMessage && (
-                        <div className={styles.tooltipDescription}>
-                          <FormattedMessage
-                            {...MSG.tooltipMessageDescription}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  }
-                  trigger="hover"
-                  placement="right-start"
-                >
-                  <Icon name="question-mark" className={styles.questionIcon} />
-                </Tooltip>
               </div>
 
               <div className={styles.delayControlsContainer}>
-                <Input
-                  name=""
-                  appearance={{
-                    colorSchema: 'grey',
-                    size: 'small',
-                  }}
-                  label=""
-                  formattingOptions={{ numericOnly: true }}
-                  elementOnly
-                />
-                <Select
-                  name=""
-                  appearance={{
-                    theme: 'grey',
-                    alignOptions: 'left',
-                  }}
-                  label=""
-                  options={[
-                    {
-                      label: MSG.hoursLabel,
-                      value: 'hours',
-                    },
-                    {
-                      label: MSG.daysLabel,
-                      value: 'days',
-                    },
-                    {
-                      label: MSG.monthsLabel,
-                      value: 'months',
-                    },
-                  ]}
-                  elementOnly
-                />
+                {delay.amount}
+                {delay.time}
               </div>
             </div>
           </FormSection>

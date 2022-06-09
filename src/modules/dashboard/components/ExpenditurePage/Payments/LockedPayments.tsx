@@ -7,6 +7,7 @@ import styles from './Payments.css';
 import Icon from '~core/Icon';
 import { FormSection } from '~core/Fields';
 import LockedRecipient from '../Recipient/LockedRecipient';
+import UserMention from '~core/UserMention';
 
 const MSG = defineMessages({
   payments: {
@@ -36,12 +37,15 @@ interface Props {
 }
 
 const LockedPayments = ({ recipients }: Props) => {
-  const [expandedRecipients, setExpandedRecipients] = useState<number[]>([]);
+  const [expandedRecipients, setExpandedRecipients] = useState<number[]>(
+    recipients?.map((_, idx) => idx),
+  );
 
-  const onToogleButtonClick = useCallback((index) => {
+  const onToggleButtonClick = useCallback((index) => {
     setExpandedRecipients((expandedIndexes) => {
       const isOpen = expandedIndexes.find((expanded) => expanded === index);
-      if (isOpen) {
+
+      if (isOpen !== undefined) {
         return expandedIndexes.filter((idx) => idx !== index);
       }
       return [...expandedIndexes, index];
@@ -54,43 +58,51 @@ const LockedPayments = ({ recipients }: Props) => {
         <div className={styles.payments}>
           <FormattedMessage {...MSG.payments} />
         </div>
-        {recipients.map((recipient, index) => (
-          <div
-            className={styles.singleRecipient}
-            // eslint-disable-next-line react/no-array-index-key
-            key={index}
-          >
-            <FormSection appearance={{ border: 'bottom' }}>
-              <div className={styles.recipientLabel}>
-                {recipient.isExpanded ? (
-                  <>
+        {recipients.map((recipient, index) => {
+          const isOpen =
+            expandedRecipients.find((idx) => idx === index) !== undefined;
+
+          return (
+            <div
+              className={styles.singleRecipient}
+              // eslint-disable-next-line react/no-array-index-key
+              key={index}
+            >
+              <FormSection appearance={{ border: 'bottom' }}>
+                <div className={styles.recipientName}>
+                  {isOpen ? (
+                    <>
+                      <Icon
+                        name="minus"
+                        onClick={() => onToggleButtonClick(index)}
+                        className={styles.signWrapper}
+                        title={MSG.minusIconTitle}
+                      />
+                      <div className={styles.verticalDivider} />
+                    </>
+                  ) : (
                     <Icon
-                      name="minus"
-                      onClick={() => onToogleButtonClick(index)}
+                      name="plus"
+                      onClick={() => onToggleButtonClick(index)}
                       className={styles.signWrapper}
-                      title={MSG.minusIconTitle}
+                      title={MSG.plusIconTitle}
                     />
-                    <div className={styles.verticalDivider} />
-                  </>
-                ) : (
-                  <Icon
-                    name="plus"
-                    onClick={() => onToogleButtonClick(index)}
-                    className={styles.signWrapper}
-                    title={MSG.plusIconTitle}
-                  />
-                )}
-                {index + 1}: <FormattedMessage {...MSG.recipient} />
-              </div>
-            </FormSection>
-            <LockedRecipient
-              {...{
-                recipient,
-                isExpanded: !!expandedRecipients.find((idx) => idx === index),
-              }}
-            />
-          </div>
-        ))}
+                  )}
+                  {index + 1}:{' '}
+                  <UserMention username={recipient.user.username || ''} />,{' '}
+                  {recipient.delay.amount}
+                  {recipient.delay.time}
+                </div>
+              </FormSection>
+              <LockedRecipient
+                recipient={{
+                  ...recipient,
+                  isExpanded: isOpen,
+                }}
+              />
+            </div>
+          );
+        })}
       </div>
     </div>
   );

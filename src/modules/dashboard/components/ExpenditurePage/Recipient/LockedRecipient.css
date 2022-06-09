@@ -24,70 +24,29 @@
   padding: 6px 0;
 }
 
-.valueContainer {
+.itemContainer {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  padding-top: 10px;
+  padding: 15px 0;
 }
 
 .valueContainer:not(:first-of-type) {
-  padding-top: 20px;
-}
-
-.valueContainer .container {
-  width: 100%;
-}
-
-.valueContainer label {
-  margin-bottom: 0;
-  color: var(--text);
-}
-
-.valueContainer input {
-  padding: 0;
-  height: 42px;
-  width: 100%;
-  border-bottom: 1px solid var(--text);
+  /* padding-top: 20px; */
 }
 
 .delayContainer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.delay {
-  display: flex;
-  align-items: center;
   font-size: 13px;
   font-weight: var(--weight-bold);
-  color: var(--text);
-  letter-spacing: 0.5px;
+  color: var(--dark);
+  letter-spacing: 0.1px;
 }
 
 .delayControlsContainer {
-  display: flex;
-  padding: 4px 0;
-}
-
-.delayControlsContainer input {
-  margin-right: 8px;
-
-  /* override style added in form component */
-  margin-bottom: -15px;
-  padding: 0 14px;
-  min-height: 44px;
-  width: 103px;
-  text-align: right;
-}
-
-.delayControlsContainer i {
-  margin-top: 4px;
-}
-
-.delayControlsContainer button {
-  min-width: 96px;
+  font-size: var(--size-smallish);
 }
 
 .tokenWrapper {
@@ -109,19 +68,15 @@
   line-height: 12px;
 }
 
-.inputContainer {
-  margin-right: 20px;
-  padding-bottom: 26px;
-  padding-top: 4px;
-  width: 100%;
-  position: relative;
+.valueAmount {
+  display: flex;
+  justify-content: center;
 }
 
-.inputContainer button {
-  padding-left: 0;
-  bottom: 4px;
-  left: 0;
-  font-size: var(--size-small);
+.valueAmount:not(:last-of-type) {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 26px;
 }
 
 .questionIcon {
@@ -157,4 +112,40 @@
 .inputContainer input {
   padding: 20px 0 4px;
   height: 42px;
+}
+
+.tokenIcon {
+  height: 18px;
+  width: 18px;
+}
+
+.symbol {
+  margin-left: 4px;
+}
+
+.delay {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: var(--weight-bold);
+  color: var(--text);
+  letter-spacing: 0.5px;
+}
+
+.icon {
+  margin-right: 4px;
+}
+
+.userName {
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
+
+.tokens {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }

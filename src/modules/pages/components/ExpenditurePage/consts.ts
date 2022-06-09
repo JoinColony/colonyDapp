@@ -1,8 +1,8 @@
 export const recipients = [
   {
     delay: {
-      amount: '2',
-      time: 'hours',
+      amount: '24',
+      time: 'h',
     },
     value: [
       {
@@ -12,10 +12,42 @@ export const recipients = [
     ],
     user: {
       id: 'filterValue',
-      profile: {
-        displayName: 'John Doe',
-        walletAddress: 'John Doe',
+      username: 'John Doe',
+      walletAddress: 'John Doe',
+    },
+  },
+  {
+    delay: {
+      amount: '24',
+      time: 'h',
+    },
+    value: [
+      {
+        amount: 0,
+        tokenAddress: 1,
       },
+    ],
+    user: {
+      id: 'filterValue',
+      username: 'John Doe',
+      walletAddress: 'John Doe',
+    },
+  },
+  {
+    delay: {
+      amount: '24',
+      time: 'h',
+    },
+    value: [
+      {
+        amount: 0,
+        tokenAddress: 1,
+      },
+    ],
+    user: {
+      id: 'filterValue',
+      username: 'John Doe',
+      walletAddress: 'John Doe',
     },
   },
 ];

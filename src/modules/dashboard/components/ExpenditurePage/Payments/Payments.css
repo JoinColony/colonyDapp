@@ -93,3 +93,18 @@
 .deleteIcon:hover {
   cursor: pointer;
 }
+
+.recipientName {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.recipientName span {
+  margin-left: 4px;
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
