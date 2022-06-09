@@ -1,7 +1,8 @@
 @value buttonHeight: 29px;
 
 .mainContainer {
-  min-width: 400px;
+  padding-top: 20px;
+  min-width: 340px;
 }
 
 .status {
