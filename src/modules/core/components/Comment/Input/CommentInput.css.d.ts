@@ -4,4 +4,7 @@ export const main: string;
 export const commentBox: string;
 export const sendInstructions: string;
 export const sendInstructionsFadeIn: string;
+export const minCharactersWarningFadeOut: string;
+export const minCharactersWarning: string;
+export const inputMessage: string;
 export const submitting: string;
