@@ -59,6 +59,7 @@
   justify-content: center;
   margin-top: calc(headerFooterHeights / 2);
   font-size: var(--size-medium-l);
+  color: var(--dark);
 }
 
 .balanceNumeral {
