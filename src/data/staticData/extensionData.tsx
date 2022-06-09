@@ -209,7 +209,7 @@ const coinMachineMessages = {
 const votingReputationMessages = {
   votingReputationName: {
     id: 'extensions.votingReputation.name',
-    defaultMessage: 'Motions & Disputes (Reputation)',
+    defaultMessage: 'Governance (Reputation Weighted)',
   },
   votingReputationDescriptionShort: {
     id: 'extensions.votingReputation.description',
