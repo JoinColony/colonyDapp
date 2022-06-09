@@ -13,6 +13,7 @@ import Heading from '~core/Heading';
 import NavLink from '~core/NavLink';
 import Numeral from '~core/Numeral';
 import { Tooltip } from '~core/Popover';
+import Link from '~core/Link';
 
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
@@ -136,9 +137,15 @@ const ColonyUnclaimedTransfers = ({
         </li>
         {claimsLength > 1 && (
           <li>
-            <div className={styles.tokenItem}>
-              <FormattedMessage {...MSG.more} values={{ extraClaims }} />
-            </div>
+            <Link
+              className={styles.manageFundsLink}
+              to={`/colony/${colonyName}/funds`}
+              data-test="manageFunds"
+            >
+              <div className={styles.tokenItem}>
+                <FormattedMessage {...MSG.more} values={{ extraClaims }} />
+              </div>
+            </Link>
           </li>
         )}
       </ul>
