@@ -48,9 +48,9 @@
 }
 
 .amountWrapper {
-  display: flex;
-  align-items: flex-end;
-  margin-right: spaceBetween;
+  display: inline-block;
+  margin-right: 20px;
+  vertical-align: middle;
 }
 
 .claimWrapper {
