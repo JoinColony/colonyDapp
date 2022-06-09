@@ -1129,12 +1129,14 @@ export type ColonyContributor = {
   roles: Array<Scalars['Int']>;
   banned: Scalars['Boolean'];
   profile: UserProfile;
+  isWhitelisted: Scalars['Boolean'];
 };
 
 export type ColonyWatcher = {
   id: Scalars['String'];
   profile: UserProfile;
   banned: Scalars['Boolean'];
+  isWhitelisted: Scalars['Boolean'];
 };
 
 export type ContributorsAndWatchers = {
@@ -2067,10 +2069,10 @@ export type ContributorsAndWatchersQueryVariables = Exact<{
 
 
 export type ContributorsAndWatchersQuery = { contributorsAndWatchers?: Maybe<{ contributors: Array<(
-      Pick<ColonyContributor, 'id' | 'directRoles' | 'roles' | 'banned'>
+      Pick<ColonyContributor, 'id' | 'directRoles' | 'roles' | 'banned' | 'isWhitelisted'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
     )>, watchers: Array<(
-      Pick<ColonyWatcher, 'id' | 'banned'>
+      Pick<ColonyWatcher, 'id' | 'banned' | 'isWhitelisted'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
     )> }> };
 
@@ -5171,6 +5173,7 @@ export const ContributorsAndWatchersDocument = gql`
       directRoles
       roles
       banned
+      isWhitelisted
       profile {
         avatarHash
         displayName
@@ -5181,6 +5184,7 @@ export const ContributorsAndWatchersDocument = gql`
     watchers {
       id
       banned
+      isWhitelisted
       profile {
         avatarHash
         displayName
