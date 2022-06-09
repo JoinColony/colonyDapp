@@ -2,7 +2,8 @@
   display: flex;
   align-items: center;
   padding: 12px 15px 12px 20px;
-  height: 40px;
+  height: auto;
+  min-height: 40px;
   border-left: 3px solid var(--temp-grey-5);
   border-top: 1px solid var(--grey-blue-1);
   font-size: var(--size-small);
@@ -79,16 +80,7 @@
 
 .failedDescription {
   display: block;
-
-  /*
-   * @NOTE This breaks design consistency
-   *
-   * This does not a use a state symbol like all the others, it just displays
-   * skewed copy under the action's name.
-   *
-   * Because of this, we must *heavily* use negative margins to align text properly.
-   */
-  margin: -4px 0 -12px 14px;
+  margin-left: 14px;
   font-size: var(--size-unreadable);
   font-weight: var(--weight-bold);
   color: var(--danger);
