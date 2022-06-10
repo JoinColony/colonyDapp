@@ -180,7 +180,7 @@ const ManageWhitelistDialog = ({
       }}
     >
       {(formValues: FormikProps<FormValues>) => (
-        <Dialog cancel={cancel} noOverflow={false}>
+        <Dialog cancel={cancel}>
           <DialogForm
             {...formValues}
             colony={colony}
