@@ -30,7 +30,7 @@ export type NetworkInfo = {
   /*
    * Used when adding the network to Metamask
    */
-  rpcUrl?: string;
+  rpcUrl: string;
 };
 
 export const DEFAULT_NETWORK = process.env.NETWORK || Network.Goerli;

@@ -13,6 +13,7 @@ export * from './colonyActions';
 export * from './colonyMotions';
 export * from './extensions';
 export * from './user';
+export * from './networkStatus';
 
 export type WithKey = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

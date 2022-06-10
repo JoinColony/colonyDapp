@@ -479,3 +479,4 @@ query ColonyHistoricRoles($colonyAddress: String!, $blockNumber: Int!) {
     }
   }
 }
+

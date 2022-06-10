@@ -1,0 +1,19 @@
+query LatestRpcBlock {
+  latestRpcBlock @client
+}
+
+query ColonyServerLiveness {
+  isServerAlive @client
+}
+
+query LatestSubgraphBlock {
+  latestSubgraphBlock @client
+ }
+
+query ReputationOracleLiveness {
+  isReputationOracleAlive @client
+}
+
+query IPFSLiveness {
+  isIPFSAlive @client
+}

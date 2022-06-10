@@ -49,3 +49,8 @@ export const RECOVERY_HELP = `https://colony.gitbook.io/colony/advanced-features
  * Reputation & Smite
  */
 export const REPUTATION_LEARN_MORE = `https://colony.gitbook.io/colony/key-concepts/reputation/award-reputation`;
+
+/*
+ * Network Health
+ */
+export const NETWORK_HEALTH = `https://colony.gitbook.io/colony/get-started/understanding-the-interface/network-health`;

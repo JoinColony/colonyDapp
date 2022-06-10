@@ -15,6 +15,7 @@ import { readyTransactionsCount } from '~users/GasStation/transactionGroup';
 import AvatarDropdown from '~users/AvatarDropdown';
 import InboxPopover from '~users/Inbox/InboxPopover';
 import { ConnectWalletPopover } from '~users/ConnectWalletWizard';
+import { NetworkStatus } from '~core/NetworkStatus';
 
 import {
   useUserNotificationsQuery,
@@ -117,6 +118,7 @@ const UserNavigation = () => {
 
   return (
     <div className={styles.main}>
+      <NetworkStatus />
       {userCanNavigate && (
         <div
           className={`${styles.elementWrapper} ${styles.networkInfo}`}

@@ -259,6 +259,11 @@ export type Query = {
   getRecoveryRequiredApprovals: Scalars['Int'];
   getRecoveryStorageSlot: Scalars['String'];
   historicColonyRoles: Array<ProcessedRoles>;
+  isIPFSAlive: Scalars['Boolean'];
+  isReputationOracleAlive: Scalars['Boolean'];
+  isServerAlive: Scalars['Boolean'];
+  latestRpcBlock: Scalars['Int'];
+  latestSubgraphBlock: Scalars['Int'];
   legacyNumberOfRecoveryRoles: Scalars['Int'];
   loggedInUser: LoggedInUser;
   motionCurrentUserVoted: Scalars['Boolean'];
@@ -2742,6 +2747,31 @@ export type SubgraphRoleEventsQuery = { colonyRoleSetEvents: Array<(
       ) }
     ) }
   )> };
+
+export type LatestRpcBlockQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LatestRpcBlockQuery = Pick<Query, 'latestRpcBlock'>;
+
+export type ColonyServerLivenessQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ColonyServerLivenessQuery = Pick<Query, 'isServerAlive'>;
+
+export type LatestSubgraphBlockQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LatestSubgraphBlockQuery = Pick<Query, 'latestSubgraphBlock'>;
+
+export type ReputationOracleLivenessQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ReputationOracleLivenessQuery = Pick<Query, 'isReputationOracleAlive'>;
+
+export type IpfsLivenessQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type IpfsLivenessQuery = Pick<Query, 'isIPFSAlive'>;
 
 export type SubgraphColonyFundsClaimedEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -7527,6 +7557,156 @@ export function useSubgraphRoleEventsLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type SubgraphRoleEventsQueryHookResult = ReturnType<typeof useSubgraphRoleEventsQuery>;
 export type SubgraphRoleEventsLazyQueryHookResult = ReturnType<typeof useSubgraphRoleEventsLazyQuery>;
 export type SubgraphRoleEventsQueryResult = Apollo.QueryResult<SubgraphRoleEventsQuery, SubgraphRoleEventsQueryVariables>;
+export const LatestRpcBlockDocument = gql`
+    query LatestRpcBlock {
+  latestRpcBlock @client
+}
+    `;
+
+/**
+ * __useLatestRpcBlockQuery__
+ *
+ * To run a query within a React component, call `useLatestRpcBlockQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLatestRpcBlockQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLatestRpcBlockQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLatestRpcBlockQuery(baseOptions?: Apollo.QueryHookOptions<LatestRpcBlockQuery, LatestRpcBlockQueryVariables>) {
+        return Apollo.useQuery<LatestRpcBlockQuery, LatestRpcBlockQueryVariables>(LatestRpcBlockDocument, baseOptions);
+      }
+export function useLatestRpcBlockLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LatestRpcBlockQuery, LatestRpcBlockQueryVariables>) {
+          return Apollo.useLazyQuery<LatestRpcBlockQuery, LatestRpcBlockQueryVariables>(LatestRpcBlockDocument, baseOptions);
+        }
+export type LatestRpcBlockQueryHookResult = ReturnType<typeof useLatestRpcBlockQuery>;
+export type LatestRpcBlockLazyQueryHookResult = ReturnType<typeof useLatestRpcBlockLazyQuery>;
+export type LatestRpcBlockQueryResult = Apollo.QueryResult<LatestRpcBlockQuery, LatestRpcBlockQueryVariables>;
+export const ColonyServerLivenessDocument = gql`
+    query ColonyServerLiveness {
+  isServerAlive @client
+}
+    `;
+
+/**
+ * __useColonyServerLivenessQuery__
+ *
+ * To run a query within a React component, call `useColonyServerLivenessQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyServerLivenessQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyServerLivenessQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useColonyServerLivenessQuery(baseOptions?: Apollo.QueryHookOptions<ColonyServerLivenessQuery, ColonyServerLivenessQueryVariables>) {
+        return Apollo.useQuery<ColonyServerLivenessQuery, ColonyServerLivenessQueryVariables>(ColonyServerLivenessDocument, baseOptions);
+      }
+export function useColonyServerLivenessLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyServerLivenessQuery, ColonyServerLivenessQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyServerLivenessQuery, ColonyServerLivenessQueryVariables>(ColonyServerLivenessDocument, baseOptions);
+        }
+export type ColonyServerLivenessQueryHookResult = ReturnType<typeof useColonyServerLivenessQuery>;
+export type ColonyServerLivenessLazyQueryHookResult = ReturnType<typeof useColonyServerLivenessLazyQuery>;
+export type ColonyServerLivenessQueryResult = Apollo.QueryResult<ColonyServerLivenessQuery, ColonyServerLivenessQueryVariables>;
+export const LatestSubgraphBlockDocument = gql`
+    query LatestSubgraphBlock {
+  latestSubgraphBlock @client
+}
+    `;
+
+/**
+ * __useLatestSubgraphBlockQuery__
+ *
+ * To run a query within a React component, call `useLatestSubgraphBlockQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLatestSubgraphBlockQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLatestSubgraphBlockQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLatestSubgraphBlockQuery(baseOptions?: Apollo.QueryHookOptions<LatestSubgraphBlockQuery, LatestSubgraphBlockQueryVariables>) {
+        return Apollo.useQuery<LatestSubgraphBlockQuery, LatestSubgraphBlockQueryVariables>(LatestSubgraphBlockDocument, baseOptions);
+      }
+export function useLatestSubgraphBlockLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LatestSubgraphBlockQuery, LatestSubgraphBlockQueryVariables>) {
+          return Apollo.useLazyQuery<LatestSubgraphBlockQuery, LatestSubgraphBlockQueryVariables>(LatestSubgraphBlockDocument, baseOptions);
+        }
+export type LatestSubgraphBlockQueryHookResult = ReturnType<typeof useLatestSubgraphBlockQuery>;
+export type LatestSubgraphBlockLazyQueryHookResult = ReturnType<typeof useLatestSubgraphBlockLazyQuery>;
+export type LatestSubgraphBlockQueryResult = Apollo.QueryResult<LatestSubgraphBlockQuery, LatestSubgraphBlockQueryVariables>;
+export const ReputationOracleLivenessDocument = gql`
+    query ReputationOracleLiveness {
+  isReputationOracleAlive @client
+}
+    `;
+
+/**
+ * __useReputationOracleLivenessQuery__
+ *
+ * To run a query within a React component, call `useReputationOracleLivenessQuery` and pass it any options that fit your needs.
+ * When your component renders, `useReputationOracleLivenessQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useReputationOracleLivenessQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useReputationOracleLivenessQuery(baseOptions?: Apollo.QueryHookOptions<ReputationOracleLivenessQuery, ReputationOracleLivenessQueryVariables>) {
+        return Apollo.useQuery<ReputationOracleLivenessQuery, ReputationOracleLivenessQueryVariables>(ReputationOracleLivenessDocument, baseOptions);
+      }
+export function useReputationOracleLivenessLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ReputationOracleLivenessQuery, ReputationOracleLivenessQueryVariables>) {
+          return Apollo.useLazyQuery<ReputationOracleLivenessQuery, ReputationOracleLivenessQueryVariables>(ReputationOracleLivenessDocument, baseOptions);
+        }
+export type ReputationOracleLivenessQueryHookResult = ReturnType<typeof useReputationOracleLivenessQuery>;
+export type ReputationOracleLivenessLazyQueryHookResult = ReturnType<typeof useReputationOracleLivenessLazyQuery>;
+export type ReputationOracleLivenessQueryResult = Apollo.QueryResult<ReputationOracleLivenessQuery, ReputationOracleLivenessQueryVariables>;
+export const IpfsLivenessDocument = gql`
+    query IPFSLiveness {
+  isIPFSAlive @client
+}
+    `;
+
+/**
+ * __useIpfsLivenessQuery__
+ *
+ * To run a query within a React component, call `useIpfsLivenessQuery` and pass it any options that fit your needs.
+ * When your component renders, `useIpfsLivenessQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useIpfsLivenessQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useIpfsLivenessQuery(baseOptions?: Apollo.QueryHookOptions<IpfsLivenessQuery, IpfsLivenessQueryVariables>) {
+        return Apollo.useQuery<IpfsLivenessQuery, IpfsLivenessQueryVariables>(IpfsLivenessDocument, baseOptions);
+      }
+export function useIpfsLivenessLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<IpfsLivenessQuery, IpfsLivenessQueryVariables>) {
+          return Apollo.useLazyQuery<IpfsLivenessQuery, IpfsLivenessQueryVariables>(IpfsLivenessDocument, baseOptions);
+        }
+export type IpfsLivenessQueryHookResult = ReturnType<typeof useIpfsLivenessQuery>;
+export type IpfsLivenessLazyQueryHookResult = ReturnType<typeof useIpfsLivenessLazyQuery>;
+export type IpfsLivenessQueryResult = Apollo.QueryResult<IpfsLivenessQuery, IpfsLivenessQueryVariables>;
 export const SubgraphColonyFundsClaimedEventsDocument = gql`
     query SubgraphColonyFundsClaimedEvents($colonyAddress: String!, $sortDirection: String = asc) {
   colonyFundsClaimedEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {name_contains: "ColonyFundsClaimed", address: $colonyAddress}) {
