@@ -145,7 +145,7 @@ const ManageWhitelistDialogForm = ({
             <Annotations
               label={MSG.annotation}
               name="annotation"
-              disabled={!userHasPermission}
+              disabled={!userHasPermission || isSubmitting}
             />
           </TabPanel>
           <TabPanel>
@@ -163,7 +163,7 @@ const ManageWhitelistDialogForm = ({
             <Annotations
               label={MSG.annotation}
               name="annotation"
-              disabled={!userHasPermission}
+              disabled={!userHasPermission || isSubmitting}
             />
           </TabPanel>
         </Tabs>
