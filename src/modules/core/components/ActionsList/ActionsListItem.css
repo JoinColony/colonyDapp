@@ -41,7 +41,6 @@
 
 .avatar:hover figure {
   border-color: var(--primary);
-  background: var(--primary);
 }
 
 .status::before {

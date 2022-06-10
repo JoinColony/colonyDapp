@@ -22,7 +22,6 @@
 .userAvatar {
   display: inline-block;
   margin: 0 15px 15px 0;
-  border: 2px solid transparent;
   border-radius: 50px;
 }
 
