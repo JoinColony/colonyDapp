@@ -142,6 +142,11 @@ const ManageWhitelistDialogForm = ({
               inputSuccessMsg={MSG.inputSuccess}
               fileSuccessMsg={MSG.fileSuccess}
             />
+            <Annotations
+              label={MSG.annotation}
+              name="annotation"
+              disabled={!userHasPermission || isSubmitting}
+            />
           </TabPanel>
           <TabPanel>
             {(whitelistedUsers?.length && (
@@ -155,15 +160,13 @@ const ManageWhitelistDialogForm = ({
                 />
               </>
             )) || <NoWhitelistedAddressesState />}
+            <Annotations
+              label={MSG.annotation}
+              name="annotation"
+              disabled={!userHasPermission || isSubmitting}
+            />
           </TabPanel>
         </Tabs>
-      </DialogSection>
-      <DialogSection>
-        <Annotations
-          label={MSG.annotation}
-          name="annotation"
-          disabled={!userHasPermission}
-        />
       </DialogSection>
       {!userHasPermission && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>

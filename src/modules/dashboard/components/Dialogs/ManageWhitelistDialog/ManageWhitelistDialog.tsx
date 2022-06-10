@@ -44,6 +44,7 @@ const displayName = 'dashboard.ManageWhitelistDialog';
 
 const ManageWhitelistDialog = ({
   cancel,
+  close,
   callStep,
   prevStep,
   colony,
@@ -175,6 +176,7 @@ const ManageWhitelistDialog = ({
         if (tabIndex === TABS.ADD_ADDRESS) {
           setFormSuccess(true);
         }
+        close();
       }}
     >
       {(formValues: FormikProps<FormValues>) => (
