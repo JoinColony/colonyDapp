@@ -54,7 +54,7 @@ const MSG = defineMessages({
     defaultMessage: 'Add or remove tokens you want the colony to recognize.',
   },
   manageTokensPermissionsList: {
-    id: 'dashboard.AdvancedDialog.manageTokensPermissionsList',
+    id: 'dashboard.ManageFundsDialog.manageTokensPermissionsList',
     defaultMessage: 'root',
   },
   rewardPayoutTitle: {
