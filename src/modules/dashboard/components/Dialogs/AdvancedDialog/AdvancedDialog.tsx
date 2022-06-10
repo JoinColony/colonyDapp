@@ -83,6 +83,14 @@ const MSG = defineMessages({
     defaultMessage:
       'Want to interact with DeFi, or govern an external smart contract?',
   },
+  manageGnosisSafeTitle: {
+    id: 'dashboard.AdvancedDialog.manageGnosisSafeTitle',
+    defaultMessage: 'Gnosis Safe Control',
+  },
+  manageGnosisSafeDescription: {
+    id: 'dashboard.AdvancedDialog.manageGnosisSafeDescription',
+    defaultMessage: 'Control a safe to interact with external contracts.',
+  },
 });
 
 interface CustomWizardDialogProps extends ActionDialogProps {
@@ -90,6 +98,7 @@ interface CustomWizardDialogProps extends ActionDialogProps {
   nextStepRecovery: string;
   nextStepEditDetails: string;
   nextStepVersionUpgrade: string;
+  nextStepManageGnosisSafe: string;
   prevStep: string;
   colony: Colony;
 }
@@ -107,6 +116,7 @@ const AdvancedDialog = ({
   nextStepRecovery,
   nextStepEditDetails,
   nextStepVersionUpgrade,
+  nextStepManageGnosisSafe,
   colony,
   colony: { version: colonyVersion },
   isVotingExtensionEnabled,
@@ -180,6 +190,13 @@ const AdvancedDialog = ({
       },
       onClick: () => callStep(nextStepEditDetails),
       dataTest: 'updateColonyDialogIndexItem',
+    },
+    {
+      title: MSG.manageGnosisSafeTitle,
+      description: MSG.manageGnosisSafeDescription,
+      icon: 'gnosis-safe',
+      dataTest: 'manageGnosisSafeItem',
+      onClick: () => callStep(nextStepManageGnosisSafe),
     },
     {
       title: MSG.makeArbitraryTransactionTitle,
