@@ -1,6 +1,7 @@
 {
   "icons": [
     "active-task",
+    "add-existing-safe",
     "archive",
     "arrow-wallet",
     "arrow-rotate-ccw",
@@ -95,6 +96,7 @@
     "plus-heavy",
     "question-mark",
     "question-mark-inverted",
+    "remove-safe",
     "return-arrow",
     "search",
     "settings",
