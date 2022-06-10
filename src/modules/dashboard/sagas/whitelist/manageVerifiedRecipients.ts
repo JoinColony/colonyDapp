@@ -8,7 +8,7 @@ import {
   ColonyFromNameDocument,
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
-import { putError, takeFrom } from '~utils/saga/effects';
+import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 
 import {
   createTransaction,
@@ -34,7 +34,7 @@ function* manageVerifiedRecipients({
     annotationMessage,
     isWhitelistActivated,
   },
-  meta: { id: metaId },
+  meta: { id: metaId, history },
   meta,
 }: Action<ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE>) {
   let txChannel;
@@ -177,6 +177,10 @@ function* manageVerifiedRecipients({
       payload: {},
       meta,
     });
+
+    if (colonyName) {
+      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
+    }
   } catch (error) {
     return yield putError(
       ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE_ERROR,

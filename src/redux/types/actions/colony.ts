@@ -5,6 +5,7 @@ import {
   ErrorActionType,
   UniqueActionType,
   UniqueActionTypeWithoutPayload,
+  MetaWithHistory,
 } from './index';
 
 export type ColonyActionTypes =
@@ -124,7 +125,7 @@ export type ColonyActionTypes =
         colonyName: string;
         isWhitelistActivated: boolean;
       },
-      WithKey
+      MetaWithHistory<object>
     >
   | ErrorActionType<ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE_ERROR, object>
   | UniqueActionType<
