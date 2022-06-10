@@ -74,6 +74,7 @@ const ColonyMembers = () => {
 
   const { data: colonyData, error, loading } = useColonyFromNameQuery({
     variables: { name: colonyName, address: '' },
+    pollInterval: 5000,
   });
 
   const colonyAddress = colonyData?.processedColony?.colonyAddress || '';
