@@ -47,7 +47,7 @@ const displayName = 'users.GasStation.TransactionStatus';
 const TransactionStatus = ({
   hash,
   status,
-  groupCount = 4,
+  groupCount,
   loadingRelated,
 }: Props) => (
   <div
