@@ -1,6 +1,7 @@
 {
   "icons": [
     "active-task",
+    "add-existing-safe",
     "archive",
     "arrow-wallet",
     "arrow-rotate-ccw",
@@ -39,6 +40,7 @@
     "codeBlock",
     "colony-logo",
     "comment",
+    "control-safe",
     "cup",
     "drag-handle",
     "droplet",
@@ -79,6 +81,7 @@
     "filled-circle-person",
     "forbidden-signal",
     "four-square",
+    "gnosis-safe",
     "graph-line",
     "heading",
     "trash",
@@ -90,6 +93,7 @@
     "phrase",
     "question-mark",
     "question-mark-inverted",
+    "remove-safe",
     "return-arrow",
     "search",
     "settings",
