@@ -83,5 +83,6 @@
   margin-left: 14px;
   font-size: var(--size-unreadable);
   font-weight: var(--weight-bold);
+  line-height: 1.6;
   color: var(--danger);
 }
