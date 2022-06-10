@@ -24,6 +24,7 @@ import EditColonyDetailsDialog from '~dialogs/EditColonyDetailsDialog';
 import ManageReputationDialog from '~dialogs/ManageReputationDialog';
 import ColonyTokenManagementDialog from '~dialogs/ColonyTokenManagementDialog';
 import { SmiteDialog, AwardDialog } from '~dialogs/AwardAndSmiteDialogs';
+import ManageGnosisSafeDialog from '~dialogs/ManageGnosisSafeDialog';
 
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
@@ -196,9 +197,51 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         nextStepRecovery: 'dashboard.RecoveryModeDialog',
         nextStepEditDetails: 'dashboard.EditColonyDetailsDialog',
         nextStepVersionUpgrade: 'dashboard.NetworkContractUpgradeDialog',
+        nextStepManageGnosisSafe: 'dashboard.ManageGnosisSafeDialog',
         colony,
       },
     },
+
+    {
+      component: ManageGnosisSafeDialog,
+      props: {
+        nextStepAddExistingSafe: 'dashboard.AddExistingSafeDialog',
+        nextStepRemoveSafe: 'dashboard.RemoveSafeDialog',
+        nextStepControlSafe: 'dashboard.StepControlSafeDialog',
+        prevStep: 'dashboard.AdvancedDialog',
+        colony,
+        isVotingExtensionEnabled,
+      },
+    },
+    // @todo - ready to be implemented in another PR.
+    // {
+    //   component: AddExistingSafeDialog,
+    //   props: {
+    //     prevStep: 'dashboard.AddExistingSafeDialog',
+    //     colony,
+    //     isVotingExtensionEnabled,
+    //     ethDomainId,
+    //   },
+    // },
+    // {
+    //   component: RemoveSafeDialog,
+    //   props: {
+    //     prevStep: 'dashboard.RemoveSafeDialog',
+    //     colony,
+    //     isVotingExtensionEnabled,
+    //     ethDomainId,
+    //   },
+    // },
+    // {
+    //   component: ControlSafeDialog,
+    //   props: {
+    //     prevStep: 'dashboard.ControlSafeDialog',
+    //     colony,
+    //     isVotingExtensionEnabled,
+    //     ethDomainId,
+    //   },
+    // },
+
     {
       component: PermissionManagementDialog,
       props: {
