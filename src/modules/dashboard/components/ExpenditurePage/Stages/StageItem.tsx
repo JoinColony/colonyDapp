@@ -13,7 +13,8 @@ interface Props {
 const StageItem = ({ label, isActive, isFirst }: Props) => {
   const { formatMessage } = useIntl();
 
-  const labelText = typeof label === 'object' ? formatMessage(label) : label;
+  const labelText =
+    typeof label === 'object' && label?.id ? formatMessage(label) : label;
 
   return (
     <div className={styles.container}>

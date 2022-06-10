@@ -76,7 +76,6 @@ const StakeExpenditureDialog = ({ cancel, onClick, close }: Props) => {
         <DialogSection appearance={{ theme: 'heading', border: 'bottom' }}>
           <Heading
             appearance={{ size: 'medium', margin: 'none' }}
-            text="Stake to Create Expenditure"
             className={styles.title}
           >
             <FormattedMessage {...MSG.header} />
@@ -137,14 +136,10 @@ const StakeExpenditureDialog = ({ cancel, onClick, close }: Props) => {
       </div>
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
-          appearance={{ theme: 'secondary', size: 'small' }}
+          appearance={{ theme: 'secondary', size: 'medium' }}
           onClick={() => cancel()}
           text={MSG.cancelText}
-          style={{
-            color: styles.textColor,
-            fontWeight: 400,
-            fontSize: styles.sizeNormal,
-          }}
+          style={{ padding: styles.padding }}
         />
         <Button
           appearance={{
@@ -155,9 +150,7 @@ const StakeExpenditureDialog = ({ cancel, onClick, close }: Props) => {
           onClick={handleSubmit}
           text={MSG.confirmText}
           style={{
-            fontWeight: 700,
             width: styles.submitButtonWidth,
-            marginLeft: styles.buttonMarginLeft,
           }}
           data-test="confirmButton"
         />

@@ -1,8 +1,5 @@
-@value textColor: var(--text);
 @value submitButtonWidth: 160px;
-@value sizeNormal: var(--size-normal);
-@value buttonMarginLeft: 6px;
-@value weightNormal: 400;
+@value padding: 2px 5px;
 
 .dialogContainer {
   padding: 0 20px;
@@ -88,6 +85,7 @@
 }
 
 .toggleContainer {
+  /* negative margin here corrects the position of the toggle input */
   margin-bottom: -6px;
   margin-left: 4px;
   margin-right: 20px;
