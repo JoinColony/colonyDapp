@@ -1,6 +1,7 @@
 import React, { useCallback, useRef } from 'react';
 import * as yup from 'yup';
 
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { Form } from '~core/Fields';
 import Payments from '~dashboard/ExpenditurePage/Payments';
 import ExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings';
@@ -17,11 +18,24 @@ const initialValues = {
   recipients: [newRecipient],
 };
 
+const MSG = defineMessages({
+  userRequiredError: {
+    id: 'dashboard.Expenditures.ExpenditurePage.userRequiredError',
+    defaultMessage: 'User is required',
+  },
+  delayRequiredError: {
+    id: 'dashboard.Expenditures.ExpenditurePage.delayRequiredError',
+    defaultMessage: 'Delay is required',
+  },
+});
+
 const validationSchema = yup.object().shape({
   expenditure: yup.string().required(),
   recipients: yup.array(
     yup.object().shape({
-      recipient: yup.object().required('User is required'),
+      recipient: yup
+        .object()
+        .required(() => <FormattedMessage {...MSG.userRequiredError} />),
       value: yup
         .array(
           yup.object().shape({
@@ -34,7 +48,9 @@ const validationSchema = yup.object().shape({
         .object()
         .shape({
           amount: yup.string().required(),
-          time: yup.string().required('Delay is required'),
+          time: yup
+            .string()
+            .required(() => <FormattedMessage {...MSG.delayRequiredError} />),
         })
         .required(),
     }),
@@ -62,7 +78,9 @@ const ExpenditurePage = () => {
           <Payments sidebarRef={sidebarRef.current} />
         </aside>
         <div className={styles.mainContainer}>
-          <main className={styles.mainContent} />
+          <main className={styles.mainContent}>
+            <button type="submit">Submit</button>
+          </main>
         </div>
       </div>
     </Form>

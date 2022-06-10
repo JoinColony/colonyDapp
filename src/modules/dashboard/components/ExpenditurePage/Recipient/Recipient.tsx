@@ -1,4 +1,5 @@
 import { FieldArray, useField, useFormikContext } from 'formik';
+import { nanoid } from 'nanoid';
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import Button from '~core/Button';
@@ -41,9 +42,7 @@ const MSG = defineMessages({
   },
   tooltipMessageDescription: {
     id: 'dashboard.Expenditures.Recipient.tooltipMessageDescription',
-    defaultMessage:
-      // eslint-disable-next-line max-len
-      'F.ex. once the work is finished, recipient has to wait before funds can be claimed.',
+    defaultMessage: `F.ex. once the work is finished, recipient has to wait before funds can be claimed.`,
   },
   addTokenText: {
     id: 'dashboard.Expenditures.Recipient.addTokenText',
@@ -81,7 +80,8 @@ interface Props {
   sidebarRef: HTMLElement | null;
 }
 
-const newToken = {
+export const newToken = {
+  id: nanoid(),
   amount: undefined,
   tokenAddress: undefined,
 };
@@ -124,7 +124,7 @@ const Recipient = ({
             render={(arrayHelpers) => (
               <FormSection appearance={{ border: 'bottom' }}>
                 {tokens?.map((token, idx) => (
-                  <div className={styles.valueContainer} key={idx}>
+                  <div className={styles.valueContainer} key={token.id}>
                     <div className={styles.inputContainer}>
                       <InputLabel label={MSG.defaultValueLabel} />
                       <Input
@@ -181,9 +181,11 @@ const Recipient = ({
                       {tokens.length === idx + 1 && (
                         <Button
                           type="button"
-                          onClick={() => arrayHelpers.push(newToken)}
+                          onClick={() =>
+                            arrayHelpers.push({ ...newToken, id: nanoid() })
+                          }
                           appearance={{ theme: 'blue' }}
-                          style={{ margin: '7px 0' }}
+                          style={{ margin: styles.buttonMargin }}
                         >
                           <FormattedMessage {...MSG.addTokenText} />
                         </Button>

@@ -18,6 +18,7 @@ import styles from './UserPickerWithSearch.css';
 import { ItemDefault } from '~core/SingleUserPicker';
 import Dropdown from './Dropdown';
 import withAdditionalOmniPicker from '~core/OmniPicker/withAdditionalOmniPicker';
+import Button from '~core/Button';
 
 type AvatarRenderFn = (
   address: Address,
@@ -112,7 +113,6 @@ const UserPickerWithSearch = ({
   omniPickerIsOpen,
   OmniPickerWrapper,
   onSelected,
-  openOmniPicker,
   toggleOmniPicker,
   placeholder,
   registerInputNode,
@@ -130,12 +130,12 @@ const UserPickerWithSearch = ({
   const { formatMessage } = useIntl();
   const ref = useRef<HTMLDivElement>(null);
 
-  const handleActiveUserClick = useCallback(() => {
+  const toggleDropdown = useCallback(() => {
     if (!disabled) {
-      setValue(null);
-      openOmniPicker();
+      toggleOmniPicker();
     }
-  }, [disabled, openOmniPicker, setValue]);
+  }, [disabled, toggleOmniPicker]);
+
   const handlePick = useCallback(
     (user: AnyUser) => {
       if (setValue) setValue(user);
@@ -175,21 +175,27 @@ const UserPickerWithSearch = ({
         />
         <div className={styles.inputWithIcon} ref={registerTriggerNode}>
           {value ? (
-            renderAvatar(value.profile.walletAddress, value)
+            <Button
+              type="button"
+              onClick={toggleDropdown}
+              appearance={{ theme: 'secondary' }}
+              style={{ padding: '0' }}
+            >
+              {renderAvatar(value.profile.walletAddress, value)}
+            </Button>
           ) : (
             <Icon
               className={omniPickerIsOpen ? styles.focusIcon : styles.icon}
               name="circle-person"
               title={MSG.selectMember}
-              onClick={toggleOmniPicker}
+              onClick={toggleDropdown}
             />
           )}
           {value && (
             <button
               type="button"
               className={classNames(styles.recipientName)}
-              onClick={handleActiveUserClick}
-              onFocus={handleActiveUserClick}
+              onClick={toggleDropdown}
               tabIndex={0}
               disabled={disabled}
               data-test={valueDataTest}

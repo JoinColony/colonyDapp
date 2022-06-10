@@ -81,17 +81,13 @@ const Payments = ({ sidebarRef }: Props) => {
           render={({ push, remove }) => (
             <>
               {recipients.map((recipient, index) => (
-                <div
-                  className={styles.singleRecipient}
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={index}
-                >
+                <div className={styles.singleRecipient} key={recipient.id}>
                   <FormSection appearance={{ border: 'bottom' }}>
                     <div className={styles.recipientLabel}>
                       {recipient.isExpanded ? (
                         <>
                           <Icon
-                            name="minus"
+                            name="collapse"
                             onClick={() => onToogleButtonClick(index)}
                             className={styles.signWrapper}
                             title={MSG.minusIconTitle}
@@ -100,7 +96,7 @@ const Payments = ({ sidebarRef }: Props) => {
                         </>
                       ) : (
                         <Icon
-                          name="plus"
+                          name="expand"
                           onClick={() => onToogleButtonClick(index)}
                           className={styles.signWrapper}
                           title={MSG.plusIconTitle}
@@ -129,14 +125,14 @@ const Payments = ({ sidebarRef }: Props) => {
               ))}
               <div className={styles.addRecipientWrapper}>
                 <Button
-                  onClick={() => push(newRecipient)}
+                  onClick={() => push({ ...newRecipient })}
                   appearance={{ theme: 'blue' }}
                 >
                   <div className={styles.addRecipientLabel}>
                     <Icon
-                      name="circle-plus"
+                      name="plus-circle"
+                      appearance={{ size: 'small' }}
                       className={styles.circlePlusIcon}
-                      viewBox="0 0 16 16"
                     />
                     <FormattedMessage {...MSG.addRecipientLabel} />
                   </div>

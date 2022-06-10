@@ -90,6 +90,10 @@
   color: var(--danger);
 }
 
+.recipientName:hover {
+  cursor: pointer;
+}
+
 .omniPickerContainer {
   width: 100%;
   max-width: 332px;

@@ -1,6 +1,10 @@
+import { nanoid } from 'nanoid';
+import { newToken } from '../Recipient/Recipient';
+
 export const newRecipient = {
+  id: nanoid(),
   recipient: undefined,
-  value: [{ amount: undefined, tokenAddress: undefined }],
+  value: [newToken],
   delay: undefined,
   isExpanded: true,
 };

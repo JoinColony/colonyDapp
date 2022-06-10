@@ -1,3 +1,4 @@
+export const buttonMargin: string;
 export const singleUserContainer: string;
 export const valueContainer: string;
 export const container: string;

@@ -36,6 +36,10 @@
   height: 16px;
   width: 16px;
   position: absolute;
+
+  /* negative margin is used to set the position of the button,
+  which collapse and expand singe recipient fields,
+  on the left side of the form */
   left: -23px;
 }
 
@@ -69,15 +73,13 @@
   justify-content: center;
   align-items: center;
   margin-right: 10px;
-  height: 17px;
-  width: 17px;
   fill: var(--action-secondary);
-  stroke: var(--action-secondary);
 }
 
 .circlePlusIcon svg {
   height: 16px;
   width: 16px;
+  overflow: visible;
 }
 
 .addRecipientWrapper {
