@@ -1,0 +1,23 @@
+.container {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-left: 7px;
+    padding: 0px 14px 0px 14px;
+    height: 100%;
+    border-left: 1px solid var(--temp-grey-13);
+    gap: 5px;
+  }
+
+  .menu-line {
+    height: 3px;
+    width: 21px;
+    background-color: var(--primary);
+  }
+}

@@ -11,3 +11,11 @@
   top: 0;
   right: 0;
 }
+
+@media screen and (max-width: 768px) {
+  .nav {
+    order: 1;
+    padding: 0;
+    position: static;
+  }
+}
