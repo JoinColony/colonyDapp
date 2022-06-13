@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-// import * as yup from 'yup';
+import * as yup from 'yup';
 
 import { Form } from '~core/Fields';
 import Payments from '~dashboard/ExpenditurePage/Payments';
@@ -10,8 +10,10 @@ import { getMainClasses } from '~utils/css';
 import styles from './ExpenditurePage.css';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/consts';
 import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
-import { recipients } from './consts';
 import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
+import TitleDescriptionSection, {
+  LockedTitleDescriptionSection,
+} from '~dashboard/ExpenditurePage/TitleDescriptionSection';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -20,42 +22,48 @@ const initialValues = {
   filteredDomainId: undefined,
   owner: undefined,
   recipients: [newRecipient],
+  title: undefined,
+  description: undefined,
 };
 
-// const validationSchema = yup.object().shape({
-// expenditure: yup.string().required(),
-// recipients: yup.array(
-//   yup.object().shape({
-//     recipient: yup.object().required('User is required'),
-//     value: yup
-//       .array(
-//         yup.object().shape({
-//           amount: yup.number().required(),
-//           tokenAddress: yup.string().required(),
-//         }),
-//       )
-//       .min(1),
-//     delay: yup
-//       .object()
-//       .shape({
-//         amount: yup.string().required(),
-//         time: yup.string().required('Delay is required'),
-//       })
-//       .required(),
-//   }),
-// ),
-// });
+const validationSchema = yup.object().shape({
+  expenditure: yup.string().required(),
+  filteredDomainId: yup.string().required('Team is required'),
+  recipients: yup.array(
+    yup.object().shape({
+      recipient: yup.object().required('User is required'),
+      value: yup
+        .array(
+          yup.object().shape({
+            amount: yup.number().required(),
+            tokenAddress: yup.string().required(),
+          }),
+        )
+        .min(1),
+      delay: yup
+        .object()
+        .shape({
+          amount: yup.string().required(),
+          time: yup.string().required('Delay is required'),
+        })
+        .required(),
+    }),
+  ),
+  title: yup.string().required(),
+});
 
 const ExpenditurePage = () => {
-  const [isFormEditable, setFormEditable] = useState(false);
+  const [isFormEditable, setFormEditable] = useState(true);
   const [formValues, setFormValues] = useState<typeof initialValues>();
+  const [shouldValidate, setShouldValidate] = useState(false);
   const sidebarRef = useRef<HTMLElement>(null);
+
   const submit = useCallback((values) => {
-    // eslint-disable-next-line no-console
-    setFormValues(values);
-    // eslint-disable-next-line no-console
-    console.log({ values });
-    // setFormEditable(false);
+    setShouldValidate(true);
+    if (values) {
+      setFormValues(values);
+    }
+    // add sending form to backend
   }, []);
 
   useEffect(() => {
@@ -67,13 +75,20 @@ const ExpenditurePage = () => {
 
   const { owner, expenditure, filteredDomainId } = formValues || {};
 
+  const handleValidate = useCallback(() => {
+    if (!shouldValidate) {
+      setShouldValidate(true);
+    }
+  }, [shouldValidate]);
+
   return isFormEditable ? (
     <Form
       initialValues={initialValues}
       onSubmit={submit}
-      // validationSchema={validationSchema}
-      validateOnBlur={false}
-      validateOnChange={false}
+      validationSchema={validationSchema}
+      validateOnBlur={shouldValidate}
+      validateOnChange={shouldValidate}
+      validate={handleValidate}
     >
       <div className={getMainClasses({}, styles)}>
         <aside className={styles.sidebar} ref={sidebarRef}>
@@ -82,7 +97,7 @@ const ExpenditurePage = () => {
         </aside>
         <div className={styles.mainContainer}>
           <main className={styles.mainContent}>
-            <button type="submit">submit</button>
+            <TitleDescriptionSection />
           </main>
         </div>
       </div>
@@ -93,10 +108,15 @@ const ExpenditurePage = () => {
         <LockedExpenditureSettings
           {...{ owner, expenditure, team: filteredDomainId }}
         />
-        <LockedPayments recipients={recipients} />
+        <LockedPayments recipients={formValues?.recipients} />
       </aside>
       <div className={styles.mainContainer}>
-        <main className={styles.mainContent} />
+        <main className={styles.mainContent}>
+          <LockedTitleDescriptionSection
+            title={formValues?.title}
+            description={formValues?.description}
+          />
+        </main>
       </div>
     </div>
   );

@@ -51,6 +51,7 @@ const MSG = defineMessages({
 
 const ExpenditureSettings = () => {
   const [, , { setValue }] = useField('owner');
+  const [, { error }] = useField('filteredDomainId');
   const owner = useLoggedInUser();
   const { walletAddress, username } = owner;
 
@@ -211,6 +212,7 @@ const ExpenditureSettings = () => {
                 />
               )}
             </div>
+            {error && <div className={styles.error}>{error}</div>}
           </FormSection>
           <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.balance}>

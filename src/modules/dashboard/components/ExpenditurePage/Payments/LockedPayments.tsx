@@ -33,22 +33,22 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  recipients: RecipientType[];
+  recipients?: RecipientType[];
 }
 
 const LockedPayments = ({ recipients }: Props) => {
-  const [expandedRecipients, setExpandedRecipients] = useState<number[]>(
-    recipients?.map((_, idx) => idx),
-  );
+  const [expandedRecipients, setExpandedRecipients] = useState<
+    number[] | undefined
+  >(recipients?.map((_, idx) => idx));
 
   const onToggleButtonClick = useCallback((index) => {
     setExpandedRecipients((expandedIndexes) => {
-      const isOpen = expandedIndexes.find((expanded) => expanded === index);
+      const isOpen = expandedIndexes?.find((expanded) => expanded === index);
 
       if (isOpen !== undefined) {
-        return expandedIndexes.filter((idx) => idx !== index);
+        return expandedIndexes?.filter((idx) => idx !== index);
       }
-      return [...expandedIndexes, index];
+      return [...(expandedIndexes || []), index];
     });
   }, []);
 
@@ -58,9 +58,9 @@ const LockedPayments = ({ recipients }: Props) => {
         <div className={styles.payments}>
           <FormattedMessage {...MSG.payments} />
         </div>
-        {recipients.map((recipient, index) => {
+        {recipients?.map((recipient, index) => {
           const isOpen =
-            expandedRecipients.find((idx) => idx === index) !== undefined;
+            expandedRecipients?.find((idx) => idx === index) !== undefined;
 
           return (
             <div
@@ -89,9 +89,9 @@ const LockedPayments = ({ recipients }: Props) => {
                     />
                   )}
                   {index + 1}:{' '}
-                  <UserMention username={recipient.user.username || ''} />,{' '}
-                  {recipient.delay.amount}
-                  {recipient.delay.time}
+                  <UserMention username={recipient.recipient.username || ''} />
+                  {recipient?.delay?.amount}
+                  {recipient?.delay?.time}
                 </div>
               </FormSection>
               <LockedRecipient

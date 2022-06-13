@@ -32,9 +32,7 @@ const MSG = defineMessages({
   },
   tooltipMessageDescription: {
     id: 'dashboard.Expenditures.Recipient.tooltipMessageDescription',
-    defaultMessage:
-      // eslint-disable-next-line max-len
-      'F.ex. once the work is finished, recipient has to wait before funds can be claimed.',
+    defaultMessage: `F.ex. once the work is finished, recipient has to wait before funds can be claimed.`,
   },
   addTokenText: {
     id: 'dashboard.Expenditures.Recipient.addTokenText',
@@ -69,7 +67,7 @@ interface Props {
 const LockedRecipient = ({ recipient }: Props) => {
   const {
     isExpanded,
-    user: { walletAddress, username },
+    recipient: { walletAddress, username },
     delay,
   } = recipient;
 
@@ -102,6 +100,11 @@ const LockedRecipient = ({ recipient }: Props) => {
                 }}
               />
               <div className={styles.tokens}>
+                {/* 
+                  Tokens value is a mock. 
+                  It has to be fetched from backend based on form value, I think.
+                  Form store only token address. 
+                */}
                 {tokens?.map((token, idx) => (
                   <div className={styles.valueAmount} key={idx}>
                     <span className={styles.icon}>
@@ -131,8 +134,8 @@ const LockedRecipient = ({ recipient }: Props) => {
               </div>
 
               <div className={styles.delayControlsContainer}>
-                {delay.amount}
-                {delay.time}
+                {delay?.amount}
+                {delay?.time}
               </div>
             </div>
           </FormSection>
