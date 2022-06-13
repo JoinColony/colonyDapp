@@ -14,7 +14,7 @@ export const filterUserSelection = (data: AnyUser[], filterValue: string) => {
       return false;
     }
 
-    const username = user.profile?.username || '';
+    const username = `@${user.profile?.username}` || '';
     const { walletAddress } = user.profile;
 
     return (
