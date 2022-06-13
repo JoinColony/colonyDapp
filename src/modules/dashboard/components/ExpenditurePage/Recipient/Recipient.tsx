@@ -137,8 +137,6 @@ const Recipient = ({
                         placeholder="Not set"
                         formattingOptions={{
                           numeral: true,
-                          // @ts-ignore
-                          tailPrefix: true,
                           numeralDecimalScale: 10,
                         }}
                         maxButtonParams={{

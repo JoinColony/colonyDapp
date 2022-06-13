@@ -26,6 +26,7 @@
 
 .sidebar::-webkit-scrollbar {
   display: none;
+  scrollbar-width: none;
 }
 
 .form {

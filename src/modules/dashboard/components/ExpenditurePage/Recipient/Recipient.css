@@ -1,4 +1,4 @@
-@value buttonMargin: 7px 0;
+@value buttonMargin: 7px 0 5px 0;
 
 .singleUserContainer {
   padding: 6px 0;
