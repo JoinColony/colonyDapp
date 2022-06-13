@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { defineMessages } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
 import * as yup from 'yup';
@@ -9,6 +9,7 @@ import Button from '~core/Button';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 import { useDialog } from '~core/Dialog';
 import RaiseObjectionDialog from '~dialogs/RaiseObjectionDialog';
+import { TokenActivationContext } from '~users/TokenActivationProvider';
 
 import {
   useLoggedInUser,
@@ -40,6 +41,10 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.StakingWidget.objectButton',
     defaultMessage: 'Object',
   },
+  activateButton: {
+    id: 'dashboard.ActionsPage.StakingWidget.activateButton',
+    defaultMessage: 'Activate',
+  },
   stakingTooltip: {
     id: 'dashboard.ActionsPage.StakingWidget.stakingTooltip',
     defaultMessage: '[TO BE ADDED]',
@@ -63,6 +68,9 @@ const StakingWidget = ({
   handleWidgetState,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
+  const { setIsOpen: openTokenActivationPopover } = useContext(
+    TokenActivationContext,
+  );
 
   const { data, loading } = useMotionStakesQuery({
     variables: {
@@ -211,6 +219,8 @@ const StakingWidget = ({
 
   const canBeStaked = isObjection ? canUserStakeNay : canUserStakeYay;
 
+  const objectButtonStyles = enoughTokens ? styles.objectButton : '';
+
   return (
     <div className={styles.main} data-test="stakingWidget">
       <ActionForm
@@ -241,7 +251,11 @@ const StakingWidget = ({
               minUserStake={minUserStake}
               userActivatedTokens={userActivatedTokens}
             />
-            <div className={styles.buttonGroup}>
+            <div
+              className={`${styles.buttonGroup} ${
+                !enoughTokens ? styles.buttonGroupAlignment : ''
+              }`}
+            >
               <Button
                 appearance={{
                   theme: isObjection ? 'danger' : 'primary',
@@ -259,7 +273,7 @@ const StakingWidget = ({
                 className={
                   !bigNumberify(totalNAYStakes).isZero()
                     ? styles.backButtonWrapper
-                    : styles.objectButton
+                    : objectButtonStyles
                 }
               >
                 {isObjection || !bigNumberify(totalNAYStakes).isZero() ? (
@@ -285,6 +299,16 @@ const StakingWidget = ({
                   />
                 )}
               </span>
+              {!enoughTokens && (
+                <Button
+                  appearance={{
+                    theme: 'primary',
+                    size: 'medium',
+                  }}
+                  text={MSG.activateButton}
+                  onClick={() => openTokenActivationPopover(true)}
+                />
+              )}
             </div>
           </div>
         )}

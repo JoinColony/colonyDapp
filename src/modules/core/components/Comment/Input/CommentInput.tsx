@@ -36,6 +36,10 @@ const MSG = defineMessages({
     id: 'core.Comment.CommentInput.commentInstuctions',
     defaultMessage: `{sendCombo} to send {newLineCombo} for a new line`,
   },
+  minCharactersWarning: {
+    id: 'core.Comment.CommentInput.minCharactersWarning',
+    defaultMessage: `You must enter at least 3 characters to comment`,
+  },
   newLineCombo: {
     id: 'core.Comment.CommentInput.newLineCombo',
     defaultMessage: 'Shift+Return',
@@ -149,52 +153,71 @@ const CommentInput = ({
         validateOnMount
         validateOnBlur
       >
-        {({ isSubmitting, isValid, handleSubmit }: FormikProps<FormValues>) => (
-          <div className={styles.commentBox} ref={commentBoxRef}>
-            <TextareaAutoresize
-              elementOnly
-              label={MSG.commentInputPlaceholder}
-              name="message"
-              placeholder={
-                disabledInputPlaceholder || MSG.commentInputPlaceholder
-              }
-              minRows={1}
-              maxRows={6}
-              onKeyDown={(event) => handleKeyboardSubmit(event, handleSubmit)}
-              innerRef={(ref) => setCommentBoxInputRef(ref)}
-              disabled={isSubmitting || disabled}
-              dataTest="commentInput"
-            />
-            {isSubmitting && (
-              <div className={styles.submitting}>
-                <SpinnerLoader />
-              </div>
-            )}
-            <div
-              className={
-                isValid
-                  ? styles.sendInstructionsFadeIn
-                  : styles.sendInstructions
-              }
-            >
-              <FormattedMessage
-                {...MSG.commentInstuctions}
-                values={{
-                  sendCombo: (
-                    <b>
-                      <FormattedMessage {...MSG.sendCombo} />
-                    </b>
-                  ),
-                  newLineCombo: (
-                    <b>
-                      <FormattedMessage {...MSG.newLineCombo} />
-                    </b>
-                  ),
-                }}
+        {({
+          values,
+          isSubmitting,
+          isValid,
+          handleSubmit,
+        }: FormikProps<FormValues>) => {
+          const { message } = values;
+          return (
+            <div className={styles.commentBox} ref={commentBoxRef}>
+              <TextareaAutoresize
+                elementOnly
+                label={MSG.commentInputPlaceholder}
+                name="message"
+                placeholder={
+                  disabledInputPlaceholder || MSG.commentInputPlaceholder
+                }
+                minRows={1}
+                maxRows={6}
+                onKeyDown={(event) => handleKeyboardSubmit(event, handleSubmit)}
+                innerRef={(ref) => setCommentBoxInputRef(ref)}
+                disabled={isSubmitting || disabled}
+                dataTest="commentInput"
               />
+              {isSubmitting && (
+                <div className={styles.submitting}>
+                  <SpinnerLoader />
+                </div>
+              )}
+              <div className={styles.inputMessage}>
+                <div
+                  className={
+                    !isValid && message.length > 0
+                      ? styles.minCharactersWarning
+                      : styles.minCharactersWarningFadeOut
+                  }
+                >
+                  <FormattedMessage {...MSG.minCharactersWarning} />
+                </div>
+                <div
+                  className={
+                    isValid
+                      ? styles.sendInstructionsFadeIn
+                      : styles.sendInstructions
+                  }
+                >
+                  <FormattedMessage
+                    {...MSG.commentInstuctions}
+                    values={{
+                      sendCombo: (
+                        <b>
+                          <FormattedMessage {...MSG.sendCombo} />
+                        </b>
+                      ),
+                      newLineCombo: (
+                        <b>
+                          <FormattedMessage {...MSG.newLineCombo} />
+                        </b>
+                      ),
+                    }}
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-        )}
+          );
+        }}
       </Form>
     </div>
   );

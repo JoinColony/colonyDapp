@@ -34,6 +34,8 @@
 
 .sendInstructions {
   margin-top: 5px;
+  position: absolute;
+  right: 0;
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   text-align: right;
@@ -54,6 +56,26 @@
 .sendInstructionsFadeIn {
   composes: sendInstructions;
   opacity: 1;
+}
+
+.minCharactersWarningFadeOut {
+  margin-top: 5px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  text-align: left;
+  white-space: nowrap;
+  color: var(--temp-grey-0);
+  opacity: 0;
+  transition: opacity 0.2s linear;
+}
+
+.minCharactersWarning {
+  composes: minCharactersWarningFadeOut;
+  opacity: 1;
+}
+
+.inputMessage {
+  display: flex;
 }
 
 .submitting {

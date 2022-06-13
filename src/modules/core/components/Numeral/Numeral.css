@@ -1,5 +1,5 @@
 .main {
-  font-size: var(--size-normal);
+  font-size: inherit;
 }
 
 /*

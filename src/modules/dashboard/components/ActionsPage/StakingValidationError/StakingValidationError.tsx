@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { defineMessage, FormattedMessage } from 'react-intl';
 
-import { UniversalMessageValues } from '~types/index';
+import Button from '~core/Button';
+import { TokenActivationContext } from '~users/TokenActivationProvider';
+import { UniversalMessageValues, PrimitiveType } from '~types/index';
 
 import styles from './StakingValidationError.css';
 
@@ -18,7 +20,7 @@ interface Props {
 const stakeValidationMSG = defineMessage({
   tokens: {
     id: 'dashboard.ActionsPage.StakingValidationError.tokens',
-    defaultMessage: `The minimum stake requirement in this team is {minimumStake}. You only have {userActiveTokens} activated, so cannot provide the minimum stake. Please activate more tokens.`,
+    defaultMessage: `Activate {leftToActivate} more {tokenSymbol} to be eligible to stake.`,
   },
   reputation: {
     id: 'dashboard.ActionsPage.StakingValidationError.reputation',
@@ -38,13 +40,39 @@ const stakeValidationMSG = defineMessage({
   },
 });
 
-const displayName = 'StakingValidationError';
+const displayName = 'dashboard.ActionsPage.StakingValidationError';
 
-const StakingValidationError = ({ stakeType, errorValues }: Props) => (
-  <div className={styles.validationError}>
-    <FormattedMessage {...stakeValidationMSG[stakeType]} values={errorValues} />
-  </div>
-);
+const StakingValidationError = ({ stakeType, errorValues }: Props) => {
+  const { setIsOpen: openTokenActivationPopover } = useContext(
+    TokenActivationContext,
+  );
+
+  if (stakeType === 'tokens') {
+    return (
+      <Button
+        text={stakeValidationMSG.tokens}
+        textValues={{
+          /* react-intl has wrong types for the formatMessage funtion that is used in the button.
+          The will be a type error if there is no type casting although it's all working correctly */
+          leftToActivate: errorValues?.leftToActivate as PrimitiveType,
+          tokenSymbol: (errorValues?.tokenSymbol as PrimitiveType) || '',
+        }}
+        appearance={{ theme: 'pink' }}
+        style={{ marginTop: '20px', fontSize: '11px' }}
+        onClick={() => openTokenActivationPopover(true)}
+      />
+    );
+  }
+
+  return (
+    <div className={styles.validationError}>
+      <FormattedMessage
+        {...stakeValidationMSG[stakeType]}
+        values={errorValues}
+      />
+    </div>
+  );
+};
 
 StakingValidationError.displayName = displayName;
 
