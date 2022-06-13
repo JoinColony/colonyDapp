@@ -28,6 +28,7 @@ import { hasRoot, canAdminister } from '~modules/users/checks';
 import { oneTxMustBeUpgraded } from '~modules/dashboard/checks';
 
 import styles from './ColonyMembers.css';
+import ManageWhitelistDialog from '~dashboard/Dialogs/ManageWhitelistDialog';
 
 const displayName = 'dashboard.ColonyMembers';
 
@@ -43,6 +44,10 @@ const MSG = defineMessages({
   unbanAddress: {
     id: 'dashboard.ColonyMembers.unbanAddress',
     defaultMessage: 'Unban address',
+  },
+  manageWhitelist: {
+    id: 'dashboard.ColonyMembers.manageWhitelist',
+    defaultMessage: 'Manage address book',
   },
   loadingText: {
     id: 'dashboard.ColonyMembers.loadingText',
@@ -69,6 +74,7 @@ const ColonyMembers = () => {
 
   const { data: colonyData, error, loading } = useColonyFromNameQuery({
     variables: { name: colonyName, address: '' },
+    pollInterval: 5000,
   });
 
   const colonyAddress = colonyData?.processedColony?.colonyAddress || '';
@@ -108,6 +114,15 @@ const ColonyMembers = () => {
     });
   }, [openPermissionManagementDialog, colonyData, isVotingExtensionEnabled]);
 
+  const openToggleManageWhitelistDialog = useDialog(ManageWhitelistDialog);
+
+  const handleToggleWhitelistDialog = useCallback(() => {
+    // @ts-ignore
+    return openToggleManageWhitelistDialog({
+      colony: colonyData?.processedColony as Colony,
+    });
+  }, [openToggleManageWhitelistDialog, colonyData]);
+
   // eslint-disable-next-line max-len
   const oneTxPaymentExtension = colonyExtensions?.processedColony?.installedExtensions.find(
     ({ details, extensionId: extensionName }) =>
@@ -128,6 +143,7 @@ const ColonyMembers = () => {
   const canAdministerComments =
     hasRegisteredProfile &&
     (hasRoot(currentUserRoles) || canAdminister(currentUserRoles));
+  const canManageWhitelist = hasRegisteredProfile && hasRoot(currentUserRoles);
 
   const controlsDisabled =
     !isSupportedColonyVersion ||
@@ -212,6 +228,15 @@ const ColonyMembers = () => {
                     />
                   </li>
                 </>
+              )}
+              {canManageWhitelist && (
+                <li>
+                  <Button
+                    appearance={{ theme: 'blue' }}
+                    text={MSG.manageWhitelist}
+                    onClick={handleToggleWhitelistDialog}
+                  />
+                </li>
               )}
             </ul>
           )}

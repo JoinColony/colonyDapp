@@ -9,12 +9,14 @@ import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 import sortBy from 'lodash/sortBy';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { isConfusing } from '@colony/unicode-confusables-noascii';
 import { AddressZero } from 'ethers/constants';
 
 import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
 import PermissionsLabel from '~core/PermissionsLabel';
 import Button from '~core/Button';
+import ConfusableWarning from '~core/ConfusableWarning';
 import { ItemDataType } from '~core/OmniPicker';
 import { ActionDialogProps } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
@@ -104,12 +106,17 @@ const MSG = defineMessages({
     payment.`,
   },
   userPickerPlaceholder: {
-    id: 'SingleUserPicker.userPickerPlaceholder',
+    id: `dashboard.CreatePaymentDialog.CreatePaymentDialogForm.userPickerPlaceholder`,
     defaultMessage: 'Search for a user or paste wallet address',
+  },
+  warningText: {
+    id: `dashboard.CreatePaymentDialog.CreatePaymentDialogForm.warningText`,
+    defaultMessage: `<span>Warning.</span> You are about to make a payment to an address not on the whitelist. Are you sure the address is correct?`,
   },
 });
 interface Props extends ActionDialogProps {
   subscribedUsers: AnyUser[];
+  showWhitelistWarning: boolean;
   ethDomainId?: number;
 }
 
@@ -154,6 +161,7 @@ const CreatePaymentDialogForm = ({
   isValid,
   values,
   ethDomainId: preselectedDomainId,
+  showWhitelistWarning,
 }: Props & FormikProps<FormValues>) => {
   const selectedDomain =
     preselectedDomainId === 0 || preselectedDomainId === undefined
@@ -442,6 +450,30 @@ const CreatePaymentDialogForm = ({
             valueDataTest="paymentRecipientName"
           />
         </div>
+        {showWhitelistWarning && (
+          <div className={styles.warningContainer}>
+            <p className={styles.warningText}>
+              <FormattedMessage
+                {...MSG.warningText}
+                values={{
+                  span: (chunks) => (
+                    <span className={styles.warningLabel}>{chunks}</span>
+                  ),
+                }}
+              />
+            </p>
+          </div>
+        )}
+        {values.recipient &&
+          isConfusing(
+            values.recipient.profile.username ||
+              values.recipient.profile.displayName,
+          ) && (
+            <ConfusableWarning
+              walletAddress={values.recipient.profile.walletAddress}
+              colonyAddress={colonyAddress}
+            />
+          )}
       </DialogSection>
       <DialogSection>
         <div className={styles.tokenAmount}>

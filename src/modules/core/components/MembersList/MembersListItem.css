@@ -27,6 +27,12 @@
   margin-left: 5px;
 }
 
+.address {
+  display: flex;
+  align-items: center;
+  line-height: 13px;
+}
+
 .address span {
   font-weight: 500;
 }
@@ -46,4 +52,17 @@
 
 .stateHasReputation.stateReputationLoaded {
   opacity: 1;
+}
+
+.whitelistedIcon {
+  margin-left: 10px;
+  position: relative;
+}
+
+.whitelistedIcon svg {
+  fill: var(--primary);
+}
+
+.whitelistedIconTooltip {
+  width: initial;
 }

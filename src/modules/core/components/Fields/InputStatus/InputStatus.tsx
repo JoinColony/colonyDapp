@@ -11,7 +11,7 @@ export interface Appearance {
   theme?: 'fat' | 'underlined' | 'minimal' | 'dotted';
   direction?: 'horizontal';
   colorSchema?: 'dark' | 'grey' | 'transparent';
-  statusShema?: 'info';
+  statusSchema?: 'info';
   size?: 'small' | 'medium';
   textSpace?: 'wrap';
 }

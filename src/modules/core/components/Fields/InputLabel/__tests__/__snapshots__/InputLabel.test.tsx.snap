@@ -12,12 +12,14 @@ exports[`InputLabel intl={intl} component Renders initial component 1`] = `
     htmlFor="foo"
     id="foo-label"
   >
-    <span>
-      awesome
-    </span>
-    <span>
-      halp
-    </span>
+    <div>
+      <span>
+        awesome
+      </span>
+      <span>
+        halp
+      </span>
+    </div>
   </label>
 </InputLabel>
 `;

@@ -111,7 +111,7 @@ const FileUpload = ({
   dropzoneOptions: { accept: acceptProp, disabled, ...dropzoneOptions } = {},
   elementOnly,
   extra,
-  form: { errors, resetForm, values },
+  form: { errors, resetForm, values, dirty },
   forwardedRef: ref,
   help,
   helpValues,
@@ -139,7 +139,7 @@ const FileUpload = ({
   const fileErrors = useMemo(() => getIn(errors, name) || [], [errors, name]);
 
   const maxFileLimitNotMet = files.length < maxFilesLimit;
-  const hasError = !!fileErrors.length;
+  const hasError = dirty && !!fileErrors.length;
 
   const accept = useMemo<string[]>(() => {
     if (!acceptProp) {

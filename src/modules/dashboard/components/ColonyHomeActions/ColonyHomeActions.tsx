@@ -17,6 +17,7 @@ import TransferFundsDialog from '~dialogs/TransferFundsDialog';
 import AdvancedDialog from '~dialogs/AdvancedDialog';
 import PermissionManagementDialog from '~dialogs/PermissionManagementDialog';
 import RecoveryModeDialog from '~dialogs/RecoveryModeDialog';
+import ManageWhitelistDialog from '~dialogs/ManageWhitelistDialog';
 import TokenMintDialog from '~dialogs/TokenMintDialog';
 import NetworkContractUpgradeDialog from '~dialogs/NetworkContractUpgradeDialog';
 import EditColonyDetailsDialog from '~dialogs/EditColonyDetailsDialog';
@@ -151,6 +152,7 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         prevStep: 'dashboard.ColonyActionsDialog',
         nextStep: 'dashboard.CreateDomainDialog',
         nextStepEdit: 'dashboard.EditDomainDialog',
+        nextStepManageWhitelist: 'dashboard.ManageWhitelistDialog',
         colony,
         isVotingExtensionEnabled,
       },
@@ -225,6 +227,13 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
       component: RecoveryModeDialog,
       props: {
         prevStep: 'dashboard.AdvancedDialog',
+        colony,
+      },
+    },
+    {
+      component: ManageWhitelistDialog,
+      props: {
+        prevStep: 'dashboard.ManageDomainsDialog',
         colony,
       },
     },

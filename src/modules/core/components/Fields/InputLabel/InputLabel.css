@@ -1,5 +1,7 @@
 .main {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 6px;
   width: 100%;
   position: relative;
@@ -58,12 +60,6 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-}
-
-.extra {
-  position: absolute;
-  top: 0;
-  right: 0;
 }
 
 .stateScreenReaderOnly {

@@ -1,0 +1,36 @@
+.container {
+  margin: 40px 0;
+}
+
+.inputContainer {
+  margin-bottom: 9px;
+}
+
+.actionsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  width: unset;
+}
+
+.actionsContainer > label {
+  margin-bottom: 0px;
+}
+
+.actionsSubContainer {
+  display: flex;
+  align-items: center;
+}
+
+.actionsSubContainer > label {
+  margin-right: 0px;
+}
+
+.uploaderContainer {
+  margin-bottom: 28px;
+}
+
+.uploaderContainer > div > p {
+  height: 0;
+}

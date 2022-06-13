@@ -7,6 +7,7 @@ import FriendlyName from '~core/FriendlyName';
 import { EventValue } from '~data/resolvers/colonyActions';
 import { parseDomainMetadata } from '~utils/colonyActions';
 import Numeral from '~core/Numeral';
+import { useTitle } from '~utils/hooks/useTitle';
 
 import ActionsPageFeed, {
   ActionsPageFeedItemWithIPFS,
@@ -25,6 +26,7 @@ import {
 import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
+import useColonyMetadataChecks from '~modules/dashboard/hooks/useColonyMetadataChecks';
 import {
   getFormattedTokenValue,
   getTokenDecimalsWithFallback,
@@ -36,7 +38,6 @@ import { ipfsDataFetcher } from '../../../../core/fetchers';
 import DetailsWidget from '../DetailsWidget';
 
 import styles from './DefaultAction.css';
-import { useTitle } from '~utils/hooks/useTitle';
 
 const displayName = 'dashboard.ActionsPage.DefaultAction';
 
@@ -82,10 +83,12 @@ const DefaultAction = ({
     actionType,
   );
 
-  const domainMetadataEvent = events.find(
-    (event) => event.name === ColonyAndExtensionsEvents.DomainMetadata,
+  const metadataEvent = events.find(
+    (event) =>
+      event.name === ColonyAndExtensionsEvents.DomainMetadata ||
+      event.name === ColonyAndExtensionsEvents.ColonyMetadata,
   );
-  const values = (domainMetadataEvent?.values as unknown) as EventValue;
+  const values = (metadataEvent?.values as unknown) as EventValue;
 
   const { data: metadataJSON } = useDataFetcher(
     ipfsDataFetcher,
@@ -94,7 +97,14 @@ const DefaultAction = ({
   );
 
   let domainMetadata;
-  if (metadataJSON) {
+  const colonyMetadataChecks = useColonyMetadataChecks(
+    actionType,
+    colony,
+    transactionHash,
+    colonyAction,
+  );
+
+  if (metadataJSON && actionType === ColonyActions.EditDomain) {
     const { domainName, domainColor, domainPurpose } = parseDomainMetadata(
       metadataJSON,
     );
@@ -236,7 +246,12 @@ const DefaultAction = ({
            */}
           <h1 className={styles.heading} data-test="actionHeading">
             <FormattedMessage
-              id={roleMessageDescriptorId || 'action.title'}
+              id={
+                (colonyMetadataChecks.verifiedAddressesChanged &&
+                  `action.${ColonyActions.ColonyEdit}.verifiedAddresses`) ||
+                roleMessageDescriptorId ||
+                'action.title'
+              }
               values={{
                 ...actionAndEventValues,
                 fromDomain: actionAndEventValues.fromDomain?.name,

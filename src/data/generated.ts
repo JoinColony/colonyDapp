@@ -298,6 +298,7 @@ export type Query = {
   userReputationForTopDomains: Array<UserDomainReputation>;
   userWhitelistStatus: UserWhitelistStatus;
   username: Scalars['String'];
+  verifiedUsers: Array<User>;
   votingState: VotingState;
   whitelistAgreement: Scalars['String'];
   whitelistPolicies: WhitelistPolicy;
@@ -704,6 +705,11 @@ export type QueryUsernameArgs = {
 };
 
 
+export type QueryVerifiedUsersArgs = {
+  verifiedAddresses: Array<Scalars['String']>;
+};
+
+
 export type QueryVotingStateArgs = {
   colonyAddress: Scalars['String'];
   motionId: Scalars['Int'];
@@ -1001,6 +1007,8 @@ export type ColonyAction = {
   motionDomain: Scalars['Int'];
   rootHash?: Maybe<Scalars['String']>;
   reputationChange: Scalars['String'];
+  isWhitelistActivated: Scalars['Boolean'];
+  verifiedAddresses: Array<Scalars['String']>;
 };
 
 export type NetworkContractsInput = {
@@ -1236,6 +1244,8 @@ export type ProcessedColony = {
   events: Array<NetworkEvent>;
   isDeploymentFinished: Scalars['Boolean'];
   installedExtensions: Array<ColonyExtension>;
+  whitelistedAddresses: Array<Scalars['String']>;
+  isWhitelistActivated: Scalars['Boolean'];
 };
 
 export type SaleToken = {
@@ -1527,7 +1537,7 @@ export type TokensFragment = (
 
 export type DomainFieldsFragment = Pick<ProcessedDomain, 'id' | 'color' | 'description' | 'ethDomainId' | 'name' | 'ethParentDomainId'>;
 
-export type ColonyProfileFragment = Pick<ProcessedColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL' | 'extensionAddresses'>;
+export type ColonyProfileFragment = Pick<ProcessedColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL' | 'extensionAddresses' | 'whitelistedAddresses' | 'isWhitelistActivated'>;
 
 export type FullColonyFragment = (
   Pick<ProcessedColony, 'version' | 'canColonyMintNativeToken' | 'canColonyUnlockNativeToken' | 'isInRecoveryMode' | 'isNativeTokenLocked' | 'isDeploymentFinished'>
@@ -1840,7 +1850,7 @@ export type ColonyActionQueryVariables = Exact<{
 
 
 export type ColonyActionQuery = { colonyAction: (
-    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionState' | 'motionDomain' | 'blockNumber' | 'rootHash' | 'reputationChange'>
+    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionState' | 'motionDomain' | 'blockNumber' | 'rootHash' | 'reputationChange' | 'isWhitelistActivated' | 'verifiedAddresses'>
     & { events: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'transactionHash'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>> }
   ) };
 
@@ -2040,6 +2050,13 @@ export type ColonyHistoricRolesQuery = { historicColonyRoles: Array<(
     Pick<ProcessedRoles, 'address'>
     & { domains: Array<Pick<ProcessedRoleDomain, 'domainId' | 'roles'>> }
   )> };
+
+export type VerifiedUsersQueryVariables = Exact<{
+  verifiedAddresses: Array<Scalars['String']>;
+}>;
+
+
+export type VerifiedUsersQuery = Pick<Query, 'verifiedUsers'>;
 
 export type SubgraphAnnotationEventsQueryVariables = Exact<{
   transactionHash: Scalars['String'];
@@ -3011,6 +3028,8 @@ export const ColonyProfileFragmentDoc = gql`
   avatarHash
   avatarURL
   extensionAddresses
+  whitelistedAddresses
+  isWhitelistActivated
 }
     `;
 export const TokensFragmentDoc = gql`
@@ -4367,6 +4386,8 @@ export const ColonyActionDocument = gql`
     blockNumber
     rootHash
     reputationChange
+    isWhitelistActivated
+    verifiedAddresses
   }
 }
     `;
@@ -5170,6 +5191,37 @@ export function useColonyHistoricRolesLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type ColonyHistoricRolesQueryHookResult = ReturnType<typeof useColonyHistoricRolesQuery>;
 export type ColonyHistoricRolesLazyQueryHookResult = ReturnType<typeof useColonyHistoricRolesLazyQuery>;
 export type ColonyHistoricRolesQueryResult = Apollo.QueryResult<ColonyHistoricRolesQuery, ColonyHistoricRolesQueryVariables>;
+export const VerifiedUsersDocument = gql`
+    query VerifiedUsers($verifiedAddresses: [String!]!) {
+  verifiedUsers(verifiedAddresses: $verifiedAddresses) @client
+}
+    `;
+
+/**
+ * __useVerifiedUsersQuery__
+ *
+ * To run a query within a React component, call `useVerifiedUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVerifiedUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVerifiedUsersQuery({
+ *   variables: {
+ *      verifiedAddresses: // value for 'verifiedAddresses'
+ *   },
+ * });
+ */
+export function useVerifiedUsersQuery(baseOptions?: Apollo.QueryHookOptions<VerifiedUsersQuery, VerifiedUsersQueryVariables>) {
+        return Apollo.useQuery<VerifiedUsersQuery, VerifiedUsersQueryVariables>(VerifiedUsersDocument, baseOptions);
+      }
+export function useVerifiedUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VerifiedUsersQuery, VerifiedUsersQueryVariables>) {
+          return Apollo.useLazyQuery<VerifiedUsersQuery, VerifiedUsersQueryVariables>(VerifiedUsersDocument, baseOptions);
+        }
+export type VerifiedUsersQueryHookResult = ReturnType<typeof useVerifiedUsersQuery>;
+export type VerifiedUsersLazyQueryHookResult = ReturnType<typeof useVerifiedUsersLazyQuery>;
+export type VerifiedUsersQueryResult = Apollo.QueryResult<VerifiedUsersQuery, VerifiedUsersQueryVariables>;
 export const SubgraphAnnotationEventsDocument = gql`
     query SubgraphAnnotationEvents($transactionHash: String!, $sortDirection: String = asc) {
   annotationEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {name_contains: "Annotation", args_contains: $transactionHash}) {

@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 import { Redirect } from 'react-router-dom';
+import { isConfusing } from '@colony/unicode-confusables-noascii';
 
 import Snackbar, { SnackbarType } from '~core/Snackbar';
 import CopyableAddress from '~core/CopyableAddress';
@@ -16,6 +17,7 @@ import {
   Textarea,
 } from '~core/Fields';
 import Button from '~core/Button';
+import ConfusableWarning from '~core/ConfusableWarning';
 import ProfileTemplate from '~pages/ProfileTemplate';
 import { useLoggedInUser, useUser, useEditUserMutation } from '~data/index';
 import { LANDING_PAGE_ROUTE } from '~routes/index';
@@ -128,7 +130,7 @@ const UserProfileEdit = () => {
         onSubmit={onSubmit}
         validationSchema={validationSchema}
       >
-        {({ status, isSubmitting, dirty, isValid }) => (
+        {({ status, isSubmitting, dirty, isValid, values }) => (
           <div className={styles.main}>
             <FieldSet>
               <InputLabel label={MSG.labelWallet} />
@@ -151,6 +153,9 @@ const UserProfileEdit = () => {
                 name="displayName"
                 dataTest="userSettingsName"
               />
+              {values.displayName && isConfusing(values.displayName) && (
+                <ConfusableWarning />
+              )}
               <Textarea
                 label={MSG.labelBio}
                 name="bio"

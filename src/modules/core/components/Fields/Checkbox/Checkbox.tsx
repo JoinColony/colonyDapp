@@ -4,6 +4,7 @@ import React, {
   useState,
   useCallback,
   useMemo,
+  useEffect,
 } from 'react';
 import { MessageDescriptor } from 'react-intl';
 import { nanoid } from 'nanoid';
@@ -46,8 +47,11 @@ interface Props {
   name: string;
   /** Standard input field property */
   onChange?: Function;
+  /** Just to check what is a default value of checkbox */
+  getDefaultValue?: Function;
   /** Input field value */
   value: string;
+  showTooltipText: boolean;
   /**  Text for the checkbox tooltip */
   tooltipText?: string;
   /** Options to pass to the underlying PopperJS element. See here for more: https://popper.js.org/docs/v2/constructors/#options. */
@@ -82,6 +86,8 @@ const Checkbox = ({
   tooltipText,
   tooltipPopperOptions,
   dataTest,
+  getDefaultValue,
+  showTooltipText,
 }: Props) => {
   const [inputId] = useState<string>(nanoid());
 
@@ -94,7 +100,7 @@ const Checkbox = ({
         push(value);
       }
       if (onChange) {
-        onChange(e);
+        onChange({ ...e, isChecked: !(idx >= 0) });
       }
     },
     [name, onChange, push, remove, value, values],
@@ -129,9 +135,16 @@ const Checkbox = ({
     [disabled, handleOnChange, inputId, isChecked, name, dataTest],
   );
 
+  useEffect(() => {
+    if (getDefaultValue) {
+      getDefaultValue(isChecked);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <label className={classNames} htmlFor={elementOnly ? inputId : undefined}>
-      {disabled && tooltipText ? (
+      {(disabled && tooltipText) || (showTooltipText && tooltipText) ? (
         <Tooltip
           content={tooltipText}
           placement="bottom"
@@ -167,6 +180,7 @@ Checkbox.defaultProps = {
   checked: false,
   disabled: false,
   elementOnly: false,
+  showTooltipText: false,
 };
 
 export default asFieldArray()(Checkbox);

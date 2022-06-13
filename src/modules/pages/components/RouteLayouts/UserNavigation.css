@@ -48,7 +48,7 @@
 
 .notificationsHighlight {
   display: block;
-  margin: -20px -4px 0 0;
+  margin: -24px -3px 0 0;/* Using negative margins to group the notification dot and icon. */
   height: 9px;
   width: 9px;
   position: relative;
