@@ -10,6 +10,7 @@ import { getMainClasses } from '~utils/css';
 
 import styles from './ExpenditurePage.css';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/consts';
+import TitleDescriptionSection from '~dashboard/ExpenditurePage/TitleDescriptionSection';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -78,7 +79,9 @@ const ExpenditurePage = () => {
           <Payments sidebarRef={sidebarRef.current} />
         </aside>
         <div className={styles.mainContainer}>
-          <main className={styles.mainContent} />
+          <main className={styles.mainContent}>
+            <TitleDescriptionSection isEditable />
+          </main>
         </div>
       </div>
     </Form>
