@@ -11,6 +11,13 @@
   color: var(--dark);
 }
 
+.contributorsTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
 .description {
   margin-left: 9px;
   font-size: var(--size-tiny);
