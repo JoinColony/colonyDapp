@@ -167,8 +167,10 @@ const MembersListItem = <U extends AnyUser = AnyUser>({
         )}
         <MemberActions
           canAdministerComments={canAdministerComments}
-          colonyAddress={colony.colonyAddress}
+          colony={colony}
           userAddress={walletAddress}
+          isWhitelisted={isWhitelisted}
+          isBanned={isUserBanned}
         />
       </div>
     </ListGroupItem>

@@ -200,7 +200,12 @@ const ManageWhitelistDialogForm = ({
           }}
           text={{ id: 'button.confirm' }}
           style={{ width: styles.wideButton }}
-          disabled={!dirty || !userHasPermission || !isValid || isSubmitting}
+          disabled={
+            (tabIndex === 0 ? !values.whitelistAddress : !dirty) ||
+            !userHasPermission ||
+            !isValid ||
+            isSubmitting
+          }
           type="submit"
           loading={isSubmitting}
           onClick={() => handleSubmit()}
