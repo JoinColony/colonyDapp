@@ -1,4 +1,5 @@
 @value itemLinkSize: 42px;
+@value itemLinkSizeMobile: 34px;
 @value itemMarginBotton: 4px;
 
 .main {
@@ -54,4 +55,37 @@
 
 .loadingColonies {
   padding: 8px 0 2px;
+}
+
+@media screen and (max-width: 768px) {
+  .main {
+    align-items: center;
+  }
+
+  .newColonyItem {
+    display: none;
+  }
+
+  .scrollableContainer {
+    justify-content: start;
+    flex-wrap: nowrap;
+    padding-top: 4px;
+    padding-left: 11px; /* 14px per design - 3px avatar border */
+    padding-right: 20px; /* To escape gradient fade on last colony when overflowed */
+    scrollbar-width: 0px; /* Currently only supported on Firefox. */
+  }
+
+  .scrollableContainer::-webkit-scrollbar {
+    display: none; /* Remove scrollbar on webkit and blink based browsers (basically all except Firefox) */
+  }
+
+  .itemImage {
+    height: 28px;
+    width: 28px;
+  }
+
+  .itemLink {
+    height: itemLinkSizeMobile;
+    width: itemLinkSizeMobile;
+  }
 }
