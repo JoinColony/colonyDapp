@@ -2,16 +2,16 @@ import React, { useEffect } from 'react';
 import { defineMessages } from 'react-intl';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
-
 import Decimal from 'decimal.js';
+
 import { useUserReputationQuery } from '~data/index';
 import { Address } from '~types/index';
 import Numeral from '~core/Numeral';
 import Icon from '~core/Icon';
 import { calculatePercentageReputation, ZeroValue } from '~utils/reputation';
+import { getFormattedTokenValue } from '~utils/tokens';
 
 import styles from './MemberReputation.css';
-import { getFormattedTokenValue } from '~utils/tokens';
 
 const MSG = defineMessages({
   starReputationTitle: {
