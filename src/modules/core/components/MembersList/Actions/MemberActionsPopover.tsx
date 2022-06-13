@@ -69,17 +69,15 @@ const MemberActionsPopover = ({
 
   const BLOCKSCOUT_URL = `https://blockscout.com/xdai/mainnet/address/${userAddress}/transactions`;
   const renderUserActions = () => (
-    <>
-      <DropdownMenuItem>
-        <Button appearance={{ theme: 'no-style' }}>
-          <ExternalLink
-            href={BLOCKSCOUT_URL}
-            className={styles.actionButton}
-            text={MSG.viewOnBlockscout}
-          />
-        </Button>
-      </DropdownMenuItem>
-    </>
+    <DropdownMenuItem>
+      <Button appearance={{ theme: 'no-style' }}>
+        <ExternalLink
+          href={BLOCKSCOUT_URL}
+          className={styles.actionButton}
+          text={MSG.viewOnBlockscout}
+        />
+      </Button>
+    </DropdownMenuItem>
   );
 
   const renderModeratorOptions = () => {
