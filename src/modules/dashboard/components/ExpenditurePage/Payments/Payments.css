@@ -9,6 +9,8 @@
 }
 
 .payments {
+  display: flex;
+  align-items: center;
   margin-bottom: 8px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
@@ -107,4 +109,17 @@
   margin-left: 4px;
   font-weight: var(--weight-bold);
   color: var(--dark);
+}
+
+.editIcon {
+  margin-left: 10px;
+}
+
+.editIcon:hover {
+  cursor: pointer;
+}
+
+.editIcon svg {
+  height: 30px;
+  width: 30px;
 }

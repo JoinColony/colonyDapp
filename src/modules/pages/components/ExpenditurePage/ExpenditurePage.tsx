@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import * as yup from 'yup';
 
 import { Form } from '~core/Fields';
@@ -14,6 +14,7 @@ import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import TitleDescriptionSection, {
   LockedTitleDescriptionSection,
 } from '~dashboard/ExpenditurePage/TitleDescriptionSection';
+import Button from '~core/Button';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -53,7 +54,7 @@ const validationSchema = yup.object().shape({
 });
 
 const ExpenditurePage = () => {
-  const [isFormEditable, setFormEditable] = useState(true);
+  const [isFormEditable, setFormEditable] = useState(false);
   const [formValues, setFormValues] = useState<typeof initialValues>();
   const [shouldValidate, setShouldValidate] = useState(false);
   const sidebarRef = useRef<HTMLElement>(null);
@@ -63,15 +64,9 @@ const ExpenditurePage = () => {
     if (values) {
       setFormValues(values);
     }
+    setFormEditable(false);
     // add sending form to backend
   }, []);
-
-  useEffect(() => {
-    if (formValues === undefined) {
-      return;
-    }
-    setFormEditable(false);
-  }, [formValues]);
 
   const { owner, expenditure, filteredDomainId } = formValues || {};
 
@@ -83,7 +78,7 @@ const ExpenditurePage = () => {
 
   return isFormEditable ? (
     <Form
-      initialValues={initialValues}
+      initialValues={formValues || initialValues}
       onSubmit={submit}
       validationSchema={validationSchema}
       validateOnBlur={shouldValidate}
@@ -98,6 +93,10 @@ const ExpenditurePage = () => {
         <div className={styles.mainContainer}>
           <main className={styles.mainContent}>
             <TitleDescriptionSection />
+            {/* Button is temporary. It should be removed when PR with expenditure locking is merged */}
+            <Button type="submit" style={{ marginLeft: '25px' }}>
+              Lock values
+            </Button>
           </main>
         </div>
       </div>
@@ -108,7 +107,10 @@ const ExpenditurePage = () => {
         <LockedExpenditureSettings
           {...{ owner, expenditure, team: filteredDomainId }}
         />
-        <LockedPayments recipients={formValues?.recipients} />
+        <LockedPayments
+          recipients={formValues?.recipients}
+          editForm={() => setFormEditable(true)}
+        />
       </aside>
       <div className={styles.mainContainer}>
         <main className={styles.mainContent}>

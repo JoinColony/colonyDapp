@@ -34,9 +34,10 @@ const MSG = defineMessages({
 
 interface Props {
   recipients?: RecipientType[];
+  editForm?: () => void;
 }
 
-const LockedPayments = ({ recipients }: Props) => {
+const LockedPayments = ({ recipients, editForm }: Props) => {
   const [expandedRecipients, setExpandedRecipients] = useState<
     number[] | undefined
   >(recipients?.map((_, idx) => idx));
@@ -57,6 +58,12 @@ const LockedPayments = ({ recipients }: Props) => {
       <div className={styles.recipientContainer}>
         <div className={styles.payments}>
           <FormattedMessage {...MSG.payments} />
+          <Icon
+            name="edit"
+            className={styles.editIcon}
+            title="Edit expenditure"
+            onClick={editForm}
+          />
         </div>
         {recipients?.map((recipient, index) => {
           const isOpen =
@@ -90,6 +97,7 @@ const LockedPayments = ({ recipients }: Props) => {
                   )}
                   {index + 1}:{' '}
                   <UserMention username={recipient.recipient.username || ''} />
+                  {', '}
                   {recipient?.delay?.amount}
                   {recipient?.delay?.time}
                 </div>
