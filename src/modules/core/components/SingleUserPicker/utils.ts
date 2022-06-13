@@ -7,20 +7,16 @@ export const filterUserSelection = (data, filterValue) => {
     return data;
   }
 
-  const filtered = data.filter(
-    (user) =>
-      user &&
-      user.profile &&
-      user.profile.username &&
-      filterValue &&
-      (user.profile.username
-        .toLowerCase()
-        .includes(filterValue.toLowerCase()) ||
-        user.profile.walletAddress
-          .toLowerCase()
-          .includes(filterValue.toLowerCase()) ||
-        user.id.toLowerCase().includes(filterValue.toLowerCase())),
-  );
+  const filtered = data.filter((user) => {
+    const { username, walletAddress } = user?.profile;
+    const valueToLowerCase = filterValue.toLowerCase();
+    return (
+      username &&
+      walletAddress &&
+      (`@${username}`.toLowerCase().includes(valueToLowerCase) ||
+        walletAddress.toLowerCase().includes(valueToLowerCase))
+    );
+  });
 
   const customValue = {
     id: 'filterValue',
