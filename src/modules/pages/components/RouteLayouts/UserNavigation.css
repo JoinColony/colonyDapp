@@ -190,3 +190,27 @@
   vertical-align: top;
   font-size: var(--size-tiny);
 }
+
+@media screen and (max-width: 768px) {
+  .elementWrapper, .notificationsIcon, .walletAutoLogin {
+    display: none;
+  }
+
+  .main {
+    height: 100%;
+  }
+
+  /* Fade effect when number of colonies is > 7 */
+  .main::before {
+    height: 43px;
+    width: 40px;
+    position: absolute;
+    top: 0px;
+    right: 89px;
+    z-index: 1;
+    border-bottom: 1px solid var(--temp-grey-13);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, var(--temp-grey-blue-5) 80%);
+    content: "";
+    pointer-events: none;
+  }
+}
