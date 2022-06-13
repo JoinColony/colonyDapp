@@ -1,10 +1,12 @@
 import React, { useMemo } from 'react';
 import classnames from 'classnames';
+import { useMediaQuery } from 'react-responsive';
 
 import Popover from '~core/Popover';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { useLoggedInUser, Colony } from '~data/index';
 import { removeValueUnits } from '~utils/css';
+import { mobile } from '~utils/mediaQueries';
 
 import AvatarDropdownPopover from './AvatarDropdownPopover';
 
@@ -25,6 +27,7 @@ const displayName = 'users.AvatarDropdown';
 
 const AvatarDropdown = ({ preventTransactions = false, colony }: Props) => {
   const { username, walletAddress, ethereal } = useLoggedInUser();
+  const isMobile = useMediaQuery({ query: mobile });
 
   /*
    * @NOTE Offset Calculations
@@ -80,7 +83,11 @@ const AvatarDropdown = ({ preventTransactions = false, colony }: Props) => {
           type="button"
           data-test="avatarDropdown"
         >
-          <UserAvatar address={walletAddress} notSet={ethereal} size="s" />
+          <UserAvatar
+            address={walletAddress}
+            notSet={ethereal}
+            size={isMobile ? 'xs' : 's'}
+          />
         </button>
       )}
     </Popover>

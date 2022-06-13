@@ -31,6 +31,7 @@ import { SUPPORTED_NETWORKS } from '~constants';
 import { groupedTransactionsAndMessages } from '../../../core/selectors';
 
 import styles from './UserNavigation.css';
+import HamburgerMenu from '~core/HamburgerMenu/HamburgerMenu';
 
 const MSG = defineMessages({
   inboxTitle: {
@@ -252,6 +253,7 @@ const UserNavigation = () => {
         preventTransactions={!isNetworkAllowed}
         colony={colonyData?.processedColony as Colony}
       />
+      <HamburgerMenu />
     </div>
   );
 };

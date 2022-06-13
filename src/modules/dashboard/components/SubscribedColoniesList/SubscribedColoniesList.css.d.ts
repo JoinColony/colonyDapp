@@ -1,4 +1,5 @@
 export const itemLinkSize: string;
+export const itemLinkSizeMobile: string;
 export const itemMarginBotton: string;
 export const main: string;
 export const scrollableContainer: string;

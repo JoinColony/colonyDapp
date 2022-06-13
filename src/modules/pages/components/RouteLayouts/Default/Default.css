@@ -41,3 +41,19 @@
   composes: history;
   left: 0;
 }
+
+@media screen and (max-width: 768px) {
+  .content {
+    flex-direction: column;
+  }
+
+  .coloniesList {
+    width: calc(100% - 90px);
+    border-right: 0;
+  }
+
+  .head {
+    display: flex;
+    border-bottom: 1px solid var(--temp-grey-13);
+  }
+}
