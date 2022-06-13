@@ -26,6 +26,7 @@ import ColonyTokenManagementDialog from '~dialogs/ColonyTokenManagementDialog';
 import { SmiteDialog, AwardDialog } from '~dialogs/AwardAndSmiteDialogs';
 import ManageGnosisSafeDialog from '~dialogs/ManageGnosisSafeDialog';
 import GnosisControlSafeDialog from '~dialogs/GnosisControlSafeDialog';
+import RemoveSafeDialog from '~dialogs/RemoveSafeDialog';
 
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
@@ -217,16 +218,7 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
     // {
     //   component: AddExistingSafeDialog,
     //   props: {
-    //     prevStep: 'dashboard.AddExistingSafeDialog',
-    //     colony,
-    //     isVotingExtensionEnabled,
-    //     ethDomainId,
-    //   },
-    // },
-    // {
-    //   component: RemoveSafeDialog,
-    //   props: {
-    //     prevStep: 'dashboard.RemoveSafeDialog',
+    //     prevStep: 'dashboard.ManageGnosisSafeDialog',
     //     colony,
     //     isVotingExtensionEnabled,
     //     ethDomainId,
@@ -239,6 +231,24 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         colony,
       },
     },
+    {
+      component: RemoveSafeDialog,
+      props: {
+        prevStep: 'dashboard.ManageGnosisSafeDialog',
+        colony,
+        isVotingExtensionEnabled,
+        ethDomainId,
+      },
+    },
+    // {
+    //   component: ControlSafeDialog,
+    //   props: {
+    //     prevStep: 'dashboard.ManageGnosisSafeDialog',
+    //     colony,
+    //     isVotingExtensionEnabled,
+    //     ethDomainId,
+    //   },
+    // },
 
     {
       component: PermissionManagementDialog,
