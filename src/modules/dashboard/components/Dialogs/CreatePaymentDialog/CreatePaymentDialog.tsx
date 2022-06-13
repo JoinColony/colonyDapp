@@ -117,7 +117,7 @@ const CreatePaymentDialog = ({
   const filteredVerifiedRecipients = useMemo(() => {
     return isWhitelistActivated &&
       colonyData?.processedColony?.whitelistedAddresses &&
-      colonyData?.processedColony?.whitelistedAddresses?.length > 0
+      colonyData.processedColony.whitelistedAddresses.length > 0
       ? (colonyMembers?.subscribedUsers || []).filter((member) =>
           colonyData?.processedColony?.whitelistedAddresses.some(
             (el) => el.toLowerCase() === member.id.toLowerCase(),
