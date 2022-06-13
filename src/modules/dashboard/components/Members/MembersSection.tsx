@@ -1,12 +1,14 @@
 import React, { useState, useCallback, ReactNode } from 'react';
-
+import classnames from 'classnames';
 import { FormattedMessage, defineMessages } from 'react-intl';
-import styles from './MembersSection.css';
 
 import MembersList from '~core/MembersList';
 import { Colony, ColonyWatcher, ColonyContributor } from '~data/index';
 
 import LoadMoreButton from '~core/LoadMoreButton';
+import SortingRow from '~core/MembersList/SortingRow';
+
+import styles from './MembersSection.css';
 
 const displayName = 'dashboard.MembersSection';
 
@@ -58,12 +60,17 @@ Props<U>) => {
   return (
     <>
       <div className={styles.bar}>
-        <div className={styles.title}>
+        <div
+          className={classnames(styles.title, {
+            [styles.contributorsTitle]: isContributorsSection,
+          })}
+        >
           <FormattedMessage
             {...(isContributorsSection
               ? MSG.contributorsTitle
               : MSG.watchersTitle)}
           />
+          {isContributorsSection && <SortingRow />}
         </div>
         {!isContributorsSection && (
           <div className={styles.description}>
@@ -79,6 +86,7 @@ Props<U>) => {
             domainId={currentDomainId}
             users={paginatedMembers}
             canAdministerComments={canAdministerComments}
+            showUserReputation={isContributorsSection}
           />
         </div>
       ) : (
