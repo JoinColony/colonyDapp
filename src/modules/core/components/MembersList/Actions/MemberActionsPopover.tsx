@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
+import { Colony } from '~data/index';
 import DropdownMenu, {
   DropdownMenuSection,
   DropdownMenuItem,
@@ -9,6 +10,7 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import { BanUserDialog } from '~core/Comment';
 import ExternalLink from '~core/ExternalLink';
+import ManageWhitelistDialog from '~dashboard/Dialogs/ManageWhitelistDialog';
 
 import styles from './MemberActionsPopover.css';
 
@@ -32,8 +34,10 @@ const MSG = defineMessages({
 
 interface Props {
   closePopover: () => void;
-  colonyAddress: string;
+  colony: Colony;
   userAddress: string;
+  isWhitelisted: boolean;
+  isBanned: boolean;
   canAdministerComments?: boolean;
 }
 
@@ -42,21 +46,30 @@ const displayName = 'core.MembersList.MemberActionsPopover';
 const MemberActionsPopover = ({
   closePopover,
   canAdministerComments,
-  colonyAddress,
+  colony,
   userAddress,
+  isWhitelisted,
+  isBanned,
 }: Props) => {
   const openBanUserDialog = useDialog(BanUserDialog);
   const handleBanUser = useCallback(
     () =>
       openBanUserDialog({
-        colonyAddress,
+        colonyAddress: colony.colonyAddress,
       }),
-    [openBanUserDialog, colonyAddress],
+    [openBanUserDialog, colony],
+  );
+  const openManageWhitelistDialog = useDialog(ManageWhitelistDialog);
+  const handleManageWhitelist = useCallback(
+    () =>
+      // @ts-ignore
+      openManageWhitelistDialog({ userAddress, colony }),
+    [openManageWhitelistDialog, userAddress, colony],
   );
 
   const BLOCKSCOUT_URL = `https://blockscout.com/xdai/mainnet/address/${userAddress}/transactions`;
   const renderUserActions = () => (
-    <DropdownMenuSection>
+    <>
       <DropdownMenuItem>
         <Button appearance={{ theme: 'no-style' }}>
           <ExternalLink
@@ -66,43 +79,44 @@ const MemberActionsPopover = ({
           />
         </Button>
       </DropdownMenuItem>
-    </DropdownMenuSection>
+    </>
   );
 
   const renderModeratorOptions = () => {
-    const userBanned = false;
     return (
-      <DropdownMenuSection>
-        <DropdownMenuItem>
-          <Button appearance={{ theme: 'no-style' }}>
-            <div className={styles.actionButton}>
-              <FormattedMessage {...MSG.addToAddressBook} />
-            </div>
-          </Button>
-        </DropdownMenuItem>
+      <>
+        {!isWhitelisted && (
+          <DropdownMenuItem>
+            <Button
+              appearance={{ theme: 'no-style' }}
+              onClick={() => handleManageWhitelist()}
+            >
+              <div className={styles.actionButton}>
+                <FormattedMessage {...MSG.addToAddressBook} />
+              </div>
+            </Button>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem>
           <Button
             appearance={{ theme: 'no-style' }}
             onClick={() => handleBanUser()}
           >
             <div className={styles.actionButton}>
-              <FormattedMessage
-                {...MSG.banUser}
-                values={{ unban: userBanned }}
-              />
+              <FormattedMessage {...MSG.banUser} values={{ unban: isBanned }} />
             </div>
           </Button>
         </DropdownMenuItem>
-      </DropdownMenuSection>
+      </>
     );
   };
 
   return (
     <DropdownMenu onClick={closePopover}>
-      {canAdministerComments && (
-        <>{renderModeratorOptions()}</>
-      )}
-      <>{renderUserActions()}</>
+      <DropdownMenuSection>
+        {canAdministerComments && renderModeratorOptions()}
+        {renderUserActions()}
+      </DropdownMenuSection>
     </DropdownMenu>
   );
 };

@@ -4,6 +4,7 @@ import classnames from 'classnames';
 
 import Icon from '~core/Icon';
 import Popover from '~core/Popover';
+import { Colony } from '~data/index';
 
 import MemberActionsPopover from './MemberActionsPopover';
 
@@ -17,8 +18,10 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  colonyAddress: string;
   userAddress: string;
+  colony: Colony;
+  isWhitelisted: boolean;
+  isBanned: boolean;
   canAdministerComments?: boolean;
 }
 
@@ -26,8 +29,10 @@ const displayName = 'core.MemberList.MemberActions';
 
 const MemberActions = ({
   canAdministerComments,
-  colonyAddress,
+  colony,
   userAddress,
+  isWhitelisted,
+  isBanned,
 }: Props) => {
   const [isOpen, setOpen] = useState(false);
   return (
@@ -36,7 +41,9 @@ const MemberActions = ({
         <MemberActionsPopover
           closePopover={close}
           canAdministerComments={canAdministerComments}
-          colonyAddress={colonyAddress}
+          colony={colony}
+          isWhitelisted={isWhitelisted}
+          isBanned={isBanned}
           userAddress={userAddress}
         />
       )}
