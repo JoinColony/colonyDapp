@@ -5,3 +5,4 @@ export const tokenSymbol: string;
 export const firstLineContainer: string;
 export const button: string;
 export const tooltip: string;
+export const manageFundsLink: string;
