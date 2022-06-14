@@ -14,6 +14,7 @@ import {
   useColonyFromNameQuery,
   useMembersSubscription,
 } from '~data/generated';
+import { SpinnerLoader } from '~core/Preloaders';
 
 const MSG = defineMessages({
   payments: {
@@ -53,7 +54,7 @@ const Payments = ({ sidebarRef }: Props) => {
   });
   const { colonyAddress } = colonyData || {};
 
-  const { data: colonyMembers } = useMembersSubscription({
+  const { data: colonyMembers, loading } = useMembersSubscription({
     variables: { colonyAddress: colonyAddress || '' },
   });
 
@@ -76,71 +77,75 @@ const Payments = ({ sidebarRef }: Props) => {
         <div className={styles.payments}>
           <FormattedMessage {...MSG.payments} />
         </div>
-        <FieldArray
-          name="recipients"
-          render={({ push, remove }) => (
-            <>
-              {recipients.map((recipient, index) => (
-                <div className={styles.singleRecipient} key={recipient.id}>
-                  <FormSection appearance={{ border: 'bottom' }}>
-                    <div className={styles.recipientLabel}>
-                      {recipient.isExpanded ? (
-                        <>
+        {loading ? (
+          <SpinnerLoader appearance={{ size: 'medium' }} />
+        ) : (
+          <FieldArray
+            name="recipients"
+            render={({ push, remove }) => (
+              <>
+                {recipients.map((recipient, index) => (
+                  <div className={styles.singleRecipient} key={recipient.id}>
+                    <FormSection appearance={{ border: 'bottom' }}>
+                      <div className={styles.recipientLabel}>
+                        {recipient.isExpanded ? (
+                          <>
+                            <Icon
+                              name="collapse"
+                              onClick={() => onToogleButtonClick(index)}
+                              className={styles.signWrapper}
+                              title={MSG.minusIconTitle}
+                            />
+                            <div className={styles.verticalDivider} />
+                          </>
+                        ) : (
                           <Icon
-                            name="collapse"
+                            name="expand"
                             onClick={() => onToogleButtonClick(index)}
                             className={styles.signWrapper}
-                            title={MSG.minusIconTitle}
+                            title={MSG.plusIconTitle}
                           />
-                          <div className={styles.verticalDivider} />
-                        </>
-                      ) : (
-                        <Icon
-                          name="expand"
-                          onClick={() => onToogleButtonClick(index)}
-                          className={styles.signWrapper}
-                          title={MSG.plusIconTitle}
-                        />
-                      )}
-                      {index + 1}: <FormattedMessage {...MSG.recipient} />
-                      {recipients.length > 1 && (
-                        <Icon
-                          name="trash"
-                          className={styles.deleteIcon}
-                          onClick={() => remove(index)}
-                          title="Delete recipient"
-                        />
-                      )}
-                    </div>
-                  </FormSection>
-                  <Recipient
-                    {...{
-                      recipient,
-                      index,
-                      sidebarRef,
-                    }}
-                    subscribedUsers={colonyMembers?.subscribedUsers || []}
-                  />
-                </div>
-              ))}
-              <div className={styles.addRecipientWrapper}>
-                <Button
-                  onClick={() => push({ ...newRecipient })}
-                  appearance={{ theme: 'blue' }}
-                >
-                  <div className={styles.addRecipientLabel}>
-                    <Icon
-                      name="plus-circle"
-                      appearance={{ size: 'small' }}
-                      className={styles.circlePlusIcon}
+                        )}
+                        {index + 1}: <FormattedMessage {...MSG.recipient} />
+                        {recipients.length > 1 && (
+                          <Icon
+                            name="trash"
+                            className={styles.deleteIcon}
+                            onClick={() => remove(index)}
+                            title="Delete recipient"
+                          />
+                        )}
+                      </div>
+                    </FormSection>
+                    <Recipient
+                      {...{
+                        recipient,
+                        index,
+                        sidebarRef,
+                      }}
+                      subscribedUsers={colonyMembers?.subscribedUsers || []}
                     />
-                    <FormattedMessage {...MSG.addRecipientLabel} />
                   </div>
-                </Button>
-              </div>
-            </>
-          )}
-        />
+                ))}
+                <div className={styles.addRecipientWrapper}>
+                  <Button
+                    onClick={() => push({ ...newRecipient })}
+                    appearance={{ theme: 'blue' }}
+                  >
+                    <div className={styles.addRecipientLabel}>
+                      <Icon
+                        name="plus-circle"
+                        appearance={{ size: 'small' }}
+                        className={styles.circlePlusIcon}
+                      />
+                      <FormattedMessage {...MSG.addRecipientLabel} />
+                    </div>
+                  </Button>
+                </div>
+              </>
+            )}
+          />
+        )}
       </div>
     </div>
   );
