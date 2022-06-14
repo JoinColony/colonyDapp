@@ -75,7 +75,7 @@ const ExpenditurePage = () => {
     >
       <div className={getMainClasses({}, styles)}>
         <aside className={styles.sidebar} ref={sidebarRef}>
-          <ExpenditureSettings />
+          <ExpenditureSettings sidebarRef={sidebarRef.current} />
           <Payments sidebarRef={sidebarRef.current} />
         </aside>
         <div className={styles.mainContainer}>

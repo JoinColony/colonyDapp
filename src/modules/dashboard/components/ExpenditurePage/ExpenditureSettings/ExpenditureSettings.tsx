@@ -21,9 +21,9 @@ import { tokens as tokensData } from './consts';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import UserMention from '~core/UserMention';
-import DomainDropdown from '~core/DomainDropdown';
 import ColorTag, { Color } from '~core/ColorTag';
 import { SpinnerLoader } from '~core/Preloaders';
+import DomainDropdownWithPortal from '~core/DomainDropdown/DomainDropdownWithPortal';
 
 const MSG = defineMessages({
   typeLabel: {
@@ -49,10 +49,10 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  colonyName: string;
+  sidebarRef: HTMLElement | null;
 }
 
-const ExpenditureSettings = () => {
+const ExpenditureSettings = ({ sidebarRef }: Props) => {
   const { walletAddress, username } = useLoggedInUser();
 
   const { colonyName } = useParams<{
@@ -179,6 +179,9 @@ const ExpenditureSettings = () => {
                     value: 'advanced',
                   },
                 ]}
+                scrollContainer={sidebarRef}
+                placement="bottom"
+                withPortal
                 optionSizeLarge
               />
             </div>
@@ -192,7 +195,7 @@ const ExpenditureSettings = () => {
                 }}
               />
               {colonyData && (
-                <DomainDropdown
+                <DomainDropdownWithPortal
                   colony={colonyData?.processedColony}
                   name="filteredDomainId"
                   renderActiveOptionFn={renderActiveOption}
@@ -201,6 +204,8 @@ const ExpenditureSettings = () => {
                   showDescription
                   dataTest="colonyDomainSelector"
                   itemDataTest="colonyDomainSelectorItem"
+                  scrollContainer={sidebarRef}
+                  placement="bottom"
                 />
               )}
             </div>

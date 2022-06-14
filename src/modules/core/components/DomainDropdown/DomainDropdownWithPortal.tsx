@@ -1,9 +1,10 @@
-import React, { ComponentProps, ReactNode, useCallback, useMemo } from 'react';
+import React, { ComponentProps, useCallback, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { ALLDOMAINS_DOMAIN_SELECTION } from '~constants';
 import { Select, SelectOption } from '~core/Fields';
-import { Colony } from '~data/index';
+import SelectWithPortalDropdown from '~core/Fields/Select/SelectWithPortalDropdown';
+import { Props as DomainDropdownProps } from './DomainDropdown';
 
 import DomainDropdownItem from './DomainDropdownItem';
 
@@ -14,53 +15,14 @@ const MSG = defineMessages({
   },
 });
 
-export interface Props {
-  /** Current colony from which to extract the valid domains */
-  colony: Colony;
-
-  /** Optional form element name */
-  name?: string;
-
-  /** Optional domain to emphasize the current selected domain */
-  currentDomainId?: number;
-
-  /** Optional callback triggereded when the domain is being changed via the dropdown */
-  onDomainChange?: (domainId: number) => any;
-
-  /** Optional method to trigger when clicking the "Edit Domain" button   */
-  onDomainEdit?: (domainId: number) => any;
-
-  /** Optional component to display in the footer of the dropdown */
-  footerComponent?: ReactNode;
-
-  /** The optional component (rendered via a function) to use as a trigger in order to open the dropdown */
-  renderActiveOptionFn?: (
-    activeOption: SelectOption | undefined,
-    activeOptionLabel: string,
-  ) => ReactNode;
-
-  /** Optional method to filter the options array */
-  filterOptionsFn?: (option: SelectOption) => boolean;
-
-  /** Toggle if to display the "All Domains" entry */
-  showAllDomains?: boolean;
-
-  /** Toggle if to show the domains descriptions text (if available) */
-  showDescription?: boolean;
-
-  /** Toggle if to set the domain dropdown in a disabled state (won't open) */
-  disabled?: boolean;
-
-  /** Provides value for data-test prop in select button used on cypress testing */
-  dataTest?: string;
-
-  /** Provides value for data-test prop in select items used on cypress testing */
-  itemDataTest?: string;
+interface Props extends DomainDropdownProps {
+  scrollContainer: HTMLElement | null;
+  placement: 'bottom' | 'right';
 }
 
 const displayName = 'DomainDropdown';
 
-const DomainDropdown = ({
+const DomainDropdownWithPortal = ({
   colony,
   name = 'selectedDomainId',
   currentDomainId,
@@ -74,6 +36,8 @@ const DomainDropdown = ({
   disabled = false,
   dataTest,
   itemDataTest,
+  scrollContainer,
+  placement,
 }: Props) => {
   const handleSubmit = useCallback(
     (domainId: number) => {
@@ -145,7 +109,7 @@ const DomainDropdown = ({
   ]);
 
   return (
-    <Select
+    <SelectWithPortalDropdown
       appearance={{
         borderedOptions: 'true',
         size: 'mediumLarge',
@@ -164,10 +128,12 @@ const DomainDropdown = ({
       disabled={disabled}
       dataTest={dataTest}
       itemDataTest={itemDataTest}
+      scrollContainer={scrollContainer}
+      placement={placement}
     />
   );
 };
 
-DomainDropdown.displayName = displayName;
+DomainDropdownWithPortal.displayName = displayName;
 
-export default DomainDropdown;
+export default DomainDropdownWithPortal;

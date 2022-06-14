@@ -6,25 +6,39 @@ import styles from './Dropdown.css';
 interface Props {
   element: HTMLDivElement | null;
   scrollContainer?: Window | HTMLElement | null;
+  placement?: 'right' | 'bottom';
   children: React.ReactNode;
 }
 
-const Dropdown = ({ element, scrollContainer = window, children }: Props) => {
-  const [posTop, setPosTop] = useState(element?.getBoundingClientRect()?.top);
+const Dropdown = ({
+  element,
+  scrollContainer = window,
+  placement = 'right',
+  children,
+}: Props) => {
+  const [posTop, setPosTop] = useState<number | undefined>();
 
   const left = useMemo(() => {
     const { left: elemLeft, width } = element?.getBoundingClientRect() || {};
+    if (placement === 'bottom') {
+      return elemLeft || 0;
+    }
     return (elemLeft || 0) + (width || 0);
-  }, [element]);
-
-  useEffect(() => {
-    setPosTop(() => element?.getBoundingClientRect()?.top);
-  }, [element]);
+  }, [element, placement]);
 
   const onScroll = useCallback(() => {
-    const top = element?.getBoundingClientRect()?.top;
-    setPosTop(top);
-  }, [element]);
+    const elementDimentions = element?.getBoundingClientRect();
+    if (!elementDimentions) {
+      setPosTop(0);
+      return;
+    }
+    const topPosition =
+      placement === 'bottom'
+        ? elementDimentions.top + elementDimentions.height
+        : elementDimentions.top;
+
+    setPosTop(topPosition);
+  }, [element, placement]);
 
   useEffect(() => {
     onScroll();
