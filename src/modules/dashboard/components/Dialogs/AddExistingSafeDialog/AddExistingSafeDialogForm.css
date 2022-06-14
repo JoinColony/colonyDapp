@@ -1,0 +1,13 @@
+@value wideButton: 160px;
+
+.chainSelect label {
+  font-size: var(--size-smallish);
+  color: var(--dark);
+}
+
+.headingContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32px 0 20px;
+}
