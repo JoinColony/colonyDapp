@@ -8,6 +8,7 @@ import {
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
+import { Tooltip } from '~core/Popover';
 import { Stage } from './consts';
 import DeleteDraftDialog from './DeleteDraftDialog';
 import DraftConfirmDialog from './DraftConfirmDialog';
@@ -71,6 +72,14 @@ const MSG = defineMessages({
   deleteDraft: {
     id: 'dashboard.Expenditures.Stages.deleteDraft',
     defaultMessage: 'Delete draft',
+  },
+  tooltipDeleteText: {
+    id: 'dashboard.Expenditures.Stages.tooltipDeleteText',
+    defaultMessage: 'Delete the expenditure',
+  },
+  tooltipShareText: {
+    id: 'dashboard.Expenditures.Stages.tooltipShareText',
+    defaultMessage: 'Share expenditure URL',
   },
 });
 
@@ -160,26 +169,56 @@ const Stages = () => {
         <div className={styles.buttonsContainer}>
           {!activeState ? (
             <>
-              <Icon
-                name="trash"
-                className={styles.icon}
-                onClick={handleDeleteDraft}
-                title={MSG.deleteDraft}
-              />
-              <Button onClick={handleSaveDraft} style={{ height: '29px' }}>
+              <span className={styles.iconContainer}>
+                <Tooltip
+                  placement="top-start"
+                  content={<FormattedMessage {...MSG.tooltipDeleteText} />}
+                >
+                  <div className={styles.iconWrapper}>
+                    <Icon
+                      name="trash"
+                      className={styles.icon}
+                      onClick={handleDeleteDraft}
+                      title={MSG.deleteDraft}
+                    />
+                  </div>
+                </Tooltip>
+              </span>
+              <Button
+                onClick={handleSaveDraft}
+                style={{ height: styles.buttonHeight }}
+              >
                 <FormattedMessage {...MSG.submitDraft} />
               </Button>
             </>
           ) : (
             <>
-              <Icon name="share" className={styles.icon} />
+              <span className={styles.iconContainer}>
+                <Tooltip
+                  placement="top-start"
+                  content={<FormattedMessage {...MSG.tooltipShareText} />}
+                >
+                  <div className={styles.iconWrapper}>
+                    <Icon name="share" className={styles.icon} />
+                  </div>
+                </Tooltip>
+              </span>
               {activeState?.stage === Stage.Draft && (
-                <Icon
-                  name="trash"
-                  className={styles.icon}
-                  onClick={handleDeleteDraft}
-                  title={MSG.deleteDraft}
-                />
+                <span className={styles.iconContainer}>
+                  <Tooltip
+                    placement="top-start"
+                    content={<FormattedMessage {...MSG.tooltipShareText} />}
+                  >
+                    <div className={styles.iconWrapper}>
+                      <Icon
+                        name="trash"
+                        className={styles.icon}
+                        onClick={handleDeleteDraft}
+                        title={MSG.deleteDraft}
+                      />
+                    </div>
+                  </Tooltip>
+                </span>
               )}
               <Button
                 onClick={activeState?.buttonAction}
