@@ -165,3 +165,10 @@
 .countdownTimerContainer {
   margin-left: 30px;
 }
+
+@media screen and (max-width: 768px) {
+  .main {
+    /* Screen width minus the padding on each side */
+    max-width: calc(100vw - 28px);
+  }
+}

@@ -8,3 +8,9 @@
 .middleSection {
   margin: 0 5px;
 }
+
+@media screen and (max-width: 768px) {
+  .middleSection {
+    overflow-wrap: break-word;
+  }
+}
