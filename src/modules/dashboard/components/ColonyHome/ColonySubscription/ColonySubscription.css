@@ -15,23 +15,6 @@
   margin-top: 4px;
 }
 
-.colonyAddress {
-  padding: 4px 6px;
-  height: 24px;
-  border-radius: var(--radius-normal);
-  text-align: center;
-  line-height: var(--size-smallish);
-  color: var(--temp-grey-blue-7);
-  cursor: pointer;
-  user-select: none;
-  outline: 0;
-}
-
-.colonyAddress:hover {
-  background-color: color-mod(var(--colony-blue) alpha(10%));
-  color: var(--colony-blue);
-}
-
 .menuIconContainer {
   height: 14px;
   width: 6px;
@@ -63,4 +46,20 @@
 .colonyJoinBtn:hover {
   background-color: color-mod(var(--action-secondary) alpha(25%));
   color: var(--action-secondary);
+}
+
+@media screen and (max-width: 768px) {
+  .joinButton {
+    padding: 6px 12px 6px 12px;
+    height: 30px;
+    width: 118px;
+    border-radius: 4px;
+    background-color: rgba(76, 93, 255, 0.12);
+    text-align: center;
+  }
+
+  .createUserRedirect {
+    width: 100%;
+    font-size: var(--size-small);
+  }
 }

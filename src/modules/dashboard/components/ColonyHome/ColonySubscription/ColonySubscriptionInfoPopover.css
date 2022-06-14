@@ -65,3 +65,14 @@
   display: block;
   align-self: flex-start;
 }
+
+@media screen and (max-width: 768px) {
+  .main {
+    min-width: 0px;
+  }
+
+  .colonyInfo {
+    margin: 0px;
+    width: 200px;
+  }
+}

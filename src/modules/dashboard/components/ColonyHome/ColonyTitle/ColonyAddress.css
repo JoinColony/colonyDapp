@@ -1,0 +1,22 @@
+.colonyAddress {
+  padding: 4px 6px;
+  height: 24px;
+  border-radius: var(--radius-normal);
+  text-align: center;
+  line-height: var(--size-smallish);
+  color: var(--temp-grey-blue-7);
+  cursor: pointer;
+  user-select: none;
+  outline: 0;
+}
+
+.colonyAddress:hover {
+  background-color: color-mod(var(--colony-blue) alpha(10%));
+  color: var(--colony-blue);
+}
+
+@media screen and (max-width: 768px) {
+  .colonyAddress {
+    padding-left: 0px;
+  }
+}

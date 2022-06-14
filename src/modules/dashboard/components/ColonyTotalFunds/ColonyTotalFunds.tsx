@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { useMediaQuery } from 'react-responsive';
 import { ColonyVersion } from '@colony/colony-js';
 
 import Icon from '~core/Icon';
@@ -20,6 +21,7 @@ import ColonyTotalFundsPopover from './ColonyTotalFundsPopover';
 
 import styles from './ColonyTotalFunds.css';
 import IconTooltip from '~core/IconTooltip';
+import { mobile } from '~utils/mediaQueries';
 
 const MSG = defineMessages({
   totalBalance: {
@@ -62,6 +64,8 @@ const ColonyTotalFunds = ({
     nativeTokenAddress,
   );
 
+  const isMobile = useMediaQuery({ query: mobile });
+
   const {
     data,
     loading: isLoadingTokenBalances,
@@ -102,55 +106,117 @@ const ColonyTotalFunds = ({
 
   return (
     <div className={styles.main}>
-      <div className={styles.selectedToken}>
-        <Numeral
-          className={styles.selectedTokenAmount}
-          unit={getTokenDecimalsWithFallback(currentToken.decimals)}
-          value={currentToken.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount}
-          data-test="colonyTotalFunds"
-        />
-        <ColonyTotalFundsPopover
-          tokens={data.tokens}
-          onSelectToken={setCurrentTokenAddress}
-          currentTokenAddress={currentTokenAddress}
-        >
-          <button className={styles.selectedTokenSymbol} type="button">
-            <span data-test="colonyTokenSymbol">{currentToken.symbol}</span>
-            {currentTokenAddress === nativeTokenAddress &&
-              isNativeTokenLocked && (
-                <IconTooltip
-                  icon="lock"
-                  tooltipText={{ id: 'tooltip.lockedToken' }}
-                  className={styles.tokenLockWrapper}
-                  appearance={{ size: 'large' }}
+      {isMobile ? (
+        // Render Link outside of .totalBalanceCopy and render
+        // .totalBalanceCopy inside of .selectedToken on mobile
+        <>
+          <div className={styles.selectedToken}>
+            <Numeral
+              className={styles.selectedTokenAmount}
+              unit={getTokenDecimalsWithFallback(currentToken.decimals)}
+              value={
+                currentToken.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount
+              }
+              data-test="colonyTotalFunds"
+            />
+            <ColonyTotalFundsPopover
+              tokens={data.tokens}
+              onSelectToken={setCurrentTokenAddress}
+              currentTokenAddress={currentTokenAddress}
+            >
+              <button className={styles.selectedTokenSymbol} type="button">
+                <span data-test="colonyTokenSymbol">{currentToken.symbol}</span>
+                {currentTokenAddress === nativeTokenAddress &&
+                  isNativeTokenLocked && (
+                    <IconTooltip
+                      icon="lock"
+                      tooltipText={{ id: 'tooltip.lockedToken' }}
+                      className={styles.tokenLockWrapper}
+                      appearance={{ size: 'large' }}
+                    />
+                  )}
+                <Icon
+                  className={styles.caretIcon}
+                  name="caret-down-small"
+                  title={MSG.tokenSelect}
                 />
-              )}
-            <Icon
-              className={styles.caretIcon}
-              name="caret-down"
-              title={MSG.tokenSelect}
+              </button>
+            </ColonyTotalFundsPopover>
+            <div className={styles.totalBalanceCopy}>
+              <FormattedMessage {...MSG.totalBalance} />
+            </div>
+          </div>
+          {isSupportedColonyVersion && isNetworkAllowed && (
+            <Link
+              className={styles.manageFundsLink}
+              to={`/colony/${colonyName}/funds`}
+              data-test="manageFunds"
+            >
+              <Icon
+                className={styles.rightArrowDisplay}
+                name="arrow-right"
+                appearance={{ size: 'small' }}
+                title={MSG.manageFundsLink}
+              />
+              <FormattedMessage {...MSG.manageFundsLink} />
+            </Link>
+          )}
+        </>
+      ) : (
+        <>
+          <div className={styles.selectedToken}>
+            <Numeral
+              className={styles.selectedTokenAmount}
+              unit={getTokenDecimalsWithFallback(currentToken.decimals)}
+              value={
+                currentToken.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount
+              }
+              data-test="colonyTotalFunds"
             />
-          </button>
-        </ColonyTotalFundsPopover>
-      </div>
-      <div className={styles.totalBalanceCopy}>
-        <FormattedMessage {...MSG.totalBalance} />
-        {isSupportedColonyVersion && isNetworkAllowed && (
-          <Link
-            className={styles.manageFundsLink}
-            to={`/colony/${colonyName}/funds`}
-            data-test="manageFunds"
-          >
-            <Icon
-              className={styles.rightArrowDisplay}
-              name="arrow-right"
-              appearance={{ size: 'small' }}
-              title={MSG.manageFundsLink}
-            />
-            <FormattedMessage {...MSG.manageFundsLink} />
-          </Link>
-        )}
-      </div>
+            <ColonyTotalFundsPopover
+              tokens={data.tokens}
+              onSelectToken={setCurrentTokenAddress}
+              currentTokenAddress={currentTokenAddress}
+            >
+              <button className={styles.selectedTokenSymbol} type="button">
+                <span data-test="colonyTokenSymbol">{currentToken.symbol}</span>
+                {currentTokenAddress === nativeTokenAddress &&
+                  isNativeTokenLocked && (
+                    <IconTooltip
+                      icon="lock"
+                      tooltipText={{ id: 'tooltip.lockedToken' }}
+                      className={styles.tokenLockWrapper}
+                      appearance={{ size: 'large' }}
+                    />
+                  )}
+                <Icon
+                  className={styles.caretIcon}
+                  name="caret-down-small"
+                  title={MSG.tokenSelect}
+                />
+              </button>
+            </ColonyTotalFundsPopover>
+          </div>
+          <div className={styles.totalBalanceCopy}>
+            <FormattedMessage {...MSG.totalBalance} />
+            {isSupportedColonyVersion && isNetworkAllowed && (
+              <Link
+                className={styles.manageFundsLink}
+                to={`/colony/${colonyName}/funds`}
+                data-test="manageFunds"
+              >
+                <Icon
+                  className={styles.rightArrowDisplay}
+                  name="arrow-right"
+                  appearance={{ size: 'small' }}
+                  title={MSG.manageFundsLink}
+                />
+                <FormattedMessage {...MSG.manageFundsLink} />
+              </Link>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 };

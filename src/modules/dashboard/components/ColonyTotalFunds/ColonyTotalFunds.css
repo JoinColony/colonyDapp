@@ -83,3 +83,31 @@
 .selectedTokenSymbol:hover .tokenLockWrapper svg {
   fill: var(--colony-blue);
 }
+
+@media screen and (max-width: 768px) {
+  .main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+    padding: 0 14px;
+    height: 77px;
+    border-bottom: 1px solid var(--temp-grey-13);
+    grid-area: fundColony;
+  }
+
+  .totalBalanceCopy {
+    margin: 0;
+    font-size: var(--size-tiny);
+  }
+
+  .manageFundsLink {
+    display: flex;
+    align-items: center;
+    font-size: var(--size-tiny);
+  }
+
+  .selectedTokenAmount {
+    font-size: 24px;
+  }
+}
