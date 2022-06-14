@@ -3,6 +3,7 @@ import { FormattedMessage, defineMessages } from 'react-intl';
 
 import { ActionButton } from '~core/Button';
 import Numeral from '~core/Numeral';
+import CopyableAddress from '~core/CopyableAddress';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 
 import { useTokenQuery, ColonyTransaction, useLoggedInUser } from '~data/index';
@@ -12,7 +13,6 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
 
 import styles from './UnclaimedTransfersItem.css';
-import CopyableAddress from '~core/CopyableAddress';
 
 const displayName = 'UnclaimedTransfers.UnclaimedTransfersItem';
 
