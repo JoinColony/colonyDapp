@@ -1,11 +1,14 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import { useMediaQuery } from 'react-responsive';
 
 import { Colony } from '~data/index';
 import Heading from '~core/Heading';
 import ColonySubscription from '../ColonySubscription';
+import ColonyAddress from './ColonyAddress';
 
 import styles from './ColonyTitle.css';
+import { mobile } from '~utils/mediaQueries';
 
 const MSG = defineMessages({
   fallbackColonyName: {
@@ -21,9 +24,11 @@ type Props = {
 const displayName = 'dashboard.ColonyHome.ColonyTitle';
 
 const ColonyTitle = ({
-  colony: { displayName: colonyDisplayName, colonyName },
+  colony: { displayName: colonyDisplayName, colonyName, colonyAddress },
   colony,
 }: Props) => {
+  const isMobile = useMediaQuery({ query: mobile });
+
   return (
     <div className={styles.main}>
       <div className={styles.wrapper}>
@@ -37,6 +42,9 @@ const ColonyTitle = ({
             text={colonyDisplayName || colonyName || MSG.fallbackColonyName}
             data-test="colonyTitle"
           />
+          {colonyAddress && isMobile && (
+            <ColonyAddress colonyAddress={colonyAddress} />
+          )}
         </div>
         <div>
           <ColonySubscription colony={colony} />

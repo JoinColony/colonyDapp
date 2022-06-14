@@ -67,3 +67,48 @@
   height: 100%;
   position: relative;
 }
+
+@media screen and (max-width: 768px) {
+  .mainContent {
+    display: grid;
+    padding: 0;
+    grid-area: fundsAndActions;
+    grid-template:
+      "fundColony" auto
+      "actionsMenu" auto
+      "actionsSummary" auto
+      / 1fr;
+  }
+
+  .mainContentGrid {
+    display: grid;
+    margin: 0px;
+    width: 100%;
+    grid-template:
+      "joinColony" auto
+      "fundsAndActions" auto
+      / 1fr;
+  }
+
+  .domainsDropdownContainer {
+    width: auto;
+  }
+
+  .leftAside {
+    display: flex;
+    align-items: center;
+    height: 71px;
+    width: 100%;
+    border-bottom: 1px solid var(--temp-grey-13);
+    grid-area: joinColony;
+  }
+
+  .rightAside {
+    display: none;
+  }
+
+  .contentActionsPanel {
+    padding: 11px 14px;
+    border: 0;
+  }
+}

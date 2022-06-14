@@ -50,3 +50,9 @@
   font-weight: var(--weight-bold);
   color: var(--dark-blue);
 }
+
+@media screen and (max-width: 768px) {
+  .main {
+    padding: 0 14px;
+  }
+}
