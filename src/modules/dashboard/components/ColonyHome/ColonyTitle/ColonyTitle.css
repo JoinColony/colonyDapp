@@ -49,3 +49,19 @@
   background-color: color-mod(var(--colony-blue) alpha(10%));
   color: var(--colony-blue);
 }
+
+@media screen and (max-width: 768px) {
+  .main {
+    margin: 0;
+    padding: 0px 14px;
+    width: 100%;
+    text-align: left;
+  }
+
+  .wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+}

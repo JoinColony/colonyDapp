@@ -201,7 +201,7 @@
   }
 
   /* Fade effect when number of colonies is > 7 */
-  .main::before {
+  .fade {
     height: 43px;
     width: 40px;
     position: absolute;

@@ -1,4 +1,5 @@
 import React, { ReactChild, useEffect } from 'react';
+import { useMediaQuery } from 'react-responsive';
 
 import { useDialog } from '~core/Dialog';
 
@@ -21,6 +22,7 @@ import ExtensionUpgrade from './ExtensionUpgrade';
 import WrongNetworkDialog from './WrongNetworkDialog';
 
 import styles from './ColonyHomeLayout.css';
+import { mobile } from '~utils/mediaQueries';
 
 type Props = {
   colony: Colony;
@@ -54,6 +56,7 @@ const ColonyHomeLayout = ({
   const { ethereal, networkId } = useLoggedInUser();
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
   const openWrongNetworkDialog = useDialog(WrongNetworkDialog);
+  const isMobile = useMediaQuery({ query: mobile });
 
   useEffect(() => {
     if (!ethereal && !isNetworkAllowed) {
@@ -68,7 +71,7 @@ const ColonyHomeLayout = ({
       >
         <aside className={styles.leftAside}>
           <ColonyTitle colony={colony} />
-          {showNavigation && <ColonyNavigation colony={colony} />}
+          {!isMobile && showNavigation && <ColonyNavigation colony={colony} />}
         </aside>
         <div className={styles.mainContent}>
           {showControls && (

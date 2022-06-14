@@ -5,3 +5,4 @@ export const menuIconContainer: string;
 export const menuActive: string;
 export const menuIcon: string;
 export const createUserRedirect: string;
+export const joinButton: string;

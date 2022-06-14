@@ -1,5 +1,6 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { useMediaQuery } from 'react-responsive';
 import classnames from 'classnames';
 
 import { SpinnerLoader } from '~core/Preloaders';
@@ -21,6 +22,7 @@ import { CREATE_USER_ROUTE } from '~routes/index';
 import ColonySubscriptionInfoPopover from './ColonySubscriptionInfoPopover';
 
 import styles from './ColonySubscription.css';
+import { mobile } from '~utils/mediaQueries';
 
 const MSG = defineMessages({
   joinColony: {
@@ -68,6 +70,10 @@ const ColonySubscription = ({
 
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
+  const isMobile = useMediaQuery({ query: mobile });
+
+  if (isMobile) MSG.joinColony.defaultMessage = 'Join this colony';
+
   return (
     <div className={styles.main}>
       {loadingSubscribe ||
@@ -81,13 +87,14 @@ const ColonySubscription = ({
           onClick={() => subscribe()}
           appearance={{ theme: 'blue', size: 'small' }}
           data-test="joinColonyButton"
+          className={styles.joinButton}
         >
           <FormattedMessage {...MSG.joinColony} />
         </Button>
       )}
       {!isSubscribed && !username && (
         <Link
-          className={styles.createUserRedirect}
+          className={`${styles.joinButton} ${styles.createUserRedirect}`}
           to={{
             pathname: CREATE_USER_ROUTE,
             state: { colonyURL: `/colony/${colonyName}` },

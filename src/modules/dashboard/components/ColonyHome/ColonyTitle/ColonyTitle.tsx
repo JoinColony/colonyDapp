@@ -1,5 +1,6 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import { useMediaQuery } from 'react-responsive';
 
 import { Colony } from '~data/index';
 import Heading from '~core/Heading';
@@ -8,6 +9,7 @@ import ColonySubscription from '../ColonySubscription';
 import InvisibleCopyableAddress from '~core/InvisibleCopyableAddress';
 
 import styles from './ColonyTitle.css';
+import { mobile } from '~utils/mediaQueries';
 
 const MSG = defineMessages({
   fallbackColonyName: {
@@ -30,33 +32,72 @@ const ColonyTitle = ({
   colony: { displayName: colonyDisplayName, colonyName, colonyAddress },
   colony,
 }: Props) => {
+  const isMobile = useMediaQuery({ query: mobile });
+
   return (
     <div className={styles.main}>
       <div className={styles.wrapper}>
-        <div className={styles.colonyTitle}>
-          <Heading
-            appearance={{
-              size: 'medium',
-              weight: 'medium',
-              margin: 'none',
-            }}
-            text={colonyDisplayName || colonyName || MSG.fallbackColonyName}
-            data-test="colonyTitle"
-          />
-        </div>
-        <div className={styles.colonyMenu}>
-          {colonyAddress && (
-            <InvisibleCopyableAddress
-              address={colonyAddress}
-              copyMessage={MSG.copyMessage}
-            >
-              <div className={styles.colonyAddress}>
-                <MaskedAddress address={colonyAddress} />
+        {isMobile ? (
+          // Render ColonySubscription outside of .colonyMenu
+          // on mobile.
+          <>
+            <div>
+              <div className={styles.colonyTitle}>
+                <Heading
+                  appearance={{
+                    size: 'medium',
+                    weight: 'medium',
+                    margin: 'none',
+                  }}
+                  text={
+                    colonyDisplayName || colonyName || MSG.fallbackColonyName
+                  }
+                  data-test="colonyTitle"
+                />
               </div>
-            </InvisibleCopyableAddress>
-          )}
-          <ColonySubscription colony={colony} />
-        </div>
+              <div className={styles.colonyMenu}>
+                {colonyAddress && (
+                  <InvisibleCopyableAddress
+                    address={colonyAddress}
+                    copyMessage={MSG.copyMessage}
+                  >
+                    <div className={styles.colonyAddress}>
+                      <MaskedAddress address={colonyAddress} />
+                    </div>
+                  </InvisibleCopyableAddress>
+                )}
+              </div>
+            </div>
+            <ColonySubscription colony={colony} />
+          </>
+        ) : (
+          <>
+            <div className={styles.colonyTitle}>
+              <Heading
+                appearance={{
+                  size: 'medium',
+                  weight: 'medium',
+                  margin: 'none',
+                }}
+                text={colonyDisplayName || colonyName || MSG.fallbackColonyName}
+                data-test="colonyTitle"
+              />
+            </div>
+            <div className={styles.colonyMenu}>
+              {colonyAddress && (
+                <InvisibleCopyableAddress
+                  address={colonyAddress}
+                  copyMessage={MSG.copyMessage}
+                >
+                  <div className={styles.colonyAddress}>
+                    <MaskedAddress address={colonyAddress} />
+                  </div>
+                </InvisibleCopyableAddress>
+              )}
+              <ColonySubscription colony={colony} />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
