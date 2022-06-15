@@ -98,6 +98,10 @@ const MembersListItem = <U extends AnyUser = AnyUser>({
     profile: { displayName, username },
   } = userProfile;
 
+  const nativeToken = colony.tokens.find(
+    (token) => token.address === colony.nativeTokenAddress,
+  );
+
   return (
     <ListGroupItem>
       {/* Disable, as `role` is conditional */}
@@ -162,6 +166,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>({
               domainId={domainId}
               onReputationLoaded={setReputationLoaded}
               showReputationPoints
+              nativeTokenDecimals={nativeToken?.decimals}
             />
           </div>
         )}
