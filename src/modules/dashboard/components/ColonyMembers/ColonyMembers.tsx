@@ -159,7 +159,6 @@ const ColonyMembers = () => {
   const openToggleManageWhitelistDialog = useDialog(ManageWhitelistDialog);
 
   const handleToggleWhitelistDialog = useCallback(() => {
-    // @ts-ignore
     return openToggleManageWhitelistDialog({
       colony: colonyData?.processedColony as Colony,
     });
