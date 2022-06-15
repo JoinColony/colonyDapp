@@ -1,17 +1,22 @@
+import { useFormikContext } from 'formik';
 import React, { useState } from 'react';
 import {
   defineMessages,
   FormattedMessage,
   MessageDescriptor,
 } from 'react-intl';
+import classNames from 'classnames';
+
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
 import StakeExpenditureDialog from './StakeExpenditureDialog';
+import { Tooltip } from '~core/Popover';
+import { Stage } from './consts';
+import DeleteDraftDialog from './DeleteDraftDialog';
 import StageItem from './StageItem';
 
 import styles from './Stages.css';
-import { Stage } from './consts';
 
 const MSG = defineMessages({
   stages: {
@@ -66,7 +71,29 @@ const MSG = defineMessages({
     id: 'dashboard.Expenditures.Stages.claimed',
     defaultMessage: 'Claimed',
   },
+  deleteDraft: {
+    id: 'dashboard.Expenditures.Stages.deleteDraft',
+    defaultMessage: 'Delete draft',
+  },
+  tooltipDeleteText: {
+    id: 'dashboard.Expenditures.Stages.tooltipDeleteText',
+    defaultMessage: 'Delete the expenditure',
+  },
+  tooltipShareText: {
+    id: 'dashboard.Expenditures.Stages.tooltipShareText',
+    defaultMessage: 'Share expenditure URL',
+  },
+  tooltipCancelText: {
+    id: 'dashboard.Expenditures.Stages.tooltipCancelText',
+    defaultMessage: 'Click to cancel expenditure',
+  },
 });
+
+const buttonStyle = {
+  width: styles.buttonWidth,
+  height: styles.buttonHeight,
+  padding: 0,
+};
 
 interface ActiveState {
   id: string;
@@ -76,16 +103,25 @@ interface ActiveState {
 }
 
 const Stages = () => {
-  const [activeState, setActiveState] = useState<ActiveState | null>(null);
+  const [activeStateId, setActiveStateId] = useState<string | null>(null);
+  const { resetForm } = useFormikContext() || {};
 
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
+  const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
+
+  const handleLockExpenditure = () => {
+    // Call to backend will be added here, to lock the expenditure
+    // fetching active state shoud be added here as well,
+    // and saving the activeState in a state
+    setActiveStateId(Stage.Locked);
+  };
 
   const states = [
     {
       id: Stage.Draft,
       label: MSG.draft,
       buttonText: MSG.lockValues,
-      buttonAction: () => {},
+      buttonAction: handleLockExpenditure,
     },
     {
       id: Stage.Locked,
@@ -115,9 +151,21 @@ const Stages = () => {
 
   const handleSaveDraft = () =>
     openDraftConfirmDialog({
-      onClick: () => setActiveState(states[0]),
+      onClick: () => setActiveStateId(Stage.Draft),
     });
-  const activeIndex = states.findIndex((state) => state.id === activeState?.id);
+
+  const handleDeleteDraft = () =>
+    openDeleteDraftDialog({
+      onClick: () => {
+        resetForm?.();
+        if (activeStateId === Stage.Draft) {
+          // logic to delete a draft from database
+        }
+      },
+    });
+
+  const activeIndex = states.findIndex((state) => state.id === activeStateId);
+  const activeState = states.find((state) => state.id === activeStateId);
 
   return (
     <div className={styles.mainContainer}>
@@ -126,36 +174,89 @@ const Stages = () => {
           <span className={styles.status}>
             <FormattedMessage {...MSG.stages} />
           </span>
-          {!activeState && (
+          {!activeStateId && (
             <span className={styles.notSaved}>
               <FormattedMessage {...MSG.notSaved} />
             </span>
           )}
         </div>
         <div className={styles.buttonsContainer}>
-          {!activeState ? (
+          {!activeStateId ? (
             <>
-              {/* Deleting the expenditure will be added in next PR */}
-              <Icon name="trash" className={styles.icon} />
-              {/* onClick has temporary action, needs to be submiting draft in the future */}
-              <Button
-                onClick={handleSaveDraft}
-                style={{ height: styles.buttonHeight }}
-              >
+              <span className={styles.iconContainer}>
+                <Tooltip
+                  placement="top-start"
+                  content={<FormattedMessage {...MSG.tooltipDeleteText} />}
+                >
+                  <div className={styles.iconWrapper}>
+                    <Icon
+                      name="trash"
+                      className={styles.icon}
+                      onClick={handleDeleteDraft}
+                      title={MSG.deleteDraft}
+                    />
+                  </div>
+                </Tooltip>
+              </span>
+              <Button onClick={handleSaveDraft} style={buttonStyle}>
                 <FormattedMessage {...MSG.submitDraft} />
               </Button>
             </>
           ) : (
             <>
-              <Icon name="share" className={styles.icon} />
-              <Button
-                onClick={activeState?.buttonAction}
-                style={{ height: styles.buttonHeight }}
-              >
+              <span className={styles.iconContainer}>
+                <Tooltip
+                  placement="top-start"
+                  content={<FormattedMessage {...MSG.tooltipShareText} />}
+                >
+                  <div className={styles.iconWrapper}>
+                    <Icon name="share" className={styles.icon} />
+                  </div>
+                </Tooltip>
+              </span>
+              {activeStateId === Stage.Draft && (
+                <span className={styles.iconContainer}>
+                  <Tooltip
+                    placement="top-start"
+                    content={<FormattedMessage {...MSG.tooltipDeleteText} />}
+                  >
+                    <div className={styles.iconWrapper}>
+                      <Icon
+                        name="trash"
+                        className={styles.icon}
+                        onClick={handleDeleteDraft}
+                        title={MSG.deleteDraft}
+                      />
+                    </div>
+                  </Tooltip>
+                </span>
+              )}
+              {activeStateId !== Stage.Draft && (
+                <span
+                  className={classNames(
+                    styles.iconContainer,
+                    styles.cancelIcon,
+                  )}
+                >
+                  <Tooltip
+                    placement="top-start"
+                    content={<FormattedMessage {...MSG.tooltipCancelText} />}
+                  >
+                    <div className={styles.iconWrapper}>
+                      <Icon
+                        name="circle-minus"
+                        className={styles.icon}
+                        title={MSG.deleteDraft}
+                      />
+                    </div>
+                  </Tooltip>
+                </span>
+              )}
+              <Button onClick={activeState?.buttonAction} style={buttonStyle}>
                 {typeof activeState?.buttonText === 'string' ? (
                   activeState.buttonText
                 ) : (
-                  <FormattedMessage {...activeState.buttonText} />
+                  <FormattedMessage {...activeState?.buttonText} />
                 )}
               </Button>
             </>

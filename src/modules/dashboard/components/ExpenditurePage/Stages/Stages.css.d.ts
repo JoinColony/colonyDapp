@@ -1,4 +1,5 @@
 export const buttonHeight: string;
+export const buttonWidth: string;
 export const mainContainer: string;
 export const status: string;
 export const notSaved: string;
@@ -6,3 +7,6 @@ export const stagesText: string;
 export const statusContainer: string;
 export const icon: string;
 export const buttonsContainer: string;
+export const iconContainer: string;
+export const iconWrapper: string;
+export const cancelIcon: string;
