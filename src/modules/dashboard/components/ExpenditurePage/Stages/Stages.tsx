@@ -11,6 +11,7 @@ import StakeExpenditureDialog from './StakeExpenditureDialog';
 import StageItem from './StageItem';
 
 import styles from './Stages.css';
+import { Stage } from './consts';
 
 const MSG = defineMessages({
   stages: {
@@ -68,7 +69,7 @@ const MSG = defineMessages({
 });
 
 interface ActiveState {
-  id: number;
+  id: string;
   label: string | MessageDescriptor;
   buttonText: string | MessageDescriptor;
   buttonAction: () => void;
@@ -81,31 +82,31 @@ const Stages = () => {
 
   const states = [
     {
-      id: 1,
+      id: Stage.Draft,
       label: MSG.draft,
       buttonText: MSG.lockValues,
       buttonAction: () => {},
     },
     {
-      id: 2,
+      id: Stage.Locked,
       label: MSG.locked,
       buttonText: MSG.escrowFunds,
       buttonAction: () => {},
     },
     {
-      id: 3,
+      id: Stage.Funded,
       label: MSG.funded,
       buttonText: MSG.releaseFunds,
       buttonAction: () => {},
     },
     {
-      id: 4,
+      id: Stage.Released,
       label: MSG.released,
       buttonText: MSG.claim,
       buttonAction: () => {},
     },
     {
-      id: 5,
+      id: Stage.Claimed,
       label: MSG.claimed,
       buttonText: MSG.completed,
       buttonAction: () => {},
