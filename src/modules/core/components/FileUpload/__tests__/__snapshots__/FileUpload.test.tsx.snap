@@ -145,12 +145,14 @@ exports[`FileUpload component Renders initial component 1`] = `
                 <label
                   className=""
                 >
-                  <span>
-                    Basic file upload
-                  </span>
-                  <span>
-                    Some help text
-                  </span>
+                  <div>
+                    <span>
+                      Basic file upload
+                    </span>
+                    <span>
+                      Some help text
+                    </span>
+                  </div>
                 </label>
               </InputLabel>
               <div

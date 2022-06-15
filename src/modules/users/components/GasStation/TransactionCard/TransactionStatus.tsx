@@ -1,5 +1,6 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import classnames from 'classnames';
 
 import { TRANSACTION_STATUSES } from '~immutable/index';
 
@@ -49,7 +50,11 @@ const TransactionStatus = ({
   groupCount,
   loadingRelated,
 }: Props) => (
-  <div className={styles.main}>
+  <div
+    className={classnames(styles.main, {
+      [styles.mainStatusReady]: TRANSACTION_STATUSES.READY === status,
+    })}
+  >
     {hash && (
       <TransactionLink
         className={styles.interaction}
@@ -79,7 +84,12 @@ const TransactionStatus = ({
        * The tooltip content needs to be wrapped inside a block
        * element (otherwise it won't detect the hover event)
        */}
-      <div>
+      <div
+        className={classnames(styles.statusIconContainer, {
+          [styles.statusIconContainerReady]:
+            TRANSACTION_STATUSES.READY === status,
+        })}
+      >
         {groupCount && status === TRANSACTION_STATUSES.READY && (
           <span className={styles.counter}>
             <span>{groupCount}</span>
@@ -102,10 +112,7 @@ const TransactionStatus = ({
           </span>
         )}
         {(status === TRANSACTION_STATUSES.PENDING || loadingRelated) && (
-          <div
-            className={styles.spinner}
-            data-test="gasStationTransactionPending"
-          >
+          <div data-test="gasStationTransactionPending">
             <SpinnerLoader appearance={{ size: 'small', theme: 'primary' }} />
           </div>
         )}

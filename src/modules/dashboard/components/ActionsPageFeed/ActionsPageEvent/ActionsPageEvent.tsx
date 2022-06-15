@@ -14,7 +14,6 @@ import Numeral from '~core/Numeral';
 
 import {
   ColonyAction,
-  useSubgraphColonyMetadataQuery,
   useSubgraphDomainMetadataQuery,
   Colony,
   useUser,
@@ -22,8 +21,7 @@ import {
 import { ColonyAndExtensionsEvents, ColonyActions } from '~types/index';
 import {
   getSpecificActionValuesCheck,
-  sortMetdataHistory,
-  parseColonyMetadata,
+  sortMetadataHistory,
   parseDomainMetadata,
   getColonyMetadataMessageDescriptorsIds,
   getDomainMetadataMessageDescriptorsIds,
@@ -34,12 +32,12 @@ import { getFormattedTokenValue } from '~utils/tokens';
 import { MotionVote } from '~utils/colonyMotions';
 
 import { ipfsDataFetcher } from '../../../../core/fetchers';
-
+import useColonyMetadataChecks from '../../../hooks/useColonyMetadataChecks';
 import { EventValues } from '../ActionsPageFeed';
 import { STATUS } from '../../ActionsPage/types';
 import { EVENT_ROLES_MAP } from '../../ActionsPage/staticMaps';
-import motionSpecificStyles from '../../ActionsPage/ActionsComponents/DefaultMotion.css';
 
+import motionSpecificStyles from '../../ActionsPage/ActionsComponents/DefaultMotion.css';
 import styles from './ActionsPageEvent.css';
 
 const displayName = 'dashboard.ActionsPageFeed.ActionsPageEvent';
@@ -146,12 +144,6 @@ const ActionsPageEvent = ({
     return eventsToIdsMap;
   });
 
-  const colonyMetadataHistory = useSubgraphColonyMetadataQuery({
-    variables: {
-      address: colonyAddress.toLowerCase(),
-    },
-  });
-
   const domainMetadataHistory = useSubgraphDomainMetadataQuery({
     variables: {
       colonyAddress: colonyAddress.toLowerCase(),
@@ -173,73 +165,13 @@ const ActionsPageEvent = ({
     // silent error
   }
 
-  /*
-   * Determine if the current medata is different from the previous one,
-   * and in what way
-   */
-  const getColonyMetadataChecks = useMemo(() => {
-    if (
-      eventName === ColonyAndExtensionsEvents.ColonyMetadata &&
-      !!colonyMetadataHistory?.data?.colony &&
-      !!actionData
-    ) {
-      const {
-        data: {
-          colony: { metadataHistory },
-        },
-      } = colonyMetadataHistory;
-      const sortedMetdataHistory = sortMetdataHistory(metadataHistory);
-      const currentMedataIndex = findLastIndex(
-        sortedMetdataHistory,
-        ({ transaction: { id: hash } }) => hash === actionData.hash,
-      );
-      /*
-       * We have a previous metadata entry
-       */
-      if (currentMedataIndex > 0) {
-        const prevMetdata = sortedMetdataHistory[currentMedataIndex - 1];
-        if (prevMetdata) {
-          setMetdataIpfsHash(prevMetdata.metadata);
-          if (metadataJSON) {
-            /*
-             * If we have a metadata json, parse into the expected values and then
-             * compare them agains the ones from the current action
-             *
-             * This should be the default case for a colony with metadata history
-             */
-            return getSpecificActionValuesCheck(
-              eventName as ColonyAndExtensionsEvents,
-              actionData,
-              parseColonyMetadata(metadataJSON),
-            );
-          }
-        }
-      }
-      /*
-       * We don't have a previous metadata entry, so fall back to the current
-       * action's values
-       */
-      const { colonyDisplayName, colonyAvatarHash, colonyTokens } = actionData;
-      return {
-        nameChanged: !!colonyDisplayName,
-        logoChanged: !!colonyAvatarHash,
-        tokensChanged: !!colonyTokens.length,
-      };
-    }
-    /*
-     * Default fallback, just use the current colony's values
-     */
-    const {
-      displayName: colonyDisplayName,
-      avatarHash,
-      tokenAddresses,
-    } = colony;
-    return {
-      nameChanged: !!colonyDisplayName,
-      logoChanged: !!avatarHash,
-      tokensChanged: !!tokenAddresses?.length,
-    };
-  }, [colonyMetadataHistory, actionData, metadataJSON, eventName, colony]);
+  const colonyMetadataChecks = useColonyMetadataChecks(
+    eventName,
+    colony,
+    actionData.hash,
+    actionData,
+  );
+
   const roleNameMessage = {
     id: `role.${
       values?.roles && values?.roles[eventIndex]
@@ -257,7 +189,7 @@ const ActionsPageEvent = ({
       !!actionData
     ) {
       const domain = domainMetadataHistory?.data?.domains[0];
-      const sortedMetdataHistory = sortMetdataHistory(domain?.metadataHistory);
+      const sortedMetdataHistory = sortMetadataHistory(domain?.metadataHistory);
       const currentMedataIndex = findLastIndex(
         sortedMetdataHistory,
         ({ transaction: { id: hash } }) => hash === actionData.hash,
@@ -294,7 +226,7 @@ const ActionsPageEvent = ({
       case ColonyAndExtensionsEvents.ColonyMetadata:
         return getColonyMetadataMessageDescriptorsIds(
           ColonyAndExtensionsEvents.ColonyMetadata,
-          getColonyMetadataChecks,
+          colonyMetadataChecks,
         );
       case ColonyAndExtensionsEvents.DomainMetadata:
         return getDomainMetadataMessageDescriptorsIds(
@@ -317,7 +249,7 @@ const ActionsPageEvent = ({
   }, [
     eventName,
     getDomainMetadataChecks,
-    getColonyMetadataChecks,
+    colonyMetadataChecks,
     eventIndex,
     values,
   ]);

@@ -32,6 +32,8 @@ fragment ColonyProfile on ProcessedColony {
   avatarHash
   avatarURL
   extensionAddresses
+  whitelistedAddresses
+  isWhitelistActivated
 }
 
 fragment FullColony on ProcessedColony {

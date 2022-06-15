@@ -54,6 +54,7 @@
 .help {
   display: inline-block;
   margin-left: 7px;
+  height: 16px;
   width: 33px;
   cursor: pointer;
 }

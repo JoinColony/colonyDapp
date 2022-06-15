@@ -5,6 +5,7 @@ import {
   ErrorActionType,
   UniqueActionType,
   UniqueActionTypeWithoutPayload,
+  MetaWithHistory,
 } from './index';
 
 export type ColonyActionTypes =
@@ -112,6 +113,26 @@ export type ColonyActionTypes =
       object
     >
   | ErrorActionType<ActionTypes.COLONY_EXTENSION_UNINSTALL_ERROR, object>
+  | UniqueActionType<
+      ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE,
+      {
+        colonyAddress: Address;
+        colonyDisplayName: string;
+        colonyAvatarHash: string;
+        verifiedAddresses: Address[];
+        colonyTokens: Address[];
+        annotationMessage?: string;
+        colonyName: string;
+        isWhitelistActivated: boolean;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE_ERROR, object>
+  | UniqueActionType<
+      ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE_SUCCESS,
+      object,
+      object
+    >
   | UniqueActionType<
       ActionTypes.WHITELIST_UPDATE,
       { userAddresses: [Address]; colonyAddress: Address; status: boolean },

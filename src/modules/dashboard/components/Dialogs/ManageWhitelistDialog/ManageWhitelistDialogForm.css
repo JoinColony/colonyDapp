@@ -1,0 +1,55 @@
+@value wideButton: 160px;
+
+.noPermissionMessage {
+  margin-bottom: 20px;
+  vertical-align: bottom;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--danger);
+}
+
+.tabsListContainer {
+  height: 42px;
+  border-bottom: 1px solid var(--temp-grey-13);
+}
+
+.tabsList {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  bottom: -1px; /* HACK to overlap the tabs' bottom borders */
+}
+
+.toggleContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tooltip {
+  padding: 5px;
+  width: 200px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+}
+
+.warningContainer {
+  margin-top: 20px;
+  padding: 20px 15px;
+  border-radius: var(--radius-normal);
+  background-color: color-mod(var(--danger) alpha(15%));
+}
+
+.warningText {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--dark);
+}
+
+.warningLabel {
+  color: var(--danger);
+}

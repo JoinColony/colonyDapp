@@ -449,10 +449,6 @@ const getVersionUpgradeActionValues = async (
 const getColonyEditActionValues = async (
   processedEvents: ProcessedEvent[],
 ): Promise<Partial<ActionValues>> => {
-  let colonyDisplayName = null;
-  let colonyAvatarHash = null;
-  let colonyTokens = [];
-
   const colonyMetadataEvent = processedEvents.find(
     ({ name }) => name === ColonyAndExtensionsEvents.ColonyMetadata,
   ) as ProcessedEvent;
@@ -461,6 +457,23 @@ const getColonyEditActionValues = async (
     address,
     values: { agent, metadata },
   } = colonyMetadataEvent;
+
+  const colonyEditValues: {
+    address: Address;
+    actionInitiator?: string;
+    colonyDisplayName: string | null;
+    colonyAvatarHash?: string | null;
+    colonyTokens?: string[];
+    isWhitelistActivated?: boolean;
+    verifiedAddresses?: string[];
+  } = {
+    address,
+    colonyDisplayName: null,
+    colonyAvatarHash: null,
+    colonyTokens: [],
+    isWhitelistActivated: false,
+    verifiedAddresses: [],
+  };
 
   /*
    * Fetch the colony's metadata
@@ -478,14 +491,18 @@ const getColonyEditActionValues = async (
   try {
     if (ipfsMetadata) {
       const {
-        colonyDisplayName: displayName,
-        colonyAvatarHash: avatarHash,
-        colonyTokens: tokenAddresses,
+        colonyDisplayName,
+        colonyAvatarHash,
+        colonyTokens,
+        isWhitelistActivated,
+        verifiedAddresses,
       } = JSON.parse(ipfsMetadata);
 
-      colonyDisplayName = displayName;
-      colonyAvatarHash = avatarHash;
-      colonyTokens = tokenAddresses;
+      colonyEditValues.colonyDisplayName = colonyDisplayName;
+      colonyEditValues.colonyAvatarHash = colonyAvatarHash;
+      colonyEditValues.colonyTokens = colonyTokens;
+      colonyEditValues.isWhitelistActivated = isWhitelistActivated;
+      colonyEditValues.verifiedAddresses = verifiedAddresses;
     }
   } catch (error) {
     log.verbose(
@@ -495,19 +512,6 @@ const getColonyEditActionValues = async (
       ipfsMetadata,
     );
   }
-
-  const colonyEditValues: {
-    address: Address;
-    actionInitiator?: string;
-    colonyDisplayName: string | null;
-    colonyAvatarHash?: string | null;
-    colonyTokens?: string[];
-  } = {
-    address,
-    colonyDisplayName,
-    colonyAvatarHash,
-    colonyTokens,
-  };
 
   if (agent) {
     colonyEditValues.actionInitiator = agent;

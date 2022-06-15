@@ -33,6 +33,8 @@ function* editColonyAction({
     hasAvatarChanged,
     colonyTokens = [],
     annotationMessage,
+    verifiedAddresses,
+    isWhitelistActivated,
   },
   meta: { id: metaId, history },
   meta,
@@ -128,6 +130,8 @@ function* editColonyAction({
           ? colonyAvatarIpfsHash
           : colonyAvatarHash,
         colonyTokens,
+        verifiedAddresses,
+        isWhitelistActivated,
       }),
     );
 

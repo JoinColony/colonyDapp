@@ -124,6 +124,8 @@ export default gql`
     motionDomain: Int!
     rootHash: String
     reputationChange: String!
+    isWhitelistActivated: Boolean!
+    verifiedAddresses: [String!]!
   }
 
   input NetworkContractsInput {
@@ -291,6 +293,7 @@ export default gql`
       tokenAddress: String!
       domainId: Int!
     ): String!
+    verifiedUsers(verifiedAddresses: [String!]!): [User!]!
   }
 
   extend type Mutation {
@@ -441,5 +444,7 @@ export default gql`
     events: [NetworkEvent!]!
     isDeploymentFinished: Boolean!
     installedExtensions: [ColonyExtension!]!
+    whitelistedAddresses: [String!]!
+    isWhitelistActivated: Boolean!
   }
 `;

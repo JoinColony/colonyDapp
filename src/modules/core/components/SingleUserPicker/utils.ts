@@ -1,8 +1,10 @@
+import { AnyUser } from '~data/index';
+
 /*
 Extracts the required values to be used in the SingleUserPicker
 on selection
 */
-export const filterUserSelection = (data, filterValue) => {
+export const filterUserSelection = (data: AnyUser[], filterValue: string) => {
   if (!filterValue) {
     return data;
   }
@@ -18,7 +20,7 @@ export const filterUserSelection = (data, filterValue) => {
     );
   });
 
-  const customValue = {
+  const customUserValue: AnyUser = {
     id: 'filterValue',
     profile: {
       walletAddress: filterValue,
@@ -26,5 +28,5 @@ export const filterUserSelection = (data, filterValue) => {
     },
   };
 
-  return [customValue].concat(filtered);
+  return [customUserValue].concat(filtered);
 };

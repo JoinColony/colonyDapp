@@ -2,7 +2,9 @@ import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 import { useApolloClient } from '@apollo/client';
+import { isConfusing } from '@colony/unicode-confusables-noascii';
 
+import ConfusableWarning from '~core/ConfusableWarning';
 import { WizardProps } from '~core/Wizard';
 import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
@@ -147,6 +149,7 @@ const StepUserName = ({ stepCompleted, wizardForm, nextStep }: Props) => {
                   data-test="claimUsernameInput"
                   disabled={!isNetworkAllowed || isSubmitting}
                 />
+                {username && isConfusing(username) && <ConfusableWarning />}
                 <div className={styles.buttons}>
                   <p className={styles.reminder}>
                     <FormattedMessage

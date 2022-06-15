@@ -7,10 +7,6 @@
   display: inline-block;
 }
 
-.main svg {
-  vertical-align: top;
-}
-
 .main svg use {
   pointer-events: none;
 }

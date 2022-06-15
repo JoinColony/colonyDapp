@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
@@ -11,7 +11,12 @@ import { ActionForm } from '~core/Fields';
 
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
-import { useMembersSubscription, useNetworkContracts } from '~data/index';
+import {
+  useColonyFromNameQuery,
+  AnyUser,
+  useMembersSubscription,
+  useNetworkContracts,
+} from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 import { WizardDialogType } from '~utils/hooks';
@@ -32,8 +37,8 @@ const MSG = defineMessages({
 export interface FormValues {
   forceAction: boolean;
   domainId: string;
-  recipient: Address;
-  amount: string; // Amount the receiver finally gets, the initiator pays this plus network fee
+  recipient: AnyUser;
+  amount: string;
   tokenAddress: Address;
   annotation: string;
   motionDomainId: string;
@@ -94,6 +99,41 @@ const CreatePaymentDialog = ({
   });
 
   const { feeInverse: networkFeeInverse } = useNetworkContracts();
+
+  /*
+   * @NOTE This (extravagant) query retrieves the latest whitelist data.
+   * Whitelist data from colony prop can be stale.
+   *
+   * Add/remove to whitelist then navigating to payment dialog
+   * without closing the modal will cause the whitelist data in
+   * colony prop to be outdated.
+   */
+  const { data: colonyData } = useColonyFromNameQuery({
+    variables: { name: colonyName, address: colonyAddress },
+  });
+  const isWhitelistActivated =
+    colonyData?.processedColony?.isWhitelistActivated;
+
+  const filteredVerifiedRecipients = useMemo(() => {
+    return isWhitelistActivated &&
+      colonyData?.processedColony?.whitelistedAddresses &&
+      colonyData.processedColony.whitelistedAddresses.length > 0
+      ? (colonyMembers?.subscribedUsers || []).filter((member) =>
+          colonyData?.processedColony?.whitelistedAddresses.some(
+            (el) => el.toLowerCase() === member.id.toLowerCase(),
+          ),
+        )
+      : colonyMembers?.subscribedUsers || [];
+  }, [colonyMembers, colonyData, isWhitelistActivated]);
+
+  const showWarningForAddress = (walletAddress) => {
+    if (!walletAddress) return false;
+    return isWhitelistActivated
+      ? !colonyData?.processedColony?.whitelistedAddresses.some(
+          (el) => el.toLowerCase() === walletAddress.toLowerCase(),
+        )
+      : false;
+  };
 
   const transform = useCallback(
     pipe(
@@ -167,6 +207,7 @@ const CreatePaymentDialog = ({
         if (formValues.values.forceAction !== isForce) {
           setIsForce(formValues.values.forceAction);
         }
+
         return (
           <Dialog cancel={cancel}>
             <DialogForm
@@ -174,8 +215,11 @@ const CreatePaymentDialog = ({
               colony={colony}
               isVotingExtensionEnabled={isVotingExtensionEnabled}
               back={() => callStep(prevStep)}
-              subscribedUsers={colonyMembers?.subscribedUsers || []}
+              subscribedUsers={filteredVerifiedRecipients}
               ethDomainId={ethDomainId}
+              showWhitelistWarning={showWarningForAddress(
+                formValues.values?.recipient?.profile?.walletAddress,
+              )}
             />
           </Dialog>
         );
