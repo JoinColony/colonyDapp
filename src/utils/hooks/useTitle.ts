@@ -95,7 +95,7 @@ const MSG = defineMessages({
   colonyExtensionDetails: {
     id: 'utils.hooks.useTitle.colonyExtensionDetails',
     defaultMessage: `Extensions > {extensionId, select,
-      VotingReputation {Motions & Disputes}
+      VotingReputation {Governance}
       CoinMachine {Coin Machine}
       OneTxPayment {One Transaction Payment}
       other {{extensionId}}
@@ -105,7 +105,7 @@ const MSG = defineMessages({
   colonyExtensionSetup: {
     id: 'utils.hooks.useTitle.colonyExtensionSetup',
     defaultMessage: `Extensions > {extensionId, select,
-      VotingReputation {Motions & Disputes}
+      VotingReputation {Governance}
       CoinMachine {Coin Machine}
       OneTxPayment {One Transaction Payment}
       other {{extensionId}}
