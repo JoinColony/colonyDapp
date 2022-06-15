@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory } from 'react-router-dom';
+import { useMediaQuery } from 'react-responsive';
 import { Extension } from '@colony/colony-js';
 
 import ActionsList, {
@@ -33,6 +34,7 @@ import {
 } from '~types/index';
 
 import styles from './ColonyActions.css';
+import { mobile } from '~utils/mediaQueries';
 
 const MSG = defineMessages({
   actionsTitle: {
@@ -84,7 +86,8 @@ const ColonyActions = ({
   colony,
   ethDomainId,
 }: Props) => {
-  const ITEMS_PER_PAGE = 10;
+  const isMobile = useMediaQuery({ query: mobile });
+  const ITEMS_PER_PAGE = isMobile ? 3 : 10;
 
   const [actionsSortOption, setActionsSortOption] = useState<string>(
     SortOptions.NEWEST,
