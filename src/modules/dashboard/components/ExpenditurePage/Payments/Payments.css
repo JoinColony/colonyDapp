@@ -33,14 +33,14 @@
 }
 
 .signWrapper {
-  height: 16px;
-  width: 16px;
+  height: 30px;
+  width: 30px;
   position: absolute;
 
   /* negative margin is used to set the position of the button,
   which collapse and expand singe recipient fields,
   on the left side of the form */
-  left: -23px;
+  left: -34px;
 }
 
 .signWrapper:hover {
@@ -54,7 +54,7 @@
 
   /* negative margin is used to set the position of the vertical line
   on the left side of the form, similar to margin in singWrapper class */
-  left: -17px;
+  left: -20px;
   border-left: 1px solid var(--temp-grey-blue-7);
   opacity: 0.25;
 }
@@ -75,14 +75,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-right: 10px;
-  fill: var(--action-secondary);
-}
+  margin-right: 2px;
 
-.circlePlusIcon svg {
-  height: 16px;
-  width: 16px;
-  overflow: visible;
+  /* negative margin is used here to adjust placement all row */
+  margin-left: -8px;
+  height: 30px;
+  width: 30px;
+  fill: var(--action-secondary);
 }
 
 .addRecipientWrapper {

@@ -135,7 +135,6 @@ const Payments = ({ sidebarRef }: Props) => {
                     <div className={styles.addRecipientLabel}>
                       <Icon
                         name="plus-circle"
-                        appearance={{ size: 'small' }}
                         className={styles.circlePlusIcon}
                       />
                       <FormattedMessage {...MSG.addRecipientLabel} />
