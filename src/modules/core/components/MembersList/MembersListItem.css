@@ -17,6 +17,7 @@
   composes: inlineEllipsis from '~styles/text.css';
   flex-grow: 0.5;
   margin-right: auto;
+  max-width: 200px;
 }
 
 .displayName {
