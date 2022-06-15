@@ -2,8 +2,9 @@ import { bigNumberify, BigNumberish } from 'ethers/utils';
 import Decimal from 'decimal.js';
 
 import { minimalFormatter } from '~utils/numbers';
-import { TokenWithBalances } from '~data/index';
+import { TokenWithBalances, UserLock } from '~data/index';
 import { DEFAULT_TOKEN_DECIMALS, SMALL_TOKEN_AMOUNT_FORMAT } from '~constants';
+import { UserTokenBalanceData } from '~types/tokens';
 
 export const getBalanceFromToken = (
   token: TokenWithBalances | undefined,
@@ -69,4 +70,24 @@ export const getFormattedTokenValue = (
   return minimalFormatter({
     value: decimalValue.toString(),
   });
+};
+
+export const getUserTokenBalanceData = (userLock: UserLock | undefined) => {
+  const nativeToken = userLock?.nativeToken;
+  const inactiveBalance = bigNumberify(nativeToken?.balance || 0);
+  const lockedBalance = bigNumberify(userLock?.totalObligation || 0);
+  const activeBalance = bigNumberify(userLock?.activeTokens || 0);
+  const totalBalance = inactiveBalance.add(activeBalance).add(lockedBalance);
+  const isPendingBalanceZero = bigNumberify(
+    userLock?.pendingBalance || 0,
+  ).isZero();
+
+  return {
+    nativeToken,
+    inactiveBalance,
+    lockedBalance,
+    activeBalance,
+    totalBalance,
+    isPendingBalanceZero,
+  } as UserTokenBalanceData;
 };
