@@ -1,4 +1,5 @@
 import React, { ReactNode, Dispatch, SetStateAction } from 'react';
+import { useMediaQuery } from 'react-responsive';
 
 import Popover from '~core/Popover';
 import TokenIcon from '~dashboard/HookedTokenIcon';
@@ -9,6 +10,7 @@ import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import styles from './ColonyTotalFundsPopover.css';
+import { mobile } from '~utils/mediaQueries';
 
 interface Props {
   onSelectToken?: Dispatch<SetStateAction<Address>>;
@@ -23,6 +25,9 @@ const ColonyTotalFundsPopover = ({
   tokens,
   currentTokenAddress,
 }: Props) => {
+  const isMobile = useMediaQuery({ query: mobile });
+  const offset = isMobile ? [50, 4] : [106, 4];
+
   return tokens ? (
     <Popover
       content={({ close }) => (
@@ -86,7 +91,7 @@ const ColonyTotalFundsPopover = ({
                * to change them you'll either have to go by exact specs, or change
                * them until it "feels right" :)
                */
-              offset: [106, 4],
+              offset,
             },
           },
         ],

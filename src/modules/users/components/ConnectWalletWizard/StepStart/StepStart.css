@@ -46,3 +46,13 @@
   border-radius: var(--radius-normal);
   background-color: var(--colony-white);
 }
+
+@media screen and (max-width: 768px) {
+  .content {
+    width: 100%;
+  }
+
+  .title {
+    text-align: center;
+  }
+}
