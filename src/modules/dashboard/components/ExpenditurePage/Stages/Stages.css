@@ -88,3 +88,7 @@
   fill: var(--pink);
   transition: fill 200ms ease-in-out;
 }
+
+.buttonTooltip {
+  max-width: 192px;
+}

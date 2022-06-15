@@ -87,6 +87,10 @@ const MSG = defineMessages({
     id: 'dashboard.Expenditures.Stages.tooltipCancelText',
     defaultMessage: 'Click to cancel expenditure',
   },
+  tooltipLockValuesText: {
+    id: 'dashboard.Expenditures.Stages.tooltipLockValuesText',
+    defaultMessage: `This will lock the values of the expenditure. To change values after locking will require the right permissions or a motion.`,
+  },
 });
 
 const buttonStyle = {
@@ -100,6 +104,7 @@ interface ActiveState {
   label: string | MessageDescriptor;
   buttonText: string | MessageDescriptor;
   buttonAction: () => void;
+  buttonTooltip?: string | MessageDescriptor;
 }
 
 const Stages = () => {
@@ -122,6 +127,7 @@ const Stages = () => {
       label: MSG.draft,
       buttonText: MSG.lockValues,
       buttonAction: handleLockExpenditure,
+      buttonTooltipt: MSG.tooltipLockValuesText,
     },
     {
       id: Stage.Locked,
@@ -252,13 +258,41 @@ const Stages = () => {
                   </Tooltip>
                 </span>
               )}
-              <Button onClick={activeState?.buttonAction} style={buttonStyle}>
-                {typeof activeState?.buttonText === 'string' ? (
-                  activeState.buttonText
-                ) : (
-                  <FormattedMessage {...activeState?.buttonText} />
-                )}
-              </Button>
+              {activeState?.buttonTooltipt ? (
+                <Tooltip
+                  placement="top"
+                  content={
+                    typeof activeState.buttonTooltipt === 'string' ? (
+                      <div className={styles.buttonTooltip}>
+                        {activeState.buttonTooltipt}
+                      </div>
+                    ) : (
+                      <div className={styles.buttonTooltip}>
+                        <FormattedMessage {...activeState.buttonTooltipt} />
+                      </div>
+                    )
+                  }
+                >
+                  <Button
+                    onClick={activeState?.buttonAction}
+                    style={buttonStyle}
+                  >
+                    {typeof activeState?.buttonText === 'string' ? (
+                      activeState.buttonText
+                    ) : (
+                      <FormattedMessage {...activeState?.buttonText} />
+                    )}
+                  </Button>
+                </Tooltip>
+              ) : (
+                <Button onClick={activeState?.buttonAction} style={buttonStyle}>
+                  {typeof activeState?.buttonText === 'string' ? (
+                    activeState.buttonText
+                  ) : (
+                    <FormattedMessage {...activeState?.buttonText} />
+                  )}
+                </Button>
+              )}
             </>
           )}
         </div>
