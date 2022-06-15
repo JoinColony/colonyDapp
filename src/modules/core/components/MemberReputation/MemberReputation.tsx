@@ -4,6 +4,7 @@ import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 import Decimal from 'decimal.js';
 
+import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import { useUserReputationQuery } from '~data/index';
 import { Address } from '~types/index';
 import Numeral from '~core/Numeral';
@@ -32,6 +33,7 @@ interface Props {
   onReputationLoaded?: (reputationLoaded: boolean) => void;
   showIconTitle?: boolean;
   showReputationPoints?: boolean;
+  nativeTokenDecimals?: number;
 }
 
 const displayName = 'MemberReputation';
@@ -44,6 +46,7 @@ const MemberReputation = ({
   onReputationLoaded = () => null,
   showIconTitle = true,
   showReputationPoints = false,
+  nativeTokenDecimals = DEFAULT_TOKEN_DECIMALS,
 }: Props) => {
   const { data: userReputationData } = useUserReputationQuery({
     variables: { address: walletAddress, colonyAddress, domainId, rootHash },
@@ -66,7 +69,7 @@ const MemberReputation = ({
   );
   const formattedReputationPoints = getFormattedTokenValue(
     new Decimal(userReputationData?.userReputation || 0).toString(),
-    18,
+    nativeTokenDecimals,
   );
 
   useEffect(() => {
