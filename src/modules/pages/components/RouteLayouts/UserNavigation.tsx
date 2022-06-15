@@ -32,6 +32,7 @@ import { groupedTransactionsAndMessages } from '../../../core/selectors';
 
 import styles from './UserNavigation.css';
 import HamburgerMenu from '~core/HamburgerMenu/HamburgerMenu';
+import { getUserTokenBalanceData } from '~utils/tokens';
 
 const MSG = defineMessages({
   inboxTitle: {
@@ -48,7 +49,10 @@ const MSG = defineMessages({
   },
   walletAutologin: {
     id: 'pages.NavigationWrapper.UserNavigation.walletAutologin',
-    defaultMessage: 'Connecting wallet...',
+    defaultMessage: `{isMobile, select,
+      true {Connecting...}
+      other {Connecting wallet...}
+    }`,
   },
   userReputationTooltip: {
     id: 'pages.NavigationWrapper.UserNavigation.userReputationTooltip',
@@ -180,14 +184,16 @@ const UserNavigation = () => {
         )}
         {previousWalletConnected && attemptingAutoLogin && userDataLoading ? (
           <div className={styles.walletAutoLogin}>
-            <MiniSpinnerLoader title={MSG.walletAutologin} />
+            <MiniSpinnerLoader
+              title={MSG.walletAutologin}
+              titleTextValues={{ isMobile: false }}
+            />
           </div>
         ) : (
           <div className={`${styles.elementWrapper} ${styles.walletWrapper}`}>
             {userCanNavigate && nativeToken && userLock && (
               <UserTokenActivationButton
-                nativeToken={nativeToken}
-                userLock={userLock}
+                tokenBalanceData={getUserTokenBalanceData(userLock)}
                 colony={colonyData?.processedColony}
                 walletAddress={walletAddress}
                 dataTest="tokenActivationButton"
@@ -249,8 +255,16 @@ const UserNavigation = () => {
           </InboxPopover>
         )}
         <AvatarDropdown
-          onlyLogout={!isNetworkAllowed}
+          spinnerMsg={MSG.walletAutologin}
           colony={colonyData?.processedColony as Colony}
+          onlyLogout={!isNetworkAllowed}
+          tokenBalanceData={getUserTokenBalanceData(userLock)}
+          appState={{
+            previousWalletConnected,
+            attemptingAutoLogin,
+            userDataLoading,
+            userCanNavigate,
+          }}
         />
         <HamburgerMenu />
       </div>
