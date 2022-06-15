@@ -1,4 +1,5 @@
 import React, { useState, ReactElement, useMemo } from 'react';
+import { useMediaQuery } from 'react-responsive';
 
 import Popover, { PopoverChildFn } from '~core/Popover';
 import { ConnectWalletContent } from '../ConnectWalletWizard';
@@ -10,6 +11,7 @@ import {
   horizontalOffset,
   verticalOffset,
 } from './ConnectWalletPopover.css';
+import { mobile } from '~utils/mediaQueries';
 
 interface Props {
   children: ReactElement | PopoverChildFn;
@@ -17,7 +19,7 @@ interface Props {
 
 const ConnectWalletPopover = ({ children }: Props) => {
   const [isOpen, setOpen] = useState(false);
-
+  const isMobile = useMediaQuery({ query: mobile });
   /*
    * @NOTE Offset Calculations
    * See: https://popper.js.org/docs/v2/modifiers/offset/
@@ -34,8 +36,8 @@ const ConnectWalletPopover = ({ children }: Props) => {
   const popoverOffset = useMemo(() => {
     const skid =
       removeValueUnits(refWidth) + removeValueUnits(horizontalOffset);
-    return [-1 * skid, removeValueUnits(verticalOffset)];
-  }, []);
+    return isMobile ? [-15, 15] : [-1 * skid, removeValueUnits(verticalOffset)];
+  }, [isMobile]);
 
   return (
     <Popover

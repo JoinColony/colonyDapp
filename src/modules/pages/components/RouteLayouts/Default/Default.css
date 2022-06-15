@@ -48,6 +48,7 @@
   }
 
   .coloniesList {
+    flex-shrink: 1;
     width: calc(100% - 90px);
     border-right: 0;
   }

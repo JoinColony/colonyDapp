@@ -213,4 +213,10 @@
     content: "";
     pointer-events: none;
   }
+
+  .connectWalletButton {
+    margin-top: 7px;
+    margin-bottom: 7px;
+    width: 120px;
+  }
 }
