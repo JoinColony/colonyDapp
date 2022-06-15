@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
+import { getBlockscoutUserURL } from '~externalUrls';
 import { Colony } from '~data/index';
 import DropdownMenu, {
   DropdownMenuSection,
@@ -61,18 +62,15 @@ const MemberActionsPopover = ({
   );
   const openManageWhitelistDialog = useDialog(ManageWhitelistDialog);
   const handleManageWhitelist = useCallback(
-    () =>
-      // @ts-ignore
-      openManageWhitelistDialog({ userAddress, colony }),
+    () => openManageWhitelistDialog({ userAddress, colony }),
     [openManageWhitelistDialog, userAddress, colony],
   );
 
-  const BLOCKSCOUT_URL = `https://blockscout.com/xdai/mainnet/address/${userAddress}/transactions`;
   const renderUserActions = () => (
     <DropdownMenuItem>
       <Button appearance={{ theme: 'no-style' }}>
         <ExternalLink
-          href={BLOCKSCOUT_URL}
+          href={getBlockscoutUserURL(userAddress)}
           className={styles.actionButton}
           text={MSG.viewOnBlockscout}
         />
