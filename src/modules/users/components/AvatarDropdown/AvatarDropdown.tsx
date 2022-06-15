@@ -4,12 +4,14 @@ import { useMediaQuery } from 'react-responsive';
 
 import Popover from '~core/Popover';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import { useLoggedInUser, Colony } from '~data/index';
+import { Colony, useLoggedInUser } from '~data/index';
 import { removeValueUnits } from '~utils/css';
-import { query700 as query } from '~styles/queries.css';
-
+import { SimpleMessageValues } from '~types/index';
+import { UserTokenBalanceData } from '~types/tokens';
 import AvatarDropdownPopover from './AvatarDropdownPopover';
+import AvatarDropdownPopoverMobile from './AvatarDropdownPopoverMobile';
 
+import { query700 as query } from '~styles/queries.css';
 import styles, {
   refWidth,
   horizontalOffset,
@@ -18,17 +20,32 @@ import styles, {
 
 const UserAvatar = HookedUserAvatar();
 
+export interface AppState {
+  previousWalletConnected: string | null;
+  attemptingAutoLogin: boolean;
+  userDataLoading: boolean;
+  userCanNavigate: boolean;
+}
+
 interface Props {
   preventTransactions?: boolean;
   colony: Colony;
+  spinnerMsg: SimpleMessageValues;
+  tokenBalanceData: UserTokenBalanceData;
+  appState: AppState;
 }
 
 const displayName = 'users.AvatarDropdown';
 
-const AvatarDropdown = ({ preventTransactions = false, colony }: Props) => {
-  const { username, walletAddress, ethereal } = useLoggedInUser();
+const AvatarDropdown = ({
+  preventTransactions = false,
+  colony,
+  spinnerMsg,
+  tokenBalanceData,
+  appState,
+}: Props) => {
   const isMobile = useMediaQuery({ query });
-
+  const { username, walletAddress, ethereal } = useLoggedInUser();
   /*
    * @NOTE Offset Calculations
    * See: https://popper.js.org/docs/v2/modifiers/offset/
@@ -45,20 +62,37 @@ const AvatarDropdown = ({ preventTransactions = false, colony }: Props) => {
   const popoverOffset = useMemo(() => {
     const skid =
       removeValueUnits(refWidth) + removeValueUnits(horizontalOffset);
-    return isMobile ? [0, 5] : [-1 * skid, removeValueUnits(verticalOffset)];
+    return isMobile ? [-70, 5] : [-1 * skid, removeValueUnits(verticalOffset)];
   }, [isMobile]);
 
-  return (
-    <Popover
-      content={({ close }) => (
+  const popoverContent = isMobile
+    ? () =>
+        username &&
+        walletAddress && (
+          <AvatarDropdownPopoverMobile
+            {...{
+              walletAddress,
+              colony,
+              appState,
+              spinnerMsg,
+              tokenBalanceData,
+            }}
+          />
+        )
+    : ({ close }) => (
         <AvatarDropdownPopover
           closePopover={close}
-          username={username}
           walletConnected={!!walletAddress && !ethereal}
-          preventTransactions={preventTransactions}
-          colony={colony}
+          {...{
+            username,
+            preventTransactions,
+            colony,
+          }}
         />
-      )}
+      );
+  return (
+    <Popover
+      content={popoverContent}
       trigger="click"
       showArrow={false}
       popperOptions={{
@@ -83,11 +117,13 @@ const AvatarDropdown = ({ preventTransactions = false, colony }: Props) => {
           type="button"
           data-test="avatarDropdown"
         >
-          <UserAvatar
-            address={walletAddress}
-            notSet={ethereal}
-            size={isMobile ? 'xs' : 's'}
-          />
+          {walletAddress && (
+            <UserAvatar
+              address={walletAddress}
+              notSet={ethereal}
+              size={isMobile ? 'xs' : 's'}
+            />
+          )}
         </button>
       )}
     </Popover>

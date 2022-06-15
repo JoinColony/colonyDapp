@@ -6,7 +6,7 @@
   display: block;
 }
 
-.baseStyles button {
+.baseStyles > ul > li > button {
   /* Reset button styles to look like a link in here */
   display: block;
   width: 100%;
