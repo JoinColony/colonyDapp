@@ -37,10 +37,11 @@ export interface FormValues {
 interface CustomWizardDialogProps {
   colony: Colony;
   userAddress?: string;
-  prevStep?: string;
 }
 
-type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
+type Props = DialogProps &
+  Partial<WizardDialogType<object>> &
+  CustomWizardDialogProps;
 
 const displayName = 'dashboard.ManageWhitelistDialog';
 
@@ -189,7 +190,7 @@ const ManageWhitelistDialog = ({
             {...formValues}
             colony={colony}
             whitelistedUsers={data?.verifiedUsers || []}
-            back={prevStep ? () => callStep(prevStep) : cancel}
+            back={prevStep && callStep ? () => callStep(prevStep) : cancel}
             showInput={showInput}
             toggleShowInput={handleToggleShowInput}
             formSuccess={formSuccess}
