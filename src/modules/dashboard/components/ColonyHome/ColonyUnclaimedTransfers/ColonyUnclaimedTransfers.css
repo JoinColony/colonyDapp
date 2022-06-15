@@ -44,9 +44,19 @@
   color: var(--action-secondary);
 }
 
+.button:disabled {
+  background-color: color-mod(var(--text-disabled) alpha(16%));
+  color: var(--text-disabled);
+}
+
 .button:hover {
   text-decoration: underline;
   cursor: pointer;
+}
+
+.button:disabled:hover {
+  text-decoration: none;
+  cursor: default;
 }
 
 .tooltip {
