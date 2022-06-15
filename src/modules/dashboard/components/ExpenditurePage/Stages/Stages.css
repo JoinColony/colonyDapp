@@ -41,10 +41,6 @@
   fill: var(--temp-grey-blue-7);
 }
 
-.icon:hover {
-  cursor: pointer;
-}
-
 .buttonsContainer {
   display: flex;
   align-items: center;
@@ -52,6 +48,10 @@
 
 .iconContainer {
   margin-right: 20px;
+}
+
+.iconContainer:hover {
+  cursor: pointer;
 }
 
 .iconContainer > div {
