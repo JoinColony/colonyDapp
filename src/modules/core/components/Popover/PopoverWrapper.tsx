@@ -8,7 +8,6 @@ import React, {
 } from 'react';
 import { MessageDescriptor, useIntl } from 'react-intl';
 import { State as PopperJsState } from '@popperjs/core';
-import { useMediaQuery } from 'react-responsive';
 
 import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
@@ -20,7 +19,6 @@ import {
 } from './types';
 
 import styles from './PopoverWrapper.css';
-import { mobile } from '~utils/mediaQueries';
 
 interface Props {
   appearance?: PopoverAppearanceType;
@@ -63,14 +61,6 @@ const PopoverWrapper = ({
     }
     return formatMessage(content as MessageDescriptor, contentValues);
   }, [close, content, contentValues, formatMessage]);
-
-  const isMobile = useMediaQuery({ query: mobile });
-  // Ensure popper is aligned correctly on mobile screen
-  if (isMobile)
-    popperStyles.popper = {
-      ...popperStyles.popper,
-      transform: 'translate3d(0px, 95.5px, 0px)',
-    };
 
   return (
     <div

@@ -45,8 +45,8 @@ const AvatarDropdown = ({ preventTransactions = false, colony }: Props) => {
   const popoverOffset = useMemo(() => {
     const skid =
       removeValueUnits(refWidth) + removeValueUnits(horizontalOffset);
-    return [-1 * skid, removeValueUnits(verticalOffset)];
-  }, []);
+    return isMobile ? [0, 5] : [-1 * skid, removeValueUnits(verticalOffset)];
+  }, [isMobile]);
 
   return (
     <Popover

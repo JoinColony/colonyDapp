@@ -3,3 +3,10 @@
   width: 450px;
   text-align: left;
 }
+
+@media screen and (max-width: 768px) {
+  .main {
+    padding: 30px 25px;
+    width: calc(100vw - 28px);
+  }
+}
