@@ -1,5 +1,5 @@
 import { useFormikContext } from 'formik';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   defineMessages,
   FormattedMessage,
@@ -91,6 +91,10 @@ const MSG = defineMessages({
     id: 'dashboard.Expenditures.Stages.tooltipLockValuesText',
     defaultMessage: `This will lock the values of the expenditure. To change values after locking will require the right permissions or a motion.`,
   },
+  tooltipNoPermissionToRealese: {
+    id: 'dashboard.Expenditures.Stages.tooltipNoPermissionToRealese',
+    defaultMessage: `You need to be the owner to release funds. You can change the owner to transfer permission.`,
+  },
 });
 
 const buttonStyle = {
@@ -121,6 +125,20 @@ const Stages = () => {
     setActiveStateId(Stage.Locked);
   };
 
+  const handleFoundExpenditure = () => {
+    // Call to backend will be added here, to found the expenditure
+    // fetching active state shoud be added here as well,
+    // and saving the activeState in a state
+    setActiveStateId(Stage.Funded);
+  };
+
+  const handleReleaseFounds = () => {
+    // Call to backend will be added here, to found the expenditure
+    // fetching active state shoud be added here as well,
+    // and saving the activeState in a state
+    setActiveStateId(Stage.Released);
+  };
+
   const states = [
     {
       id: Stage.Draft,
@@ -133,13 +151,13 @@ const Stages = () => {
       id: Stage.Locked,
       label: MSG.locked,
       buttonText: MSG.escrowFunds,
-      buttonAction: () => {},
+      buttonAction: handleFoundExpenditure,
     },
     {
       id: Stage.Funded,
       label: MSG.funded,
       buttonText: MSG.releaseFunds,
-      buttonAction: () => {},
+      buttonAction: handleReleaseFounds,
     },
     {
       id: Stage.Released,
@@ -172,6 +190,83 @@ const Stages = () => {
 
   const activeIndex = states.findIndex((state) => state.id === activeStateId);
   const activeState = states.find((state) => state.id === activeStateId);
+  // temporary value, there's need to add logic to check if realese founds can be made
+  const canRealeseFounds = false;
+
+  const renderButton = useCallback(() => {
+    if (activeStateId === Stage.Funded) {
+      return (
+        <>
+          {canRealeseFounds ? (
+            <Button onClick={activeState?.buttonAction} style={buttonStyle}>
+              {typeof activeState?.buttonText === 'string' ? (
+                activeState.buttonText
+              ) : (
+                <FormattedMessage {...activeState?.buttonText} />
+              )}
+            </Button>
+          ) : (
+            <Tooltip
+              placement="top"
+              content={
+                <div className={styles.buttonTooltip}>
+                  <FormattedMessage {...MSG.tooltipNoPermissionToRealese} />
+                </div>
+              }
+            >
+              <Button
+                onClick={activeState?.buttonAction}
+                style={buttonStyle}
+                disabled
+              >
+                {typeof activeState?.buttonText === 'string' ? (
+                  activeState.buttonText
+                ) : (
+                  <FormattedMessage {...activeState?.buttonText} />
+                )}
+              </Button>
+            </Tooltip>
+          )}
+        </>
+      );
+    }
+    if (activeState?.buttonTooltipt) {
+      return (
+        <Tooltip
+          placement="top"
+          content={
+            typeof activeState.buttonTooltipt === 'string' ? (
+              <div className={styles.buttonTooltip}>
+                {activeState.buttonTooltipt}
+              </div>
+            ) : (
+              <div className={styles.buttonTooltip}>
+                <FormattedMessage {...activeState.buttonTooltipt} />
+              </div>
+            )
+          }
+        >
+          <Button onClick={activeState?.buttonAction} style={buttonStyle}>
+            {typeof activeState?.buttonText === 'string' ? (
+              activeState.buttonText
+            ) : (
+              <FormattedMessage {...activeState?.buttonText} />
+            )}
+          </Button>
+        </Tooltip>
+      );
+    }
+
+    return (
+      <Button onClick={activeState?.buttonAction} style={buttonStyle}>
+        {typeof activeState?.buttonText === 'string' ? (
+          activeState.buttonText
+        ) : (
+          <FormattedMessage {...activeState?.buttonText} />
+        )}
+      </Button>
+    );
+  }, [activeState, activeStateId, canRealeseFounds]);
 
   return (
     <div className={styles.mainContainer}>
@@ -258,41 +353,7 @@ const Stages = () => {
                   </Tooltip>
                 </span>
               )}
-              {activeState?.buttonTooltipt ? (
-                <Tooltip
-                  placement="top"
-                  content={
-                    typeof activeState.buttonTooltipt === 'string' ? (
-                      <div className={styles.buttonTooltip}>
-                        {activeState.buttonTooltipt}
-                      </div>
-                    ) : (
-                      <div className={styles.buttonTooltip}>
-                        <FormattedMessage {...activeState.buttonTooltipt} />
-                      </div>
-                    )
-                  }
-                >
-                  <Button
-                    onClick={activeState?.buttonAction}
-                    style={buttonStyle}
-                  >
-                    {typeof activeState?.buttonText === 'string' ? (
-                      activeState.buttonText
-                    ) : (
-                      <FormattedMessage {...activeState?.buttonText} />
-                    )}
-                  </Button>
-                </Tooltip>
-              ) : (
-                <Button onClick={activeState?.buttonAction} style={buttonStyle}>
-                  {typeof activeState?.buttonText === 'string' ? (
-                    activeState.buttonText
-                  ) : (
-                    <FormattedMessage {...activeState?.buttonText} />
-                  )}
-                </Button>
-              )}
+              {renderButton()}
             </>
           )}
         </div>
