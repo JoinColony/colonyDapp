@@ -9,18 +9,14 @@ export const filterUserSelection = (data: AnyUser[], filterValue: string) => {
     return data;
   }
 
-  const filteredUsers = data.filter((user) => {
-    if (!user.profile?.walletAddress) {
-      return false;
-    }
-
-    const username = user.profile?.username || '';
-    const { walletAddress } = user.profile;
-
+  const filtered = data.filter((user) => {
+    const { username, walletAddress } = user?.profile;
+    const valueToLowerCase = filterValue.toLowerCase();
     return (
-      username.toLowerCase().includes(filterValue.toLowerCase()) ||
-      walletAddress.toLowerCase().includes(filterValue.toLowerCase()) ||
-      user.id.toLowerCase().includes(filterValue.toLowerCase())
+      username &&
+      walletAddress &&
+      (`@${username}`.toLowerCase().includes(valueToLowerCase) ||
+        walletAddress.toLowerCase().includes(valueToLowerCase))
     );
   });
 
@@ -32,5 +28,5 @@ export const filterUserSelection = (data: AnyUser[], filterValue: string) => {
     },
   };
 
-  return [customUserValue].concat(filteredUsers);
+  return [customUserValue].concat(filtered);
 };
