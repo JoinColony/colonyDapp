@@ -3,10 +3,10 @@ import classnames from 'classnames';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import MembersList from '~core/MembersList';
-import { Colony, ColonyWatcher, ColonyContributor } from '~data/index';
-
 import LoadMoreButton from '~core/LoadMoreButton';
 import SortingRow from '~core/MembersList/SortingRow';
+import { Colony, ColonyWatcher, ColonyContributor } from '~data/index';
+import useColonyMembersSorting from '~modules/dashboard/hooks/useColonyMembersSorting';
 
 import styles from './MembersSection.css';
 
@@ -57,6 +57,17 @@ Props<U>) => {
     setDataPage(dataPage + 1);
   }, [dataPage]);
 
+  const {
+    sortedMembers,
+    sortingMethod,
+    handleSortingMethodChange,
+  } = useColonyMembersSorting(
+    paginatedMembers,
+    colony,
+    isContributorsSection,
+    currentDomainId,
+  );
+
   return (
     <>
       <div className={styles.bar}>
@@ -70,7 +81,12 @@ Props<U>) => {
               ? MSG.contributorsTitle
               : MSG.watchersTitle)}
           />
-          {isContributorsSection && <SortingRow />}
+          {isContributorsSection && handleSortingMethodChange && (
+            <SortingRow
+              handleSortingMethodChange={handleSortingMethodChange}
+              sortingMethod={sortingMethod}
+            />
+          )}
         </div>
         {!isContributorsSection && (
           <div className={styles.description}>
@@ -78,13 +94,13 @@ Props<U>) => {
           </div>
         )}
       </div>
-      {members.length ? (
+      {sortedMembers.length ? (
         <div className={styles.membersList}>
           <MembersList
             colony={colony}
             extraItemContent={extraItemContent}
             domainId={currentDomainId}
-            users={paginatedMembers}
+            users={sortedMembers}
             canAdministerComments={canAdministerComments}
             showUserReputation={isContributorsSection}
           />

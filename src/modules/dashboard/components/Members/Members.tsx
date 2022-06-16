@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import sortBy from 'lodash/sortBy';
 
 import { SpinnerLoader } from '~core/Preloaders';
@@ -14,6 +14,7 @@ import {
   ColonyContributor,
   ColonyWatcher,
   DomainFieldsFragment,
+  AnyUser,
 } from '~data/index';
 import {
   COLONY_TOTAL_BALANCE_DOMAIN_ID,
@@ -49,6 +50,12 @@ interface Props {
   selectedDomain: DomainFieldsFragment | undefined;
   handleDomainChange: React.Dispatch<React.SetStateAction<number>>;
 }
+
+export type Member = AnyUser & {
+  roles: ColonyRole[];
+  directRoles: ColonyRole[];
+  banned: boolean;
+};
 
 const displayName = 'dashboard.Members';
 

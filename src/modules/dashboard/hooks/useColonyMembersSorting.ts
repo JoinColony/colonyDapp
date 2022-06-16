@@ -2,13 +2,20 @@ import { useState, useMemo } from 'react';
 import { ColonyRole } from '@colony/colony-js';
 import Decimal from 'decimal.js';
 
-import { SORTING_METHODS } from '~core/MembersList/MembersList';
 import {
   Colony,
   ColonyWatcher,
   ColonyContributor,
   useUserReputationLazyQuery,
 } from '~data/index';
+
+export enum SORTING_METHODS {
+  BY_HIGHEST_REP = 'BY_HIGHEST_REP',
+  BY_LOWEST_REP = 'BY_LOWEST_REP',
+
+  BY_HIGHEST_ROLE_ID = 'BY_HIGHEST_ROLE_ID',
+  BY_LOWEST_ROLE_ID = 'BY_LOWEST_ROLE_ID',
+}
 
 const useColonyMembersSorting = (
   members: ColonyWatcher[] | ColonyContributor[],
