@@ -4,6 +4,7 @@ export const selectInner: string;
 export const inputWrapper: string;
 export const select: string;
 export const selectExpandContainer: string;
+export const selectIcon: string;
 export const activeOption: string;
 export const themeDefault: string;
 export const themeAlt: string;

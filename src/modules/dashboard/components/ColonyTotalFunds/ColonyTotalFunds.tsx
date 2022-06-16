@@ -125,13 +125,11 @@ const ColonyTotalFunds = ({
                   appearance={{ size: 'large' }}
                 />
               )}
-            <span className={styles.caretContainer}>
-              <Icon
-                className={styles.caretIcon}
-                name="caret-down-small"
-                title={MSG.tokenSelect}
-              />
-            </span>
+            <Icon
+              className={styles.caretIcon}
+              name="caret-down-small"
+              title={MSG.tokenSelect}
+            />
           </button>
         </ColonyTotalFundsPopover>
       </div>
