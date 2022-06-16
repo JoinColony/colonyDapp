@@ -17,9 +17,14 @@
 }
 
 .sortingIcon {
-  height: 15px;
-  width: 30px;
+  margin-left: 5px;
+  height: 10px;
+  width: 10px;
   position: relative;
-  top: -6px;
+  top: 1px;
   fill: var(--temp-grey-blue-7);
+}
+
+.sortingButton:hover .sortingIcon {
+  fill: var(--colony-blue);
 }
