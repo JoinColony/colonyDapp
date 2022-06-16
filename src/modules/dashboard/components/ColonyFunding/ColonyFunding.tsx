@@ -10,6 +10,7 @@ import LoadingTemplate from '~pages/LoadingTemplate';
 import ColonyFundingBanner from '~dashboard/ColonyFundingBanner';
 import ColonyFundingMenu from '~dashboard/ColonyFundingMenu';
 import TokenCardList from '~dashboard/TokenCardList';
+import UnclaimedTransfers from '~dashboard/UnclaimedTransfers';
 import { useColonyFromNameQuery } from '~data/index';
 
 import { NOT_FOUND_ROUTE } from '~routes/index';
@@ -135,6 +136,7 @@ const ColonyFunding = ({ match }: Props) => {
               />
             </Form>
           </div>
+          <UnclaimedTransfers colony={colony} />
           <TokenCardList
             appearance={{ numCols: '3' }}
             nativeTokenAddress={colony.nativeTokenAddress}

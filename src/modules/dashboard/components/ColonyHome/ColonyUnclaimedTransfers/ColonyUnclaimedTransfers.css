@@ -1,0 +1,59 @@
+.main {
+  margin-bottom: 40px;
+}
+
+.main a:hover, .main a:active {
+  text-decoration: underline;
+  color: var(--colony-blue);
+}
+
+.main h4 {
+  font-size: var(--size-smallish);
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.tokenItem {
+  composes: flexContainerRow flexAlignCenter from '~styles/layout.css';
+  flex-wrap: wrap;
+}
+
+.tokenValue {
+  margin-right: 4px;
+}
+
+.tokenSymbol {
+  composes: flexContainerRow flexAlignCenter from '~styles/layout.css';
+}
+
+.firstLineContainer {
+  display: flex;
+  align-items: center;
+}
+
+.button {
+  margin-left: 10px;
+  height: 18px;
+  width: 45px;
+  border: none;
+  border-radius: 5px;
+  background-color: color-mod(var(--action-secondary) alpha(16%));
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 11px;
+  color: var(--action-secondary);
+}
+
+.button:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.tooltip {
+  width: 166px;
+  text-align: left;
+}
+
+.manageFundsLink {
+  color: var(--colony-blue);
+}

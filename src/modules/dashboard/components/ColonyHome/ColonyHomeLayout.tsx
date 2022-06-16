@@ -10,6 +10,7 @@ import { Colony, useLoggedInUser } from '~data/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
 
 import ColonyFunding from './ColonyFunding';
+import ColonyUnclaimedTransfers from './ColonyUnclaimedTransfers';
 import ColonyTitle from './ColonyTitle';
 import ColonyNavigation from './ColonyNavigation';
 import ColonyMembers from './ColonyMembers';
@@ -99,6 +100,7 @@ const ColonyHomeLayout = ({
               colony={colony}
               currentDomainId={filteredDomainId}
             />
+            <ColonyUnclaimedTransfers colony={colony} />
             <ColonyFunding colony={colony} currentDomainId={filteredDomainId} />
             <ColonyMembers colony={colony} currentDomainId={filteredDomainId} />
             <ColonyExtensions colony={colony} />

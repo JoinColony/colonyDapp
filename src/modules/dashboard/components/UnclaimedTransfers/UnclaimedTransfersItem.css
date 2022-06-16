@@ -3,14 +3,26 @@
 .content {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin-bottom: 1px;
-  padding: 30px 20px;
+  padding: 28px 20px 28px 25px;
   height: 89px;
   border-radius: var(--radius-large);
   background-color: var(--colony-white);
   box-shadow: 0px 2px 11px var(--drop-shadow);
   outline: 0;
+}
+
+.tokenWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.tokenName {
+  margin-left: 25px;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
 }
 
 .button {
@@ -23,57 +35,25 @@
 }
 
 .amount {
-  font-size: var(--size-normal);
+  font-size: var(--size-medium);
   font-weight: var(--weight-normal);
   color: var(--dark);
 }
 
-.amountWrapper,
-.date,
-.details {
-  display: flex;
-  flex-direction: column;
-  font-size: var(--size-tiny);
-  font-weight: var(--weight-bold);
-  color: var(--temp-grey-blue-7);
-}
-
-.details {
-  margin-right: auto;
-  min-width: 143px;
+.tokenSymbol {
+  margin-left: 5px;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+  color: var(--dark);
 }
 
 .amountWrapper {
-  align-items: flex-end;
-  margin-right: spaceBetween;
+  display: inline-block;
+  margin-right: 20px;
+  vertical-align: middle;
 }
 
-.date {
+.claimWrapper {
+  display: flex;
   align-items: center;
-  margin-right: spaceBetween;
-  text-transform: uppercase;
-}
-
-.date span:first-child {
-  font-size: var(--size-medium-l);
-  font-weight: var(--weight-normal);
-  color: var(--dark);
-}
-
-.sender {
-  margin-bottom: 2px;
-  font-size: var(--size-normal);
-  font-weight: 600;
-  color: var(--dark);
-}
-
-.arrowIcon {
-  flex: 0 0 26px;
-  margin-right: spaceBetween;
-  height: 26px;
-  width: 26px;
-}
-
-.arrowIcon svg {
-  fill: color-mod(var(--dark) alpha(65%));
 }
