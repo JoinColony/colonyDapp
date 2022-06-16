@@ -198,7 +198,7 @@ const AdvancedDialog = ({
     {
       title: MSG.manageGnosisSafeTitle,
       description: MSG.manageGnosisSafeDescription,
-      icon: 'gnosis-safe',
+      icon: 'gnosis-logo',
       dataTest: 'manageGnosisSafeItem',
       onClick: () => callStep(nextStepManageGnosisSafe),
     },
