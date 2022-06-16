@@ -149,11 +149,10 @@
 }
 
 .arrowIcon {
-  height: 24px;
-  width: 24px;
+  width: 9px;
   position: absolute;
-  top: 2px;
-  left: 298px;
+  top: 4px;
+  left: 305px;
 }
 
 .arrowIconActive svg {

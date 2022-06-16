@@ -32,7 +32,7 @@
   opacity: 0.7;
 }
 
-.select svg {
+.select > i svg {
   fill: var(--grey-4);
   stroke: var(--grey-4);
 }
@@ -46,12 +46,9 @@
   stroke: var(--colony-blue);
 }
 
-.selectExpandContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 21px;
-  width: 21px;
+.selectIcon {
+  margin-left: 8px;
+  width: 7px;
 }
 
 .activeOption {
@@ -100,7 +97,7 @@
 
 .themeGrey {
   composes: baseSelect;
-  padding: 10.5px 5px 10.5px 15px;
+  padding: 10.5px 8px 10.5px 15px;
   border: 1px solid rgb(200, 214, 245);
   border-radius: var(--radius-tiny);
   background-color: rgb(249, 250, 250);
