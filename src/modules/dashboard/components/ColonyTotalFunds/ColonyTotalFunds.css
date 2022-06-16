@@ -65,15 +65,8 @@
 }
 
 .caretIcon {
-  display: block;
-  height: 24px;
-  width: 24px;
-}
-
-.caretContainer {
-  display: inline-block;
-  margin: 0 0 0 3px;
-  vertical-align: middle;
+  margin-left: 10px;
+  width: 9px;
 }
 
 .tokenLockWrapper {
