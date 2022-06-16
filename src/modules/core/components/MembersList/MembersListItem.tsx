@@ -23,16 +23,17 @@ import styles from './MembersListItem.css';
 import InvisibleCopyableAddress from '~core/InvisibleCopyableAddress';
 import MaskedAddress from '~core/MaskedAddress';
 import IconTooltip from '~core/IconTooltip';
+import { Member } from '~dashboard/Members';
 
-interface Props<U> {
-  extraItemContent?: (user: U) => ReactNode;
+interface Props {
+  extraItemContent?: (user: Member | AnyUser) => ReactNode;
   colony: Colony;
-  onRowClick?: (user: U) => void;
+  onRowClick?: (user: Member | AnyUser) => void;
   showUserInfo: boolean;
   showUserReputation: boolean;
   domainId: number | undefined;
-  user: U;
   canAdministerComments?: boolean;
+  user: Member | AnyUser;
 }
 
 const MSG = defineMessages({
@@ -46,16 +47,17 @@ const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
 const componentDisplayName = 'MembersList.MembersListItem';
 
-const MembersListItem = <U extends AnyUser = AnyUser>({
-  colony,
-  domainId,
-  extraItemContent,
-  onRowClick,
-  showUserInfo,
-  showUserReputation,
-  user,
-  canAdministerComments,
-}: Props<U>) => {
+const MembersListItem = (props: Props) => {
+  const {
+    colony,
+    domainId,
+    extraItemContent,
+    onRowClick,
+    showUserInfo,
+    showUserReputation,
+    user,
+    canAdministerComments,
+  } = props;
   const {
     profile: { walletAddress },
     banned = false,
