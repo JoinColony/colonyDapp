@@ -89,30 +89,28 @@ exports[`Select component Renders initial component 1`] = `
                       Bar
                     </span>
                   </div>
-                  <span>
-                    <Icon
-                      name="caret-down-small"
-                      title={
-                        Object {
-                          "defaultMessage": "expand",
-                          "id": "Select.expandIconHTMLTitle",
-                        }
+                  <Icon
+                    name="caret-down-small"
+                    title={
+                      Object {
+                        "defaultMessage": "expand",
+                        "id": "Select.expandIconHTMLTitle",
                       }
+                    }
+                  >
+                    <i
+                      className=""
+                      title="expand"
                     >
-                      <i
-                        className=""
-                        title="expand"
+                      <svg
+                        viewBox="0 0 30 30"
                       >
-                        <svg
-                          viewBox="0 0 30 30"
-                        >
-                          <use
-                            xlinkHref="#undefined"
-                          />
-                        </svg>
-                      </i>
-                    </Icon>
-                  </span>
+                        <use
+                          xlinkHref="#undefined"
+                        />
+                      </svg>
+                    </i>
+                  </Icon>
                 </div>
               </button>
             </div>
