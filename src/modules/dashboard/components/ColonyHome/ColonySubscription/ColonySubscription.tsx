@@ -21,7 +21,7 @@ import ColonySubscriptionInfoPopover from './ColonySubscriptionInfoPopover';
 import ColonyAddress from '../ColonyTitle/ColonyAddress';
 
 import styles from './ColonySubscription.css';
-import { mobile } from '~utils/mediaQueries';
+import { query700 as query } from '~styles/queries.css';
 
 const MSG = defineMessages({
   copyMessage: {
@@ -73,9 +73,7 @@ const ColonySubscription = ({
 
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
-  const isMobile = useMediaQuery({ query: mobile });
-
-  if (isMobile) MSG.joinColony.defaultMessage = 'Join this colony';
+  const isMobile = useMediaQuery({ query });
 
   return (
     <div className={styles.main}>
