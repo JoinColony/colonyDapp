@@ -7,11 +7,11 @@ import {
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
-import StakeExpenditureDialog from './StakeExpenditureDialog';
+import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
 import StageItem from './StageItem';
 
 import styles from './Stages.css';
-import { Stage } from './consts';
+import { Stage } from './constants';
 
 const MSG = defineMessages({
   stages: {
@@ -116,6 +116,7 @@ const Stages = () => {
   const handleSaveDraft = () =>
     openDraftConfirmDialog({
       onClick: () => setActiveState(states[0]),
+      isVotingExtensionEnabled: true,
     });
   const activeIndex = states.findIndex((state) => state.id === activeState?.id);
 
@@ -137,7 +138,6 @@ const Stages = () => {
             <>
               {/* Deleting the expenditure will be added in next PR */}
               <Icon name="trash" className={styles.icon} />
-              {/* onClick has temporary action, needs to be submiting draft in the future */}
               <Button
                 onClick={handleSaveDraft}
                 style={{ height: styles.buttonHeight }}
