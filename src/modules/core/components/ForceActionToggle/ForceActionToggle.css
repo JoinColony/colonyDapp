@@ -13,6 +13,7 @@
   margin-left: 11px;
   height: 16px;
   width: 16px;
+  z-index: var(--z-index-popover);
   border-radius: 50%;
   background-color: white;
   stroke: none;

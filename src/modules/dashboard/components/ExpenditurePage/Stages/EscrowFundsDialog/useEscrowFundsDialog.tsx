@@ -8,7 +8,11 @@ import React, {
 } from 'react';
 import classNames from 'classnames';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import {
+  COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  defaultColor,
+  rootDomainColor,
+} from '~constants';
 import ColorTag, { Color } from '~core/ColorTag';
 import { FormSection, SelectOption } from '~core/Fields';
 import { useColonyFromNameQuery } from '~data/generated';
@@ -29,7 +33,7 @@ const MSG = defineMessages({
 });
 
 const useEscrowFundsDialog = (colonyName: string) => {
-  const ref = useRef(null);
+  const sectionRowRef = useRef<HTMLDivElement>(null);
   const [domainID, setDomainID] = useState<number>();
   const { data: colonyData, loading } = useColonyFromNameQuery({
     variables: { address: '', name: colonyName },
@@ -42,8 +46,6 @@ const useEscrowFundsDialog = (colonyName: string) => {
 
   const getDomainColor = useCallback<(domainId: string | undefined) => Color>(
     (domainId) => {
-      const rootDomainColor: Color = Color.LightPink;
-      const defaultColor: Color = Color.Yellow;
       if (domainId === String(ROOT_DOMAIN_ID)) {
         return rootDomainColor;
       }
@@ -64,6 +66,7 @@ const useEscrowFundsDialog = (colonyName: string) => {
     (option, label) => {
       const value = option?.value;
       const color = getDomainColor(value);
+
       return (
         <div className={styles.activeItem}>
           <ColorTag color={color} />
@@ -76,12 +79,11 @@ const useEscrowFundsDialog = (colonyName: string) => {
 
   const filterDomains = useCallback((optionDomain) => {
     const optionDomainId = parseInt(optionDomain.value, 10);
-    if (optionDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) {
-      return false;
-    }
-    return true;
+
+    return optionDomainId !== COLONY_TOTAL_BALANCE_DOMAIN_ID;
   }, []);
 
+  // @TODO replace the mock with real data
   const balanceOptions = useMemo(
     () =>
       tokens.map((token, index) => ({
@@ -111,6 +113,7 @@ const useEscrowFundsDialog = (colonyName: string) => {
       })),
     [],
   );
+  // @TODO replace the mock with real data
   const requiredFunds = useMemo(
     () =>
       requiredFundsMock.map((token) => ({
@@ -152,7 +155,7 @@ const useEscrowFundsDialog = (colonyName: string) => {
     domainID,
     handleMotionDomainChange,
     loading,
-    ref,
+    sectionRowRef,
   };
 };
 

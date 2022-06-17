@@ -8,7 +8,11 @@ import { useDialog } from '~core/Dialog';
 import EditDomainDialog from '~dialogs/EditDomainDialog';
 
 import { Colony, useLoggedInUser, useColonyExtensionsQuery } from '~data/index';
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import {
+  COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  defaultColor,
+  rootDomainColor,
+} from '~constants';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
 import { oneTxMustBeUpgraded } from '~modules/dashboard/checks';
@@ -56,8 +60,6 @@ const ColonyDomainSelector = ({
 
   const getDomainColor = useCallback<(domainId: string | undefined) => Color>(
     (domainId) => {
-      const rootDomainColor: Color = Color.LightPink;
-      const defaultColor: Color = Color.Yellow;
       if (domainId === String(ROOT_DOMAIN_ID)) {
         return rootDomainColor;
       }
