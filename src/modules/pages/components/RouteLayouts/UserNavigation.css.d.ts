@@ -1,3 +1,5 @@
+export const queries: string;
+export const query700: string;
 export const main: string;
 export const elementWrapper: string;
 export const notificationsButton: string;

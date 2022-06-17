@@ -1,3 +1,6 @@
+@value queries: "~styles/queries.css";
+@value query700 from queries;
+
 .address {
   font-family: var(--family-techie);
   font-size: var(--size-smallish);
@@ -9,7 +12,7 @@
   margin: 0 5px;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and query700 {
   .middleSection {
     overflow-wrap: break-word;
   }

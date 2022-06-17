@@ -1,3 +1,6 @@
+@value queries: "~styles/queries.css";
+@value query700 from queries;
+
 .container {
   display: flex;
   padding: 2px;
@@ -38,7 +41,7 @@
   text-align: center;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and query700 {
   .container {
     height: 40px;
     width: 120px;

@@ -1,3 +1,6 @@
+@value queries: "~styles/queries.css";
+@value query700 from queries;
+
 .main {
   height: 100%;
 }
@@ -41,7 +44,7 @@
   left: 0;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and query700 {
   .content {
     flex-direction: column;
   }

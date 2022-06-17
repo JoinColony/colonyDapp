@@ -1,8 +1,11 @@
+@value queries: "~styles/queries.css";
+@value query700 from queries;
+
 .container {
   display: none;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and query700 {
   .container {
     display: flex;
     flex-direction: column;

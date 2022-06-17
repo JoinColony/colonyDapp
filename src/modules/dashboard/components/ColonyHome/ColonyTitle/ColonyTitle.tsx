@@ -5,7 +5,7 @@ import { Colony } from '~data/index';
 import ColonySubscription from '../ColonySubscription';
 
 import styles from './ColonyTitle.css';
-import { mobile } from '~utils/mediaQueries';
+import { query700 as query } from '~styles/queries.css';
 import ColonyTitleHeading from './ColonyTitleHeading';
 import ColonyTitleMenu from './ColonyTitleMenu';
 
@@ -16,7 +16,7 @@ type Props = {
 const displayName = 'dashboard.ColonyHome.ColonyTitle';
 
 const ColonyTitle = ({ colony }: Props) => {
-  const isMobile = useMediaQuery({ query: mobile });
+  const isMobile = useMediaQuery({ query });
 
   return (
     <div className={styles.main}>

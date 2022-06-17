@@ -4,6 +4,9 @@
 @value tokenDisplaySymbolFontSize: 18px;
 @value tokenDisplayFontWeight: 300;
 
+@value queries: "~styles/queries.css";
+@value query700 from queries;
+
 .main {
   display: block;
   margin-bottom: 32px;
@@ -91,7 +94,7 @@
   fill: var(--colony-blue);
 }
 
-@media screen and (max-width: 768px) {
+@media screen and query700 {
   .main {
     display: flex;
     justify-content: space-between;

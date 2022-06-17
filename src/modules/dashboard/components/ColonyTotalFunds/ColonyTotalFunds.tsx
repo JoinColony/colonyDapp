@@ -7,7 +7,7 @@ import { Colony, useLoggedInUser } from '~data/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
 
 import styles from './ColonyTotalFunds.css';
-import { mobile } from '~utils/mediaQueries';
+import { query700 as query } from '~styles/queries.css';
 import ColonyTotalFundsSelectedToken from './ColonyTotalFundsSelectedToken';
 import ColonyTotalFundsManageFunds from './ColonyTotalFundsManageFunds';
 
@@ -27,7 +27,7 @@ const displayName = 'dashboard.ColonyTotalFunds';
 const ColonyTotalFunds = ({ colony: { version }, colony }: Props) => {
   const { networkId } = useLoggedInUser();
 
-  const isMobile = useMediaQuery({ query: mobile });
+  const isMobile = useMediaQuery({ query });
 
   const isSupportedColonyVersion =
     parseInt(version, 10) >= ColonyVersion.LightweightSpaceship;
