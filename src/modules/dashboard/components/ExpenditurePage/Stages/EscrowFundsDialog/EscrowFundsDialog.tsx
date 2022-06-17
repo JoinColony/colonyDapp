@@ -134,7 +134,7 @@ const EscrowFundsDialog = ({ cancel, onClick, close, colonyName }: Props) => {
             </Heading>
             <FormSection appearance={{ border: 'top' }}>
               <div ref={ref} className={styles.sectionRow}>
-                <Dropdown element={ref.current}>
+                <Dropdown element={ref.current} placement="exact">
                   <div className={styles.sectionRow}>
                     <InputLabel
                       label={MSG.allocationTeam}
