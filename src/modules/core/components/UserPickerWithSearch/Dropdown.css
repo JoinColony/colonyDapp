@@ -1,0 +1,5 @@
+.dropdown {
+  /* width: 332px; */
+  position: absolute;
+  z-index: var(--z-index-dialog);
+}

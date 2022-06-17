@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   defineMessages,
   FormattedMessage,
   MessageDescriptor,
 } from 'react-intl';
+import { useParams } from 'react-router-dom';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
@@ -11,6 +12,7 @@ import StakeExpenditureDialog from './StakeExpenditureDialog';
 import StageItem from './StageItem';
 
 import styles from './Stages.css';
+import EscrowFundsDialog from './EscrowFundsDialog/EscrowFundsDialog';
 
 const MSG = defineMessages({
   stages: {
@@ -76,9 +78,11 @@ interface ActiveState {
 
 const Stages = () => {
   const [activeState, setActiveState] = useState<ActiveState | null>(null);
-
+  const { colonyName } = useParams<{
+    colonyName: string;
+  }>();
+  const openEscrowFundsDialog = useDialog(EscrowFundsDialog);
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
-
   const states = [
     {
       id: 1,
@@ -111,6 +115,15 @@ const Stages = () => {
       buttonAction: () => {},
     },
   ];
+  const handleEscrowFunds = useCallback(
+    () =>
+      openEscrowFundsDialog({
+        colonyName,
+        onClick: () => setActiveState(states[3]),
+      }),
+    [colonyName, openEscrowFundsDialog],
+  );
+  states[0].buttonAction = handleEscrowFunds;
 
   const handleSaveDraft = () =>
     openDraftConfirmDialog({
@@ -148,7 +161,7 @@ const Stages = () => {
             <>
               <Icon name="share" className={styles.icon} />
               <Button
-                onClick={activeState?.buttonAction}
+                onClick={activeState.buttonAction}
                 style={{ height: styles.buttonHeight }}
               >
                 {typeof activeState?.buttonText === 'string' ? (

@@ -2,15 +2,14 @@ import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Dialog, { DialogSection } from '~core/Dialog';
-import { Form, Toggle } from '~core/Fields';
+import { Form } from '~core/Fields';
 import Heading from '~core/Heading';
-import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
-import { Tooltip } from '~core/Popover';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import Button from '~core/Button';
 import styles from './StakeExpenditureDialog.css';
+import ForceActionToggle from '~core/ForceActionToggle/ForceActionToggle';
 
 // Mock Data for Staking token, needs to be replaced with native token.
 const activeToken = {
@@ -72,89 +71,72 @@ const StakeExpenditureDialog = ({ cancel, onClick, close }: Props) => {
 
   return (
     <Dialog cancel={cancel}>
-      <div className={styles.dialogContainer}>
-        <DialogSection appearance={{ theme: 'heading', border: 'bottom' }}>
-          <Heading
-            appearance={{ size: 'medium', margin: 'none' }}
-            className={styles.title}
-          >
-            <FormattedMessage {...MSG.header} />
-            <div className={styles.forceContainer}>
-              <FormattedMessage {...MSG.force} />
-              {/* Connect to the form in next PR */}
-              <Form initialValues={{ force: false }} onSubmit={() => {}}>
-                <div className={styles.toggleContainer}>
-                  <Toggle name="force" appearance={{ theme: 'danger' }} />
-                </div>
-              </Form>
-              <Tooltip
-                content={
-                  <div className={styles.tooltip}>
-                    <FormattedMessage id="tooltip.forceAction" />
-                  </div>
-                }
-                trigger="hover"
-                placement="top-end"
-              >
-                <Icon name="question-mark" className={styles.questionIcon} />
-              </Tooltip>
-            </div>
-          </Heading>
-        </DialogSection>
-        <DialogSection appearance={{ border: 'bottom' }}>
-          <div className={styles.stakeContainer}>
-            <FormattedMessage {...MSG.stake} />{' '}
-            <div className={styles.label}>
-              <span className={styles.icon}>
-                <TokenIcon
-                  className={styles.tokenIcon}
-                  token={activeToken}
-                  name={activeToken.name || activeToken.address}
-                />
-              </span>
+      <Form initialValues={{ force: false }} onSubmit={handleSubmit}>
+        <div className={styles.dialogContainer}>
+          <DialogSection appearance={{ theme: 'heading', border: 'bottom' }}>
+            <Heading
+              appearance={{ size: 'medium', margin: 'none' }}
+              className={styles.title}
+            >
+              <FormattedMessage {...MSG.header} />
+              <ForceActionToggle />
+            </Heading>
+          </DialogSection>
+          <DialogSection appearance={{ border: 'bottom' }}>
+            <div className={styles.stakeContainer}>
+              <FormattedMessage {...MSG.stake} />{' '}
+              <div className={styles.label}>
+                <span className={styles.icon}>
+                  <TokenIcon
+                    className={styles.tokenIcon}
+                    token={activeToken}
+                    name={activeToken.name || activeToken.address}
+                  />
+                </span>
 
-              <Numeral
-                unit={getTokenDecimalsWithFallback(activeToken.decimals)}
-                value={
-                  activeToken.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount
-                }
-              />
-              <span className={styles.symbol}>{activeToken.symbol}</span>
+                <Numeral
+                  unit={getTokenDecimalsWithFallback(activeToken.decimals)}
+                  value={
+                    activeToken.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount
+                  }
+                />
+                <span className={styles.symbol}>{activeToken.symbol}</span>
+              </div>
             </div>
-          </div>
+          </DialogSection>
+          <DialogSection>
+            <div className={styles.messageContainer}>
+              <p className={styles.messageParagraph}>
+                <FormattedMessage {...MSG.descriptionText} />
+              </p>
+              <p className={styles.messageParagraph}>
+                <FormattedMessage {...MSG.descriptionText2} />
+              </p>
+            </div>
+          </DialogSection>
+        </div>
+        <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
+          <Button
+            appearance={{ theme: 'secondary', size: 'medium' }}
+            onClick={() => cancel()}
+            text={MSG.cancelText}
+            style={{ padding: styles.padding }}
+          />
+          <Button
+            appearance={{
+              theme: 'primary',
+              size: 'large',
+            }}
+            autoFocus
+            onClick={handleSubmit}
+            text={MSG.confirmText}
+            style={{
+              width: styles.submitButtonWidth,
+            }}
+            data-test="confirmButton"
+          />
         </DialogSection>
-        <DialogSection>
-          <div className={styles.messageContainer}>
-            <p className={styles.messageParagraph}>
-              <FormattedMessage {...MSG.descriptionText} />
-            </p>
-            <p className={styles.messageParagraph}>
-              <FormattedMessage {...MSG.descriptionText2} />
-            </p>
-          </div>
-        </DialogSection>
-      </div>
-      <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
-        <Button
-          appearance={{ theme: 'secondary', size: 'medium' }}
-          onClick={() => cancel()}
-          text={MSG.cancelText}
-          style={{ padding: styles.padding }}
-        />
-        <Button
-          appearance={{
-            theme: 'primary',
-            size: 'large',
-          }}
-          autoFocus
-          onClick={handleSubmit}
-          text={MSG.confirmText}
-          style={{
-            width: styles.submitButtonWidth,
-          }}
-          data-test="confirmButton"
-        />
-      </DialogSection>
+      </Form>
     </Dialog>
   );
 };

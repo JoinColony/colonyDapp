@@ -255,5 +255,6 @@
     "permission.1": "Root",
 
     "tooltip.lockedToken": "This token is locked. Colony native tokens are locked and non-transferrable by default to avoid unwanted project token transfer outside of the colony.",
-    "tooltip.forceAction": "Toggle the \"Force\" button to perform this action immediately and bypass governance. You need the right permissions to do this."
+    "tooltip.forceAction": "Toggle the \"Force\" button to perform this action immediately and bypass governance. You need the right permissions to do this.",
+    "tooltip.forceActionLabel": "Force"
   }

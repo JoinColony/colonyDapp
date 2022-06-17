@@ -25,3 +25,29 @@ export const tokens = [
     symbol: 'MAT',
   },
 ];
+
+export const requiredFundsMock = [
+  {
+    address: '0x0000000000000000000000000000000000000000',
+    balances: [{ amount: '2015', domainId: 0 }],
+    decimals: 2,
+    iconHash: '',
+    id: '0x0000000000000000000000000000000000000000',
+    name: 'xDAI',
+    symbol: 'ETH',
+  },
+  {
+    address: '0x3Fe98e1e643c3f78aCF72B7FC4A68B5A737CD274',
+    balances: [
+      {
+        amount: '2005',
+        domainId: 0,
+      },
+    ],
+    decimals: 2,
+    iconHash: null,
+    id: '0x3Fe98e1e643c3f78aCF72B7FC4A68B5A737CD274',
+    name: 'CLNY',
+    symbol: 'CLNY',
+  },
+];
