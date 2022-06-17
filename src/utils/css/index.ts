@@ -64,7 +64,7 @@ export const removeValueUnits = (valueWithUnit: string): number => {
      */
 
     // eslint-disable-next-line no-useless-escape, prettier/prettier
-    '\%', 
+    '\%',
   ];
   return parseInt(
     valueWithUnit.replace(
