@@ -367,13 +367,16 @@ export const colonyResolvers = ({
       });
       const verifiedAddresses = colony?.processedColony.whitelistedAddresses;
 
+      const domainIdchecked =
+        domainId === COLONY_TOTAL_BALANCE_DOMAIN_ID ? ROOT_DOMAIN_ID : domainId;
+
       const domainRoles = getAllUserRolesForDomain(
         colony?.processedColony,
-        domainId === COLONY_TOTAL_BALANCE_DOMAIN_ID ? ROOT_DOMAIN_ID : domainId,
+        domainIdchecked,
       );
       const directDomainRoles = getAllUserRolesForDomain(
         colony?.processedColony,
-        domainId === COLONY_TOTAL_BALANCE_DOMAIN_ID ? ROOT_DOMAIN_ID : domainId,
+        domainIdchecked,
         true,
       );
 
@@ -413,7 +416,7 @@ export const colonyResolvers = ({
         query: ColonyMembersWithReputationDocument,
         variables: {
           colonyAddress: colonyAddress.toLowerCase(),
-          domainId,
+          domainId: domainIdchecked,
         },
         fetchPolicy: 'network-only',
       });
@@ -443,17 +446,6 @@ export const colonyResolvers = ({
         },
         fetchPolicy: 'network-only',
       });
-
-      // const { data: verifiedUsers } = await apolloClient.query<
-      //   VerifiedUsersQuery,
-      //   VerifiedUsersQueryVariables
-      // >({
-      //   query: VerifiedUsersDo,
-      //   variables: {
-      //     colonyAddress,
-      //   },
-      //   fetchPolicy: 'network-only',
-      // });
 
       const contributors: any[] = [];
       const watchers: any[] = [];
@@ -525,6 +517,9 @@ export const colonyResolvers = ({
           profile: {
             __typename: 'UserProfile',
             walletAddress: address,
+            avatarHash: null,
+            displayName: null,
+            username: null,
           },
           roles: [],
           directRoles: [],
