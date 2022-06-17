@@ -330,7 +330,7 @@ export const colonyResolvers = ({
       _,
       {
         colonyAddress,
-        domainId = COLONY_TOTAL_BALANCE_DOMAIN_ID,
+        domainId = ROOT_DOMAIN_ID,
       }: { colonyAddress: Address; domainId: number },
     ) {
       const colonyClient = await colonyManager.getClient(
