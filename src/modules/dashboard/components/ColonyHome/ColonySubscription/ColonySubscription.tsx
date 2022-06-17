@@ -22,12 +22,15 @@ import { CREATE_USER_ROUTE } from '~routes/index';
 import ColonySubscriptionInfoPopover from './ColonySubscriptionInfoPopover';
 
 import styles from './ColonySubscription.css';
-import { mobile } from '~utils/mediaQueries';
+import { query700 as query } from '~styles/queries.css';
 
 const MSG = defineMessages({
   joinColony: {
     id: 'dashboard.ColonyHome.ColonySubscription.joinColony',
-    defaultMessage: 'Join',
+    defaultMessage: `{isMobile, select, 
+      true {Join this colony} 
+      other {Join} 
+    }`,
   },
   colonyMenuTitle: {
     id: 'dashboard.ColonyHome.ColonySubscription.colonyMenuTitle',
@@ -70,9 +73,7 @@ const ColonySubscription = ({
 
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
-  const isMobile = useMediaQuery({ query: mobile });
-
-  if (isMobile) MSG.joinColony.defaultMessage = 'Join this colony';
+  const isMobile = useMediaQuery({ query });
 
   return (
     <div className={styles.main}>
@@ -89,7 +90,7 @@ const ColonySubscription = ({
           data-test="joinColonyButton"
           className={styles.joinButton}
         >
-          <FormattedMessage {...MSG.joinColony} />
+          <FormattedMessage {...MSG.joinColony} values={{ isMobile }} />
         </Button>
       )}
       {!isSubscribed && !username && (
@@ -100,6 +101,7 @@ const ColonySubscription = ({
             state: { colonyURL: `/colony/${colonyName}` },
           }}
           text={MSG.joinColony}
+          textValues={{ isMobile }}
         />
       )}
       {isSubscribed && (
