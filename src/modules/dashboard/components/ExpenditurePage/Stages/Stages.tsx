@@ -17,6 +17,7 @@ import DeleteDraftDialog from './DeleteDraftDialog';
 import StageItem from './StageItem';
 
 import styles from './Stages.css';
+import LinkedMotions from './LinkedMotions';
 
 const MSG = defineMessages({
   stages: {
@@ -366,6 +367,7 @@ const Stages = () => {
           isActive={activeState ? index <= activeIndex : false}
         />
       ))}
+      <LinkedMotions status="passed" />
     </div>
   );
 };
