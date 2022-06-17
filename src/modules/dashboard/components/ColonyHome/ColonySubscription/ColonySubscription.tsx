@@ -7,8 +7,6 @@ import { SpinnerLoader } from '~core/Preloaders';
 import Icon from '~core/Icon';
 import Button from '~core/Button';
 import Link from '~core/Link';
-import MaskedAddress from '~core/MaskedAddress';
-import InvisibleCopyableAddress from '~core/InvisibleCopyableAddress';
 
 import {
   useLoggedInUser,
@@ -25,7 +23,7 @@ import ColonySubscriptionInfoPopover from './ColonySubscriptionInfoPopover';
 import ColonyAddress from '../ColonyTitle/ColonyAddress';
 
 import styles from './ColonySubscription.css';
-import { mobile } from '~utils/mediaQueries';
+import { query700 as query } from '~styles/queries.css';
 
 const MSG = defineMessages({
   copyMessage: {
@@ -77,9 +75,7 @@ const ColonySubscription = ({
 
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
-  const isMobile = useMediaQuery({ query: mobile });
-
-  if (isMobile) MSG.joinColony.defaultMessage = 'Join this colony';
+  const isMobile = useMediaQuery({ query });
 
   return (
     <div className={styles.main}>

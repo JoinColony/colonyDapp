@@ -10,7 +10,7 @@ import HistoryNavigation from '../HistoryNavigation';
 import styles from './Default.css';
 import navStyles from '../SimpleNav/SimpleNav.css';
 
-import { mobile } from '~utils/mediaQueries';
+import { query700 as query } from '~styles/queries.css';
 import UserNavigation from '../UserNavigation';
 
 interface Props {
@@ -35,7 +35,14 @@ const Default = ({
     hasBackLink === undefined
       ? location.state && location.state.hasBackLink
       : hasBackLink;
-  const isMobile = useMediaQuery({ query: mobile });
+  const isMobile = useMediaQuery({ query });
+
+  const SubscribedColonies = () =>
+    hasSubscribedColonies ? (
+      <div className={styles.coloniesList}>
+        <SubscribedColoniesList />
+      </div>
+    ) : null;
 
   return (
     <div className={styles.main}>
@@ -57,18 +64,10 @@ const Default = ({
               <div className={navStyles.nav}>
                 <UserNavigation />
               </div>
-              {hasSubscribedColonies && (
-                <div className={styles.coloniesList}>
-                  <SubscribedColoniesList />
-                </div>
-              )}
+              <SubscribedColonies />
             </div>
           ) : (
-            hasSubscribedColonies && (
-              <div className={styles.coloniesList}>
-                <SubscribedColoniesList />
-              </div>
-            )
+            <SubscribedColonies />
           )}
           <div className={styles.children}>{children}</div>
         </div>
