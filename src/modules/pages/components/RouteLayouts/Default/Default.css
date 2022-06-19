@@ -57,6 +57,7 @@
 
   .head {
     display: flex;
+    min-height: 43px; /* Prevents breakage when no colonies present */
     border-bottom: 1px solid var(--temp-grey-13);
   }
 }
