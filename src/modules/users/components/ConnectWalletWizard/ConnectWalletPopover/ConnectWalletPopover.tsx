@@ -36,7 +36,7 @@ const ConnectWalletPopover = ({ children }: Props) => {
   const popoverOffset = useMemo(() => {
     const skid =
       removeValueUnits(refWidth) + removeValueUnits(horizontalOffset);
-    return isMobile ? [-15, 15] : [-1 * skid, removeValueUnits(verticalOffset)];
+    return isMobile ? [-33, 15] : [-1 * skid, removeValueUnits(verticalOffset)];
   }, [isMobile]);
 
   return (

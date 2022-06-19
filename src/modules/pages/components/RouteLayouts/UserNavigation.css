@@ -199,6 +199,7 @@
 
   .main {
     height: 100%;
+    gap: 7px;
   }
 
   /* Fade effect when number of colonies is > 7 */
@@ -218,6 +219,7 @@
   .connectWalletButton {
     margin-top: 7px;
     margin-bottom: 7px;
+    margin-right: 0px;
     width: 120px;
   }
 }
