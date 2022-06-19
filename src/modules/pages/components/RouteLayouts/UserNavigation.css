@@ -202,20 +202,6 @@
     gap: 7px;
   }
 
-  /* Fade effect when number of colonies is > 7 */
-  .fade {
-    height: 43px;
-    width: 40px;
-    position: absolute;
-    top: 0px;
-    right: 89px;
-    z-index: 1;
-    border-bottom: 1px solid var(--temp-grey-13);
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, var(--temp-grey-blue-5) 80%);
-    content: "";
-    pointer-events: none;
-  }
-
   .connectWalletButton {
     margin-top: 7px;
     margin-bottom: 7px;
