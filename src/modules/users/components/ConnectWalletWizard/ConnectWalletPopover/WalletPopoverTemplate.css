@@ -11,4 +11,8 @@
     padding: 30px 25px;
     width: calc(100vw - 28px);
   }
+
+  button[class*="DecisionOption"] {
+    height: auto;
+  }
 }
