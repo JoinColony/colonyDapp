@@ -88,7 +88,6 @@ const ColonySubscription = ({
           onClick={() => subscribe()}
           appearance={{ theme: 'blue', size: 'small' }}
           data-test="joinColonyButton"
-          className={styles.joinButton}
         >
           <FormattedMessage {...MSG.joinColony} values={{ isMobile }} />
         </Button>
