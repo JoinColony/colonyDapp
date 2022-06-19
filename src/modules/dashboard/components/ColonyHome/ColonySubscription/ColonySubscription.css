@@ -51,13 +51,17 @@
 }
 
 @media screen and query700 {
-  .joinButton {
+  .joinButton, .main > button {
     padding: 6px 12px 6px 12px;
     height: 30px;
     width: 118px;
+    border: 0;
     border-radius: 4px;
     background-color: rgba(76, 93, 255, 0.12);
+    font-size: var(--size-small);
+    font-weight: var(--weight-bold);
     text-align: center;
+    color: var(--colony-blue);
   }
 
   .createUserRedirect {
