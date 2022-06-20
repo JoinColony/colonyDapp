@@ -25,11 +25,6 @@
   background-color: var(--grey-blue-3);
 }
 
-.sidebar::-webkit-scrollbar {
-  display: none;
-  scrollbar-width: none;
-}
-
 .form {
   display: flex;
   justify-content: center;

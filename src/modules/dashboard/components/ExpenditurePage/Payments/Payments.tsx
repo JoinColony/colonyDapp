@@ -3,13 +3,14 @@ import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FieldArray, useField } from 'formik';
 import { useParams } from 'react-router';
+import { nanoid } from 'nanoid';
 import Button from '~core/Button';
 import Recipient from '../Recipient';
 
 import styles from './Payments.css';
 import Icon from '~core/Icon';
 import { FormSection } from '~core/Fields';
-import { newRecipient } from './consts';
+import { newRecipient } from './constants';
 import {
   useColonyFromNameQuery,
   useMembersSubscription,
@@ -129,7 +130,7 @@ const Payments = ({ sidebarRef }: Props) => {
                 ))}
                 <div className={styles.addRecipientWrapper}>
                   <Button
-                    onClick={() => push({ ...newRecipient })}
+                    onClick={() => push({ ...newRecipient, id: nanoid() })}
                     appearance={{ theme: 'blue' }}
                   >
                     <div className={styles.addRecipientLabel}>

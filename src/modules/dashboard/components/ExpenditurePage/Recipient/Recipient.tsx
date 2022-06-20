@@ -19,7 +19,7 @@ import UserPickerWithSearch from '~core/UserPickerWithSearch';
 import { AnyUser } from '~data/index';
 import { Address } from '~types/index';
 import { Recipient as RecipientType } from '../Payments/types';
-import { tokensData } from './consts';
+import { tokensData } from './constants';
 
 import styles from './Recipient.css';
 
