@@ -59,6 +59,10 @@
   opacity: 0.25;
 }
 
+.dividerInLastItem {
+  height: calc(100% - 84px);
+}
+
 .minus {
   height: 1px;
   width: 70%;

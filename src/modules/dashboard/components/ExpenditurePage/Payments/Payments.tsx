@@ -1,9 +1,10 @@
 import React, { useCallback } from 'react';
-
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FieldArray, useField } from 'formik';
 import { useParams } from 'react-router';
 import { nanoid } from 'nanoid';
+import classNames from 'classnames';
+
 import Button from '~core/Button';
 import Recipient from '../Recipient';
 
@@ -97,7 +98,12 @@ const Payments = ({ sidebarRef }: Props) => {
                               className={styles.signWrapper}
                               title={MSG.minusIconTitle}
                             />
-                            <div className={styles.verticalDivider} />
+                            <div
+                              className={classNames(styles.verticalDivider, {
+                                [styles.dividerInLastItem]:
+                                  index === recipients?.length - 1,
+                              })}
+                            />
                           </>
                         ) : (
                           <Icon
