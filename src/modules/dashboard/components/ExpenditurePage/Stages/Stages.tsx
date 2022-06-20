@@ -1,5 +1,5 @@
 import { useFormikContext } from 'formik';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import {
   defineMessages,
   FormattedMessage,
@@ -17,6 +17,10 @@ import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
 import StageItem from './StageItem';
 import { Stage } from './constants';
 import LinkedMotions from './LinkedMotions';
+import {
+  InitialValuesType,
+  ValuesType,
+} from '~pages/ExpenditurePage/ExpenditurePage';
 
 const MSG = defineMessages({
   stages: {
@@ -111,9 +115,16 @@ interface ActiveState {
   buttonTooltip?: string | MessageDescriptor;
 }
 
-const Stages = () => {
-  const [activeStateId, setActiveStateId] = useState<string | null>(null);
-  const { resetForm } = useFormikContext() || {};
+interface Props {
+  lockValues: () => void;
+  handleSubmit: (values: InitialValuesType) => void;
+  activeStateId: string | null;
+  setActiveStateId: (id: string) => void;
+}
+
+const Stages = ({ lockValues, activeStateId, setActiveStateId }: Props) => {
+  const { values, resetForm, handleSubmit, validateForm } =
+    useFormikContext<ValuesType>() || {};
 
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
   const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
@@ -123,6 +134,7 @@ const Stages = () => {
     // fetching active state shoud be added here as well,
     // and saving the activeState in a state
     setActiveStateId(Stage.Locked);
+    lockValues();
   };
 
   const handleFoundExpenditure = () => {
@@ -173,11 +185,20 @@ const Stages = () => {
     },
   ];
 
-  const handleSaveDraft = () =>
-    openDraftConfirmDialog({
-      onClick: () => setActiveStateId(Stage.Draft),
-      isVotingExtensionEnabled: true,
-    });
+  const handleSaveDraft = useCallback(async () => {
+    const errors = await validateForm(values);
+    const hasErrors = Object.keys(errors)?.length;
+
+    return (
+      !hasErrors &&
+      openDraftConfirmDialog({
+        onClick: () => {
+          handleSubmit(values as any);
+        },
+        isVotingExtensionEnabled: true,
+      })
+    );
+  }, [handleSubmit, openDraftConfirmDialog, validateForm, values]);
 
   const handleDeleteDraft = () =>
     openDeleteDraftDialog({

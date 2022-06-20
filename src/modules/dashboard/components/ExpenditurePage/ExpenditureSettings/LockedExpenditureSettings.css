@@ -1,4 +1,4 @@
-@value paddingTop: 56px;
+@value paddingTop: 75px;
 @value paddingRightLeftBottom: 54px;
 
 .container {
@@ -7,16 +7,12 @@
 
 .container i {
   /* The negative margin is used here to adjust the position of the caret icon */
-  margin-bottom: -3px;
+  margin-bottom: -4px;
 }
 
 .settingsRow {
   composes: flexContainerRow flexAlignCenter flexJustifyBetween from '~styles/layout.css';
   min-height: 41px;
-}
-
-.settingsRow h4 {
-  font-size: var(--size-smallish);
 }
 
 .settingsRow button[aria-expanded="true"] {
@@ -51,15 +47,15 @@
   justify-content: flex-end;
   align-items: center;
   padding: 0;
-  font-size: var(--size-normal);
-  font-weight: var(--weight-normal);
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
   color: var(--dark);
 }
 
 .option {
   margin-bottom: 12px;
   padding: 16px 20px 0 0;
-  font-size: var(--size-normal);
+  font-size: var(--size-smallish);
 }
 
 .firstOption {
@@ -91,18 +87,13 @@
 
 .activeItemLabel {
   margin-left: 8px;
-  padding-bottom: 2px;
   font-size: var(--size-smallish);
-  color: var(--text);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
 }
 
 .blue button {
-  font-size: var(--size-smallish);
   color: var(--action-secondary);
-}
-
-.blue li {
-  font-size: var(--size-smallish);
 }
 
 .blue svg {
@@ -114,14 +105,16 @@
   position: static;
 }
 
-.balance span {
+.expenditure {
   font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  text-transform: capitalize;
+  color: var(--dark);
 }
 
-.error {
-  width: 100%;
-  font-size: var(--size-tiny);
-  font-weight: var(--weight-bold);
-  text-align: right;
-  color: var(--danger);
+.expenditureContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 14px;
 }
