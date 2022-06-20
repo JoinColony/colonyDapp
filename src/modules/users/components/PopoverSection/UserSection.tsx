@@ -1,5 +1,6 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
+
 import { DropdownMenuItem, DropdownMenuSection } from '~core/DropdownMenu';
 import NavLink from '~core/NavLink';
 import { Colony, Maybe } from '~data/index';
@@ -15,7 +16,7 @@ const MSG = defineMessages({
     defaultMessage: 'My Profile',
   },
   settings: {
-    id: 'users.PopoverSection.UserSection.link.colonySettings',
+    id: 'users.PopoverSection.UserSection.link.settings',
     defaultMessage: 'Settings',
   },
 });
@@ -44,22 +45,22 @@ const UserSection = ({ colony, username }: Props) => (
       </DropdownMenuItem>
     )}
     {username && (
-      <DropdownMenuItem>
-        <NavLink
-          to={`/user/${username}`}
-          text={MSG.myProfile}
-          data-test="userProfile"
-        />
-      </DropdownMenuItem>
-    )}
-    {username && (
-      <DropdownMenuItem>
-        <NavLink
-          to={USER_EDIT_ROUTE}
-          text={MSG.settings}
-          data-test="userProfileSettings"
-        />
-      </DropdownMenuItem>
+      <>
+        <DropdownMenuItem>
+          <NavLink
+            to={`/user/${username}`}
+            text={MSG.myProfile}
+            data-test="userProfile"
+          />
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <NavLink
+            to={USER_EDIT_ROUTE}
+            text={MSG.settings}
+            data-test="userProfileSettings"
+          />
+        </DropdownMenuItem>
+      </>
     )}
   </DropdownMenuSection>
 );

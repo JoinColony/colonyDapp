@@ -15,6 +15,11 @@ import { readyTransactionsCount } from '~users/GasStation/transactionGroup';
 import AvatarDropdown from '~users/AvatarDropdown';
 import InboxPopover from '~users/Inbox/InboxPopover';
 import { ConnectWalletPopover } from '~users/ConnectWalletWizard';
+import HamburgerDropdown from '~users/HamburgerDropdown/HamburgerDropdown';
+import { useSelector } from '~utils/hooks';
+import { useAutoLogin, getLastWallet } from '~utils/autoLogin';
+import { checkIfNetworkIsAllowed } from '~utils/networks';
+import { getUserTokenBalanceData } from '~utils/tokens';
 
 import {
   useUserNotificationsQuery,
@@ -23,16 +28,12 @@ import {
   useColonyFromNameQuery,
   Colony,
 } from '~data/index';
-import { useSelector } from '~utils/hooks';
-import { useAutoLogin, getLastWallet } from '~utils/autoLogin';
-import { checkIfNetworkIsAllowed } from '~utils/networks';
+
 import { SUPPORTED_NETWORKS } from '~constants';
 
 import { groupedTransactionsAndMessages } from '../../../core/selectors';
 
 import styles from './UserNavigation.css';
-import HamburgerMenu from '~core/HamburgerMenu/HamburgerMenu';
-import { getUserTokenBalanceData } from '~utils/tokens';
 
 const MSG = defineMessages({
   inboxTitle: {
@@ -272,7 +273,11 @@ const UserNavigation = () => {
             userCanNavigate,
           }}
         />
-        <HamburgerMenu />
+        <HamburgerDropdown
+          onlyLogout={!isNetworkAllowed}
+          colony={colonyData?.processedColony as Colony}
+          colonyName={colonyName}
+        />
       </div>
     </>
   );

@@ -9,10 +9,11 @@ import DropdownMenu, {
 } from '~core/DropdownMenu';
 import MaskedAddress from '~core/MaskedAddress';
 import MemberReputation from '~core/MemberReputation';
-import UserTokenActivationDisplay from '../UserTokenActivationButton/UserTokenActivationDisplay';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 import { SimpleMessageValues } from '~types/index';
 import { UserTokenBalanceData } from '~types/tokens';
+
+import UserTokenActivationDisplay from '../UserTokenActivationButton/UserTokenActivationDisplay';
 import { TokenActivationPopover } from '../TokenActivation';
 import { AppState } from './AvatarDropdown';
 
