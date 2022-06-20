@@ -18,6 +18,7 @@
 }
 
 .sidebar {
+  height: 600px;
   min-height: calc(100vh - navBarHeight);
   width: sidebarWidth;
   overflow-y: auto;
