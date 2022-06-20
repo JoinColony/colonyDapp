@@ -1,3 +1,6 @@
+@value queries: "~styles/queries.css";
+@value query700 from queries;
+
 .main {
   font-size: var(--size-small);
   font-weight: var(--weight-bold);
@@ -7,4 +10,11 @@
 .main:hover {
   text-decoration: underline;
   color: var(--dark-blue);
+}
+@media screen and query700 {
+  .main {
+    font-size: inherit;
+    font-weight: inherit;
+    color: inherit;
+  }
 }

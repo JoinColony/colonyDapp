@@ -1,0 +1,18 @@
+@value query700 from "~styles/queries.css";
+
+.hamburgerButton {
+  display: none;
+}
+
+@media screen and query700 {
+  .hamburgerButton {
+    display: block;
+    padding: 0;
+    height: 100%;
+    border: 0;
+  }
+
+  .activeDropdown {
+    background-color: var(--temp-grey-blue-7);
+  }
+}
