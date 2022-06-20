@@ -47,3 +47,8 @@ export const REPUTATION_LEARN_MORE = `https://colony.gitbook.io/colony/key-conce
  * Metatransactions
  */
 export const METATRANSACTIONS_LEARN_MORE = `https://colony.gitbook.io/colony/announcements/metatransactions`;
+
+/*
+ * Gnosis safe control
+ */
+export const GNOSIS_SAFE_INTEGRATION_LEARN_MORE = `https://colony.gitbook.io/colony/key-concepts/reputation/award-reputatiohttps://colony.gitbook.io/colony/manage-funds/gnosis-safe-integration`;
