@@ -224,7 +224,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         nextStepControlSafe: 'dashboard.GnosisControlSafeDialog',
         prevStep: 'dashboard.AdvancedDialog',
         colony,
-        isVotingExtensionEnabled,
       },
     },
     // @todo - ready to be implemented in another PR.
