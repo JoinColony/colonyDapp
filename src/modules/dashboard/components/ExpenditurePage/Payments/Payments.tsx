@@ -87,7 +87,7 @@ const Payments = ({ sidebarRef }: Props) => {
               <>
                 {recipients.map((recipient, index) => (
                   <div className={styles.singleRecipient} key={recipient.id}>
-                    <FormSection appearance={{ border: 'bottom' }}>
+                    <FormSection>
                       <div className={styles.recipientLabel}>
                         {recipient.isExpanded ? (
                           <>
@@ -125,23 +125,22 @@ const Payments = ({ sidebarRef }: Props) => {
                         sidebarRef,
                       }}
                       subscribedUsers={colonyMembers?.subscribedUsers || []}
+                      isLast={index === recipients?.length - 1}
                     />
                   </div>
                 ))}
-                <div className={styles.addRecipientWrapper}>
-                  <Button
-                    onClick={() => push({ ...newRecipient, id: nanoid() })}
-                    appearance={{ theme: 'blue' }}
-                  >
-                    <div className={styles.addRecipientLabel}>
-                      <Icon
-                        name="plus-circle"
-                        className={styles.circlePlusIcon}
-                      />
-                      <FormattedMessage {...MSG.addRecipientLabel} />
-                    </div>
-                  </Button>
-                </div>
+                <Button
+                  onClick={() => push({ ...newRecipient, id: nanoid() })}
+                  appearance={{ theme: 'blue' }}
+                >
+                  <div className={styles.addRecipientLabel}>
+                    <Icon
+                      name="plus-circle"
+                      className={styles.circlePlusIcon}
+                    />
+                    <FormattedMessage {...MSG.addRecipientLabel} />
+                  </div>
+                </Button>
               </>
             )}
           />

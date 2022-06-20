@@ -28,7 +28,7 @@
 }
 
 .singleRecipient {
-  margin-bottom: 40px;
+  padding-bottom: 4px;
   position: relative;
 }
 
@@ -48,7 +48,7 @@
 }
 
 .verticalDivider {
-  height: calc(100% - 84px);
+  height: calc(100% - 124px);
   position: absolute;
   top: 56px;
 
@@ -82,10 +82,6 @@
   height: 30px;
   width: 30px;
   fill: var(--action-secondary);
-}
-
-.addRecipientWrapper {
-  margin-top: 9px;
 }
 
 .deleteIcon {

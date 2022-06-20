@@ -4,6 +4,14 @@
   padding: 6px 0;
 }
 
+.formContainer {
+  border-top: 1px solid var(--grey-blue-0);
+}
+
+.margin-bottom {
+  margin-bottom: 36px;
+}
+
 .valueContainer {
   display: flex;
   align-items: flex-start;

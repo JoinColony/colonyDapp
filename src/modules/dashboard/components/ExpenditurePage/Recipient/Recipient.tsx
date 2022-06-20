@@ -2,6 +2,8 @@ import { FieldArray, useField, useFormikContext } from 'formik';
 import { nanoid } from 'nanoid';
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import classNames from 'classnames';
+
 import Button from '~core/Button';
 import {
   FormSection,
@@ -78,6 +80,7 @@ interface Props {
   index: number;
   subscribedUsers: AnyUser[];
   sidebarRef: HTMLElement | null;
+  isLast?: boolean;
 }
 
 export const newToken = {
@@ -91,6 +94,7 @@ const Recipient = ({
   index,
   subscribedUsers,
   sidebarRef,
+  isLast,
 }: Props) => {
   const { setFieldValue } = useFormikContext();
   const { isExpanded, value: tokens } = recipient;
@@ -103,7 +107,12 @@ const Recipient = ({
   return (
     <div className={styles.container}>
       {isExpanded && (
-        <>
+        <div
+          className={classNames(
+            styles.formContainer,
+            !isLast && styles.marginBottom,
+          )}
+        >
           <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.singleUserContainer}>
               <UserPickerWithSearch
@@ -258,7 +267,7 @@ const Recipient = ({
               <div className={styles.error}>{timeError}</div>
             )}
           </FormSection>
-        </>
+        </div>
       )}
     </div>
   );

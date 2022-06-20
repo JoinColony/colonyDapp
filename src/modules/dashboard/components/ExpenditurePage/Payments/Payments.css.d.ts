@@ -9,5 +9,4 @@ export const verticalDivider: string;
 export const minus: string;
 export const addRecipientLabel: string;
 export const circlePlusIcon: string;
-export const addRecipientWrapper: string;
 export const deleteIcon: string;
