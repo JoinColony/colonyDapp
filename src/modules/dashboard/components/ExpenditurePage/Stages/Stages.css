@@ -1,4 +1,5 @@
 @value buttonHeight: 29px;
+@value buttonWidth: 100px;
 
 .mainContainer {
   padding-top: 20px;

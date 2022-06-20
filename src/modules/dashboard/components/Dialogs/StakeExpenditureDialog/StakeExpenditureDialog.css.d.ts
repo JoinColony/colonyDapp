@@ -1,5 +1,4 @@
 export const submitButtonWidth: string;
-export const padding: string;
 export const title: string;
 export const forceContainer: string;
 export const stakeContainer: string;

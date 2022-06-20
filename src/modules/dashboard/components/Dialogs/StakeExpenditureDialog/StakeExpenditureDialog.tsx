@@ -167,9 +167,8 @@ const StakeExpenditureDialog = ({
             </DialogSection>
             <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
               <Button
-                appearance={{ theme: 'secondary', size: 'medium' }}
+                appearance={{ theme: 'secondary', size: 'large' }}
                 text={MSG.cancelText}
-                style={{ padding: styles.padding }}
                 onClick={close}
               />
               <Button

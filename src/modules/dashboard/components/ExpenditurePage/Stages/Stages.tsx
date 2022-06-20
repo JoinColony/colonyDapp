@@ -75,6 +75,12 @@ interface ActiveState {
   buttonAction: () => void;
 }
 
+const buttonStyles = {
+  height: styles.buttonHeight,
+  width: styles.buttonWidth,
+  padding: 0,
+};
+
 const Stages = () => {
   const [activeState, setActiveState] = useState<ActiveState | null>(null);
 
@@ -138,20 +144,14 @@ const Stages = () => {
             <>
               {/* Deleting the expenditure will be added in next PR */}
               <Icon name="trash" className={styles.icon} />
-              <Button
-                onClick={handleSaveDraft}
-                style={{ height: styles.buttonHeight }}
-              >
+              <Button onClick={handleSaveDraft} style={buttonStyles}>
                 <FormattedMessage {...MSG.submitDraft} />
               </Button>
             </>
           ) : (
             <>
               <Icon name="share" className={styles.icon} />
-              <Button
-                onClick={activeState?.buttonAction}
-                style={{ height: styles.buttonHeight }}
-              >
+              <Button onClick={activeState?.buttonAction} style={buttonStyles}>
                 {typeof activeState?.buttonText === 'string' ? (
                   activeState.buttonText
                 ) : (
