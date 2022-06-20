@@ -1,5 +1,6 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
+
 import { DropdownMenuItem, DropdownMenuSection } from '~core/DropdownMenu';
 import NavLink from '~core/NavLink';
 import { Colony, Maybe } from '~data/index';
@@ -15,7 +16,7 @@ const MSG = defineMessages({
     defaultMessage: 'My Profile',
   },
   settings: {
-    id: 'users.PopoverSection.UserSection.link.colonySettings',
+    id: 'users.PopoverSection.UserSection.link.settings',
     defaultMessage: 'Settings',
   },
 });

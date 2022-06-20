@@ -1,5 +1,6 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
+
 import { DropdownMenuItem, DropdownMenuSection } from '~core/DropdownMenu';
 import NavLink from '~core/NavLink';
 import { CREATE_COLONY_ROUTE } from '~routes/routeConstants';

@@ -1,5 +1,6 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
+
 import { ActionButton } from '~core/Button';
 import { DropdownMenuItem, DropdownMenuSection } from '~core/DropdownMenu';
 import { ActionTypes } from '~redux/actionTypes';
