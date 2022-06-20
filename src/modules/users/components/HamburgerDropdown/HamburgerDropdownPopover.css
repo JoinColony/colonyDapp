@@ -1,0 +1,18 @@
+.menu {
+  border-radius: var(--radius-normal);
+  border-top-right-radius: 0px;
+  background-color: var(--temp-grey-blue-7);
+}
+
+.menu li[class*="DropdownMenuItem"] > a {
+  padding: 5px 15px;
+}
+
+.menu li {
+  color: white;
+}
+
+.menu ul[class*="DropdownMenuSection_separator"]:nth-child(4),
+.menu ul[class*="DropdownMenuSection_separator"]:nth-child(5) {
+  border-top: none;
+}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
+
 import { DropdownMenuItem, DropdownMenuSection } from '~core/DropdownMenu';
 import ExternalLink from '~core/ExternalLink';
 import { FEEDBACK, HELP } from '~externalUrls';
@@ -8,11 +9,11 @@ import styles from './HelperSection.css';
 
 const MSG = defineMessages({
   reportBugs: {
-    id: 'users.PopoverSection.HelperSection.link.reportBugs',
+    id: 'users.PopoverSection.HelperSection.reportBugs',
     defaultMessage: 'Report Bugs',
   },
   helpCenter: {
-    id: 'users.PopoverSection.HelperSection.link.helpCenter',
+    id: 'users.PopoverSection.HelperSection.helpCenter',
     defaultMessage: 'Help Center',
   },
 });

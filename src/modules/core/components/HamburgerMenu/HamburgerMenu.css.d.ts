@@ -1,3 +1,3 @@
-export const query700: string;
-export const container: string;
+export const main: string;
 export const menuLine: string;
+export const menuOpen: string;
