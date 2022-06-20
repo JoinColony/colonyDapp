@@ -16,6 +16,7 @@ import styles from './Stages.css';
 import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
 import StageItem from './StageItem';
 import { Stage } from './constants';
+import LinkedMotions from './LinkedMotions';
 
 const MSG = defineMessages({
   stages: {
@@ -369,6 +370,7 @@ const Stages = () => {
           isActive={activeState ? index <= activeIndex : false}
         />
       ))}
+      <LinkedMotions status="passed" />
     </div>
   );
 };
