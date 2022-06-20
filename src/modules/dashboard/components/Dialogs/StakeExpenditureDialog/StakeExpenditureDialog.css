@@ -1,20 +1,13 @@
 @value submitButtonWidth: 160px;
 @value padding: 2px 5px;
 
-.dialogContainer {
-  padding: 0 20px;
-}
-
-.dialogContainer section {
-  padding: 0;
-}
-
 .title {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 34px 0;
   width: 100%;
+  border-bottom: 1px solid var(--grey-blue-0);
   font-size: var(--size-medium-l);
   font-weight: var(--weight-bold);
   color: var(--dark);
@@ -30,7 +23,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0 10px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--grey-blue-0);
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--temp-grey-blue-7);

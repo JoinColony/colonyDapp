@@ -10,13 +10,12 @@ import classNames from 'classnames';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
-import StakeExpenditureDialog from './StakeExpenditureDialog';
 import { Tooltip } from '~core/Popover';
-import { Stage } from './consts';
 import DeleteDraftDialog from './DeleteDraftDialog';
-import StageItem from './StageItem';
-
 import styles from './Stages.css';
+import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
+import StageItem from './StageItem';
+import { Stage } from './constants';
 
 const MSG = defineMessages({
   stages: {
@@ -176,6 +175,7 @@ const Stages = () => {
   const handleSaveDraft = () =>
     openDraftConfirmDialog({
       onClick: () => setActiveStateId(Stage.Draft),
+      isVotingExtensionEnabled: true,
     });
 
   const handleDeleteDraft = () =>
@@ -299,7 +299,10 @@ const Stages = () => {
                   </div>
                 </Tooltip>
               </span>
-              <Button onClick={handleSaveDraft} style={buttonStyle}>
+              <Button
+                onClick={handleSaveDraft}
+                style={{ height: styles.buttonHeight }}
+              >
                 <FormattedMessage {...MSG.submitDraft} />
               </Button>
             </>
