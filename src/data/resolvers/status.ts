@@ -88,8 +88,12 @@ export const statusResolvers = ({
     async isIPFSAlive() {
       try {
         if (!(isDev || process.env.DEV)) {
-          const res = await fetch(PINATA_GATEWAY);
-          return res.status === 200;
+          // This specific hash is taken from https://ipfs.github.io/public-gateway-checker/
+          const hashToCheck = `bafybeifx7yeb55armcsxwwitkymga5xf53dxiarykms3ygqic223w5sk3m`;
+          const hashString = 'Hello from IPFS Gateway Checker';
+          const res = await fetch(`${PINATA_GATEWAY}/${hashToCheck}`);
+          const text = await res.text();
+          return res.status === 200 && hashString === text.trim();
         }
         return true;
       } catch (error) {
