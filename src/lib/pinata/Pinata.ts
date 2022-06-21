@@ -1,15 +1,18 @@
 import { log } from '~utils/debug';
 
+import PinataCache from './PinataCache';
+
 import {
   PINATA_API_KEY,
   PINATA_API_SECRET,
-  PINATA_GATEWAY,
   PINATA_ENDPOINT,
   JSON_MIME_TYPE,
 } from './constants';
 
 class Pinata {
   hasApiAccess: boolean;
+
+  cache: PinataCache = new PinataCache();
 
   constructor() {
     this.hasApiAccess = !!(PINATA_API_KEY && PINATA_API_SECRET);
@@ -18,21 +21,20 @@ class Pinata {
   /**
    * Return a JSON string from IPFS using the Pinata.cloud gateway
    */
-  // eslint-disable-next-line class-methods-use-this
   async getJSON(hash: string): Promise<string | null> {
     let responseData: string | undefined;
     try {
       if (!hash) {
         throw new Error(`IPFS hash was not provided: ${hash}`);
       }
-      const response = await fetch(`${PINATA_GATEWAY}/${hash}`);
-      responseData = await response.text();
+      const response = await this.cache.getCacheObject(hash);
+      responseData = await response?.text();
       if (!responseData || typeof responseData !== 'string') {
         throw new Error(`Malformed IPFS data fetched: ${responseData}`);
       }
       return responseData;
     } catch (error) {
-      log.verbose('Could not get IPFS hash from Pinata:', hash);
+      log.verbose('Could not get IPFS hash from Pinata Gateway:', hash);
       log.verbose(error);
       return null;
     }
@@ -84,14 +86,15 @@ class Pinata {
       responseData = postResponse?.IpfsHash;
       if (!responseData) {
         throw new Error(
-          `Failed upload the data to IPFS using Pinata: ${JSON.stringify(
+          `Failed upload the data to IPFS using Pinata API: ${JSON.stringify(
             postResponse,
           )}`,
         );
       }
+      await this.cache.setCacheObject(responseData, response);
       return responseData;
     } catch (error) {
-      log.verbose('Could not save data to IPFS using Pinata:', data);
+      log.verbose('Could not save data to IPFS using Pinata API:', data);
       log.verbose(error);
       return null;
     }
