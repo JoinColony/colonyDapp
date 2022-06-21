@@ -178,7 +178,7 @@ const useEscrowFundsDialog = (colonyName: string) => {
           </FormSection>
         ),
       })),
-    [],
+    [formatMessage],
   );
 
   return {
