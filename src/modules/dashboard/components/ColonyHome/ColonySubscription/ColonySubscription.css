@@ -68,4 +68,8 @@
     width: 100%;
     font-size: var(--size-small);
   }
+
+  .menuIcon svg {
+    transform: scale(1.75);
+  }
 }
