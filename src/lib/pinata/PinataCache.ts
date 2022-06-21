@@ -20,7 +20,7 @@ class PinataCache {
     /*
      * Make sure the cache is initialized
      */
-    this.init();
+    await this.init();
 
     const HASH_URL = `${PINATA_GATEWAY}/${hash}`;
     try {
@@ -53,7 +53,7 @@ class PinataCache {
     /*
      * Make sure the cache is initialized
      */
-    this.init();
+    await this.init();
 
     const HASH_URL = `${PINATA_GATEWAY}/${hash}`;
     try {
