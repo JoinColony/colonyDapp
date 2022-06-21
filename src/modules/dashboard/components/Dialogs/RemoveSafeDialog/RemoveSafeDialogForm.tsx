@@ -26,6 +26,10 @@ const MSG = defineMessages({
     id: 'dashboard.RemoveSafeDialog.RemoveSafeDialogForm.desc',
     defaultMessage: 'Select safe you wish to remove',
   },
+  emptySafeMsg: {
+    id: 'dashboard.RemoveSafeDialog.RemoveSafeDialogForm.emptySafeMsg',
+    defaultMessage: 'No Safes found to remove.',
+  },
 });
 
 interface Props {
@@ -57,22 +61,32 @@ const RemoveSafeDialogForm = ({
           className={styles.title}
         />
       </DialogSection>
-      <DialogSection appearance={{ theme: 'sidePadding' }}>
-        <div className={styles.description}>
-          <FormattedMessage {...MSG.desc} />
+      {!safeList.length ? (
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <div className={styles.emptySafeList}>
+            <FormattedMessage {...MSG.emptySafeMsg} />
+          </div>
+        </DialogSection>
+      ) : (
+        <div>
+          <DialogSection appearance={{ theme: 'sidePadding' }}>
+            <div className={styles.description}>
+              <FormattedMessage {...MSG.desc} />
+            </div>
+          </DialogSection>
+          <DialogSection appearance={{ theme: 'sidePadding' }}>
+            <div className={styles.content}>
+              {safeList.map((item) => (
+                <SafeListItem
+                  key={item.address}
+                  safe={item}
+                  isChecked={values.safeList.includes(item.address)}
+                />
+              ))}
+            </div>
+          </DialogSection>
         </div>
-      </DialogSection>
-      <DialogSection appearance={{ theme: 'sidePadding' }}>
-        <div className={styles.content}>
-          {safeList.map((item) => (
-            <SafeListItem
-              key={item.address}
-              safe={item}
-              isChecked={values.safeList.includes(item.address)}
-            />
-          ))}
-        </div>
-      </DialogSection>
+      )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
