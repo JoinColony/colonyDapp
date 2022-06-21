@@ -44,4 +44,12 @@
     align-items: center;
     width: 100%;
   }
+
+  .colonyTitle {
+    padding: 0;
+  }
+
+  .colonyAddress {
+    padding: 4px 0;
+  }
 }
