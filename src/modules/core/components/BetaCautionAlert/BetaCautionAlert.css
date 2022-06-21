@@ -1,5 +1,3 @@
-@value query700 from "~styles/queries.css";
-
 .container {
   display: flex;
   padding: 2px;
@@ -38,20 +36,4 @@
   width: 100%;
   font-size: var(--size-tiny);
   text-align: center;
-}
-
-@media screen and query700 {
-  .container {
-    height: 40px;
-    width: 120px;
-    left: 14px;
-  }
-
-  .pinkStripe {
-    height: 36px;
-  }
-
-  .betaText {
-    padding-top: 0;
-  }
 }
