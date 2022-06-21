@@ -20,7 +20,7 @@ import { getMainClasses } from '~utils/css';
 import styles from './Checkbox.css';
 
 interface Appearance {
-  theme: 'dark';
+  theme: 'dark' | 'pink';
   direction: 'vertical' | 'horizontal';
 }
 
