@@ -79,8 +79,6 @@ const NetworkStatus = () => {
   useEffect(() => {
     if (latestRpcBlockError) {
       setNetworkHealth(NetworkHealthType.Critical);
-      console.info(`Setting Network Status to Critical cause: `);
-      console.info(latestRpcBlockError);
     } else if (
       latestSubgraphBlockError ||
       !isReputationOracleAlive?.isReputationOracleAlive ||
@@ -92,30 +90,9 @@ const NetworkStatus = () => {
           latestSubgraphBlock.latestSubgraphBlock + subgraphRpcDiff)
     ) {
       setNetworkHealth(NetworkHealthType.Poor);
-      console.info(`Setting Network Status to Poor cause: `);
-      console.info([
-        latestRpcBlockError,
-        isReputationOracleAlive,
-        isColonyServerAlive,
-        ipfsLivenessData,
-        latestRpcBlock,
-        latestSubgraphBlock,
-        latestSubgraphBlockError,
-      ]);
     } else {
       // If everything is okay, set health to healthy (to correct for the previous state)
       setNetworkHealth(NetworkHealthType.Healthy);
-
-      console.info(`Setting Network Status to Healthy cause: `);
-      console.info([
-        latestRpcBlockError,
-        isReputationOracleAlive,
-        isColonyServerAlive,
-        ipfsLivenessData,
-        latestRpcBlock,
-        latestSubgraphBlock,
-        latestSubgraphBlockError,
-      ]);
     }
   }, [
     latestRpcBlockError,
