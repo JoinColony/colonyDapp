@@ -1,3 +1,6 @@
+@value secondaryPadding700: 20px;
+@value query700 from "~styles/queries.css";
+
 .title {
   display: flex;
   align-items: center;
@@ -105,4 +108,16 @@
 
 .tooltip {
   max-width: 200px;
+}
+
+@media screen and query700 {
+  .main {
+    padding-left: secondaryPadding700;
+    padding-right: calc(secondaryPadding700 - 10px);
+  }
+
+  .main::after, .main:hover:not(.stateDisabled)::before {
+    right: 20px;
+    left: 20px;
+  }
 }

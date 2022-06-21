@@ -1,6 +1,8 @@
 @value primaryPadding: 60px;
 @value secondaryPadding: 40px;
 
+@value query700 from "~styles/queries.css";
+
 .content {
   padding-bottom: primaryPadding;
 }
@@ -37,4 +39,23 @@
 
 .backButton svg {
   fill: color-mod(var(--dark) alpha(65%));
+}
+
+@media screen and query700 {
+  .header {
+    padding-top: secondaryPadding;
+  }
+
+  .header::after {
+    right: 20px;
+    left: 20px;
+  }
+
+  .content {
+    padding-bottom: secondaryPadding;
+  }
+
+  .backButton {
+    margin-left: 12px;
+  }
 }
