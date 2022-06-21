@@ -87,7 +87,7 @@ const ColonySubscription = ({
       )}
       {!isSubscribed && !username && (
         <Link
-          className={`${styles.createUserRedirect}`}
+          className={styles.createUserRedirect}
           to={{
             pathname: CREATE_USER_ROUTE,
             state: { colonyURL: `/colony/${colonyName}` },
