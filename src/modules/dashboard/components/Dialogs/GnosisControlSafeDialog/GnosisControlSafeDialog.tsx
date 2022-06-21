@@ -11,6 +11,19 @@ import GnosisControlSafeForm from './GnosisControlSafeForm';
 
 const displayName = 'dashboard.GnosisControlSafeDialog';
 
+const safes = [
+  {
+    name: 'All Saints',
+    address: '0x3a157280ca91bB49dAe3D1619C55Da7F9D4438c2',
+    chain: 'Gnosis Chain',
+  },
+  {
+    name: '(Mainnet)',
+    address: '0x3a157280ca91bB49dAe3D1619C55Da7F9D4438c3',
+    chain: 'Mainnet',
+  },
+];
+
 export interface FormValues {
   safeType: any;
   transactionType: any;
@@ -39,6 +52,7 @@ const GnosisControlSafeDialog = ({
             {...formValues}
             back={callStep && prevStep ? () => callStep(prevStep) : undefined}
             colony={colony}
+            safes={safes}
           />
         </Dialog>
       )}
