@@ -160,7 +160,7 @@ const GnosisControlSafeForm = ({
       </DialogSection>
       <DialogSection>
         <div className={styles.addTransaction}>
-          <AddItemButton text={MSG.buttonTransaction} />
+          <AddItemButton text={MSG.buttonTransaction} disabled />
         </div>
       </DialogSection>
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
