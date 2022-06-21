@@ -1,0 +1,26 @@
+.button > button {
+  padding: 0px 24px 1px 6px;
+  height: 44px;
+  border: none;
+  border-radius: 32px;
+  background-color: color-mod(var(--action-secondary) alpha(12%));
+  font-weight: var(--weight-normal);
+  color: var(--action-secondary);
+}
+
+.button div {
+  display: flex;
+  align-items: center;
+  height: 44px;
+}
+
+.button i {
+  margin-right: 10px;
+  height: 28px;
+  width: 28px;
+}
+
+.button svg {
+  fill: var(--action-secondary);
+  stroke: var(--action-secondary);
+}
