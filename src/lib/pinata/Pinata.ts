@@ -25,7 +25,8 @@ class Pinata {
     let responseData: string | undefined;
     try {
       if (!hash) {
-        throw new Error(`IPFS hash was not provided: ${hash}`);
+        // Silent error
+        return null;
       }
       const response = await this.cache.getCacheObject(hash);
       responseData = await response?.text();
