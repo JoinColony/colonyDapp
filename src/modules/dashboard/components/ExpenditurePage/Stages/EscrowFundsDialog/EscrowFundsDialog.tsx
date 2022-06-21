@@ -159,16 +159,18 @@ const EscrowFundsDialog = ({ cancel, onClick, close, colonyName }: Props) => {
                           <SpinnerLoader />
                         ) : (
                           colonyData && (
-                            <DomainDropdown
-                              colony={colonyData.processedColony}
-                              name="filteredDomainId"
-                              renderActiveOptionFn={renderActiveOption}
-                              filterOptionsFn={filterDomains}
-                              showAllDomains
-                              showDescription
-                              dataTest="colonyDomainSelector"
-                              itemDataTest="colonyDomainSelectorItem"
-                            />
+                            <span className={styles.teamSelectWrapper}>
+                              <DomainDropdown
+                                colony={colonyData.processedColony}
+                                name="filteredDomainId"
+                                renderActiveOptionFn={renderActiveOption}
+                                filterOptionsFn={filterDomains}
+                                showAllDomains
+                                showDescription
+                                dataTest="colonyDomainSelector"
+                                itemDataTest="colonyDomainSelectorItem"
+                              />
+                            </span>
                           )
                         )}
                       </div>
@@ -176,7 +178,7 @@ const EscrowFundsDialog = ({ cancel, onClick, close, colonyName }: Props) => {
                   </div>
                 </FormSection>
                 <FormSection appearance={{ border: 'top' }}>
-                  <div className={styles.sectionRow}>
+                  <div className={styles.sectionRow} id={styles.balanceRow}>
                     <InputLabel
                       label={MSG.allocationBalance}
                       appearance={{

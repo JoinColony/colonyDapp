@@ -35,6 +35,8 @@ export const requiredFundsMock = [
     id: '0x0000000000000000000000000000000000000000',
     name: 'xDAI',
     symbol: 'ETH',
+    isPartial: true,
+    total: [{ amount: '3015', domainId: 0 }],
   },
   {
     address: '0x3Fe98e1e643c3f78aCF72B7FC4A68B5A737CD274',
@@ -49,5 +51,6 @@ export const requiredFundsMock = [
     id: '0x3Fe98e1e643c3f78aCF72B7FC4A68B5A737CD274',
     name: 'CLNY',
     symbol: 'CLNY',
+    isPartial: false,
   },
 ];

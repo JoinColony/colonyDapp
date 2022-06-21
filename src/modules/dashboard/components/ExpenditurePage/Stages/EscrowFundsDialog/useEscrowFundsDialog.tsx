@@ -7,7 +7,7 @@ import React, {
   useRef,
 } from 'react';
 import classNames from 'classnames';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import {
   COLONY_TOTAL_BALANCE_DOMAIN_ID,
   defaultColor,
@@ -26,15 +26,24 @@ import TokenIcon from '~dashboard/HookedTokenIcon';
 import Numeral from '~core/Numeral';
 
 const MSG = defineMessages({
-  totalToFund: {
-    id: 'dashboard.Expenditures.Stages.escrowFundsDialog.totalToFund',
+  fullFund: {
+    id: 'dashboard.Expenditures.Stages.escrowFundsDialog.fullFund',
     defaultMessage: 'Total {name} to fund',
+  },
+  partialFund: {
+    id: 'dashboard.Expenditures.Stages.escrowFundsDialog.partialFund',
+    defaultMessage: '{name} to fund',
+  },
+  total: {
+    id: 'dashboard.Expenditures.Stages.escrowFundsDialog.total',
+    defaultMessage: 'Total',
   },
 });
 
 const useEscrowFundsDialog = (colonyName: string) => {
   const sectionRowRef = useRef<HTMLDivElement>(null);
   const [domainID, setDomainID] = useState<number>();
+  const { formatMessage } = useIntl();
   const { data: colonyData, loading } = useColonyFromNameQuery({
     variables: { address: '', name: colonyName },
   });
@@ -106,6 +115,7 @@ const useEscrowFundsDialog = (colonyName: string) => {
             <Numeral
               unit={getTokenDecimalsWithFallback(token.decimals)}
               value={token.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount}
+              className={styles.tokenNumeral}
             />
             <span className={styles.symbol}>{token.symbol}</span>
           </div>
@@ -122,10 +132,34 @@ const useEscrowFundsDialog = (colonyName: string) => {
         children: (
           <FormSection appearance={{ border: 'top' }}>
             <div className={styles.requiredFundsRow}>
-              <FormattedMessage
-                {...MSG.totalToFund}
-                values={{ name: token.name }}
-              />
+              <span>
+                {token.isPartial ? (
+                  <>
+                    <FormattedMessage
+                      {...MSG.partialFund}
+                      values={{ name: token.name }}
+                    />
+                    <span className={styles.tokenTotal}>
+                      {` (${formatMessage(MSG.total)} ${token.name} `}
+                      <Numeral
+                        className={styles.tokenNumeralTiny}
+                        unit={getTokenDecimalsWithFallback(token.decimals)}
+                        value={
+                          token.total?.[COLONY_TOTAL_BALANCE_DOMAIN_ID]
+                            .amount ?? 0
+                        }
+                      />
+                      )
+                    </span>
+                  </>
+                ) : (
+                  <FormattedMessage
+                    {...MSG.fullFund}
+                    values={{ name: token.name }}
+                  />
+                )}
+              </span>
+
               <span className={styles.icon}>
                 <TokenIcon
                   className={styles.tokenIcon}
@@ -137,8 +171,9 @@ const useEscrowFundsDialog = (colonyName: string) => {
               <Numeral
                 unit={getTokenDecimalsWithFallback(token.decimals)}
                 value={token.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount}
+                className={styles.tokenNumeralNormal}
               />
-              <span className={styles.symbol}>{token.symbol}</span>
+              <span className={styles.symbolNormal}>{token.symbol}</span>
             </div>
           </FormSection>
         ),

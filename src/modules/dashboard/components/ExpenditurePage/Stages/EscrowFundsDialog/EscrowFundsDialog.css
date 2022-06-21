@@ -4,6 +4,11 @@
 
 .dialogContainer section {
   padding: 0;
+  font-size: var(--size-smallish);
+}
+
+.dialogContainer h5 {
+  font-size: var(--size-smallish);
 }
 
 .title {
@@ -17,6 +22,7 @@
 
 .description {
   margin-bottom: 20px;
+  font-size: var(--size-normal);
 }
 
 .requiredFundsHeader {
@@ -35,6 +41,11 @@
 .sectionRow {
   composes: flexContainerRow flexAlignCenter flexJustifyBetween from '~styles/layout.css';
   min-height: 41px;
+}
+
+#balanceRow label:first-child {
+  align-self: flex-start;
+  margin-top: 15px;
 }
 
 .activeItem {
@@ -67,7 +78,7 @@
 .option {
   margin-bottom: 12px;
   padding: 0px;
-  font-size: var(--size-normal);
+  font-size: var(--size-smallish);
 }
 
 .firstOption {
@@ -83,6 +94,12 @@
   display: block;
 }
 
+.tokenTotal {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
 .tokenIcon {
   height: 18px;
   width: 18px;
@@ -90,4 +107,31 @@
 
 .symbol {
   margin-left: 4px;
+  font-size: var(--size-smallish);
+  color: var(--dark);
+}
+
+.symbolNormal {
+  composes: symbol;
+  font-size: var(--size-normal);
+}
+
+.tokenNumeral {
+  font-size: var(--size-smallish);
+  color: var(--dark);
+}
+
+.tokenNumeralTiny {
+  composes: tokenNumeral;
+  font-size: var(--size-tiny);
+}
+
+.tokenNumeralNormal {
+  composes: tokenNumeral;
+  font-size: var(--size-normal);
+}
+
+.teamSelectWrapper svg {
+  fill: var(--action-secondary);
+  stroke: var(--action-secondary);
 }
