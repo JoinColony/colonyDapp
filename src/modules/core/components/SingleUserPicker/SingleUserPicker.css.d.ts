@@ -17,3 +17,4 @@ export const errorHorizontal: string;
 export const omniContainer: string;
 export const arrowIcon: string;
 export const arrowIconActive: string;
+export const maskedAddress: string;
