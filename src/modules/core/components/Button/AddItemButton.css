@@ -1,26 +1,32 @@
-.button > button {
-  padding: 0px 24px 1px 6px;
+.main {
+  display: flex;
+  align-items: center;
+  padding: 0px 24px 0px 6px;
   height: 44px;
   border: none;
   border-radius: 32px;
   background-color: color-mod(var(--action-secondary) alpha(12%));
   font-weight: var(--weight-normal);
   color: var(--action-secondary);
+
+  &:hover {
+    cursor: pointer;
+  }
 }
 
-.button div {
-  display: flex;
-  align-items: center;
-  height: 44px;
+.main[disabled] {
+  background-color: color-mod(var(--text-disabled) alpha(12%));
+  color: var(--text-disabled);
 }
 
-.button i {
+.main i {
   margin-right: 10px;
-  height: 28px;
-  width: 28px;
 }
 
-.button svg {
+.main svg {
   fill: var(--action-secondary);
-  stroke: var(--action-secondary);
+}
+
+.main[disabled] svg {
+  fill: var(--text-disabled);
 }
