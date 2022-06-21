@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { useMediaQuery } from 'react-responsive';
 import classnames from 'classnames';
+import { useMediaQuery } from 'react-responsive';
 
 import { SpinnerLoader } from '~core/Preloaders';
 import Icon from '~core/Icon';
@@ -74,9 +74,7 @@ const ColonySubscription = ({
   );
 
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
-
   const isMobile = useMediaQuery({ query });
-
   return (
     <div className={styles.main}>
       {loadingSubscribe ||

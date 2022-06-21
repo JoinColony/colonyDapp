@@ -7,5 +7,4 @@ export const menuIconContainer: string;
 export const menuActive: string;
 export const menuIcon: string;
 export const colonyJoinBtn: string;
-export const joinButton: string;
 export const createUserRedirect: string;
