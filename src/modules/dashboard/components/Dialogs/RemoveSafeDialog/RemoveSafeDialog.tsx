@@ -29,27 +29,27 @@ const safes: Safe[] = [
     name: 'All Saints (Gnosis Chain)',
     address: '0x3a157280ca91bB49dAe3D1619C55Da7F9D4438c2',
   },
-  {
-    name: '(Mainnet)',
-    address: '0x4a157280ca91bB49dAe3D1619C55Da7F9D4438c3',
-  },
-  {
-    name: 'Big safe',
-    address: '0x5a157280ca91bB49dAe3D1619C55Da7F9D4438c2',
-  },
-  {
-    name: `Just a test with a very very long name,
-    hang on its even longer!!!!!!!!`,
-    address: '0x6a157280ca91bB49dAe3D1619C55Da7F9D4438c3',
-  },
-  {
-    name: 'blalabalabal',
-    address: '0x7a157280ca91bB49dAe3D1619C55Da7F9D4438c2',
-  },
-  {
-    name: 'final test',
-    address: '0x8a157280ca91bB49dAe3D1619C55Da7F9D4438c3',
-  },
+  // {
+  //   name: '(Mainnet)',
+  //   address: '0x4a157280ca91bB49dAe3D1619C55Da7F9D4438c3',
+  // },
+  // {
+  //   name: 'Big safe',
+  //   address: '0x5a157280ca91bB49dAe3D1619C55Da7F9D4438c2',
+  // },
+  // {
+  //   name: `Just a test with a very very long name,
+  //   hang on its even longer!!!!!!!!`,
+  //   address: '0x6a157280ca91bB49dAe3D1619C55Da7F9D4438c3',
+  // },
+  // {
+  //   name: 'blalabalabal',
+  //   address: '0x7a157280ca91bB49dAe3D1619C55Da7F9D4438c2',
+  // },
+  // {
+  //   name: 'final test',
+  //   address: '0x8a157280ca91bB49dAe3D1619C55Da7F9D4438c3',
+  // },
 ];
 
 const RemoveSafeDialog = ({
@@ -62,7 +62,8 @@ const RemoveSafeDialog = ({
   return (
     <ActionForm
       initialValues={{
-        safeList: [],
+        // if there's only 1 safe then that safe is already checked.
+        safeList: safes.length === 1 ? safes[0].address : [],
       }}
       // @TODO need to update action, in another PR
       submit={ActionTypes.COLONY_ACTION_RECOVERY}
