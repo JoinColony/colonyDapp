@@ -47,6 +47,32 @@
   background-color: var(--temp-grey-2);
 }
 
+.themePink:not(.stateIsChecked) .checkbox {
+  border: 1px solid var(--temp-grey-blue-9);
+  box-shadow: 0 0 0 3px  color-mod(var(--temp-grey-blue-9) alpha(25%));
+}
+
+.themePink:not(:active) + .checkbox {
+  box-shadow: 0 0 2px 1px var(--temp-grey-blue-9);
+}
+
+.themePink.delegate.not(:focus) + .checkbox {
+  box-shadow: 0 0 3px 1px  color-mod(var(--primary) alpha(25%));
+}
+
+.themePink:active + .checkbox {
+  box-shadow: 0 0 2px 1px var(--pink);
+}
+
+.themePink.stateIsChecked .checkbox {
+  border: 1px solid var(--pink);
+  box-shadow: 0 0 0 3px color-mod(var(--pink) alpha(25%));
+}
+
+.themePink.delegate:focus + .checkbox {
+  box-shadow: 0 0 0 3px color-mod(var(--pink) alpha(25%));
+}
+
 /* Direction */
 
 .directionHorizontal {
@@ -77,6 +103,14 @@
   bottom: 0;
   background-color: var(--primary);
   content: '';
+}
+
+.themePink.stateIsChecked .checkbox .checkmark::before {
+  background-color: var(--pink);
+}
+
+.themePink.stateIsChecked .checkbox .checkmark::after {
+  background-color: var(--pink);
 }
 
 .stateDisabled {
