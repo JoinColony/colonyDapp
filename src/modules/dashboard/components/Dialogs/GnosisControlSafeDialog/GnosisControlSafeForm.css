@@ -1,1 +1,25 @@
 @value wideButton: 160px;
+@value width: 419px;
+
+.safePicker {
+  margin: 20px 0;
+}
+
+.safePicker input {
+  width: width;
+  max-width: 419px;
+}
+
+.safePicker button {
+  max-width: width;
+  color: var(--dark);
+}
+
+.safePicker i {
+  left: 412px;
+}
+
+.addTransaction {
+  margin-bottom: 20px;
+  text-align: center;
+}
