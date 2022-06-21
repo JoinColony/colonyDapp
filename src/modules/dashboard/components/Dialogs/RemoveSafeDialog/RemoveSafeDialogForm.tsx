@@ -11,7 +11,10 @@ import { useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '~modules/transformers';
 import { canEnterRecoveryMode } from '~modules/users/checks';
 
+import SafeListItem from './SafeListItem';
+import { Safe } from './types';
 import { FormValues } from './RemoveSafeDialog';
+
 import styles from './RemoveSafeDialogForm.css';
 
 const MSG = defineMessages({
@@ -28,6 +31,7 @@ const MSG = defineMessages({
 interface Props {
   back: () => void;
   colony: Colony;
+  safeList: Safe[];
 }
 
 const RemoveSafeDialogForm = ({
@@ -35,13 +39,12 @@ const RemoveSafeDialogForm = ({
   colony,
   handleSubmit,
   isSubmitting,
+  values,
+  safeList,
 }: Props & FormikProps<FormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
-
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
-
   const hasRegisteredProfile = !!username && !ethereal;
-
   const userHasPermission =
     hasRegisteredProfile && canEnterRecoveryMode(allUserRoles);
 
@@ -54,13 +57,21 @@ const RemoveSafeDialogForm = ({
           className={styles.title}
         />
       </DialogSection>
-      <DialogSection>
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
         <div className={styles.description}>
           <FormattedMessage {...MSG.desc} />
         </div>
       </DialogSection>
-      <DialogSection>
-        <p>blabla</p>
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <div className={styles.content}>
+          {safeList.map((item) => (
+            <SafeListItem
+              key={item.address}
+              safe={item}
+              isChecked={values.safeList.includes(item.address)}
+            />
+          ))}
+        </div>
       </DialogSection>
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
@@ -69,11 +80,13 @@ const RemoveSafeDialogForm = ({
           text={{ id: 'button.back' }}
         />
         <Button
-          appearance={{ theme: 'primary', size: 'large' }}
+          appearance={{ theme: 'pink', size: 'large' }}
           text={{ id: 'button.confirm' }}
           onClick={() => handleSubmit()}
           loading={isSubmitting}
-          disabled={!userHasPermission || isSubmitting}
+          disabled={
+            !userHasPermission || isSubmitting || !values?.safeList.length
+          }
           data-test="removeSafeConfirmButton"
         />
       </DialogSection>
