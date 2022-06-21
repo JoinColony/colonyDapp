@@ -1,3 +1,5 @@
+export const secondaryPadding700: string;
+export const query700: string;
 export const title: string;
 export const description: string;
 export const main: string;
