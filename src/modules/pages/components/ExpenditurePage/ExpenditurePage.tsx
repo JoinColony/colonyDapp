@@ -6,16 +6,14 @@ import { nanoid } from 'nanoid';
 import { Form } from '~core/Fields';
 import Payments from '~dashboard/ExpenditurePage/Payments';
 import ExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings';
-
+import Stages from '~dashboard/ExpenditurePage/Stages';
 import { getMainClasses } from '~utils/css';
-
 import styles from './ExpenditurePage.css';
 import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
 import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import TitleDescriptionSection, {
   LockedTitleDescriptionSection,
 } from '~dashboard/ExpenditurePage/TitleDescriptionSection';
-import Button from '~core/Button';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 
 const displayName = 'pages.ExpenditurePage';
@@ -110,10 +108,7 @@ const ExpenditurePage = () => {
         <div className={styles.mainContainer}>
           <main className={styles.mainContent}>
             <TitleDescriptionSection />
-            {/* Button is temporary. It should be removed when PR with expenditure locking is merged */}
-            <Button type="submit" style={{ marginLeft: '25px' }}>
-              Lock values
-            </Button>
+            <Stages />
           </main>
         </div>
       </div>
@@ -135,6 +130,7 @@ const ExpenditurePage = () => {
             title={formValues?.title}
             description={formValues?.description}
           />
+          <Stages />
         </main>
       </div>
     </div>
