@@ -316,7 +316,7 @@ const Select = ({
           <div className={styles.selectInner}>
             <div className={styles.activeOption}>{activeOptionDisplay}</div>
             <Icon
-              name="caret-down-small"
+              name="caret-down"
               className={styles.selectIcon}
               title={MSG.expandIconHTMLTitle}
             />
