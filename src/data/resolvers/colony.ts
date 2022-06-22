@@ -141,13 +141,18 @@ export const getProcessedColony = async (
         avatar = await ipfs.getString(colonyAvatarHash);
         avatarObject = JSON.parse(avatar as string);
       } catch (error) {
-        log.verbose('Could not fetch colony avatar', avatar);
-        log.verbose(
-          `Could not parse IPFS avatar for colony:`,
-          ensName,
-          'with hash:',
-          colonyAvatarHash,
-        );
+        /*
+         * @NOTE Silent error if avatar hash is null
+         */
+        if (colonyAvatarHash) {
+          log.verbose('Could not fetch colony avatar', avatar);
+          log.verbose(
+            `Could not parse IPFS avatar for colony:`,
+            ensName,
+            'with hash:',
+            colonyAvatarHash,
+          );
+        }
       }
     }
   } catch (error) {
