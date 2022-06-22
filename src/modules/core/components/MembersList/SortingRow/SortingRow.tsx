@@ -63,7 +63,7 @@ const SortingRow = ({ handleSortingMethodChange, sortingMethod }: Props) => {
           })}
           name={`caret-${
             sortingMethod === SORTING_METHODS.BY_HIGHEST_ROLE_ID ? 'up' : 'down'
-          }-small`}
+          }`}
           title={MSG.permissions}
         />
       </Button>
@@ -78,7 +78,7 @@ const SortingRow = ({ handleSortingMethodChange, sortingMethod }: Props) => {
           })}
           name={`caret-${
             sortingMethod === SORTING_METHODS.BY_HIGHEST_REP ? 'up' : 'down'
-          }-small`}
+          }`}
           title={MSG.reputation}
         />
       </Button>
