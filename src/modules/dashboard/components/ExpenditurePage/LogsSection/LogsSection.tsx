@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import { defineMessages, FormattedMessage } from 'react-intl';
 import styles from './LogsSection.css';
-import { logs, colony } from './consts';
+import { logs, colony } from './constants';
 import Log from './Log';
 import { useLoggedInUser } from '~data/helpers';
 import Comment, { CommentInput } from '~core/Comment';

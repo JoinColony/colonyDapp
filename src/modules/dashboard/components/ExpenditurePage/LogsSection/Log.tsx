@@ -45,14 +45,14 @@ const Log = ({
             name: actionType,
             amount,
             reputation: (
-              <div className={styles.reputationStarWrapper}>
-                <div className={styles.reputationWrapper}>
+              <span className={styles.reputationStarWrapper}>
+                <span className={styles.reputationWrapper}>
                   <MemberReputation
                     walletAddress={user?.profile.walletAddress}
                     colonyAddress={colonyAddress}
                   />
-                </div>
-              </div>
+                </span>
+              </span>
             ),
             user: (
               <span className={styles.userDecoration}>
@@ -61,7 +61,7 @@ const Log = ({
             ),
             changes:
               changes?.map((change, index) => (
-                <div
+                <span
                   className={styles.change}
                   key={`${index}_${changes?.length}`}
                 >
@@ -79,17 +79,17 @@ const Log = ({
                   />
                   {index !== changes.length - 1 ? ',' : '.'}
                   {index === changes.length - 2 && ' and '}
-                </div>
+                </span>
               )) || '',
             funds:
               funds?.map((fund, index) => (
-                <div
+                <span
                   className={styles.change}
                   key={`${index}_${funds?.length}`}
                 >
                   {fund}
                   {index !== funds.length - 1 ? ',' : '.'}
-                </div>
+                </span>
               )) || '',
           }}
         />
