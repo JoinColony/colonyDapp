@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FormikProps } from 'formik';
 
@@ -7,13 +7,13 @@ import { DialogSection } from '~core/Dialog';
 import Heading from '~core/Heading';
 import ExternalLink from '~core/ExternalLink';
 import Button, { AddItemButton } from '~core/Button';
-import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
+import { SingleSafePicker, filterUserSelection } from '~core/SingleUserPicker';
 
 import { GNOSIS_SAFE_INTEGRATION_LEARN_MORE } from '~externalUrls';
 import { Colony } from '~data/index';
 import { Address } from '~types/index';
 
-import { FormValues } from './GnosisControlSafeDialog';
+import { FormValues, transactionOptions } from './GnosisControlSafeDialog';
 import styles from './GnosisControlSafeForm.css';
 import { Select } from '~core/Fields';
 
@@ -77,41 +77,13 @@ const renderAvatar = (address: string, item) => (
   />
 );
 
-const transactionOptions = [
-  {
-    value: 'transferFunds',
-    label: 'Transfer funds',
-  },
-  {
-    value: 'transferNft',
-    label: 'Transfer NFT',
-  },
-  {
-    value: 'contractInteraction',
-    label: 'Contract interaction',
-  },
-  {
-    value: 'rawTransaction',
-    label: 'Raw transaction',
-  },
-];
-
 const GnosisControlSafeForm = ({
   back,
   handleSubmit,
   safes,
+  isSubmitting,
+  isValid,
 }: Props & FormikProps<FormValues>) => {
-  const updatedSafes = useMemo(
-    () =>
-      safes.map((item) => ({
-        profile: {
-          displayName: `${item.name} (${item.chain})`,
-          walletAddress: item.address,
-        },
-      })),
-    [safes],
-  );
-
   return (
     <>
       <DialogSection>
@@ -134,15 +106,15 @@ const GnosisControlSafeForm = ({
       </DialogSection>
       <DialogSection>
         <div className={styles.safePicker}>
-          <SingleUserPicker
+          <SingleSafePicker
             appearance={{ width: 'wide' }}
             label={MSG.selectSafe}
-            name="safeType"
+            name="safe"
             filter={filterUserSelection}
             renderAvatar={renderAvatar}
-            data={updatedSafes}
+            data={safes}
             showMaskedAddress
-            // disabled={inputDisabled}
+            disabled={isSubmitting}
             placeholder={MSG.safePickerPlaceholder}
           />
         </div>
@@ -151,11 +123,10 @@ const GnosisControlSafeForm = ({
         <Select
           options={transactionOptions}
           label={MSG.transactionLabel}
-          // onChange={handleDomainChange}
           name="transactionType"
           appearance={{ theme: 'grey', width: 'fluid' }}
           placeholder={MSG.transactionPlaceholder}
-          // disabled={isSubmitting}
+          disabled={isSubmitting}
         />
       </DialogSection>
       <DialogSection>
@@ -173,8 +144,8 @@ const GnosisControlSafeForm = ({
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() => handleSubmit()}
           text={MSG.buttonInteract}
-          // loading={isSubmitting}
-          // disabled={!isValid || inputDisabled}
+          loading={isSubmitting}
+          disabled={!isValid || isSubmitting}
           style={{ width: styles.wideButton }}
         />
       </DialogSection>
