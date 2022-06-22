@@ -482,6 +482,7 @@ query ContributorsAndWatchers($colonyAddress: String!, $colonyName: String!, $do
         username
         walletAddress
       }
+      userReputation
     }
     watchers {
       id
