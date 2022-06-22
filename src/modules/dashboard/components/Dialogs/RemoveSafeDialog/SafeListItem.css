@@ -4,8 +4,9 @@
   align-items: center;
   margin-bottom: 8px;
   padding: 11px 11px;
-  border-radius: var(--radius-tiny);
+  height: 42px;
   border: 1px solid color-mod(var(--action-secondary) alpha(25%));
+  border-radius: var(--radius-tiny);
   background-color: color-mod(var(--action-secondary) alpha(5%));
 }
 
