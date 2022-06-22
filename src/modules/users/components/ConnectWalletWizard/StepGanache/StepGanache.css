@@ -18,3 +18,7 @@
   composes: content;
   margin-top: 30px;
 }
+
+.content button i {
+  min-width: 7px;
+}
