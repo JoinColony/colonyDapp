@@ -536,7 +536,7 @@ export const colonyResolvers = ({
           );
           return {
             ...contributor,
-            userReputation: contributorReputation,
+            userReputation: contributorReputation.toString(),
           };
         }),
       );
