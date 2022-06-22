@@ -133,3 +133,13 @@
 .tagWrapper > span {
   border-radius: 512px;
 }
+
+.claimButton {
+  composes: main themePrimary from '~core/Button/Button.css';
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 21px;
+  border-radius: 12px;
+  font-size: 11px;
+}

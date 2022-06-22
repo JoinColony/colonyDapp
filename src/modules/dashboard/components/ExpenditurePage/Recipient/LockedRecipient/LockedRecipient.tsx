@@ -4,14 +4,15 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { FormSection, InputLabel } from '~core/Fields';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
-import { Recipient as RecipientType } from '../Payments/types';
+import { Recipient as RecipientType } from '../../Payments/types';
 import TokenIcon from '~dashboard/HookedTokenIcon';
-import { tokensData as tokens } from './consts';
+import { tokensData as tokens } from '../constants';
 
 import styles from './LockedRecipient.css';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import Numeral from '~core/Numeral';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import Delay from '~dashboard/ExpenditurePage/Delay';
 
 const MSG = defineMessages({
   defaultRecipientLabel: {
@@ -134,8 +135,7 @@ const LockedRecipient = ({ recipient }: Props) => {
               </div>
 
               <div className={styles.delayControlsContainer}>
-                {delay?.amount}
-                {delay?.time}
+                <Delay amount={delay?.amount} time={delay?.time} />
               </div>
             </div>
           </FormSection>

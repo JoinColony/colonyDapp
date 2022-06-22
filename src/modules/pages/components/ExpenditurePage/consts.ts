@@ -66,7 +66,7 @@ export const mockFormValues = {
   recipients: [
     {
       delay: {
-        amount: '1231212',
+        amount: '2',
         time: 'hours',
       },
       isExpanded: true,

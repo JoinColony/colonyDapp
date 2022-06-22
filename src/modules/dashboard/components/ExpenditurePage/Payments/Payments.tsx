@@ -9,7 +9,7 @@ import Recipient from '../Recipient';
 import styles from './Payments.css';
 import Icon from '~core/Icon';
 import { FormSection } from '~core/Fields';
-import { newRecipient } from './consts';
+import { newRecipient } from './constants';
 import {
   useColonyFromNameQuery,
   useMembersSubscription,
@@ -81,11 +81,7 @@ const Payments = ({ sidebarRef }: Props) => {
           render={({ push, remove }) => (
             <>
               {recipients.map((recipient, index) => (
-                <div
-                  className={styles.singleRecipient}
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={index}
-                >
+                <div className={styles.singleRecipient} key={recipient.id}>
                   <FormSection appearance={{ border: 'bottom' }}>
                     <div className={styles.recipientLabel}>
                       {recipient.isExpanded ? (

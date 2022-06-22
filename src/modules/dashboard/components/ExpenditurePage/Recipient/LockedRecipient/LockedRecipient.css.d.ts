@@ -3,7 +3,6 @@ export const userContainer: string;
 export const userAvatarContainer: string;
 export const singleUserContainer: string;
 export const itemContainer: string;
-export const valueContainer: string;
 export const delayContainer: string;
 export const delayControlsContainer: string;
 export const tokenWrapper: string;

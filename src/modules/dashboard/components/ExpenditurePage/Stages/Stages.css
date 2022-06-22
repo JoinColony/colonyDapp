@@ -1,9 +1,13 @@
 @value buttonHeight: 29px;
 @value buttonWidth: 100px;
+@value iconColor: var(--temp-grey-blue-7);
 
 .mainContainer {
-  padding-top: 20px;
   min-width: 340px;
+}
+
+.stagesContainer {
+  padding-top: 20px;
 }
 
 .status {
@@ -35,18 +39,12 @@
   border-bottom: 1px solid var(--temp-grey-6);
 }
 
-.icon svg {
-  height: 18px;
-  width: 18px;
-  fill: var(--temp-grey-blue-7);
-}
-
 .buttonsContainer {
   display: flex;
   align-items: center;
 }
 
-.iconContainer {
+.buttonsContainer > span:not(:last-of-type) {
   margin-right: 20px;
 }
 
@@ -59,7 +57,7 @@
 }
 
 .buttonsContainer button {
-  margin-left: 4px;
+  margin-left: 30px;
 }
 
 .iconWrapper {

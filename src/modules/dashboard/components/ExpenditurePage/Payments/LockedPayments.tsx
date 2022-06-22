@@ -6,13 +6,14 @@ import { Recipient as RecipientType } from './types';
 import styles from './Payments.css';
 import Icon from '~core/Icon';
 import { FormSection } from '~core/Fields';
-import LockedRecipient from '../Recipient/LockedRecipient';
+import LockedRecipient from '../Recipient/LockedRecipient/LockedRecipient';
 import UserMention from '~core/UserMention';
-// import { RemainingTime } from '~dashboard/CoinMachine/RemainingDisplayWidgets';
-// import TimerValue from '~core/TimerValue';
-// import useSplitTime from '~utils/hooks/useSplitTime';
-import TimeRelative from '~core/TimeRelative';
 import Tag from '~core/Tag';
+import { Stage } from '../Stages/constants';
+import TimeRelativeShort from '../TimeRelativeShort/TimeRelativeShort';
+import Button from '~core/Button';
+import Delay from '../Delay';
+import { State } from '~pages/ExpenditurePage/ExpenditurePage';
 
 const MSG = defineMessages({
   payments: {
@@ -35,14 +36,32 @@ const MSG = defineMessages({
     id: 'dashboard.Expenditures.Payments.plusIconTitle',
     defaultMessage: 'Expand a single recipient settings',
   },
+  claim: {
+    id: 'dashboard.Expenditures.Payments.claim',
+    defaultMessage: 'Claim',
+  },
+  claimed: {
+    id: 'dashboard.Expenditures.Payments.claimed',
+    defaultMessage: 'Claimed',
+  },
+  claimNow: {
+    id: 'dashboard.Expenditures.Payments.claimNow',
+    defaultMessage: 'Claim now',
+  },
 });
 
+type ExtendedRecipient = RecipientType & {
+  claimDate: number;
+  isClaimable: boolean;
+};
+
 interface Props {
-  recipients?: RecipientType[];
+  recipients?: ExtendedRecipient[];
   editForm?: () => void;
+  activeState?: State;
 }
 
-const LockedPayments = ({ recipients, editForm }: Props) => {
+const LockedPayments = ({ recipients, editForm, activeState }: Props) => {
   const [expandedRecipients, setExpandedRecipients] = useState<
     number[] | undefined
   >(recipients?.map((_, idx) => idx));
@@ -58,20 +77,49 @@ const LockedPayments = ({ recipients, editForm }: Props) => {
     });
   }, []);
 
-  // const value = 1655714131040;
-  // const periodLength = 30;
+  const renderTag = useCallback(
+    (isClaimable: boolean, claimDate: number) => {
+      const hasPassed = claimDate < new Date().getTime();
 
-  // const { splitTime, timeLeft } = useSplitTime(
-  //   value / 1000,
-  //   true,
-  //   periodLength / 1000,
-  // );
-
-  // const showValueWarning =
-  // appearance.theme !== 'danger' &&
-  // typeof value === 'number' &&
-  // periodLength !== undefined &&
-  // (timeLeft * 1000 * 100) / periodLength <= 10;
+      if (isClaimable) {
+        return (
+          <Button
+            className={styles.claimButton}
+            onClick={activeState?.buttonAction}
+          >
+            <FormattedMessage {...MSG.claimNow} />
+          </Button>
+        );
+      }
+      if (hasPassed) {
+        return (
+          <div className={styles.tagWrapper}>
+            <Tag
+              appearance={{
+                theme: 'light',
+              }}
+            >
+              <FormattedMessage {...MSG.claimed} />
+            </Tag>
+          </div>
+        );
+      }
+      return (
+        <div className={styles.tagWrapper}>
+          <Tag
+            appearance={{
+              theme: 'golden',
+              colorSchema: 'fullColor',
+            }}
+          >
+            <FormattedMessage {...MSG.claim} />{' '}
+            <TimeRelativeShort value={new Date(claimDate)} formatting="short" />
+          </Tag>
+        </div>
+      );
+    },
+    [activeState],
+  );
 
   return (
     <div className={styles.paymentContainer}>
@@ -85,16 +133,12 @@ const LockedPayments = ({ recipients, editForm }: Props) => {
             onClick={editForm}
           />
         </div>
-        {recipients?.map((recipient, index) => {
+        {recipients?.map(({ isClaimable, claimDate, ...recipient }, index) => {
           const isOpen =
             expandedRecipients?.find((idx) => idx === index) !== undefined;
 
           return (
-            <div
-              className={styles.singleRecipient}
-              // eslint-disable-next-line react/no-array-index-key
-              key={index}
-            >
+            <div className={styles.singleRecipient} key={recipient.id}>
               <FormSection appearance={{ border: 'bottom' }}>
                 <div className={styles.recipientNameWrapper}>
                   <div className={styles.recipientName}>
@@ -121,17 +165,13 @@ const LockedPayments = ({ recipients, editForm }: Props) => {
                       username={recipient.recipient.username || ''}
                     />
                     {', '}
-                    {recipient?.delay?.amount}
-                    {recipient?.delay?.time}
+                    <Delay
+                      amount={recipient?.delay?.amount}
+                      time={recipient?.delay?.time}
+                    />
                   </div>
-                  <div className={styles.tagWrapper}>
-                    <Tag
-                      appearance={{ theme: 'golden', colorSchema: 'fullColor' }}
-                    >
-                      Claim{' '}
-                      <TimeRelative value={new Date(2022, 5, 20, 14, 0, 0)} />
-                    </Tag>
-                  </div>
+                  {activeState?.id === Stage.Released &&
+                    renderTag(isClaimable, claimDate)}
                 </div>
               </FormSection>
               <LockedRecipient
