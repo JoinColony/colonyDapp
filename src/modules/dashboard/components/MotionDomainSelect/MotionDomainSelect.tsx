@@ -86,6 +86,7 @@ const MotionDomainSelect = ({
           showAllDomains={false}
           showDescription={false}
           disabled={disabled}
+          dropdownSize="normal"
         />
       </div>
     </Form>

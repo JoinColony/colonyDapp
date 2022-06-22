@@ -249,7 +249,7 @@ const SingleUserPicker = ({
                 className={classnames(styles.arrowIcon, {
                   [styles.arrowIconActive]: omniPickerIsOpen,
                 })}
-                name="caret-down-small"
+                name="caret-down"
                 title={omniPickerIsOpen ? MSG.openedCaret : MSG.closedCaret}
               />
             )}
