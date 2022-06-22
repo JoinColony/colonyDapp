@@ -14,6 +14,8 @@ import { checkIfNetworkIsAllowed } from '~utils/networks';
 import styles from './SubscribedColoniesList.css';
 import { query700 as query } from '~styles/queries.css';
 
+import SubscribedColoniesDropdown from './SubscribedColoniesDropdown';
+
 const MSG = defineMessages({
   iconTitleCreateNewColony: {
     id: 'dashboard.SubscribedColoniesList.iconTitleCreateNewColony',
@@ -25,14 +27,41 @@ const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 
 const displayName = 'dashboard.SubscribedColoniesList';
 
-const SubscribedColoniesList = () => {
+interface ListProps {
+  path: string;
+}
+
+const SubscribedColoniesList = ({ path }: ListProps) => {
   const { walletAddress, networkId, ethereal } = useLoggedInUser();
   const { data, loading } = useUserColoniesQuery({
     variables: { address: walletAddress },
   });
 
+  const coloniesList = data?.user.processedColonies;
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
   const isMobile = useMediaQuery({ query });
+
+  const pathElements = path.split('/');
+  const activeColony = coloniesList?.filter((colony) => {
+    const colonyInPath = pathElements[2];
+    return colonyInPath === colony.colonyName;
+  })[0];
+
+  const AddColony = () => (
+    <div className={`${styles.item} ${styles.newColonyItem}`}>
+      <NavLink
+        className={styles.itemLink}
+        to={CREATE_COLONY_ROUTE}
+        data-test="createColony"
+      >
+        <Icon
+          className={styles.newColonyIcon}
+          name="circle-plus"
+          title={MSG.iconTitleCreateNewColony}
+        />
+      </NavLink>
+    </div>
+  );
 
   return (
     <div className={styles.main}>
@@ -42,8 +71,19 @@ const SubscribedColoniesList = () => {
             <SpinnerLoader appearance={{ size: 'medium' }} />
           </div>
         )}
-        {!loading &&
-          data?.user?.processedColonies.map((colony) => {
+        {!loading && isMobile ? (
+          <>
+            {coloniesList?.length ? (
+              <SubscribedColoniesDropdown
+                activeColony={activeColony}
+                coloniesList={coloniesList}
+              />
+            ) : (
+              (ethereal || isNetworkAllowed) && <AddColony />
+            )}
+          </>
+        ) : (
+          coloniesList?.map((colony) => {
             const { colonyAddress, colonyName } = colony as {
               colonyAddress: string;
               colonyName: string;
@@ -66,23 +106,10 @@ const SubscribedColoniesList = () => {
                 </NavLink>
               </div>
             );
-          })}
+          })
+        )}
       </div>
-      {(ethereal || isNetworkAllowed) && (
-        <div className={`${styles.item} ${styles.newColonyItem}`}>
-          <NavLink
-            className={styles.itemLink}
-            to={CREATE_COLONY_ROUTE}
-            data-test="createColony"
-          >
-            <Icon
-              className={styles.newColonyIcon}
-              name="circle-plus"
-              title={MSG.iconTitleCreateNewColony}
-            />
-          </NavLink>
-        </div>
-      )}
+      {(ethereal || isNetworkAllowed) && !isMobile && <AddColony />}
     </div>
   );
 };
