@@ -3,6 +3,7 @@ import { defineMessages } from 'react-intl';
 
 import { ALLDOMAINS_DOMAIN_SELECTION } from '~constants';
 import { Select, SelectOption } from '~core/Fields';
+import { DropdownSize } from '~core/Fields/Select/types';
 import { Colony } from '~data/index';
 
 import DomainDropdownItem from './DomainDropdownItem';
@@ -56,6 +57,9 @@ interface Props {
 
   /** Provides value for data-test prop in select items used on cypress testing */
   itemDataTest?: string;
+
+  /** Provides the option of setting a different dropdown size than the default one */
+  dropdownSize?: DropdownSize;
 }
 
 const displayName = 'DomainDropdown';
@@ -74,6 +78,7 @@ const DomainDropdown = ({
   disabled = false,
   dataTest,
   itemDataTest,
+  dropdownSize = 'mediumLarge',
 }: Props) => {
   const handleSubmit = useCallback(
     (domainId: number) => {
@@ -148,7 +153,7 @@ const DomainDropdown = ({
     <Select
       appearance={{
         borderedOptions: 'true',
-        size: 'mediumLarge',
+        size: dropdownSize,
         theme: 'alt',
         width: 'content',
       }}
