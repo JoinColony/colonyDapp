@@ -6,12 +6,13 @@ import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
 import { Recipient as RecipientType } from '../Payments/types';
 import TokenIcon from '~dashboard/HookedTokenIcon';
-import { tokensData as tokens } from './consts';
+import { tokensData as tokens } from './constants';
 
 import styles from './LockedRecipient.css';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import Numeral from '~core/Numeral';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import Delay from '../Delay';
 
 const MSG = defineMessages({
   defaultRecipientLabel: {
@@ -67,14 +68,16 @@ interface Props {
 const LockedRecipient = ({ recipient }: Props) => {
   const {
     isExpanded,
-    recipient: { walletAddress, username },
+    recipient: {
+      profile: { walletAddress, username, displayName },
+    },
     delay,
   } = recipient;
 
   return (
     <div>
       {isExpanded && (
-        <>
+        <div className={styles.formContainer}>
           <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.userContainer}>
               <InputLabel
@@ -86,7 +89,7 @@ const LockedRecipient = ({ recipient }: Props) => {
               <div className={styles.userAvatarContainer}>
                 <UserAvatar address={walletAddress} size="xs" notSet={false} />
                 <div className={styles.userName}>
-                  <UserMention username={username || ''} />
+                  <UserMention username={username || displayName || ''} />
                 </div>
               </div>
             </div>
@@ -134,12 +137,11 @@ const LockedRecipient = ({ recipient }: Props) => {
               </div>
 
               <div className={styles.delayControlsContainer}>
-                {delay?.amount}
-                {delay?.time}
+                <Delay amount={delay?.amount} time={delay?.time} />
               </div>
             </div>
           </FormSection>
-        </>
+        </div>
       )}
     </div>
   );

@@ -1,5 +1,9 @@
 .container {
-  padding: 74px 25px;
+  padding: 69px 25px 74px;
+}
+
+.lockedSectionContainer {
+  padding: 76px 25px 74px;
 }
 
 .number {

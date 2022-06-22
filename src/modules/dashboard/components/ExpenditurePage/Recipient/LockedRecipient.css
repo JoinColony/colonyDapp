@@ -18,7 +18,10 @@
   display: flex;
 }
 
-/* checke it */
+.formContainer {
+  margin-bottom: 36px;
+  border-top: 1px solid var(--grey-blue-0);
+}
 
 .singleUserContainer {
   padding: 6px 0;
@@ -29,10 +32,6 @@
   align-items: flex-start;
   justify-content: space-between;
   padding: 15px 0;
-}
-
-.valueContainer:not(:first-of-type) {
-  /* padding-top: 20px; */
 }
 
 .delayContainer {

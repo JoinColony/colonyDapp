@@ -18,15 +18,11 @@
 }
 
 .sidebar {
-  height: 100px;
+  height: 600px;
   min-height: calc(100vh - navBarHeight);
   width: sidebarWidth;
   overflow-y: auto;
   background-color: var(--grey-blue-3);
-}
-
-.sidebar::-webkit-scrollbar {
-  display: none;
 }
 
 .form {

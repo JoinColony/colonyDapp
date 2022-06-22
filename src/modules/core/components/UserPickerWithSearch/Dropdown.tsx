@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import * as ReactDOM from 'react-dom';
 
+import styles from './Dropdown.css';
+
 interface Props {
   element: HTMLDivElement | null;
   scrollContainer?: Window | HTMLElement | null;
@@ -37,11 +39,10 @@ const Dropdown = ({ element, scrollContainer = window, children }: Props) => {
   return element
     ? ReactDOM.createPortal(
         <div
+          className={styles.dropdown}
           style={{
-            position: 'absolute',
             top: posTop,
             left,
-            width: '332px',
           }}
         >
           {children}

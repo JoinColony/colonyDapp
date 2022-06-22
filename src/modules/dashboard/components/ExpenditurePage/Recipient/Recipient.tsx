@@ -1,6 +1,9 @@
 import { FieldArray, useField, useFormikContext } from 'formik';
+import { nanoid } from 'nanoid';
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import classNames from 'classnames';
+
 import Button from '~core/Button';
 import {
   FormSection,
@@ -18,7 +21,7 @@ import UserPickerWithSearch from '~core/UserPickerWithSearch';
 import { AnyUser } from '~data/index';
 import { Address } from '~types/index';
 import { Recipient as RecipientType } from '../Payments/types';
-import { tokensData } from './consts';
+import { tokensData } from './constants';
 
 import styles from './Recipient.css';
 
@@ -41,9 +44,7 @@ const MSG = defineMessages({
   },
   tooltipMessageDescription: {
     id: 'dashboard.Expenditures.Recipient.tooltipMessageDescription',
-    defaultMessage:
-      // eslint-disable-next-line max-len
-      'F.ex. once the work is finished, recipient has to wait before funds can be claimed.',
+    defaultMessage: `F.ex. once the work is finished, recipient has to wait before funds can be claimed.`,
   },
   addTokenText: {
     id: 'dashboard.Expenditures.Recipient.addTokenText',
@@ -79,9 +80,11 @@ interface Props {
   index: number;
   subscribedUsers: AnyUser[];
   sidebarRef: HTMLElement | null;
+  isLast?: boolean;
 }
 
-const newToken = {
+export const newToken = {
+  id: nanoid(),
   amount: undefined,
   tokenAddress: undefined,
 };
@@ -91,6 +94,7 @@ const Recipient = ({
   index,
   subscribedUsers,
   sidebarRef,
+  isLast,
 }: Props) => {
   const { setFieldValue } = useFormikContext();
   const { isExpanded, value: tokens } = recipient;
@@ -103,7 +107,12 @@ const Recipient = ({
   return (
     <div className={styles.container}>
       {isExpanded && (
-        <>
+        <div
+          className={classNames(
+            styles.formContainer,
+            !isLast && styles.marginBottom,
+          )}
+        >
           <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.singleUserContainer}>
               <UserPickerWithSearch
@@ -124,7 +133,7 @@ const Recipient = ({
             render={(arrayHelpers) => (
               <FormSection appearance={{ border: 'bottom' }}>
                 {tokens?.map((token, idx) => (
-                  <div className={styles.valueContainer} key={idx}>
+                  <div className={styles.valueContainer} key={token.id}>
                     <div className={styles.inputContainer}>
                       <InputLabel label={MSG.defaultValueLabel} />
                       <Input
@@ -137,8 +146,6 @@ const Recipient = ({
                         placeholder="Not set"
                         formattingOptions={{
                           numeral: true,
-                          // @ts-ignore
-                          tailPrefix: true,
                           numeralDecimalScale: 10,
                         }}
                         maxButtonParams={{
@@ -181,9 +188,11 @@ const Recipient = ({
                       {tokens.length === idx + 1 && (
                         <Button
                           type="button"
-                          onClick={() => arrayHelpers.push(newToken)}
+                          onClick={() =>
+                            arrayHelpers.push({ ...newToken, id: nanoid() })
+                          }
                           appearance={{ theme: 'blue' }}
-                          style={{ margin: '7px 0' }}
+                          style={{ margin: styles.buttonMargin }}
                         >
                           <FormattedMessage {...MSG.addTokenText} />
                         </Button>
@@ -258,7 +267,7 @@ const Recipient = ({
               <div className={styles.error}>{timeError}</div>
             )}
           </FormSection>
-        </>
+        </div>
       )}
     </div>
   );

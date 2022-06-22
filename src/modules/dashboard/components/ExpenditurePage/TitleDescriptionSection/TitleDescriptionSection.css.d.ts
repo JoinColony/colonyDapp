@@ -1,4 +1,5 @@
 export const container: string;
+export const lockedSectionContainer: string;
 export const number: string;
 export const title: string;
 export const titleContainer: string;

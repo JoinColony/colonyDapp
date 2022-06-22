@@ -1,6 +1,9 @@
+import { newToken } from '../Recipient/Recipient';
+
 export const newRecipient = {
+  id: undefined,
   recipient: undefined,
-  value: [{ amount: undefined, tokenAddress: undefined }],
+  value: [newToken],
   delay: undefined,
   isExpanded: true,
 };

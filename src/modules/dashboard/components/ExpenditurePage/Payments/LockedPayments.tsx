@@ -1,13 +1,14 @@
 import React, { useCallback, useState } from 'react';
-
+import classNames from 'classnames';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { Recipient as RecipientType } from './types';
 
+import { Recipient as RecipientType } from './types';
 import styles from './Payments.css';
 import Icon from '~core/Icon';
 import { FormSection } from '~core/Fields';
 import LockedRecipient from '../Recipient/LockedRecipient';
 import UserMention from '~core/UserMention';
+import Delay from '../Delay';
 
 const MSG = defineMessages({
   payments: {
@@ -70,36 +71,40 @@ const LockedPayments = ({ recipients, editForm }: Props) => {
             expandedRecipients?.find((idx) => idx === index) !== undefined;
 
           return (
-            <div
-              className={styles.singleRecipient}
-              // eslint-disable-next-line react/no-array-index-key
-              key={index}
-            >
-              <FormSection appearance={{ border: 'bottom' }}>
+            <div className={styles.singleRecipient} key={recipient.id}>
+              <FormSection>
                 <div className={styles.recipientName}>
                   {isOpen ? (
                     <>
                       <Icon
-                        name="minus"
+                        name="collapse"
                         onClick={() => onToggleButtonClick(index)}
                         className={styles.signWrapper}
                         title={MSG.minusIconTitle}
                       />
-                      <div className={styles.verticalDivider} />
+                      <div className={classNames(styles.verticalDivider)} />
                     </>
                   ) : (
                     <Icon
-                      name="plus"
+                      name="expand"
                       onClick={() => onToggleButtonClick(index)}
                       className={styles.signWrapper}
                       title={MSG.plusIconTitle}
                     />
                   )}
                   {index + 1}:{' '}
-                  <UserMention username={recipient.recipient.username || ''} />
+                  <UserMention
+                    username={
+                      recipient.recipient.profile.username ||
+                      recipient.recipient.profile.displayName ||
+                      ''
+                    }
+                  />
                   {', '}
-                  {recipient?.delay?.amount}
-                  {recipient?.delay?.time}
+                  <Delay
+                    amount={recipient?.delay?.amount}
+                    time={recipient?.delay?.time}
+                  />
                 </div>
               </FormSection>
               <LockedRecipient
