@@ -48,12 +48,12 @@
 }
 
 .themePink:not(.stateIsChecked) .checkbox {
-  border: 1px solid var(--temp-grey-blue-9);
-  box-shadow: 0 0 0 3px  color-mod(var(--temp-grey-blue-9) alpha(25%));
+  border: 1px solid var(--temp-grey-blue-4);
+  box-shadow: 0 0 0 3px  color-mod(var(--temp-grey-blue-4) alpha(25%));
 }
 
-.themePink.delegate.not(:focus) + .checkbox {
-  box-shadow: 0 0 0 3px color-mod(var(--temp-grey-blue-9) alpha(25%));
+.themePink.delegate:not(:focus) + .checkbox {
+  box-shadow: 0 0 0 3px color-mod(var(--temp-grey-blue-4) alpha(25%));
 }
 
 .themePink.stateIsChecked .checkbox {
