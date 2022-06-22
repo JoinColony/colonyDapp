@@ -68,7 +68,9 @@ interface Props {
 const LockedRecipient = ({ recipient }: Props) => {
   const {
     isExpanded,
-    recipient: { walletAddress, username },
+    recipient: {
+      profile: { walletAddress, displayName, username },
+    },
     delay,
   } = recipient;
 
@@ -87,7 +89,7 @@ const LockedRecipient = ({ recipient }: Props) => {
               <div className={styles.userAvatarContainer}>
                 <UserAvatar address={walletAddress} size="xs" notSet={false} />
                 <div className={styles.userName}>
-                  <UserMention username={username || ''} />
+                  <UserMention username={displayName || username || ''} />
                 </div>
               </div>
             </div>

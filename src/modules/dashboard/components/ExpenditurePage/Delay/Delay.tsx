@@ -11,7 +11,7 @@ const Delay = ({ amount, time }: Props) => {
       case 'hours':
         return 'h';
       case 'days':
-        return 'd';
+        return 'day';
       case 'months':
         return 'mth';
       default:

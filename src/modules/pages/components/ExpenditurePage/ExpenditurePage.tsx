@@ -252,7 +252,7 @@ const ExpenditurePage = () => {
           // temporary value, recipients will be fetched from backed
           recipients={formValues?.recipients?.map((recipent) => ({
             ...recipent,
-            claimDate: new Date(2022, 5, 24).getTime(),
+            claimDate: new Date(2022, 5, 25).getTime(),
             isClaimable: false,
           }))}
           editForm={() => setFormEditable(true)}
