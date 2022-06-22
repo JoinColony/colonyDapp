@@ -50,9 +50,6 @@ import {
   BannedUsersQuery,
   BannedUsersQueryVariables,
   BannedUsersDocument,
-  // VerifiedUsersQuery,
-  // VerifiedUsersQueryVariables,
-  // VerifiedUsersDocument,
 } from '~data/index';
 
 import { createAddress } from '~utils/web3';
@@ -69,6 +66,7 @@ import {
   getPayoutClaimedTransfers,
   getColonyUnclaimedTransfers,
 } from './transactions';
+import { getUserReputation } from './user';
 
 export const getLatestSubgraphBlock = async (
   apolloClient: ApolloClient<object>,
@@ -528,7 +526,22 @@ export const colonyResolvers = ({
         });
       });
 
-      return { contributors, watchers };
+      const contributorsWithReputation = await Promise.all(
+        contributors.map(async (contributor) => {
+          const contributorReputation = await getUserReputation(
+            colonyManager,
+            contributor.profile.walletAddress,
+            colonyAddress,
+            domainId,
+          );
+          return {
+            ...contributor,
+            userReputation: contributorReputation,
+          };
+        }),
+      );
+
+      return { contributors: contributorsWithReputation, watchers };
     },
     async colonyDomain(_, { colonyAddress, domainId }) {
       const { data } = await apolloClient.query<

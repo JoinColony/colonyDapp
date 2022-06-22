@@ -257,6 +257,7 @@ export default gql`
     banned: Boolean!
     profile: UserProfile!
     isWhitelisted: Boolean!
+    userReputation: String!
   }
 
   type ColonyWatcher {
