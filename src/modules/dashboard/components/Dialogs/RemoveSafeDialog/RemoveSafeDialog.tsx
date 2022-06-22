@@ -3,6 +3,7 @@ import { FormikProps } from 'formik';
 
 import Dialog, { DialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
+import { Address } from '~types/index';
 
 import { Colony } from '~data/index';
 import { ActionTypes } from '~redux/index';
@@ -12,7 +13,7 @@ import { Safe } from './types';
 import DialogForm from './RemoveSafeDialogForm';
 
 export interface FormValues {
-  safeList: string[];
+  safeList: Address[];
 }
 
 interface CustomWizardDialogProps {
@@ -24,6 +25,7 @@ type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
 
 const displayName = 'dashboard.RemoveSafeDialog';
 
+// Mock data for testing
 const safes: Safe[] = [
   {
     name: 'All Saints (Gnosis Chain)',
@@ -63,7 +65,7 @@ const RemoveSafeDialog = ({
     <ActionForm
       initialValues={{
         // if there's only 1 safe then that safe is already checked.
-        safeList: safes.length === 1 ? safes[0].address : [],
+        safeList: safes.length === 1 ? [safes[0].address] : [],
       }}
       // @TODO need to update action, in another PR
       submit={ActionTypes.COLONY_ACTION_RECOVERY}
