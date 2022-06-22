@@ -13,7 +13,7 @@ interface Props {
   handleClick?: () => void;
 }
 
-const displayName = 'dashboard.DomainDropdown.AddItemButton';
+const displayName = 'Button.AddItemButton';
 
 const AddItemButton = ({ text, handleClick, disabled }: Props) => {
   return (
