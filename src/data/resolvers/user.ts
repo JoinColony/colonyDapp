@@ -35,7 +35,7 @@ import { parseSubgraphEvent } from '~utils/events';
 import { getToken } from './token';
 import { getProcessedColony } from './colony';
 
-const getUserReputation = async (
+export const getUserReputation = async (
   colonyManager: ColonyManager,
   address: Address,
   colonyAddress: Address,
