@@ -90,7 +90,7 @@ exports[`Select component Renders initial component 1`] = `
                     </span>
                   </div>
                   <Icon
-                    name="caret-down-small"
+                    name="caret-down"
                     title={
                       Object {
                         "defaultMessage": "expand",

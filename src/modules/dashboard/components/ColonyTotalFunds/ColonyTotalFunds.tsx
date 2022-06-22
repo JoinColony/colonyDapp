@@ -127,7 +127,7 @@ const ColonyTotalFunds = ({
               )}
             <Icon
               className={styles.caretIcon}
-              name="caret-down-small"
+              name="caret-down"
               title={MSG.tokenSelect}
             />
           </button>
