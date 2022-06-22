@@ -1,13 +1,9 @@
 import { useState, useMemo } from 'react';
 import { ColonyRole } from '@colony/colony-js';
 import Decimal from 'decimal.js';
+import { isEmpty } from 'lodash';
 
-import {
-  Colony,
-  ColonyWatcher,
-  ColonyContributor,
-  useUserReputationLazyQuery,
-} from '~data/index';
+import { ColonyWatcher, ColonyContributor } from '~data/index';
 
 export enum SORTING_METHODS {
   BY_HIGHEST_REP = 'BY_HIGHEST_REP',
@@ -19,21 +15,11 @@ export enum SORTING_METHODS {
 
 const useColonyMembersSorting = (
   members: ColonyWatcher[] | ColonyContributor[],
-  colony: Colony,
   isContributorsSection: boolean,
-  domainId: number,
 ) => {
   const [sortingMethod, setSortingMethod] = useState<SORTING_METHODS>(
     SORTING_METHODS.BY_HIGHEST_REP,
   );
-  const [
-    fetchUser1ReputationData,
-    { data: user1ReputationData },
-  ] = useUserReputationLazyQuery();
-  const [
-    fetchUser2ReputationData,
-    { data: user2ReputationData },
-  ] = useUserReputationLazyQuery();
 
   const sortedUsers = useMemo(() => {
     if (!isContributorsSection) {
@@ -41,51 +27,40 @@ const useColonyMembersSorting = (
     }
 
     return [...(members as ColonyContributor[])].sort((user1, user2) => {
-      const isSortingByRep =
-        sortingMethod === SORTING_METHODS.BY_HIGHEST_REP ||
-        sortingMethod === SORTING_METHODS.BY_LOWEST_REP;
       const user1Roles = [...user1.roles];
       const user2Roles = [...user2.roles];
 
-      if (isSortingByRep) {
-        if (!(user1ReputationData && user2ReputationData)) {
-          fetchUser1ReputationData({
-            variables: {
-              address: user1.profile.walletAddress,
-              colonyAddress: colony.colonyAddress,
-              domainId,
-              rootHash: null,
-            },
-          });
-          fetchUser2ReputationData({
-            variables: {
-              address: user2.profile.walletAddress,
-              colonyAddress: colony.colonyAddress,
-              domainId,
-              rootHash: null,
-            },
-          });
-        } else {
-          if (sortingMethod === SORTING_METHODS.BY_HIGHEST_REP) {
-            return new Decimal(user2ReputationData.userReputation)
-              .sub(user1ReputationData.userReputation)
-              .toNumber();
-          }
-          if (sortingMethod === SORTING_METHODS.BY_LOWEST_REP) {
-            return new Decimal(user1ReputationData.userReputation)
-              .sub(user2ReputationData.userReputation)
-              .toNumber();
-          }
-        }
-      } else if (sortingMethod === SORTING_METHODS.BY_HIGHEST_ROLE_ID) {
+      if (sortingMethod === SORTING_METHODS.BY_HIGHEST_REP) {
+        return new Decimal(user2.userReputation)
+          .sub(user1.userReputation)
+          .toNumber();
+      }
+      if (sortingMethod === SORTING_METHODS.BY_LOWEST_REP) {
+        return new Decimal(user1.userReputation)
+          .sub(user2.userReputation)
+          .toNumber();
+      }
+
+      if (isEmpty(user1Roles) && isEmpty(user2Roles)) {
+        return 0;
+      }
+      if (isEmpty(user1Roles)) {
+        return 1;
+      }
+      if (isEmpty(user2Roles)) {
+        return -1;
+      }
+
+      if (sortingMethod === SORTING_METHODS.BY_HIGHEST_ROLE_ID) {
         user1Roles.sort(
           (roleA: ColonyRole, roleB: ColonyRole) => roleB - roleA,
         );
         user2Roles.sort(
           (roleA: ColonyRole, roleB: ColonyRole) => roleB - roleA,
         );
-        return user1Roles[0] - user2Roles[0];
-      } else if (sortingMethod === SORTING_METHODS.BY_LOWEST_ROLE_ID) {
+        return user2Roles[0] - user1Roles[0];
+      }
+      if (sortingMethod === SORTING_METHODS.BY_LOWEST_ROLE_ID) {
         user1Roles.sort(
           (roleA: ColonyRole, roleB: ColonyRole) => roleA - roleB,
         );
@@ -97,17 +72,7 @@ const useColonyMembersSorting = (
 
       return 0;
     });
-  }, [
-    sortingMethod,
-    fetchUser1ReputationData,
-    fetchUser2ReputationData,
-    user1ReputationData,
-    user2ReputationData,
-    members,
-    colony,
-    domainId,
-    isContributorsSection,
-  ]);
+  }, [sortingMethod, members, isContributorsSection]);
 
   return {
     sortedMembers: sortedUsers,

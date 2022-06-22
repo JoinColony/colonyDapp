@@ -61,12 +61,7 @@ Props<U>) => {
     sortedMembers,
     sortingMethod,
     handleSortingMethodChange,
-  } = useColonyMembersSorting(
-    paginatedMembers,
-    colony,
-    isContributorsSection,
-    currentDomainId,
-  );
+  } = useColonyMembersSorting(paginatedMembers, isContributorsSection);
 
   return (
     <>
