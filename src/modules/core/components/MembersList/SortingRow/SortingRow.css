@@ -25,6 +25,7 @@
   fill: var(--temp-grey-blue-7);
 }
 
-.sortingButton:hover .sortingIcon {
+.sortingButton:hover .sortingIcon,
+.toggledIcon {
   fill: var(--colony-blue);
 }

@@ -48,8 +48,7 @@ const MembersSection = <U extends ColonyWatcher | ColonyContributor>({
   canAdministerComments,
   extraItemContent,
   isContributorsSection,
-}: // @NOTE Add another optional paramater called sortingParams/sortingFun to handle sorting
-Props<U>) => {
+}: Props<U>) => {
   const [dataPage, setDataPage] = useState<number>(1);
 
   const paginatedMembers = members.slice(0, ITEMS_PER_SECTION * dataPage);
