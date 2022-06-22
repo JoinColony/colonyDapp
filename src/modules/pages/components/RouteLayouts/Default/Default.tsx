@@ -40,7 +40,7 @@ const Default = ({
   const SubscribedColonies = () =>
     hasSubscribedColonies ? (
       <div className={styles.coloniesList}>
-        <SubscribedColoniesList />
+        <SubscribedColoniesList path={location.pathname} />
       </div>
     ) : null;
 
