@@ -20,11 +20,11 @@ import styles from './RemoveSafeDialogForm.css';
 const MSG = defineMessages({
   title: {
     id: 'dashboard.RemoveSafeDialog.RemoveSafeDialogForm.title',
-    defaultMessage: 'Remove safe',
+    defaultMessage: 'Remove Safe',
   },
   desc: {
     id: 'dashboard.RemoveSafeDialog.RemoveSafeDialogForm.desc',
-    defaultMessage: 'Select safe you wish to remove',
+    defaultMessage: 'Select Safe you wish to remove',
   },
   emptySafeMsg: {
     id: 'dashboard.RemoveSafeDialog.RemoveSafeDialogForm.emptySafeMsg',
@@ -80,7 +80,7 @@ const RemoveSafeDialogForm = ({
                 <SafeListItem
                   key={item.address}
                   safe={item}
-                  isChecked={values.safeList.includes(item.address)}
+                  isChecked={values?.safeList?.includes(item.address)}
                 />
               ))}
             </div>
