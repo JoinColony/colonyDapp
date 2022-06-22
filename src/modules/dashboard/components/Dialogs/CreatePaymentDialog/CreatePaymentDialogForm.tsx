@@ -617,7 +617,7 @@ const CreatePaymentDialogForm = ({
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() => handleSubmit()}
-          text={{ id: 'button.confirm' }}
+          text={{ id: 'button.createMotion' }}
           loading={isSubmitting}
           /*
            * Disable Form submissions if either the form is invalid, or
