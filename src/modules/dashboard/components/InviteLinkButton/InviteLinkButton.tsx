@@ -3,7 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import copyToClipboard from 'copy-to-clipboard';
 
 import { Tooltip } from '~core/Popover';
-import Button, { ButtonAppearance } from '~core/Button';
+import Button, { Appearance as ButtonAppearance } from '~core/Button';
 
 import styles from './styles.css';
 
