@@ -1,3 +1,6 @@
+@value queries: "~styles/queries.css";
+@value query700 from queries;
+
 .content {
   margin: 0 auto;
   width: 340px;
@@ -45,4 +48,14 @@
   padding: var(--pad-medium);
   border-radius: var(--radius-normal);
   background-color: var(--colony-white);
+}
+
+@media screen and query700 {
+  .content {
+    width: 100%;
+  }
+
+  .title {
+    text-align: center;
+  }
 }

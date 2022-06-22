@@ -31,6 +31,7 @@ import { SUPPORTED_NETWORKS } from '~constants';
 import { groupedTransactionsAndMessages } from '../../../core/selectors';
 
 import styles from './UserNavigation.css';
+import HamburgerMenu from '~core/HamburgerMenu/HamburgerMenu';
 
 const MSG = defineMessages({
   inboxTitle: {
@@ -116,139 +117,144 @@ const UserNavigation = () => {
   }, [userDataLoading, userLock, dispatch, ethereal]);
 
   return (
-    <div className={styles.main}>
-      {userCanNavigate && (
-        <div
-          className={`${styles.elementWrapper} ${styles.networkInfo}`}
-          title={
-            isNetworkAllowed
-              ? SUPPORTED_NETWORKS[networkId || 1].name
-              : undefined
-          }
-        >
-          {isNetworkAllowed && SUPPORTED_NETWORKS[networkId || 1].shortName}
-        </div>
-      )}
-      {!ethereal && !isNetworkAllowed && (
-        <div className={`${styles.elementWrapper} ${styles.wrongNetwork}`}>
-          <FormattedMessage {...MSG.wrongNetworkAlert} />
-        </div>
-      )}
-      {userCanNavigate && colonyData?.colonyAddress && (
-        <Tooltip
-          content={formatMessage(MSG.userReputationTooltip)}
-          placement="bottom-start"
-          popperOptions={{
-            modifiers: [
-              {
-                name: 'offset',
-                options: {
-                  offset: [0, 8],
-                },
-              },
-            ],
-          }}
-        >
-          <div className={`${styles.elementWrapper} ${styles.reputation}`}>
-            <MemberReputation
-              walletAddress={walletAddress}
-              colonyAddress={colonyData?.colonyAddress}
-              showIconTitle={false}
-            />
+    <>
+      <div className={styles.main}>
+        {userCanNavigate && (
+          <div
+            className={`${styles.elementWrapper} ${styles.networkInfo}`}
+            title={
+              isNetworkAllowed
+                ? SUPPORTED_NETWORKS[networkId || 1].name
+                : undefined
+            }
+          >
+            {isNetworkAllowed && SUPPORTED_NETWORKS[networkId || 1].shortName}
           </div>
-        </Tooltip>
-      )}
-      {ethereal && (
-        <ConnectWalletPopover>
-          {({ isOpen, toggle, ref }) => (
-            <button
-              type="button"
-              className={
-                isOpen
-                  ? styles.connectWalletButtonActive
-                  : styles.connectWalletButton
-              }
-              ref={ref}
-              onClick={toggle}
-            >
-              <FormattedMessage {...MSG.connectWallet} />
-            </button>
-          )}
-        </ConnectWalletPopover>
-      )}
-      {previousWalletConnected && attemptingAutoLogin && userDataLoading ? (
-        <div className={styles.walletAutoLogin}>
-          <MiniSpinnerLoader title={MSG.walletAutologin} />
-        </div>
-      ) : (
-        <div className={`${styles.elementWrapper} ${styles.walletWrapper}`}>
-          {userCanNavigate && nativeToken && userLock && (
-            <UserTokenActivationButton
-              nativeToken={nativeToken}
-              userLock={userLock}
-              colony={colonyData?.processedColony}
-              walletAddress={walletAddress}
-              dataTest="tokenActivationButton"
-            />
-          )}
-          {userCanNavigate && (
-            <GasStationPopover
-              transactionAndMessageGroups={transactionAndMessageGroups}
-            >
-              {({ isOpen, toggle, ref }) => (
-                <>
-                  <button
-                    type="button"
-                    className={
-                      isOpen ? styles.walletAddressActive : styles.walletAddress
-                    }
-                    ref={ref}
-                    onClick={toggle}
-                    data-test="gasStationPopover"
-                  >
-                    <span>
-                      <MaskedAddress address={walletAddress} />
-                    </span>
-                  </button>
-                  {readyTransactions >= 1 && (
-                    <span className={styles.readyTransactionsCount}>
-                      <span>{readyTransactions}</span>
-                    </span>
-                  )}
-                </>
-              )}
-            </GasStationPopover>
-          )}
-        </div>
-      )}
-      {userCanNavigate && (
-        <InboxPopover notifications={notifications}>
-          {({ isOpen, toggle, ref }) => (
-            <button
-              type="button"
-              className={styles.notificationsButton}
-              ref={ref}
-              onClick={toggle}
-            >
-              <div
-                className={`${styles.notificationsIcon} ${
-                  isOpen ? styles.notificationsIconActive : ''
-                }`}
+        )}
+        {!ethereal && !isNetworkAllowed && (
+          <div className={`${styles.elementWrapper} ${styles.wrongNetwork}`}>
+            <FormattedMessage {...MSG.wrongNetworkAlert} />
+          </div>
+        )}
+        {userCanNavigate && colonyData?.colonyAddress && (
+          <Tooltip
+            content={formatMessage(MSG.userReputationTooltip)}
+            placement="bottom-start"
+            popperOptions={{
+              modifiers: [
+                {
+                  name: 'offset',
+                  options: {
+                    offset: [0, 8],
+                  },
+                },
+              ],
+            }}
+          >
+            <div className={`${styles.elementWrapper} ${styles.reputation}`}>
+              <MemberReputation
+                walletAddress={walletAddress}
+                colonyAddress={colonyData?.colonyAddress}
+                showIconTitle={false}
+              />
+            </div>
+          </Tooltip>
+        )}
+        {ethereal && (
+          <ConnectWalletPopover>
+            {({ isOpen, toggle, ref }) => (
+              <button
+                type="button"
+                className={
+                  isOpen
+                    ? styles.connectWalletButtonActive
+                    : styles.connectWalletButton
+                }
+                ref={ref}
+                onClick={toggle}
               >
-                <Icon name="envelope" title={MSG.inboxTitle} />
-                {hasUnreadNotifications && (
-                  <span className={styles.notificationsHighlight} />
+                <FormattedMessage {...MSG.connectWallet} />
+              </button>
+            )}
+          </ConnectWalletPopover>
+        )}
+        {previousWalletConnected && attemptingAutoLogin && userDataLoading ? (
+          <div className={styles.walletAutoLogin}>
+            <MiniSpinnerLoader title={MSG.walletAutologin} />
+          </div>
+        ) : (
+          <div className={`${styles.elementWrapper} ${styles.walletWrapper}`}>
+            {userCanNavigate && nativeToken && userLock && (
+              <UserTokenActivationButton
+                nativeToken={nativeToken}
+                userLock={userLock}
+                colony={colonyData?.processedColony}
+                walletAddress={walletAddress}
+                dataTest="tokenActivationButton"
+              />
+            )}
+            {userCanNavigate && (
+              <GasStationPopover
+                transactionAndMessageGroups={transactionAndMessageGroups}
+              >
+                {({ isOpen, toggle, ref }) => (
+                  <>
+                    <button
+                      type="button"
+                      className={
+                        isOpen
+                          ? styles.walletAddressActive
+                          : styles.walletAddress
+                      }
+                      ref={ref}
+                      onClick={toggle}
+                      data-test="gasStationPopover"
+                    >
+                      <span>
+                        <MaskedAddress address={walletAddress} />
+                      </span>
+                    </button>
+                    {readyTransactions >= 1 && (
+                      <span className={styles.readyTransactionsCount}>
+                        <span>{readyTransactions}</span>
+                      </span>
+                    )}
+                  </>
                 )}
-              </div>
-            </button>
-          )}
-        </InboxPopover>
-      )}
-      <AvatarDropdown
-        onlyLogout={!isNetworkAllowed}
-        colony={colonyData?.processedColony as Colony}
-      />
-    </div>
+              </GasStationPopover>
+            )}
+          </div>
+        )}
+        {userCanNavigate && (
+          <InboxPopover notifications={notifications}>
+            {({ isOpen, toggle, ref }) => (
+              <button
+                type="button"
+                className={styles.notificationsButton}
+                ref={ref}
+                onClick={toggle}
+              >
+                <div
+                  className={`${styles.notificationsIcon} ${
+                    isOpen ? styles.notificationsIconActive : ''
+                  }`}
+                >
+                  <Icon name="envelope" title={MSG.inboxTitle} />
+                  {hasUnreadNotifications && (
+                    <span className={styles.notificationsHighlight} />
+                  )}
+                </div>
+              </button>
+            )}
+          </InboxPopover>
+        )}
+        <AvatarDropdown
+          onlyLogout={!isNetworkAllowed}
+          colony={colonyData?.processedColony as Colony}
+        />
+        <HamburgerMenu />
+      </div>
+    </>
   );
 };
 

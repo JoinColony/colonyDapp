@@ -1,5 +1,15 @@
+@value queries: "~styles/queries.css";
+@value query700 from queries;
+
 .main {
   padding: 30px 50px;
   width: 450px;
   text-align: left;
+}
+
+@media screen and query700 {
+  .main {
+    padding: 30px 25px;
+    width: calc(100vw - 28px);
+  }
 }

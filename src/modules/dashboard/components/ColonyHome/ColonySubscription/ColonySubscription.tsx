@@ -25,7 +25,7 @@ import styles from './ColonySubscription.css';
 const MSG = defineMessages({
   joinColony: {
     id: 'dashboard.ColonyHome.ColonySubscription.joinColony',
-    defaultMessage: 'Join',
+    defaultMessage: `Join this colony`,
   },
   colonyMenuTitle: {
     id: 'dashboard.ColonyHome.ColonySubscription.colonyMenuTitle',

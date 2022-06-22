@@ -1,5 +1,6 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import { useMediaQuery } from 'react-responsive';
 
 import Icon from '~core/Icon';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -11,6 +12,7 @@ import { CREATE_COLONY_ROUTE } from '~routes/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
 
 import styles from './SubscribedColoniesList.css';
+import { query700 as query } from '~styles/queries.css';
 
 const MSG = defineMessages({
   iconTitleCreateNewColony: {
@@ -30,6 +32,7 @@ const SubscribedColoniesList = () => {
   });
 
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
+  const isMobile = useMediaQuery({ query });
 
   return (
     <div className={styles.main}>
@@ -57,7 +60,7 @@ const SubscribedColoniesList = () => {
                     <ColonyAvatar
                       colony={colony}
                       colonyAddress={colonyAddress}
-                      size="s"
+                      size={isMobile ? 'xs' : 's'}
                     />
                   </div>
                 </NavLink>

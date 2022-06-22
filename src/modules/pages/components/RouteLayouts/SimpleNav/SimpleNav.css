@@ -1,3 +1,6 @@
+@value queries: "~styles/queries.css";
+@value query700 from queries;
+
 .wrapper {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   position: relative;
@@ -10,4 +13,12 @@
   position: absolute;
   top: 0;
   right: 0;
+}
+
+@media screen and query700 {
+  .nav {
+    order: 1;
+    padding: 0;
+    position: static;
+  }
 }

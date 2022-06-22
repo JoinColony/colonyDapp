@@ -1,3 +1,6 @@
+@value queries: "~styles/queries.css";
+@value query700 from queries;
+
 .main {
   height: 100%;
 }
@@ -39,4 +42,22 @@
 .onlyHistory {
   composes: history;
   left: 0;
+}
+
+@media screen and query700 {
+  .content {
+    flex-direction: column;
+  }
+
+  .coloniesList {
+    flex-shrink: 1;
+    width: calc(100% - 90px);
+    border-right: 0;
+  }
+
+  .head {
+    display: flex;
+    min-height: 43px; /* Prevents breakage when no colonies present */
+    border-bottom: 1px solid var(--temp-grey-13);
+  }
 }

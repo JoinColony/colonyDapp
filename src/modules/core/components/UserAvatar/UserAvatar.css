@@ -1,3 +1,6 @@
+@value queries: "~styles/queries.css";
+@value query700 from queries;
+
 .main {
   max-width: max-content;
   line-height: 0;
@@ -14,4 +17,10 @@
 
 .stateShowOnClick {
   cursor: pointer;
+}
+
+@media screen and query700 {
+  .main > figure {
+    border: 0px solid transparent;
+  }
 }

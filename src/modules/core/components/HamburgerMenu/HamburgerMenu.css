@@ -1,0 +1,26 @@
+@value queries: "~styles/queries.css";
+@value query700 from queries;
+
+.container {
+  display: none;
+}
+
+@media screen and query700 {
+  .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-left: 7px;
+    padding: 0px 14px 0px 14px;
+    height: 100%;
+    border-left: 1px solid var(--temp-grey-13);
+    gap: 5px;
+  }
+
+  .menu-line {
+    height: 3px;
+    width: 21px;
+    background-color: var(--primary);
+  }
+}

@@ -1,3 +1,5 @@
+@value queries: "~styles/queries.css";
+@value query700 from queries;
 
 .main {
   display: inline-flex;
@@ -189,4 +191,22 @@
   margin-right: 10px;
   vertical-align: top;
   font-size: var(--size-tiny);
+}
+
+@media screen and query700 {
+  .elementWrapper, .notificationsIcon, .walletAutoLogin {
+    display: none;
+  }
+
+  .main {
+    height: 100%;
+    gap: 7px;
+  }
+
+  .connectWalletButton {
+    margin-top: 7px;
+    margin-bottom: 7px;
+    margin-right: 0px;
+    width: 120px;
+  }
 }

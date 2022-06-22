@@ -1,3 +1,6 @@
+@value queries: "~styles/queries.css";
+@value query700 from queries;
+
 .modal {
   max-height: calc(100vh - 28px);
   position: relative;
@@ -30,4 +33,10 @@
   fill: var(--colony-white);
   stroke: var(--colony-white);
   cursor: pointer;
+}
+
+@media screen and query700 {
+  .main {
+    width: calc(100vw - 28px);
+  }
 }

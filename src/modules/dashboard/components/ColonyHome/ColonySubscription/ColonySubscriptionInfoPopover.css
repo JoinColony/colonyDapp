@@ -1,3 +1,6 @@
+@value queries: "~styles/queries.css";
+@value query700 from queries;
+
 .main {
   padding: 20px;
   min-width: 380px;
@@ -64,4 +67,15 @@
 .unsubscribeFromColony {
   display: block;
   align-self: flex-start;
+}
+
+@media screen and query700 {
+  .main {
+    min-width: 0px;
+  }
+
+  .colonyInfo {
+    margin: 0px;
+    width: 200px;
+  }
 }

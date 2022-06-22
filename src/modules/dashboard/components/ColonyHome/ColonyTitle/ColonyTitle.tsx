@@ -1,24 +1,13 @@
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { useMediaQuery } from 'react-responsive';
 
 import { Colony } from '~data/index';
-import Heading from '~core/Heading';
-import MaskedAddress from '~core/MaskedAddress';
 import ColonySubscription from '../ColonySubscription';
-import InvisibleCopyableAddress from '~core/InvisibleCopyableAddress';
 
 import styles from './ColonyTitle.css';
-
-const MSG = defineMessages({
-  fallbackColonyName: {
-    id: 'dashboard.ColonyHome.ColonyTitle.fallbackColonyName',
-    defaultMessage: 'Unknown Colony',
-  },
-  copyMessage: {
-    id: 'dashboard.ColonyHome.ColonyTitle.copyMessage',
-    defaultMessage: 'Click to copy colony address',
-  },
-});
+import { query700 as query } from '~styles/queries.css';
+import ColonyTitleHeading from './ColonyTitleHeading';
+import ColonyTitleMenu from './ColonyTitleMenu';
 
 type Props = {
   colony: Colony;
@@ -26,37 +15,30 @@ type Props = {
 
 const displayName = 'dashboard.ColonyHome.ColonyTitle';
 
-const ColonyTitle = ({
-  colony: { displayName: colonyDisplayName, colonyName, colonyAddress },
-  colony,
-}: Props) => {
+const ColonyTitle = ({ colony }: Props) => {
+  const isMobile = useMediaQuery({ query });
+
   return (
     <div className={styles.main}>
       <div className={styles.wrapper}>
-        <div className={styles.colonyTitle}>
-          <Heading
-            appearance={{
-              size: 'medium',
-              weight: 'medium',
-              margin: 'none',
-            }}
-            text={colonyDisplayName || colonyName || MSG.fallbackColonyName}
-            data-test="colonyTitle"
-          />
-        </div>
-        <div className={styles.colonyMenu}>
-          {colonyAddress && (
-            <InvisibleCopyableAddress
-              address={colonyAddress}
-              copyMessage={MSG.copyMessage}
-            >
-              <div className={styles.colonyAddress}>
-                <MaskedAddress address={colonyAddress} />
-              </div>
-            </InvisibleCopyableAddress>
-          )}
-          <ColonySubscription colony={colony} />
-        </div>
+        {isMobile ? (
+          // Render ColonySubscription outside of ColonyTitleMenu
+          // on mobile.
+          <>
+            <div>
+              <ColonyTitleHeading colony={colony} />
+              <ColonyTitleMenu colony={colony} />
+            </div>
+            <ColonySubscription colony={colony} />
+          </>
+        ) : (
+          <>
+            <ColonyTitleHeading colony={colony} />
+            <ColonyTitleMenu colony={colony}>
+              <ColonySubscription colony={colony} />
+            </ColonyTitleMenu>
+          </>
+        )}
       </div>
     </div>
   );

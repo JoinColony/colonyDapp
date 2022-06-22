@@ -1,5 +1,9 @@
 @value itemLinkSize: 42px;
+@value itemLinkSizeMobile: 34px;
 @value itemMarginBotton: 4px;
+
+@value queries: "~styles/queries.css";
+@value query700 from queries;
 
 .main {
   display: flex;
@@ -54,4 +58,30 @@
 
 .loadingColonies {
   padding: 8px 0 2px;
+}
+
+@media screen and query700 {
+  .main {
+    align-items: center;
+  }
+
+  .newColonyItem {
+    display: none;
+  }
+
+  .scrollableContainer {
+    justify-content: start;
+    padding-top: 4px;
+    padding-left: 11px; /* 14px per design - 3px avatar border */
+  }
+
+  .itemImage {
+    height: 28px;
+    width: 28px;
+  }
+
+  .itemLink {
+    height: itemLinkSizeMobile;
+    width: itemLinkSizeMobile;
+  }
 }
