@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import classnames from 'classnames';
 
 import Button from '~core/Button';
 import Icon from '~core/Icon';
@@ -46,6 +47,9 @@ const SortingRow = ({ handleSortingMethodChange, sortingMethod }: Props) => {
         return SORTING_METHODS.BY_HIGHEST_ROLE_ID;
     }
   }, [sortingMethod]);
+  const isSortingByRep =
+    sortingMethod === SORTING_METHODS.BY_HIGHEST_REP ||
+    sortingMethod === SORTING_METHODS.BY_LOWEST_REP;
   return (
     <div className={styles.container}>
       <Button
@@ -54,7 +58,9 @@ const SortingRow = ({ handleSortingMethodChange, sortingMethod }: Props) => {
       >
         <FormattedMessage {...MSG.permissions} />
         <Icon
-          className={styles.sortingIcon}
+          className={classnames(styles.sortingIcon, {
+            [styles.toggledIcon]: !isSortingByRep,
+          })}
           name={`caret-${
             sortingMethod === SORTING_METHODS.BY_HIGHEST_ROLE_ID ? 'up' : 'down'
           }-small`}
@@ -67,7 +73,9 @@ const SortingRow = ({ handleSortingMethodChange, sortingMethod }: Props) => {
       >
         <FormattedMessage {...MSG.reputation} />
         <Icon
-          className={styles.sortingIcon}
+          className={classnames(styles.sortingIcon, {
+            [styles.toggledIcon]: isSortingByRep,
+          })}
           name={`caret-${
             sortingMethod === SORTING_METHODS.BY_HIGHEST_REP ? 'up' : 'down'
           }-small`}
