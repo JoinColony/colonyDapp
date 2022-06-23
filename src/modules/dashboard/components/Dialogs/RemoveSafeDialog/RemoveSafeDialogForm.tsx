@@ -6,7 +6,8 @@ import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import Heading from '~core/Heading';
 
-import { useLoggedInUser, Colony } from '~data/index';
+import { ActionDialogProps } from '~core/Dialog';
+import { useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '~modules/transformers';
 import { canEnterRecoveryMode } from '~modules/users/checks';
@@ -32,9 +33,7 @@ const MSG = defineMessages({
   },
 });
 
-interface Props {
-  back: () => void;
-  colony: Colony;
+interface Props extends Omit<ActionDialogProps, 'isVotingExtensionEnabled'> {
   safeList: Safe[];
 }
 
