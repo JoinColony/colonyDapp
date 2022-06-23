@@ -46,12 +46,14 @@
 }
 
 .selectIcon {
+  align-self: center;
   margin-left: 8px;
   width: 7px;
 }
 
 .activeOption {
   display: flex;
+  align-self: center;
   height: 100%;
   overflow: hidden;
   font-weight: var(--weight-bold);
