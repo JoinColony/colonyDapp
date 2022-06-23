@@ -6,24 +6,27 @@ import React, {
   useState,
 } from 'react';
 import { AddressZero } from 'ethers/constants';
-
 import { defineMessages } from 'react-intl';
-import { createAddress } from '~utils/web3';
+import { useMediaQuery } from 'react-responsive';
+
 import UserMention from '~core/UserMention';
 import { ListGroupItem } from '~core/ListGroup';
 import MemberReputation from '~core/MemberReputation';
-import { AnyUser, Colony, useUser } from '~data/index';
-import { ENTER } from '~types/index';
-import HookedUserAvatar from '~users/HookedUserAvatar';
-import { getMainClasses } from '~utils/css';
-
-import MemberActions from './Actions';
-
-import styles from './MembersListItem.css';
 import InvisibleCopyableAddress from '~core/InvisibleCopyableAddress';
 import MaskedAddress from '~core/MaskedAddress';
 import IconTooltip from '~core/IconTooltip';
 import { Member } from '~dashboard/Members';
+
+import HookedUserAvatar from '~users/HookedUserAvatar';
+import { AnyUser, Colony, useUser } from '~data/index';
+import { ENTER } from '~types/index';
+import { getMainClasses } from '~utils/css';
+
+import MemberActions from './Actions';
+import { createAddress } from '~utils/web3';
+
+import { query700 as query } from '~styles/queries.css';
+import styles from './MembersListItem.css';
 
 interface Props {
   extraItemContent?: (user: Member | AnyUser) => ReactNode;
@@ -103,6 +106,7 @@ const MembersListItem = (props: Props) => {
   const nativeToken = colony.tokens.find(
     (token) => token.address === colony.nativeTokenAddress,
   );
+  const isMobile = useMediaQuery({ query });
 
   return (
     <ListGroupItem>
@@ -159,7 +163,9 @@ const MembersListItem = (props: Props) => {
             )}
           </div>
         </div>
-        {renderedExtraItemContent && <div>{renderedExtraItemContent}</div>}
+        {renderedExtraItemContent && !isMobile && (
+          <div>{renderedExtraItemContent}</div>
+        )}
         {showUserReputation && (
           <div className={styles.reputationSection}>
             <MemberReputation

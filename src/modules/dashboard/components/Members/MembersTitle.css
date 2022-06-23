@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .titleContainer {
   display: flex;
   justify-content: space-between;
@@ -104,4 +106,33 @@
   right: 25px;
   z-index: 2;
   transform: translateY(-50%);
+}
+
+@media screen and query700 {
+  .titleContainer {
+    margin-bottom: 11px;
+    padding: 0 14px;
+  }
+
+  .titleLeft {
+    justify-content: space-between;
+    height: 50px;
+    width: 100%;
+  }
+
+  .titleLeft ul {
+    width: 200px;
+    top: calc(100% + 2px);
+    right: 0px;
+  }
+
+  .titleLeft ul button {
+    justify-content: flex-start;
+    margin-left: 10px;
+    gap: 10px;
+  }
+
+  .titleLeft ul button div:first-child {
+    position: static;
+  }
 }

@@ -1,3 +1,4 @@
+@value query700 from '~styles/queries.css';
 
 .main {
   composes: stretchHorizontal from '~styles/layout.css';
@@ -48,4 +49,32 @@
 .reputationPoints {
   line-height: 18px;
   color: var(--dark);
+}
+
+@media screen and query700 {
+  .mainContentGrid {
+    display: grid;
+    margin: 0;
+    width: 100%;
+    grid-template:
+      "joinColony" auto
+      "membersSection" auto
+      / 1fr;
+  }
+
+  .mainContent {
+    margin: 0;
+    padding: 0;
+    padding-bottom: 60px;
+    grid-area: membersSection;
+  }
+
+  .loadingWrapper {
+    margin: 0;
+    width: 100%;
+  }
+
+  .rightAside {
+    display: none;
+  }
 }

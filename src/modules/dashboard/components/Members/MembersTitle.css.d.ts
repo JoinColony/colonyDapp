@@ -1,3 +1,4 @@
+export const query700: string;
 export const titleContainer: string;
 export const titleLeft: string;
 export const titleSelect: string;

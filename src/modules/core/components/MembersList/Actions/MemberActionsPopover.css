@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .actionButton {
   composes: flexContainerRow flexAlignCenter from '~styles/layout.css';
   font-size: var(--size-normal);
@@ -12,4 +14,14 @@
 .actionButton i svg {
   fill: var(--temp-grey-blue-7);
   stroke: none;
+}
+
+@media screen and query700 {
+  div[class*="MembersListItem_main"] div[class*="DropdownMenu_main"] {
+    padding: 6px 0;
+  }
+
+  div[class*="MembersListItem_main"] li[class*="DropdownMenuItem"] {
+    padding: 6px 0 6px 12px;
+  }
 }

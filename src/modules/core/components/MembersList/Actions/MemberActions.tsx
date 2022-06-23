@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { defineMessages } from 'react-intl';
+import { useMediaQuery } from 'react-responsive';
 
 import Popover from '~core/Popover';
 import { ThreeDotsButton } from '~core/Button';
 import { Colony } from '~data/index';
 
 import MemberActionsPopover from './MemberActionsPopover';
+
+import { query700 as query } from '~styles/queries.css';
 
 const MSG = defineMessages({
   memberActionsTitle: {
@@ -32,6 +35,9 @@ const MemberActions = ({
   isBanned,
 }: Props) => {
   const [isOpen, setOpen] = useState(false);
+  const isMobile = useMediaQuery({ query });
+  const offset = isMobile ? [0, 0] : [40, 15];
+
   return (
     <Popover
       content={({ close }) => (
@@ -54,7 +60,7 @@ const MemberActions = ({
           {
             name: 'offset',
             options: {
-              offset: [40, 15],
+              offset,
             },
           },
         ],
