@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import classnames from 'classnames';
 
@@ -29,24 +29,14 @@ const MSG = defineMessages({
 });
 
 const SortingRow = ({ handleSortingMethodChange, sortingMethod }: Props) => {
-  const nextSortingByRepMethod = useMemo(() => {
-    switch (sortingMethod) {
-      case SORTING_METHODS.BY_HIGHEST_REP:
-        return SORTING_METHODS.BY_LOWEST_REP;
-      default:
-        return SORTING_METHODS.BY_HIGHEST_REP;
-    }
-  }, [sortingMethod]);
-  const nextSortingByRoleMethod = useMemo(() => {
-    switch (sortingMethod) {
-      case SORTING_METHODS.BY_HIGHEST_ROLE_ID:
-        return SORTING_METHODS.BY_LOWEST_ROLE_ID;
-      case SORTING_METHODS.BY_LOWEST_ROLE_ID:
-        return SORTING_METHODS.BY_HIGHEST_REP;
-      default:
-        return SORTING_METHODS.BY_HIGHEST_ROLE_ID;
-    }
-  }, [sortingMethod]);
+  const nextSortingByRepMethod =
+    sortingMethod === SORTING_METHODS.BY_HIGHEST_REP
+      ? SORTING_METHODS.BY_LOWEST_REP
+      : SORTING_METHODS.BY_HIGHEST_REP;
+  const nextSortingByRoleMethod =
+    sortingMethod === SORTING_METHODS.BY_HIGHEST_ROLE_ID
+      ? SORTING_METHODS.BY_LOWEST_ROLE_ID
+      : SORTING_METHODS.BY_HIGHEST_ROLE_ID;
   const isSortingByRep =
     sortingMethod === SORTING_METHODS.BY_HIGHEST_REP ||
     sortingMethod === SORTING_METHODS.BY_LOWEST_REP;
@@ -61,9 +51,11 @@ const SortingRow = ({ handleSortingMethodChange, sortingMethod }: Props) => {
           className={classnames(styles.sortingIcon, {
             [styles.toggledIcon]: !isSortingByRep,
           })}
-          name={`caret-${
-            sortingMethod === SORTING_METHODS.BY_HIGHEST_ROLE_ID ? 'up' : 'down'
-          }`}
+          name={
+            sortingMethod === SORTING_METHODS.BY_HIGHEST_ROLE_ID
+              ? 'caret-up'
+              : 'caret-down'
+          }
           title={MSG.permissions}
         />
       </Button>
@@ -76,9 +68,11 @@ const SortingRow = ({ handleSortingMethodChange, sortingMethod }: Props) => {
           className={classnames(styles.sortingIcon, {
             [styles.toggledIcon]: isSortingByRep,
           })}
-          name={`caret-${
-            sortingMethod === SORTING_METHODS.BY_HIGHEST_REP ? 'up' : 'down'
-          }`}
+          name={
+            sortingMethod === SORTING_METHODS.BY_HIGHEST_REP
+              ? 'caret-up'
+              : 'caret-down'
+          }
           title={MSG.reputation}
         />
       </Button>
