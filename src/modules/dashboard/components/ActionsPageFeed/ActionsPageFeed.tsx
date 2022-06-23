@@ -29,7 +29,12 @@ import { hasRoot, canAdminister } from '~modules/users/checks';
 import ActionsPageEvent from './ActionsPageEvent';
 import ActionsPageSystemInfo from './ActionsPageSystemInfo';
 import ActionsPageSystemMessage from './ActionsPageSystemMessage';
-import { ActionsPageFeedType, SystemInfo, SystemMessage } from './types';
+import {
+  ActionsPageFeedType,
+  ExtendedSystemMessage,
+  SystemInfo,
+  SystemMessage,
+} from './types';
 import styles from './ActionsPageFeed.css';
 
 const displayName = 'dashboard.ActionsPageFeed';
@@ -86,7 +91,7 @@ interface Props {
   transactionHash: string;
   networkEvents?: ParsedEvent[];
   systemInfos?: SystemInfo[];
-  systemMessages?: SystemMessage[];
+  systemMessages?: ExtendedSystemMessage[];
   recipient?: AnyUser;
   values?: EventValues;
   actionType?: string;

@@ -1,15 +1,26 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { defineMessages, FormattedMessage } from 'react-intl';
 import styles from './LogsSection.css';
-import { logs, colony } from './constants';
+import {
+  colony,
+  colonyAction,
+  systemMessages,
+  transactionHash,
+} from './constants';
 import Log from './Log';
 import { useLoggedInUser } from '~data/helpers';
 import Comment, { CommentInput } from '~core/Comment';
-import { Colony } from '~data/index';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Input } from '~core/Fields';
 import { TransactionMeta } from '~dashboard/ActionsPage';
+import ActionsPageFeed, {
+  ActionsPageFeedType,
+  ExtendedSystemMessage,
+  FeedItemWithId,
+  SystemMessage,
+} from '~dashboard/ActionsPageFeed';
+import { TransactionMessageFragment } from '~data/index';
 
 const MSG = defineMessages({
   commentPlaceholder: {
@@ -29,48 +40,11 @@ interface Props {
 
 const LogsSection = ({ colonyAddress }: Props) => {
   const { username: currentUserName, ethereal } = useLoggedInUser();
-  // add logs fetching here
-
-  const renderLogs = useMemo(() => {
-    return logs?.map((log) => {
-      if (log.type === 'action' && log.actionType) {
-        return <Log {...log} key={log.uniqueId} />;
-      }
-      const {
-        createdAt,
-        message,
-        sourceId,
-        deleted,
-        adminDelete,
-        userBanned,
-        initiator,
-      } = log;
-      if (log.type === 'comment') {
-        return (
-          <li className={styles.comment} key={log.uniqueId}>
-            <Comment
-              createdAt={createdAt}
-              comment={message}
-              commentMeta={{
-                id: sourceId || '',
-                deleted,
-                adminDelete,
-                userBanned,
-              }}
-              colony={(colony as unknown) as Colony}
-              user={initiator}
-              showControls
-            />
-          </li>
-        );
-      }
-      return null;
-    });
-  }, []);
+  // add fetching systemMessages here
 
   return (
     <div className={styles.container}>
-      {!logs ? (
+      {!systemMessages ? (
         <div className={styles.logContainer}>
           <div className={styles.dotContainer}>
             <div className={styles.dot} />
@@ -83,7 +57,60 @@ const LogsSection = ({ colonyAddress }: Props) => {
           </div>
         </div>
       ) : (
-        <ul>{renderLogs}</ul>
+        <ActionsPageFeed
+          transactionHash={transactionHash}
+          colony={colony as any}
+          systemMessages={systemMessages}
+          actionData={colonyAction}
+        >
+          {(sortedFeed) => {
+            return sortedFeed.map((feedItem) => {
+              /*
+               * Comment
+               */
+              if (feedItem.type === ActionsPageFeedType.ServerComment) {
+                const {
+                  initiator: messageInitiator,
+                  createdAt,
+                  context: { message, deleted, adminDelete, userBanned },
+                  uniqueId,
+                  sourceId,
+                } = (feedItem as unknown) as FeedItemWithId<
+                  TransactionMessageFragment
+                >;
+                return (
+                  <Comment
+                    key={uniqueId}
+                    createdAt={createdAt}
+                    colony={colony as any}
+                    comment={message}
+                    commentMeta={{
+                      id: sourceId,
+                      deleted,
+                      adminDelete,
+                      userBanned,
+                    }}
+                    user={messageInitiator}
+                    showControls
+                  />
+                );
+              }
+              /*
+               * System Message
+               */
+              if (feedItem.type === ActionsPageFeedType.SystemMessage) {
+                const { uniqueId } = feedItem as FeedItemWithId<SystemMessage>;
+                return (
+                  <Log
+                    {...(feedItem as ExtendedSystemMessage)}
+                    key={uniqueId}
+                  />
+                );
+              }
+              return null;
+            });
+          }}
+        </ActionsPageFeed>
       )}
       {/*
        *  @NOTE A user can comment only if he has a wallet connected
@@ -109,10 +136,7 @@ const LogsSection = ({ colonyAddress }: Props) => {
           <CommentInput
             {...{
               colonyAddress,
-              transactionHash:
-                // temporary value, needs to be changed with CommentInput logic to add a comment
-                // eslint-disable-next-line max-len
-                '0x1785d214f0127279681354be8e23ad1a1501207432229db93a415c7a58427138',
+              transactionHash,
             }}
           />
         </div>

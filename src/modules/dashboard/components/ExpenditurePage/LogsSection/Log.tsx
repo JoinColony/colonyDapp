@@ -4,26 +4,12 @@ import FriendlyName from '~core/FriendlyName';
 import MemberReputation from '~core/MemberReputation';
 import PermissionsLabel from '~core/PermissionsLabel';
 import { TransactionMeta } from '~dashboard/ActionsPage';
-import { AnyUser } from '~data/index';
+import { ExtendedSystemMessage } from '~dashboard/ActionsPageFeed';
 
 import styles from './Log.css';
-import { ExpenditureActions } from './types';
-
-interface Props {
-  actionType: ExpenditureActions | string;
-  user: AnyUser;
-  createdAt: number;
-  blockExplorerName: string;
-  transactionHash: string;
-  amount?: string;
-  funds?: string[];
-  changes?: any[];
-  colonyAddress: string;
-  role?: number;
-}
 
 const Log = ({
-  actionType,
+  name,
   user,
   createdAt,
   transactionHash,
@@ -32,7 +18,7 @@ const Log = ({
   colonyAddress,
   funds,
   role,
-}: Props) => {
+}: ExtendedSystemMessage) => {
   return (
     <li className={styles.container}>
       <div className={styles.dotContainer}>
@@ -42,15 +28,17 @@ const Log = ({
         <FormattedMessage
           id="systemMessage.title"
           values={{
-            name: actionType,
+            name,
             amount,
             reputation: (
               <span className={styles.reputationStarWrapper}>
                 <span className={styles.reputationWrapper}>
-                  <MemberReputation
-                    walletAddress={user?.profile.walletAddress}
-                    colonyAddress={colonyAddress}
-                  />
+                  {user && colonyAddress && (
+                    <MemberReputation
+                      walletAddress={user.profile.walletAddress}
+                      colonyAddress={colonyAddress}
+                    />
+                  )}
                 </span>
               </span>
             ),
@@ -95,7 +83,7 @@ const Log = ({
         />
         <div className={styles.details}>
           {/* Role is temporaily value, there should be added logic to adding it based on response from the API */}
-          {actionType && role && (
+          {name && role && (
             <div className={styles.roles}>
               <PermissionsLabel
                 appearance={{ theme: 'simple' }}
