@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .actionsButton {
   padding: 0;
   height: 18px;
@@ -37,4 +39,10 @@
 .activeDropdown .actionsIcon,
 .actionsButton:hover .actionsIcon {
   fill: var(--action-secondary);
+}
+
+@media screen and query700 {
+  .actionsButton {
+    transform: scale(1.8);
+  }
 }

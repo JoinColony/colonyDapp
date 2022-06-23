@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   display: flex;
   align-items: center;
@@ -72,4 +74,43 @@
 
 .whitelistedIconTooltip {
   width: 130px;
+}
+
+@media screen and query700 {
+  .main {
+    position: relative;
+    overflow: visible;
+    background: white;
+  }
+
+  .section {
+    order: -1;
+  }
+
+  .main button {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+  }
+
+  .main button svg {
+    transform: scale(0.8);
+    fill: var(--temp-grey-blue-7);
+    stroke: none;
+  }
+
+  .main div[role="tooltip"] {
+    display: flex;
+    align-items: center;
+  }
+
+  .main div[role="tooltip"] button {
+    padding: 0;
+  }
+
+  .reputationSection {
+    width: auto;
+  }
 }
