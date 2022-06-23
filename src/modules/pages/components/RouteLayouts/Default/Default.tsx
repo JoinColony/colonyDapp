@@ -6,12 +6,11 @@ import { RouteComponentProps } from '~pages/RouteLayouts';
 import SubscribedColoniesList from '~dashboard/SubscribedColoniesList';
 import SimpleNav from '../SimpleNav';
 import HistoryNavigation from '../HistoryNavigation';
-
-import styles from './Default.css';
-import navStyles from '../SimpleNav/SimpleNav.css';
+import UserNavigation from '../UserNavigation';
 
 import { query700 as query } from '~styles/queries.css';
-import UserNavigation from '../UserNavigation';
+import styles from './Default.css';
+import navStyles from '../SimpleNav/SimpleNav.css';
 
 interface Props {
   children: ReactNode;
@@ -47,7 +46,7 @@ const Default = ({
   return (
     <div className={styles.main}>
       <SimpleNav>
-        {backLinkExists && (
+        {backLinkExists && !isMobile && (
           <HistoryNavigation
             backRoute={backRoute}
             backText={backText}

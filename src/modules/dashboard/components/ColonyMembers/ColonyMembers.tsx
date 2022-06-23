@@ -4,6 +4,7 @@ import { defineMessages } from 'react-intl';
 import { ColonyVersion, Extension } from '@colony/colony-js';
 import Decimal from 'decimal.js';
 import { AddressZero } from 'ethers/constants';
+import { useMediaQuery } from 'react-responsive';
 
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
@@ -37,9 +38,11 @@ import { checkIfNetworkIsAllowed } from '~utils/networks';
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot, canAdminister } from '~modules/users/checks';
 import { oneTxMustBeUpgraded } from '~modules/dashboard/checks';
+import ManageWhitelistDialog from '~dashboard/Dialogs/ManageWhitelistDialog';
+import ColonyHomeInfo from '~dashboard/ColonyHome/ColonyHomeInfo';
 
 import styles from './ColonyMembers.css';
-import ManageWhitelistDialog from '~dashboard/Dialogs/ManageWhitelistDialog';
+import { query700 as query } from '~styles/queries.css';
 
 const displayName = 'dashboard.ColonyMembers';
 
@@ -206,6 +209,8 @@ const ColonyMembers = () => {
     !colonyData?.processedColony?.isDeploymentFinished ||
     mustUpgradeOneTx;
 
+  const isMobile = useMediaQuery({ query });
+
   if (
     loading ||
     colonyExtensionLoading ||
@@ -229,6 +234,13 @@ const ColonyMembers = () => {
   return (
     <div className={styles.main}>
       <div className={styles.mainContentGrid}>
+        {isMobile && (
+          <ColonyHomeInfo
+            colony={colonyData.processedColony}
+            showNavigation
+            isMobile
+          />
+        )}
         <div className={styles.mainContent}>
           {colonyData && colonyData.processedColony && (
             <Members

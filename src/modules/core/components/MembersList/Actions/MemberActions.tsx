@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { defineMessages } from 'react-intl';
 import classnames from 'classnames';
+import { useMediaQuery } from 'react-responsive';
 
 import Icon from '~core/Icon';
 import Popover from '~core/Popover';
@@ -8,6 +9,7 @@ import { Colony } from '~data/index';
 
 import MemberActionsPopover from './MemberActionsPopover';
 
+import { query700 as query } from '~styles/queries.css';
 import styles from './MemberActions.css';
 
 const MSG = defineMessages({
@@ -35,6 +37,9 @@ const MemberActions = ({
   isBanned,
 }: Props) => {
   const [isOpen, setOpen] = useState(false);
+  const isMobile = useMediaQuery({ query });
+  const offset = isMobile ? [0, 0] : [40, 15];
+
   return (
     <Popover
       content={({ close }) => (
@@ -57,7 +62,7 @@ const MemberActions = ({
           {
             name: 'offset',
             options: {
-              offset: [40, 15],
+              offset,
             },
           },
         ],
