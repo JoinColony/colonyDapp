@@ -43,7 +43,7 @@ const SafeListItem = ({ safe, isChecked }: Props) => {
       />
 
       <span className={`${isChecked ? styles.selectedLabel : styles.label}`}>
-        {safe.name}
+        {`${safe.name} (${safe.chain})`}
       </span>
 
       <InvisibleCopyableAddress
