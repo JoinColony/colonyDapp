@@ -1,0 +1,139 @@
+@value submitButtonWidth: 160px;
+
+.title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32px 0 20px;
+  width: 100%;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.forceContainer {
+  display: flex;
+  align-items: center;
+  font-size: var(--size-smallish);
+}
+
+.stakeContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--grey-blue-0);
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+  opacity: 0.85;
+}
+
+.messageContainer {
+  padding-bottom: 90px;
+  color: var(--temp-grey-blue-7);
+}
+
+.label {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.icon {
+  margin-right: 10px;
+}
+
+.icon figure {
+  display: block;
+}
+
+.tokenIcon {
+  height: 16px;
+  width: 16px;
+}
+
+.symbol {
+  margin-left: 4px;
+}
+
+.questionIcon {
+  display: block;
+
+  /* next lines are used for the correct tooltip arrow placement */
+  margin-right: -20px;
+  margin-bottom: -3px;
+  margin-left: 11px;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background-color: white;
+  stroke: none;
+  transform: translateX(-20px);
+}
+
+.toggleContainer {
+  /* negative margin here corrects the position of the toggle input */
+  margin-bottom: -6px;
+  margin-left: 4px;
+  margin-right: 20px;
+}
+
+.messageParagraph {
+  padding-top: 14px;
+}
+
+.tooltip {
+  max-width: 250px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px 0;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--temp-grey-blue-7);
+}
+
+.recipientContainer {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  padding: 8px 0;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--dark);
+}
+
+.valueContainer {
+  text-align: right;
+}
+
+.value {
+  /* color: black; */
+}
+
+.userAvatarContainer {
+  display: flex;
+  align-items: center;
+}
+
+.userName {
+  /* color: black; */
+}
+
+.contentWrapper {
+  padding: 0 20px;
+}
+
+.descriptionWrapper {
+  padding: 10px 0 30px;
+}

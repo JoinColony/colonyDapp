@@ -1,9 +1,6 @@
-import React, { useState } from 'react';
-import {
-  defineMessages,
-  FormattedMessage,
-  MessageDescriptor,
-} from 'react-intl';
+import React, { useCallback } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
+import { useFormikContext } from 'formik';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
@@ -11,7 +8,7 @@ import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
 import StageItem from './StageItem';
 
 import styles from './Stages.css';
-import { Stage } from './constants';
+import { State, ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 
 const MSG = defineMessages({
   stages: {
@@ -68,63 +65,39 @@ const MSG = defineMessages({
   },
 });
 
-interface ActiveState {
-  id: string;
-  label: string | MessageDescriptor;
-  buttonText: string | MessageDescriptor;
-  buttonAction: () => void;
-}
-
 const buttonStyles = {
   height: styles.buttonHeight,
   width: styles.buttonWidth,
   padding: 0,
 };
 
-const Stages = () => {
-  const [activeState, setActiveState] = useState<ActiveState | null>(null);
+interface Props {
+  states: State[];
+  activeStateId?: string;
+}
 
+const Stages = ({ states, activeStateId }: Props) => {
+  const { values, handleSubmit, validateForm } =
+    useFormikContext<ValuesType>() || {};
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
 
-  const states = [
-    {
-      id: Stage.Draft,
-      label: MSG.draft,
-      buttonText: MSG.lockValues,
-      buttonAction: () => {},
-    },
-    {
-      id: Stage.Locked,
-      label: MSG.locked,
-      buttonText: MSG.escrowFunds,
-      buttonAction: () => {},
-    },
-    {
-      id: Stage.Funded,
-      label: MSG.funded,
-      buttonText: MSG.releaseFunds,
-      buttonAction: () => {},
-    },
-    {
-      id: Stage.Released,
-      label: MSG.released,
-      buttonText: MSG.claim,
-      buttonAction: () => {},
-    },
-    {
-      id: Stage.Claimed,
-      label: MSG.claimed,
-      buttonText: MSG.completed,
-      buttonAction: () => {},
-    },
-  ];
+  const handleSaveDraft = useCallback(async () => {
+    const errors = await validateForm(values);
+    const hasErrors = Object.keys(errors)?.length;
 
-  const handleSaveDraft = () =>
-    openDraftConfirmDialog({
-      onClick: () => setActiveState(states[0]),
-      isVotingExtensionEnabled: true,
-    });
-  const activeIndex = states.findIndex((state) => state.id === activeState?.id);
+    return (
+      !hasErrors &&
+      openDraftConfirmDialog({
+        onClick: () => {
+          handleSubmit(values as any);
+        },
+        isVotingExtensionEnabled: true,
+      })
+    );
+  }, [handleSubmit, openDraftConfirmDialog, validateForm, values]);
+
+  const activeIndex = states.findIndex((state) => state.id === activeStateId);
+  const activeState = states.find((state) => state.id === activeStateId);
 
   return (
     <div className={styles.mainContainer}>

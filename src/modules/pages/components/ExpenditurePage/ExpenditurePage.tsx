@@ -1,7 +1,11 @@
 import React, { useCallback, useRef, useState } from 'react';
 import * as yup from 'yup';
 
-import { defineMessages, FormattedMessage } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  MessageDescriptor,
+} from 'react-intl';
 import { nanoid } from 'nanoid';
 import { Form } from '~core/Fields';
 import Payments from '~dashboard/ExpenditurePage/Payments';
@@ -15,6 +19,11 @@ import TitleDescriptionSection, {
   LockedTitleDescriptionSection,
 } from '~dashboard/ExpenditurePage/TitleDescriptionSection';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
+import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
+import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
+import Tag from '~core/Tag';
+import { useDialog } from '~core/Dialog';
+import EditExpenditureDialog from '~dashboard/Dialogs/EditExpenditureDialog/EditExpenditureDialog';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -27,6 +36,26 @@ const initialValues = {
   recipients: [{ ...newRecipient, id: nanoid() }],
 };
 
+export interface ValuesType {
+  expenditure: string;
+  filteredDomainId: { label: string; value: string };
+  owner: string;
+  recipients: {
+    recipient: string;
+    value: { amount: number; tokenAddress: number }[];
+    delay: { amount: string; time: string };
+    isExpanded: boolean;
+  }[];
+  title: string;
+  description?: string;
+}
+export interface State {
+  id: string;
+  label: string | MessageDescriptor;
+  buttonText: string | MessageDescriptor;
+  buttonAction: () => void;
+}
+
 const MSG = defineMessages({
   userRequiredError: {
     id: 'dashboard.Expenditures.ExpenditurePage.userRequiredError',
@@ -35,6 +64,54 @@ const MSG = defineMessages({
   delayRequiredError: {
     id: 'dashboard.Expenditures.ExpenditurePage.delayRequiredError',
     defaultMessage: 'Delay is required',
+  },
+  lockValues: {
+    id: 'dashboard.Expenditures.Stages.lockValues',
+    defaultMessage: 'Lock values',
+  },
+  escrowFunds: {
+    id: 'dashboard.Expenditures.Stages.escrowFunds',
+    defaultMessage: 'Escrow funds',
+  },
+  releaseFunds: {
+    id: 'dashboard.Expenditures.Stages.releaseFunds',
+    defaultMessage: 'Release funds',
+  },
+  claim: {
+    id: 'dashboard.Expenditures.Stages.claim',
+    defaultMessage: 'Claim',
+  },
+  draft: {
+    id: 'dashboard.Expenditures.Stages.draft',
+    defaultMessage: 'Draft',
+  },
+  locked: {
+    id: 'dashboard.Expenditures.Stages.locked',
+    defaultMessage: 'Locked',
+  },
+  funded: {
+    id: 'dashboard.Expenditures.Stages.funded',
+    defaultMessage: 'Funded',
+  },
+  released: {
+    id: 'dashboard.Expenditures.Stages.released',
+    defaultMessage: 'Released',
+  },
+  claimed: {
+    id: 'dashboard.Expenditures.Stages.claimed',
+    defaultMessage: 'Claimed',
+  },
+  tooltipLockValuesText: {
+    id: 'dashboard.Expenditures.Stages.tooltipLockValuesText',
+    defaultMessage: `This will lock the values of the expenditure. To change values after locking will require the right permissions or a motion.`,
+  },
+  completed: {
+    id: 'dashboard.Expenditures.Stages.completed',
+    defaultMessage: 'Completed',
+  },
+  suggestions: {
+    id: 'dashboard.Expenditures.Stages.suggestions',
+    defaultMessage: 'You are making suggestions ',
   },
 });
 
@@ -70,9 +147,13 @@ const validationSchema = yup.object().shape({
 
 const ExpenditurePage = () => {
   const [isFormEditable, setFormEditable] = useState(true);
+  const [isInEditMode, setIsInEditMode] = useState(false);
   const [formValues, setFormValues] = useState<typeof initialValues>();
   const [shouldValidate, setShouldValidate] = useState(false);
   const sidebarRef = useRef<HTMLElement>(null);
+  const [activeStateId, setActiveStateId] = useState<string>();
+
+  const openEditExpenditureDialog = useDialog(EditExpenditureDialog);
 
   const submit = useCallback((values) => {
     setShouldValidate(true);
@@ -83,6 +164,67 @@ const ExpenditurePage = () => {
     // add sending form to backend
   }, []);
 
+  const lockValues = useCallback(() => {
+    setFormEditable(false);
+  }, []);
+
+  const handleLockExpenditure = () => {
+    // Call to backend will be added here, to lock the expenditure
+    // fetching active state shoud be added here as well,
+    // and saving the activeState in a state
+    setActiveStateId(Stage.Locked);
+    lockValues();
+  };
+
+  const handleFoundExpenditure = () => {
+    // Call to backend will be added here, to found the expenditure
+    setActiveStateId(Stage.Funded);
+  };
+
+  const handleReleaseFounds = () => {
+    // Call to backend will be added here, to realese founds
+    setActiveStateId(Stage.Released);
+  };
+
+  const handleClaimExpenditure = () => {
+    // Call to backend will be added here, to claim the expenditure
+    setActiveStateId(Stage.Claimed);
+  };
+
+  const states = [
+    {
+      id: Stage.Draft,
+      label: MSG.draft,
+      buttonText: MSG.lockValues,
+      buttonAction: handleLockExpenditure,
+      buttonTooltip: MSG.tooltipLockValuesText,
+    },
+    {
+      id: Stage.Locked,
+      label: MSG.locked,
+      buttonText: MSG.escrowFunds,
+      buttonAction: handleFoundExpenditure,
+    },
+    {
+      id: Stage.Funded,
+      label: MSG.funded,
+      buttonText: MSG.releaseFunds,
+      buttonAction: handleReleaseFounds,
+    },
+    {
+      id: Stage.Released,
+      label: MSG.released,
+      buttonText: MSG.claim,
+      buttonAction: handleClaimExpenditure,
+    },
+    {
+      id: Stage.Claimed,
+      label: MSG.claimed,
+      buttonText: MSG.completed,
+      buttonAction: () => {},
+    },
+  ];
+
   const { owner, expenditure, filteredDomainId } = formValues || {};
 
   const handleValidate = useCallback(() => {
@@ -90,6 +232,31 @@ const ExpenditurePage = () => {
       setShouldValidate(true);
     }
   }, [shouldValidate]);
+
+  const handleConfirmEition = useCallback(() => {
+    setIsInEditMode(false);
+    setFormEditable(false);
+    // add call to the backend
+  }, []);
+
+  const handleEditLockedForm = useCallback(() => {
+    setIsInEditMode(true);
+    setFormEditable(true);
+  }, []);
+
+  const handleEditCancel = useCallback(() => {
+    setIsInEditMode(false);
+    setFormEditable(false);
+  }, []);
+
+  const handleEditSubmit = useCallback(() => {
+    setIsInEditMode(true);
+    setFormEditable(true);
+    openEditExpenditureDialog({
+      onClick: handleConfirmEition,
+      isVotingExtensionEnabled: true,
+    });
+  }, [handleConfirmEition, openEditExpenditureDialog]);
 
   return isFormEditable ? (
     <Form
@@ -102,13 +269,33 @@ const ExpenditurePage = () => {
     >
       <div className={getMainClasses({}, styles)}>
         <aside className={styles.sidebar} ref={sidebarRef}>
+          {isInEditMode && (
+            <div className={styles.tagWrapper}>
+              <Tag
+                appearance={{
+                  theme: 'blue',
+                }}
+              >
+                <FormattedMessage {...MSG.suggestions} />
+              </Tag>
+            </div>
+          )}
           <ExpenditureSettings />
           <Payments sidebarRef={sidebarRef.current} />
         </aside>
         <div className={styles.mainContainer}>
           <main className={styles.mainContent}>
             <TitleDescriptionSection />
-            <Stages />
+            {isInEditMode ? (
+              <EditButtons {...{ handleEditSubmit, handleEditCancel }} />
+            ) : (
+              <Stages
+                {...{
+                  states,
+                  activeStateId,
+                }}
+              />
+            )}
           </main>
         </div>
       </div>
@@ -121,7 +308,7 @@ const ExpenditurePage = () => {
         />
         <LockedPayments
           recipients={formValues?.recipients}
-          editForm={() => setFormEditable(true)}
+          editForm={handleEditLockedForm}
         />
       </aside>
       <div className={styles.mainContainer}>
@@ -130,7 +317,12 @@ const ExpenditurePage = () => {
             title={formValues?.title}
             description={formValues?.description}
           />
-          <Stages />
+          <Stages
+            {...{
+              states,
+              activeStateId,
+            }}
+          />
         </main>
       </div>
     </div>
