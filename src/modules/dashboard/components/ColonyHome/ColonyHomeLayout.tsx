@@ -13,8 +13,7 @@ import { checkIfNetworkIsAllowed } from '~utils/networks';
 
 import ColonyFunding from './ColonyFunding';
 import ColonyUnclaimedTransfers from './ColonyUnclaimedTransfers';
-import ColonyTitle from './ColonyTitle';
-import ColonyNavigation from './ColonyNavigation';
+import ColonyHomeInfo from './ColonyHomeInfo';
 import ColonyMembers from './ColonyMembers';
 import ColonyExtensions from './ColonyExtensions';
 import ColonyDomainDescription from './ColonyDomainDescription';
@@ -70,10 +69,7 @@ const ColonyHomeLayout = ({
       <div
         className={showSidebar ? styles.mainContentGrid : styles.minimalGrid}
       >
-        <aside className={styles.leftAside}>
-          <ColonyTitle colony={colony} />
-          {!isMobile && showNavigation && <ColonyNavigation colony={colony} />}
-        </aside>
+        <ColonyHomeInfo {...{ colony, isMobile, showNavigation }} />
         <div className={styles.mainContent}>
           {showControls && (
             <>
