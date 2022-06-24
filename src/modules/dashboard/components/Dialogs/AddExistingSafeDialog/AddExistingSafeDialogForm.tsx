@@ -6,7 +6,7 @@ import { ActionDialogProps } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Select, Input, Annotations } from '~core/Fields';
 import Heading from '~core/Heading';
-import { chains } from './gnosisSafeChains';
+import { GNOSIS_SAFE_NETWORKS } from '~modules/constants';
 
 import { FormValues } from './AddExistingSafeDialog';
 
@@ -14,29 +14,27 @@ import styles from './AddExistingSafeDialogForm.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.AddExistingPaymentDialog.AddExistingSafeDialogForm.title',
+    id: 'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.title',
     defaultMessage: 'Add Gnosis Safe',
   },
   chain: {
-    id: 'dashboard.AddExistingPaymentDialog.AddExistingSafeDialogForm.chain',
+    id: 'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.chain',
     defaultMessage: 'Select Chain',
   },
   safeName: {
-    id: 'dashboard.AddExistingPaymentDialog.AddExistingSafeDialogForm.safeName',
-    defaultMessage: 'Name the safe',
+    id: 'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.safeName',
+    defaultMessage: 'Name the Safe',
   },
   annotation: {
-    id:
-      'dashboard.AddExistingPaymentDialog.AddExistingSafeDialogForm.annotation',
+    id: 'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.annotation',
     defaultMessage: 'Explain why you’re adding this Gnosis Safe (optional)',
   },
   contract: {
-    id: 'dashboard.AddExistingPaymentDialog.AddExistingSafeDialogForm.contract',
-    defaultMessage: 'Add Safe Contract',
+    id: 'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.contract',
+    defaultMessage: 'Add Safe address',
   },
   safeFound: {
-    id:
-      'dashboard.AddExistingPaymentDialog.AddExistingSafeDialogForm.safeFound',
+    id: 'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.safeFound',
     // @TODO remove hardcoding here
     defaultMessage: 'Safe found on Gnosis Chain',
   },
@@ -64,7 +62,7 @@ const AddExistingSafeDialogForm = ({
       <DialogSection>
         <div className={styles.chainSelect}>
           <Select
-            options={chains}
+            options={GNOSIS_SAFE_NETWORKS}
             label={MSG.chain}
             name="chainId"
             appearance={{ theme: 'grey', width: 'fluid' }}
@@ -87,6 +85,7 @@ const AddExistingSafeDialogForm = ({
           name="safeName"
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
           disabled={isSubmitting}
+          // @There is no limit on Gnosis Safe names, so, we can impose our own
           maxLength={20}
         />
       </DialogSection>
@@ -96,7 +95,7 @@ const AddExistingSafeDialogForm = ({
           label={MSG.annotation}
           name="annotation"
           disabled={isSubmitting}
-          maxLength={90}
+          dataTest="addSafeAnnotation"
         />
       </DialogSection>
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
@@ -108,7 +107,7 @@ const AddExistingSafeDialogForm = ({
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() => handleSubmit()}
-          text={{ id: 'button.interact' }}
+          text={{ id: 'button.confirm' }}
           loading={isSubmitting}
           disabled={!isValid}
           style={{ width: styles.wideButton }}
@@ -119,6 +118,6 @@ const AddExistingSafeDialogForm = ({
 };
 
 AddExistingSafeDialogForm.displayName =
-  'dashboard.AddExistingPaymentDialog.AddExistingSafeDialogForm';
+  'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm';
 
 export default AddExistingSafeDialogForm;

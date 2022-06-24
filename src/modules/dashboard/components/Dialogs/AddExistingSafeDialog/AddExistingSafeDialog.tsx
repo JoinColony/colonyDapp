@@ -52,7 +52,7 @@ const AddExistingSafeDialog = ({
     chainId: yup.string().required(),
     contractAddress: yup.string().address().required(),
     safeName: yup.string().required().max(20),
-    annotation: yup.string().max(90),
+    annotation: yup.string().max(4000),
   });
 
   // @TODO change this accordingly
