@@ -63,7 +63,7 @@ const HamburgerDropdownPopover = ({
             {username && (
               <DropdownMenuSection>
                 <DropdownMenuItem>
-                  <NavLink to={colonyHomePath} text={MSG.actions} />
+                  <NavLink to={colonyHomePath} text={MSG.actions} exact />
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <NavLink to={`${colonyHomePath}/funds`} text={MSG.funds} />
