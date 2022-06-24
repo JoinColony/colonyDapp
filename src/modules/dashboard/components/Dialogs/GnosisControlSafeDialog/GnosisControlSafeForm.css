@@ -1,13 +1,17 @@
 @value wideButton: 160px;
 @value width: 419px;
 
+.heading {
+  margin-bottom: 20px;
+}
+
 .safePicker {
   margin: 20px 0;
 }
 
 .safePicker input {
   width: width;
-  max-width: 419px;
+  max-width: width;
 }
 
 .safePicker button {
