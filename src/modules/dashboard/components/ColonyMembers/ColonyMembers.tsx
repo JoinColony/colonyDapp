@@ -20,6 +20,7 @@ import Members from '~dashboard/Members';
 import PermissionManagementDialog from '~dialogs/PermissionManagementDialog';
 import WrongNetworkDialog from '~dashboard/ColonyHome/WrongNetworkDialog';
 import InviteLinkButton from '~dashboard/InviteLinkButton';
+import ManageWhitelistDialog from '~dashboard/Dialogs/ManageWhitelistDialog';
 
 import {
   useColonyFromNameQuery,
@@ -39,7 +40,7 @@ import { hasRoot, canAdminister } from '~modules/users/checks';
 import { oneTxMustBeUpgraded } from '~modules/dashboard/checks';
 
 import styles from './ColonyMembers.css';
-import ManageWhitelistDialog from '~dashboard/Dialogs/ManageWhitelistDialog';
+import MembersFilter from './MembersFilter';
 
 const displayName = 'dashboard.ColonyMembers';
 
@@ -313,6 +314,7 @@ const ColonyMembers = () => {
               </>
             )}
           </ul>
+          <MembersFilter />
         </aside>
       </div>
     </div>
