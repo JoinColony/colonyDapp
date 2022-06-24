@@ -46,9 +46,9 @@ const MSG = defineMessages({
     id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.buttonTransaction`,
     defaultMessage: 'Add another transaction',
   },
-  buttonInteract: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.buttonInteract`,
-    defaultMessage: 'Interact',
+  buttonCreateTransaction: {
+    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.buttonCreateTransaction`,
+    defaultMessage: 'Create transaction',
   },
 });
 
@@ -144,7 +144,7 @@ const GnosisControlSafeForm = ({
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() => handleSubmit()}
-          text={MSG.buttonInteract}
+          text={MSG.buttonCreateTransaction}
           loading={isSubmitting}
           disabled={!isValid || isSubmitting}
           style={{ width: styles.wideButton }}
