@@ -4,6 +4,7 @@ import { FormikProps } from 'formik';
 
 import Avatar from '~core/Avatar';
 import { DialogSection } from '~core/Dialog';
+import { Select } from '~core/Fields';
 import Heading from '~core/Heading';
 import ExternalLink from '~core/ExternalLink';
 import Button, { AddItemButton } from '~core/Button';
@@ -15,7 +16,6 @@ import { Address } from '~types/index';
 
 import { FormValues, transactionOptions } from './GnosisControlSafeDialog';
 import styles from './GnosisControlSafeForm.css';
-import { Select } from '~core/Fields';
 
 const MSG = defineMessages({
   title: {
@@ -32,7 +32,7 @@ const MSG = defineMessages({
   },
   safePickerPlaceholder: {
     id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.safePickerPlaceholder`,
-    defaultMessage: 'Select safe to control',
+    defaultMessage: 'Select Safe to control',
   },
   transactionLabel: {
     id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.transactionLabel`,
@@ -47,8 +47,7 @@ const MSG = defineMessages({
     defaultMessage: 'Add another transaction',
   },
   buttonInteract: {
-    id:
-      'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.buttonInteract',
+    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.buttonInteract`,
     defaultMessage: 'Interact',
   },
 });
@@ -87,10 +86,12 @@ const GnosisControlSafeForm = ({
   return (
     <>
       <DialogSection>
-        <Heading
-          appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
-          text={MSG.title}
-        />
+        <div className={styles.heading}>
+          <Heading
+            appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+            text={MSG.title}
+          />
+        </div>
       </DialogSection>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
         <FormattedMessage
