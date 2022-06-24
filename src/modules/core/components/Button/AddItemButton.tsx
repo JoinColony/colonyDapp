@@ -5,7 +5,7 @@ import Icon from '../Icon';
 import styles from './AddItemButton.css';
 
 interface Props {
-  /** A string or a `messageDescriptor` that make up the button's text label */
+  /** A `messageDescriptor` that make up the button's text label */
   text: MessageDescriptor;
 
   disabled?: boolean;
