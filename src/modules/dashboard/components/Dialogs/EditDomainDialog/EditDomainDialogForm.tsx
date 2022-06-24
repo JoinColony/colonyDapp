@@ -35,9 +35,9 @@ const MSG = defineMessages({
     id: 'dashboard.EditDomainDialog.EditDomainDialogForm.name',
     defaultMessage: 'Team name',
   },
-  domain: {
-    id: 'dashboard.EditDomainDialog.EditDomainDialogForm.domain',
-    defaultMessage: 'Select domain',
+  team: {
+    id: 'dashboard.EditDomainDialog.EditDomainDialogForm.team',
+    defaultMessage: 'Select team',
   },
   purpose: {
     id: 'dashboard.EditDomainDialog.EditDomainDialogForm.name',
@@ -219,7 +219,7 @@ const EditDomainDialogForm = ({
           <div className={styles.domainName}>
             <Select
               options={domainOptions}
-              label={MSG.domain}
+              label={MSG.team}
               onChange={handleDomainChange}
               name="domainId"
               appearance={{ theme: 'grey', width: 'fluid' }}
