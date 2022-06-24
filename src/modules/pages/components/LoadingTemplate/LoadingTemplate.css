@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   position: absolute;
@@ -31,4 +33,10 @@
 .nakedMole {
   margin: 0 auto;
   padding-bottom: 12px;
+}
+
+@media screen and query700 {
+  .main {
+    background: white;
+  }
 }
