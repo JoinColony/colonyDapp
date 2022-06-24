@@ -8,6 +8,7 @@ import { AnyUser } from '~data/index';
 import { Address, SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
 
+import MaskedAddress from '../MaskedAddress';
 import {
   ItemDataType,
   withOmniPicker,
@@ -105,6 +106,12 @@ interface Props extends WithOmnipickerInProps {
 
   /** Provides value for data-test prop in the value of the input used on cypress testing */
   valueDataTest?: string;
+
+  /* An option to show masked address next to display name for the selected item */
+  showMaskedAddress?: boolean;
+
+  /* icon name for the avatar placeholder */
+  placholderIconName?: string;
 }
 
 interface EnhancedProps extends Props, WrappedComponentProps {}
@@ -136,6 +143,8 @@ const SingleUserPicker = ({
   dataTest,
   itemDataTest,
   valueDataTest,
+  showMaskedAddress = false,
+  placholderIconName = 'filled-circle-person',
 }: EnhancedProps) => {
   const [, { error, touched, value }, { setValue }] = useField<AnyUser | null>(
     name,
@@ -204,7 +213,7 @@ const SingleUserPicker = ({
           ) : (
             <Icon
               className={omniPickerIsOpen ? styles.focusIcon : styles.icon}
-              name="filled-circle-person"
+              name={placholderIconName}
               title={MSG.selectMember}
             />
           )}
@@ -224,6 +233,11 @@ const SingleUserPicker = ({
                   {value.profile.displayName ||
                     value.profile.username ||
                     value.profile.walletAddress}
+                  {showMaskedAddress && (
+                    <span className={styles.maskedAddress}>
+                      <MaskedAddress address={value.profile.walletAddress} />
+                    </span>
+                  )}
                 </button>
               )
             }
