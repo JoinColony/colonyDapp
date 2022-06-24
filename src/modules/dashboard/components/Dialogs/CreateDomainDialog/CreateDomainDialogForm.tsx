@@ -188,7 +188,11 @@ const CreateDomainDialogForm = ({
           />
         )}
         <Button
-          text={{ id: 'button.confirm' }}
+          text={
+            values.forceAction || !isVotingExtensionEnabled
+              ? { id: 'button.confirm' }
+              : { id: 'button.createMotion' }
+          }
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() => handleSubmit()}
           loading={isSubmitting}

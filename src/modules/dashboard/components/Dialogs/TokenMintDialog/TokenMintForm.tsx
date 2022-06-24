@@ -175,7 +175,11 @@ const TokenMintForm = ({
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() => handleSubmit()}
-          text={{ id: 'button.confirm' }}
+          text={
+            values.forceAction || !isVotingExtensionEnabled
+              ? { id: 'button.confirm' }
+              : { id: 'button.createMotion' }
+          }
           loading={isSubmitting}
           disabled={!isValid || inputDisabled}
           style={{ width: styles.wideButton }}

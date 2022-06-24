@@ -113,14 +113,6 @@ const MSG = defineMessages({
     id: `dashboard.CreatePaymentDialog.CreatePaymentDialogForm.warningText`,
     defaultMessage: `<span>Warning.</span> You are about to make a payment to an address not on the whitelist. Are you sure the address is correct?`,
   },
-  createMotionText: {
-    id: `button.createMotion`,
-    defaultMessage: `Create Motion`,
-  },
-  confirmText: {
-    id: `button.confirm`,
-    defaultMessage: `Confirm`,
-  },
 });
 interface Props extends ActionDialogProps {
   subscribedUsers: AnyUser[];
@@ -186,7 +178,6 @@ const CreatePaymentDialogForm = ({
     MessageDescriptor | string | undefined
   >(undefined);
   const [currentFromDomain, setCurrentFromDomain] = useState<number>(domainId);
-  const [forceToggle, setForceToggle] = useState<boolean>(values.forceAction);
   const { tokenAddress, amount } = values;
 
   const selectedToken = useMemo(
@@ -362,13 +353,6 @@ const CreatePaymentDialogForm = ({
     [setFieldValue],
   );
 
-  const handleForceToggleChange = useCallback(
-    (value) => {
-      setForceToggle(!value);
-    },
-    [setForceToggle],
-  );
-
   const canMakePayment = userHasPermission && isOneTxPaymentExtensionEnabled;
 
   const inputDisabled = !canMakePayment || onlyForceAction || isSubmitting;
@@ -400,7 +384,6 @@ const CreatePaymentDialogForm = ({
             {hasRoles && isVotingExtensionEnabled && (
               <Toggle
                 label={{ id: 'label.force' }}
-                onChange={handleForceToggleChange}
                 name="forceAction"
                 disabled={!canMakePayment || isSubmitting}
               />
@@ -634,7 +617,11 @@ const CreatePaymentDialogForm = ({
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() => handleSubmit()}
-          text={forceToggle ? MSG.confirmText : MSG.createMotionText}
+          text={
+            values.forceAction || !isVotingExtensionEnabled
+              ? { id: 'button.confirm' }
+              : { id: 'button.createMotion' }
+          }
           loading={isSubmitting}
           /*
            * Disable Form submissions if either the form is invalid, or

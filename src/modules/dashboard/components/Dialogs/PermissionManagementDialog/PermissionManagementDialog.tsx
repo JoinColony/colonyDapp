@@ -273,7 +273,11 @@ const PermissionManagementDialog = ({
                   <Button
                     appearance={{ theme: 'primary', size: 'large' }}
                     loading={isSubmitting}
-                    text={{ id: 'button.confirm' }}
+                    text={
+                      values.forceAction || !isVotingExtensionEnabled
+                        ? { id: 'button.confirm' }
+                        : { id: 'button.createMotion' }
+                    }
                     type="submit"
                     style={{ width: styles.wideButton }}
                     disabled={

@@ -279,7 +279,11 @@ const EditColonyDetailsDialogForm = ({
         />
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
-          text={{ id: 'button.confirm' }}
+          text={
+            forceAction || !isVotingExtensionEnabled
+              ? { id: 'button.confirm' }
+              : { id: 'button.createMotion' }
+          }
           onClick={() => handleSubmit()}
           loading={isSubmitting}
           disabled={

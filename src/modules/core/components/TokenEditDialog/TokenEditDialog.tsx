@@ -235,7 +235,11 @@ const TokenEditDialog = ({
         />
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
-          text={{ id: 'button.confirm' }}
+          text={
+            values.forceAction || !isVotingExtensionEnabled
+              ? { id: 'button.confirm' }
+              : { id: 'button.createMotion' }
+          }
           loading={isSubmitting}
           onClick={() => handleSubmit()}
           disabled={
