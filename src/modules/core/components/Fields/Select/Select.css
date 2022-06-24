@@ -133,6 +133,11 @@
   }
 }
 
+.themeGrid .selectInner {
+  position: relative;
+  top: 1px;
+}
+
 .widthContent {
   width: min-content;
 }
