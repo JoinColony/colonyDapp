@@ -1,3 +1,5 @@
+@value query700 from "~styles/queries.css";
+
 .main {
   padding: 20px;
   min-width: 380px;
@@ -66,7 +68,7 @@
   align-self: flex-start;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and query700 {
   .main {
     min-width: 0px;
   }

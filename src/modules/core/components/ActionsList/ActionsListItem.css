@@ -5,6 +5,8 @@
 @value popoverWidth: 400px;
 @value popoverDistance: 10px;
 
+@value query700 from "~styles/queries.css";
+
 .main {
   display: flex;
   align-items: center;
@@ -166,7 +168,7 @@
   margin-left: 30px;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and query700 {
   .main {
     /* Screen width minus the padding on each side */
     max-width: calc(100vw - 28px);

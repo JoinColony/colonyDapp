@@ -6,7 +6,7 @@ import Popover from '~core/Popover';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { useLoggedInUser, Colony } from '~data/index';
 import { removeValueUnits } from '~utils/css';
-import { mobile } from '~utils/mediaQueries';
+import { query700 as query } from '~styles/queries.css';
 
 import AvatarDropdownPopover from './AvatarDropdownPopover';
 
@@ -27,7 +27,7 @@ const displayName = 'users.AvatarDropdown';
 
 const AvatarDropdown = ({ preventTransactions = false, colony }: Props) => {
   const { username, walletAddress, ethereal } = useLoggedInUser();
-  const isMobile = useMediaQuery({ query: mobile });
+  const isMobile = useMediaQuery({ query });
 
   /*
    * @NOTE Offset Calculations

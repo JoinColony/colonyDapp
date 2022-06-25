@@ -1,10 +1,12 @@
+@value query700 from "~styles/queries.css";
+
 .main {
   padding: 30px 50px;
   width: 450px;
   text-align: left;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and query700 {
   .main {
     padding: 30px 25px;
     width: calc(100vw - 28px);

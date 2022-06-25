@@ -1,3 +1,4 @@
+export const query700: string;
 export const content: string;
 export const title: string;
 export const titleSimplified: string;

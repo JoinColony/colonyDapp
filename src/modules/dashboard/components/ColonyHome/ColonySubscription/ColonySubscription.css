@@ -1,3 +1,5 @@
+@value query700 from "~styles/queries.css";
+
 .main {
   composes: flexContainerRow flexAlignCenter from '~styles/layout.css';
 }
@@ -48,7 +50,7 @@
   color: var(--action-secondary);
 }
 
-@media screen and (max-width: 768px) {
+@media screen and query700 {
   .joinButton {
     padding: 6px 12px 6px 12px;
     height: 30px;
