@@ -1,3 +1,4 @@
+@value query700 from "~styles/queries.css";
 
 .main {
   display: inline-flex;
@@ -191,7 +192,7 @@
   font-size: var(--size-tiny);
 }
 
-@media screen and (max-width: 768px) {
+@media screen and query700 {
   .elementWrapper, .notificationsIcon, .walletAutoLogin {
     display: none;
   }

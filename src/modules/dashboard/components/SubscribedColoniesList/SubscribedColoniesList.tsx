@@ -12,7 +12,7 @@ import { CREATE_COLONY_ROUTE } from '~routes/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
 
 import styles from './SubscribedColoniesList.css';
-import { mobile } from '~utils/mediaQueries';
+import { query700 as query } from '~styles/queries.css';
 
 const MSG = defineMessages({
   iconTitleCreateNewColony: {
@@ -32,7 +32,7 @@ const SubscribedColoniesList = () => {
   });
 
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
-  const isMobile = useMediaQuery({ query: mobile });
+  const isMobile = useMediaQuery({ query });
 
   return (
     <div className={styles.main}>

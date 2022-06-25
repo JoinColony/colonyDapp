@@ -1,3 +1,5 @@
+@value query700 from "~styles/queries.css";
+
 .main {
   composes: stretch from '~styles/layout.css';
   overflow: visible;
@@ -68,7 +70,7 @@
   position: relative;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and query700 {
   .mainContent {
     display: grid;
     padding: 0;

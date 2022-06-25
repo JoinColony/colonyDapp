@@ -1,3 +1,5 @@
+@value query700 from "~styles/queries.css";
+
 .main {
   display: block;
 }
@@ -51,7 +53,7 @@
   color: var(--dark-blue);
 }
 
-@media screen and (max-width: 768px) {
+@media screen and query700 {
   .main {
     padding: 0 14px 60px;
   }

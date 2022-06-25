@@ -1,3 +1,5 @@
+@value query700 from "~styles/queries.css";
+
 .main {
   max-width: max-content;
   line-height: 0;
@@ -16,7 +18,7 @@
   cursor: pointer;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and query700 {
   .main > figure {
     border: 0px solid transparent;
   }

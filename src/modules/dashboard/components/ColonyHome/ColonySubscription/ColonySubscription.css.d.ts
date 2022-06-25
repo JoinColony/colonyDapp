@@ -1,3 +1,4 @@
+export const query700: string;
 export const main: string;
 export const spinnerContainer: string;
 export const colonySubscribed: string;

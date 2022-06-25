@@ -1,3 +1,5 @@
+@value query700 from "~styles/queries.css";
+
 .main {
   display: block;
   margin: 0 -40px 50px 0px;
@@ -28,7 +30,7 @@
   cursor: default;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and query700 {
   .main {
     margin: 0;
     padding: 0px 14px;

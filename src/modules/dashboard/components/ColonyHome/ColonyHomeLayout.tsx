@@ -23,7 +23,7 @@ import ColonyFinishDeployment from './ColonyFinishDeployment';
 import ExtensionUpgrade from './ExtensionUpgrade';
 
 import styles from './ColonyHomeLayout.css';
-import { mobile } from '~utils/mediaQueries';
+import { query700 as query } from '~styles/queries.css';
 
 type Props = {
   colony: Colony;
@@ -57,7 +57,7 @@ const ColonyHomeLayout = ({
   const { ethereal, networkId } = useLoggedInUser();
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
   const openWrongNetworkDialog = useDialog(WrongNetworkDialog);
-  const isMobile = useMediaQuery({ query: mobile });
+  const isMobile = useMediaQuery({ query });
 
   useEffect(() => {
     if (!ethereal && !isNetworkAllowed) {

@@ -10,7 +10,7 @@ import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import styles from './ColonyTotalFundsPopover.css';
-import { mobile } from '~utils/mediaQueries';
+import { query700 as query } from '~styles/queries.css';
 
 interface Props {
   onSelectToken?: Dispatch<SetStateAction<Address>>;
@@ -25,7 +25,7 @@ const ColonyTotalFundsPopover = ({
   tokens,
   currentTokenAddress,
 }: Props) => {
-  const isMobile = useMediaQuery({ query: mobile });
+  const isMobile = useMediaQuery({ query });
   const offset = isMobile ? [50, 4] : [106, 4];
 
   return tokens ? (

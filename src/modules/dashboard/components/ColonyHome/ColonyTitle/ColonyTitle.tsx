@@ -8,7 +8,7 @@ import ColonySubscription from '../ColonySubscription';
 import ColonyAddress from './ColonyAddress';
 
 import styles from './ColonyTitle.css';
-import { mobile } from '~utils/mediaQueries';
+import { query700 as query } from '~styles/queries.css';
 
 const MSG = defineMessages({
   fallbackColonyName: {
@@ -27,7 +27,7 @@ const ColonyTitle = ({
   colony: { displayName: colonyDisplayName, colonyName, colonyAddress },
   colony,
 }: Props) => {
-  const isMobile = useMediaQuery({ query: mobile });
+  const isMobile = useMediaQuery({ query });
 
   return (
     <div className={styles.main}>
