@@ -2,6 +2,8 @@
 @value horizontalOffset: 20px;
 @value verticalOffset: 19px;
 
+@value query700 from "~styles/queries.css";
+
 .avatarButton {
   padding: 0;
   border: 0;
@@ -20,7 +22,7 @@
   box-shadow: 0px 4px 27px color-mod(var(--temp-grey-8) alpha(25%));
 }
 
-@media screen and (max-width: 768px) {
+@media screen and query700 {
   .avatarButton {
     z-index: 2;
     border: 2px solid transparent;

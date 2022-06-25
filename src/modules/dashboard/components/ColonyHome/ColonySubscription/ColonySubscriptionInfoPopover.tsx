@@ -11,7 +11,7 @@ import ENS from '~lib/ENS';
 import { Colony } from '~data/index';
 
 import styles from './ColonySubscriptionInfoPopover.css';
-import { mobile } from '~utils/mediaQueries';
+import { query700 as query } from '~styles/queries.css';
 
 const MSG = defineMessages({
   leaveColonyQuestion: {
@@ -41,7 +41,7 @@ const ColonySubscriptionInfoPopover = ({
   canUnsubscribe = true,
   onUnsubscribe = () => {},
 }: Props) => {
-  const isMobile = useMediaQuery({ query: mobile });
+  const isMobile = useMediaQuery({ query });
   const offset = isMobile ? [115, -365] : [100, -10];
 
   return (

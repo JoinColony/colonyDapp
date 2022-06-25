@@ -4,7 +4,7 @@ import { useMediaQuery } from 'react-responsive';
 import { RouteComponentProps } from '~pages/RouteLayouts';
 import UserNavigation from '../UserNavigation';
 
-import { mobile } from '~utils/mediaQueries';
+import { query700 as query } from '~styles/queries.css';
 
 import styles from './SimpleNav.css';
 
@@ -14,7 +14,7 @@ interface Props {
 }
 
 const SimpleNav = ({ children }: Props) => {
-  const isMobile = useMediaQuery({ query: mobile });
+  const isMobile = useMediaQuery({ query });
 
   // Render UserNavigation in parent component (Default) on mobile.
   return (

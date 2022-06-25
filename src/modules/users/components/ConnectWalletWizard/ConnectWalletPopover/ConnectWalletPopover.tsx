@@ -11,7 +11,7 @@ import {
   horizontalOffset,
   verticalOffset,
 } from './ConnectWalletPopover.css';
-import { mobile } from '~utils/mediaQueries';
+import { query700 as query } from '~styles/queries.css';
 
 interface Props {
   children: ReactElement | PopoverChildFn;
@@ -19,7 +19,7 @@ interface Props {
 
 const ConnectWalletPopover = ({ children }: Props) => {
   const [isOpen, setOpen] = useState(false);
-  const isMobile = useMediaQuery({ query: mobile });
+  const isMobile = useMediaQuery({ query });
   /*
    * @NOTE Offset Calculations
    * See: https://popper.js.org/docs/v2/modifiers/offset/
