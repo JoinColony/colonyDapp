@@ -46,7 +46,14 @@ import { Address } from '~types/index';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 
+import {
+  getDomainMetadataFromResponse,
+  getColonyAvatarImage,
+  getColonyMetadataFromResponse,
+} from '~utils/eventMetadataHandler';
+import { getEventMetadataVersion } from '~utils/eventMetadataHandler/helper';
 import { getToken } from './token';
+
 import {
   getColonyFundsClaimedTransfers,
   getPayoutClaimedTransfers,
@@ -92,16 +99,14 @@ export const getProcessedColony = async (
     extensions: colonyExtensions = [],
   } = subgraphColony;
   let displayName: string | null = null;
-  let avatar: string | null = null;
-  let avatarHash: string | null = null;
   let avatarObject: { image: string | null } | null = { image: null };
+  let avatarHash: string | null = null;
   let tokenAddresses: Array<Address> = [];
   let whitelistedAddresses: Array<Address> = [];
   let whitelistActivated = false;
 
   const prevIpfsHash = metadataHistory.slice(-1).pop();
   const ipfsHash = metadata || prevIpfsHash?.metadata || null;
-
   /*
    * Fetch the colony's metadata
    */
@@ -119,38 +124,63 @@ export const getProcessedColony = async (
 
   try {
     if (ipfsMetadata) {
-      const {
-        colonyDisplayName = null,
-        colonyAvatarHash = null,
-        colonyTokens = [],
-        verifiedAddresses = [],
-        isWhitelistActivated = null,
-      } = JSON.parse(ipfsMetadata);
+      const metadataVersion = getEventMetadataVersion(ipfsMetadata);
+      // console.log(`🚀 colony.ts ~ metadataVersion`, metadataVersion);
+      if (metadataVersion === 1) {
+        /*
+         * original metadata format
+         */
+        const {
+          colonyDisplayName = null,
+          colonyAvatarHash = null,
+          colonyTokens = [],
+          verifiedAddresses = [],
+          isWhitelistActivated = null,
+        } = JSON.parse(ipfsMetadata);
 
-      displayName = colonyDisplayName;
-      avatarHash = colonyAvatarHash;
-      tokenAddresses = colonyTokens;
-      whitelistedAddresses = verifiedAddresses;
-      if (isWhitelistActivated !== null) {
-        whitelistActivated = isWhitelistActivated;
+        displayName = colonyDisplayName;
+        avatarHash = colonyAvatarHash;
+        tokenAddresses = colonyTokens;
+        whitelistedAddresses = verifiedAddresses;
+        if (isWhitelistActivated !== null) {
+          whitelistActivated = isWhitelistActivated;
+        }
+      } else {
+        /*
+         * new metadata format
+         */
+        const colonyMetadata = getColonyMetadataFromResponse(ipfsMetadata);
+
+        displayName = colonyMetadata?.colonyDisplayName || '';
+        avatarHash = colonyMetadata?.colonyAvatarHash || '';
+        tokenAddresses = colonyMetadata?.colonyTokens || [];
+        whitelistedAddresses = colonyMetadata?.verifiedAddresses || [];
+        if (colonyMetadata?.isWhitelistActivated) {
+          whitelistActivated = colonyMetadata.isWhitelistActivated;
+        }
       }
+
       /*
        * Fetch the colony's avatar
        */
-      try {
-        avatar = await ipfs.getString(colonyAvatarHash);
-        avatarObject = JSON.parse(avatar as string);
-      } catch (error) {
-        /*
-         * @NOTE Silent error if avatar hash is null
-         */
-        if (colonyAvatarHash) {
-          log.verbose('Could not fetch colony avatar', avatar);
+      if (avatarHash) {
+        let response: string | null = null;
+        try {
+          response = await ipfs.getString(avatarHash);
+          if (response) {
+            avatarObject =
+              metadataVersion === 1
+                ? JSON.parse(response) // original metadata format
+                : { image: getColonyAvatarImage(response) }; // new metadata format
+            console.log(`🚀 ~ avatarObject`, avatarObject);
+          }
+        } catch (error) {
+          log.verbose('Could not fetch colony avatar', response);
           log.verbose(
             `Could not parse IPFS avatar for colony:`,
             ensName,
             'with hash:',
-            colonyAvatarHash,
+            avatarHash,
           );
         }
       }
@@ -197,7 +227,7 @@ export const getProcessedDomain = async (
     name: domainName,
   } = subgraphDomain;
   let name: string | null = null;
-  let color: string | null = null;
+  let color: number | null = null;
   let description: string | null = null;
 
   const prevIpfsHash = metadataHistory.slice(-1).pop();
@@ -220,15 +250,32 @@ export const getProcessedDomain = async (
 
   try {
     if (ipfsMetadata) {
-      const {
-        domainName: metadataDomainName = null,
-        domainColor = null,
-        domainPurpose = null,
-      } = JSON.parse(ipfsMetadata);
+      const metadataVersion = getEventMetadataVersion(ipfsMetadata);
+      // console.log(`🚀 domain.ts ~ metadataVersion`, metadataVersion);
+      if (metadataVersion === 1) {
+        /*
+         * original metadata format
+         */
+        const {
+          domainName: metadataDomainName = null,
+          domainColor = null,
+          domainPurpose = null,
+        } = JSON.parse(ipfsMetadata);
 
-      name = metadataDomainName;
-      color = domainColor;
-      description = domainPurpose;
+        name = metadataDomainName;
+        color = domainColor;
+        description = domainPurpose;
+      } else {
+        /*
+         * new metadata format
+         */
+        const domainMetadata = getDomainMetadataFromResponse(ipfsMetadata);
+        console.log(`🚀 ~ domainMetadata`, domainMetadata);
+
+        name = domainMetadata?.domainName || null;
+        color = domainMetadata?.domainColor || null;
+        description = domainMetadata?.domainPurpose || null;
+      }
     }
   } catch (error) {
     log.verbose(
@@ -247,7 +294,7 @@ export const getProcessedDomain = async (
       ? parseInt(parent.domainChainId, 10)
       : null,
     name: name || domainName,
-    color: color ? parseInt(color, 10) : Color.LightPink,
+    color: color || Color.LightPink,
     description,
   };
 };

@@ -27,6 +27,12 @@ import {
 } from '~dashboard/ActionsPage';
 import ipfs from '~context/ipfsWithFallbackContext';
 import { log } from '~utils/debug';
+import {
+  getColonyMetadataFromResponse,
+  getDomainMetadataFromResponse,
+} from '~utils/eventMetadataHandler';
+
+import { getEventMetadataVersion } from '~utils/eventMetadataHandler/helper';
 
 import { getMotionRequiredStake, MotionState } from '../colonyMotions';
 import { availableRoles } from '~dialogs/PermissionManagementDialog';
@@ -242,11 +248,21 @@ const getPaymentActionValues = async (
   return paymentActionValues;
 };
 
-const getDomainValuesFromIPFS = async (ipfsHash: string) => {
+interface DomainValues {
+  domainName: string | null;
+  domainColor: number | null;
+  domainPurpose: string | null;
+}
+
+const getDomainValuesFromIPFS = async (
+  ipfsHash: string,
+): Promise<DomainValues> => {
   let ipfsMetadata: any = null;
-  let domainName = null;
-  let domainColor = null;
-  let domainPurpose = null;
+  let domainValues: DomainValues = {
+    domainName: null,
+    domainColor: null,
+    domainPurpose: null,
+  };
 
   try {
     ipfsMetadata = await ipfs.getString(ipfsHash);
@@ -259,11 +275,30 @@ const getDomainValuesFromIPFS = async (ipfsHash: string) => {
 
   try {
     if (ipfsMetadata) {
-      const domainMetadata = JSON.parse(ipfsMetadata);
+      const metadataVersion = getEventMetadataVersion(ipfsMetadata);
+      // console.log(`🚀 domain.ts ~ metadataVersion`, metadataVersion);
+      if (metadataVersion === 1) {
+        /*
+         * original metadata format
+         */
+        const domainMetadata = JSON.parse(ipfsMetadata);
+        domainValues = {
+          domainName: domainMetadata.domainName,
+          domainColor: domainMetadata.domainColor,
+          domainPurpose: domainMetadata.domainPurpose,
+        };
+      } else {
+        /*
+         * new metadata format
+         */
+        const domainMetadata = getDomainMetadataFromResponse(ipfsMetadata);
 
-      domainName = domainMetadata.domainName;
-      domainColor = domainMetadata.domainColor || null;
-      domainPurpose = domainMetadata.domainPurpose || null;
+        domainValues = {
+          domainName: domainMetadata?.domainName || null,
+          domainColor: domainMetadata?.domainColor || null,
+          domainPurpose: domainMetadata?.domainPurpose || null,
+        };
+      }
     }
   } catch (error) {
     log.verbose(
@@ -273,17 +308,6 @@ const getDomainValuesFromIPFS = async (ipfsHash: string) => {
       ipfsMetadata,
     );
   }
-
-  const domainValues: {
-    domainName: string | null;
-    domainColor: number | null;
-    domainPurpose: string | null;
-  } = {
-    domainName,
-    domainColor,
-    domainPurpose,
-  };
-
   return domainValues;
 };
 
@@ -490,19 +514,41 @@ const getColonyEditActionValues = async (
 
   try {
     if (ipfsMetadata) {
-      const {
-        colonyDisplayName,
-        colonyAvatarHash,
-        colonyTokens,
-        isWhitelistActivated,
-        verifiedAddresses,
-      } = JSON.parse(ipfsMetadata);
+      const metadataVersion = getEventMetadataVersion(ipfsMetadata);
+      // console.log(`🚀 colony.ts ~ metadataVersion`, metadataVersion);
+      if (metadataVersion === 1) {
+        /*
+         * original metadata format
+         */
+        const {
+          colonyDisplayName,
+          colonyAvatarHash,
+          colonyTokens,
+          isWhitelistActivated,
+          verifiedAddresses,
+        } = JSON.parse(ipfsMetadata);
 
-      colonyEditValues.colonyDisplayName = colonyDisplayName;
-      colonyEditValues.colonyAvatarHash = colonyAvatarHash;
-      colonyEditValues.colonyTokens = colonyTokens;
-      colonyEditValues.isWhitelistActivated = isWhitelistActivated;
-      colonyEditValues.verifiedAddresses = verifiedAddresses;
+        colonyEditValues.colonyDisplayName = colonyDisplayName;
+        colonyEditValues.colonyAvatarHash = colonyAvatarHash;
+        colonyEditValues.colonyTokens = colonyTokens;
+        colonyEditValues.isWhitelistActivated = isWhitelistActivated;
+        colonyEditValues.verifiedAddresses = verifiedAddresses;
+      } else {
+        /*
+         * new metadata format
+         */
+        const colonyMetadata = getColonyMetadataFromResponse(ipfsMetadata);
+
+        colonyEditValues.colonyDisplayName =
+          colonyMetadata?.colonyDisplayName ?? '';
+        colonyEditValues.colonyAvatarHash =
+          colonyMetadata?.colonyAvatarHash || '';
+        colonyEditValues.colonyTokens = colonyMetadata?.colonyTokens || [];
+        colonyEditValues.verifiedAddresses =
+          colonyMetadata?.verifiedAddresses || [];
+        colonyEditValues.isWhitelistActivated =
+          colonyMetadata?.isWhitelistActivated;
+      }
     }
   } catch (error) {
     log.verbose(
@@ -901,9 +947,9 @@ const getColonyEditMotionValues = async (
     colonyClient,
   );
 
-  let colonyDisplayName = null;
-  let colonyAvatarHash = null;
-  let colonyTokens = [];
+  let colonyDisplayName: string | null = null;
+  let colonyAvatarHash: string | null = null;
+  let colonyTokens: string[] | null = null;
   let ipfsMetadata: any = null;
 
   try {
@@ -917,15 +963,30 @@ const getColonyEditMotionValues = async (
 
   try {
     if (ipfsMetadata) {
-      const {
-        colonyDisplayName: displayName,
-        colonyAvatarHash: avatarHash,
-        colonyTokens: tokenAddresses,
-      } = JSON.parse(ipfsMetadata);
+      const metadataVersion = getEventMetadataVersion(ipfsMetadata);
+      // console.log(`🚀 colony.ts ~ metadataVersion`, metadataVersion);
+      if (metadataVersion === 1) {
+        /*
+         * original metadata format
+         */
+        const {
+          colonyDisplayName: displayName,
+          colonyAvatarHash: avatarHash,
+          colonyTokens: tokenAddresses,
+        } = JSON.parse(ipfsMetadata);
 
-      colonyDisplayName = displayName;
-      colonyAvatarHash = avatarHash;
-      colonyTokens = tokenAddresses;
+        colonyDisplayName = displayName;
+        colonyAvatarHash = avatarHash;
+        colonyTokens = tokenAddresses;
+      } else {
+        /*
+         * new metadata format
+         */
+        const colonyMetadata = getColonyMetadataFromResponse(ipfsMetadata);
+        colonyDisplayName = colonyMetadata?.colonyDisplayName || null;
+        colonyAvatarHash = colonyMetadata?.colonyAvatarHash || null;
+        colonyTokens = colonyMetadata?.colonyTokens || [];
+      }
     }
   } catch (error) {
     log.verbose(
@@ -940,7 +1001,7 @@ const getColonyEditMotionValues = async (
     actionInitiator?: string;
     colonyDisplayName: string | null;
     colonyAvatarHash?: string | null;
-    colonyTokens?: string[];
+    colonyTokens?: string[] | null;
   } = {
     ...motionDefaultValues,
     colonyDisplayName,
