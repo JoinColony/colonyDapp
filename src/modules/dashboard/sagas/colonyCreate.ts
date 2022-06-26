@@ -41,6 +41,8 @@ import {
 } from '../../core/actionCreators';
 import { createTransaction, createTransactionChannels } from '../../core/sagas';
 import { ipfsUpload } from '../../core/sagas/ipfs';
+import { getMetadataStringForColony } from '~utils/eventMetadataHandler';
+
 import { createUserWithSecondAttempt } from '../../users/sagas/utils';
 import { log } from '~utils/debug';
 
@@ -289,20 +291,16 @@ function* colonyCreate({
      */
     let colonyAddress;
     if (createColony) {
+      const colonyMetadata = getMetadataStringForColony({
+        colonyName,
+        colonyDisplayName: displayName,
+      });
       /*
        * First IPFS upload try
        */
       let colonyMetadataIpfsHash;
       try {
-        colonyMetadataIpfsHash = yield call(
-          ipfsUpload,
-          JSON.stringify({
-            colonyName,
-            colonyDisplayName: displayName,
-            colonyAvatarHash: null,
-            colonyTokens: [],
-          }),
-        );
+        colonyMetadataIpfsHash = yield call(ipfsUpload, colonyMetadata);
       } catch (error) {
         log.verbose('Could not upload the colony metadata IPFS. Retrying...');
         log.verbose(error);
@@ -310,15 +308,7 @@ function* colonyCreate({
          * If the first try fails, then attempt to upload again
          * We assume the first error was due to a connection issue
          */
-        colonyMetadataIpfsHash = yield call(
-          ipfsUpload,
-          JSON.stringify({
-            colonyName,
-            colonyDisplayName: displayName,
-            colonyAvatarHash: null,
-            colonyTokens: [],
-          }),
-        );
+        colonyMetadataIpfsHash = yield call(ipfsUpload, colonyMetadata);
       }
 
       const { version: latestVersion } = yield getNetworkContracts();
