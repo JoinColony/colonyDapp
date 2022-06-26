@@ -26,48 +26,48 @@ import { tokensData } from './constants';
 import styles from './Recipient.css';
 
 const MSG = defineMessages({
-  defaultRecipientLabel: {
-    id: 'dashboard.Expenditures.Recipient.defaultRecipientLabel',
+  recipientLabel: {
+    id: 'dashboard.ExpenditurePage.Recipient.recipientLabel',
     defaultMessage: 'Recipient',
   },
-  defaultValueLabel: {
-    id: 'dashboard.Expenditures.Recipient.defaultValueLabel',
+  valueLabel: {
+    id: 'dashboard.ExpenditurePage.Recipient.valueLabel',
     defaultMessage: 'Value',
   },
-  defaultDelayLabel: {
-    id: 'dashboard.Expenditures.Recipient.defaultDelayLabel',
+  delayLabel: {
+    id: 'dashboard.ExpenditurePage.Recipient.delayLabel',
     defaultMessage: 'Claim delay',
   },
   tooltipMessageTitle: {
-    id: 'dashboard.Expenditures.Recipient.tooltipMessageTitle',
+    id: 'dashboard.ExpenditurePage.Recipient.tooltipMessageTitle',
     defaultMessage: 'Security delay for claiming funds.',
   },
   tooltipMessageDescription: {
-    id: 'dashboard.Expenditures.Recipient.tooltipMessageDescription',
+    id: 'dashboard.ExpenditurePage.Recipient.tooltipMessageDescription',
     defaultMessage: `F.ex. once the work is finished, recipient has to wait before funds can be claimed.`,
   },
   addTokenText: {
-    id: 'dashboard.Expenditures.Recipient.addTokenText',
+    id: 'dashboard.ExpenditurePage.Recipient.addTokenText',
     defaultMessage: 'Another token',
   },
   removeTokenText: {
-    id: 'dashboard.Expenditures.Recipient.removeTokenText',
+    id: 'dashboard.ExpenditurePage.Recipient.removeTokenText',
     defaultMessage: 'Discard',
   },
   hoursLabel: {
-    id: 'dashboard.Expenditures.Recipient.daysOptionLabel',
+    id: 'dashboard.ExpenditurePage.Recipient.hoursLabel',
     defaultMessage: 'hours',
   },
   daysLabel: {
-    id: 'dashboard.Expenditures.Recipient.daysOptionLabel',
+    id: 'dashboard.ExpenditurePage.Recipient.daysLabel',
     defaultMessage: 'days',
   },
   monthsLabel: {
-    id: 'dashboard.Expenditures.Recipient.monthsOptionLabel',
+    id: 'dashboard.ExpenditurePage.Recipient.monthsLabel',
     defaultMessage: 'months',
   },
   valueError: {
-    id: 'dashboard.Expenditures.Recipient.valueError',
+    id: 'dashboard.ExpenditurePage.Recipient.valueError',
     defaultMessage: 'Value is required',
   },
 });
@@ -117,7 +117,7 @@ const Recipient = ({
             <div className={styles.singleUserContainer}>
               <UserPickerWithSearch
                 data={subscribedUsers}
-                label={MSG.defaultRecipientLabel}
+                label={MSG.recipientLabel}
                 name={`recipients[${index}].recipient`}
                 filter={filterUserSelection}
                 renderAvatar={supRenderAvatar}
@@ -135,14 +135,14 @@ const Recipient = ({
                 {tokens?.map((token, idx) => (
                   <div className={styles.valueContainer} key={token.id}>
                     <div className={styles.inputContainer}>
-                      <InputLabel label={MSG.defaultValueLabel} />
+                      <InputLabel label={MSG.valueLabel} />
                       <Input
                         name={`recipients[${index}].value[${idx}].amount`}
                         appearance={{
                           theme: 'underlined',
                           size: 'small',
                         }}
-                        label={MSG.defaultValueLabel}
+                        label={MSG.valueLabel}
                         placeholder="Not set"
                         formattingOptions={{
                           numeral: true,
@@ -206,7 +206,7 @@ const Recipient = ({
           <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.delayContainer}>
               <div className={styles.delay}>
-                <FormattedMessage {...MSG.defaultDelayLabel} />
+                <FormattedMessage {...MSG.delayLabel} />
                 <Tooltip
                   content={
                     <div className={styles.tooltip}>
