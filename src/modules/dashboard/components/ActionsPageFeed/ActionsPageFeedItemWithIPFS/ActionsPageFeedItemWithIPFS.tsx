@@ -8,6 +8,8 @@ import Link from '~core/Link';
 
 import { useDataFetcher } from '~utils/hooks';
 import { ipfsDataFetcher } from '../../../../core/fetchers';
+import { getAnnotationMsgFromResponse } from '~utils/eventMetadataHandler';
+import { getEventMetadataVersion } from '~utils/eventMetadataHandler/helper';
 
 import styles from './ActionsPageFeedItemWithIPFS.css';
 
@@ -47,9 +49,23 @@ const ActionsPageFeedItemWithIPFS = ({
     if (!annotation || !ipfsDataJSON) {
       return undefined;
     }
-    const annotationObject = JSON.parse(ipfsDataJSON);
-    if (annotationObject && annotationObject.annotationMessage) {
-      return annotationObject.annotationMessage;
+
+    const metadataVersion = getEventMetadataVersion(ipfsDataJSON);
+    // console.log(`🚀 ~ annotationMessage ~ metadataVersion`, metadataVersion);
+    if (metadataVersion === 1) {
+      /*
+       * original metadata format
+       */
+      const annotationObject = JSON.parse(ipfsDataJSON);
+      if (annotationObject && annotationObject.annotationMessage) {
+        return annotationObject.annotationMessage;
+      }
+    } else {
+      /*
+       * new metadata format
+       */
+      console.log(`🚀 ~ annotationMessage ~Found new metadata format`);
+      return getAnnotationMsgFromResponse(ipfsDataJSON);
     }
     return undefined;
   }, [annotation, ipfsDataJSON]);
