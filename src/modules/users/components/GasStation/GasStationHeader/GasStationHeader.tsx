@@ -17,6 +17,10 @@ const MSG = defineMessages({
     id: 'users.GasStation.GasStationHeader.goToWalletLinkTitle',
     defaultMessage: 'Go to Wallet',
   },
+  network: {
+    id: 'users.GasStation.GasStationHeader.network',
+    defaultMessage: 'Network: {connectedNetwork} (connected)',
+  },
 });
 
 interface Props {
@@ -24,9 +28,9 @@ interface Props {
 }
 
 const displayName = 'users.GasStation.GasStationHeader';
-
 const GasStationHeader = ({ close }: Props) => {
   const { balance, walletAddress } = useLoggedInUser();
+
   return (
     <div className={styles.main}>
       <div className={styles.walletDetails}>
