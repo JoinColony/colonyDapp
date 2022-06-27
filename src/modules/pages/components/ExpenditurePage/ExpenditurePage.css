@@ -8,7 +8,7 @@
 }
 
 .mainContainer {
-  height: 100%;
+  min-height: 100%;
   width: calc(100% - sidebarWidth);
   background-color: var(--colony-white);
 }
@@ -18,7 +18,16 @@
 }
 
 .sidebar {
+  height: 600px;
   min-height: calc(100vh - navBarHeight);
   width: sidebarWidth;
+  overflow-y: auto;
   background-color: var(--grey-blue-3);
+}
+
+.form {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
 }

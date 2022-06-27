@@ -1,5 +1,5 @@
-export const paddingTopBottom: string;
-export const paddingRightLeft: string;
+export const paddingTop: string;
+export const paddingRightLeftBottom: string;
 export const container: string;
 export const settingsRow: string;
 export const userContainer: string;
