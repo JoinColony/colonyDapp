@@ -36,7 +36,7 @@ interface Props extends SelectProps {
   placement?: 'right' | 'bottom';
 }
 
-const displayName = 'Select';
+const displayName = 'SelectWithPortalDropdown';
 
 const SelectWithPortalDropdown = ({
   appearance,
