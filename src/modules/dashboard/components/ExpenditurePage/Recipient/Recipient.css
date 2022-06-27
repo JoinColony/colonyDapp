@@ -4,6 +4,14 @@
   padding: 6px 0;
 }
 
+.formContainer {
+  border-top: 1px solid var(--grey-blue-0);
+}
+
+.margin-bottom {
+  margin-bottom: 36px;
+}
+
 .valueContainer {
   display: flex;
   align-items: flex-start;
@@ -41,10 +49,10 @@
 .delay {
   display: flex;
   align-items: center;
-  font-size: 13px;
+  font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--text);
-  letter-spacing: 0.5px;
+  letter-spacing: var(--spacing-medium);
 }
 
 .delayControlsContainer {
@@ -74,7 +82,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  font-size: 12px;
+  font-size: var(--size-small);
 }
 
 .removeWrapper {

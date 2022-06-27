@@ -3,6 +3,8 @@ import * as ReactDOM from 'react-dom';
 
 import styles from './Dropdown.css';
 
+const displayName = 'UserPickerWithSearch.Dropdown';
+
 interface Props {
   element: HTMLDivElement | null;
   scrollContainer?: Window | HTMLElement | null;
@@ -65,5 +67,7 @@ const Dropdown = ({
       )
     : null;
 };
+
+Dropdown.displayName = displayName;
 
 export default Dropdown;

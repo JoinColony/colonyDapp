@@ -9,7 +9,7 @@
 }
 
 .payments {
-  margin-bottom: 8px;
+  margin-bottom: 18px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   line-height: 18px;
@@ -18,10 +18,9 @@
 
 .recipientLabel {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  min-height: 28px;
-  min-height: 40px;
+  align-items: center;
+  padding-bottom: 10px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   line-height: 18px;
@@ -29,18 +28,19 @@
 }
 
 .singleRecipient {
+  padding-bottom: 4px;
   position: relative;
 }
 
 .signWrapper {
-  height: 16px;
-  width: 16px;
+  height: 30px;
+  width: 30px;
   position: absolute;
 
   /* negative margin is used to set the position of the button,
-  which collapse and expand singe recipient fields,
+  which collapses and expands single recipient fields,
   on the left side of the form */
-  left: -23px;
+  left: -34px;
 }
 
 .signWrapper:hover {
@@ -48,15 +48,19 @@
 }
 
 .verticalDivider {
-  height: calc(100% - 80px);
+  height: calc(100% - 124px);
   position: absolute;
   top: 56px;
 
   /* negative margin is used to set the position of the vertical line
-  on the left side of the form, similar to margin in singWrapper class */
-  left: -17px;
+  on the left side of the form, similar to margin in signWrapper class */
+  left: -20px;
   border-left: 1px solid var(--temp-grey-blue-7);
   opacity: 0.25;
+}
+
+.dividerInLastItem {
+  height: calc(100% - 84px);
 }
 
 .minus {
@@ -75,18 +79,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-right: 10px;
+  margin-right: 2px;
+
+  /* a negative margin is used here to align the entire "Add recipient" row to the left */
+  margin-left: -8px;
+  height: 30px;
+  width: 30px;
   fill: var(--action-secondary);
-}
-
-.circlePlusIcon svg {
-  height: 16px;
-  width: 16px;
-  overflow: visible;
-}
-
-.addRecipientWrapper {
-  margin-top: 9px;
 }
 
 .deleteIcon {
