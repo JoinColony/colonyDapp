@@ -15,7 +15,13 @@ import Wallet from '~dashboard/Wallet';
 import ConnectWalletWizard from '~users/ConnectWalletWizard';
 import UserProfile from '~users/UserProfile';
 import UserProfileEdit from '~users/UserProfileEdit';
-import { NavBar, Plain, SimpleNav, Default } from '~pages/RouteLayouts/index';
+import {
+  NavBar,
+  Plain,
+  SimpleNav,
+  Default,
+  WrappedNavBar,
+} from '~pages/RouteLayouts/index';
 import { ColonyBackText } from '~pages/BackTexts';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import LadingPage from '~pages/LandingPage';
@@ -256,7 +262,7 @@ const Routes = () => {
         <AlwaysAccesibleRoute
           path={EXPENDITURE_ROUTE}
           component={ExpenditurePage}
-          layout={NavBar}
+          layout={WrappedNavBar}
           routeProps={({ colonyName }) => ({
             backText: '',
             backRoute: generatePath(COLONY_EXPENDITURE_ROUTE, {
@@ -264,7 +270,6 @@ const Routes = () => {
             }),
           })}
         />
-
         {/*
          * Redirect anything else that's not found to the 404 route
          */}

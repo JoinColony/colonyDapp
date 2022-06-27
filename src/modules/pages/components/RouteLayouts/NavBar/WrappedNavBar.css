@@ -1,0 +1,3 @@
+.container nav {
+  z-index: var(--z-index-positioning);
+}

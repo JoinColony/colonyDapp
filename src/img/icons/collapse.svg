@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30">
+  <rect
+    x="7"
+    y="7"
+    width="16"
+    height="16"
+    rx="1.5"
+    ry="1.5"
+    fill="none"
+    isolation="isolate"
+    opacity=".65"
+    stroke="#76748b"
+  />
+  <path
+    d="M11.5,15.56c-.28,0-.5-.22-.5-.5v-.06c0-.28,.22-.5,.5-.5h7c.28,0,.5,.22,.5,.5v.06c0,.28-.22,.5-.5,.5h-7Z"
+    fill="#76748b"
+  />
+</svg>
