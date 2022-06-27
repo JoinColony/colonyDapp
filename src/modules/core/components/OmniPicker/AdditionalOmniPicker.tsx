@@ -17,6 +17,7 @@ import OmniPickerContent from './OmniPickerContent';
 import OmniPickerItemEmpty from './OmniPickerItemEmpty';
 import styles from './OmniPicker.css';
 
+const displayName = 'OmniPicker.AdditionalOmniPicker';
 interface Appearance {
   position: 'top' | 'bottom';
 }
@@ -273,5 +274,7 @@ class AdditionalOmniPicker extends Component<Props> {
     );
   }
 }
+
+AdditionalOmniPicker.displayName = displayName;
 
 export default AdditionalOmniPicker;

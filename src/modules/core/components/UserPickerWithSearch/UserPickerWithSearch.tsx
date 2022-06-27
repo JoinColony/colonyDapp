@@ -27,23 +27,23 @@ type AvatarRenderFn = (
 
 const MSG = defineMessages({
   selectMember: {
-    id: 'SingleUserPicker.selectMember',
+    id: 'UserPickerWithSearch.selectMember',
     defaultMessage: 'Select member',
   },
   emptyMessage: {
-    id: 'SingleUserPicker.emptyMessage',
+    id: 'UserPickerWithSearch.emptyMessage',
     defaultMessage: 'No Colony members match that search.',
   },
   remove: {
-    id: 'SingleUserPicker.remove',
+    id: 'UserPickerWithSearch.remove',
     defaultMessage: 'Remove',
   },
   closedCaret: {
-    id: 'SingleUserPicker.closedCaret',
+    id: 'UserPickerWithSearch.closedCaret',
     defaultMessage: 'Closed user picker',
   },
   openedCaret: {
-    id: 'SingleUserPicker.openedCaret',
+    id: 'UserPickerWithSearch.openedCaret',
     defaultMessage: 'Opened user picker',
   },
 });
