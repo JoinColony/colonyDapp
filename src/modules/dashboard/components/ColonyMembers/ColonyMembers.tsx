@@ -21,6 +21,7 @@ import PermissionManagementDialog from '~dialogs/PermissionManagementDialog';
 import WrongNetworkDialog from '~dashboard/ColonyHome/WrongNetworkDialog';
 import InviteLinkButton from '~dashboard/InviteLinkButton';
 import ManageWhitelistDialog from '~dashboard/Dialogs/ManageWhitelistDialog';
+import { MEMEBERS_FILTERS } from '~dashboard/ColonyMembers/MembersFilter';
 
 import {
   useColonyFromNameQuery,
@@ -71,6 +72,8 @@ const MSG = defineMessages({
 });
 
 const ColonyMembers = () => {
+  const [filters, setFilters] = useState<MEMEBERS_FILTERS[]>([]);
+
   const {
     networkId,
     username,
@@ -221,6 +224,7 @@ const ColonyMembers = () => {
             <Members
               selectedDomain={selectedDomainId}
               handleDomainChange={setSelectedDomainId}
+              filters={filters}
             />
           )}
         </div>
@@ -301,7 +305,7 @@ const ColonyMembers = () => {
               </>
             )}
           </ul>
-          <MembersFilter />
+          <MembersFilter handleFiltersCallback={setFilters} />
         </aside>
       </div>
     </div>
