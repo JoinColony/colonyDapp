@@ -81,11 +81,7 @@ const MemberInfoPopover = ({
     fetchPolicy: 'no-cache',
   });
 
-  if (
-    loadingNativeTokenAddress ||
-    loadingUserReputation ||
-    loadingUserBalance
-  ) {
+  if (loadingNativeTokenAddress || loadingUserBalance) {
     return (
       <div className={`${styles.main} ${styles.loadingSpinnerContainer}`}>
         <SpinnerLoader
@@ -129,6 +125,7 @@ const MemberInfoPopover = ({
               isCurrentUserReputation={
                 currentUserWalletAddress === walletAddress
               }
+              isUserReputationLoading={loadingUserReputation}
             />
           </div>
         )}
