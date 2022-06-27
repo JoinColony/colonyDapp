@@ -202,10 +202,21 @@
     gap: 7px;
   }
 
+  .readyTransactionsCount {
+    display: none;
+  }
+
   .connectWalletButton {
     margin-top: 7px;
     margin-bottom: 7px;
     margin-right: 0px;
     width: 120px;
+  }
+
+  .gasStationReference + div {
+    display: flex;
+    justify-content: center;
+    width: 100vw;
+    background-color: transparent;
   }
 }
