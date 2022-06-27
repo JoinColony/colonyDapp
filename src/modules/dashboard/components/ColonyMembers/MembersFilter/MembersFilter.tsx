@@ -1,17 +1,13 @@
 import { FormikProps } from 'formik';
-import React from 'react';
-import { defineMessage, FormattedMessage } from 'react-intl';
-import Button from '~core/Button';
+import React, { useMemo } from 'react';
+import { defineMessage, FormattedMessage, MessageDescriptor } from 'react-intl';
 
+import Button from '~core/Button';
 import { Form, Checkbox } from '~core/Fields';
 
 import styles from './MembersFilter.css';
 
 const displayName = 'dashboard.ColonyMembers.MembersFilter';
-
-interface FormValues {
-  filters: string[];
-}
 
 const MSG = defineMessage({
   filter: {
@@ -40,57 +36,79 @@ const MSG = defineMessage({
   },
 });
 
-const filters = [
+export enum MEMEBERS_FILTERS {
+  CONTRIBUTORS = 'contributors',
+  WATCHERS = 'watchers',
+  VERIFIED = 'verified',
+  BANNED = 'banned',
+}
+
+interface FormValues {
+  filters: MEMEBERS_FILTERS[];
+}
+
+interface Filter {
+  name: MEMEBERS_FILTERS;
+  text: MessageDescriptor;
+}
+
+const filters: Filter[] = [
   {
-    name: 'contributors',
+    name: MEMEBERS_FILTERS.CONTRIBUTORS,
     text: MSG.contributors,
   },
   {
-    name: 'watchers',
+    name: MEMEBERS_FILTERS.WATCHERS,
     text: MSG.watchers,
   },
   {
-    name: 'verified',
+    name: MEMEBERS_FILTERS.VERIFIED,
     text: MSG.verified,
   },
   {
-    name: 'banned',
+    name: MEMEBERS_FILTERS.BANNED,
     text: MSG.banned,
   },
 ];
 
-const MembersFilter = () => {
+interface Props {
+  handleFiltersCallback: (filters: MEMEBERS_FILTERS[]) => void;
+}
+
+const MembersFilter = ({ handleFiltersCallback }: Props) => {
+  const filterNames = useMemo(() => filters.map((item) => item.name), []);
+
   return (
     <>
       <hr className={styles.divider} />
-      <Form
-        initialValues={{ filters: filters.map((item) => item.name) }}
-        onSubmit={() => {}}
-      >
-        {({ resetForm }: FormikProps<FormValues>) => (
-          <>
-            <div className={styles.titleContainer}>
-              <span className={styles.title}>
-                <FormattedMessage {...MSG.filter} />
-              </span>
-              <Button
-                text={MSG.reset}
-                appearance={{ theme: 'blue' }}
-                onClick={() => resetForm()}
-              />
-            </div>
-            <div className={styles.checkboxes}>
-              {filters.map((item) => (
-                <Checkbox
-                  value={item.name}
-                  name="filters"
-                  key={item.name}
-                  label={item.text}
+      <Form initialValues={{ filters: filterNames }} onSubmit={() => {}}>
+        {({ resetForm, values }: FormikProps<FormValues>) => {
+          handleFiltersCallback(values.filters);
+          return (
+            <>
+              <div className={styles.titleContainer}>
+                <span className={styles.title}>
+                  <FormattedMessage {...MSG.filter} />
+                </span>
+                <Button
+                  text={MSG.reset}
+                  appearance={{ theme: 'blue' }}
+                  onClick={() => resetForm()}
                 />
-              ))}
-            </div>
-          </>
-        )}
+              </div>
+              <div className={styles.checkboxes}>
+                {filters.map((item) => (
+                  <Checkbox
+                    value={item.name}
+                    name="filters"
+                    key={item.name}
+                    label={item.text}
+                  />
+                ))}
+              </div>
+            </>
+          );
+        }}
       </Form>
     </>
   );

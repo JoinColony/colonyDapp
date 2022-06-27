@@ -5,6 +5,8 @@ import sortBy from 'lodash/sortBy';
 
 import { SpinnerLoader } from '~core/Preloaders';
 import UserPermissions from '~dashboard/UserPermissions';
+import { MEMEBERS_FILTERS } from '~dashboard/ColonyMembers/MembersFilter';
+
 import { useTransformer } from '~utils/hooks';
 import {
   Colony,
@@ -46,6 +48,7 @@ interface Props {
   colony: Colony;
   selectedDomain: number | undefined;
   handleDomainChange: React.Dispatch<React.SetStateAction<number>>;
+  filters: MEMEBERS_FILTERS[];
 }
 
 export type Member = AnyUser & {

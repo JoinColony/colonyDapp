@@ -1,1 +1,1 @@
-export { default } from './MembersFilter';
+export { default, MEMEBERS_FILTERS } from './MembersFilter';
