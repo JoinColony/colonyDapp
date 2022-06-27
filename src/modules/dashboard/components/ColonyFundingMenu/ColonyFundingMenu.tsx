@@ -122,7 +122,7 @@ const ColonyFundingMenu = ({
 
   return (
     <ul className={styles.main}>
-      <li>
+      <li className={styles.listItem}>
         <Button
           text={MSG.navItemMoveTokens}
           appearance={{ theme: 'blue' }}
@@ -137,7 +137,7 @@ const ColonyFundingMenu = ({
           }
         />
       </li>
-      <li>
+      <li className={styles.listItem}>
         <Button
           text={MSG.navItemMintNewTokens}
           appearance={{ theme: 'blue' }}
@@ -152,7 +152,7 @@ const ColonyFundingMenu = ({
           }
         />
       </li>
-      <li>
+      <li className={styles.listItem}>
         <Button
           text={MSG.navItemManageTokens}
           appearance={{ theme: 'blue' }}

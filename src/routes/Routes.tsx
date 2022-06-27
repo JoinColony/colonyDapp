@@ -183,7 +183,7 @@ const Routes = () => {
           routeProps={({ colonyName }) => ({
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,
-            hasSubscribedColonies: false,
+            hasSubscribedColonies: isMobile,
           })}
         />
         <AlwaysAccesibleRoute
