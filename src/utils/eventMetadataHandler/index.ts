@@ -1,3 +1,5 @@
+import * as yup from 'yup';
+import { metadataSchema } from './metaDataValidation';
 import {
   AnnotationMetadata,
   ColonyMetadata,
@@ -15,50 +17,55 @@ const METADATA_VERSION = 2;
  */
 // String from IPFS to Metadata Object
 const parseEventMetadata = (res: string): Metadata | undefined => {
-  try {
-    const { version, name, data } = JSON.parse(res);
-    // @TODO decide how to handle versions in the future
-    if (version !== METADATA_VERSION) {
-      log.verbose('Invalid metadata version');
-      return undefined;
+  let validatedRes: yup.Shape<
+    object | undefined,
+    {
+      version: number;
+      name: MetadataType;
+      data: object;
     }
+  >;
 
-    switch (name) {
-      case MetadataType.Colony:
-        return {
-          version,
-          name,
-          data: {
-            ...data,
-            colonyTokens: data.colonyTokens ? data.colonyTokens : [],
-            verifiedAddresses: data.verifiedAddresses
-              ? data.verifiedAddresses
-              : [],
-          },
-        };
-      case MetadataType.Domain:
-        return {
-          version,
-          name,
-          data: {
-            ...data,
-            domainTokens: data.domainTokens ? data.domainTokens : [],
-          },
-        };
-      case MetadataType.Annotation:
-      case MetadataType.Misc:
-        return {
-          version,
-          name,
-          data: {
-            ...data,
-          },
-        };
-      default:
-        log.verbose('Invalid metadata type');
+  try {
+    validatedRes = metadataSchema.validateSync(res);
+  } catch (validationError) {
+    log.verbose('Metadata validation schema error:', validationError.message);
+    return undefined;
+  }
+
+  // @TODO decide how to handle versions in the future
+  if (validatedRes?.version !== METADATA_VERSION) {
+    log.verbose('Invalid metadata version');
+    return undefined;
+  }
+
+  switch (validatedRes?.name) {
+    case MetadataType.Colony: {
+      const colonyData = validatedRes?.data as ColonyMetadata;
+      return {
+        version: validatedRes?.version,
+        name: validatedRes?.name,
+        data: {
+          ...validatedRes?.data,
+          colonyTokens: colonyData.colonyTokens ? colonyData.colonyTokens : [],
+          verifiedAddresses: colonyData.verifiedAddresses
+            ? colonyData.verifiedAddresses
+            : [],
+        },
+      };
     }
-  } catch (e) {
-    log.verbose('Invalid metadata: Problem parsing metadata: ', e);
+    case MetadataType.Domain:
+    case MetadataType.Annotation:
+    case MetadataType.Misc:
+      return {
+        version: validatedRes?.version,
+        name: validatedRes?.name,
+        data: {
+          ...validatedRes?.data,
+        },
+      };
+    default:
+      log.verbose('Invalid metadata type');
   }
   // @TODO handle invalid metadata - not expecting to get this far
   return undefined;
@@ -163,16 +170,13 @@ export const getColonyAvatarImage = (res: string): string | undefined => {
 
 // convenience func to set colonyAvatarImage to IPFS
 export const setColonyAvatarImage = (colonyAvatarImage: string): string => {
-  return JSON.stringify(
-    getMetadataStringForMisc({
-      name: 'colonyAvatarImage',
-      content: colonyAvatarImage,
-    }),
-  );
+  return getMetadataStringForMisc({
+    name: 'colonyAvatarImage',
+    content: colonyAvatarImage,
+  });
 };
 
 export function getEventMetadataVersion(response: string): number {
   const res = JSON.parse(response);
-  console.log(`🚀 ~ METADATA version:`, res?.version);
   return (res?.version as number) || 1;
 }
