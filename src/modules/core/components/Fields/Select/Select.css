@@ -46,15 +46,17 @@
 }
 
 .selectIcon {
-  align-self: center;
+  display: flex;
   margin-left: 8px;
-  height: 10px;
+  height: 100%;
   width: 10px;
+  position: relative;
+  top: 1px;
 }
 
 .activeOption {
   display: flex;
-  align-self: center;
+  align-items: center;
   height: 100%;
   overflow: hidden;
   font-weight: var(--weight-bold);
@@ -116,6 +118,12 @@
   font-weight: var(--weight-normal);
 }
 
+.themeGrey .selectInner {
+  display: flex;
+  align-items: center;
+  height: 22px;
+}
+
 .themeGrid {
   padding: 11px 15px;
   height: 45px;
@@ -134,8 +142,13 @@
 }
 
 .themeGrid .selectInner {
-  position: relative;
-  top: 1px;
+  display: flex;
+  align-items: center;
+  height: 22px;
+}
+
+.themeGrid .selectIcon {
+  top: 0;
 }
 
 .widthContent {
@@ -168,8 +181,10 @@
 }
 
 .sizeMediumLarge.themeAlt .selectIcon {
-  align-self: center;
+  display: flex;
+  align-items: center;
   margin-left: 14px;
+  height: 27px;
   position: relative;
-  bottom: 2px;
+  top: 2px;
 }

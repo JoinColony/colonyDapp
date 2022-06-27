@@ -22,3 +22,7 @@
 .content button i {
   min-width: 10px;
 }
+
+.content button > div {
+  height: 21px;
+}
