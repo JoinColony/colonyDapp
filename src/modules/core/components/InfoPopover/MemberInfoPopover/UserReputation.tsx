@@ -10,6 +10,7 @@ import { ZeroValue } from '~utils/reputation';
 import styles from './MemberInfoPopover.css';
 import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
+import { SpinnerLoader } from '~core/Preloaders';
 
 const displayName = `InfoPopover.MemberInfoPopover.UserReputation`;
 
@@ -18,6 +19,7 @@ interface Props {
   // eslint-disable-next-line max-len
   userReputationForTopDomains: UserReputationForTopDomainsQuery['userReputationForTopDomains'];
   isCurrentUserReputation: boolean;
+  isUserReputationLoading?: boolean;
 }
 
 const MSG = defineMessages({
@@ -43,6 +45,7 @@ const UserReputation = ({
   colony,
   userReputationForTopDomains,
   isCurrentUserReputation,
+  isUserReputationLoading = false,
 }: Props) => {
   const formattedUserReputations = userReputationForTopDomains?.map(
     ({ domainId, ...rest }) => {
@@ -66,51 +69,64 @@ const UserReputation = ({
         }}
         text={MSG.labelText}
       />
-      {isEmpty(formattedUserReputations) ? (
-        <p className={styles.noReputationDescription}>
-          <FormattedMessage
-            {...MSG.noReputationDescription}
-            values={{ isCurrentUserReputation }}
-          />
-        </p>
+      {isUserReputationLoading ? (
+        <SpinnerLoader
+          appearance={{
+            theme: 'grey',
+            size: 'small',
+          }}
+        />
       ) : (
-        <ul>
-          {formattedUserReputations.map(
-            ({ reputationDomain, reputationPercentage }) => (
-              <li
-                key={`${reputationDomain?.name}-${reputationPercentage}`}
-                className={styles.domainReputationItem}
-              >
-                <p className={styles.domainName}>{reputationDomain?.name}</p>
-                <div className={styles.reputationContainer}>
-                  {reputationPercentage === ZeroValue.NearZero && (
-                    <div className={styles.reputation}>
-                      {reputationPercentage}
+        <>
+          {isEmpty(formattedUserReputations) ? (
+            <p className={styles.noReputationDescription}>
+              <FormattedMessage
+                {...MSG.noReputationDescription}
+                values={{ isCurrentUserReputation }}
+              />
+            </p>
+          ) : (
+            <ul>
+              {formattedUserReputations.map(
+                ({ reputationDomain, reputationPercentage }) => (
+                  <li
+                    key={`${reputationDomain?.name}-${reputationPercentage}`}
+                    className={styles.domainReputationItem}
+                  >
+                    <p className={styles.domainName}>
+                      {reputationDomain?.name}
+                    </p>
+                    <div className={styles.reputationContainer}>
+                      {reputationPercentage === ZeroValue.NearZero && (
+                        <div className={styles.reputation}>
+                          {reputationPercentage}
+                        </div>
+                      )}
+                      {reputationPercentage !== ZeroValue.NearZero && (
+                        <Numeral
+                          className={styles.reputation}
+                          appearance={{ theme: 'primary' }}
+                          value={reputationPercentage}
+                          suffix="%"
+                        />
+                      )}
+                      <Icon
+                        name="star"
+                        appearance={{ size: 'extraTiny' }}
+                        className={styles.icon}
+                        title={MSG.starReputationTitle}
+                        titleValues={{
+                          reputation: reputationPercentage,
+                          domainName: reputationDomain?.name,
+                        }}
+                      />
                     </div>
-                  )}
-                  {reputationPercentage !== ZeroValue.NearZero && (
-                    <Numeral
-                      className={styles.reputation}
-                      appearance={{ theme: 'primary' }}
-                      value={reputationPercentage}
-                      suffix="%"
-                    />
-                  )}
-                  <Icon
-                    name="star"
-                    appearance={{ size: 'extraTiny' }}
-                    className={styles.icon}
-                    title={MSG.starReputationTitle}
-                    titleValues={{
-                      reputation: reputationPercentage,
-                      domainName: reputationDomain?.name,
-                    }}
-                  />
-                </div>
-              </li>
-            ),
+                  </li>
+                ),
+              )}
+            </ul>
           )}
-        </ul>
+        </>
       )}
     </div>
   );
