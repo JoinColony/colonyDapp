@@ -15,6 +15,8 @@ import { Colony } from '~data/index';
 import { Address } from '~types/index';
 
 import { FormValues, transactionOptions } from './GnosisControlSafeDialog';
+import { TransferFundsSection } from './TransactionTypesSection';
+
 import styles from './GnosisControlSafeForm.css';
 
 const MSG = defineMessages({
@@ -77,11 +79,13 @@ const renderAvatar = (address: string, item) => (
 );
 
 const GnosisControlSafeForm = ({
+  colony,
   back,
   handleSubmit,
   safes,
   isSubmitting,
   isValid,
+  values,
 }: Props & FormikProps<FormValues>) => {
   return (
     <>
@@ -130,6 +134,13 @@ const GnosisControlSafeForm = ({
           disabled={isSubmitting}
         />
       </DialogSection>
+      {values.transactionType === 'transferFunds' && (
+        <TransferFundsSection
+          colony={colony}
+          isSubmitting={isSubmitting}
+          values={values}
+        />
+      )}
       <DialogSection>
         <div className={styles.addTransaction}>
           <AddItemButton text={MSG.buttonTransaction} disabled />

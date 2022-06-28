@@ -1,6 +1,8 @@
 import React from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
+import { toFinite } from 'lodash';
+import { defineMessages } from 'react-intl';
 
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
@@ -9,6 +11,13 @@ import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
 
 import GnosisControlSafeForm from './GnosisControlSafeForm';
+
+const MSG = defineMessages({
+  amountZero: {
+    id: 'dashboard.GnosisControlSafeDialog.amountZero',
+    defaultMessage: 'Amount must be greater than zero',
+  },
+});
 
 /* to remove when data is wired in */
 const safes = [
@@ -27,6 +36,8 @@ const safes = [
 export interface FormValues {
   safe: string;
   transactionType: string;
+  tokenAddress?: string;
+  amount?: string;
 }
 
 export const transactionOptions = [
@@ -57,6 +68,29 @@ type Props = DialogProps &
 const validationSchema = yup.object().shape({
   safe: yup.string().required(),
   transactionType: yup.string().required(),
+  recipient: yup.object().shape({
+    profile: yup.object().shape({
+      walletAddress: yup.string().when('transactionType', {
+        is: (transactionType) => transactionType === 'transferFunds',
+        then: yup.string().address().required(),
+        otherwise: false,
+      }),
+    }),
+  }),
+  amount: yup.number().when('transactionType', {
+    is: (transactionType) => transactionType === 'transferFunds',
+    then: yup
+      .number()
+      .transform((value) => toFinite(value))
+      .required()
+      .moreThan(0, () => MSG.amountZero),
+    otherwise: false,
+  }),
+  tokenAddress: yup.string().when('transactionType', {
+    is: (transactionType) => transactionType === 'transferFunds',
+    then: yup.string().address().required(),
+    otherwise: false,
+  }),
 });
 
 const GnosisControlSafeDialog = ({
