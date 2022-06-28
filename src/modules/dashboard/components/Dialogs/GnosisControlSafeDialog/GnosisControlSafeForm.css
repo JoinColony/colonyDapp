@@ -23,6 +23,14 @@
   left: 412px;
 }
 
+.safePicker label {
+  color: var(--dark);
+}
+
+.transactionTypeSelectContainer label {
+  color: var(--dark);
+}
+
 .addTransaction {
   display: flex;
   justify-content: center;
