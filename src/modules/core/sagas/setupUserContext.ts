@@ -1,7 +1,6 @@
 import { all, call, fork, put } from 'redux-saga/effects';
 import { formatEther } from 'ethers/utils';
 import userflow from 'userflow.js';
-import { Network } from '@colony/colony-js';
 
 import { WalletMethod } from '~immutable/index';
 import { createAddress } from '~utils/web3';
