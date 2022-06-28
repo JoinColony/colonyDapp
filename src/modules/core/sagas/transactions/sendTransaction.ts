@@ -22,9 +22,8 @@ import {
 } from '~immutable/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { Action } from '~redux/types/actions';
-import { ExtendedReduxContext } from '~types/index';
+import { ExtendedReduxContext, MethodParams } from '~types/index';
 import { DEFAULT_NETWORK } from '~constants';
-import { MethodParams } from '~types/index';
 
 import { transactionSendError } from '../../actionCreators';
 import { oneTransaction } from '../../selectors';
@@ -35,7 +34,7 @@ import transactionChannel from './transactionChannel';
  * Given a method and a transaction record, create a promise for sending the
  * transaction with the method.
  */
-async function getMethodTransactionPromise(
+async function getTransactionMethodPromise(
   // @TODO this is not great but I feel like we will replace this anyways at some point
   client: ContractClient,
   tx: TransactionRecord,
