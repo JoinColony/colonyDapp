@@ -1,9 +1,10 @@
 .singleUserPickerContainer i {
-  left: 412px;
+  left: 417px;
 }
 
-.singleUserPickerContainer input {
-  max-width: 419px;
+.singleUserPickerContainer input,
+.singleUserPickerContainer button {
+  max-width: 424px;
 }
 
 .singleUserPickerContainer > div {
