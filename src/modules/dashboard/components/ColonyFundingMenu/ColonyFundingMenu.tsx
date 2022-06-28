@@ -21,6 +21,7 @@ import { checkIfNetworkIsAllowed } from '~utils/networks';
 import { getUserRolesForDomain } from '~modules/transformers';
 import { userHasRole } from '~modules/users/checks';
 import { oneTxMustBeUpgraded } from '~modules/dashboard/checks';
+import { SimpleMessageValues } from '~types/index';
 
 import styles from './ColonyFundingMenu.css';
 
@@ -120,54 +121,46 @@ const ColonyFundingMenu = ({
   const isSupportedColonyVersion =
     parseInt(version, 10) >= ColonyVersion.LightweightSpaceship;
 
+  const isDisabled =
+    !isSupportedColonyVersion ||
+    !isNetworkAllowed ||
+    !hasRegisteredProfile ||
+    !isDeploymentFinished ||
+    mustUpgradeOneTx;
+
+  interface FIProps {
+    text: SimpleMessageValues;
+    handleClick: () => void;
+    disabled: boolean;
+  }
+
+  const FundingItem = ({ text, handleClick, disabled }: FIProps) => (
+    <li>
+      <Button
+        text={text}
+        appearance={{ theme: 'blue' }}
+        onClick={handleClick}
+        disabled={isDisabled || disabled}
+      />
+    </li>
+  );
   return (
     <ul className={styles.main}>
-      <li className={styles.listItem}>
-        <Button
-          text={MSG.navItemMoveTokens}
-          appearance={{ theme: 'blue' }}
-          onClick={handleMoveTokens}
-          disabled={
-            !canMoveTokens ||
-            !isSupportedColonyVersion ||
-            !isNetworkAllowed ||
-            !hasRegisteredProfile ||
-            !isDeploymentFinished ||
-            mustUpgradeOneTx
-          }
-        />
-      </li>
-      <li className={styles.listItem}>
-        <Button
-          text={MSG.navItemMintNewTokens}
-          appearance={{ theme: 'blue' }}
-          onClick={handleMintTokens}
-          disabled={
-            !canUserMintNativeToken ||
-            !isSupportedColonyVersion ||
-            !isNetworkAllowed ||
-            !hasRegisteredProfile ||
-            !isDeploymentFinished ||
-            mustUpgradeOneTx
-          }
-        />
-      </li>
-      <li className={styles.listItem}>
-        <Button
-          text={MSG.navItemManageTokens}
-          appearance={{ theme: 'blue' }}
-          onClick={handleEditTokens}
-          disabled={
-            !canEdit ||
-            !isSupportedColonyVersion ||
-            !isNetworkAllowed ||
-            !hasRegisteredProfile ||
-            !isDeploymentFinished ||
-            mustUpgradeOneTx
-          }
-          data-test="manageTokens"
-        />
-      </li>
+      <FundingItem
+        text={MSG.navItemMoveTokens}
+        handleClick={handleMoveTokens}
+        disabled={!canMoveTokens}
+      />
+      <FundingItem
+        text={MSG.navItemMintNewTokens}
+        handleClick={handleMintTokens}
+        disabled={!canUserMintNativeToken}
+      />
+      <FundingItem
+        text={MSG.navItemManageTokens}
+        handleClick={handleEditTokens}
+        disabled={!canEdit}
+      />
     </ul>
   );
 };
