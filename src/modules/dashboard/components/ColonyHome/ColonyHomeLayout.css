@@ -74,8 +74,12 @@
   .mainContent {
     display: grid;
     padding: 0;
-    grid-area: fundsAndActions;
+    grid-area: main;
     grid-template:
+      /*
+      * @TODO Generalise grid row names
+      * as this class is used on multiple pages.
+      */
       "fundColony" auto
       "actionsMenu" auto
       "actionsSummary" auto
@@ -88,8 +92,12 @@
     width: 100%;
     grid-template:
       "joinColony" auto
-      "fundsAndActions" auto
+      "main" auto
       / 1fr;
+  }
+
+  .minimalGrid .mainContent {
+    grid-column: 1 / 2;
   }
 
   .domainsDropdownContainer {
