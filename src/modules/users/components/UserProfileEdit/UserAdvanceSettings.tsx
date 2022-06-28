@@ -30,9 +30,9 @@ const MSG = defineMessages({
   },
   tooltip: {
     id: 'users.UserProfileEdit.UserAdvanceSettings.tooltip',
-    defaultMessage: `Metatransactions are turned on by default. 
+    defaultMessage: `Metatransactions are turned on by default.
     If you would rather connect directly to xDai chain,
-    and pay for your own transactions, you can turn them off 
+    and pay for your own transactions, you can turn them off
     by switching the toggle at any time. {br}{br} Please note,
     this setting is stored locally in your browser,
     if you clear your cache you will need to turn Metatransactions off again.`,
@@ -89,7 +89,7 @@ const UserAdvanceSettings = () => {
                 tooltipTextValues={{ br: <br /> }}
                 className={stylesAdvance.tooltipContainer}
                 tooltipClassName={stylesAdvance.tooltipContent}
-                tooltipPopperProps={{
+                tooltipPopperOptions={{
                   placement: 'right',
                 }}
               />
