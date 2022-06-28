@@ -1,8 +1,8 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FormikProps } from 'formik';
-
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
+
 import Avatar from '~core/Avatar';
 import { DialogSection } from '~core/Dialog';
 import { Select } from '~core/Fields';
@@ -11,6 +11,10 @@ import ExternalLink from '~core/ExternalLink';
 import Button, { AddItemButton } from '~core/Button';
 import { SingleSafePicker, filterUserSelection } from '~core/SingleUserPicker';
 
+import { getUserRolesForDomain } from '~modules/transformers';
+import { userHasRole } from '~modules/users/checks';
+import { useTransformer } from '~utils/hooks';
+import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import { GNOSIS_SAFE_INTEGRATION_LEARN_MORE } from '~externalUrls';
 import { Colony, useLoggedInUser } from '~data/index';
 import { Address } from '~types/index';
@@ -19,10 +23,6 @@ import { FormValues, transactionOptions } from './GnosisControlSafeDialog';
 import { TransferFundsSection } from './TransactionTypesSection';
 
 import styles from './GnosisControlSafeForm.css';
-import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
-import { userHasRole } from '~modules/users/checks';
-import { useTransformer } from '~utils/hooks';
-import { getUserRolesForDomain } from '~modules/transformers';
 
 const MSG = defineMessages({
   title: {
@@ -145,7 +145,7 @@ const GnosisControlSafeForm = ({
             renderAvatar={renderAvatar}
             data={safes}
             showMaskedAddress
-            disabled={!userHasPermission && isSubmitting}
+            disabled={!userHasPermission || isSubmitting}
             placeholder={MSG.safePickerPlaceholder}
           />
         </div>
@@ -158,14 +158,14 @@ const GnosisControlSafeForm = ({
             name="transactionType"
             appearance={{ theme: 'grey', width: 'fluid' }}
             placeholder={MSG.transactionPlaceholder}
-            disabled={!userHasPermission && isSubmitting}
+            disabled={!userHasPermission || isSubmitting}
           />
         </div>
       </DialogSection>
       {values.transactionType === 'transferFunds' && (
         <TransferFundsSection
           colony={colony}
-          disabledInput={!userHasPermission && isSubmitting}
+          disabledInput={!userHasPermission || isSubmitting}
           values={values}
         />
       )}
