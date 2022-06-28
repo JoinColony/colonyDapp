@@ -36,7 +36,7 @@ const displayName = `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.Tra
 
 interface Props {
   colony: Colony;
-  isSubmitting: boolean;
+  disabledInput: boolean;
   values: FormValues;
   back?: () => void;
 }
@@ -47,7 +47,7 @@ const renderAvatar = (address: Address, item: AnyUser) => (
 
 const TransferFundsSection = ({
   colony: { tokens, colonyAddress },
-  isSubmitting,
+  disabledInput,
   values,
 }: Props) => {
   const { data: colonyMembers } = useMembersSubscription({
@@ -68,7 +68,7 @@ const TransferFundsSection = ({
           networkFeeInverse={networkFeeInverse}
           selectedToken={selectedToken}
           tokens={tokens}
-          disabledInput={isSubmitting}
+          disabledInput={disabledInput}
         />
       </DialogSection>
       <DialogSection>
@@ -79,7 +79,7 @@ const TransferFundsSection = ({
             name="recipient"
             filter={filterUserSelection}
             renderAvatar={renderAvatar}
-            disabled={isSubmitting}
+            disabled={disabledInput}
             placeholder={MSG.userPickerPlaceholder}
             dataTest="paymentRecipientPicker"
             itemDataTest="paymentRecipientItem"

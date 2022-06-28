@@ -38,6 +38,7 @@ export interface FormValues {
   transactionType: string;
   tokenAddress?: string;
   amount?: string;
+  forceAction: boolean;
 }
 
 export const transactionOptions = [
@@ -98,12 +99,17 @@ const GnosisControlSafeDialog = ({
   cancel,
   callStep,
   prevStep,
+  isVotingExtensionEnabled,
 }: Props) => {
   return (
     <ActionForm
       initialValues={{
-        safe: undefined,
+        safe: null,
         transactionType: transactionOptions[0],
+        forceAction: false,
+        tokenAddress: colony.nativeTokenAddress,
+        amount: null,
+        recipient: null,
       }}
       validationSchema={validationSchema}
       submit={ActionTypes.COLONY_ACTION_GENERIC}
@@ -117,6 +123,7 @@ const GnosisControlSafeDialog = ({
             back={callStep && prevStep ? () => callStep(prevStep) : undefined}
             colony={colony}
             safes={safes}
+            isVotingExtensionEnabled={isVotingExtensionEnabled}
           />
         </Dialog>
       )}
