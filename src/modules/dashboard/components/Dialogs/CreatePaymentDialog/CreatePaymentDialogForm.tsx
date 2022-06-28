@@ -9,16 +9,14 @@ import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 import sortBy from 'lodash/sortBy';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
-import { AddressZero } from 'ethers/constants';
 
-import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
 import PermissionsLabel from '~core/PermissionsLabel';
 import Button from '~core/Button';
 import { ItemDataType } from '~core/OmniPicker';
 import { ActionDialogProps } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
-import { Select, Input, Annotations, TokenSymbolSelector } from '~core/Fields';
+import { Select, Annotations, AmountTokens } from '~core/Fields';
 import Heading from '~core/Heading';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
@@ -444,93 +442,14 @@ const CreatePaymentDialogForm = ({
         </div>
       </DialogSection>
       <DialogSection>
-        <div className={styles.tokenAmount}>
-          <div className={styles.tokenAmountInputContainer}>
-            <Input
-              label={MSG.amount}
-              name="amount"
-              appearance={{
-                theme: 'minimal',
-                align: 'right',
-              }}
-              formattingOptions={{
-                delimiter: ',',
-                numeral: true,
-                numeralDecimalScale: getTokenDecimalsWithFallback(
-                  selectedToken && selectedToken.decimals,
-                ),
-              }}
-              disabled={inputDisabled}
-              /*
-               * Force the input component into an error state
-               * This is needed for our custom error state to work
-               */
-              forcedFieldError={customAmountError}
-              dataTest="paymentAmountInput"
-            />
-            {networkFeeInverse &&
-              values.amount &&
-              values.amount !== '0' &&
-              values.amount !== '0.' &&
-              values.amount !== '.' && (
-                <div className={styles.networkFee}>
-                  <FormattedMessage
-                    {...MSG.fee}
-                    values={{
-                      fee: (
-                        <Numeral
-                          appearance={{
-                            size: 'small',
-                            theme: 'grey',
-                          }}
-                          value={
-                            calculateFee(
-                              values.amount,
-                              networkFeeInverse,
-                              getTokenDecimalsWithFallback(
-                                selectedToken?.decimals,
-                              ),
-                            ).feesInWei
-                          }
-                          unit={getTokenDecimalsWithFallback(
-                            selectedToken && selectedToken.decimals,
-                          )}
-                        />
-                      ),
-                      symbol: (selectedToken && selectedToken.symbol) || '???',
-                    }}
-                  />
-                </div>
-              )}
-          </div>
-          <div className={styles.tokenAmountContainer}>
-            <div className={styles.tokenAmountSelect}>
-              <TokenSymbolSelector
-                label={MSG.token}
-                tokens={tokens}
-                name="tokenAddress"
-                elementOnly
-                appearance={{ alignOptions: 'right', theme: 'grey' }}
-                disabled={inputDisabled}
-              />
-            </div>
-            {values.tokenAddress === AddressZero && (
-              <div className={styles.tokenAmountUsd}>
-                <EthUsd
-                  appearance={{ theme: 'grey' }}
-                  value={
-                    /*
-                     * @NOTE Set value to 0 if amount is only the decimal point
-                     * Just entering the decimal point will pass it through to EthUsd
-                     * and that will try to fetch the balance for, which, obviously, will fail
-                     */
-                    values.amount && values.amount !== '.' ? values.amount : '0'
-                  }
-                />
-              </div>
-            )}
-          </div>
-        </div>
+        <AmountTokens
+          values={values}
+          networkFeeInverse={networkFeeInverse}
+          customAmountError={customAmountError}
+          selectedToken={selectedToken}
+          tokens={tokens}
+          disabledInput={inputDisabled}
+        />
       </DialogSection>
       <DialogSection>
         <Annotations
