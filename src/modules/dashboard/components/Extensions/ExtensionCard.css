@@ -1,4 +1,5 @@
 @value lineHeight from './Extensions.css';
+@value query700 from '~styles/queries.css';
 
 .main {
   display: block;
@@ -62,4 +63,10 @@
   position: absolute;
   right: 20px;
   bottom: 20px;
+}
+
+@media screen and query700 {
+  .main {
+    margin: 0;
+  }
 }
