@@ -1,7 +1,5 @@
 import { useState, useMemo } from 'react';
-import { ColonyRole } from '@colony/colony-js';
 import Decimal from 'decimal.js';
-import { isEmpty } from 'lodash';
 
 import { ColonyWatcher, ColonyContributor } from '~data/index';
 
@@ -27,9 +25,6 @@ const useColonyMembersSorting = (
     }
 
     return [...(members as ColonyContributor[])].sort((user1, user2) => {
-      const user1Roles = [...user1.roles];
-      const user2Roles = [...user2.roles];
-
       if (sortingMethod === SORTING_METHODS.BY_HIGHEST_REP) {
         return new Decimal(user2.userReputation)
           .sub(user1.userReputation)
@@ -41,33 +36,11 @@ const useColonyMembersSorting = (
           .toNumber();
       }
 
-      if (isEmpty(user1Roles) && isEmpty(user2Roles)) {
-        return 0;
-      }
-      if (isEmpty(user1Roles)) {
-        return 1;
-      }
-      if (isEmpty(user2Roles)) {
-        return -1;
-      }
-
       if (sortingMethod === SORTING_METHODS.BY_HIGHEST_ROLE_ID) {
-        user1Roles.sort(
-          (roleA: ColonyRole, roleB: ColonyRole) => roleB - roleA,
-        );
-        user2Roles.sort(
-          (roleA: ColonyRole, roleB: ColonyRole) => roleB - roleA,
-        );
-        return user2Roles[0] - user1Roles[0];
+        return user2.roles.length - user1.roles.length;
       }
       if (sortingMethod === SORTING_METHODS.BY_LOWEST_ROLE_ID) {
-        user1Roles.sort(
-          (roleA: ColonyRole, roleB: ColonyRole) => roleA - roleB,
-        );
-        user2Roles.sort(
-          (roleA: ColonyRole, roleB: ColonyRole) => roleA - roleB,
-        );
-        return user1Roles[0] - user2Roles[0];
+        return user1.roles.length - user2.roles.length;
       }
 
       return 0;
