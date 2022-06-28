@@ -1,0 +1,15 @@
+.singleUserPickerContainer i {
+  left: 412px;
+}
+
+.singleUserPickerContainer input {
+  max-width: 419px;
+}
+
+.singleUserPickerContainer > div {
+  padding-left: 0;
+}
+
+.singleUserPickerContainer label {
+  color: var(--dark);
+}
