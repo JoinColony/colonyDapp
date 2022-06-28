@@ -307,6 +307,7 @@ const EditDomainDialogForm = ({
           onClick={() => handleSubmit()}
           loading={isSubmitting}
           disabled={inputDisabled || !isValid}
+          style={{ minWidth: styles.wideButton }}
           data-test="editDomainConfirmButton"
         />
       </DialogSection>

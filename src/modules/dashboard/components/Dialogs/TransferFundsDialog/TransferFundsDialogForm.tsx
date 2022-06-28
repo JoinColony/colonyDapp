@@ -462,7 +462,7 @@ const TransferFundsDialogForm = ({
           }
           loading={isSubmitting}
           disabled={!isValid || inputDisabled}
-          style={{ width: styles.wideButton }}
+          style={{ minWidth: styles.wideButton }}
           data-test="transferFundsConfirmButton"
         />
       </DialogSection>

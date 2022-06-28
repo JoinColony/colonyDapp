@@ -628,7 +628,7 @@ const CreatePaymentDialogForm = ({
            * if our custom state was triggered.
            */
           disabled={!isValid || !!customAmountError || inputDisabled}
-          style={{ width: styles.wideButton }}
+          style={{ minWidth: styles.wideButton }}
           data-test="paymentConfirmButton"
         />
       </DialogSection>

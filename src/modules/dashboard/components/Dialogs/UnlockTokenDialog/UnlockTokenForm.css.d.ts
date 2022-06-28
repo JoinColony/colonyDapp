@@ -1,3 +1,4 @@
+export const wideButton: string;
 export const modalHeading: string;
 export const headingContainer: string;
 export const noPermissionMessage: string;

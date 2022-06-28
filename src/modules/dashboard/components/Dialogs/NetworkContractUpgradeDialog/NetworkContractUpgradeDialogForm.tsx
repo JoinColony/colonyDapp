@@ -266,12 +266,17 @@ const NetworkContractUpgradeDialogForm = ({
         )}
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
-          text={{ id: 'button.confirm' }}
+          text={
+            values.forceAction || !isVotingExtensionEnabled
+              ? { id: 'button.confirm' }
+              : { id: 'button.createMotion' }
+          }
           disabled={
             inputDisabled ||
             PREVENT_UPGRADE_IF_LEGACY_RECOVERY_ROLES ||
             isSubmitting
           }
+          style={{ minWidth: styles.wideButton }}
           onClick={() => handleSubmit()}
           loading={isSubmitting || loadingLegacyRecoveyRole}
         />

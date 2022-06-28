@@ -1,3 +1,4 @@
+export const wideButton: string;
 export const title: string;
 export const logoPlaceholder: string;
 export const smallText: string;

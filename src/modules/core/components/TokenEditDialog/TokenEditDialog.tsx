@@ -250,7 +250,7 @@ const TokenEditDialog = ({
             isLoadingAddress
           }
           type="submit"
-          style={{ width: styles.wideButton }}
+          style={{ minWidth: styles.wideButton }}
           data-test="confirm"
         />
       </DialogSection>

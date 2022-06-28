@@ -189,6 +189,7 @@ const UnlockTokenForm = ({
           }
           loading={isSubmitting}
           disabled={!isValid || inputDisabled}
+          style={{ minWidth: styles.wideButton }}
           data-test="unlockTokenConfirmButton"
         />
       </DialogSection>

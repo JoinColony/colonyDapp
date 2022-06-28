@@ -293,6 +293,7 @@ const EditColonyDetailsDialogForm = ({
             !canValuesBeUpdate ||
             isSubmitting
           }
+          style={{ minWidth: styles.wideButton }}
           data-test="confirmButton"
         />
       </DialogSection>

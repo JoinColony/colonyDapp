@@ -197,6 +197,7 @@ const CreateDomainDialogForm = ({
           onClick={() => handleSubmit()}
           loading={isSubmitting}
           disabled={inputDisabled || !isValid}
+          style={{ minWidth: styles.wideButton }}
           data-test="createDomainConfirmButton"
         />
       </DialogSection>

@@ -1,3 +1,5 @@
+@value wideButton: 160px;
+
 .title {
   font-size: var(--size-medium-l);
   font-weight: var(--weight-bold);

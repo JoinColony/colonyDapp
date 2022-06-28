@@ -279,7 +279,7 @@ const PermissionManagementDialog = ({
                         : { id: 'button.createMotion' }
                     }
                     type="submit"
-                    style={{ width: styles.wideButton }}
+                    style={{ minWidth: styles.wideButton }}
                     disabled={
                       inputDisabled ||
                       !isValid ||
