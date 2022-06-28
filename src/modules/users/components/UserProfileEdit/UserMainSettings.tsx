@@ -18,7 +18,7 @@ import {
 import Button from '~core/Button';
 import ConfusableWarning from '~core/ConfusableWarning';
 
-import { useLoggedInUser, useUser, useEditUserMutation, AnyUser } from '~data/index';
+import { useEditUserMutation, AnyUser } from '~data/index';
 
 import styles from './UserProfileEdit.css';
 
@@ -81,7 +81,7 @@ const validationSchema = yup.object({
   website: yup.string().url().nullable(),
 });
 
-const UserProfileEdit = ({ user }: Props) => {
+const UserMainSettings = ({ user }: Props) => {
   const [showSnackbar, setShowSnackbar] = useState<boolean>(false);
   useEffect(() => {
     if (showSnackbar) {
@@ -92,8 +92,6 @@ const UserProfileEdit = ({ user }: Props) => {
     }
     return undefined;
   }, [showSnackbar]);
-
-  const { walletAddress, ethereal } = useLoggedInUser();
 
   const [editUser, { error }] = useEditUserMutation();
   const onSubmit = useCallback(
