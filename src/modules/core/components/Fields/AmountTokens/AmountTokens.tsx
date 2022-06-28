@@ -6,11 +6,11 @@ import {
 } from 'react-intl';
 import { AddressZero } from 'ethers/constants';
 import Maybe from 'graphql/tsutils/Maybe';
+import moveDecimal from 'move-decimal-point';
 
+import { bigNumberify } from 'ethers/utils';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { AnyToken, AnyTokens } from '~data/index';
-
-import { calculateFee } from '~dashboard/Dialogs/CreatePaymentDialog/CreatePaymentDialogForm';
 
 import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
@@ -33,20 +33,43 @@ interface Props {
 
 const MSG = defineMessages({
   amount: {
-    id: 'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.amount',
+    id: 'AmountTokens.amount',
     defaultMessage: 'Amount',
   },
   fee: {
-    id: 'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.fee',
+    id: 'AmountTokens.fee',
     defaultMessage: 'Network fee: {fee} {symbol}',
   },
   token: {
-    id: 'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.address',
+    id: 'AmountTokens.address',
     defaultMessage: 'Token',
   },
 });
 
-const displayName = 'Fields.AmountTokens';
+const displayName = 'AmountTokens';
+
+// NOTE: The equation to calculate totalToPay is as following (in Wei)
+// totalToPay = (receivedAmount + 1) * (feeInverse / (feeInverse -1))
+// The network adds 1 wei extra fee after the percentage calculation
+// For more info check out
+// https://github.com/JoinColony/colonyNetwork/blob/806e4d5750dc3a6b9fa80f6e007773b28327c90f/contracts/colony/ColonyFunding.sol#L656
+
+export const calculateFee = (
+  receivedAmount: string, // amount that the recipient finally receives
+  feeInverse: string,
+  decimals: number,
+): { feesInWei: string; totalToPay: string } => {
+  const amountInWei = moveDecimal(receivedAmount, decimals);
+  const totalToPayInWei = bigNumberify(amountInWei)
+    .add(1)
+    .mul(feeInverse)
+    .div(bigNumberify(feeInverse).sub(1));
+  const feesInWei = totalToPayInWei.sub(amountInWei);
+  return {
+    feesInWei: feesInWei.toString(),
+    totalToPay: moveDecimal(totalToPayInWei, -1 * decimals),
+  }; // NOTE: seems like moveDecimal does not have strict typing
+};
 
 const AmountTokens = ({
   values,
