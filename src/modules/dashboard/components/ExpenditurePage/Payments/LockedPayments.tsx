@@ -95,8 +95,8 @@ const LockedPayments = ({ recipients, editForm }: Props) => {
                   {index + 1}:{' '}
                   <UserMention
                     username={
-                      recipient.recipient.profile.username ||
-                      recipient.recipient.profile.displayName ||
+                      recipient.recipient?.profile.username ||
+                      recipient.recipient?.profile.displayName ||
                       ''
                     }
                   />

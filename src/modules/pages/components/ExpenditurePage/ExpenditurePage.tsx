@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 import * as yup from 'yup';
+import isEqual from 'lodash/isEqual';
 
 import {
   defineMessages,
@@ -7,6 +8,7 @@ import {
   MessageDescriptor,
 } from 'react-intl';
 import { nanoid } from 'nanoid';
+import { FormikErrors } from 'formik';
 import { Form } from '~core/Fields';
 import Payments from '~dashboard/ExpenditurePage/Payments';
 import ExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings';
@@ -15,15 +17,14 @@ import { getMainClasses } from '~utils/css';
 import styles from './ExpenditurePage.css';
 import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
 import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
-import TitleDescriptionSection, {
-  LockedTitleDescriptionSection,
-} from '~dashboard/ExpenditurePage/TitleDescriptionSection';
+import TitleDescriptionSection from '~dashboard/ExpenditurePage/TitleDescriptionSection';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
 import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
 import Tag from '~core/Tag';
 import { useDialog } from '~core/Dialog';
 import EditExpenditureDialog from '~dashboard/Dialogs/EditExpenditureDialog/EditExpenditureDialog';
+import LockedTitleDescriptionSection from '~dashboard/ExpenditurePage/TitleDescriptionSection/LockedTitleDescriptionSection';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -49,11 +50,30 @@ export interface ValuesType {
   title: string;
   description?: string;
 }
+
+export interface FormValues {
+  expenditure?: string;
+  filteredDomainId?: string;
+  owner?: string;
+  recipients?: {
+    recipient?: string;
+    value?: { amount: number; tokenAddress: number }[];
+    delay?: { amount: string; time: string };
+    isExpanded?: boolean;
+  }[];
+  title?: string;
+  description?: string;
+}
+
 export interface State {
   id: string;
   label: string | MessageDescriptor;
   buttonText: string | MessageDescriptor;
   buttonAction: () => void;
+}
+
+interface Props {
+  colonyName: string;
 }
 
 const MSG = defineMessages({
@@ -145,13 +165,15 @@ const validationSchema = yup.object().shape({
   title: yup.string().required(),
 });
 
-const ExpenditurePage = () => {
+const ExpenditurePage = ({ colonyName }: Props) => {
   const [isFormEditable, setFormEditable] = useState(true);
   const [isInEditMode, setIsInEditMode] = useState(false);
+  // initialFormValues is temporary value
+  // const initialFormValues = mockFormValues;
   const [formValues, setFormValues] = useState<typeof initialValues>();
   const [shouldValidate, setShouldValidate] = useState(false);
   const sidebarRef = useRef<HTMLElement>(null);
-  const [activeStateId, setActiveStateId] = useState<string>();
+  const [activeStateId, setActiveStateId] = useState<string>(Stage.Draft);
 
   const openEditExpenditureDialog = useDialog(EditExpenditureDialog);
 
@@ -249,14 +271,85 @@ const ExpenditurePage = () => {
     setFormEditable(false);
   }, []);
 
-  const handleEditSubmit = useCallback(() => {
-    setIsInEditMode(true);
-    setFormEditable(true);
-    openEditExpenditureDialog({
-      onClick: handleConfirmEition,
-      isVotingExtensionEnabled: true,
-    });
-  }, [handleConfirmEition, openEditExpenditureDialog]);
+  // add discard change
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const discardChange = useCallback((name: string) => {
+    // logic to change field value to initial
+  }, []);
+
+  const handleEditSubmit = useCallback(
+    async (
+      values: ValuesType,
+      validateForm: (values?: ValuesType) => Promise<FormikErrors<ValuesType>>,
+    ) => {
+      setIsInEditMode(true);
+      setFormEditable(true);
+      const errors = await validateForm(values);
+      const hasErrors = Object.keys(errors)?.length;
+
+      const differentValues = Object.entries(values).reduce(
+        (result, current) => {
+          const [key, value] = current;
+
+          // if the value is an array, check each item
+          if (Array.isArray(value)) {
+            const changes = value.map((item, index) => {
+              if (typeof item === 'object') {
+                const change = Object.entries(item).reduce(
+                  (acc, [currKey, currVal]) => {
+                    const initialVal = initialValues[key][index][currKey];
+
+                    if (currKey === 'isExpanded') {
+                      return acc;
+                    }
+
+                    if (!isEqual(currVal, initialVal)) {
+                      return { ...acc, ...{ [currKey]: currVal } };
+                    }
+
+                    return acc;
+                  },
+                  {},
+                );
+
+                return Object.keys(change).length > 0 ? change : {};
+              }
+
+              if (!isEqual(value, initialValues[key])) {
+                return value;
+              }
+
+              return {};
+            });
+
+            return Object.keys(changes).length > 0
+              ? { ...result, ...{ [key]: changes } }
+              : result;
+          }
+
+          if (isEqual(initialValues[key], values[key])) {
+            return { ...result, [key]: value };
+          }
+
+          return result;
+        },
+        {},
+      );
+
+      // add previous value for recipient
+
+      return (
+        !hasErrors &&
+        openEditExpenditureDialog({
+          onClick: handleConfirmEition,
+          isVotingExtensionEnabled: true,
+          colonyName,
+          formValues: differentValues,
+        })
+      );
+    },
+    [colonyName, handleConfirmEition, openEditExpenditureDialog],
+  );
 
   return isFormEditable ? (
     <Form
@@ -267,38 +360,45 @@ const ExpenditurePage = () => {
       validateOnChange={shouldValidate}
       validate={handleValidate}
     >
-      <div className={getMainClasses({}, styles)}>
-        <aside className={styles.sidebar} ref={sidebarRef}>
-          {isInEditMode && (
-            <div className={styles.tagWrapper}>
-              <Tag
-                appearance={{
-                  theme: 'blue',
-                }}
-              >
-                <FormattedMessage {...MSG.suggestions} />
-              </Tag>
-            </div>
-          )}
-          <ExpenditureSettings />
-          <Payments sidebarRef={sidebarRef.current} />
-        </aside>
-        <div className={styles.mainContainer}>
-          <main className={styles.mainContent}>
-            <TitleDescriptionSection />
-            {isInEditMode ? (
-              <EditButtons {...{ handleEditSubmit, handleEditCancel }} />
-            ) : (
-              <Stages
-                {...{
-                  states,
-                  activeStateId,
-                }}
-              />
+      {({ values, validateForm }) => (
+        <div className={getMainClasses({}, styles)}>
+          <aside className={styles.sidebar} ref={sidebarRef}>
+            {isInEditMode && (
+              <div className={styles.tagWrapper}>
+                <Tag
+                  appearance={{
+                    theme: 'blue',
+                  }}
+                >
+                  <FormattedMessage {...MSG.suggestions} />
+                </Tag>
+              </div>
             )}
-          </main>
+            <ExpenditureSettings />
+            <Payments sidebarRef={sidebarRef.current} />
+          </aside>
+          <div className={styles.mainContainer}>
+            <main className={styles.mainContent}>
+              <TitleDescriptionSection />
+              {isInEditMode ? (
+                <EditButtons
+                  handleEditSubmit={() =>
+                    handleEditSubmit(values, validateForm)
+                  }
+                  {...{ handleEditCancel }}
+                />
+              ) : (
+                <Stages
+                  {...{
+                    states,
+                    activeStateId,
+                  }}
+                />
+              )}
+            </main>
+          </div>
         </div>
-      </div>
+      )}
     </Form>
   ) : (
     <div className={getMainClasses({}, styles)}>

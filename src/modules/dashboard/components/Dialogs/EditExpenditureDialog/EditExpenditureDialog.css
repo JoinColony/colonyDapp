@@ -53,6 +53,7 @@
 }
 
 .tokenIcon {
+  margin-right: 4px;
   height: 16px;
   width: 16px;
 }
@@ -89,17 +90,32 @@
 
 .tooltip {
   max-width: 250px;
+  white-space: normal;
 }
 
 .row {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 12px 0;
+  padding: 10px 0;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   line-height: 18px;
   color: var(--temp-grey-blue-7);
+}
+
+.withoutPadding {
+  padding: 0;
+}
+
+.forceRow {
+  align-items: baseline;
+  white-space: nowrap;
+}
+
+.forceRow form {
+  margin-left: 5px;
+  max-width: 200px;
 }
 
 .recipientContainer {
@@ -113,12 +129,18 @@
   color: var(--dark);
 }
 
+.recipientContainer span {
+  margin-left: 4px;
+  color: inherit;
+}
+
 .valueContainer {
   text-align: right;
 }
 
 .value {
-  /* color: black; */
+  display: flex;
+  align-items: center;
 }
 
 .userAvatarContainer {
@@ -126,12 +148,12 @@
   align-items: center;
 }
 
-.userName {
-  /* color: black; */
+.userAvatarContainer > span {
+  margin-left: 4px;
 }
 
 .contentWrapper {
-  padding: 0 20px;
+  padding: 0 20px 54px;
 }
 
 .descriptionWrapper {
