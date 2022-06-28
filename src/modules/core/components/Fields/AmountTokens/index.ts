@@ -1,1 +1,1 @@
-export { default } from './AmountTokens';
+export { default, calculateFee } from './AmountTokens';
