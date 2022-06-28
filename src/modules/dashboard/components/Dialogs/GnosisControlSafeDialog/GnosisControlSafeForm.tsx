@@ -2,6 +2,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FormikProps } from 'formik';
 
+import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import Avatar from '~core/Avatar';
 import { DialogSection } from '~core/Dialog';
 import { Select } from '~core/Fields';
@@ -11,13 +12,17 @@ import Button, { AddItemButton } from '~core/Button';
 import { SingleSafePicker, filterUserSelection } from '~core/SingleUserPicker';
 
 import { GNOSIS_SAFE_INTEGRATION_LEARN_MORE } from '~externalUrls';
-import { Colony } from '~data/index';
+import { Colony, useLoggedInUser } from '~data/index';
 import { Address } from '~types/index';
 
 import { FormValues, transactionOptions } from './GnosisControlSafeDialog';
 import { TransferFundsSection } from './TransactionTypesSection';
 
 import styles from './GnosisControlSafeForm.css';
+import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
+import { userHasRole } from '~modules/users/checks';
+import { useTransformer } from '~utils/hooks';
+import { getUserRolesForDomain } from '~modules/transformers';
 
 const MSG = defineMessages({
   title: {
@@ -65,6 +70,7 @@ export interface GnosisSafe {
 interface Props {
   colony: Colony;
   safes: GnosisSafe[];
+  isVotingExtensionEnabled: boolean;
   back?: () => void;
 }
 
@@ -86,7 +92,27 @@ const GnosisControlSafeForm = ({
   isSubmitting,
   isValid,
   values,
+  isVotingExtensionEnabled,
 }: Props & FormikProps<FormValues>) => {
+  const { walletAddress } = useLoggedInUser();
+  const fromDomainRoles = useTransformer(getUserRolesForDomain, [
+    colony,
+    walletAddress,
+    ROOT_DOMAIN_ID,
+  ]);
+  const userHasFundingPermission = userHasRole(
+    fromDomainRoles,
+    ColonyRole.Funding,
+  );
+  const userHasRootPermission = userHasRole(fromDomainRoles, ColonyRole.Root);
+  const hasRoles = userHasFundingPermission && userHasRootPermission;
+  const [userHasPermission] = useDialogActionPermissions(
+    colony.colonyAddress,
+    hasRoles,
+    isVotingExtensionEnabled,
+    values.forceAction,
+  );
+
   return (
     <>
       <DialogSection>
@@ -119,25 +145,27 @@ const GnosisControlSafeForm = ({
             renderAvatar={renderAvatar}
             data={safes}
             showMaskedAddress
-            disabled={isSubmitting}
+            disabled={!userHasPermission && isSubmitting}
             placeholder={MSG.safePickerPlaceholder}
           />
         </div>
       </DialogSection>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
-        <Select
-          options={transactionOptions}
-          label={MSG.transactionLabel}
-          name="transactionType"
-          appearance={{ theme: 'grey', width: 'fluid' }}
-          placeholder={MSG.transactionPlaceholder}
-          disabled={isSubmitting}
-        />
+        <div className={styles.transactionTypeSelectContainer}>
+          <Select
+            options={transactionOptions}
+            label={MSG.transactionLabel}
+            name="transactionType"
+            appearance={{ theme: 'grey', width: 'fluid' }}
+            placeholder={MSG.transactionPlaceholder}
+            disabled={!userHasPermission && isSubmitting}
+          />
+        </div>
       </DialogSection>
       {values.transactionType === 'transferFunds' && (
         <TransferFundsSection
           colony={colony}
-          isSubmitting={isSubmitting}
+          disabledInput={!userHasPermission && isSubmitting}
           values={values}
         />
       )}
