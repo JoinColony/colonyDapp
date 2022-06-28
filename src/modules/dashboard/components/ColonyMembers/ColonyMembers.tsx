@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
-import { ColonyVersion, Extension } from '@colony/colony-js';
+import { ColonyVersion, Extension, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import Decimal from 'decimal.js';
 import { AddressZero } from 'ethers/constants';
 
@@ -305,7 +305,13 @@ const ColonyMembers = () => {
               </>
             )}
           </ul>
-          <MembersFilter handleFiltersCallback={setFilters} />
+          <MembersFilter
+            handleFiltersCallback={setFilters}
+            isRoot={
+              selectedDomainId === ROOT_DOMAIN_ID ||
+              selectedDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID
+            }
+          />
         </aside>
       </div>
     </div>

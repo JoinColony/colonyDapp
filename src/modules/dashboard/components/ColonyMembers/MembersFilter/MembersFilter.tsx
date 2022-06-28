@@ -73,15 +73,24 @@ const filters: Filter[] = [
 
 interface Props {
   handleFiltersCallback: (filters: MEMEBERS_FILTERS[]) => void;
+  isRoot: boolean;
 }
 
-const MembersFilter = ({ handleFiltersCallback }: Props) => {
-  const filterNames = useMemo(() => filters.map((item) => item.name), []);
+const MembersFilter = ({ handleFiltersCallback, isRoot }: Props) => {
+  const filterNames = useMemo(() => {
+    const filtersList = filters.map((item) => item.name);
+
+    return isRoot ? filtersList : filtersList.slice(2);
+  }, [isRoot]);
 
   return (
     <>
       <hr className={styles.divider} />
-      <Form initialValues={{ filters: filterNames }} onSubmit={() => {}}>
+      <Form
+        initialValues={{ filters: filterNames }}
+        onSubmit={() => {}}
+        enableReinitialize
+      >
         {({ resetForm, values }: FormikProps<FormValues>) => {
           handleFiltersCallback(values.filters);
           return (
