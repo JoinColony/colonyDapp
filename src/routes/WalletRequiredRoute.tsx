@@ -7,7 +7,6 @@ import {
 } from 'react-router-dom';
 import { StaticContext } from 'react-router';
 
-import BetaCautionAlert from '~core/BetaCautionAlert';
 import FeedbackWidget from '~core/FeedbackWidget';
 import { RouteComponentProps } from '~pages/RouteLayouts';
 
@@ -43,7 +42,6 @@ const WalletRequiredRoute = ({
   const RouteComponent = ({ ...props }) => (
     <Layout routeProps={routeProps} {...props}>
       <Component routeProps={routeProps} {...props} />
-      <BetaCautionAlert />
       <FeedbackWidget />
     </Layout>
   );
@@ -141,7 +139,6 @@ const WalletRequiredRoute = ({
             return (
               <Layout routeProps={routeProps} {...props}>
                 <Component routeProps={routeProps} {...props} />
-                <BetaCautionAlert />
                 <FeedbackWidget />
               </Layout>
             );
