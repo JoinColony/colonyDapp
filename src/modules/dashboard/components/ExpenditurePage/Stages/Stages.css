@@ -41,25 +41,29 @@
   fill: var(--temp-grey-blue-7);
 }
 
-.icon:hover {
-  cursor: pointer;
-}
-
 .buttonsContainer {
   display: flex;
   align-items: center;
 }
 
-.iconContainer {
-  margin-right: 20px;
-}
-
-.iconContainer > div {
+.iconButton > div {
   margin-bottom: 7px;
 }
 
-.buttonsContainer button {
-  margin-left: 4px;
+.iconButton {
+  margin-right: 20px;
+  margin-left: 0;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+}
+
+.iconButton:hover {
+  cursor: pointer;
+}
+
+.iconButtonDisabled {
+  opacity: 0.5;
 }
 
 .iconWrapper {
@@ -79,4 +83,8 @@
     content: '';
     opacity: 0.1;
   }
+}
+
+.iconButtonDisabled:hover {
+  cursor: not-allowed;
 }
