@@ -7,10 +7,10 @@ import { Form } from '~core/Fields';
 import Payments from '~dashboard/ExpenditurePage/Payments';
 import ExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings';
 import Stages from '~dashboard/ExpenditurePage/Stages';
+import TitleDescriptionSection from '~dashboard/ExpenditurePage/TitleDescriptionSection';
 import { getMainClasses } from '~utils/css';
 import styles from './ExpenditurePage.css';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
-import TitleDescriptionSection from '~dashboard/ExpenditurePage/TitleDescriptionSection';
 
 const displayName = 'pages.ExpenditurePage';
 
