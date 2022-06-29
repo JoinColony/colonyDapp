@@ -15,36 +15,17 @@ import ActionsPageFeed, {
   FeedItemWithId,
   SystemMessagesName,
 } from '~dashboard/ActionsPageFeed';
-import {
-  AnyUser,
-  Colony,
-  ParsedEvent,
-  TransactionMessageFragment,
-} from '~data/index';
+import { Colony, ParsedEvent, TransactionMessageFragment } from '~data/index';
 import FriendlyName from '~core/FriendlyName';
 import MemberReputation from '~core/MemberReputation';
 
-type FeedItem = FeedItemWithId<
-  ParsedEvent & {
-    // type has to be adjusted based on response from API
-    changes?: {
-      changeType: string;
-      prevValue: string | AnyUser;
-      currValue: string | AnyUser;
-      recipient: AnyUser;
-    }[];
-    user?: AnyUser;
-    funds?: string[];
-  }
->;
-
 const MSG = defineMessages({
   commentPlaceholder: {
-    id: 'dashboard.Expenditures.ExpenditureLogs.commentPlaceholder',
+    id: 'dashboard.ExpenditurePage.ExpenditureLogs.commentPlaceholder',
     defaultMessage: 'What would you like to say?',
   },
   emptyLog: {
-    id: 'dashboard.Expenditures.ExpenditureLogs.emptyLog',
+    id: 'dashboard.ExpenditurePage.ExpenditureLogs.emptyLog',
     defaultMessage: 'Log event',
   },
 });
@@ -72,6 +53,8 @@ export const ifIsSystemMessage = (name: string) => {
   return false;
 };
 
+const displayName = 'dashboard.LogsSection';
+
 interface Props {
   colony: Colony;
   isFormEditable?: boolean;
@@ -79,7 +62,7 @@ interface Props {
 
 const LogsSection = ({ colony }: Props) => {
   const { username: currentUserName, ethereal } = useLoggedInUser();
-  // add fetching systemMessages here
+  // add fetching systemMessages here, mocks are used now
 
   const additionalValues = useCallback(
     (feedItem) => {
@@ -258,5 +241,7 @@ const LogsSection = ({ colony }: Props) => {
     </div>
   );
 };
+
+LogsSection.displayName = displayName;
 
 export default LogsSection;
