@@ -1,0 +1,52 @@
+@value buttonHeight: 29px;
+@value buttonWidth: 100px;
+
+.mainContainer {
+  padding-top: 20px;
+  min-width: 340px;
+}
+
+.status {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--dark);
+}
+
+.notSaved {
+  margin-left: 9px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--temp-grey-blue-7);
+  letter-spacing: 0.5px;
+}
+
+.stagesText {
+  display: flex;
+  align-items: center;
+  line-height: 18px;
+}
+
+.statusContainer {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--temp-grey-6);
+}
+
+.icon {
+  margin-right: 20px;
+  height: 20px;
+  width: 20px;
+  fill: var(--temp-grey-blue-7);
+}
+
+.icon:hover {
+  cursor: pointer;
+}
+
+.buttonsContainer {
+  display: flex;
+  align-items: center;
+}

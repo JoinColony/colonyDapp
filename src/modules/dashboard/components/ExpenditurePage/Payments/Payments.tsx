@@ -20,24 +20,28 @@ import { SpinnerLoader } from '~core/Preloaders';
 
 const MSG = defineMessages({
   payments: {
-    id: 'dashboard.Expenditures.Payments.defaultPayment',
+    id: 'dashboard.ExpenditurePage.Payments.payments',
     defaultMessage: 'Add payments',
   },
   recipient: {
-    id: 'dashboard.Expenditures.Payments.defaultRrecipient',
+    id: 'dashboard.ExpenditurePage.Payments.recipient',
     defaultMessage: 'Recipient',
   },
   addRecipientLabel: {
-    id: 'dashboard.Expenditures.Payments.addRecipientLabel',
+    id: 'dashboard.ExpenditurePage.Payments.addRecipientLabel',
     defaultMessage: 'Add recipient',
   },
   minusIconTitle: {
-    id: 'dashboard.Expenditures.Payments.minusIconTitle',
+    id: 'dashboard.ExpenditurePage.Payments.minusIconTitle',
     defaultMessage: 'Collapse a single recipient settings',
   },
   plusIconTitle: {
-    id: 'dashboard.Expenditures.Payments.plusIconTitle',
+    id: 'dashboard.ExpenditurePage.Payments.plusIconTitle',
     defaultMessage: 'Expand a single recipient settings',
+  },
+  deleteIconTitle: {
+    id: 'dashboard.ExpenditurePage.Payments.deleteIconTitle',
+    defaultMessage: 'Delete recipient',
   },
 });
 
@@ -119,7 +123,7 @@ const Payments = ({ sidebarRef }: Props) => {
                             name="trash"
                             className={styles.deleteIcon}
                             onClick={() => remove(index)}
-                            title="Delete recipient"
+                            title={MSG.deleteIconTitle}
                           />
                         )}
                       </div>
