@@ -1,4 +1,3 @@
-import { useFormikContext } from 'formik';
 import React, { useState } from 'react';
 import {
   defineMessages,
@@ -10,13 +9,11 @@ import classNames from 'classnames';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
-import StakeExpenditureDialog from './StakeExpenditureDialog';
 import { Tooltip } from '~core/Popover';
-import { Stage } from './consts';
-import DeleteDraftDialog from './DeleteDraftDialog';
-import StageItem from './StageItem';
-
 import styles from './Stages.css';
+import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
+import StageItem from './StageItem';
+import { Stage } from './constants';
 
 const MSG = defineMessages({
   stages: {
@@ -107,12 +104,16 @@ interface ActiveState {
   buttonTooltip?: string | MessageDescriptor;
 }
 
+const buttonStyles = {
+  height: styles.buttonHeight,
+  width: styles.buttonWidth,
+  padding: 0,
+};
+
 const Stages = () => {
   const [activeStateId, setActiveStateId] = useState<string | null>(null);
-  const { resetForm } = useFormikContext() || {};
 
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
-  const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
 
   const handleLockExpenditure = () => {
     // Call to backend will be added here, to lock the expenditure
@@ -158,16 +159,7 @@ const Stages = () => {
   const handleSaveDraft = () =>
     openDraftConfirmDialog({
       onClick: () => setActiveStateId(Stage.Draft),
-    });
-
-  const handleDeleteDraft = () =>
-    openDeleteDraftDialog({
-      onClick: () => {
-        resetForm?.();
-        if (activeStateId === Stage.Draft) {
-          // logic to delete a draft from database
-        }
-      },
+      isVotingExtensionEnabled: true,
     });
 
   const activeIndex = states.findIndex((state) => state.id === activeStateId);
@@ -198,13 +190,12 @@ const Stages = () => {
                     <Icon
                       name="trash"
                       className={styles.icon}
-                      onClick={handleDeleteDraft}
                       title={MSG.deleteDraft}
                     />
                   </div>
                 </Tooltip>
               </span>
-              <Button onClick={handleSaveDraft} style={buttonStyle}>
+              <Button onClick={handleSaveDraft} style={buttonStyles}>
                 <FormattedMessage {...MSG.submitDraft} />
               </Button>
             </>
@@ -230,7 +221,6 @@ const Stages = () => {
                       <Icon
                         name="trash"
                         className={styles.icon}
-                        onClick={handleDeleteDraft}
                         title={MSG.deleteDraft}
                       />
                     </div>
