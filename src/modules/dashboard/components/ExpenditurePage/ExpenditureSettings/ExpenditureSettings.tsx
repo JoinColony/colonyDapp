@@ -48,6 +48,8 @@ const MSG = defineMessages({
   },
 });
 
+const displayName = 'dashboard.ExpenditureSettings';
+
 interface Props {
   colonyName: string;
 }
@@ -240,5 +242,7 @@ const ExpenditureSettings = () => {
     </div>
   );
 };
+
+ExpenditureSettings.displayName = displayName;
 
 export default ExpenditureSettings;

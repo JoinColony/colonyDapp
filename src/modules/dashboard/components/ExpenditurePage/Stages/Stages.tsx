@@ -110,6 +110,8 @@ const buttonStyles = {
   padding: 0,
 };
 
+const displayName = 'dashboard.Stages';
+
 const Stages = () => {
   const [activeStateId, setActiveStateId] = useState<string | null>(null);
 
@@ -298,5 +300,7 @@ const Stages = () => {
     </div>
   );
 };
+
+Stages.displayName = displayName;
 
 export default Stages;
