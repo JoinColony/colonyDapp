@@ -501,10 +501,9 @@ const CreatePaymentDialogForm = ({
               dataTest="paymentAmountInput"
             />
             {networkFeeInverse &&
+              customAmountError === undefined &&
               values.amount &&
-              values.amount !== '0' &&
-              values.amount !== '0.' &&
-              values.amount !== '.' && (
+              Number(values.amount) > 0 && (
                 <div className={styles.networkFee}>
                   <FormattedMessage
                     {...MSG.fee}
