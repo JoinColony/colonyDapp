@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
-import { MessageDescriptor, useIntl } from 'react-intl';
+import { FormattedMessage, MessageDescriptor, useIntl } from 'react-intl';
 
-import { SimpleMessageValues } from '~types/index';
+import { ComplexMessageValues, SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
 
 import styles from './InputLabel.css';
@@ -36,7 +36,7 @@ interface Props {
   label: string | MessageDescriptor;
 
   /** Values for label text (react-intl interpolation) */
-  labelValues?: SimpleMessageValues;
+  labelValues?: SimpleMessageValues | ComplexMessageValues;
 
   /** Should only be visible for screenreaders, but not for display users */
   screenReaderOnly?: boolean;
@@ -57,9 +57,11 @@ const InputLabel = ({
   const helpText =
     typeof help === 'object' ? formatMessage(help, helpValues) : help;
   const labelText =
-    typeof inputLabel === 'object'
-      ? formatMessage(inputLabel, labelValues)
-      : inputLabel;
+    typeof inputLabel === 'string' ? (
+      inputLabel
+    ) : (
+      <FormattedMessage {...inputLabel} values={labelValues} />
+    );
   return (
     <label
       className={getMainClasses(appearance, styles, {
