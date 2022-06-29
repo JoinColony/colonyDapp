@@ -35,10 +35,9 @@ const MSG = defineMessages({
 
 interface Props {
   recipients?: RecipientType[];
-  editForm?: () => void;
 }
 
-const LockedPayments = ({ recipients, editForm }: Props) => {
+const LockedPayments = ({ recipients }: Props) => {
   const [expandedRecipients, setExpandedRecipients] = useState<
     number[] | undefined
   >(recipients?.map((_, idx) => idx));
@@ -59,12 +58,6 @@ const LockedPayments = ({ recipients, editForm }: Props) => {
       <div className={styles.recipientContainer}>
         <div className={styles.payments}>
           <FormattedMessage {...MSG.payments} />
-          <Icon
-            name="edit"
-            className={styles.editIcon}
-            title="Edit expenditure"
-            onClick={editForm}
-          />
         </div>
         {recipients?.map((recipient, index) => {
           const isOpen =

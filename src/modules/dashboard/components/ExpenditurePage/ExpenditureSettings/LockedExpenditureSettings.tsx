@@ -14,7 +14,7 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import UserMention from '~core/UserMention';
 import ColorTag, { Color } from '~core/ColorTag';
-import { AnyUser } from '~data/index';
+import { LoggedInUser } from '~data/index';
 
 const MSG = defineMessages({
   typeLabel: {
@@ -42,7 +42,10 @@ const MSG = defineMessages({
 interface Props {
   expenditure?: string;
   team?: { label: string; value: string };
-  owner?: AnyUser['profile'];
+  owner?: Pick<
+    LoggedInUser,
+    'username' | 'balance' | 'walletAddress' | 'ethereal' | 'networkId'
+  >;
 }
 
 const LockedExpenditureSettings = ({ expenditure, owner }: Props) => {
@@ -128,6 +131,11 @@ const LockedExpenditureSettings = ({ expenditure, owner }: Props) => {
           </div>
         </FormSection>
         <FormSection appearance={{ border: 'bottom' }}>
+          {/* 
+          Form is added here, because SelectHorizontal has to be wrapped in
+          form component. Select horizontal does not call any action on form
+          component 
+        */}
           <Form initialValues={{}} onSubmit={() => {}}>
             <div className={styles.balance}>
               <SelectHorizontal

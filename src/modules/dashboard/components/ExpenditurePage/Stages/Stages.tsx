@@ -1,70 +1,56 @@
-import React, { useState } from 'react';
+import React, { useCallback } from 'react';
+import { useFormikContext } from 'formik';
 import {
   defineMessages,
   FormattedMessage,
   MessageDescriptor,
 } from 'react-intl';
+
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
 import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
 import StageItem from './StageItem';
-
 import styles from './Stages.css';
-import { Stage } from './constants';
+
+import {
+  InitialValuesType,
+  State,
+  ValuesType,
+} from '~pages/ExpenditurePage/ExpenditurePage';
 
 const MSG = defineMessages({
   stages: {
-    id: 'dashboard.Expenditures.Stages.stages',
+    id: 'dashboard.ExpenditurePage.Stages.stages',
     defaultMessage: 'Stages',
   },
   notSaved: {
-    id: 'dashboard.Expenditures.Stages.notSaved',
+    id: 'dashboard.ExpenditurePage.Stages.notSaved',
     defaultMessage: 'Not saved',
   },
   submitDraft: {
-    id: 'dashboard.Expenditures.Stages.submitDraft',
+    id: 'dashboard.ExpenditurePage.Stages.submitDraft',
     defaultMessage: 'Submit draft',
   },
-  lockValues: {
-    id: 'dashboard.Expenditures.Stages.lockValues',
-    defaultMessage: 'Lock values',
+  deleteDraft: {
+    id: 'dashboard.ExpenditurePage.Stages.deleteDraft',
+    defaultMessage: 'Delete draft',
   },
-  escrowFunds: {
-    id: 'dashboard.Expenditures.Stages.escrowFunds',
-    defaultMessage: 'Escrow funds',
+  tooltipDeleteText: {
+    id: 'dashboard.ExpenditurePage.Stages.tooltipDeleteText',
+    defaultMessage: 'Delete the expenditure',
   },
-  releaseFunds: {
-    id: 'dashboard.Expenditures.Stages.releaseFunds',
-    defaultMessage: 'Release funds',
+  tooltipShareText: {
+    id: 'dashboard.ExpenditurePage.Stages.tooltipShareText',
+    defaultMessage: 'Share expenditure URL',
   },
-  claim: {
-    id: 'dashboard.Expenditures.Stages.claim',
-    defaultMessage: 'Claim',
+  tooltipCancelText: {
+    id: 'dashboard.ExpenditurePage.Stages.tooltipCancelText',
+    defaultMessage: 'Click to cancel expenditure',
   },
-  completed: {
-    id: 'dashboard.Expenditures.Stages.completed',
-    defaultMessage: 'Completed',
-  },
-  draft: {
-    id: 'dashboard.Expenditures.Stages.draft',
-    defaultMessage: 'Draft',
-  },
-  locked: {
-    id: 'dashboard.Expenditures.Stages.locked',
-    defaultMessage: 'Locked',
-  },
-  funded: {
-    id: 'dashboard.Expenditures.Stages.funded',
-    defaultMessage: 'Funded',
-  },
-  released: {
-    id: 'dashboard.Expenditures.Stages.released',
-    defaultMessage: 'Released',
-  },
-  claimed: {
-    id: 'dashboard.Expenditures.Stages.claimed',
-    defaultMessage: 'Claimed',
+  tooltipNoPermissionToRealese: {
+    id: 'dashboard.ExpenditurePage.Stages.tooltipNoPermissionToRealese',
+    defaultMessage: `You need to be the owner to release funds. You can change the owner to transfer permission.`,
   },
 });
 
@@ -81,50 +67,35 @@ const buttonStyles = {
   padding: 0,
 };
 
-const Stages = () => {
-  const [activeState, setActiveState] = useState<ActiveState | null>(null);
+interface Props {
+  states: State[];
+  handleSubmit: (values: InitialValuesType) => void;
+  activeStateId?: string;
+}
+
+const Stages = ({ states, activeStateId }: Props) => {
+  const { values, handleSubmit, validateForm } =
+    useFormikContext<ValuesType>() || {};
 
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
 
-  const states = [
-    {
-      id: Stage.Draft,
-      label: MSG.draft,
-      buttonText: MSG.lockValues,
-      buttonAction: () => {},
-    },
-    {
-      id: Stage.Locked,
-      label: MSG.locked,
-      buttonText: MSG.escrowFunds,
-      buttonAction: () => {},
-    },
-    {
-      id: Stage.Funded,
-      label: MSG.funded,
-      buttonText: MSG.releaseFunds,
-      buttonAction: () => {},
-    },
-    {
-      id: Stage.Released,
-      label: MSG.released,
-      buttonText: MSG.claim,
-      buttonAction: () => {},
-    },
-    {
-      id: Stage.Claimed,
-      label: MSG.claimed,
-      buttonText: MSG.completed,
-      buttonAction: () => {},
-    },
-  ];
+  const handleSaveDraft = useCallback(async () => {
+    const errors = await validateForm(values);
+    const hasErrors = Object.keys(errors)?.length;
 
-  const handleSaveDraft = () =>
-    openDraftConfirmDialog({
-      onClick: () => setActiveState(states[0]),
-      isVotingExtensionEnabled: true,
-    });
-  const activeIndex = states.findIndex((state) => state.id === activeState?.id);
+    return (
+      !hasErrors &&
+      openDraftConfirmDialog({
+        onClick: () => {
+          handleSubmit(values as any);
+        },
+        isVotingExtensionEnabled: true,
+      })
+    );
+  }, [handleSubmit, openDraftConfirmDialog, validateForm, values]);
+
+  const activeIndex = states.findIndex((state) => state.id === activeStateId);
+  const activeState = states.find((state) => state.id === activeStateId);
 
   return (
     <div className={styles.mainContainer}>
