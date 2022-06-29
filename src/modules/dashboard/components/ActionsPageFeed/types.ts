@@ -1,7 +1,6 @@
 import { MessageDescriptor } from 'react-intl';
 import { UniversalMessageValues } from '~types/index';
 import { Appearance as SystemInfoAppearance } from './ActionsPageSystemInfo';
-import { AnyUser } from '~data/index';
 
 export { EventValues, FeedItemWithId, FeedItems } from './ActionsPageFeed';
 
@@ -76,14 +75,4 @@ export interface SystemMessage {
   type: ActionsPageFeedType.SystemMessage;
   name: SystemMessagesName;
   createdAt: number;
-}
-
-export interface ExtendedSystemMessage extends SystemMessage {
-  user?: AnyUser;
-  transactionHash?: string;
-  amount?: string;
-  funds?: string[];
-  changes?: any[];
-  colonyAddress?: string;
-  role?: number;
 }

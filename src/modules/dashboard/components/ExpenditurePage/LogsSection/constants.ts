@@ -3,60 +3,6 @@ import {
   SystemMessagesName,
 } from '~dashboard/ActionsPageFeed';
 
-export const colony = {
-  avatarHash: null,
-  avatarURL: null,
-  canColonyMintNativeToken: true,
-  canColonyUnlockNativeToken: true,
-  colonyAddress: '0xA1e73506F3ef6dC19dc27B750ADF585FD0F30C63',
-  colonyName: 'test2',
-  displayName: 'test2',
-  domains: [
-    {
-      domainId: 1,
-      color: 0,
-      description: null,
-      ethDomainId: 1,
-      ethParentDomainId: null,
-      id: '0xa1e73506f3ef6dc19dc27b750adf585fd0f30c63_domain_1',
-      name: 'Root',
-    },
-  ],
-  extensionAddresses: ['0xda571541f04ce3879bef2933792046967f149d52'],
-  id: 3,
-  isDeploymentFinished: true,
-  isInRecoveryMode: false,
-  isNativeTokenLocked: true,
-  nativeTokenAddress: '0xdeFB1b38a01254D5861EFEee5bC0674242acF12D',
-  version: '8',
-  roles: [
-    {
-      address: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
-      domains: [
-        {
-          domainId: 1,
-          roles: ['1'],
-        },
-      ],
-    },
-  ],
-  tokenAddresses: ['0xdeFB1b38a01254D5861EFEee5bC0674242acF12D'],
-  tokens: [
-    {
-      address: '0x0000000000000000000000000000000000000000',
-      decimals: 18,
-      iconHash: '',
-      id: '0x0000000000000000000000000000000000000000',
-      name: 'Ether',
-      processedBalances: [
-        { __typename: 'DomainBalance', domainId: 1, amount: '0' },
-        { __typename: 'DomainBalance', domainId: 0, amount: '0' },
-      ],
-      symbol: 'ETH',
-    },
-  ],
-};
-
 export const colonyAction = {
   actionInitiator: '0x45B17FF6998D4d76A10a32621A71773E3722DA65',
   actionType: 'SystemMessage',
@@ -107,7 +53,7 @@ export const systemMessages = [
       },
     },
     values: {
-      amount: '10',
+      amount: '10 CLNY',
     },
     createdAt: 1653900557000,
     blockExplorerName: 'Blockscout',

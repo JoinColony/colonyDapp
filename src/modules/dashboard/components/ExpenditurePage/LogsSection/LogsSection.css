@@ -70,3 +70,36 @@
 .transactionMeta {
   width: 100%;
 }
+
+.reputationWrapper {
+  display: inline-block;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+}
+
+.reputationWrapper > div {
+  padding-right: 0;
+}
+
+.reputationStarWrapper {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  padding-right: 4px;
+  padding-left: 10px;
+  position: relative;
+}
+
+.reputationWrapper i {
+  right: unset;
+  left: -16px;
+}
+
+.change {
+  margin-left: 4px;
+}
+
+.titleDecoration {
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}

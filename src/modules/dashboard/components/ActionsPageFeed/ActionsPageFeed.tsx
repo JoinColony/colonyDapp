@@ -29,12 +29,7 @@ import { hasRoot, canAdminister } from '~modules/users/checks';
 import ActionsPageEvent from './ActionsPageEvent';
 import ActionsPageSystemInfo from './ActionsPageSystemInfo';
 import ActionsPageSystemMessage from './ActionsPageSystemMessage';
-import {
-  ActionsPageFeedType,
-  ExtendedSystemMessage,
-  SystemInfo,
-  SystemMessage,
-} from './types';
+import { ActionsPageFeedType, SystemInfo, SystemMessage } from './types';
 import styles from './ActionsPageFeed.css';
 
 const displayName = 'dashboard.ActionsPageFeed';
@@ -74,6 +69,8 @@ export interface EventValues {
   objectionTag?: ReactElement;
   reputationChange?: string;
   isSmiteAction?: boolean;
+  changes?: ReactElement[];
+  funds?: ReactElement[];
 }
 
 export type FeedItemWithId<T> = T & { uniqueId: string };
@@ -91,7 +88,7 @@ interface Props {
   transactionHash: string;
   networkEvents?: ParsedEvent[];
   systemInfos?: SystemInfo[];
-  systemMessages?: ExtendedSystemMessage[];
+  systemMessages?: SystemMessage[];
   recipient?: AnyUser;
   values?: EventValues;
   actionType?: string;

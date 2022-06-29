@@ -1,9 +1,9 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { useParams } from 'react-router';
 import * as yup from 'yup';
 
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { nanoid } from 'nanoid';
+import { RouteChildrenProps, useParams } from 'react-router';
 import { Form } from '~core/Fields';
 import Payments from '~dashboard/ExpenditurePage/Payments';
 import ExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings';
@@ -14,6 +14,7 @@ import { getMainClasses } from '~utils/css';
 
 import styles from './ExpenditurePage.css';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
+import { SpinnerLoader } from '~core/Preloaders';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -61,15 +62,22 @@ const validationSchema = yup.object().shape({
   ),
 });
 
-const ExpenditurePage = () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [isEditable, setIsEditable] = useState(true);
+type Props = RouteChildrenProps<{ colonyName: string }>;
+
+const ExpenditurePage = ({ match }: Props) => {
+  if (!match) {
+    throw new Error(
+      `No match found for route in ${displayName} Please check route setup.`,
+    );
+  }
+
   const { colonyName } = useParams<{
-    transactionHash?: string;
     colonyName: string;
   }>();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isEditable, setIsEditable] = useState(true);
 
-  const { data } = useColonyFromNameQuery({
+  const { data: colonyData, loading } = useColonyFromNameQuery({
     variables: { name: colonyName, address: '' },
   });
 
@@ -95,10 +103,18 @@ const ExpenditurePage = () => {
         <div className={styles.mainContainer}>
           <main className={styles.mainContent}>
             <TitleDescriptionSection isEditable />
-            <LogsSection
-              colonyAddress={data?.colonyAddress || ''}
-              isFormEditable={isEditable}
-            />
+            {loading ? (
+              <div className={styles.spinnerContainer}>
+                <SpinnerLoader appearance={{ size: 'medium' }} />
+              </div>
+            ) : (
+              colonyData && (
+                <LogsSection
+                  colony={colonyData.processedColony}
+                  isFormEditable={isEditable}
+                />
+              )
+            )}
           </main>
         </div>
       </div>
@@ -109,10 +125,18 @@ const ExpenditurePage = () => {
       <div className={styles.mainContainer}>
         <main className={styles.mainContent}>
           <TitleDescriptionSection isEditable={isEditable} />
-          <LogsSection
-            colonyAddress={data?.colonyAddress || ''}
-            isFormEditable={isEditable}
-          />
+          {loading ? (
+            <div className={styles.spinnerContainer}>
+              <SpinnerLoader appearance={{ size: 'medium' }} />
+            </div>
+          ) : (
+            colonyData && (
+              <LogsSection
+                colony={colonyData.processedColony}
+                isFormEditable={isEditable}
+              />
+            )
+          )}
         </main>
       </div>
     </div>

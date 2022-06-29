@@ -8,3 +8,7 @@ export const logContainer: string;
 export const dot: string;
 export const dotContainer: string;
 export const transactionMeta: string;
+export const reputationWrapper: string;
+export const reputationStarWrapper: string;
+export const change: string;
+export const titleDecoration: string;
