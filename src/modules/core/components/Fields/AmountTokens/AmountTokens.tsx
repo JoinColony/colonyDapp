@@ -55,7 +55,7 @@ const displayName = 'AmountTokens';
 // https://github.com/JoinColony/colonyNetwork/blob/806e4d5750dc3a6b9fa80f6e007773b28327c90f/contracts/colony/ColonyFunding.sol#L656
 
 export const calculateFee = (
-  receivedAmount: string, // amount that the recipient finally receives
+  receivedAmount = '0', // amount that the recipient finally receives
   feeInverse: string,
   decimals: number,
 ): { feesInWei: string; totalToPay: string } => {
@@ -78,94 +78,92 @@ const AmountTokens = ({
   selectedToken,
   tokens,
   disabledInput,
-}: Props) => {
-  return (
-    <div className={styles.tokenAmount}>
-      <div className={styles.tokenAmountInputContainer}>
-        <Input
-          label={MSG.amount}
-          name="amount"
-          appearance={{
-            theme: 'minimal',
-            align: 'right',
-          }}
-          formattingOptions={{
-            delimiter: ',',
-            numeral: true,
-            numeralDecimalScale: getTokenDecimalsWithFallback(
-              selectedToken && selectedToken.decimals,
-            ),
-          }}
-          disabled={disabledInput}
-          /*
-           * Force the input component into an error state
-           * This is needed for our custom error state to work
-           */
-          forcedFieldError={customAmountError}
-          dataTest="paymentAmountInput"
-        />
-        {networkFeeInverse &&
-          customAmountError === undefined &&
-          values.amount &&
-          Number(values.amount) > 0 && (
-            <div className={styles.networkFee}>
-              <FormattedMessage
-                {...MSG.fee}
-                values={{
-                  fee: (
-                    <Numeral
-                      appearance={{
-                        size: 'small',
-                        theme: 'grey',
-                      }}
-                      value={
-                        calculateFee(
-                          values.amount,
-                          networkFeeInverse,
-                          getTokenDecimalsWithFallback(selectedToken?.decimals),
-                        ).feesInWei
-                      }
-                      unit={getTokenDecimalsWithFallback(
-                        selectedToken && selectedToken.decimals,
-                      )}
-                    />
-                  ),
-                  symbol: (selectedToken && selectedToken.symbol) || '???',
-                }}
-              />
-            </div>
-          )}
-      </div>
-      <div className={styles.tokenAmountContainer}>
-        <div className={styles.tokenAmountSelect}>
-          <TokenSymbolSelector
-            label={MSG.token}
-            tokens={tokens}
-            name="tokenAddress"
-            elementOnly
-            appearance={{ alignOptions: 'right', theme: 'grey' }}
-            disabled={disabledInput}
-          />
-        </div>
-        {values.tokenAddress === AddressZero && (
-          <div className={styles.tokenAmountUsd}>
-            <EthUsd
-              appearance={{ theme: 'grey' }}
-              value={
-                /*
-                 * @NOTE Set value to 0 if amount is only the decimal point
-                 * Just entering the decimal point will pass it through to EthUsd
-                 * and that will try to fetch the balance for, which, obviously, will fail
-                 */
-                values.amount && values.amount !== '.' ? values.amount : '0'
-              }
+}: Props) => (
+  <div className={styles.tokenAmount}>
+    <div className={styles.tokenAmountInputContainer}>
+      <Input
+        label={MSG.amount}
+        name="amount"
+        appearance={{
+          theme: 'minimal',
+          align: 'right',
+        }}
+        formattingOptions={{
+          delimiter: ',',
+          numeral: true,
+          numeralDecimalScale: getTokenDecimalsWithFallback(
+            selectedToken && selectedToken.decimals,
+          ),
+        }}
+        disabled={disabledInput}
+        /*
+          * Force the input component into an error state
+          * This is needed for our custom error state to work
+          */
+        forcedFieldError={customAmountError}
+        dataTest="paymentAmountInput"
+      />
+      {networkFeeInverse &&
+        customAmountError === undefined &&
+        values.amount &&
+        Number(values.amount) > 0 && (
+          <div className={styles.networkFee}>
+            <FormattedMessage
+              {...MSG.fee}
+              values={{
+                fee: (
+                  <Numeral
+                    appearance={{
+                      size: 'small',
+                      theme: 'grey',
+                    }}
+                    value={
+                      calculateFee(
+                        values.amount,
+                        networkFeeInverse,
+                        getTokenDecimalsWithFallback(selectedToken?.decimals),
+                      ).feesInWei
+                    }
+                    unit={getTokenDecimalsWithFallback(
+                      selectedToken && selectedToken.decimals,
+                    )}
+                  />
+                ),
+                symbol: (selectedToken && selectedToken.symbol) || '???',
+              }}
             />
           </div>
         )}
-      </div>
     </div>
-  );
-};
+    <div className={styles.tokenAmountContainer}>
+      <div className={styles.tokenAmountSelect}>
+        <TokenSymbolSelector
+          label={MSG.token}
+          tokens={tokens}
+          name="tokenAddress"
+          elementOnly
+          appearance={{ alignOptions: 'right', theme: 'grey' }}
+          disabled={disabledInput}
+        />
+      </div>
+      {values.tokenAddress === AddressZero && (
+        <div className={styles.tokenAmountUsd}>
+          <EthUsd
+            appearance={{ theme: 'grey' }}
+            value={
+              /*
+                * @NOTE Set value to 0 if amount is only the decimal point
+                * Just entering the decimal point will pass it through to EthUsd
+                * and that will try to fetch the balance for, which, obviously, will fail
+                */
+              values.amount && values.amount !== '.' ? values.amount : '0'
+            }
+          />
+        </div>
+      )}
+    </div>
+  </div>
+);
 
 AmountTokens.displayName = displayName;
 
