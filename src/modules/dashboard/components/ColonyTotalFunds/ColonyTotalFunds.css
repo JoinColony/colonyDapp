@@ -95,7 +95,6 @@
     padding: 0 14px;
     height: 77px;
     border-bottom: 1px solid var(--temp-grey-13);
-    grid-area: fundColony;
   }
 
   .totalBalanceCopy {
