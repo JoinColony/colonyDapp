@@ -61,6 +61,8 @@ const MSG = defineMessages({
   },
 });
 
+const displayName = 'dashboard.StakeExpenditureDialog';
+
 interface FormValues {
   forceAction: boolean;
 }
@@ -196,5 +198,7 @@ const StakeExpenditureDialog = ({
     </ActionForm>
   );
 };
+
+StakeExpenditureDialog.displayName = displayName;
 
 export default StakeExpenditureDialog;

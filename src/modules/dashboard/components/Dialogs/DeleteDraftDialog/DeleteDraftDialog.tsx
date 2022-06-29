@@ -20,6 +20,8 @@ const MSG = defineMessages({
   },
 });
 
+const displayName = 'dashboard.DeleteDraftDialog';
+
 interface Props {
   cancel: () => void;
   close: () => void;
@@ -38,7 +40,6 @@ const DeleteDraftDialog = ({ cancel, onClick, close }: Props) => {
         <div className={styles.heading}>
           <Heading
             appearance={{ size: 'medium', margin: 'none' }}
-            text="Stake to Create Expenditure"
             className={styles.title}
           >
             <FormattedMessage {...MSG.header} />
@@ -52,11 +53,12 @@ const DeleteDraftDialog = ({ cancel, onClick, close }: Props) => {
           onClick={handleSubmit}
           text={MSG.deleteText}
           className={styles.button}
-          data-test="confirmButton"
         />
       </DialogSection>
     </Dialog>
   );
 };
+
+DeleteDraftDialog.displayName = displayName;
 
 export default DeleteDraftDialog;
