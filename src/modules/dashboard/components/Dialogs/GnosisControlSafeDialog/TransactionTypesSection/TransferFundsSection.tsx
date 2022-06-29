@@ -15,7 +15,7 @@ import { DialogSection } from '~core/Dialog';
 
 import { FormValues } from '../GnosisControlSafeDialog';
 
-import styles from './TransferFundsSection.css';
+import styles from './TransactionTypesSection.css';
 
 const MSG = defineMessages({
   amount: {
