@@ -1,18 +1,22 @@
-@value paddingTopBottom: 75px;
-@value paddingRightLeft: 54px;
+@value paddingTop: 56px;
+@value paddingRightLeftBottom: 54px;
 
 .container {
-  padding: paddingTopBottom paddingRightLeft;
+  padding: paddingTop paddingRightLeftBottom paddingRightLeftBottom;
 }
 
 .container i {
   /* The negative margin is used here to adjust the position of the caret icon */
-  margin-bottom: -4px;
+  margin-bottom: -3px;
 }
 
 .settingsRow {
   composes: flexContainerRow flexAlignCenter flexJustifyBetween from '~styles/layout.css';
   min-height: 41px;
+}
+
+.settingsRow h4 {
+  font-size: var(--size-smallish);
 }
 
 .settingsRow button[aria-expanded="true"] {
@@ -87,12 +91,18 @@
 
 .activeItemLabel {
   margin-left: 8px;
-  font-size: var(--size-normal);
+  padding-bottom: 2px;
+  font-size: var(--size-smallish);
   color: var(--text);
 }
 
 .blue button {
+  font-size: var(--size-smallish);
   color: var(--action-secondary);
+}
+
+.blue li {
+  font-size: var(--size-smallish);
 }
 
 .blue svg {
@@ -102,4 +112,8 @@
 
 .balance ul {
   position: static;
+}
+
+.balance span {
+  font-size: var(--size-smallish);
 }

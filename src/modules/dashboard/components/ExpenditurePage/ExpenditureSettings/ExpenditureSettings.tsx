@@ -5,7 +5,6 @@ import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { defineMessages } from 'react-intl';
 import {
-  Form,
   InputLabel,
   SelectHorizontal,
   SelectOption,
@@ -28,23 +27,23 @@ import { SpinnerLoader } from '~core/Preloaders';
 
 const MSG = defineMessages({
   typeLabel: {
-    id: 'dashboard.Expenditures.ExpenditureSettings.defaultExpenditureLabel',
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.defaultExpenditureLabel',
     defaultMessage: 'Expenditure type',
   },
   teamLabel: {
-    id: 'dashboard.Expenditures.ExpenditureSettings.defaultTeamLabel',
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.defaultTeamLabel',
     defaultMessage: 'Team',
   },
   balanceLabel: {
-    id: 'dashboard.Expenditures.ExpenditureSettings.defaultBalanceLabel',
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.defaultBalanceLabel',
     defaultMessage: 'Balance',
   },
   ownerLabel: {
-    id: 'dashboard.Expenditures.ExpenditureSettings.defaultOwnerLabel',
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.defaultOwnerLabel',
     defaultMessage: 'Owner',
   },
   optionAdvanced: {
-    id: 'dashboard.Expenditures.ExpenditureSettings.defaultAdvancedOption',
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.defaultAdvancedOption',
     defaultMessage: 'Advanced payment',
   },
 });
@@ -161,12 +160,10 @@ const ExpenditureSettings = () => {
 
   return (
     <div className={styles.container}>
-      {/* eslint-disable-next-line no-warning-comments */}
-      {/* TODO: add submit handler and initial values */}
       {loading ? (
         <SpinnerLoader appearance={{ size: 'medium' }} />
       ) : (
-        <Form initialValues={{}} onSubmit={() => {}}>
+        <>
           <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.blue}>
               <SelectHorizontal
@@ -238,7 +235,7 @@ const ExpenditureSettings = () => {
               </div>
             </div>
           </FormSection>
-        </Form>
+        </>
       )}
     </div>
   );

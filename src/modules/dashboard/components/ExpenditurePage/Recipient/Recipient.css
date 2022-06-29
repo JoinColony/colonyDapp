@@ -1,0 +1,147 @@
+@value buttonMargin: 7px 0 5px 0;
+
+.singleUserContainer {
+  padding: 6px 0;
+}
+
+.formContainer {
+  border-top: 1px solid var(--grey-blue-0);
+}
+
+.margin-bottom {
+  margin-bottom: 36px;
+}
+
+.valueContainer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-top: 10px;
+}
+
+.valueContainer:not(:first-of-type) {
+  padding-top: 20px;
+}
+
+.valueContainer .container {
+  width: 100%;
+}
+
+.valueContainer label {
+  margin-bottom: 0;
+  color: var(--text);
+}
+
+.valueContainer input {
+  padding: 0;
+  height: 42px;
+  width: 100%;
+  border-bottom: 1px solid var(--text);
+}
+
+.delayContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+}
+
+.delay {
+  display: flex;
+  align-items: center;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--text);
+  letter-spacing: var(--spacing-medium);
+}
+
+.delayControlsContainer {
+  display: flex;
+}
+
+.delayControlsContainer input {
+  margin-right: 8px;
+
+  /* override style added in form component */
+  margin-bottom: -15px;
+  padding: 0 14px;
+  min-height: 44px;
+  width: 103px;
+  text-align: right;
+}
+
+.delayControlsContainer i {
+  margin-top: 4px;
+}
+
+.delayControlsContainer button {
+  min-width: 96px;
+}
+
+.tokenWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: var(--size-small);
+}
+
+.removeWrapper {
+  margin-bottom: 6px;
+  height: 18px;
+  font-weight: var(--weight-bold);
+  color: var(--colony-blue);
+}
+
+.removeWrapper button {
+  height: unset;
+  line-height: 12px;
+}
+
+.inputContainer {
+  margin-right: 20px;
+  padding-bottom: 26px;
+  padding-top: 2px;
+  width: 100%;
+  position: relative;
+}
+
+.inputContainer button {
+  padding-left: 0;
+  bottom: 4px;
+  left: 0;
+  font-size: var(--size-small);
+}
+
+.questionIcon {
+  display: block;
+  margin-left: 6px;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background-color: white;
+  stroke: none;
+}
+
+.tooltip {
+  max-width: 218px;
+}
+
+.tooltipDescription {
+  margin-top: 8px;
+}
+
+.error {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  text-align: right;
+  color: var(--danger);
+}
+
+.inputContainer input::placeholder {
+  color: var(--dark);
+}
+
+.inputContainer input {
+  padding: 20px 0 4px;
+  height: 42px;
+}
