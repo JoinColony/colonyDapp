@@ -55,7 +55,7 @@ const displayName = 'AmountTokens';
 // https://github.com/JoinColony/colonyNetwork/blob/806e4d5750dc3a6b9fa80f6e007773b28327c90f/contracts/colony/ColonyFunding.sol#L656
 
 export const calculateFee = (
-  receivedAmount: string, // amount that the recipient finally receives
+  receivedAmount = '0', // amount that the recipient finally receives
   feeInverse: string,
   decimals: number,
 ): { feesInWei: string; totalToPay: string } => {
@@ -79,6 +79,8 @@ const AmountTokens = ({
   tokens,
   disabledInput,
 }: Props) => {
+  const isAmountValid = (amount?: string) =>
+    amount && amount !== '0' && amount !== '0.' && amount !== '.';
   return (
     <div className={styles.tokenAmount}>
       <div className={styles.tokenAmountInputContainer}>
@@ -104,38 +106,34 @@ const AmountTokens = ({
           forcedFieldError={customAmountError}
           dataTest="paymentAmountInput"
         />
-        {networkFeeInverse &&
-          values.amount &&
-          values.amount !== '0' &&
-          values.amount !== '0.' &&
-          values.amount !== '.' && (
-            <div className={styles.networkFee}>
-              <FormattedMessage
-                {...MSG.fee}
-                values={{
-                  fee: (
-                    <Numeral
-                      appearance={{
-                        size: 'small',
-                        theme: 'grey',
-                      }}
-                      value={
-                        calculateFee(
-                          values.amount,
-                          networkFeeInverse,
-                          getTokenDecimalsWithFallback(selectedToken?.decimals),
-                        ).feesInWei
-                      }
-                      unit={getTokenDecimalsWithFallback(
-                        selectedToken && selectedToken.decimals,
-                      )}
-                    />
-                  ),
-                  symbol: (selectedToken && selectedToken.symbol) || '???',
-                }}
-              />
-            </div>
-          )}
+        {networkFeeInverse && isAmountValid(values.amount) && (
+          <div className={styles.networkFee}>
+            <FormattedMessage
+              {...MSG.fee}
+              values={{
+                fee: (
+                  <Numeral
+                    appearance={{
+                      size: 'small',
+                      theme: 'grey',
+                    }}
+                    value={
+                      calculateFee(
+                        values.amount,
+                        networkFeeInverse,
+                        getTokenDecimalsWithFallback(selectedToken?.decimals),
+                      ).feesInWei
+                    }
+                    unit={getTokenDecimalsWithFallback(
+                      selectedToken && selectedToken.decimals,
+                    )}
+                  />
+                ),
+                symbol: (selectedToken && selectedToken.symbol) || '???',
+              }}
+            />
+          </div>
+        )}
       </div>
       <div className={styles.tokenAmountContainer}>
         <div className={styles.tokenAmountSelect}>
