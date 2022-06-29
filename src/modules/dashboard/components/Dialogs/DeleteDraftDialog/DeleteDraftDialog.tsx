@@ -48,16 +48,10 @@ const DeleteDraftDialog = ({ cancel, onClick, close }: Props) => {
       </DialogSection>
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
-          appearance={{
-            theme: 'danger',
-            size: 'large',
-          }}
           autoFocus
           onClick={handleSubmit}
           text={MSG.deleteText}
-          style={{
-            height: '44px',
-          }}
+          className={styles.button}
           data-test="confirmButton"
         />
       </DialogSection>

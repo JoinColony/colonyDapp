@@ -15,3 +15,11 @@
   line-height: 18px;
   color: var(--temp-grey-blue-7);
 }
+
+.button {
+  composes: themeDanger from '~core/Button/Button.css';
+  height: 44px;
+  width: 160px;
+  font-size: var(--size-normal);
+  line-height: 18px;
+}
