@@ -11,7 +11,7 @@ import styles from './NavBar.css';
 
 const displayName = 'pages.NavBar';
 
-interface Props {
+export interface Props {
   children: ReactNode;
   routeProps?: RouteComponentProps;
 }
