@@ -1,0 +1,42 @@
+.container {
+  display: flex;
+  align-items: baseline;
+  padding: 9px 0;
+  position: relative;
+}
+
+.dot {
+  margin-right: 14px;
+  height: 7px;
+  width: 7px;
+  min-width: 7px;
+  border: 1px solid var(--temp-grey-blue-7);
+  border-radius: 50%;
+}
+
+.verticalLine {
+  height: 60%;
+  position: absolute;
+  bottom: 22px;
+  left: 3px;
+  border-left: 1px solid var(--temp-grey-6);
+}
+
+.activeDot {
+  border: 1px solid var(--primary);
+  background-color: var(--primary);
+}
+
+.verticalLineActive {
+  border-left: 1px solid var(--primary);
+}
+
+.label {
+  font-size: 11px;
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.activeLabel {
+  color: var(--temp-grey-blue-7);
+}
