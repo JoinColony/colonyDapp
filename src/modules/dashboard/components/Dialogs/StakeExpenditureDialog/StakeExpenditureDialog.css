@@ -1,23 +1,12 @@
-@value textColor: var(--text);
 @value submitButtonWidth: 160px;
-@value sizeNormal: var(--size-normal);
-@value buttonMarginLeft: 6px;
-@value weightNormal: 400;
-
-.dialogContainer {
-  padding: 0 20px;
-}
-
-.dialogContainer section {
-  padding: 0;
-}
 
 .title {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 34px 0;
+  padding: 32px 0 20px;
   width: 100%;
+  border-bottom: 1px solid var(--grey-blue-0);
   font-size: var(--size-medium-l);
   font-weight: var(--weight-bold);
   color: var(--dark);
@@ -33,7 +22,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0 10px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--grey-blue-0);
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--temp-grey-blue-7);
@@ -74,6 +64,9 @@
 
 .questionIcon {
   display: block;
+
+  /* next lines are used for the correct tooltip arrow placement */
+  margin-right: -20px;
   margin-bottom: -3px;
   margin-left: 11px;
   height: 16px;
@@ -81,16 +74,14 @@
   border-radius: 50%;
   background-color: white;
   stroke: none;
+  transform: translateX(-20px);
 }
 
 .toggleContainer {
+  /* negative margin here corrects the position of the toggle input */
   margin-bottom: -6px;
   margin-left: 4px;
-}
-
-.cancelButton {
-  font-weight: var(--weight-bold);
-  color: rgba(60, 68, 77, 0.65);
+  margin-right: 20px;
 }
 
 .messageParagraph {
@@ -98,5 +89,5 @@
 }
 
 .tooltip {
-  max-width: 200px;
+  max-width: 250px;
 }

@@ -9,16 +9,15 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import { Stage } from './consts';
 import DeleteDraftDialog from './DeleteDraftDialog';
-import DraftConfirmDialog from './DraftConfirmDialog';
+import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
 import StageItem from './StageItem';
-
 import styles from './Stages.css';
+import { Stage } from './constants';
 
 const MSG = defineMessages({
   stages: {
-    id: 'dashboard.Expenditures.Stages.defaultText',
+    id: 'dashboard.Expenditures.Stages.stages',
     defaultMessage: 'Stages',
   },
   notSaved: {
@@ -84,51 +83,57 @@ const MSG = defineMessages({
 });
 
 interface ActiveState {
-  id: number;
+  id: string;
   label: string | MessageDescriptor;
   buttonText: string | MessageDescriptor;
   buttonAction: () => void;
   stage: string;
 }
 
+const buttonStyles = {
+  height: styles.buttonHeight,
+  width: styles.buttonWidth,
+  padding: 0,
+};
+
 const Stages = () => {
   const [activeState, setActiveState] = useState<ActiveState | null>(null);
   const { resetForm } = useFormikContext() || {};
 
-  const openDraftConfirmDialog = useDialog(DraftConfirmDialog);
   const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
+  const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
 
   const states = [
     {
-      id: 1,
+      id: Stage.Draft,
       label: MSG.draft,
       buttonText: MSG.lockValues,
       buttonAction: () => {},
       stage: Stage.Draft,
     },
     {
-      id: 2,
+      id: Stage.Locked,
       label: MSG.locked,
       buttonText: MSG.escrowFunds,
       buttonAction: () => {},
       stage: Stage.Locked,
     },
     {
-      id: 3,
+      id: Stage.Funded,
       label: MSG.funded,
       buttonText: MSG.releaseFunds,
       buttonAction: () => {},
       stage: Stage.Funded,
     },
     {
-      id: 4,
+      id: Stage.Released,
       label: MSG.released,
       buttonText: MSG.claim,
       buttonAction: () => {},
       stage: Stage.Released,
     },
     {
-      id: 5,
+      id: Stage.Claimed,
       label: MSG.claimed,
       buttonText: MSG.completed,
       buttonAction: () => {},
@@ -139,6 +144,7 @@ const Stages = () => {
   const handleSaveDraft = () =>
     openDraftConfirmDialog({
       onClick: () => setActiveState(states[0]),
+      isVotingExtensionEnabled: true,
     });
 
   const handleDeleteDraft = () =>
@@ -156,7 +162,7 @@ const Stages = () => {
   return (
     <div className={styles.mainContainer}>
       <div className={styles.statusContainer}>
-        <span>
+        <div className={styles.stagesText}>
           <span className={styles.status}>
             <FormattedMessage {...MSG.stages} />
           </span>
@@ -165,7 +171,7 @@ const Stages = () => {
               <FormattedMessage {...MSG.notSaved} />
             </span>
           )}
-        </span>
+        </div>
         <div className={styles.buttonsContainer}>
           {!activeState ? (
             <>
@@ -184,10 +190,7 @@ const Stages = () => {
                   </div>
                 </Tooltip>
               </span>
-              <Button
-                onClick={handleSaveDraft}
-                style={{ height: styles.buttonHeight }}
-              >
+              <Button onClick={handleSaveDraft} style={buttonStyles}>
                 <FormattedMessage {...MSG.submitDraft} />
               </Button>
             </>
@@ -220,10 +223,12 @@ const Stages = () => {
                   </Tooltip>
                 </span>
               )}
-              <Button
+              {/* <Button
                 onClick={activeState?.buttonAction}
                 style={{ height: '29px' }}
               >
+              <Icon name="share" className={styles.icon} /> */}
+              <Button onClick={activeState?.buttonAction} style={buttonStyles}>
                 {typeof activeState?.buttonText === 'string' ? (
                   activeState.buttonText
                 ) : (

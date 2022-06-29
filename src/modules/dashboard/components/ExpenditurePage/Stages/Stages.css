@@ -1,18 +1,31 @@
 @value buttonHeight: 29px;
+@value buttonWidth: 100px;
 
 .mainContainer {
-  min-width: 400px;
+  padding-top: 20px;
+  min-width: 340px;
 }
 
 .status {
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
+  line-height: 18px;
   color: var(--dark);
 }
 
 .notSaved {
   margin-left: 9px;
   font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--temp-grey-blue-7);
+  letter-spacing: 0.5px;
+}
+
+.stagesText {
+  display: flex;
+  align-items: center;
+  line-height: 18px;
 }
 
 .statusContainer {
