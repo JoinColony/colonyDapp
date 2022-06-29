@@ -15,4 +15,8 @@
   .middleSection {
     overflow-wrap: break-word;
   }
+
+  .address {
+    overflow-wrap: anywhere;
+  }
 }
