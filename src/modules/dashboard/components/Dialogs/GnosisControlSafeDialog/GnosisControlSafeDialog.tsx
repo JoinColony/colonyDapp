@@ -79,7 +79,9 @@ const validationSchema = yup.object().shape({
     }),
   }),
   amount: yup.number().when('transactionType', {
-    is: (transactionType) => transactionType === 'transferFunds',
+    is: (transactionType) =>
+      transactionType === 'transferFunds' ||
+      transactionType === 'rawTransaction',
     then: yup
       .number()
       .transform((value) => toFinite(value))
@@ -90,6 +92,11 @@ const validationSchema = yup.object().shape({
   tokenAddress: yup.string().when('transactionType', {
     is: (transactionType) => transactionType === 'transferFunds',
     then: yup.string().address().required(),
+    otherwise: false,
+  }),
+  data: yup.string().when('transactionType', {
+    is: (transactionType) => transactionType === 'rawTransaction',
+    then: yup.string().required(),
     otherwise: false,
   }),
 });
@@ -105,7 +112,7 @@ const GnosisControlSafeDialog = ({
     <ActionForm
       initialValues={{
         safe: null,
-        transactionType: transactionOptions[0],
+        transactionType: null,
         forceAction: false,
         tokenAddress: colony.nativeTokenAddress,
         amount: null,
