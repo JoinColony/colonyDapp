@@ -20,7 +20,10 @@ import { Colony, useLoggedInUser } from '~data/index';
 import { Address } from '~types/index';
 
 import { FormValues, transactionOptions } from './GnosisControlSafeDialog';
-import { TransferFundsSection } from './TransactionTypesSection';
+import {
+  TransferFundsSection,
+  RawTransactionSection,
+} from './TransactionTypesSection';
 
 import styles from './GnosisControlSafeForm.css';
 
@@ -164,6 +167,13 @@ const GnosisControlSafeForm = ({
       </DialogSection>
       {values.transactionType === 'transferFunds' && (
         <TransferFundsSection
+          colony={colony}
+          disabledInput={!userHasPermission || isSubmitting}
+          values={values}
+        />
+      )}
+      {values.transactionType === 'rawTransaction' && (
+        <RawTransactionSection
           colony={colony}
           disabledInput={!userHasPermission || isSubmitting}
           values={values}
