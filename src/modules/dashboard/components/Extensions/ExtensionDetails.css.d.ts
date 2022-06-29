@@ -1,3 +1,4 @@
+export const query700: string;
 export const main: string;
 export const headerLine: string;
 export const extensionText: string;
@@ -12,3 +13,4 @@ export const permissions: string;
 export const actionButtons: string;
 export const iconWrapper: string;
 export const contractAddress: string;
+export const content: string;
