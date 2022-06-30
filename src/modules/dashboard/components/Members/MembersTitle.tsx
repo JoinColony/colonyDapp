@@ -32,7 +32,7 @@ interface Props {
     value: string;
     label: string;
   }[];
-  handleDomainChange: (e: any) => void;
+  handleDomainChange: (domainId: number) => void;
   searchValue: string;
   setSearchValue: Dispatch<SetStateAction<string>>;
   handleSearch: (e: any) => void;
@@ -99,7 +99,9 @@ const MembersTitle = ({
               elementOnly
               label={MSG.labelFilter}
               name="filter"
-              onChange={handleDomainChange}
+              onChange={(domainId) =>
+                handleDomainChange(parseInt(domainId, 10))
+              }
               options={domainSelectOptions}
             />
           </div>
