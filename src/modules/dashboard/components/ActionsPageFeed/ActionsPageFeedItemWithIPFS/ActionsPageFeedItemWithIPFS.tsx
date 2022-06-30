@@ -54,7 +54,6 @@ const ActionsPageFeedItemWithIPFS = ({
     }
 
     const metadataVersion = getEventMetadataVersion(ipfsDataJSON);
-    // console.log(`🚀 ~ annotationMessage ~ metadataVersion`, metadataVersion);
     if (metadataVersion === 1) {
       /*
        * original metadata format
@@ -67,7 +66,6 @@ const ActionsPageFeedItemWithIPFS = ({
       /*
        * new metadata format
        */
-      console.log(`🚀 ~ annotationMessage ~Found new metadata format`);
       return getAnnotationMsgFromResponse(ipfsDataJSON);
     }
     return undefined;
