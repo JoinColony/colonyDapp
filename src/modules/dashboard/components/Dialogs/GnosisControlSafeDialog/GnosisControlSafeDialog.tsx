@@ -99,6 +99,21 @@ const validationSchema = yup.object().shape({
     then: yup.string().required(),
     otherwise: false,
   }),
+  contract: yup.string().when('transactionType', {
+    is: (transactionType) => transactionType === 'contractInteraction',
+    then: yup.string().address().required(),
+    otherwise: false,
+  }),
+  abi: yup.string().when('transactionType', {
+    is: (transactionType) => transactionType === 'contractInteraction',
+    then: yup.string().required(),
+    otherwise: false,
+  }),
+  contractFunction: yup.string().when('transactionType', {
+    is: (transactionType) => transactionType === 'contractInteraction',
+    then: yup.string().required(),
+    otherwise: false,
+  }),
 });
 
 const GnosisControlSafeDialog = ({
