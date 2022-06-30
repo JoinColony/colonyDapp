@@ -11,6 +11,7 @@ import SimpleNav from '../SimpleNav';
 import { query700 as query } from '~styles/queries.css';
 import styles from './UserLayout.css';
 import navStyles from '../SimpleNav/SimpleNav.css';
+import { useLoggedInUser } from '~data/helpers';
 
 interface Props {
   routeProps?: RouteComponentProps;
@@ -22,7 +23,9 @@ const UserLayout = ({
   routeProps: { hasSubscribedColonies = true } = {},
 }: Props) => {
   const isMobile = useMediaQuery({ query });
+  const loggedInUser = useLoggedInUser();
   const { pathname } = useLocation();
+
   return (
     <SimpleNav>
       {isMobile && (
@@ -32,7 +35,10 @@ const UserLayout = ({
           </div>
           {hasSubscribedColonies && (
             <div className={styles.coloniesList}>
-              <SubscribedColoniesList path={pathname} />
+              <SubscribedColoniesList
+                path={pathname}
+                loggedInUser={loggedInUser}
+              />
             </div>
           )}
         </div>

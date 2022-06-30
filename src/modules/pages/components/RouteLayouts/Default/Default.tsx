@@ -4,6 +4,8 @@ import { useMediaQuery } from 'react-responsive';
 
 import { RouteComponentProps } from '~pages/RouteLayouts';
 import SubscribedColoniesList from '~dashboard/SubscribedColoniesList';
+import { useLoggedInUser } from '~data/helpers';
+
 import SimpleNav from '../SimpleNav';
 import HistoryNavigation from '../HistoryNavigation';
 import UserNavigation from '../UserNavigation';
@@ -35,11 +37,15 @@ const Default = ({
       ? location.state && location.state.hasBackLink
       : hasBackLink;
   const isMobile = useMediaQuery({ query });
+  const loggedInUser = useLoggedInUser();
 
   const SubscribedColonies = () =>
     hasSubscribedColonies ? (
       <div className={styles.coloniesList}>
-        <SubscribedColoniesList path={location.pathname} />
+        <SubscribedColoniesList
+          loggedInUser={loggedInUser}
+          path={location.pathname}
+        />
       </div>
     ) : null;
 
