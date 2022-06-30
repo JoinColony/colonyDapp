@@ -13,6 +13,13 @@ import {
   formatColonyRoles,
 } from '@colony/colony-js';
 
+import {
+  getColonyAvatarImage,
+  getColonyMetadataFromResponse,
+  getDomainMetadataFromResponse,
+  getEventMetadataVersion,
+} from '@colony/colony-event-metadata-parser';
+
 import { Color } from '~core/ColorTag';
 
 import ENS from '~lib/ENS';
@@ -46,12 +53,6 @@ import { Address } from '~types/index';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 
-import {
-  getDomainMetadataFromResponse,
-  getColonyAvatarImage,
-  getColonyMetadataFromResponse,
-} from '~utils/eventMetadataHandler';
-import { getEventMetadataVersion } from '~utils/eventMetadataHandler/helper';
 import { getToken } from './token';
 
 import {
@@ -150,6 +151,7 @@ export const getProcessedColony = async (
          * new metadata format
          */
         const colonyMetadata = getColonyMetadataFromResponse(ipfsMetadata);
+        console.log(`🚀 ~ getColonyMetadataFromResponse:`, colonyMetadata);
 
         displayName = colonyMetadata?.colonyDisplayName || '';
         avatarHash = colonyMetadata?.colonyAvatarHash || '';
