@@ -13,7 +13,6 @@ import {
   useContributorsAndWatchersQuery,
   ColonyContributor,
   ColonyWatcher,
-  DomainFieldsFragment,
   AnyUser,
 } from '~data/index';
 import {
@@ -47,7 +46,7 @@ const MSG = defineMessages({
 interface Props {
   colony: Colony;
   bannedUsers: BannedUsersQuery['bannedUsers'];
-  selectedDomain: DomainFieldsFragment | undefined;
+  selectedDomain: number | undefined;
   handleDomainChange: React.Dispatch<React.SetStateAction<number>>;
 }
 
@@ -75,18 +74,6 @@ const Members = ({
   const [contributors, setContributors] = useState<ColonyContributor[]>([]);
   const [watchers, setWatchers] = useState<ColonyWatcher[]>([]);
 
-  /*
-   * NOTE If we can't find the domain based on the current selected doamain id,
-   * it means that it doesn't exist.
-   * We then fall back to the to the "All Domains" selection
-   *
-   * Another alternative would be to redirect here to the /colony/members route
-   * but that has the annoying side-effect of flickering the loading spinner
-   * a couple of times on the page
-   */
-  const { ethDomainId: currentDomainId = COLONY_TOTAL_BALANCE_DOMAIN_ID } =
-    selectedDomain || {};
-
   const {
     data: members,
     loading: loadingMembers,
@@ -94,7 +81,7 @@ const Members = ({
     variables: {
       colonyAddress,
       colonyName,
-      domainId: currentDomainId,
+      domainId: selectedDomain,
     },
   });
 
@@ -153,7 +140,7 @@ const Members = ({
       <MembersSection<ColonyContributor>
         isContributorsSection
         colony={colony}
-        currentDomainId={currentDomainId}
+        currentDomainId={selectedDomain || COLONY_TOTAL_BALANCE_DOMAIN_ID}
         members={contributors as ColonyContributor[]}
         canAdministerComments={canAdministerComments}
         extraItemContent={({ roles, directRoles, banned }) => {
@@ -169,12 +156,12 @@ const Members = ({
     );
 
     const watchersContent =
-      currentDomainId === ROOT_DOMAIN_ID ||
-      currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID ? (
+      selectedDomain === ROOT_DOMAIN_ID ||
+      selectedDomain === COLONY_TOTAL_BALANCE_DOMAIN_ID ? (
         <MembersSection<ColonyWatcher>
           isContributorsSection={false}
           colony={colony}
-          currentDomainId={currentDomainId}
+          currentDomainId={selectedDomain}
           members={watchers as ColonyWatcher[]}
           canAdministerComments={canAdministerComments}
           extraItemContent={({ banned }) => (
@@ -189,7 +176,7 @@ const Members = ({
         {watchersContent}
       </>
     );
-  }, [canAdministerComments, colony, contributors, currentDomainId, watchers]);
+  }, [canAdministerComments, colony, contributors, selectedDomain, watchers]);
 
   if (loadingMembers) {
     return (
@@ -205,7 +192,7 @@ const Members = ({
   return (
     <div className={styles.main}>
       <MembersTitle
-        currentDomainId={currentDomainId}
+        currentDomainId={selectedDomain || COLONY_TOTAL_BALANCE_DOMAIN_ID}
         handleDomainChange={handleDomainChange}
         domainSelectOptions={domainSelectOptions}
         searchValue={searchValue}
