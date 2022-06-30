@@ -36,19 +36,36 @@ export class ExtendedJsonRpcProvider extends JsonRpcProvider {
   ): Promise<string> {
     const tx = await resolveProperties(transaction);
 
+    // Never cache calls to addr(bytes32)
+    if (tx.data.slice(0, 10) === '0x3b3b57de') {
+      return this._parentCall(transaction, blockTag);
+    }
+
+    const block = await blockTag;
+
     const { from } = tx;
     delete tx.from;
-    const key = `${serializeTransaction(tx)}:${from || ''}`;
+    const key = `${serializeTransaction(tx)}:${from || ''}:${block || ''}`;
+
+    let cacheTime;
+    const now = Date.now();
+
+    if (block === 'latest' || !block) {
+      cacheTime = 60000;
+    } else {
+      // Queries for a specific block can be cached indefinitely
+      cacheTime = now;
+    }
 
     if (
       this.cachedData[key] &&
-      this.cachedData[key].timestamp > Date.now() - 60000
+      this.cachedData[key].timestamp > now - cacheTime
     ) {
       return this.cachedData[key].response;
     }
 
     this.cachedData[key] = {
-      timestamp: Date.now(),
+      timestamp: now,
       response: this._parentCall(transaction, blockTag),
     };
 
