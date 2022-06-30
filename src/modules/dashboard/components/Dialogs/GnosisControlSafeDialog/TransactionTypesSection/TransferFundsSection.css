@@ -1,5 +1,8 @@
-.singleUserPickerContainer i {
-  left: 417px;
+.singleUserPickerContainer div + i {
+  /* @NOTE: Negative value here to compensate for the
+  empty space inside the icon's SVG */
+  right: -7px;
+  left: inherit;
 }
 
 .singleUserPickerContainer input,
