@@ -131,7 +131,6 @@ function* editColonyAction({
       verifiedAddresses,
       isWhitelistActivated,
     });
-    console.log(`🚀 ~ colonyMetadata`, colonyMetadata);
 
     /*
      * Upload colony metadata to IPFS

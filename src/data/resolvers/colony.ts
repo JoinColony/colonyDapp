@@ -141,7 +141,6 @@ export const getProcessedColony = async (
   try {
     if (ipfsMetadata) {
       const metadataVersion = getEventMetadataVersion(ipfsMetadata);
-      // console.log(`🚀 colony.ts ~ metadataVersion`, metadataVersion);
       if (metadataVersion === 1) {
         /*
          * original metadata format
@@ -166,8 +165,6 @@ export const getProcessedColony = async (
          * new metadata format
          */
         const colonyMetadata = getColonyMetadataFromResponse(ipfsMetadata);
-        console.log(`🚀 ~ getColonyMetadataFromResponse:`, colonyMetadata);
-
         displayName = colonyMetadata?.colonyDisplayName || '';
         avatarHash = colonyMetadata?.colonyAvatarHash || '';
         tokenAddresses = colonyMetadata?.colonyTokens || [];
@@ -189,7 +186,6 @@ export const getProcessedColony = async (
               metadataVersion === 1
                 ? JSON.parse(response) // original metadata format
                 : { image: getColonyAvatarImage(response) }; // new metadata format
-            console.log(`🚀 ~ avatarObject`, avatarObject);
           }
         } catch (error) {
           log.verbose('Could not fetch colony avatar', response);
@@ -268,7 +264,6 @@ export const getProcessedDomain = async (
   try {
     if (ipfsMetadata) {
       const metadataVersion = getEventMetadataVersion(ipfsMetadata);
-      // console.log(`🚀 domain.ts ~ metadataVersion`, metadataVersion);
       if (metadataVersion === 1) {
         /*
          * original metadata format
@@ -287,8 +282,6 @@ export const getProcessedDomain = async (
          * new metadata format
          */
         const domainMetadata = getDomainMetadataFromResponse(ipfsMetadata);
-        console.log(`🚀 ~ domainMetadata`, domainMetadata);
-
         name = domainMetadata?.domainName || null;
         color = domainMetadata?.domainColor || null;
         description = domainMetadata?.domainPurpose || null;
