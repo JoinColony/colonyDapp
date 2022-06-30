@@ -275,7 +275,6 @@ const getDomainValuesFromIPFS = async (
   try {
     if (ipfsMetadata) {
       const metadataVersion = getEventMetadataVersion(ipfsMetadata);
-      // console.log(`🚀 domain.ts ~ metadataVersion`, metadataVersion);
       if (metadataVersion === 1) {
         /*
          * original metadata format
@@ -514,7 +513,6 @@ const getColonyEditActionValues = async (
   try {
     if (ipfsMetadata) {
       const metadataVersion = getEventMetadataVersion(ipfsMetadata);
-      // console.log(`🚀 colony.ts ~ metadataVersion`, metadataVersion);
       if (metadataVersion === 1) {
         /*
          * original metadata format
@@ -963,7 +961,6 @@ const getColonyEditMotionValues = async (
   try {
     if (ipfsMetadata) {
       const metadataVersion = getEventMetadataVersion(ipfsMetadata);
-      // console.log(`🚀 colony.ts ~ metadataVersion`, metadataVersion);
       if (metadataVersion === 1) {
         /*
          * original metadata format

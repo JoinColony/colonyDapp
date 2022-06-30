@@ -6,7 +6,6 @@ export function* uploadIfpsAnnotation(annotationMessage: string) {
   const annotationMetadata = getStringForMetadataAnnotation({
     annotationMsg: annotationMessage,
   });
-  console.log(`🚀 ~ annotationMetadata`, annotationMetadata);
 
   let ipfsHash: string | null = null;
   ipfsHash = yield call(ipfsUpload, annotationMetadata);
