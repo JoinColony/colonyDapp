@@ -1,5 +1,6 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType } from '@colony/colony-js';
+import { getStringForMetadataColony } from '@colony/colony-event-metadata-parser';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
@@ -103,13 +104,18 @@ function* manageVerifiedRecipients({
     /*
      * Upload colony metadata to IPFS
      */
-    const colonyMetadataIpfsHash = yield call(uploadIfsWithFallback, {
-      colonyDisplayName,
-      colonyAvatarHash,
-      verifiedAddresses,
-      colonyTokens,
-      isWhitelistActivated,
-    });
+    let colonyMetadataIpfsHash = null;
+
+    colonyMetadataIpfsHash = yield call(
+      ipfsUpload,
+      getStringForMetadataColony({
+        colonyDisplayName,
+        colonyAvatarHash,
+        verifiedAddresses,
+        colonyTokens,
+        isWhitelistActivated,
+      }),
+    );
 
     yield put(
       transactionAddParams(editColony.id, [

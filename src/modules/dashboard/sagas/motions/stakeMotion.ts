@@ -1,5 +1,6 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType, ExtensionClient } from '@colony/colony-js';
+import { getStringForMetadataAnnotation } from '@colony/colony-event-metadata-parser';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { TEMP_getContext, ContextModule } from '~context/index';
@@ -142,9 +143,13 @@ function* stakeMotion({
       /*
        * Upload annotation metadata to IPFS
        */
-      const annotationMessageIpfsHash = yield call(uploadIfsWithFallback, {
-        annotationMessage,
-      });
+      let annotationMessageIpfsHash = null;
+      annotationMessageIpfsHash = yield call(
+        ipfsUpload,
+        getStringForMetadataAnnotation({
+          annotationMsg: annotationMessage || '',
+        }),
+      );
 
       yield put(
         transactionAddParams(annotateStaking.id, [

@@ -1,5 +1,6 @@
 import { call, fork, put, takeLatest } from 'redux-saga/effects';
 import { ClientType, TokenLockingClient } from '@colony/colony-js';
+import { getStringForColonyAvatarImage } from '@colony/colony-event-metadata-parser';
 import { BigNumber } from 'ethers/utils';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
@@ -72,7 +73,10 @@ function* userAvatarUpload({
     let ipfsHash = null;
     if (payload.data) {
       try {
-        ipfsHash = yield call(uploadIfsWithFallback, { image: payload.data });
+        ipfsHash = yield call(
+          ipfsUpload,
+          getStringForColonyAvatarImage(payload.data),
+        );
       } catch (error) {
         // silent error
       }

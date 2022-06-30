@@ -5,6 +5,8 @@ import {
   getPermissionProofs,
   ColonyRole,
 } from '@colony/colony-js';
+import { getStringForMetadataAnnotation } from '@colony/colony-event-metadata-parser';
+
 import { AddressZero } from 'ethers/constants';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
@@ -161,6 +163,20 @@ function* manageReputationMotion({
     }
 
     yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_CREATED);
+    if (annotationMessage) {
+      yield takeFrom(
+        annotateManageReputationMotion.channel,
+        ActionTypes.TRANSACTION_CREATED,
+      );
+    }
+
+    let ipfsHash = null;
+    ipfsHash = yield call(
+      ipfsUpload,
+      getStringForMetadataAnnotation({
+        annotationMsg: annotationMessage || '',
+      }),
+    );
 
     yield put(transactionReady(createMotion.id));
 
