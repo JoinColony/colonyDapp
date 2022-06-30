@@ -19,8 +19,12 @@
   color: var(--dark);
 }
 
-.safePicker i {
+.safePicker div + i {
   left: 412px;
+}
+
+.safePicker label + i svg {
+  stroke: unset;
 }
 
 .safePicker label {
