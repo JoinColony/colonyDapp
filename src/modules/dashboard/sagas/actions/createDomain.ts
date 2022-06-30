@@ -1,6 +1,6 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType, ROOT_DOMAIN_ID } from '@colony/colony-js';
-
+import { getStringForMetadataDomain } from '@colony/colony-event-metadata-parser';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
   ColonyFromNameDocument,
@@ -97,11 +97,15 @@ function* createDomainAction({
     /*
      * Upload domain metadata to IPFS
      */
-    const domainMetadataIpfsHash = yield call(uploadIfsWithFallback, {
-      domainName,
-      domainColor,
-      domainPurpose,
-    });
+    let domainMetadataIpfsHash = null;
+    domainMetadataIpfsHash = yield call(
+      ipfsUpload,
+      getStringForMetadataDomain({
+        domainName,
+        domainColor,
+        domainPurpose,
+      }),
+    );
 
     yield put(
       transactionAddParams(createDomain.id, [

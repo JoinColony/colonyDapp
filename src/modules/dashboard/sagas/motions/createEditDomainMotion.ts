@@ -6,6 +6,8 @@ import {
   getChildIndex,
   ColonyRole,
 } from '@colony/colony-js';
+import { getStringForMetadataDomain } from '@colony/colony-event-metadata-parser';
+
 import { AddressZero } from 'ethers/constants';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
@@ -107,11 +109,15 @@ function* createEditDomainMotion({
     /*
      * Upload domain metadata to IPFS
      */
-    const domainMetadataIpfsHash = yield call(uploadIfsWithFallback, {
-      domainName,
-      domainColor,
-      domainPurpose,
-    });
+    let domainMetadataIpfsHash = null;
+    domainMetadataIpfsHash = yield call(
+      ipfsUpload,
+      getStringForMetadataDomain({
+        domainName,
+        domainColor,
+        domainPurpose,
+      }),
+    );
 
     const encodedAction = colonyClient.interface.functions[
       isCreateDomain

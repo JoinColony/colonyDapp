@@ -1,5 +1,10 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType, ROOT_DOMAIN_ID, getChildIndex } from '@colony/colony-js';
+import {
+  getStringForColonyAvatarImage,
+  getStringForMetadataColony,
+} from '@colony/colony-event-metadata-parser';
+
 import { AddressZero } from 'ethers/constants';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
@@ -88,21 +93,26 @@ function* editColonyMotion({
      */
     let colonyAvatarIpfsHash = null;
     if (colonyAvatarImage && hasAvatarChanged) {
-      colonyAvatarIpfsHash = yield call(uploadIfsWithFallback, {
-        image: colonyAvatarImage,
-      });
+      colonyAvatarIpfsHash = yield call(
+        ipfsUpload,
+        getStringForColonyAvatarImage(colonyAvatarImage),
+      );
     }
 
     /*
      * Upload colony metadata to IPFS
      */
-    const colonyMetadataIpfsHash = yield call(uploadIfsWithFallback, {
-      colonyDisplayName,
-      colonyAvatarHash: hasAvatarChanged
-        ? colonyAvatarIpfsHash
-        : colonyAvatarHash,
-      colonyTokens,
-    });
+    let colonyMetadataIpfsHash = null;
+    colonyMetadataIpfsHash = yield call(
+      ipfsUpload,
+      getStringForMetadataColony({
+        colonyDisplayName,
+        colonyAvatarHash: hasAvatarChanged
+          ? colonyAvatarIpfsHash
+          : colonyAvatarHash,
+        colonyTokens,
+      }),
+    );
 
     const encodedAction = colonyClient.interface.functions.editColony.encode([
       colonyMetadataIpfsHash,
