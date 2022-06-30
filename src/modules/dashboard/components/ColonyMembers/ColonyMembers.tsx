@@ -225,6 +225,7 @@ const ColonyMembers = () => {
               selectedDomain={selectedDomainId}
               handleDomainChange={setSelectedDomainId}
               filters={filters}
+              colony={colonyData?.processedColony}
             />
           )}
         </div>
