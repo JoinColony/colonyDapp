@@ -14,7 +14,8 @@
   padding-left: 0;
 }
 
-.singleUserPickerContainer label {
+.singleUserPickerContainer label,
+.contractFunctionSelectorContainer label {
   color: var(--dark);
 }
 
