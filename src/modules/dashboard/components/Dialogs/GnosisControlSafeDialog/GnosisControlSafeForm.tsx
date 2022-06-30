@@ -23,6 +23,7 @@ import { FormValues, transactionOptions } from './GnosisControlSafeDialog';
 import {
   TransferFundsSection,
   RawTransactionSection,
+  ContractInteractionSection,
 } from './TransactionTypesSection';
 
 import styles from './GnosisControlSafeForm.css';
@@ -175,6 +176,11 @@ const GnosisControlSafeForm = ({
       {values.transactionType === 'rawTransaction' && (
         <RawTransactionSection
           colony={colony}
+          disabledInput={!userHasPermission || isSubmitting}
+        />
+      )}
+      {values.transactionType === 'contractInteraction' && (
+        <ContractInteractionSection
           disabledInput={!userHasPermission || isSubmitting}
         />
       )}
