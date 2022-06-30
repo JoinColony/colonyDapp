@@ -5,7 +5,7 @@
 }
 
 .lockedSectionContainer {
-  padding: 4px 25px 74px;
+  padding: 6px 25px 74px;
 }
 
 .number {
@@ -22,6 +22,10 @@
   line-height: 24px;
   color: var(--dark);
   letter-spacing: 0.5px;
+}
+
+.lockedTitle {
+  line-height: 18px;
 }
 
 .titleContainer {
