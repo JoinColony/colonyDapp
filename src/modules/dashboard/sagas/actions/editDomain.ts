@@ -1,5 +1,6 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType } from '@colony/colony-js';
+import { getStringForMetadataDomain } from '@colony/colony-event-metadata-parser';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
@@ -99,7 +100,7 @@ function* editDomainAction({
     let domainMetadataIpfsHash = null;
     domainMetadataIpfsHash = yield call(
       ipfsUpload,
-      JSON.stringify({
+      getStringForMetadataDomain({
         domainName,
         domainColor,
         domainPurpose,

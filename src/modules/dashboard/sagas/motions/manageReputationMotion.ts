@@ -5,6 +5,8 @@ import {
   getPermissionProofs,
   ColonyRole,
 } from '@colony/colony-js';
+import { getStringForMetadataAnnotation } from '@colony/colony-event-metadata-parser';
+
 import { AddressZero } from 'ethers/constants';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
@@ -172,8 +174,8 @@ function* manageReputationMotion({
     let ipfsHash = null;
     ipfsHash = yield call(
       ipfsUpload,
-      JSON.stringify({
-        annotationMessage,
+      getStringForMetadataAnnotation({
+        annotationMsg: annotationMessage || '',
       }),
     );
 
