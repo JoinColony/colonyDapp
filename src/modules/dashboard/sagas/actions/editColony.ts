@@ -1,6 +1,7 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType } from '@colony/colony-js';
 
+import { getStringForMetadataColony } from '@colony/colony-event-metadata-parser';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
   ColonyFromNameDocument,
@@ -121,7 +122,7 @@ function* editColonyAction({
     }
 
     let colonyMetadataIpfsHash = null;
-    const colonyMetadata = getMetadataStringForColony({
+    const colonyMetadata = getStringForMetadataColony({
       colonyDisplayName,
       colonyAvatarHash: hasAvatarChanged
         ? colonyAvatarIpfsHash
@@ -130,6 +131,7 @@ function* editColonyAction({
       verifiedAddresses,
       isWhitelistActivated,
     });
+    console.log(`🚀 ~ colonyMetadata`, colonyMetadata);
 
     /*
      * Upload colony metadata to IPFS

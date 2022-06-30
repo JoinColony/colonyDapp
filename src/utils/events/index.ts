@@ -5,9 +5,14 @@ import {
   MotionState as NetworkMotionState,
   getEvents,
 } from '@colony/colony-js';
+
+import {
+  getColonyMetadataFromResponse,
+  getDomainMetadataFromResponse,
+  getEventMetadataVersion,
+} from '@colony/colony-event-metadata-parser';
 import { bigNumberify, BigNumberish, hexStripZeros } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
-
 import ColonyManagerClass from '~lib/ColonyManager';
 import {
   ColonyActions,
@@ -27,12 +32,6 @@ import {
 } from '~dashboard/ActionsPage';
 import ipfs from '~context/ipfsWithFallbackContext';
 import { log } from '~utils/debug';
-import {
-  getColonyMetadataFromResponse,
-  getDomainMetadataFromResponse,
-} from '~utils/eventMetadataHandler';
-
-import { getEventMetadataVersion } from '~utils/eventMetadataHandler/helper';
 
 import { getMotionRequiredStake, MotionState } from '../colonyMotions';
 import { availableRoles } from '~dialogs/PermissionManagementDialog';
