@@ -34,9 +34,9 @@ const SortingRow = ({ handleSortingMethodChange, sortingMethod }: Props) => {
       ? SORTING_METHODS.BY_LOWEST_REP
       : SORTING_METHODS.BY_HIGHEST_REP;
   const nextSortingByRoleMethod =
-    sortingMethod === SORTING_METHODS.BY_HIGHEST_ROLE_ID
-      ? SORTING_METHODS.BY_LOWEST_ROLE_ID
-      : SORTING_METHODS.BY_HIGHEST_ROLE_ID;
+    sortingMethod === SORTING_METHODS.BY_MORE_PERMISSIONS
+      ? SORTING_METHODS.BY_LESS_PERMISSIONS
+      : SORTING_METHODS.BY_MORE_PERMISSIONS;
   const isSortingByRep =
     sortingMethod === SORTING_METHODS.BY_HIGHEST_REP ||
     sortingMethod === SORTING_METHODS.BY_LOWEST_REP;
@@ -52,7 +52,7 @@ const SortingRow = ({ handleSortingMethodChange, sortingMethod }: Props) => {
             [styles.toggledIcon]: !isSortingByRep,
           })}
           name={
-            sortingMethod === SORTING_METHODS.BY_HIGHEST_ROLE_ID
+            sortingMethod === SORTING_METHODS.BY_MORE_PERMISSIONS
               ? 'caret-up'
               : 'caret-down'
           }
