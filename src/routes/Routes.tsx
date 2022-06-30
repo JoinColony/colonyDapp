@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { Route, Redirect, Switch } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
+import { useMediaQuery } from 'react-responsive';
 
 import { WalletMethod } from '~immutable/index';
 import CreateColonyWizard from '~dashboard/CreateColonyWizard';
@@ -52,6 +53,7 @@ import {
 import AlwaysAccesibleRoute from './AlwaysAccesibleRoute';
 import WalletRequiredRoute from './WalletRequiredRoute';
 import { useTitle } from '~utils/hooks/useTitle';
+import { query700 as query } from '~styles/queries.css';
 
 const MSG = defineMessages({
   userProfileEditBack: {
@@ -82,7 +84,7 @@ const Routes = () => {
   const didClaimProfile = !!username;
 
   useTitle();
-
+  const isMobile = useMediaQuery({ query });
   /**
    * @NOTE Memoized Switch
    *
@@ -210,7 +212,7 @@ const Routes = () => {
           routeProps={({ colonyName }) => ({
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,
-            hasSubscribedColonies: false,
+            hasSubscribedColonies: isMobile,
           })}
         />
         <AlwaysAccesibleRoute
@@ -255,7 +257,7 @@ const Routes = () => {
         <Redirect to={NOT_FOUND_ROUTE} />
       </Switch>
     ),
-    [didClaimProfile, isConnected, username],
+    [didClaimProfile, isConnected, username, isMobile],
   );
 
   if (isAppLoading) {

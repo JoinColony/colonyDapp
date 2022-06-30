@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .bar {
   display: flex;
   align-items: baseline;
@@ -35,4 +37,22 @@
 
 .membersList > ul {
   box-shadow: none;
+}
+
+@media screen and query700 {
+  .bar {
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .title {
+    padding: 0 14px;
+  }
+
+  .description {
+    margin-left: 0px;
+    padding: 0 14px;
+  }
 }
