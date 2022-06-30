@@ -1,5 +1,6 @@
 import { ClientType } from '@colony/colony-js';
 import { Resolvers } from '@apollo/client';
+import { getNameValueFromMisc } from '@colony/colony-event-metadata-parser';
 
 import { Context, ContextModule } from '~context/index';
 import {
@@ -59,9 +60,9 @@ export const whitelistResolvers = ({
   Query: {
     async whitelistAgreement(_, { agreementHash }) {
       try {
-        const agreement = await ipfsWithFallback.getString(agreementHash);
+        const response = await ipfsWithFallback.getString(agreementHash);
 
-        return JSON.parse(agreement).agreement;
+        return getNameValueFromMisc('agreement', response);
       } catch (error) {
         log.verbose(
           `Could not fetch whitelist agreement from IPFS with hash: `,

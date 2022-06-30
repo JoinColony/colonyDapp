@@ -6,6 +6,8 @@ import {
   getChildIndex,
   ColonyRole,
 } from '@colony/colony-js';
+import { getStringForMetadataDomain } from '@colony/colony-event-metadata-parser';
+
 import { AddressZero } from 'ethers/constants';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
@@ -111,7 +113,7 @@ function* createEditDomainMotion({
     let domainMetadataIpfsHash = null;
     domainMetadataIpfsHash = yield call(
       ipfsUpload,
-      JSON.stringify({
+      getStringForMetadataDomain({
         domainName,
         domainColor,
         domainPurpose,

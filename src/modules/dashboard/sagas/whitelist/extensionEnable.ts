@@ -1,5 +1,6 @@
 import { all, call, takeEvery } from 'redux-saga/effects';
 import { ClientType, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { getStringForMetadataMisc } from '@colony/colony-event-metadata-parser';
 
 import { Action, ActionTypes } from '~redux/index';
 import {
@@ -62,9 +63,13 @@ function* extensionEnable({
      */
     let agreementHash = '';
     if (payload.agreement) {
+      const miscMetadata = {
+        name: 'agreement',
+        value: payload?.agreement,
+      };
       agreementHash = yield call(
         ipfsUpload,
-        JSON.stringify({ agreement: payload.agreement }),
+        getStringForMetadataMisc(miscMetadata),
       );
     }
 
