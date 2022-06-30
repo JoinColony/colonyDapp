@@ -163,9 +163,6 @@ const ColonyMembers = () => {
       colony: colonyData?.processedColony as Colony,
     });
   }, [openToggleManageWhitelistDialog, colonyData]);
-  const selectedDomain = colonyData?.processedColony?.domains?.find(
-    ({ ethDomainId }) => ethDomainId === selectedDomainId,
-  );
 
   const nativeToken = colonyData?.processedColony?.tokens.find(
     ({ address }) =>
@@ -234,7 +231,7 @@ const ColonyMembers = () => {
             <Members
               colony={colonyData.processedColony}
               bannedUsers={bannedMembers?.bannedUsers || []}
-              selectedDomain={selectedDomain}
+              selectedDomain={selectedDomainId}
               handleDomainChange={setSelectedDomainId}
             />
           )}
