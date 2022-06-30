@@ -34,11 +34,13 @@ export class ExtendedJsonRpcProvider extends JsonRpcProvider {
     transaction: TransactionRequest,
     blockTag?: BlockTag | Promise<BlockTag>,
   ): Promise<string> {
+    let useCache = false;
     const tx = await resolveProperties(transaction);
 
-    // Never cache calls to addr(bytes32)
-    if (tx.data.slice(0, 10) === '0x3b3b57de') {
-      return this._parentCall(transaction, blockTag);
+    // Only use cache calls if we're on the actions page / colony home
+    const regex = new RegExp('^/colony/[^/]*$');
+    if (regex.test(window.location.pathname)) {
+      useCache = true;
     }
 
     const block = await blockTag;
@@ -58,6 +60,7 @@ export class ExtendedJsonRpcProvider extends JsonRpcProvider {
     }
 
     if (
+      useCache &&
       this.cachedData[key] &&
       this.cachedData[key].timestamp > now - cacheTime
     ) {
