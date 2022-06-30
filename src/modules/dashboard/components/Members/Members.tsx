@@ -64,6 +64,7 @@ const Members = ({
   colony,
   selectedDomain,
   handleDomainChange,
+  filters,
 }: Props) => {
   const [searchValue, setSearchValue] = useState<string>('');
   const {
@@ -110,20 +111,22 @@ const Members = ({
   );
 
   const filterContributorsAndWatchers = useCallback(
-    (filterValue) => {
+    (filterValue?) => {
       const filteredContributors = filterMembers<ColonyContributor>(
         members?.contributorsAndWatchers?.contributors || [],
         filterValue,
+        filters,
       );
       setContributors(filteredContributors);
 
       const filteredWatchers = filterMembers<ColonyWatcher>(
         members?.contributorsAndWatchers?.watchers || [],
         filterValue,
+        filters,
       );
       setWatchers(filteredWatchers);
     },
-    [members],
+    [members, filters],
   );
 
   // handles search values & close button
@@ -137,7 +140,10 @@ const Members = ({
   );
 
   const membersContent = useMemo(() => {
-    const contributorsContent = (
+    const contributorsContent = ((selectedDomain !==
+      COLONY_TOTAL_BALANCE_DOMAIN_ID &&
+      selectedDomain !== ROOT_DOMAIN_ID) ||
+      filters.includes(MEMEBERS_FILTERS.CONTRIBUTORS)) && (
       <MembersSection<ColonyContributor>
         isContributorsSection
         colony={colony}
@@ -157,8 +163,9 @@ const Members = ({
     );
 
     const watchersContent =
-      selectedDomain === ROOT_DOMAIN_ID ||
-      selectedDomain === COLONY_TOTAL_BALANCE_DOMAIN_ID ? (
+      (selectedDomain === ROOT_DOMAIN_ID ||
+        selectedDomain === COLONY_TOTAL_BALANCE_DOMAIN_ID) &&
+      filters.includes(MEMEBERS_FILTERS.WATCHERS) ? (
         <MembersSection<ColonyWatcher>
           isContributorsSection={false}
           colony={colony}
@@ -177,7 +184,19 @@ const Members = ({
         {watchersContent}
       </>
     );
-  }, [canAdministerComments, colony, contributors, selectedDomain, watchers]);
+  }, [
+    canAdministerComments,
+    colony,
+    contributors,
+    selectedDomain,
+    watchers,
+    filters,
+  ]);
+
+  useEffect(() => filterContributorsAndWatchers(), [
+    filterContributorsAndWatchers,
+    filters,
+  ]);
 
   if (loadingMembers) {
     return (
