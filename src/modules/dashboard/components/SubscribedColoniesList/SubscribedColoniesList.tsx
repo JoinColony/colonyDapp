@@ -7,7 +7,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 import NavLink from '~core/NavLink';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 
-import { useLoggedInUser, useUserColoniesQuery } from '~data/index';
+import { LoggedInUser, useUserColoniesQuery } from '~data/index';
 import { CREATE_COLONY_ROUTE } from '~routes/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
 
@@ -27,12 +27,15 @@ const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 
 const displayName = 'dashboard.SubscribedColoniesList';
 
-interface ListProps {
+interface Props {
+  loggedInUser: Pick<
+    LoggedInUser,
+    'walletAddress' | 'networkId' | 'ethereal' | 'balance' | 'username'
+  >;
   path: string;
 }
-
-const SubscribedColoniesList = ({ path }: ListProps) => {
-  const { walletAddress, networkId, ethereal } = useLoggedInUser();
+const SubscribedColoniesList = ({ loggedInUser, path }: Props) => {
+  const { walletAddress, networkId, ethereal } = loggedInUser;
   const { data, loading } = useUserColoniesQuery({
     variables: { address: walletAddress },
   });
