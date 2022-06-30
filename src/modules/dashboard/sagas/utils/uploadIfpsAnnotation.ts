@@ -1,9 +1,9 @@
 import { call } from 'redux-saga/effects';
-import { getMetadataStringForAnnotation } from '~utils/eventMetadataHandler';
+import { getStringForMetadataAnnotation } from '@colony/colony-event-metadata-parser';
 import { ipfsUpload } from '../../../core/sagas/ipfs';
 
 export function* uploadIfpsAnnotation(annotationMessage: string) {
-  const annotationMetadata = getMetadataStringForAnnotation({
+  const annotationMetadata = getStringForMetadataAnnotation({
     annotationMsg: annotationMessage,
   });
   console.log(`🚀 ~ annotationMetadata`, annotationMetadata);

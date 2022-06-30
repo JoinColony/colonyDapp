@@ -2,14 +2,17 @@ import React, { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
 
+import {
+  getAnnotationMsgFromResponse,
+  getEventMetadataVersion,
+} from '@colony/colony-event-metadata-parser';
+
 import Comment, { Props as CommentProps } from '~core/Comment';
 import CalloutCard from '~core/CalloutCard';
 import Link from '~core/Link';
 
 import { useDataFetcher } from '~utils/hooks';
 import { ipfsDataFetcher } from '../../../../core/fetchers';
-import { getAnnotationMsgFromResponse } from '~utils/eventMetadataHandler';
-import { getEventMetadataVersion } from '~utils/eventMetadataHandler/helper';
 
 import styles from './ActionsPageFeedItemWithIPFS.css';
 

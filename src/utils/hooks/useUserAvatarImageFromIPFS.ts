@@ -1,9 +1,12 @@
+import {
+  getColonyAvatarImage,
+  getEventMetadataVersion,
+} from '@colony/colony-event-metadata-parser';
+
 import { useDataFetcher } from '~utils/hooks';
 import { IPFSAvatarImage } from '~types/index';
 
 import { ipfsDataFetcher } from '../../modules/core/fetchers';
-import { getColonyAvatarImage } from '~utils/eventMetadataHandler';
-import { getEventMetadataVersion } from '~utils/eventMetadataHandler/helper';
 
 const useUserAvatarImageFromIPFS = (ipfsHash: string): IPFSAvatarImage => {
   let avatarObject: IPFSAvatarImage = { image: undefined };
