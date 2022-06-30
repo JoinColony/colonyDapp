@@ -1,7 +1,10 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType } from '@colony/colony-js';
+import {
+  getStringForColonyAvatarImage,
+  getStringForMetadataColony,
+} from '@colony/colony-event-metadata-parser';
 
-import { getStringForMetadataColony } from '@colony/colony-event-metadata-parser';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
   ColonyFromNameDocument,
@@ -114,9 +117,7 @@ function* editColonyAction({
     if (colonyAvatarImage && hasAvatarChanged) {
       colonyAvatarIpfsHash = yield call(
         ipfsUpload,
-        JSON.stringify({
-          image: colonyAvatarImage,
-        }),
+        getStringForColonyAvatarImage(colonyAvatarImage),
       );
     }
 
