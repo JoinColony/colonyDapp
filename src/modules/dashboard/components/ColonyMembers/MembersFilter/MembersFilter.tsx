@@ -77,11 +77,13 @@ interface Props {
 }
 
 const MembersFilter = ({ handleFiltersCallback, isRoot }: Props) => {
-  const filterNames = useMemo(() => {
-    const filtersList = filters.map((item) => item.name);
+  const filtersList = useMemo(() => (isRoot ? filters : filters.slice(2)), [
+    isRoot,
+  ]);
 
-    return isRoot ? filtersList : filtersList.slice(2);
-  }, [isRoot]);
+  const filterNames = useMemo(() => filtersList.map((item) => item.name), [
+    filtersList,
+  ]);
 
   return (
     <>
@@ -106,7 +108,7 @@ const MembersFilter = ({ handleFiltersCallback, isRoot }: Props) => {
                 />
               </div>
               <div className={styles.checkboxes}>
-                {filters.map((item) => (
+                {filtersList.map((item) => (
                   <Checkbox
                     value={item.name}
                     name="filters"
