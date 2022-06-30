@@ -18,23 +18,23 @@ import { LoggedInUser } from '~data/index';
 
 const MSG = defineMessages({
   typeLabel: {
-    id: 'dashboard.Expenditures.ExpenditureSettings.defaultExpenditureLabel',
+    id: 'dashboard.ExpenditurePage.LockedExpenditureSettings.typeLabel',
     defaultMessage: 'Expenditure type',
   },
   teamLabel: {
-    id: 'dashboard.Expenditures.ExpenditureSettings.defaultTeamLabel',
+    id: 'dashboard.ExpenditurePage.LockedExpenditureSettings.teamLabel',
     defaultMessage: 'Team',
   },
   balanceLabel: {
-    id: 'dashboard.Expenditures.ExpenditureSettings.defaultBalanceLabel',
+    id: 'dashboard.ExpenditurePage.LockedExpenditureSettings.balanceLabel',
     defaultMessage: 'Balance',
   },
   ownerLabel: {
-    id: 'dashboard.Expenditures.ExpenditureSettings.defaultOwnerLabel',
+    id: 'dashboard.ExpenditurePage.LockedExpenditureSettings.ownerLabel',
     defaultMessage: 'Owner',
   },
   optionAdvanced: {
-    id: 'dashboard.Expenditures.ExpenditureSettings.defaultAdvancedOption',
+    id: 'dashboard.ExpenditurePage.LockedExpenditureSettings.optionAdvanced',
     defaultMessage: 'Advanced payment',
   },
 });

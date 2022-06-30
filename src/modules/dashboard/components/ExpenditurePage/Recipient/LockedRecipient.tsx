@@ -15,48 +15,48 @@ import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Delay from '../Delay';
 
 const MSG = defineMessages({
-  defaultRecipientLabel: {
-    id: 'dashboard.Expenditures.Recipient.defaultRecipientLabel',
+  recipientLabel: {
+    id: 'dashboard.ExpenditurePage.LockedRecipient.recipientLabel',
     defaultMessage: 'Recipient',
   },
-  defaultValueLabel: {
-    id: 'dashboard.Expenditures.Recipient.defaultValueLabel',
+  valueLabel: {
+    id: 'dashboard.ExpenditurePage.LockedRecipient.valueLabel',
     defaultMessage: 'Value',
   },
-  defaultDelayLabel: {
-    id: 'dashboard.Expenditures.Recipient.defaultDelayLabel',
+  delayLabel: {
+    id: 'dashboard.ExpenditurePage.LockedRecipient.delayLabel',
     defaultMessage: 'Claim delay',
   },
   tooltipMessageTitle: {
-    id: 'dashboard.Expenditures.Recipient.tooltipMessageTitle',
+    id: 'dashboard.ExpenditurePage.LockedRecipient.tooltipMessageTitle',
     defaultMessage: 'Security delay for claiming funds.',
   },
   tooltipMessageDescription: {
-    id: 'dashboard.Expenditures.Recipient.tooltipMessageDescription',
+    id: 'dashboard.ExpenditurePage.LockedRecipient.tooltipMessageDescription',
     defaultMessage: `F.ex. once the work is finished, recipient has to wait before funds can be claimed.`,
   },
   addTokenText: {
-    id: 'dashboard.Expenditures.Recipient.addTokenText',
+    id: 'dashboard.ExpenditurePage.LockedRecipient.addTokenText',
     defaultMessage: 'Another token',
   },
   removeTokenText: {
-    id: 'dashboard.Expenditures.Recipient.removeTokenText',
+    id: 'dashboard.ExpenditurePage.LockedRecipient.removeTokenText',
     defaultMessage: 'Discard',
   },
   hoursLabel: {
-    id: 'dashboard.Expenditures.Recipient.daysOptionLabel',
+    id: 'dashboard.ExpenditurePage.LockedRecipient.hoursLabel',
     defaultMessage: 'hours',
   },
   daysLabel: {
-    id: 'dashboard.Expenditures.Recipient.daysOptionLabel',
+    id: 'dashboard.ExpenditurePage.LockedRecipient.daysLabel',
     defaultMessage: 'days',
   },
   monthsLabel: {
-    id: 'dashboard.Expenditures.Recipient.monthsOptionLabel',
+    id: 'dashboard.ExpenditurePage.LockedRecipient.monthsLabel',
     defaultMessage: 'months',
   },
   valueError: {
-    id: 'dashboard.Expenditures.Recipient.valueError',
+    id: 'dashboard.ExpenditurePage.LockedRecipient.valueError',
     defaultMessage: 'Value is required',
   },
 });
@@ -81,7 +81,7 @@ const LockedRecipient = ({ recipient }: Props) => {
           <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.userContainer}>
               <InputLabel
-                label={MSG.defaultRecipientLabel}
+                label={MSG.recipientLabel}
                 appearance={{
                   direction: 'horizontal',
                 }}
@@ -97,7 +97,7 @@ const LockedRecipient = ({ recipient }: Props) => {
           <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.itemContainer}>
               <InputLabel
-                label={MSG.defaultValueLabel}
+                label={MSG.valueLabel}
                 appearance={{
                   direction: 'horizontal',
                 }}
@@ -133,7 +133,7 @@ const LockedRecipient = ({ recipient }: Props) => {
           <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.itemContainer}>
               <div className={styles.delay}>
-                <FormattedMessage {...MSG.defaultDelayLabel} />
+                <FormattedMessage {...MSG.delayLabel} />
               </div>
 
               <div className={styles.delayControlsContainer}>

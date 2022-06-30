@@ -12,23 +12,23 @@ import Delay from '../Delay';
 
 const MSG = defineMessages({
   payments: {
-    id: 'dashboard.Expenditures.Payments.defaultPayment',
+    id: 'dashboard.ExpenditurePage.LockedPayments.payments',
     defaultMessage: 'Payments',
   },
   recipient: {
-    id: 'dashboard.Expenditures.Payments.defaultRrecipient',
+    id: 'dashboard.ExpenditurePage.LockedPayments.recipient',
     defaultMessage: 'Recipient',
   },
   addRecipientLabel: {
-    id: 'dashboard.Expenditures.Payments.addRecipientLabel',
+    id: 'dashboard.ExpenditurePage.LockedPayments.addRecipientLabel',
     defaultMessage: 'Add recipient',
   },
   minusIconTitle: {
-    id: 'dashboard.Expenditures.Payments.minusIconTitle',
+    id: 'dashboard.ExpenditurePage.LockedPayments.minusIconTitle',
     defaultMessage: 'Collapse a single recipient settings',
   },
   plusIconTitle: {
-    id: 'dashboard.Expenditures.Payments.plusIconTitle',
+    id: 'dashboard.ExpenditurePage.LockedPayments.plusIconTitle',
     defaultMessage: 'Expand a single recipient settings',
   },
 });
