@@ -41,13 +41,10 @@ export default withHooks<
 
     try {
       const metadataVersion = getEventMetadataVersion(avatar);
-      console.log(`🚀 ~hookedColonyAvatar metadataVersion`, metadataVersion);
       avatarObject =
         metadataVersion === 1
           ? JSON.parse(avatar) // original metadata format
           : { image: getColonyAvatarImage(avatar) }; // new metadata format
-      console.log(`🚀 ~ avatarObject`, avatarObject);
-      // avatarObject = JSON.parse(avatar);
     } catch (error) {
       // silent error
     }
