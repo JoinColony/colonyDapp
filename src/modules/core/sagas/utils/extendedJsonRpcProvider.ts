@@ -37,10 +37,17 @@ export class ExtendedJsonRpcProvider extends JsonRpcProvider {
     let useCache = false;
     const tx = await resolveProperties(transaction);
 
-    // Only use cache calls if we're on the actions page / colony home
+    // Use cache calls if we're on the actions page / colony home
     const regex = new RegExp('^/colony/[^/]*$');
     if (regex.test(window.location.pathname)) {
       useCache = true;
+    }
+
+    // Unless we're querying the user's token balances
+    const sig = tx.data.slice(0, 10);
+    // getUserLock(address,address) / getTotalObligation(address,address) / balanceOf(address)
+    if (sig === '0x1cc17c52' || sig === '0x006ad100' || sig === '0x70a08231') {
+      useCache = false;
     }
 
     const block = await blockTag;
