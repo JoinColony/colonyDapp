@@ -7,8 +7,8 @@ export enum SORTING_METHODS {
   BY_HIGHEST_REP = 'BY_HIGHEST_REP',
   BY_LOWEST_REP = 'BY_LOWEST_REP',
 
-  BY_HIGHEST_ROLE_ID = 'BY_HIGHEST_ROLE_ID',
-  BY_LOWEST_ROLE_ID = 'BY_LOWEST_ROLE_ID',
+  BY_MORE_PERMISSIONS = 'BY_MORE_PERMISSIONS',
+  BY_LESS_PERMISSIONS = 'BY_LESS_PERMISSIONS',
 }
 
 const useColonyMembersSorting = (
@@ -36,10 +36,10 @@ const useColonyMembersSorting = (
           .toNumber();
       }
 
-      if (sortingMethod === SORTING_METHODS.BY_HIGHEST_ROLE_ID) {
+      if (sortingMethod === SORTING_METHODS.BY_MORE_PERMISSIONS) {
         return user2.roles.length - user1.roles.length;
       }
-      if (sortingMethod === SORTING_METHODS.BY_LOWEST_ROLE_ID) {
+      if (sortingMethod === SORTING_METHODS.BY_LESS_PERMISSIONS) {
         return user1.roles.length - user2.roles.length;
       }
 
