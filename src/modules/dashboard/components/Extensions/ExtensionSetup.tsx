@@ -8,6 +8,7 @@ import { Extension } from '@colony/colony-js';
 import Decimal from 'decimal.js';
 import { bigNumberify } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
+import { useMediaQuery } from 'react-responsive';
 
 import { IconButton, ActionButton } from '~core/Button';
 import {
@@ -32,6 +33,7 @@ import { Address } from '~types/index';
 
 import { ColonyPolicySelector } from '../Whitelist';
 
+import { query700 as query } from '~styles/queries.css';
 import styles from './ExtensionSetup.css';
 
 import {
@@ -298,6 +300,7 @@ const ExtensionSetup = ({
     whitelistAddress,
   ]);
 
+  const isMobile = useMediaQuery({ query });
   const showInputField = useCallback(
     (paramName) => {
       return (
@@ -358,137 +361,145 @@ const ExtensionSetup = ({
         disabled,
         complementaryLabel,
         tokenLabel,
-      }) => (
-        <div
-          key={paramName}
-          className={isExtraParams ? styles.extraParams : ''}
-        >
-          {type === ExtensionParamType.Input && showInputField(paramName) && (
-            <div
-              className={`${styles.input} ${
-                paramName.endsWith('Address') ? styles.addressInput : ''
-              }`}
-            >
-              <Input
-                appearance={{ size: 'medium', theme: 'minimal' }}
-                label={title}
-                name={paramName}
-                onChange={(newValue) =>
-                  handleCoinMachineTargetValidation(
-                    paramName,
-                    newValue,
-                    formikBag,
-                  )
-                }
-                forcedFieldError={
-                  formikBag?.status?.[paramName]
-                    ? MSG[`${paramName}Error`]
-                    : undefined
-                }
-                disabled={formikBag.isSubmitting}
-              />
-              <p className={styles.inputsDescription}>
-                <FormattedMessage
-                  {...description}
-                  values={{
-                    span: (chunks) => (
-                      <span className={styles.descriptionExample}>
-                        {chunks}
-                      </span>
-                    ),
-                  }}
-                />
-              </p>
-              {(complementaryLabel || tokenLabel) && (
-                <span className={styles.complementaryLabel}>
-                  {complementaryLabel ? (
-                    <FormattedMessage {...MSG[complementaryLabel]} />
-                  ) : (
-                    getToken(formikBag.values[tokenLabel])?.symbol
-                  )}
-                </span>
+      }) => {
+        const Label = () =>
+          (complementaryLabel || tokenLabel) && (
+            <span className={styles.complementaryLabel}>
+              {complementaryLabel ? (
+                <FormattedMessage {...MSG[complementaryLabel]} />
+              ) : (
+                getToken(formikBag.values[tokenLabel])?.symbol
               )}
-            </div>
-          )}
-          {type === ExtensionParamType.Textarea && (
-            <div className={styles.textArea}>
-              <Textarea
-                appearance={{ colorSchema: 'grey' }}
-                label={title}
-                name={paramName}
-                disabled={
-                  (disabled && disabled(formikBag.values)) ||
-                  formikBag.isSubmitting
-                }
-                extra={
-                  description && (
-                    <p className={styles.textAreaDescription}>
-                      <FormattedMessage {...description} />
-                    </p>
-                  )
-                }
-              />
-            </div>
-          )}
-          {type === ExtensionParamType.ColonyPolicySelector && (
-            <ColonyPolicySelector
-              name={paramName}
-              title={title}
-              options={options || []}
-            />
-          )}
-          {type === ExtensionParamType.TokenSelector && (
-            <div>
-              <InputLabel
-                label={title}
-                appearance={{
-                  theme: 'minimal',
-                  size: 'medium',
-                }}
-              />
-              <div className={styles.tokenSelectorContainer}>
-                {fieldName && (
-                  <p>
-                    <FormattedMessage {...fieldName} />
-                  </p>
-                )}
-                <TokenSymbolSelector
-                  tokens={tokens}
+            </span>
+          );
+
+        return (
+          <div
+            key={paramName}
+            className={isExtraParams ? styles.extraParams : ''}
+          >
+            {type === ExtensionParamType.Input && showInputField(paramName) && (
+              <div
+                className={`${styles.input} ${
+                  paramName.endsWith('Address') ? styles.addressInput : ''
+                }`}
+              >
+                <div className={styles.inputWrapper}>
+                  <Input
+                    appearance={{ size: 'medium', theme: 'minimal' }}
+                    label={title}
+                    name={paramName}
+                    onChange={(newValue) =>
+                      handleCoinMachineTargetValidation(
+                        paramName,
+                        newValue,
+                        formikBag,
+                      )
+                    }
+                    forcedFieldError={
+                      formikBag?.status?.[paramName]
+                        ? MSG[`${paramName}Error`]
+                        : undefined
+                    }
+                    disabled={formikBag.isSubmitting}
+                  />
+                  {isMobile && <Label />}
+                </div>
+                <p className={styles.inputsDescription}>
+                  <FormattedMessage
+                    {...description}
+                    values={{
+                      span: (chunks) => (
+                        <span className={styles.descriptionExample}>
+                          {chunks}
+                        </span>
+                      ),
+                    }}
+                  />
+                </p>
+                {!isMobile && <Label />}
+              </div>
+            )}
+            {type === ExtensionParamType.Textarea && (
+              <div className={styles.textArea}>
+                <Textarea
+                  appearance={{ colorSchema: 'grey' }}
+                  label={title}
                   name={paramName}
-                  appearance={{ alignOptions: 'right', theme: 'grey' }}
-                  elementOnly
-                  label={paramName}
-                  onChange={(newValue) =>
-                    handleCoinMachineTokenValidation(
-                      paramName,
-                      newValue,
-                      formikBag,
+                  disabled={
+                    (disabled && disabled(formikBag.values)) ||
+                    formikBag.isSubmitting
+                  }
+                  extra={
+                    description && (
+                      <p className={styles.textAreaDescription}>
+                        <FormattedMessage {...description} />
+                      </p>
                     )
                   }
-                  disabled={formikBag.isSubmitting}
                 />
               </div>
-              <div className={styles.tokenAddessLink}>
-                {tokenContractAddress &&
-                  tokenContractAddress(formikBag.values[paramName])}
-                <div>
-                  <MaskedAddress address={formikBag.values[paramName]} full />
+            )}
+            {type === ExtensionParamType.ColonyPolicySelector && (
+              <ColonyPolicySelector
+                name={paramName}
+                title={title}
+                options={options || []}
+              />
+            )}
+            {type === ExtensionParamType.TokenSelector && (
+              <div>
+                <InputLabel
+                  label={title}
+                  appearance={{
+                    theme: 'minimal',
+                    size: 'medium',
+                  }}
+                />
+                <div className={styles.tokenSelectorContainer}>
+                  {fieldName && (
+                    <p>
+                      <FormattedMessage {...fieldName} />
+                    </p>
+                  )}
+                  <TokenSymbolSelector
+                    tokens={tokens}
+                    name={paramName}
+                    appearance={{ alignOptions: 'right', theme: 'grey' }}
+                    elementOnly
+                    label={paramName}
+                    onChange={(newValue) =>
+                      handleCoinMachineTokenValidation(
+                        paramName,
+                        newValue,
+                        formikBag,
+                      )
+                    }
+                    disabled={formikBag.isSubmitting}
+                  />
                 </div>
+                <div className={styles.tokenAddessLink}>
+                  {tokenContractAddress &&
+                    tokenContractAddress(formikBag.values[paramName])}
+                  <div>
+                    <MaskedAddress address={formikBag.values[paramName]} full />
+                  </div>
+                </div>
+                {description && (
+                  <p className={styles.inputsDescription}>
+                    <FormattedMessage {...description} />
+                  </p>
+                )}
+                {formikBag?.status?.[`${paramName}Error`] && (
+                  <p className={styles.tokenErrors}>
+                    <FormattedMessage {...MSG.tokenValidationError} />
+                  </p>
+                )}
               </div>
-              {description && (
-                <p className={styles.inputsDescription}>
-                  <FormattedMessage {...description} />
-                </p>
-              )}
-              {formikBag?.status?.[`${paramName}Error`] && (
-                <p className={styles.tokenErrors}>
-                  <FormattedMessage {...MSG.tokenValidationError} />
-                </p>
-              )}
-            </div>
-          )}
-        </div>
-      ),
+            )}
+          </div>
+        );
+      },
     );
 
   return (
@@ -511,6 +522,7 @@ const ExtensionSetup = ({
           <Heading
             appearance={{ size: 'medium', margin: 'none' }}
             text={MSG.title}
+            id="enableExtnTitle"
           />
           <div
             className={descriptionExtended ? styles.extensionDescription : ''}

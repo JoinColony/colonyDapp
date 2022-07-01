@@ -1,3 +1,4 @@
+export const query700: string;
 export const main: string;
 export const extensionDescription: string;
 export const descriptionExtended: string;
@@ -14,3 +15,4 @@ export const tokenAddessLink: string;
 export const extraParams: string;
 export const divider: string;
 export const tokenErrors: string;
+export const inputWrapper: string;
