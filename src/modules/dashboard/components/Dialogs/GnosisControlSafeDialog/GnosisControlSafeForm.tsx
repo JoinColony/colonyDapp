@@ -176,7 +176,6 @@ const GnosisControlSafeForm = ({
         <RawTransactionSection
           colony={colony}
           disabledInput={!userHasPermission || isSubmitting}
-          values={values}
         />
       )}
       <DialogSection>
