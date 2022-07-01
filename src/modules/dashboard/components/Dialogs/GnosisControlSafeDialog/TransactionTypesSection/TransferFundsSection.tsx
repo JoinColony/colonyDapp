@@ -38,7 +38,6 @@ interface Props {
   colony: Colony;
   disabledInput: boolean;
   values: FormValues;
-  back?: () => void;
 }
 
 const renderAvatar = (address: Address, item: AnyUser) => (
