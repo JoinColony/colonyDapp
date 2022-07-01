@@ -8,6 +8,7 @@ import toFinite from 'lodash/toFinite';
 
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
+import { calculateFee } from '~core/Fields/AmountTokens';
 
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
@@ -16,7 +17,7 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 import { WizardDialogType } from '~utils/hooks';
 
-import DialogForm, { calculateFee } from './CreatePaymentDialogForm';
+import DialogForm from './CreatePaymentDialogForm';
 
 const MSG = defineMessages({
   amountZero: {

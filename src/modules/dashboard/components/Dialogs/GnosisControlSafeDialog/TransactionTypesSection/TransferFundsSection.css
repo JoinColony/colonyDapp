@@ -1,0 +1,19 @@
+.singleUserPickerContainer div + i {
+  /* @NOTE: Negative value here to compensate for the
+  empty space inside the icon's SVG */
+  right: -7px;
+  left: inherit;
+}
+
+.singleUserPickerContainer input,
+.singleUserPickerContainer button {
+  max-width: 424px;
+}
+
+.singleUserPickerContainer > div {
+  padding-left: 0;
+}
+
+.singleUserPickerContainer label {
+  color: var(--dark);
+}

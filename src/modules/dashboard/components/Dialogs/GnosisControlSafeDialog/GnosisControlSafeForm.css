@@ -19,8 +19,20 @@
   color: var(--dark);
 }
 
-.safePicker i {
+.safePicker div + i {
   left: 412px;
+}
+
+.safePicker label + i svg {
+  stroke: unset;
+}
+
+.safePicker label {
+  color: var(--dark);
+}
+
+.transactionTypeSelectContainer label {
+  color: var(--dark);
 }
 
 .addTransaction {
