@@ -85,9 +85,7 @@ exports[`Select component Renders initial component 1`] = `
               >
                 <div>
                   <div>
-                    <span>
-                      Bar
-                    </span>
+                    <span />
                   </div>
                   <Icon
                     name="caret-down"
