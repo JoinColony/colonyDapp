@@ -2,12 +2,15 @@ import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 import { useHistory, useParams } from 'react-router';
 import { ColonyVersion } from '@colony/colony-js';
+import { useMediaQuery } from 'react-responsive';
 
 import Button, { ActionButton, IconButton } from '~core/Button';
 import { ColonyExtensionQuery } from '~data/index';
 import { ExtensionData } from '~data/staticData/extensionData';
 import { ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
+import { waitForElement } from '~utils/dom';
+import { query700 as query } from '~styles/queries.css';
 
 import { getButtonAction } from './utils';
 
@@ -42,10 +45,16 @@ const ExtensionActionButton = ({
     colonyName: string;
     extensionId: string;
   }>();
+  const isMobile = useMediaQuery({ query });
 
-  const handleEnableButtonClick = useCallback(() => {
+  const handleEnableButtonClick = useCallback(async () => {
     history.push(`/colony/${colonyName}/extensions/${extensionId}/setup`);
-  }, [colonyName, extensionId, history]);
+    // Generate a smooth scroll to `Form` on mobile when clicking `Enable`
+    if (isMobile) {
+      const offset = (await waitForElement('#enableExtnTitle')).offsetTop;
+      window.scrollTo({ top: offset - 20, behavior: 'smooth' });
+    }
+  }, [colonyName, extensionId, history, isMobile]);
 
   const isSupportedColonyVersion =
     parseInt(colonyVersion || '1', 10) >= ColonyVersion.LightweightSpaceship;

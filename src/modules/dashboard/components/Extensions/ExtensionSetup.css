@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   max-width: 600px;
 }
@@ -126,4 +128,49 @@
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   color: var(--danger);
+}
+
+@media screen and query700 {
+  .main {
+    padding: 0 14px;
+  }
+
+  .main h3 {
+    padding: 0;
+  }
+
+  .tokenSelectorContainer {
+    height: auto;
+  }
+
+  .input {
+    max-width: none;
+  }
+
+  /* For Coin Machine Setup */
+  .inputContainer .extraParams:nth-child(3) .tokenSelectorContainer {
+    margin-top: 10px;
+  }
+
+  .inputWrapper {
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+  }
+
+  .inputWrapper > div {
+    width: 100%;
+  }
+
+  .inputWrapper > span {
+    margin-bottom: 14px;
+  }
+
+  .complementaryLabel {
+    position: static;
+  }
+
+  .textArea label {
+    column-gap: 10px;
+  }
 }
