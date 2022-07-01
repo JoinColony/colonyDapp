@@ -1,3 +1,5 @@
+@value wideButton: 160px;
+
 .nameAndColorContainer {
   display: flex;
   align-items: center;

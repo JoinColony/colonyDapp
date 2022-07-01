@@ -1,3 +1,4 @@
+export const wideButton: string;
 export const title: string;
 export const noPermissionMessage: string;
 export const contractVersionLine: string;

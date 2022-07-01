@@ -298,11 +298,16 @@ const EditDomainDialogForm = ({
           />
         )}
         <Button
-          text={{ id: 'button.confirm' }}
+          text={
+            forceAction || !isVotingExtensionEnabled
+              ? { id: 'button.confirm' }
+              : { id: 'button.createMotion' }
+          }
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() => handleSubmit()}
           loading={isSubmitting}
           disabled={inputDisabled || !isValid}
+          style={{ minWidth: styles.wideButton }}
           data-test="editDomainConfirmButton"
         />
       </DialogSection>

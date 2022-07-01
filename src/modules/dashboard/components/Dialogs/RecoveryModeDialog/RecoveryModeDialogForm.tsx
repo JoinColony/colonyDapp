@@ -146,6 +146,7 @@ const RecoveryModeDialogForm = ({
           onClick={() => handleSubmit()}
           loading={isSubmitting}
           disabled={!userHasPermission || isSubmitting}
+          style={{ minWidth: styles.wideButton }}
           data-test="recoveryConfirmButton"
         />
       </DialogSection>

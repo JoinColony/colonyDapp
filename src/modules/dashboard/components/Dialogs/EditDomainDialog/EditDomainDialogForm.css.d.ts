@@ -1,3 +1,4 @@
+export const wideButton: string;
 export const nameAndColorContainer: string;
 export const domainName: string;
 export const noPermissionFromMessage: string;

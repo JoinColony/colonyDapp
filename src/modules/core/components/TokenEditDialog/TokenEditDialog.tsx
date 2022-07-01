@@ -235,7 +235,11 @@ const TokenEditDialog = ({
         />
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
-          text={{ id: 'button.confirm' }}
+          text={
+            values.forceAction || !isVotingExtensionEnabled
+              ? { id: 'button.confirm' }
+              : { id: 'button.createMotion' }
+          }
           loading={isSubmitting}
           onClick={() => handleSubmit()}
           disabled={
@@ -246,7 +250,7 @@ const TokenEditDialog = ({
             isLoadingAddress
           }
           type="submit"
-          style={{ width: styles.wideButton }}
+          style={{ minWidth: styles.wideButton }}
           data-test="confirm"
         />
       </DialogSection>

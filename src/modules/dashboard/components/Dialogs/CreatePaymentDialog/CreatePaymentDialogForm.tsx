@@ -617,14 +617,18 @@ const CreatePaymentDialogForm = ({
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() => handleSubmit()}
-          text={{ id: 'button.confirm' }}
+          text={
+            values.forceAction || !isVotingExtensionEnabled
+              ? { id: 'button.confirm' }
+              : { id: 'button.createMotion' }
+          }
           loading={isSubmitting}
           /*
            * Disable Form submissions if either the form is invalid, or
            * if our custom state was triggered.
            */
           disabled={!isValid || !!customAmountError || inputDisabled}
-          style={{ width: styles.wideButton }}
+          style={{ minWidth: styles.wideButton }}
           data-test="paymentConfirmButton"
         />
       </DialogSection>
