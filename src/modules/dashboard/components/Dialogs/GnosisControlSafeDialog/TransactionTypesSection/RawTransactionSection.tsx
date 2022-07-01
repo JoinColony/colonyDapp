@@ -8,8 +8,6 @@ import UserAvatar from '~core/UserAvatar';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import { DialogSection } from '~core/Dialog';
 
-import { FormValues } from '../GnosisControlSafeDialog';
-
 import styles from './TransactionTypesSection.css';
 
 const MSG = defineMessages({
@@ -36,8 +34,6 @@ const displayName = `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.Raw
 interface Props {
   colony: Colony;
   disabledInput: boolean;
-  values: FormValues;
-  back?: () => void;
 }
 
 const renderAvatar = (address: Address, item: AnyUser) => (
