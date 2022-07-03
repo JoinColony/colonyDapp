@@ -234,7 +234,11 @@ async function getMetatransactionMethodPromise(
   );
 
   if (reponseStatus !== 'success') {
-    throw new Error(responseErrorMessage.reason);
+    throw new Error(
+      responseErrorMessage?.reason ||
+        responseErrorMessage ||
+        responseData?.payload,
+    );
   }
 
   return {
