@@ -12,14 +12,8 @@ const fetchRetry = require('@adobe/node-fetch-retry');
 const startGanache = require('./start_ganache');
 const deployContracts = require('./deploy_contracts');
 
-const { PID_FILE, NETWORK_PACKAGES, NETWORK_ROOT, DAPP_LIBS } = require('./paths');
+const { PID_FILE, NETWORK_PACKAGES, DAPP_LIBS, GANACHE_ACCOUNTS, ETHERROUTER_ADDRESS } = require('./paths');
 const { getStaticDevResource, injectEnvironmentVariables } = require('./utils');
-const { private_keys: ganacheAccounts } = require(
-  path.resolve(NETWORK_ROOT, 'ganache-accounts.json'),
-);
-const { etherRouterAddress: networkAddress } = require(
-  path.resolve(NETWORK_ROOT, 'etherrouter-address.json'),
-);
 
 injectEnvironmentVariables('NODE_ENV');
 
@@ -44,6 +38,8 @@ addProcess('truffle', () =>
 );
 
 addProcess('oracle', async () => {
+  const { private_keys: ganacheAccounts } = require(GANACHE_ACCOUNTS);
+  const { etherRouterAddress: networkAddress } = require(ETHERROUTER_ADDRESS);
   /*
    * Same account network uses for their end to end tests
    */
@@ -81,6 +77,7 @@ addProcess('oracle', async () => {
 });
 
 addProcess('reputationMonitor', async () => {
+  const { etherRouterAddress: networkAddress } = require(ETHERROUTER_ADDRESS);
   const monitorProcess = spawn('node', ['./reputationMonitor/index.js', networkAddress], {
     cwd: DAPP_LIBS,
     stdio: 'pipe',
@@ -104,6 +101,8 @@ addProcess('reputationMonitor', async () => {
 });
 
 addProcess('metaTxBroadcast', async () => {
+  const { etherRouterAddress: networkAddress } = require(ETHERROUTER_ADDRESS);
+  const { private_keys: ganacheAccounts } = require(GANACHE_ACCOUNTS);
   /*
    * Use the last ganache account for sending metatransactions
    */

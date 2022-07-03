@@ -2,7 +2,7 @@
 
 const waitOn = require('wait-on');
 const { spawn } = require('child_process');
-const { ROOT_PATH } = require('./paths');
+const { ROOT_PATH, GANACHE_ACCOUNTS } = require('./paths');
 
 let stdio;
 
@@ -38,7 +38,10 @@ const startGanache = async () => {
       cwd: ROOT_PATH,
     },
   );
-  await waitOn({ resources: ['tcp:8545'] });
+  await waitOn({ resources: [
+    `file:${GANACHE_ACCOUNTS}`,
+    'tcp:8545',
+  ] });
   return process;
 };
 
