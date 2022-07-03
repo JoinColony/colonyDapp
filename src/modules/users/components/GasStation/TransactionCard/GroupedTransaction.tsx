@@ -72,11 +72,9 @@ const GroupedTransaction = ({
               }
             />
           </div>
-          {/* For multisig, we have to pass in _something_ */}
           <TransactionStatus
             groupCount={transactionGroup.length}
             status={status}
-            // multisig={{}}
           />
         </div>
       )}

@@ -98,12 +98,6 @@ export interface TransactionResponse {
   error?: Error;
 }
 
-export interface MultisigOperationJSON {
-  nonce: number;
-  payload: object; // MultisigOperationPayload
-  signers: object; // Signers
-}
-
 export interface UserRolesForDomain {
   address: string;
   domainId: number;

@@ -79,11 +79,9 @@ const TransactionCard = ({ idx, transactionGroup, onClick }: Props) => {
               }
             />
           </div>
-          {/* For multisig, how do we pass it in here? */}
           <TransactionStatus
             groupCount={transactionGroup.length}
             status={status}
-            // multisig={{}}
           />
         </div>
       </button>

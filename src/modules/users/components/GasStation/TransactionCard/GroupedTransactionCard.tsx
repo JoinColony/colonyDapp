@@ -20,10 +20,6 @@ const MSG = defineMessages({
     defaultMessage: `{type, select,
       ESTIMATE {Estimation error}
       EVENT_DATA {Event data error}
-      MULTISIG_NONCE {Multisig nonce}
-      MULTISIG_REFRESH {Multisig refresh}
-      MULTISIG_REJECT {Multisig rejected}
-      MULTISIG_SIGN {Multisig signature}
       RECEIPT {Receipt error}
       SEND {Send error}
       UNSUCCESSFUL {Unsuccessful}
@@ -152,12 +148,7 @@ const GroupedTransactionCard = ({
           )}
         </>
       ) : (
-        // multisig: pass proper multisig prop here
-        <TransactionStatus
-          status={status}
-          loadingRelated={loadingRelated}
-          // multisig={{}}
-        />
+        <TransactionStatus status={status} loadingRelated={loadingRelated} />
       )}
     </li>
   );
