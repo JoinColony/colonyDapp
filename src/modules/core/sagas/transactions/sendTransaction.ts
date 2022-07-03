@@ -113,17 +113,15 @@ async function getMetatransactionMethodPromise(
       userAddress,
     );
   } catch (error) {
-    const colonyClient = await colonyManager.getClient(
-      ClientType.ColonyClient,
-      colonyAddress,
+    throw new Error(
+      `Contract does not support MetaTransactions. ${normalizedClient?.clientType} at ${normalizedClient?.address}`,
     );
-    availableNonce = await colonyClient.getMetatransactionNonce(userAddress);
   }
 
   // eslint-disable-next-line no-console
   console.log(
     'Transaction to send',
-    client.clientType,
+    normalizedClient.clientType,
     normalizedMethodName,
     params,
   );
@@ -261,6 +259,10 @@ export default function* sendTransaction({
   let contextClient: ContractClient;
   if (context === ClientType.TokenClient) {
     contextClient = yield colonyManager.getTokenClient(identifier as string);
+  } else if (context === ClientType.TokenLockingClient) {
+    contextClient = yield colonyManager.getTokenLockingClient(
+      identifier as string,
+    );
   } else if (
     context === ((ExtendedReduxContext.WrappedToken as unknown) as ClientType)
   ) {
@@ -293,7 +295,13 @@ export default function* sendTransaction({
     ? getMetatransactionMethodPromise
     : getTransactionMethodPromise;
 
-  // Create a promise to send the transaction with the given method.
+  /*
+   * @NOTE Create a promise to send the transaction with the given method.
+   *
+   * DO NOT! yield this method! Otherwise the error we're throwing inside
+   * `getMetatransactionMethodPromise` based on the broadcaster's response message
+   * will not catch, so the UI will not properly display it in the Gas Station
+   */
   const txPromise = promiseMethod(contextClient, transaction);
 
   const channel = yield call(
