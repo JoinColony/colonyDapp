@@ -180,7 +180,7 @@ export function* getCanUserSendMetatransactions() {
     SlotKey.Metatransactions,
   );
 
-  const metatransactionsAvailable = canUseMetatransactions(userWalletNetworkId);
+  const metatransactionsAvailable = canUseMetatransactions();
 
   return metatransactionsAvailable && metatransactionEnabled;
 }

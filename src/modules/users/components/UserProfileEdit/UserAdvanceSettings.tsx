@@ -7,7 +7,6 @@ import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import { Form, Toggle } from '~core/Fields';
 
 import { useUserSettings, SlotKey } from '~utils/hooks/useUserSettings';
-import { useLoggedInUser } from '~data/helpers';
 import { canUseMetatransactions } from '../../checks';
 
 import styles from './UserProfileEdit.css';
@@ -51,8 +50,6 @@ const validationSchema = yup.object({
 const displayName = 'users.UserProfileEdit.UserAdvanceSettings';
 
 const UserAdvanceSettings = () => {
-  const { networkId: userWalletNetworkId } = useLoggedInUser();
-
   const {
     settings: { metatransactions: metatransactionsSetting },
     setSettingsKey,
@@ -65,9 +62,7 @@ const UserAdvanceSettings = () => {
     [setSettingsKey],
   );
 
-  const metatransasctionsToggleAvailable = canUseMetatransactions(
-    userWalletNetworkId as number,
-  );
+  const metatransasctionsToggleAvailable = canUseMetatransactions();
 
   const metatransasctionsAvailable = metatransasctionsToggleAvailable
     ? metatransactionsSetting
