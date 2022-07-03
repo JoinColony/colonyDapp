@@ -19,9 +19,9 @@ const MSG = defineMessages({
     id: 'users.UserProfileEdit.UserAdvanceSettings.heading',
     defaultMessage: 'Advanced settings',
   },
-  metaDesc: {
-    id: 'users.UserProfileEdit.UserAdvanceSettings.metaDesc',
-    defaultMessage: `You have turned off metatransactions. Please, make sure to switch to xDai RPC in your Metamask.`,
+  metaDescGlobalOff: {
+    id: 'users.UserProfileEdit.UserAdvanceSettings.metaDescGlobalOff',
+    defaultMessage: `Metatransactions are disabled globally.`,
   },
   labelMetaTx: {
     id: 'users.UserProfileEdit.UserAdvanceSettings.labelMetaTx',
@@ -33,7 +33,7 @@ const MSG = defineMessages({
   tooltip: {
     id: 'users.UserProfileEdit.UserAdvanceSettings.tooltip',
     defaultMessage: `Metatransactions are turned on by default.
-    If you would rather connect directly to xDai chain,
+    If you would rather connect directly to the chain,
     and pay for your own transactions, you can turn them off
     by switching the toggle at any time. {br}{br} Please note,
     this setting is stored locally in your browser,
@@ -94,7 +94,7 @@ const UserAdvanceSettings = () => {
         validationSchema={validationSchema}
         onSubmit={() => {}}
       >
-        {({ values, isSubmitting }) => (
+        {({ isSubmitting }) => (
           <div className={styles.main}>
             <Heading
               appearance={{ theme: 'dark', size: 'medium' }}
@@ -121,22 +121,26 @@ const UserAdvanceSettings = () => {
               />
             </div>
             <div className={stylesAdvance.metaDesc}>
-              {!values.metatransactions && (
-                <FormattedMessage {...MSG.metaDesc} />
+              {!metatransasctionsToggleAvailable && (
+                <FormattedMessage {...MSG.metaDescGlobalOff} />
               )}
             </div>
-            <Button
-              text={{ id: 'button.save' }}
-              loading={isSubmitting}
-              onClick={() => setShowSnackbar(true)}
-              disabled={!metatransasctionsToggleAvailable}
-            />
-            <Snackbar
-              show={showSnackbar}
-              setShow={setShowSnackbar}
-              msg={MSG.snackbarSuccess}
-              type={SnackbarType.Success}
-            />
+            {metatransasctionsToggleAvailable && (
+              <>
+                <Button
+                  text={{ id: 'button.save' }}
+                  loading={isSubmitting}
+                  onClick={() => setShowSnackbar(true)}
+                  disabled={!metatransasctionsToggleAvailable}
+                />
+                <Snackbar
+                  show={showSnackbar}
+                  setShow={setShowSnackbar}
+                  msg={MSG.snackbarSuccess}
+                  type={SnackbarType.Success}
+                />
+              </>
+            )}
           </div>
         )}
       </Form>
