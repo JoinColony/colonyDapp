@@ -16,7 +16,6 @@ const MSG = defineMessages({
   transactionState: {
     id: 'users.GasStationPopover.TransactionStatus.transactionState',
     defaultMessage: `{status, select,
-      MULTISIG {Waiting on other party to sign}
       FAILED {Failed transaction. Try again}
       SUCCEEDED {Transaction succeeded}
       READY {{groupCount, number} {groupCount, plural,
