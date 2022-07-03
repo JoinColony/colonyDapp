@@ -1,10 +1,12 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import { Form, Toggle } from '~core/Fields';
+import Snackbar, { SnackbarType } from '~core/Snackbar';
+import Button from '~core/Button';
 
 import { useUserSettings, SlotKey } from '~utils/hooks/useUserSettings';
 import { canUseMetatransactions } from '../../checks';
@@ -37,6 +39,10 @@ const MSG = defineMessages({
     this setting is stored locally in your browser,
     if you clear your cache you will need to turn Metatransactions off again.`,
   },
+  snackbarSuccess: {
+    id: 'users.UserProfileEdit.UserAdvanceSettings.snackbarSuccess',
+    defaultMessage: 'Profile settings have been updated.',
+  },
 });
 
 interface FormValues {
@@ -50,6 +56,17 @@ const validationSchema = yup.object({
 const displayName = 'users.UserProfileEdit.UserAdvanceSettings';
 
 const UserAdvanceSettings = () => {
+  const [showSnackbar, setShowSnackbar] = useState<boolean>(false);
+  useEffect(() => {
+    if (showSnackbar) {
+      const timeout = setTimeout(() => setShowSnackbar(true), 200000);
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+    return undefined;
+  }, [showSnackbar]);
+
   const {
     settings: { metatransactions: metatransactionsSetting },
     setSettingsKey,
@@ -77,7 +94,7 @@ const UserAdvanceSettings = () => {
         validationSchema={validationSchema}
         onSubmit={() => {}}
       >
-        {({ values }) => (
+        {({ values, isSubmitting }) => (
           <div className={styles.main}>
             <Heading
               appearance={{ theme: 'dark', size: 'medium' }}
@@ -103,11 +120,23 @@ const UserAdvanceSettings = () => {
                 }}
               />
             </div>
-            {!values.metatransactions && (
-              <div className={stylesAdvance.metaDesc}>
+            <div className={stylesAdvance.metaDesc}>
+              {!values.metatransactions && (
                 <FormattedMessage {...MSG.metaDesc} />
-              </div>
-            )}
+              )}
+            </div>
+            <Button
+              text={{ id: 'button.save' }}
+              loading={isSubmitting}
+              onClick={() => setShowSnackbar(true)}
+              disabled={!metatransasctionsToggleAvailable}
+            />
+            <Snackbar
+              show={showSnackbar}
+              setShow={setShowSnackbar}
+              msg={MSG.snackbarSuccess}
+              type={SnackbarType.Success}
+            />
           </div>
         )}
       </Form>
