@@ -16,6 +16,8 @@ const DAPP_LIBS = path.resolve(DAPP_ROOT, LIB_FOLDER);
 const NETWORK_ROOT = path.resolve(DAPP_LIBS, NETWORK_FOLDER);
 const NETWORK_PACKAGES = path.resolve(NETWORK_ROOT, NETWORK_PACKAGES_FOLDER);
 const PID_FILE = path.resolve(ROOT_PATH, '.dappPids.json');
+const GANACHE_ACCOUNTS = path.resolve(NETWORK_ROOT, 'ganache-accounts.json');
+const ETHERROUTER_ADDRESS = path.resolve(NETWORK_ROOT, 'etherrouter-address.json');
 
 exports.MODULES_FOLDER = MODULES_FOLDER;
 exports.COMPONENTS_FOLDER = COMPONENTS_FOLDER;
@@ -27,6 +29,8 @@ exports.DAPP_LIBS = DAPP_LIBS;
 exports.NETWORK_ROOT = NETWORK_ROOT;
 exports.NETWORK_PACKAGES = NETWORK_PACKAGES;
 exports.PID_FILE = PID_FILE;
+exports.GANACHE_ACCOUNTS = GANACHE_ACCOUNTS;
+exports.ETHERROUTER_ADDRESS = ETHERROUTER_ADDRESS;
 
 module.exports = {
   MODULES_FOLDER,
@@ -39,4 +43,6 @@ module.exports = {
   NETWORK_PACKAGES,
   PID_FILE,
   NODE_ENV_OBJECT_PATH,
+  GANACHE_ACCOUNTS,
+  ETHERROUTER_ADDRESS,
 };
