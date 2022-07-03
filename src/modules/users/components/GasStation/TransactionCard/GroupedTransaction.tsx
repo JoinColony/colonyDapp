@@ -40,14 +40,22 @@ const GroupedTransaction = ({
           <div className={styles.description}>
             <Heading
               appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
-              text={{ id: `transaction.${groupKey}.title` }}
+              text={{
+                id: `${
+                  transactionGroup[0].metatransaction ? 'meta' : ''
+                }transaction.${groupKey}.title`,
+              }}
               textValues={arrayToObject(values.params)}
             />
             <FormattedMessage
               id={
                 process.env.DEBUG
-                  ? `transaction.debug.description`
-                  : `transaction.${groupKey}.description`
+                  ? `${
+                      transactionGroup[0].metatransaction ? 'meta' : ''
+                    }transaction.debug.description`
+                  : `${
+                      transactionGroup[0].metatransaction ? 'meta' : ''
+                    }transaction.${groupKey}.description`
               }
               values={arrayToObject(values.params)}
             />

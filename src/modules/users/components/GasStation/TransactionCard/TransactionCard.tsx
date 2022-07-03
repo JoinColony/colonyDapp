@@ -31,6 +31,15 @@ const TransactionCard = ({ idx, transactionGroup, onClick }: Props) => {
   const groupKey = getGroupKey(transactionGroup);
   const status = getGroupStatus(transactionGroup);
   const values = getGroupValues<TransactionType>(transactionGroup);
+
+  const defaultTransactionMessageDescriptorId = `${
+    transactionGroup[0].metatransaction ? 'meta' : ''
+  }transaction.${groupKey}${
+    transactionGroup[0].methodContext
+      ? `.${transactionGroup[0].methodContext}`
+      : ''
+  }.title`;
+
   return (
     <Card className={styles.main}>
       <button
@@ -44,16 +53,14 @@ const TransactionCard = ({ idx, transactionGroup, onClick }: Props) => {
             <Heading
               appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
               text={{
-                id: `transaction.${groupKey}${
-                  transactionGroup[0].methodContext
-                    ? `.${transactionGroup[0].methodContext}`
-                    : ''
-                }.title`,
+                id: defaultTransactionMessageDescriptorId,
               }}
               textValues={arrayToObject(values.params)}
             />
             <FormattedMessage
-              id={`transaction.${groupKey}${
+              id={`${
+                transactionGroup[0].metatransaction ? 'meta' : ''
+              }transaction.${groupKey}${
                 transactionGroup[0].methodContext
                   ? `.${transactionGroup[0].methodContext}`
                   : ''
