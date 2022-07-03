@@ -11,7 +11,11 @@ export interface UserSettingsSlot {
 }
 
 const defaultSlotValues: UserSettingsSlot = {
-  metatransactions: true,
+  /*
+   * If on local dev, metatransactions are disabled by default on your user profile
+   * In production however, they will be enabled by default
+   */
+  metatransactions: process.env.NODE_ENV !== 'development',
 };
 
 /**
