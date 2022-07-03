@@ -22,6 +22,8 @@ export const createTransactionAction = (
     params = [],
     ready,
     metatransaction = false,
+    title,
+    titleValues,
   }: TxConfig,
 ) => ({
   type: ActionTypes.TRANSACTION_CREATED,
@@ -40,6 +42,8 @@ export const createTransactionAction = (
         ? TRANSACTION_STATUSES.CREATED
         : TRANSACTION_STATUSES.READY,
     metatransaction,
+    title,
+    titleValues,
   },
   meta: { id },
 });

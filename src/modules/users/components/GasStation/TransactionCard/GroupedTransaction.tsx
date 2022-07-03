@@ -33,6 +33,22 @@ const GroupedTransaction = ({
   const groupKey = getGroupKey(transactionGroup);
   const status = getGroupStatus(transactionGroup);
   const values = getGroupValues<TransactionType>(transactionGroup);
+
+  const defaultTransactionGroupMessageDescriptorTitleId = {
+    id: `${
+      transactionGroup[0].metatransaction ? 'meta' : ''
+    }transaction.${groupKey}.title`,
+  };
+  const defaultTransactionGroupMessageDescriptorDescriptionId = {
+    id: process.env.DEBUG
+      ? `${
+          transactionGroup[0].metatransaction ? 'meta' : ''
+        }transaction.debug.description`
+      : `${
+          transactionGroup[0].metatransaction ? 'meta' : ''
+        }transaction.${groupKey}.description`,
+  };
+
   return (
     <Card className={styles.main}>
       {interactive && (
@@ -41,23 +57,19 @@ const GroupedTransaction = ({
             <Heading
               appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
               text={{
-                id: `${
-                  transactionGroup[0].metatransaction ? 'meta' : ''
-                }transaction.${groupKey}.title`,
+                ...defaultTransactionGroupMessageDescriptorTitleId,
+                ...values.group?.title,
               }}
-              textValues={arrayToObject(values.params)}
+              textValues={
+                values.group?.titleValues || arrayToObject(values.params)
+              }
             />
             <FormattedMessage
-              id={
-                process.env.DEBUG
-                  ? `${
-                      transactionGroup[0].metatransaction ? 'meta' : ''
-                    }transaction.debug.description`
-                  : `${
-                      transactionGroup[0].metatransaction ? 'meta' : ''
-                    }transaction.${groupKey}.description`
+              {...defaultTransactionGroupMessageDescriptorDescriptionId}
+              {...values.group?.description}
+              values={
+                values.group?.descriptionValues || arrayToObject(values.params)
               }
-              values={arrayToObject(values.params)}
             />
           </div>
           {/* For multisig, we have to pass in _something_ */}

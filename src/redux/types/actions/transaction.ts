@@ -40,6 +40,8 @@ export type TransactionActionTypes =
         | 'gasLimit'
         | 'status'
         | 'metatransaction'
+        | 'title'
+        | 'titleValues'
       >,
       Meta
     >
