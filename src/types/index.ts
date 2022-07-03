@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { TransactionReceipt } from 'ethers/providers';
 import { BigNumberish } from 'ethers/utils';
 import { ColonyRole, TransactionOverrides } from '@colony/colony-js';
+import { MessageDescriptor } from 'react-intl';
 
 export * from './keyTypes';
 export * from './DefaultValues';
@@ -75,6 +76,10 @@ export interface TxConfig {
     key: string;
     id: string | string[];
     index: number;
+    title?: MessageDescriptor;
+    titleValues?: SimpleMessageValues;
+    description?: MessageDescriptor;
+    descriptionValues?: SimpleMessageValues;
   };
   identifier?: string;
   methodContext?: string;
@@ -83,6 +88,8 @@ export interface TxConfig {
   params?: MethodParams;
   ready?: boolean;
   metatransaction?: boolean;
+  title?: MessageDescriptor;
+  titleValues?: SimpleMessageValues;
 }
 
 export interface TransactionResponse {

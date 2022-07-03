@@ -53,6 +53,8 @@ const GroupedTransactionCard = ({
     loadingRelated,
     group,
     metatransaction,
+    title,
+    titleValues,
   },
 }: Props) => {
   const dispatch = useDispatch();
@@ -80,11 +82,11 @@ const GroupedTransactionCard = ({
   // A prior transaction was selected
   const hasDependency = ready && !selected;
 
-  const defaultTransactionMessageDescriptorId = `${
-    metatransaction ? 'meta' : ''
-  }transaction.${context ? `${context}.` : ''}${methodName}.${
-    methodContext ? `${methodContext}.` : ''
-  }title`;
+  const defaultTransactionMessageDescriptorId = {
+    id: `${metatransaction ? 'meta' : ''}transaction.${
+      context ? `${context}.` : ''
+    }${methodName}.${methodContext ? `${methodContext}.` : ''}title`,
+  };
 
   return (
     <li
@@ -107,8 +109,9 @@ const GroupedTransactionCard = ({
           <div>
             {`${(group?.index || idx) + 1}. `}
             <FormattedMessage
-              id={defaultTransactionMessageDescriptorId}
-              values={params}
+              {...defaultTransactionMessageDescriptorId}
+              {...title}
+              values={titleValues || params}
             />
             {failed && error && (
               <span className={styles.failedDescription}>

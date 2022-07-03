@@ -32,13 +32,24 @@ const TransactionCard = ({ idx, transactionGroup, onClick }: Props) => {
   const status = getGroupStatus(transactionGroup);
   const values = getGroupValues<TransactionType>(transactionGroup);
 
-  const defaultTransactionMessageDescriptorId = `${
-    transactionGroup[0].metatransaction ? 'meta' : ''
-  }transaction.${groupKey}${
-    transactionGroup[0].methodContext
-      ? `.${transactionGroup[0].methodContext}`
-      : ''
-  }.title`;
+  const defaultTransactionGroupMessageDescriptorTitleId = {
+    id: `${
+      transactionGroup[0].metatransaction ? 'meta' : ''
+    }transaction.${groupKey}${
+      transactionGroup[0].methodContext
+        ? `.${transactionGroup[0].methodContext}`
+        : ''
+    }.title`,
+  };
+  const defaultTransactionGroupMessageDescriptorDescriptionId = {
+    id: `${
+      transactionGroup[0].metatransaction ? 'meta' : ''
+    }transaction.${groupKey}${
+      transactionGroup[0].methodContext
+        ? `.${transactionGroup[0].methodContext}`
+        : ''
+    }.description`,
+  };
 
   return (
     <Card className={styles.main}>
@@ -53,19 +64,19 @@ const TransactionCard = ({ idx, transactionGroup, onClick }: Props) => {
             <Heading
               appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
               text={{
-                id: defaultTransactionMessageDescriptorId,
+                ...defaultTransactionGroupMessageDescriptorTitleId,
+                ...values.group?.title,
               }}
-              textValues={arrayToObject(values.params)}
+              textValues={
+                values.group?.titleValues || arrayToObject(values.params)
+              }
             />
             <FormattedMessage
-              id={`${
-                transactionGroup[0].metatransaction ? 'meta' : ''
-              }transaction.${groupKey}${
-                transactionGroup[0].methodContext
-                  ? `.${transactionGroup[0].methodContext}`
-                  : ''
-              }.description`}
-              values={arrayToObject(values.params)}
+              {...defaultTransactionGroupMessageDescriptorDescriptionId}
+              {...values.group?.description}
+              values={
+                values.group?.descriptionValues || arrayToObject(values.params)
+              }
             />
           </div>
           {/* For multisig, how do we pass it in here? */}

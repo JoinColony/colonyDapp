@@ -2,12 +2,14 @@ import { Record } from 'immutable';
 import { BigNumber } from 'ethers/utils';
 import { TransactionReceipt } from 'ethers/providers';
 import { ClientType, TransactionOverrides } from '@colony/colony-js';
+import { MessageDescriptor } from 'react-intl';
 
 import {
   AddressOrENSName,
   DefaultValues,
   MethodParams,
   RecordToJS,
+  SimpleMessageValues,
 } from '~types/index';
 
 export enum TRANSACTION_ERRORS {
@@ -52,6 +54,10 @@ export interface TransactionRecordProps {
     key: string;
     id: string | string[];
     index: number;
+    title?: MessageDescriptor;
+    titleValues?: SimpleMessageValues;
+    description?: MessageDescriptor;
+    descriptionValues?: SimpleMessageValues;
   };
   hash?: string;
   id: TransactionId;
@@ -64,6 +70,8 @@ export interface TransactionRecordProps {
   status: TRANSACTION_STATUSES;
   loadingRelated?: boolean;
   metatransaction: boolean;
+  title?: MessageDescriptor;
+  titleValues?: SimpleMessageValues;
 }
 
 export type TransactionType = Readonly<TransactionRecordProps>;
@@ -90,6 +98,8 @@ const defaultValues: DefaultValues<TransactionRecordProps> = {
   status: undefined,
   loadingRelated: false,
   metatransaction: false,
+  title: undefined,
+  titleValues: undefined,
 };
 
 export class TransactionRecord
