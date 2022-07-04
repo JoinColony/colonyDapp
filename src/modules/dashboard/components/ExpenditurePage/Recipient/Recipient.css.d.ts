@@ -1,4 +1,7 @@
+export const buttonMargin: string;
 export const singleUserContainer: string;
+export const formContainer: string;
+export const marginBottom: string;
 export const valueContainer: string;
 export const container: string;
 export const delayContainer: string;

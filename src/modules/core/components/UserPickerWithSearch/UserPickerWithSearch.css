@@ -18,10 +18,11 @@
     height: 38px;
     width: 38px;
     position: absolute;
-    top: -5px;
-    left: -5px;
+    top: 0;
+    left: 0;
     border-radius: 50%;
     background-color: var(--action-secondary);
+    transform: translate(-5px, -5px);
     content: '';
     opacity: 0.1;
   }
@@ -88,6 +89,10 @@
   font-weight: var(--weight-bold);
   text-overflow: ellipsis;
   color: var(--danger);
+}
+
+.recipientName:hover {
+  cursor: pointer;
 }
 
 .omniPickerContainer {

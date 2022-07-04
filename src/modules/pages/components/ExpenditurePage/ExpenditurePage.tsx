@@ -1,7 +1,13 @@
 import React, { useCallback, useRef, useState } from 'react';
 import * as yup from 'yup';
-import { defineMessages, MessageDescriptor } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  MessageDescriptor,
+} from 'react-intl';
+import { nanoid } from 'nanoid';
 
+import { RouteChildrenProps, useParams } from 'react-router';
 import { Form } from '~core/Fields';
 import Payments from '~dashboard/ExpenditurePage/Payments';
 import ExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings';
@@ -15,6 +21,9 @@ import TitleDescriptionSection, {
   LockedTitleDescriptionSection,
 } from '~dashboard/ExpenditurePage/TitleDescriptionSection';
 import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
+import { useColonyFromNameQuery } from '~data/generated';
+import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
+import { setClaimDate } from './utils';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -63,27 +72,30 @@ const MSG = defineMessages({
     id: 'dashboard.Expenditures.Stages.completed',
     defaultMessage: 'Completed',
   },
+  userRequiredError: {
+    id: 'dashboard.Expenditures.ExpenditurePage.userRequiredError',
+    defaultMessage: 'User is required',
+  },
+  delayRequiredError: {
+    id: 'dashboard.Expenditures.ExpenditurePage.delayRequiredError',
+    defaultMessage: 'Delay is required',
+  },
 });
 
 const initialValues = {
   expenditure: 'advanced',
   filteredDomainId: undefined,
   owner: undefined,
-  recipients: [newRecipient],
   title: undefined,
   description: undefined,
+  recipients: [{ ...newRecipient, id: nanoid() }],
 };
 
 export interface ValuesType {
   expenditure: string;
   filteredDomainId: { label: string; value: string };
   owner: string;
-  recipients: {
-    recipient: string;
-    value: { amount: number; tokenAddress: number }[];
-    delay: { amount: string; time: string };
-    isExpanded: boolean;
-  }[];
+  recipients: Recipient[];
   title: string;
   description?: string;
 }
@@ -103,7 +115,9 @@ const validationSchema = yup.object().shape({
   filteredDomainId: yup.string().required('Team is required'),
   recipients: yup.array(
     yup.object().shape({
-      recipient: yup.object().required('User is required'),
+      recipient: yup
+        .object()
+        .required(() => <FormattedMessage {...MSG.userRequiredError} />),
       value: yup
         .array(
           yup.object().shape({
@@ -116,7 +130,9 @@ const validationSchema = yup.object().shape({
         .object()
         .shape({
           amount: yup.string().required(),
-          time: yup.string().required('Delay is required'),
+          time: yup
+            .string()
+            .required(() => <FormattedMessage {...MSG.delayRequiredError} />),
         })
         .required(),
     }),
@@ -124,7 +140,25 @@ const validationSchema = yup.object().shape({
   title: yup.string().required(),
 });
 
-const ExpenditurePage = () => {
+type Props = RouteChildrenProps<{ colonyName: string }>;
+
+const ExpenditurePage = ({ match }: Props) => {
+  if (!match) {
+    throw new Error(
+      `No match found for route in ${displayName} Please check route setup.`,
+    );
+  }
+
+  const { colonyName } = useParams<{
+    colonyName: string;
+  }>();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isEditable, setIsEditable] = useState(true);
+
+  const { data: colonyData } = useColonyFromNameQuery({
+    variables: { name: colonyName, address: '' },
+  });
+
   const [isFormEditable, setFormEditable] = useState(true);
   const [formValues, setFormValues] = useState<ValuesType>();
   const [shouldValidate, setShouldValidate] = useState(false);
@@ -136,8 +170,18 @@ const ExpenditurePage = () => {
     setActiveStateId(Stage.Draft);
 
     if (values) {
-      setFormValues(values);
+      setFormValues({
+        ...values,
+        recipients: values.recipients.map((reicpient) => ({
+          ...reicpient,
+          claimDate: setClaimDate({
+            amount: reicpient.delay.amount,
+            time: reicpient.delay.time,
+          }),
+        })),
+      });
     }
+
     // add sending form values to backend
   }, []);
 
@@ -223,7 +267,12 @@ const ExpenditurePage = () => {
       <div className={getMainClasses({}, styles)}>
         <aside className={styles.sidebar} ref={sidebarRef}>
           <ExpenditureSettings />
-          <Payments sidebarRef={sidebarRef.current} />
+          {colonyData && (
+            <Payments
+              sidebarRef={sidebarRef.current}
+              colony={colonyData.processedColony}
+            />
+          )}
         </aside>
         <div className={styles.mainContainer}>
           <main className={styles.mainContent}>
@@ -249,14 +298,9 @@ const ExpenditurePage = () => {
           owner={owner as any}
         />
         <LockedPayments
-          // temporary value, recipients will be fetched from backed
-          recipients={formValues?.recipients?.map((recipent) => ({
-            ...recipent,
-            claimDate: new Date(2022, 5, 25).getTime(),
-            isClaimable: false,
-          }))}
-          editForm={() => setFormEditable(true)}
+          recipients={formValues?.recipients}
           activeState={activeState}
+          colony={colonyData?.processedColony}
         />
       </aside>
       <div className={styles.mainContainer}>
@@ -265,15 +309,19 @@ const ExpenditurePage = () => {
             title={formValues?.title}
             description={formValues?.description}
           />
-          <Stages
-            {...{
-              states,
-              activeStateId,
-              setActiveStateId,
-              lockValues,
-              handleSubmit,
-            }}
-          />
+          {colonyData && (
+            <Stages
+              {...{
+                states,
+                activeStateId,
+                setActiveStateId,
+                lockValues,
+                handleSubmit,
+                colony: colonyData.processedColony,
+                recipients: formValues?.recipients,
+              }}
+            />
+          )}
         </main>
       </div>
     </div>

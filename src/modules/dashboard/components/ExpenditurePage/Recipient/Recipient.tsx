@@ -1,6 +1,9 @@
 import { FieldArray, useField, useFormikContext } from 'formik';
+import { nanoid } from 'nanoid';
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import classNames from 'classnames';
+
 import Button from '~core/Button';
 import {
   FormSection,
@@ -23,50 +26,48 @@ import { tokensData } from './constants';
 import styles from './Recipient.css';
 
 const MSG = defineMessages({
-  defaultRecipientLabel: {
-    id: 'dashboard.Expenditures.Recipient.defaultRecipientLabel',
+  recipientLabel: {
+    id: 'dashboard.ExpenditurePage.Recipient.recipientLabel',
     defaultMessage: 'Recipient',
   },
-  defaultValueLabel: {
-    id: 'dashboard.Expenditures.Recipient.defaultValueLabel',
+  valueLabel: {
+    id: 'dashboard.ExpenditurePage.Recipient.valueLabel',
     defaultMessage: 'Value',
   },
-  defaultDelayLabel: {
-    id: 'dashboard.Expenditures.Recipient.defaultDelayLabel',
+  delayLabel: {
+    id: 'dashboard.ExpenditurePage.Recipient.delayLabel',
     defaultMessage: 'Claim delay',
   },
   tooltipMessageTitle: {
-    id: 'dashboard.Expenditures.Recipient.tooltipMessageTitle',
+    id: 'dashboard.ExpenditurePage.Recipient.tooltipMessageTitle',
     defaultMessage: 'Security delay for claiming funds.',
   },
   tooltipMessageDescription: {
-    id: 'dashboard.Expenditures.Recipient.tooltipMessageDescription',
-    defaultMessage:
-      // eslint-disable-next-line max-len
-      'F.ex. once the work is finished, recipient has to wait before funds can be claimed.',
+    id: 'dashboard.ExpenditurePage.Recipient.tooltipMessageDescription',
+    defaultMessage: `F.ex. once the work is finished, recipient has to wait before funds can be claimed.`,
   },
   addTokenText: {
-    id: 'dashboard.Expenditures.Recipient.addTokenText',
+    id: 'dashboard.ExpenditurePage.Recipient.addTokenText',
     defaultMessage: 'Another token',
   },
   removeTokenText: {
-    id: 'dashboard.Expenditures.Recipient.removeTokenText',
+    id: 'dashboard.ExpenditurePage.Recipient.removeTokenText',
     defaultMessage: 'Discard',
   },
   hoursLabel: {
-    id: 'dashboard.Expenditures.Recipient.daysOptionLabel',
+    id: 'dashboard.ExpenditurePage.Recipient.hoursLabel',
     defaultMessage: 'hours',
   },
   daysLabel: {
-    id: 'dashboard.Expenditures.Recipient.daysOptionLabel',
+    id: 'dashboard.ExpenditurePage.Recipient.daysLabel',
     defaultMessage: 'days',
   },
   monthsLabel: {
-    id: 'dashboard.Expenditures.Recipient.monthsOptionLabel',
+    id: 'dashboard.ExpenditurePage.Recipient.monthsLabel',
     defaultMessage: 'months',
   },
   valueError: {
-    id: 'dashboard.Expenditures.Recipient.valueError',
+    id: 'dashboard.ExpenditurePage.Recipient.valueError',
     defaultMessage: 'Value is required',
   },
 });
@@ -79,9 +80,11 @@ interface Props {
   index: number;
   subscribedUsers: AnyUser[];
   sidebarRef: HTMLElement | null;
+  isLast?: boolean;
 }
 
-const newToken = {
+export const newToken = {
+  id: nanoid(),
   amount: undefined,
   tokenAddress: undefined,
 };
@@ -91,6 +94,7 @@ const Recipient = ({
   index,
   subscribedUsers,
   sidebarRef,
+  isLast,
 }: Props) => {
   const { setFieldValue } = useFormikContext();
   const { isExpanded, value: tokens } = recipient;
@@ -103,12 +107,17 @@ const Recipient = ({
   return (
     <div className={styles.container}>
       {isExpanded && (
-        <>
+        <div
+          className={classNames(
+            styles.formContainer,
+            !isLast && styles.marginBottom,
+          )}
+        >
           <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.singleUserContainer}>
               <UserPickerWithSearch
                 data={subscribedUsers}
-                label={MSG.defaultRecipientLabel}
+                label={MSG.recipientLabel}
                 name={`recipients[${index}].recipient`}
                 filter={filterUserSelection}
                 renderAvatar={supRenderAvatar}
@@ -124,21 +133,19 @@ const Recipient = ({
             render={(arrayHelpers) => (
               <FormSection appearance={{ border: 'bottom' }}>
                 {tokens?.map((token, idx) => (
-                  <div className={styles.valueContainer} key={idx}>
+                  <div className={styles.valueContainer} key={token.id}>
                     <div className={styles.inputContainer}>
-                      <InputLabel label={MSG.defaultValueLabel} />
+                      <InputLabel label={MSG.valueLabel} />
                       <Input
                         name={`recipients[${index}].value[${idx}].amount`}
                         appearance={{
                           theme: 'underlined',
                           size: 'small',
                         }}
-                        label={MSG.defaultValueLabel}
+                        label={MSG.valueLabel}
                         placeholder="Not set"
                         formattingOptions={{
                           numeral: true,
-                          // @ts-ignore
-                          tailPrefix: true,
                           numeralDecimalScale: 10,
                         }}
                         maxButtonParams={{
@@ -181,9 +188,11 @@ const Recipient = ({
                       {tokens.length === idx + 1 && (
                         <Button
                           type="button"
-                          onClick={() => arrayHelpers.push(newToken)}
+                          onClick={() =>
+                            arrayHelpers.push({ ...newToken, id: nanoid() })
+                          }
                           appearance={{ theme: 'blue' }}
-                          style={{ margin: '7px 0' }}
+                          style={{ margin: styles.buttonMargin }}
                         >
                           <FormattedMessage {...MSG.addTokenText} />
                         </Button>
@@ -197,7 +206,7 @@ const Recipient = ({
           <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.delayContainer}>
               <div className={styles.delay}>
-                <FormattedMessage {...MSG.defaultDelayLabel} />
+                <FormattedMessage {...MSG.delayLabel} />
                 <Tooltip
                   content={
                     <div className={styles.tooltip}>
@@ -258,7 +267,7 @@ const Recipient = ({
               <div className={styles.error}>{timeError}</div>
             )}
           </FormSection>
-        </>
+        </div>
       )}
     </div>
   );

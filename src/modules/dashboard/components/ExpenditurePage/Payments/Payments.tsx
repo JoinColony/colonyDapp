@@ -1,8 +1,10 @@
 import React, { useCallback } from 'react';
-
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FieldArray, useField } from 'formik';
 import { useParams } from 'react-router';
+import { nanoid } from 'nanoid';
+import classNames from 'classnames';
+
 import Button from '~core/Button';
 import Recipient from '../Recipient';
 
@@ -14,27 +16,32 @@ import {
   useColonyFromNameQuery,
   useMembersSubscription,
 } from '~data/generated';
+import { SpinnerLoader } from '~core/Preloaders';
 
 const MSG = defineMessages({
   payments: {
-    id: 'dashboard.Expenditures.Payments.defaultPayment',
+    id: 'dashboard.ExpenditurePage.Payments.payments',
     defaultMessage: 'Add payments',
   },
   recipient: {
-    id: 'dashboard.Expenditures.Payments.defaultRrecipient',
+    id: 'dashboard.ExpenditurePage.Payments.recipient',
     defaultMessage: 'Recipient',
   },
   addRecipientLabel: {
-    id: 'dashboard.Expenditures.Payments.addRecipientLabel',
+    id: 'dashboard.ExpenditurePage.Payments.addRecipientLabel',
     defaultMessage: 'Add recipient',
   },
   minusIconTitle: {
-    id: 'dashboard.Expenditures.Payments.minusIconTitle',
+    id: 'dashboard.ExpenditurePage.Payments.minusIconTitle',
     defaultMessage: 'Collapse a single recipient settings',
   },
   plusIconTitle: {
-    id: 'dashboard.Expenditures.Payments.plusIconTitle',
+    id: 'dashboard.ExpenditurePage.Payments.plusIconTitle',
     defaultMessage: 'Expand a single recipient settings',
+  },
+  deleteIconTitle: {
+    id: 'dashboard.ExpenditurePage.Payments.deleteIconTitle',
+    defaultMessage: 'Delete recipient',
   },
 });
 
@@ -53,7 +60,7 @@ const Payments = ({ sidebarRef }: Props) => {
   });
   const { colonyAddress } = colonyData || {};
 
-  const { data: colonyMembers } = useMembersSubscription({
+  const { data: colonyMembers, loading } = useMembersSubscription({
     variables: { colonyAddress: colonyAddress || '' },
   });
 
@@ -76,71 +83,78 @@ const Payments = ({ sidebarRef }: Props) => {
         <div className={styles.payments}>
           <FormattedMessage {...MSG.payments} />
         </div>
-        <FieldArray
-          name="recipients"
-          render={({ push, remove }) => (
-            <>
-              {recipients.map((recipient, index) => (
-                <div className={styles.singleRecipient} key={recipient.id}>
-                  <FormSection appearance={{ border: 'bottom' }}>
-                    <div className={styles.recipientLabel}>
-                      {recipient.isExpanded ? (
-                        <>
+        {loading ? (
+          <SpinnerLoader appearance={{ size: 'medium' }} />
+        ) : (
+          <FieldArray
+            name="recipients"
+            render={({ push, remove }) => (
+              <>
+                {recipients.map((recipient, index) => (
+                  <div className={styles.singleRecipient} key={recipient.id}>
+                    <FormSection>
+                      <div className={styles.recipientLabel}>
+                        {recipient.isExpanded ? (
+                          <>
+                            <Icon
+                              name="collapse"
+                              onClick={() => onToogleButtonClick(index)}
+                              className={styles.signWrapper}
+                              title={MSG.minusIconTitle}
+                            />
+                            <div
+                              className={classNames(styles.verticalDivider, {
+                                [styles.dividerInLastItem]:
+                                  index === recipients?.length - 1,
+                              })}
+                            />
+                          </>
+                        ) : (
                           <Icon
-                            name="minus"
+                            name="expand"
                             onClick={() => onToogleButtonClick(index)}
                             className={styles.signWrapper}
-                            title={MSG.minusIconTitle}
+                            title={MSG.plusIconTitle}
                           />
-                          <div className={styles.verticalDivider} />
-                        </>
-                      ) : (
-                        <Icon
-                          name="plus"
-                          onClick={() => onToogleButtonClick(index)}
-                          className={styles.signWrapper}
-                          title={MSG.plusIconTitle}
-                        />
-                      )}
-                      {index + 1}: <FormattedMessage {...MSG.recipient} />
-                      {recipients.length > 1 && (
-                        <Icon
-                          name="trash"
-                          className={styles.deleteIcon}
-                          onClick={() => remove(index)}
-                          title="Delete recipient"
-                        />
-                      )}
-                    </div>
-                  </FormSection>
-                  <Recipient
-                    {...{
-                      recipient,
-                      index,
-                      sidebarRef,
-                    }}
-                    subscribedUsers={colonyMembers?.subscribedUsers || []}
-                  />
-                </div>
-              ))}
-              <div className={styles.addRecipientWrapper}>
+                        )}
+                        {index + 1}: <FormattedMessage {...MSG.recipient} />
+                        {recipients.length > 1 && (
+                          <Icon
+                            name="trash"
+                            className={styles.deleteIcon}
+                            onClick={() => remove(index)}
+                            title={MSG.deleteIconTitle}
+                          />
+                        )}
+                      </div>
+                    </FormSection>
+                    <Recipient
+                      {...{
+                        recipient,
+                        index,
+                        sidebarRef,
+                      }}
+                      subscribedUsers={colonyMembers?.subscribedUsers || []}
+                      isLast={index === recipients?.length - 1}
+                    />
+                  </div>
+                ))}
                 <Button
-                  onClick={() => push(newRecipient)}
+                  onClick={() => push({ ...newRecipient, id: nanoid() })}
                   appearance={{ theme: 'blue' }}
                 >
                   <div className={styles.addRecipientLabel}>
                     <Icon
-                      name="circle-plus"
+                      name="plus-circle"
                       className={styles.circlePlusIcon}
-                      viewBox="0 0 16 16"
                     />
                     <FormattedMessage {...MSG.addRecipientLabel} />
                   </div>
                 </Button>
-              </div>
-            </>
-          )}
-        />
+              </>
+            )}
+          />
+        )}
       </div>
     </div>
   );

@@ -205,6 +205,48 @@ const Stages = ({ states, activeStateId }: Props) => {
           buttonIsActive
         />
       )}
+      {/* <div className={styles.statusContainer}>
+        <div className={styles.stagesText}>
+          <span className={styles.status}>
+            <FormattedMessage {...MSG.stages} />
+          </span>
+          {!activeState && (
+            <span className={styles.notSaved}>
+              <FormattedMessage {...MSG.notSaved} />
+            </span>
+          )}
+        </div>
+        <div className={styles.buttonsContainer}>
+          {!activeState ? (
+            <>
+             
+              <Icon name="trash" className={styles.icon} />
+              <Button onClick={handleSaveDraft} style={buttonStyles}>
+                <FormattedMessage {...MSG.submitDraft} />
+              </Button>
+            </>
+          ) : (
+            <>
+              <Icon name="share" className={styles.icon} />
+              <Button onClick={activeState?.buttonAction} style={buttonStyles}>
+                {typeof activeState?.buttonText === 'string' ? (
+                  activeState.buttonText
+                ) : (
+                  <FormattedMessage {...activeState.buttonText} />
+                )}
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
+      {states.map(({ id, label }, index) => (
+        <StageItem
+          key={id}
+          label={label}
+          isFirst={index === 0}
+          isActive={activeState ? index <= activeIndex : false}
+        />
+      )} */}
       <div className={styles.stagesContainer}>
         <div className={styles.statusContainer}>
           <div className={styles.stagesText}>
