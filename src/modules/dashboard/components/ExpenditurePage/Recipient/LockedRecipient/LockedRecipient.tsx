@@ -133,17 +133,19 @@ const LockedRecipient = ({ recipient, colony }: Props) => {
               </div>
             </div>
           </FormSection>
-          <FormSection appearance={{ border: 'bottom' }}>
-            <div className={styles.itemContainer}>
-              <div className={styles.delay}>
-                <FormattedMessage {...MSG.defaultDelayLabel} />
-              </div>
+          {delay?.amount && (
+            <FormSection appearance={{ border: 'bottom' }}>
+              <div className={styles.itemContainer}>
+                <div className={styles.delay}>
+                  <FormattedMessage {...MSG.defaultDelayLabel} />
+                </div>
 
-              <div className={styles.delayControlsContainer}>
-                <Delay amount={delay?.amount} time={delay?.time} />
+                <div className={styles.delayControlsContainer}>
+                  <Delay amount={delay?.amount} time={delay?.time} />
+                </div>
               </div>
-            </div>
-          </FormSection>
+            </FormSection>
+          )}
         </>
       )}
     </div>

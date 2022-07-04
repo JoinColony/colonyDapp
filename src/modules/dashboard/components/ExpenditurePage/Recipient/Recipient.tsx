@@ -1,6 +1,6 @@
 import { FieldArray, useFormikContext } from 'formik';
 import { nanoid } from 'nanoid';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
 
@@ -77,6 +77,10 @@ interface Props {
   colony: Colony;
 }
 
+export const setInitialTokenAddress = (nativeTokenAddress: string) => {
+  return nativeTokenAddress;
+};
+
 export const newToken = {
   id: nanoid(),
   amount: undefined,
@@ -95,6 +99,14 @@ const Recipient = ({
   const { isExpanded, value: tokens } = recipient;
   // const [, { error: tokenErrors }] = useField(`recipients[${index}].value`);
   const { tokens: colonyTokens } = colony || {};
+
+  const newTokenData = useMemo(() => {
+    return {
+      ...newToken,
+      id: nanoid(),
+      tokenAddress: colony.nativeTokenAddress,
+    };
+  }, [colony.nativeTokenAddress]);
 
   return (
     <div className={styles.container}>
@@ -127,7 +139,6 @@ const Recipient = ({
                 {tokens?.map((token, idx) => (
                   <div className={styles.valueContainer} key={token.id}>
                     <div className={styles.inputContainer}>
-                      {/* <InputLabel label={MSG.valueLabel} /> */}
                       <Input
                         name={`recipients[${index}].value[${idx}].amount`}
                         appearance={{
@@ -167,15 +178,14 @@ const Recipient = ({
                           // eslint-disable-next-line max-len
                           name={`recipients[${index}].value[${idx}].tokenAddress`}
                           appearance={{ alignOptions: 'right', theme: 'grey' }}
+                          elementOnly
                         />
                       </div>
                       {/* if last */}
                       {tokens.length === idx + 1 && (
                         <Button
                           type="button"
-                          onClick={() =>
-                            arrayHelpers.push({ ...newToken, id: nanoid() })
-                          }
+                          onClick={() => arrayHelpers.push(newTokenData)}
                           appearance={{ theme: 'blue' }}
                           style={{ margin: styles.buttonMargin }}
                         >

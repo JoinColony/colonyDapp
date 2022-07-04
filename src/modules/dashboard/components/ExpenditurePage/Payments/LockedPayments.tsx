@@ -162,10 +162,12 @@ const LockedPayments = ({ recipients, activeState, colony }: Props) => {
                     )}
                     {index + 1}: <UserMention username={recipientName} />
                     {', '}
-                    <Delay
-                      amount={recipient?.delay?.amount}
-                      time={recipient?.delay?.time}
-                    />
+                    {recipient?.delay?.amount && (
+                      <Delay
+                        amount={recipient?.delay?.amount}
+                        time={recipient?.delay?.time}
+                      />
+                    )}
                   </div>
                   {activeState?.id === Stage.Released &&
                     claimDate &&

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FieldArray, useField } from 'formik';
 import { nanoid } from 'nanoid';
@@ -55,6 +55,14 @@ const Payments = ({ sidebarRef, colony }: Props) => {
   const { data: colonyMembers, loading } = useMembersSubscription({
     variables: { colonyAddress: colonyAddress || '' },
   });
+
+  const newRecipientData = useMemo(() => {
+    return {
+      ...newRecipient,
+      id: nanoid(),
+      value: [{ amount: undefined, tokenAddress: colony.nativeTokenAddress }],
+    };
+  }, [colony.nativeTokenAddress]);
 
   const onToogleButtonClick = useCallback(
     (index) => {
@@ -133,7 +141,7 @@ const Payments = ({ sidebarRef, colony }: Props) => {
                   </div>
                 ))}
                 <Button
-                  onClick={() => push({ ...newRecipient, id: nanoid() })}
+                  onClick={() => push(newRecipientData)}
                   appearance={{ theme: 'blue' }}
                 >
                   <div className={styles.addRecipientLabel}>

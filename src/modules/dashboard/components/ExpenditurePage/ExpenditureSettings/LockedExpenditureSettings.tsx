@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import classNames from 'classnames';
 
 import { defineMessages } from 'react-intl';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { InputLabel, SelectHorizontal, FormSection, Form } from '~core/Fields';
 import Numeral from '~core/Numeral';
 
@@ -14,7 +15,7 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import UserMention from '~core/UserMention';
 import ColorTag, { Color } from '~core/ColorTag';
-import { AnyUser } from '~data/index';
+import { Colony } from '~data/index';
 
 const MSG = defineMessages({
   typeLabel: {
@@ -41,11 +42,19 @@ const MSG = defineMessages({
 
 interface Props {
   expenditure?: string;
-  team?: { label: string; value: string };
-  owner?: AnyUser['profile'];
+  filteredDomainId?: string;
+  walletAddress: string;
+  username: string;
+  colony?: Colony;
 }
 
-const LockedExpenditureSettings = ({ expenditure, owner }: Props) => {
+const LockedExpenditureSettings = ({
+  expenditure,
+  walletAddress,
+  username,
+  filteredDomainId,
+  colony,
+}: Props) => {
   const [activeToken, ...tokens] = tokensData;
 
   const renderBalanceActiveOption = useCallback(
@@ -99,6 +108,29 @@ const LockedExpenditureSettings = ({ expenditure, owner }: Props) => {
     [tokens],
   );
 
+  const domain = useMemo(
+    () =>
+      colony?.domains.find(
+        ({ ethDomainId }) => Number(filteredDomainId) === ethDomainId,
+      ),
+    [colony, filteredDomainId],
+  );
+
+  const getDomainColor = useCallback<(domainId: string | undefined) => Color>(
+    (domainId) => {
+      const rootDomainColor: Color = Color.LightPink;
+      const defaultColor: Color = Color.Yellow;
+      if (domainId === String(ROOT_DOMAIN_ID)) {
+        return rootDomainColor;
+      }
+      if (!colony || !domainId) {
+        return defaultColor;
+      }
+      return domain ? domain.color : defaultColor;
+    },
+    [colony, domain],
+  );
+
   return (
     <div className={styles.container}>
       <>
@@ -122,8 +154,8 @@ const LockedExpenditureSettings = ({ expenditure, owner }: Props) => {
               }}
             />
             <div className={styles.activeItem}>
-              <ColorTag color={Color.LightPink} />
-              <div className={styles.activeItemLabel}>Dev</div>
+              <ColorTag color={getDomainColor(filteredDomainId)} />
+              <div className={styles.activeItemLabel}>{domain?.name}</div>
             </div>
           </div>
         </FormSection>
@@ -152,13 +184,9 @@ const LockedExpenditureSettings = ({ expenditure, owner }: Props) => {
               }}
             />
             <div className={styles.userAvatarContainer}>
-              <UserAvatar
-                address={owner?.walletAddress || ''}
-                size="xs"
-                notSet={false}
-              />
+              <UserAvatar address={walletAddress} size="xs" notSet={false} />
               <div className={styles.userName}>
-                <UserMention username={owner?.username || ''} />
+                <UserMention username={username} />
               </div>
             </div>
           </div>

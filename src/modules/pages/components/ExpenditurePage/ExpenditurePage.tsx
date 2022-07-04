@@ -1,9 +1,10 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import * as yup from 'yup';
 import { defineMessages, MessageDescriptor } from 'react-intl';
 import { nanoid } from 'nanoid';
 
 import { RouteChildrenProps, useParams } from 'react-router';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { Form } from '~core/Fields';
 import Payments from '~dashboard/ExpenditurePage/Payments';
 import ExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings';
@@ -20,6 +21,8 @@ import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
 import { useColonyFromNameQuery } from '~data/generated';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
 import { setClaimDate } from './utils';
+import { SpinnerLoader } from '~core/Preloaders';
+import { useLoggedInUser } from '~data/helpers';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -76,16 +79,16 @@ const MSG = defineMessages({
 
 const initialValues = {
   expenditure: 'advanced',
-  filteredDomainId: undefined,
+  filteredDomainId: String(ROOT_DOMAIN_ID),
   owner: undefined,
   title: undefined,
   description: undefined,
-  recipients: [{ ...newRecipient, id: nanoid() }],
+  recipients: [newRecipient],
 };
 
 export interface ValuesType {
   expenditure: string;
-  filteredDomainId: { label: string; value: string };
+  filteredDomainId: string;
   owner: string;
   recipients: Recipient[];
   title: string;
@@ -111,7 +114,7 @@ const validationSchema = yup.object().shape({
       value: yup
         .array(
           yup.object().shape({
-            amount: yup.number().required('Value is required'),
+            amount: yup.number().required(() => MSG.valueError),
           }),
         )
         .min(1),
@@ -135,15 +138,37 @@ const ExpenditurePage = ({ match }: Props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isEditable, setIsEditable] = useState(true);
 
-  const { data: colonyData } = useColonyFromNameQuery({
+  const { data: colonyData, loading } = useColonyFromNameQuery({
     variables: { name: colonyName, address: '' },
   });
+  const loggedInUser = useLoggedInUser();
 
   const [isFormEditable, setFormEditable] = useState(true);
   const [formValues, setFormValues] = useState<ValuesType>();
   const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStateId, setActiveStateId] = useState<string>();
   const sidebarRef = useRef<HTMLElement>(null);
+
+  const initialValuesData = useMemo(() => {
+    return (
+      formValues || {
+        ...initialValues,
+        owner: loggedInUser,
+        recipients: [
+          {
+            ...newRecipient,
+            id: nanoid(),
+            value: [
+              {
+                amount: undefined,
+                tokenAddress: colonyData?.processedColony?.nativeTokenAddress,
+              },
+            ],
+          },
+        ],
+      }
+    );
+  }, [colonyData, formValues, loggedInUser]);
 
   const handleSubmit = useCallback((values) => {
     setShouldValidate(true);
@@ -227,7 +252,7 @@ const ExpenditurePage = ({ match }: Props) => {
   ];
   const activeState = states.find((state) => state.id === activeStateId);
 
-  const { owner, expenditure, filteredDomainId } = formValues || {};
+  const { expenditure, filteredDomainId } = formValues || {};
 
   const handleValidate = useCallback(() => {
     if (!shouldValidate) {
@@ -237,21 +262,32 @@ const ExpenditurePage = ({ match }: Props) => {
 
   return isFormEditable ? (
     <Form
-      initialValues={formValues || initialValues}
+      initialValues={initialValuesData}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
       validateOnBlur={shouldValidate}
       validateOnChange={shouldValidate}
       validate={handleValidate}
+      enableReinitialize
     >
       <div className={getMainClasses({}, styles)}>
         <aside className={styles.sidebar} ref={sidebarRef}>
-          <ExpenditureSettings />
-          {colonyData && (
-            <Payments
-              sidebarRef={sidebarRef.current}
-              colony={colonyData.processedColony}
-            />
+          {loading ? (
+            <SpinnerLoader appearance={{ size: 'medium' }} />
+          ) : (
+            colonyData && (
+              <>
+                <ExpenditureSettings
+                  colony={colonyData.processedColony}
+                  username={loggedInUser.username || ''}
+                  walletAddress={loggedInUser.walletAddress}
+                />
+                <Payments
+                  sidebarRef={sidebarRef.current}
+                  colony={colonyData.processedColony}
+                />
+              </>
+            )
           )}
         </aside>
         <div className={styles.mainContainer}>
@@ -274,8 +310,10 @@ const ExpenditurePage = ({ match }: Props) => {
     <div className={getMainClasses({}, styles)}>
       <aside className={styles.sidebar} ref={sidebarRef}>
         <LockedExpenditureSettings
-          {...{ expenditure, team: filteredDomainId }}
-          owner={owner as any}
+          {...{ expenditure, filteredDomainId }}
+          username={loggedInUser?.username || ''}
+          walletAddress={loggedInUser?.walletAddress}
+          colony={colonyData?.processedColony}
         />
         <LockedPayments
           recipients={formValues?.recipients}
