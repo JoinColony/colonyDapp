@@ -1,5 +1,5 @@
 import { useFormikContext } from 'formik';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
 
@@ -19,6 +19,10 @@ import {
   ValuesType,
 } from '~pages/ExpenditurePage/ExpenditurePage';
 import ClaimFunds from './ClaimFunds';
+import { Recipient as RecipientType } from '../Payments/types';
+import { getRecipientTokens } from '../utils';
+import { Colony } from '~data/index';
+import { useCalculateTokens } from '../hooks';
 
 const MSG = defineMessages({
   stages: {
@@ -65,14 +69,31 @@ interface Props {
   states: State[];
   handleSubmit: (values: InitialValuesType) => void;
   activeStateId?: string;
+  recipients?: RecipientType[];
+  colony?: Colony;
 }
 
-const Stages = ({ states, activeStateId }: Props) => {
+const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
   const { values, resetForm, handleSubmit, validateForm } =
     useFormikContext<ValuesType>() || {};
 
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
   const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
+
+  const recipientsWithTokens = useMemo(() => {
+    return recipients?.map((recipient) => {
+      const token = getRecipientTokens(recipient, colony);
+      return { ...recipient, value: token };
+    });
+  }, [colony, recipients]);
+
+  const {
+    claimableNow,
+    claimed,
+    totalClaimable,
+    nextClaim,
+    buttonIsActive,
+  } = useCalculateTokens(recipientsWithTokens as any);
 
   const handleSaveDraft = useCallback(async () => {
     const errors = await validateForm(values);
@@ -201,52 +222,13 @@ const Stages = ({ states, activeStateId }: Props) => {
         <ClaimFunds
           buttonAction={activeState?.buttonAction}
           buttonText={activeState?.buttonText}
-          // temporary value
-          buttonIsActive
+          buttonIsActive={buttonIsActive}
+          claimableNow={claimableNow}
+          claimed={claimed}
+          totalClaimable={totalClaimable}
+          claimDate={nextClaim}
         />
       )}
-      {/* <div className={styles.statusContainer}>
-        <div className={styles.stagesText}>
-          <span className={styles.status}>
-            <FormattedMessage {...MSG.stages} />
-          </span>
-          {!activeState && (
-            <span className={styles.notSaved}>
-              <FormattedMessage {...MSG.notSaved} />
-            </span>
-          )}
-        </div>
-        <div className={styles.buttonsContainer}>
-          {!activeState ? (
-            <>
-             
-              <Icon name="trash" className={styles.icon} />
-              <Button onClick={handleSaveDraft} style={buttonStyles}>
-                <FormattedMessage {...MSG.submitDraft} />
-              </Button>
-            </>
-          ) : (
-            <>
-              <Icon name="share" className={styles.icon} />
-              <Button onClick={activeState?.buttonAction} style={buttonStyles}>
-                {typeof activeState?.buttonText === 'string' ? (
-                  activeState.buttonText
-                ) : (
-                  <FormattedMessage {...activeState.buttonText} />
-                )}
-              </Button>
-            </>
-          )}
-        </div>
-      </div>
-      {states.map(({ id, label }, index) => (
-        <StageItem
-          key={id}
-          label={label}
-          isFirst={index === 0}
-          isActive={activeState ? index <= activeIndex : false}
-        />
-      )} */}
       <div className={styles.stagesContainer}>
         <div className={styles.statusContainer}>
           <div className={styles.stagesText}>
@@ -352,7 +334,7 @@ const Stages = ({ states, activeStateId }: Props) => {
             isActive={activeState ? index <= activeIndex : false}
           />
         ))}
-        <LinkedMotions status="passed" />
+        {activeStateId === Stage.Funded && <LinkedMotions status="passed" />}
       </div>
     </div>
   );

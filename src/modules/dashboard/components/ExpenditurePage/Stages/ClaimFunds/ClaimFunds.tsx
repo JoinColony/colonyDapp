@@ -5,6 +5,7 @@ import {
   MessageDescriptor,
 } from 'react-intl';
 import classNames from 'classnames';
+import { nanoid } from 'nanoid';
 
 import { FormSection } from '~core/Fields';
 import Tag from '~core/Tag';
@@ -38,22 +39,27 @@ const MSG = defineMessages({
   },
 });
 
+export type Token = Record<string, number>;
+
 interface Props {
   buttonAction?: () => void;
   buttonText?: string | MessageDescriptor;
   buttonIsActive: boolean;
+  claimDate?: number;
+  totalClaimable?: Token;
+  claimableNow?: Token;
+  claimed: Token;
 }
 
-const ClaimFunds = ({ buttonAction, buttonText, buttonIsActive }: Props) => {
-  // tempprary mock values, should be fetched from the backend
-  const claimDate = new Date(2022, 5, 24);
-  const totalClaimable = [
-    { amount: 500, symbol: 'xDAI', decimals: 0 },
-    { amount: 50000, symbol: 'CLNY', decimals: 0 },
-  ];
-  const claimableNow = [{ amount: 50, symbol: 'xDAI', decimals: 0 }];
-  const claimed = [{ amount: 5000, symbol: 'CLNY', decimals: 0 }];
-
+const ClaimFunds = ({
+  buttonAction,
+  buttonText,
+  buttonIsActive,
+  claimDate,
+  totalClaimable,
+  claimableNow,
+  claimed,
+}: Props) => {
   return (
     <div className={styles.container}>
       <FormSection appearance={{ border: 'bottom' }}>
@@ -69,65 +75,75 @@ const ClaimFunds = ({ buttonAction, buttonText, buttonIsActive }: Props) => {
               }}
             >
               <FormattedMessage {...MSG.claim} />{' '}
-              <TimeRelativeShort value={new Date(claimDate)} />
+              {claimDate ? (
+                <TimeRelativeShort value={new Date(claimDate)} />
+              ) : (
+                <div>Nothing to claim</div>
+              )}
             </Tag>
           </div>
         </div>
       </FormSection>
-      <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.row}>
-          <span className={styles.label}>
-            <FormattedMessage {...MSG.totalClaimable} />
-          </span>
-          <div className={styles.valueContainer}>
-            {totalClaimable.map(({ decimals, amount, symbol }) => (
-              <div className={styles.value}>
-                <Numeral
-                  unit={getTokenDecimalsWithFallback(decimals)}
-                  value={amount}
-                />{' '}
-                {symbol}
-              </div>
-            ))}
+      {totalClaimable && (
+        <FormSection appearance={{ border: 'bottom' }}>
+          <div className={styles.row}>
+            <span className={styles.label}>
+              <FormattedMessage {...MSG.totalClaimable} />
+            </span>
+            <div className={styles.valueContainer}>
+              {Object.entries(totalClaimable)?.map(([amount, symbol]) => (
+                <div className={styles.value} key={nanoid()}>
+                  <Numeral
+                    unit={getTokenDecimalsWithFallback(0)}
+                    value={amount || ''}
+                  />{' '}
+                  {symbol}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </FormSection>
-      <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.row}>
-          <span className={styles.label}>
-            <FormattedMessage {...MSG.claimableNow} />
-          </span>
-          <div className={styles.valueContainer}>
-            {claimableNow.map(({ amount, symbol, decimals }) => (
-              <div className={styles.value}>
-                <Numeral
-                  unit={getTokenDecimalsWithFallback(decimals)}
-                  value={amount}
-                />{' '}
-                {symbol}
-              </div>
-            ))}
+        </FormSection>
+      )}
+      {claimableNow && (
+        <FormSection appearance={{ border: 'bottom' }}>
+          <div className={styles.row}>
+            <span className={styles.label}>
+              <FormattedMessage {...MSG.claimableNow} />
+            </span>
+            <div className={styles.valueContainer}>
+              {Object.entries(claimableNow)?.map(([amount, symbol]) => (
+                <div className={styles.value} key={nanoid()}>
+                  <Numeral
+                    unit={getTokenDecimalsWithFallback(0)}
+                    value={amount || ''}
+                  />{' '}
+                  {symbol}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </FormSection>
-      <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.row}>
-          <span className={styles.label}>
-            <FormattedMessage {...MSG.claimed} />
-          </span>
-          <div className={styles.valueContainer}>
-            {claimed.map(({ amount, symbol, decimals }) => (
-              <div className={styles.value}>
-                <Numeral
-                  unit={getTokenDecimalsWithFallback(decimals)}
-                  value={amount}
-                />{' '}
-                {symbol}
-              </div>
-            ))}
+        </FormSection>
+      )}
+      {claimed && (
+        <FormSection appearance={{ border: 'bottom' }}>
+          <div className={styles.row}>
+            <span className={styles.label}>
+              <FormattedMessage {...MSG.claimed} />
+            </span>
+            <div className={styles.valueContainer}>
+              {Object.entries(claimed).map(([amount, symbol]) => (
+                <div className={styles.value} key={nanoid()}>
+                  <Numeral
+                    unit={getTokenDecimalsWithFallback(0)}
+                    value={amount || ''}
+                  />{' '}
+                  {symbol}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </FormSection>
+        </FormSection>
+      )}
       <div className={styles.buttonWrapper}>
         <Button
           onClick={buttonAction}

@@ -53,7 +53,6 @@ export const recipients = [
 ];
 
 export const mockFormValues = {
-  description: undefined,
   expenditure: 'advanced',
   filteredDomainId: '1',
   owner: {
@@ -67,15 +66,16 @@ export const mockFormValues = {
     {
       delay: {
         amount: '2',
-        time: 'hours',
+        time: 'days',
       },
       isExpanded: true,
       recipient: {
         id: 'filterValue',
-        profile: { displayName: 'asdf', walletAddress: 'asdf' },
+        profile: { displayName: 'John Doe', walletAddress: 'asdf' },
       },
       value: [{ amount: '0', tokenAddress: '0' }],
     },
   ],
-  title: 'asdf',
+  title: 'Update to issue#45',
+  description: 'Find more here: https://github.com/colony-lib/issue-45',
 };

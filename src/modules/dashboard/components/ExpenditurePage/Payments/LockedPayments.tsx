@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 
 import { defineMessages, FormattedMessage } from 'react-intl';
+import classNames from 'classnames';
 import { Recipient as RecipientType } from './types';
 
 import styles from './Payments.css';
@@ -14,6 +15,7 @@ import TimeRelativeShort from '../TimeRelativeShort/TimeRelativeShort';
 import Button from '~core/Button';
 import Delay from '../Delay';
 import { State } from '~pages/ExpenditurePage/ExpenditurePage';
+import { Colony } from '~data/index';
 
 const MSG = defineMessages({
   payments: {
@@ -50,18 +52,13 @@ const MSG = defineMessages({
   },
 });
 
-type ExtendedRecipient = RecipientType & {
-  claimDate: number;
-  isClaimable: boolean;
-};
-
 interface Props {
-  recipients?: ExtendedRecipient[];
-  editForm?: () => void;
+  recipients?: RecipientType[];
   activeState?: State;
+  colony?: Colony;
 }
 
-const LockedPayments = ({ recipients, editForm, activeState }: Props) => {
+const LockedPayments = ({ recipients, activeState, colony }: Props) => {
   const [expandedRecipients, setExpandedRecipients] = useState<
     number[] | undefined
   >(recipients?.map((_, idx) => idx));
@@ -78,8 +75,8 @@ const LockedPayments = ({ recipients, editForm, activeState }: Props) => {
   }, []);
 
   const renderTag = useCallback(
-    (isClaimable: boolean, claimDate: number) => {
-      const hasPassed = claimDate < new Date().getTime();
+    (claimDate: number, claimed?: boolean) => {
+      const isClaimable = claimDate < new Date().getTime();
 
       if (isClaimable) {
         return (
@@ -91,7 +88,7 @@ const LockedPayments = ({ recipients, editForm, activeState }: Props) => {
           </Button>
         );
       }
-      if (hasPassed) {
+      if (claimed) {
         return (
           <div className={styles.tagWrapper}>
             <Tag
@@ -126,16 +123,14 @@ const LockedPayments = ({ recipients, editForm, activeState }: Props) => {
       <div className={styles.recipientContainer}>
         <div className={styles.payments}>
           <FormattedMessage {...MSG.payments} />
-          <Icon
-            name="edit"
-            className={styles.editIcon}
-            title="Edit expenditure"
-            onClick={editForm}
-          />
         </div>
-        {recipients?.map(({ isClaimable, claimDate, ...recipient }, index) => {
+        {recipients?.map(({ claimed, claimDate, ...recipient }, index) => {
           const isOpen =
             expandedRecipients?.find((idx) => idx === index) !== undefined;
+          const recipientName =
+            recipient.recipient.profile.displayName ||
+            recipient.recipient.profile.username ||
+            '';
 
           return (
             <div className={styles.singleRecipient} key={recipient.id}>
@@ -145,25 +140,27 @@ const LockedPayments = ({ recipients, editForm, activeState }: Props) => {
                     {isOpen ? (
                       <>
                         <Icon
-                          name="minus"
+                          name="collapse"
                           onClick={() => onToggleButtonClick(index)}
                           className={styles.signWrapper}
                           title={MSG.minusIconTitle}
                         />
-                        <div className={styles.verticalDivider} />
+                        <div
+                          className={classNames(styles.verticalDivider, {
+                            [styles.dividerInLastItem]:
+                              index === recipients?.length - 1,
+                          })}
+                        />
                       </>
                     ) : (
                       <Icon
-                        name="plus"
+                        name="expand"
                         onClick={() => onToggleButtonClick(index)}
                         className={styles.signWrapper}
                         title={MSG.plusIconTitle}
                       />
                     )}
-                    {index + 1}:{' '}
-                    <UserMention
-                      username={recipient.recipient.username || ''}
-                    />
+                    {index + 1}: <UserMention username={recipientName} />
                     {', '}
                     <Delay
                       amount={recipient?.delay?.amount}
@@ -171,15 +168,19 @@ const LockedPayments = ({ recipients, editForm, activeState }: Props) => {
                     />
                   </div>
                   {activeState?.id === Stage.Released &&
-                    renderTag(isClaimable, claimDate)}
+                    claimDate &&
+                    renderTag(claimDate, claimed)}
                 </div>
               </FormSection>
-              <LockedRecipient
-                recipient={{
-                  ...recipient,
-                  isExpanded: isOpen,
-                }}
-              />
+              {colony && (
+                <LockedRecipient
+                  recipient={{
+                    ...recipient,
+                    isExpanded: isOpen,
+                  }}
+                  colony={colony}
+                />
+              )}
             </div>
           );
         })}

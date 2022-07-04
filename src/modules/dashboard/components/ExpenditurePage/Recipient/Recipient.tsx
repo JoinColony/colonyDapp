@@ -18,10 +18,9 @@ import { Tooltip } from '~core/Popover';
 import { filterUserSelection } from '~core/SingleUserPicker';
 import UserAvatar from '~core/UserAvatar';
 import UserPickerWithSearch from '~core/UserPickerWithSearch';
-import { AnyUser } from '~data/index';
+import { AnyUser, Colony } from '~data/index';
 import { Address } from '~types/index';
 import { Recipient as RecipientType } from '../Payments/types';
-import { tokensData } from './constants';
 
 import styles from './Recipient.css';
 
@@ -81,6 +80,7 @@ interface Props {
   subscribedUsers: AnyUser[];
   sidebarRef: HTMLElement | null;
   isLast?: boolean;
+  colony: Colony;
 }
 
 export const newToken = {
@@ -95,6 +95,7 @@ const Recipient = ({
   subscribedUsers,
   sidebarRef,
   isLast,
+  colony,
 }: Props) => {
   const { setFieldValue } = useFormikContext();
   const { isExpanded, value: tokens } = recipient;
@@ -103,6 +104,7 @@ const Recipient = ({
     `recipients[${index}].delay.amount`,
   );
   const [, { error: timeError }] = useField(`recipients[${index}].delay.time`);
+  const { tokens: colonyTokens } = colony || {};
 
   return (
     <div className={styles.container}>
@@ -172,7 +174,7 @@ const Recipient = ({
                       <div>
                         <TokenSymbolSelector
                           label=""
-                          tokens={tokensData}
+                          tokens={colonyTokens}
                           // eslint-disable-next-line max-len
                           name={`recipients[${index}].value[${idx}].tokenAddress`}
                           appearance={{ alignOptions: 'right', theme: 'grey' }}
