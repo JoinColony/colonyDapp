@@ -68,7 +68,8 @@ const AvatarDropdown = ({
   const popoverContent = isMobile
     ? () =>
         username &&
-        walletAddress && (
+        walletAddress &&
+        colony && (
           <AvatarDropdownPopoverMobile
             {...{
               walletAddress,
