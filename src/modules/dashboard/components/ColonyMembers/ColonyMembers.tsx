@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
@@ -88,6 +88,13 @@ const ColonyMembers = () => {
     parseInt(domainId, 10) || COLONY_TOTAL_BALANCE_DOMAIN_ID,
   );
 
+  const isRootDomain = useMemo(
+    () =>
+      selectedDomainId === ROOT_DOMAIN_ID ||
+      selectedDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID,
+    [selectedDomainId],
+  );
+
   const { data: totalReputation } = useUserReputationQuery({
     variables: {
       address: AddressZero,
@@ -152,20 +159,19 @@ const ColonyMembers = () => {
             </p>
           </div>
           <ul className={styles.controls}>
-            <li>
-              <InviteLinkButton
-                colonyName={colonyName}
-                buttonAppearance={{ theme: 'blue' }}
-              />
-            </li>
+            {isRootDomain && (
+              <li>
+                <InviteLinkButton
+                  colonyName={colonyName}
+                  buttonAppearance={{ theme: 'blue' }}
+                />
+              </li>
+            )}
             <MemberControls colony={colonyData?.processedColony} />
           </ul>
           <MembersFilter
             handleFiltersCallback={setFilters}
-            isRoot={
-              selectedDomainId === ROOT_DOMAIN_ID ||
-              selectedDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID
-            }
+            isRoot={isRootDomain}
           />
         </aside>
       </div>
