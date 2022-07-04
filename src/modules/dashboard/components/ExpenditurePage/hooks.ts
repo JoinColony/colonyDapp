@@ -71,7 +71,7 @@ export const useCalculateTokens = (recipients?: Recipient[]) => {
   );
 
   const claimed = calculateTokens(
-    recipients?.filter((recipient) => !recipient.claimed, {}) as any,
+    recipients?.filter((recipient) => recipient.claimed, {}) as any,
     pattern,
   );
 
