@@ -1,0 +1,7 @@
+.head {
+  composes: head from '../Default/Default.css';
+}
+
+.coloniesList {
+  composes: coloniesList from '../Default/Default.css';
+}

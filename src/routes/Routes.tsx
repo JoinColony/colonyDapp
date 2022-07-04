@@ -53,6 +53,7 @@ import AlwaysAccesibleRoute from './AlwaysAccesibleRoute';
 import WalletRequiredRoute from './WalletRequiredRoute';
 import { useTitle } from '~utils/hooks/useTitle';
 import { query700 as query } from '~styles/queries.css';
+import UserLayout from '~pages/RouteLayouts/UserLayout/UserLayout';
 
 const MSG = defineMessages({
   userProfileEditBack: {
@@ -188,9 +189,10 @@ const Routes = () => {
         <AlwaysAccesibleRoute
           path={USER_ROUTE}
           component={UserProfile}
-          layout={SimpleNav}
+          layout={UserLayout}
           routeProps={{
             hasBackLink: false,
+            hasSubscribedColonies: isMobile,
           }}
         />
         <AlwaysAccesibleRoute
