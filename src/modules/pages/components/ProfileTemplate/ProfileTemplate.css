@@ -1,5 +1,6 @@
 @value paddingHorizontal: 60px;
 @value sidebarWidth: 340px;
+@value query700 from '~styles/queries.css';
 
 .main {
   display: flex;
@@ -41,5 +42,38 @@
   & .mainContainer {
     border-left: 2px solid var(--grey-blue-0);
     background-color: transparent;
+  }
+}
+
+@media screen and query700 {
+  .main {
+    flex-direction: column;
+  }
+
+  .mainContainer {
+    background-color: transparent;
+  }
+
+  .sidebar {
+    justify-content: center;
+    padding: 40px 0;
+    height: auto;
+    width: 100%;
+  }
+
+  .sidebar > div > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .mainContent {
+    padding: 40px 30px;
+  }
+
+  .mainContent div:nth-child(2) {
+    justify-content: space-around;
+    row-gap: 10px;
   }
 }
