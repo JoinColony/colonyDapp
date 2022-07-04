@@ -20,6 +20,8 @@
   composes: themeDanger from '~core/Button/Button.css';
   height: 44px;
   width: 160px;
+  border-color: var(--pink);
+  background-color: var(--pink);
   font-size: var(--size-normal);
   line-height: 18px;
 }

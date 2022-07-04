@@ -236,7 +236,7 @@ const Stages = () => {
                 >
                   <Tooltip
                     placement="top-start"
-                    content={<FormattedMessage {...MSG.deleteDraft} />}
+                    content={<FormattedMessage {...MSG.tooltipDeleteText} />}
                   >
                     <div className={styles.iconWrapper}>
                       <Icon

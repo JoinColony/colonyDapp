@@ -58,6 +58,10 @@
   background-color: transparent;
 }
 
+.iconButton i {
+  display: flex;
+}
+
 .iconButton:hover {
   cursor: pointer;
 }
@@ -72,14 +76,14 @@
 
 .iconWrapper:hover {
   &::after {
-    height: 28px;
-    width: 28px;
+    height: 30px;
+    width: 30px;
     position: absolute;
     top: 0;
     left: 0;
     border-radius: 50%;
     background-color: var(--action-secondary);
-    transform: translate(-5px, -5px);
+    transform: translate(-6px, -6px);
     content: '';
     opacity: 0.1;
   }
