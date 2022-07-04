@@ -1,17 +1,11 @@
-import { FieldArray, useField, useFormikContext } from 'formik';
+import { FieldArray, useFormikContext } from 'formik';
 import { nanoid } from 'nanoid';
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
 
 import Button from '~core/Button';
-import {
-  FormSection,
-  Input,
-  InputLabel,
-  Select,
-  TokenSymbolSelector,
-} from '~core/Fields';
+import { FormSection, Input, Select, TokenSymbolSelector } from '~core/Fields';
 import Icon from '~core/Icon';
 import { ItemDataType } from '~core/OmniPicker';
 import { Tooltip } from '~core/Popover';
@@ -99,11 +93,7 @@ const Recipient = ({
 }: Props) => {
   const { setFieldValue } = useFormikContext();
   const { isExpanded, value: tokens } = recipient;
-  const [, { error: tokenErrors }] = useField(`recipients[${index}].value`);
-  const [, { error: amountError }] = useField(
-    `recipients[${index}].delay.amount`,
-  );
-  const [, { error: timeError }] = useField(`recipients[${index}].delay.time`);
+  // const [, { error: tokenErrors }] = useField(`recipients[${index}].value`);
   const { tokens: colonyTokens } = colony || {};
 
   return (
@@ -137,7 +127,7 @@ const Recipient = ({
                 {tokens?.map((token, idx) => (
                   <div className={styles.valueContainer} key={token.id}>
                     <div className={styles.inputContainer}>
-                      <InputLabel label={MSG.valueLabel} />
+                      {/* <InputLabel label={MSG.valueLabel} /> */}
                       <Input
                         name={`recipients[${index}].value[${idx}].amount`}
                         appearance={{
@@ -156,7 +146,6 @@ const Recipient = ({
                           maxAmount: '0',
                           fieldName: `recipients[${index}].value[${idx}].amount`,
                         }}
-                        elementOnly
                       />
                     </div>
                     <div className={styles.tokenWrapper}>
@@ -178,14 +167,8 @@ const Recipient = ({
                           // eslint-disable-next-line max-len
                           name={`recipients[${index}].value[${idx}].tokenAddress`}
                           appearance={{ alignOptions: 'right', theme: 'grey' }}
-                          elementOnly
                         />
                       </div>
-                      {tokenErrors?.[idx] && (
-                        <div className={styles.error}>
-                          <FormattedMessage {...MSG.valueError} />
-                        </div>
-                      )}
                       {/* if last */}
                       {tokens.length === idx + 1 && (
                         <Button
@@ -265,9 +248,6 @@ const Recipient = ({
                 />
               </div>
             </div>
-            {(amountError || timeError) && (
-              <div className={styles.error}>{timeError}</div>
-            )}
           </FormSection>
         </div>
       )}

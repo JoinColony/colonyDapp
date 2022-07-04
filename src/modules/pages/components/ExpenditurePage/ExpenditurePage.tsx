@@ -1,10 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 import * as yup from 'yup';
-import {
-  defineMessages,
-  FormattedMessage,
-  MessageDescriptor,
-} from 'react-intl';
+import { defineMessages, MessageDescriptor } from 'react-intl';
 import { nanoid } from 'nanoid';
 
 import { RouteChildrenProps, useParams } from 'react-router';
@@ -72,13 +68,9 @@ const MSG = defineMessages({
     id: 'dashboard.Expenditures.Stages.completed',
     defaultMessage: 'Completed',
   },
-  userRequiredError: {
-    id: 'dashboard.Expenditures.ExpenditurePage.userRequiredError',
-    defaultMessage: 'User is required',
-  },
-  delayRequiredError: {
-    id: 'dashboard.Expenditures.ExpenditurePage.delayRequiredError',
-    defaultMessage: 'Delay is required',
+  valueError: {
+    id: 'dashboard.Expenditures.Stages.completed',
+    defaultMessage: 'Value is required',
   },
 });
 
@@ -112,29 +104,17 @@ export type InitialValuesType = typeof initialValues;
 
 const validationSchema = yup.object().shape({
   expenditure: yup.string().required(),
-  filteredDomainId: yup.string().required('Team is required'),
+  filteredDomainId: yup.string().required(),
   recipients: yup.array(
     yup.object().shape({
-      recipient: yup
-        .object()
-        .required(() => <FormattedMessage {...MSG.userRequiredError} />),
+      recipient: yup.object().required(),
       value: yup
         .array(
           yup.object().shape({
-            amount: yup.number().required(),
-            tokenAddress: yup.string().required(),
+            amount: yup.number().required('Value is required'),
           }),
         )
         .min(1),
-      delay: yup
-        .object()
-        .shape({
-          amount: yup.string().required(),
-          time: yup
-            .string()
-            .required(() => <FormattedMessage {...MSG.delayRequiredError} />),
-        })
-        .required(),
     }),
   ),
   title: yup.string().required(),

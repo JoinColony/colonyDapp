@@ -52,6 +52,10 @@
   composes: icon;
 }
 
+.errorIcon {
+  stroke: var(--danger);
+}
+
 .baseInput {
   height: 28px;
   max-width: 332px;
