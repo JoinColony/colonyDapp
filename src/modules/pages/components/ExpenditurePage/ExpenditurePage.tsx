@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import * as yup from 'yup';
 import {
   defineMessages,
@@ -7,9 +7,10 @@ import {
 } from 'react-intl';
 import { nanoid } from 'nanoid';
 
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { RouteChildrenProps, useParams } from 'react-router';
 import { Form } from '~core/Fields';
 import Payments from '~dashboard/ExpenditurePage/Payments';
-import ExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings';
 import Stages from '~dashboard/ExpenditurePage/Stages';
 import TitleDescriptionSection, {
   LockedTitleDescriptionSection,
@@ -19,67 +20,75 @@ import styles from './ExpenditurePage.css';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
 import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
+import { useColonyFromNameQuery } from '~data/generated';
+import { useLoggedInUser } from '~data/helpers';
+import { SpinnerLoader } from '~core/Preloaders';
+import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
+import { ExpenditureSettings } from '~dashboard/ExpenditurePage';
 import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
-import { LoggedInUser } from '~data/generated';
 
 const displayName = 'pages.ExpenditurePage';
 
 const MSG = defineMessages({
   lockValues: {
-    id: 'dashboard.Expenditures.Stages.lockValues',
+    id: 'dashboard.ExpenditurePage.lockValues',
     defaultMessage: 'Lock values',
   },
   escrowFunds: {
-    id: 'dashboard.Expenditures.Stages.escrowFunds',
+    id: 'dashboard.ExpenditurePage.escrowFunds',
     defaultMessage: 'Escrow funds',
   },
   releaseFunds: {
-    id: 'dashboard.Expenditures.Stages.releaseFunds',
+    id: 'dashboard.ExpenditurePage.releaseFunds',
     defaultMessage: 'Release funds',
   },
   claim: {
-    id: 'dashboard.Expenditures.Stages.claim',
+    id: 'dashboard.ExpenditurePage.claim',
     defaultMessage: 'Claim',
   },
   draft: {
-    id: 'dashboard.Expenditures.Stages.draft',
+    id: 'dashboard.ExpenditurePage.draft',
     defaultMessage: 'Draft',
   },
   locked: {
-    id: 'dashboard.Expenditures.Stages.locked',
+    id: 'dashboard.ExpenditurePage.locked',
     defaultMessage: 'Locked',
   },
   funded: {
-    id: 'dashboard.Expenditures.Stages.funded',
+    id: 'dashboard.ExpenditurePage.funded',
     defaultMessage: 'Funded',
   },
   released: {
-    id: 'dashboard.Expenditures.Stages.released',
+    id: 'dashboard.ExpenditurePage.released',
     defaultMessage: 'Released',
   },
   claimed: {
-    id: 'dashboard.Expenditures.Stages.claimed',
+    id: 'dashboard.ExpenditurePage.claimed',
     defaultMessage: 'Claimed',
   },
   tooltipLockValuesText: {
-    id: 'dashboard.Expenditures.Stages.tooltipLockValuesText',
+    id: 'dashboard.ExpenditurePage.tooltipLockValuesText',
     defaultMessage: `This will lock the values of the expenditure. To change values after locking will require the right permissions or a motion.`,
   },
   completed: {
-    id: 'dashboard.Expenditures.Stages.completed',
+    id: 'dashboard.ExpenditurePage.completed',
     defaultMessage: 'Completed',
   },
   userRequiredError: {
-    id: 'dashboard.Expenditures.ExpenditurePage.userRequiredError',
+    id: 'dashboard.ExpenditurePage.userRequiredError',
     defaultMessage: 'User is required',
   },
-  delayRequiredError: {
-    id: 'dashboard.Expenditures.ExpenditurePage.delayRequiredError',
-    defaultMessage: 'Delay is required',
-  },
   teamRequiredError: {
-    id: 'dashboard.Expenditures.ExpenditurePage.teamRequiredError',
+    id: 'dashboard.ExpenditurePage.teamRequiredError',
     defaultMessage: 'Team is required',
+  },
+  valueError: {
+    id: 'dashboard.ExpenditurePage.completed',
+    defaultMessage: 'Value is required',
+  },
+  amountZeroError: {
+    id: 'dashboard.ExpenditurePage.amountZeroError',
+    defaultMessage: 'Value must be greater than zero',
   },
 });
 
@@ -90,29 +99,22 @@ const validationSchema = yup.object().shape({
     .required(() => <FormattedMessage {...MSG.teamRequiredError} />),
   recipients: yup.array(
     yup.object().shape({
-      recipient: yup
-        .object()
-        .required(() => <FormattedMessage {...MSG.userRequiredError} />),
+      recipient: yup.object().required(),
       value: yup
         .array(
           yup.object().shape({
-            amount: yup.number().required(),
+            amount: yup
+              .number()
+              .required(() => MSG.valueError)
+              .moreThan(0, () => MSG.amountZeroError),
             tokenAddress: yup.string().required(),
           }),
         )
         .min(1),
-      delay: yup
-        .object()
-        .shape({
-          amount: yup.string().required(),
-          time: yup
-            .string()
-            .required(() => <FormattedMessage {...MSG.delayRequiredError} />),
-        })
-        .required(),
     }),
   ),
-  title: yup.string().required(),
+  title: yup.string().min(3).required(),
+  description: yup.string().max(4000),
 });
 
 export interface State {
@@ -125,26 +127,17 @@ export interface State {
 
 export interface ValuesType {
   expenditure: string;
-  filteredDomainId: { label: string; value: string };
-  owner: Pick<
-    LoggedInUser,
-    'username' | 'balance' | 'walletAddress' | 'ethereal' | 'networkId'
-  >;
-  recipients: {
-    id: string;
-    recipient: string;
-    value: { id: string; amount: number; tokenAddress: number }[];
-    delay: { amount: string; time: string };
-    isExpanded: boolean;
-  }[];
+  filteredDomainId: string;
+  owner: string;
+  recipients: Recipient[];
   title: string;
   description?: string;
 }
 
 const initialValues = {
   expenditure: 'advanced',
-  recipients: [{ ...newRecipient, id: nanoid() }],
-  filteredDomainId: undefined,
+  recipients: [newRecipient],
+  filteredDomainId: String(ROOT_DOMAIN_ID),
   owner: undefined,
   title: undefined,
   description: undefined,
@@ -152,12 +145,50 @@ const initialValues = {
 
 export type InitialValuesType = typeof initialValues;
 
-const ExpenditurePage = () => {
+type Props = RouteChildrenProps<{ colonyName: string }>;
+
+const ExpenditurePage = ({ match }: Props) => {
+  if (!match) {
+    throw new Error(
+      `No match found for route in ${displayName} Please check route setup.`,
+    );
+  }
+
+  const { colonyName } = useParams<{
+    colonyName: string;
+  }>();
+
   const [isFormEditable, setFormEditable] = useState(true);
   const [formValues, setFormValues] = useState<ValuesType>();
   const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStateId, setActiveStateId] = useState<string>();
   const sidebarRef = useRef<HTMLElement>(null);
+
+  const { data: colonyData, loading } = useColonyFromNameQuery({
+    variables: { name: colonyName, address: '' },
+  });
+  const loggedInUser = useLoggedInUser();
+
+  const initialValuesData = useMemo(() => {
+    return (
+      formValues || {
+        ...initialValues,
+        owner: loggedInUser,
+        recipients: [
+          {
+            ...newRecipient,
+            id: nanoid(),
+            value: [
+              {
+                amount: undefined,
+                tokenAddress: colonyData?.processedColony?.nativeTokenAddress,
+              },
+            ],
+          },
+        ],
+      }
+    );
+  }, [colonyData, formValues, loggedInUser]);
 
   const handleSubmit = useCallback((values) => {
     setShouldValidate(true);
@@ -230,7 +261,7 @@ const ExpenditurePage = () => {
     },
   ];
 
-  const { owner, expenditure, filteredDomainId } = formValues || {};
+  const { expenditure, filteredDomainId } = formValues || {};
 
   const handleValidate = useCallback(() => {
     if (!shouldValidate) {
@@ -240,17 +271,33 @@ const ExpenditurePage = () => {
 
   return isFormEditable ? (
     <Form
-      initialValues={formValues || initialValues}
+      initialValues={initialValuesData}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
       validateOnBlur={shouldValidate}
       validateOnChange={shouldValidate}
       validate={handleValidate}
+      enableReinitialize
     >
       <div className={getMainClasses({}, styles)}>
         <aside className={styles.sidebar} ref={sidebarRef}>
-          <ExpenditureSettings />
-          <Payments sidebarRef={sidebarRef.current} />
+          {loading ? (
+            <SpinnerLoader appearance={{ size: 'medium' }} />
+          ) : (
+            colonyData && (
+              <>
+                <ExpenditureSettings
+                  colony={colonyData.processedColony}
+                  username={loggedInUser.username || ''}
+                  walletAddress={loggedInUser.walletAddress}
+                />
+                <Payments
+                  sidebarRef={sidebarRef.current}
+                  colony={colonyData.processedColony}
+                />
+              </>
+            )
+          )}
         </aside>
         <div className={styles.mainContainer}>
           <main className={styles.mainContent}>
@@ -272,9 +319,15 @@ const ExpenditurePage = () => {
     <div className={getMainClasses({}, styles)}>
       <aside className={styles.sidebar} ref={sidebarRef}>
         <LockedExpenditureSettings
-          {...{ expenditure, owner, team: filteredDomainId }}
+          {...{ expenditure, filteredDomainId }}
+          username={loggedInUser?.username || ''}
+          walletAddress={loggedInUser?.walletAddress}
+          colony={colonyData?.processedColony}
         />
-        <LockedPayments recipients={formValues?.recipients} />
+        <LockedPayments
+          recipients={formValues?.recipients}
+          colony={colonyData?.processedColony}
+        />
       </aside>
       <div className={styles.mainContainer}>
         <main className={styles.mainContent}>

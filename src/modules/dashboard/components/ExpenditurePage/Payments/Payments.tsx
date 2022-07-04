@@ -1,7 +1,6 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FieldArray, useField } from 'formik';
-import { useParams } from 'react-router';
 import { nanoid } from 'nanoid';
 import classNames from 'classnames';
 
@@ -12,11 +11,9 @@ import styles from './Payments.css';
 import Icon from '~core/Icon';
 import { FormSection } from '~core/Fields';
 import { newRecipient } from './constants';
-import {
-  useColonyFromNameQuery,
-  useMembersSubscription,
-} from '~data/generated';
+import { useMembersSubscription } from '~data/generated';
 import { SpinnerLoader } from '~core/Preloaders';
+import { Colony } from '~data/index';
 
 const MSG = defineMessages({
   payments: {
@@ -47,22 +44,25 @@ const MSG = defineMessages({
 
 interface Props {
   sidebarRef: HTMLElement | null;
+  colony: Colony;
 }
 
-const Payments = ({ sidebarRef }: Props) => {
+const Payments = ({ sidebarRef, colony }: Props) => {
   const [, { value: recipients }, { setValue }] = useField('recipients');
-  const { colonyName } = useParams<{
-    colonyName: string;
-  }>();
 
-  const { data: colonyData } = useColonyFromNameQuery({
-    variables: { address: '', name: colonyName },
-  });
-  const { colonyAddress } = colonyData || {};
+  const { colonyAddress } = colony || {};
 
   const { data: colonyMembers, loading } = useMembersSubscription({
     variables: { colonyAddress: colonyAddress || '' },
   });
+
+  const newRecipientData = useMemo(() => {
+    return {
+      ...newRecipient,
+      id: nanoid(),
+      value: [{ amount: undefined, tokenAddress: colony.nativeTokenAddress }],
+    };
+  }, [colony.nativeTokenAddress]);
 
   const onToogleButtonClick = useCallback(
     (index) => {
@@ -136,11 +136,12 @@ const Payments = ({ sidebarRef }: Props) => {
                       }}
                       subscribedUsers={colonyMembers?.subscribedUsers || []}
                       isLast={index === recipients?.length - 1}
+                      colony={colony}
                     />
                   </div>
                 ))}
                 <Button
-                  onClick={() => push({ ...newRecipient, id: nanoid() })}
+                  onClick={() => push(newRecipientData)}
                   appearance={{ theme: 'blue' }}
                 >
                   <div className={styles.addRecipientLabel}>

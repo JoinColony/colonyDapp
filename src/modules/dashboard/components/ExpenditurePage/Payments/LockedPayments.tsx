@@ -8,7 +8,7 @@ import Icon from '~core/Icon';
 import { FormSection } from '~core/Fields';
 import LockedRecipient from '../Recipient/LockedRecipient';
 import UserMention from '~core/UserMention';
-import Delay from '../Delay';
+import { Colony } from '~data/index';
 
 const MSG = defineMessages({
   payments: {
@@ -35,9 +35,10 @@ const MSG = defineMessages({
 
 interface Props {
   recipients?: RecipientType[];
+  colony?: Colony;
 }
 
-const LockedPayments = ({ recipients }: Props) => {
+const LockedPayments = ({ recipients, colony }: Props) => {
   const [expandedRecipients, setExpandedRecipients] = useState<
     number[] | undefined
   >(recipients?.map((_, idx) => idx));
@@ -93,19 +94,24 @@ const LockedPayments = ({ recipients }: Props) => {
                       ''
                     }
                   />
-                  {', '}
-                  <Delay
-                    amount={recipient?.delay?.amount}
-                    time={recipient?.delay?.time}
-                  />
+                  {recipient.delay.amount && (
+                    <>
+                      {', '}
+                      {recipient?.delay?.amount}
+                      {recipient?.delay?.time}
+                    </>
+                  )}
                 </div>
               </FormSection>
-              <LockedRecipient
-                recipient={{
-                  ...recipient,
-                  isExpanded: isOpen,
-                }}
-              />
+              {colony && (
+                <LockedRecipient
+                  recipient={{
+                    ...recipient,
+                    isExpanded: isOpen,
+                  }}
+                  colony={colony}
+                />
+              )}
             </div>
           );
         })}

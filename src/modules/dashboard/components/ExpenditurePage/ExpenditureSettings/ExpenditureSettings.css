@@ -22,7 +22,7 @@
 .settingsRow button[aria-expanded="true"] {
   padding: 2px 0 2px 6px;
   border-radius: 4px;
-  background-color: rgb(229, 230, 247);
+  background-color: var(--grey-blue-1);
 }
 
 .userContainer {
@@ -118,10 +118,14 @@
   font-size: var(--size-smallish);
 }
 
+.balance li:hover {
+  background-color: transparent;
+}
+
 .error {
   width: 100%;
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   text-align: right;
-  color: var(--danger);
+  color: var(--pink);
 }

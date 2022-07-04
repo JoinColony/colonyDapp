@@ -6,7 +6,7 @@
 .settingsRow button[aria-expanded="true"] {
   padding: 2px 0 2px 6px;
   border-radius: 4px;
-  background-color: rgb(229, 230, 247);
+  background-color: var(--grey-blue-1);
 }
 
 .userContainer {
@@ -32,20 +32,20 @@
   align-items: flex-start;
   justify-content: space-between;
   padding: 15px 0;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
 }
 
 .delayContainer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
-  font-weight: var(--weight-bold);
   color: var(--dark);
   letter-spacing: 0.1px;
 }
 
 .delayControlsContainer {
-  font-size: var(--size-smallish);
+  color: var(--dark);
 }
 
 .tokenWrapper {
@@ -70,6 +70,16 @@
 .valueAmount {
   display: flex;
   justify-content: center;
+  align-items: center;
+  color: var(--dark);
+}
+
+.valueAmount figure {
+  display: block;
+}
+
+.valueAmount span {
+  font-size: var(--size-smallish);
 }
 
 .valueAmount:not(:last-of-type) {

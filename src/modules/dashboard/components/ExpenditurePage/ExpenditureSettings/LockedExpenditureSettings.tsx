@@ -1,7 +1,9 @@
+/* eslint-disable max-len */
 import React, { useCallback, useMemo } from 'react';
 import classNames from 'classnames';
 
 import { defineMessages } from 'react-intl';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { InputLabel, SelectHorizontal, FormSection, Form } from '~core/Fields';
 import Numeral from '~core/Numeral';
 
@@ -14,41 +16,49 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import UserMention from '~core/UserMention';
 import ColorTag, { Color } from '~core/ColorTag';
-import { LoggedInUser } from '~data/index';
+import { Colony } from '~data/index';
 
 const MSG = defineMessages({
   typeLabel: {
-    id: 'dashboard.ExpenditurePage.LockedExpenditureSettings.typeLabel',
+    id:
+      'dashboard.ExpenditurePage.LockedExpenditureSettings.defaultExpenditureLabel',
     defaultMessage: 'Expenditure type',
   },
   teamLabel: {
-    id: 'dashboard.ExpenditurePage.LockedExpenditureSettings.teamLabel',
+    id: 'dashboard.ExpenditurePage.LockedExpenditureSettings.defaultTeamLabel',
     defaultMessage: 'Team',
   },
   balanceLabel: {
-    id: 'dashboard.ExpenditurePage.LockedExpenditureSettings.balanceLabel',
+    id:
+      'dashboard.ExpenditurePage.LockedExpenditureSettings.defaultBalanceLabel',
     defaultMessage: 'Balance',
   },
   ownerLabel: {
-    id: 'dashboard.ExpenditurePage.LockedExpenditureSettings.ownerLabel',
+    id: 'dashboard.ExpenditurePage.LockedExpenditureSettings.defaultOwnerLabel',
     defaultMessage: 'Owner',
   },
   optionAdvanced: {
-    id: 'dashboard.ExpenditurePage.LockedExpenditureSettings.optionAdvanced',
+    id:
+      'dashboard.ExpenditurePage.LockedExpenditureSettings.defaultAdvancedOption',
     defaultMessage: 'Advanced payment',
   },
 });
 
 interface Props {
   expenditure?: string;
-  team?: { label: string; value: string };
-  owner?: Pick<
-    LoggedInUser,
-    'username' | 'balance' | 'walletAddress' | 'ethereal' | 'networkId'
-  >;
+  filteredDomainId?: string;
+  walletAddress: string;
+  username: string;
+  colony?: Colony;
 }
 
-const LockedExpenditureSettings = ({ expenditure, owner }: Props) => {
+const LockedExpenditureSettings = ({
+  expenditure,
+  walletAddress,
+  username,
+  filteredDomainId,
+  colony,
+}: Props) => {
   const [activeToken, ...tokens] = tokensData;
 
   const renderBalanceActiveOption = useCallback(
@@ -102,6 +112,29 @@ const LockedExpenditureSettings = ({ expenditure, owner }: Props) => {
     [tokens],
   );
 
+  const domain = useMemo(
+    () =>
+      colony?.domains.find(
+        ({ ethDomainId }) => Number(filteredDomainId) === ethDomainId,
+      ),
+    [colony, filteredDomainId],
+  );
+
+  const getDomainColor = useCallback<(domainId: string | undefined) => Color>(
+    (domainId) => {
+      const rootDomainColor: Color = Color.LightPink;
+      const defaultColor: Color = Color.Yellow;
+      if (domainId === String(ROOT_DOMAIN_ID)) {
+        return rootDomainColor;
+      }
+      if (!colony || !domainId) {
+        return defaultColor;
+      }
+      return domain ? domain.color : defaultColor;
+    },
+    [colony, domain],
+  );
+
   return (
     <div className={styles.container}>
       <>
@@ -125,17 +158,12 @@ const LockedExpenditureSettings = ({ expenditure, owner }: Props) => {
               }}
             />
             <div className={styles.activeItem}>
-              <ColorTag color={Color.LightPink} />
-              <div className={styles.activeItemLabel}>Dev</div>
+              <ColorTag color={getDomainColor(filteredDomainId)} />
+              <div className={styles.activeItemLabel}>{domain?.name}</div>
             </div>
           </div>
         </FormSection>
         <FormSection appearance={{ border: 'bottom' }}>
-          {/* 
-          Form is added here, because SelectHorizontal has to be wrapped in
-          form component. Select horizontal does not call any action on form
-          component 
-        */}
           <Form initialValues={{}} onSubmit={() => {}}>
             <div className={styles.balance}>
               <SelectHorizontal
@@ -160,13 +188,9 @@ const LockedExpenditureSettings = ({ expenditure, owner }: Props) => {
               }}
             />
             <div className={styles.userAvatarContainer}>
-              <UserAvatar
-                address={owner?.walletAddress || ''}
-                size="xs"
-                notSet={false}
-              />
+              <UserAvatar address={walletAddress} size="xs" notSet={false} />
               <div className={styles.userName}>
-                <UserMention username={owner?.username || ''} />
+                <UserMention username={username} />
               </div>
             </div>
           </div>

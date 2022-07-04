@@ -18,7 +18,7 @@
 .settingsRow button[aria-expanded="true"] {
   padding: 2px 0 2px 6px;
   border-radius: 4px;
-  background-color: rgb(229, 230, 247);
+  background-color: var(--grey-blue-1);
 }
 
 .userContainer {
@@ -103,6 +103,11 @@
 
 .balance ul {
   position: static;
+}
+
+.balance li:hover {
+  background-color: transparent;
+  cursor: default;
 }
 
 .expenditure {
