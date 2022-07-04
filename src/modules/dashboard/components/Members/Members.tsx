@@ -110,39 +110,41 @@ const Members = ({
     ['value'],
   );
 
-  const filterContributorsAndWatchers = useCallback(
-    (filterValue?) => {
-      const filteredContributors = filterMembers<ColonyContributor>(
-        members?.contributorsAndWatchers?.contributors || [],
-        filterValue,
-        filters,
-      );
-      setContributors(filteredContributors);
+  const filterContributorsAndWatchers = useCallback(() => {
+    const filteredContributors = filterMembers<ColonyContributor>(
+      members?.contributorsAndWatchers?.contributors || [],
+      searchValue,
+      filters,
+    );
+    setContributors(filteredContributors);
 
-      const filteredWatchers = filterMembers<ColonyWatcher>(
-        members?.contributorsAndWatchers?.watchers || [],
-        filterValue,
-        filters,
-      );
-      setWatchers(filteredWatchers);
-    },
-    [members, filters],
-  );
+    const filteredWatchers = filterMembers<ColonyWatcher>(
+      members?.contributorsAndWatchers?.watchers || [],
+      searchValue,
+      filters,
+    );
+    setWatchers(filteredWatchers);
+  }, [members, filters, searchValue]);
 
   // handles search values & close button
   const handleSearch = useCallback(
     (event) => {
       const value = event.target?.value || '';
       setSearchValue(value);
-      filterContributorsAndWatchers(value);
+      filterContributorsAndWatchers();
     },
     [filterContributorsAndWatchers, setSearchValue],
   );
 
+  const isRootDomain = useMemo(
+    () =>
+      selectedDomain === ROOT_DOMAIN_ID ||
+      selectedDomain === COLONY_TOTAL_BALANCE_DOMAIN_ID,
+    [selectedDomain],
+  );
+
   const membersContent = useMemo(() => {
-    const contributorsContent = ((selectedDomain !==
-      COLONY_TOTAL_BALANCE_DOMAIN_ID &&
-      selectedDomain !== ROOT_DOMAIN_ID) ||
+    const contributorsContent = (!isRootDomain ||
       filters.includes(MEMEBERS_FILTERS.CONTRIBUTORS)) && (
       <MembersSection<ColonyContributor>
         isContributorsSection
@@ -163,13 +165,11 @@ const Members = ({
     );
 
     const watchersContent =
-      (selectedDomain === ROOT_DOMAIN_ID ||
-        selectedDomain === COLONY_TOTAL_BALANCE_DOMAIN_ID) &&
-      filters.includes(MEMEBERS_FILTERS.WATCHERS) ? (
+      isRootDomain && filters.includes(MEMEBERS_FILTERS.WATCHERS) ? (
         <MembersSection<ColonyWatcher>
           isContributorsSection={false}
           colony={colony}
-          currentDomainId={selectedDomain}
+          currentDomainId={selectedDomain || COLONY_TOTAL_BALANCE_DOMAIN_ID}
           members={watchers as ColonyWatcher[]}
           canAdministerComments={canAdministerComments}
           extraItemContent={({ banned }) => (
@@ -191,12 +191,25 @@ const Members = ({
     selectedDomain,
     watchers,
     filters,
+    isRootDomain,
   ]);
 
-  useEffect(() => filterContributorsAndWatchers(), [
-    filterContributorsAndWatchers,
-    filters,
-  ]);
+  useEffect(() => {
+    if (
+      filters.includes(MEMEBERS_FILTERS.WATCHERS) ||
+      filters.includes(MEMEBERS_FILTERS.CONTRIBUTORS)
+    ) {
+      filterContributorsAndWatchers();
+    }
+
+    if (!filters.includes(MEMEBERS_FILTERS.WATCHERS)) {
+      setWatchers([]);
+    }
+
+    if (isRootDomain && !filters.includes(MEMEBERS_FILTERS.CONTRIBUTORS)) {
+      setContributors([]);
+    }
+  }, [filterContributorsAndWatchers, filters, isRootDomain]);
 
   if (loadingMembers) {
     return (
