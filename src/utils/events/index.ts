@@ -731,8 +731,10 @@ const getMotionValues = async (
   votingClient: ExtensionClient,
   colonyClient: ColonyClient,
 ): Promise<Partial<MotionValues>> => {
-  const motionCreatedEvent = processedEvents[0];
-  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motionCreatedEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
+  );
+  const motionId = motionCreatedEvent?.values.motionId.toString();
   const motion = await votingClient.getMotion(motionId);
   const motionNetworkState = await votingClient.getMotionState(motionId);
   const motionState = await getMotionState(
@@ -745,9 +747,9 @@ const getMotionValues = async (
   const motionValues: Partial<MotionValues> = {
     motionNAYStake: motion.stakes[0].toString(),
     motionState,
-    address: motionCreatedEvent.address,
+    address: motionCreatedEvent?.address,
     recipient: motion.altTarget,
-    actionInitiator: motionCreatedEvent.values.creator,
+    actionInitiator: motionCreatedEvent?.values.creator,
     tokenAddress,
     motionDomain: motion.domainId.toNumber(),
     rootHash: motion.rootHash,
@@ -761,8 +763,10 @@ const getMintTokensMotionValues = async (
   votingClient: ExtensionClient,
   colonyClient: ColonyClient,
 ): Promise<Partial<MotionValues>> => {
-  const motionCreatedEvent = processedEvents[0];
-  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motionCreatedEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
+  );
+  const motionId = motionCreatedEvent?.values.motionId.toString();
   const motion = await votingClient.getMotion(motionId);
   const values = colonyClient.interface.parseTransaction({
     data: motion.action,
@@ -788,8 +792,10 @@ const getCreateDomainMotionValues = async (
   votingClient: ExtensionClient,
   colonyClient: ColonyClient,
 ): Promise<Partial<MotionValues>> => {
-  const motionCreatedEvent = processedEvents[0];
-  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motionCreatedEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
+  );
+  const motionId = motionCreatedEvent?.values.motionId.toString();
   const motion = await votingClient.getMotion(motionId);
   const values = colonyClient.interface.parseTransaction({
     data: motion.action,
@@ -818,8 +824,10 @@ const getSetUserRolesMotionValues = async (
   votingClient: ExtensionClient,
   colonyClient: ColonyClient,
 ): Promise<Partial<MotionValues>> => {
-  const motionCreatedEvent = processedEvents[0];
-  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motionCreatedEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
+  );
+  const motionId = motionCreatedEvent?.values.motionId.toString();
   const motion = await votingClient.getMotion(motionId);
   const values = colonyClient.interface.parseTransaction({
     data: motion.action,
@@ -857,8 +865,10 @@ const getEditDomainMotionValues = async (
   votingClient: ExtensionClient,
   colonyClient: ColonyClient,
 ): Promise<Partial<MotionValues>> => {
-  const motionCreatedEvent = processedEvents[0];
-  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motionCreatedEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
+  );
+  const motionId = motionCreatedEvent?.values.motionId.toString();
   const motion = await votingClient.getMotion(motionId);
   const values = colonyClient.interface.parseTransaction({
     data: motion.action,
@@ -889,8 +899,10 @@ const getColonyEditMotionValues = async (
   votingClient: ExtensionClient,
   colonyClient: ColonyClient,
 ): Promise<Partial<MotionValues>> => {
-  const motionCreatedEvent = processedEvents[0];
-  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motionCreatedEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
+  );
+  const motionId = motionCreatedEvent?.values.motionId.toString();
   const motion = await votingClient.getMotion(motionId);
   const values = colonyClient.interface.parseTransaction({
     data: motion.action,
@@ -957,8 +969,10 @@ const getPaymentMotionValues = async (
   oneTxPaymentClient: ExtensionClient,
   colonyClient: ColonyClient,
 ): Promise<Partial<MotionValues>> => {
-  const motionCreatedEvent = processedEvents[0];
-  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motionCreatedEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
+  );
+  const motionId = motionCreatedEvent?.values.motionId.toString();
   const motion = await votingClient.getMotion(motionId);
   const values = oneTxPaymentClient.interface.parseTransaction({
     data: motion.action,
@@ -990,8 +1004,10 @@ const getMoveFundsMotionValues = async (
   votingClient: ExtensionClient,
   colonyClient: ColonyClient,
 ): Promise<Partial<MotionValues>> => {
-  const motionCreatedEvent = processedEvents[0];
-  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motionCreatedEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
+  );
+  const motionId = motionCreatedEvent?.values.motionId.toString();
   const motion = await votingClient.getMotion(motionId);
   const values = colonyClient.interface.parseTransaction({
     data: motion.action,
@@ -1026,8 +1042,10 @@ const getVersionUpgradeMotionValues = async (
   votingClient: ExtensionClient,
   colonyClient: ColonyClient,
 ): Promise<Partial<MotionValues>> => {
-  const motionCreatedEvent = processedEvents[0];
-  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motionCreatedEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
+  );
+  const motionId = motionCreatedEvent?.values.motionId.toString();
   const motion = await votingClient.getMotion(motionId);
   const values = colonyClient.interface.parseTransaction({
     data: motion.action,
@@ -1053,8 +1071,10 @@ const getEmitDomainReputationPenaltyAndRewardMotionValues = async (
   votingClient: ExtensionClient,
   colonyClient: ColonyClient,
 ): Promise<Partial<MotionValues>> => {
-  const motionCreatedEvent = processedEvents[0];
-  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motionCreatedEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
+  );
+  const motionId = motionCreatedEvent?.values.motionId.toString();
   const motion = await votingClient.getMotion(motionId);
   const values = colonyClient.interface.parseTransaction({
     data: motion.action,
