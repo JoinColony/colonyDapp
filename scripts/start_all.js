@@ -112,6 +112,7 @@ addProcess('metaTxBroadcast', async () => {
       './metatransaction-broadcaster/bin/index.js',
       '--privateKey', privateKey,
       '--gasPrice', 1,
+      '--gasLimit', 6000000,
       '--colonyNetworkAddress', networkAddress,
       '--port', 3004
     ], {
