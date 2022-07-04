@@ -101,7 +101,7 @@ const AvatarDropdownPopoverMobile = ({
       <DropdownMenuSection separator>
         <DropdownMenuItem>
           <ItemContainer message={MSG.address}>
-            {colonyAddress && <MaskedAddress address={colonyAddress} />}
+            {walletAddress && <MaskedAddress address={walletAddress} />}
           </ItemContainer>
         </DropdownMenuItem>
         <DropdownMenuItem>
