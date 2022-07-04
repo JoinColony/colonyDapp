@@ -12,6 +12,7 @@ import {
 } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 import { poll } from 'ethers/utils';
+import { createAddress } from '~utils/web3';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
@@ -274,7 +275,7 @@ function* colonyRestartDeployment({
       );
       yield put(transactionReady(deployTokenAuthority.id));
       const {
-        payload: { deployedContractAddress },
+        payload: { deployedContractAddress, eventData },
       } = yield takeFrom(
         deployTokenAuthority.channel,
         ActionTypes.TRANSACTION_SUCCEEDED,
@@ -284,7 +285,12 @@ function* colonyRestartDeployment({
        * Set Token authority (to deployed Token Authority)
        */
       yield put(
-        transactionAddParams(setTokenAuthority.id, [deployedContractAddress]),
+        transactionAddParams(setTokenAuthority.id, [
+          createAddress(
+            eventData?.TokenAuthorityDeployed?.tokenAuthorityAddress ||
+              deployedContractAddress,
+          ),
+        ]),
       );
       yield put(transactionReady(setTokenAuthority.id));
       yield takeFrom(

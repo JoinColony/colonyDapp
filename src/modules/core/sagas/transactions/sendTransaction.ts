@@ -249,7 +249,13 @@ export default function* sendTransaction({
 }: Action<ActionTypes.TRANSACTION_SEND>) {
   const transaction: TransactionRecord = yield selectAsJS(oneTransaction, id);
 
-  const { status, context, identifier, metatransaction } = transaction;
+  const {
+    status,
+    context,
+    identifier,
+    metatransaction,
+    methodName,
+  } = transaction;
 
   if (status !== TRANSACTION_STATUSES.READY) {
     throw new Error('Transaction is not ready to send.');
@@ -263,6 +269,11 @@ export default function* sendTransaction({
     contextClient = yield colonyManager.getTokenLockingClient(
       identifier as string,
     );
+  } else if (
+    metatransaction &&
+    methodName === TRANSACTION_METHODS.DeployTokenAuthority
+  ) {
+    contextClient = colonyManager.networkClient;
   } else if (
     context === ((ExtendedReduxContext.WrappedToken as unknown) as ClientType)
   ) {

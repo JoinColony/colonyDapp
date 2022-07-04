@@ -401,7 +401,7 @@ function* colonyCreate({
       );
       yield put(transactionReady(deployTokenAuthority.id));
       const {
-        payload: { deployedContractAddress },
+        payload: { deployedContractAddress, eventData },
       } = yield takeFrom(
         deployTokenAuthority.channel,
         ActionTypes.TRANSACTION_SUCCEEDED,
@@ -411,7 +411,12 @@ function* colonyCreate({
        * Set Token authority (to deployed TokenAuthority)
        */
       yield put(
-        transactionAddParams(setTokenAuthority.id, [deployedContractAddress]),
+        transactionAddParams(setTokenAuthority.id, [
+          createAddress(
+            eventData?.TokenAuthorityDeployed?.tokenAuthorityAddress ||
+              deployedContractAddress,
+          ),
+        ]),
       );
       yield put(transactionReady(setTokenAuthority.id));
       yield takeFrom(
