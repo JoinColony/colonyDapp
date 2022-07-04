@@ -132,7 +132,7 @@ const LockedRecipient = ({ recipient, colony }: Props) => {
               </div>
             </div>
           </FormSection>
-          {delay.amount && (
+          {delay?.amount && (
             <FormSection appearance={{ border: 'bottom' }}>
               <div className={styles.itemContainer}>
                 <InputLabel
@@ -142,7 +142,7 @@ const LockedRecipient = ({ recipient, colony }: Props) => {
                   }}
                 />
                 <span className={styles.delayControlsContainer}>
-                  {delay?.amount} {delay?.time}
+                  {delay.amount} {delay.time}
                 </span>
               </div>
             </FormSection>

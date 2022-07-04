@@ -94,11 +94,11 @@ const LockedPayments = ({ recipients, colony }: Props) => {
                       ''
                     }
                   />
-                  {recipient.delay.amount && (
+                  {recipient?.delay?.amount && (
                     <>
                       {', '}
-                      {recipient?.delay?.amount}
-                      {recipient?.delay?.time}
+                      {recipient.delay.amount}
+                      {recipient.delay.time}
                     </>
                   )}
                 </div>

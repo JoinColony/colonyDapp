@@ -9,7 +9,7 @@ export const getRecipientTokens = (
   const { tokens: colonyTokens } = colony || {};
   const calculatedTokens = value?.map(({ amount, tokenAddress }) => {
     const token = colonyTokens?.find(
-      (tokenItem) => tokenItem.address === tokenAddress,
+      (tokenItem) => tokenAddress && tokenItem.address === tokenAddress,
     );
 
     return {
