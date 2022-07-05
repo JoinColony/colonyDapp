@@ -221,8 +221,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
       props: {
         prevStep: 'dashboard.ManageGnosisSafeDialog',
         colony,
-        isVotingExtensionEnabled,
-        ethDomainId,
       },
     },
     // {
