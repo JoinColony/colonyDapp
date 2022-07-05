@@ -79,9 +79,9 @@ const ColonyFinishDeployment = ({
         <ActionButton
           appearance={{ theme: 'primary', size: 'medium' }}
           text={MSG.buttonFinishDeployment}
-          submit={ActionTypes.COLONY_DEPLOYMENT_RESTART}
-          error={ActionTypes.COLONY_DEPLOYMENT_RESTART_ERROR}
-          success={ActionTypes.COLONY_DEPLOYMENT_RESTART_SUCCESS}
+          submit={ActionTypes.DEPLOYMENT_RESTART}
+          error={ActionTypes.DEPLOYMENT_RESTART_ERROR}
+          success={ActionTypes.DEPLOYMENT_RESTART_SUCCESS}
           transform={transform}
           disabled={!canFinishDeployment}
         />

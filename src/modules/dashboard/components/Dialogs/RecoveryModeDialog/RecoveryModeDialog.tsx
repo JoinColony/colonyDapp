@@ -61,9 +61,9 @@ const RecoveryModeDialog = ({
       initialValues={{
         annotation: undefined,
       }}
-      submit={ActionTypes.COLONY_ACTION_RECOVERY}
-      error={ActionTypes.COLONY_ACTION_RECOVERY_ERROR}
-      success={ActionTypes.COLONY_ACTION_RECOVERY_SUCCESS}
+      submit={ActionTypes.ACTION_RECOVERY}
+      error={ActionTypes.ACTION_RECOVERY_ERROR}
+      success={ActionTypes.ACTION_RECOVERY_SUCCESS}
       validationSchema={validationSchema}
       onSuccess={close}
       transform={transform}

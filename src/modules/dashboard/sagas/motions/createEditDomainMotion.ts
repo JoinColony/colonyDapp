@@ -40,7 +40,7 @@ function* createEditDomainMotion({
   },
   meta: { id: metaId, history },
   meta,
-}: Action<ActionTypes.COLONY_MOTION_DOMAIN_CREATE_EDIT>) {
+}: Action<ActionTypes.MOTION_DOMAIN_CREATE_EDIT>) {
   let txChannel;
   try {
     /*
@@ -193,7 +193,7 @@ function* createEditDomainMotion({
       yield takeFrom(annotateMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
     }
     yield put<AllActions>({
-      type: ActionTypes.COLONY_MOTION_DOMAIN_CREATE_EDIT_SUCCESS,
+      type: ActionTypes.MOTION_DOMAIN_CREATE_EDIT_SUCCESS,
       meta,
     });
 
@@ -201,11 +201,7 @@ function* createEditDomainMotion({
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
     }
   } catch (caughtError) {
-    putError(
-      ActionTypes.COLONY_MOTION_DOMAIN_CREATE_EDIT_ERROR,
-      caughtError,
-      meta,
-    );
+    putError(ActionTypes.MOTION_DOMAIN_CREATE_EDIT_ERROR, caughtError, meta);
   } finally {
     txChannel.close();
   }
@@ -213,7 +209,7 @@ function* createEditDomainMotion({
 
 export default function* createEditDomainMotionSaga() {
   yield takeEvery(
-    ActionTypes.COLONY_MOTION_DOMAIN_CREATE_EDIT,
+    ActionTypes.MOTION_DOMAIN_CREATE_EDIT,
     createEditDomainMotion,
   );
 }

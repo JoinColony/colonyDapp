@@ -104,9 +104,9 @@ const RevealWidget = ({
   return (
     <ActionForm
       initialValues={{}}
-      submit={ActionTypes.COLONY_MOTION_REVEAL_VOTE}
-      error={ActionTypes.COLONY_MOTION_REVEAL_VOTE_ERROR}
-      success={ActionTypes.COLONY_MOTION_REVEAL_VOTE_SUCCESS}
+      submit={ActionTypes.MOTION_REVEAL_VOTE}
+      error={ActionTypes.MOTION_REVEAL_VOTE_ERROR}
+      success={ActionTypes.MOTION_REVEAL_VOTE_SUCCESS}
       transform={transform}
       onSuccess={handleSuccess}
     >

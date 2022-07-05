@@ -25,7 +25,7 @@ function* tokenUnlockAction({
   meta,
   meta: { id: metaId, history },
   payload: { colonyAddress, annotationMessage, colonyName },
-}: Action<ActionTypes.COLONY_ACTION_UNLOCK_TOKEN>) {
+}: Action<ActionTypes.ACTION_UNLOCK_TOKEN>) {
   let txChannel;
 
   try {
@@ -149,7 +149,7 @@ function* tokenUnlockAction({
     });
 
     yield put<AllActions>({
-      type: ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_SUCCESS,
+      type: ActionTypes.ACTION_UNLOCK_TOKEN_SUCCESS,
       meta,
     });
 
@@ -157,12 +157,12 @@ function* tokenUnlockAction({
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
     }
   } catch (error) {
-    putError(ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_ERROR, error, meta);
+    putError(ActionTypes.ACTION_UNLOCK_TOKEN_ERROR, error, meta);
   } finally {
     txChannel.close();
   }
 }
 
 export default function* unlockTokenActionSaga() {
-  yield takeEvery(ActionTypes.COLONY_ACTION_UNLOCK_TOKEN, tokenUnlockAction);
+  yield takeEvery(ActionTypes.ACTION_UNLOCK_TOKEN, tokenUnlockAction);
 }

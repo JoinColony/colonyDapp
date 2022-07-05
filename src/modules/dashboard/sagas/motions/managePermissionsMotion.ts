@@ -37,7 +37,7 @@ function* managePermissionsMotion({
   },
   meta: { id: metaId, history },
   meta,
-}: Action<ActionTypes.COLONY_MOTION_USER_ROLES_SET>) {
+}: Action<ActionTypes.MOTION_USER_ROLES_SET>) {
   let txChannel;
   try {
     /*
@@ -196,7 +196,7 @@ function* managePermissionsMotion({
       );
     }
     yield put<AllActions>({
-      type: ActionTypes.COLONY_MOTION_USER_ROLES_SET_SUCCESS,
+      type: ActionTypes.MOTION_USER_ROLES_SET_SUCCESS,
       meta,
     });
 
@@ -204,15 +204,12 @@ function* managePermissionsMotion({
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
     }
   } catch (caughtError) {
-    putError(ActionTypes.COLONY_MOTION_USER_ROLES_SET_ERROR, caughtError, meta);
+    putError(ActionTypes.MOTION_USER_ROLES_SET_ERROR, caughtError, meta);
   } finally {
     txChannel.close();
   }
 }
 
 export default function* managePermissionsMotionSaga() {
-  yield takeEvery(
-    ActionTypes.COLONY_MOTION_USER_ROLES_SET,
-    managePermissionsMotion,
-  );
+  yield takeEvery(ActionTypes.MOTION_USER_ROLES_SET, managePermissionsMotion);
 }

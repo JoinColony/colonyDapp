@@ -41,7 +41,7 @@ function* enterRecoveryAction({
   payload: { colonyAddress, walletAddress, colonyName, annotationMessage },
   meta: { id: metaId, history },
   meta,
-}: Action<ActionTypes.COLONY_ACTION_RECOVERY>) {
+}: Action<ActionTypes.ACTION_RECOVERY>) {
   let txChannel;
 
   try {
@@ -176,7 +176,7 @@ function* enterRecoveryAction({
     });
 
     yield put({
-      type: ActionTypes.COLONY_ACTION_RECOVERY_SUCCESS,
+      type: ActionTypes.ACTION_RECOVERY_SUCCESS,
       meta,
     });
 
@@ -184,11 +184,7 @@ function* enterRecoveryAction({
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
     }
   } catch (error) {
-    return yield putError(
-      ActionTypes.COLONY_ACTION_RECOVERY_ERROR,
-      error,
-      meta,
-    );
+    return yield putError(ActionTypes.ACTION_RECOVERY_ERROR, error, meta);
   } finally {
     txChannel.close();
   }
@@ -205,7 +201,7 @@ function* setStorageSlotValue({
   },
   meta: { id: metaId },
   meta,
-}: Action<ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT>) {
+}: Action<ActionTypes.ACTION_RECOVERY_SET_SLOT>) {
   let txChannel;
   try {
     if (!storageSlotLocation) {
@@ -291,12 +287,12 @@ function* setStorageSlotValue({
     });
 
     yield put({
-      type: ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT_SUCCESS,
+      type: ActionTypes.ACTION_RECOVERY_SET_SLOT_SUCCESS,
       meta,
     });
   } catch (error) {
     return yield putError(
-      ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT_ERROR,
+      ActionTypes.ACTION_RECOVERY_SET_SLOT_ERROR,
       error,
       meta,
     );
@@ -310,7 +306,7 @@ function* approveExitRecovery({
   payload: { colonyAddress, walletAddress, startBlock, scrollToRef },
   meta: { id: metaId },
   meta,
-}: Action<ActionTypes.COLONY_ACTION_RECOVERY_APPROVE>) {
+}: Action<ActionTypes.ACTION_RECOVERY_APPROVE>) {
   let txChannel;
   try {
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
@@ -399,7 +395,7 @@ function* approveExitRecovery({
     });
 
     yield put({
-      type: ActionTypes.COLONY_ACTION_RECOVERY_APPROVE_SUCCESS,
+      type: ActionTypes.ACTION_RECOVERY_APPROVE_SUCCESS,
       meta,
     });
 
@@ -421,7 +417,7 @@ function* approveExitRecovery({
     scrollToRef?.current?.scrollIntoView({ behavior: 'smooth' });
   } catch (error) {
     return yield putError(
-      ActionTypes.COLONY_ACTION_RECOVERY_APPROVE_ERROR,
+      ActionTypes.ACTION_RECOVERY_APPROVE_ERROR,
       error,
       meta,
     );
@@ -435,7 +431,7 @@ function* exitRecoveryMode({
   payload: { colonyAddress, startBlock, scrollToRef },
   meta: { id: metaId },
   meta,
-}: Action<ActionTypes.COLONY_ACTION_RECOVERY_APPROVE>) {
+}: Action<ActionTypes.ACTION_RECOVERY_APPROVE>) {
   let txChannel;
   try {
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
@@ -482,7 +478,7 @@ function* exitRecoveryMode({
     });
 
     yield put({
-      type: ActionTypes.COLONY_ACTION_RECOVERY_APPROVE_SUCCESS,
+      type: ActionTypes.ACTION_RECOVERY_APPROVE_SUCCESS,
       meta,
     });
 
@@ -504,7 +500,7 @@ function* exitRecoveryMode({
     scrollToRef?.current?.scrollIntoView({ behavior: 'smooth' });
   } catch (error) {
     return yield putError(
-      ActionTypes.COLONY_ACTION_RECOVERY_APPROVE_ERROR,
+      ActionTypes.ACTION_RECOVERY_APPROVE_ERROR,
       error,
       meta,
     );
@@ -515,14 +511,8 @@ function* exitRecoveryMode({
 }
 
 export default function* enterRecoveryActionSaga() {
-  yield takeEvery(ActionTypes.COLONY_ACTION_RECOVERY, enterRecoveryAction);
-  yield takeEvery(
-    ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT,
-    setStorageSlotValue,
-  );
-  yield takeEvery(
-    ActionTypes.COLONY_ACTION_RECOVERY_APPROVE,
-    approveExitRecovery,
-  );
-  yield takeEvery(ActionTypes.COLONY_ACTION_RECOVERY_EXIT, exitRecoveryMode);
+  yield takeEvery(ActionTypes.ACTION_RECOVERY, enterRecoveryAction);
+  yield takeEvery(ActionTypes.ACTION_RECOVERY_SET_SLOT, setStorageSlotValue);
+  yield takeEvery(ActionTypes.ACTION_RECOVERY_APPROVE, approveExitRecovery);
+  yield takeEvery(ActionTypes.ACTION_RECOVERY_EXIT, exitRecoveryMode);
 }

@@ -37,7 +37,7 @@ function* manageReputationMotion({
   },
   meta: { id: metaId, history },
   meta,
-}: Action<ActionTypes.COLONY_MOTION_MANAGE_REPUTATION>) {
+}: Action<ActionTypes.MOTION_MANAGE_REPUTATION>) {
   let txChannel;
   try {
     /*
@@ -211,7 +211,7 @@ function* manageReputationMotion({
     yield fork(updateDomainReputation, colonyAddress, userAddress, domainId);
 
     yield put<AllActions>({
-      type: ActionTypes.COLONY_MOTION_MANAGE_REPUTATION_SUCCESS,
+      type: ActionTypes.MOTION_MANAGE_REPUTATION_SUCCESS,
       meta,
     });
 
@@ -219,15 +219,12 @@ function* manageReputationMotion({
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
     }
   } catch (error) {
-    putError(ActionTypes.COLONY_MOTION_MANAGE_REPUTATION_ERROR, error, meta);
+    putError(ActionTypes.MOTION_MANAGE_REPUTATION_ERROR, error, meta);
   } finally {
     txChannel.close();
   }
 }
 
 export default function* manageReputationMotionSage() {
-  yield takeEvery(
-    ActionTypes.COLONY_MOTION_MANAGE_REPUTATION,
-    manageReputationMotion,
-  );
+  yield takeEvery(ActionTypes.MOTION_MANAGE_REPUTATION, manageReputationMotion);
 }

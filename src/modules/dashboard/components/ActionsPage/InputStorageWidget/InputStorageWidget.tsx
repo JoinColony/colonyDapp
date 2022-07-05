@@ -196,9 +196,9 @@ const InputStorageWidget = ({
         newStorageSlotValue: '',
       }}
       validationSchema={validationSchema}
-      submit={ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT}
-      error={ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT_ERROR}
-      success={ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT_SUCCESS}
+      submit={ActionTypes.ACTION_RECOVERY_SET_SLOT}
+      error={ActionTypes.ACTION_RECOVERY_SET_SLOT_ERROR}
+      success={ActionTypes.ACTION_RECOVERY_SET_SLOT_SUCCESS}
       transform={transform}
       onSuccess={handleSubmitSuccess}
     >

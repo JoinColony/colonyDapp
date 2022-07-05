@@ -29,7 +29,7 @@ import { updateMotionValues } from '../utils';
 function* claimMotionRewards({
   meta,
   payload: { userAddress, colonyAddress, motionIds },
-}: Action<ActionTypes.COLONY_MOTION_CLAIM>) {
+}: Action<ActionTypes.MOTION_CLAIM>) {
   const txChannel = yield call(getTxChannel, meta.id);
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
@@ -195,11 +195,11 @@ function* claimMotionRewards({
     });
 
     yield put<AllActions>({
-      type: ActionTypes.COLONY_MOTION_CLAIM_SUCCESS,
+      type: ActionTypes.MOTION_CLAIM_SUCCESS,
       meta,
     });
   } catch (error) {
-    return yield putError(ActionTypes.COLONY_MOTION_CLAIM_ERROR, error, meta);
+    return yield putError(ActionTypes.MOTION_CLAIM_ERROR, error, meta);
   } finally {
     txChannel.close();
   }
@@ -207,5 +207,5 @@ function* claimMotionRewards({
 }
 
 export default function* claimMotionRewardsSaga() {
-  yield takeEvery(ActionTypes.COLONY_MOTION_CLAIM, claimMotionRewards);
+  yield takeEvery(ActionTypes.MOTION_CLAIM, claimMotionRewards);
 }

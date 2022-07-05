@@ -35,7 +35,7 @@ function* createDomainAction({
   },
   meta: { id: metaId, history },
   meta,
-}: Action<ActionTypes.COLONY_ACTION_DOMAIN_CREATE>) {
+}: Action<ActionTypes.ACTION_DOMAIN_CREATE>) {
   let txChannel;
   try {
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
@@ -163,7 +163,7 @@ function* createDomainAction({
     );
 
     yield put<AllActions>({
-      type: ActionTypes.COLONY_ACTION_DOMAIN_CREATE_SUCCESS,
+      type: ActionTypes.ACTION_DOMAIN_CREATE_SUCCESS,
       meta,
     });
 
@@ -171,11 +171,7 @@ function* createDomainAction({
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
     }
   } catch (error) {
-    return yield putError(
-      ActionTypes.COLONY_ACTION_DOMAIN_CREATE_ERROR,
-      error,
-      meta,
-    );
+    return yield putError(ActionTypes.ACTION_DOMAIN_CREATE_ERROR, error, meta);
   } finally {
     txChannel.close();
   }
@@ -183,5 +179,5 @@ function* createDomainAction({
 }
 
 export default function* createDomainActionSaga() {
-  yield takeEvery(ActionTypes.COLONY_ACTION_DOMAIN_CREATE, createDomainAction);
+  yield takeEvery(ActionTypes.ACTION_DOMAIN_CREATE, createDomainAction);
 }

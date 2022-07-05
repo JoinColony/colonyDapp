@@ -228,9 +228,9 @@ const StakingWidget = ({
           amount: 0,
         }}
         validationSchema={validationSchema}
-        submit={ActionTypes.COLONY_MOTION_STAKE}
-        error={ActionTypes.COLONY_MOTION_STAKE_ERROR}
-        success={ActionTypes.COLONY_MOTION_STAKE_SUCCESS}
+        submit={ActionTypes.MOTION_STAKE}
+        error={ActionTypes.MOTION_STAKE_ERROR}
+        success={ActionTypes.MOTION_STAKE_SUCCESS}
         transform={transform}
         onSuccess={handleSuccess}
       >

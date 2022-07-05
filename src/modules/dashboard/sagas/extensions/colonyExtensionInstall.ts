@@ -21,7 +21,7 @@ import { refreshExtension } from '../utils';
 export function* colonyExtensionInstall({
   meta,
   payload: { colonyAddress, extensionId },
-}: Action<ActionTypes.COLONY_EXTENSION_INSTALL>) {
+}: Action<ActionTypes.EXTENSION_INSTALL>) {
   const txChannel = yield call(getTxChannel, meta.id);
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
   const { networkClient } = TEMP_getContext(ContextModule.ColonyManager);
@@ -57,18 +57,14 @@ export function* colonyExtensionInstall({
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_CREATED);
 
     yield put<AllActions>({
-      type: ActionTypes.COLONY_EXTENSION_INSTALL_SUCCESS,
+      type: ActionTypes.EXTENSION_INSTALL_SUCCESS,
       payload: {},
       meta,
     });
 
     yield waitForTxResult(txChannel);
   } catch (error) {
-    return yield putError(
-      ActionTypes.COLONY_EXTENSION_INSTALL_ERROR,
-      error,
-      meta,
-    );
+    return yield putError(ActionTypes.EXTENSION_INSTALL_ERROR, error, meta);
   } finally {
     const extensionAddress = yield networkClient.getExtensionInstallation(
       getExtensionHash(extensionId),
@@ -82,5 +78,5 @@ export function* colonyExtensionInstall({
 }
 
 export default function* colonyExtensionInstallSaga() {
-  yield takeEvery(ActionTypes.COLONY_EXTENSION_INSTALL, colonyExtensionInstall);
+  yield takeEvery(ActionTypes.EXTENSION_INSTALL, colonyExtensionInstall);
 }

@@ -19,7 +19,7 @@ import {
  */
 export type ColonyActionsActionTypes =
   | UniqueActionType<
-      ActionTypes.COLONY_ACTION_DOMAIN_CREATE,
+      ActionTypes.ACTION_DOMAIN_CREATE,
       {
         colonyAddress: Address;
         colonyName?: string;
@@ -31,13 +31,13 @@ export type ColonyActionsActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_ACTION_DOMAIN_CREATE_ERROR, object>
+  | ErrorActionType<ActionTypes.ACTION_DOMAIN_CREATE_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_ACTION_DOMAIN_CREATE_SUCCESS,
+      ActionTypes.ACTION_DOMAIN_CREATE_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<
-      ActionTypes.COLONY_ACTION_DOMAIN_EDIT,
+      ActionTypes.ACTION_DOMAIN_EDIT,
       {
         colonyAddress: Address;
         colonyName?: string;
@@ -49,13 +49,13 @@ export type ColonyActionsActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_ACTION_DOMAIN_EDIT_ERROR, object>
+  | ErrorActionType<ActionTypes.ACTION_DOMAIN_EDIT_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_ACTION_DOMAIN_EDIT_SUCCESS,
+      ActionTypes.ACTION_DOMAIN_EDIT_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<
-      ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT,
+      ActionTypes.ACTION_EXPENDITURE_PAYMENT,
       {
         colonyAddress: Address;
         colonyName?: string;
@@ -70,13 +70,13 @@ export type ColonyActionsActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT_ERROR, object>
+  | ErrorActionType<ActionTypes.ACTION_EXPENDITURE_PAYMENT_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT_SUCCESS,
+      ActionTypes.ACTION_EXPENDITURE_PAYMENT_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<
-      ActionTypes.COLONY_ACTION_EDIT_COLONY,
+      ActionTypes.ACTION_EDIT_COLONY,
       {
         colonyAddress: Address;
         colonyName: string;
@@ -94,13 +94,13 @@ export type ColonyActionsActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_ACTION_EDIT_COLONY_ERROR, object>
+  | ErrorActionType<ActionTypes.ACTION_EDIT_COLONY_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_ACTION_EDIT_COLONY_SUCCESS,
+      ActionTypes.ACTION_EDIT_COLONY_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<
-      ActionTypes.COLONY_ACTION_MOVE_FUNDS,
+      ActionTypes.ACTION_MOVE_FUNDS,
       {
         colonyAddress: Address;
         colonyName?: string;
@@ -112,13 +112,13 @@ export type ColonyActionsActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_ACTION_MOVE_FUNDS_ERROR, object>
+  | ErrorActionType<ActionTypes.ACTION_MOVE_FUNDS_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_ACTION_MOVE_FUNDS_SUCCESS,
+      ActionTypes.ACTION_MOVE_FUNDS_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<
-      ActionTypes.COLONY_ACTION_MINT_TOKENS,
+      ActionTypes.ACTION_MINT_TOKENS,
       {
         colonyAddress: Address;
         colonyName?: string;
@@ -128,13 +128,13 @@ export type ColonyActionsActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_ACTION_MINT_TOKENS_ERROR, object>
+  | ErrorActionType<ActionTypes.ACTION_MINT_TOKENS_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_ACTION_MINT_TOKENS_SUCCESS,
+      ActionTypes.ACTION_MINT_TOKENS_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<
-      ActionTypes.COLONY_ACTION_VERSION_UPGRADE,
+      ActionTypes.ACTION_VERSION_UPGRADE,
       {
         colonyAddress: Address;
         version: string;
@@ -144,12 +144,12 @@ export type ColonyActionsActionTypes =
       MetaWithHistory<object>
     >
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_ACTION_VERSION_UPGRADE_SUCCESS,
+      ActionTypes.ACTION_VERSION_UPGRADE_SUCCESS,
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_ACTION_VERSION_UPGRADE_ERROR, object>
+  | ErrorActionType<ActionTypes.ACTION_VERSION_UPGRADE_ERROR, object>
   | UniqueActionType<
-      ActionTypes.COLONY_ACTION_USER_ROLES_SET,
+      ActionTypes.ACTION_USER_ROLES_SET,
       {
         colonyAddress: Address;
         colonyName: string;
@@ -160,13 +160,13 @@ export type ColonyActionsActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_ACTION_USER_ROLES_SET_ERROR, object>
+  | ErrorActionType<ActionTypes.ACTION_USER_ROLES_SET_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_ACTION_USER_ROLES_SET_SUCCESS,
+      ActionTypes.ACTION_USER_ROLES_SET_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<
-      ActionTypes.COLONY_ACTION_UNLOCK_TOKEN,
+      ActionTypes.ACTION_UNLOCK_TOKEN,
       {
         colonyAddress: Address;
         colonyName: string;
@@ -175,12 +175,12 @@ export type ColonyActionsActionTypes =
       MetaWithHistory<object>
     >
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_SUCCESS,
+      ActionTypes.ACTION_UNLOCK_TOKEN_SUCCESS,
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_ERROR, object>
+  | ErrorActionType<ActionTypes.ACTION_UNLOCK_TOKEN_ERROR, object>
   | UniqueActionType<
-      ActionTypes.COLONY_ACTION_RECOVERY,
+      ActionTypes.ACTION_RECOVERY,
       {
         colonyAddress: Address;
         walletAddress: Address;
@@ -189,13 +189,13 @@ export type ColonyActionsActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_ACTION_RECOVERY_ERROR, object>
+  | ErrorActionType<ActionTypes.ACTION_RECOVERY_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_ACTION_RECOVERY_SUCCESS,
+      ActionTypes.ACTION_RECOVERY_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<
-      ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT,
+      ActionTypes.ACTION_RECOVERY_SET_SLOT,
       {
         colonyAddress: Address;
         walletAddress: Address;
@@ -205,13 +205,10 @@ export type ColonyActionsActionTypes =
       },
       WithKey
     >
-  | ErrorActionType<ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT_ERROR, object>
-  | ActionTypeWithMeta<
-      ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT_SUCCESS,
-      object
-    >
+  | ErrorActionType<ActionTypes.ACTION_RECOVERY_SET_SLOT_ERROR, object>
+  | ActionTypeWithMeta<ActionTypes.ACTION_RECOVERY_SET_SLOT_SUCCESS, object>
   | UniqueActionType<
-      ActionTypes.COLONY_ACTION_RECOVERY_APPROVE,
+      ActionTypes.ACTION_RECOVERY_APPROVE,
       {
         colonyAddress: Address;
         walletAddress: Address;
@@ -220,13 +217,10 @@ export type ColonyActionsActionTypes =
       },
       WithKey
     >
-  | ErrorActionType<ActionTypes.COLONY_ACTION_RECOVERY_APPROVE_ERROR, object>
-  | ActionTypeWithMeta<
-      ActionTypes.COLONY_ACTION_RECOVERY_APPROVE_SUCCESS,
-      object
-    >
+  | ErrorActionType<ActionTypes.ACTION_RECOVERY_APPROVE_ERROR, object>
+  | ActionTypeWithMeta<ActionTypes.ACTION_RECOVERY_APPROVE_SUCCESS, object>
   | UniqueActionType<
-      ActionTypes.COLONY_ACTION_RECOVERY_EXIT,
+      ActionTypes.ACTION_RECOVERY_EXIT,
       {
         colonyAddress: Address;
         startBlock: number;
@@ -234,10 +228,10 @@ export type ColonyActionsActionTypes =
       },
       WithKey
     >
-  | ErrorActionType<ActionTypes.COLONY_ACTION_RECOVERY_EXIT_ERROR, object>
-  | ActionTypeWithMeta<ActionTypes.COLONY_ACTION_RECOVERY_EXIT_SUCCESS, object>
+  | ErrorActionType<ActionTypes.ACTION_RECOVERY_EXIT_ERROR, object>
+  | ActionTypeWithMeta<ActionTypes.ACTION_RECOVERY_EXIT_SUCCESS, object>
   | UniqueActionType<
-      ActionTypes.COLONY_ACTION_MANAGE_REPUTATION,
+      ActionTypes.ACTION_MANAGE_REPUTATION,
       {
         colonyAddress: Address;
         colonyName: string;
@@ -249,8 +243,8 @@ export type ColonyActionsActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_ACTION_MANAGE_REPUTATION_ERROR, object>
+  | ErrorActionType<ActionTypes.ACTION_MANAGE_REPUTATION_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_ACTION_MANAGE_REPUTATION_SUCCESS,
+      ActionTypes.ACTION_MANAGE_REPUTATION_SUCCESS,
       MetaWithHistory<object>
     >;

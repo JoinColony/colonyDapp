@@ -462,9 +462,9 @@ const ExtensionDetails = ({
                   children: <FormattedMessage {...MSG.textDeprecate} />,
                 }}
                 appearance={{ theme: 'blue' }}
-                submit={ActionTypes.COLONY_EXTENSION_DEPRECATE}
-                error={ActionTypes.COLONY_EXTENSION_DEPRECATE_ERROR}
-                success={ActionTypes.COLONY_EXTENSION_DEPRECATE_SUCCESS}
+                submit={ActionTypes.EXTENSION_DEPRECATE}
+                error={ActionTypes.EXTENSION_DEPRECATE_ERROR}
+                success={ActionTypes.EXTENSION_DEPRECATE_SUCCESS}
                 text={MSG.buttonDeprecate}
                 values={{ colonyAddress, extensionId, isToDeprecate: true }}
                 disabled={!isSupportedColonyVersion || !isNetworkAllowed}
@@ -481,9 +481,9 @@ const ExtensionDetails = ({
                   children: <FormattedMessage {...MSG.textReEnable} />,
                 }}
                 appearance={{ theme: 'blue' }}
-                submit={ActionTypes.COLONY_EXTENSION_DEPRECATE}
-                error={ActionTypes.COLONY_EXTENSION_DEPRECATE_ERROR}
-                success={ActionTypes.COLONY_EXTENSION_DEPRECATE_SUCCESS}
+                submit={ActionTypes.EXTENSION_DEPRECATE}
+                error={ActionTypes.EXTENSION_DEPRECATE_ERROR}
+                success={ActionTypes.EXTENSION_DEPRECATE_SUCCESS}
                 text={MSG.buttonReEnable}
                 values={{ colonyAddress, extensionId, isToDeprecate: false }}
                 disabled={!isSupportedColonyVersion || !isNetworkAllowed}
@@ -496,9 +496,9 @@ const ExtensionDetails = ({
                   uninstallModalProps.DEFAULT
                 }
                 appearance={{ theme: 'blue' }}
-                submit={ActionTypes.COLONY_EXTENSION_UNINSTALL}
-                error={ActionTypes.COLONY_EXTENSION_UNINSTALL_ERROR}
-                success={ActionTypes.COLONY_EXTENSION_UNINSTALL_SUCCESS}
+                submit={ActionTypes.EXTENSION_UNINSTALL}
+                error={ActionTypes.EXTENSION_UNINSTALL_ERROR}
+                success={ActionTypes.EXTENSION_UNINSTALL_SUCCESS}
                 text={MSG.buttonUninstall}
                 values={{ colonyAddress, extensionId }}
                 disabled={!isSupportedColonyVersion || !isNetworkAllowed}

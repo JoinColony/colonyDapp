@@ -28,7 +28,7 @@ function* createRootMotionSaga({
   },
   meta: { id: metaId, history },
   meta,
-}: Action<ActionTypes.COLONY_ROOT_MOTION>) {
+}: Action<ActionTypes.ROOT_MOTION>) {
   let txChannel;
   try {
     if (!motionParams) {
@@ -149,7 +149,7 @@ function* createRootMotionSaga({
       );
     }
     yield put<AllActions>({
-      type: ActionTypes.COLONY_ROOT_MOTION_SUCCESS,
+      type: ActionTypes.ROOT_MOTION_SUCCESS,
       meta,
     });
 
@@ -157,12 +157,12 @@ function* createRootMotionSaga({
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
     }
   } catch (caughtError) {
-    putError(ActionTypes.COLONY_ROOT_MOTION_ERROR, caughtError, meta);
+    putError(ActionTypes.ROOT_MOTION_ERROR, caughtError, meta);
   } finally {
     txChannel.close();
   }
 }
 
 export default function* rootMotionSaga() {
-  yield takeEvery(ActionTypes.COLONY_ROOT_MOTION, createRootMotionSaga);
+  yield takeEvery(ActionTypes.ROOT_MOTION, createRootMotionSaga);
 }
