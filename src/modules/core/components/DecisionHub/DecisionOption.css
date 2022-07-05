@@ -1,3 +1,4 @@
+@value query700 from '~styles/queries.css';
 
 .main {
   display: flex;
@@ -42,4 +43,10 @@
 
 .tooltip {
   max-width: 270px;
+}
+
+@media screen and query700 {
+  .main {
+    height: auto;
+  }
 }
