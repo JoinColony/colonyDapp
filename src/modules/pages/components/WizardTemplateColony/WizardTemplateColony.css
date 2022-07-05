@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .layoutMain {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   overflow: auto;
@@ -75,4 +77,17 @@
 
 .copy {
   margin-left: 8px;
+}
+
+@media screen and query700 {
+  .content section {
+    padding-left: 14px;
+    padding-right: 14px;
+    width: 100%;
+    max-width: 500px;
+  }
+
+  .content section h3 {
+    white-space: normal;
+  }
 }
