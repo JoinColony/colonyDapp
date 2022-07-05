@@ -1,12 +1,10 @@
-import React from 'react';
-import { FormikProps } from 'formik';
+import React, { useCallback, useState } from 'react';
+import { FormikProps, FormikState } from 'formik';
 import { defineMessages } from 'react-intl';
 import Button from '~core/Button';
-import { ActionDialogProps } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
-import { Select, Input, Annotations } from '~core/Fields';
+import { Select, Input, Annotations, SelectOption } from '~core/Fields';
 import Heading from '~core/Heading';
-import { GNOSIS_SAFE_NETWORKS } from '~modules/constants';
 
 import { FormValues } from './AddExistingSafeDialog';
 
@@ -33,22 +31,83 @@ const MSG = defineMessages({
     id: 'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.contract',
     defaultMessage: 'Add Safe address',
   },
-  safeFound: {
-    id: 'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.safeFound',
-    // @TODO remove hardcoding here
-    defaultMessage: 'Safe found on Gnosis Chain',
+  safeLoading: {
+    id: 'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.safeLoading',
+    defaultMessage: 'Loading Safe details...',
+  },
+  safeCheck: {
+    id: 'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.safeCheck',
+    defaultMessage: `Safe {safeData, select,
+      true {found}
+      other {not found}
+    } on {selectedChain}`,
   },
 });
-interface Props extends ActionDialogProps {
-  ethDomainId?: number;
+
+const getStatusText = (
+  selectedChain: SelectOption,
+  isLoadingAddress: boolean,
+  status: FormikState<FormValues>,
+  safeData?: any, // @TODO ADD IN Safe data Type when wiring up
+) => {
+  if (!status?.touched?.contractAddress || status?.errors?.contractAddress) {
+    return {};
+  }
+  if (isLoadingAddress) {
+    return { status: MSG.safeLoading };
+  }
+  if (safeData === null) {
+    return {
+      status: MSG.safeCheck,
+      statusValues: {
+        safeData,
+        selectedChain: selectedChain.label.toString(),
+      },
+    };
+  }
+  return {
+    status: MSG.safeCheck,
+    statusValues: {
+      safeData,
+      selectedChain: selectedChain.label.toString(),
+    },
+  };
+};
+
+interface Props {
+  back: () => void;
+  status: FormikState<FormValues>;
+  networkOptions: SelectOption[];
 }
 
 const AddExistingSafeDialogForm = ({
   back,
+  networkOptions,
+  status,
   handleSubmit,
   isSubmitting,
   isValid,
 }: Props & FormikProps<FormValues>) => {
+  const [selectedChain, setSelectedChain] = useState<SelectOption>(
+    networkOptions[0],
+  );
+
+  // @TODO Add in actual API check when wiring up.
+  const safeData = true;
+  const isLoadingSafe = false;
+
+  const handleNetworkChange = useCallback(
+    (fromNetworkValue) => {
+      const selectedNetwork = networkOptions.find(
+        (option) => option.value === fromNetworkValue,
+      );
+      if (selectedNetwork) {
+        setSelectedChain(selectedNetwork);
+      }
+    },
+    [networkOptions, setSelectedChain],
+  );
+
   return (
     <>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
@@ -62,11 +121,12 @@ const AddExistingSafeDialogForm = ({
       <DialogSection>
         <div className={styles.chainSelect}>
           <Select
-            options={GNOSIS_SAFE_NETWORKS}
+            options={networkOptions}
             label={MSG.chain}
             name="chainId"
             appearance={{ theme: 'grey', width: 'fluid' }}
             disabled={isSubmitting}
+            onChange={handleNetworkChange}
           />
         </div>
       </DialogSection>
@@ -76,7 +136,7 @@ const AddExistingSafeDialogForm = ({
           label={MSG.contract}
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
           disabled={isSubmitting}
-          status={MSG.safeFound}
+          {...getStatusText(selectedChain, isLoadingSafe, status, safeData)}
         />
       </DialogSection>
       <DialogSection>

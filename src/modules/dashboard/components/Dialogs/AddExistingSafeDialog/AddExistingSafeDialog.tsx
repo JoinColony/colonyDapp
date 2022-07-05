@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
-
+import { GNOSIS_SAFE_NETWORKS } from '~modules/constants';
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
@@ -22,31 +22,18 @@ export interface FormValues {
 
 type Props = Required<DialogProps> &
   WizardDialogType<object> &
-  ActionDialogProps & {
-    ethDomainId?: number;
-  };
+  ActionDialogProps;
 
 const displayName = 'dashboard.AddExistingSafeDialog';
 
 const AddExistingSafeDialog = ({
   colony: { colonyAddress, colonyName },
-  colony,
-  isVotingExtensionEnabled,
   callStep,
   prevStep,
   cancel,
   close,
 }: Props) => {
   const history = useHistory();
-
-  // @TODO change this accordingly
-  const getFormAction = useCallback(
-    (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
-      const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
-      return ActionTypes[`COLONY_ACTION_EXPENDITURE_PAYMENT${actionEnd}`];
-    },
-    [],
-  );
 
   const validationSchema = yup.object().shape({
     chainId: yup.string().required(),
@@ -55,7 +42,15 @@ const AddExistingSafeDialog = ({
     annotation: yup.string().max(4000),
   });
 
-  // @TODO change this accordingly
+  // Create array for Network options
+  const networkOptions = GNOSIS_SAFE_NETWORKS.map((option) => {
+    return {
+      label: option.name,
+      value: option.chainId.toString(),
+    };
+  });
+
+  // @TODO change this accordingly when wiring up
   const transform = useCallback(
     pipe(
       mapPayload((payload) => {
@@ -83,25 +78,25 @@ const AddExistingSafeDialog = ({
   return (
     <ActionForm
       initialValues={{
-        chainId: 'xdai',
+        chainId: networkOptions[0].value,
         annotation: undefined,
         safeName: undefined,
         contractAddress: undefined,
       }}
       validationSchema={validationSchema}
-      submit={getFormAction('SUBMIT')}
-      error={getFormAction('ERROR')}
-      success={getFormAction('SUCCESS')}
+      submit={ActionTypes.COLONY_ACTION_GENERIC}
+      error={ActionTypes.COLONY_ACTION_GENERIC}
+      success={ActionTypes.COLONY_ACTION_GENERIC}
       transform={transform}
       onSuccess={close}
     >
-      {(formValues: FormikProps<FormValues>) => {
+      {(status, values: FormikProps<FormValues>) => {
         return (
           <Dialog cancel={cancel}>
             <DialogForm
-              {...formValues}
-              colony={colony}
-              isVotingExtensionEnabled={isVotingExtensionEnabled}
+              {...values}
+              status={status}
+              networkOptions={networkOptions}
               back={() => callStep(prevStep)}
             />
           </Dialog>
