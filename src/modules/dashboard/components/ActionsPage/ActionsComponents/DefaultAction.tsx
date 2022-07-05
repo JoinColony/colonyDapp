@@ -1,6 +1,7 @@
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import Decimal from 'decimal.js';
+import { useMediaQuery } from 'react-responsive';
 
 import Tag, { Appearance as TagAppareance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
@@ -37,7 +38,9 @@ import { ipfsDataFetcher } from '../../../../core/fetchers';
 
 import DetailsWidget from '../DetailsWidget';
 
+import { query700 as query } from '~styles/queries.css';
 import styles from './DefaultAction.css';
+import ColonyHomeInfo from '~dashboard/ColonyHome/ColonyHomeInfo';
 
 const displayName = 'dashboard.ActionsPage.DefaultAction';
 
@@ -221,8 +224,10 @@ const DefaultAction = ({
     )} | Action | Colony - ${colony.displayName ?? colony.colonyName ?? ``}`,
   );
 
+  const isMobile = useMediaQuery({ query });
   return (
     <div className={styles.main}>
+      {isMobile && <ColonyHomeInfo colony={colony} showNavigation isMobile />}
       {isVotingExtensionEnabled && (
         <div className={styles.upperContainer}>
           <p className={styles.tagWrapper}>

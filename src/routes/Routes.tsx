@@ -220,10 +220,11 @@ const Routes = () => {
           exact
           path={ACTIONS_PAGE_ROUTE}
           component={ActionsPage}
-          layout={NavBar}
+          layout={isMobile ? Default : NavBar}
           routeProps={({ colonyName }) => ({
             backText: '',
             backRoute: `/colony/${colonyName}`,
+            hasSubscribedColonies: isMobile,
           })}
         />
         <AlwaysAccesibleRoute
