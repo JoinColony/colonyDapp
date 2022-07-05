@@ -17,75 +17,75 @@ import { Stage } from './constants';
 
 const MSG = defineMessages({
   stages: {
-    id: 'dashboard.Expenditures.Stages.stages',
+    id: 'dashboard.ExpenditurePage.Stages.stages',
     defaultMessage: 'Stages',
   },
   notSaved: {
-    id: 'dashboard.Expenditures.Stages.notSaved',
+    id: 'dashboard.ExpenditurePage.Stages.notSaved',
     defaultMessage: 'Not saved',
   },
   submitDraft: {
-    id: 'dashboard.Expenditures.Stages.submitDraft',
+    id: 'dashboard.ExpenditurePage.Stages.submitDraft',
     defaultMessage: 'Submit draft',
   },
   lockValues: {
-    id: 'dashboard.Expenditures.Stages.lockValues',
+    id: 'dashboard.ExpenditurePage.Stages.lockValues',
     defaultMessage: 'Lock values',
   },
   escrowFunds: {
-    id: 'dashboard.Expenditures.Stages.escrowFunds',
+    id: 'dashboard.ExpenditurePage.Stages.escrowFunds',
     defaultMessage: 'Escrow funds',
   },
   releaseFunds: {
-    id: 'dashboard.Expenditures.Stages.releaseFunds',
+    id: 'dashboard.ExpenditurePage.Stages.releaseFunds',
     defaultMessage: 'Release funds',
   },
   claim: {
-    id: 'dashboard.Expenditures.Stages.claim',
+    id: 'dashboard.ExpenditurePage.Stages.claim',
     defaultMessage: 'Claim',
   },
   completed: {
-    id: 'dashboard.Expenditures.Stages.completed',
+    id: 'dashboard.ExpenExpenditurePageditures.Stages.completed',
     defaultMessage: 'Completed',
   },
   draft: {
-    id: 'dashboard.Expenditures.Stages.draft',
+    id: 'dashboard.ExpenditurePage.Stages.draft',
     defaultMessage: 'Draft',
   },
   locked: {
-    id: 'dashboard.Expenditures.Stages.locked',
+    id: 'dashboard.ExpenditurePage.Stages.locked',
     defaultMessage: 'Locked',
   },
   funded: {
-    id: 'dashboard.Expenditures.Stages.funded',
+    id: 'dashboard.ExpenditurePage.Stages.funded',
     defaultMessage: 'Funded',
   },
   released: {
-    id: 'dashboard.Expenditures.Stages.released',
+    id: 'dashboard.ExpenditurePage.Stages.released',
     defaultMessage: 'Released',
   },
   claimed: {
-    id: 'dashboard.Expenditures.Stages.claimed',
+    id: 'dashboard.ExpenditurePage.Stages.claimed',
     defaultMessage: 'Claimed',
   },
   deleteDraft: {
-    id: 'dashboard.Expenditures.Stages.deleteDraft',
+    id: 'dashboard.ExpenditurePage.Stages.deleteDraft',
     defaultMessage: 'Delete draft',
   },
   tooltipDeleteText: {
-    id: 'dashboard.Expenditures.Stages.tooltipDeleteText',
+    id: 'dashboard.ExpenditurePage.Stages.tooltipDeleteText',
     defaultMessage: 'Delete the expenditure',
   },
   tooltipShareText: {
-    id: 'dashboard.Expenditures.Stages.tooltipShareText',
+    id: 'dashboard.ExpenditurePage.Stages.tooltipShareText',
     defaultMessage: 'Share expenditure URL',
   },
   tooltipCancelText: {
-    id: 'dashboard.Expenditures.Stages.tooltipCancelText',
+    id: 'dashboard.ExpenditurePage.Stages.tooltipCancelText',
     defaultMessage: 'Click to cancel expenditure',
   },
   tooltipLockValuesText: {
-    id: 'dashboard.Expenditures.Stages.tooltipLockValuesText',
+    id: 'dashboard.ExpenditurePage.Stages.tooltipLockValuesText',
     defaultMessage: `This will lock the values of the expenditure. To change values after locking will require the right permissions or a motion.`,
   },
 });
@@ -110,7 +110,7 @@ const buttonStyles = {
   padding: 0,
 };
 
-const displayName = 'dashboard.Stages';
+const displayName = 'dashboard.ExpenditurePage.Stages';
 
 const Stages = () => {
   const [activeStateId, setActiveStateId] = useState<string | null>(null);

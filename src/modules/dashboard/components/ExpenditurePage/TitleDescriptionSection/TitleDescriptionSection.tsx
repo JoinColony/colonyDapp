@@ -20,7 +20,7 @@ const MSG = defineMessages({
   },
 });
 
-const displayName = 'dashboard.TitleDescriptionSection';
+const displayName = 'dashboard.ExpenditurePage.TitleDescriptionSection';
 
 interface Props {
   isEditable?: boolean;
