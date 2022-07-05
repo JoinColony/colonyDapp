@@ -245,7 +245,7 @@ const UserNavigation = () => {
         </InboxPopover>
       )}
       <AvatarDropdown
-        onlyLogout={!isNetworkAllowed}
+        preventTransactions={!isNetworkAllowed}
         colony={colonyData?.processedColony as Colony}
       />
     </div>
