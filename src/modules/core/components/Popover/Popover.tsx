@@ -54,6 +54,8 @@ interface Props {
   onClose?: (data?: any, modifiers?: { cancelled: boolean }) => void;
   /** Delay opening of popover for `openDelay` ms */
   openDelay?: number;
+  /** Close popover after `closeDelay` ms */
+  closeDelay?: number;
   /** Popover placement */
   placement?: Placement;
   /** Options to pass to the underlying PopperJS element. See here for more: https://popper.js.org/docs/v2/constructors/#options. */
@@ -87,6 +89,7 @@ const Popover = ({
   isOpen: isOpenProp = false,
   onClose,
   openDelay,
+  closeDelay,
   placement: placementProp = 'auto',
   popperOptions = {},
   retainRefFocus,
@@ -102,6 +105,7 @@ const Popover = ({
   const [arrowElement, setArrowElement] = useState<HTMLElement | null>(null);
 
   const openTimeoutRef = useRef<number>();
+  const closeTimeoutRef = useRef<number>();
   const { current: elementId } = useRef<string>(nanoid());
 
   const { attributes, styles, state } = usePopper(
@@ -120,6 +124,11 @@ const Popover = ({
     if (isOpen) {
       return;
     }
+    if (closeDelay && window) {
+      closeTimeoutRef.current = window.setTimeout(() => {
+        _setIsOpen(false);
+      }, closeDelay);
+    }
     if (openDelay && window) {
       openTimeoutRef.current = window.setTimeout(() => {
         _setIsOpen(true);
@@ -133,6 +142,7 @@ const Popover = ({
     (data?: any, modifiers?: { cancelled: boolean }) => {
       if (window) {
         window.clearTimeout(openTimeoutRef.current);
+        window.clearTimeout(closeTimeoutRef.current);
       }
       if (!isOpen) return;
       _setIsOpen(false);
@@ -253,9 +263,13 @@ const Popover = ({
   // Timeouts
   useEffect(() => {
     const currentOpenTimeoutRef = openTimeoutRef && openTimeoutRef.current;
+    const currentCloseTimeoutRef = closeTimeoutRef && closeTimeoutRef.current;
     return () => {
       if (window && currentOpenTimeoutRef) {
         window.clearTimeout(currentOpenTimeoutRef);
+      }
+      if (window && currentCloseTimeoutRef) {
+        window.clearTimeout(currentCloseTimeoutRef);
       }
     };
   }, []);

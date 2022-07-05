@@ -71,6 +71,7 @@ const GasStationPopover = ({
       placement="bottom-end"
       showArrow={false}
       isOpen={isOpen}
+      closeDelay={4000}
       onClose={() => {
         setOpen(false);
         setTxNeedsSigning(false);
