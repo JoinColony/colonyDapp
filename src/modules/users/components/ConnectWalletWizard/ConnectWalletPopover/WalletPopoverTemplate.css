@@ -9,7 +9,10 @@
 @media screen and query700 {
   .main {
     padding: 30px 25px;
-    width: calc(100vw - 28px);
+    width: calc(100% - 28px);
+    border-radius: 4px;
+    background-color: var(--grey-blue-2);
+    box-shadow: 0px 2px 11px 0px var(--drop-shadow);
   }
 
   .main button {
