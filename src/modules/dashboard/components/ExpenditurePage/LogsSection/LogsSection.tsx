@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import styles from './LogsSection.css';
 import { colonyAction, systemMessages, transactionHash } from './constants';
 import { useLoggedInUser } from '~data/helpers';
-import Comment, { CommentInput } from '~core/Comment';
+import Comment from '~core/Comment';
 import { TransactionMeta } from '~dashboard/ActionsPage';
 import ActionsPageFeed, {
   ActionsPageEvent,
@@ -16,20 +16,20 @@ import ActionsPageFeed, {
 import { Colony, ParsedEvent, TransactionMessageFragment } from '~data/index';
 import FriendlyName from '~core/FriendlyName';
 import MemberReputation from '~core/MemberReputation';
-import PortalWrapper from '../PortalWrapper';
+import { SubformCommentInput } from '~core/Comment/Input';
 
 const MSG = defineMessages({
   commentPlaceholder: {
-    id: 'dashboard.ExpenditurePage.ExpenditureLogs.commentPlaceholder',
+    id: 'dashboard.ExpenditurePage.LogsSection.commentPlaceholder',
     defaultMessage: 'What would you like to say?',
   },
   emptyLog: {
-    id: 'dashboard.ExpenditurePage.ExpenditureLogs.emptyLog',
+    id: 'dashboard.ExpenditurePage.LogsSection.emptyLog',
     defaultMessage: 'Log event',
   },
 });
 
-export const ifIsSystemMessage = (name: string) => {
+export const isSystemMessage = (name: string) => {
   if (
     name === SystemMessagesName.ExpenditureStaked ||
     name === SystemMessagesName.ExpenditureFunding ||
@@ -52,7 +52,7 @@ export const ifIsSystemMessage = (name: string) => {
   return false;
 };
 
-const displayName = 'LogsSection';
+const displayName = 'dashboard.ExpenditurePage.LogsSection';
 
 interface Props {
   colony: Colony;
@@ -60,15 +60,6 @@ interface Props {
 
 const LogsSection = ({ colony }: Props) => {
   const { username: currentUserName, ethereal } = useLoggedInUser();
-  const commentRef = useRef<HTMLDivElement>(null);
-  const [commentWrapper, setCommentWrapper] = useState<HTMLDivElement | null>(
-    null,
-  );
-
-  useEffect(() => {
-    // Force a rerender, so it can be passed to the child.
-    setCommentWrapper(commentRef.current);
-  }, [commentRef]);
 
   // add fetching systemMessages here, mocks are used now
 
@@ -79,11 +70,8 @@ const LogsSection = ({ colony }: Props) => {
       return {
         name,
         changes:
-          changes?.map((change, changeIndex) => (
-            <span
-              className={styles.change}
-              key={`${changeIndex}_${changes?.length}`}
-            >
+          changes?.map((change, index) => (
+            <span className={styles.change} key={index}>
               <FormattedMessage
                 id={`systemMessage.change.${change.changeType}`}
                 values={{
@@ -96,8 +84,8 @@ const LogsSection = ({ colony }: Props) => {
                   value: change.currValue,
                 }}
               />
-              {changeIndex !== changes.length - 1 ? ',' : '.'}
-              {changeIndex === changes.length - 2 && ' and '}
+              {index !== changes.length - 1 ? ',' : '.'}
+              {index === changes.length - 2 && ' and '}
             </span>
           )) || '',
         reputation: (
@@ -113,10 +101,10 @@ const LogsSection = ({ colony }: Props) => {
           </span>
         ),
         funds:
-          funds?.map((fund, idx) => (
-            <span className={styles.change} key={`${idx}_${funds?.length}`}>
+          funds?.map((fund, index) => (
+            <span className={styles.change} key={index}>
               {fund}
-              {idx !== funds.length - 1 ? ',' : '.'}
+              {index !== funds.length - 1 ? ',' : '.'}
             </span>
           )) || '',
         initiator: (
@@ -131,6 +119,7 @@ const LogsSection = ({ colony }: Props) => {
 
   return (
     <div className={styles.container}>
+      <hr className={styles.divider} />
       {!systemMessages ? (
         <div className={styles.logContainer}>
           <div className={styles.dotContainer}>
@@ -221,18 +210,14 @@ const LogsSection = ({ colony }: Props) => {
        *  @NOTE A user can comment only if he has a wallet connected
        * and a registered user profile,
        */}
-      <div ref={commentRef}>
-        {currentUserName && !ethereal && commentWrapper && (
-          <div className={styles.commentInput}>
-            <PortalWrapper element={commentRef?.current}>
-              <CommentInput
-                colonyAddress={colony?.colonyAddress}
-                transactionHash={transactionHash}
-              />
-            </PortalWrapper>
-          </div>
-        )}
-      </div>
+      {currentUserName && !ethereal && (
+        <div className={styles.commentInput}>
+          <SubformCommentInput
+            colonyAddress={colony?.colonyAddress}
+            transactionHash={transactionHash}
+          />
+        </div>
+      )}
     </div>
   );
 };

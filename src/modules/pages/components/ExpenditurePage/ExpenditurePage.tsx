@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef } from 'react';
 import * as yup from 'yup';
 
 import { defineMessages, FormattedMessage } from 'react-intl';
@@ -74,8 +74,6 @@ const ExpenditurePage = ({ match }: Props) => {
   const { colonyName } = useParams<{
     colonyName: string;
   }>();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [isEditable, setIsEditable] = useState(true);
 
   const { data: colonyData, loading } = useColonyFromNameQuery({
     variables: { name: colonyName, address: '' },
@@ -87,7 +85,7 @@ const ExpenditurePage = ({ match }: Props) => {
     console.log({ values });
   }, []);
 
-  return isEditable ? (
+  return (
     <Form
       initialValues={initialValues}
       onSubmit={submit}
@@ -114,22 +112,6 @@ const ExpenditurePage = ({ match }: Props) => {
         </div>
       </div>
     </Form>
-  ) : (
-    <div className={getMainClasses({}, styles)}>
-      <aside className={styles.sidebar} />
-      <div className={styles.mainContainer}>
-        <main className={styles.mainContent}>
-          <TitleDescriptionSection isEditable={isEditable} />
-          {loading ? (
-            <div className={styles.spinnerContainer}>
-              <SpinnerLoader appearance={{ size: 'medium' }} />
-            </div>
-          ) : (
-            colonyData && <LogsSection colony={colonyData.processedColony} />
-          )}
-        </main>
-      </div>
-    </div>
   );
 };
 

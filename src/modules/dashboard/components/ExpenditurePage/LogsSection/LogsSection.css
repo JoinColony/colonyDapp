@@ -5,16 +5,6 @@
   padding: 0 25px;
 }
 
-.comment div {
-  padding: 0;
-  font-size: var(--size-tiny);
-  font-weight: var(--weight-bold);
-}
-
-.comment > div > div {
-  width: 58px;
-}
-
 .commentInput {
   margin-top: 29px;
 }
@@ -102,4 +92,10 @@
 .titleDecoration {
   font-weight: var(--weight-bold);
   color: var(--pink);
+}
+
+.divider {
+  margin: 0 0 8px 0;
+  background-color: var(--temp-grey-blue-7);
+  opacity: 0.15;
 }

@@ -1,7 +1,6 @@
 export const inputBackground: string;
 export const shadow: string;
 export const container: string;
-export const comment: string;
 export const commentInput: string;
 export const disabledComment: string;
 export const logContainer: string;
@@ -12,3 +11,4 @@ export const reputationWrapper: string;
 export const reputationStarWrapper: string;
 export const change: string;
 export const titleDecoration: string;
+export const divider: string;
