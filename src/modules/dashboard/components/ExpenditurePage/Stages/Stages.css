@@ -1,0 +1,94 @@
+@value buttonHeight: 29px;
+@value buttonWidth: 100px;
+
+.mainContainer {
+  padding-top: 20px;
+  min-width: 340px;
+}
+
+.status {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--dark);
+}
+
+.notSaved {
+  margin-left: 9px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--temp-grey-blue-7);
+  letter-spacing: 0.5px;
+}
+
+.stagesText {
+  display: flex;
+  align-items: center;
+  line-height: 18px;
+}
+
+.statusContainer {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--temp-grey-6);
+}
+
+.icon svg {
+  height: 18px;
+  width: 18px;
+  fill: var(--temp-grey-blue-7);
+}
+
+.buttonsContainer {
+  display: flex;
+  align-items: center;
+}
+
+.iconContainer {
+  margin-right: 20px;
+}
+
+.iconContainer:hover {
+  cursor: pointer;
+}
+
+.iconContainer > div {
+  margin-bottom: 7px;
+}
+
+.buttonsContainer button {
+  margin-left: 4px;
+}
+
+.iconWrapper {
+  position: relative;
+}
+
+.iconWrapper::after {
+  height: 28px;
+  width: 28px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  background-color: var(--action-secondary);
+  content: '';
+  opacity: 0;
+  transform: translate(-5px, -5px);
+  transition: opacity 200ms ease-in-out;
+}
+
+.iconWrapper:hover::after {
+  opacity: 0.1;
+}
+
+.cancelIcon:hover svg {
+  fill: var(--pink);
+  transition: fill 200ms ease-in-out;
+}
+
+.buttonTooltip {
+  max-width: 192px;
+}

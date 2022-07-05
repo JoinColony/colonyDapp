@@ -2,7 +2,9 @@
 @value shadow: inset 0px 2px 4px color-mod(black alpha(7%));
 
 .container {
-  padding: 0 25px;
+  padding-right: 37px;
+  padding-bottom: 50px;
+  width: 100%;
 }
 
 .commentInput {

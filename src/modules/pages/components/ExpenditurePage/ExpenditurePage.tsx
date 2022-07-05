@@ -1,17 +1,16 @@
 import React, { useCallback, useRef } from 'react';
 import * as yup from 'yup';
-
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { nanoid } from 'nanoid';
 import { RouteChildrenProps, useParams } from 'react-router';
 import { Form } from '~core/Fields';
+import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
+import { useColonyFromNameQuery } from '~data/generated';
 import Payments from '~dashboard/ExpenditurePage/Payments';
 import ExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings';
-import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
+import Stages from '~dashboard/ExpenditurePage/Stages';
 import TitleDescriptionSection from '~dashboard/ExpenditurePage/TitleDescriptionSection';
-import { useColonyFromNameQuery } from '~data/generated';
 import { getMainClasses } from '~utils/css';
-
 import styles from './ExpenditurePage.css';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -100,14 +99,19 @@ const ExpenditurePage = ({ match }: Props) => {
         </aside>
         <div className={styles.mainContainer}>
           <main className={styles.mainContent}>
-            <TitleDescriptionSection isEditable />
-            {loading ? (
-              <div className={styles.spinnerContainer}>
-                <SpinnerLoader appearance={{ size: 'medium' }} />
-              </div>
-            ) : (
-              colonyData && <LogsSection colony={colonyData.processedColony} />
-            )}
+            <div>
+              <TitleDescriptionSection isEditable />
+              {loading ? (
+                <div className={styles.spinnerContainer}>
+                  <SpinnerLoader appearance={{ size: 'medium' }} />
+                </div>
+              ) : (
+                colonyData && (
+                  <LogsSection colony={colonyData.processedColony} />
+                )
+              )}
+            </div>
+            <Stages />
           </main>
         </div>
       </div>
