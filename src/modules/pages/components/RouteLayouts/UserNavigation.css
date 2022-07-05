@@ -234,6 +234,14 @@
     width: 120px;
   }
 
+  .connectWalletButton + div[role="tooltip"] {
+    display: flex;
+    justify-content: center;
+    width: 100vw;
+    background-color: transparent;
+    box-shadow: none;
+  }
+
   .gasStationReference + div {
     display: flex;
     justify-content: center;
