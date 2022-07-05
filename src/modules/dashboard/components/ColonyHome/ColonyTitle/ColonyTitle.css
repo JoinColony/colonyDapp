@@ -1,8 +1,7 @@
 .main {
   display: block;
-  margin: 0 -40px 50px;
+  margin: 0 -40px 50px 0px;
   padding-top: 15px;
-  text-align: right;
 }
 
 .wrapper {
