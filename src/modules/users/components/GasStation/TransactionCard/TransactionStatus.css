@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   flex: 0 1 auto;
   cursor: default;
@@ -62,4 +64,10 @@
 .statusIconContainerReady {
   height: 20px;
   line-height: 20px;
+}
+
+@media screen and query700 {
+  .main {
+    min-width: 14px;
+  }
 }
