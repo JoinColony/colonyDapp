@@ -31,6 +31,10 @@ export type NetworkInfo = {
    * Used when adding the network to Metamask
    */
   rpcUrl?: string;
+  /*
+   * Used when interacting with Gnosis Safe Transaction Service
+   */
+  gnosisTxService?: string;
 };
 
 export const DEFAULT_NETWORK = process.env.NETWORK || Network.Goerli;
@@ -71,7 +75,7 @@ const XDAI_NETWORK: NetworkInfo = {
   /*
    * Needs to be this exact name, otherwise Metamask marks it as "not valid" when adding it
    */
-  name: 'xDAI Chain',
+  name: 'Gnosis Chain',
   chainId: 100,
   shortName: 'xDai',
   displayENSDomain: 'joincolony.colonyxdai',
@@ -80,6 +84,7 @@ const XDAI_NETWORK: NetworkInfo = {
   tokenExplorerLink: 'https://blockscout.com/poa/xdai/tokens',
   contractAddressLink: 'https://blockscout.com/poa/xdai/address',
   rpcUrl: 'https://rpc.xdaichain.com',
+  gnosisTxService: 'https://safe-transaction.xdai.gnosis.io/',
 };
 
 const ETHEREUM_NETWORK: NetworkInfo = {
@@ -92,6 +97,7 @@ const ETHEREUM_NETWORK: NetworkInfo = {
   tokenExplorerLink: 'https://etherscan.io/tokens',
   contractAddressLink: 'https://etherscan.io/address',
   rpcUrl: 'https://mainnet.infura.io/v3',
+  gnosisTxService: 'https://safe-transaction.mainnet.gnosis.io/',
 };
 
 const GOERLI_NETWORK: NetworkInfo = {
@@ -104,6 +110,54 @@ const GOERLI_NETWORK: NetworkInfo = {
   tokenExplorerLink: 'https://goerli.etherscan.io/tokens',
   contractAddressLink: 'https://goerli.etherscan.io/address',
   rpcUrl: 'https://goerli.infura.io/v3',
+};
+
+const ARBITRUM_NETWORK: NetworkInfo = {
+  name: 'Arbitrum',
+  chainId: 42161,
+  shortName: 'ETH',
+  contractAddressLink: '',
+  gnosisTxService: 'https://safe-transaction.arbitrum.gnosis.io/',
+};
+
+const AURORA_NETWORK: NetworkInfo = {
+  name: 'Aurora',
+  chainId: 1313161554,
+  shortName: 'ETH',
+  contractAddressLink: '',
+  gnosisTxService: 'https://safe-transaction.aurora.gnosis.io/',
+};
+
+const AVALANCHE_NETWORK: NetworkInfo = {
+  name: 'Avalanche',
+  chainId: 43114,
+  shortName: 'AVAX',
+  contractAddressLink: '',
+  gnosisTxService: 'https://safe-transaction.avalanche.gnosis.io/',
+};
+
+const BINANCE_NETWORK: NetworkInfo = {
+  name: 'Binance Smart Chain',
+  chainId: 56,
+  shortName: 'BNB',
+  contractAddressLink: '',
+  gnosisTxService: 'https://safe-transaction.bsc.gnosis.io/',
+};
+
+const OPTIMISM_NETWORK: NetworkInfo = {
+  name: 'Optimism',
+  chainId: 10,
+  shortName: 'ETH',
+  contractAddressLink: '',
+  gnosisTxService: 'https://safe-transaction.optimism.gnosis.io/',
+};
+
+const POLYGON_NETWORK: NetworkInfo = {
+  name: 'Polygon',
+  chainId: 137,
+  shortName: 'MATIC',
+  contractAddressLink: '',
+  gnosisTxService: 'https://safe-transaction.polygon.gnosis.io/',
 };
 
 /*
@@ -144,6 +198,17 @@ export const SUPPORTED_NETWORKS = {
   [GOERLI_NETWORK.chainId]: GOERLI_NETWORK,
   [GANACHE_NETWORK.chainId]: GANACHE_NETWORK,
 };
+
+export const GNOSIS_SAFE_NETWORKS: NetworkInfo[] = [
+  XDAI_NETWORK,
+  ETHEREUM_NETWORK,
+  ARBITRUM_NETWORK,
+  AURORA_NETWORK,
+  AVALANCHE_NETWORK,
+  BINANCE_NETWORK,
+  OPTIMISM_NETWORK,
+  POLYGON_NETWORK,
+];
 
 export const DEFAULT_NETWORK_TOKEN = TOKEN_DATA[DEFAULT_NETWORK];
 
