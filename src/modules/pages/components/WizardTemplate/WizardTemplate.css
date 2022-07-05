@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .layoutMain {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   overflow: auto;
@@ -30,4 +32,22 @@
 
 .stepBarContainer {
   padding-right: 20px;
+}
+
+@media screen and query700 {
+  .content {
+    padding-bottom: 60px;
+  }
+
+  .content main {
+    padding: 0 14px;
+  }
+
+  .content main > div:first-child {
+    margin-top: 30px;
+  }
+
+  .content main > div:first-child h3 {
+    text-align: left;
+  }
 }

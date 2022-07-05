@@ -52,6 +52,7 @@
 @media screen and query700 {
   .content {
     width: 100%;
+    max-width: 340px;
   }
 
   .title {
