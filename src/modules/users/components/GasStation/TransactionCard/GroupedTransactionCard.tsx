@@ -1,14 +1,20 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useContext } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
 
 import { TransactionType, TRANSACTION_STATUSES } from '~immutable/index';
-import { Appearance } from '../GasStationContent';
-import { getMainClasses } from '~utils/css';
-import { transactionCancel } from '../../../../core/actionCreators';
 import { Tooltip } from '~core/Popover';
+import { useDialog } from '~core/Dialog';
+import { transactionCancel } from '../../../../core/actionCreators';
+
+import WrongNetworkDialog from '~dashboard/ColonyHome/WrongNetworkDialog';
+
+import { getMainClasses } from '~utils/css';
+
+import { Appearance } from '../GasStationContent';
 import styles from './GroupedTransactionCard.css';
 import TransactionStatus from './TransactionStatus';
+import { GasStationContext } from '../GasStationProvider';
 
 const MSG = defineMessages({
   hasDependentTx: {
@@ -54,6 +60,13 @@ const GroupedTransactionCard = ({
   },
 }: Props) => {
   const dispatch = useDispatch();
+  const { updateTransactionAlert, transactionAlerts } = useContext(
+    GasStationContext,
+  );
+  /*
+   * @TODO Replace with proper modal
+   */
+  const openWrongNetworkDialog = useDialog(WrongNetworkDialog);
 
   const handleCancel = useCallback(() => {
     dispatch(transactionCancel(id));
@@ -67,6 +80,30 @@ const GroupedTransactionCard = ({
   const toggleCancelConfirmation = useCallback(() => {
     setIsShowingCancelConfirmation(!isShowingCancelConfirmation);
   }, [isShowingCancelConfirmation]);
+
+  useEffect(() => {
+    if (
+      /*
+       * @NOTE Sadly we don't have a better way currently to detect this error
+       */
+      error?.message.includes('Contract does not support MetaTransactions') &&
+      !transactionAlerts?.[id]?.seen
+    ) {
+      /*
+       * @TODO Replace with proper modal
+       * @TODO Add logic to display the modal
+       * (the `seen` tracking needs to be included in that logic)
+       */
+      updateTransactionAlert(id, { seen: true });
+      openWrongNetworkDialog();
+    }
+  }, [
+    error,
+    id,
+    openWrongNetworkDialog,
+    transactionAlerts,
+    updateTransactionAlert,
+  ]);
 
   const ready = status === TRANSACTION_STATUSES.READY;
   const failed = status === TRANSACTION_STATUSES.FAILED;
