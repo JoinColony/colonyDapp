@@ -111,12 +111,12 @@ const GnosisControlSafeDialog = ({
   return (
     <ActionForm
       initialValues={{
-        safe: null,
-        transactionType: null,
+        safe: '',
+        transactionType: '',
         forceAction: false,
         tokenAddress: colony.nativeTokenAddress,
-        amount: null,
-        recipient: null,
+        amount: 0,
+        recipient: '',
       }}
       validationSchema={validationSchema}
       submit={ActionTypes.COLONY_ACTION_GENERIC}
