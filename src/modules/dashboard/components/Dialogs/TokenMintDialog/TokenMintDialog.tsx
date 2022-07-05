@@ -68,8 +68,8 @@ const TokenMintDialog = ({
       const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
 
       return isVotingExtensionEnabled && !isForce
-        ? ActionTypes[`COLONY_ROOT_MOTION${actionEnd}`]
-        : ActionTypes[`COLONY_ACTION_MINT_TOKENS${actionEnd}`];
+        ? ActionTypes[`ROOT_MOTION${actionEnd}`]
+        : ActionTypes[`ACTION_MINT_TOKENS${actionEnd}`];
     },
     [isVotingExtensionEnabled, isForce],
   );

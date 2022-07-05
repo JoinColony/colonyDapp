@@ -34,7 +34,7 @@ function* managePermissionsAction({
   },
   meta: { id: metaId, history },
   meta,
-}: Action<ActionTypes.COLONY_ACTION_USER_ROLES_SET>) {
+}: Action<ActionTypes.ACTION_USER_ROLES_SET>) {
   let txChannel;
   try {
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
@@ -146,7 +146,7 @@ function* managePermissionsAction({
     }
 
     yield put<AllActions>({
-      type: ActionTypes.COLONY_ACTION_USER_ROLES_SET_SUCCESS,
+      type: ActionTypes.ACTION_USER_ROLES_SET_SUCCESS,
       meta,
     });
 
@@ -162,7 +162,7 @@ function* managePermissionsAction({
     });
 
     yield put<AllActions>({
-      type: ActionTypes.COLONY_ACTION_USER_ROLES_SET_SUCCESS,
+      type: ActionTypes.ACTION_USER_ROLES_SET_SUCCESS,
       meta,
     });
 
@@ -170,11 +170,7 @@ function* managePermissionsAction({
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
     }
   } catch (error) {
-    return yield putError(
-      ActionTypes.COLONY_ACTION_USER_ROLES_SET_ERROR,
-      error,
-      meta,
-    );
+    return yield putError(ActionTypes.ACTION_USER_ROLES_SET_ERROR, error, meta);
   } finally {
     txChannel.close();
   }
@@ -182,8 +178,5 @@ function* managePermissionsAction({
 }
 
 export default function* managePermissionsActionSaga() {
-  yield takeEvery(
-    ActionTypes.COLONY_ACTION_USER_ROLES_SET,
-    managePermissionsAction,
-  );
+  yield takeEvery(ActionTypes.ACTION_USER_ROLES_SET, managePermissionsAction);
 }

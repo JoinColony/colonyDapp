@@ -32,7 +32,7 @@ function* editColonyMotion({
   },
   meta: { id: metaId, history },
   meta,
-}: Action<ActionTypes.COLONY_MOTION_EDIT_COLONY>) {
+}: Action<ActionTypes.MOTION_EDIT_COLONY>) {
   let txChannel;
   try {
     /*
@@ -188,7 +188,7 @@ function* editColonyMotion({
       );
     }
     yield put<AllActions>({
-      type: ActionTypes.COLONY_MOTION_EDIT_COLONY_SUCCESS,
+      type: ActionTypes.MOTION_EDIT_COLONY_SUCCESS,
       meta,
     });
 
@@ -196,12 +196,12 @@ function* editColonyMotion({
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
     }
   } catch (caughtError) {
-    putError(ActionTypes.COLONY_MOTION_EDIT_COLONY_ERROR, caughtError, meta);
+    putError(ActionTypes.MOTION_EDIT_COLONY_ERROR, caughtError, meta);
   } finally {
     txChannel.close();
   }
 }
 
 export default function* editColonyMotionSaga() {
-  yield takeEvery(ActionTypes.COLONY_MOTION_EDIT_COLONY, editColonyMotion);
+  yield takeEvery(ActionTypes.MOTION_EDIT_COLONY, editColonyMotion);
 }

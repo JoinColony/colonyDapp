@@ -69,8 +69,8 @@ const ColonyTokenManagementDialog = ({
       const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
 
       return isVotingExtensionEnabled && !isForce
-        ? ActionTypes[`COLONY_MOTION_EDIT_COLONY${actionEnd}`]
-        : ActionTypes[`COLONY_ACTION_EDIT_COLONY${actionEnd}`];
+        ? ActionTypes[`MOTION_EDIT_COLONY${actionEnd}`]
+        : ActionTypes[`ACTION_EDIT_COLONY${actionEnd}`];
     },
     [isVotingExtensionEnabled, isForce],
   );

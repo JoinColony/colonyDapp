@@ -150,9 +150,9 @@ const VoteWidget = ({
         vote: undefined,
       }}
       validationSchema={validationSchema}
-      submit={ActionTypes.COLONY_MOTION_VOTE}
-      error={ActionTypes.COLONY_MOTION_VOTE_ERROR}
-      success={ActionTypes.COLONY_MOTION_VOTE_SUCCESS}
+      submit={ActionTypes.MOTION_VOTE}
+      error={ActionTypes.MOTION_VOTE_ERROR}
+      success={ActionTypes.MOTION_VOTE_SUCCESS}
       transform={transform}
       onSuccess={handleSuccess}
     >

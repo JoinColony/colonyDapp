@@ -7,7 +7,7 @@ import { updateMotionValues } from '../utils';
 function* motionStateUpdate({
   payload: { colonyAddress, motionId, userAddress },
   meta,
-}: Action<ActionTypes.COLONY_MOTION_STATE_UPDATE>) {
+}: Action<ActionTypes.MOTION_STATE_UPDATE>) {
   try {
     /*
      * Update motion page values
@@ -15,15 +15,15 @@ function* motionStateUpdate({
     yield fork(updateMotionValues, colonyAddress, userAddress, motionId);
 
     yield put<AllActions>({
-      type: ActionTypes.COLONY_MOTION_STATE_UPDATE_SUCCESS,
+      type: ActionTypes.MOTION_STATE_UPDATE_SUCCESS,
       meta,
     });
   } catch (error) {
-    return yield putError(ActionTypes.COLONY_MOTION_STATE_UPDATE_ERROR, error);
+    return yield putError(ActionTypes.MOTION_STATE_UPDATE_ERROR, error);
   }
   return null;
 }
 
 export default function* updateMotionStateSaga() {
-  yield takeEvery(ActionTypes.COLONY_MOTION_STATE_UPDATE, motionStateUpdate);
+  yield takeEvery(ActionTypes.MOTION_STATE_UPDATE, motionStateUpdate);
 }

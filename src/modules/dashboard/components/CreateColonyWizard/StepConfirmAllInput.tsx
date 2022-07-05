@@ -86,9 +86,9 @@ const StepConfirmAllInput = ({
   return (
     <ActionForm
       initialValues={{}}
-      submit={ActionTypes.COLONY_CREATE}
-      success={ActionTypes.COLONY_CREATE_SUCCESS}
-      error={ActionTypes.COLONY_CREATE_ERROR}
+      submit={ActionTypes.CREATE}
+      success={ActionTypes.CREATE_SUCCESS}
+      error={ActionTypes.CREATE_ERROR}
       transform={transform}
       onSuccess={() => nextStep(wizardValues)}
     >

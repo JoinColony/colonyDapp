@@ -55,9 +55,9 @@ const ExtensionActionButton = ({
       <ActionButton
         appearance={{ theme: 'primary', size: 'medium' }}
         button={IconButton}
-        submit={ActionTypes.COLONY_EXTENSION_INSTALL}
-        error={ActionTypes.COLONY_EXTENSION_INSTALL_ERROR}
-        success={ActionTypes.COLONY_EXTENSION_INSTALL_SUCCESS}
+        submit={ActionTypes.EXTENSION_INSTALL}
+        error={ActionTypes.EXTENSION_INSTALL_ERROR}
+        success={ActionTypes.EXTENSION_INSTALL_SUCCESS}
         values={{
           colonyAddress,
           extensionId: extension.extensionId,

@@ -74,8 +74,8 @@ const TransferFundsDialog = ({
       const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
 
       return isVotingExtensionEnabled && !isForce
-        ? ActionTypes[`COLONY_MOTION_MOVE_FUNDS${actionEnd}`]
-        : ActionTypes[`COLONY_ACTION_MOVE_FUNDS${actionEnd}`];
+        ? ActionTypes[`MOTION_MOVE_FUNDS${actionEnd}`]
+        : ActionTypes[`ACTION_MOVE_FUNDS${actionEnd}`];
     },
     [isVotingExtensionEnabled, isForce],
   );

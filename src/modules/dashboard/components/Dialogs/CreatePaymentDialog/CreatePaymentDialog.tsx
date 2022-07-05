@@ -70,8 +70,8 @@ const CreatePaymentDialog = ({
       const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
 
       return isVotingExtensionEnabled && !isForce
-        ? ActionTypes[`COLONY_MOTION_EXPENDITURE_PAYMENT${actionEnd}`]
-        : ActionTypes[`COLONY_ACTION_EXPENDITURE_PAYMENT${actionEnd}`];
+        ? ActionTypes[`MOTION_EXPENDITURE_PAYMENT${actionEnd}`]
+        : ActionTypes[`ACTION_EXPENDITURE_PAYMENT${actionEnd}`];
     },
     [isVotingExtensionEnabled, isForce],
   );

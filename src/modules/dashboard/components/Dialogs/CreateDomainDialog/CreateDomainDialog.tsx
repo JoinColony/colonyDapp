@@ -43,8 +43,8 @@ const CreateDomainDialog = ({
       const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
 
       return isVotingExtensionEnabled && !isForce
-        ? ActionTypes[`COLONY_MOTION_DOMAIN_CREATE_EDIT${actionEnd}`]
-        : ActionTypes[`COLONY_ACTION_DOMAIN_CREATE${actionEnd}`];
+        ? ActionTypes[`MOTION_DOMAIN_CREATE_EDIT${actionEnd}`]
+        : ActionTypes[`ACTION_DOMAIN_CREATE${actionEnd}`];
     },
     [isVotingExtensionEnabled, isForce],
   );
