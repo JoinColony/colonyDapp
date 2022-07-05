@@ -199,15 +199,15 @@ export const SUPPORTED_NETWORKS = {
   [GANACHE_NETWORK.chainId]: GANACHE_NETWORK,
 };
 
-export const GNOSIS_SAFE_NETWORKS = [
-  { value: String(GNOSIS_NETWORK.chainId), label: GNOSIS_NETWORK.name },
-  { value: String(ETHEREUM_NETWORK.chainId), label: ETHEREUM_NETWORK.name },
-  { value: String(ARBITRUM_NETWORK.chainId), label: ARBITRUM_NETWORK.name },
-  { value: String(AURORA_NETWORK.chainId), label: AURORA_NETWORK.name },
-  { value: String(AVALANCHE_NETWORK.chainId), label: AVALANCHE_NETWORK.name },
-  { value: String(BINANCE_NETWORK.chainId), label: BINANCE_NETWORK.name },
-  { value: String(OPTIMISM_NETWORK.chainId), label: OPTIMISM_NETWORK.name },
-  { value: String(POLYGON_NETWORK.chainId), label: POLYGON_NETWORK.name },
+export const GNOSIS_SAFE_NETWORKS: NetworkInfo[] = [
+  GNOSIS_NETWORK,
+  ETHEREUM_NETWORK,
+  ARBITRUM_NETWORK,
+  AURORA_NETWORK,
+  AVALANCHE_NETWORK,
+  BINANCE_NETWORK,
+  OPTIMISM_NETWORK,
+  POLYGON_NETWORK,
 ];
 
 export const DEFAULT_NETWORK_TOKEN = TOKEN_DATA[DEFAULT_NETWORK];
