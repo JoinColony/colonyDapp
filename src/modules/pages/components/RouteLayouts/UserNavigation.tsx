@@ -9,7 +9,7 @@ import MemberReputation from '~core/MemberReputation';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 import { Tooltip } from '~core/Popover';
 
-import { GasStationPopover } from '~users/GasStation';
+import { GasStationPopover, GasStationProvider } from '~users/GasStation';
 import UserTokenActivationButton from '~users/UserTokenActivationButton';
 import { readyTransactionsCount } from '~users/GasStation/transactionGroup';
 import AvatarDropdown from '~users/AvatarDropdown';
@@ -192,32 +192,36 @@ const UserNavigation = () => {
             />
           )}
           {userCanNavigate && (
-            <GasStationPopover
-              transactionAndMessageGroups={transactionAndMessageGroups}
-            >
-              {({ isOpen, toggle, ref }) => (
-                <>
-                  <button
-                    type="button"
-                    className={
-                      isOpen ? styles.walletAddressActive : styles.walletAddress
-                    }
-                    ref={ref}
-                    onClick={toggle}
-                    data-test="gasStationPopover"
-                  >
-                    <span>
-                      <MaskedAddress address={walletAddress} />
-                    </span>
-                  </button>
-                  {readyTransactions >= 1 && (
-                    <span className={styles.readyTransactionsCount}>
-                      <span>{readyTransactions}</span>
-                    </span>
-                  )}
-                </>
-              )}
-            </GasStationPopover>
+            <GasStationProvider>
+              <GasStationPopover
+                transactionAndMessageGroups={transactionAndMessageGroups}
+              >
+                {({ isOpen, toggle, ref }) => (
+                  <>
+                    <button
+                      type="button"
+                      className={
+                        isOpen
+                          ? styles.walletAddressActive
+                          : styles.walletAddress
+                      }
+                      ref={ref}
+                      onClick={toggle}
+                      data-test="gasStationPopover"
+                    >
+                      <span>
+                        <MaskedAddress address={walletAddress} />
+                      </span>
+                    </button>
+                    {readyTransactions >= 1 && (
+                      <span className={styles.readyTransactionsCount}>
+                        <span>{readyTransactions}</span>
+                      </span>
+                    )}
+                  </>
+                )}
+              </GasStationPopover>
+            </GasStationProvider>
           )}
         </div>
       )}
