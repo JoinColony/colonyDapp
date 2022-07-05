@@ -20,6 +20,8 @@ const MSG = defineMessages({
   },
 });
 
+const displayName = 'dashboard.ExpenditurePage.TitleDescriptionSection';
+
 interface Props {
   isEditable?: boolean;
 }
@@ -74,5 +76,7 @@ const TitleDescriptionSection = ({ isEditable }: Props) => {
     </div>
   );
 };
+
+TitleDescriptionSection.displayName = displayName;
 
 export default TitleDescriptionSection;

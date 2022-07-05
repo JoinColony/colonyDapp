@@ -7,3 +7,7 @@ export const stagesText: string;
 export const statusContainer: string;
 export const icon: string;
 export const buttonsContainer: string;
+export const iconContainer: string;
+export const iconWrapper: string;
+export const cancelIcon: string;
+export const buttonTooltip: string;
