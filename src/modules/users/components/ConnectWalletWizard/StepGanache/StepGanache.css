@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .content {
   composes: alignCenter from '~styles/text.css';
   composes: marginBottomMedium from '~styles/layout.css';
@@ -25,4 +27,42 @@
 
 .content button > div {
   height: 21px;
+}
+
+@media screen and query700 {
+  .content, .contentSimplified {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .contentSimplified {
+    padding: 20px 14px;
+  }
+
+  .iconContainer {
+    margin-bottom: 10px;
+  }
+
+  .contentSimplified ul,
+  .content ul {
+    width: 100%;
+  }
+
+  .contentSimplified ul span,
+  .content ul span {
+    width: 100%;
+  }
+
+  .contentSimplified li,
+  .content li {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .contentSimplified > div:last-child button span,
+  .content > div:last-child button span {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
 }
