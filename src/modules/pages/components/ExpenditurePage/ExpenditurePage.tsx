@@ -108,12 +108,7 @@ const ExpenditurePage = ({ match }: Props) => {
                 <SpinnerLoader appearance={{ size: 'medium' }} />
               </div>
             ) : (
-              colonyData && (
-                <LogsSection
-                  colony={colonyData.processedColony}
-                  isFormEditable={isEditable}
-                />
-              )
+              colonyData && <LogsSection colony={colonyData.processedColony} />
             )}
           </main>
         </div>
@@ -130,12 +125,7 @@ const ExpenditurePage = ({ match }: Props) => {
               <SpinnerLoader appearance={{ size: 'medium' }} />
             </div>
           ) : (
-            colonyData && (
-              <LogsSection
-                colony={colonyData.processedColony}
-                isFormEditable={isEditable}
-              />
-            )
+            colonyData && <LogsSection colony={colonyData.processedColony} />
           )}
         </main>
       </div>

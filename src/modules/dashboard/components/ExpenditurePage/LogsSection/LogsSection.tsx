@@ -1,12 +1,10 @@
-import React, { useCallback } from 'react';
-
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+
 import styles from './LogsSection.css';
 import { colonyAction, systemMessages, transactionHash } from './constants';
 import { useLoggedInUser } from '~data/helpers';
 import Comment, { CommentInput } from '~core/Comment';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Input } from '~core/Fields';
 import { TransactionMeta } from '~dashboard/ActionsPage';
 import ActionsPageFeed, {
   ActionsPageEvent,
@@ -18,6 +16,7 @@ import ActionsPageFeed, {
 import { Colony, ParsedEvent, TransactionMessageFragment } from '~data/index';
 import FriendlyName from '~core/FriendlyName';
 import MemberReputation from '~core/MemberReputation';
+import PortalWrapper from '../PortalWrapper';
 
 const MSG = defineMessages({
   commentPlaceholder: {
@@ -53,15 +52,24 @@ export const ifIsSystemMessage = (name: string) => {
   return false;
 };
 
-const displayName = 'dashboard.LogsSection';
+const displayName = 'LogsSection';
 
 interface Props {
   colony: Colony;
-  isFormEditable?: boolean;
 }
 
 const LogsSection = ({ colony }: Props) => {
   const { username: currentUserName, ethereal } = useLoggedInUser();
+  const commentRef = useRef<HTMLDivElement>(null);
+  const [commentWrapper, setCommentWrapper] = useState<HTMLDivElement | null>(
+    null,
+  );
+
+  useEffect(() => {
+    // Force a rerender, so it can be passed to the child.
+    setCommentWrapper(commentRef.current);
+  }, [commentRef]);
+
   // add fetching systemMessages here, mocks are used now
 
   const additionalValues = useCallback(
@@ -212,32 +220,19 @@ const LogsSection = ({ colony }: Props) => {
       {/*
        *  @NOTE A user can comment only if he has a wallet connected
        * and a registered user profile,
-       
-       * also input is disabled when the form is editable
-       
-       * "isFormEditable" isn't change to false right now, so below code is commented.
        */}
-      {currentUserName && !ethereal && (
-        // <>
-        //   {isFormEditable ? (
-        //     <div className={styles.disabledComment}>
-        //       <Input
-        //         name="disabled"
-        //         placeholder={MSG.commentPlaceholder}
-        //         elementOnly
-        //         disabled
-        //       />
-        //     </div>
-        //   ) : (
-        <div className={styles.commentInput}>
-          <CommentInput
-            colonyAddress={colony?.colonyAddress}
-            transactionHash={transactionHash}
-          />
-        </div>
-        //   )}
-        // </>
-      )}
+      <div ref={commentRef}>
+        {currentUserName && !ethereal && commentWrapper && (
+          <div className={styles.commentInput}>
+            <PortalWrapper element={commentRef?.current}>
+              <CommentInput
+                colonyAddress={colony?.colonyAddress}
+                transactionHash={transactionHash}
+              />
+            </PortalWrapper>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
