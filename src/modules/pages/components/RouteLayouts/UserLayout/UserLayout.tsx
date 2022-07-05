@@ -2,6 +2,7 @@ import React from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { useLocation } from 'react-router';
 
+import { RouteComponentProps } from '~pages/RouteLayouts';
 import SubscribedColoniesList from '~dashboard/SubscribedColoniesList';
 
 import UserNavigation from '../UserNavigation';
@@ -12,14 +13,16 @@ import styles from './UserLayout.css';
 import navStyles from '../SimpleNav/SimpleNav.css';
 
 interface Props {
-  hasSubscribedColonies: boolean;
+  routeProps?: RouteComponentProps;
   children: React.ReactNode;
 }
 
-const UserLayout = ({ children, hasSubscribedColonies = true }: Props) => {
+const UserLayout = ({
+  children,
+  routeProps: { hasSubscribedColonies = true } = {},
+}: Props) => {
   const isMobile = useMediaQuery({ query });
   const { pathname } = useLocation();
-
   return (
     <SimpleNav>
       {isMobile && (
