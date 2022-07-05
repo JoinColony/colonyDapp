@@ -1,107 +1,104 @@
-import React, { useState } from 'react';
+import { useFormikContext } from 'formik';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   defineMessages,
   FormattedMessage,
   MessageDescriptor,
 } from 'react-intl';
+import copyToClipboard from 'copy-to-clipboard';
 import classNames from 'classnames';
 
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import styles from './Stages.css';
+import DeleteDraftDialog from '../../Dialogs/DeleteDraftDialog/DeleteDraftDialog';
 import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
 import StageItem from './StageItem';
+import styles from './Stages.css';
 import { Stage } from './constants';
 
 const MSG = defineMessages({
   stages: {
-    id: 'dashboard.ExpenditurePage.Stages.stages',
+    id: 'dashboard.Expenditures.Stages.stages',
     defaultMessage: 'Stages',
   },
   notSaved: {
-    id: 'dashboard.ExpenditurePage.Stages.notSaved',
+    id: 'dashboard.Expenditures.Stages.notSaved',
     defaultMessage: 'Not saved',
   },
   submitDraft: {
-    id: 'dashboard.ExpenditurePage.Stages.submitDraft',
+    id: 'dashboard.Expenditures.Stages.submitDraft',
     defaultMessage: 'Submit draft',
   },
   lockValues: {
-    id: 'dashboard.ExpenditurePage.Stages.lockValues',
+    id: 'dashboard.Expenditures.Stages.lockValues',
     defaultMessage: 'Lock values',
   },
   escrowFunds: {
-    id: 'dashboard.ExpenditurePage.Stages.escrowFunds',
+    id: 'dashboard.Expenditures.Stages.escrowFunds',
     defaultMessage: 'Escrow funds',
   },
   releaseFunds: {
-    id: 'dashboard.ExpenditurePage.Stages.releaseFunds',
+    id: 'dashboard.Expenditures.Stages.releaseFunds',
     defaultMessage: 'Release funds',
   },
   claim: {
-    id: 'dashboard.ExpenditurePage.Stages.claim',
+    id: 'dashboard.Expenditures.Stages.claim',
     defaultMessage: 'Claim',
   },
   completed: {
-    id: 'dashboard.ExpenExpenditurePageditures.Stages.completed',
+    id: 'dashboard.Expenditures.Stages.completed',
     defaultMessage: 'Completed',
   },
   draft: {
-    id: 'dashboard.ExpenditurePage.Stages.draft',
+    id: 'dashboard.Expenditures.Stages.draft',
     defaultMessage: 'Draft',
   },
   locked: {
-    id: 'dashboard.ExpenditurePage.Stages.locked',
+    id: 'dashboard.Expenditures.Stages.locked',
     defaultMessage: 'Locked',
   },
   funded: {
-    id: 'dashboard.ExpenditurePage.Stages.funded',
+    id: 'dashboard.Expenditures.Stages.funded',
     defaultMessage: 'Funded',
   },
   released: {
-    id: 'dashboard.ExpenditurePage.Stages.released',
+    id: 'dashboard.Expenditures.Stages.released',
     defaultMessage: 'Released',
   },
   claimed: {
-    id: 'dashboard.ExpenditurePage.Stages.claimed',
+    id: 'dashboard.Expenditures.Stages.claimed',
     defaultMessage: 'Claimed',
   },
   deleteDraft: {
-    id: 'dashboard.ExpenditurePage.Stages.deleteDraft',
+    id: 'dashboard.Expenditures.Stages.deleteDraft',
     defaultMessage: 'Delete draft',
   },
   tooltipDeleteText: {
-    id: 'dashboard.ExpenditurePage.Stages.tooltipDeleteText',
+    id: 'dashboard.Expenditures.Stages.tooltipDeleteText',
     defaultMessage: 'Delete the expenditure',
   },
   tooltipShareText: {
-    id: 'dashboard.ExpenditurePage.Stages.tooltipShareText',
+    id: 'dashboard.Expenditures.Stages.tooltipShareText',
     defaultMessage: 'Share expenditure URL',
-  },
-  tooltipCancelText: {
-    id: 'dashboard.ExpenditurePage.Stages.tooltipCancelText',
-    defaultMessage: 'Click to cancel expenditure',
   },
   tooltipLockValuesText: {
     id: 'dashboard.ExpenditurePage.Stages.tooltipLockValuesText',
     defaultMessage: `This will lock the values of the expenditure. To change values after locking will require the right permissions or a motion.`,
   },
+  tooltipCancelText: {
+    id: 'dashboard.ExpenditurePage.Stages.tooltipCancelText',
+    defaultMessage: 'Click to cancel expenditure',
+  },
 });
-
-const buttonStyle = {
-  width: styles.buttonWidth,
-  height: styles.buttonHeight,
-  padding: 0,
-};
 
 interface ActiveState {
   id: string;
   label: string | MessageDescriptor;
   buttonText: string | MessageDescriptor;
   buttonAction: () => void;
-  buttonTooltip?: string | MessageDescriptor;
+  stage: string;
 }
 
 const buttonStyles = {
@@ -110,11 +107,13 @@ const buttonStyles = {
   padding: 0,
 };
 
-const displayName = 'dashboard.ExpenditurePage.Stages';
-
 const Stages = () => {
   const [activeStateId, setActiveStateId] = useState<string | null>(null);
+  const { resetForm } = useFormikContext() || {};
+  const [valueIsCopied, setValueIsCopied] = useState(false);
+  const userFeedbackTimer = useRef<any>(null);
 
+  const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
 
   const handleLockExpenditure = () => {
@@ -137,24 +136,28 @@ const Stages = () => {
       label: MSG.locked,
       buttonText: MSG.escrowFunds,
       buttonAction: () => {},
+      stage: Stage.Locked,
     },
     {
       id: Stage.Funded,
       label: MSG.funded,
       buttonText: MSG.releaseFunds,
       buttonAction: () => {},
+      stage: Stage.Funded,
     },
     {
       id: Stage.Released,
       label: MSG.released,
       buttonText: MSG.claim,
       buttonAction: () => {},
+      stage: Stage.Released,
     },
     {
       id: Stage.Claimed,
       label: MSG.claimed,
       buttonText: MSG.completed,
       buttonAction: () => {},
+      stage: Stage.Claimed,
     },
   ];
 
@@ -163,6 +166,25 @@ const Stages = () => {
       onClick: () => setActiveStateId(Stage.Draft),
       isVotingExtensionEnabled: true,
     });
+
+  const handleDeleteDraft = () =>
+    openDeleteDraftDialog({
+      onClick: () => {
+        resetForm?.();
+        if (activeStateId === Stage.Draft) {
+          // add logic to delete the draft from database
+        }
+      },
+    });
+
+  const handleClipboardCopy = () => {
+    copyToClipboard(window.location.href);
+    setValueIsCopied(true);
+    userFeedbackTimer.current = setTimeout(() => setValueIsCopied(false), 2000);
+  };
+  useEffect(() => () => clearTimeout(userFeedbackTimer.current), [
+    userFeedbackTimer,
+  ]);
 
   const activeIndex = states.findIndex((state) => state.id === activeStateId);
   const activeState = states.find((state) => state.id === activeStateId);
@@ -183,7 +205,7 @@ const Stages = () => {
         <div className={styles.buttonsContainer}>
           {!activeStateId ? (
             <>
-              <span className={styles.iconContainer}>
+              <Button className={styles.iconButton} onClick={handleDeleteDraft}>
                 <Tooltip
                   placement="top-start"
                   content={<FormattedMessage {...MSG.tooltipDeleteText} />}
@@ -196,25 +218,38 @@ const Stages = () => {
                     />
                   </div>
                 </Tooltip>
-              </span>
+              </Button>
               <Button onClick={handleSaveDraft} style={buttonStyles}>
                 <FormattedMessage {...MSG.submitDraft} />
               </Button>
             </>
           ) : (
             <>
-              <span className={styles.iconContainer}>
-                <Tooltip
-                  placement="top-start"
-                  content={<FormattedMessage {...MSG.tooltipShareText} />}
-                >
-                  <div className={styles.iconWrapper}>
-                    <Icon name="share" className={styles.icon} />
-                  </div>
-                </Tooltip>
-              </span>
+              <Button
+                className={classNames(styles.iconButton, {
+                  [styles.iconButtonDisabled]: valueIsCopied,
+                })}
+                onClick={handleClipboardCopy}
+                disabled={valueIsCopied}
+              >
+                {valueIsCopied ? (
+                  <Icon name="share" className={styles.icon} />
+                ) : (
+                  <Tooltip
+                    placement="top-start"
+                    content={<FormattedMessage {...MSG.tooltipShareText} />}
+                  >
+                    <div className={styles.iconWrapper}>
+                      <Icon name="share" className={styles.icon} />
+                    </div>
+                  </Tooltip>
+                )}
+              </Button>
               {activeStateId === Stage.Draft && (
-                <span className={styles.iconContainer}>
+                <Button
+                  className={styles.iconButton}
+                  onClick={handleDeleteDraft}
+                >
                   <Tooltip
                     placement="top-start"
                     content={<FormattedMessage {...MSG.tooltipDeleteText} />}
@@ -223,18 +258,17 @@ const Stages = () => {
                       <Icon
                         name="trash"
                         className={styles.icon}
+                        onClick={handleDeleteDraft}
                         title={MSG.deleteDraft}
                       />
                     </div>
                   </Tooltip>
-                </span>
+                </Button>
               )}
               {activeStateId !== Stage.Draft && (
-                <span
-                  className={classNames(
-                    styles.iconContainer,
-                    styles.cancelIcon,
-                  )}
+                <Button
+                  className={classNames(styles.iconButton, styles.cancelIcon)}
+                  onClick={handleDeleteDraft}
                 >
                   <Tooltip
                     placement="top-start"
@@ -248,7 +282,7 @@ const Stages = () => {
                       />
                     </div>
                   </Tooltip>
-                </span>
+                </Button>
               )}
               {activeState?.buttonTooltipt ? (
                 <Tooltip
@@ -267,7 +301,7 @@ const Stages = () => {
                 >
                   <Button
                     onClick={activeState?.buttonAction}
-                    style={buttonStyle}
+                    style={buttonStyles}
                   >
                     {typeof activeState?.buttonText === 'string' ? (
                       activeState.buttonText
@@ -277,7 +311,10 @@ const Stages = () => {
                   </Button>
                 </Tooltip>
               ) : (
-                <Button onClick={activeState?.buttonAction} style={buttonStyle}>
+                <Button
+                  onClick={activeState?.buttonAction}
+                  style={buttonStyles}
+                >
                   {typeof activeState?.buttonText === 'string' ? (
                     activeState.buttonText
                   ) : (
@@ -300,7 +337,5 @@ const Stages = () => {
     </div>
   );
 };
-
-Stages.displayName = displayName;
 
 export default Stages;
