@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
-import { toFinite } from 'lodash';
+import toFinite from 'lodash/toFinite';
 import { defineMessages } from 'react-intl';
 
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
@@ -74,7 +74,6 @@ const validationSchema = yup.object().shape({
       walletAddress: yup.string().when('transactionType', {
         is: (transactionType) => transactionType === 'transferFunds',
         then: yup.string().address().required(),
-        otherwise: false,
       }),
     }),
   }),
@@ -87,32 +86,26 @@ const validationSchema = yup.object().shape({
       .transform((value) => toFinite(value))
       .required()
       .moreThan(0, () => MSG.amountZero),
-    otherwise: false,
   }),
   tokenAddress: yup.string().when('transactionType', {
     is: (transactionType) => transactionType === 'transferFunds',
     then: yup.string().address().required(),
-    otherwise: false,
   }),
   data: yup.string().when('transactionType', {
     is: (transactionType) => transactionType === 'rawTransaction',
     then: yup.string().required(),
-    otherwise: false,
   }),
   contract: yup.string().when('transactionType', {
     is: (transactionType) => transactionType === 'contractInteraction',
     then: yup.string().address().required(),
-    otherwise: false,
   }),
   abi: yup.string().when('transactionType', {
     is: (transactionType) => transactionType === 'contractInteraction',
     then: yup.string().required(),
-    otherwise: false,
   }),
   contractFunction: yup.string().when('transactionType', {
     is: (transactionType) => transactionType === 'contractInteraction',
     then: yup.string().required(),
-    otherwise: false,
   }),
 });
 
@@ -132,6 +125,10 @@ const GnosisControlSafeDialog = ({
         tokenAddress: colony.nativeTokenAddress,
         amount: 0,
         recipient: '',
+        data: '',
+        contract: '',
+        abi: '',
+        contractFunction: '',
       }}
       validationSchema={validationSchema}
       submit={ActionTypes.COLONY_ACTION_GENERIC}
