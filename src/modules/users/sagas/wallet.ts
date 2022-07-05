@@ -15,6 +15,7 @@ import {
 import { addChain } from '@purser/metamask/lib-esm/helpers';
 
 import { WalletMethod } from '~immutable/index';
+import { getCanUserSendMetatransactions } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { Address } from '~types/index';
 import { createAddress } from '~utils/web3';
@@ -54,9 +55,12 @@ function* metaMaskWatch(walletAddress: Address) {
 }
 
 function* metamaskSwitchNetwork() {
+  const shouldSendMetatransaction = yield getCanUserSendMetatransactions();
   if (
-    DEFAULT_NETWORK === Network.Xdai ||
-    DEFAULT_NETWORK === Network.XdaiFork
+    (DEFAULT_NETWORK === Network.Xdai ||
+      DEFAULT_NETWORK === Network.XdaiFork ||
+      DEFAULT_NETWORK === Network.Local) &&
+    !shouldSendMetatransaction
   ) {
     const {
       name: chainName,

@@ -167,20 +167,12 @@ export function* updateNetworkContracts() {
 
 // Meant to be used as a saga in a proper context
 export function* getCanUserSendMetatransactions() {
-  const { networkId: userWalletNetworkId } = yield getLoggedInUser();
-
-  if (!userWalletNetworkId) {
-    throw new Error(
-      `Could not get user's metatransactions prefference. Cannot access the user's network from the wallet`,
-    );
-  }
-
   const userSettings = yield TEMP_getContext(ContextModule.UserSettings);
-  const metatransactionEnabled = userSettings.getSlotStorageAtKey(
+  const userHasMetatransactionEnabled = userSettings.getSlotStorageAtKey(
     SlotKey.Metatransactions,
   );
 
   const metatransactionsAvailable = canUseMetatransactions();
 
-  return metatransactionsAvailable && metatransactionEnabled;
+  return metatransactionsAvailable && userHasMetatransactionEnabled;
 }
