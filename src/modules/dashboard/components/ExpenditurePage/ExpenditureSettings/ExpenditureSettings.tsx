@@ -47,6 +47,8 @@ const MSG = defineMessages({
   },
 });
 
+const displayName = 'dashboard.ExpenditurePage.ExpenditureSettings';
+
 interface Props {
   colony: Colony;
   walletAddress: string;
@@ -225,5 +227,7 @@ const ExpenditureSettings = ({ colony, walletAddress, username }: Props) => {
     </div>
   );
 };
+
+ExpenditureSettings.displayName = displayName;
 
 export default ExpenditureSettings;

@@ -35,18 +35,60 @@
   border-bottom: 1px solid var(--temp-grey-6);
 }
 
-.icon {
-  margin-right: 20px;
-  height: 20px;
-  width: 20px;
+.icon svg {
+  height: 18px;
+  width: 18px;
   fill: var(--temp-grey-blue-7);
-}
-
-.icon:hover {
-  cursor: pointer;
 }
 
 .buttonsContainer {
   display: flex;
   align-items: center;
+}
+
+.iconContainer {
+  margin-right: 20px;
+}
+
+.iconContainer:hover {
+  cursor: pointer;
+}
+
+.iconContainer > div {
+  margin-bottom: 7px;
+}
+
+.buttonsContainer button {
+  margin-left: 4px;
+}
+
+.iconWrapper {
+  position: relative;
+}
+
+.iconWrapper::after {
+  height: 28px;
+  width: 28px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  background-color: var(--action-secondary);
+  content: '';
+  opacity: 0;
+  transform: translate(-5px, -5px);
+  transition: opacity 200ms ease-in-out;
+}
+
+.iconWrapper:hover::after {
+  opacity: 0.1;
+}
+
+.cancelIcon:hover svg {
+  fill: var(--pink);
+  transition: fill 200ms ease-in-out;
+}
+
+.buttonTooltip {
+  max-width: 192px;
 }

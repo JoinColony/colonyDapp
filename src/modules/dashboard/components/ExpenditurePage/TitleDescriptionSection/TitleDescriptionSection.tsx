@@ -20,6 +20,8 @@ const MSG = defineMessages({
   },
 });
 
+const displayName = 'dashboard.ExpenditurePage.TitleDescriptionSection';
+
 const TitleDescriptionSection = () => {
   const [, { value: title, error: inputError }] = useField('title');
   const [, { value: description, error: descriptionError }] = useField(
@@ -63,5 +65,7 @@ const TitleDescriptionSection = () => {
     </div>
   );
 };
+
+TitleDescriptionSection.displayName = displayName;
 
 export default TitleDescriptionSection;
