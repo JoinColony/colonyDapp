@@ -10,3 +10,5 @@ export const buttonsContainer: string;
 export const iconButton: string;
 export const iconButtonDisabled: string;
 export const iconWrapper: string;
+export const buttonTooltip: string;
+export const cancelIcon: string;

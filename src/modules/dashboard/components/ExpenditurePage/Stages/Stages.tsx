@@ -83,6 +83,14 @@ const MSG = defineMessages({
     id: 'dashboard.Expenditures.Stages.tooltipShareText',
     defaultMessage: 'Share expenditure URL',
   },
+  tooltipLockValuesText: {
+    id: 'dashboard.ExpenditurePage.Stages.tooltipLockValuesText',
+    defaultMessage: `This will lock the values of the expenditure. To change values after locking will require the right permissions or a motion.`,
+  },
+  tooltipCancelText: {
+    id: 'dashboard.ExpenditurePage.Stages.tooltipCancelText',
+    defaultMessage: 'Click to cancel expenditure',
+  },
 });
 
 interface ActiveState {
@@ -100,7 +108,7 @@ const buttonStyles = {
 };
 
 const Stages = () => {
-  const [activeState, setActiveState] = useState<ActiveState | null>(null);
+  const [activeStateId, setActiveStateId] = useState<string | null>(null);
   const { resetForm } = useFormikContext() || {};
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
@@ -108,13 +116,20 @@ const Stages = () => {
   const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
 
+  const handleLockExpenditure = () => {
+    // Call to backend will be added here, to lock the expenditure
+    // fetching active state shoud be added here as well,
+    // and saving the activeState in a state
+    setActiveStateId(Stage.Locked);
+  };
+
   const states = [
     {
       id: Stage.Draft,
       label: MSG.draft,
       buttonText: MSG.lockValues,
-      buttonAction: () => {},
-      stage: Stage.Draft,
+      buttonAction: handleLockExpenditure,
+      buttonTooltipt: MSG.tooltipLockValuesText,
     },
     {
       id: Stage.Locked,
@@ -148,7 +163,7 @@ const Stages = () => {
 
   const handleSaveDraft = () =>
     openDraftConfirmDialog({
-      onClick: () => setActiveState(states[0]),
+      onClick: () => setActiveStateId(Stage.Draft),
       isVotingExtensionEnabled: true,
     });
 
@@ -156,7 +171,7 @@ const Stages = () => {
     openDeleteDraftDialog({
       onClick: () => {
         resetForm?.();
-        if (activeState?.stage === Stage.Draft) {
+        if (activeStateId === Stage.Draft) {
           // add logic to delete the draft from database
         }
       },
@@ -171,7 +186,8 @@ const Stages = () => {
     userFeedbackTimer,
   ]);
 
-  const activeIndex = states.findIndex((state) => state.id === activeState?.id);
+  const activeIndex = states.findIndex((state) => state.id === activeStateId);
+  const activeState = states.find((state) => state.id === activeStateId);
 
   return (
     <div className={styles.mainContainer}>
@@ -180,14 +196,14 @@ const Stages = () => {
           <span className={styles.status}>
             <FormattedMessage {...MSG.stages} />
           </span>
-          {!activeState && (
+          {!activeStateId && (
             <span className={styles.notSaved}>
               <FormattedMessage {...MSG.notSaved} />
             </span>
           )}
         </div>
         <div className={styles.buttonsContainer}>
-          {!activeState ? (
+          {!activeStateId ? (
             <>
               <Button className={styles.iconButton} onClick={handleDeleteDraft}>
                 <Tooltip
@@ -229,7 +245,7 @@ const Stages = () => {
                   </Tooltip>
                 )}
               </Button>
-              {activeState?.stage === Stage.Draft && (
+              {activeStateId === Stage.Draft && (
                 <Button
                   className={styles.iconButton}
                   onClick={handleDeleteDraft}
@@ -249,13 +265,63 @@ const Stages = () => {
                   </Tooltip>
                 </Button>
               )}
-              <Button onClick={activeState?.buttonAction} style={buttonStyles}>
-                {typeof activeState?.buttonText === 'string' ? (
-                  activeState.buttonText
-                ) : (
-                  <FormattedMessage {...activeState.buttonText} />
-                )}
-              </Button>
+              {activeStateId !== Stage.Draft && (
+                <Button
+                  className={classNames(styles.iconButton, styles.cancelIcon)}
+                  onClick={handleDeleteDraft}
+                >
+                  <Tooltip
+                    placement="top-start"
+                    content={<FormattedMessage {...MSG.tooltipCancelText} />}
+                  >
+                    <div className={styles.iconWrapper}>
+                      <Icon
+                        name="circle-minus"
+                        className={styles.icon}
+                        title={MSG.deleteDraft}
+                      />
+                    </div>
+                  </Tooltip>
+                </Button>
+              )}
+              {activeState?.buttonTooltipt ? (
+                <Tooltip
+                  placement="top"
+                  content={
+                    typeof activeState.buttonTooltipt === 'string' ? (
+                      <div className={styles.buttonTooltip}>
+                        {activeState.buttonTooltipt}
+                      </div>
+                    ) : (
+                      <div className={styles.buttonTooltip}>
+                        <FormattedMessage {...activeState.buttonTooltipt} />
+                      </div>
+                    )
+                  }
+                >
+                  <Button
+                    onClick={activeState?.buttonAction}
+                    style={buttonStyles}
+                  >
+                    {typeof activeState?.buttonText === 'string' ? (
+                      activeState.buttonText
+                    ) : (
+                      <FormattedMessage {...activeState?.buttonText} />
+                    )}
+                  </Button>
+                </Tooltip>
+              ) : (
+                <Button
+                  onClick={activeState?.buttonAction}
+                  style={buttonStyles}
+                >
+                  {typeof activeState?.buttonText === 'string' ? (
+                    activeState.buttonText
+                  ) : (
+                    <FormattedMessage {...activeState?.buttonText} />
+                  )}
+                </Button>
+              )}
             </>
           )}
         </div>

@@ -92,3 +92,12 @@
 .iconButtonDisabled:hover {
   cursor: not-allowed;
 }
+
+.buttonTooltip {
+  max-width: 192px;
+}
+
+.cancelIcon:hover svg {
+  fill: var(--pink);
+  transition: fill 200ms ease-in-out;
+}
