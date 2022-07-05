@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   padding-top: 90px;
   height: 100%;
@@ -107,4 +109,33 @@
 .commentBox {
   margin-top: 30px;
   padding-bottom: 40px;
+}
+
+@media screen and query700 {
+  .main {
+    padding-top: 0px;
+  }
+
+  .dividerTop {
+    display: none;
+  }
+
+  .container {
+    flex-direction: column;
+    margin: 0;
+    padding: 0 14px;
+  }
+
+  .content {
+    width: 100%;
+  }
+
+  .setMarginWidth {
+    width: auto;
+  }
+
+  .details {
+    padding-bottom: 60px;
+    width: 100%;
+  }
 }
