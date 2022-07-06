@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState, ReactElement } from 'react';
+import { useMediaQuery } from 'react-responsive';
 
 import Popover, { PopoverChildFn } from '~core/Popover';
 import { usePrevious } from '~utils/hooks';
@@ -12,6 +13,7 @@ import {
 
 import GasStationContent from './GasStationContent';
 
+import { query700 as query } from '~styles/queries.css';
 import {
   refWidth,
   horizontalOffset,
@@ -33,6 +35,7 @@ const GasStationPopover = ({
     transactionAndMessageGroups,
   ]);
   const prevTxCount: number | void = usePrevious(txCount);
+  const isMobile = useMediaQuery({ query });
 
   useEffect(() => {
     if (prevTxCount != null && txCount > prevTxCount) {
@@ -57,8 +60,8 @@ const GasStationPopover = ({
   const popoverOffset = useMemo(() => {
     const skid =
       removeValueUnits(refWidth) / 2 + removeValueUnits(horizontalOffset);
-    return [-1 * skid, removeValueUnits(verticalOffset)];
-  }, []);
+    return isMobile ? [-86, 25] : [-1 * skid, removeValueUnits(verticalOffset)];
+  }, [isMobile]);
 
   return (
     <Popover

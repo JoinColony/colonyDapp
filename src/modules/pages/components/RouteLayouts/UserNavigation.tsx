@@ -2,6 +2,7 @@ import React, { useMemo, useEffect } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { useMediaQuery } from 'react-responsive';
 
 import Icon from '~core/Icon';
 import MaskedAddress from '~core/MaskedAddress';
@@ -33,6 +34,7 @@ import { SUPPORTED_NETWORKS } from '~constants';
 
 import { groupedTransactionsAndMessages } from '../../../core/selectors';
 
+import { query700 as query } from '~styles/queries.css';
 import styles from './UserNavigation.css';
 
 const MSG = defineMessages({
@@ -114,6 +116,7 @@ const UserNavigation = () => {
   const previousWalletConnected = lastWalletType && lastWalletAddress;
 
   const { formatMessage } = useIntl();
+  const isMobile = useMediaQuery({ query });
 
   useEffect(() => {
     if (!userDataLoading && !ethereal) {
@@ -191,46 +194,62 @@ const UserNavigation = () => {
             />
           </div>
         ) : (
-          <div className={`${styles.elementWrapper} ${styles.walletWrapper}`}>
-            {userCanNavigate && nativeToken && userLock && (
-              <UserTokenActivationButton
-                tokenBalanceData={getUserTokenBalanceData(userLock)}
-                colony={colonyData?.processedColony}
-                walletAddress={walletAddress}
-                dataTest="tokenActivationButton"
-              />
-            )}
-            {userCanNavigate && (
-              <GasStationPopover
-                transactionAndMessageGroups={transactionAndMessageGroups}
+          <>
+            {isMobile ? (
+              // Render GasStationPopover outside of div.elementWrapper on mobile
+              // Popover will not be accessible from a button like on Desktop. It will appear when completing an action.
+              userCanNavigate && (
+                <GasStationPopover
+                  transactionAndMessageGroups={transactionAndMessageGroups}
+                >
+                  <div className={styles.gasStationReference} />
+                </GasStationPopover>
+              )
+            ) : (
+              <div
+                className={`${styles.elementWrapper} ${styles.walletWrapper}`}
               >
-                {({ isOpen, toggle, ref }) => (
-                  <>
-                    <button
-                      type="button"
-                      className={
-                        isOpen
-                          ? styles.walletAddressActive
-                          : styles.walletAddress
-                      }
-                      ref={ref}
-                      onClick={toggle}
-                      data-test="gasStationPopover"
-                    >
-                      <span>
-                        <MaskedAddress address={walletAddress} />
-                      </span>
-                    </button>
-                    {readyTransactions >= 1 && (
-                      <span className={styles.readyTransactionsCount}>
-                        <span>{readyTransactions}</span>
-                      </span>
-                    )}
-                  </>
+                {userCanNavigate && nativeToken && userLock && (
+                  <UserTokenActivationButton
+                    tokenBalanceData={getUserTokenBalanceData(userLock)}
+                    colony={colonyData?.processedColony}
+                    walletAddress={walletAddress}
+                    dataTest="tokenActivationButton"
+                  />
                 )}
-              </GasStationPopover>
+                {userCanNavigate && (
+                  <GasStationPopover
+                    transactionAndMessageGroups={transactionAndMessageGroups}
+                  >
+                    {({ isOpen, toggle, ref }) => (
+                      <>
+                        <button
+                          type="button"
+                          className={
+                            isOpen
+                              ? styles.walletAddressActive
+                              : styles.walletAddress
+                          }
+                          ref={ref}
+                          onClick={toggle}
+                          data-test="gasStationPopover"
+                        >
+                          <span>
+                            <MaskedAddress address={walletAddress} />
+                          </span>
+                        </button>
+                        {readyTransactions >= 1 && (
+                          <span className={styles.readyTransactionsCount}>
+                            <span>{readyTransactions}</span>
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </GasStationPopover>
+                )}
+              </div>
             )}
-          </div>
+          </>
         )}
         {userCanNavigate && (
           <InboxPopover notifications={notifications}>
