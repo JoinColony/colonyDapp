@@ -5,11 +5,13 @@ import { useDispatch } from 'redux-react-hook';
 import { TransactionType, TRANSACTION_STATUSES } from '~immutable/index';
 import { Tooltip } from '~core/Popover';
 import { useDialog } from '~core/Dialog';
+import ExternalLink from '~core/ExternalLink';
 import { transactionCancel } from '../../../../core/actionCreators';
 
-import WrongNetworkDialog from '~dialogs/WrongNetworkDialog';
+import TransactionAlertDialog from '~dialogs/TransactionAlertDialog';
 
 import { getMainClasses } from '~utils/css';
+import { METATRANSACTIONS_LEARN_MORE } from '~externalUrls';
 
 import { Appearance } from '../GasStationContent';
 import styles from './GroupedTransactionCard.css';
@@ -30,6 +32,17 @@ const MSG = defineMessages({
       SEND {Send error}
       UNSUCCESSFUL {Unsuccessful}
       }: {message}`,
+  },
+  metaTransactionsAlert: {
+    id: 'users.GasStation.GroupedTransactionCard.metaTransactionsAlert',
+    /* eslint-disable max-len */
+    defaultMessage: `
+Colony now covers your gas fees when performing actions on Colony. In order for it to work, your Colony needs to be upgraded to at least v9, the One Transaction Payment extension to at least v3 and Governance (Reputation Weighted) extension to at least v4.
+
+You can toggle this feature, called Metatransactions, in your User Settings under the Advanced Settings tab.
+
+{learnMoreLink}`,
+    /* eslint-enable max-len */
   },
 });
 
@@ -63,10 +76,7 @@ const GroupedTransactionCard = ({
   const { updateTransactionAlert, transactionAlerts } = useContext(
     GasStationContext,
   );
-  /*
-   * @TODO Replace with proper modal
-   */
-  const openWrongNetworkDialog = useDialog(WrongNetworkDialog);
+  const openTransactionAlertDialog = useDialog(TransactionAlertDialog);
 
   const handleCancel = useCallback(() => {
     dispatch(transactionCancel(id));
@@ -91,7 +101,6 @@ const GroupedTransactionCard = ({
       !transactionAlerts?.[id]?.isOpen
     ) {
       /*
-       * @TODO Replace with proper modal
        * @TODO Add logic to display the modal
        * (the `seen` tracking needs to be included in that logic)
        */
@@ -101,7 +110,17 @@ const GroupedTransactionCard = ({
        * (even though it's supposed to handle individual updates as well)
        */
       updateTransactionAlert(id, { wasSeen: true, isOpen: true });
-      openWrongNetworkDialog()
+      openTransactionAlertDialog({
+        text: MSG.metaTransactionsAlert,
+        textValues: {
+          learnMoreLink: (
+            <ExternalLink
+              href={METATRANSACTIONS_LEARN_MORE}
+              text={{ id: 'text.learnMore' }}
+            />
+          ),
+        },
+      })
         .afterClosed()
         /*
          * @NOTE due to the way the dialog provider works you need to pass
@@ -124,7 +143,7 @@ const GroupedTransactionCard = ({
   }, [
     error,
     id,
-    openWrongNetworkDialog,
+    openTransactionAlertDialog,
     transactionAlerts,
     updateTransactionAlert,
   ]);
