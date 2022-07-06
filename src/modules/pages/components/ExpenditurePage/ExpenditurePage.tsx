@@ -180,6 +180,7 @@ const ExpenditurePage = ({ match }: Props) => {
             id: nanoid(),
             value: [
               {
+                id: nanoid(),
                 amount: undefined,
                 tokenAddress: colonyData?.processedColony?.nativeTokenAddress,
               },

@@ -1,5 +1,4 @@
-import React, { ReactNode, useCallback, useMemo } from 'react';
-import classNames from 'classnames';
+import React, { ReactNode, useCallback } from 'react';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { defineMessages } from 'react-intl';
@@ -11,20 +10,16 @@ import {
   FormSection,
 } from '~core/Fields';
 import { Colony } from '~data/index';
-import Numeral from '~core/Numeral';
-
 import styles from './ExpenditureSettings.css';
 import UserAvatar from '~core/UserAvatar';
-import TokenIcon from '~dashboard/HookedTokenIcon';
-
 import { tokens as tokensData } from './constants';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import UserMention from '~core/UserMention';
 import DomainDropdown from '~core/DomainDropdown';
 import ColorTag, { Color } from '~core/ColorTag';
+import BalanceSelect from './BalanceSelect';
 
-const MSG = defineMessages({
+export const MSG = defineMessages({
   typeLabel: {
     id: 'dashboard.ExpenditurePage.ExpenditureSettings.defaultExpenditureLabel',
     defaultMessage: 'Expenditure type',
@@ -103,57 +98,6 @@ const ExpenditureSettings = ({ colony, walletAddress, username }: Props) => {
 
   const [activeToken, ...tokens] = tokensData;
 
-  const renderBalanceActiveOption = useCallback(
-    () => (
-      <div className={styles.label}>
-        <span className={styles.icon}>
-          <TokenIcon
-            className={styles.tokenIcon}
-            token={activeToken}
-            name={activeToken.name || activeToken.address}
-          />
-        </span>
-
-        <Numeral
-          unit={getTokenDecimalsWithFallback(activeToken.decimals)}
-          value={activeToken.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount}
-        />
-        <span className={styles.symbol}>{activeToken.symbol}</span>
-      </div>
-    ),
-    [activeToken],
-  );
-
-  const balanceOptions = useMemo(
-    () =>
-      tokens.map((token, index) => ({
-        label: token.name,
-        value: token.id,
-        children: (
-          <div
-            className={classNames(styles.label, styles.option, {
-              [styles.firstOption]: index === 0,
-            })}
-          >
-            <span className={styles.icon}>
-              <TokenIcon
-                className={styles.tokenIcon}
-                token={token}
-                name={token.name || token.address}
-              />
-            </span>
-
-            <Numeral
-              unit={getTokenDecimalsWithFallback(token.decimals)}
-              value={token.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount}
-            />
-            <span className={styles.symbol}>{token.symbol}</span>
-          </div>
-        ),
-      })),
-    [tokens],
-  );
-
   return (
     <div className={styles.container}>
       <FormSection appearance={{ border: 'bottom' }}>
@@ -195,18 +139,11 @@ const ExpenditureSettings = ({ colony, walletAddress, username }: Props) => {
         {error && <div className={styles.error}>{error}</div>}
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.balance}>
-          <SelectHorizontal
-            name="balance"
-            label={MSG.balanceLabel}
-            appearance={{
-              theme: 'alt',
-            }}
-            options={balanceOptions}
-            renderActiveOption={renderBalanceActiveOption}
-            unselectable
-          />
-        </div>
+        <BalanceSelect
+          activeToken={activeToken}
+          tokens={tokens}
+          name="balance"
+        />
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.userContainer}>

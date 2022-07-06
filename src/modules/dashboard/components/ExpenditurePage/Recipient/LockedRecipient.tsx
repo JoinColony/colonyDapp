@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { defineMessages } from 'react-intl';
+import classNames from 'classnames';
 
 import { FormSection, InputLabel } from '~core/Fields';
 import UserAvatar from '~core/UserAvatar';
@@ -12,53 +12,9 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import Numeral from '~core/Numeral';
 import { Colony } from '~data/index';
 import { getRecipientTokens } from '../utils';
+import { MSG } from './Recipient';
 
-const MSG = defineMessages({
-  recipientLabel: {
-    id: 'dashboard.ExpenditurePage.LockedRecipient.recipientLabel',
-    defaultMessage: 'Recipient',
-  },
-  valueLabel: {
-    id: 'dashboard.ExpenditurePage.LockedRecipient.valueLabel',
-    defaultMessage: 'Value',
-  },
-  delayLabel: {
-    id: 'dashboard.ExpenditurePage.LockedRecipient.delayLabel',
-    defaultMessage: 'Claim delay',
-  },
-  tooltipMessageTitle: {
-    id: 'dashboard.ExpenditurePage.LockedRecipient.tooltipMessageTitle',
-    defaultMessage: 'Security delay for claiming funds.',
-  },
-  tooltipMessageDescription: {
-    id: 'dashboard.ExpenditurePage.LockedRecipient.tooltipMessageDescription',
-    defaultMessage: `F.ex. once the work is finished, recipient has to wait before funds can be claimed.`,
-  },
-  addTokenText: {
-    id: 'dashboard.ExpenditurePage.LockedRecipient.addTokenText',
-    defaultMessage: 'Another token',
-  },
-  removeTokenText: {
-    id: 'dashboard.ExpenditurePage.LockedRecipient.removeTokenText',
-    defaultMessage: 'Discard',
-  },
-  hoursLabel: {
-    id: 'dashboard.ExpenditurePage.LockedRecipient.hoursLabel',
-    defaultMessage: 'hours',
-  },
-  daysLabel: {
-    id: 'dashboard.ExpenditurePage.LockedRecipient.daysLabel',
-    defaultMessage: 'days',
-  },
-  monthsLabel: {
-    id: 'dashboard.ExpenditurePage.LockedRecipient.monthsLabel',
-    defaultMessage: 'months',
-  },
-  valueError: {
-    id: 'dashboard.ExpenditurePage.LockedRecipient.valueError',
-    defaultMessage: 'Value is required',
-  },
-});
+const displayNameLockedRecipient = 'dashboard.ExpenditurePage.LockedRecipient';
 
 interface Props {
   recipient: RecipientType;
@@ -100,7 +56,12 @@ const LockedRecipient = ({ recipient, colony }: Props) => {
             </div>
           </FormSection>
           <FormSection appearance={{ border: 'bottom' }}>
-            <div className={styles.itemContainer}>
+            <div
+              className={classNames(styles.itemContainer, {
+                [styles.tokensContainer]:
+                  recipientValues && recipientValues.length > 1,
+              })}
+            >
               <InputLabel
                 label={MSG.valueLabel}
                 appearance={{
@@ -152,5 +113,7 @@ const LockedRecipient = ({ recipient, colony }: Props) => {
     </div>
   );
 };
+
+LockedRecipient.displayName = displayNameLockedRecipient;
 
 export default LockedRecipient;

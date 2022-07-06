@@ -23,48 +23,21 @@
   border-top: 1px solid var(--grey-blue-0);
 }
 
-.singleUserContainer {
-  padding: 6px 0;
-}
-
 .itemContainer {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   padding: 15px 0;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
 }
 
-.delayContainer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: var(--dark);
-  letter-spacing: 0.1px;
+.tokensContainer {
+  align-items: flex-end;
 }
 
 .delayControlsContainer {
   color: var(--dark);
-}
-
-.tokenWrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  font-size: 12px;
-}
-
-.removeWrapper {
-  margin-bottom: 6px;
-  height: 18px;
-  font-weight: var(--weight-bold);
-  color: var(--colony-blue);
-}
-
-.removeWrapper button {
-  height: unset;
-  line-height: 12px;
 }
 
 .valueAmount {
@@ -88,41 +61,6 @@
   margin-bottom: 26px;
 }
 
-.questionIcon {
-  display: block;
-  margin-bottom: -3px;
-  margin-left: 6px;
-  height: 16px;
-  width: 16px;
-  border-radius: 50%;
-  background-color: white;
-  stroke: none;
-}
-
-.tooltip {
-  max-width: 218px;
-}
-
-.tooltipDescription {
-  margin-top: 8px;
-}
-
-.error {
-  font-size: var(--size-tiny);
-  font-weight: var(--weight-bold);
-  text-align: right;
-  color: var(--danger);
-}
-
-.inputContainer input::placeholder {
-  color: var(--dark);
-}
-
-.inputContainer input {
-  padding: 20px 0 4px;
-  height: 42px;
-}
-
 .tokenIcon {
   height: 18px;
   width: 18px;
@@ -130,15 +68,6 @@
 
 .symbol {
   margin-left: 4px;
-}
-
-.delay {
-  display: flex;
-  align-items: center;
-  font-size: 13px;
-  font-weight: var(--weight-bold);
-  color: var(--text);
-  letter-spacing: 0.5px;
 }
 
 .icon {

@@ -18,7 +18,7 @@ import { Recipient as RecipientType } from '../Payments/types';
 
 import styles from './Recipient.css';
 
-const MSG = defineMessages({
+export const MSG = defineMessages({
   recipientLabel: {
     id: 'dashboard.ExpenditurePage.Recipient.recipientLabel',
     defaultMessage: 'Recipient',
@@ -65,6 +65,8 @@ const MSG = defineMessages({
   },
 });
 
+const displayName = 'dashboard.ExpenditurePage.Recipient';
+
 const supRenderAvatar = (address: Address, item: ItemDataType<AnyUser>) => (
   <UserAvatar address={address} user={item} size="xs" notSet={false} />
 );
@@ -102,7 +104,6 @@ const Recipient = ({
   const newTokenData = useMemo(() => {
     return {
       ...newToken,
-      id: nanoid(),
       tokenAddress: colony.nativeTokenAddress,
     };
   }, [colony.nativeTokenAddress]);
@@ -184,7 +185,9 @@ const Recipient = ({
                       {tokens.length === idx + 1 && (
                         <Button
                           type="button"
-                          onClick={() => arrayHelpers.push(newTokenData)}
+                          onClick={() =>
+                            arrayHelpers.push({ ...newTokenData, id: nanoid() })
+                          }
                           appearance={{ theme: 'blue' }}
                           style={{ margin: styles.buttonMargin }}
                         >
@@ -263,5 +266,7 @@ const Recipient = ({
     </div>
   );
 };
+
+Recipient.displayName = displayName;
 
 export default Recipient;

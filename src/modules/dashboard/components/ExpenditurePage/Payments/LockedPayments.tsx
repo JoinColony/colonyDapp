@@ -1,37 +1,16 @@
 import React, { useCallback, useState } from 'react';
-import classNames from 'classnames';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
 import { Recipient as RecipientType } from './types';
 import styles from './Payments.css';
-import Icon from '~core/Icon';
 import { FormSection } from '~core/Fields';
 import LockedRecipient from '../Recipient/LockedRecipient';
 import UserMention from '~core/UserMention';
 import { Colony } from '~data/index';
+import { MSG } from './Payments';
+import CollapseExpandButtons from './CollapseExpandButtons';
 
-const MSG = defineMessages({
-  payments: {
-    id: 'dashboard.ExpenditurePage.LockedPayments.payments',
-    defaultMessage: 'Payments',
-  },
-  recipient: {
-    id: 'dashboard.ExpenditurePage.LockedPayments.recipient',
-    defaultMessage: 'Recipient',
-  },
-  addRecipientLabel: {
-    id: 'dashboard.ExpenditurePage.LockedPayments.addRecipientLabel',
-    defaultMessage: 'Add recipient',
-  },
-  minusIconTitle: {
-    id: 'dashboard.ExpenditurePage.LockedPayments.minusIconTitle',
-    defaultMessage: 'Collapse a single recipient settings',
-  },
-  plusIconTitle: {
-    id: 'dashboard.ExpenditurePage.LockedPayments.plusIconTitle',
-    defaultMessage: 'Expand a single recipient settings',
-  },
-});
+const displayName = 'dashboard.ExpenditurePage.LockedPayments';
 
 interface Props {
   recipients?: RecipientType[];
@@ -68,24 +47,11 @@ const LockedPayments = ({ recipients, colony }: Props) => {
             <div className={styles.singleRecipient} key={recipient.id}>
               <FormSection>
                 <div className={styles.recipientName}>
-                  {isOpen ? (
-                    <>
-                      <Icon
-                        name="collapse"
-                        onClick={() => onToggleButtonClick(index)}
-                        className={styles.signWrapper}
-                        title={MSG.minusIconTitle}
-                      />
-                      <div className={classNames(styles.verticalDivider)} />
-                    </>
-                  ) : (
-                    <Icon
-                      name="expand"
-                      onClick={() => onToggleButtonClick(index)}
-                      className={styles.signWrapper}
-                      title={MSG.plusIconTitle}
-                    />
-                  )}
+                  <CollapseExpandButtons
+                    isExpanded={isOpen}
+                    onToogleButtonClick={() => onToggleButtonClick(index)}
+                    isLastitem={index === recipients?.length - 1}
+                  />
                   {index + 1}:{' '}
                   <UserMention
                     username={
@@ -97,8 +63,7 @@ const LockedPayments = ({ recipients, colony }: Props) => {
                   {recipient?.delay?.amount && (
                     <>
                       {', '}
-                      {recipient.delay.amount}
-                      {recipient.delay.time}
+                      {recipient.delay.amount} {recipient.delay.time}
                     </>
                   )}
                 </div>
@@ -119,5 +84,7 @@ const LockedPayments = ({ recipients, colony }: Props) => {
     </div>
   );
 };
+
+LockedPayments.displayName = displayName;
 
 export default LockedPayments;
