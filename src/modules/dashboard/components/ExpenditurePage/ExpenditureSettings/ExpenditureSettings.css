@@ -52,13 +52,12 @@
   justify-content: flex-end;
   align-items: center;
   padding: 0;
-  font-size: var(--size-normal);
+  font-size: var(--size-smallish);
   font-weight: var(--weight-normal);
   color: var(--dark);
 }
 
 .lockedLabel {
-  font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
 }
 
