@@ -8,13 +8,21 @@ import styles from './MetaMaskWalletInteraction.css';
 const MSG = defineMessages({
   metamaskPromptText: {
     id: 'users.GasStation.MetaMaskWalletInteraction.metamaskPromptText',
-    defaultMessage: `Please finish this action on MetaMask`,
+    defaultMessage: `Please finish this {isMetatransaction, select,
+      true {metatransaction}
+      false {transaction}
+      other {action}
+    } on MetaMask`,
   },
 });
 
 const displayName = 'users.GasStation.MetaMaskWalletInteraction';
 
-const MetaMaskWalletInteraction = () => {
+interface Props {
+  transactionType?: string;
+}
+
+const MetaMaskWalletInteraction = ({ transactionType }: Props) => {
   return (
     <div className={styles.main}>
       <div className={styles.content}>
@@ -24,7 +32,14 @@ const MetaMaskWalletInteraction = () => {
           appearance={{ size: 'medium' }}
         />
         <span className={styles.text}>
-          <FormattedMessage {...MSG.metamaskPromptText} />
+          <FormattedMessage
+            {...MSG.metamaskPromptText}
+            values={{
+              isMetatransaction: !transactionType
+                ? undefined
+                : transactionType === 'metatransaction',
+            }}
+          />
         </span>
       </div>
     </div>
