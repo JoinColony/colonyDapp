@@ -17,7 +17,6 @@ import LoadingTemplate from '~pages/LoadingTemplate';
 import Members from '~dashboard/Members';
 import WrongNetworkDialog from '~dashboard/ColonyHome/WrongNetworkDialog';
 import InviteLinkButton from '~dashboard/InviteLinkButton';
-import { MEMEBERS_FILTERS } from '~dashboard/ColonyMembers/MembersFilter';
 
 import {
   useColonyFromNameQuery,
@@ -28,7 +27,12 @@ import { getFormattedTokenValue } from '~utils/tokens';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
 
-import MembersFilter from './MembersFilter';
+import MembersFilter, {
+  BannedStatus,
+  FormValues,
+  MemberType,
+  VerificationType,
+} from './MembersFilter';
 import MemberControls from './MemberControls';
 import styles from './ColonyMembers.css';
 
@@ -46,7 +50,11 @@ const MSG = defineMessages({
 });
 
 const ColonyMembers = () => {
-  const [filters, setFilters] = useState<MEMEBERS_FILTERS[]>([]);
+  const [filters, setFilters] = useState<FormValues>({
+    memberType: MemberType.ALL,
+    verificationType: VerificationType.ALL,
+    bannedStatus: BannedStatus.ALL,
+  });
 
   const { networkId, ethereal } = useLoggedInUser();
   const { domainId } = useParams<{

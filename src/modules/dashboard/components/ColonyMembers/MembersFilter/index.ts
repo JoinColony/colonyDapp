@@ -1,1 +1,7 @@
-export { default, MEMEBERS_FILTERS } from './MembersFilter';
+export {
+  default,
+  FormValues,
+  MemberType,
+  VerificationType,
+  BannedStatus,
+} from './MembersFilter';

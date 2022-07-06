@@ -5,7 +5,10 @@ import sortBy from 'lodash/sortBy';
 
 import { SpinnerLoader } from '~core/Preloaders';
 import UserPermissions from '~dashboard/UserPermissions';
-import { MEMEBERS_FILTERS } from '~dashboard/ColonyMembers/MembersFilter';
+import {
+  FormValues as FiltersFormValues,
+  MemberType,
+} from '~dashboard/ColonyMembers/MembersFilter';
 
 import { useTransformer } from '~utils/hooks';
 import {
@@ -48,7 +51,7 @@ interface Props {
   colony: Colony;
   selectedDomain: number | undefined;
   handleDomainChange: React.Dispatch<React.SetStateAction<number>>;
-  filters: MEMEBERS_FILTERS[];
+  filters: FiltersFormValues;
 }
 
 export type Member = AnyUser & {
@@ -145,7 +148,8 @@ const Members = ({
 
   const membersContent = useMemo(() => {
     const contributorsContent = (!isRootDomain ||
-      filters.includes(MEMEBERS_FILTERS.CONTRIBUTORS)) && (
+      filters.memberType === MemberType.ALL ||
+      filters.memberType === MemberType.CONTRIBUTORS) && (
       <MembersSection<ColonyContributor>
         isContributorsSection
         colony={colony}
@@ -165,7 +169,9 @@ const Members = ({
     );
 
     const watchersContent =
-      isRootDomain && filters.includes(MEMEBERS_FILTERS.WATCHERS) ? (
+      isRootDomain &&
+      (filters.memberType === MemberType.ALL ||
+        filters.memberType === MemberType.WATCHERS) ? (
         <MembersSection<ColonyWatcher>
           isContributorsSection={false}
           colony={colony}
@@ -195,20 +201,7 @@ const Members = ({
   ]);
 
   useEffect(() => {
-    if (
-      filters.includes(MEMEBERS_FILTERS.WATCHERS) ||
-      filters.includes(MEMEBERS_FILTERS.CONTRIBUTORS)
-    ) {
-      filterContributorsAndWatchers();
-    }
-
-    if (!filters.includes(MEMEBERS_FILTERS.WATCHERS)) {
-      setWatchers([]);
-    }
-
-    if (isRootDomain && !filters.includes(MEMEBERS_FILTERS.CONTRIBUTORS)) {
-      setContributors([]);
-    }
+    filterContributorsAndWatchers();
   }, [filterContributorsAndWatchers, filters, isRootDomain]);
 
   if (loadingMembers) {
