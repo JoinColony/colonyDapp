@@ -15,7 +15,7 @@ import { DialogSection } from '~core/Dialog';
 
 import { FormValues } from '../GnosisControlSafeDialog';
 
-import styles from './TransferFundsSection.css';
+import styles from './TransactionTypesSection.css';
 
 const MSG = defineMessages({
   amount: {
@@ -38,7 +38,6 @@ interface Props {
   colony: Colony;
   disabledInput: boolean;
   values: FormValues;
-  back?: () => void;
 }
 
 const renderAvatar = (address: Address, item: AnyUser) => (

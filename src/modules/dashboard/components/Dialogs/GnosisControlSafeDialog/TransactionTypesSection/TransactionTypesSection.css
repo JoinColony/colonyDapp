@@ -17,3 +17,7 @@
 .singleUserPickerContainer label {
   color: var(--dark);
 }
+
+.labelDescription {
+  color: var(--temp-grey-blue-7);
+}
