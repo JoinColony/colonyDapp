@@ -81,8 +81,7 @@
 
   .itemImage {
     composes: itemLink;
-    height: 28px;
-    width: 28px;
+    min-width: 34px;
     border-width: 2px;
   }
 
@@ -95,6 +94,12 @@
     display: flex;
     align-items: center;
     gap: 10px;
+  }
+
+  .dropdownItem > div:nth-child(2) {
+    padding-right: 10px;
+    white-space: break-spaces;
+    overflow-wrap: anywhere;
   }
 
   .activeColony > .dropdownItem {
@@ -122,6 +127,7 @@
 
   .scrollableContainer div[class*="DropdownMenu"] {
     max-height: 80vh;
+    max-width: 85vw;
     overflow-y: scroll;
   }
 

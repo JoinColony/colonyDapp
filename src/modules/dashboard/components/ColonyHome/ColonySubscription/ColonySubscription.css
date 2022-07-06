@@ -83,4 +83,8 @@
   .menuIcon svg {
     transform: scale(1.75);
   }
+
+  .colonyJoinBtn {
+    min-width: 100px;
+  }
 }
