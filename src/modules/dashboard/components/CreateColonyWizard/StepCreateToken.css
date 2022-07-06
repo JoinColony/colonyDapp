@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   width: 460px;
 }
@@ -31,4 +33,14 @@
   font-weight: var(--weight-bold);
   color: var(--sky-blue);
   cursor: pointer;
+}
+
+@media screen and query700 {
+  .main {
+    width: 100%;
+  }
+
+  .titleSection {
+    margin-top: 155px;
+  }
 }
