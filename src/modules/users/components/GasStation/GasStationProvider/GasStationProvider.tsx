@@ -1,10 +1,13 @@
 import React, { createContext, useState, ReactNode } from 'react';
 
+type SingleTransactionAlert = { wasSeen?: boolean; isOpen?: boolean };
+type TransactionAlerts = Record<string, SingleTransactionAlert>;
+
 export const GasStationContext = createContext<{
-  transactionAlerts: Record<string, { seen: boolean }>;
+  transactionAlerts: TransactionAlerts;
   updateTransactionAlert: (
     transactionId: string,
-    alertPayload: { seen?: boolean },
+    alertPayload: SingleTransactionAlert,
   ) => void;
 }>({
   transactionAlerts: {},
@@ -17,7 +20,7 @@ interface Props {
 
 const GasStationProvider = ({ children }: Props) => {
   const [transactionAlerts, updateTransactionAlerts] = useState<
-    Record<string, { seen: boolean }>
+    TransactionAlerts
   >({});
 
   const updateTransactionAlert = (
@@ -26,15 +29,16 @@ const GasStationProvider = ({ children }: Props) => {
      * @NOTE This was thought about being extendable, so that more props can
      * be tracked for a transactions from component land (eg: isOpen)
      */
-    alertPayload: { seen?: boolean },
-  ) =>
-    updateTransactionAlerts({
+    alertPayload: SingleTransactionAlert,
+  ) => {
+    return updateTransactionAlerts({
       ...transactionAlerts,
       [transactionId]: {
         ...(transactionAlerts[transactionId] || {}),
         ...alertPayload,
       },
     });
+  };
 
   return (
     <>

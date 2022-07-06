@@ -87,15 +87,30 @@ const GroupedTransactionCard = ({
        * @NOTE Sadly we don't have a better way currently to detect this error
        */
       error?.message.includes('Contract does not support MetaTransactions') &&
-      !transactionAlerts?.[id]?.seen
+      !transactionAlerts?.[id]?.wasSeen &&
+      !transactionAlerts?.[id]?.isOpen
     ) {
       /*
        * @TODO Replace with proper modal
        * @TODO Add logic to display the modal
        * (the `seen` tracking needs to be included in that logic)
        */
-      updateTransactionAlert(id, { seen: true });
-      openWrongNetworkDialog();
+      /*
+       * @NOTE due to the way the dialog provider works you need to pass
+       * all values being updated to the update function
+       * (even though it's supposed to handle individual updates as well)
+       */
+      updateTransactionAlert(id, { wasSeen: true, isOpen: true });
+      openWrongNetworkDialog()
+        .afterClosed()
+        /*
+         * @NOTE due to the way the dialog provider works you need to pass
+         * all values being updated to the update function
+         * (even though it's supposed to handle individual updates as well)
+         */
+        .catch(() =>
+          updateTransactionAlert(id, { wasSeen: true, isOpen: false }),
+        );
     }
   }, [
     error,

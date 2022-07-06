@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useContext } from 'react';
 import { useDispatch } from 'redux-react-hook';
 import * as yup from 'yup';
 
@@ -13,6 +13,8 @@ import {
   transactionEstimateGas,
   transactionSend,
 } from '../../../../core/actionCreators';
+
+import { GasStationContext } from '../GasStationProvider';
 
 import styles from './GasStationControls.css';
 
@@ -35,6 +37,7 @@ const GasStationControls = ({
 }: Props) => {
   const dispatch = useDispatch();
   const transform = useCallback(withId(id), [id]);
+  const { updateTransactionAlert } = useContext(GasStationContext);
 
   /*
    * @NOTE Automatically send the transaction
@@ -55,6 +58,11 @@ const GasStationControls = ({
     }
   }, [dispatch, id, error, metatransaction]);
 
+  const handleResetMetaTransactionAlert = useCallback(
+    () => updateTransactionAlert(id, { wasSeen: false }),
+    [id, updateTransactionAlert],
+  );
+
   const initialFormValues: FormValues = { id };
 
   return (
@@ -69,7 +77,11 @@ const GasStationControls = ({
       >
         {error && (
           <div className={styles.controls}>
-            <IconButton type="submit" text={{ id: 'button.retry' }} />
+            <IconButton
+              type="submit"
+              text={{ id: 'button.retry' }}
+              onClick={handleResetMetaTransactionAlert}
+            />
           </div>
         )}
       </ActionForm>
