@@ -60,7 +60,7 @@ const HamburgerDropdownPopover = ({
       <DropdownMenu onClick={closePopover}>
         {!onlyLogout && (
           <>
-            {username && (
+            {username && colonyName && (
               <DropdownMenuSection>
                 <DropdownMenuItem>
                   <NavLink to={colonyHomePath} text={MSG.actions} exact />
