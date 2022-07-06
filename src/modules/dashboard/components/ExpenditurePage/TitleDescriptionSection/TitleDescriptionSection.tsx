@@ -9,14 +9,18 @@ import styles from './TitleDescriptionSection.css';
 
 const MSG = defineMessages({
   titlePlaceholder: {
-    id: 'dashboard.Expenditures.TitleDescriptionSection.titlePlaceholder',
+    id: 'dashboard.ExpenditurePage.TitleDescriptionSection.titlePlaceholder',
     defaultMessage: 'Enter expenditure title',
   },
   descriptionPlaceholder: {
-    id: 'dashboard.Expenditures.TitleDescriptionSection.descriptionPlaceholder',
+    id:
+      // eslint-disable-next-line max-len
+      'dashboard.ExpenditurePage.TitleDescriptionSection.descriptionPlaceholder',
     defaultMessage: 'Enter description',
   },
 });
+
+const displayName = 'dashboard.ExpenditurePage.TitleDescriptionSection';
 
 interface Props {
   isEditable?: boolean;
@@ -72,5 +76,7 @@ const TitleDescriptionSection = ({ isEditable }: Props) => {
     </div>
   );
 };
+
+TitleDescriptionSection.displayName = displayName;
 
 export default TitleDescriptionSection;

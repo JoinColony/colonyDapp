@@ -31,26 +31,28 @@ import { SpinnerLoader } from '~core/Preloaders';
 
 const MSG = defineMessages({
   typeLabel: {
-    id: 'dashboard.Expenditures.ExpenditureSettings.defaultExpenditureLabel',
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.defaultExpenditureLabel',
     defaultMessage: 'Expenditure type',
   },
   teamLabel: {
-    id: 'dashboard.Expenditures.ExpenditureSettings.defaultTeamLabel',
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.defaultTeamLabel',
     defaultMessage: 'Team',
   },
   balanceLabel: {
-    id: 'dashboard.Expenditures.ExpenditureSettings.defaultBalanceLabel',
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.defaultBalanceLabel',
     defaultMessage: 'Balance',
   },
   ownerLabel: {
-    id: 'dashboard.Expenditures.ExpenditureSettings.defaultOwnerLabel',
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.defaultOwnerLabel',
     defaultMessage: 'Owner',
   },
   optionAdvanced: {
-    id: 'dashboard.Expenditures.ExpenditureSettings.defaultAdvancedOption',
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.defaultAdvancedOption',
     defaultMessage: 'Advanced payment',
   },
 });
+
+const displayName = 'dashboard.ExpenditurePage.ExpenditureSettings';
 
 interface Props {
   colonyName: string;
@@ -162,8 +164,6 @@ const ExpenditureSettings = () => {
 
   return (
     <div className={styles.container}>
-      {/* eslint-disable-next-line no-warning-comments */}
-      {/* TODO: add submit handler and initial values */}
       {loading ? (
         <SpinnerLoader appearance={{ size: 'medium' }} />
       ) : (
@@ -244,5 +244,7 @@ const ExpenditureSettings = () => {
     </div>
   );
 };
+
+ExpenditureSettings.displayName = displayName;
 
 export default ExpenditureSettings;

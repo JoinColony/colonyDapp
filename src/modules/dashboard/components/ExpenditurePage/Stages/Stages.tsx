@@ -1,18 +1,24 @@
-import React, { useCallback, useState } from 'react';
+import { useFormikContext } from 'formik';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   defineMessages,
   FormattedMessage,
   MessageDescriptor,
 } from 'react-intl';
 import { useParams } from 'react-router-dom';
+import copyToClipboard from 'copy-to-clipboard';
+import classNames from 'classnames';
+
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
-import StakeExpenditureDialog from './StakeExpenditureDialog';
+import { Tooltip } from '~core/Popover';
+import DeleteDraftDialog from '../../Dialogs/DeleteDraftDialog/DeleteDraftDialog';
+import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
 import StageItem from './StageItem';
-
 import styles from './Stages.css';
-import EscrowFundsDialog from './EscrowFundsDialog/EscrowFundsDialog';
+import EscrowFundsDialog from '../../Dialogs/EscrowFundsDialog/EscrowFundsDialog';
+import { Stage } from './constants';
 
 const MSG = defineMessages({
   stages: {
@@ -67,69 +73,137 @@ const MSG = defineMessages({
     id: 'dashboard.Expenditures.Stages.claimed',
     defaultMessage: 'Claimed',
   },
+  deleteDraft: {
+    id: 'dashboard.Expenditures.Stages.deleteDraft',
+    defaultMessage: 'Delete draft',
+  },
+  tooltipDeleteText: {
+    id: 'dashboard.Expenditures.Stages.tooltipDeleteText',
+    defaultMessage: 'Delete the expenditure',
+  },
+  tooltipShareText: {
+    id: 'dashboard.Expenditures.Stages.tooltipShareText',
+    defaultMessage: 'Share expenditure URL',
+  },
+  tooltipLockValuesText: {
+    id: 'dashboard.ExpenditurePage.Stages.tooltipLockValuesText',
+    defaultMessage: `This will lock the values of the expenditure. To change values after locking will require the right permissions or a motion.`,
+  },
+  tooltipCancelText: {
+    id: 'dashboard.ExpenditurePage.Stages.tooltipCancelText',
+    defaultMessage: 'Click to cancel expenditure',
+  },
 });
 
 interface ActiveState {
-  id: number;
+  id: string;
   label: string | MessageDescriptor;
   buttonText: string | MessageDescriptor;
   buttonAction: () => void;
+  stage: string;
 }
 
+const buttonStyles = {
+  height: styles.buttonHeight,
+  width: styles.buttonWidth,
+  padding: 0,
+};
+
 const Stages = () => {
-  const [activeState, setActiveState] = useState<ActiveState | null>(null);
+  const [activeStateId, setActiveStateId] = useState<string | null>(null);
+  const { resetForm } = useFormikContext() || {};
+  const [valueIsCopied, setValueIsCopied] = useState(false);
+  const userFeedbackTimer = useRef<any>(null);
   const { colonyName } = useParams<{
     colonyName: string;
   }>();
-  const openEscrowFundsDialog = useDialog(EscrowFundsDialog);
+
+  const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
-  const states = [
-    {
-      id: 1,
-      label: MSG.draft,
-      buttonText: MSG.lockValues,
-      buttonAction: () => {},
-    },
-    {
-      id: 2,
-      label: MSG.locked,
-      buttonText: MSG.escrowFunds,
-      buttonAction: () => {},
-    },
-    {
-      id: 3,
-      label: MSG.funded,
-      buttonText: MSG.releaseFunds,
-      buttonAction: () => {},
-    },
-    {
-      id: 4,
-      label: MSG.released,
-      buttonText: MSG.claim,
-      buttonAction: () => {},
-    },
-    {
-      id: 5,
-      label: MSG.claimed,
-      buttonText: MSG.completed,
-      buttonAction: () => {},
-    },
-  ];
+  const openEscrowFundsDialog = useDialog(EscrowFundsDialog);
+
+  const handleLockExpenditure = useCallback(() => {
+    // Call to backend will be added here, to lock the expenditure
+    // fetching active state shoud be added here as well,
+    // and saving the activeState in a state
+    setActiveStateId(Stage.Locked);
+  }, []);
+
   const handleEscrowFunds = useCallback(
     () =>
       openEscrowFundsDialog({
         colonyName,
-        onClick: () => setActiveState(states[3]),
+        onClick: () => setActiveStateId(Stage.Funded),
+        isVotingExtensionEnabled: true, // temporary value
       }),
     [colonyName, openEscrowFundsDialog],
   );
-  states[0].buttonAction = handleEscrowFunds;
+
+  const states = [
+    {
+      id: Stage.Draft,
+      label: MSG.draft,
+      buttonText: MSG.lockValues,
+      buttonAction: handleLockExpenditure,
+      buttonTooltipt: MSG.tooltipLockValuesText,
+    },
+    {
+      id: Stage.Locked,
+      label: MSG.locked,
+      buttonText: MSG.escrowFunds,
+      buttonAction: handleEscrowFunds,
+      stage: Stage.Locked,
+    },
+    {
+      id: Stage.Funded,
+      label: MSG.funded,
+      buttonText: MSG.releaseFunds,
+      buttonAction: () => {},
+      stage: Stage.Funded,
+    },
+    {
+      id: Stage.Released,
+      label: MSG.released,
+      buttonText: MSG.claim,
+      buttonAction: () => {},
+      stage: Stage.Released,
+    },
+    {
+      id: Stage.Claimed,
+      label: MSG.claimed,
+      buttonText: MSG.completed,
+      buttonAction: () => {},
+      stage: Stage.Claimed,
+    },
+  ];
 
   const handleSaveDraft = () =>
     openDraftConfirmDialog({
-      onClick: () => setActiveState(states[0]),
+      onClick: () => setActiveStateId(Stage.Draft),
+      isVotingExtensionEnabled: true,
     });
-  const activeIndex = states.findIndex((state) => state.id === activeState?.id);
+
+  const handleDeleteDraft = () =>
+    openDeleteDraftDialog({
+      onClick: () => {
+        resetForm?.();
+        if (activeStateId === Stage.Draft) {
+          // add logic to delete the draft from database
+        }
+      },
+    });
+
+  const handleClipboardCopy = () => {
+    copyToClipboard(window.location.href);
+    setValueIsCopied(true);
+    userFeedbackTimer.current = setTimeout(() => setValueIsCopied(false), 2000);
+  };
+  useEffect(() => () => clearTimeout(userFeedbackTimer.current), [
+    userFeedbackTimer,
+  ]);
+
+  const activeIndex = states.findIndex((state) => state.id === activeStateId);
+  const activeState = states.find((state) => state.id === activeStateId);
 
   return (
     <div className={styles.mainContainer}>
@@ -138,38 +212,132 @@ const Stages = () => {
           <span className={styles.status}>
             <FormattedMessage {...MSG.stages} />
           </span>
-          {!activeState && (
+          {!activeStateId && (
             <span className={styles.notSaved}>
               <FormattedMessage {...MSG.notSaved} />
             </span>
           )}
         </div>
         <div className={styles.buttonsContainer}>
-          {!activeState ? (
+          {!activeStateId ? (
             <>
-              {/* Deleting the expenditure will be added in next PR */}
-              <Icon name="trash" className={styles.icon} />
-              {/* onClick has temporary action, needs to be submiting draft in the future */}
-              <Button
-                onClick={handleSaveDraft}
-                style={{ height: styles.buttonHeight }}
-              >
+              <Button className={styles.iconButton} onClick={handleDeleteDraft}>
+                <Tooltip
+                  placement="top-start"
+                  content={<FormattedMessage {...MSG.tooltipDeleteText} />}
+                >
+                  <div className={styles.iconWrapper}>
+                    <Icon
+                      name="trash"
+                      className={styles.icon}
+                      title={MSG.deleteDraft}
+                    />
+                  </div>
+                </Tooltip>
+              </Button>
+              <Button onClick={handleSaveDraft} style={buttonStyles}>
                 <FormattedMessage {...MSG.submitDraft} />
               </Button>
             </>
           ) : (
             <>
-              <Icon name="share" className={styles.icon} />
               <Button
-                onClick={activeState.buttonAction}
-                style={{ height: styles.buttonHeight }}
+                className={classNames(styles.iconButton, {
+                  [styles.iconButtonDisabled]: valueIsCopied,
+                })}
+                onClick={handleClipboardCopy}
+                disabled={valueIsCopied}
               >
-                {typeof activeState?.buttonText === 'string' ? (
-                  activeState.buttonText
+                {valueIsCopied ? (
+                  <Icon name="share" className={styles.icon} />
                 ) : (
-                  <FormattedMessage {...activeState.buttonText} />
+                  <Tooltip
+                    placement="top-start"
+                    content={<FormattedMessage {...MSG.tooltipShareText} />}
+                  >
+                    <div className={styles.iconWrapper}>
+                      <Icon name="share" className={styles.icon} />
+                    </div>
+                  </Tooltip>
                 )}
               </Button>
+              {activeStateId === Stage.Draft && (
+                <Button
+                  className={styles.iconButton}
+                  onClick={handleDeleteDraft}
+                >
+                  <Tooltip
+                    placement="top-start"
+                    content={<FormattedMessage {...MSG.tooltipDeleteText} />}
+                  >
+                    <div className={styles.iconWrapper}>
+                      <Icon
+                        name="trash"
+                        className={styles.icon}
+                        onClick={handleDeleteDraft}
+                        title={MSG.deleteDraft}
+                      />
+                    </div>
+                  </Tooltip>
+                </Button>
+              )}
+              {activeStateId !== Stage.Draft && (
+                <Button
+                  className={classNames(styles.iconButton, styles.cancelIcon)}
+                  onClick={handleDeleteDraft}
+                >
+                  <Tooltip
+                    placement="top-start"
+                    content={<FormattedMessage {...MSG.tooltipCancelText} />}
+                  >
+                    <div className={styles.iconWrapper}>
+                      <Icon
+                        name="circle-minus"
+                        className={styles.icon}
+                        title={MSG.deleteDraft}
+                      />
+                    </div>
+                  </Tooltip>
+                </Button>
+              )}
+              {activeState?.buttonTooltipt ? (
+                <Tooltip
+                  placement="top"
+                  content={
+                    typeof activeState.buttonTooltipt === 'string' ? (
+                      <div className={styles.buttonTooltip}>
+                        {activeState.buttonTooltipt}
+                      </div>
+                    ) : (
+                      <div className={styles.buttonTooltip}>
+                        <FormattedMessage {...activeState.buttonTooltipt} />
+                      </div>
+                    )
+                  }
+                >
+                  <Button
+                    onClick={activeState?.buttonAction}
+                    style={buttonStyles}
+                  >
+                    {typeof activeState?.buttonText === 'string' ? (
+                      activeState.buttonText
+                    ) : (
+                      <FormattedMessage {...activeState?.buttonText} />
+                    )}
+                  </Button>
+                </Tooltip>
+              ) : (
+                <Button
+                  onClick={activeState?.buttonAction}
+                  style={buttonStyles}
+                >
+                  {typeof activeState?.buttonText === 'string' ? (
+                    activeState.buttonText
+                  ) : (
+                    <FormattedMessage {...activeState?.buttonText} />
+                  )}
+                </Button>
+              )}
             </>
           )}
         </div>
