@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   padding-top: 146px;
   width: 100%;
@@ -37,4 +39,14 @@
   display: flex;
   justify-content: flex-end;
   margin-top: 22px;
+}
+
+@media screen and query700 {
+  .main {
+    padding-bottom: 30px;
+  }
+
+  .finalContainer {
+    width: 100%;
+  }
 }

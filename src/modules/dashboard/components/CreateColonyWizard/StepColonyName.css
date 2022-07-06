@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   padding-top: 155px;
   width: 100%;
@@ -33,4 +35,10 @@
 
 .tooltipContent {
   min-width: 280px;
+}
+
+@media screen and query700 {
+  .main {
+    padding-bottom: 40px;
+  }
 }
