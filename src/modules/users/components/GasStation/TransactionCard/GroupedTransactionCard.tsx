@@ -107,8 +107,17 @@ const GroupedTransactionCard = ({
          * @NOTE due to the way the dialog provider works you need to pass
          * all values being updated to the update function
          * (even though it's supposed to handle individual updates as well)
+         *
+         * @NOTE2 We need catch in here since clicking outside, or the close
+         * icon counts as `cancel` rather than `close`, and as to not show
+         * an error when we really shouldn't
          */
-        .catch(() =>
+        .catch(() => null)
+        /*
+         * @NOTE We need to perform the action in the `finally` block in order
+         * to account for both the `cancel` and the `close` actions
+         */
+        .finally(() =>
           updateTransactionAlert(id, { wasSeen: true, isOpen: false }),
         );
     }
