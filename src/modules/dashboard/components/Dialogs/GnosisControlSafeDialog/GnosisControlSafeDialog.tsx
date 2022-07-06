@@ -13,7 +13,7 @@ import { WizardDialogType } from '~utils/hooks';
 import { Address } from '~types/index';
 
 import { TransactionTypes } from './constants';
-import GnosisControlSafeForm from './GnosisControlSafeForm';
+import GnosisControlSafeForm, { NFT } from './GnosisControlSafeForm';
 
 const MSG = defineMessages({
   requiredFieldError: {
@@ -50,6 +50,7 @@ export interface FormValues {
     contract?: string;
     abi?: string;
     contractFunction?: string;
+    nft: NFT;
   }[];
   safe: string;
   forceAction: boolean;
@@ -129,6 +130,18 @@ const validationSchema = (isPreview) =>
           then: yup.string().required(() => MSG.requiredFieldError),
           otherwise: false,
         }),
+        nft: yup.object().shape({
+          profile: yup.object().shape({
+            walletAddress: yup.string().when('transactionType', {
+              is: (transactionType) => transactionType === 'transferNft',
+              then: yup
+                .string()
+                .address()
+                .required(() => MSG.requiredFieldError),
+              otherwise: false,
+            }),
+          }),
+        }),
       }),
     ),
   });
@@ -157,8 +170,10 @@ const GnosisControlSafeDialog = ({
             contract: '',
             abi: '',
             contractFunction: '',
+            nft: undefined,
           },
         ],
+        // transactionType: 'transferNft', // For dev testing - set to transferNft
       }}
       validationSchema={validationSchema(showPreview)}
       submit={ActionTypes.COLONY_ACTION_GENERIC}
