@@ -19,6 +19,12 @@
 
 @media screen and query700 {
   .main {
+    padding-left: 14px;
+    padding-right: 14px;
     font-size: var(--size-smallish);
+  }
+
+  .address {
+    word-break: break-word;
   }
 }
