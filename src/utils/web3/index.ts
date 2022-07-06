@@ -2,7 +2,7 @@ import BN from 'bn.js';
 import { getAddress, padZeros, hexlify } from 'ethers/utils';
 import { ClientType, ContractClient, TokenClientType } from '@colony/colony-js';
 
-import { Address } from '~types/index';
+import { Address, ExtendedClientType } from '~types/index';
 import { TransactionError } from '~immutable/Transaction';
 
 export const createAddress = (address: string): Address => getAddress(address);
@@ -102,9 +102,10 @@ export const isMetatransactionErrorFromColonyContract = (
   if (clientType === ClientType.TokenClient) {
     [, tokenType] = error.message.match(TOKEN_TYPE_REGEX) || [];
   }
-  const isCorrectClient = Object.values(ClientType).includes(
-    clientType as ClientType,
-  );
+  const isCorrectClient = [
+    ...Object.values(ClientType),
+    ...Object.values(ExtendedClientType),
+  ].includes(clientType as ClientType);
   const isCorrectToken = tokenType === TokenClientType.Colony;
   if (clientType === ClientType.TokenClient) {
     return isCorrectClient && isCorrectToken;

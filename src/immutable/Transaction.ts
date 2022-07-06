@@ -10,6 +10,7 @@ import {
   MethodParams,
   RecordToJS,
   SimpleMessageValues,
+  ExtendedClientType,
 } from '~types/index';
 
 export enum TRANSACTION_ERRORS {
@@ -42,7 +43,7 @@ export interface TransactionError {
 export type TransactionId = string;
 
 export interface TransactionRecordProps {
-  context: ClientType;
+  context: ClientType | ExtendedClientType;
   createdAt: Date;
   deployedContractAddress?: string;
   error?: TransactionError;

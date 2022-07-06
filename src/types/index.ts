@@ -112,7 +112,7 @@ export interface FixedToken {
   iconHash?: string;
 }
 
-export enum ExtendedReduxContext {
-  WrappedToken = 'WrappedToken',
-  VestingSimple = 'VestingSimple',
+export enum ExtendedClientType {
+  WrappedTokenClient = 'WrappedTokenClient',
+  VestingSimpleClient = 'VestingSimpleClient',
 }

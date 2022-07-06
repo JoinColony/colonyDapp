@@ -23,7 +23,7 @@ import {
 } from '~immutable/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { Action } from '~redux/types/actions';
-import { ExtendedReduxContext, MethodParams } from '~types/index';
+import { ExtendedClientType, MethodParams } from '~types/index';
 import { DEFAULT_NETWORK } from '~constants';
 
 import { transactionSendError } from '../../actionCreators';
@@ -271,9 +271,7 @@ export default function* sendTransaction({
     methodName === TRANSACTION_METHODS.DeployTokenAuthority
   ) {
     contextClient = colonyManager.networkClient;
-  } else if (
-    context === ((ExtendedReduxContext.WrappedToken as unknown) as ClientType)
-  ) {
+  } else if (context === ExtendedClientType.WrappedTokenClient) {
     // @ts-ignore
     const wrappedTokenAbi = abis.WrappedToken.default.abi;
     contextClient = new Contract(
@@ -281,9 +279,8 @@ export default function* sendTransaction({
       wrappedTokenAbi,
       colonyManager.signer,
     );
-  } else if (
-    context === ((ExtendedReduxContext.VestingSimple as unknown) as ClientType)
-  ) {
+    contextClient.clientType = ExtendedClientType.WrappedTokenClient;
+  } else if (context === ExtendedClientType.VestingSimpleClient) {
     // @ts-ignore
     const vestingSimpleAbi = abis.vestingSimple.default.abi;
     contextClient = new Contract(
@@ -291,8 +288,12 @@ export default function* sendTransaction({
       vestingSimpleAbi,
       colonyManager.signer,
     );
+    contextClient.clientType = ExtendedClientType.VestingSimpleClient;
   } else {
-    contextClient = yield colonyManager.getClient(context, identifier);
+    contextClient = yield colonyManager.getClient(
+      context as ClientType,
+      identifier,
+    );
   }
 
   if (!contextClient) {

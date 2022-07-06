@@ -2,7 +2,7 @@ import { call, put, takeEvery, fork } from 'redux-saga/effects';
 
 import { bigNumberify } from 'ethers/utils';
 import { Action, ActionTypes, AllActions } from '~redux/index';
-import { ExtendedReduxContext } from '~types/index';
+import { ExtendedClientType } from '~types/index';
 import {
   UserBalanceWithLockDocument,
   UserBalanceWithLockQuery,
@@ -30,7 +30,7 @@ function* unwrapToken({
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
     yield fork(createTransaction, meta.id, {
-      context: ExtendedReduxContext.WrappedToken,
+      context: ExtendedClientType.WrappedTokenClient,
       methodName: 'withdraw',
       identifier: process.env.META_WRAPPED_TOKEN_ADDRESS,
       params: [bigNumberify(amount)],
