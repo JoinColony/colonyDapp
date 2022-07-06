@@ -17,27 +17,6 @@
   color: var(--text-disabled);
 }
 
-.disabledComment {
-  margin-top: 28px;
-}
-
-.disabledComment input {
-  padding: 11px 8px;
-  height: 40px;
-  border: 1px solid var(--temp-grey-blue-4);
-  border-radius: var(--radius-tiny);
-  background-color: inputBackground;
-  font-size: var(--size-smallish);
-  font-weight: var(--weight-normal);
-  line-height: var(--size-medium-l);
-  box-shadow: shadow;
-}
-
-.disabledComment input::placeholder {
-  font-style: normal;
-  color: var(--text-disabled);
-}
-
 .logContainer {
   display: flex;
   align-items: baseline;
