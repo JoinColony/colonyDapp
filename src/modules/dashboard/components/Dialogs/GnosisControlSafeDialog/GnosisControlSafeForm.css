@@ -9,6 +9,10 @@
   margin: 20px 0;
 }
 
+.safePicker > div {
+  padding-left: 0px;
+}
+
 .safePicker input {
   width: width;
   max-width: width;
