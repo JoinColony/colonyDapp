@@ -74,12 +74,9 @@
   .mainContent {
     display: grid;
     padding: 0;
-    grid-area: fundsAndActions;
-    grid-template:
-      "fundColony" auto
-      "actionsMenu" auto
-      "actionsSummary" auto
-      / 1fr;
+    grid-area: main;
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
   }
 
   .mainContentGrid {
@@ -88,8 +85,12 @@
     width: 100%;
     grid-template:
       "joinColony" auto
-      "fundsAndActions" auto
+      "main" auto
       / 1fr;
+  }
+
+  .minimalGrid .mainContent {
+    grid-column: 1 / 2;
   }
 
   .domainsDropdownContainer {
