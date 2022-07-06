@@ -68,6 +68,25 @@
     gap: 10px;
   }
 
+  .sidebar h3 {
+    text-align: center;
+  }
+
+  .sidebar form > div:first-child {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .sidebar form > div:last-child {
+    display: flex;
+    justify-content: center;
+  }
+
+  .sidebar form label {
+    margin-bottom: 20px;
+  }
+
   .mainContent {
     padding: 40px 30px;
   }
@@ -75,5 +94,22 @@
   .mainContent div:nth-child(2) {
     justify-content: space-around;
     row-gap: 10px;
+  }
+
+  .mainContent fieldset:first-child {
+    word-break: break-word;
+  }
+
+  .mainContent fieldset:first-child > div {
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+
+  .mainContent input {
+    padding: 0 8px;
+  }
+
+  .mainContent form > div > div:last-child > div {
+    width: 100%;
   }
 }

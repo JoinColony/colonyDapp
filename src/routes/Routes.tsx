@@ -201,7 +201,7 @@ const Routes = () => {
           component={UserProfileEdit}
           layout={Default}
           routeProps={{
-            hasSubscribedColonies: false,
+            hasSubscribedColonies: isMobile,
             backText: MSG.userProfileEditBack,
             backRoute: `/user/${username}`,
           }}
