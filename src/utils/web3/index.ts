@@ -97,15 +97,25 @@ export const isMetatransactionErrorFromColonyContract = (
   }
   const CLIENT_ADDRESS_REGEX = /\.\s(.*Client)\s/;
   const TOKEN_TYPE_REGEX = /of\stype\s(.*)\sat/;
-  let tokenType: string = TokenClientType.Erc20;
   const [, clientType] = error.message.match(CLIENT_ADDRESS_REGEX) || [];
+  /*
+   * @NOTE Shortcut it early if it's the Vesting Contract or the Wrapped Token Contract
+   * While technically ours, they don't support metatransactions and they're
+   * not upgradable either, so no such functionality can be added to them
+   */
+  if (
+    clientType === ExtendedClientType.VestingSimpleClient ||
+    clientType === ExtendedClientType.WrappedTokenClient
+  ) {
+    return false;
+  }
+  let tokenType: string = TokenClientType.Erc20;
   if (clientType === ClientType.TokenClient) {
     [, tokenType] = error.message.match(TOKEN_TYPE_REGEX) || [];
   }
-  const isCorrectClient = [
-    ...Object.values(ClientType),
-    ...Object.values(ExtendedClientType),
-  ].includes(clientType as ClientType);
+  const isCorrectClient = Object.values(ClientType).includes(
+    clientType as ClientType,
+  );
   const isCorrectToken = tokenType === TokenClientType.Colony;
   if (clientType === ClientType.TokenClient) {
     return isCorrectClient && isCorrectToken;
