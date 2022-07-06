@@ -15,6 +15,7 @@ import { hexSequenceNormalizer } from '@purser/core';
 import { ActionTypes } from '~redux/index';
 import { selectAsJS } from '~utils/saga/effects';
 import { mergePayload } from '~utils/actions';
+import { generateMetatransactionErrorMessage } from '~utils/web3';
 import {
   TRANSACTION_STATUSES,
   TRANSACTION_METHODS,
@@ -100,12 +101,10 @@ async function getMetatransactionMethodPromise(
   const { provider } = normalizedClient;
 
   /*
-   * If we're using a contract that's not really a contract, like TokenClient
-   * (which is a client we added in colonyJS), which doesn't have a getMetatransactionNonce call
-   * we need to make sure to always get a nonce.
-   *
-   * For this, if the client we're going to query doesn't have such a call, then we
-   * fall back to fetching that value from the colony client
+   * If the client we're going to query doesn't have such a call it means that
+   * most likely it doesn't support metatransactions.
+   * This can be either our contracts (older ones) or external contracts without
+   * support
    */
   let availableNonce: BigNumberish;
   try {
@@ -113,9 +112,7 @@ async function getMetatransactionMethodPromise(
       userAddress,
     );
   } catch (error) {
-    throw new Error(
-      `Contract does not support MetaTransactions. ${normalizedClient?.clientType} at ${normalizedClient?.address}`,
-    );
+    throw new Error(generateMetatransactionErrorMessage(normalizedClient));
   }
 
   // eslint-disable-next-line no-console

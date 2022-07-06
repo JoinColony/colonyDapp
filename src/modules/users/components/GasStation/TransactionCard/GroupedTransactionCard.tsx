@@ -11,6 +11,10 @@ import { transactionCancel } from '../../../../core/actionCreators';
 import TransactionAlertDialog from '~dialogs/TransactionAlertDialog';
 
 import { getMainClasses } from '~utils/css';
+import {
+  isGasStationMetatransactionError,
+  isMetatransactionErrorFromColonyContract,
+} from '~utils/web3';
 import { METATRANSACTIONS_LEARN_MORE } from '~externalUrls';
 
 import { Appearance } from '../GasStationContent';
@@ -93,17 +97,11 @@ const GroupedTransactionCard = ({
 
   useEffect(() => {
     if (
-      /*
-       * @NOTE Sadly we don't have a better way currently to detect this error
-       */
-      error?.message.includes('Contract does not support MetaTransactions') &&
+      isGasStationMetatransactionError(error) &&
+      isMetatransactionErrorFromColonyContract(error) &&
       !transactionAlerts?.[id]?.wasSeen &&
       !transactionAlerts?.[id]?.isOpen
     ) {
-      /*
-       * @TODO Add logic to display the modal
-       * (the `seen` tracking needs to be included in that logic)
-       */
       /*
        * @NOTE due to the way the dialog provider works you need to pass
        * all values being updated to the update function
