@@ -1,64 +1,95 @@
-import { MEMEBERS_FILTERS } from '~dashboard/ColonyMembers/MembersFilter';
+import {
+  FormValues,
+  BannedStatus,
+  VerificationType,
+} from '~dashboard/ColonyMembers/MembersFilter';
 
 import { ColonyContributor, ColonyWatcher } from '~data/index';
 
 export const filterMembers = <M extends ColonyContributor | ColonyWatcher>(
   data: M[],
-  filterValue?: string,
-  filtersList?: MEMEBERS_FILTERS[],
+  searchValue?: string,
+  filters?: FormValues,
 ): M[] => {
-  const excludeBanned = !filtersList?.includes(MEMEBERS_FILTERS.BANNED);
-  const excludeVerified = !filtersList?.includes(MEMEBERS_FILTERS.VERIFIED);
-
   /* No filters */
-  if (!filterValue && !excludeBanned && !excludeVerified) {
+  if (
+    !searchValue &&
+    filters?.bannedStatus === BannedStatus.ALL &&
+    filters?.verificationType === VerificationType.ALL
+  ) {
     return data;
   }
 
   /* Only text filter */
-  if (filterValue && !excludeBanned && !excludeVerified) {
+  if (
+    searchValue &&
+    filters?.bannedStatus === BannedStatus.ALL &&
+    filters?.verificationType === VerificationType.ALL
+  ) {
     return data.filter(
       ({ profile, id }) =>
-        profile?.username?.toLowerCase().includes(filterValue.toLowerCase()) ||
+        profile?.username?.toLowerCase().includes(searchValue.toLowerCase()) ||
         profile?.walletAddress
           ?.toLowerCase()
-          .includes(filterValue.toLowerCase()) ||
-        id?.toLowerCase().includes(filterValue.toLowerCase()),
+          .includes(searchValue.toLowerCase()) ||
+        id?.toLowerCase().includes(searchValue.toLowerCase()),
     );
   }
 
-  /* Only checkbox filters */
-  if (!filterValue) {
-    return data.filter(({ banned, isWhitelisted }) => {
-      if (excludeBanned && excludeVerified) {
-        return !banned && !isWhitelisted;
-      }
-
-      if (excludeBanned) {
-        return !banned;
-      }
-
-      return !isWhitelisted;
-    });
-  }
-
-  /* All the filters together */
+  /* All other combinations */
   return data.filter(({ banned, isWhitelisted, profile, id }) => {
     const textFilter =
-      profile?.username?.toLowerCase().includes(filterValue?.toLowerCase()) ||
-      profile?.walletAddress
-        ?.toLowerCase()
-        .includes(filterValue?.toLowerCase()) ||
-      id?.toLowerCase().includes(filterValue?.toLowerCase());
+      searchValue === undefined || searchValue === ''
+        ? true
+        : profile?.username
+            ?.toLowerCase()
+            .includes(searchValue.toLowerCase()) ||
+          profile?.walletAddress
+            ?.toLowerCase()
+            .includes(searchValue.toLowerCase()) ||
+          id?.toLowerCase().includes(searchValue.toLowerCase());
 
-    if (excludeBanned && excludeVerified) {
-      return !banned && !isWhitelisted && textFilter;
+    if (filters?.verificationType === VerificationType.ALL) {
+      if (filters?.bannedStatus === BannedStatus.BANNED) {
+        return banned && textFilter;
+      }
+
+      if (filters?.bannedStatus !== BannedStatus.NOT_BANNED) {
+        return !banned && textFilter;
+      }
     }
 
-    if (excludeBanned) {
-      return !banned && textFilter;
+    if (filters?.bannedStatus === BannedStatus.ALL) {
+      if (filters.verificationType === VerificationType.VERIFIED) {
+        return isWhitelisted && textFilter;
+      }
+
+      if (filters.verificationType === VerificationType.UNVERIFIED) {
+        return !isWhitelisted && textFilter;
+      }
     }
 
-    return !isWhitelisted && textFilter;
+    if (
+      filters?.verificationType === VerificationType.VERIFIED &&
+      filters?.bannedStatus === BannedStatus.BANNED
+    ) {
+      return isWhitelisted && banned && textFilter;
+    }
+
+    if (
+      filters?.verificationType === VerificationType.UNVERIFIED &&
+      filters?.bannedStatus === BannedStatus.BANNED
+    ) {
+      return !isWhitelisted && banned && textFilter;
+    }
+
+    if (
+      filters?.verificationType === VerificationType.VERIFIED &&
+      filters?.bannedStatus === BannedStatus.NOT_BANNED
+    ) {
+      return isWhitelisted && !banned && textFilter;
+    }
+
+    return !isWhitelisted && !banned && textFilter;
   });
 };

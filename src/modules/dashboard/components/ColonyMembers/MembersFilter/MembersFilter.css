@@ -15,6 +15,10 @@
   color: var(--dark);
 }
 
+.filters > div {
+  width: 206px;
+}
+
 .checkboxes > label {
   margin-bottom: 15px;
 }
