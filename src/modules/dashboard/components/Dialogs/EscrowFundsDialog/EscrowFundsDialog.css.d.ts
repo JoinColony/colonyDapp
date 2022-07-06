@@ -20,3 +20,7 @@ export const tokenNumeral: string;
 export const tokenNumeralTiny: string;
 export const tokenNumeralNormal: string;
 export const teamSelectWrapper: string;
+export const tooltip: string;
+export const questionIcon: string;
+export const forceContainer: string;
+export const margin: string;

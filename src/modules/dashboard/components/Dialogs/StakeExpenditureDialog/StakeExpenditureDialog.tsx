@@ -4,7 +4,7 @@ import { FormikProps } from 'formik';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Dialog, { DialogSection } from '~core/Dialog';
-import { ActionForm } from '~core/Fields';
+import { ActionForm, Toggle } from '~core/Fields';
 import Heading from '~core/Heading';
 import Numeral from '~core/Numeral';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -12,7 +12,8 @@ import TokenIcon from '~dashboard/HookedTokenIcon';
 import Button from '~core/Button';
 import styles from './StakeExpenditureDialog.css';
 import { ActionTypes } from '~redux/actionTypes';
-import ForceActionToggle from '~core/ForceActionToggle/ForceActionToggle';
+import { Tooltip } from '~core/Popover';
+import Icon from '~core/Icon';
 
 // Mock Data for Staking token, needs to be replaced with native token.
 const activeToken = {
@@ -110,7 +111,30 @@ const StakeExpenditureDialog = ({
                 className={styles.title}
               >
                 <FormattedMessage {...MSG.header} />
-                <ForceActionToggle name="forceAction" />
+
+                <div className={styles.forceContainer}>
+                  <div className={styles.margin}>
+                    <Toggle
+                      label={{ id: 'label.force' }}
+                      name="forceAction"
+                      appearance={{ theme: 'danger' }}
+                    />
+                  </div>
+                  <Tooltip
+                    content={
+                      <div className={styles.tooltip}>
+                        <FormattedMessage id="tooltip.forceAction" />
+                      </div>
+                    }
+                    trigger="hover"
+                    placement="top-end"
+                  >
+                    <Icon
+                      name="question-mark"
+                      className={styles.questionIcon}
+                    />
+                  </Tooltip>
+                </div>
               </Heading>
             </DialogSection>
             <DialogSection appearance={{ theme: 'sidePadding' }}>

@@ -1,6 +1,7 @@
 export const submitButtonWidth: string;
 export const title: string;
 export const forceContainer: string;
+export const margin: string;
 export const stakeContainer: string;
 export const messageContainer: string;
 export const label: string;
@@ -9,3 +10,4 @@ export const tokenIcon: string;
 export const symbol: string;
 export const messageParagraph: string;
 export const tooltip: string;
+export const questionIcon: string;

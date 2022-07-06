@@ -135,3 +135,28 @@
   fill: var(--action-secondary);
   stroke: var(--action-secondary);
 }
+
+.tooltip {
+  max-width: 250px;
+}
+
+.questionIcon {
+  display: block;
+
+  /* next lines are used for the correct tooltip arrow placement */
+  margin-right: -20px;
+  margin-left: 11px;
+  width: 16px;
+  z-index: var(--z-index-popover);
+  transform: translateX(-20px);
+}
+
+.forceContainer {
+  display: flex;
+  align-items: center;
+  font-size: var(--size-smallish);
+}
+
+.margin {
+  margin-right: 20px;
+}

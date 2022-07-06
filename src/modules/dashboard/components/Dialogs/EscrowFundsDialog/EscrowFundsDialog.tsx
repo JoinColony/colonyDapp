@@ -2,7 +2,13 @@ import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FormikProps } from 'formik';
 import Dialog, { DialogSection } from '~core/Dialog';
-import { ActionForm, Annotations, FormSection, InputLabel } from '~core/Fields';
+import {
+  ActionForm,
+  Annotations,
+  FormSection,
+  InputLabel,
+  Toggle,
+} from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import styles from './EscrowFundsDialog.css';
@@ -11,8 +17,9 @@ import useEscrowFundsDialog from './useEscrowFundsDialog';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 import Dropdown from '~core/UserPickerWithSearch/Dropdown';
 import { SpinnerLoader } from '~core/Preloaders';
-import ForceActionToggle from '~core/ForceActionToggle/ForceActionToggle';
 import { ActionTypes } from '~redux/actionTypes';
+import { Tooltip } from '~core/Popover';
+import Icon from '~core/Icon';
 
 const MSG = defineMessages({
   title: {
@@ -150,7 +157,29 @@ const EscrowFundsDialog = ({
                       )
                     )}
                   </FormSection>
-                  <ForceActionToggle name="force" />
+                  <div className={styles.forceContainer}>
+                    <div className={styles.margin}>
+                      <Toggle
+                        label={{ id: 'label.force' }}
+                        name="force"
+                        appearance={{ theme: 'danger' }}
+                      />
+                    </div>
+                    <Tooltip
+                      content={
+                        <div className={styles.tooltip}>
+                          <FormattedMessage id="tooltip.forceAction" />
+                        </div>
+                      }
+                      trigger="hover"
+                      placement="top-end"
+                    >
+                      <Icon
+                        name="question-mark"
+                        className={styles.questionIcon}
+                      />
+                    </Tooltip>
+                  </div>
                 </DialogSection>
                 <Heading
                   appearance={{ size: 'medium', margin: 'none' }}

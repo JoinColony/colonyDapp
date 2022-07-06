@@ -18,6 +18,10 @@
   font-size: var(--size-smallish);
 }
 
+.margin {
+  margin-right: 20px;
+}
+
 .stakeContainer {
   display: flex;
   justify-content: space-between;
@@ -68,4 +72,15 @@
 
 .tooltip {
   max-width: 250px;
+}
+
+.questionIcon {
+  display: block;
+
+  /* next lines are used for the correct tooltip arrow placement */
+  margin-right: -20px;
+  margin-left: 11px;
+  width: 16px;
+  z-index: var(--z-index-popover);
+  transform: translateX(-20px);
 }
