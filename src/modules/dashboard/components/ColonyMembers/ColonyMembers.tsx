@@ -10,7 +10,7 @@ import { BanUserDialog } from '~core/Comment';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import Members from '~dashboard/Members';
 import PermissionManagementDialog from '~dialogs/PermissionManagementDialog';
-import WrongNetworkDialog from '~dashboard/ColonyHome/WrongNetworkDialog';
+import WrongNetworkDialog from '~dialogs/WrongNetworkDialog';
 
 import {
   useColonyFromNameQuery,

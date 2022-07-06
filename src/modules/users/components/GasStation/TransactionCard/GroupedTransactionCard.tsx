@@ -7,7 +7,7 @@ import { Tooltip } from '~core/Popover';
 import { useDialog } from '~core/Dialog';
 import { transactionCancel } from '../../../../core/actionCreators';
 
-import WrongNetworkDialog from '~dashboard/ColonyHome/WrongNetworkDialog';
+import WrongNetworkDialog from '~dialogs/WrongNetworkDialog';
 
 import { getMainClasses } from '~utils/css';
 
