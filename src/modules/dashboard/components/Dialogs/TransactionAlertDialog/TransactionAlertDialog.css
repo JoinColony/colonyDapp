@@ -1,0 +1,9 @@
+.content {
+  padding: 13px 0 0;
+  white-space: pre-line;
+}
+
+.controls {
+  padding: 0 0 8px;
+  text-align: right;
+}
