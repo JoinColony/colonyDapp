@@ -18,10 +18,6 @@
   font-size: var(--size-smallish);
 }
 
-.margin {
-  margin-right: 20px;
-}
-
 .stakeContainer {
   display: flex;
   justify-content: space-between;
@@ -66,21 +62,32 @@
   margin-left: 4px;
 }
 
+.questionIcon {
+  display: block;
+
+  /* next lines are used for the correct tooltip arrow placement */
+  margin-right: -20px;
+  margin-bottom: -3px;
+  margin-left: 11px;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background-color: white;
+  stroke: none;
+  transform: translateX(-20px);
+}
+
+.toggleContainer {
+  /* negative margin here corrects the position of the toggle input */
+  margin-bottom: -6px;
+  margin-left: 4px;
+  margin-right: 20px;
+}
+
 .messageParagraph {
   padding-top: 14px;
 }
 
 .tooltip {
   max-width: 250px;
-}
-
-.questionIcon {
-  display: block;
-
-  /* next lines are used for the correct tooltip arrow placement */
-  margin-right: -20px;
-  margin-left: 11px;
-  width: 16px;
-  z-index: var(--z-index-popover);
-  transform: translateX(-20px);
 }

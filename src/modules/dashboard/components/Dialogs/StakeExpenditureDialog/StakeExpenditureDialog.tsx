@@ -6,14 +6,14 @@ import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm, Toggle } from '~core/Fields';
 import Heading from '~core/Heading';
+import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
+import { Tooltip } from '~core/Popover';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import Button from '~core/Button';
 import styles from './StakeExpenditureDialog.css';
 import { ActionTypes } from '~redux/actionTypes';
-import { Tooltip } from '~core/Popover';
-import Icon from '~core/Icon';
 
 // Mock Data for Staking token, needs to be replaced with native token.
 const activeToken = {
@@ -28,35 +28,35 @@ const activeToken = {
 
 const MSG = defineMessages({
   header: {
-    id: 'dashboard.StakeExpenditureDialog.header',
+    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.header',
     defaultMessage: 'Stake to Create Expenditure',
   },
   force: {
-    id: 'dashboard.StakeExpenditureDialog.force',
+    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.force',
     defaultMessage: 'Force',
   },
   stake: {
-    id: 'dashboard.StakeExpenditureDialog.stake',
+    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.stake',
     defaultMessage: 'Stake',
   },
   descriptionText: {
-    id: 'dashboard.StakeExpenditureDialog.descriptionText',
+    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.descriptionText',
     defaultMessage: `Almost there! You have to provide a stake first. 
     Imagine it is like renting a permission. 
     If motion succeeds you will get your stake back.`,
   },
   descriptionText2: {
-    id: 'dashboard.StakeExpenditureDialog.descriptionText2',
+    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.descriptionText2',
     defaultMessage: `
     Until expenditure is staked it won’t show up publicly on list. 
     It works like an anti-spam filter.`,
   },
   cancelText: {
-    id: 'dashboard.StakeExpenditureDialog.cancelText',
+    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.cancelText',
     defaultMessage: 'Cancel',
   },
   confirmText: {
-    id: 'dashboard.StakeExpenditureDialog.confirmText',
+    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.confirmText',
     defaultMessage: 'Stake',
   },
 });
@@ -111,15 +111,12 @@ const StakeExpenditureDialog = ({
                 className={styles.title}
               >
                 <FormattedMessage {...MSG.header} />
-
                 <div className={styles.forceContainer}>
-                  <div className={styles.margin}>
-                    <Toggle
-                      label={{ id: 'label.force' }}
-                      name="forceAction"
-                      appearance={{ theme: 'danger' }}
-                    />
+                  <FormattedMessage {...MSG.force} />
+                  <div className={styles.toggleContainer}>
+                    <Toggle name="force" appearance={{ theme: 'danger' }} />
                   </div>
+
                   <Tooltip
                     content={
                       <div className={styles.tooltip}>
