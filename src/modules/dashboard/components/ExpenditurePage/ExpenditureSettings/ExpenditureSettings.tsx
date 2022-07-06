@@ -17,7 +17,7 @@ import styles from './ExpenditureSettings.css';
 import UserAvatar from '~core/UserAvatar';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 
-import { tokens as tokensData } from './consts';
+import { tokens as tokensData } from './constants';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import {
   COLONY_TOTAL_BALANCE_DOMAIN_ID,

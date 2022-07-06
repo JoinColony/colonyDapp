@@ -21,7 +21,7 @@ import styles from './EscrowFundsDialog.css';
 import {
   tokens,
   requiredFundsMock,
-} from '~dashboard/ExpenditurePage/ExpenditureSettings/consts';
+} from '~dashboard/ExpenditurePage/ExpenditureSettings/constants';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import Numeral from '~core/Numeral';
 
