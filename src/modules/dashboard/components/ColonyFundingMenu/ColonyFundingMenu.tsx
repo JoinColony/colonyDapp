@@ -12,7 +12,7 @@ import { useDialog } from '~core/Dialog';
 import TransferFundsDialog from '~dialogs/TransferFundsDialog';
 import ColonyTokenManagementDialog from '~dialogs/ColonyTokenManagementDialog';
 import TokenMintDialog from '~dialogs/TokenMintDialog';
-import WrongNetworkDialog from '~dashboard/ColonyHome/WrongNetworkDialog';
+import WrongNetworkDialog from '~dialogs/WrongNetworkDialog';
 
 import { Colony, useLoggedInUser, useColonyExtensionsQuery } from '~data/index';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
