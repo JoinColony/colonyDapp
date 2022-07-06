@@ -75,7 +75,11 @@ const LockedPayments = ({ recipients, activeState, colony }: Props) => {
   }, []);
 
   const renderTag = useCallback(
-    (claimDate: number, claimed?: boolean) => {
+    (claimDate: number | null, claimed?: boolean) => {
+      if (!claimDate) {
+        return null;
+      }
+
       const isClaimable = claimDate < new Date().getTime();
 
       if (isClaimable) {

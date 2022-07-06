@@ -48,38 +48,58 @@
   margin-right: 20px;
 }
 
-.iconContainer:hover {
-  cursor: pointer;
+.buttonsContainer button {
+  margin-left: 30px;
 }
 
-.iconContainer > div {
+.iconButton > div {
   margin-bottom: 7px;
 }
 
-.buttonsContainer button {
-  margin-left: 30px;
+.iconButton {
+  margin-left: 0;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+}
+
+.iconButton i {
+  display: flex;
+}
+
+.iconButton:hover {
+  cursor: pointer;
+}
+
+.iconButtonDisabled {
+  opacity: 0.5;
 }
 
 .iconWrapper {
   position: relative;
 }
 
-.iconWrapper::after {
-  height: 28px;
-  width: 28px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  border-radius: 50%;
-  background-color: var(--action-secondary);
-  content: '';
-  opacity: 0;
-  transform: translate(-5px, -5px);
-  transition: opacity 200ms ease-in-out;
+.iconWrapper:hover {
+  &::after {
+    height: 30px;
+    width: 30px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 50%;
+    background-color: var(--action-secondary);
+    transform: translate(-6px, -6px);
+    content: '';
+    opacity: 0.1;
+  }
 }
 
-.iconWrapper:hover::after {
-  opacity: 0.1;
+.iconButtonDisabled:hover {
+  cursor: not-allowed;
+}
+
+.buttonTooltip {
+  max-width: 192px;
 }
 
 .cancelIcon:hover svg {
@@ -87,6 +107,8 @@
   transition: fill 200ms ease-in-out;
 }
 
-.buttonTooltip {
-  max-width: 192px;
+.icon svg {
+  height: 18px;
+  width: 18px;
+  fill: var(--temp-grey-blue-7);
 }

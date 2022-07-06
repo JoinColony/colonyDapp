@@ -12,7 +12,7 @@ import Tag from '~core/Tag';
 import TimeRelativeShort from '~dashboard/ExpenditurePage/TimeRelativeShort/TimeRelativeShort';
 import styles from './ClaimFunds.css';
 import Button from '~core/Button';
-import { buttonStyle } from '../Stages';
+import { buttonStyles } from '../Stages';
 import Numeral from '~core/Numeral';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
@@ -36,6 +36,10 @@ const MSG = defineMessages({
   claimed: {
     id: 'dashboard.Expenditures.Stages.ClaimFunds.claimed',
     defaultMessage: 'Claimed',
+  },
+  nothingToClaim: {
+    id: 'dashboard.Expenditures.Stages.ClaimFunds.nothingToClaim',
+    defaultMessage: 'Nothing to claim',
   },
 });
 
@@ -74,11 +78,13 @@ const ClaimFunds = ({
                 colorSchema: 'fullColor',
               }}
             >
-              <FormattedMessage {...MSG.claim} />{' '}
               {claimDate ? (
-                <TimeRelativeShort value={new Date(claimDate)} />
+                <>
+                  <FormattedMessage {...MSG.claim} />{' '}
+                  <TimeRelativeShort value={new Date(claimDate)} />
+                </>
               ) : (
-                <div>Nothing to claim</div>
+                <FormattedMessage {...MSG.nothingToClaim} />
               )}
             </Tag>
           </div>
@@ -147,7 +153,7 @@ const ClaimFunds = ({
       <div className={styles.buttonWrapper}>
         <Button
           onClick={buttonAction}
-          style={buttonStyle}
+          style={buttonStyles}
           disabled={!buttonIsActive}
         >
           {typeof buttonText === 'string' ? (

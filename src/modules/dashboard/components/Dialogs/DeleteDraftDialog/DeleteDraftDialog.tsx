@@ -7,18 +7,21 @@ import styles from './DeleteDraftDialog.css';
 
 const MSG = defineMessages({
   header: {
-    id: 'dashboard.Expenditures.Stages.deleteDraftDialog.header',
-    defaultMessage: 'Delete Expenditure',
+    id: 'dashboard.ExpenditurePage.Stages.DeleteDraftDialog.header',
+    defaultMessage: 'Delete Advanced Payment',
   },
   description: {
-    id: 'dashboard.Expenditures.Stages.deleteDraftDialog.description',
-    defaultMessage: 'Are you sure you want to delete this draft expenditure?',
+    id: 'dashboard.ExpenditurePage.Stages.DeleteDraftDialog.description',
+    defaultMessage:
+      'Are you sure you want to delete this draft Advanced Payment?',
   },
   deleteText: {
-    id: 'dashboard.Expenditures.Stages.deleteDraftDialog.deleteText',
+    id: 'dashboard.ExpenditurePage.Stages.DeleteDraftDialog.deleteText',
     defaultMessage: 'Delete',
   },
 });
+
+const displayName = 'dashboard.DeleteDraftDialog';
 
 interface Props {
   cancel: () => void;
@@ -38,7 +41,6 @@ const DeleteDraftDialog = ({ cancel, onClick, close }: Props) => {
         <div className={styles.heading}>
           <Heading
             appearance={{ size: 'medium', margin: 'none' }}
-            text="Stake to Create Expenditure"
             className={styles.title}
           >
             <FormattedMessage {...MSG.header} />
@@ -48,21 +50,16 @@ const DeleteDraftDialog = ({ cancel, onClick, close }: Props) => {
       </DialogSection>
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
-          appearance={{
-            theme: 'danger',
-            size: 'large',
-          }}
           autoFocus
           onClick={handleSubmit}
           text={MSG.deleteText}
-          style={{
-            height: '44px',
-          }}
-          data-test="confirmButton"
+          className={styles.button}
         />
       </DialogSection>
     </Dialog>
   );
 };
+
+DeleteDraftDialog.displayName = displayName;
 
 export default DeleteDraftDialog;

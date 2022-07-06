@@ -1,13 +1,20 @@
 import { useFormikContext } from 'formik';
-import React, { useCallback, useMemo } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import copyToClipboard from 'copy-to-clipboard';
 import classNames from 'classnames';
 
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import DeleteDraftDialog from './DeleteDraftDialog';
+
 import styles from './Stages.css';
 import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
 import StageItem from './StageItem';
@@ -23,6 +30,7 @@ import { Recipient as RecipientType } from '../Payments/types';
 import { getRecipientTokens } from '../utils';
 import { Colony } from '~data/index';
 import { useCalculateTokens } from '../hooks';
+import DeleteDraftDialog from '~dashboard/Dialogs/DeleteDraftDialog/DeleteDraftDialog';
 
 const MSG = defineMessages({
   stages: {
@@ -57,9 +65,13 @@ const MSG = defineMessages({
     id: 'dashboard.Expenditures.Stages.tooltipNoPermissionToRealese',
     defaultMessage: `You need to be the owner to release funds. You can change the owner to transfer permission.`,
   },
+  tooltipLockValuesText: {
+    id: 'dashboard.ExpenditurePage.Stages.tooltipLockValuesText',
+    defaultMessage: `This will lock the values of the expenditure. To change values after locking will require the right permissions or a motion.`,
+  },
 });
 
-export const buttonStyle = {
+export const buttonStyles = {
   width: styles.buttonWidth,
   height: styles.buttonHeight,
   padding: 0,
@@ -74,11 +86,14 @@ interface Props {
 }
 
 const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
+  const [valueIsCopied, setValueIsCopied] = useState(false);
+  const userFeedbackTimer = useRef<any>(null);
+
   const { values, resetForm, handleSubmit, validateForm } =
     useFormikContext<ValuesType>() || {};
 
-  const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
   const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
+  const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
 
   const recipientsWithTokens = useMemo(() => {
     return recipients?.map((recipient) => {
@@ -115,10 +130,19 @@ const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
       onClick: () => {
         resetForm?.();
         if (activeStateId === Stage.Draft) {
-          // logic to delete a draft from database
+          // add logic to delete the draft from database
         }
       },
     });
+
+  const handleClipboardCopy = () => {
+    copyToClipboard(window.location.href);
+    setValueIsCopied(true);
+    userFeedbackTimer.current = setTimeout(() => setValueIsCopied(false), 2000);
+  };
+  useEffect(() => () => clearTimeout(userFeedbackTimer.current), [
+    userFeedbackTimer,
+  ]);
 
   const activeIndex = states.findIndex((state) => state.id === activeStateId);
   const activeState = states.find((state) => state.id === activeStateId);
@@ -134,7 +158,7 @@ const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
       return (
         <>
           {canRealeseFounds ? (
-            <Button onClick={activeState?.buttonAction} style={buttonStyle}>
+            <Button onClick={activeState?.buttonAction} style={buttonStyles}>
               {typeof activeState?.buttonText === 'string' ? (
                 activeState.buttonText
               ) : (
@@ -153,7 +177,7 @@ const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
               >
                 <Button
                   onClick={activeState?.buttonAction}
-                  style={buttonStyle}
+                  style={buttonStyles}
                   disabled
                 >
                   {typeof activeState?.buttonText === 'string' ? (
@@ -187,7 +211,7 @@ const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
           >
             <Button
               onClick={activeState?.buttonAction}
-              style={buttonStyle}
+              style={buttonStyles}
               disabled={activeStateId === Stage.Claimed}
             >
               {typeof activeState?.buttonText === 'string' ? (
@@ -204,7 +228,7 @@ const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
     return (
       <Button
         onClick={activeState?.buttonAction}
-        style={buttonStyle}
+        style={buttonStyles}
         disabled={activeStateId === Stage.Claimed}
       >
         {typeof activeState?.buttonText === 'string' ? (
@@ -244,7 +268,10 @@ const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
           <div className={styles.buttonsContainer}>
             {!activeStateId ? (
               <>
-                <span className={styles.iconContainer}>
+                <Button
+                  className={styles.iconButton}
+                  onClick={handleDeleteDraft}
+                >
                   <Tooltip
                     placement="top-start"
                     content={<FormattedMessage {...MSG.tooltipDeleteText} />}
@@ -252,38 +279,43 @@ const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
                     <div className={styles.iconWrapper}>
                       <Icon
                         name="trash"
-                        onClick={handleDeleteDraft}
-                        appearance={{ size: 'normal' }}
-                        style={{ fill: styles.iconColor }}
+                        className={styles.icon}
+                        title={MSG.deleteDraft}
                       />
                     </div>
                   </Tooltip>
-                </span>
-                <Button
-                  onClick={handleSaveDraft}
-                  style={{ height: styles.buttonHeight }}
-                >
+                </Button>
+                <Button onClick={handleSaveDraft} style={buttonStyles}>
                   <FormattedMessage {...MSG.submitDraft} />
                 </Button>
               </>
             ) : (
               <>
-                <span className={styles.iconContainer}>
-                  <Tooltip
-                    placement="top-start"
-                    content={<FormattedMessage {...MSG.tooltipShareText} />}
-                  >
-                    <div className={styles.iconWrapper}>
-                      <Icon
-                        name="share"
-                        appearance={{ size: 'normal' }}
-                        style={{ fill: styles.iconColor }}
-                      />
-                    </div>
-                  </Tooltip>
-                </span>
+                <Button
+                  className={classNames(styles.iconButton, {
+                    [styles.iconButtonDisabled]: valueIsCopied,
+                  })}
+                  onClick={handleClipboardCopy}
+                  disabled={valueIsCopied}
+                >
+                  {valueIsCopied ? (
+                    <Icon name="share" className={styles.icon} />
+                  ) : (
+                    <Tooltip
+                      placement="top-start"
+                      content={<FormattedMessage {...MSG.tooltipShareText} />}
+                    >
+                      <div className={styles.iconWrapper}>
+                        <Icon name="share" className={styles.icon} />
+                      </div>
+                    </Tooltip>
+                  )}
+                </Button>
                 {activeStateId === Stage.Draft && (
-                  <span className={styles.iconContainer}>
+                  <Button
+                    className={styles.iconButton}
+                    onClick={handleDeleteDraft}
+                  >
                     <Tooltip
                       placement="top-start"
                       content={<FormattedMessage {...MSG.tooltipDeleteText} />}
@@ -292,20 +324,17 @@ const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
                         <Icon
                           name="trash"
                           onClick={handleDeleteDraft}
-                          title={MSG.deleteDraft}
                           appearance={{ size: 'normal' }}
                           style={{ fill: styles.iconColor }}
                         />
                       </div>
                     </Tooltip>
-                  </span>
+                  </Button>
                 )}
                 {activeStateId !== Stage.Draft && (
-                  <span
-                    className={classNames(
-                      styles.iconContainer,
-                      styles.cancelIcon,
-                    )}
+                  <Button
+                    className={classNames(styles.iconButton, styles.cancelIcon)}
+                    onClick={() => {}}
                   >
                     <Tooltip
                       placement="top-start"
@@ -319,7 +348,7 @@ const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
                         />
                       </div>
                     </Tooltip>
-                  </span>
+                  </Button>
                 )}
                 {renderButton()}
               </>

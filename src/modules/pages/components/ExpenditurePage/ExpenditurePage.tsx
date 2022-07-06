@@ -179,10 +179,12 @@ const ExpenditurePage = ({ match }: Props) => {
         ...values,
         recipients: values.recipients.map((reicpient) => ({
           ...reicpient,
-          claimDate: setClaimDate({
-            amount: reicpient.delay.amount,
-            time: reicpient.delay.time,
-          }),
+          claimDate: reicpient.delay.amount
+            ? setClaimDate({
+                amount: reicpient.delay.amount,
+                time: reicpient.delay.time,
+              })
+            : null,
         })),
       });
     }
@@ -202,7 +204,7 @@ const ExpenditurePage = ({ match }: Props) => {
     lockValues();
   };
 
-  const handleFoundExpenditure = () => {
+  const handleFundExpenditure = () => {
     // Call to backend will be added here, to found the expenditure
     setActiveStateId(Stage.Funded);
   };
@@ -229,7 +231,7 @@ const ExpenditurePage = ({ match }: Props) => {
       id: Stage.Locked,
       label: MSG.locked,
       buttonText: MSG.escrowFunds,
-      buttonAction: handleFoundExpenditure,
+      buttonAction: handleFundExpenditure,
     },
     {
       id: Stage.Funded,
