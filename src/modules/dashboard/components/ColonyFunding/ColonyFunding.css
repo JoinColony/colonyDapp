@@ -140,6 +140,10 @@
     transform: translate(0px, 55px) !important;
   }
 
+  .content div[role='tooltip'] > div {
+    max-width: 100%;
+  }
+
   .content div[role='tooltip'] > div > div {
     display: flex;
     flex-direction: column;
