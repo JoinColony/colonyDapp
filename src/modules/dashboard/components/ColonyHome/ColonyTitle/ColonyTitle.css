@@ -43,10 +43,16 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    column-gap: 10px;
   }
 
   .colonyTitle {
     padding: 0;
+    overflow-wrap: anywhere; /* Wrap very long colony names */
+  }
+
+  .colonyTitle h3 {
+    white-space: break-spaces; /* Wrap very long colony names */
   }
 
   .colonyAddress {
