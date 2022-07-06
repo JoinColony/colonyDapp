@@ -132,11 +132,15 @@ const MembersFilter = ({ handleFiltersCallback, isRoot }: Props) => {
                 <span className={styles.title}>
                   <FormattedMessage {...MSG.filter} />
                 </span>
-                <Button
-                  text={MSG.reset}
-                  appearance={{ theme: 'blue' }}
-                  onClick={() => resetForm()}
-                />
+                {(values.bannedStatus !== BannedStatus.ALL ||
+                  values.verificationType !== VerificationType.ALL ||
+                  values.memberType !== MemberType.ALL) && (
+                  <Button
+                    text={MSG.reset}
+                    appearance={{ theme: 'blue' }}
+                    onClick={() => resetForm()}
+                  />
+                )}
               </div>
               {isRoot && (
                 <Select

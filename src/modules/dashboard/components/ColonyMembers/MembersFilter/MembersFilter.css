@@ -15,20 +15,10 @@
   color: var(--dark);
 }
 
+.filters {
+  margin-bottom: 110px;
+}
+
 .filters > div {
   width: 206px;
-}
-
-.checkboxes > label {
-  margin-bottom: 15px;
-}
-
-.checkboxes > label > span {
-  margin-right: 15px;
-}
-
-.checkboxes > label > label {
-  font-size: var(--size-small);
-  font-weight: var(--weight-normal);
-  color: var(--dark);
 }
