@@ -4,7 +4,7 @@
   background-color: var(--temp-grey-blue-7);
 }
 
-.menu li[class*="DropdownMenuItem"] > a {
+.menu li > *, .menu li:only-child > * {
   padding: 5px 15px;
 }
 
@@ -12,7 +12,7 @@
   color: white;
 }
 
-.menu ul[class*="DropdownMenuSection_separator"]:nth-child(4),
-.menu ul[class*="DropdownMenuSection_separator"]:nth-child(5) {
+.menu ul:nth-child(4),
+.menu ul:nth-child(5) {
   border-top: none;
 }

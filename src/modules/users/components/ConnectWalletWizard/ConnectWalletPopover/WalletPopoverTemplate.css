@@ -12,7 +12,7 @@
     width: calc(100vw - 28px);
   }
 
-  button[class*="DecisionOption"] {
+  .main button {
     height: auto;
   }
 }
