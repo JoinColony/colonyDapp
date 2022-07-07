@@ -1,5 +1,5 @@
+import React, { useRef } from 'react';
 import { FormikProps } from 'formik';
-import React from 'react';
 import { defineMessage, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
@@ -112,6 +112,12 @@ interface Props {
 }
 
 const MembersFilter = ({ handleFiltersCallback, isRoot }: Props) => {
+  const selectRef = useRef<HTMLButtonElement>(null);
+
+  const scrollIntoView = () => {
+    selectRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <>
       <hr className={styles.divider} />
@@ -156,12 +162,19 @@ const MembersFilter = ({ handleFiltersCallback, isRoot }: Props) => {
                 options={verificationTypes}
                 label={MSG.verificationType}
               />
-              <Select
-                appearance={{ theme: 'grey' }}
-                name="bannedStatus"
-                options={bannedStatuses}
-                label={MSG.bannedStatus}
-              />
+              <button
+                onClick={scrollIntoView}
+                ref={selectRef}
+                type="button"
+                className={styles.button}
+              >
+                <Select
+                  appearance={{ theme: 'grey' }}
+                  name="bannedStatus"
+                  options={bannedStatuses}
+                  label={MSG.bannedStatus}
+                />
+              </button>
             </div>
           );
         }}
