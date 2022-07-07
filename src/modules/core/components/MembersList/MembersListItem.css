@@ -15,7 +15,6 @@
 
 .usernameSection {
   composes: section;
-  composes: inlineEllipsis from '~styles/text.css';
   flex-grow: 0.5;
   margin-right: auto;
   max-width: 200px;
@@ -39,13 +38,6 @@
 .address span {
   font-size: var(--size-normal);
   font-weight: 500;
-}
-
-/* We need position fixed for this case and because of the way
-  styles are applied in the `Tooltip` component !important is the only way
-  to override them without refactoring the whole `Tootltip` */
-.address > div > div {
-  position: fixed !important;
 }
 
 .reputationSection {
@@ -75,5 +67,5 @@
 }
 
 .whitelistedIconTooltip {
-  width: initial;
+  width: 130px;
 }
