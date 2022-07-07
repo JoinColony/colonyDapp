@@ -1,6 +1,6 @@
 import { call, put, take } from 'redux-saga/effects';
-import { Contract, Signer, providers } from 'ethers';
-import { TransactionResponse, Web3Provider } from 'ethers/providers';
+import { Contract } from 'ethers';
+import { TransactionResponse } from 'ethers/providers';
 import { BigNumberish, splitSignature } from 'ethers/utils';
 import { soliditySha3 } from 'web3-utils';
 import {
@@ -11,7 +11,6 @@ import {
 } from '@colony/colony-js';
 import abis from '@colony/colony-js/lib-esm/abis';
 import { hexSequenceNormalizer } from '@purser/core';
-import { HttpProvider } from 'web3-providers';
 
 import { ActionTypes } from '~redux/index';
 import { selectAsJS } from '~utils/saga/effects';
@@ -24,7 +23,11 @@ import {
 } from '~immutable/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { Action } from '~redux/types/actions';
-import { ExtendedClientType, MethodParams } from '~types/index';
+import {
+  ExtendedClientType,
+  MethodParams,
+  MetatransactionFlavour,
+} from '~types/index';
 import { DEFAULT_NETWORK } from '~constants';
 
 import { transactionSendError } from '../../actionCreators';
@@ -120,7 +123,7 @@ async function getMetatransactionMethodPromise(
     );
     lightTokenClient.clientType = ClientType.TokenClient;
     lightTokenClient.tokenClientType = ExtendedClientType.LightTokenClient;
-    lightTokenClient.metatransactionVariation = 'metatransactions';
+    lightTokenClient.metatransactionVariation = MetatransactionFlavour.Vanilla;
   }
 
   const { provider } = normalizedClient;
@@ -140,7 +143,8 @@ async function getMetatransactionMethodPromise(
       availableNonce = await lightTokenClient.getMetatransactionNonce(
         userAddress,
       );
-      lightTokenClient.metatransactionVariation = 'metatransactions';
+      lightTokenClient.metatransactionVariation =
+        MetatransactionFlavour.Vanilla;
     } catch (error) {
       // silent error
     }
@@ -150,18 +154,15 @@ async function getMetatransactionMethodPromise(
      */
     try {
       availableNonce = await lightTokenClient.nonces(userAddress);
-      lightTokenClient.metatransactionVariation = 'eip2612';
+      lightTokenClient.metatransactionVariation =
+        MetatransactionFlavour.EIP2612;
     } catch (error) {
       // silent error
     }
     /*
      * @TODO REMOVE!!
      */
-    lightTokenClient.metatransactionVariation = 'eip2612';
-    // eslint-disable-next-line no-console
-    console.log(
-      `Token Client is using the ${lightTokenClient.metatransactionVariation} variation`,
-    );
+    lightTokenClient.metatransactionVariation = MetatransactionFlavour.EIP2612;
 
     if (!availableNonce) {
       throw new Error(generateMetatransactionErrorMessage(lightTokenClient));
@@ -217,25 +218,22 @@ async function getMetatransactionMethodPromise(
   let broadcastData = '';
   if (
     normalizedClient.clientType === ClientType.TokenClient &&
-    lightTokenClient.metatransactionVariation === 'eip2612'
+    lightTokenClient.metatransactionVariation ===
+      MetatransactionFlavour.EIP2612 &&
+    normalizedMethodName === TRANSACTION_METHODS.Approve
   ) {
+    // eslint-disable-next-line no-console
+    console.log(
+      `Token Client is using the ${lightTokenClient.metatransactionVariation} variation`,
+    );
+
     // eslint-disable-next-line no-console
     console.log(
       `Broadcasting transaction as EIP2612 Metadata variation (obviously via a Token Client)`,
     );
 
     const tokenName = await normalizedClient.name();
-    const [tokenLockingContractAddres, amount] = params;
-
-    let spender: string | undefined = '';
-    switch (methodName) {
-      case TRANSACTION_METHODS.Approve: {
-        spender = tokenLockingContractAddres as string;
-        break;
-      }
-      default:
-        break;
-    }
+    const [spender, amount] = params;
 
     const deadline = Math.floor(Date.now() / 1000) + 3600;
     const signatureApproval = {
@@ -257,7 +255,7 @@ async function getMetatransactionMethodPromise(
       primaryType: 'Permit',
       domain: {
         name: tokenName,
-        version: 1,
+        version: '1',
         chainId,
         verifyingContract: normalizedClient.address,
       },
@@ -304,7 +302,6 @@ async function getMetatransactionMethodPromise(
 
     // eslint-disable-next-line no-console
     console.log('Broadcast data', broadcastData);
-
   } else {
     // eslint-disable-next-line no-console
     console.log('Broadcasting transaction as VANILLA Metadata variation');
@@ -396,6 +393,10 @@ async function getMetatransactionMethodPromise(
     responseData,
   );
 
+  /*
+   * @TODO Generate human friendly error message for the token being locked
+   * (only required for Metatransactions)
+   */
   if (reponseStatus !== 'success') {
     throw new Error(
       responseErrorMessage?.reason ||
