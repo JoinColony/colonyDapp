@@ -17,10 +17,6 @@ const MSG = defineMessages({
     id: 'users.GasStation.GasStationHeader.goToWalletLinkTitle',
     defaultMessage: 'Go to Wallet',
   },
-  network: {
-    id: 'users.GasStation.GasStationHeader.network',
-    defaultMessage: 'Network: {connectedNetwork} (connected)',
-  },
 });
 
 interface Props {
