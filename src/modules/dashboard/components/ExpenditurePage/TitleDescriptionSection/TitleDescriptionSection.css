@@ -1,12 +1,11 @@
 .container {
-  /* padding: 69px 25px 74px; */
-}
-
-.lockedSectionContainer {
-  /* padding: 76px 25px 74px; */
   padding-right: 37px;
   padding-bottom: 74px;
   width: 100%;
+}
+
+.lockedSectionContainer {
+  padding: 6px 25px 74px;
 }
 
 .number {
@@ -23,6 +22,10 @@
   line-height: 24px;
   color: var(--dark);
   letter-spacing: 0.5px;
+}
+
+.lockedTitle {
+  line-height: 18px;
 }
 
 .titleContainer {

@@ -1,6 +1,4 @@
-import React, { ReactNode, useCallback, useEffect, useMemo } from 'react';
-import classNames from 'classnames';
-import { useParams } from 'react-router';
+import React, { ReactNode, useCallback } from 'react';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { defineMessages } from 'react-intl';
@@ -11,22 +9,17 @@ import {
   SelectOption,
   FormSection,
 } from '~core/Fields';
-import { useLoggedInUser, useColonyFromNameQuery } from '~data/index';
-import Numeral from '~core/Numeral';
-
+import { Colony } from '~data/index';
 import styles from './ExpenditureSettings.css';
 import UserAvatar from '~core/UserAvatar';
-import TokenIcon from '~dashboard/HookedTokenIcon';
-
 import { tokens as tokensData } from './constants';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import UserMention from '~core/UserMention';
 import DomainDropdown from '~core/DomainDropdown';
 import ColorTag, { Color } from '~core/ColorTag';
-import { SpinnerLoader } from '~core/Preloaders';
+import BalanceSelect from './BalanceSelect';
 
-const MSG = defineMessages({
+export const MSG = defineMessages({
   typeLabel: {
     id: 'dashboard.ExpenditurePage.ExpenditureSettings.defaultExpenditureLabel',
     defaultMessage: 'Expenditure type',
@@ -49,24 +42,16 @@ const MSG = defineMessages({
   },
 });
 
-const ExpenditureSettings = () => {
-  const [, , { setValue }] = useField('owner');
+const displayName = 'dashboard.ExpenditurePage.ExpenditureSettings';
+
+interface Props {
+  colony: Colony;
+  walletAddress: string;
+  username: string;
+}
+
+const ExpenditureSettings = ({ colony, walletAddress, username }: Props) => {
   const [, { error }] = useField('filteredDomainId');
-  const owner = useLoggedInUser();
-  const { walletAddress, username } = owner;
-
-  useEffect(() => {
-    setValue(owner);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [owner]);
-
-  const { colonyName } = useParams<{
-    colonyName: string;
-  }>();
-
-  const { data: colonyData, loading } = useColonyFromNameQuery({
-    variables: { address: '', name: colonyName },
-  });
 
   const getDomainColor = useCallback<(domainId: string | undefined) => Color>(
     (domainId) => {
@@ -75,15 +60,15 @@ const ExpenditureSettings = () => {
       if (domainId === String(ROOT_DOMAIN_ID)) {
         return rootDomainColor;
       }
-      if (!colonyData?.processedColony || !domainId) {
+      if (!colony || !domainId) {
         return defaultColor;
       }
-      const domain = colonyData?.processedColony?.domains.find(
+      const domain = colony.domains.find(
         ({ ethDomainId }) => Number(domainId) === ethDomainId,
       );
       return domain ? domain.color : defaultColor;
     },
-    [colonyData],
+    [colony],
   );
 
   const renderActiveOption = useCallback<
@@ -92,8 +77,6 @@ const ExpenditureSettings = () => {
     (option, label) => {
       const value = option?.value;
       const color = getDomainColor(value);
-      // eslint-disable-next-line no-console
-      console.log({ option, label });
 
       return (
         <div className={styles.activeItem}>
@@ -115,139 +98,73 @@ const ExpenditureSettings = () => {
 
   const [activeToken, ...tokens] = tokensData;
 
-  const renderBalanceActiveOption = useCallback(
-    () => (
-      <div className={styles.label}>
-        <span className={styles.icon}>
-          <TokenIcon
-            className={styles.tokenIcon}
-            token={activeToken}
-            name={activeToken.name || activeToken.address}
-          />
-        </span>
-
-        <Numeral
-          unit={getTokenDecimalsWithFallback(activeToken.decimals)}
-          value={activeToken.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount}
-        />
-        <span className={styles.symbol}>{activeToken.symbol}</span>
-      </div>
-    ),
-    [activeToken],
-  );
-
-  const balanceOptions = useMemo(
-    () =>
-      tokens.map((token, index) => ({
-        label: token.name,
-        value: token.id,
-        children: (
-          <div
-            className={classNames(styles.label, styles.option, {
-              [styles.firstOption]: index === 0,
-            })}
-          >
-            <span className={styles.icon}>
-              <TokenIcon
-                className={styles.tokenIcon}
-                token={token}
-                name={token.name || token.address}
-              />
-            </span>
-
-            <Numeral
-              unit={getTokenDecimalsWithFallback(token.decimals)}
-              value={token.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount}
-            />
-            <span className={styles.symbol}>{token.symbol}</span>
-          </div>
-        ),
-      })),
-    [tokens],
-  );
-
   return (
     <div className={styles.container}>
-      {loading ? (
-        <SpinnerLoader appearance={{ size: 'medium' }} />
-      ) : (
-        <>
-          <FormSection appearance={{ border: 'bottom' }}>
-            <div className={styles.blue}>
-              <SelectHorizontal
-                name="expenditure"
-                label={MSG.typeLabel}
-                appearance={{
-                  theme: 'alt',
-                  width: 'content',
-                }}
-                options={[
-                  {
-                    label: MSG.optionAdvanced,
-                    value: 'advanced',
-                  },
-                ]}
-                optionSizeLarge
-              />
+      <FormSection appearance={{ border: 'bottom' }}>
+        <div className={styles.blue}>
+          <SelectHorizontal
+            name="expenditure"
+            label={MSG.typeLabel}
+            appearance={{
+              theme: 'alt',
+              width: 'content',
+            }}
+            options={[
+              {
+                label: MSG.optionAdvanced,
+                value: 'advanced',
+              },
+            ]}
+            optionSizeLarge
+          />
+        </div>
+      </FormSection>
+      <FormSection appearance={{ border: 'bottom' }}>
+        <div className={styles.settingsRow}>
+          <InputLabel
+            label={MSG.teamLabel}
+            appearance={{
+              direction: 'horizontal',
+            }}
+          />
+          {colony && (
+            <DomainDropdown
+              name="filteredDomainId"
+              colony={colony}
+              renderActiveOptionFn={renderActiveOption}
+              filterOptionsFn={filterDomains}
+            />
+          )}
+        </div>
+        {error && <div className={styles.error}>{error}</div>}
+      </FormSection>
+      <FormSection appearance={{ border: 'bottom' }}>
+        <BalanceSelect
+          activeToken={activeToken}
+          tokens={tokens}
+          name="balance"
+        />
+      </FormSection>
+      <FormSection appearance={{ border: 'bottom' }}>
+        <div className={styles.userContainer}>
+          <InputLabel
+            label={MSG.ownerLabel}
+            appearance={{
+              direction: 'horizontal',
+            }}
+          />
+          <div className={styles.userAvatarContainer}>
+            <UserAvatar address={walletAddress} size="xs" notSet={false} />
+            <div className={styles.userName}>
+              <UserMention username={username || ''} />
             </div>
-          </FormSection>
-          <FormSection appearance={{ border: 'bottom' }}>
-            <div className={styles.settingsRow}>
-              <InputLabel
-                label={MSG.teamLabel}
-                appearance={{
-                  direction: 'horizontal',
-                }}
-              />
-              {colonyData && (
-                <DomainDropdown
-                  colony={colonyData?.processedColony}
-                  name="filteredDomainId"
-                  renderActiveOptionFn={renderActiveOption}
-                  filterOptionsFn={filterDomains}
-                  showAllDomains
-                  showDescription
-                  dataTest="colonyDomainSelector"
-                  itemDataTest="colonyDomainSelectorItem"
-                />
-              )}
-            </div>
-            {error && <div className={styles.error}>{error}</div>}
-          </FormSection>
-          <FormSection appearance={{ border: 'bottom' }}>
-            <div className={styles.balance}>
-              <SelectHorizontal
-                name="balance"
-                label={MSG.balanceLabel}
-                appearance={{
-                  theme: 'alt',
-                }}
-                options={balanceOptions}
-                renderActiveOption={renderBalanceActiveOption}
-                unselectable
-              />
-            </div>
-          </FormSection>
-          <FormSection appearance={{ border: 'bottom' }}>
-            <div className={styles.userContainer}>
-              <InputLabel
-                label={MSG.ownerLabel}
-                appearance={{
-                  direction: 'horizontal',
-                }}
-              />
-              <div className={styles.userAvatarContainer}>
-                <UserAvatar address={walletAddress} size="xs" notSet={false} />
-                <div className={styles.userName}>
-                  <UserMention username={username || ''} />
-                </div>
-              </div>
-            </div>
-          </FormSection>
-        </>
-      )}
+          </div>
+        </div>
+      </FormSection>
     </div>
   );
 };
+
+ExpenditureSettings.displayName = displayName;
 
 export default ExpenditureSettings;

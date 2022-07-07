@@ -1,9 +1,7 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FieldArray, useField } from 'formik';
-import { useParams } from 'react-router';
 import { nanoid } from 'nanoid';
-import classNames from 'classnames';
 
 import Button from '~core/Button';
 import Recipient from '../Recipient';
@@ -12,16 +10,15 @@ import styles from './Payments.css';
 import Icon from '~core/Icon';
 import { FormSection } from '~core/Fields';
 import { newRecipient } from './constants';
-import {
-  useColonyFromNameQuery,
-  useMembersSubscription,
-} from '~data/generated';
+import { useMembersSubscription } from '~data/generated';
 import { SpinnerLoader } from '~core/Preloaders';
+import { Colony } from '~data/index';
+import CollapseExpandButtons from './CollapseExpandButtons';
 
-const MSG = defineMessages({
+export const MSG = defineMessages({
   payments: {
     id: 'dashboard.ExpenditurePage.Payments.payments',
-    defaultMessage: 'Add payments',
+    defaultMessage: 'Payments',
   },
   recipient: {
     id: 'dashboard.ExpenditurePage.Payments.recipient',
@@ -45,26 +42,30 @@ const MSG = defineMessages({
   },
 });
 
+const displayName = 'dashboard.ExpenditurePage.Payments';
+
 interface Props {
   sidebarRef: HTMLElement | null;
+  colony: Colony;
 }
 
-const Payments = ({ sidebarRef }: Props) => {
+const Payments = ({ sidebarRef, colony }: Props) => {
   const [, { value: recipients }, { setValue }] = useField('recipients');
-  const { colonyName } = useParams<{
-    colonyName: string;
-  }>();
 
-  const { data: colonyData } = useColonyFromNameQuery({
-    variables: { address: '', name: colonyName },
-  });
-  const { colonyAddress } = colonyData || {};
+  const { colonyAddress } = colony || {};
 
   const { data: colonyMembers, loading } = useMembersSubscription({
     variables: { colonyAddress: colonyAddress || '' },
   });
 
-  const onToogleButtonClick = useCallback(
+  const newRecipientData = useMemo(() => {
+    return {
+      ...newRecipient,
+      value: [{ amount: undefined, tokenAddress: colony.nativeTokenAddress }],
+    };
+  }, [colony.nativeTokenAddress]);
+
+  const onToggleButtonClick = useCallback(
     (index) => {
       setValue(
         recipients.map((recipient, idx) =>
@@ -94,29 +95,11 @@ const Payments = ({ sidebarRef }: Props) => {
                   <div className={styles.singleRecipient} key={recipient.id}>
                     <FormSection>
                       <div className={styles.recipientLabel}>
-                        {recipient.isExpanded ? (
-                          <>
-                            <Icon
-                              name="collapse"
-                              onClick={() => onToogleButtonClick(index)}
-                              className={styles.signWrapper}
-                              title={MSG.minusIconTitle}
-                            />
-                            <div
-                              className={classNames(styles.verticalDivider, {
-                                [styles.dividerInLastItem]:
-                                  index === recipients?.length - 1,
-                              })}
-                            />
-                          </>
-                        ) : (
-                          <Icon
-                            name="expand"
-                            onClick={() => onToogleButtonClick(index)}
-                            className={styles.signWrapper}
-                            title={MSG.plusIconTitle}
-                          />
-                        )}
+                        <CollapseExpandButtons
+                          isExpanded={recipient.isExpanded}
+                          onToogleButtonClick={() => onToggleButtonClick(index)}
+                          isLastitem={index === recipients?.length - 1}
+                        />
                         {index + 1}: <FormattedMessage {...MSG.recipient} />
                         {recipients.length > 1 && (
                           <Icon
@@ -136,11 +119,12 @@ const Payments = ({ sidebarRef }: Props) => {
                       }}
                       subscribedUsers={colonyMembers?.subscribedUsers || []}
                       isLast={index === recipients?.length - 1}
+                      colony={colony}
                     />
                   </div>
                 ))}
                 <Button
-                  onClick={() => push({ ...newRecipient, id: nanoid() })}
+                  onClick={() => push({ ...newRecipientData, id: nanoid() })}
                   appearance={{ theme: 'blue' }}
                 >
                   <div className={styles.addRecipientLabel}>
@@ -159,5 +143,7 @@ const Payments = ({ sidebarRef }: Props) => {
     </div>
   );
 };
+
+Payments.displayName = displayName;
 
 export default Payments;

@@ -1,133 +1,100 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import * as yup from 'yup';
-import isEqual from 'lodash/isEqual';
-
 import {
   defineMessages,
   FormattedMessage,
   MessageDescriptor,
 } from 'react-intl';
 import { nanoid } from 'nanoid';
+
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { RouteChildrenProps, useParams } from 'react-router';
 import { FormikErrors } from 'formik';
+import { isEqual } from 'lodash';
 import { Form } from '~core/Fields';
 import Payments from '~dashboard/ExpenditurePage/Payments';
-import ExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings';
 import Stages from '~dashboard/ExpenditurePage/Stages';
+import TitleDescriptionSection, {
+  LockedTitleDescriptionSection,
+} from '~dashboard/ExpenditurePage/TitleDescriptionSection';
 import { getMainClasses } from '~utils/css';
 import styles from './ExpenditurePage.css';
-import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
-import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
-import TitleDescriptionSection from '~dashboard/ExpenditurePage/TitleDescriptionSection';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
-import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
-import Tag from '~core/Tag';
-import { useDialog } from '~core/Dialog';
+import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
+import { useColonyFromNameQuery } from '~data/generated';
+import { useLoggedInUser } from '~data/helpers';
+import { SpinnerLoader } from '~core/Preloaders';
+import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
+import { ExpenditureSettings } from '~dashboard/ExpenditurePage';
+import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
 import EditExpenditureDialog from '~dashboard/Dialogs/EditExpenditureDialog/EditExpenditureDialog';
-import LockedTitleDescriptionSection from '~dashboard/ExpenditurePage/TitleDescriptionSection/LockedTitleDescriptionSection';
+import { useDialog } from '~core/Dialog';
+import Tag from '~core/Tag';
+import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
 
 const displayName = 'pages.ExpenditurePage';
 
-const initialValues = {
-  expenditure: 'advanced',
-  filteredDomainId: undefined,
-  owner: undefined,
-  title: undefined,
-  description: undefined,
-  recipients: [{ ...newRecipient, id: nanoid() }],
-};
-
-export interface ValuesType {
-  expenditure: string;
-  filteredDomainId: { label: string; value: string };
-  owner: string;
-  recipients: {
-    recipient: string;
-    value: { amount: number; tokenAddress: number }[];
-    delay: { amount: string; time: string };
-    isExpanded: boolean;
-  }[];
-  title: string;
-  description?: string;
-}
-
-export interface FormValues {
-  expenditure?: string;
-  filteredDomainId?: string;
-  owner?: string;
-  recipients?: {
-    recipient?: string;
-    value?: { amount: number; tokenAddress: number }[];
-    delay?: { amount: string; time: string };
-    isExpanded?: boolean;
-  }[];
-  title?: string;
-  description?: string;
-}
-
-export interface State {
-  id: string;
-  label: string | MessageDescriptor;
-  buttonText: string | MessageDescriptor;
-  buttonAction: () => void;
-}
-
-interface Props {
-  colonyName: string;
-}
-
 const MSG = defineMessages({
-  userRequiredError: {
-    id: 'dashboard.Expenditures.ExpenditurePage.userRequiredError',
-    defaultMessage: 'User is required',
-  },
-  delayRequiredError: {
-    id: 'dashboard.Expenditures.ExpenditurePage.delayRequiredError',
-    defaultMessage: 'Delay is required',
-  },
   lockValues: {
-    id: 'dashboard.Expenditures.Stages.lockValues',
+    id: 'dashboard.ExpenditurePage.lockValues',
     defaultMessage: 'Lock values',
   },
   escrowFunds: {
-    id: 'dashboard.Expenditures.Stages.escrowFunds',
+    id: 'dashboard.ExpenditurePage.escrowFunds',
     defaultMessage: 'Escrow funds',
   },
   releaseFunds: {
-    id: 'dashboard.Expenditures.Stages.releaseFunds',
+    id: 'dashboard.ExpenditurePage.releaseFunds',
     defaultMessage: 'Release funds',
   },
   claim: {
-    id: 'dashboard.Expenditures.Stages.claim',
+    id: 'dashboard.ExpenditurePage.claim',
     defaultMessage: 'Claim',
   },
   draft: {
-    id: 'dashboard.Expenditures.Stages.draft',
+    id: 'dashboard.ExpenditurePage.draft',
     defaultMessage: 'Draft',
   },
   locked: {
-    id: 'dashboard.Expenditures.Stages.locked',
+    id: 'dashboard.ExpenditurePage.locked',
     defaultMessage: 'Locked',
   },
   funded: {
-    id: 'dashboard.Expenditures.Stages.funded',
+    id: 'dashboard.ExpenditurePage.funded',
     defaultMessage: 'Funded',
   },
   released: {
-    id: 'dashboard.Expenditures.Stages.released',
+    id: 'dashboard.ExpenditurePage.released',
     defaultMessage: 'Released',
   },
   claimed: {
-    id: 'dashboard.Expenditures.Stages.claimed',
+    id: 'dashboard.ExpenditurePage.claimed',
     defaultMessage: 'Claimed',
   },
   tooltipLockValuesText: {
-    id: 'dashboard.Expenditures.Stages.tooltipLockValuesText',
+    id: 'dashboard.ExpenditurePage.tooltipLockValuesText',
     defaultMessage: `This will lock the values of the expenditure. To change values after locking will require the right permissions or a motion.`,
   },
   completed: {
-    id: 'dashboard.Expenditures.Stages.completed',
+    id: 'dashboard.ExpenditurePage.completed',
     defaultMessage: 'Completed',
+  },
+  userRequiredError: {
+    id: 'dashboard.ExpenditurePage.userRequiredError',
+    defaultMessage: 'User is required',
+  },
+  teamRequiredError: {
+    id: 'dashboard.ExpenditurePage.teamRequiredError',
+    defaultMessage: 'Team is required',
+  },
+  valueError: {
+    id: 'dashboard.ExpenditurePage.completed',
+    defaultMessage: 'Value is required',
+  },
+  amountZeroError: {
+    id: 'dashboard.ExpenditurePage.amountZeroError',
+    defaultMessage: 'Value must be greater than zero',
   },
   suggestions: {
     id: 'dashboard.Expenditures.Stages.suggestions',
@@ -137,53 +104,113 @@ const MSG = defineMessages({
 
 const validationSchema = yup.object().shape({
   expenditure: yup.string().required(),
-  filteredDomainId: yup.string().required('Team is required'),
+  filteredDomainId: yup
+    .string()
+    .required(() => <FormattedMessage {...MSG.teamRequiredError} />),
   recipients: yup.array(
     yup.object().shape({
-      recipient: yup
-        .object()
-        .required(() => <FormattedMessage {...MSG.userRequiredError} />),
+      recipient: yup.object().required(),
       value: yup
         .array(
           yup.object().shape({
-            amount: yup.number().required(),
+            amount: yup
+              .number()
+              .required(() => MSG.valueError)
+              .moreThan(0, () => MSG.amountZeroError),
             tokenAddress: yup.string().required(),
           }),
         )
         .min(1),
-      delay: yup
-        .object()
-        .shape({
-          amount: yup.string().required(),
-          time: yup
-            .string()
-            .required(() => <FormattedMessage {...MSG.delayRequiredError} />),
-        })
-        .required(),
     }),
   ),
-  title: yup.string().required(),
+  title: yup.string().min(3).required(),
+  description: yup.string().max(4000),
 });
 
-const ExpenditurePage = ({ colonyName }: Props) => {
+export interface State {
+  id: string;
+  label: string | MessageDescriptor;
+  buttonText: string | MessageDescriptor;
+  buttonAction: () => void;
+  buttonTooltip?: string | MessageDescriptor;
+}
+
+export interface ValuesType {
+  expenditure: string;
+  filteredDomainId: string;
+  owner: string;
+  recipients: Recipient[];
+  title: string;
+  description?: string;
+}
+
+const initialValues = {
+  expenditure: 'advanced',
+  recipients: [newRecipient],
+  filteredDomainId: String(ROOT_DOMAIN_ID),
+  owner: undefined,
+  title: undefined,
+  description: undefined,
+};
+
+export type InitialValuesType = typeof initialValues;
+
+type Props = RouteChildrenProps<{ colonyName: string }>;
+
+const ExpenditurePage = ({ match }: Props) => {
+  if (!match) {
+    throw new Error(
+      `No match found for route in ${displayName} Please check route setup.`,
+    );
+  }
+
+  const { colonyName } = useParams<{
+    colonyName: string;
+  }>();
+
   const [isFormEditable, setFormEditable] = useState(true);
-  const [isInEditMode, setIsInEditMode] = useState(false);
-  // initialFormValues is temporary value
-  // const initialFormValues = mockFormValues;
-  const [formValues, setFormValues] = useState<typeof initialValues>();
+  const [formValues, setFormValues] = useState<ValuesType>();
   const [shouldValidate, setShouldValidate] = useState(false);
+  const [activeStateId, setActiveStateId] = useState<string>();
   const sidebarRef = useRef<HTMLElement>(null);
-  const [activeStateId, setActiveStateId] = useState<string>(Stage.Draft);
 
   const openEditExpenditureDialog = useDialog(EditExpenditureDialog);
 
-  const submit = useCallback((values) => {
+  const { data: colonyData, loading } = useColonyFromNameQuery({
+    variables: { name: colonyName, address: '' },
+  });
+  const loggedInUser = useLoggedInUser();
+
+  const initialValuesData = useMemo(() => {
+    return (
+      formValues || {
+        ...initialValues,
+        owner: loggedInUser,
+        recipients: [
+          {
+            ...newRecipient,
+            id: nanoid(),
+            value: [
+              {
+                id: nanoid(),
+                amount: undefined,
+                tokenAddress: colonyData?.processedColony?.nativeTokenAddress,
+              },
+            ],
+          },
+        ],
+      }
+    );
+  }, [colonyData, formValues, loggedInUser]);
+
+  const handleSubmit = useCallback((values) => {
     setShouldValidate(true);
+    setActiveStateId(Stage.Draft);
+
     if (values) {
       setFormValues(values);
     }
-    setFormEditable(false);
-    // add sending form to backend
+    // add sending form values to backend
   }, []);
 
   const lockValues = useCallback(() => {
@@ -247,7 +274,7 @@ const ExpenditurePage = ({ colonyName }: Props) => {
     },
   ];
 
-  const { owner, expenditure, filteredDomainId } = formValues || {};
+  const { expenditure, filteredDomainId } = formValues || {};
 
   const handleValidate = useCallback(() => {
     if (!shouldValidate) {
@@ -255,19 +282,21 @@ const ExpenditurePage = ({ colonyName }: Props) => {
     }
   }, [shouldValidate]);
 
+  const [inEditMode, setInEditMode] = useState(false);
+
   const handleConfirmEition = useCallback(() => {
-    setIsInEditMode(false);
+    setInEditMode(false);
     setFormEditable(false);
     // add call to the backend
   }, []);
 
   const handleEditLockedForm = useCallback(() => {
-    setIsInEditMode(true);
+    setInEditMode(true);
     setFormEditable(true);
   }, []);
 
   const handleEditCancel = useCallback(() => {
-    setIsInEditMode(false);
+    setInEditMode(false);
     setFormEditable(false);
   }, []);
 
@@ -282,7 +311,7 @@ const ExpenditurePage = ({ colonyName }: Props) => {
       values: ValuesType,
       validateForm: (values?: ValuesType) => Promise<FormikErrors<ValuesType>>,
     ) => {
-      setIsInEditMode(true);
+      setInEditMode(true);
       setFormEditable(true);
       const errors = await validateForm(values);
       const hasErrors = Object.keys(errors)?.length;
@@ -353,34 +382,50 @@ const ExpenditurePage = ({ colonyName }: Props) => {
 
   return isFormEditable ? (
     <Form
-      initialValues={formValues || initialValues}
-      onSubmit={submit}
+      initialValues={initialValuesData}
+      onSubmit={handleSubmit}
       validationSchema={validationSchema}
       validateOnBlur={shouldValidate}
       validateOnChange={shouldValidate}
       validate={handleValidate}
+      enableReinitialize
     >
       {({ values, validateForm }) => (
         <div className={getMainClasses({}, styles)}>
           <aside className={styles.sidebar} ref={sidebarRef}>
-            {isInEditMode && (
-              <div className={styles.tagWrapper}>
-                <Tag
-                  appearance={{
-                    theme: 'blue',
-                  }}
-                >
-                  <FormattedMessage {...MSG.suggestions} />
-                </Tag>
-              </div>
+            {loading ? (
+              <SpinnerLoader appearance={{ size: 'medium' }} />
+            ) : (
+              colonyData && (
+                <>
+                  {inEditMode && (
+                    <div className={styles.tagWrapper}>
+                      <Tag
+                        appearance={{
+                          theme: 'blue',
+                        }}
+                      >
+                        <FormattedMessage {...MSG.suggestions} />
+                      </Tag>
+                    </div>
+                  )}
+                  <ExpenditureSettings
+                    colony={colonyData.processedColony}
+                    username={loggedInUser.username || ''}
+                    walletAddress={loggedInUser.walletAddress}
+                  />
+                  <Payments
+                    sidebarRef={sidebarRef.current}
+                    colony={colonyData.processedColony}
+                  />
+                </>
+              )
             )}
-            <ExpenditureSettings />
-            <Payments sidebarRef={sidebarRef.current} />
           </aside>
           <div className={styles.mainContainer}>
             <main className={styles.mainContent}>
               <TitleDescriptionSection />
-              {isInEditMode ? (
+              {inEditMode ? (
                 <EditButtons
                   handleEditSubmit={() =>
                     handleEditSubmit(values, validateForm)
@@ -392,6 +437,9 @@ const ExpenditurePage = ({ colonyName }: Props) => {
                   {...{
                     states,
                     activeStateId,
+                    setActiveStateId,
+                    lockValues,
+                    handleSubmit,
                   }}
                 />
               )}
@@ -404,10 +452,14 @@ const ExpenditurePage = ({ colonyName }: Props) => {
     <div className={getMainClasses({}, styles)}>
       <aside className={styles.sidebar} ref={sidebarRef}>
         <LockedExpenditureSettings
-          {...{ owner, expenditure, team: filteredDomainId }}
+          {...{ expenditure, filteredDomainId }}
+          username={loggedInUser?.username || ''}
+          walletAddress={loggedInUser?.walletAddress}
+          colony={colonyData?.processedColony}
         />
         <LockedPayments
           recipients={formValues?.recipients}
+          colony={colonyData?.processedColony}
           editForm={handleEditLockedForm}
         />
       </aside>
@@ -421,6 +473,9 @@ const ExpenditurePage = ({ colonyName }: Props) => {
             {...{
               states,
               activeStateId,
+              setActiveStateId,
+              lockValues,
+              handleSubmit,
             }}
           />
         </main>

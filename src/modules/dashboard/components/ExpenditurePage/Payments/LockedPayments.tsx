@@ -1,44 +1,25 @@
 import React, { useCallback, useState } from 'react';
-import classNames from 'classnames';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
 import { Recipient as RecipientType } from './types';
 import styles from './Payments.css';
-import Icon from '~core/Icon';
 import { FormSection } from '~core/Fields';
 import LockedRecipient from '../Recipient/LockedRecipient';
 import UserMention from '~core/UserMention';
-import Delay from '../Delay';
+import { Colony } from '~data/index';
+import { MSG } from './Payments';
+import CollapseExpandButtons from './CollapseExpandButtons';
+import Icon from '~core/Icon';
 
-const MSG = defineMessages({
-  payments: {
-    id: 'dashboard.Expenditures.Payments.defaultPayment',
-    defaultMessage: 'Payments',
-  },
-  recipient: {
-    id: 'dashboard.Expenditures.Payments.defaultRrecipient',
-    defaultMessage: 'Recipient',
-  },
-  addRecipientLabel: {
-    id: 'dashboard.Expenditures.Payments.addRecipientLabel',
-    defaultMessage: 'Add recipient',
-  },
-  minusIconTitle: {
-    id: 'dashboard.Expenditures.Payments.minusIconTitle',
-    defaultMessage: 'Collapse a single recipient settings',
-  },
-  plusIconTitle: {
-    id: 'dashboard.Expenditures.Payments.plusIconTitle',
-    defaultMessage: 'Expand a single recipient settings',
-  },
-});
+const displayName = 'dashboard.ExpenditurePage.LockedPayments';
 
 interface Props {
   recipients?: RecipientType[];
-  editForm?: () => void;
+  colony?: Colony;
+  editForm: () => void;
 }
 
-const LockedPayments = ({ recipients, editForm }: Props) => {
+const LockedPayments = ({ recipients, colony, editForm }: Props) => {
   const [expandedRecipients, setExpandedRecipients] = useState<
     number[] | undefined
   >(recipients?.map((_, idx) => idx));
@@ -74,24 +55,11 @@ const LockedPayments = ({ recipients, editForm }: Props) => {
             <div className={styles.singleRecipient} key={recipient.id}>
               <FormSection>
                 <div className={styles.recipientName}>
-                  {isOpen ? (
-                    <>
-                      <Icon
-                        name="collapse"
-                        onClick={() => onToggleButtonClick(index)}
-                        className={styles.signWrapper}
-                        title={MSG.minusIconTitle}
-                      />
-                      <div className={classNames(styles.verticalDivider)} />
-                    </>
-                  ) : (
-                    <Icon
-                      name="expand"
-                      onClick={() => onToggleButtonClick(index)}
-                      className={styles.signWrapper}
-                      title={MSG.plusIconTitle}
-                    />
-                  )}
+                  <CollapseExpandButtons
+                    isExpanded={isOpen}
+                    onToogleButtonClick={() => onToggleButtonClick(index)}
+                    isLastitem={index === recipients?.length - 1}
+                  />
                   {index + 1}:{' '}
                   <UserMention
                     username={
@@ -100,19 +68,23 @@ const LockedPayments = ({ recipients, editForm }: Props) => {
                       ''
                     }
                   />
-                  {', '}
-                  <Delay
-                    amount={recipient?.delay?.amount}
-                    time={recipient?.delay?.time}
-                  />
+                  {recipient?.delay?.amount && (
+                    <>
+                      {', '}
+                      {recipient.delay.amount} {recipient.delay.time}
+                    </>
+                  )}
                 </div>
               </FormSection>
-              <LockedRecipient
-                recipient={{
-                  ...recipient,
-                  isExpanded: isOpen,
-                }}
-              />
+              {colony && (
+                <LockedRecipient
+                  recipient={{
+                    ...recipient,
+                    isExpanded: isOpen,
+                  }}
+                  colony={colony}
+                />
+              )}
             </div>
           );
         })}
@@ -120,5 +92,7 @@ const LockedPayments = ({ recipients, editForm }: Props) => {
     </div>
   );
 };
+
+LockedPayments.displayName = displayName;
 
 export default LockedPayments;
