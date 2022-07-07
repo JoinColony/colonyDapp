@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
-import { toFinite } from 'lodash';
+import toFinite from 'lodash/toFinite';
 import { defineMessages } from 'react-intl';
 
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
@@ -99,6 +99,21 @@ const validationSchema = yup.object().shape({
     then: yup.string().required(),
     otherwise: false,
   }),
+  contract: yup.string().when('transactionType', {
+    is: (transactionType) => transactionType === 'contractInteraction',
+    then: yup.string().address().required(),
+    otherwise: false,
+  }),
+  abi: yup.string().when('transactionType', {
+    is: (transactionType) => transactionType === 'contractInteraction',
+    then: yup.string().required(),
+    otherwise: false,
+  }),
+  contractFunction: yup.string().when('transactionType', {
+    is: (transactionType) => transactionType === 'contractInteraction',
+    then: yup.string().required(),
+    otherwise: false,
+  }),
 });
 
 const GnosisControlSafeDialog = ({
@@ -113,10 +128,13 @@ const GnosisControlSafeDialog = ({
       initialValues={{
         safe: '',
         transactionType: '',
-        forceAction: false,
         tokenAddress: colony.nativeTokenAddress,
-        amount: 0,
-        recipient: '',
+        amount: undefined,
+        recipient: null,
+        data: '',
+        contract: '',
+        abi: '',
+        contractFunction: '',
       }}
       validationSchema={validationSchema}
       submit={ActionTypes.COLONY_ACTION_GENERIC}

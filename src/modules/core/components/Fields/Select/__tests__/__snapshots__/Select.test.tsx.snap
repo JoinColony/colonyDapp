@@ -83,9 +83,7 @@ exports[`Select component Renders initial component 1`] = `
               >
                 <div>
                   <div>
-                    <span>
-                      Bar
-                    </span>
+                    <span />
                   </div>
                   <span>
                     <Icon
@@ -120,6 +118,7 @@ exports[`Select component Renders initial component 1`] = `
                   "theme": "minimal",
                 }
               }
+              touched={false}
             >
               <p
                 className=""
