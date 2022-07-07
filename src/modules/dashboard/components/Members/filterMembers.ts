@@ -54,7 +54,7 @@ export const filterMembers = <M extends ColonyContributor | ColonyWatcher>(
         return banned && textFilter;
       }
 
-      if (filters?.bannedStatus !== BannedStatus.NOT_BANNED) {
+      if (filters?.bannedStatus === BannedStatus.NOT_BANNED) {
         return !banned && textFilter;
       }
     }
