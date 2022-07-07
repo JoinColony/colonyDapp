@@ -68,7 +68,7 @@ function* colonyRestartDeployment({
     }
     if (!colonyAddress) {
       throw new Error(
-        `The colony adress was not provided to the Colony Restart Deployment flow`,
+        `The colony address was not provided to the Colony Restart Deployment flow`,
       );
     }
 
