@@ -118,6 +118,7 @@ exports[`Select component Renders initial component 1`] = `
                   "theme": "minimal",
                 }
               }
+              touched={false}
             >
               <p
                 className=""
