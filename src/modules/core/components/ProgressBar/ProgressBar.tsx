@@ -42,9 +42,10 @@ const ProgressBar = ({
 }: Props) => {
   const { formatMessage } = useIntl();
   const titleText = formatMessage(MSG.titleProgress, { value, max });
+  const shouldDisplayThreshold = !!(threshold && threshold > 0);
   return (
     <div className={`${styles.wrapper} ${getMainClasses(appearance, styles)}`}>
-      {threshold && (
+      {shouldDisplayThreshold && (
         <div
           style={{
             left: `calc(${threshold}% - 12px)`,
