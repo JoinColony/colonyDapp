@@ -115,4 +115,5 @@ export interface FixedToken {
 export enum ExtendedClientType {
   WrappedTokenClient = 'WrappedTokenClient',
   VestingSimpleClient = 'VestingSimpleClient',
+  LightTokenClient = 'LightTokenClient',
 }
