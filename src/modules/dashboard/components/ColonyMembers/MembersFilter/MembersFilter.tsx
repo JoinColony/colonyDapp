@@ -112,7 +112,7 @@ interface Props {
 }
 
 const MembersFilter = ({ handleFiltersCallback, isRoot }: Props) => {
-  const selectRef = useRef<HTMLButtonElement>(null);
+  const selectRef = useRef<HTMLDivElement>(null);
 
   const scrollIntoView = () => {
     selectRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -162,11 +162,15 @@ const MembersFilter = ({ handleFiltersCallback, isRoot }: Props) => {
                 options={verificationTypes}
                 label={MSG.verificationType}
               />
-              <button
+              {/* Have to use `div` and not a button as we use button
+              further down in `Select` componment and it produces
+              a bad html hierarcy warning */}
+              <div
                 onClick={scrollIntoView}
                 ref={selectRef}
-                type="button"
-                className={styles.button}
+                role="button"
+                tabIndex={0}
+                onKeyUp={scrollIntoView}
               >
                 <Select
                   appearance={{ theme: 'grey' }}
@@ -174,7 +178,7 @@ const MembersFilter = ({ handleFiltersCallback, isRoot }: Props) => {
                   options={bannedStatuses}
                   label={MSG.bannedStatus}
                 />
-              </button>
+              </div>
             </div>
           );
         }}
