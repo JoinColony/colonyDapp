@@ -33,6 +33,7 @@ export enum TRANSACTION_METHODS {
   DeployToken = 'deployToken',
   DeployTokenViaNetwork = 'deployTokenViaNetwork',
   DeployTokenAuthority = 'deployTokenAuthority',
+  Approve = 'approve',
 }
 
 export interface TransactionError {
