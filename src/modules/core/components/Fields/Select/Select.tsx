@@ -111,7 +111,7 @@ const Select = ({
   itemDataTest,
 }: Props) => {
   const [id] = useState<string>(idProp || nanoid());
-  const [, { error, value }, { setValue }] = useField(name);
+  const [, { error, value, touched }, { setValue }] = useField(name);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const { formatMessage } = useIntl();
 
@@ -348,6 +348,7 @@ const Select = ({
           status={status}
           statusValues={statusValues}
           error={error}
+          touched={touched}
         />
       )}
     </div>
