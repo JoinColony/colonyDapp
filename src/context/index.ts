@@ -12,6 +12,12 @@ import UserSettingsClass from './userSettings';
 
 export { UserSettingsClass as UserSettings };
 
+interface ExtendedPurserWallet extends PurserWallet {
+  signTypedData: (
+    typedData: Record<string, any>,
+  ) => Promise<{ signature: string; r: string; s: string; v?: number }>;
+}
+
 export enum ContextModule {
   Wallet = 'wallet',
   ColonyManager = 'colonyManager',
@@ -29,7 +35,7 @@ export interface IpfsWithFallbackSkeleton {
 }
 
 export interface Context {
-  [ContextModule.Wallet]?: PurserWallet;
+  [ContextModule.Wallet]?: ExtendedPurserWallet;
   [ContextModule.ColonyManager]?: ColonyManagerClass;
   // @todo type the client cache properly
   [ContextModule.ApolloClient]?: ApolloClientClass<object>;

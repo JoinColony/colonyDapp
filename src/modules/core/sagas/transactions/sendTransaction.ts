@@ -272,22 +272,7 @@ async function getMetatransactionMethodPromise(
       },
     };
 
-    // eslint-disable-next-line no-console
-    console.log('Typed Approval', signatureApproval);
-
-    const eip2612signature = await provider.send('eth_signTypedData', [
-      userAddress,
-      signatureApproval,
-    ]);
-
-    // eslint-disable-next-line no-console
-    console.log('SIGNATURE for Typed Approval', eip2612signature);
-
-    // const { r, s, v } = splitSignature(eip2612signature);
-
-    const r = `0x${eip2612signature.substring(2, 66)}`;
-    const s = `0x${eip2612signature.substring(66, 130)}`;
-    const v = parseInt(eip2612signature.substring(130), 16);
+    const { r, s, v } = await wallet.signTypedData(signatureApproval);
 
     broadcastData = JSON.stringify({
       target: normalizedClient.address,

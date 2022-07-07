@@ -122,3 +122,8 @@ export enum MetatransactionFlavour {
   Vanilla = 'vanillaMetatransactions',
   EIP2612 = 'eip2612Metatransactions',
 }
+
+export enum RpcMethods {
+  SignTypedData = 'eth_signTypedData',
+  SignTypedDataV4 = 'eth_signTypedData_v4', // Only available via Metamask
+}
