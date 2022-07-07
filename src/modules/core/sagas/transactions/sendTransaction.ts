@@ -1,6 +1,6 @@
 import { call, put, take } from 'redux-saga/effects';
-import { Contract } from 'ethers';
-import { TransactionResponse } from 'ethers/providers';
+import { Contract, Signer, providers } from 'ethers';
+import { TransactionResponse, Web3Provider } from 'ethers/providers';
 import { BigNumberish, splitSignature } from 'ethers/utils';
 import { soliditySha3 } from 'web3-utils';
 import {
@@ -11,6 +11,7 @@ import {
 } from '@colony/colony-js';
 import abis from '@colony/colony-js/lib-esm/abis';
 import { hexSequenceNormalizer } from '@purser/core';
+import { HttpProvider } from 'web3-providers';
 
 import { ActionTypes } from '~redux/index';
 import { selectAsJS } from '~utils/saga/effects';
@@ -61,7 +62,7 @@ async function getTransactionMethodPromise(
 
 async function getMetatransactionMethodPromise(
   client: ContractClient,
-  { methodName, params, identifier: colonyAddress }: TransactionRecord,
+  { methodName, params, identifier: colonyAddress, id }: TransactionRecord,
 ): Promise<TransactionResponse> {
   const wallet = TEMP_getContext(ContextModule.Wallet);
   const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
@@ -70,6 +71,7 @@ async function getMetatransactionMethodPromise(
 
   let normalizedMethodName: string = methodName;
   let normalizedClient: ContractClient = client;
+  let lightTokenClient: ContractClient = client;
   let normalizedParams: MethodParams = params;
 
   switch (methodName) {
@@ -98,22 +100,90 @@ async function getMetatransactionMethodPromise(
       break;
   }
 
+  /*
+   * @NOTE If it's a TokenClient we need to reinstantiate as the "light" token client
+   * basically a frankenstein's monster (currently) supporting both Metatransactions
+   * and EIP-2612 (or attempting to anyway)
+   */
+  if (client.clientType === ClientType.TokenClient) {
+    // eslint-disable-next-line no-console
+    console.log(`We're using a Token Client`);
+
+    lightTokenClient = new Contract(
+      // NOTE: This is actually the token's address
+      colonyAddress || '',
+      [
+        'function getMetatransactionNonce(address) view returns (uint256)',
+        'function nonces(address) view returns (uint256)',
+      ],
+      colonyManager.signer,
+    );
+    lightTokenClient.clientType = ClientType.TokenClient;
+    lightTokenClient.tokenClientType = ExtendedClientType.LightTokenClient;
+    lightTokenClient.metatransactionVariation = 'metatransactions';
+  }
+
   const { provider } = normalizedClient;
 
+  let availableNonce: BigNumberish | undefined;
+
   /*
-   * If the client we're going to query doesn't have such a call it means that
-   * most likely it doesn't support metatransactions.
-   * This can be either our contracts (older ones) or external contracts without
-   * support
+   * @NOTE We have two ways to go about Metatransactions when it comes to the Token Client
+   * Either vanilla metransactions or Signed Approvals. We need to check for both,
+   * and attempt to use of them
    */
-  let availableNonce: BigNumberish;
-  try {
-    availableNonce = await normalizedClient.getMetatransactionNonce(
-      userAddress,
+  if (normalizedClient.clientType === ClientType.TokenClient) {
+    /*
+     * See if the token supports Metatransactions
+     */
+    try {
+      availableNonce = await lightTokenClient.getMetatransactionNonce(
+        userAddress,
+      );
+      lightTokenClient.metatransactionVariation = 'metatransactions';
+    } catch (error) {
+      // silent error
+    }
+    /*
+     * Otherwise, see if supports EIP-2612
+     * https://eips.ethereum.org/EIPS/eip-2612
+     */
+    try {
+      availableNonce = await lightTokenClient.nonces(userAddress);
+      lightTokenClient.metatransactionVariation = 'eip2612';
+    } catch (error) {
+      // silent error
+    }
+    /*
+     * @TODO REMOVE!!
+     */
+    lightTokenClient.metatransactionVariation = 'eip2612';
+    // eslint-disable-next-line no-console
+    console.log(
+      `Token Client is using the ${lightTokenClient.metatransactionVariation} variation`,
     );
-  } catch (error) {
-    throw new Error(generateMetatransactionErrorMessage(normalizedClient));
+
+    if (!availableNonce) {
+      throw new Error(generateMetatransactionErrorMessage(lightTokenClient));
+    }
+  } else {
+    /*
+     * If the client we're going to query doesn't have such a call it means that
+     * most likely it doesn't support metatransactions.
+     * This can be either our contracts (older ones) or external contracts without
+     * support
+     */
+    try {
+      availableNonce = await normalizedClient.getMetatransactionNonce(
+        userAddress,
+      );
+    } catch (error) {
+      throw new Error(generateMetatransactionErrorMessage(normalizedClient));
+    }
   }
+
+  // eslint-disable-next-line no-console
+  console.log('Current NONCE', availableNonce);
 
   // eslint-disable-next-line no-console
   console.log(
@@ -123,20 +193,12 @@ async function getMetatransactionMethodPromise(
     params,
   );
 
-  /*
-   * All the 'WithProofs' helpers don't really exist on chain, so we have to
-   * make sure we are calling the on-chain method, rather than our own helper
-   *
-   * @TODO This needs to handle cases where the method is "withProofs", but
-   * since we can't encode with that helper, we'll have to either find a way around this
-   * or just re-provide proofs (none of which is ideal)
-   */
-  const encodedTransaction = await normalizedClient.interface.functions[
-    normalizedMethodName
-  ].encode([...normalizedParams]);
-
   // eslint-disable-next-line no-console
-  console.log('Encoded transaction', encodedTransaction);
+  console.log('NORMALIZED CLIENT', normalizedClient);
+  if (normalizedClient.clientType === ClientType.TokenClient) {
+    // eslint-disable-next-line no-console
+    console.log('LIGHT TOKEN CLIENT', lightTokenClient);
+  }
 
   const { chainId: currentNetworkChainId } = await provider.getNetwork();
   let chainId = currentNetworkChainId;
@@ -152,57 +214,163 @@ async function getMetatransactionMethodPromise(
     chainId = 1;
   }
 
-  const message = soliditySha3(
-    { t: 'uint256', v: availableNonce.toString() },
-    { t: 'address', v: normalizedClient.address },
-    { t: 'uint256', v: chainId },
-    { t: 'bytes', v: encodedTransaction },
-  ) as string;
+  let broadcastData = '';
+  if (
+    normalizedClient.clientType === ClientType.TokenClient &&
+    lightTokenClient.metatransactionVariation === 'eip2612'
+  ) {
+    // eslint-disable-next-line no-console
+    console.log(
+      `Broadcasting transaction as EIP2612 Metadata variation (obviously via a Token Client)`,
+    );
 
-  // eslint-disable-next-line no-console
-  console.log('Transaction message', message);
+    const tokenName = await normalizedClient.name();
+    const [tokenLockingContractAddres, amount] = params;
 
-  const messageBuffer = Buffer.from(
-    hexSequenceNormalizer(message, false),
-    'hex',
-  );
+    let spender: string | undefined = '';
+    switch (methodName) {
+      case TRANSACTION_METHODS.Approve: {
+        spender = tokenLockingContractAddres as string;
+        break;
+      }
+      default:
+        break;
+    }
 
-  const convertedBufferMessage = Array.from(messageBuffer);
-  /*
-   * Purser validator expects either a string or a Uint8Array. We convert this
-   * to a an array to make Metamask happy when signing the buffer.
-   *
-   * So in order to actually pass validation, both for Software and Metamask
-   * wallets we need to "fake" the array as actually being a Uint.
-   *
-   * Note this not affect the format of the data passed in to be signed,
-   * or the signature.
-   */
-  convertedBufferMessage.constructor = Uint8Array;
+    const deadline = Math.floor(Date.now() / 1000) + 3600;
+    const signatureApproval = {
+      types: {
+        EIP712Domain: [
+          { name: 'name', type: 'string' },
+          { name: 'version', type: 'string' },
+          { name: 'chainId', type: 'uint256' },
+          { name: 'verifyingContract', type: 'address' },
+        ],
+        Permit: [
+          { name: 'owner', type: 'address' },
+          { name: 'spender', type: 'address' },
+          { name: 'value', type: 'uint256' },
+          { name: 'nonce', type: 'uint256' },
+          { name: 'deadline', type: 'uint256' },
+        ],
+      },
+      primaryType: 'Permit',
+      domain: {
+        name: tokenName,
+        version: 1,
+        chainId,
+        verifyingContract: normalizedClient.address,
+      },
+      message: {
+        owner: userAddress,
+        spender,
+        value: amount.toString(),
+        nonce: availableNonce?.toString(),
+        /*
+         * @NOTE One hour in the future from now
+         * Time is in seconds
+         */
+        deadline,
+      },
+    };
 
-  // eslint-disable-next-line no-console
-  console.log('Actual signature converted Buffer', convertedBufferMessage);
+    // eslint-disable-next-line no-console
+    console.log('Typed Approval', signatureApproval);
 
-  const metatransactionSignature = await wallet.signMessage({
-    messageData: (convertedBufferMessage as unknown) as Uint8Array,
-  });
+    const eip2612signature = await provider.send('eth_signTypedData', [
+      userAddress,
+      signatureApproval,
+    ]);
 
-  // eslint-disable-next-line no-console
-  console.log('Signature', metatransactionSignature);
+    // eslint-disable-next-line no-console
+    console.log('SIGNATURE for Typed Approval', eip2612signature);
 
-  const { r, s, v } = splitSignature(metatransactionSignature);
+    // const { r, s, v } = splitSignature(eip2612signature);
 
-  const broadcastData = JSON.stringify({
-    target: normalizedClient.address,
-    payload: encodedTransaction,
-    userAddress,
-    r,
-    s,
-    v,
-  });
+    const r = `0x${eip2612signature.substring(2, 66)}`;
+    const s = `0x${eip2612signature.substring(66, 130)}`;
+    const v = parseInt(eip2612signature.substring(130), 16);
 
-  // eslint-disable-next-line no-console
-  console.log('Broadcast data', broadcastData);
+    broadcastData = JSON.stringify({
+      target: normalizedClient.address,
+      owner: userAddress,
+      spender,
+      value: amount.toString(),
+      deadline,
+      r,
+      s,
+      v,
+    });
+
+    // eslint-disable-next-line no-console
+    console.log('Broadcast data', broadcastData);
+
+  } else {
+    // eslint-disable-next-line no-console
+    console.log('Broadcasting transaction as VANILLA Metadata variation');
+    /*
+     * All the 'WithProofs' helpers don't really exist on chain, so we have to
+     * make sure we are calling the on-chain method, rather than our own helper
+     */
+    const encodedTransaction = await normalizedClient.interface.functions[
+      normalizedMethodName
+    ].encode([...normalizedParams]);
+
+    // eslint-disable-next-line no-console
+    console.log('Encoded transaction', encodedTransaction);
+
+    const message = soliditySha3(
+      { t: 'uint256', v: availableNonce?.toString() as string },
+      { t: 'address', v: normalizedClient.address },
+      { t: 'uint256', v: chainId },
+      { t: 'bytes', v: encodedTransaction },
+    ) as string;
+
+    // eslint-disable-next-line no-console
+    console.log('Transaction message', message);
+
+    const messageBuffer = Buffer.from(
+      hexSequenceNormalizer(message, false),
+      'hex',
+    );
+
+    const convertedBufferMessage = Array.from(messageBuffer);
+    /*
+     * Purser validator expects either a string or a Uint8Array. We convert this
+     * to a an array to make Metamask happy when signing the buffer.
+     *
+     * So in order to actually pass validation, both for Software and Metamask
+     * wallets we need to "fake" the array as actually being a Uint.
+     *
+     * Note this not affect the format of the data passed in to be signed,
+     * or the signature.
+     */
+    convertedBufferMessage.constructor = Uint8Array;
+
+    // eslint-disable-next-line no-console
+    console.log('Actual signature converted Buffer', convertedBufferMessage);
+
+    const metatransactionSignature = await wallet.signMessage({
+      messageData: (convertedBufferMessage as unknown) as Uint8Array,
+    });
+
+    // eslint-disable-next-line no-console
+    console.log('Signature', metatransactionSignature);
+
+    const { r, s, v } = splitSignature(metatransactionSignature);
+
+    broadcastData = JSON.stringify({
+      target: normalizedClient.address,
+      payload: encodedTransaction,
+      userAddress,
+      r,
+      s,
+      v,
+    });
+
+    // eslint-disable-next-line no-console
+    console.log('Broadcast data', broadcastData);
+  }
 
   const response = await fetch(
     `${process.env.BROADCASTER_ENDPOINT}/broadcast`,
@@ -235,6 +403,9 @@ async function getMetatransactionMethodPromise(
         responseData?.payload,
     );
   }
+
+  // eslint-disable-next-line no-console
+  console.log(`Metatransaction ${id} done ------------`);
 
   return {
     hash: responseData.txHash,
