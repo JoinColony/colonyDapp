@@ -82,7 +82,7 @@ const Textarea = ({
 }: Props) => {
   const { formatMessage } = useIntl();
   const [id] = useState(idProp || nanoid());
-  const [{ value, ...fieldInputProps }, { error }] = useField<string>({
+  const [{ value, ...fieldInputProps }, { error, touched }] = useField<string>({
     name,
     value: '',
   });
@@ -108,7 +108,7 @@ const Textarea = ({
       <div className={styles.textareaWrapper}>
         <textarea
           {...fieldInputProps}
-          aria-invalid={error ? true : undefined}
+          aria-invalid={touched && error ? true : undefined}
           className={getMainClasses(appearance, styles)}
           id={id}
           maxLength={maxLength}
@@ -135,6 +135,7 @@ const Textarea = ({
           status={status}
           statusValues={statusValues}
           error={error}
+          touched={touched}
         />
       )}
     </div>

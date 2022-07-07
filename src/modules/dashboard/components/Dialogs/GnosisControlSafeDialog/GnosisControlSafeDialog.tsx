@@ -74,6 +74,7 @@ const validationSchema = yup.object().shape({
       walletAddress: yup.string().when('transactionType', {
         is: (transactionType) => transactionType === 'transferFunds',
         then: yup.string().address().required(),
+        otherwise: false,
       }),
     }),
   }),
@@ -86,26 +87,32 @@ const validationSchema = yup.object().shape({
       .transform((value) => toFinite(value))
       .required()
       .moreThan(0, () => MSG.amountZero),
+    otherwise: false,
   }),
   tokenAddress: yup.string().when('transactionType', {
     is: (transactionType) => transactionType === 'transferFunds',
     then: yup.string().address().required(),
+    otherwise: false,
   }),
   data: yup.string().when('transactionType', {
     is: (transactionType) => transactionType === 'rawTransaction',
     then: yup.string().required(),
+    otherwise: false,
   }),
   contract: yup.string().when('transactionType', {
     is: (transactionType) => transactionType === 'contractInteraction',
     then: yup.string().address().required(),
+    otherwise: false,
   }),
   abi: yup.string().when('transactionType', {
     is: (transactionType) => transactionType === 'contractInteraction',
     then: yup.string().required(),
+    otherwise: false,
   }),
   contractFunction: yup.string().when('transactionType', {
     is: (transactionType) => transactionType === 'contractInteraction',
     then: yup.string().required(),
+    otherwise: false,
   }),
 });
 
@@ -121,10 +128,9 @@ const GnosisControlSafeDialog = ({
       initialValues={{
         safe: '',
         transactionType: '',
-        forceAction: false,
         tokenAddress: colony.nativeTokenAddress,
-        amount: 0,
-        recipient: '',
+        amount: undefined,
+        recipient: null,
         data: '',
         contract: '',
         abi: '',
