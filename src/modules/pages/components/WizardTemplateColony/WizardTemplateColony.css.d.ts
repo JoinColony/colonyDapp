@@ -1,3 +1,4 @@
+export const query700: string;
 export const layoutMain: string;
 export const header: string;
 export const steps: string;
