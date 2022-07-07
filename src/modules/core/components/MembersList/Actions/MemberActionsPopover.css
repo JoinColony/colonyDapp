@@ -15,13 +15,3 @@
   fill: var(--temp-grey-blue-7);
   stroke: none;
 }
-
-@media screen and query700 {
-  div[class*="MembersListItem_main"] div[class*="DropdownMenu_main"] {
-    padding: 6px 0;
-  }
-
-  div[class*="MembersListItem_main"] li[class*="DropdownMenuItem"] {
-    padding: 6px 0 6px 12px;
-  }
-}

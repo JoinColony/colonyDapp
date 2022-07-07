@@ -126,11 +126,11 @@
     max-width: 100vw;
   }
 
-  .main div[class*="CopyableAddress_main"] {
+  .section p + div > div {
     gap: 10px;
   }
 
-  .main span[class*="MaskedAddress"] {
+  .section p + div > div span {
     padding-right: 10px;
     overflow-wrap: anywhere;
   }
