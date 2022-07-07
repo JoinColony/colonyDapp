@@ -113,9 +113,15 @@ export const isMetatransactionErrorFromColonyContract = (
   if (clientType === ClientType.TokenClient) {
     [, tokenType] = error.message.match(TOKEN_TYPE_REGEX) || [];
   }
-  const isCorrectClient = Object.values(ClientType).includes(
-    clientType as ClientType,
-  );
+  /*
+   * @NOTE All ColonyJS client types (if correct version) support Metatransactions
+   * Locally defined clients (in Dapp) may not. Out of them, the only one currently
+   * supporting that is the `Light Token Client` hence why it's singled out
+   */
+  const isCorrectClient = [
+    ...Object.values(ClientType),
+    ExtendedClientType.LightTokenClient,
+  ].includes(clientType as ClientType);
   const isCorrectToken = tokenType === TokenClientType.Colony;
   if (clientType === ClientType.TokenClient) {
     return isCorrectClient && isCorrectToken;
