@@ -117,3 +117,8 @@ export enum ExtendedClientType {
   VestingSimpleClient = 'VestingSimpleClient',
   LightTokenClient = 'LightTokenClient',
 }
+
+export enum MetatransactionFlavour {
+  Vanilla = 'vanillaMetatransactions',
+  EIP2612 = 'eip2612Metatransactions',
+}
