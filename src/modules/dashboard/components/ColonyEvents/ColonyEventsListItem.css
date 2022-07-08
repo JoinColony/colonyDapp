@@ -5,6 +5,8 @@
 @value popoverWidth: 400px;
 @value popoverDistance: 10px;
 
+@value query700 from '~styles/queries.css';
+
 .listItem:first-of-type {
   border-top: 1px solid var(--temp-grey-13);
 }
@@ -92,4 +94,17 @@
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   color: var(--action-secondary);
+}
+
+@media screen and query700 {
+  .title {
+    padding: 15px 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .main {
+    height: auto;
+    min-height: 51px;
+  }
 }
