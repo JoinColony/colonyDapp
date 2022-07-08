@@ -80,7 +80,7 @@ async function getMetatransactionMethodPromise(
   let lightTokenClient: ContractClient = client;
   let normalizedParams: MethodParams = params;
   let availableNonce: BigNumberish | undefined;
-  let broadcastData = '';
+  let broadcastData: Record<string, any> = {};
 
   switch (methodName) {
     /*
@@ -236,7 +236,7 @@ async function getMetatransactionMethodPromise(
       ),
     );
 
-    broadcastData = JSON.stringify({
+    broadcastData = {
       target: normalizedClient.address,
       owner: userAddress,
       spender,
@@ -245,7 +245,7 @@ async function getMetatransactionMethodPromise(
       r,
       s,
       v,
-    });
+    };
 
     // eslint-disable-next-line no-console
     console.log('Broadcast data', broadcastData);
@@ -280,14 +280,14 @@ async function getMetatransactionMethodPromise(
 
     const { r, s, v } = splitSignature(metatransactionSignature);
 
-    broadcastData = JSON.stringify({
+    broadcastData = {
       target: normalizedClient.address,
       payload: encodedTransaction,
       userAddress,
       r,
       s,
       v,
-    });
+    };
 
     // eslint-disable-next-line no-console
     console.log('Broadcast data', broadcastData);
@@ -295,7 +295,7 @@ async function getMetatransactionMethodPromise(
 
   const {
     responseData: { txHash: hash },
-  } = await broadcastMetatransaction(broadcastData);
+  } = await broadcastMetatransaction(normalizedMethodName, broadcastData);
 
   // eslint-disable-next-line no-console
   console.log(`Metatransaction ${id} done ------------`);

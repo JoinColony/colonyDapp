@@ -8,6 +8,8 @@ import { Address } from '~types/index';
 
 import { DEFAULT_NETWORK } from '~constants';
 
+import { generateBroadcasterHumanReadableError } from './errorMessages';
+
 export async function getChainId(): Promise<number> {
   const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
   const { provider } = colonyManager;
@@ -121,14 +123,15 @@ export const generateMetatransactionMessage = async (
 };
 
 export const broadcastMetatransaction = async (
-  broadcastData: string,
+  methodName: string,
+  broadcastData: Record<string, any> = {},
 ): Promise<{
   responseData: {
     payload?: string;
     reason?: string;
     txHash?: string;
   };
-  reponseStatus: 'fail' | 'success';
+  reponseStatus: 'fail' | 'success' | 'unknown';
   response: Response;
 }> => {
   const response = await fetch(
@@ -138,32 +141,25 @@ export const broadcastMetatransaction = async (
       headers: {
         'Content-Type': 'application/json',
       },
-      body: broadcastData,
+      body: JSON.stringify(broadcastData),
     },
   );
   const {
-    message: responseErrorMessage,
+    message: responseError,
     status: reponseStatus,
     data: responseData,
   } = await response.json();
 
   // eslint-disable-next-line no-console
-  console.log(
-    'Response data',
-    responseErrorMessage,
-    reponseStatus,
-    responseData,
-  );
+  console.log('Response data', responseError, reponseStatus, responseData);
 
-  /*
-   * @TODO Generate human friendly error message for the token being locked
-   * (only required for Metatransactions)
-   */
   if (reponseStatus !== 'success') {
     throw new Error(
-      responseErrorMessage?.reason ||
-        responseErrorMessage ||
-        responseData?.payload,
+      generateBroadcasterHumanReadableError(
+        methodName,
+        responseError,
+        responseData,
+      ),
     );
   }
 
