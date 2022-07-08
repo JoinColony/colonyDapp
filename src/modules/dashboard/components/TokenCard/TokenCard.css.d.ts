@@ -1,4 +1,5 @@
 export const headerFooterHeights: string;
+export const query700: string;
 export const main: string;
 export const cardHeading: string;
 export const iconContainer: string;
