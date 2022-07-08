@@ -28,7 +28,7 @@ interface Props {
   tooltipPopperOptions?: PopperOptions;
   tooltipClassName?: string;
   className?: string;
-  iconTitle?: string;
+  iconTitle?: string | MessageDescriptor;
   showArrow?: boolean;
   dataTest?: string;
 }
