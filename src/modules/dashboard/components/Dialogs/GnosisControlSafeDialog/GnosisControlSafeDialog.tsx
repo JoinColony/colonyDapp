@@ -34,10 +34,12 @@ const safes = [
 ];
 
 export interface FormValues {
+  transactions: {
+    transactionType: string;
+    tokenAddress?: string;
+    amount?: string;
+  }[];
   safe: string;
-  transactionType: string;
-  tokenAddress?: string;
-  amount?: string;
   forceAction: boolean;
 }
 
@@ -68,52 +70,56 @@ type Props = DialogProps &
 
 const validationSchema = yup.object().shape({
   safe: yup.string().required(),
-  transactionType: yup.string().required(),
-  recipient: yup.object().shape({
-    profile: yup.object().shape({
-      walletAddress: yup.string().when('transactionType', {
+  transactions: yup.array(
+    yup.object().shape({
+      transactionType: yup.string().required(),
+      recipient: yup.object().shape({
+        profile: yup.object().shape({
+          walletAddress: yup.string().when('transactionType', {
+            is: (transactionType) => transactionType === 'transferFunds',
+            then: yup.string().address().required(),
+            otherwise: false,
+          }),
+        }),
+      }),
+      amount: yup.number().when('transactionType', {
+        is: (transactionType) =>
+          transactionType === 'transferFunds' ||
+          transactionType === 'rawTransaction',
+        then: yup
+          .number()
+          .transform((value) => toFinite(value))
+          .required()
+          .moreThan(0, () => MSG.amountZero),
+        otherwise: false,
+      }),
+      tokenAddress: yup.string().when('transactionType', {
         is: (transactionType) => transactionType === 'transferFunds',
         then: yup.string().address().required(),
         otherwise: false,
       }),
+      data: yup.string().when('transactionType', {
+        is: (transactionType) => transactionType === 'rawTransaction',
+        then: yup.string().required(),
+        otherwise: false,
+      }),
+      contract: yup.string().when('transactionType', {
+        is: (transactionType) => transactionType === 'contractInteraction',
+        then: yup.string().address().required(),
+        otherwise: false,
+      }),
+      abi: yup.string().when('transactionType', {
+        is: (transactionType) => transactionType === 'contractInteraction',
+        then: yup.string().required(),
+        otherwise: false,
+      }),
+      contractFunction: yup.string().when('transactionType', {
+        is: (transactionType) => transactionType === 'contractInteraction',
+        then: yup.string().required(),
+        otherwise: false,
+      }),
     }),
-  }),
-  amount: yup.number().when('transactionType', {
-    is: (transactionType) =>
-      transactionType === 'transferFunds' ||
-      transactionType === 'rawTransaction',
-    then: yup
-      .number()
-      .transform((value) => toFinite(value))
-      .required()
-      .moreThan(0, () => MSG.amountZero),
-    otherwise: false,
-  }),
-  tokenAddress: yup.string().when('transactionType', {
-    is: (transactionType) => transactionType === 'transferFunds',
-    then: yup.string().address().required(),
-    otherwise: false,
-  }),
-  data: yup.string().when('transactionType', {
-    is: (transactionType) => transactionType === 'rawTransaction',
-    then: yup.string().required(),
-    otherwise: false,
-  }),
-  contract: yup.string().when('transactionType', {
-    is: (transactionType) => transactionType === 'contractInteraction',
-    then: yup.string().address().required(),
-    otherwise: false,
-  }),
-  abi: yup.string().when('transactionType', {
-    is: (transactionType) => transactionType === 'contractInteraction',
-    then: yup.string().required(),
-    otherwise: false,
-  }),
-  contractFunction: yup.string().when('transactionType', {
-    is: (transactionType) => transactionType === 'contractInteraction',
-    then: yup.string().required(),
-    otherwise: false,
-  }),
+  ),
 });
 
 const GnosisControlSafeDialog = ({
@@ -127,14 +133,18 @@ const GnosisControlSafeDialog = ({
     <ActionForm
       initialValues={{
         safe: '',
-        transactionType: '',
-        tokenAddress: colony.nativeTokenAddress,
-        amount: undefined,
-        recipient: null,
-        data: '',
-        contract: '',
-        abi: '',
-        contractFunction: '',
+        transactions: [
+          {
+            transactionType: '',
+            tokenAddress: colony.nativeTokenAddress,
+            amount: undefined,
+            recipient: null,
+            data: '',
+            contract: '',
+            abi: '',
+            contractFunction: '',
+          },
+        ],
       }}
       validationSchema={validationSchema}
       submit={ActionTypes.COLONY_ACTION_GENERIC}
