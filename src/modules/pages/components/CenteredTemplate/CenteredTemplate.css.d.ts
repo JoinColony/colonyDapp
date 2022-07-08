@@ -1,4 +1,5 @@
 export const paddingHorizontal: string;
+export const query700: string;
 export const main: string;
 export const header: string;
 export const mainContainer: string;
