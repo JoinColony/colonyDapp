@@ -76,8 +76,6 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.RecoveryStorageSlotSet} {{agent} set storage slot {storageSlot} to {storageSlotValue}}
       ${ColonyAndExtensionsEvents.RecoveryModeExitApproved} {{agent} approved exiting the Recovery Mode}
       ${ColonyAndExtensionsEvents.RecoveryModeExited} {{agent} exited the colony from Recovery Mode}
-      ${ColonyAndExtensionsEvents.PeriodUpdated} {Coin machine period updated from {activePeriod} to {currentPeriod}}
-      ${ColonyAndExtensionsEvents.TokensBought} {{agent} bought {amount} {tokenSymbol}}
       ${ColonyAndExtensionsEvents.MotionCreated} {{agent} created motion {motionId} in {domain}}
       ${ColonyAndExtensionsEvents.MotionStaked} {{agent} {voteSide} motion {motionId} for {amount} {tokenSymbol}}
       ${ColonyAndExtensionsEvents.MotionVoteSubmitted} {{agent} voted in motion {motionId}}

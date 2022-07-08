@@ -2,11 +2,6 @@ import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType, getExtensionHash, Extension } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 
-import {
-  CoinMachineHasWhitelistQuery,
-  CoinMachineHasWhitelistQueryVariables,
-  CoinMachineHasWhitelistDocument,
-} from '~data/index';
 import { Action, ActionTypes } from '~redux/index';
 import { putError, takeFrom } from '~utils/saga/effects';
 
@@ -28,7 +23,6 @@ export function* colonyExtensionUninstall({
   let txChannel;
   try {
     const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
-    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
     txChannel = yield call(getTxChannel, metaId);
 
     let haveToUpdateCoinMachineWhitelist = false;
@@ -128,17 +122,6 @@ export function* colonyExtensionUninstall({
     }
 
     yield call(refreshExtension, colonyAddress, extensionId);
-
-    yield apolloClient.query<
-      CoinMachineHasWhitelistQuery,
-      CoinMachineHasWhitelistQueryVariables
-    >({
-      query: CoinMachineHasWhitelistDocument,
-      variables: {
-        colonyAddress,
-      },
-      fetchPolicy: 'network-only',
-    });
   } catch (error) {
     return yield putError(
       ActionTypes.COLONY_EXTENSION_UNINSTALL_ERROR,

@@ -23,12 +23,8 @@ import {
   UserWhitelistStatusQuery,
   UserWhitelistStatusQueryVariables,
   UserWhitelistStatusDocument,
-  CoinMachineSalePeriodsQuery,
-  CoinMachineSalePeriodsQueryVariables,
-  CoinMachineSalePeriodsDocument,
 } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
-import { PREV_PERIODS_LIMIT } from '~dashboard/CoinMachine/TokenSalesTable/TokenSalesTable';
 
 export function* refreshExtension(
   colonyAddress: string,
@@ -68,20 +64,6 @@ export function* refreshExtension(
       variables: {
         colonyAddress,
         userAddress: walletAddress,
-      },
-      fetchPolicy: 'network-only',
-    });
-  }
-
-  if (extensionId === Extension.CoinMachine) {
-    yield apolloClient.query<
-      CoinMachineSalePeriodsQuery,
-      CoinMachineSalePeriodsQueryVariables
-    >({
-      query: CoinMachineSalePeriodsDocument,
-      variables: {
-        colonyAddress,
-        limit: PREV_PERIODS_LIMIT,
       },
       fetchPolicy: 'network-only',
     });

@@ -21,7 +21,6 @@ import {
   COLONY_HOME_ROUTE,
   COLONY_EVENTS_ROUTE,
   ACTIONS_PAGE_ROUTE,
-  COIN_MACHINE_ROUTE,
   USER_ROUTE,
   MEMBERS_ROUTE,
   COLONY_EXTENSION_SETUP_ROUTE,
@@ -96,7 +95,6 @@ const MSG = defineMessages({
     id: 'utils.hooks.useTitle.colonyExtensionDetails',
     defaultMessage: `Extensions > {extensionId, select,
       VotingReputation {Governance}
-      CoinMachine {Coin Machine}
       OneTxPayment {One Transaction Payment}
       other {{extensionId}}
       } | Colony - {colonyName}`,
@@ -106,7 +104,6 @@ const MSG = defineMessages({
     id: 'utils.hooks.useTitle.colonyExtensionSetup',
     defaultMessage: `Extensions > {extensionId, select,
       VotingReputation {Governance}
-      CoinMachine {Coin Machine}
       OneTxPayment {One Transaction Payment}
       other {{extensionId}}
       } > Setup | Colony - {colonyName}`,
@@ -159,7 +156,6 @@ const routeMessages: Record<string, MessageDescriptor> = {
   [MEMBERS_ROUTE]: MSG.colonyMembers,
   [USER_ROUTE]: MSG.userProfile,
   [ACTIONS_PAGE_ROUTE]: MSG.transactionDetails,
-  [COIN_MACHINE_ROUTE]: MSG.buyTokens,
   '/': MSG.fallbackTitle,
 };
 

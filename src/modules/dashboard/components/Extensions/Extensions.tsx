@@ -45,6 +45,10 @@ interface Props {
 }
 
 const Extensions = ({ colonyAddress }: Props) => {
+  // remove "CoinMachine" from list of possible extensions
+  // - until extension is removed from Colony-JS
+  const cleanedExtensions = extensions.filter((item) => item !== 'CoinMachine');
+
   const { data, loading } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
   });
@@ -68,7 +72,7 @@ const Extensions = ({ colonyAddress }: Props) => {
   const availableExtensionsData = useMemo(() => {
     if (data?.processedColony?.installedExtensions) {
       const { installedExtensions } = data.processedColony;
-      return extensions.reduce((availableExtensions, extensionName) => {
+      return cleanedExtensions.reduce((availableExtensions, extensionName) => {
         const installedExtension = installedExtensions.find(
           ({ extensionId }) => extensionName === extensionId,
         );
@@ -93,7 +97,7 @@ const Extensions = ({ colonyAddress }: Props) => {
       }, []);
     }
     return [];
-  }, [data, networkExtensionData]);
+  }, [cleanedExtensions, data, networkExtensionData]);
 
   if (loading) {
     return (

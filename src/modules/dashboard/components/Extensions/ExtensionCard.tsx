@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, MessageDescriptor } from 'react-intl';
 
 import { useParams } from 'react-router';
 import Card from '~core/Card';
@@ -50,7 +50,13 @@ const ExtensionCard = ({ extension, installedExtension, dataTest }: Props) => {
             </div>
           </div>
           <div className={styles.cardDescription}>
-            <FormattedMessage {...extension.descriptionShort} />
+            {extension.descriptionShort === 'string' ? (
+              extension.descriptionShort
+            ) : (
+              <FormattedMessage
+                {...(extension.descriptionShort as MessageDescriptor)}
+              />
+            )}
           </div>
           {installedExtension ? (
             <div className={styles.status}>

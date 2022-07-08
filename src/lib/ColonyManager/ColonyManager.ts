@@ -175,11 +175,6 @@ export default class ColonyManager {
           Extension.OneTxPayment,
         );
       }
-      case ClientType.CoinMachineClient: {
-        if (!identifier)
-          throw new Error('Need colony identifier to get CoinMachineClient');
-        return this.getColonyExtensionClient(identifier, Extension.CoinMachine);
-      }
       case ClientType.VotingReputationClient: {
         if (!identifier)
           throw new Error(

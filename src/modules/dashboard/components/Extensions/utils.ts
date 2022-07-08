@@ -39,10 +39,6 @@ export const getButtonAction = (
   let actionBeginning: string;
 
   switch (extensionId) {
-    case Extension.CoinMachine: {
-      actionBeginning = 'COIN_MACHINE';
-      break;
-    }
     case Extension.Whitelist: {
       actionBeginning = 'WHITELIST';
       break;

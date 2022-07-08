@@ -106,11 +106,6 @@ export enum ColonyAndExtensionsEvents {
    */
   OneTxPaymentMade = 'OneTxPaymentMade',
   /*
-   * Extension: Coin Machine events
-   */
-  TokensBought = 'TokensBought',
-  PeriodUpdated = 'PeriodUpdated',
-  /*
    * Motion events
    */
   MotionCreated = 'MotionCreated',
