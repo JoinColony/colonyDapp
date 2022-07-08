@@ -13,7 +13,6 @@ import { ContextModule, TEMP_getContext } from '~context/index';
 import { XDAI_NETWORK } from '~constants';
 import { metamaskSwitchNetwork } from '../../../users/sagas/wallet';
 import {
-  ExtendedClientType,
   MethodParams,
   MetatransactionFlavour,
   MetamaskRpcErrors,
@@ -95,7 +94,11 @@ async function getMetatransactionPromise(
       colonyManager.signer,
     );
     lightTokenClient.clientType = ClientType.TokenClient;
-    lightTokenClient.tokenClientType = ExtendedClientType.LightTokenClient;
+    /*
+     * @NOTE This is only used in error reporting, if the token contract
+     * does not support neither vanilla metatransactions or eip2612 metransactions
+     */
+    lightTokenClient.tokenClientType = 'Light';
     lightTokenClient.metatransactionVariation = MetatransactionFlavour.Vanilla;
 
     // eslint-disable-next-line no-console
