@@ -1,4 +1,5 @@
 import { createIntl } from 'react-intl';
+import { parseBytes32String } from 'ethers/utils';
 
 import { TRANSACTION_METHODS } from '~immutable/index';
 import { ContractRevertErrors } from '~types/index';
@@ -27,14 +28,35 @@ export const generateBroadcasterHumanReadableError = (
 
   if (
     methodName === TRANSACTION_METHODS.Approve &&
-    response?.reason?.includes(ContractRevertErrors.TokenUnauthorized)
+    (response?.reason?.includes(ContractRevertErrors.TokenUnauthorized) ||
+      /*
+       * @NOTE Account for error reasons encoded as hex strings
+       * From RPC endpoints like Nethermind
+       */
+      parseBytes32String(response?.reason?.padEnd(66, '0') as string).includes(
+        ContractRevertErrors.TokenUnauthorized,
+      ))
   ) {
     errorMessage = intl.formatMessage({ id: 'error.tokenLocked' });
   }
 
   if (
     response?.reason?.includes(ContractRevertErrors.MetaTxInvalidSignature) ||
-    response?.reason?.includes(ContractRevertErrors.TokenInvalidSignature)
+    /*
+     * @NOTE Account for error reasons encoded as hex strings
+     * From RPC endpoints like Nethermind
+     */
+    parseBytes32String(response?.reason?.padEnd(66, '0') as string).includes(
+      ContractRevertErrors.MetaTxInvalidSignature,
+    ) ||
+    response?.reason?.includes(ContractRevertErrors.TokenInvalidSignature) ||
+    /*
+     * @NOTE Account for error reasons encoded as hex strings
+     * From RPC endpoints like Nethermind
+     */
+    parseBytes32String(response?.reason?.padEnd(66, '0') as string).includes(
+      ContractRevertErrors.TokenInvalidSignature,
+    )
   ) {
     errorMessage = intl.formatMessage({ id: 'error.invalidSignature' });
   }
