@@ -6,7 +6,6 @@ import { soliditySha3 } from 'web3-utils';
 import {
   ContractClient,
   TransactionOverrides,
-  Network,
   ClientType,
 } from '@colony/colony-js';
 import abis from '@colony/colony-js/lib-esm/abis';
@@ -28,12 +27,12 @@ import {
   MethodParams,
   MetatransactionFlavour,
 } from '~types/index';
-import { DEFAULT_NETWORK } from '~constants';
 
 import { transactionSendError } from '../../actionCreators';
 import { oneTransaction } from '../../selectors';
 
 import transactionChannel from './transactionChannel';
+import { getChainId } from '../utils';
 
 /*
  * Given a method and a transaction record, create a promise for sending the
@@ -65,17 +64,19 @@ async function getTransactionMethodPromise(
 
 async function getMetatransactionMethodPromise(
   client: ContractClient,
-  { methodName, params, identifier: colonyAddress, id }: TransactionRecord,
+  { methodName, params, identifier: clientAddress, id }: TransactionRecord,
 ): Promise<TransactionResponse> {
   const wallet = TEMP_getContext(ContextModule.Wallet);
   const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
   const { networkClient } = colonyManager;
   const { address: userAddress } = wallet;
+  const chainId = await getChainId();
 
   let normalizedMethodName: string = methodName;
   let normalizedClient: ContractClient = client;
   let lightTokenClient: ContractClient = client;
   let normalizedParams: MethodParams = params;
+  let availableNonce: BigNumberish | undefined;
 
   switch (methodName) {
     /*
@@ -94,7 +95,7 @@ async function getMetatransactionMethodPromise(
       const [tokenAddress, allowedToTransfer] = params;
       normalizedParams = [
         tokenAddress,
-        colonyAddress as string,
+        clientAddress as string,
         allowedToTransfer,
       ];
       break;
@@ -103,18 +104,25 @@ async function getMetatransactionMethodPromise(
       break;
   }
 
+  // eslint-disable-next-line no-console
+  console.log('NORMALIZED CLIENT', normalizedClient);
+
   /*
-   * @NOTE If it's a TokenClient we need to reinstantiate as the "light" token client
-   * basically a frankenstein's monster (currently) supporting both Metatransactions
-   * and EIP-2612 (or attempting to anyway)
+   * @NOTE We have two ways to go about Metatransactions when it comes to the Token Client
+   * Either vanilla metransactions or Signed Approvals (EIP2612). We need to check for both,
+   * and attempt to use of them
    */
-  if (client.clientType === ClientType.TokenClient) {
+  if (normalizedClient.clientType === ClientType.TokenClient) {
     // eslint-disable-next-line no-console
     console.log(`We're using a Token Client`);
 
+    /*
+     * @NOTE If it's a TokenClient we need to reinstantiate as the "light" token client
+     * basically a frankenstein's monster (currently) supporting both Metatransactions
+     * and EIP-2612 (or attempting to anyway)
+     */
     lightTokenClient = new Contract(
-      // NOTE: This is actually the token's address
-      colonyAddress || '',
+      clientAddress as string,
       [
         'function getMetatransactionNonce(address) view returns (uint256)',
         'function nonces(address) view returns (uint256)',
@@ -124,18 +132,10 @@ async function getMetatransactionMethodPromise(
     lightTokenClient.clientType = ClientType.TokenClient;
     lightTokenClient.tokenClientType = ExtendedClientType.LightTokenClient;
     lightTokenClient.metatransactionVariation = MetatransactionFlavour.Vanilla;
-  }
 
-  const { provider } = normalizedClient;
+    // eslint-disable-next-line no-console
+    console.log('LIGHT TOKEN CLIENT', lightTokenClient);
 
-  let availableNonce: BigNumberish | undefined;
-
-  /*
-   * @NOTE We have two ways to go about Metatransactions when it comes to the Token Client
-   * Either vanilla metransactions or Signed Approvals. We need to check for both,
-   * and attempt to use of them
-   */
-  if (normalizedClient.clientType === ClientType.TokenClient) {
     /*
      * See if the token supports Metatransactions
      */
@@ -193,27 +193,6 @@ async function getMetatransactionMethodPromise(
     normalizedMethodName,
     params,
   );
-
-  // eslint-disable-next-line no-console
-  console.log('NORMALIZED CLIENT', normalizedClient);
-  if (normalizedClient.clientType === ClientType.TokenClient) {
-    // eslint-disable-next-line no-console
-    console.log('LIGHT TOKEN CLIENT', lightTokenClient);
-  }
-
-  const { chainId: currentNetworkChainId } = await provider.getNetwork();
-  let chainId = currentNetworkChainId;
-  if (DEFAULT_NETWORK === Network.Local) {
-    /*
-     * Due to ganache internals shannanigans, when on the local ganache network
-     * we must use chainId 1, otherwise the broadcaster (and the underlying contracts)
-     * wont't be able to verify the signature (due to a chainId miss-match)
-     *
-     * This issue is only valid for ganache networks, as in production the chain id
-     * is returned properly
-     */
-    chainId = 1;
-  }
 
   let broadcastData = '';
   if (
