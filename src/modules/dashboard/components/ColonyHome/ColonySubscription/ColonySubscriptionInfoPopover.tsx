@@ -42,7 +42,7 @@ const ColonySubscriptionInfoPopover = ({
   onUnsubscribe = () => {},
 }: Props) => {
   const isMobile = useMediaQuery({ query });
-  const offset = isMobile ? [115, -365] : [100, -10];
+  const offset = isMobile ? [115, -20] : [100, -10];
 
   return (
     <Popover
@@ -90,7 +90,7 @@ const ColonySubscriptionInfoPopover = ({
       }
       trigger="click"
       showArrow={false}
-      placement="right"
+      placement={isMobile ? 'left' : 'right'}
       popperOptions={{
         modifiers: [
           {
