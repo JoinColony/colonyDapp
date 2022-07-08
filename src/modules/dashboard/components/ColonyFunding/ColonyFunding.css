@@ -63,6 +63,17 @@
     gap: 20px;
   }
 
+  .aside {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+  }
+
+  .banner {
+    margin: 0 0 40px;
+  }
+
   .titleContainer {
     align-items: center;
     margin-bottom: 20px;
@@ -75,29 +86,28 @@
     width: auto;
   }
 
-  .aside {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
+  .titleContainer ul {
+    width: 200px;
+    top: calc(100% + 2px);
+    right: 0px;
   }
 
-  .banner {
-    margin: 0 0 40px;
+  .titleContainer ~ div {
+    padding-bottom: 0;
   }
 
-  .titleContainer + div > ul {
+  .titleContainer ~ div > ul {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 5px;
   }
 
-  .titleContainer + div > ul * {
+  .titleContainer ~ div > ul * {
     margin: 0;
   }
 
-  .titleContainer + div > ul > div {
+  .titleContainer ~ div > ul > div {
     width: calc(100% - 28px);
   }
 
@@ -117,16 +127,6 @@
 
   .content div > li:only-child > div:nth-child(3) {
     line-height: 12px;
-  }
-
-  .titleContainer ul {
-    width: 200px;
-    top: calc(100% + 2px);
-    right: 0px;
-  }
-
-  .titleContainer + div {
-    padding-bottom: 0;
   }
 
   .content div[role='tooltip'] {
@@ -168,7 +168,8 @@
     position: static;
   }
 
-  .content.content p + div > div { /* Repeating the .content class increases specificity and prevents override from selector above. */
+  /* Repeating the .content class increases specificity and prevents override from selector above. */
+  .content.content p + div > div {
     align-items: flex-start;
     gap: 30px;
   }
