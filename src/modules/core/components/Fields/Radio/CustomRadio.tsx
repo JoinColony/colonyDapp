@@ -102,7 +102,10 @@ const CustomRadio = ({
             {label === 'string' ? (
               label
             ) : (
-              <FormattedMessage {...label} values={labelValues} />
+              <FormattedMessage
+                {...(label as MessageDescriptor)}
+                values={labelValues}
+              />
             )}
           </span>
         )}
@@ -111,7 +114,10 @@ const CustomRadio = ({
             {description === 'string' ? (
               description
             ) : (
-              <FormattedMessage {...description} values={descriptionValues} />
+              <FormattedMessage
+                {...(description as MessageDescriptor)}
+                values={descriptionValues}
+              />
             )}
           </span>
         )}
