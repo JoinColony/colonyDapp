@@ -5,11 +5,15 @@ import sortBy from 'lodash/sortBy';
 
 import { SpinnerLoader } from '~core/Preloaders';
 import UserPermissions from '~dashboard/UserPermissions';
+import {
+  FormValues as FiltersFormValues,
+  MemberType,
+} from '~dashboard/ColonyMembers/MembersFilter';
+
 import { useTransformer } from '~utils/hooks';
 import {
   Colony,
   useLoggedInUser,
-  BannedUsersQuery,
   useContributorsAndWatchersQuery,
   ColonyContributor,
   ColonyWatcher,
@@ -45,9 +49,9 @@ const MSG = defineMessages({
 
 interface Props {
   colony: Colony;
-  bannedUsers: BannedUsersQuery['bannedUsers'];
   selectedDomain: number | undefined;
   handleDomainChange: React.Dispatch<React.SetStateAction<number>>;
+  filters: FiltersFormValues;
 }
 
 export type Member = AnyUser & {
@@ -63,6 +67,7 @@ const Members = ({
   colony,
   selectedDomain,
   handleDomainChange,
+  filters,
 }: Props) => {
   const [searchValue, setSearchValue] = useState<string>('');
   const {
@@ -108,35 +113,43 @@ const Members = ({
     ['value'],
   );
 
-  const filterContributorsAndWatchers = useCallback(
-    (filterValue) => {
-      const filteredContributors = filterMembers<ColonyContributor>(
-        members?.contributorsAndWatchers?.contributors || [],
-        filterValue,
-      );
-      setContributors(filteredContributors);
+  const filterContributorsAndWatchers = useCallback(() => {
+    const filteredContributors = filterMembers<ColonyContributor>(
+      members?.contributorsAndWatchers?.contributors || [],
+      searchValue,
+      filters,
+    );
+    setContributors(filteredContributors);
 
-      const filteredWatchers = filterMembers<ColonyWatcher>(
-        members?.contributorsAndWatchers?.watchers || [],
-        filterValue,
-      );
-      setWatchers(filteredWatchers);
-    },
-    [members],
-  );
+    const filteredWatchers = filterMembers<ColonyWatcher>(
+      members?.contributorsAndWatchers?.watchers || [],
+      searchValue,
+      filters,
+    );
+    setWatchers(filteredWatchers);
+  }, [members, filters, searchValue]);
 
   // handles search values & close button
   const handleSearch = useCallback(
     (event) => {
       const value = event.target?.value || '';
       setSearchValue(value);
-      filterContributorsAndWatchers(value);
+      filterContributorsAndWatchers();
     },
     [filterContributorsAndWatchers, setSearchValue],
   );
 
+  const isRootDomain = useMemo(
+    () =>
+      selectedDomain === ROOT_DOMAIN_ID ||
+      selectedDomain === COLONY_TOTAL_BALANCE_DOMAIN_ID,
+    [selectedDomain],
+  );
+
   const membersContent = useMemo(() => {
-    const contributorsContent = (
+    const contributorsContent = (!isRootDomain ||
+      filters.memberType === MemberType.ALL ||
+      filters.memberType === MemberType.CONTRIBUTORS) && (
       <MembersSection<ColonyContributor>
         isContributorsSection
         colony={colony}
@@ -156,12 +169,13 @@ const Members = ({
     );
 
     const watchersContent =
-      selectedDomain === ROOT_DOMAIN_ID ||
-      selectedDomain === COLONY_TOTAL_BALANCE_DOMAIN_ID ? (
+      isRootDomain &&
+      (filters.memberType === MemberType.ALL ||
+        filters.memberType === MemberType.WATCHERS) ? (
         <MembersSection<ColonyWatcher>
           isContributorsSection={false}
           colony={colony}
-          currentDomainId={selectedDomain}
+          currentDomainId={selectedDomain || COLONY_TOTAL_BALANCE_DOMAIN_ID}
           members={watchers as ColonyWatcher[]}
           canAdministerComments={canAdministerComments}
           extraItemContent={({ banned }) => (
@@ -176,7 +190,19 @@ const Members = ({
         {watchersContent}
       </>
     );
-  }, [canAdministerComments, colony, contributors, selectedDomain, watchers]);
+  }, [
+    canAdministerComments,
+    colony,
+    contributors,
+    selectedDomain,
+    watchers,
+    filters,
+    isRootDomain,
+  ]);
+
+  useEffect(() => {
+    filterContributorsAndWatchers();
+  }, [filterContributorsAndWatchers, filters, isRootDomain]);
 
   if (loadingMembers) {
     return (
