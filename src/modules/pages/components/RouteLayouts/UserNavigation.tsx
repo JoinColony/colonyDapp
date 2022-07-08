@@ -122,11 +122,11 @@ const UserNavigation = () => {
           className={`${styles.elementWrapper} ${styles.networkInfo}`}
           title={
             isNetworkAllowed
-              ? SUPPORTED_NETWORKS[networkId || 1].name
+              ? SUPPORTED_NETWORKS[networkId || 1]?.name
               : undefined
           }
         >
-          {isNetworkAllowed && SUPPORTED_NETWORKS[networkId || 1].shortName}
+          {isNetworkAllowed && SUPPORTED_NETWORKS[networkId || 1]?.shortName}
         </div>
       )}
       {!ethereal && !isNetworkAllowed && (
