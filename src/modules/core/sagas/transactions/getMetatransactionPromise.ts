@@ -127,7 +127,7 @@ async function getMetatransactionPromise(
     /*
      * @TODO REMOVE!!
      */
-    lightTokenClient.metatransactionVariation = MetatransactionFlavour.EIP2612;
+    // lightTokenClient.metatransactionVariation = MetatransactionFlavour.EIP2612;
 
     if (!availableNonce) {
       throw new Error(generateMetatransactionErrorMessage(lightTokenClient));
