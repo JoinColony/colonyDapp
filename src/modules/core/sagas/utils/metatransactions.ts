@@ -119,3 +119,57 @@ export const generateMetatransactionMessage = async (
     messageUint8,
   };
 };
+
+export const broadcastMetatransaction = async (
+  broadcastData: string,
+): Promise<{
+  responseData: {
+    payload?: string;
+    reason?: string;
+    txHash?: string;
+  };
+  reponseStatus: 'fail' | 'success';
+  response: Response;
+}> => {
+  const response = await fetch(
+    `${process.env.BROADCASTER_ENDPOINT}/broadcast`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: broadcastData,
+    },
+  );
+  const {
+    message: responseErrorMessage,
+    status: reponseStatus,
+    data: responseData,
+  } = await response.json();
+
+  // eslint-disable-next-line no-console
+  console.log(
+    'Response data',
+    responseErrorMessage,
+    reponseStatus,
+    responseData,
+  );
+
+  /*
+   * @TODO Generate human friendly error message for the token being locked
+   * (only required for Metatransactions)
+   */
+  if (reponseStatus !== 'success') {
+    throw new Error(
+      responseErrorMessage?.reason ||
+        responseErrorMessage ||
+        responseData?.payload,
+    );
+  }
+
+  return {
+    responseData,
+    reponseStatus,
+    response,
+  };
+};
