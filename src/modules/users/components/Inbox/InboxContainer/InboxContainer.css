@@ -79,4 +79,10 @@
   .contentContainerFull {
     padding: 35px 14px 60px;
   }
+
+  .contentContainerPopup {
+    width: calc(100% - 28px);
+    border-radius: 4px;
+    background-color: var(--grey-blue-2);
+  }
 }
