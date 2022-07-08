@@ -2,14 +2,12 @@ import { call, put, take } from 'redux-saga/effects';
 import { Contract } from 'ethers';
 import { TransactionResponse } from 'ethers/providers';
 import { BigNumberish, splitSignature } from 'ethers/utils';
-import { soliditySha3 } from 'web3-utils';
 import {
   ContractClient,
   TransactionOverrides,
   ClientType,
 } from '@colony/colony-js';
 import abis from '@colony/colony-js/lib-esm/abis';
-import { hexSequenceNormalizer } from '@purser/core';
 
 import { ActionTypes } from '~redux/index';
 import { selectAsJS } from '~utils/saga/effects';
@@ -32,7 +30,11 @@ import { transactionSendError } from '../../actionCreators';
 import { oneTransaction } from '../../selectors';
 
 import transactionChannel from './transactionChannel';
-import { getChainId, generateEIP2612TypedData } from '../utils';
+import {
+  getChainId,
+  generateEIP2612TypedData,
+  generateMetatransactionMessage,
+} from '../utils';
 
 /*
  * Given a method and a transaction record, create a promise for sending the
@@ -249,6 +251,7 @@ async function getMetatransactionMethodPromise(
   } else {
     // eslint-disable-next-line no-console
     console.log('Broadcasting transaction as VANILLA Metadata variation');
+
     /*
      * All the 'WithProofs' helpers don't really exist on chain, so we have to
      * make sure we are calling the on-chain method, rather than our own helper
@@ -260,39 +263,15 @@ async function getMetatransactionMethodPromise(
     // eslint-disable-next-line no-console
     console.log('Encoded transaction', encodedTransaction);
 
-    const message = soliditySha3(
-      { t: 'uint256', v: availableNonce?.toString() as string },
-      { t: 'address', v: normalizedClient.address },
-      { t: 'uint256', v: chainId },
-      { t: 'bytes', v: encodedTransaction },
-    ) as string;
-
-    // eslint-disable-next-line no-console
-    console.log('Transaction message', message);
-
-    const messageBuffer = Buffer.from(
-      hexSequenceNormalizer(message, false),
-      'hex',
+    const { messageUint8: messageData } = await generateMetatransactionMessage(
+      encodedTransaction,
+      normalizedClient.address,
+      chainId,
+      availableNonce as BigNumberish,
     );
 
-    const convertedBufferMessage = Array.from(messageBuffer);
-    /*
-     * Purser validator expects either a string or a Uint8Array. We convert this
-     * to a an array to make Metamask happy when signing the buffer.
-     *
-     * So in order to actually pass validation, both for Software and Metamask
-     * wallets we need to "fake" the array as actually being a Uint.
-     *
-     * Note this not affect the format of the data passed in to be signed,
-     * or the signature.
-     */
-    convertedBufferMessage.constructor = Uint8Array;
-
-    // eslint-disable-next-line no-console
-    console.log('Actual signature converted Buffer', convertedBufferMessage);
-
     const metatransactionSignature = await wallet.signMessage({
-      messageData: (convertedBufferMessage as unknown) as Uint8Array,
+      messageData,
     });
 
     // eslint-disable-next-line no-console
