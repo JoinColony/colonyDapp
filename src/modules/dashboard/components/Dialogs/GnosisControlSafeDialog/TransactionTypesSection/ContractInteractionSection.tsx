@@ -37,13 +37,17 @@ const displayName = `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.Con
 
 interface Props {
   disabledInput: boolean;
+  transactionFormIndex: number;
 }
 
 const renderAvatar = (address: Address, item: AnyUser) => (
   <UserAvatar address={address} user={item} size="xs" notSet={false} />
 );
 
-const ContractInteractionSection = ({ disabledInput }: Props) => {
+const ContractInteractionSection = ({
+  disabledInput,
+  transactionFormIndex,
+}: Props) => {
   return (
     <>
       <DialogSection>
@@ -52,7 +56,7 @@ const ContractInteractionSection = ({ disabledInput }: Props) => {
           <SingleUserPicker
             data={[]}
             label={MSG.contractLabel}
-            name="contract"
+            name={`transactions.${transactionFormIndex}.contract`}
             filter={filterUserSelection}
             renderAvatar={renderAvatar}
             disabled={disabledInput}
@@ -63,7 +67,7 @@ const ContractInteractionSection = ({ disabledInput }: Props) => {
       <DialogSection>
         <Textarea
           label={MSG.abiLabel}
-          name="abi"
+          name={`transactions.${transactionFormIndex}.abi`}
           appearance={{ colorSchema: 'grey', resizable: 'vertical' }}
           disabled={disabledInput}
         />
@@ -73,7 +77,7 @@ const ContractInteractionSection = ({ disabledInput }: Props) => {
           {/* @TODO: Connect available contract functions data with picker */}
           <Select
             label={MSG.functionLabel}
-            name="contractFunction"
+            name={`transactions.${transactionFormIndex}.contractFunction`}
             appearance={{ theme: 'grey', width: 'fluid' }}
             placeholder={MSG.functionPlaceholder}
             disabled={disabledInput}

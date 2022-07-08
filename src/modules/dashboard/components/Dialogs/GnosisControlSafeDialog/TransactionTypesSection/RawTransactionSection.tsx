@@ -35,6 +35,7 @@ const displayName = `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.Raw
 interface Props {
   colony: Colony;
   disabledInput: boolean;
+  transactionFormIndex: number;
 }
 
 const renderAvatar = (address: Address, item: AnyUser) => (
@@ -44,6 +45,7 @@ const renderAvatar = (address: Address, item: AnyUser) => (
 const RawTransactionSection = ({
   colony: { colonyAddress, nativeTokenAddress, tokens },
   disabledInput,
+  transactionFormIndex,
 }: Props) => {
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress },
@@ -59,7 +61,7 @@ const RawTransactionSection = ({
           <SingleUserPicker
             data={colonyMembers?.subscribedUsers || []}
             label={MSG.recipient}
-            name="recipient"
+            name={`transactions.${transactionFormIndex}.recipient`}
             filter={filterUserSelection}
             renderAvatar={renderAvatar}
             disabled={disabledInput}
@@ -70,7 +72,7 @@ const RawTransactionSection = ({
       <DialogSection>
         <Input
           label={MSG.valueLabel}
-          name="amount"
+          name={`transactions.${transactionFormIndex}.amount`}
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
           disabled={disabledInput}
           labelValues={{
@@ -90,7 +92,7 @@ const RawTransactionSection = ({
       <DialogSection appearance={{ theme: 'sidePadding' }}>
         <Input
           label={MSG.dataLabel}
-          name="data"
+          name={`transactions.${transactionFormIndex}.data`}
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
           disabled={disabledInput}
           labelValues={{
