@@ -32,7 +32,7 @@ import { transactionSendError } from '../../actionCreators';
 import { oneTransaction } from '../../selectors';
 
 import transactionChannel from './transactionChannel';
-import { getChainId } from '../utils';
+import { getChainId, generateEIP2612TypedData } from '../utils';
 
 /*
  * Given a method and a transaction record, create a promise for sending the
@@ -77,6 +77,7 @@ async function getMetatransactionMethodPromise(
   let lightTokenClient: ContractClient = client;
   let normalizedParams: MethodParams = params;
   let availableNonce: BigNumberish | undefined;
+  let broadcastData = '';
 
   switch (methodName) {
     /*
@@ -194,7 +195,11 @@ async function getMetatransactionMethodPromise(
     params,
   );
 
-  let broadcastData = '';
+  /*
+   * @NOTE For the EIP2612 metatransaction variation we only support the
+   * TokenClient.approve method, every other call needs to go through
+   * vanilla metatransactions
+   */
   if (
     normalizedClient.clientType === ClientType.TokenClient &&
     lightTokenClient.metatransactionVariation ===
@@ -213,45 +218,20 @@ async function getMetatransactionMethodPromise(
 
     const tokenName = await normalizedClient.name();
     const [spender, amount] = params;
-
     const deadline = Math.floor(Date.now() / 1000) + 3600;
-    const signatureApproval = {
-      types: {
-        EIP712Domain: [
-          { name: 'name', type: 'string' },
-          { name: 'version', type: 'string' },
-          { name: 'chainId', type: 'uint256' },
-          { name: 'verifyingContract', type: 'address' },
-        ],
-        Permit: [
-          { name: 'owner', type: 'address' },
-          { name: 'spender', type: 'address' },
-          { name: 'value', type: 'uint256' },
-          { name: 'nonce', type: 'uint256' },
-          { name: 'deadline', type: 'uint256' },
-        ],
-      },
-      primaryType: 'Permit',
-      domain: {
-        name: tokenName,
-        version: '1',
-        chainId,
-        verifyingContract: normalizedClient.address,
-      },
-      message: {
-        owner: userAddress,
-        spender,
-        value: amount.toString(),
-        nonce: availableNonce?.toString(),
-        /*
-         * @NOTE One hour in the future from now
-         * Time is in seconds
-         */
-        deadline,
-      },
-    };
 
-    const { r, s, v } = await wallet.signTypedData(signatureApproval);
+    const { r, s, v } = await wallet.signTypedData(
+      generateEIP2612TypedData(
+        userAddress,
+        tokenName,
+        chainId,
+        normalizedClient.address,
+        spender as string,
+        amount as BigNumberish,
+        availableNonce as BigNumberish,
+        deadline,
+      ),
+    );
 
     broadcastData = JSON.stringify({
       target: normalizedClient.address,
