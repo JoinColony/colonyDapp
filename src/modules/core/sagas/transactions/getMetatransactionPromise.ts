@@ -2,14 +2,21 @@ import { Contract } from 'ethers';
 import { TransactionResponse } from 'ethers/providers';
 import { BigNumberish, splitSignature } from 'ethers/utils';
 import { ContractClient, ClientType } from '@colony/colony-js';
+import { switchChain } from '@purser/metamask/lib-esm/helpers';
 
-import { generateMetatransactionErrorMessage } from '~utils/web3';
+import {
+  generateMetatransactionErrorMessage,
+  generateMetamaskTypedDataSignatureErrorMessage,
+} from '~utils/web3';
 import { TRANSACTION_METHODS, TransactionRecord } from '~immutable/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
+import { XDAI_NETWORK } from '~constants';
+import { metamaskSwitchNetwork } from '../../../users/sagas/wallet';
 import {
   ExtendedClientType,
   MethodParams,
   MetatransactionFlavour,
+  MetamaskRpcErrors,
 } from '~types/index';
 
 import {
@@ -167,42 +174,66 @@ async function getMetatransactionPromise(
     console.log(
       `Token Client is using the ${lightTokenClient.metatransactionVariation} variation`,
     );
-
-    // eslint-disable-next-line no-console
-    console.log(
-      `Broadcasting transaction as EIP2612 Metadata variation (obviously via a Token Client)`,
-    );
-
     const tokenName = await normalizedClient.name();
     const [spender, amount] = params;
     const deadline = Math.floor(Date.now() / 1000) + 3600;
 
-    const { r, s, v } = await wallet.signTypedData(
-      generateEIP2612TypedData(
-        userAddress,
-        tokenName,
-        chainId,
-        normalizedClient.address,
-        spender as string,
-        amount as BigNumberish,
-        availableNonce as BigNumberish,
+    try {
+      const { r, s, v } = await wallet.signTypedData(
+        generateEIP2612TypedData(
+          userAddress,
+          tokenName,
+          chainId,
+          normalizedClient.address,
+          spender as string,
+          amount as BigNumberish,
+          availableNonce as BigNumberish,
+          deadline,
+        ),
+      );
+
+      broadcastData = {
+        target: normalizedClient.address,
+        owner: userAddress,
+        spender,
+        value: amount.toString(),
         deadline,
-      ),
-    );
+        r,
+        s,
+        v,
+      };
 
-    broadcastData = {
-      target: normalizedClient.address,
-      owner: userAddress,
-      spender,
-      value: amount.toString(),
-      deadline,
-      r,
-      s,
-      v,
-    };
+      // eslint-disable-next-line no-console
+      console.log('Broadcast data', broadcastData);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log("User's wallet", wallet);
 
-    // eslint-disable-next-line no-console
-    console.log('Broadcast data', broadcastData);
+      // eslint-disable-next-line no-underscore-dangle
+      const { chainId: walletChainId } = wallet?.mmProvider?._network || {};
+      /*
+       * @NOTE If we're singning typed data, with Metamask, we need to be on the same
+       * chain as Dapp and contracts deployment
+       */
+      if (wallet.subtype === 'metamask' && walletChainId !== chainId) {
+        if (chainId === XDAI_NETWORK.chainId) {
+          /*
+           * @NOTE This actually adds the network if it doesn't exist
+           */
+          metamaskSwitchNetwork(true).next();
+        } else {
+          switchChain(chainId);
+        }
+        if (
+          error.message.includes(MetamaskRpcErrors.TypedDataSignDifferentChain)
+        ) {
+          throw new Error(
+            generateMetamaskTypedDataSignatureErrorMessage(chainId),
+          );
+        }
+      }
+      throw new Error(error.message);
+    }
   } else {
     // eslint-disable-next-line no-console
     console.log('Broadcasting transaction as VANILLA Metadata variation');

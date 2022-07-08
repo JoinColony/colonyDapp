@@ -4,6 +4,7 @@ import { ClientType, ContractClient, TokenClientType } from '@colony/colony-js';
 
 import { Address, ExtendedClientType } from '~types/index';
 import { TransactionError } from '~immutable/Transaction';
+import { SUPPORTED_NETWORKS } from '~constants';
 
 export const createAddress = (address: string): Address => getAddress(address);
 
@@ -67,6 +68,11 @@ export const generateMetatransactionErrorMessage = (
       ? ` of type ${emmitentClient.tokenClientType}`
       : ''
   } at ${emmitentClient.address}`;
+
+export const generateMetamaskTypedDataSignatureErrorMessage = (
+  chainId: number,
+) =>
+  `Please switch your wallet's network to ${SUPPORTED_NETWORKS?.[chainId]?.name} in order to sign this typed data`;
 
 export function intArrayToBytes32(arr: Array<number>) {
   return `0x${new BN(

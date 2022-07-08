@@ -13,6 +13,12 @@ import UserSettingsClass from './userSettings';
 export { UserSettingsClass as UserSettings };
 
 interface ExtendedPurserWallet extends PurserWallet {
+  mmProvider?: {
+    _network?: {
+      chainId?: number;
+      name?: string;
+    };
+  };
   signTypedData: (
     typedData: Record<string, any>,
   ) => Promise<{ signature: string; r: string; s: string; v?: number }>;
