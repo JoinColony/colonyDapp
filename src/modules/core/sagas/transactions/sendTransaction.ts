@@ -34,6 +34,7 @@ import {
   getChainId,
   generateEIP2612TypedData,
   generateMetatransactionMessage,
+  broadcastMetatransaction,
 } from '../utils';
 
 /*
@@ -292,48 +293,14 @@ async function getMetatransactionMethodPromise(
     console.log('Broadcast data', broadcastData);
   }
 
-  const response = await fetch(
-    `${process.env.BROADCASTER_ENDPOINT}/broadcast`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: broadcastData,
-    },
-  );
   const {
-    message: responseErrorMessage,
-    status: reponseStatus,
-    data: responseData,
-  } = await response.json();
-
-  // eslint-disable-next-line no-console
-  console.log(
-    'Response data',
-    responseErrorMessage,
-    reponseStatus,
-    responseData,
-  );
-
-  /*
-   * @TODO Generate human friendly error message for the token being locked
-   * (only required for Metatransactions)
-   */
-  if (reponseStatus !== 'success') {
-    throw new Error(
-      responseErrorMessage?.reason ||
-        responseErrorMessage ||
-        responseData?.payload,
-    );
-  }
+    responseData: { txHash: hash },
+  } = await broadcastMetatransaction(broadcastData);
 
   // eslint-disable-next-line no-console
   console.log(`Metatransaction ${id} done ------------`);
 
-  return {
-    hash: responseData.txHash,
-  } as TransactionResponse;
+  return { hash } as TransactionResponse;
 }
 
 export default function* sendTransaction({
