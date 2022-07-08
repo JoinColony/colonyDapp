@@ -1,4 +1,5 @@
 @value headerFooterHeights: 35px;
+@value query700 from '~styles/queries.css';
 
 .main {
   display: flex;
@@ -87,4 +88,74 @@
 
 .cardFooter span {
   font-size: var(--size-small);
+}
+
+@media screen and query700 {
+  .main {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 0px;
+    gap: 10px;
+    box-shadow: none;
+  }
+
+  .main div {
+    align-items: center;
+    gap: 10px;
+  }
+
+  .main > div:nth-child(3) {
+    line-height: 12px;
+  }
+
+  .main div[role='tooltip'] {
+    width: 100%;
+  }
+
+  .main div[role='tooltip'] > div {
+    max-width: 100%;
+  }
+
+  .main div[role='tooltip'] > div > div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background: white;
+    gap: 10px;
+  }
+
+  .main div[role='tooltip'] > div > div > div:first-child {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .main div[role='tooltip'] p + div > div {
+    align-items: flex-start;
+    gap: 30px;
+  }
+
+  .main div[role='tooltip'] p + div > div > div:first-child {
+    overflow-wrap: anywhere;
+  }
+
+  .main div[role='tooltip'] span:nth-child(2) {
+    padding-right: 10px;
+    line-height: 0px;
+  }
+
+  .main div[role='tooltip'] button {
+    line-height: 10px;
+  }
+
+  .main figure {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .main figure > div {
+    position: static;
+  }
 }
