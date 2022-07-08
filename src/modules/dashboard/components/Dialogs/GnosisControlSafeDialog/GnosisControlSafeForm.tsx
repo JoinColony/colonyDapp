@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { FormikProps } from 'formik';
+import { FieldArray, FormikProps } from 'formik';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import classnames from 'classnames';
+import { nanoid } from 'nanoid';
 
 import Avatar from '~core/Avatar';
 import { DialogSection } from '~core/Dialog';
@@ -9,7 +11,9 @@ import { Select } from '~core/Fields';
 import Heading from '~core/Heading';
 import ExternalLink from '~core/ExternalLink';
 import Button, { AddItemButton } from '~core/Button';
+import Icon from '~core/Icon';
 import { SingleSafePicker, filterUserSelection } from '~core/SingleUserPicker';
+import IconTooltip from '~core/IconTooltip';
 
 import { getUserRolesForDomain } from '~modules/transformers';
 import { userHasRole } from '~modules/users/checks';
@@ -61,6 +65,23 @@ const MSG = defineMessages({
     id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.buttonCreateTransaction`,
     defaultMessage: 'Create transaction',
   },
+  transactionTitle: {
+    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.transactionTitle`,
+    defaultMessage: `Transaction #{transactionNumber} {transactionType, select, undefined {} other {({transactionType})}}`,
+  },
+  toggleTransaction: {
+    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.toggleTransaction`,
+    defaultMessage:
+      '{tabToggleStatus, select, true {Expand} false {Close}} transaction',
+  },
+  deleteTransaction: {
+    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.deleteTransaction`,
+    defaultMessage: 'Delete transaction',
+  },
+  deleteTransactionTooltipText: {
+    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.deleteTransactionTooltipText`,
+    defaultMessage: `Delete transaction.\nBe careful, data can be lost.`,
+  },
 });
 
 const displayName = 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm';
@@ -98,6 +119,7 @@ const GnosisControlSafeForm = ({
   values,
   isVotingExtensionEnabled,
 }: Props & FormikProps<FormValues>) => {
+  const [transactionTabStatus, setTransactionTabStatus] = useState([true]);
   const { walletAddress } = useLoggedInUser();
   const fromDomainRoles = useTransformer(getUserRolesForDomain, [
     colony,
@@ -116,6 +138,40 @@ const GnosisControlSafeForm = ({
     isVotingExtensionEnabled,
     values.forceAction,
   );
+  const handleTabRemoval = (arrayHelpers, index) => {
+    arrayHelpers.remove(index);
+    const newTransactionTabStatus = [...transactionTabStatus];
+    newTransactionTabStatus.splice(index, 1);
+    setTransactionTabStatus(newTransactionTabStatus);
+  };
+  const handleNewTab = (arrayHelpers) => {
+    arrayHelpers.push({
+      transactionType: '',
+      tokenAddress: colony.nativeTokenAddress,
+      amount: undefined,
+      recipient: null,
+      data: '',
+      contract: '',
+      abi: '',
+      contractFunction: '',
+    });
+    setTransactionTabStatus([
+      ...Array(transactionTabStatus.length).fill(false),
+      true,
+    ]);
+  };
+  const handleTabToggle = (newIndex: number) => {
+    const newTransactionTabs = transactionTabStatus.map((tab, index) =>
+      index === newIndex ? !tab : tab,
+    );
+    setTransactionTabStatus([...newTransactionTabs]);
+  };
+  const getTransactionTypeLabel = (transactionTypeValue) => {
+    const transactionType = transactionOptions.find(
+      (transaction) => transaction.value === transactionTypeValue,
+    );
+    return transactionType?.label;
+  };
 
   return (
     <>
@@ -154,41 +210,116 @@ const GnosisControlSafeForm = ({
           />
         </div>
       </DialogSection>
-      <DialogSection appearance={{ theme: 'sidePadding' }}>
-        <div className={styles.transactionTypeSelectContainer}>
-          <Select
-            options={transactionOptions}
-            label={MSG.transactionLabel}
-            name="transactionType"
-            appearance={{ theme: 'grey', width: 'fluid' }}
-            placeholder={MSG.transactionPlaceholder}
-            disabled={!userHasPermission || isSubmitting}
-          />
-        </div>
-      </DialogSection>
-      {values.transactionType === 'transferFunds' && (
-        <TransferFundsSection
-          colony={colony}
-          disabledInput={!userHasPermission || isSubmitting}
-          values={values}
-        />
-      )}
-      {values.transactionType === 'rawTransaction' && (
-        <RawTransactionSection
-          colony={colony}
-          disabledInput={!userHasPermission || isSubmitting}
-        />
-      )}
-      {values.transactionType === 'contractInteraction' && (
-        <ContractInteractionSection
-          disabledInput={!userHasPermission || isSubmitting}
-        />
-      )}
-      <DialogSection>
-        <div className={styles.addTransaction}>
-          <AddItemButton text={MSG.buttonTransaction} disabled />
-        </div>
-      </DialogSection>
+      <FieldArray
+        name="transactions"
+        render={(arrayHelpers) => (
+          <>
+            {values.transactions.map((transaction, index) => (
+              <div key={nanoid()}>
+                {values.transactions.length > 1 && (
+                  <div
+                    className={classnames(styles.transactionHeading, {
+                      [styles.transactionHeadingOpen]:
+                        transactionTabStatus[index],
+                    })}
+                  >
+                    <Heading
+                      appearance={{
+                        size: 'normal',
+                        margin: 'none',
+                        theme: 'dark',
+                      }}
+                      text={MSG.transactionTitle}
+                      textValues={{
+                        transactionNumber: index + 1,
+                        transactionType: getTransactionTypeLabel(
+                          transaction.transactionType,
+                        ),
+                      }}
+                    />
+                    <Button
+                      className={styles.tabButton}
+                      onClick={() => handleTabRemoval(arrayHelpers, index)}
+                    >
+                      <IconTooltip
+                        icon="trash"
+                        className={styles.deleteTabIcon}
+                        tooltipClassName={styles.deleteTabTooltip}
+                        iconTitle={MSG.deleteTransaction}
+                        tooltipText={MSG.deleteTransactionTooltipText}
+                      />
+                    </Button>
+                    <Button
+                      className={styles.tabButton}
+                      onClick={() => handleTabToggle(index)}
+                    >
+                      <Icon
+                        name="caret-up-small"
+                        className={styles.toggleTabIcon}
+                        title={MSG.toggleTransaction}
+                        titleValues={{
+                          tabToggleStatus: transactionTabStatus[index],
+                        }}
+                      />
+                    </Button>
+                  </div>
+                )}
+                <div
+                  className={classnames({
+                    [styles.tabContentClosed]: !transactionTabStatus[index],
+                  })}
+                >
+                  <DialogSection appearance={{ theme: 'sidePadding' }}>
+                    <div className={styles.transactionTypeSelectContainer}>
+                      <Select
+                        options={transactionOptions}
+                        label={MSG.transactionLabel}
+                        name={`transactions.${index}.transactionType`}
+                        appearance={{ theme: 'grey', width: 'fluid' }}
+                        placeholder={MSG.transactionPlaceholder}
+                        disabled={!userHasPermission || isSubmitting}
+                      />
+                    </div>
+                  </DialogSection>
+                  {values.transactions[index]?.transactionType ===
+                    'transferFunds' && (
+                    <TransferFundsSection
+                      colony={colony}
+                      disabledInput={!userHasPermission || isSubmitting}
+                      values={values}
+                      transactionFormIndex={index}
+                    />
+                  )}
+                  {values.transactions[index]?.transactionType ===
+                    'rawTransaction' && (
+                    <RawTransactionSection
+                      colony={colony}
+                      disabledInput={!userHasPermission || isSubmitting}
+                      transactionFormIndex={index}
+                    />
+                  )}
+                  {values.transactions[index]?.transactionType ===
+                    'contractInteraction' && (
+                    <ContractInteractionSection
+                      disabledInput={!userHasPermission || isSubmitting}
+                      transactionFormIndex={index}
+                    />
+                  )}
+                </div>
+              </div>
+            ))}
+            <DialogSection>
+              <div className={styles.addTransaction}>
+                <AddItemButton
+                  text={MSG.buttonTransaction}
+                  disabled={isSubmitting || !isValid}
+                  handleClick={() => handleNewTab(arrayHelpers)}
+                />
+              </div>
+            </DialogSection>
+          </>
+        )}
+      />
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
