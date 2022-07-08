@@ -127,7 +127,7 @@ const ColonyEvents = ({
   );
 
   return (
-    <div>
+    <div className={styles.main}>
       <div className={styles.bar}>
         <div className={styles.title}>
           <FormattedMessage {...MSG.transactionsLogTitle} />
