@@ -193,7 +193,7 @@
 }
 
 @media screen and query700 {
-  .elementWrapper, .notificationsIcon, .walletAutoLogin {
+  .elementWrapper, .walletAutoLogin {
     display: none;
   }
 
@@ -213,18 +213,21 @@
     width: 120px;
   }
 
-  .connectWalletButton + div[role="tooltip"] {
+  .gasStationReference + div,
+  .notificationsButton + div,
+  .connectWalletButton + div {
     display: flex;
     justify-content: center;
     width: 100vw;
     background-color: transparent;
-    box-shadow: none;
   }
 
-  .gasStationReference + div {
-    display: flex;
-    justify-content: center;
-    width: 100vw;
-    background-color: transparent;
+  .notificationsIcon {
+    margin-right: 0px;
+  }
+
+  .notificationsButton + div,
+  .connectWalletButton + div {
+    box-shadow: none;
   }
 }
