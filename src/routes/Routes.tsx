@@ -138,7 +138,7 @@ const Routes = () => {
           didClaimProfile={didClaimProfile}
           path={WALLET_ROUTE}
           component={Wallet}
-          layout={SimpleNav}
+          layout={isMobile ? Default : SimpleNav}
           routeProps={{
             hasBackLink: false,
           }}
