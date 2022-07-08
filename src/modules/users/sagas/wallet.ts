@@ -56,8 +56,10 @@ function* metaMaskWatch(walletAddress: Address) {
   }
 }
 
-function* metamaskSwitchNetwork() {
-  const shouldSendMetatransaction = yield getCanUserSendMetatransactions();
+export function* metamaskSwitchNetwork(ignoreMetatransactions = false) {
+  const shouldSendMetatransaction = ignoreMetatransactions
+    ? false
+    : yield getCanUserSendMetatransactions();
   if (
     (DEFAULT_NETWORK === Network.Xdai ||
       DEFAULT_NETWORK === Network.XdaiFork ||
