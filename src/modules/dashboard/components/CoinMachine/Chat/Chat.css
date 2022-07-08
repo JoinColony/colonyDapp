@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   display: flex;
   flex-direction: column;
@@ -38,4 +40,13 @@
   margin-left: 10px;
   vertical-align: top;
   font-size: var(--size-small);
+}
+
+@media screen and query700 {
+  .messages {
+    flex: auto;
+    margin-bottom: 0;
+    padding-bottom: 20px;
+    min-height: 100px;
+  }
 }

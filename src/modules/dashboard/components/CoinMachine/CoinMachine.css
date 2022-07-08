@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   display: block;
   margin: 0 0 20px 20px;
@@ -84,4 +86,25 @@
   composes: container;
   grid-column: 1 / 3;
   grid-row: time / sales;
+}
+
+@media screen and query700 {
+  .main {
+    margin: 0;
+    padding: 20px 14px 0px;
+    width: auto;
+  }
+
+  .grid {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 60px;
+    height: auto;
+    min-height: 0px;
+    width: auto;
+  }
+
+  .grid > div > div {
+    row-gap: 10px;
+  }
 }

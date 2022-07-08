@@ -1,3 +1,4 @@
+export const query700: string;
 export const container: string;
 export const tableContainer: string;
 export const tableContainerOverflow: string;

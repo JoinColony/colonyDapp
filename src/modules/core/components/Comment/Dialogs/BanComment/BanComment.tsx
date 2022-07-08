@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
+import { useMediaQuery } from 'react-responsive';
 
 import Button from '~core/Button';
 import Dialog, { DialogProps, DialogSection } from '~core/Dialog';
@@ -15,6 +16,7 @@ import {
   BannedUsersDocument,
 } from '~data/index';
 
+import { query700 as query } from '~styles/queries.css';
 import styles from './BanComment.css';
 
 const MSG = defineMessages({
@@ -99,6 +101,7 @@ const BanComment = ({
     [close, colony, comment, updateTransactionMessage, user],
   );
 
+  const isMobile = useMediaQuery({ query });
   return (
     <Dialog cancel={cancel}>
       <div className={styles.container}>
@@ -161,7 +164,10 @@ const BanComment = ({
           </div>
           <div className={styles.confirmButtonContainer}>
             <Button
-              appearance={{ theme: unban ? 'primary' : 'pink', size: 'large' }}
+              appearance={{
+                theme: unban ? 'primary' : 'pink',
+                size: isMobile && !unban ? 'medium' : 'large',
+              }}
               text={MSG.confirmButtonText}
               textValues={{ unban }}
               loading={loading}

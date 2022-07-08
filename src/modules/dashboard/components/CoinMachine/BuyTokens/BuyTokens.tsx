@@ -7,6 +7,7 @@ import { AddressZero } from 'ethers/constants';
 import { BigNumber, bigNumberify } from 'ethers/utils';
 import Decimal from 'decimal.js';
 import toFinite from 'lodash/toFinite';
+import { useMediaQuery } from 'react-responsive';
 
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
@@ -37,6 +38,7 @@ import { CM_LEARN_MORE } from '~externalUrls';
 
 import GetWhitelisted from '../GetWhitelisted';
 
+import { query700 as query } from '~styles/queries.css';
 import styles from './BuyTokens.css';
 
 const MSG = defineMessages({
@@ -314,6 +316,8 @@ const BuyTokens = ({
     [],
   );
 
+  const isMobile = useMediaQuery({ query });
+
   if (
     loadingSaleTokens &&
     loadingUserToken &&
@@ -350,7 +354,7 @@ const BuyTokens = ({
           <QuestionMarkTooltip
             tooltipText={MSG.helpTooltip}
             tooltipPopperOptions={{
-              placement: 'top',
+              placement: isMobile ? 'left' : 'top',
             }}
             tooltipClassName={styles.tooltip}
           />
