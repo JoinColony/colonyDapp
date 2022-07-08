@@ -48,7 +48,7 @@ const ProgressBar = ({
       {shouldDisplayThreshold && (
         <div
           style={{
-            left: `calc(${threshold}% - 12px)`,
+            left: `calc(${threshold}% - 14px)`,
           }}
           className={styles.threshold}
         >
