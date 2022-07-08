@@ -1,5 +1,7 @@
 import { Network } from '@colony/colony-js';
 import { BigNumberish } from 'ethers/utils';
+import { soliditySha3 } from 'web3-utils';
+import { hexSequenceNormalizer } from '@purser/core';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { Address } from '~types/index';
@@ -63,7 +65,7 @@ export const generateEIP2612TypedData = (
     owner: userAddress,
     spender,
     value: value.toString(),
-    nonce: nonce?.toString(),
+    nonce: nonce.toString(),
     /*
      * @NOTE One hour in the future from now
      * Time is in seconds
@@ -71,3 +73,49 @@ export const generateEIP2612TypedData = (
     deadline,
   },
 });
+
+export const generateMetatransactionMessage = async (
+  encodedTransaction: string,
+  contractAddress: Address,
+  chainId: number,
+  nonce: BigNumberish,
+): Promise<{
+  message: string;
+  messageUint8: Uint8Array;
+}> => {
+  const message = soliditySha3(
+    { t: 'uint256', v: nonce.toString() },
+    { t: 'address', v: contractAddress },
+    { t: 'uint256', v: chainId },
+    { t: 'bytes', v: encodedTransaction },
+  ) as string;
+
+  // eslint-disable-next-line no-console
+  console.log('Transaction message', message);
+
+  const messageBuffer = Buffer.from(
+    hexSequenceNormalizer(message, false),
+    'hex',
+  );
+
+  const messageUint8 = (Array.from(messageBuffer) as unknown) as Uint8Array;
+  /*
+   * Purser validator expects either a string or a Uint8Array. We convert this
+   * to a an array to make Metamask happy when signing the buffer.
+   *
+   * So in order to actually pass validation, both for Software and Metamask
+   * wallets we need to "fake" the array as actually being a Uint.
+   *
+   * Note this not affect the format of the data passed in to be signed,
+   * or the signature.
+   */
+  messageUint8.constructor = Uint8Array;
+
+  // eslint-disable-next-line no-console
+  console.log('Actual message converted into Uint8', messageUint8);
+
+  return {
+    message,
+    messageUint8,
+  };
+};
