@@ -4,6 +4,7 @@ import * as yup from 'yup';
 import toFinite from 'lodash/toFinite';
 import { defineMessages } from 'react-intl';
 
+import { AnyUser } from '~data/index';
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 
@@ -37,7 +38,12 @@ export interface FormValues {
   transactions: {
     transactionType: string;
     tokenAddress?: string;
-    amount?: string;
+    amount?: number;
+    recipient?: AnyUser;
+    data?: string;
+    contract?: string;
+    abi?: string;
+    contractFunction?: string;
   }[];
   safe: string;
   forceAction: boolean;
