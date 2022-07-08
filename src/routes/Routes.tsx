@@ -148,7 +148,7 @@ const Routes = () => {
           didClaimProfile={didClaimProfile}
           path={INBOX_ROUTE}
           component={Inbox}
-          layout={SimpleNav}
+          layout={isMobile ? Default : SimpleNav}
           routeProps={{
             hasBackLink: false,
           }}

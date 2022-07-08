@@ -1,4 +1,5 @@
 @value tableHeight: 347px;
+@value query700 from '~styles/queries.css';
 
 .inboxContainerFull {
   flex: 0 1;
@@ -72,4 +73,10 @@
   max-width: 700px;
   font-size: var(--size-medium-l);
   font-weight: var(--weight-normal);
+}
+
+@media screen and query700 {
+  .contentContainerFull {
+    padding: 35px 14px 60px;
+  }
 }
