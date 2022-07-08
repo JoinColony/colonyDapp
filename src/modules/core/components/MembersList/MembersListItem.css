@@ -15,7 +15,6 @@
 
 .usernameSection {
   composes: section;
-  composes: inlineEllipsis from '~styles/text.css';
   flex-grow: 0.5;
   margin-right: auto;
   max-width: 200px;
@@ -68,5 +67,5 @@
 }
 
 .whitelistedIconTooltip {
-  width: initial;
+  width: 130px;
 }
