@@ -40,3 +40,78 @@
   justify-content: center;
   margin-bottom: 20px;
 }
+
+.transactionHeading {
+  display: flex;
+  align-items: center;
+  padding: 16px 38px 16px 20px;
+  height: 52px;
+  border-bottom: 1px solid color-mod(var(--action-secondary) alpha(12%));
+  background-color: color-mod(var(--action-secondary) alpha(6%));
+}
+
+.transactionHeading h4 {
+  margin-right: auto;
+}
+
+.tabButton {
+  display: flex;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.tabButtonIcon {
+  display: flex;
+  height: 100%;
+  width: 10px;
+  fill: var(--temp-grey-blue-7);
+}
+
+.tabButtonIcon:last-child {
+  margin-left: 18px;
+}
+
+.deleteTabIcon {
+  display: none;
+  margin-right: 10px;
+  padding: 5px;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  fill: var(--danger);
+}
+
+.deleteTabIcon:hover {
+  background-color: color-mod(var(--action-secondary) alpha(10%));
+}
+
+.deleteTabTooltip {
+  text-align: left;
+  white-space: pre-line;
+}
+
+.transactionHeading:hover .deleteTabIcon {
+  display: unset;
+}
+
+.toggleTabIcon {
+  width: 12px;
+  fill: var(--dark);
+  transform: rotate(180deg);
+}
+
+.tabContentClosed {
+  display: none;
+}
+
+.transactionHeadingOpen {
+  margin-bottom: 18px;
+  border-bottom: 1px solid transparent;
+  background-color: transparent;
+}
+
+.transactionHeadingOpen .toggleTabIcon {
+  transform: none;
+}
