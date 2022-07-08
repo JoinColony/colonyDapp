@@ -23,7 +23,7 @@ import { checkIfNetworkIsAllowed } from '~utils/networks';
 import styles from './StepColonyName.css';
 
 interface FormValues {
-  displayName: string;
+  colonyUniqueURL: string;
   colonyName: string;
   username: string;
 }
@@ -79,7 +79,7 @@ const displayName = 'dashboard.CreateColonyWizard.StepColonyName';
 
 const validationSchema = yup.object({
   colonyName: yup.string().required().ensAddress(),
-  displayName: yup.string().required(),
+  colonyUniqueURL: yup.string().required(),
 });
 
 const StepColonyName = ({
@@ -197,14 +197,14 @@ const StepColonyName = ({
             <div className={styles.nameForm}>
               <Input
                 appearance={{ theme: 'fat' }}
-                name="displayName"
+                name="colonyName"
                 data-test="claimColonyDisplayNameInput"
                 label={MSG.labelDisplay}
                 disabled={!isNetworkAllowed || isSubmitting}
               />
               <Input
                 appearance={{ theme: 'fat' }}
-                name="colonyName"
+                name="colonyUniqueURL"
                 data-test="claimColonyNameInput"
                 // eslint-disable-next-line max-len
                 extensionString={`.colony.${DEFAULT_NETWORK_INFO.displayENSDomain}`}
