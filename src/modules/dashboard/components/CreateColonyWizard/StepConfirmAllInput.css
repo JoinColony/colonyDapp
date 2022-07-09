@@ -49,4 +49,8 @@
   .finalContainer {
     width: 100%;
   }
+
+  .cardRow span {
+    max-width: 208px;
+  }
 }

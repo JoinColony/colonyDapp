@@ -41,4 +41,8 @@
   .main {
     padding-bottom: 40px;
   }
+
+  .main h3 span {
+    overflow-wrap: anywhere;
+  }
 }
