@@ -40,6 +40,10 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Payments.deleteIconTitle',
     defaultMessage: 'Delete recipient',
   },
+  newValue: {
+    id: 'dashboard.ExpenditurePage.Payments.deleteIconTitle',
+    defaultMessage: 'New value. See activity feed.',
+  },
 });
 
 const displayName = 'dashboard.ExpenditurePage.Payments';
@@ -61,7 +65,13 @@ const Payments = ({ sidebarRef, colony }: Props) => {
   const newRecipientData = useMemo(() => {
     return {
       ...newRecipient,
-      value: [{ amount: undefined, tokenAddress: colony.nativeTokenAddress }],
+      value: [
+        {
+          amount: undefined,
+          tokenAddress: colony.nativeTokenAddress,
+          id: nanoid(),
+        },
+      ],
     };
   }, [colony.nativeTokenAddress]);
 

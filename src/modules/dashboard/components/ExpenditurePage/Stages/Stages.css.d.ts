@@ -12,3 +12,5 @@ export const iconButtonDisabled: string;
 export const iconWrapper: string;
 export const buttonTooltip: string;
 export const cancelIcon: string;
+export const stageWrapper: string;
+export const iconTooltip: string;

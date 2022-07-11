@@ -63,6 +63,10 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Recipient.valueError',
     defaultMessage: 'Value is required',
   },
+  pending: {
+    id: 'dashboard.ExpenditurePage.Recipient.pending',
+    defaultMessage: '(Pending)',
+  },
 });
 
 const displayName = 'dashboard.ExpenditurePage.Recipient';
@@ -150,7 +154,7 @@ const Recipient = ({
                         maxButtonParams={{
                           setFieldValue,
                           // mock, needs to be changed to the actual value
-                          maxAmount: '0',
+                          maxAmount: '100',
                           fieldName: `recipients[${index}].value[${idx}].amount`,
                         }}
                       />

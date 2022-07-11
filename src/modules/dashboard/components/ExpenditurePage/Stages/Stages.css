@@ -101,3 +101,13 @@
   fill: var(--pink);
   transition: fill 200ms ease-in-out;
 }
+
+.stageWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.iconTooltip svg {
+  margin-left: 8px;
+  width: 12px;
+}

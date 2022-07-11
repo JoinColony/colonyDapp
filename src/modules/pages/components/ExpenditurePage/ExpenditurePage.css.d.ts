@@ -6,3 +6,4 @@ export const mainContent: string;
 export const sidebar: string;
 export const form: string;
 export const tagWrapper: string;
+export const tagStagesWrapper: string;

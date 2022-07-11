@@ -1,95 +1,103 @@
-import { FormikProps } from 'formik';
 import React, { useCallback, useState } from 'react';
-import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
-import classNames from 'classnames';
+import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
-import Dialog, { DialogSection } from '~core/Dialog';
-import { ActionForm, Annotations, Toggle } from '~core/Fields';
-import Heading from '~core/Heading';
-import Icon from '~core/Icon';
-// import Numeral from '~core/Numeral';
-import { Tooltip } from '~core/Popover';
 import { ActionTypes } from '~redux/actionTypes';
-// import { getTokenDecimalsWithFallback } from '~utils/tokens';
-// import TokenIcon from '~dashboard/HookedTokenIcon';
-import styles from './EditExpenditureDialog.css';
-// import UserAvatar from '~core/UserAvatar';
-// import UserMention from '~core/UserMention';
-// import Delay from '~dashboard/ExpenditurePage/Delay';
-import Button from '~core/Button';
-import MotionDomainSelect from '~dashboard/MotionDomainSelect';
-import { useColonyFromNameQuery } from '~data/generated';
-import { SpinnerLoader } from '~core/Preloaders';
-import { FormValues } from '~pages/ExpenditurePage/ExpenditurePage';
+import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
+import { Colony } from '~data/index';
+import EditExpenditureDialogForm from './EditExpenditureDialogForm';
 
-const MSG = defineMessages({
+export const MSG = defineMessages({
   header: {
-    id: 'dashboard.Expenditures.Edit.editConfirmDialog.header',
+    id: 'dashboard.EditConfirmDialog.header',
     defaultMessage: 'Create a motion to edit payment',
   },
   headerForce: {
-    id: 'dashboard.Expenditures.Edit.editConfirmDialog.headerForce',
+    id: 'dashboard.EditConfirmDialog.headerForce',
     defaultMessage: 'Create a motion to edit expenditure',
   },
   force: {
-    id: 'dashboard.Expenditures.Edit.editConfirmDialog.force',
+    id: 'dashboard.EditConfirmDialog.force',
     defaultMessage: 'Force',
   },
   team: {
-    id: 'dashboard.Expenditures.Edit.editConfirmDialog.team',
+    id: 'dashboard.EditConfirmDialog.team',
     defaultMessage: 'Motion will be created in ',
   },
   descriptionText: {
-    id: 'dashboard.Expenditures.Edit.editConfirmDialog.descriptionText',
+    id: 'dashboard.EditConfirmDialog.descriptionText',
     defaultMessage: `Payment is currently at the locked stage.
     Any edits require at this point an action to be made.
     You can either enforce permission,
     or create a motion to get collective approval.`,
   },
   newRecipient: {
-    id: 'dashboard.Expenditures.Edit.editConfirmDialog.newRecipient',
+    id: 'dashboard.EditConfirmDialog.newRecipient',
     defaultMessage: 'New recipient',
   },
   newAmount: {
-    id: 'dashboard.Expenditures.Edit.editConfirmDialog.newAmount',
+    id: 'dashboard.EditConfirmDialog.newAmount',
     defaultMessage: 'New amount',
   },
   newClaimDelay: {
-    id: 'dashboard.Expenditures.Edit.editConfirmDialog.newClaimDelay',
+    id: 'dashboard.EditConfirmDialog.newClaimDelay',
     defaultMessage: 'New claim delay',
   },
   descriptionLabel: {
-    id: 'dashboard.Expenditures.Edit.editConfirmDialog.descriptionLabel',
+    id: 'dashboard.EditConfirmDialog.descriptionLabel',
     defaultMessage: 'Explain why youre changing the payment (optional)',
   },
   cancelText: {
-    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.cancelText',
+    id: 'dashboard.EditConfirmDialog.cancelText',
     defaultMessage: 'Back',
   },
   confirmText: {
-    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.confirmText',
+    id: 'dashboard.EditConfirmDialog.confirmText',
     defaultMessage: 'Create motion',
   },
   confirmTexForce: {
-    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.confirmTexForce',
+    id: 'dashboard.EditConfirmDialog.confirmTexForce',
     defaultMessage: 'Force change',
   },
   textareaLabel: {
-    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.textareaLabel',
+    id: 'dashboard.EditConfirmDialog.textareaLabel',
     defaultMessage: 'Explain why you`re changing the payment (optional)',
   },
   forceTextareaLabel: {
-    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.textareaLabel',
+    id: 'dashboard.EditConfirmDialog.textareaLabel',
     defaultMessage: 'Explain why you`re changing the expenditure',
   },
   errorAnnotation: {
-    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.errorAnnotation',
+    id: 'dashboard.EditConfirmDialog.errorAnnotation',
     defaultMessage: 'Annotation is required',
+  },
+  change: {
+    id: 'dashboard.EditConfirmDialog.change',
+    defaultMessage: 'Change',
+  },
+  new: {
+    id: 'dashboard.EditConfirmDialog.new',
+    defaultMessage: 'New',
+  },
+  discard: {
+    id: 'dashboard.EditConfirmDialog.discard',
+    defaultMessage: 'Discard',
+  },
+  removed: {
+    id: 'dashboard.EditConfirmDialog.removed',
+    defaultMessage: 'Recipient has been deleted',
+  },
+  removedDelay: {
+    id: 'dashboard.EditConfirmDialog.removedDelay',
+    defaultMessage: 'Removed claim delay',
+  },
+  teamCaption: {
+    id: 'dashboard.EditConfirmDialog.teamCaption',
+    defaultMessage: 'Team',
   },
 });
 
-const validationSchema = (annotationErrorMessage) =>
+export const validationSchema = (annotationErrorMessage) =>
   yup.object().shape({
     forceAction: yup.bool(),
     // eslint-disable-next-line func-names
@@ -101,35 +109,75 @@ const validationSchema = (annotationErrorMessage) =>
       }),
   });
 
-interface FormValuesType {
+export interface FormValuesType {
   forceAction: boolean;
+  annotation?: string;
 }
 
 type Props = {
-  onClick: () => void;
+  onClick: (
+    values: Partial<ValuesType> | undefined,
+    wasForced: boolean,
+  ) => void;
   close: () => void;
   isVotingExtensionEnabled: boolean;
-  colonyName: string;
-  formValues: FormValues;
+  colony: Colony;
+  newValues?: Partial<ValuesType>;
+  oldValues: ValuesType;
 };
 
 const EditExpenditureDialog = ({
   close,
   onClick,
   isVotingExtensionEnabled,
-  colonyName,
+  colony,
+  newValues,
+  oldValues,
 }: Props) => {
   const [isForce, setIsForce] = useState(false);
   const [domainID, setDomainID] = useState<number>();
-  const { formatMessage } = useIntl();
+  const [confirmedValues, setConfirmedValues] = useState(newValues);
 
-  const { data: colonyData, loading } = useColonyFromNameQuery({
-    variables: { address: '', name: colonyName },
-  });
   const handleMotionDomainChange = useCallback(
     (motionDomainId) => setDomainID(motionDomainId),
     [],
   );
+
+  const discardChange = useCallback(
+    (name: keyof ValuesType) => {
+      if (confirmedValues && !(name in confirmedValues)) {
+        return;
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { [name]: removedProperty, ...updatedValues } =
+        confirmedValues || {};
+
+      setConfirmedValues(updatedValues);
+    },
+    [confirmedValues],
+  );
+
+  const discardRecipientChange = useCallback((id: string) => {
+    setConfirmedValues((confirmedVal) => {
+      const newRecipients = confirmedVal?.recipients?.filter(
+        (recipient) => recipient.id !== id,
+      );
+
+      if (newRecipients?.length === 0) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { recipients: rec, ...updatedValues } = confirmedVal || {};
+
+        return updatedValues;
+      }
+      const newVal = {
+        ...confirmedVal,
+        recipients: newRecipients,
+      };
+
+      return newVal;
+    });
+  }, []);
 
   const getFormAction = useCallback(
     (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
@@ -143,117 +191,22 @@ const EditExpenditureDialog = ({
   );
 
   return (
-    <ActionForm
-      initialValues={{ forceAction: false }}
-      submit={getFormAction('SUBMIT')}
-      error={getFormAction('ERROR')}
-      success={getFormAction('SUCCESS')}
-      onSuccess={close}
-      validationSchema={validationSchema(formatMessage(MSG.errorAnnotation))}
-    >
-      {({
-        values,
-        handleSubmit,
-        isSubmitting,
-      }: FormikProps<FormValuesType>) => {
-        if (values.forceAction !== isForce) {
-          setIsForce(values.forceAction);
-        }
-        return (
-          <Dialog cancel={close}>
-            <DialogSection>
-              {loading ? (
-                <SpinnerLoader />
-              ) : (
-                colonyData && (
-                  <div
-                    className={classNames(
-                      styles.row,
-                      styles.withoutPadding,
-                      styles.forceRow,
-                    )}
-                  >
-                    <FormattedMessage {...MSG.team} />
-                    <MotionDomainSelect
-                      colony={colonyData.processedColony}
-                      onDomainChange={handleMotionDomainChange}
-                      initialSelectedDomain={domainID}
-                    />
-                    <div className={styles.forceContainer}>
-                      <FormattedMessage {...MSG.force} />
-                      <div className={styles.toggleContainer}>
-                        <Toggle
-                          name="forceAction"
-                          appearance={{ theme: 'danger' }}
-                          disabled={isSubmitting}
-                        />
-                      </div>
-
-                      <Tooltip
-                        content={
-                          <div className={styles.tooltip}>
-                            <FormattedMessage id="tooltip.forceAction" />
-                          </div>
-                        }
-                        trigger="hover"
-                        popperOptions={{
-                          placement: 'top-end',
-                          strategy: 'fixed',
-                        }}
-                      >
-                        <Icon
-                          name="question-mark"
-                          className={styles.questionIcon}
-                        />
-                      </Tooltip>
-                    </div>
-                  </div>
-                )
-              )}
-              <Heading
-                appearance={{ size: 'medium', margin: 'none' }}
-                className={styles.title}
-              >
-                <FormattedMessage
-                  {...(isForce ? MSG.headerForce : MSG.header)}
-                />
-              </Heading>
-              <div className={styles.descriptionWrapper}>
-                <FormattedMessage {...MSG.descriptionText} />
-              </div>
-            </DialogSection>
-            <div className={styles.contentWrapper} />
-            <DialogSection appearance={{ theme: 'sidePadding' }}>
-              <Annotations
-                label={isForce ? MSG.forceTextareaLabel : MSG.textareaLabel}
-                name="annotationMessage"
-                maxLength={90}
-              />
-            </DialogSection>
-            <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
-              <Button
-                appearance={{ theme: 'secondary', size: 'large' }}
-                text={MSG.cancelText}
-                onClick={close}
-              />
-              <Button
-                appearance={{
-                  theme: isForce ? 'danger' : 'primary',
-                  size: 'large',
-                }}
-                autoFocus
-                text={isForce ? MSG.confirmTexForce : MSG.confirmText}
-                onClick={(e) => {
-                  handleSubmit(e as any);
-                  onClick();
-                  close();
-                }}
-              />
-            </DialogSection>
-          </Dialog>
-        );
+    <EditExpenditureDialogForm
+      {...{
+        close,
+        handleMotionDomainChange,
+        colony,
+        confirmedValues,
+        discardChange,
+        discardRecipientChange,
+        getFormAction,
+        isForce,
+        oldValues,
+        onClick,
+        setIsForce,
+        domainID,
       }}
-    </ActionForm>
+    />
   );
 };
 

@@ -9,4 +9,6 @@ export interface Recipient {
     time: string;
   };
   isExpanded?: boolean;
+  removed?: boolean;
+  created?: boolean;
 }

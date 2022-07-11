@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import classNames from 'classnames';
 
+import { FormattedMessage } from 'react-intl';
 import { FormSection, InputLabel } from '~core/Fields';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
@@ -13,27 +14,29 @@ import Numeral from '~core/Numeral';
 import { Colony } from '~data/index';
 import { getRecipientTokens } from '../utils';
 import { MSG } from './Recipient';
+import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 
 const displayNameLockedRecipient = 'dashboard.ExpenditurePage.LockedRecipient';
 
 interface Props {
   recipient: RecipientType;
   colony: Colony;
+  pendingChanges?: Partial<ValuesType>;
 }
 
-const LockedRecipient = ({ recipient, colony }: Props) => {
-  const {
-    isExpanded,
-    recipient: {
-      profile: { walletAddress, username, displayName },
-    },
-    delay,
-  } = recipient;
+const LockedRecipient = ({ recipient, colony, pendingChanges }: Props) => {
+  const { isExpanded, recipient: recipientItem, delay } = recipient;
+  const { profile } = recipientItem || {};
+  const { walletAddress, username, displayName } = profile || {};
 
   const recipientValues = useMemo(() => getRecipientTokens(recipient, colony), [
     colony,
     recipient,
   ]);
+
+  const newPendingChange = pendingChanges?.recipients?.find(
+    (item) => item.id === recipient.id,
+  );
 
   return (
     <div>
@@ -41,14 +44,25 @@ const LockedRecipient = ({ recipient, colony }: Props) => {
         <div className={styles.formContainer}>
           <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.userContainer}>
-              <InputLabel
-                label={MSG.recipientLabel}
-                appearance={{
-                  direction: 'horizontal',
-                }}
-              />
+              <div className={styles.pendingWrapper}>
+                <InputLabel
+                  label={MSG.recipientLabel}
+                  appearance={{
+                    direction: 'horizontal',
+                  }}
+                />
+                {newPendingChange?.recipient && (
+                  <div className={styles.pending}>
+                    <FormattedMessage {...MSG.pending} />
+                  </div>
+                )}
+              </div>
               <div className={styles.userAvatarContainer}>
-                <UserAvatar address={walletAddress} size="xs" notSet={false} />
+                <UserAvatar
+                  address={walletAddress || ''}
+                  size="xs"
+                  notSet={false}
+                />
                 <div className={styles.userName}>
                   <UserMention username={username || displayName || ''} />
                 </div>
@@ -62,12 +76,19 @@ const LockedRecipient = ({ recipient, colony }: Props) => {
                   recipientValues && recipientValues.length > 1,
               })}
             >
-              <InputLabel
-                label={MSG.valueLabel}
-                appearance={{
-                  direction: 'horizontal',
-                }}
-              />
+              <div className={styles.pendingWrapper}>
+                <InputLabel
+                  label={MSG.valueLabel}
+                  appearance={{
+                    direction: 'horizontal',
+                  }}
+                />
+                {newPendingChange?.value && (
+                  <div className={styles.pending}>
+                    <FormattedMessage {...MSG.pending} />
+                  </div>
+                )}
+              </div>
               <div className={styles.tokens}>
                 {recipientValues?.map(
                   ({ amount, token }, idx) =>
@@ -96,12 +117,19 @@ const LockedRecipient = ({ recipient, colony }: Props) => {
           {delay?.amount && (
             <FormSection appearance={{ border: 'bottom' }}>
               <div className={styles.itemContainer}>
-                <InputLabel
-                  label={MSG.delayLabel}
-                  appearance={{
-                    direction: 'horizontal',
-                  }}
-                />
+                <div className={styles.pendingWrapper}>
+                  <InputLabel
+                    label={MSG.delayLabel}
+                    appearance={{
+                      direction: 'horizontal',
+                    }}
+                  />
+                  {newPendingChange?.delay && (
+                    <div className={styles.pending}>
+                      <FormattedMessage {...MSG.pending} />
+                    </div>
+                  )}
+                </div>
                 <span className={styles.delayControlsContainer}>
                   {delay.amount} {delay.time}
                 </span>

@@ -65,6 +65,10 @@
   height: calc(100% - 84px);
 }
 
+.dividerInLockedItem {
+  height: calc(100% - 120px);
+}
+
 .minus {
   height: 1px;
   width: 70%;
@@ -126,4 +130,21 @@
 .editIcon svg {
   height: 30px;
   width: 30px;
+}
+
+.recipientNameWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dot {
+  height: 9px;
+  width: 9px;
+  border-radius: 50%;
+  background-color: var(--golden);
+}
+
+.blue {
+  background-color: var(--action-secondary);
 }

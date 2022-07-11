@@ -10,10 +10,9 @@ import { nanoid } from 'nanoid';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { RouteChildrenProps, useParams } from 'react-router';
 import { FormikErrors } from 'formik';
-import { isEqual } from 'lodash';
 import { Form } from '~core/Fields';
 import Payments from '~dashboard/ExpenditurePage/Payments';
-import Stages from '~dashboard/ExpenditurePage/Stages';
+import { FormStages, LockedStages } from '~dashboard/ExpenditurePage/Stages';
 import TitleDescriptionSection, {
   LockedTitleDescriptionSection,
 } from '~dashboard/ExpenditurePage/TitleDescriptionSection';
@@ -22,7 +21,7 @@ import styles from './ExpenditurePage.css';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
 import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
-import { useColonyFromNameQuery } from '~data/generated';
+import { LoggedInUser, useColonyFromNameQuery } from '~data/generated';
 import { useLoggedInUser } from '~data/helpers';
 import { SpinnerLoader } from '~core/Preloaders';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
@@ -32,6 +31,7 @@ import EditExpenditureDialog from '~dashboard/Dialogs/EditExpenditureDialog/Edit
 import { useDialog } from '~core/Dialog';
 import Tag from '~core/Tag';
 import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
+import { findDifferences } from './utils';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -97,8 +97,12 @@ const MSG = defineMessages({
     defaultMessage: 'Value must be greater than zero',
   },
   suggestions: {
-    id: 'dashboard.Expenditures.Stages.suggestions',
+    id: 'dashboard.ExpenditurePage.suggestions',
     defaultMessage: 'You are making suggestions ',
+  },
+  activeMotion: {
+    id: 'dashboard.ExpenditurePage.activeMotion',
+    defaultMessage: 'There is an active motion for this expenditure',
   },
 });
 
@@ -138,7 +142,12 @@ export interface State {
 export interface ValuesType {
   expenditure: string;
   filteredDomainId: string;
-  owner: string;
+  owner:
+    | string
+    | Pick<
+        LoggedInUser,
+        'walletAddress' | 'balance' | 'username' | 'ethereal' | 'networkId'
+      >;
   recipients: Recipient[];
   title: string;
   description?: string;
@@ -185,6 +194,7 @@ const ExpenditurePage = ({ match }: Props) => {
     return (
       formValues || {
         ...initialValues,
+        id: nanoid(),
         owner: loggedInUser,
         recipients: [
           {
@@ -205,7 +215,6 @@ const ExpenditurePage = ({ match }: Props) => {
 
   const handleSubmit = useCallback((values) => {
     setShouldValidate(true);
-    setActiveStateId(Stage.Draft);
 
     if (values) {
       setFormValues(values);
@@ -217,15 +226,15 @@ const ExpenditurePage = ({ match }: Props) => {
     setFormEditable(false);
   }, []);
 
-  const handleLockExpenditure = () => {
+  const handleLockExpenditure = useCallback(() => {
     // Call to backend will be added here, to lock the expenditure
     // fetching active state shoud be added here as well,
     // and saving the activeState in a state
     setActiveStateId(Stage.Locked);
     lockValues();
-  };
+  }, [lockValues]);
 
-  const handleFoundExpenditure = () => {
+  const handleFundExpenditure = () => {
     // Call to backend will be added here, to found the expenditure
     setActiveStateId(Stage.Funded);
   };
@@ -252,7 +261,7 @@ const ExpenditurePage = ({ match }: Props) => {
       id: Stage.Locked,
       label: MSG.locked,
       buttonText: MSG.escrowFunds,
-      buttonAction: handleFoundExpenditure,
+      buttonAction: handleFundExpenditure,
     },
     {
       id: Stage.Funded,
@@ -283,27 +292,39 @@ const ExpenditurePage = ({ match }: Props) => {
   }, [shouldValidate]);
 
   const [inEditMode, setInEditMode] = useState(false);
+  const oldValues = useRef<ValuesType>();
+  const [pendingChanges, setPendingChanges] = useState<
+    Partial<ValuesType> | undefined
+  >();
+  const [forcedChanges, setForcedChanges] = useState<
+    Partial<ValuesType> | undefined
+  >();
 
-  const handleConfirmEition = useCallback(() => {
-    setInEditMode(false);
-    setFormEditable(false);
-    // add call to the backend
-  }, []);
+  const handleConfirmEition = useCallback(
+    (confirmedValues: Partial<ValuesType> | undefined, wasForced: boolean) => {
+      setInEditMode(false);
+      setFormEditable(false);
+
+      if (wasForced) {
+        setForcedChanges(confirmedValues);
+        // call to backend to set new values goes here
+      } else {
+        setPendingChanges(confirmedValues);
+        // setting pendigChanges is temporary, it should be replaced with call to api
+      }
+    },
+    [],
+  );
 
   const handleEditLockedForm = useCallback(() => {
     setInEditMode(true);
     setFormEditable(true);
-  }, []);
+    oldValues.current = formValues;
+  }, [formValues]);
 
   const handleEditCancel = useCallback(() => {
     setInEditMode(false);
     setFormEditable(false);
-  }, []);
-
-  // add discard change
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const discardChange = useCallback((name: string) => {
-    // logic to change field value to initial
   }, []);
 
   const handleEditSubmit = useCallback(
@@ -316,68 +337,22 @@ const ExpenditurePage = ({ match }: Props) => {
       const errors = await validateForm(values);
       const hasErrors = Object.keys(errors)?.length;
 
-      const differentValues = Object.entries(values).reduce(
-        (result, current) => {
-          const [key, value] = current;
-
-          // if the value is an array, check each item
-          if (Array.isArray(value)) {
-            const changes = value.map((item, index) => {
-              if (typeof item === 'object') {
-                const change = Object.entries(item).reduce(
-                  (acc, [currKey, currVal]) => {
-                    const initialVal = initialValues[key][index][currKey];
-
-                    if (currKey === 'isExpanded') {
-                      return acc;
-                    }
-
-                    if (!isEqual(currVal, initialVal)) {
-                      return { ...acc, ...{ [currKey]: currVal } };
-                    }
-
-                    return acc;
-                  },
-                  {},
-                );
-
-                return Object.keys(change).length > 0 ? change : {};
-              }
-
-              if (!isEqual(value, initialValues[key])) {
-                return value;
-              }
-
-              return {};
-            });
-
-            return Object.keys(changes).length > 0
-              ? { ...result, ...{ [key]: changes } }
-              : result;
-          }
-
-          if (isEqual(initialValues[key], values[key])) {
-            return { ...result, [key]: value };
-          }
-
-          return result;
-        },
-        {},
-      );
-
-      // add previous value for recipient
+      const differentValues = findDifferences(values, oldValues.current);
 
       return (
         !hasErrors &&
+        colonyData &&
+        oldValues.current &&
         openEditExpenditureDialog({
           onClick: handleConfirmEition,
           isVotingExtensionEnabled: true,
-          colonyName,
-          formValues: differentValues,
+          colony: colonyData?.processedColony,
+          newValues: differentValues,
+          oldValues: oldValues.current,
         })
       );
     },
-    [colonyName, handleConfirmEition, openEditExpenditureDialog],
+    [colonyData, handleConfirmEition, openEditExpenditureDialog],
   );
 
   return isFormEditable ? (
@@ -430,16 +405,15 @@ const ExpenditurePage = ({ match }: Props) => {
                   handleEditSubmit={() =>
                     handleEditSubmit(values, validateForm)
                   }
-                  {...{ handleEditCancel }}
+                  handleEditCancel={handleEditCancel}
                 />
               ) : (
-                <Stages
+                <FormStages
                   {...{
                     states,
                     activeStateId,
                     setActiveStateId,
-                    lockValues,
-                    handleSubmit,
+                    setFormValues,
                   }}
                 />
               )}
@@ -461,6 +435,8 @@ const ExpenditurePage = ({ match }: Props) => {
           recipients={formValues?.recipients}
           colony={colonyData?.processedColony}
           editForm={handleEditLockedForm}
+          pendingChanges={pendingChanges}
+          forcedChanges={!!forcedChanges}
         />
       </aside>
       <div className={styles.mainContainer}>
@@ -469,15 +445,26 @@ const ExpenditurePage = ({ match }: Props) => {
             title={formValues?.title}
             description={formValues?.description}
           />
-          <Stages
-            {...{
-              states,
-              activeStateId,
-              setActiveStateId,
-              lockValues,
-              handleSubmit,
-            }}
-          />
+          <div className={styles.tagStagesWrapper}>
+            {pendingChanges && (
+              <Tag
+                appearance={{
+                  theme: 'golden',
+                }}
+              >
+                <FormattedMessage {...MSG.activeMotion} />
+              </Tag>
+            )}
+            <LockedStages
+              {...{
+                states,
+                activeStateId,
+                setActiveStateId,
+              }}
+              pendingChanges={!!pendingChanges}
+              forcedChanges={!!forcedChanges}
+            />
+          </div>
         </main>
       </div>
     </div>

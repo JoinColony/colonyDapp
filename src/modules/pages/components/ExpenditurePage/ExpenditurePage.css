@@ -45,3 +45,10 @@
   margin-bottom: -50px;
   padding: 34px 54px 0;
 }
+
+.tagStagesWrapper span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
