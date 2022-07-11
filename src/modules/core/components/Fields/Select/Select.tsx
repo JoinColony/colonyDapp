@@ -122,6 +122,7 @@ const Select = ({
   const [, { error, value }, { setValue }] = useField(name);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const { formatMessage } = useIntl();
+  const dropdownContainerRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -149,10 +150,17 @@ const Select = ({
         evt.target instanceof Node &&
         !wrapperRef.current.contains(evt.target)
       ) {
+        const withinDropdown =
+          dropdownRef.current && dropdownRef?.current.contains(evt.target);
+
+        if (withDropdownElelment && withinDropdown) {
+          return;
+        }
+
         close();
       }
     },
-    [close],
+    [close, withDropdownElelment],
   );
 
   const goUp = () => {
@@ -301,7 +309,7 @@ const Select = ({
         helpValues={helpValues}
         screenReaderOnly={elementOnly}
       />
-      <div className={styles.inputWrapper} ref={dropdownRef}>
+      <div className={styles.inputWrapper} ref={dropdownContainerRef}>
         <button
           className={`${styles.select} ${getMainClasses(appearance, styles)}`}
           aria-haspopup="listbox"
@@ -333,9 +341,10 @@ const Select = ({
           <>
             {withDropdownElelment ? (
               <Dropdown
-                element={dropdownRef.current}
+                element={dropdownContainerRef.current}
                 scrollContainer={scrollContainer}
                 placement={placement}
+                ref={dropdownRef}
               >
                 <SelectListBox
                   checkedOption={checkedOption}
