@@ -14,6 +14,10 @@ import { WizardDialogType } from '~utils/hooks';
 import GnosisControlSafeForm from './GnosisControlSafeForm';
 
 const MSG = defineMessages({
+  requiredFieldError: {
+    id: 'dashboard.GnosisControlSafeDialog.requiredFieldError',
+    defaultMessage: 'Please enter a value',
+  },
   amountZero: {
     id: 'dashboard.GnosisControlSafeDialog.amountZero',
     defaultMessage: 'Amount must be greater than zero',
@@ -75,15 +79,18 @@ type Props = DialogProps &
   ActionDialogProps;
 
 const validationSchema = yup.object().shape({
-  safe: yup.string().required(),
+  safe: yup.string().required(() => MSG.requiredFieldError),
   transactions: yup.array(
     yup.object().shape({
-      transactionType: yup.string().required(),
+      transactionType: yup.string().required(() => MSG.requiredFieldError),
       recipient: yup.object().shape({
         profile: yup.object().shape({
           walletAddress: yup.string().when('transactionType', {
             is: (transactionType) => transactionType === 'transferFunds',
-            then: yup.string().address().required(),
+            then: yup
+              .string()
+              .address()
+              .required(() => MSG.requiredFieldError),
             otherwise: false,
           }),
         }),
@@ -95,33 +102,39 @@ const validationSchema = yup.object().shape({
         then: yup
           .number()
           .transform((value) => toFinite(value))
-          .required()
+          .required(() => MSG.requiredFieldError)
           .moreThan(0, () => MSG.amountZero),
         otherwise: false,
       }),
       tokenAddress: yup.string().when('transactionType', {
         is: (transactionType) => transactionType === 'transferFunds',
-        then: yup.string().address().required(),
+        then: yup
+          .string()
+          .address()
+          .required(() => MSG.requiredFieldError),
         otherwise: false,
       }),
       data: yup.string().when('transactionType', {
         is: (transactionType) => transactionType === 'rawTransaction',
-        then: yup.string().required(),
+        then: yup.string().required(() => MSG.requiredFieldError),
         otherwise: false,
       }),
       contract: yup.string().when('transactionType', {
         is: (transactionType) => transactionType === 'contractInteraction',
-        then: yup.string().address().required(),
+        then: yup
+          .string()
+          .address()
+          .required(() => MSG.requiredFieldError),
         otherwise: false,
       }),
       abi: yup.string().when('transactionType', {
         is: (transactionType) => transactionType === 'contractInteraction',
-        then: yup.string().required(),
+        then: yup.string().required(() => MSG.requiredFieldError),
         otherwise: false,
       }),
       contractFunction: yup.string().when('transactionType', {
         is: (transactionType) => transactionType === 'contractInteraction',
-        then: yup.string().required(),
+        then: yup.string().required(() => MSG.requiredFieldError),
         otherwise: false,
       }),
     }),
