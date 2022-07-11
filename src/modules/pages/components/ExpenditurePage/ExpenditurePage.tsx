@@ -6,14 +6,13 @@ import { RouteChildrenProps, useParams } from 'react-router';
 import { Form } from '~core/Fields';
 import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
 import { useColonyFromNameQuery } from '~data/generated';
-import Payments from '~dashboard/ExpenditurePage/Payments';
-import ExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings';
 import Stages from '~dashboard/ExpenditurePage/Stages';
 import TitleDescriptionSection from '~dashboard/ExpenditurePage/TitleDescriptionSection';
 import { getMainClasses } from '~utils/css';
 import styles from './ExpenditurePage.css';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import { SpinnerLoader } from '~core/Preloaders';
+import ExpenditureForm from './ExpenditureForm';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -94,8 +93,7 @@ const ExpenditurePage = ({ match }: Props) => {
     >
       <div className={getMainClasses({}, styles)}>
         <aside className={styles.sidebar} ref={sidebarRef}>
-          <ExpenditureSettings />
-          <Payments sidebarRef={sidebarRef.current} />
+          <ExpenditureForm sidebarRef={sidebarRef.current} />
         </aside>
         <div className={styles.mainContainer}>
           <main className={styles.mainContent}>
