@@ -23,7 +23,7 @@ import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import UserMention from '~core/UserMention';
 import ColorTag, { Color } from '~core/ColorTag';
 import { SpinnerLoader } from '~core/Preloaders';
-import DomainDropdownWithPortal from '~core/DomainDropdown/DomainDropdownWithPortal';
+import DomainDropdown from '~core/DomainDropdown';
 
 const MSG = defineMessages({
   typeLabel: {
@@ -181,7 +181,7 @@ const ExpenditureSettings = ({ sidebarRef }: Props) => {
                 ]}
                 scrollContainer={sidebarRef}
                 placement="bottom"
-                withPortal
+                withDropdownElelment
                 optionSizeLarge
               />
             </div>
@@ -195,7 +195,7 @@ const ExpenditureSettings = ({ sidebarRef }: Props) => {
                 }}
               />
               {colonyData && (
-                <DomainDropdownWithPortal
+                <DomainDropdown
                   colony={colonyData?.processedColony}
                   name="filteredDomainId"
                   renderActiveOptionFn={renderActiveOption}
@@ -206,6 +206,7 @@ const ExpenditureSettings = ({ sidebarRef }: Props) => {
                   itemDataTest="colonyDomainSelectorItem"
                   scrollContainer={sidebarRef}
                   placement="bottom"
+                  withDropdownElelment
                 />
               )}
             </div>

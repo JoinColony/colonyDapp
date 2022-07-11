@@ -21,6 +21,7 @@ import InputStatus from '../InputStatus';
 import Icon from '../../Icon';
 
 import styles from './Select.css';
+import Dropdown from '~core/UserPickerWithSearch/Dropdown';
 
 const MSG = defineMessages({
   expandIconHTMLTitle: {
@@ -86,6 +87,10 @@ export interface Props {
 
   /** Provides value for data-test prop in select items used on cypress testing */
   itemDataTest?: string;
+
+  withDropdownElelment?: boolean;
+  scrollContainer?: HTMLElement | null;
+  placement?: 'right' | 'bottom' | 'exact';
 }
 
 const displayName = 'Select';
@@ -109,11 +114,15 @@ const Select = ({
   statusValues,
   dataTest,
   itemDataTest,
+  withDropdownElelment = false,
+  scrollContainer,
+  placement,
 }: Props) => {
   const [id] = useState<string>(idProp || nanoid());
   const [, { error, value }, { setValue }] = useField(name);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const { formatMessage } = useIntl();
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<number>(-1);
@@ -292,7 +301,7 @@ const Select = ({
         helpValues={helpValues}
         screenReaderOnly={elementOnly}
       />
-      <div className={styles.inputWrapper}>
+      <div className={styles.inputWrapper} ref={dropdownRef}>
         <button
           className={`${styles.select} ${getMainClasses(appearance, styles)}`}
           aria-haspopup="listbox"
@@ -321,18 +330,41 @@ const Select = ({
           </div>
         </button>
         {isOpen && !!options.length && (
-          <SelectListBox
-            checkedOption={checkedOption}
-            selectedOption={selectedOption}
-            listboxId={listboxId}
-            options={options}
-            optionsFooter={optionsFooter}
-            onSelect={selectOption}
-            onClick={checkOption}
-            appearance={appearance}
-            name={name}
-            dataTest={itemDataTest}
-          />
+          <>
+            {withDropdownElelment ? (
+              <Dropdown
+                element={dropdownRef.current}
+                scrollContainer={scrollContainer}
+                placement={placement}
+              >
+                <SelectListBox
+                  checkedOption={checkedOption}
+                  selectedOption={selectedOption}
+                  listboxId={listboxId}
+                  options={options}
+                  optionsFooter={optionsFooter}
+                  onSelect={selectOption}
+                  onClick={checkOption}
+                  appearance={appearance}
+                  name={name}
+                  dataTest={itemDataTest}
+                />
+              </Dropdown>
+            ) : (
+              <SelectListBox
+                checkedOption={checkedOption}
+                selectedOption={selectedOption}
+                listboxId={listboxId}
+                options={options}
+                optionsFooter={optionsFooter}
+                onSelect={selectOption}
+                onClick={checkOption}
+                appearance={appearance}
+                name={name}
+                dataTest={itemDataTest}
+              />
+            )}
+          </>
         )}
       </div>
       {!elementOnly && (

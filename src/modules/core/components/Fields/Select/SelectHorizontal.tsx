@@ -6,12 +6,11 @@ import Select, { Props as SelectProps } from './Select';
 import styles from './SelectHorizontal.css';
 import InputStatus from '../InputStatus';
 import InputLabel from '../InputLabel';
-import SelectWithPortalDropdown from './SelectWithPortalDropdown';
 
 interface Props extends SelectProps {
   unselectable?: boolean;
   optionSizeLarge?: boolean;
-  withPortal?: boolean;
+  withDropdownElelment?: boolean;
   scrollContainer?: HTMLElement | null;
   placement?: 'bottom' | 'right';
 }
@@ -19,7 +18,7 @@ interface Props extends SelectProps {
 const SelectHorizontal = ({
   unselectable,
   optionSizeLarge,
-  withPortal,
+  withDropdownElelment,
   scrollContainer,
   placement,
   ...selectProps
@@ -53,15 +52,16 @@ const SelectHorizontal = ({
           helpValues={helpValues}
           screenReaderOnly={elementOnly}
         />
-
-        {withPortal ? (
-          <SelectWithPortalDropdown
-            {...{ id, scrollContainer, placement, ...selectProps }}
-            elementOnly
-          />
-        ) : (
-          <Select {...{ id, ...selectProps }} elementOnly />
-        )}
+        <Select
+          {...{
+            id,
+            withDropdownElelment,
+            scrollContainer,
+            placement,
+            ...selectProps,
+          }}
+          elementOnly
+        />
       </div>
       {!elementOnly && (error || status) && (
         <div className={styles.status}>
