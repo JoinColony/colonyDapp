@@ -103,10 +103,12 @@ export const validationSchema = (annotationErrorMessage) =>
     // eslint-disable-next-line func-names
     annotationMessage: yup
       .string()
-      // eslint-disable-next-line func-names
       .test('isRequired', annotationErrorMessage, function (value) {
         const isRequired = this?.parent?.forceAction;
-        return isRequired ? isRequired && value : true;
+        if (isRequired) {
+          return !!value;
+        }
+        return true;
       }),
   });
 
