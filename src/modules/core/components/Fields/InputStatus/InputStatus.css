@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   margin-top: 4px;
   height: 15px;
@@ -54,4 +56,17 @@
   height: 38px;
   line-height: 18px;
   white-space: pre-wrap;
+}
+
+@media screen and query700 {
+  .main {
+    display: flex;
+    height: auto;
+    white-space: normal;
+  }
+
+  .main::before {
+    margin-top: 4px;
+    min-width: 8px;
+  }
 }
