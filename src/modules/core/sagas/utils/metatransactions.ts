@@ -91,10 +91,6 @@ export const generateMetatransactionMessage = async (
     { t: 'uint256', v: chainId },
     { t: 'bytes', v: encodedTransaction },
   ) as string;
-
-  // eslint-disable-next-line no-console
-  console.log('Transaction message', message);
-
   const messageBuffer = Buffer.from(
     hexSequenceNormalizer(message, false),
     'hex',
@@ -112,9 +108,6 @@ export const generateMetatransactionMessage = async (
    * or the signature.
    */
   messageUint8.constructor = Uint8Array;
-
-  // eslint-disable-next-line no-console
-  console.log('Actual message converted into Uint8', messageUint8);
 
   return {
     message,
@@ -149,9 +142,6 @@ export const broadcastMetatransaction = async (
     status: reponseStatus,
     data: responseData,
   } = await response.json();
-
-  // eslint-disable-next-line no-console
-  console.log('Response data', responseError, reponseStatus, responseData);
 
   if (reponseStatus !== 'success') {
     throw new Error(
