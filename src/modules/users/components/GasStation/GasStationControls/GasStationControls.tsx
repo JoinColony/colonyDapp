@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useContext } from 'react';
 import { useDispatch } from 'redux-react-hook';
 import * as yup from 'yup';
 
@@ -9,7 +9,12 @@ import { ActionTypes } from '~redux/index';
 import { IconButton } from '~core/Button';
 import { ActionForm } from '~core/Fields';
 
-import { transactionEstimateGas } from '../../../../core/actionCreators';
+import {
+  transactionEstimateGas,
+  transactionSend,
+} from '../../../../core/actionCreators';
+
+import { GasStationContext } from '../GasStationProvider';
 
 import styles from './GasStationControls.css';
 
@@ -27,9 +32,12 @@ const validationSchema = yup.object().shape({
 
 const displayName = 'users.GasStation.GasStationControls';
 
-const GasStationControls = ({ transaction: { id, error } }: Props) => {
+const GasStationControls = ({
+  transaction: { id, error, metatransaction },
+}: Props) => {
   const dispatch = useDispatch();
   const transform = useCallback(withId(id), [id]);
+  const { updateTransactionAlert } = useContext(GasStationContext);
 
   /*
    * @NOTE Automatically send the transaction
@@ -42,9 +50,18 @@ const GasStationControls = ({ transaction: { id, error } }: Props) => {
    */
   useEffect(() => {
     if (!error) {
-      dispatch(transactionEstimateGas(id));
+      if (metatransaction) {
+        dispatch(transactionSend(id));
+      } else {
+        dispatch(transactionEstimateGas(id));
+      }
     }
-  }, [dispatch, id, error]);
+  }, [dispatch, id, error, metatransaction]);
+
+  const handleResetMetaTransactionAlert = useCallback(
+    () => updateTransactionAlert(id, { wasSeen: false }),
+    [id, updateTransactionAlert],
+  );
 
   const initialFormValues: FormValues = { id };
 
@@ -60,7 +77,11 @@ const GasStationControls = ({ transaction: { id, error } }: Props) => {
       >
         {error && (
           <div className={styles.controls}>
-            <IconButton type="submit" text={{ id: 'button.retry' }} />
+            <IconButton
+              type="submit"
+              text={{ id: 'button.retry' }}
+              onClick={handleResetMetaTransactionAlert}
+            />
           </div>
         )}
       </ActionForm>

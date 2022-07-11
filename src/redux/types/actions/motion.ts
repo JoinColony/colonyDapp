@@ -21,7 +21,7 @@ export enum RootMotionOperationNames {
 
 export type MotionActionTypes =
   | UniqueActionType<
-      ActionTypes.COLONY_MOTION_STAKE,
+      ActionTypes.MOTION_STAKE,
       {
         userAddress: Address;
         colonyAddress: Address;
@@ -32,13 +32,13 @@ export type MotionActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_MOTION_STAKE_ERROR, object>
+  | ErrorActionType<ActionTypes.MOTION_STAKE_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_MOTION_STAKE_SUCCESS,
+      ActionTypes.MOTION_STAKE_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<
-      ActionTypes.COLONY_MOTION_VOTE,
+      ActionTypes.MOTION_VOTE,
       {
         userAddress: Address;
         colonyAddress: Address;
@@ -47,13 +47,10 @@ export type MotionActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_MOTION_VOTE_ERROR, object>
-  | ActionTypeWithMeta<
-      ActionTypes.COLONY_MOTION_VOTE_SUCCESS,
-      MetaWithHistory<object>
-    >
+  | ErrorActionType<ActionTypes.MOTION_VOTE_ERROR, object>
+  | ActionTypeWithMeta<ActionTypes.MOTION_VOTE_SUCCESS, MetaWithHistory<object>>
   | UniqueActionType<
-      ActionTypes.COLONY_MOTION_REVEAL_VOTE,
+      ActionTypes.MOTION_REVEAL_VOTE,
       {
         userAddress: Address;
         colonyAddress: Address;
@@ -61,13 +58,13 @@ export type MotionActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_MOTION_REVEAL_VOTE_ERROR, object>
+  | ErrorActionType<ActionTypes.MOTION_REVEAL_VOTE_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_MOTION_REVEAL_VOTE_SUCCESS,
+      ActionTypes.MOTION_REVEAL_VOTE_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<
-      ActionTypes.COLONY_MOTION_FINALIZE,
+      ActionTypes.MOTION_FINALIZE,
       {
         userAddress: Address;
         colonyAddress: Address;
@@ -75,13 +72,13 @@ export type MotionActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_MOTION_FINALIZE_ERROR, object>
+  | ErrorActionType<ActionTypes.MOTION_FINALIZE_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_MOTION_FINALIZE_SUCCESS,
+      ActionTypes.MOTION_FINALIZE_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<
-      ActionTypes.COLONY_MOTION_CLAIM,
+      ActionTypes.MOTION_CLAIM,
       {
         userAddress: Address;
         colonyAddress: Address;
@@ -89,13 +86,13 @@ export type MotionActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_MOTION_CLAIM_ERROR, object>
+  | ErrorActionType<ActionTypes.MOTION_CLAIM_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_MOTION_CLAIM_SUCCESS,
+      ActionTypes.MOTION_CLAIM_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<
-      ActionTypes.COLONY_MOTION_DOMAIN_CREATE_EDIT,
+      ActionTypes.MOTION_DOMAIN_CREATE_EDIT,
       {
         colonyAddress: Address;
         colonyName?: string;
@@ -110,13 +107,13 @@ export type MotionActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_MOTION_DOMAIN_CREATE_EDIT_ERROR, object>
+  | ErrorActionType<ActionTypes.MOTION_DOMAIN_CREATE_EDIT_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_MOTION_DOMAIN_CREATE_EDIT_SUCCESS,
+      ActionTypes.MOTION_DOMAIN_CREATE_EDIT_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<
-      ActionTypes.COLONY_MOTION_EXPENDITURE_PAYMENT,
+      ActionTypes.MOTION_EXPENDITURE_PAYMENT,
       {
         colonyAddress: Address;
         colonyName?: string;
@@ -132,13 +129,13 @@ export type MotionActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_MOTION_EXPENDITURE_PAYMENT_ERROR, object>
+  | ErrorActionType<ActionTypes.MOTION_EXPENDITURE_PAYMENT_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_MOTION_EXPENDITURE_PAYMENT_SUCCESS,
+      ActionTypes.MOTION_EXPENDITURE_PAYMENT_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<
-      ActionTypes.COLONY_MOTION_EDIT_COLONY,
+      ActionTypes.MOTION_EDIT_COLONY,
       {
         colonyAddress: Address;
         colonyName: string;
@@ -154,13 +151,13 @@ export type MotionActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_MOTION_EDIT_COLONY_ERROR, object>
+  | ErrorActionType<ActionTypes.MOTION_EDIT_COLONY_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_MOTION_EDIT_COLONY_SUCCESS,
+      ActionTypes.MOTION_EDIT_COLONY_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<
-      ActionTypes.COLONY_MOTION_MOVE_FUNDS,
+      ActionTypes.MOTION_MOVE_FUNDS,
       {
         colonyAddress: Address;
         colonyName?: string;
@@ -173,13 +170,13 @@ export type MotionActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_MOTION_MOVE_FUNDS_ERROR, object>
+  | ErrorActionType<ActionTypes.MOTION_MOVE_FUNDS_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_MOTION_MOVE_FUNDS_SUCCESS,
+      ActionTypes.MOTION_MOVE_FUNDS_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<
-      ActionTypes.COLONY_ROOT_MOTION,
+      ActionTypes.ROOT_MOTION,
       {
         operationName: RootMotionOperationNames;
         colonyAddress: Address;
@@ -189,13 +186,10 @@ export type MotionActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_ROOT_MOTION_ERROR, object>
-  | ActionTypeWithMeta<
-      ActionTypes.COLONY_ROOT_MOTION_SUCCESS,
-      MetaWithHistory<object>
-    >
+  | ErrorActionType<ActionTypes.ROOT_MOTION_ERROR, object>
+  | ActionTypeWithMeta<ActionTypes.ROOT_MOTION_SUCCESS, MetaWithHistory<object>>
   | UniqueActionType<
-      ActionTypes.COLONY_MOTION_USER_ROLES_SET,
+      ActionTypes.MOTION_USER_ROLES_SET,
       {
         colonyAddress: Address;
         colonyName: string;
@@ -207,13 +201,13 @@ export type MotionActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_MOTION_USER_ROLES_SET_ERROR, object>
+  | ErrorActionType<ActionTypes.MOTION_USER_ROLES_SET_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_MOTION_USER_ROLES_SET_SUCCESS,
+      ActionTypes.MOTION_USER_ROLES_SET_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<
-      ActionTypes.COLONY_MOTION_STATE_UPDATE,
+      ActionTypes.MOTION_STATE_UPDATE,
       {
         colonyAddress: Address;
         motionId: BigNumber;
@@ -221,13 +215,13 @@ export type MotionActionTypes =
       },
       object
     >
-  | ErrorActionType<ActionTypes.COLONY_MOTION_STATE_UPDATE_ERROR, object>
+  | ErrorActionType<ActionTypes.MOTION_STATE_UPDATE_ERROR, object>
   | UniqueActionTypeWithoutPayload<
-      ActionTypes.COLONY_MOTION_STATE_UPDATE_SUCCESS,
+      ActionTypes.MOTION_STATE_UPDATE_SUCCESS,
       object
     >
   | UniqueActionType<
-      ActionTypes.COLONY_MOTION_ESCALATE,
+      ActionTypes.MOTION_ESCALATE,
       {
         userAddress: Address;
         colonyAddress: Address;
@@ -235,13 +229,13 @@ export type MotionActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_MOTION_ESCALATE_ERROR, object>
+  | ErrorActionType<ActionTypes.MOTION_ESCALATE_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_MOTION_ESCALATE_SUCCESS,
+      ActionTypes.MOTION_ESCALATE_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<
-      ActionTypes.COLONY_MOTION_MANAGE_REPUTATION,
+      ActionTypes.MOTION_MANAGE_REPUTATION,
       {
         colonyAddress: Address;
         colonyName?: string;
@@ -254,8 +248,8 @@ export type MotionActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_MOTION_MANAGE_REPUTATION_ERROR, object>
+  | ErrorActionType<ActionTypes.MOTION_MANAGE_REPUTATION_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_MOTION_MANAGE_REPUTATION_SUCCESS,
+      ActionTypes.MOTION_MANAGE_REPUTATION_SUCCESS,
       MetaWithHistory<object>
     >;

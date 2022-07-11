@@ -45,8 +45,8 @@ const NetworkContractUpgradeDialog = ({
       const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
 
       return isVotingExtensionEnabled && !isForce
-        ? ActionTypes[`COLONY_ROOT_MOTION${actionEnd}`]
-        : ActionTypes[`COLONY_ACTION_VERSION_UPGRADE${actionEnd}`];
+        ? ActionTypes[`ROOT_MOTION${actionEnd}`]
+        : ActionTypes[`ACTION_VERSION_UPGRADE${actionEnd}`];
     },
     [isVotingExtensionEnabled, isForce],
   );

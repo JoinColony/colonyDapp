@@ -48,7 +48,7 @@ export const getButtonAction = (
       break;
     }
     default:
-      actionBeginning = 'COLONY_EXTENSION';
+      actionBeginning = 'EXTENSION';
   }
 
   return ActionTypes[`${actionBeginning}_ENABLE${actionEnd}`];

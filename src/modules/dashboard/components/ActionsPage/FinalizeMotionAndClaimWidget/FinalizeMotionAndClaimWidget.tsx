@@ -313,9 +313,9 @@ const FinalizeMotionAndClaimWidget = ({
       {showFinalizeButton && (
         <ActionForm
           initialValues={{}}
-          submit={ActionTypes.COLONY_MOTION_FINALIZE}
-          error={ActionTypes.COLONY_MOTION_FINALIZE_ERROR}
-          success={ActionTypes.COLONY_MOTION_FINALIZE_SUCCESS}
+          submit={ActionTypes.MOTION_FINALIZE}
+          error={ActionTypes.MOTION_FINALIZE_ERROR}
+          success={ActionTypes.MOTION_FINALIZE_SUCCESS}
           transform={finalizeTransform}
           onSuccess={handleSuccess}
         >
@@ -360,9 +360,9 @@ const FinalizeMotionAndClaimWidget = ({
       {showClaimButton && (
         <ActionForm
           initialValues={{}}
-          submit={ActionTypes.COLONY_MOTION_CLAIM}
-          error={ActionTypes.COLONY_MOTION_CLAIM_ERROR}
-          success={ActionTypes.COLONY_MOTION_CLAIM_SUCCESS}
+          submit={ActionTypes.MOTION_CLAIM}
+          error={ActionTypes.MOTION_CLAIM_ERROR}
+          success={ActionTypes.MOTION_CLAIM_SUCCESS}
           transform={claimTransform}
           onSuccess={handleSuccess}
         >

@@ -8,7 +8,7 @@ import { ActionTypes, Action } from '~redux/index';
 import { selectAsJS } from '~utils/saga/effects';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { TransactionRecordProps } from '~immutable/index';
-import { ExtendedReduxContext } from '~types/index';
+import { ExtendedClientType } from '~types/index';
 
 import { oneTransaction } from '../../selectors';
 import {
@@ -45,7 +45,8 @@ export default function* estimateGasCost({
     if (context === ClientType.TokenClient) {
       contextClient = yield colonyManager.getTokenClient(identifier as string);
     } else if (
-      context === ((ExtendedReduxContext.WrappedToken as unknown) as ClientType)
+      context ===
+      ((ExtendedClientType.WrappedTokenClient as unknown) as ClientType)
     ) {
       // @ts-ignore
       const wrappedTokenAbi = abis.WrappedToken.default.abi;
@@ -56,7 +57,7 @@ export default function* estimateGasCost({
       );
     } else if (
       context ===
-      ((ExtendedReduxContext.VestingSimple as unknown) as ClientType)
+      ((ExtendedClientType.VestingSimpleClient as unknown) as ClientType)
     ) {
       // @ts-ignore
       const vestingSimpleAbi = abis.vestingSimple.default.abi;
@@ -66,7 +67,10 @@ export default function* estimateGasCost({
         colonyManager.signer,
       );
     } else {
-      contextClient = yield colonyManager.getClient(context, identifier);
+      contextClient = yield colonyManager.getClient(
+        context as ClientType,
+        identifier,
+      );
     }
 
     if (!contextClient) {

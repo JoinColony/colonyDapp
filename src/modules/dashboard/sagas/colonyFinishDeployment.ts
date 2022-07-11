@@ -12,6 +12,7 @@ import {
 } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 import { poll } from 'ethers/utils';
+import { createAddress } from '~utils/web3';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
@@ -47,7 +48,7 @@ interface ChannelDefinition {
 function* colonyRestartDeployment({
   payload: { colonyAddress },
   meta,
-}: Action<ActionTypes.COLONY_DEPLOYMENT_RESTART>) {
+}: Action<ActionTypes.DEPLOYMENT_RESTART>) {
   try {
     const { walletAddress, username } = yield getLoggedInUser();
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
@@ -274,7 +275,7 @@ function* colonyRestartDeployment({
       );
       yield put(transactionReady(deployTokenAuthority.id));
       const {
-        payload: { deployedContractAddress },
+        payload: { deployedContractAddress, eventData },
       } = yield takeFrom(
         deployTokenAuthority.channel,
         ActionTypes.TRANSACTION_SUCCEEDED,
@@ -284,7 +285,12 @@ function* colonyRestartDeployment({
        * Set Token authority (to deployed Token Authority)
        */
       yield put(
-        transactionAddParams(setTokenAuthority.id, [deployedContractAddress]),
+        transactionAddParams(setTokenAuthority.id, [
+          createAddress(
+            eventData?.TokenAuthorityDeployed?.tokenAuthorityAddress ||
+              deployedContractAddress,
+          ),
+        ]),
       );
       yield put(transactionReady(setTokenAuthority.id));
       yield takeFrom(
@@ -408,18 +414,15 @@ function* colonyRestartDeployment({
     });
 
     yield put<AllActions>({
-      type: ActionTypes.COLONY_DEPLOYMENT_RESTART_SUCCESS,
+      type: ActionTypes.DEPLOYMENT_RESTART_SUCCESS,
       meta,
     });
   } catch (error) {
-    yield putError(ActionTypes.COLONY_DEPLOYMENT_RESTART_ERROR, error, meta);
+    yield putError(ActionTypes.DEPLOYMENT_RESTART_ERROR, error, meta);
     console.error('saga err', error);
   }
 }
 
 export default function* colonyFinishDeploymentSaga() {
-  yield takeLatest(
-    ActionTypes.COLONY_DEPLOYMENT_RESTART,
-    colonyRestartDeployment,
-  );
+  yield takeLatest(ActionTypes.DEPLOYMENT_RESTART, colonyRestartDeployment);
 }

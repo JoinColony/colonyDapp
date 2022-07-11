@@ -43,7 +43,7 @@ export enum ROLES_COMMUNITY {
   member = 'role.member',
 }
 
-const XDAI_TOKEN: TokenInfo = {
+export const XDAI_TOKEN: TokenInfo = {
   /*
    * Needs to be this exact name, otherwise Metamask marks it as "not valid" when adding it
    */
@@ -55,19 +55,19 @@ const XDAI_TOKEN: TokenInfo = {
   decimals: 18,
 };
 
-const ETHER_TOKEN: TokenInfo = {
+export const ETHER_TOKEN: TokenInfo = {
   name: 'Ether',
   symbol: 'ETH',
   decimals: 18,
 };
 
-const GOERLI_TOKEN: TokenInfo = {
+export const GOERLI_TOKEN: TokenInfo = {
   name: 'Goerli Ether',
   symbol: 'GOETH',
   decimals: 18,
 };
 
-const XDAI_NETWORK: NetworkInfo = {
+export const XDAI_NETWORK: NetworkInfo = {
   /*
    * Needs to be this exact name, otherwise Metamask marks it as "not valid" when adding it
    */
@@ -82,7 +82,7 @@ const XDAI_NETWORK: NetworkInfo = {
   rpcUrl: 'https://rpc.xdaichain.com',
 };
 
-const ETHEREUM_NETWORK: NetworkInfo = {
+export const ETHEREUM_NETWORK: NetworkInfo = {
   name: 'Ethereum',
   chainId: 1,
   shortName: 'ETH',
@@ -94,7 +94,7 @@ const ETHEREUM_NETWORK: NetworkInfo = {
   rpcUrl: 'https://mainnet.infura.io/v3',
 };
 
-const GOERLI_NETWORK: NetworkInfo = {
+export const GOERLI_NETWORK: NetworkInfo = {
   name: 'Goerli Testnet',
   chainId: 5,
   shortName: 'GTH',
@@ -110,9 +110,9 @@ const GOERLI_NETWORK: NetworkInfo = {
  * @NOTE Local Network
  * ChainId is manually set by us, since ganache randomizes it on each start
  */
-const GANACHE_NETWORK: NetworkInfo = {
+export const GANACHE_NETWORK: NetworkInfo = {
   name: 'Local Ganache Instance',
-  chainId: 13131313,
+  chainId: 1337,
   shortName: 'Ganache',
   blockExplorerName: 'Noexplorer',
   blockExplorerUrl: 'http://localhost',

@@ -65,8 +65,8 @@ const ManageReputationContainer = ({
       const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
 
       return isVotingExtensionEnabled && !isForce
-        ? ActionTypes[`COLONY_MOTION_MANAGE_REPUTATION${actionEnd}`]
-        : ActionTypes[`COLONY_ACTION_MANAGE_REPUTATION${actionEnd}`];
+        ? ActionTypes[`MOTION_MANAGE_REPUTATION${actionEnd}`]
+        : ActionTypes[`ACTION_MANAGE_REPUTATION${actionEnd}`];
     },
     [isVotingExtensionEnabled, isForce],
   );

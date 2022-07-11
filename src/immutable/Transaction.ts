@@ -2,22 +2,20 @@ import { Record } from 'immutable';
 import { BigNumber } from 'ethers/utils';
 import { TransactionReceipt } from 'ethers/providers';
 import { ClientType, TransactionOverrides } from '@colony/colony-js';
+import { MessageDescriptor } from 'react-intl';
 
 import {
-  Address,
   AddressOrENSName,
   DefaultValues,
   MethodParams,
   RecordToJS,
+  SimpleMessageValues,
+  ExtendedClientType,
 } from '~types/index';
 
 export enum TRANSACTION_ERRORS {
   ESTIMATE = 'ESTIMATE',
   EVENT_DATA = 'EVENT_DATA',
-  MULTISIG_NONCE = 'MULTISIG_NONCE',
-  MULTISIG_REFRESH = 'MULTISIG_REFRESH',
-  MULTISIG_REJECT = 'MULTISIG_REJECT',
-  MULTISIG_SIGN = 'MULTISIG_SIGN',
   RECEIPT = 'RECEIPT',
   SEND = 'SEND',
   UNSUCCESSFUL = 'UNSUCCESSFUL',
@@ -28,8 +26,14 @@ export enum TRANSACTION_STATUSES {
   READY = 'READY',
   PENDING = 'PENDING',
   FAILED = 'FAILED',
-  MULTISIG = 'MULTISIG',
   SUCCEEDED = 'SUCCEEDED',
+}
+
+export enum TRANSACTION_METHODS {
+  DeployToken = 'deployToken',
+  DeployTokenViaNetwork = 'deployTokenViaNetwork',
+  DeployTokenAuthority = 'deployTokenAuthority',
+  Approve = 'approve',
 }
 
 export interface TransactionError {
@@ -39,16 +43,8 @@ export interface TransactionError {
 
 export type TransactionId = string;
 
-export interface TransactionMultisig {
-  missingSignees?: Address[];
-  nonce?: number;
-  payload?: object;
-  requiredSignees?: Address[];
-  signers?: object[];
-}
-
 export interface TransactionRecordProps {
-  context: ClientType;
+  context: ClientType | ExtendedClientType;
   createdAt: Date;
   deployedContractAddress?: string;
   error?: TransactionError;
@@ -60,18 +56,24 @@ export interface TransactionRecordProps {
     key: string;
     id: string | string[];
     index: number;
+    title?: MessageDescriptor;
+    titleValues?: SimpleMessageValues;
+    description?: MessageDescriptor;
+    descriptionValues?: SimpleMessageValues;
   };
   hash?: string;
   id: TransactionId;
   identifier?: AddressOrENSName;
   methodContext?: string; // Context in which method is used e.g. setOneTxRole
   methodName: string;
-  multisig?: TransactionMultisig; // Indicates tx is multisig if set
   options: TransactionOverrides;
   params: MethodParams;
   receipt?: TransactionReceipt;
   status: TRANSACTION_STATUSES;
   loadingRelated?: boolean;
+  metatransaction: boolean;
+  title?: MessageDescriptor;
+  titleValues?: SimpleMessageValues;
 }
 
 export type TransactionType = Readonly<TransactionRecordProps>;
@@ -92,12 +94,14 @@ const defaultValues: DefaultValues<TransactionRecordProps> = {
   identifier: undefined,
   methodContext: undefined,
   methodName: undefined,
-  multisig: undefined,
   options: {},
   params: {},
   receipt: undefined,
   status: undefined,
   loadingRelated: false,
+  metatransaction: false,
+  title: undefined,
+  titleValues: undefined,
 };
 
 export class TransactionRecord

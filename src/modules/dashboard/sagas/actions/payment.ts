@@ -53,7 +53,7 @@ function* createPaymentAction({
     history,
   },
   meta,
-}: Action<ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT>) {
+}: Action<ActionTypes.ACTION_EXPENDITURE_PAYMENT>) {
   let txChannel;
   try {
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
@@ -209,7 +209,7 @@ function* createPaymentAction({
     });
 
     yield put<AllActions>({
-      type: ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT_SUCCESS,
+      type: ActionTypes.ACTION_EXPENDITURE_PAYMENT_SUCCESS,
       meta,
     });
 
@@ -217,15 +217,12 @@ function* createPaymentAction({
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
     }
   } catch (error) {
-    putError(ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT_ERROR, error, meta);
+    putError(ActionTypes.ACTION_EXPENDITURE_PAYMENT_ERROR, error, meta);
   } finally {
     txChannel.close();
   }
 }
 
 export default function* paymentActionSaga() {
-  yield takeEvery(
-    ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT,
-    createPaymentAction,
-  );
+  yield takeEvery(ActionTypes.ACTION_EXPENDITURE_PAYMENT, createPaymentAction);
 }

@@ -18,7 +18,7 @@ import { updateMotionValues } from '../utils';
 function* revealVoteMotion({
   meta,
   payload: { userAddress, colonyAddress, motionId },
-}: Action<ActionTypes.COLONY_MOTION_REVEAL_VOTE>) {
+}: Action<ActionTypes.MOTION_REVEAL_VOTE>) {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
     const context = TEMP_getContext(ContextModule.ColonyManager);
@@ -162,26 +162,22 @@ function* revealVoteMotion({
       yield fork(updateMotionValues, colonyAddress, userAddress, motionId);
 
       return yield put<AllActions>({
-        type: ActionTypes.COLONY_MOTION_REVEAL_VOTE_SUCCESS,
+        type: ActionTypes.MOTION_REVEAL_VOTE_SUCCESS,
         meta,
       });
     }
     return yield putError(
-      ActionTypes.COLONY_MOTION_REVEAL_VOTE_ERROR,
+      ActionTypes.MOTION_REVEAL_VOTE_ERROR,
       new Error('User did not submit standard vote value'),
       meta,
     );
   } catch (error) {
-    return yield putError(
-      ActionTypes.COLONY_MOTION_REVEAL_VOTE_ERROR,
-      error,
-      meta,
-    );
+    return yield putError(ActionTypes.MOTION_REVEAL_VOTE_ERROR, error, meta);
   } finally {
     txChannel.close();
   }
 }
 
 export default function* revealVoteMotionSaga() {
-  yield takeEvery(ActionTypes.COLONY_MOTION_REVEAL_VOTE, revealVoteMotion);
+  yield takeEvery(ActionTypes.MOTION_REVEAL_VOTE, revealVoteMotion);
 }

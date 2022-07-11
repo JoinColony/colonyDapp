@@ -1,0 +1,25 @@
+.metaDesc {
+  margin-bottom: 60px;
+  margin-top: 25px;
+  max-width: 460px;
+}
+
+.toggleContainer {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.toggleContainer label {
+  margin-right: 14px;
+}
+
+.tooltipContainer {
+  margin-left: 13px;
+  cursor: pointer;
+}
+
+.tooltipContent {
+  padding: 10px;
+  width: 218px;
+}

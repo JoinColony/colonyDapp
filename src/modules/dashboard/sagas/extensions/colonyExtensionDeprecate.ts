@@ -15,7 +15,7 @@ import { refreshExtension } from '../utils';
 function* colonyExtensionDeprecate({
   meta,
   payload: { colonyAddress, extensionId, isToDeprecate },
-}: Action<ActionTypes.COLONY_EXTENSION_DEPRECATE>) {
+}: Action<ActionTypes.EXTENSION_DEPRECATE>) {
   const txChannel = yield call(getTxChannel, meta.id);
 
   try {
@@ -29,18 +29,14 @@ function* colonyExtensionDeprecate({
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_CREATED);
 
     yield put<AllActions>({
-      type: ActionTypes.COLONY_EXTENSION_DEPRECATE_SUCCESS,
+      type: ActionTypes.EXTENSION_DEPRECATE_SUCCESS,
       payload: {},
       meta,
     });
 
     yield waitForTxResult(txChannel);
   } catch (error) {
-    return yield putError(
-      ActionTypes.COLONY_EXTENSION_DEPRECATE_ERROR,
-      error,
-      meta,
-    );
+    return yield putError(ActionTypes.EXTENSION_DEPRECATE_ERROR, error, meta);
   } finally {
     yield call(refreshExtension, colonyAddress, extensionId);
 
@@ -50,8 +46,5 @@ function* colonyExtensionDeprecate({
 }
 
 export default function* colonyExtensionDeprecateSaga() {
-  yield takeEvery(
-    ActionTypes.COLONY_EXTENSION_DEPRECATE,
-    colonyExtensionDeprecate,
-  );
+  yield takeEvery(ActionTypes.EXTENSION_DEPRECATE, colonyExtensionDeprecate);
 }

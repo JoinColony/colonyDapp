@@ -26,7 +26,7 @@ function* colonyExtensionEnable({
   meta: { id: metaId },
   meta,
   payload: { colonyAddress, extensionId, ...payload },
-}: Action<ActionTypes.COLONY_EXTENSION_ENABLE>) {
+}: Action<ActionTypes.EXTENSION_ENABLE>) {
   const extension = extensionData[extensionId];
   const initChannelName = `${meta.id}-initialise`;
 
@@ -114,11 +114,7 @@ function* colonyExtensionEnable({
     }
     yield call(refreshExtension, colonyAddress, extensionId);
   } catch (error) {
-    return yield putError(
-      ActionTypes.COLONY_EXTENSION_ENABLE_ERROR,
-      error,
-      meta,
-    );
+    return yield putError(ActionTypes.EXTENSION_ENABLE_ERROR, error, meta);
   } finally {
     initChannel.close();
   }
@@ -126,5 +122,5 @@ function* colonyExtensionEnable({
 }
 
 export default function* colonyExtensionEnableSaga() {
-  yield takeEvery(ActionTypes.COLONY_EXTENSION_ENABLE, colonyExtensionEnable);
+  yield takeEvery(ActionTypes.EXTENSION_ENABLE, colonyExtensionEnable);
 }

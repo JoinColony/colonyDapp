@@ -33,6 +33,22 @@ const GroupedTransaction = ({
   const groupKey = getGroupKey(transactionGroup);
   const status = getGroupStatus(transactionGroup);
   const values = getGroupValues<TransactionType>(transactionGroup);
+
+  const defaultTransactionGroupMessageDescriptorTitleId = {
+    id: `${
+      transactionGroup[0].metatransaction ? 'meta' : ''
+    }transaction.${groupKey}.title`,
+  };
+  const defaultTransactionGroupMessageDescriptorDescriptionId = {
+    id: process.env.DEBUG
+      ? `${
+          transactionGroup[0].metatransaction ? 'meta' : ''
+        }transaction.debug.description`
+      : `${
+          transactionGroup[0].metatransaction ? 'meta' : ''
+        }transaction.${groupKey}.description`,
+  };
+
   return (
     <Card className={styles.main}>
       {interactive && (
@@ -40,23 +56,25 @@ const GroupedTransaction = ({
           <div className={styles.description}>
             <Heading
               appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
-              text={{ id: `transaction.${groupKey}.title` }}
-              textValues={arrayToObject(values.params)}
+              text={{
+                ...defaultTransactionGroupMessageDescriptorTitleId,
+                ...values.group?.title,
+              }}
+              textValues={
+                values.group?.titleValues || arrayToObject(values.params)
+              }
             />
             <FormattedMessage
-              id={
-                process.env.DEBUG
-                  ? `transaction.debug.description`
-                  : `transaction.${groupKey}.description`
+              {...defaultTransactionGroupMessageDescriptorDescriptionId}
+              {...values.group?.description}
+              values={
+                values.group?.descriptionValues || arrayToObject(values.params)
               }
-              values={arrayToObject(values.params)}
             />
           </div>
-          {/* For multisig, we have to pass in _something_ */}
           <TransactionStatus
             groupCount={transactionGroup.length}
             status={status}
-            // multisig={{}}
           />
         </div>
       )}

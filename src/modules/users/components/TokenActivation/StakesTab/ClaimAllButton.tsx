@@ -51,9 +51,9 @@ const ClaimAllButton = ({
   return (
     <ActionForm
       initialValues={{}}
-      submit={ActionTypes.COLONY_MOTION_CLAIM}
-      error={ActionTypes.COLONY_MOTION_CLAIM_ERROR}
-      success={ActionTypes.COLONY_MOTION_CLAIM_SUCCESS}
+      submit={ActionTypes.MOTION_CLAIM}
+      error={ActionTypes.MOTION_CLAIM_ERROR}
+      success={ActionTypes.MOTION_CLAIM_SUCCESS}
       transform={transform}
       onSuccess={setIsPopoverOpen}
       onError={setIsPopoverOpen}

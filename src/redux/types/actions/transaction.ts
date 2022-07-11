@@ -7,22 +7,22 @@ import {
 import { TransactionError, TransactionType } from '~immutable/index';
 import { MethodParams } from '~types/index';
 
-type WithId = { id: string };
+type Meta = { id: string; metatransaction?: boolean };
 
 export type TransactionActionTypes =
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.TRANSACTION_ADD_IDENTIFIER,
       { identifier: string },
-      WithId
+      Meta
     >
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.TRANSACTION_ADD_PARAMS,
       { params: MethodParams },
-      WithId
+      Meta
     >
-  | ActionTypeWithMeta<ActionTypes.TRANSACTION_READY, WithId>
-  | ActionTypeWithMeta<ActionTypes.TRANSACTION_PENDING, WithId>
-  | ActionTypeWithMeta<ActionTypes.TRANSACTION_CANCEL, WithId>
+  | ActionTypeWithMeta<ActionTypes.TRANSACTION_READY, Meta>
+  | ActionTypeWithMeta<ActionTypes.TRANSACTION_PENDING, Meta>
+  | ActionTypeWithMeta<ActionTypes.TRANSACTION_CANCEL, Meta>
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.TRANSACTION_CREATED,
       Pick<
@@ -34,14 +34,16 @@ export type TransactionActionTypes =
         | 'identifier'
         | 'methodContext'
         | 'methodName'
-        | 'multisig'
         | 'options'
         | 'params'
         | 'gasPrice'
         | 'gasLimit'
         | 'status'
+        | 'metatransaction'
+        | 'title'
+        | 'titleValues'
       >,
-      WithId
+      Meta
     >
   | (ActionTypeWithPayloadAndMeta<
       ActionTypes.TRANSACTION_ERROR,
@@ -50,29 +52,29 @@ export type TransactionActionTypes =
     > & {
       error: true;
     })
-  | ActionTypeWithMeta<ActionTypes.TRANSACTION_ESTIMATE_GAS, WithId>
+  | ActionTypeWithMeta<ActionTypes.TRANSACTION_ESTIMATE_GAS, Meta>
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.TRANSACTION_HASH_RECEIVED,
       { hash: string; blockHash: string; blockNumber: number; params: object },
-      WithId
+      Meta
     >
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.TRANSACTION_GAS_UPDATE,
       { gasLimit?: string; gasPrice?: string },
-      WithId
+      Meta
     >
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.TRANSACTION_LOAD_RELATED,
       { loading: boolean },
-      WithId
+      Meta
     >
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.TRANSACTION_RECEIPT_RECEIVED,
       { receipt: TransactionReceipt; params: MethodParams },
-      WithId
+      Meta
     >
-  | ActionTypeWithMeta<ActionTypes.TRANSACTION_SEND, WithId>
-  | ActionTypeWithMeta<ActionTypes.TRANSACTION_SENT, WithId>
+  | ActionTypeWithMeta<ActionTypes.TRANSACTION_SEND, Meta>
+  | ActionTypeWithMeta<ActionTypes.TRANSACTION_SENT, Meta>
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.TRANSACTION_SUCCEEDED,
       {
@@ -81,6 +83,6 @@ export type TransactionActionTypes =
         receipt: TransactionReceipt;
         deployedContractAddress?: string;
       },
-      WithId
+      Meta
     >
-  | ActionTypeWithMeta<ActionTypes.TRANSACTION_RETRY, WithId>;
+  | ActionTypeWithMeta<ActionTypes.TRANSACTION_RETRY, Meta>;

@@ -20,6 +20,8 @@ import { Address } from '~types/index';
 import { createAddress } from '~utils/web3';
 import { DEFAULT_NETWORK, NETWORK_DATA, TOKEN_DATA } from '~constants';
 
+import { ganacheSignTypedData, metamaskSignTypedData } from './utils';
+
 /**
  * Watch for changes in Metamask account, and log the user out when they happen.
  */
@@ -53,7 +55,7 @@ function* metaMaskWatch(walletAddress: Address) {
   }
 }
 
-function* metamaskSwitchNetwork() {
+export function* metamaskSwitchNetwork() {
   if (
     DEFAULT_NETWORK === Network.Xdai ||
     DEFAULT_NETWORK === Network.XdaiFork
@@ -90,15 +92,18 @@ function* openMetamaskWallet() {
   const wallet = yield call(purserOpenMetaMaskWallet);
   yield spawn(metaMaskWatch, createAddress(wallet.address));
   yield spawn(metamaskSwitchNetwork);
+  wallet.signTypedData = metamaskSignTypedData.bind(wallet);
   return wallet;
 }
 
 function* openGanacheWallet({
   payload: { privateKey },
 }: Action<ActionTypes.WALLET_CREATE>) {
-  return yield call(purserOpenSoftwareWallet, {
+  const wallet = yield call(purserOpenSoftwareWallet, {
     privateKey,
   });
+  wallet.signTypedData = ganacheSignTypedData.bind(wallet);
+  return wallet;
 }
 
 function* createEtherealWallet() {

@@ -85,9 +85,9 @@ const RaiseObjectionDialog = ({
         amount: 0,
         annotation: undefined,
       }}
-      submit={ActionTypes.COLONY_MOTION_STAKE}
-      error={ActionTypes.COLONY_MOTION_STAKE_ERROR}
-      success={ActionTypes.COLONY_MOTION_STAKE_SUCCESS}
+      submit={ActionTypes.MOTION_STAKE}
+      error={ActionTypes.MOTION_STAKE_ERROR}
+      success={ActionTypes.MOTION_STAKE_SUCCESS}
       validationSchema={validationSchema}
       onSubmit={close}
       onSuccess={handleSuccess}

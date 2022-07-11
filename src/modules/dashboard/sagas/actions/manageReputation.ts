@@ -29,7 +29,7 @@ function* manageReputationAction({
   },
   meta: { id: metaId, history },
   meta,
-}: Action<ActionTypes.COLONY_ACTION_MANAGE_REPUTATION>) {
+}: Action<ActionTypes.ACTION_MANAGE_REPUTATION>) {
   let txChannel;
   try {
     const batchKey = isSmitingReputation
@@ -139,7 +139,7 @@ function* manageReputationAction({
     yield fork(updateDomainReputation, colonyAddress, userAddress, domainId);
 
     yield put<AllActions>({
-      type: ActionTypes.COLONY_ACTION_MANAGE_REPUTATION_SUCCESS,
+      type: ActionTypes.ACTION_MANAGE_REPUTATION_SUCCESS,
       meta,
     });
 
@@ -148,7 +148,7 @@ function* manageReputationAction({
     }
   } catch (error) {
     return yield putError(
-      ActionTypes.COLONY_ACTION_MANAGE_REPUTATION_ERROR,
+      ActionTypes.ACTION_MANAGE_REPUTATION_ERROR,
       error,
       meta,
     );
@@ -159,8 +159,5 @@ function* manageReputationAction({
 }
 
 export default function* manageReputationActionSaga() {
-  yield takeEvery(
-    ActionTypes.COLONY_ACTION_MANAGE_REPUTATION,
-    manageReputationAction,
-  );
+  yield takeEvery(ActionTypes.ACTION_MANAGE_REPUTATION, manageReputationAction);
 }

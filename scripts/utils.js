@@ -95,6 +95,22 @@ const getStaticDevResource = (processName) => {
         { desc: 'Colony Server GraphQL Playground', res: 'http://0.0.0.0:3000/graphql' },
       ];
     }
+    case 'oracle': {
+      return [
+        { desc: 'Reputation Oracle', res: 'http://0.0.0.0:3002' },
+      ];
+    }
+    case 'reputationMonitor': {
+      return [
+        { desc: 'Reputation Monitor', res: 'http://0.0.0.0:3001/reputation' },
+        { desc: 'Reputation Monitor Toggle On/Off', res: 'http://0.0.0.0:3001/reputation/monitor/toggle' },
+      ];
+    }
+    case 'metaTxBroadcast': {
+      return [
+        { desc: 'Metatransactions Broadcast Service', res: 'http://0.0.0.0:3004' },
+      ];
+    }
     case 'graph-node': {
       return [
         { desc: 'Postgres Server', res: 'postgres://0.0.0.0:5432' },

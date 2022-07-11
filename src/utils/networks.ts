@@ -9,6 +9,7 @@ export const checkIfNetworkIsAllowed = (
   const onLocalDevEnvironment = process.env.NETWORK === Network.Local;
   const currentNetworkData =
     NETWORK_DATA[process.env.NETWORK || DEFAULT_NETWORK];
+
   return (
     walletSupportedNetwork &&
     (walletSupportedNetwork.chainId === currentNetworkData.chainId ||

@@ -55,7 +55,7 @@ interface Props {
   closePopover: () => void;
   username?: string | null;
   walletConnected?: boolean;
-  onlyLogout?: boolean;
+  preventTransactions?: boolean;
   colony: Colony;
 }
 
@@ -65,7 +65,7 @@ const AvatarDropdownPopover = ({
   closePopover,
   username,
   walletConnected = false,
-  onlyLogout = false,
+  preventTransactions = false,
   colony,
 }: Props) => {
   const renderUserSection = useCallback(() => {
@@ -150,7 +150,7 @@ const AvatarDropdownPopover = ({
 
   return (
     <DropdownMenu onClick={closePopover}>
-      {!onlyLogout ? (
+      {!preventTransactions ? (
         <>
           {renderUserSection()}
           {renderColonySection()}
@@ -158,7 +158,11 @@ const AvatarDropdownPopover = ({
           {renderMetaSection()}
         </>
       ) : (
-        <>{renderMetaSection()}</>
+        <>
+          {renderUserSection()}
+          {renderHelperSection()}
+          {renderMetaSection()}
+        </>
       )}
     </DropdownMenu>
   );

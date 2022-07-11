@@ -45,8 +45,8 @@ const UnlockTokenDialog = ({
       const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
 
       return isVotingExtensionEnabled && !isForce
-        ? ActionTypes[`COLONY_ROOT_MOTION${actionEnd}`]
-        : ActionTypes[`COLONY_ACTION_UNLOCK_TOKEN${actionEnd}`];
+        ? ActionTypes[`ROOT_MOTION${actionEnd}`]
+        : ActionTypes[`ACTION_UNLOCK_TOKEN${actionEnd}`];
     },
     [isVotingExtensionEnabled, isForce],
   );

@@ -36,7 +36,7 @@ function* manageVerifiedRecipients({
   },
   meta: { id: metaId, history },
   meta,
-}: Action<ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE>) {
+}: Action<ActionTypes.VERIFIED_RECIPIENTS_MANAGE>) {
   let txChannel;
   try {
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
@@ -173,7 +173,7 @@ function* manageVerifiedRecipients({
     );
 
     yield put<AllActions>({
-      type: ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE_SUCCESS,
+      type: ActionTypes.VERIFIED_RECIPIENTS_MANAGE_SUCCESS,
       payload: {},
       meta,
     });
@@ -183,7 +183,7 @@ function* manageVerifiedRecipients({
     }
   } catch (error) {
     return yield putError(
-      ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE_ERROR,
+      ActionTypes.VERIFIED_RECIPIENTS_MANAGE_ERROR,
       error,
       meta,
     );
@@ -195,7 +195,7 @@ function* manageVerifiedRecipients({
 
 export default function* manageVerifiedRecipientsSaga() {
   yield takeEvery(
-    ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE,
+    ActionTypes.VERIFIED_RECIPIENTS_MANAGE,
     manageVerifiedRecipients,
   );
 }

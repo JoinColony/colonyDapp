@@ -86,7 +86,7 @@ const StepConfirmTransactions = ({
   // Cancel the saga when the component unmounts
   useEffect(
     () => () => {
-      dispatch({ type: ActionTypes.COLONY_CREATE_CANCEL });
+      dispatch({ type: ActionTypes.CREATE_CANCEL });
     },
     [dispatch],
   );

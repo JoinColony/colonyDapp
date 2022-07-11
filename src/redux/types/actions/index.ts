@@ -1,11 +1,9 @@
 import { CoinMachineActionTypes } from './coinMachine';
 import { ColonyActionTypes } from './colony';
 import { ColonyActionsActionTypes } from './colonyActions';
-import { ConnectionActionTypes } from './connection';
 import { MotionActionTypes } from './motion';
 import { GasPricesActionTypes } from './gasPrices';
 import { IpfsActionTypes } from './ipfs';
-import { MultisigActionTypes } from './multisig';
 import { TransactionActionTypes } from './transaction';
 import { MessageActionTypes } from './message';
 import { UserActionTypes } from './user';
@@ -99,10 +97,8 @@ export type AllActions =
   | CoinMachineActionTypes
   | ColonyActionTypes
   | ColonyActionsActionTypes
-  | ConnectionActionTypes
   | GasPricesActionTypes
   | IpfsActionTypes
-  | MultisigActionTypes
   | TransactionActionTypes
   | MessageActionTypes
   | UserActionTypes

@@ -61,7 +61,7 @@ function* colonyCreate({
     tokenSymbol: givenTokenSymbol,
     username: givenUsername,
   },
-}: Action<ActionTypes.COLONY_CREATE>) {
+}: Action<ActionTypes.CREATE>) {
   const { username: currentUsername, walletAddress } = yield getLoggedInUser();
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
   const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
@@ -225,7 +225,7 @@ function* colonyCreate({
      * where transactions can get processed.
      */
     yield put<AllActions>({
-      type: ActionTypes.COLONY_CREATE_SUCCESS,
+      type: ActionTypes.CREATE_SUCCESS,
       meta,
       payload: undefined,
     });
@@ -268,12 +268,14 @@ function* colonyCreate({
     let tokenAddress: string;
     if (createToken) {
       const {
-        payload: { deployedContractAddress },
+        payload: { deployedContractAddress, eventData },
       } = yield takeFrom(
         createToken.channel,
         ActionTypes.TRANSACTION_SUCCEEDED,
       );
-      tokenAddress = createAddress(deployedContractAddress);
+      tokenAddress = createAddress(
+        eventData?.TokenDeployed?.tokenAddress || deployedContractAddress,
+      );
     } else {
       if (!givenTokenAddress) {
         throw new Error('Token address not provided');
@@ -355,7 +357,7 @@ function* colonyCreate({
       colonyAddress = createdColonyAddress;
       if (!colonyAddress) {
         return yield putError(
-          ActionTypes.COLONY_CREATE_ERROR,
+          ActionTypes.CREATE_ERROR,
           new Error('Missing colony address'),
           meta,
         );
@@ -399,7 +401,7 @@ function* colonyCreate({
       );
       yield put(transactionReady(deployTokenAuthority.id));
       const {
-        payload: { deployedContractAddress },
+        payload: { deployedContractAddress, eventData },
       } = yield takeFrom(
         deployTokenAuthority.channel,
         ActionTypes.TRANSACTION_SUCCEEDED,
@@ -409,7 +411,12 @@ function* colonyCreate({
        * Set Token authority (to deployed TokenAuthority)
        */
       yield put(
-        transactionAddParams(setTokenAuthority.id, [deployedContractAddress]),
+        transactionAddParams(setTokenAuthority.id, [
+          createAddress(
+            eventData?.TokenAuthorityDeployed?.tokenAuthorityAddress ||
+              deployedContractAddress,
+          ),
+        ]),
       );
       yield put(transactionReady(setTokenAuthority.id));
       yield takeFrom(
@@ -542,7 +549,7 @@ function* colonyCreate({
 
     return null;
   } catch (error) {
-    yield putError(ActionTypes.COLONY_CREATE_ERROR, error, meta);
+    yield putError(ActionTypes.CREATE_ERROR, error, meta);
     // For non-transaction errors (where something is probably irreversibly wrong),
     // cancel the saga.
     return null;
@@ -560,8 +567,8 @@ function* colonyCreate({
 
 export default function* colonyCreateSaga() {
   yield takeLatestCancellable(
-    ActionTypes.COLONY_CREATE,
-    ActionTypes.COLONY_CREATE_CANCEL,
+    ActionTypes.CREATE,
+    ActionTypes.CREATE_CANCEL,
     colonyCreate,
   );
 }

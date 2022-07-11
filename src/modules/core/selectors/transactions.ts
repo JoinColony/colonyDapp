@@ -3,7 +3,6 @@ import { Collection, Map as ImmutableMap, List } from 'immutable';
 
 import { TransactionRecord, TRANSACTION_STATUSES } from '~immutable/index';
 
-import { isMultisig, isPendingMultisig } from '../checks';
 import { TransactionsListMap } from '../state';
 import { messageGroups } from './messages';
 import { RootStateRecord } from '../../state';
@@ -71,16 +70,6 @@ export const pendingTransactions = createSelector(
     transactions
       .filter((tx) => tx.status === TRANSACTION_STATUSES.PENDING)
       .sort(createdAtDesc),
-);
-
-export const multisigTransactions = createSelector(
-  allTransactions,
-  (transactions) => transactions.filter(isMultisig).sort(createdAtDesc),
-);
-
-export const pendingMultisigTransactions = createSelector(
-  allTransactions,
-  (transactions) => transactions.filter(isPendingMultisig).sort(createdAtDesc),
 );
 
 /*

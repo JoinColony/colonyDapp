@@ -16,7 +16,6 @@ const MSG = defineMessages({
   transactionState: {
     id: 'users.GasStationPopover.TransactionStatus.transactionState',
     defaultMessage: `{status, select,
-      MULTISIG {Waiting on other party to sign}
       FAILED {Failed transaction. Try again}
       SUCCEEDED {Transaction succeeded}
       READY {{groupCount, number} {groupCount, plural,
@@ -32,9 +31,6 @@ const MSG = defineMessages({
   },
 });
 
-/**
- * @todo Support multisig status in `TransactionStatus` component.
- */
 interface Props {
   groupCount?: number;
   hash?: string;
@@ -115,9 +111,6 @@ const TransactionStatus = ({
           <div data-test="gasStationTransactionPending">
             <SpinnerLoader appearance={{ size: 'small', theme: 'primary' }} />
           </div>
-        )}
-        {status === TRANSACTION_STATUSES.MULTISIG && (
-          <span className={styles.multisig} />
         )}
         {status === TRANSACTION_STATUSES.FAILED && (
           <span className={styles.failed}>!</span>

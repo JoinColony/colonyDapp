@@ -10,18 +10,18 @@ import {
 
 export type ColonyActionTypes =
   | UniqueActionType<
-      ActionTypes.COLONY_CLAIM_TOKEN,
+      ActionTypes.CLAIM_TOKEN,
       { tokenAddress: Address; colonyAddress: Address },
       object
     >
-  | ErrorActionType<ActionTypes.COLONY_CLAIM_TOKEN_ERROR, object>
+  | ErrorActionType<ActionTypes.CLAIM_TOKEN_ERROR, object>
   | UniqueActionType<
-      ActionTypes.COLONY_CLAIM_TOKEN_SUCCESS,
+      ActionTypes.CLAIM_TOKEN_SUCCESS,
       { params: { token: Address } },
       object
     >
   | UniqueActionType<
-      ActionTypes.COLONY_CREATE,
+      ActionTypes.CREATE,
       {
         colonyName: string;
         displayName: string;
@@ -35,86 +35,58 @@ export type ColonyActionTypes =
       },
       object
     >
-  | ActionType<typeof ActionTypes.COLONY_CREATE_CANCEL>
-  | ErrorActionType<ActionTypes.COLONY_CREATE_ERROR, object>
-  | UniqueActionType<ActionTypes.COLONY_CREATE_SUCCESS, void, object>
+  | ActionType<typeof ActionTypes.CREATE_CANCEL>
+  | ErrorActionType<ActionTypes.CREATE_ERROR, object>
+  | UniqueActionType<ActionTypes.CREATE_SUCCESS, void, object>
   | UniqueActionType<
-      ActionTypes.COLONY_DEPLOYMENT_RESTART,
+      ActionTypes.DEPLOYMENT_RESTART,
       {
         colonyAddress: Address;
       },
       object
     >
-  | ErrorActionType<ActionTypes.COLONY_DEPLOYMENT_RESTART_ERROR, object>
+  | ErrorActionType<ActionTypes.DEPLOYMENT_RESTART_ERROR, object>
   | UniqueActionTypeWithoutPayload<
-      ActionTypes.COLONY_DEPLOYMENT_RESTART_SUCCESS,
+      ActionTypes.DEPLOYMENT_RESTART_SUCCESS,
       object
     >
-  | ErrorActionType<ActionTypes.COLONY_RECOVERY_MODE_ENTER_ERROR, object>
+  | ErrorActionType<ActionTypes.RECOVERY_MODE_ENTER_ERROR, object>
+  | UniqueActionType<ActionTypes.RECOVERY_MODE_ENTER_SUCCESS, object, object>
   | UniqueActionType<
-      ActionTypes.COLONY_RECOVERY_MODE_ENTER_SUCCESS,
-      object,
-      object
-    >
-  | UniqueActionType<
-      ActionTypes.COLONY_EXTENSION_INSTALL,
+      ActionTypes.EXTENSION_INSTALL,
       { colonyAddress: Address; extensionId: string },
       WithKey
     >
+  | UniqueActionType<ActionTypes.EXTENSION_INSTALL_SUCCESS, object, object>
+  | ErrorActionType<ActionTypes.EXTENSION_INSTALL_ERROR, object>
+  | UniqueActionType<ActionTypes.EXTENSION_ENABLE, any, WithKey>
+  | UniqueActionType<ActionTypes.EXTENSION_ENABLE_SUCCESS, object, object>
+  | ErrorActionType<ActionTypes.EXTENSION_ENABLE_ERROR, object>
   | UniqueActionType<
-      ActionTypes.COLONY_EXTENSION_INSTALL_SUCCESS,
-      object,
-      object
-    >
-  | ErrorActionType<ActionTypes.COLONY_EXTENSION_INSTALL_ERROR, object>
-  | UniqueActionType<ActionTypes.COLONY_EXTENSION_ENABLE, any, WithKey>
-  | UniqueActionType<
-      ActionTypes.COLONY_EXTENSION_ENABLE_SUCCESS,
-      object,
-      object
-    >
-  | ErrorActionType<ActionTypes.COLONY_EXTENSION_ENABLE_ERROR, object>
-  | UniqueActionType<
-      ActionTypes.COLONY_EXTENSION_DEPRECATE,
+      ActionTypes.EXTENSION_DEPRECATE,
       { colonyAddress: Address; extensionId: string; isToDeprecate: boolean },
       WithKey
     >
+  | UniqueActionType<ActionTypes.EXTENSION_DEPRECATE_SUCCESS, object, object>
+  | ErrorActionType<ActionTypes.EXTENSION_DEPRECATE_ERROR, object>
   | UniqueActionType<
-      ActionTypes.COLONY_EXTENSION_DEPRECATE_SUCCESS,
-      object,
-      object
-    >
-  | ErrorActionType<ActionTypes.COLONY_EXTENSION_DEPRECATE_ERROR, object>
-  | UniqueActionType<
-      ActionTypes.COLONY_EXTENSION_UNINSTALL,
+      ActionTypes.EXTENSION_UNINSTALL,
       { colonyAddress: Address; extensionId: string },
       WithKey
     >
+  | UniqueActionType<ActionTypes.EXTENSION_UNINSTALL_SUCCESS, object, object>
+  | ErrorActionType<ActionTypes.EXTENSION_UNINSTALL_ERROR, object>
   | UniqueActionType<
-      ActionTypes.COLONY_EXTENSION_UNINSTALL_SUCCESS,
-      object,
-      object
-    >
-  | ErrorActionType<ActionTypes.COLONY_EXTENSION_UNINSTALL_ERROR, object>
-  | UniqueActionType<
-      ActionTypes.COLONY_EXTENSION_UPGRADE,
+      ActionTypes.EXTENSION_UPGRADE,
       { colonyAddress: Address; extensionId: string; version: number },
       WithKey
     >
+  | UniqueActionType<ActionTypes.EXTENSION_UPGRADE_SUCCESS, object, object>
+  | ErrorActionType<ActionTypes.EXTENSION_UPGRADE_ERROR, object>
+  | UniqueActionType<ActionTypes.EXTENSION_UNINSTALL_SUCCESS, object, object>
+  | ErrorActionType<ActionTypes.EXTENSION_UNINSTALL_ERROR, object>
   | UniqueActionType<
-      ActionTypes.COLONY_EXTENSION_UPGRADE_SUCCESS,
-      object,
-      object
-    >
-  | ErrorActionType<ActionTypes.COLONY_EXTENSION_UPGRADE_ERROR, object>
-  | UniqueActionType<
-      ActionTypes.COLONY_EXTENSION_UNINSTALL_SUCCESS,
-      object,
-      object
-    >
-  | ErrorActionType<ActionTypes.COLONY_EXTENSION_UNINSTALL_ERROR, object>
-  | UniqueActionType<
-      ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE,
+      ActionTypes.VERIFIED_RECIPIENTS_MANAGE,
       {
         colonyAddress: Address;
         colonyDisplayName: string;
@@ -127,9 +99,9 @@ export type ColonyActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE_ERROR, object>
+  | ErrorActionType<ActionTypes.VERIFIED_RECIPIENTS_MANAGE_ERROR, object>
   | UniqueActionType<
-      ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE_SUCCESS,
+      ActionTypes.VERIFIED_RECIPIENTS_MANAGE_SUCCESS,
       object,
       object
     >

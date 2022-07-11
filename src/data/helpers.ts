@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { DataValue, graphql } from '@apollo/client/react/hoc';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
+import { SlotKey } from '~context/userSettings';
 import { Address } from '~types/index';
 
 import {
@@ -22,6 +23,8 @@ import {
   UpdateNetworkContractsMutationVariables,
   UpdateNetworkContractsDocument,
 } from './index';
+
+import { canUseMetatransactions } from '../modules/users/checks';
 
 export const getMinimalUser = (
   address: string,
@@ -160,4 +163,16 @@ export function* updateNetworkContracts() {
     };
   };
   return networkContracts;
+}
+
+// Meant to be used as a saga in a proper context
+export function* getCanUserSendMetatransactions() {
+  const userSettings = yield TEMP_getContext(ContextModule.UserSettings);
+  const userHasMetatransactionEnabled = userSettings.getSlotStorageAtKey(
+    SlotKey.Metatransactions,
+  );
+
+  const metatransactionsAvailable = canUseMetatransactions();
+
+  return metatransactionsAvailable && userHasMetatransactionEnabled;
 }

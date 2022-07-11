@@ -166,9 +166,9 @@ const ManageWhitelistDialog = ({
         whitelistedAddresses: storedVerifiedRecipients,
         isSubmitting: false,
       }}
-      submit={ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE}
-      error={ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE_ERROR}
-      success={ActionTypes.COLONY_VERIFIED_RECIPIENTS_MANAGE_SUCCESS}
+      submit={ActionTypes.VERIFIED_RECIPIENTS_MANAGE}
+      error={ActionTypes.VERIFIED_RECIPIENTS_MANAGE_ERROR}
+      success={ActionTypes.VERIFIED_RECIPIENTS_MANAGE_SUCCESS}
       validationSchema={mergedSchemas}
       transform={transform}
       enableReinitialize

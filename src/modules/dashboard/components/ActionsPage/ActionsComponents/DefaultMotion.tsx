@@ -473,9 +473,9 @@ const DefaultMotion = ({
               <div className={motionSpecificStyles.escalation}>
                 <ActionButton
                   appearance={{ theme: 'blue', size: 'small' }}
-                  submit={ActionTypes.COLONY_MOTION_ESCALATE}
-                  error={ActionTypes.COLONY_MOTION_ESCALATE_ERROR}
-                  success={ActionTypes.COLONY_MOTION_ESCALATE_SUCCESS}
+                  submit={ActionTypes.MOTION_ESCALATE}
+                  error={ActionTypes.MOTION_ESCALATE_ERROR}
+                  success={ActionTypes.MOTION_ESCALATE_SUCCESS}
                   transform={escalateTransform}
                   text={MSG.escalate}
                   /*

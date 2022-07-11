@@ -5,6 +5,7 @@ import { useDialog } from '~core/Dialog';
 import ColonyDomainSelector from '~dashboard/ColonyHome/ColonyDomainSelector';
 import ColonyHomeActions from '~dashboard/ColonyHomeActions';
 import ColonyTotalFunds from '~dashboard/ColonyTotalFunds';
+import WrongNetworkDialog from '~dialogs/WrongNetworkDialog';
 
 import { Colony, useLoggedInUser } from '~data/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
@@ -19,7 +20,6 @@ import ColonyDomainDescription from './ColonyDomainDescription';
 import ColonyUpgrade from './ColonyUpgrade';
 import ColonyFinishDeployment from './ColonyFinishDeployment';
 import ExtensionUpgrade from './ExtensionUpgrade';
-import WrongNetworkDialog from './WrongNetworkDialog';
 
 import styles from './ColonyHomeLayout.css';
 

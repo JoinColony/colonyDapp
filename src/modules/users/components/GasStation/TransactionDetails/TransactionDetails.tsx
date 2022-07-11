@@ -51,7 +51,15 @@ const TransactionDetails = ({
           transaction={selectedTransaction as TransactionType}
         />
       )}
-      {showInteraction(selectedTransaction) && <MetaMaskWalletInteraction />}
+      {showInteraction(selectedTransaction) && (
+        <MetaMaskWalletInteraction
+          transactionType={
+            selectedTransaction.metatransaction
+              ? 'metatransaction'
+              : 'transaction'
+          }
+        />
+      )}
     </div>
   );
 };

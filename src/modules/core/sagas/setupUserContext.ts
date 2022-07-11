@@ -9,6 +9,7 @@ import {
   TEMP_getContext,
   TEMP_setContext,
   ContextModule,
+  UserSettings,
 } from '~context/index';
 import { putError } from '~utils/saga/effects';
 import { log } from '~utils/debug';
@@ -35,6 +36,7 @@ import { createUserWithSecondAttempt } from '../../users/sagas/utils';
 import { getGasPrices, reinitializeColonyManager } from './utils';
 import setupOnBeforeUnload from './setupOnBeforeUnload';
 import { setupUserBalanceListener } from './setupUserBalanceListener';
+import { GANACHE_NETWORK } from '~constants';
 
 function* setupContextDependentSagas() {
   const appLoadingState: typeof AppLoadingState = AppLoadingState;
@@ -96,20 +98,15 @@ export default function* setupUserContext(
       walletNetworkId = window.ethereum.networkVersion;
     }
     /*
-     * @NOTE Detecting Ganache via it's network id is a bit iffy
-     * It's randomized on start so we can reliably count on it.
-     *
-     * For that, if the chainId is bigger then 10k, we assume we're on
-     * ganache (on dev mode only), and set our own chainId to `13131313`
-     *
-     * We really need a better way of detecting ganache here, it will have to do
-     * for now
+     * We manually set the chain to this value when ganache starts
+     * So for the purpouses of our development environment, the local network's
+     * id is 1337 (the default chainId ganache sets)
      */
     if (
       process.env.NODE_ENV === 'development' &&
       parseInt(walletNetworkId, 10) > 10000
     ) {
-      walletNetworkId = '13131313';
+      walletNetworkId = String(GANACHE_NETWORK.chainId);
     }
 
     TEMP_setContext(ContextModule.Wallet, wallet);
@@ -164,12 +161,27 @@ export default function* setupUserContext(
     // @TODO refactor setupUserContext for graphql
     // @BODY eventually we want to move everything to resolvers, so all of this has to happen outside of sagas. There is no need to have a separate state or anything, just set it up in an aync function (instead of WALLET_CREATE), then call this function
     const ipfsWithFallback = TEMP_getContext(ContextModule.IPFSWithFallback);
+
+    /*
+     * Get user settings and hydrate them in the context
+     *
+     * In case the user is just browsing and didn't log in (ethereal wallet),
+     * don't pass the address to the settings context, so as to not pollute
+     * the local storage namespace.
+     * This way it will save, and override all settings in the 000000... slot key
+     */
+    const userSettings = new UserSettings(
+      method !== WalletMethod.Ethereal ? wallet.address : null,
+    );
+    TEMP_setContext(ContextModule.UserSettings, userSettings);
+
     const userContext = {
       apolloClient,
       colonyManager,
       ens,
       wallet,
       ipfsWithFallback,
+      userSettings,
     };
     yield setupResolvers(apolloClient, userContext);
 

@@ -154,7 +154,7 @@ const CountDownTimer = ({
     }, 1000);
     if (timeLeft === 0) {
       dispatch({
-        type: ActionTypes.COLONY_MOTION_STATE_UPDATE,
+        type: ActionTypes.MOTION_STATE_UPDATE,
         payload: {
           colonyAddress,
           motionId: bigNumberify(motionId),

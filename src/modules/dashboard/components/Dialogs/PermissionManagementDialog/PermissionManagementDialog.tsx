@@ -93,8 +93,8 @@ const PermissionManagementDialog = ({
       const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
 
       return isVotingExtensionEnabled && !isForce
-        ? ActionTypes[`COLONY_MOTION_USER_ROLES_SET${actionEnd}`]
-        : ActionTypes[`COLONY_ACTION_USER_ROLES_SET${actionEnd}`];
+        ? ActionTypes[`MOTION_USER_ROLES_SET${actionEnd}`]
+        : ActionTypes[`ACTION_USER_ROLES_SET${actionEnd}`];
     },
     [isVotingExtensionEnabled, isForce],
   );

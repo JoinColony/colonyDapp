@@ -18,7 +18,7 @@ import { updateMotionValues } from '../utils';
 function* voteMotion({
   meta,
   payload: { userAddress, colonyAddress, motionId, vote },
-}: Action<ActionTypes.COLONY_MOTION_VOTE>) {
+}: Action<ActionTypes.MOTION_VOTE>) {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
     const context = TEMP_getContext(ContextModule.ColonyManager);
@@ -105,11 +105,11 @@ function* voteMotion({
     yield fork(updateMotionValues, colonyAddress, userAddress, motionId);
 
     yield put<AllActions>({
-      type: ActionTypes.COLONY_MOTION_VOTE_SUCCESS,
+      type: ActionTypes.MOTION_VOTE_SUCCESS,
       meta,
     });
   } catch (error) {
-    return yield putError(ActionTypes.COLONY_MOTION_VOTE_ERROR, error, meta);
+    return yield putError(ActionTypes.MOTION_VOTE_ERROR, error, meta);
   } finally {
     txChannel.close();
   }
@@ -117,5 +117,5 @@ function* voteMotion({
 }
 
 export default function* voteMotionSaga() {
-  yield takeEvery(ActionTypes.COLONY_MOTION_VOTE, voteMotion);
+  yield takeEvery(ActionTypes.MOTION_VOTE, voteMotion);
 }

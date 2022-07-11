@@ -220,9 +220,9 @@ const MultisigWidget = ({
             <div className={styles.buttonWrapper}>
               <ActionButton
                 appearance={{ theme: 'primary', size: 'medium' }}
-                submit={ActionTypes.COLONY_ACTION_RECOVERY_APPROVE}
-                error={ActionTypes.COLONY_ACTION_RECOVERY_APPROVE_ERROR}
-                success={ActionTypes.COLONY_ACTION_RECOVERY_APPROVE_SUCCESS}
+                submit={ActionTypes.ACTION_RECOVERY_APPROVE}
+                error={ActionTypes.ACTION_RECOVERY_APPROVE_ERROR}
+                success={ActionTypes.ACTION_RECOVERY_APPROVE_SUCCESS}
                 transform={transform}
                 text={{ id: 'button.approve' }}
                 disabled={hasAlreadyApproved}
