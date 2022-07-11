@@ -282,7 +282,9 @@ const GnosisControlSafeForm = ({
                 )}
                 <div
                   className={classnames({
-                    [styles.tabContentClosed]: !transactionTabStatus[index],
+                    [styles.tabContentClosed]:
+                      values.transactions.length > 1 &&
+                      !transactionTabStatus[index],
                   })}
                 >
                   <DialogSection appearance={{ theme: 'sidePadding' }}>
