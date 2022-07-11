@@ -48,6 +48,8 @@ const MSG = defineMessages({
   },
 });
 
+const displayName = 'dashboard.ExpenditurePage.ExpenditureSettings';
+
 interface Props {
   sidebarRef: HTMLElement | null;
 }
@@ -246,5 +248,7 @@ const ExpenditureSettings = ({ sidebarRef }: Props) => {
     </div>
   );
 };
+
+ExpenditureSettings.displayName = displayName;
 
 export default ExpenditureSettings;

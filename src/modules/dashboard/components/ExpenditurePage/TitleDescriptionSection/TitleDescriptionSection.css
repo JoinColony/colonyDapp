@@ -1,5 +1,7 @@
 .container {
-  padding: 69px 25px 74px;
+  padding-right: 37px;
+  padding-bottom: 74px;
+  width: 100%;
 }
 
 .number {
