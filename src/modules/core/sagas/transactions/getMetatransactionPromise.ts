@@ -27,7 +27,7 @@ import {
 
 async function getMetatransactionPromise(
   client: ContractClient,
-  { methodName, params, identifier: clientAddress, id }: TransactionRecord,
+  { methodName, params, identifier: clientAddress }: TransactionRecord,
 ): Promise<TransactionResponse> {
   const wallet = TEMP_getContext(ContextModule.Wallet);
   const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
@@ -68,18 +68,12 @@ async function getMetatransactionPromise(
       break;
   }
 
-  // eslint-disable-next-line no-console
-  console.log('NORMALIZED CLIENT', normalizedClient);
-
   /*
    * @NOTE We have two ways to go about Metatransactions when it comes to the Token Client
    * Either vanilla metransactions or Signed Approvals (EIP2612). We need to check for both,
    * and attempt to use of them
    */
   if (normalizedClient.clientType === ClientType.TokenClient) {
-    // eslint-disable-next-line no-console
-    console.log(`We're using a Token Client`);
-
     /*
      * @NOTE If it's a TokenClient we need to reinstantiate as the "light" token client
      * basically a frankenstein's monster (currently) supporting both Metatransactions
@@ -100,9 +94,6 @@ async function getMetatransactionPromise(
      */
     lightTokenClient.tokenClientType = 'Light';
     lightTokenClient.metatransactionVariation = MetatransactionFlavour.Vanilla;
-
-    // eslint-disable-next-line no-console
-    console.log('LIGHT TOKEN CLIENT', lightTokenClient);
 
     /*
      * See if the token supports Metatransactions
@@ -127,11 +118,6 @@ async function getMetatransactionPromise(
     } catch (error) {
       // silent error
     }
-    /*
-     * @TODO REMOVE!!
-     */
-    lightTokenClient.metatransactionVariation = MetatransactionFlavour.EIP2612;
-
     if (!availableNonce) {
       throw new Error(generateMetatransactionErrorMessage(lightTokenClient));
     }
@@ -151,17 +137,6 @@ async function getMetatransactionPromise(
     }
   }
 
-  // eslint-disable-next-line no-console
-  console.log('Current NONCE', availableNonce);
-
-  // eslint-disable-next-line no-console
-  console.log(
-    'Transaction to send',
-    normalizedClient.clientType,
-    normalizedMethodName,
-    params,
-  );
-
   /*
    * @NOTE For the EIP2612 metatransaction variation we only support the
    * TokenClient.approve method, every other call needs to go through
@@ -173,10 +148,6 @@ async function getMetatransactionPromise(
       MetatransactionFlavour.EIP2612 &&
     normalizedMethodName === TRANSACTION_METHODS.Approve
   ) {
-    // eslint-disable-next-line no-console
-    console.log(
-      `Token Client is using the ${lightTokenClient.metatransactionVariation} variation`,
-    );
     const tokenName = await normalizedClient.name();
     const [spender, amount] = params;
     const deadline = Math.floor(Date.now() / 1000) + 3600;
@@ -205,13 +176,7 @@ async function getMetatransactionPromise(
         s,
         v,
       };
-
-      // eslint-disable-next-line no-console
-      console.log('Broadcast data', broadcastData);
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log("User's wallet", wallet);
-
       // eslint-disable-next-line no-underscore-dangle
       const { chainId: walletChainId } = wallet?.mmProvider?._network || {};
       /*
@@ -241,9 +206,6 @@ async function getMetatransactionPromise(
       throw new Error(error.message);
     }
   } else {
-    // eslint-disable-next-line no-console
-    console.log('Broadcasting transaction as VANILLA Metadata variation');
-
     /*
      * All the 'WithProofs' helpers don't really exist on chain, so we have to
      * make sure we are calling the on-chain method, rather than our own helper
@@ -251,9 +213,6 @@ async function getMetatransactionPromise(
     const encodedTransaction = await normalizedClient.interface.functions[
       normalizedMethodName
     ].encode([...normalizedParams]);
-
-    // eslint-disable-next-line no-console
-    console.log('Encoded transaction', encodedTransaction);
 
     const { messageUint8: messageData } = await generateMetatransactionMessage(
       encodedTransaction,
@@ -266,9 +225,6 @@ async function getMetatransactionPromise(
       messageData,
     });
 
-    // eslint-disable-next-line no-console
-    console.log('Signature', metatransactionSignature);
-
     const { r, s, v } = splitSignature(metatransactionSignature);
 
     broadcastData = {
@@ -279,17 +235,11 @@ async function getMetatransactionPromise(
       s,
       v,
     };
-
-    // eslint-disable-next-line no-console
-    console.log('Broadcast data', broadcastData);
   }
 
   const {
     responseData: { txHash: hash },
   } = await broadcastMetatransaction(normalizedMethodName, broadcastData);
-
-  // eslint-disable-next-line no-console
-  console.log(`Metatransaction ${id} done ------------`);
 
   return { hash } as TransactionResponse;
 }
