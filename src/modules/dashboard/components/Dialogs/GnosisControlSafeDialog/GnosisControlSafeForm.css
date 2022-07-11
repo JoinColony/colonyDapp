@@ -44,7 +44,7 @@
 .transactionHeading {
   display: flex;
   align-items: center;
-  padding: 16px 38px 16px 20px;
+  padding: 16px 32px 16px 20px;
   height: 52px;
   border-bottom: 1px solid color-mod(var(--action-secondary) alpha(12%));
   background-color: color-mod(var(--action-secondary) alpha(6%));
@@ -97,7 +97,7 @@
 }
 
 .toggleTabIcon {
-  width: 12px;
+  width: 10px;
   fill: var(--dark);
   transform: rotate(180deg);
 }
