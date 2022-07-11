@@ -130,7 +130,7 @@ async function getMetatransactionPromise(
     /*
      * @TODO REMOVE!!
      */
-    // lightTokenClient.metatransactionVariation = MetatransactionFlavour.EIP2612;
+    lightTokenClient.metatransactionVariation = MetatransactionFlavour.EIP2612;
 
     if (!availableNonce) {
       throw new Error(generateMetatransactionErrorMessage(lightTokenClient));
@@ -222,8 +222,11 @@ async function getMetatransactionPromise(
         if (chainId === XDAI_NETWORK.chainId) {
           /*
            * @NOTE This actually adds the network if it doesn't exist
+           *
+           * Arguably this should no longer be necessary since you shouldn't even
+           * be able to get to this stage
            */
-          metamaskSwitchNetwork(true).next();
+          metamaskSwitchNetwork().next();
         } else {
           switchChain(chainId);
         }
