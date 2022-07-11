@@ -61,6 +61,7 @@ const SelectHorizontal = ({
             ...selectProps,
           }}
           elementOnly
+          optionSizeLarge
         />
       </div>
       {!elementOnly && (error || status) && (

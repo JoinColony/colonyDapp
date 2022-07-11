@@ -6,6 +6,7 @@ import React, {
   useState,
 } from 'react';
 import * as ReactDOM from 'react-dom';
+import classNames from 'classnames';
 
 import styles from './Dropdown.css';
 
@@ -15,12 +16,19 @@ interface Props {
   element: HTMLDivElement | null;
   scrollContainer?: Window | HTMLElement | null;
   placement?: 'right' | 'bottom' | 'exact'; // 'exact' - portal will appear in the same place element would. Allowing dropdowns with full width to appear in dialogs
+  optionSizeLarge?: boolean;
   children: React.ReactNode;
 }
 
 const Dropdown = React.forwardRef(
   (
-    { element, scrollContainer = window, placement = 'right', children }: Props,
+    {
+      element,
+      scrollContainer = window,
+      placement = 'right',
+      optionSizeLarge,
+      children,
+    }: Props,
     ref: RefObject<HTMLDivElement>,
   ) => {
     const [posTop, setPosTop] = useState<number | undefined>();
@@ -73,7 +81,9 @@ const Dropdown = React.forwardRef(
     return element
       ? ReactDOM.createPortal(
           <div
-            className={styles.dropdown}
+            className={classNames(styles.dropdown, {
+              [styles.optionSizeLarge]: optionSizeLarge,
+            })}
             style={{
               top: posTop,
               left,
