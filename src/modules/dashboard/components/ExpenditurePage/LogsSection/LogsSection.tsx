@@ -29,26 +29,23 @@ const MSG = defineMessages({
 });
 
 export const isSystemMessage = (name: string) => {
-  if (
-    name === SystemMessagesName.ExpenditureStaked ||
-    name === SystemMessagesName.ExpenditureFunding ||
-    name === SystemMessagesName.ExpenditureModified ||
-    name === SystemMessagesName.ExpenditureCreatedDraft ||
-    name === SystemMessagesName.ExpenditureCancelledDraft ||
-    name === SystemMessagesName.ExpenditureClaimedStake ||
-    name === SystemMessagesName.ExpenditureLocked ||
-    name === SystemMessagesName.ExpenditureMotionModified ||
-    name === SystemMessagesName.ExpenditureOwnerChange ||
-    name === SystemMessagesName.ExpenditureMotionOwnerChange ||
-    name === SystemMessagesName.ExpenditureMotionFunding ||
-    name === SystemMessagesName.ExpenditureFunded ||
-    name === SystemMessagesName.ExpenditureReleaseFunds ||
-    name === SystemMessagesName.ExpenditureFundsClaimed ||
-    name === SystemMessagesName.ExpenditureAllFundsClaimed
-  ) {
-    return true;
-  }
-  return false;
+  return [
+    SystemMessagesName.ExpenditureStaked,
+    SystemMessagesName.ExpenditureFunding,
+    SystemMessagesName.ExpenditureModified,
+    SystemMessagesName.ExpenditureCreatedDraft,
+    SystemMessagesName.ExpenditureCancelledDraft,
+    SystemMessagesName.ExpenditureClaimedStake,
+    SystemMessagesName.ExpenditureLocked,
+    SystemMessagesName.ExpenditureMotionModified,
+    SystemMessagesName.ExpenditureOwnerChange,
+    SystemMessagesName.ExpenditureMotionOwnerChange,
+    SystemMessagesName.ExpenditureMotionFunding,
+    SystemMessagesName.ExpenditureFunded,
+    SystemMessagesName.ExpenditureReleaseFunds,
+    SystemMessagesName.ExpenditureFundsClaimed,
+    SystemMessagesName.ExpenditureAllFundsClaimed,
+  ].includes(name as SystemMessagesName);
 };
 
 const displayName = 'dashboard.ExpenditurePage.LogsSection';

@@ -50,7 +50,7 @@ const ExpenditureForm = ({ sidebarRef }: Props) => {
     <Form onSubmit={onSubmit}>
       <ExpenditureSettings />
       <Payments sidebarRef={sidebarRef} />
-      <button type="submit" className={styles.hiddenSubmit}>
+      <button type="submit" tabIndex={-1} className={styles.hiddenSubmit}>
         <FormattedMessage {...MSG.submit} />
       </button>
     </Form>
