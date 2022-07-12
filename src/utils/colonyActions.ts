@@ -210,6 +210,7 @@ export const parseColonyMetadata = (
   colonyAvatarHash: string | null;
   colonyTokens: string[] | null;
   verifiedAddresses: string[] | null;
+  isWhitelistActivated: boolean | null;
 } => {
   try {
     if (jsonMetadata) {
@@ -218,12 +219,14 @@ export const parseColonyMetadata = (
         colonyAvatarHash = null,
         colonyTokens = [],
         verifiedAddresses = [],
+        isWhitelistActivated = null,
       } = JSON.parse(jsonMetadata);
       return {
         colonyDisplayName,
         colonyAvatarHash,
         colonyTokens,
         verifiedAddresses,
+        isWhitelistActivated,
       };
     }
   } catch (error) {
@@ -235,6 +238,7 @@ export const parseColonyMetadata = (
     colonyAvatarHash: null,
     colonyTokens: [],
     verifiedAddresses: [],
+    isWhitelistActivated: null,
   };
 };
 
@@ -296,6 +300,7 @@ export const getSpecificActionValuesCheck = (
     domainPurpose: currentDomainPurpose,
     domainColor: currentDomainColor,
     verifiedAddresses: currentVerifiedAddresses,
+    isWhitelistActivated: currentIsWhitelistActivated,
   }: Partial<ColonyAction>,
   {
     colonyDisplayName: prevColonyDisplayName,
@@ -305,6 +310,7 @@ export const getSpecificActionValuesCheck = (
     domainPurpose: prevDomainPurpose,
     domainColor: prevDomainColor,
     verifiedAddresses: prevVerifiedAddresses,
+    isWhitelistActivated: prevIsWhitelistActivated,
   }: {
     colonyDisplayName?: string | null;
     colonyAvatarHash?: string | null;
@@ -313,16 +319,20 @@ export const getSpecificActionValuesCheck = (
     domainPurpose?: string | null;
     domainColor?: string | null;
     verifiedAddresses?: string[] | null;
+    isWhitelistActivated?: boolean | null;
   },
 ): { [key: string]: boolean } => {
   switch (actionType) {
     case ColonyAndExtensionsEvents.ColonyMetadata: {
       const nameChanged = prevColonyDisplayName !== currentColonyDisplayName;
       const logoChanged = prevColonyAvatarHash !== currentColonyAvatarHash;
-      const verifiedAddressesChanged = !isEqual(
-        prevVerifiedAddresses,
-        currentVerifiedAddresses,
-      );
+
+      const verifiedAddressesChanged =
+        !isEqual(prevVerifiedAddresses, currentVerifiedAddresses) ||
+        // purposely using loose equality here to compare IsWhitelistActivated flags
+        // eslint-disable-next-line eqeqeq
+        prevIsWhitelistActivated != currentIsWhitelistActivated;
+
       /*
        * Tokens arrays might come from a subgraph query, in which case
        * they're not really "arrays", so we have to create a new instace of
