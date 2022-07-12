@@ -141,18 +141,17 @@ const ManageWhitelistDialog = ({
               whitelistActivated = true;
             }
           }
-
           return {
             colonyAddress,
-            colonyDisplayName: colony.displayName,
+            colonyDisplayName: colonyData?.processedColony?.displayName,
             colonyAvatarHash: avatarHash,
             verifiedAddresses,
             isWhitelistActivated: whitelistActivated,
             annotationMessage,
             colonyName,
-            colonyTokens: tokenAddresses.filter(
-              (tokenAddres) => tokenAddres !== nativeTokenAddress,
-            ),
+            colonyTokens: (
+              colonyData?.processedColony?.tokenAddresses || tokenAddresses
+            ).filter((tokenAddress) => tokenAddress !== nativeTokenAddress),
           };
         },
       ),
