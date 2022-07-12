@@ -36,6 +36,11 @@
   width: 100%;
 }
 
+.inputContainerMaxButton button {
+  right: initial;
+  left: -6px;
+}
+
 .networkFee {
   position: relative;
   bottom: 14px;

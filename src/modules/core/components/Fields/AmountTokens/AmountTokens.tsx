@@ -7,6 +7,7 @@ import {
 import { AddressZero } from 'ethers/constants';
 import Maybe from 'graphql/tsutils/Maybe';
 import moveDecimal from 'move-decimal-point';
+import classnames from 'classnames';
 
 import { bigNumberify } from 'ethers/utils';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -17,7 +18,7 @@ import Numeral from '~core/Numeral';
 import { FormValues as CreatePaymentFormValues } from '~dashboard/Dialogs/CreatePaymentDialog/CreatePaymentDialog';
 import { FormValues as GnosisControlSafeFormValues } from '~dashboard/Dialogs/GnosisControlSafeDialog/GnosisControlSafeDialog';
 
-import Input from '../Input';
+import Input, { MaxButtonParams } from '../Input';
 import TokenSymbolSelector from '../TokenSymbolSelector';
 
 import styles from './AmountTokens.css';
@@ -31,6 +32,7 @@ interface Props {
   customAmountError?: MessageDescriptor | string;
   inputName?: string;
   selectorName?: string;
+  maxButtonParams?: MaxButtonParams;
 }
 
 const MSG = defineMessages({
@@ -82,9 +84,14 @@ const AmountTokens = ({
   disabledInput,
   inputName,
   selectorName,
+  maxButtonParams,
 }: Props) => (
   <div className={styles.tokenAmount}>
-    <div className={styles.tokenAmountInputContainer}>
+      <div
+        className={classnames(styles.tokenAmountInputContainer, {
+          [styles.inputContainerMaxButton]: !!maxButtonParams,
+        })}
+      >
       <Input
         label={MSG.amount}
         name={inputName || 'amount'}
@@ -106,6 +113,7 @@ const AmountTokens = ({
           */
         forcedFieldError={customAmountError}
         dataTest="paymentAmountInput"
+        maxButtonParams={maxButtonParams}
       />
       {networkFeeInverse &&
         customAmountError === undefined &&
