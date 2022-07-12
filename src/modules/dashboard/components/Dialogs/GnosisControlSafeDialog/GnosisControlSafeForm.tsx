@@ -7,7 +7,7 @@ import { nanoid } from 'nanoid';
 
 import Avatar from '~core/Avatar';
 import { DialogSection } from '~core/Dialog';
-import { Select } from '~core/Fields';
+import { Annotations, Input, Select } from '~core/Fields';
 import Heading from '~core/Heading';
 import ExternalLink from '~core/ExternalLink';
 import Button, { AddItemButton } from '~core/Button';
@@ -82,6 +82,10 @@ const MSG = defineMessages({
     id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.deleteTransactionTooltipText`,
     defaultMessage: `Delete transaction.\nBe careful, data can be lost.`,
   },
+  previewTitle: {
+    id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.previewTitle',
+    defaultMessage: 'Confirm transaction details',
+  },
 });
 
 const displayName = 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm';
@@ -121,6 +125,8 @@ const GnosisControlSafeForm = ({
   setFieldValue,
 }: Props & FormikProps<FormValues>) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState([true]);
+  const [showPreview, setShowPreview] = useState(false);
+
   const { walletAddress } = useLoggedInUser();
   const fromDomainRoles = useTransformer(getUserRolesForDomain, [
     colony,
@@ -190,7 +196,7 @@ const GnosisControlSafeForm = ({
     [values.transactions.length],
   );
 
-  return (
+  return !showPreview ? (
     <>
       <DialogSection>
         <div className={styles.heading}>
@@ -348,8 +354,45 @@ const GnosisControlSafeForm = ({
         />
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
-          onClick={() => handleSubmit()}
+          onClick={() => setShowPreview(!showPreview)}
+          // onClick={() => handleSubmit()}
           text={MSG.buttonCreateTransaction}
+          // loading={isSubmitting}
+          disabled={!isValid || isSubmitting}
+          style={{ width: styles.wideButton }}
+        />
+      </DialogSection>
+    </>
+  ) : (
+    <>
+      <DialogSection>
+        <div className={styles.heading}>
+          <Heading
+            appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+            text={MSG.previewTitle}
+          />
+        </div>
+      </DialogSection>
+      <DialogSection>
+        <div>1. Subtitle</div>
+        <div>transaction details</div>
+      </DialogSection>
+      <DialogSection>
+        <Input label="Set title" name="transactionSetTitle" disabled={false} />
+      </DialogSection>
+      <DialogSection>
+        <Annotations label="Explain why" name="annotation" />
+      </DialogSection>
+      <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
+        <Button
+          appearance={{ theme: 'secondary', size: 'large' }}
+          onClick={() => setShowPreview(!showPreview)}
+          text={{ id: 'button.back' }}
+        />
+        <Button
+          appearance={{ theme: 'primary', size: 'large' }}
+          onClick={() => handleSubmit()}
+          text={{ id: 'button.confirm' }}
           loading={isSubmitting}
           disabled={!isValid || isSubmitting}
           style={{ width: styles.wideButton }}
