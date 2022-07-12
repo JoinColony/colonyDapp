@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   composes: main from "./Extensions.css";
   margin-right: 100px;
@@ -102,4 +104,72 @@
 .contractAddress {
   font-size: var(--size-smallish);
   cursor: pointer;
+}
+
+@media screen and query700 {
+  .main {
+    margin: 0;
+  }
+
+  .main > div:first-child {
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 15px 14px 0px;
+  }
+
+  .main > div:first-child > div {
+    display: flex;
+    flex-wrap: wrap;
+    flex-basis: fit-content;
+  }
+
+  .main span {
+    white-space: normal;
+  }
+
+  .main > div:first-child span:nth-child(2) {
+    margin: 1px 2px 0px;
+  }
+
+  .main > div:first-child > div:nth-child(2) {
+    margin-top: 1px;
+  }
+
+  .content {
+    order: 1;
+  }
+
+  aside {
+    display: flex;
+    justify-content: center;
+  }
+
+  .extensionText {
+    padding: 0 14px 24px;
+    border-bottom: 1px solid var(--temp-grey-13);
+  }
+
+  .extensionText h3 {
+    padding: 0;
+  }
+
+  .extensionDetails {
+    margin-bottom: 30px;
+    padding: 0 40px;
+    width: 100%;
+  }
+
+  .extensionDetails button {
+    margin-bottom: 8px;
+  }
+
+  .extensionDetails .headerLine {
+    display: none;
+  }
+
+  .buttonWrapper {
+    padding: 0;
+    height: auto;
+    max-height: 48px;
+  }
 }

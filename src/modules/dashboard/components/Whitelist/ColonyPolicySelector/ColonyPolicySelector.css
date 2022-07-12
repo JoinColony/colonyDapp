@@ -1,4 +1,12 @@
+@value query700 from '~styles/queries.css';
+
 .container {
   margin-top: 50px;
   width: 340px;
+}
+
+@media screen and query700 {
+  .container {
+    width: auto;
+  }
 }

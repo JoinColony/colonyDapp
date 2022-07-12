@@ -1,4 +1,5 @@
 @value wideButton: 160px;
+@value query700 from '~styles/queries.css';
 
 .title {
   font-size: var(--size-medium-l);
@@ -37,5 +38,11 @@
     font-size: var(--size-normal);
     color: var(--text-disabled);
     letter-spacing: var(--spacing-normal);
+  }
+}
+
+@media screen and query700 {
+  .input {
+    margin-top: 20px;
   }
 }
