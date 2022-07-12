@@ -21,7 +21,8 @@ import {
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
-import { uploadIfpsAnnotation } from '../utils';
+
+import { updateColonyDisplayCache, uploadIfpsAnnotation } from '../utils';
 
 function* manageVerifiedRecipients({
   payload: {
@@ -170,6 +171,17 @@ function* manageVerifiedRecipients({
         },
         fetchPolicy: 'network-only',
       },
+    );
+
+    /*
+     * Update apollo's cache for the current colony to reflect the recently
+     * made changes
+     */
+    yield updateColonyDisplayCache(
+      colonyAddress,
+      colonyDisplayName,
+      colonyAvatarHash,
+      null,
     );
 
     yield put<AllActions>({
