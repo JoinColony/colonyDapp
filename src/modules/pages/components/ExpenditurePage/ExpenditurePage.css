@@ -47,5 +47,5 @@
 }
 
 .hiddenSubmit {
-  visibility: hidden;
+  opacity: 0;
 }

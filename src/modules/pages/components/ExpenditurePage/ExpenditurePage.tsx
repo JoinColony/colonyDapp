@@ -3,7 +3,8 @@ import * as yup from 'yup';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { nanoid } from 'nanoid';
 import { RouteChildrenProps, useParams } from 'react-router';
-import { Form } from '~core/Fields';
+import { Formik } from 'formik';
+
 import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
 import { useColonyFromNameQuery } from '~data/generated';
 import Stages from '~dashboard/ExpenditurePage/Stages';
@@ -84,7 +85,7 @@ const ExpenditurePage = ({ match }: Props) => {
   }, []);
 
   return (
-    <Form
+    <Formik
       initialValues={initialValues}
       onSubmit={submit}
       validationSchema={validationSchema}
@@ -104,16 +105,14 @@ const ExpenditurePage = ({ match }: Props) => {
                   <SpinnerLoader appearance={{ size: 'medium' }} />
                 </div>
               ) : (
-                colonyData && (
-                  <LogsSection colony={colonyData.processedColony} />
-                )
+                <LogsSection colony={colonyData?.processedColony} />
               )}
             </div>
             <Stages />
           </main>
         </div>
       </div>
-    </Form>
+    </Formik>
   );
 };
 

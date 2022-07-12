@@ -4,7 +4,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import styles from './LogsSection.css';
 import { colonyAction, systemMessages, transactionHash } from './constants';
 import { useLoggedInUser } from '~data/helpers';
-import Comment from '~core/Comment';
+import Comment, { CommentInput } from '~core/Comment';
 import { TransactionMeta } from '~dashboard/ActionsPage';
 import ActionsPageFeed, {
   ActionsPageEvent,
@@ -16,7 +16,6 @@ import ActionsPageFeed, {
 import { Colony, ParsedEvent, TransactionMessageFragment } from '~data/index';
 import FriendlyName from '~core/FriendlyName';
 import MemberReputation from '~core/MemberReputation';
-import { SubformCommentInput } from '~core/Comment/Input';
 
 const MSG = defineMessages({
   commentPlaceholder: {
@@ -55,7 +54,7 @@ export const isSystemMessage = (name: string) => {
 const displayName = 'dashboard.ExpenditurePage.LogsSection';
 
 interface Props {
-  colony: Colony;
+  colony?: Colony;
 }
 
 const LogsSection = ({ colony }: Props) => {
@@ -91,7 +90,7 @@ const LogsSection = ({ colony }: Props) => {
         reputation: (
           <span className={styles.reputationStarWrapper}>
             <span className={styles.reputationWrapper}>
-              {user && colony.colonyAddress && (
+              {user && colony?.colonyAddress && (
                 <MemberReputation
                   walletAddress={user.profile.walletAddress}
                   colonyAddress={colony.colonyAddress}
@@ -114,13 +113,13 @@ const LogsSection = ({ colony }: Props) => {
         ),
       };
     },
-    [colony.colonyAddress],
+    [colony],
   );
 
   return (
     <div className={styles.container}>
       <hr className={styles.divider} />
-      {!systemMessages ? (
+      {!systemMessages || !colony ? (
         <div className={styles.logContainer}>
           <div className={styles.dotContainer}>
             <div className={styles.dot} />
@@ -210,9 +209,9 @@ const LogsSection = ({ colony }: Props) => {
        *  @NOTE A user can comment only if he has a wallet connected
        * and a registered user profile,
        */}
-      {currentUserName && !ethereal && (
+      {currentUserName && !ethereal && colony && (
         <div className={styles.commentInput}>
-          <SubformCommentInput
+          <CommentInput
             colonyAddress={colony?.colonyAddress}
             transactionHash={transactionHash}
           />
