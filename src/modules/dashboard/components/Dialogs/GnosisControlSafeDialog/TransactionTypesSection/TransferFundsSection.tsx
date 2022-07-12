@@ -38,6 +38,8 @@ interface Props {
   colony: Colony;
   disabledInput: boolean;
   values: FormValues;
+  transactionFormIndex: number;
+  setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
 }
 
 const renderAvatar = (address: Address, item: AnyUser) => (
@@ -48,15 +50,18 @@ const TransferFundsSection = ({
   colony: { tokens, colonyAddress },
   disabledInput,
   values,
+  transactionFormIndex,
+  setFieldValue,
 }: Props) => {
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress },
   });
   const { feeInverse: networkFeeInverse } = useNetworkContracts();
-
+  const selectedTokenAddress =
+    values.transactions[transactionFormIndex].tokenAddress;
   const selectedToken = useMemo(
-    () => tokens.find((token) => token.address === values.tokenAddress),
-    [tokens, values.tokenAddress],
+    () => tokens.find((token) => token.address === selectedTokenAddress),
+    [tokens, selectedTokenAddress],
   );
 
   return (
@@ -68,6 +73,14 @@ const TransferFundsSection = ({
           selectedToken={selectedToken}
           tokens={tokens}
           disabledInput={disabledInput}
+          inputName={`transactions.${transactionFormIndex}.amount`}
+          selectorName={`transactions.${transactionFormIndex}.tokenAddress`}
+          // @TODO: Connect max amount to max amount in safe
+          maxButtonParams={{
+            fieldName: `transactions.${transactionFormIndex}.amount`,
+            maxAmount: '0',
+            setFieldValue,
+          }}
         />
       </DialogSection>
       <DialogSection>
@@ -75,7 +88,7 @@ const TransferFundsSection = ({
           <SingleUserPicker
             data={colonyMembers?.subscribedUsers || []}
             label={MSG.recipient}
-            name="recipient"
+            name={`transactions.${transactionFormIndex}.recipient`}
             filter={filterUserSelection}
             renderAvatar={renderAvatar}
             disabled={disabledInput}

@@ -7,6 +7,7 @@ import {
 import { AddressZero } from 'ethers/constants';
 import Maybe from 'graphql/tsutils/Maybe';
 import moveDecimal from 'move-decimal-point';
+import classnames from 'classnames';
 
 import { bigNumberify } from 'ethers/utils';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -17,7 +18,7 @@ import Numeral from '~core/Numeral';
 import { FormValues as CreatePaymentFormValues } from '~dashboard/Dialogs/CreatePaymentDialog/CreatePaymentDialog';
 import { FormValues as GnosisControlSafeFormValues } from '~dashboard/Dialogs/GnosisControlSafeDialog/GnosisControlSafeDialog';
 
-import Input from '../Input';
+import Input, { MaxButtonParams } from '../Input';
 import TokenSymbolSelector from '../TokenSymbolSelector';
 
 import styles from './AmountTokens.css';
@@ -29,6 +30,9 @@ interface Props {
   values: CreatePaymentFormValues | GnosisControlSafeFormValues;
   selectedToken?: AnyToken;
   customAmountError?: MessageDescriptor | string;
+  inputName?: string;
+  selectorName?: string;
+  maxButtonParams?: MaxButtonParams;
 }
 
 const MSG = defineMessages({
@@ -78,15 +82,22 @@ const AmountTokens = ({
   selectedToken,
   tokens,
   disabledInput,
+  inputName,
+  selectorName,
+  maxButtonParams,
 }: Props) => {
   const isAmountValid = (amount?: string) =>
     amount && amount !== '0' && amount !== '0.' && amount !== '.';
   return (
     <div className={styles.tokenAmount}>
-      <div className={styles.tokenAmountInputContainer}>
+      <div
+        className={classnames(styles.tokenAmountInputContainer, {
+          [styles.inputContainerMaxButton]: !!maxButtonParams,
+        })}
+      >
         <Input
           label={MSG.amount}
-          name="amount"
+          name={inputName || 'amount'}
           appearance={{
             theme: 'minimal',
             align: 'right',
@@ -105,8 +116,9 @@ const AmountTokens = ({
            */
           forcedFieldError={customAmountError}
           dataTest="paymentAmountInput"
+          maxButtonParams={maxButtonParams}
         />
-        {networkFeeInverse && isAmountValid(values.amount) && (
+        {networkFeeInverse && isAmountValid(values[inputName || 'amount']) && (
           <div className={styles.networkFee}>
             <FormattedMessage
               {...MSG.fee}
@@ -119,7 +131,7 @@ const AmountTokens = ({
                     }}
                     value={
                       calculateFee(
-                        values.amount,
+                        values[inputName || 'amount'],
                         networkFeeInverse,
                         getTokenDecimalsWithFallback(selectedToken?.decimals),
                       ).feesInWei
@@ -140,13 +152,13 @@ const AmountTokens = ({
           <TokenSymbolSelector
             label={MSG.token}
             tokens={tokens}
-            name="tokenAddress"
+            name={selectorName || 'tokenAddress'}
             elementOnly
             appearance={{ alignOptions: 'right', theme: 'grey' }}
             disabled={disabledInput}
           />
         </div>
-        {values.tokenAddress === AddressZero && (
+        {values[inputName || 'amount'] === AddressZero && (
           <div className={styles.tokenAmountUsd}>
             <EthUsd
               appearance={{ theme: 'grey' }}
@@ -156,7 +168,10 @@ const AmountTokens = ({
                  * Just entering the decimal point will pass it through to EthUsd
                  * and that will try to fetch the balance for, which, obviously, will fail
                  */
-                values.amount && values.amount !== '.' ? values.amount : '0'
+                values[inputName || 'amount'] &&
+                values[inputName || 'amount'] !== '.'
+                  ? values[inputName || 'amount']
+                  : '0'
               }
             />
           </div>

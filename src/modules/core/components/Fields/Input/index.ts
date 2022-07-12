@@ -1,5 +1,5 @@
 export { default } from './Input';
-export { default as InputComponent } from './InputComponent';
+export { default as InputComponent, MaxButtonParams } from './InputComponent';
 
 export interface InputComponentAppearance {
   theme?: 'fat' | 'underlined' | 'minimal' | 'dotted';
