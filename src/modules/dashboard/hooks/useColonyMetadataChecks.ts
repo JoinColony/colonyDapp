@@ -60,7 +60,7 @@ const useColonyMetadataChecks = (
       eventName === ColonyAndExtensionsEvents.ColonyMetadata ||
       eventName === ColonyActions.ColonyEdit
     ) {
-      if (colonyMetadataHistory?.data?.colony) {
+      if (colonyMetadataHistory?.data?.colony && actionData) {
         const {
           data: {
             colony: { metadataHistory },
@@ -101,6 +101,27 @@ const useColonyMetadataChecks = (
             if (!isEqual(newMetadataChecks, metadataChecks)) {
               setMetadataChecks(newMetadataChecks);
             }
+          }
+        } else {
+          /*
+           * We don't have a previous metadata entry, so fall back to the current
+           * action's values if we can
+           */
+          const {
+            colonyDisplayName: actionColonyDisplayName,
+            colonyAvatarHash: actionColonyAvatarHash,
+            colonyTokens: actionColonyTokens,
+            verifiedAddresses: actionVerifiedAddresses,
+          } = actionData;
+          const newMetadataValues = {
+            nameChanged: !!actionColonyDisplayName,
+            logoChanged: !!actionColonyAvatarHash,
+            tokensChanged: !!actionColonyTokens?.length,
+            verifiedAddressesChanged: !!actionVerifiedAddresses?.length,
+          };
+
+          if (!isEqual(newMetadataValues, metadataChecks)) {
+            setMetadataChecks(newMetadataValues);
           }
         }
       }
