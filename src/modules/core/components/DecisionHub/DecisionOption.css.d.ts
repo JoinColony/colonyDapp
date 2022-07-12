@@ -1,3 +1,4 @@
+export const query700: string;
 export const main: string;
 export const themeAlt: string;
 export const stateDisabled: string;
