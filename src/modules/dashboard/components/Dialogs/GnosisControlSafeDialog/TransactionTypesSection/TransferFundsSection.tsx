@@ -39,6 +39,7 @@ interface Props {
   disabledInput: boolean;
   values: FormValues;
   transactionFormIndex: number;
+  setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
 }
 
 const renderAvatar = (address: Address, item: AnyUser) => (
@@ -50,6 +51,7 @@ const TransferFundsSection = ({
   disabledInput,
   values,
   transactionFormIndex,
+  setFieldValue,
 }: Props) => {
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress },
@@ -73,6 +75,12 @@ const TransferFundsSection = ({
           disabledInput={disabledInput}
           inputName={`transactions.${transactionFormIndex}.amount`}
           selectorName={`transactions.${transactionFormIndex}.tokenAddress`}
+          // @TODO: Connect max amount to max amount in safe
+          maxButtonParams={{
+            fieldName: `transactions.${transactionFormIndex}.amount`,
+            maxAmount: '0',
+            setFieldValue,
+          }}
         />
       </DialogSection>
       <DialogSection>

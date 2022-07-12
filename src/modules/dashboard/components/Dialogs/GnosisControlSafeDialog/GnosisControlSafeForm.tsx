@@ -118,6 +118,7 @@ const GnosisControlSafeForm = ({
   isValid,
   values,
   isVotingExtensionEnabled,
+  setFieldValue,
 }: Props & FormikProps<FormValues>) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState([true]);
   const { walletAddress } = useLoggedInUser();
@@ -306,6 +307,7 @@ const GnosisControlSafeForm = ({
                       disabledInput={!userHasPermission || isSubmitting}
                       values={values}
                       transactionFormIndex={index}
+                      setFieldValue={setFieldValue}
                     />
                   )}
                   {values.transactions[index]?.transactionType ===
