@@ -10,9 +10,6 @@ import {
   Colony,
   useTokenBalancesForDomainsQuery,
 } from '~data/index';
-import { useTransformer } from '~utils/hooks';
-import { canFund } from '~modules/users/checks';
-import { getAllUserRoles } from '~modules/transformers';
 
 import TokenItem from './TokenItem';
 
@@ -33,11 +30,9 @@ interface Props {
 const displayName = 'dashboard.ColonyHome.ColonyFunding';
 
 const ColonyFunding = ({ colony, currentDomainId }: Props) => {
-  const { walletAddress, ethereal, username } = useLoggedInUser();
+  const { ethereal, username } = useLoggedInUser();
 
-  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
-
-  const canMoveFunds = !!username && !ethereal && canFund(allUserRoles);
+  const canMoveFunds = !!username && !ethereal;
 
   const {
     colonyAddress,
