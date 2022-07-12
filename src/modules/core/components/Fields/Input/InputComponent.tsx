@@ -35,7 +35,7 @@ export type Appearance = {
 
 type CleaveHTMLInputElement = HTMLInputElement & { rawValue: string };
 
-interface MaxButtonParams {
+export interface MaxButtonParams {
   setFieldValue: (field, value) => void;
   maxAmount: string;
   fieldName: string;
