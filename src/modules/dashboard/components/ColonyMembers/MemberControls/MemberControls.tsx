@@ -7,7 +7,7 @@ import { useDialog } from '~core/Dialog';
 import { BanUserDialog } from '~core/Comment';
 
 import PermissionManagementDialog from '~dialogs/PermissionManagementDialog';
-import WrongNetworkDialog from '~dashboard/ColonyHome/WrongNetworkDialog';
+import WrongNetworkDialog from '~dialogs/WrongNetworkDialog';
 import ManageWhitelistDialog from '~dashboard/Dialogs/ManageWhitelistDialog';
 
 import { Colony, useColonyExtensionsQuery, useLoggedInUser } from '~data/index';
