@@ -19,11 +19,7 @@ import TokenIcon from '~dashboard/HookedTokenIcon';
 
 import { tokens as tokensData } from './constants';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import {
-  COLONY_TOTAL_BALANCE_DOMAIN_ID,
-  defaultColor,
-  rootDomainColor,
-} from '~constants';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import UserMention from '~core/UserMention';
 import DomainDropdown from '~core/DomainDropdown';
 import ColorTag, { Color } from '~core/ColorTag';
@@ -71,6 +67,8 @@ const ExpenditureSettings = () => {
 
   const getDomainColor = useCallback<(domainId: string | undefined) => Color>(
     (domainId) => {
+      const rootDomainColor: Color = Color.LightPink;
+      const defaultColor: Color = Color.Yellow;
       if (domainId === String(ROOT_DOMAIN_ID)) {
         return rootDomainColor;
       }

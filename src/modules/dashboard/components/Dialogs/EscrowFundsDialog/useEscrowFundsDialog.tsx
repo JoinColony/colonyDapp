@@ -8,11 +8,7 @@ import React, {
 } from 'react';
 import classNames from 'classnames';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
-import {
-  COLONY_TOTAL_BALANCE_DOMAIN_ID,
-  defaultColor,
-  rootDomainColor,
-} from '~constants';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import ColorTag, { Color } from '~core/ColorTag';
 import { FormSection, SelectOption } from '~core/Fields';
 import { useColonyFromNameQuery } from '~data/generated';
@@ -27,15 +23,15 @@ import Numeral from '~core/Numeral';
 
 const MSG = defineMessages({
   fullFund: {
-    id: 'dashboard.Expenditures.Stages.escrowFundsDialog.fullFund',
+    id: 'dashboard.EscrowFundsDialog.fullFund',
     defaultMessage: 'Total {name} to fund',
   },
   partialFund: {
-    id: 'dashboard.Expenditures.Stages.escrowFundsDialog.partialFund',
+    id: 'dashboard.EscrowFundsDialog.partialFund',
     defaultMessage: '{name} to fund',
   },
   total: {
-    id: 'dashboard.Expenditures.Stages.escrowFundsDialog.total',
+    id: 'dashboard.EscrowFundsDialog.total',
     defaultMessage: 'Total',
   },
 });
@@ -55,6 +51,8 @@ const useEscrowFundsDialog = (colonyName: string) => {
 
   const getDomainColor = useCallback<(domainId: string | undefined) => Color>(
     (domainId) => {
+      const rootDomainColor: Color = Color.LightPink;
+      const defaultColor: Color = Color.Yellow;
       if (domainId === String(ROOT_DOMAIN_ID)) {
         return rootDomainColor;
       }

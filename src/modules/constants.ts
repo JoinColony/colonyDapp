@@ -159,6 +159,3 @@ export const ALLDOMAINS_DOMAIN_SELECTION = {
 };
 
 export const SMALL_TOKEN_AMOUNT_FORMAT = '0.00000...';
-
-export const rootDomainColor: Color = Color.LightPink;
-export const defaultColor: Color = Color.Yellow;
