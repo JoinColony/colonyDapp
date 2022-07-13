@@ -39,9 +39,9 @@ const MSG = defineMessages({
     id: 'dashboard.CancelExpenditureDialog.shouldBePenalized',
     defaultMessage: 'Do you want to penalize the owner?',
   },
-  smite: {
-    id: 'dashboard.CancelExpenditureDialog.smite',
-    defaultMessage: 'Smite',
+  penalize: {
+    id: 'dashboard.CancelExpenditureDialog.penalize',
+    defaultMessage: 'Penalize',
   },
   showMercy: {
     id: 'dashboard.CancelExpenditureDialog.showMercy',
@@ -84,10 +84,10 @@ interface FormValues {
 interface Props {
   close: () => void;
   colony?: Colony;
-  onClick: () => void;
+  onClick: (isForce: boolean) => void;
 }
 
-const CancelExpenditureDialog = ({ close, colony }: Props) => {
+const CancelExpenditureDialog = ({ close, colony, onClick }: Props) => {
   const [isForce, setIsForce] = useState(false);
   const [domainID, setDomainID] = useState<number>();
 
@@ -116,7 +116,7 @@ const CancelExpenditureDialog = ({ close, colony }: Props) => {
       onSuccess={close}
       validationSchema={validationSchema}
     >
-      {({ values, isSubmitting }: FormikProps<FormValues>) => {
+      {({ values, isSubmitting, handleSubmit }: FormikProps<FormValues>) => {
         if (values.forceAction !== isForce) {
           setIsForce(values.forceAction);
         }
@@ -236,7 +236,7 @@ const CancelExpenditureDialog = ({ close, colony }: Props) => {
                     checked={values.effect === 'penalize'}
                     elementOnly
                   >
-                    <FormattedMessage {...MSG.smite} />
+                    <FormattedMessage {...MSG.penalize} />
                   </Radio>
                 </div>
                 <div
@@ -287,6 +287,12 @@ const CancelExpenditureDialog = ({ close, colony }: Props) => {
                 autoFocus
                 text={MSG.submit}
                 type="submit"
+                onClick={() => {
+                  // onClick and close are temporary, only handleSubmit should stay here
+                  onClick(isForce);
+                  close();
+                  handleSubmit();
+                }}
               />
             </DialogSection>
           </Dialog>

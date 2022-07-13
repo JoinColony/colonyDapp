@@ -5,3 +5,5 @@ export const activeDot: string;
 export const verticalLineActive: string;
 export const label: string;
 export const activeLabel: string;
+export const cancelled: string;
+export const cancelledLabel: string;
