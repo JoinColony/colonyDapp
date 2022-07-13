@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   display: flex;
   align-items: center;
@@ -23,4 +25,10 @@
 
 .boldAddress {
   font-weight: var(--weight-medium);
+}
+
+@media screen and query700 {
+  .addressContainer {
+    min-width: 40px;
+  }
 }
