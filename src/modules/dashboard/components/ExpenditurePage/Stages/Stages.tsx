@@ -24,7 +24,7 @@ import DeleteDraftDialog from '../../Dialogs/DeleteDraftDialog/DeleteDraftDialog
 import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
 import StageItem from './StageItem';
 import styles from './Stages.css';
-import { Stage } from './constants';
+import { MotionStatus, Stage, Status } from './constants';
 import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
 import { Colony } from '~data/index';
 import PermissionsLabel from '~core/PermissionsLabel';
@@ -129,11 +129,9 @@ const buttonStyles = {
   padding: 0,
 };
 
-type Status = 'cancelled' | 'forceCancelled';
-
 interface Motion {
   type: 'Cancel';
-  status: 'passed' | 'failed' | 'pending';
+  status: MotionStatus;
 }
 interface Props {
   colony?: Colony;
@@ -219,17 +217,15 @@ const Stages = ({ colony }: Props) => {
     openCancelExpenditureDialog({
       onClick: (isForce: boolean) => {
         if (isForce) {
-          // temporary action, call to backend should be done here
-          // setIsCancelled(true);
-          setStatus('forceCancelled');
-          // setActiveStateId(Stage.Draft);
+          // temporary action,
+          setStatus(Status.ForceCancelled);
         } else {
           // temporary action
-          setMotion({ type: 'Cancel', status: 'pending' });
+          setMotion({ type: 'Cancel', status: MotionStatus.Pending });
           setTimeout(() => {
-            setStatus('cancelled');
-            setMotion({ type: 'Cancel', status: 'passed' });
-          }, 3000);
+            setStatus(Status.Cancelled);
+            setMotion({ type: 'Cancel', status: MotionStatus.Passed });
+          }, 5000);
         }
       },
       colony,
@@ -276,7 +272,8 @@ const Stages = ({ colony }: Props) => {
               onClick={activeState?.buttonAction}
               style={buttonStyles}
               disabled={
-                activeStateId === Stage.Claimed || motion?.status === 'pending'
+                activeStateId === Stage.Claimed ||
+                motion?.status === MotionStatus.Pending
               }
             >
               {typeof activeState?.buttonText === 'string' ? (
@@ -294,7 +291,8 @@ const Stages = ({ colony }: Props) => {
         onClick={activeState?.buttonAction}
         style={buttonStyles}
         disabled={
-          activeStateId === Stage.Claimed || motion?.status === 'pending'
+          activeStateId === Stage.Claimed ||
+          motion?.status === MotionStatus.Pending
         }
       >
         {typeof activeState?.buttonText === 'string' ? (
@@ -359,7 +357,7 @@ const Stages = ({ colony }: Props) => {
 
   return (
     <div className={styles.mainContainer}>
-      {motion?.status === 'pending' && (
+      {motion?.status === MotionStatus.Pending && (
         <div className={styles.tagWrapper}>
           <Tag
             appearance={{
@@ -377,7 +375,7 @@ const Stages = ({ colony }: Props) => {
       )}
       <div
         className={classNames(styles.statusContainer, {
-          [styles.withTag]: motion?.status === 'pending',
+          [styles.withTag]: motion?.status === MotionStatus.Pending,
         })}
       >
         <div className={styles.stagesText}>
@@ -456,13 +454,17 @@ const Stages = ({ colony }: Props) => {
               {!isCancelled && activeStateId !== Stage.Draft && (
                 <Button
                   className={classNames(styles.iconButton, {
-                    [styles.cancelIcon]: motion?.status !== 'pending',
-                    [styles.iconButtonDisabled]: motion?.status === 'pending',
+                    [styles.cancelIcon]:
+                      motion?.status !== MotionStatus.Pending,
+                    [styles.iconButtonDisabled]:
+                      motion?.status === MotionStatus.Pending,
                   })}
                   onClick={handleCancelExpenditure}
-                  disabled={isCancelled || motion?.status === 'pending'}
+                  disabled={
+                    isCancelled || motion?.status === MotionStatus.Pending
+                  }
                 >
-                  {motion?.status === 'pending' ? (
+                  {motion?.status === MotionStatus.Pending ? (
                     <Icon
                       name="circle-minus"
                       className={styles.icon}
