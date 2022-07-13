@@ -213,6 +213,10 @@ table {
 }
 
 @media screen and query700 {
+  html {
+    background-color: white;
+  }
+
   /*
   * @NOTE: The following makes it possible to reset
   * the window's scroll position programatically.
@@ -223,5 +227,9 @@ table {
   body {
     height: auto;
     overflow-y: scroll;
+  }
+
+  :global(#root) {
+    height: 100vh;
   }
 }
