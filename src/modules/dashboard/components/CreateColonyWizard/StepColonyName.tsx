@@ -215,7 +215,6 @@ const StepColonyName = ({
                 disabled={!isNetworkAllowed || isSubmitting}
                 extra={
                   <QuestionMarkTooltip
-                    iconTitle="helper"
                     tooltipText={MSG.tooltip}
                     tooltipTextValues={{
                       displayENSDomain: DEFAULT_NETWORK_INFO.displayENSDomain,
