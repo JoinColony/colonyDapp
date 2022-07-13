@@ -1,4 +1,11 @@
-import React, { useCallback, Dispatch, useRef, SetStateAction } from 'react';
+import React, {
+  useCallback,
+  Dispatch,
+  useRef,
+  SetStateAction,
+  useState,
+  useEffect,
+} from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 
 import Heading from '~core/Heading';
@@ -49,6 +56,7 @@ const MembersTitle = ({
 }: Props) => {
   const { formatMessage } = useIntl();
   const searchInput = useRef<HTMLInputElement>(null);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const handleFocusRef = useCallback(() => {
     searchInput?.current?.focus();
   }, [searchInput]);
@@ -70,13 +78,23 @@ const MembersTitle = ({
       (e.target as HTMLInputElement).placeholder = formatMessage(
         MSG.searchPlaceholder,
       );
+      setIsSearchFocused(true);
     },
     [formatMessage],
   );
 
   const handleMouseLeave = useCallback((e) => {
     (e.target as HTMLInputElement).placeholder = '';
+    setIsSearchFocused(false);
   }, []);
+
+  useEffect(() => {
+    if (searchInput.current === document.activeElement) {
+      setIsSearchFocused(true);
+    }
+    /* Needs to be set up lie this for the focus to work */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchInput.current, document.activeElement]);
 
   return (
     <div className={styles.titleContainer}>
@@ -132,7 +150,9 @@ const MembersTitle = ({
         )}
         <Icon
           appearance={{ size: 'normal' }}
-          className={styles.icon}
+          className={`${styles.icon} ${
+            isSearchFocused ? styles.iconFocused : ''
+          }`}
           name="search"
           title={MSG.search}
           onClick={handleFocusRef}
