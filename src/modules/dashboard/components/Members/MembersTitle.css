@@ -57,6 +57,14 @@
   right: 2px;
   z-index: 1;
   transform: translateY(-50%);
+
+  & svg {
+    stroke: color-mod(var(--temp-grey-blue-7) alpha(65%));
+  }
+}
+
+.iconFocused svg {
+  stroke: var(--colony-blue);
 }
 
 .input {
