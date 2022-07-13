@@ -57,8 +57,10 @@ const MemberActionsPopover = ({
     () =>
       openBanUserDialog({
         colonyAddress: colony.colonyAddress,
+        isBanning: !isBanned,
+        addressToBan: userAddress,
       }),
-    [openBanUserDialog, colony],
+    [openBanUserDialog, colony, userAddress, isBanned],
   );
   const openManageWhitelistDialog = useDialog(ManageWhitelistDialog);
   const handleManageWhitelist = useCallback(

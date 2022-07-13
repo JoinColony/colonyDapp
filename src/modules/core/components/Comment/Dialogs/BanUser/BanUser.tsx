@@ -71,6 +71,7 @@ const displayName = 'core.Comment.BanUser';
 interface Props extends DialogProps {
   colonyAddress: Address;
   isBanning?: boolean;
+  addressToBan?: Address;
 }
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
@@ -87,7 +88,13 @@ const validationSchema = yup.object().shape({
   }),
 });
 
-const BanUser = ({ colonyAddress, cancel, close, isBanning = true }: Props) => {
+const BanUser = ({
+  colonyAddress,
+  cancel,
+  close,
+  isBanning = true,
+  addressToBan,
+}: Props) => {
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress },
   });
@@ -145,12 +152,28 @@ const BanUser = ({ colonyAddress, cancel, close, isBanning = true }: Props) => {
     [close, colonyAddress, updateBanStatus],
   );
 
+  const membersList = useMemo(
+    () => (isBanning ? membersNotBanned : membersBanned),
+    [isBanning, membersNotBanned, membersBanned],
+  );
+
+  const selectedUser = useMemo(
+    () =>
+      (membersList as AnyUser[]).find(
+        (user) => user.profile?.walletAddress === addressToBan,
+      ),
+    [membersList, addressToBan],
+  );
+
   return (
     <Form
-      initialValues={{ userAddress: '' }}
+      initialValues={{
+        userAddress: addressToBan ? selectedUser : '',
+      }}
       validationSchema={validationSchema}
       validateOnMount
       onSubmit={handleSubmit}
+      enableReinitialize
     >
       {({ isValid, isSubmitting, submitForm }: FormikProps<FormValues>) => (
         <Dialog cancel={cancel}>
@@ -165,7 +188,7 @@ const BanUser = ({ colonyAddress, cancel, close, isBanning = true }: Props) => {
             <div className={styles.userPickerContainer}>
               <SingleUserPicker
                 appearance={{ width: 'wide' }}
-                data={isBanning ? membersNotBanned : membersBanned}
+                data={membersList}
                 label={MSG.selectUser}
                 name="userAddress"
                 filter={filterUserSelection}
