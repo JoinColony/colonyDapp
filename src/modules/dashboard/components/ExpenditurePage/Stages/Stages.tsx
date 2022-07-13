@@ -217,7 +217,7 @@ const Stages = ({ colony }: Props) => {
     openCancelExpenditureDialog({
       onClick: (isForce: boolean) => {
         if (isForce) {
-          // temporary action,
+          // temporary action
           setStatus(Status.ForceCancelled);
         } else {
           // temporary action
@@ -497,7 +497,7 @@ const Stages = ({ colony }: Props) => {
           label={label}
           isFirst={index === 0}
           isActive={activeState ? index <= activeIndex : false}
-          isCancelled={isCancelled}
+          isCancelled={isCancelled && status === Status.ForceCancelled}
           labelComponent={labelComponent({ label, index })}
         />
       ))}
