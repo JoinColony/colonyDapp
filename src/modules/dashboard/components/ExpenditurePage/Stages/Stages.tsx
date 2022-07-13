@@ -1,6 +1,11 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useFormikContext } from 'formik';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   defineMessages,
   FormattedMessage,
@@ -24,6 +29,8 @@ import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog'
 import { Colony } from '~data/index';
 import PermissionsLabel from '~core/PermissionsLabel';
 import Tag from '~core/Tag';
+import { LinkedMotions } from '.';
+import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
 
 const MSG = defineMessages({
   stages: {
@@ -122,6 +129,12 @@ const buttonStyles = {
   padding: 0,
 };
 
+type Status = 'cancelled' | 'forceCancelled';
+
+interface Motion {
+  type: 'Cancel';
+  status: 'passed' | 'failed' | 'pending';
+}
 interface Props {
   colony?: Colony;
 }
@@ -133,8 +146,8 @@ const Stages = ({ colony }: Props) => {
   const { resetForm } = useFormikContext() || {};
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
-  const [isCancelled, setIsCancelled] = useState(false);
-  const [isMotion, setIsMotion] = useState(false);
+  const [motion, setMotion] = useState<Motion>();
+  const [status, setStatus] = useState<Status>();
   const { formatMessage } = useIntl();
 
   const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
@@ -207,11 +220,16 @@ const Stages = ({ colony }: Props) => {
       onClick: (isForce: boolean) => {
         if (isForce) {
           // temporary action, call to backend should be done here
-          setIsCancelled(true);
-          setActiveStateId(Stage.Draft);
+          // setIsCancelled(true);
+          setStatus('forceCancelled');
+          // setActiveStateId(Stage.Draft);
         } else {
           // temporary action
-          setIsMotion(true);
+          setMotion({ type: 'Cancel', status: 'pending' });
+          setTimeout(() => {
+            setStatus('cancelled');
+            setMotion({ type: 'Cancel', status: 'passed' });
+          }, 3000);
         }
       },
       colony,
@@ -230,7 +248,7 @@ const Stages = ({ colony }: Props) => {
   const activeState = states.find((state) => state.id === activeStateId);
 
   const renderButton = useCallback(() => {
-    if (isCancelled) {
+    if (status === 'cancelled' || status === 'forceCancelled') {
       return (
         <Button style={buttonStyles} disabled>
           <FormattedMessage {...MSG.cancelled} />
@@ -257,7 +275,9 @@ const Stages = ({ colony }: Props) => {
             <Button
               onClick={activeState?.buttonAction}
               style={buttonStyles}
-              disabled={activeStateId === Stage.Claimed || isMotion}
+              disabled={
+                activeStateId === Stage.Claimed || motion?.status === 'pending'
+              }
             >
               {typeof activeState?.buttonText === 'string' ? (
                 activeState.buttonText
@@ -273,7 +293,9 @@ const Stages = ({ colony }: Props) => {
       <Button
         onClick={activeState?.buttonAction}
         style={buttonStyles}
-        disabled={activeStateId === Stage.Claimed || isMotion}
+        disabled={
+          activeStateId === Stage.Claimed || motion?.status === 'pending'
+        }
       >
         {typeof activeState?.buttonText === 'string' ? (
           activeState.buttonText
@@ -282,16 +304,22 @@ const Stages = ({ colony }: Props) => {
         )}
       </Button>
     );
-  }, [activeState, isCancelled, activeStateId]);
+  }, [status, activeState, activeStateId, motion]);
 
-  const renderStage = useCallback(
-    (id: string, label: string | MessageDescriptor, index: number) => {
+  const labelComponent = useMemo(
+    () => ({
+      label,
+      index,
+    }: {
+      label: string | MessageDescriptor;
+      index: number;
+    }) => {
       // role is temporary mock value
       const role = ColonyRole.Arbitration;
 
-      // if expenditure was cancelled it shows different label with icon
-      const labelComponent =
-        isCancelled && index === activeIndex ? (
+      // if forced cancellation - it shows different label with icon
+      if (status === 'forceCancelled' && index === activeIndex) {
+        return (
           <div className={styles.labelComponent}>
             {typeof label === 'object' && label?.id ? (
               <FormattedMessage {...label} />
@@ -305,25 +333,33 @@ const Stages = ({ colony }: Props) => {
               minimal
             />
           </div>
-        ) : undefined;
+        );
+      }
 
-      return (
-        <StageItem
-          key={id}
-          label={label}
-          isFirst={index === 0}
-          isActive={activeState ? index <= activeIndex : false}
-          isCancelled={isCancelled}
-          labelComponent={labelComponent}
-        />
-      );
+      // if forced cancellation - it shows different label
+      if (status === 'cancelled' && index === activeIndex) {
+        return (
+          <div className={styles.labelComponent}>
+            {typeof label === 'object' && label?.id ? (
+              <FormattedMessage {...label} />
+            ) : (
+              label
+            )}{' '}
+            ({formatMessage(MSG.cancelled).toLocaleLowerCase()})
+          </div>
+        );
+      }
+
+      return undefined;
     },
-    [activeIndex, activeState, formatMessage, isCancelled],
+    [activeIndex, formatMessage, status],
   );
+
+  const isCancelled = status === 'cancelled' || status === 'forceCancelled';
 
   return (
     <div className={styles.mainContainer}>
-      {isMotion && (
+      {motion?.status === 'pending' && (
         <div className={styles.tagWrapper}>
           <Tag
             appearance={{
@@ -341,7 +377,7 @@ const Stages = ({ colony }: Props) => {
       )}
       <div
         className={classNames(styles.statusContainer, {
-          [styles.withTag]: isMotion,
+          [styles.withTag]: motion?.status === 'pending',
         })}
       >
         <div className={styles.stagesText}>
@@ -417,16 +453,16 @@ const Stages = ({ colony }: Props) => {
                   </Tooltip>
                 </Button>
               )}
-              {activeStateId !== Stage.Draft && (
+              {!isCancelled && activeStateId !== Stage.Draft && (
                 <Button
                   className={classNames(styles.iconButton, {
-                    [styles.cancelIcon]: !isMotion,
-                    [styles.iconButtonDisabled]: isMotion,
+                    [styles.cancelIcon]: motion?.status !== 'pending',
+                    [styles.iconButtonDisabled]: motion?.status === 'pending',
                   })}
                   onClick={handleCancelExpenditure}
-                  disabled={isCancelled || isMotion}
+                  disabled={isCancelled || motion?.status === 'pending'}
                 >
-                  {isMotion ? (
+                  {motion?.status === 'pending' ? (
                     <Icon
                       name="circle-minus"
                       className={styles.icon}
@@ -453,7 +489,24 @@ const Stages = ({ colony }: Props) => {
           )}
         </div>
       </div>
-      {states.map(({ id, label }, index) => renderStage(id, label, index))}
+      {states.map(({ id, label }, index) => (
+        <StageItem
+          key={id}
+          label={label}
+          isFirst={index === 0}
+          isActive={activeState ? index <= activeIndex : false}
+          isCancelled={isCancelled}
+          labelComponent={labelComponent({ label, index })}
+        />
+      ))}
+      {motion && (
+        <LinkedMotions
+          status={motion.status}
+          motion={motion.type}
+          id="25"
+          motionLink={LANDING_PAGE_ROUTE}
+        />
+      )}
     </div>
   );
 };

@@ -16,7 +16,7 @@ import Icon from '~core/Icon';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import { tokens } from '~dashboard/ExpenditurePage/ExpenditureSettings/consts';
+import { tokens as tokensMock } from '~dashboard/ExpenditurePage/ExpenditureSettings/consts';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import Numeral from '~core/Numeral';
 
@@ -90,6 +90,8 @@ interface Props {
 const CancelExpenditureDialog = ({ close, colony, onClick }: Props) => {
   const [isForce, setIsForce] = useState(false);
   const [domainID, setDomainID] = useState<number>();
+  // temporary data
+  const tokens = [tokensMock[0]];
 
   const getFormAction = useCallback(
     (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
@@ -187,6 +189,7 @@ const CancelExpenditureDialog = ({ close, colony, onClick }: Props) => {
                         [styles.paddingBottom]:
                           tokens.length > 1 && index !== tokens.length - 1,
                       })}
+                      key={token.id}
                     >
                       <TokenIcon
                         className={styles.tokenIcon}
