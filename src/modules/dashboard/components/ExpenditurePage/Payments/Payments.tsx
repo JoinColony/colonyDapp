@@ -61,7 +61,13 @@ const Payments = ({ sidebarRef, colony }: Props) => {
   const newRecipientData = useMemo(() => {
     return {
       ...newRecipient,
-      value: [{ amount: undefined, tokenAddress: colony.nativeTokenAddress }],
+      value: [
+        {
+          amount: undefined,
+          tokenAddress: colony.nativeTokenAddress,
+          id: nanoid(),
+        },
+      ],
     };
   }, [colony.nativeTokenAddress]);
 

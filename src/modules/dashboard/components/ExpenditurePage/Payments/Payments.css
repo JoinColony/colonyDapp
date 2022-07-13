@@ -103,7 +103,7 @@
 .recipientName {
   display: flex;
   align-items: center;
-  padding: 12px 0;
+  padding-bottom: 10px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--dark);
