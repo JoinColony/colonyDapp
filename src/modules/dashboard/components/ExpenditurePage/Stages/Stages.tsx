@@ -17,6 +17,8 @@ import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
 import StageItem from './StageItem';
 import styles from './Stages.css';
 import { Stage } from './constants';
+import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
+import { Colony } from '~data/index';
 
 const MSG = defineMessages({
   stages: {
@@ -107,14 +109,19 @@ const buttonStyles = {
   padding: 0,
 };
 
-const Stages = () => {
-  const [activeStateId, setActiveStateId] = useState<string | null>(null);
+interface Props {
+  colony?: Colony;
+}
+
+const Stages = ({ colony }: Props) => {
+  const [activeStateId, setActiveStateId] = useState<string | null>();
   const { resetForm } = useFormikContext() || {};
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
 
   const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
+  const openCancelExpenditureDialog = useDialog(CancelExpenditureDialog);
 
   const handleLockExpenditure = () => {
     // Call to backend will be added here, to lock the expenditure
@@ -175,6 +182,12 @@ const Stages = () => {
           // add logic to delete the draft from database
         }
       },
+    });
+
+  const handleCancelExpenditure = () =>
+    openCancelExpenditureDialog({
+      onClick: () => {},
+      colony,
     });
 
   const handleClipboardCopy = () => {
@@ -268,7 +281,7 @@ const Stages = () => {
               {activeStateId !== Stage.Draft && (
                 <Button
                   className={classNames(styles.iconButton, styles.cancelIcon)}
-                  onClick={handleDeleteDraft}
+                  onClick={handleCancelExpenditure}
                 >
                   <Tooltip
                     placement="top-start"

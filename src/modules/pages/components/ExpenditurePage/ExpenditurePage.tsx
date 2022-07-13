@@ -3,6 +3,7 @@ import * as yup from 'yup';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { nanoid } from 'nanoid';
 
+import { RouteChildrenProps, useParams } from 'react-router';
 import { Form } from '~core/Fields';
 import Payments from '~dashboard/ExpenditurePage/Payments';
 import ExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings';
@@ -11,6 +12,7 @@ import TitleDescriptionSection from '~dashboard/ExpenditurePage/TitleDescription
 import { getMainClasses } from '~utils/css';
 import styles from './ExpenditurePage.css';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
+import { useColonyFromNameQuery } from '~data/generated';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -58,7 +60,23 @@ const validationSchema = yup.object().shape({
   ),
 });
 
-const ExpenditurePage = () => {
+type Props = RouteChildrenProps<{ colonyName: string }>;
+
+const ExpenditurePage = ({ match }: Props) => {
+  if (!match) {
+    throw new Error(
+      `No match found for route in ${displayName} Please check route setup.`,
+    );
+  }
+
+  const { colonyName } = useParams<{
+    colonyName: string;
+  }>();
+
+  const { data: colonyData } = useColonyFromNameQuery({
+    variables: { name: colonyName, address: '' },
+  });
+
   const sidebarRef = useRef<HTMLElement>(null);
   const submit = useCallback((values) => {
     // eslint-disable-next-line no-console
@@ -81,7 +99,7 @@ const ExpenditurePage = () => {
         <div className={styles.mainContainer}>
           <main className={styles.mainContent}>
             <TitleDescriptionSection isEditable />
-            <Stages />
+            <Stages colony={colonyData?.processedColony} />
           </main>
         </div>
       </div>

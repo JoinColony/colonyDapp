@@ -1,0 +1,179 @@
+@value radioButtonWidth: 340px;
+@value buttonWidth: 160px;
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0 13px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--temp-grey-blue-7);
+  letter-spacing: 0.5px;
+}
+
+.withoutPadding {
+  padding: 0;
+}
+
+.forceRow {
+  align-items: center;
+  white-space: nowrap;
+}
+
+.forceRow form {
+  max-width: 200px;
+}
+
+.forceContainer {
+  display: flex;
+  align-items: center;
+  font-size: var(--size-smallish);
+  color: var(--dark);
+}
+
+.toggleContainer {
+  /* negative margin here corrects the position of the toggle input */
+  margin-bottom: -6px;
+  margin-left: 4px;
+  margin-right: 20px;
+}
+
+.tooltip {
+  max-width: 250px;
+  white-space: normal;
+}
+
+.questionIcon {
+  display: block;
+
+  /* next lines are used for the correct tooltip arrow placement */
+  margin-right: -20px;
+  margin-bottom: -3px;
+  margin-left: 11px;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background-color: white;
+  stroke: none;
+  transform: translateX(-20px);
+}
+
+.title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 0 12px;
+  width: 100%;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  line-height: 24px;
+  color: var(--dark);
+  letter-spacing: 0.5px;
+}
+
+.radioGroup {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: 0.5px;
+}
+
+.radioWrapper > label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 9px;
+  padding: 0 7px;
+  height: 40px;
+  width: radioButtonWidth;
+  border: 1px solid color-mod(var(--action-secondary) alpha(25%));
+  border-radius: 2px;
+  background-color: color-mod(var(--action-secondary) alpha(5%));
+}
+
+.radioWrapper > label > span {
+  height: 27px;
+  width: 27px;
+  top: 0;
+  border: 1px solid color-mod(var(--action-secondary) alpha(25%));
+  background-color: var(--colony-white);
+
+  &::after {
+    height: 7px;
+    width: 7px;
+  }
+}
+
+.selected > label {
+  border: 1px solid var(--primary);
+  background-color: color-mod(var(--primary) alpha(12%));
+}
+
+.textWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 11px;
+  margin-bottom: 8px;
+  width: radioButtonWidth;
+  color: var(--text);
+}
+
+.message {
+  display: flex;
+  align-items: center;
+  margin-top: 21px;
+  padding: 0 15px;
+  height: 46px;
+  border-radius: 5px;
+  background-color: color-mod(var(--primary) alpha(15%));
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--text);
+  letter-spacing: 0.5px;
+}
+
+.messageWarning {
+  background-color: color-mod(var(--pink) alpha(15%));
+}
+
+.annotations {
+  margin: 24px 0 5px;
+  letter-spacing: 0.5px;
+}
+
+.tokens {
+  padding: 11px 0 15px;
+  border-top: 1px solid var(--grey-blue-0);
+  border-bottom: 1px solid var(--grey-blue-0);
+  color: color-mod(var(--temp-grey-blue-7), alpha(85%));
+}
+
+.value {
+  display: flex;
+  align-items: center;
+  color: color-mod(var(--dark), alpha(85%));
+}
+
+.paddingBottom {
+  padding-bottom: 6px;
+}
+
+.tokenIcon {
+  margin-right: 4px;
+  height: 16px;
+  width: 16px;
+}
+
+.tokensWarpper {
+  text-align: right;
+}
+
+.top {
+  align-items: flex-start;
+}
