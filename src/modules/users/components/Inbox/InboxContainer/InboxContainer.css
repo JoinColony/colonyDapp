@@ -83,6 +83,11 @@
   .contentContainerPopup {
     width: calc(100% - 28px);
     border-radius: 4px;
-    background-color: var(--grey-blue-2);
+    background-color: white;
+    box-shadow: 0 2px 11px 0px var(--drop-shadow);
+  }
+
+  .inboxHeadingPopover h3 {
+    font-size: var(--size-medium);
   }
 }

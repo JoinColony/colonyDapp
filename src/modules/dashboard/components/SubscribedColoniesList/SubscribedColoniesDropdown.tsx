@@ -49,7 +49,7 @@ const SubscribedColoniesDropdown = ({ activeColony, coloniesList }: Props) => {
                           size="xs"
                         />
                       </div>
-                      <div>{colony.displayName}</div>
+                      <div>{colony.displayName || colony.colonyName}</div>
                     </div>
                   </NavLink>
                 </DropdownMenuItem>

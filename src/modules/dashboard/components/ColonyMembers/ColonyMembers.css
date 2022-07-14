@@ -52,6 +52,11 @@
 }
 
 @media screen and query700 {
+  .main {
+    height: 100%;
+    min-height: 715px;
+  }
+
   .mainContentGrid {
     display: grid;
     margin: 0;

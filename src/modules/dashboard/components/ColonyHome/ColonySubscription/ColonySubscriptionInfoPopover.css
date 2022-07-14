@@ -70,11 +70,20 @@
 
 @media screen and query700 {
   .main {
+    width: clamp(300px, 90vw, 400px);
     min-width: 0px;
   }
 
   .colonyInfo {
     margin: 0px;
-    width: 200px;
+  }
+
+  .colonyInfoENS {
+    overflow-wrap: anywhere;
+  }
+
+  .unsubscribeFromColony {
+    padding-left: 5px;
+    line-height: 2.3;
   }
 }
