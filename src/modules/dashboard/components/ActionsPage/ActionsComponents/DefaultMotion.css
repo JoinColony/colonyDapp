@@ -16,11 +16,11 @@
 
 .progressStateContainer {
   display: flex;
-  align-items: baseline;
 }
 
 .progressBarContainer {
   margin-left: 2px;
+  padding-top: 5px;
   width: 116px;
 }
 

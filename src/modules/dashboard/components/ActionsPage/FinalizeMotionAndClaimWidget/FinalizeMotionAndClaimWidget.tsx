@@ -323,8 +323,8 @@ const FinalizeMotionAndClaimWidget = ({
             <>
               <div className={styles.itemWithForcedBorder}>
                 <div className={styles.label}>
-                  <div>
-                    <FormattedMessage {...MSG.finalizeLabel} />
+                  <FormattedMessage {...MSG.finalizeLabel} />
+                  <div className={styles.helpIcon}>
                     <QuestionMarkTooltip
                       tooltipText={MSG.finalizeTooltip}
                       className={styles.help}

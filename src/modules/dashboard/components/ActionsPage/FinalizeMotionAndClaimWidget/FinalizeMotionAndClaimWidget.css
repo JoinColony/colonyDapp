@@ -30,6 +30,10 @@
   color: var(--dark);
 }
 
+.itemWithForcedBorder .helpIcon {
+  padding-top: 5px;
+}
+
 .title {
   composes: item;
 }
