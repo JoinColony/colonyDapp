@@ -16,4 +16,9 @@
   .activeDropdown {
     background-color: var(--temp-grey-blue-7);
   }
+
+  li > a {
+    font-size: inherit;
+    font-weight: inherit;
+  }
 }

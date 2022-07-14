@@ -9,3 +9,4 @@ export const editButtonCol: string;
 export const editButton: string;
 export const headingWrapper: string;
 export const activeDomain: string;
+export const query700: string;

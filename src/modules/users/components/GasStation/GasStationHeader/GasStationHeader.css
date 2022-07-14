@@ -45,6 +45,10 @@
     gap: 10px;
   }
 
+  .actionsContainer > a {
+    padding-top: 5px;
+  }
+
   .closeButton {
     display: flex;
     justify-content: center;

@@ -162,10 +162,6 @@
     width: 100%;
   }
 
-  .inputWrapper > span {
-    margin-bottom: 14px;
-  }
-
   .complementaryLabel {
     position: static;
   }
