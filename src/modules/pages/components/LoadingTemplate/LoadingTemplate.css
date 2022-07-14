@@ -39,4 +39,9 @@
   .main {
     background: white;
   }
+
+  .loadingDelayedOrFailed {
+    padding: 0 14px;
+    width: auto;
+  }
 }
