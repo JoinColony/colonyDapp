@@ -36,3 +36,73 @@
 .activeOption {
   color: var(--primary);
 }
+
+.editIcon {
+  margin-left: 10px;
+}
+
+.amountWrapper {
+  display: flex;
+  align-items: center;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+  color: color-mod(var(--dark) alpha(85%));
+  letter-spacing: 0.1px;
+}
+
+.tokenIcon {
+  margin-right: 8px;
+  height: 16px;
+  width: 16px;
+}
+
+.lockedAmount {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 11px 0;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+  letter-spacing: 0.5px;
+}
+
+.lockedRecipient {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 0;
+  min-height: 42px;
+}
+
+.userName {
+  display: flex;
+  align-items: center;
+  max-width: 55%;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--pink);
+  letter-spacing: 0.25px;
+}
+
+.userName span {
+  margin-left: 5px;
+}
+
+.recipientAmountWrapper {
+  display: flex;
+  align-items: center;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+  color: var(--dark);
+  letter-spacing: 0.1px;
+}
+
+.recipientAmountWrapper span {
+  margin-right: 3px;
+}
+
+.amountWrapper span {
+  margin-right: 3px;
+}

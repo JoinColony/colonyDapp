@@ -618,17 +618,6 @@ const ExpenditurePage = ({ match }: Props) => {
       validateOnBlur={shouldValidate}
       validateOnChange={shouldValidate}
       validate={handleValidate}
-      initialTouched={{
-        recipients: [
-          {
-            value: [
-              {
-                amount: true,
-              },
-            ],
-          },
-        ],
-      }}
       enableReinitialize
     >
       {({ values, validateForm }) => (
