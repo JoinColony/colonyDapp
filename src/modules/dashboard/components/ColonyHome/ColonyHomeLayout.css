@@ -113,5 +113,10 @@
   .contentActionsPanel {
     padding: 11px 14px;
     border: 0;
+    column-gap: 10px;
+  }
+
+  .contentActionsPanel > button {
+    padding: 9px clamp(22px, 7%, 32px);
   }
 }

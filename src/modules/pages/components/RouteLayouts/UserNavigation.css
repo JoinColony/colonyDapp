@@ -220,14 +220,10 @@
     justify-content: center;
     width: 100vw;
     background-color: transparent;
+    box-shadow: none;
   }
 
   .notificationsIcon {
     margin-right: 0px;
-  }
-
-  .notificationsButton + div,
-  .connectWalletButton + div {
-    box-shadow: none;
   }
 }
