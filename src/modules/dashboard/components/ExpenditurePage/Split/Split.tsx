@@ -58,11 +58,7 @@ const Split = ({ colony, sidebarRef }: Props) => {
           </div>
         </div>
       </FormSection>
-      {splitUnequal ? (
-        <SplitUnequal {...{ colony, sidebarRef }} />
-      ) : (
-        <SplitEqual {...{ colony, sidebarRef }} />
-      )}
+      {splitUnequal ? <SplitUnequal {...{ colony, sidebarRef }} /> : null}
     </div>
   );
 };

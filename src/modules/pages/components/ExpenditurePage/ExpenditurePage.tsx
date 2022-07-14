@@ -23,6 +23,7 @@ import { FormStages, LockedStages } from '~dashboard/ExpenditurePage/Stages';
 import TitleDescriptionSection, {
   LockedTitleDescriptionSection,
 } from '~dashboard/ExpenditurePage/TitleDescriptionSection';
+import Split from '~dashboard/ExpenditurePage/Split';
 import { getMainClasses } from '~utils/css';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import {
