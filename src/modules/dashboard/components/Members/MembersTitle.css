@@ -47,6 +47,14 @@
   &:hover {
     border-bottom: 1px solid var(--primary);
   }
+
+  &:hover > i > svg {
+    stroke: var(--colony-blue);
+  }
+
+  &:focus-within > i > svg {
+    stroke: var(--colony-blue);
+  }
 }
 
 .icon {
@@ -60,11 +68,11 @@
 
   & svg {
     stroke: color-mod(var(--temp-grey-blue-7) alpha(65%));
-  }
-}
 
-.iconFocused svg {
-  stroke: var(--colony-blue);
+    &:hover {
+      stroke: var(--colony-blue);
+    }
+  }
 }
 
 .input {
