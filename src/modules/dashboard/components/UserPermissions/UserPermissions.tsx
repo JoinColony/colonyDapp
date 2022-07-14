@@ -18,6 +18,7 @@ interface Props {
   directRoles: ColonyRole[];
   appearance?: Appearance;
   banned?: boolean;
+  hideHeadRole?: boolean;
 }
 
 const displayName = 'dashboard.UserPermissions';
@@ -27,6 +28,7 @@ const UserPermissions = ({
   directRoles,
   appearance,
   banned = false,
+  hideHeadRole = false,
 }: Props) => {
   const sortedRoles = roles
     .filter(
@@ -48,14 +50,14 @@ const UserPermissions = ({
           <Tag text={{ id: 'label.banned' }} appearance={{ theme: 'banned' }} />
         </div>
       )}
-      {!isNil(headRole) && (
+      {!hideHeadRole && !isNil(headRole) && (
         <PermissionsLabel
           permission={headRole}
           key={headRole}
           inherited={!directRoles.includes(headRole)}
         />
       )}
-      {restRoles.map((role) => (
+      {(hideHeadRole ? sortedRoles : restRoles).map((role) => (
         <PermissionsLabel
           permission={role}
           key={role}

@@ -162,6 +162,7 @@ const Members = ({
               roles={roles}
               directRoles={directRoles}
               banned={banned}
+              hideHeadRole
             />
           );
         }}
