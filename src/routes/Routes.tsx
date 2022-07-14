@@ -230,19 +230,21 @@ const Routes = () => {
         <AlwaysAccesibleRoute
           path={UNWRAP_TOKEN_ROUTE}
           component={UnwrapTokensPage}
-          layout={NavBar}
+          layout={isMobile ? Default : NavBar}
           routeProps={({ colonyName }) => ({
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,
+            hasSubscribedColonies: isMobile,
           })}
         />
         <AlwaysAccesibleRoute
           path={CLAIM_TOKEN_ROUTE}
           component={ClaimTokensPage}
-          layout={NavBar}
+          layout={isMobile ? Default : NavBar}
           routeProps={({ colonyName }) => ({
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,
+            hasSubscribedColonies: isMobile,
           })}
         />
 
