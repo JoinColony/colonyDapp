@@ -104,10 +104,15 @@
   .main div[role="tooltip"] {
     display: flex;
     align-items: center;
+    transform: translate(14px, 64px) !important;
   }
 
   .main div[role="tooltip"] button {
     padding: 0;
+  }
+
+  .main div[role="tooltip"] > span {
+    transform: translateX(10px) !important;
   }
 
   .reputationSection {
