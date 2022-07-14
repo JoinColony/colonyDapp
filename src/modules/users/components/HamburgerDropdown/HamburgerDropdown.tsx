@@ -34,6 +34,7 @@ const HamburgerDropdown = ({ onlyLogout, colony, colonyName }: Props) => {
       )}
       trigger="click"
       showArrow={false}
+      placement="bottom"
       popperOptions={{
         modifiers: [
           {

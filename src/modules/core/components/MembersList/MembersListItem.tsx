@@ -133,6 +133,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>({
             domainId={domainId}
             notSet={false}
             banned={isUserBanned}
+            popperOptions={isMobile ? { placement: 'bottom' } : undefined}
           />
         </div>
         <div className={styles.usernameSection}>
