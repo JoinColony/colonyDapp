@@ -22,6 +22,7 @@ import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import {
   MotionStatus,
   Stage,
+  Status,
 } from '~dashboard/ExpenditurePage/Stages/constants';
 import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import { LoggedInUser, useColonyFromNameQuery } from '~data/generated';
@@ -304,22 +305,24 @@ const ExpenditurePage = ({ match }: Props) => {
   const [pendingChanges, setPendingChanges] = useState<
     Partial<ValuesType> | undefined
   >();
-  const [forcedChanges, setForcedChanges] = useState<
-    Partial<ValuesType> | undefined
-  >();
   const [motion, setMotion] = useState<Motion>();
+  const [status, setStatus] = useState<Status>();
 
   const handleConfirmEition = useCallback(
-    (confirmedValues: Partial<ValuesType> | undefined, wasForced: boolean) => {
+    (confirmedValues: Partial<ValuesType> | undefined, isForced: boolean) => {
       setInEditMode(false);
       setFormEditable(false);
 
-      if (wasForced) {
-        setForcedChanges(confirmedValues);
+      // setting state is temporary
+      // changes won't be visible now, they will be displayed after
+      // updating them on backend and then fetching changes
+      if (isForced) {
+        setStatus(Status.ForceEdited);
         // call to backend to set new values goes here
       } else {
         setPendingChanges(confirmedValues);
         setMotion({ type: 'Edit', status: MotionStatus.Pending });
+        setStatus(Status.Edited);
         // setting pendigChanges is temporary, it should be replaced with call to api
       }
     },
@@ -446,7 +449,6 @@ const ExpenditurePage = ({ match }: Props) => {
           colony={colonyData?.processedColony}
           editForm={handleEditLockedForm}
           pendingChanges={pendingChanges}
-          forcedChanges={!!forcedChanges}
         />
       </aside>
       <div className={styles.mainContainer}>
@@ -456,24 +458,14 @@ const ExpenditurePage = ({ match }: Props) => {
             description={formValues?.description}
           />
           <div className={styles.tagStagesWrapper}>
-            {pendingChanges && (
-              <Tag
-                appearance={{
-                  theme: 'golden',
-                }}
-              >
-                <FormattedMessage {...MSG.activeMotion} />
-              </Tag>
-            )}
             <LockedStages
               {...{
                 states,
                 activeStateId,
                 setActiveStateId,
+                motion,
+                status,
               }}
-              pendingChanges={!!pendingChanges}
-              forcedChanges={!!forcedChanges}
-              motion={motion}
             />
           </div>
         </main>

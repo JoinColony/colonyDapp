@@ -14,6 +14,7 @@ import CollapseExpandButtons from './CollapseExpandButtons';
 import Icon from '~core/Icon';
 import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 import { Tooltip } from '~core/Popover';
+import { Status } from '../Stages/constants';
 
 const displayName = 'dashboard.ExpenditurePage.LockedPayments';
 
@@ -22,7 +23,7 @@ interface Props {
   colony?: Colony;
   editForm: () => void;
   pendingChanges?: Partial<ValuesType>;
-  forcedChanges?: boolean;
+  status?: Status;
 }
 
 const LockedPayments = ({
@@ -30,7 +31,7 @@ const LockedPayments = ({
   colony,
   editForm,
   pendingChanges,
-  forcedChanges,
+  status,
 }: Props) => {
   const [expandedRecipients, setExpandedRecipients] = useState<
     number[] | undefined
@@ -96,7 +97,9 @@ const LockedPayments = ({
                     )}
                   </div>
                   {inPendingState && <div className={styles.dot} />}
-                  {forcedChanges && (
+                  {/* temporary value to show that recipient was updated in locked state
+                  it should be fetched from backend */}
+                  {status === Status.ForceEdited && index === 0 && (
                     <Tooltip content={<FormattedMessage {...MSG.newValue} />}>
                       <div className={classNames(styles.dot, styles.blue)} />
                     </Tooltip>

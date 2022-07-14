@@ -11,3 +11,10 @@ export enum MotionStatus {
   Failed = 'failed',
   Pending = 'pending',
 }
+
+export enum Status {
+  Cancelled = 'cancelled',
+  ForceCancelled = 'forceCancelled',
+  Edited = 'edited',
+  ForceEdited = 'forceEdited',
+}

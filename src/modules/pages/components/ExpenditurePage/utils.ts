@@ -34,7 +34,7 @@ export const findDifferences = (
           }
 
           if (newValueById && !oldValueById) {
-            // value has been added, so we set change field to true
+            // value has been added, so we set created field to true
             return { ...newValueById, created: true };
           }
 

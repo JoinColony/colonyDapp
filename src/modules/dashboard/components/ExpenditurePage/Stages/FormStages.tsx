@@ -9,12 +9,10 @@ import Stages from './Stages';
 
 const displayName = 'dashboard.ExpenditurePage.FormStages';
 
-export interface Props {
+interface Props {
   states: State[];
   activeStateId?: string;
   setActiveStateId?: React.Dispatch<React.SetStateAction<string | undefined>>;
-  pendingChanges?: boolean;
-  forcedChanges?: boolean;
   setFormValues?: React.Dispatch<React.SetStateAction<ValuesType | undefined>>;
 }
 
@@ -22,8 +20,6 @@ const FormStages = ({
   states,
   activeStateId,
   setActiveStateId,
-  pendingChanges,
-  forcedChanges,
   setFormValues,
 }: Props) => {
   const { values, handleSubmit, validateForm, resetForm } =
@@ -79,8 +75,6 @@ const FormStages = ({
       {...{
         states,
         activeStateId,
-        forcedChanges,
-        pendingChanges,
         setActiveStateId,
         handleButtonClick,
         handleDeleteDraft,

@@ -1,18 +1,21 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  defineMessages,
+  FormattedMessage,
+  MessageDescriptor,
+} from 'react-intl';
 import copyToClipboard from 'copy-to-clipboard';
 import classNames from 'classnames';
 
+import { ColonyRole } from '@colony/colony-js';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
 import StageItem from './StageItem/StageItem';
 import { Motion, State } from '~pages/ExpenditurePage/ExpenditurePage';
 import styles from './Stages.css';
-import { Stage } from './constants';
-import LinkedMotions from './LinkedMotions';
-import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
-import IconTooltip from '~core/IconTooltip';
+import { MotionStatus, Stage, Status } from './constants';
+import PermissionsLabel from '~core/PermissionsLabel';
 
 const MSG = defineMessages({
   stages: {
@@ -55,6 +58,10 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Stages.tooltipForcedUpdate',
     defaultMessage: 'Value updated by arbitrator',
   },
+  updatedByArbitrator: {
+    id: 'dashboard.ExpenditurePage.Stages.updatedByArbitrator',
+    defaultMessage: 'Value updated by arbitrator',
+  },
 });
 
 const displayName = 'dashboard.ExpenditurePage.Stages';
@@ -68,23 +75,23 @@ export const buttonStyles = {
 export interface Props {
   states: State[];
   activeStateId?: string;
-  pendingChanges?: boolean;
-  forcedChanges?: boolean;
   handleDeleteDraft?: () => void;
   handleSaveDraft?: () => void;
   handleButtonClick: () => void;
+  status?: Status;
   motion?: Motion;
+  disabledButton?: boolean;
 }
 
 const Stages = ({
   states,
   activeStateId,
-  pendingChanges,
-  forcedChanges,
   handleDeleteDraft,
   handleSaveDraft,
   handleButtonClick,
+  status,
   motion,
+  disabledButton,
 }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
@@ -101,8 +108,46 @@ const Stages = ({
   const activeIndex = states.findIndex((state) => state.id === activeStateId);
   const activeState = states.find((state) => state.id === activeStateId);
 
+  const labelComponent = useMemo(
+    () => ({
+      label,
+      index,
+    }: {
+      label: string | MessageDescriptor;
+      index: number;
+    }) => {
+      // role is temporary mock value
+      const role = ColonyRole.Arbitration;
+
+      if (status === Status.ForceEdited && index === activeIndex) {
+        return (
+          <div className={styles.labelComponent}>
+            {typeof label === 'object' && label?.id ? (
+              <FormattedMessage {...label} />
+            ) : (
+              label
+            )}{' '}
+            <PermissionsLabel
+              permission={role}
+              appearance={{ theme: 'white' }}
+              infoMessage={MSG.updatedByArbitrator}
+              minimal
+            />
+          </div>
+        );
+      }
+
+      return undefined;
+    },
+    [activeIndex, status],
+  );
+
   return (
-    <div className={styles.mainContainer}>
+    <div
+      className={classNames(styles.mainContainer, {
+        [styles.paddingSmall]: motion?.status === MotionStatus.Pending,
+      })}
+    >
       <div className={styles.statusContainer}>
         <div className={styles.stagesText}>
           <span className={styles.status}>
@@ -228,6 +273,7 @@ const Stages = ({
                   onClick={handleButtonClick}
                   style={buttonStyles}
                   type="submit"
+                  disabled={disabledButton}
                 >
                   {typeof activeState?.buttonText === 'string' ? (
                     activeState.buttonText
@@ -247,25 +293,10 @@ const Stages = ({
             label={label}
             isFirst={index === 0}
             isActive={activeState ? index <= activeIndex : false}
+            labelComponent={labelComponent({ label, index })}
           />
-          {id === Stage.Locked && forcedChanges && (
-            <IconTooltip
-              icon="lock"
-              tooltipText={MSG.tooltipForcedUpdate}
-              iconClassName={styles.iconTooltip}
-            />
-          )}
         </div>
       ))}
-      {pendingChanges && motion && (
-        // motion link needs to be changed and redirects to actual motions page
-        <LinkedMotions
-          status={motion.status}
-          motion={motion.type}
-          motionLink={LANDING_PAGE_ROUTE}
-          id="25"
-        />
-      )}
     </div>
   );
 };

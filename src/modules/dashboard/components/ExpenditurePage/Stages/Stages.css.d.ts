@@ -1,6 +1,7 @@
 export const buttonHeight: string;
 export const buttonWidth: string;
 export const mainContainer: string;
+export const paddingSmall: string;
 export const status: string;
 export const notSaved: string;
 export const stagesText: string;
@@ -14,3 +15,4 @@ export const buttonTooltip: string;
 export const cancelIcon: string;
 export const stageWrapper: string;
 export const iconTooltip: string;
+export const labelComponent: string;
