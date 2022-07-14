@@ -7,7 +7,7 @@ import Button from '~core/Button';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
 import StageItem from './StageItem/StageItem';
-import { State } from '~pages/ExpenditurePage/ExpenditurePage';
+import { Motion, State } from '~pages/ExpenditurePage/ExpenditurePage';
 import styles from './Stages.css';
 import { Stage } from './constants';
 import LinkedMotions from './LinkedMotions';
@@ -73,6 +73,7 @@ export interface Props {
   handleDeleteDraft?: () => void;
   handleSaveDraft?: () => void;
   handleButtonClick: () => void;
+  motion?: Motion;
 }
 
 const Stages = ({
@@ -83,6 +84,7 @@ const Stages = ({
   handleDeleteDraft,
   handleSaveDraft,
   handleButtonClick,
+  motion,
 }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
@@ -255,9 +257,14 @@ const Stages = ({
           )}
         </div>
       ))}
-      {pendingChanges && (
+      {pendingChanges && motion && (
         // motion link needs to be changed and redirects to actual motions page
-        <LinkedMotions status="pending" motionLink={LANDING_PAGE_ROUTE} />
+        <LinkedMotions
+          status={motion.status}
+          motion={motion.type}
+          motionLink={LANDING_PAGE_ROUTE}
+          id="25"
+        />
       )}
     </div>
   );

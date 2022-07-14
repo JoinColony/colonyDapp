@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import Link from '~core/Link';
 
 import Tag from '~core/Tag';
@@ -12,7 +12,7 @@ const MSG = defineMessages({
   },
   foundExp: {
     id: 'dashboard.Expenditures.Stages.foundExp',
-    defaultMessage: 'Fund Exp',
+    defaultMessage: '{motion} Exp - {id}',
   },
   passed: {
     id: 'dashboard.Expenditures.Stages.passed',
@@ -33,9 +33,13 @@ const displayName = 'dashboard.ExpenditurePage.Stages.LinkedMotions';
 interface Props {
   status: 'passed' | 'failed' | 'pending';
   motionLink?: string;
+  motion: string;
+  id: string;
 }
 
-const LinkedMotions = ({ status, motionLink }: Props) => {
+const LinkedMotions = ({ status, motionLink, motion, id }: Props) => {
+  const { formatMessage } = useIntl();
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.titleWrapper}>
@@ -47,7 +51,7 @@ const LinkedMotions = ({ status, motionLink }: Props) => {
         </div>
       </div>
       <div className={styles.statusWrapper}>
-        <FormattedMessage {...MSG.foundExp} /> - 25
+        {formatMessage(MSG.foundExp, { motion, id })}
         {status === 'pending' && motionLink ? (
           <Link to={motionLink} className={styles.link}>
             <FormattedMessage {...MSG.motion} />

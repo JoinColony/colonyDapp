@@ -19,7 +19,10 @@ import TitleDescriptionSection, {
 import { getMainClasses } from '~utils/css';
 import styles from './ExpenditurePage.css';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
-import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
+import {
+  MotionStatus,
+  Stage,
+} from '~dashboard/ExpenditurePage/Stages/constants';
 import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import { LoggedInUser, useColonyFromNameQuery } from '~data/generated';
 import { useLoggedInUser } from '~data/helpers';
@@ -137,6 +140,11 @@ export interface State {
   buttonText: string | MessageDescriptor;
   buttonAction: () => void;
   buttonTooltip?: string | MessageDescriptor;
+}
+
+export interface Motion {
+  type: 'Cancel' | 'Edit';
+  status: MotionStatus;
 }
 
 export interface ValuesType {
@@ -299,6 +307,7 @@ const ExpenditurePage = ({ match }: Props) => {
   const [forcedChanges, setForcedChanges] = useState<
     Partial<ValuesType> | undefined
   >();
+  const [motion, setMotion] = useState<Motion>();
 
   const handleConfirmEition = useCallback(
     (confirmedValues: Partial<ValuesType> | undefined, wasForced: boolean) => {
@@ -310,6 +319,7 @@ const ExpenditurePage = ({ match }: Props) => {
         // call to backend to set new values goes here
       } else {
         setPendingChanges(confirmedValues);
+        setMotion({ type: 'Edit', status: MotionStatus.Pending });
         // setting pendigChanges is temporary, it should be replaced with call to api
       }
     },
@@ -463,6 +473,7 @@ const ExpenditurePage = ({ match }: Props) => {
               }}
               pendingChanges={!!pendingChanges}
               forcedChanges={!!forcedChanges}
+              motion={motion}
             />
           </div>
         </main>

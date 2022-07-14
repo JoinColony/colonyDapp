@@ -1,9 +1,14 @@
 import React, { useCallback } from 'react';
+import { Motion } from '~pages/ExpenditurePage/ExpenditurePage';
 
-import { Props } from './FormStages';
+import { Props as StagesProps } from './FormStages';
 import Stages from './Stages';
 
 const displayName = 'dashboard.ExpenditurePage.LockedStages';
+
+interface Props extends StagesProps {
+  motion?: Motion;
+}
 
 const LockedStages = ({
   states,
@@ -11,6 +16,7 @@ const LockedStages = ({
   setActiveStateId,
   pendingChanges,
   forcedChanges,
+  motion,
 }: Props) => {
   const activeState = states.find((state) => state.id === activeStateId);
 
@@ -27,6 +33,7 @@ const LockedStages = ({
         pendingChanges,
         setActiveStateId,
         handleButtonClick,
+        motion,
       }}
     />
   );

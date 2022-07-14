@@ -447,6 +447,9 @@ const EditExpenditureDialogForm = ({
                   onClick(confirmedValues, isForce);
                   close();
                 }}
+                disabled={
+                  confirmedValues && Object.keys(confirmedValues).length === 0
+                }
               />
             </DialogSection>
           </Dialog>
