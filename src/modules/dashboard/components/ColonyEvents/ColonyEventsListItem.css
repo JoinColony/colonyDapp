@@ -107,4 +107,24 @@
     height: auto;
     min-height: 51px;
   }
+
+  .avatar {
+    position: relative;
+  }
+
+  .avatar > div[role="tooltip"] {
+    transform: translate(0px, 42px) !important;
+  }
+
+  .content {
+    position: relative;
+  }
+
+  .content > div:first-of-type > div:nth-child(2) {
+    overflow-wrap: anywhere;
+  }
+
+  .content > div[data-popper-placement] {
+    width: calc(100% + 47px);
+  }
 }

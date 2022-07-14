@@ -173,4 +173,16 @@
     /* Screen width minus the padding on each side */
     max-width: calc(100vw - 28px);
   }
+
+  .avatar {
+    position: relative;
+  }
+
+  /* @NOTE Placing popover here as doing so in the component was producing unexpected placement when changing
+  *  screen orientation.
+  */
+
+  .avatar > div[role="tooltip"] {
+    transform: translate(-20px, 42px) !important;
+  }
 }
