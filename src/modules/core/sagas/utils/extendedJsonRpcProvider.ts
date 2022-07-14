@@ -3,7 +3,12 @@ import {
   BlockTag,
   TransactionRequest,
 } from 'ethers/providers';
-import { poll, serializeTransaction, resolveProperties } from 'ethers/utils';
+import {
+  poll,
+  serializeTransaction,
+  resolveProperties,
+  solidityKeccak256,
+} from 'ethers/utils';
 
 type CachedRPCResponse = {
   response: Promise<string>;
@@ -23,11 +28,23 @@ export class ExtendedJsonRpcProvider extends JsonRpcProvider {
 
   cachedData: { [key: string]: CachedRPCResponse } = {};
 
+  cacheBypass: string[] = [];
+
   constructor(...args) {
     super(...args);
     this._parentGetCode = super.getCode;
     this._parentCall = super.call;
     this.cachedData = {};
+    this.cacheBypass = [
+      'addr(bytes32)',
+      'getUserLock(address,address)',
+      'getTotalObligation(address,address)',
+      'balanceOf(address)',
+      'getMetatransactionNonce(address)',
+      'nonces(address)',
+    ].map((functionDeclaration) =>
+      solidityKeccak256(['string'], [functionDeclaration]).slice(0, 10),
+    );
   }
 
   async call(
@@ -45,8 +62,8 @@ export class ExtendedJsonRpcProvider extends JsonRpcProvider {
 
     // Unless we're querying the user's token balances
     const sig = tx.data.slice(0, 10);
-    // getUserLock(address,address) / getTotalObligation(address,address) / balanceOf(address)
-    if (sig === '0x1cc17c52' || sig === '0x006ad100' || sig === '0x70a08231') {
+
+    if (this.cacheBypass.includes(sig)) {
       useCache = false;
     }
 
