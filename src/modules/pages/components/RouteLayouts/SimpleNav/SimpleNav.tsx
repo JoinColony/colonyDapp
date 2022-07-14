@@ -18,7 +18,7 @@ const SimpleNav = ({ children }: Props) => {
 
   // Render UserNavigation in parent component (Default) on mobile.
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} id="simpleNav">
       {!isMobile && (
         <div className={styles.nav}>
           <UserNavigation />

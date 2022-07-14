@@ -52,7 +52,8 @@ const ExtensionActionButton = ({
     // Generate a smooth scroll to `Form` on mobile when clicking `Enable`
     if (isMobile) {
       const offset = (await waitForElement('#enableExtnTitle')).offsetTop;
-      window.scrollTo({ top: offset - 20, behavior: 'smooth' });
+      const scrollContainer = await waitForElement('#simpleNav');
+      scrollContainer.scrollTo({ top: offset - 20, behavior: 'smooth' });
     }
   }, [colonyName, extensionId, history, isMobile]);
 

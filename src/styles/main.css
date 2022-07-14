@@ -216,20 +216,4 @@ table {
   html {
     background-color: white;
   }
-
-  /*
-  * @NOTE: The following makes it possible to reset
-  * the window's scroll position programatically.
-  * This is useful on mobile to prevent the user having to
-  * manually scroll back to the top of a new page after clicking
-  * on a link at the bottom of the previous page (e.g. Extensions).
-  */
-  body {
-    height: auto;
-    overflow-y: scroll;
-  }
-
-  :global(#root) {
-    height: 100vh;
-  }
 }
