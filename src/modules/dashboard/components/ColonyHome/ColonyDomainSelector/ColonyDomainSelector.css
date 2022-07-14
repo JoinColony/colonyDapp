@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .activeItem {
   display: flex;
   align-items: center;
@@ -7,4 +9,10 @@
 .activeItemLabel {
   margin-left: 16px;
   color: var(--temp-grey-blue-7);
+}
+
+@media screen and query700 {
+  .main span > i {
+    transform: translateY(3px);
+  }
 }

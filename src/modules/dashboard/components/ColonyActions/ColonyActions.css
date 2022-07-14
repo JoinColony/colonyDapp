@@ -53,4 +53,8 @@
   .main {
     padding: 0 14px 60px;
   }
+
+  .filter i {
+    transform: translateY(2px);
+  }
 }

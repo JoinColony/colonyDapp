@@ -31,4 +31,11 @@
     padding-right: 0;
     gap: 0;
   }
+
+  .sortingIcon {
+    height: 18px;
+    width: 18px;
+    position: static;
+    transform: translateY(3px);
+  }
 }

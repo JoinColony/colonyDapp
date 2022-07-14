@@ -112,6 +112,7 @@ const ColonyDomainSelector = ({
         filteredDomainId: String(filteredDomainId),
       }}
       onSubmit={() => {}}
+      className={styles.main}
     >
       <DomainDropdown
         colony={colony}
