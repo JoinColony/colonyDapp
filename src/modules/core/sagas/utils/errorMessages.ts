@@ -1,5 +1,6 @@
 import { createIntl } from 'react-intl';
-import { parseBytes32String, isHexString } from 'ethers/utils';
+import { isHexString } from 'ethers/utils';
+import { hexSequenceNormalizer } from '@purser/core';
 
 import { TRANSACTION_METHODS } from '~immutable/index';
 import { ContractRevertErrors } from '~types/index';
@@ -23,6 +24,7 @@ export const generateBroadcasterHumanReadableError = (
 ): string => {
   let errorMessage =
     error?.reason ||
+    response?.reason ||
     response?.payload ||
     intl.formatMessage({ id: 'error.unknown' });
 
@@ -33,7 +35,10 @@ export const generateBroadcasterHumanReadableError = (
   const [, foundHexString] = response?.reason?.match(/(0x.*)/) || [];
   const isHexReason = foundHexString && isHexString(foundHexString);
   const hexReasonValue = isHexReason
-    ? parseBytes32String(foundHexString.padEnd(66, '0'))
+    ? Buffer.from(
+        hexSequenceNormalizer(foundHexString, false),
+        'hex',
+      ).toString()
     : '';
 
   if (
