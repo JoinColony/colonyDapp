@@ -108,9 +108,9 @@ const ColonyFundingMenu = ({
   const mustUpgradeOneTx = oneTxMustBeUpgraded(oneTxPaymentExtension);
 
   const canEdit =
-    userHasRole(rootRoles, ColonyRole.Root) ||
-    userHasRole(rootRoles, ColonyRole.Administration);
-  const canMoveTokens = userHasRole(rootRoles, ColonyRole.Funding);
+    isVotingExtensionEnabled || userHasRole(rootRoles, ColonyRole.Root);
+  const canMoveTokens =
+    isVotingExtensionEnabled || userHasRole(rootRoles, ColonyRole.Funding);
   const canUserMintNativeToken = isVotingExtensionEnabled
     ? colony.canColonyMintNativeToken
     : userHasRole(rootRoles, ColonyRole.Root) &&

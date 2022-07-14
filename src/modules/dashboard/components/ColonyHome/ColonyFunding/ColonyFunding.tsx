@@ -5,14 +5,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 import Heading from '~core/Heading';
 import InfoPopover from '~core/InfoPopover';
 import NavLink from '~core/NavLink';
-import {
-  useLoggedInUser,
-  Colony,
-  useTokenBalancesForDomainsQuery,
-} from '~data/index';
-import { useTransformer } from '~utils/hooks';
-import { canFund } from '~modules/users/checks';
-import { getAllUserRoles } from '~modules/transformers';
+import { Colony, useTokenBalancesForDomainsQuery } from '~data/index';
 
 import TokenItem from './TokenItem';
 
@@ -33,12 +26,6 @@ interface Props {
 const displayName = 'dashboard.ColonyHome.ColonyFunding';
 
 const ColonyFunding = ({ colony, currentDomainId }: Props) => {
-  const { walletAddress, ethereal, username } = useLoggedInUser();
-
-  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
-
-  const canMoveFunds = !!username && !ethereal && canFund(allUserRoles);
-
   const {
     colonyAddress,
     tokens: colonyTokens,
@@ -62,13 +49,9 @@ const ColonyFunding = ({ colony, currentDomainId }: Props) => {
   return (
     <div className={styles.main}>
       <Heading appearance={{ size: 'normal', weight: 'bold' }}>
-        {canMoveFunds ? (
-          <NavLink to={`/colony/${colonyName}/funds`}>
-            <FormattedMessage {...MSG.title} />
-          </NavLink>
-        ) : (
+        <NavLink to={`/colony/${colonyName}/funds`}>
           <FormattedMessage {...MSG.title} />
-        )}
+        </NavLink>
       </Heading>
       {data && !isLoadingTokenBalances ? (
         <ul data-test="availableFunds">
