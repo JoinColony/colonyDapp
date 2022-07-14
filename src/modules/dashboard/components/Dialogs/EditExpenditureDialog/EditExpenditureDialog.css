@@ -4,7 +4,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 32px 0 20px;
+  padding: 9px 0 20px;
   width: 100%;
   font-size: var(--size-medium-l);
   font-weight: var(--weight-bold);
@@ -115,11 +115,6 @@
 .forceRow {
   align-items: baseline;
   white-space: nowrap;
-}
-
-.forceRow form {
-  margin-left: 5px;
-  max-width: 200px;
 }
 
 .recipientContainer {

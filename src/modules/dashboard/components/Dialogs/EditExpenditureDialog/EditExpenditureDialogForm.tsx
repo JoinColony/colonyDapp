@@ -163,8 +163,7 @@ const EditExpenditureDialogForm = ({
                       '-'
                     ) : (
                       <>
-                        {newValue.amount}
-                        {newValue.time}
+                        {newValue.amount} {newValue.time}
                       </>
                     )}
                   </div>
@@ -238,7 +237,6 @@ const EditExpenditureDialogForm = ({
                   styles.forceRow,
                 )}
               >
-                <FormattedMessage {...MSG.team} />
                 <MotionDomainSelect
                   colony={colony}
                   onDomainChange={handleMotionDomainChange}
@@ -424,7 +422,7 @@ const EditExpenditureDialogForm = ({
             </div>
             <DialogSection appearance={{ theme: 'sidePadding' }}>
               <Annotations
-                label={isForce ? MSG.forceTextareaLabel : MSG.textareaLabel}
+                label={isForce ? MSG.forceTextareaLabel : MSG.descriptionLabel}
                 name="annotationMessage"
                 maxLength={90}
               />

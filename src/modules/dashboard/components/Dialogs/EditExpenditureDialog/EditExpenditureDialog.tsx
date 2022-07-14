@@ -20,10 +20,6 @@ export const MSG = defineMessages({
     id: 'dashboard.EditConfirmDialog.force',
     defaultMessage: 'Force',
   },
-  team: {
-    id: 'dashboard.EditConfirmDialog.team',
-    defaultMessage: 'Motion will be created in ',
-  },
   descriptionText: {
     id: 'dashboard.EditConfirmDialog.descriptionText',
     defaultMessage: `Payment is currently at the locked stage.
@@ -45,7 +41,7 @@ export const MSG = defineMessages({
   },
   descriptionLabel: {
     id: 'dashboard.EditConfirmDialog.descriptionLabel',
-    defaultMessage: 'Explain why youre changing the payment (optional)',
+    defaultMessage: `Explain why you're changing the payment (optional)`,
   },
   cancelText: {
     id: 'dashboard.EditConfirmDialog.cancelText',
@@ -59,13 +55,9 @@ export const MSG = defineMessages({
     id: 'dashboard.EditConfirmDialog.confirmTexForce',
     defaultMessage: 'Force change',
   },
-  textareaLabel: {
-    id: 'dashboard.EditConfirmDialog.textareaLabel',
-    defaultMessage: 'Explain why you`re changing the payment (optional)',
-  },
   forceTextareaLabel: {
     id: 'dashboard.EditConfirmDialog.textareaLabel',
-    defaultMessage: 'Explain why you`re changing the expenditure',
+    defaultMessage: `Explain why you're changing the expenditure`,
   },
   errorAnnotation: {
     id: 'dashboard.EditConfirmDialog.errorAnnotation',
