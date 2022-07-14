@@ -79,7 +79,7 @@ export const XDAI_NETWORK: NetworkInfo = {
   blockExplorerUrl: 'https://blockscout.com/poa/xdai',
   tokenExplorerLink: 'https://blockscout.com/poa/xdai/tokens',
   contractAddressLink: 'https://blockscout.com/poa/xdai/address',
-  rpcUrl: 'https://rpc.xdaichain.com',
+  rpcUrl: 'https://rpc.gnosischain.com',
 };
 
 export const ETHEREUM_NETWORK: NetworkInfo = {
