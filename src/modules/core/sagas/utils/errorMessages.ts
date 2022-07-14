@@ -60,5 +60,14 @@ export const generateBroadcasterHumanReadableError = (
     return errorMessage;
   }
 
+  /*
+   * @NOTE If the error in unknown _(we didn't trigger the previous logic checks)_
+   * make sure to log it out so we can debug it
+   */
+  console.error(
+    errorMessage,
+    `Reponse: ${response?.payload} ${response?.reason}`,
+    `Decoded: ${hexReasonValue}`,
+  );
   return errorMessage;
 };
