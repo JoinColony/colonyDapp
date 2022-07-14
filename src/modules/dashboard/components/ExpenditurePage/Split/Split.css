@@ -1,0 +1,60 @@
+@value paddingRightLeft: 54px;
+
+.paymentContainer {
+  padding: 0 paddingRightLeft 80px;
+}
+
+.split {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 6px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: color-mod(var(--dark), alpha(85%));
+}
+
+.splitToggle {
+  display: flex;
+  align-items: center;
+}
+
+.recipientWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.recipientsWrapper {
+  margin-bottom: 1px solid var(--temp-grey-blue-7);
+}
+
+.deleteIcon {
+  height: 20px;
+  width: 20px;
+  fill: var(--temp-grey-blue-7);
+}
+
+.deleteIcon:hover {
+  cursor: pointer;
+}
+
+.addRecipientLabel {
+  display: flex;
+  align-items: center;
+}
+
+.circlePlusIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 2px;
+
+  /* a negative margin is used here to align the entire "Add recipient" row to the left */
+  margin-left: -8px;
+  height: 30px;
+  width: 30px;
+  fill: var(--action-secondary);
+}

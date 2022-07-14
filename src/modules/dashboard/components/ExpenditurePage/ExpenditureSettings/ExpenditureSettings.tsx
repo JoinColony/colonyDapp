@@ -40,7 +40,22 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.ExpenditureSettings.defaultAdvancedOption',
     defaultMessage: 'Advanced payment',
   },
+  split: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.split',
+    defaultMessage: 'Split',
+  },
 });
+
+const expeditureTypes = [
+  {
+    label: MSG.optionAdvanced,
+    value: 'advanced',
+  },
+  {
+    label: MSG.split,
+    value: 'split',
+  },
+];
 
 const displayName = 'dashboard.ExpenditurePage.ExpenditureSettings';
 
@@ -108,12 +123,7 @@ const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
               theme: 'alt',
               width: 'content',
             }}
-            options={[
-              {
-                label: MSG.optionAdvanced,
-                value: 'advanced',
-              },
-            ]}
+            options={expeditureTypes}
             scrollContainer={sidebarRef}
             placement="bottom"
             withDropdownElelment

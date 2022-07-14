@@ -32,6 +32,7 @@ import EditExpenditureDialog from '~dashboard/Dialogs/EditExpenditureDialog';
 import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
 import Tag from '~core/Tag';
 import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
+import Split from '~dashboard/ExpenditurePage/Split';
 
 import { findDifferences, updateValues, setClaimDate } from './utils';
 import ExpenditureForm from './ExpenditureForm';
