@@ -67,11 +67,11 @@ export const GOERLI_TOKEN: TokenInfo = {
   decimals: 18,
 };
 
-export const XDAI_NETWORK: NetworkInfo = {
+export const GNOSIS_NETWORK: NetworkInfo = {
   /*
    * Needs to be this exact name, otherwise Metamask marks it as "not valid" when adding it
    */
-  name: 'xDAI Chain',
+  name: 'Gnosis Chain',
   chainId: 100,
   shortName: 'xDai',
   displayENSDomain: 'joincolony.colonyxdai',
@@ -124,8 +124,8 @@ export const GANACHE_NETWORK: NetworkInfo = {
 
 export const NETWORK_DATA: { [key: string]: NetworkInfo } = {
   [Network.Local]: GANACHE_NETWORK,
-  [Network.Xdai]: XDAI_NETWORK,
-  [Network.XdaiFork]: XDAI_NETWORK,
+  [Network.Xdai]: GNOSIS_NETWORK,
+  [Network.XdaiFork]: GNOSIS_NETWORK,
   [Network.Goerli]: GOERLI_NETWORK,
   [Network.Mainnet]: ETHEREUM_NETWORK,
 };
@@ -139,7 +139,7 @@ export const TOKEN_DATA = {
 };
 
 export const SUPPORTED_NETWORKS = {
-  [XDAI_NETWORK.chainId]: XDAI_NETWORK,
+  [GNOSIS_NETWORK.chainId]: GNOSIS_NETWORK,
   [ETHEREUM_NETWORK.chainId]: ETHEREUM_NETWORK,
   [GOERLI_NETWORK.chainId]: GOERLI_NETWORK,
   [GANACHE_NETWORK.chainId]: GANACHE_NETWORK,
