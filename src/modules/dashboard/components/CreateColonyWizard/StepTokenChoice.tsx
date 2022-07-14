@@ -1,5 +1,6 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { useMediaQuery } from 'react-responsive';
 
 import { WizardProps } from '~core/Wizard';
 import Heading from '~core/Heading';
@@ -8,6 +9,7 @@ import DecisionHub from '~core/DecisionHub';
 import { Form } from '~core/Fields';
 import { multiLineTextEllipsis } from '~utils/strings';
 
+import { query700 as query } from '~styles/queries.css';
 import styles from './StepTokenChoice.css';
 
 const LEARN_MORE_URL = `https://colony.gitbook.io/colony/create-a-colony/select-native-token`;
@@ -95,60 +97,64 @@ type Props = WizardProps<FormValues>;
 
 const displayName = 'dashboard.CreateColonyWizard.StepTokenChoice';
 
-const StepTokenChoice = ({ nextStep, wizardForm, wizardValues }: Props) => (
-  <Form onSubmit={nextStep} {...wizardForm}>
-    <section className={styles.content}>
-      <div className={styles.title}>
-        <Heading appearance={{ size: 'medium', weight: 'bold' }}>
-          <FormattedMessage
-            {...MSG.heading}
-            values={{
-              /*
-               * @NOTE We need to use a JS string truncate here, rather then CSS,
-               * since we're dealing with a string that needs to be truncated,
-               * inside a sentence that does not
-               */
-              colony: (
-                <span title={wizardValues.displayName}>
-                  {multiLineTextEllipsis(wizardValues.displayName, 120)}
-                </span>
-              ),
-            }}
+const StepTokenChoice = ({ nextStep, wizardForm, wizardValues }: Props) => {
+  const isMobile = useMediaQuery({ query });
+
+  return (
+    <Form onSubmit={nextStep} {...wizardForm}>
+      <section className={styles.content}>
+        <div className={styles.title}>
+          <Heading appearance={{ size: 'medium', weight: 'bold' }}>
+            <FormattedMessage
+              {...MSG.heading}
+              values={{
+                /*
+                 * @NOTE We need to use a JS string truncate here, rather then CSS,
+                 * since we're dealing with a string that needs to be truncated,
+                 * inside a sentence that does not
+                 */
+                colony: (
+                  <span title={wizardValues.displayName}>
+                    {multiLineTextEllipsis(wizardValues.displayName, 120)}
+                  </span>
+                ),
+              }}
+            />
+          </Heading>
+        </div>
+        <div className={styles.subtitle}>
+          <Heading
+            appearance={{ size: 'normal', weight: 'thin' }}
+            text={MSG.subtitle}
           />
-        </Heading>
-      </div>
-      <div className={styles.subtitle}>
-        <Heading
-          appearance={{ size: 'normal', weight: 'thin' }}
-          text={MSG.subtitle}
-        />
-      </div>
-      <div className={styles.subtitleWithExampleBox}>
-        <Heading
-          className={styles.subtitleWithExample}
-          appearance={{ size: 'normal', weight: 'thin' }}
-          text={MSG.subtitleWithExample}
-        />
-      </div>
-      <DecisionHub name="tokenChoice" options={options} />
-      <div className={styles.titleAndButton}>
-        <Heading
-          appearance={{
-            size: 'tiny',
-            weight: 'bold',
-            margin: 'none',
-          }}
-          text={MSG.notSure}
-        />
-        <ExternalLink
-          className={styles.link}
-          text={{ id: 'text.learnMore' }}
-          href={LEARN_MORE_URL}
-        />
-      </div>
-    </section>
-  </Form>
-);
+        </div>
+        <div className={styles.subtitleWithExampleBox}>
+          <Heading
+            className={styles.subtitleWithExample}
+            appearance={{ size: 'normal', weight: 'thin' }}
+            text={MSG.subtitleWithExample}
+          />
+        </div>
+        <DecisionHub name="tokenChoice" options={options} isMobile={isMobile} />
+        <div className={styles.titleAndButton}>
+          <Heading
+            appearance={{
+              size: 'tiny',
+              weight: 'bold',
+              margin: 'none',
+            }}
+            text={MSG.notSure}
+          />
+          <ExternalLink
+            className={styles.link}
+            text={{ id: 'text.learnMore' }}
+            href={LEARN_MORE_URL}
+          />
+        </div>
+      </section>
+    </Form>
+  );
+};
 
 StepTokenChoice.displayName = displayName;
 

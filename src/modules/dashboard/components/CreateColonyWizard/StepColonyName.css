@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   padding-top: 155px;
   width: 100%;
@@ -33,4 +35,27 @@
 
 .tooltipContent {
   min-width: 280px;
+}
+
+@media screen and query700 {
+  .main {
+    padding-bottom: 40px;
+  }
+
+  .main h3 span {
+    overflow-wrap: anywhere;
+  }
+
+  .nameForm > div:not(:last-child) {
+    min-height: 87px;
+  }
+
+  /* Tooltip popover */
+  .nameForm > div:nth-child(2) span > div:not(:only-child) {
+    max-width: calc(100vw - 50px);
+  }
+
+  .tooltipContent {
+    min-width: 0px;
+  }
 }
