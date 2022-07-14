@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import { Colony, Maybe, useColonyExtensionsQuery } from '~data/index';
+import { Colony, Maybe } from '~data/index';
 import DropdownMenu, {
   DropdownMenuItem,
   DropdownMenuSection,
@@ -59,12 +59,6 @@ const HamburgerDropdownPopover = ({
   isWalletConnected = false,
 }: Props) => {
   const colonyHomePath = `/colony/${colonyName}`;
-  const { data } = useColonyExtensionsQuery({
-    variables: { address: colony?.colonyAddress },
-  });
-  const coinMachineExtn = data?.processedColony.installedExtensions.find(
-    ({ extensionId }) => extensionId === 'CoinMachine',
-  );
 
   return (
     <div className={styles.menu}>
@@ -91,16 +85,6 @@ const HamburgerDropdownPopover = ({
                     text={MSG.extensions}
                   />
                 </DropdownMenuItem>
-                {coinMachineExtn &&
-                  coinMachineExtn.details.initialized &&
-                  !coinMachineExtn.details.deprecated && (
-                    <DropdownMenuItem>
-                      <NavLink
-                        to={`${colonyHomePath}/buy-tokens`}
-                        text={MSG.buyTokens}
-                      />
-                    </DropdownMenuItem>
-                  )}
               </DropdownMenuSection>
             )}
             <UserSection colony={colony} username={username} />
