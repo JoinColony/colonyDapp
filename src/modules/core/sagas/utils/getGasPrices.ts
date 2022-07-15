@@ -97,6 +97,23 @@ const fetchGasPrices = async (
       // API prices are in Gwei, so they need to be normalised
       const oneGwei = bigNumberify(10 ** 9);
 
+      let { average } = data;
+      let { fast } = data;
+      /*
+       * @NOTE IF we're on Gnosis Chain, ensure that transactions alway pay at
+       * least 2gwei for gas
+       *
+       * This to counteract some unpleasantness coming from the Blockscout gas oracle
+       *
+       * Locally this is not a problem (and we don't even use the oracle to estimate)
+       */
+      if (
+        DEFAULT_NETWORK === Network.Xdai ||
+        DEFAULT_NETWORK === Network.XdaiFork
+      ) {
+        average = data.average > 2 ? data.average : 2;
+        fast = data.fast > 2 ? data.fast : 2;
+      }
       /*
        * @NOTE Split the values into integer and remainder
        * (1.22 becomes 1 and 22)
@@ -104,11 +121,9 @@ const fetchGasPrices = async (
        * The integer part gets multiplied by 1 gwei, while the remainder
        * gets padded with 9 zeros. Everything will be added together.
        */
-      const [averageInteger, averageRemainder = 0] = String(data.average).split(
-        '.',
-      );
+      const [averageInteger, averageRemainder = 0] = String(average).split('.');
       const [slowInteger, slowRemainder = 0] = String(data.slow).split('.');
-      const [fastInteger, fastRemainder = 0] = String(data.fast).split('.');
+      const [fastInteger, fastRemainder = 0] = String(fast).split('.');
 
       return {
         ...defaultGasPrices,
@@ -127,9 +142,11 @@ const fetchGasPrices = async (
 
     return defaultGasPrices;
   } catch (caughtError) {
-    log.warn(
-      `Could not get ${DEFAULT_NETWORK} network gas prices: ${caughtError.message}`,
-    );
+    if (process.env.NODE_ENV !== 'development') {
+      log.warn(
+        `Could not get ${DEFAULT_NETWORK} network gas prices: ${caughtError.message}`,
+      );
+    }
     // Default values
     return {
       ...defaultGasPrices,
