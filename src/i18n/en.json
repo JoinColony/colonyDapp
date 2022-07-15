@@ -410,6 +410,8 @@
     "metatransaction.WrappedToken.withdraw.description": "Unwrap Token",
     "metatransaction.VestingSimple.claimGrant.title": "Claim Colony Grant",
     "metatransaction.VestingSimple.claimGrant.description": "Claim Colony Grant",
+    "metatransaction.ColonyClient.annotateTransaction.title": "Annotate Transaction",
+    "metatransaction.ColonyClient.annotateTransaction.description": "Annotate Transaction",
 
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",
