@@ -16,29 +16,31 @@ import { buttonStyles } from '../Stages';
 import Numeral from '~core/Numeral';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
+const displayName = 'dashboard.ExpenditurePage.ClaimFunds';
+
 const MSG = defineMessages({
   claim: {
-    id: 'dashboard.Expenditures.Stages.ClaimFunds.claim',
+    id: 'dashboard.ExpenditurePage.Stages.ClaimFunds.claim',
     defaultMessage: 'Next claim',
   },
   claimFunds: {
-    id: 'dashboard.Expenditures.Stages.ClaimFunds.claimFunds',
+    id: 'dashboard.ExpenditurePage.Stages.ClaimFunds.claimFunds',
     defaultMessage: 'Claim funds',
   },
   totalClaimable: {
-    id: 'dashboard.Expenditures.Stages.ClaimFunds.totalClaimable',
+    id: 'dashboard.ExpenditurePage.Stages.ClaimFunds.totalClaimable',
     defaultMessage: 'Total claimable',
   },
   claimableNow: {
-    id: 'dashboard.Expenditures.Stages.ClaimFunds.claimableNow',
+    id: 'dashboard.ExpenditurePage.Stages.ClaimFunds.claimableNow',
     defaultMessage: 'Claimable now',
   },
   claimed: {
-    id: 'dashboard.Expenditures.Stages.ClaimFunds.claimed',
+    id: 'dashboard.ExpenditurePage.Stages.ClaimFunds.claimed',
     defaultMessage: 'Claimed',
   },
   nothingToClaim: {
-    id: 'dashboard.Expenditures.Stages.ClaimFunds.nothingToClaim',
+    id: 'dashboard.ExpenditurePage.Stages.ClaimFunds.nothingToClaim',
     defaultMessage: 'Nothing to claim',
   },
 });
@@ -166,5 +168,7 @@ const ClaimFunds = ({
     </div>
   );
 };
+
+ClaimFunds.displayName = displayName;
 
 export default ClaimFunds;

@@ -16,35 +16,35 @@ import CollapseExpandButtons from './CollapseExpandButtons';
 
 const MSG = defineMessages({
   payments: {
-    id: 'dashboard.Expenditures.Payments.defaultPayment',
+    id: 'dashboard.ExpenditurePage.Payments.defaultPayment',
     defaultMessage: 'Payments',
   },
   recipient: {
-    id: 'dashboard.Expenditures.Payments.defaultRrecipient',
+    id: 'dashboard.ExpenditurePage.Payments.defaultRrecipient',
     defaultMessage: 'Recipient',
   },
   addRecipientLabel: {
-    id: 'dashboard.Expenditures.Payments.addRecipientLabel',
+    id: 'dashboard.ExpenditurePage.Payments.addRecipientLabel',
     defaultMessage: 'Add recipient',
   },
   minusIconTitle: {
-    id: 'dashboard.Expenditures.Payments.minusIconTitle',
+    id: 'dashboard.ExpenditurePage.Payments.minusIconTitle',
     defaultMessage: 'Collapse a single recipient settings',
   },
   plusIconTitle: {
-    id: 'dashboard.Expenditures.Payments.plusIconTitle',
+    id: 'dashboard.ExpenditurePage.Payments.plusIconTitle',
     defaultMessage: 'Expand a single recipient settings',
   },
   claim: {
-    id: 'dashboard.Expenditures.Payments.claim',
+    id: 'dashboard.ExpenditurePage.Payments.claim',
     defaultMessage: 'Claim',
   },
   claimed: {
-    id: 'dashboard.Expenditures.Payments.claimed',
+    id: 'dashboard.ExpenditurePage.Payments.claimed',
     defaultMessage: 'Claimed',
   },
   claimNow: {
-    id: 'dashboard.Expenditures.Payments.claimNow',
+    id: 'dashboard.ExpenditurePage.Payments.claimNow',
     defaultMessage: 'Claim now',
   },
 });
