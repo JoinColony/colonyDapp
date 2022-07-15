@@ -139,6 +139,7 @@
 }
 
 .tagWrapper > span {
+  padding: 2px 14px 3px;
   border-radius: 12px;
 }
 
@@ -153,6 +154,7 @@
 }
 
 .claimedTagWrapper span {
+  padding: 2px 14px 3px;
   border-radius: 12px;
   background-color: var(--text-disabled);
   color: var(--colony-white);
