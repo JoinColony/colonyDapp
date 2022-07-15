@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import classNames from 'classnames';
 
 import { FormSection, InputLabel } from '~core/Fields';
 import UserAvatar from '~core/UserAvatar';
@@ -10,56 +10,11 @@ import TokenIcon from '~dashboard/HookedTokenIcon';
 import styles from './LockedRecipient.css';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import Numeral from '~core/Numeral';
-import Delay from '~dashboard/ExpenditurePage/Delay';
 import { Colony } from '~data/index';
 import { getRecipientTokens } from '~dashboard/ExpenditurePage/utils';
+import { MSG } from '../Recipient';
 
-const MSG = defineMessages({
-  defaultRecipientLabel: {
-    id: 'dashboard.Expenditures.Recipient.defaultRecipientLabel',
-    defaultMessage: 'Recipient',
-  },
-  defaultValueLabel: {
-    id: 'dashboard.Expenditures.Recipient.defaultValueLabel',
-    defaultMessage: 'Value',
-  },
-  defaultDelayLabel: {
-    id: 'dashboard.Expenditures.Recipient.defaultDelayLabel',
-    defaultMessage: 'Claim delay',
-  },
-  tooltipMessageTitle: {
-    id: 'dashboard.Expenditures.Recipient.tooltipMessageTitle',
-    defaultMessage: 'Security delay for claiming funds.',
-  },
-  tooltipMessageDescription: {
-    id: 'dashboard.Expenditures.Recipient.tooltipMessageDescription',
-    defaultMessage: `F.ex. once the work is finished, recipient has to wait before funds can be claimed.`,
-  },
-  addTokenText: {
-    id: 'dashboard.Expenditures.Recipient.addTokenText',
-    defaultMessage: 'Another token',
-  },
-  removeTokenText: {
-    id: 'dashboard.Expenditures.Recipient.removeTokenText',
-    defaultMessage: 'Discard',
-  },
-  hoursLabel: {
-    id: 'dashboard.Expenditures.Recipient.daysOptionLabel',
-    defaultMessage: 'hours',
-  },
-  daysLabel: {
-    id: 'dashboard.Expenditures.Recipient.daysOptionLabel',
-    defaultMessage: 'days',
-  },
-  monthsLabel: {
-    id: 'dashboard.Expenditures.Recipient.monthsOptionLabel',
-    defaultMessage: 'months',
-  },
-  valueError: {
-    id: 'dashboard.Expenditures.Recipient.valueError',
-    defaultMessage: 'Value is required',
-  },
-});
+const displayNameLockedRecipient = 'dashboard.ExpenditurePage.LockedRecipient';
 
 interface Props {
   recipient: RecipientType;
@@ -70,7 +25,7 @@ const LockedRecipient = ({ recipient, colony }: Props) => {
   const {
     isExpanded,
     recipient: {
-      profile: { walletAddress, displayName, username },
+      profile: { walletAddress, username, displayName },
     },
     delay,
   } = recipient;
@@ -83,11 +38,11 @@ const LockedRecipient = ({ recipient, colony }: Props) => {
   return (
     <div>
       {isExpanded && (
-        <>
+        <div className={styles.formContainer}>
           <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.userContainer}>
               <InputLabel
-                label={MSG.defaultRecipientLabel}
+                label={MSG.recipientLabel}
                 appearance={{
                   direction: 'horizontal',
                 }}
@@ -95,15 +50,20 @@ const LockedRecipient = ({ recipient, colony }: Props) => {
               <div className={styles.userAvatarContainer}>
                 <UserAvatar address={walletAddress} size="xs" notSet={false} />
                 <div className={styles.userName}>
-                  <UserMention username={displayName || username || ''} />
+                  <UserMention username={username || displayName || ''} />
                 </div>
               </div>
             </div>
           </FormSection>
           <FormSection appearance={{ border: 'bottom' }}>
-            <div className={styles.itemContainer}>
+            <div
+              className={classNames(styles.itemContainer, {
+                [styles.tokensContainer]:
+                  recipientValues && recipientValues.length > 1,
+              })}
+            >
               <InputLabel
-                label={MSG.defaultValueLabel}
+                label={MSG.valueLabel}
                 appearance={{
                   direction: 'horizontal',
                 }}
@@ -136,20 +96,24 @@ const LockedRecipient = ({ recipient, colony }: Props) => {
           {delay?.amount && (
             <FormSection appearance={{ border: 'bottom' }}>
               <div className={styles.itemContainer}>
-                <div className={styles.delay}>
-                  <FormattedMessage {...MSG.defaultDelayLabel} />
-                </div>
-
-                <div className={styles.delayControlsContainer}>
-                  <Delay amount={delay?.amount} time={delay?.time} />
-                </div>
+                <InputLabel
+                  label={MSG.delayLabel}
+                  appearance={{
+                    direction: 'horizontal',
+                  }}
+                />
+                <span className={styles.delayControlsContainer}>
+                  {delay.amount} {delay.time}
+                </span>
               </div>
             </FormSection>
           )}
-        </>
+        </div>
       )}
     </div>
   );
 };
+
+LockedRecipient.displayName = displayNameLockedRecipient;
 
 export default LockedRecipient;

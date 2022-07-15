@@ -1,79 +1,95 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import * as yup from 'yup';
-import { defineMessages, MessageDescriptor } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  MessageDescriptor,
+} from 'react-intl';
 import { nanoid } from 'nanoid';
 
-import { RouteChildrenProps, useParams } from 'react-router';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { RouteChildrenProps, useParams } from 'react-router';
 import { Form } from '~core/Fields';
 import Payments from '~dashboard/ExpenditurePage/Payments';
-import ExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings';
 import Stages from '~dashboard/ExpenditurePage/Stages';
-import { getMainClasses } from '~utils/css';
-import styles from './ExpenditurePage.css';
-import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
-import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
-import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import TitleDescriptionSection, {
   LockedTitleDescriptionSection,
 } from '~dashboard/ExpenditurePage/TitleDescriptionSection';
+import { getMainClasses } from '~utils/css';
+import styles from './ExpenditurePage.css';
+import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
+import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import { useColonyFromNameQuery } from '~data/generated';
-import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
-import { setClaimDate } from './utils';
-import { SpinnerLoader } from '~core/Preloaders';
 import { useLoggedInUser } from '~data/helpers';
+import { SpinnerLoader } from '~core/Preloaders';
+import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
+import { ExpenditureSettings } from '~dashboard/ExpenditurePage';
+import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
+import { setClaimDate } from './utils';
 
 const displayName = 'pages.ExpenditurePage';
 
 const MSG = defineMessages({
   lockValues: {
-    id: 'dashboard.Expenditures.Stages.lockValues',
+    id: 'dashboard.ExpenditurePage.lockValues',
     defaultMessage: 'Lock values',
   },
   escrowFunds: {
-    id: 'dashboard.Expenditures.Stages.escrowFunds',
+    id: 'dashboard.ExpenditurePage.escrowFunds',
     defaultMessage: 'Escrow funds',
   },
   releaseFunds: {
-    id: 'dashboard.Expenditures.Stages.releaseFunds',
+    id: 'dashboard.ExpenditurePage.releaseFunds',
     defaultMessage: 'Release funds',
   },
   claim: {
-    id: 'dashboard.Expenditures.Stages.claim',
+    id: 'dashboard.ExpenditurePage.claim',
     defaultMessage: 'Claim',
   },
   draft: {
-    id: 'dashboard.Expenditures.Stages.draft',
+    id: 'dashboard.ExpenditurePage.draft',
     defaultMessage: 'Draft',
   },
   locked: {
-    id: 'dashboard.Expenditures.Stages.locked',
+    id: 'dashboard.ExpenditurePage.locked',
     defaultMessage: 'Locked',
   },
   funded: {
-    id: 'dashboard.Expenditures.Stages.funded',
+    id: 'dashboard.ExpenditurePage.funded',
     defaultMessage: 'Funded',
   },
   released: {
-    id: 'dashboard.Expenditures.Stages.released',
+    id: 'dashboard.ExpenditurePage.released',
     defaultMessage: 'Released',
   },
   claimed: {
-    id: 'dashboard.Expenditures.Stages.claimed',
+    id: 'dashboard.ExpenditurePage.claimed',
     defaultMessage: 'Claimed',
   },
   tooltipLockValuesText: {
-    id: 'dashboard.Expenditures.Stages.tooltipLockValuesText',
+    id: 'dashboard.ExpenditurePage.tooltipLockValuesText',
     defaultMessage: `This will lock the values of the expenditure. To change values after locking will require the right permissions or a motion.`,
   },
   completed: {
-    id: 'dashboard.Expenditures.Stages.completed',
+    id: 'dashboard.ExpenditurePage.completed',
     defaultMessage: 'Completed',
   },
+  userRequiredError: {
+    id: 'dashboard.ExpenditurePage.userRequiredError',
+    defaultMessage: 'User is required',
+  },
+  teamRequiredError: {
+    id: 'dashboard.ExpenditurePage.teamRequiredError',
+    defaultMessage: 'Team is required',
+  },
   valueError: {
-    id: 'dashboard.Expenditures.Stages.completed',
+    id: 'dashboard.ExpenditurePage.completed',
     defaultMessage: 'Value is required',
+  },
+  amountZeroError: {
+    id: 'dashboard.ExpenditurePage.amountZeroError',
+    defaultMessage: 'Value must be greater than zero',
   },
 });
 
@@ -103,25 +119,32 @@ export interface State {
   buttonTooltip?: string | MessageDescriptor;
 }
 
-export type InitialValuesType = typeof initialValues;
-
 const validationSchema = yup.object().shape({
   expenditure: yup.string().required(),
-  filteredDomainId: yup.string().required(),
+  filteredDomainId: yup
+    .string()
+    .required(() => <FormattedMessage {...MSG.teamRequiredError} />),
   recipients: yup.array(
     yup.object().shape({
       recipient: yup.object().required(),
       value: yup
         .array(
           yup.object().shape({
-            amount: yup.number().required(() => MSG.valueError),
+            amount: yup
+              .number()
+              .required(() => MSG.valueError)
+              .moreThan(0, () => MSG.amountZeroError),
+            tokenAddress: yup.string().required(),
           }),
         )
         .min(1),
     }),
   ),
-  title: yup.string().required(),
+  title: yup.string().min(3).required(),
+  description: yup.string().max(4000),
 });
+
+export type InitialValuesType = typeof initialValues;
 
 type Props = RouteChildrenProps<{ colonyName: string }>;
 
@@ -135,19 +158,16 @@ const ExpenditurePage = ({ match }: Props) => {
   const { colonyName } = useParams<{
     colonyName: string;
   }>();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [isEditable, setIsEditable] = useState(true);
-
-  const { data: colonyData, loading } = useColonyFromNameQuery({
-    variables: { name: colonyName, address: '' },
-  });
-  const loggedInUser = useLoggedInUser();
-
   const [isFormEditable, setFormEditable] = useState(true);
   const [formValues, setFormValues] = useState<ValuesType>();
   const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStateId, setActiveStateId] = useState<string>();
   const sidebarRef = useRef<HTMLElement>(null);
+
+  const { data: colonyData, loading } = useColonyFromNameQuery({
+    variables: { name: colonyName, address: '' },
+  });
+  const loggedInUser = useLoggedInUser();
 
   const initialValuesData = useMemo(() => {
     return (
@@ -160,6 +180,7 @@ const ExpenditurePage = ({ match }: Props) => {
             id: nanoid(),
             value: [
               {
+                id: nanoid(),
                 amount: undefined,
                 tokenAddress: colonyData?.processedColony?.nativeTokenAddress,
               },
@@ -174,21 +195,25 @@ const ExpenditurePage = ({ match }: Props) => {
     setShouldValidate(true);
     setActiveStateId(Stage.Draft);
 
+    // claimDate assignment here is temporary
+    // Claim date will be calculated on backend
+
     if (values) {
       setFormValues({
         ...values,
-        recipients: values.recipients.map((reicpient) => ({
-          ...reicpient,
-          claimDate: reicpient.delay.amount
-            ? setClaimDate({
-                amount: reicpient.delay.amount,
-                time: reicpient.delay.time,
-              })
-            : null,
-        })),
+        recipients: values.recipients.map((reicpient) => {
+          return {
+            ...reicpient,
+            claimDate: reicpient.delay.amount
+              ? setClaimDate({
+                  amount: reicpient.delay.amount,
+                  time: reicpient.delay.time,
+                })
+              : null,
+          };
+        }),
       });
     }
-
     // add sending form values to backend
   }, []);
 

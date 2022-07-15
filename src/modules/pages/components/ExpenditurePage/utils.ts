@@ -1,5 +1,5 @@
 type GetTimeDifferenceParameters = {
-  amount: number;
+  amount: string;
   time: 'hours' | 'days' | 'months';
 };
 
@@ -26,7 +26,7 @@ export const getTimeDifference = ({
 }: GetTimeDifferenceParameters): number => {
   const multiplicator = timeMultiplier(time);
 
-  return amount * multiplicator;
+  return Number(amount) * multiplicator;
 };
 
 export const setClaimDate = ({

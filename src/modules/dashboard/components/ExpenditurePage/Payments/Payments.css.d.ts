@@ -7,6 +7,7 @@ export const singleRecipient: string;
 export const signWrapper: string;
 export const verticalDivider: string;
 export const dividerInLastItem: string;
+export const dividerInLockedItem: string;
 export const minus: string;
 export const addRecipientLabel: string;
 export const circlePlusIcon: string;

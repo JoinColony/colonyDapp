@@ -1,11 +1,11 @@
-import { useFormikContext } from 'formik';
 import React, {
-  useCallback,
   useEffect,
-  useMemo,
+  useCallback,
   useRef,
   useState,
+  useMemo,
 } from 'react';
+import { useFormikContext } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import copyToClipboard from 'copy-to-clipboard';
 import classNames from 'classnames';
@@ -18,15 +18,14 @@ import { Tooltip } from '~core/Popover';
 import styles from './Stages.css';
 import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
 import StageItem from './StageItem';
-import { Stage } from './constants';
-import LinkedMotions from './LinkedMotions';
 import {
   InitialValuesType,
   State,
   ValuesType,
 } from '~pages/ExpenditurePage/ExpenditurePage';
+import { Stage } from './constants';
 import ClaimFunds from './ClaimFunds';
-import { Recipient as RecipientType } from '../Payments/types';
+import { Recipient, Recipient as RecipientType } from '../Payments/types';
 import { getRecipientTokens } from '../utils';
 import { Colony } from '~data/index';
 import { useCalculateTokens } from '../hooks';
@@ -34,36 +33,36 @@ import DeleteDraftDialog from '~dashboard/Dialogs/DeleteDraftDialog/DeleteDraftD
 
 const MSG = defineMessages({
   stages: {
-    id: 'dashboard.Expenditures.Stages.stages',
+    id: 'dashboard.ExpenditurePage.Stages.stages',
     defaultMessage: 'Stages',
   },
   notSaved: {
-    id: 'dashboard.Expenditures.Stages.notSaved',
+    id: 'dashboard.ExpenditurePage.Stages.notSaved',
     defaultMessage: 'Not saved',
   },
   submitDraft: {
-    id: 'dashboard.Expenditures.Stages.submitDraft',
+    id: 'dashboard.ExpenditurePage.Stages.submitDraft',
     defaultMessage: 'Submit draft',
   },
   deleteDraft: {
-    id: 'dashboard.Expenditures.Stages.deleteDraft',
+    id: 'dashboard.ExpenditurePage.Stages.deleteDraft',
     defaultMessage: 'Delete draft',
   },
   tooltipDeleteText: {
-    id: 'dashboard.Expenditures.Stages.tooltipDeleteText',
+    id: 'dashboard.ExpenditurePage.Stages.tooltipDeleteText',
     defaultMessage: 'Delete the expenditure',
   },
   tooltipShareText: {
-    id: 'dashboard.Expenditures.Stages.tooltipShareText',
+    id: 'dashboard.ExpenditurePage.Stages.tooltipShareText',
     defaultMessage: 'Share expenditure URL',
   },
   tooltipCancelText: {
-    id: 'dashboard.Expenditures.Stages.tooltipCancelText',
+    id: 'dashboard.ExpenditurePage.Stages.tooltipCancelText',
     defaultMessage: 'Click to cancel expenditure',
   },
   tooltipNoPermissionToRealese: {
-    id: 'dashboard.Expenditures.Stages.tooltipNoPermissionToRealese',
-    defaultMessage: `You need to be the owner to release funds. You can change the owner to transfer permission.`,
+    id: 'dashboard.ExpenditurePage.Stages.tooltipNoPermissionToRealese',
+    defaultMessage: 'You need to create a Motion to release funds.',
   },
   tooltipLockValuesText: {
     id: 'dashboard.ExpenditurePage.Stages.tooltipLockValuesText',
@@ -71,9 +70,11 @@ const MSG = defineMessages({
   },
 });
 
+const displayName = 'dashboard.ExpenditurePage.Stages';
+
 export const buttonStyles = {
-  width: styles.buttonWidth,
   height: styles.buttonHeight,
+  width: styles.buttonWidth,
   padding: 0,
 };
 
@@ -86,11 +87,11 @@ interface Props {
 }
 
 const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
+  const { values, handleSubmit, validateForm, resetForm } =
+    useFormikContext<ValuesType>() || {};
+
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
-
-  const { values, resetForm, handleSubmit, validateForm } =
-    useFormikContext<ValuesType>() || {};
 
   const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
@@ -108,7 +109,7 @@ const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
     totalClaimable,
     nextClaim,
     buttonIsActive,
-  } = useCalculateTokens(recipientsWithTokens as any);
+  } = useCalculateTokens(recipientsWithTokens as Recipient[]);
 
   const handleSaveDraft = useCallback(async () => {
     const errors = await validateForm(values);
@@ -363,10 +364,11 @@ const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
             isActive={activeState ? index <= activeIndex : false}
           />
         ))}
-        {activeStateId === Stage.Funded && <LinkedMotions status="passed" />}
       </div>
     </div>
   );
 };
+
+Stages.displayName = displayName;
 
 export default Stages;

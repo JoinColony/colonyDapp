@@ -53,7 +53,7 @@
 }
 
 .errorIcon {
-  stroke: var(--danger);
+  stroke: var(--pink);
 }
 
 .baseInput {

@@ -2,7 +2,6 @@ import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FieldArray, useField } from 'formik';
 import { nanoid } from 'nanoid';
-import classNames from 'classnames';
 
 import Button from '~core/Button';
 import Recipient from '../Recipient';
@@ -14,11 +13,12 @@ import { newRecipient } from './constants';
 import { useMembersSubscription } from '~data/generated';
 import { SpinnerLoader } from '~core/Preloaders';
 import { Colony } from '~data/index';
+import CollapseExpandButtons from './CollapseExpandButtons';
 
-const MSG = defineMessages({
+export const MSG = defineMessages({
   payments: {
     id: 'dashboard.ExpenditurePage.Payments.payments',
-    defaultMessage: 'Add payments',
+    defaultMessage: 'Payments',
   },
   recipient: {
     id: 'dashboard.ExpenditurePage.Payments.recipient',
@@ -42,6 +42,8 @@ const MSG = defineMessages({
   },
 });
 
+const displayName = 'dashboard.ExpenditurePage.Payments';
+
 interface Props {
   sidebarRef: HTMLElement | null;
   colony: Colony;
@@ -59,12 +61,17 @@ const Payments = ({ sidebarRef, colony }: Props) => {
   const newRecipientData = useMemo(() => {
     return {
       ...newRecipient,
-      id: nanoid(),
-      value: [{ amount: undefined, tokenAddress: colony.nativeTokenAddress }],
+      value: [
+        {
+          amount: undefined,
+          tokenAddress: colony.nativeTokenAddress,
+          id: nanoid(),
+        },
+      ],
     };
   }, [colony.nativeTokenAddress]);
 
-  const onToogleButtonClick = useCallback(
+  const onToggleButtonClick = useCallback(
     (index) => {
       setValue(
         recipients.map((recipient, idx) =>
@@ -94,29 +101,11 @@ const Payments = ({ sidebarRef, colony }: Props) => {
                   <div className={styles.singleRecipient} key={recipient.id}>
                     <FormSection>
                       <div className={styles.recipientLabel}>
-                        {recipient.isExpanded ? (
-                          <>
-                            <Icon
-                              name="collapse"
-                              onClick={() => onToogleButtonClick(index)}
-                              className={styles.signWrapper}
-                              title={MSG.minusIconTitle}
-                            />
-                            <div
-                              className={classNames(styles.verticalDivider, {
-                                [styles.dividerInLastItem]:
-                                  index === recipients?.length - 1,
-                              })}
-                            />
-                          </>
-                        ) : (
-                          <Icon
-                            name="expand"
-                            onClick={() => onToogleButtonClick(index)}
-                            className={styles.signWrapper}
-                            title={MSG.plusIconTitle}
-                          />
-                        )}
+                        <CollapseExpandButtons
+                          isExpanded={recipient.isExpanded}
+                          onToogleButtonClick={() => onToggleButtonClick(index)}
+                          isLastitem={index === recipients?.length - 1}
+                        />
                         {index + 1}: <FormattedMessage {...MSG.recipient} />
                         {recipients.length > 1 && (
                           <Icon
@@ -141,7 +130,7 @@ const Payments = ({ sidebarRef, colony }: Props) => {
                   </div>
                 ))}
                 <Button
-                  onClick={() => push(newRecipientData)}
+                  onClick={() => push({ ...newRecipientData, id: nanoid() })}
                   appearance={{ theme: 'blue' }}
                 >
                   <div className={styles.addRecipientLabel}>
@@ -160,5 +149,7 @@ const Payments = ({ sidebarRef, colony }: Props) => {
     </div>
   );
 };
+
+Payments.displayName = displayName;
 
 export default Payments;

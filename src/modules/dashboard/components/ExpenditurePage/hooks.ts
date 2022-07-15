@@ -10,7 +10,7 @@ export interface Token {
 }
 
 export interface Recipient extends Omit<RecipientType, 'value'> {
-  value: Token[];
+  value?: Token[];
 }
 
 export const hasSymbolKey = (obj: any): obj is { symbol: string } => {
@@ -21,6 +21,9 @@ export const useCalculateTokens = (recipients?: Recipient[]) => {
   const calculateTokens = useCallback(
     (recipientsArr: Recipient[], initailAcc?: Record<string, number>) => {
       const allTokens = recipientsArr?.reduce((acc, recipient) => {
+        if (!recipient.value) {
+          return acc;
+        }
         return [...acc, ...recipient.value];
       }, []);
 
