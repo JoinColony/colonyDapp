@@ -151,13 +151,18 @@
   padding: 11px 0 15px;
   border-top: 1px solid var(--grey-blue-0);
   border-bottom: 1px solid var(--grey-blue-0);
-  color: color-mod(var(--temp-grey-blue-7), alpha(85%));
 }
 
 .value {
   display: flex;
   align-items: center;
-  color: color-mod(var(--dark), alpha(85%));
+  font-size: var(--size-smallish);
+  color: color-mod(var(--dark) alpha(85%));
+}
+
+.value span {
+  padding-right: 2px;
+  font-size: var(--size-smallish);
 }
 
 .paddingBottom {

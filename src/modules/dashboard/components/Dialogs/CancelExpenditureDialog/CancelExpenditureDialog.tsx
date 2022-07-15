@@ -65,7 +65,7 @@ const MSG = defineMessages({
   },
   effectTooltip: {
     id: 'dashboard.CancelExpenditureDialog.effectTooltip',
-    defaultMessage: 'Do you want to penalize the owner?', // add correct value here
+    defaultMessage: `Decide what to do with the owner's stake when cancelling this Advanced Payment.`,
   },
 });
 
@@ -199,7 +199,7 @@ const CancelExpenditureDialog = ({ close, colony, onClick }: Props) => {
                       <Numeral
                         unit={getTokenDecimalsWithFallback(0)}
                         value={0.1}
-                      />{' '}
+                      />
                       {token.symbol}
                     </div>
                   ))}
