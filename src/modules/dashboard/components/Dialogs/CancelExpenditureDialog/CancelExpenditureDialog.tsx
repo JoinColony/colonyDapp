@@ -16,7 +16,7 @@ import Icon from '~core/Icon';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import { tokens as tokensMock } from '~dashboard/ExpenditurePage/ExpenditureSettings/consts';
+import { tokens as tokensMock } from '~dashboard/ExpenditurePage/ExpenditureSettings/constants';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import Numeral from '~core/Numeral';
 

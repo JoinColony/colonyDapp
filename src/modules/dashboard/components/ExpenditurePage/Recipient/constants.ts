@@ -14,6 +14,7 @@ export const tokensData = [
       { __typename: 'DomainBalance', domainId: 0, amount: '0' },
     ],
     symbol: 'ETH',
+    balances: [{ amount: '180', domainId: 0 }],
     __typename: 'Token',
   },
   {
@@ -31,6 +32,7 @@ export const tokensData = [
       { __typename: 'DomainBalance', domainId: 0, amount: '0' },
     ],
     symbol: 'MAT',
+    balances: [{ amount: '0', domainId: 0 }],
     __typename: 'Token',
   },
 ];

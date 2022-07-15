@@ -1,11 +1,11 @@
-import { useFormikContext } from 'formik';
 import React, {
-  useCallback,
   useEffect,
-  useMemo,
+  useCallback,
   useRef,
   useState,
+  useMemo,
 } from 'react';
+import { useFormikContext } from 'formik';
 import {
   defineMessages,
   FormattedMessage,
@@ -23,6 +23,11 @@ import { Tooltip } from '~core/Popover';
 import DeleteDraftDialog from '../../Dialogs/DeleteDraftDialog/DeleteDraftDialog';
 import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
 import StageItem from './StageItem';
+import {
+  InitialValuesType,
+  State,
+  ValuesType,
+} from '~pages/ExpenditurePage/ExpenditurePage';
 import styles from './Stages.css';
 import { MotionStatus, Stage, Status } from './constants';
 import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
@@ -45,46 +50,6 @@ const MSG = defineMessages({
     id: 'dashboard.Expenditures.Stages.submitDraft',
     defaultMessage: 'Submit draft',
   },
-  lockValues: {
-    id: 'dashboard.Expenditures.Stages.lockValues',
-    defaultMessage: 'Lock values',
-  },
-  escrowFunds: {
-    id: 'dashboard.Expenditures.Stages.escrowFunds',
-    defaultMessage: 'Escrow funds',
-  },
-  releaseFunds: {
-    id: 'dashboard.Expenditures.Stages.releaseFunds',
-    defaultMessage: 'Release funds',
-  },
-  claim: {
-    id: 'dashboard.Expenditures.Stages.claim',
-    defaultMessage: 'Claim',
-  },
-  completed: {
-    id: 'dashboard.Expenditures.Stages.completed',
-    defaultMessage: 'Completed',
-  },
-  draft: {
-    id: 'dashboard.Expenditures.Stages.draft',
-    defaultMessage: 'Draft',
-  },
-  locked: {
-    id: 'dashboard.Expenditures.Stages.locked',
-    defaultMessage: 'Locked',
-  },
-  funded: {
-    id: 'dashboard.Expenditures.Stages.funded',
-    defaultMessage: 'Funded',
-  },
-  released: {
-    id: 'dashboard.Expenditures.Stages.released',
-    defaultMessage: 'Released',
-  },
-  claimed: {
-    id: 'dashboard.Expenditures.Stages.claimed',
-    defaultMessage: 'Claimed',
-  },
   deleteDraft: {
     id: 'dashboard.Expenditures.Stages.deleteDraft',
     defaultMessage: 'Delete draft',
@@ -96,10 +61,6 @@ const MSG = defineMessages({
   tooltipShareText: {
     id: 'dashboard.Expenditures.Stages.tooltipShareText',
     defaultMessage: 'Share expenditure URL',
-  },
-  tooltipLockValuesText: {
-    id: 'dashboard.ExpenditurePage.Stages.tooltipLockValuesText',
-    defaultMessage: `This will lock the values of the expenditure. To change values after locking will require the right permissions or a motion.`,
   },
   tooltipCancelText: {
     id: 'dashboard.ExpenditurePage.Stages.tooltipCancelText',
@@ -113,15 +74,17 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Stages.motion',
     defaultMessage: 'You can’t {action} unless motion ends',
   },
+  tooltipNoPermissionToRealese: {
+    id: 'dashboard.ExpenditurePage.Stages.tooltipNoPermissionToRealese',
+    defaultMessage: 'You need to create a Motion to release funds.',
+  },
+  tooltipLockValuesText: {
+    id: 'dashboard.ExpenditurePage.Stages.tooltipLockValuesText',
+    defaultMessage: `This will lock the values of the expenditure. To change values after locking will require the right permissions or a motion.`,
+  },
 });
 
-interface ActiveState {
-  id: string;
-  label: string | MessageDescriptor;
-  buttonText: string | MessageDescriptor;
-  buttonAction: () => void;
-  stage: string;
-}
+const displayName = 'dashboard.ExpenditurePage.Stages';
 
 const buttonStyles = {
   height: styles.buttonHeight,
@@ -133,14 +96,18 @@ interface Motion {
   type: 'Cancel';
   status: MotionStatus;
 }
+
 interface Props {
+  states: State[];
+  handleSubmit: (values: InitialValuesType) => void;
+  activeStateId?: string;
   colony?: Colony;
 }
 
-const Stages = ({ colony }: Props) => {
-  const [activeStateId, setActiveStateId] = useState<string | null>(
-    Stage.Locked,
-  );
+const Stages = ({ colony, states, activeStateId }: Props) => {
+  const { values, handleSubmit, validateForm } =
+    useFormikContext<ValuesType>() || {};
+
   const { resetForm } = useFormikContext() || {};
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
@@ -152,56 +119,20 @@ const Stages = ({ colony }: Props) => {
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
   const openCancelExpenditureDialog = useDialog(CancelExpenditureDialog);
 
-  const handleLockExpenditure = () => {
-    // Call to backend will be added here, to lock the expenditure
-    // fetching active state shoud be added here as well,
-    // and saving the activeState in a state
-    setActiveStateId(Stage.Locked);
-  };
+  const handleSaveDraft = useCallback(async () => {
+    const errors = await validateForm(values);
+    const hasErrors = Object.keys(errors)?.length;
 
-  const states = [
-    {
-      id: Stage.Draft,
-      label: MSG.draft,
-      buttonText: MSG.lockValues,
-      buttonAction: handleLockExpenditure,
-      buttonTooltip: MSG.tooltipLockValuesText,
-    },
-    {
-      id: Stage.Locked,
-      label: MSG.locked,
-      buttonText: MSG.escrowFunds,
-      buttonAction: () => {},
-      stage: Stage.Locked,
-    },
-    {
-      id: Stage.Funded,
-      label: MSG.funded,
-      buttonText: MSG.releaseFunds,
-      buttonAction: () => {},
-      stage: Stage.Funded,
-    },
-    {
-      id: Stage.Released,
-      label: MSG.released,
-      buttonText: MSG.claim,
-      buttonAction: () => {},
-      stage: Stage.Released,
-    },
-    {
-      id: Stage.Claimed,
-      label: MSG.claimed,
-      buttonText: MSG.completed,
-      buttonAction: () => {},
-      stage: Stage.Claimed,
-    },
-  ];
-
-  const handleSaveDraft = () =>
-    openDraftConfirmDialog({
-      onClick: () => setActiveStateId(Stage.Draft),
-      isVotingExtensionEnabled: true,
-    });
+    return (
+      !hasErrors &&
+      openDraftConfirmDialog({
+        onClick: () => {
+          handleSubmit(values as any);
+        },
+        isVotingExtensionEnabled: true,
+      })
+    );
+  }, [handleSubmit, openDraftConfirmDialog, validateForm, values]);
 
   const handleDeleteDraft = () =>
     openDeleteDraftDialog({
@@ -512,5 +443,7 @@ const Stages = ({ colony }: Props) => {
     </div>
   );
 };
+
+Stages.displayName = displayName;
 
 export default Stages;

@@ -4,6 +4,6 @@ export const newRecipient = {
   id: undefined,
   recipient: undefined,
   value: [newToken],
-  delay: undefined,
+  delay: { amount: undefined, time: 'hours' },
   isExpanded: true,
 };
