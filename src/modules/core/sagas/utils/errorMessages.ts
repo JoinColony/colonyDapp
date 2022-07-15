@@ -1,5 +1,6 @@
 import { createIntl } from 'react-intl';
-import { parseBytes32String, isHexString } from 'ethers/utils';
+import { isHexString } from 'ethers/utils';
+import { hexSequenceNormalizer } from '@purser/core';
 
 import { TRANSACTION_METHODS } from '~immutable/index';
 import { ContractRevertErrors } from '~types/index';
@@ -23,6 +24,7 @@ export const generateBroadcasterHumanReadableError = (
 ): string => {
   let errorMessage =
     error?.reason ||
+    response?.reason ||
     response?.payload ||
     intl.formatMessage({ id: 'error.unknown' });
 
@@ -33,7 +35,10 @@ export const generateBroadcasterHumanReadableError = (
   const [, foundHexString] = response?.reason?.match(/(0x.*)/) || [];
   const isHexReason = foundHexString && isHexString(foundHexString);
   const hexReasonValue = isHexReason
-    ? parseBytes32String(foundHexString.padEnd(66, '0'))
+    ? Buffer.from(
+        hexSequenceNormalizer(foundHexString, false),
+        'hex',
+      ).toString()
     : '';
 
   if (
@@ -55,5 +60,14 @@ export const generateBroadcasterHumanReadableError = (
     return errorMessage;
   }
 
+  /*
+   * @NOTE If the error in unknown _(we didn't trigger the previous logic checks)_
+   * make sure to log it out so we can debug it
+   */
+  console.error(
+    errorMessage,
+    `Reponse: ${response?.payload} ${response?.reason}`,
+    `Decoded: ${hexReasonValue}`,
+  );
   return errorMessage;
 };
