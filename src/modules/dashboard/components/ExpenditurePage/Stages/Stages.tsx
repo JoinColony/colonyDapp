@@ -286,6 +286,22 @@ const Stages = ({ colony, states, activeStateId }: Props) => {
 
   const isCancelled = status === 'cancelled' || status === 'forceCancelled';
 
+  const formattedLabel = useMemo(
+    () => (text: string | MessageDescriptor | undefined): string => {
+      if (undefined) {
+        return '';
+      }
+      if (typeof text === 'string') {
+        return text;
+      }
+      if (typeof text === 'object' && text?.id) {
+        return formatMessage(text);
+      }
+      return '';
+    },
+    [formatMessage],
+  );
+
   return (
     <div className={styles.mainContainer}>
       {motion?.status === MotionStatus.Pending && (
@@ -297,9 +313,7 @@ const Stages = ({ colony, states, activeStateId }: Props) => {
             }}
           >
             {formatMessage(MSG.motion, {
-              action: activeState?.buttonText
-                ? formatMessage(activeState?.buttonText)
-                : '',
+              action: formattedLabel(activeState?.buttonText),
             })}
           </Tag>
         </div>
