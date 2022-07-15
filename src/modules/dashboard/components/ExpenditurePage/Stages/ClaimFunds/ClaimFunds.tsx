@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   defineMessages,
   FormattedMessage,
@@ -47,6 +47,12 @@ const MSG = defineMessages({
 
 export type Token = Record<string, number>;
 
+interface TokenWithId {
+  symbol: string;
+  amount: number;
+  id: string;
+}
+
 interface Props {
   buttonAction?: () => void;
   buttonText?: string | MessageDescriptor;
@@ -66,6 +72,25 @@ const ClaimFunds = ({
   claimableNow,
   claimed,
 }: Props) => {
+  const convertToTokensWithIds = useMemo(
+    () => (object: Token | undefined): TokenWithId[] => {
+      if (!object) {
+        return [];
+      }
+
+      return Object.entries(object).map(([symbol, amount]) => ({
+        symbol,
+        amount,
+        id: nanoid(),
+      }));
+    },
+    [],
+  );
+
+  const totalClaimableWithId = convertToTokensWithIds(totalClaimable);
+  const claimableNowWithId = convertToTokensWithIds(claimableNow);
+  const claimedWithId = convertToTokensWithIds(claimed);
+
   return (
     <div className={styles.container}>
       <FormSection appearance={{ border: 'bottom' }}>
@@ -99,8 +124,8 @@ const ClaimFunds = ({
               <FormattedMessage {...MSG.totalClaimable} />
             </span>
             <div className={styles.valueContainer}>
-              {Object.entries(totalClaimable)?.map(([symbol, amount]) => (
-                <div className={styles.value} key={nanoid()}>
+              {totalClaimableWithId.map(({ symbol, amount, id }) => (
+                <div className={styles.value} key={id}>
                   <Numeral
                     unit={getTokenDecimalsWithFallback(0)}
                     value={amount || 0}
@@ -119,8 +144,8 @@ const ClaimFunds = ({
               <FormattedMessage {...MSG.claimableNow} />
             </span>
             <div className={styles.valueContainer}>
-              {Object.entries(claimableNow)?.map(([symbol, amount]) => (
-                <div className={styles.value} key={nanoid()}>
+              {claimableNowWithId.map(({ symbol, amount, id }) => (
+                <div className={styles.value} key={id}>
                   <Numeral
                     unit={getTokenDecimalsWithFallback(0)}
                     value={amount || 0}
@@ -139,8 +164,8 @@ const ClaimFunds = ({
               <FormattedMessage {...MSG.claimed} />
             </span>
             <div className={styles.valueContainer}>
-              {Object.entries(claimed).map(([symbol, amount]) => (
-                <div className={styles.value} key={nanoid()}>
+              {claimedWithId.map(({ symbol, amount, id }) => (
+                <div className={styles.value} key={id}>
                   <Numeral
                     unit={getTokenDecimalsWithFallback(0)}
                     value={amount || 0}
