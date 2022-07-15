@@ -10,7 +10,7 @@ import {
 } from '~utils/web3';
 import { TRANSACTION_METHODS, TransactionRecord } from '~immutable/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
-import { XDAI_NETWORK } from '~constants';
+import { GNOSIS_NETWORK } from '~constants';
 import { metamaskSwitchNetwork } from '../../../users/sagas/wallet';
 import {
   MethodParams,
@@ -184,7 +184,7 @@ async function getMetatransactionPromise(
        * chain as Dapp and contracts deployment
        */
       if (wallet.subtype === 'metamask' && walletChainId !== chainId) {
-        if (chainId === XDAI_NETWORK.chainId) {
+        if (chainId === GNOSIS_NETWORK.chainId) {
           /*
            * @NOTE This actually adds the network if it doesn't exist
            *
