@@ -99,11 +99,11 @@ const ClaimFunds = ({
               <FormattedMessage {...MSG.totalClaimable} />
             </span>
             <div className={styles.valueContainer}>
-              {Object.entries(totalClaimable)?.map(([amount, symbol]) => (
+              {Object.entries(totalClaimable)?.map(([symbol, amount]) => (
                 <div className={styles.value} key={nanoid()}>
                   <Numeral
                     unit={getTokenDecimalsWithFallback(0)}
-                    value={amount || ''}
+                    value={amount || 0}
                   />{' '}
                   {symbol}
                 </div>
@@ -119,11 +119,11 @@ const ClaimFunds = ({
               <FormattedMessage {...MSG.claimableNow} />
             </span>
             <div className={styles.valueContainer}>
-              {Object.entries(claimableNow)?.map(([amount, symbol]) => (
+              {Object.entries(claimableNow)?.map(([symbol, amount]) => (
                 <div className={styles.value} key={nanoid()}>
                   <Numeral
                     unit={getTokenDecimalsWithFallback(0)}
-                    value={amount || ''}
+                    value={amount || 0}
                   />{' '}
                   {symbol}
                 </div>
@@ -139,11 +139,11 @@ const ClaimFunds = ({
               <FormattedMessage {...MSG.claimed} />
             </span>
             <div className={styles.valueContainer}>
-              {Object.entries(claimed).map(([amount, symbol]) => (
+              {Object.entries(claimed).map(([symbol, amount]) => (
                 <div className={styles.value} key={nanoid()}>
                   <Numeral
                     unit={getTokenDecimalsWithFallback(0)}
-                    value={amount || ''}
+                    value={amount || 0}
                   />{' '}
                   {symbol}
                 </div>

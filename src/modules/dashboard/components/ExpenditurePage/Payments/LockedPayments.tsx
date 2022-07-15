@@ -79,6 +79,7 @@ const LockedPayments = ({ recipients, activeState, colony }: Props) => {
         return null;
       }
 
+      // it's temporary value
       const isClaimable = claimDate < new Date().getTime();
 
       if (isClaimable) {
@@ -93,12 +94,8 @@ const LockedPayments = ({ recipients, activeState, colony }: Props) => {
       }
       if (claimed) {
         return (
-          <div className={styles.tagWrapper}>
-            <Tag
-              appearance={{
-                theme: 'light',
-              }}
-            >
+          <div className={styles.claimedTagWrapper}>
+            <Tag>
               <FormattedMessage {...MSG.claimed} />
             </Tag>
           </div>

@@ -17,3 +17,4 @@ export const recipientName: string;
 export const editIcon: string;
 export const tagWrapper: string;
 export const claimButton: string;
+export const claimedTagWrapper: string;

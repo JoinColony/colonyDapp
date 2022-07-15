@@ -139,7 +139,7 @@
 }
 
 .tagWrapper > span {
-  border-radius: 512px;
+  border-radius: 12px;
 }
 
 .claimButton {
@@ -150,4 +150,10 @@
   height: 21px;
   border-radius: 12px;
   font-size: 11px;
+}
+
+.claimedTagWrapper span {
+  border-radius: 12px;
+  background-color: var(--text-disabled);
+  color: var(--colony-white);
 }

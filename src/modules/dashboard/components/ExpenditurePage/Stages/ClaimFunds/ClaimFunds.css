@@ -8,7 +8,6 @@
   align-items: flex-start;
   padding: 12px 0;
   font-size: var(--size-smallish);
-  font-weight: var(--weight-bold);
   line-height: 18px;
   color: var(--temp-grey-blue-7);
 }
@@ -37,7 +36,8 @@
 }
 
 .tagWrapper > span {
-  border-radius: 512px;
+  padding: 1px 14px 2px;
+  border-radius: 12px;
 }
 
 .buttonWrapper {
