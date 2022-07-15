@@ -185,7 +185,10 @@ const UserPickerWithSearch = ({
             </Button>
           ) : (
             <Icon
-              className={omniPickerIsOpen ? styles.focusIcon : styles.icon}
+              className={classNames(styles.icon, {
+                [styles.focusIcon]: omniPickerIsOpen,
+                [styles.errorIcon]: error,
+              })}
               name="circle-person"
               title={MSG.selectMember}
               onClick={toggleDropdown}
@@ -231,12 +234,12 @@ const UserPickerWithSearch = ({
             {...(disabled ? {} : { onClick: toggleOmniPicker })}
             className={classNames(styles.arrowIcon, {
               [styles.arrowIconActive]: omniPickerIsOpen,
+              [styles.errorIcon]: error,
             })}
             name="caret-down-small"
             title={omniPickerIsOpen ? MSG.openedCaret : MSG.closedCaret}
           />
         </div>
-        {error && <span className={styles.error}>{error}</span>}
       </div>
     </OmniPickerWrapper>
   );

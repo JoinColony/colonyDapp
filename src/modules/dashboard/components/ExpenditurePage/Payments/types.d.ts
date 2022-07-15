@@ -1,8 +1,8 @@
 export interface Recipient {
   id?: string;
-  user: AnyUser;
-  value: { id: string; amount?: number; tokenAddress?: number }[];
-  delay: {
+  recipient?: AnyUser;
+  value?: { amount?: number; tokenAddress?: string; id: string }[];
+  delay?: {
     amount: string;
     time: string;
   };
