@@ -160,3 +160,9 @@
 .margin {
   margin-right: 20px;
 }
+
+.motionActiveItem {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}

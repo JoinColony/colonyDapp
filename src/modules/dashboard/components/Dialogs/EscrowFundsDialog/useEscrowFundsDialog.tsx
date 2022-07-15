@@ -34,6 +34,10 @@ const MSG = defineMessages({
     id: 'dashboard.EscrowFundsDialog.total',
     defaultMessage: 'Total',
   },
+  createDomain: {
+    id: 'dashboard.EscrowFundsDialog.creationTarget',
+    defaultMessage: 'Motion will be created in',
+  },
 });
 
 const useEscrowFundsDialog = (colonyName: string) => {
@@ -82,6 +86,25 @@ const useEscrowFundsDialog = (colonyName: string) => {
       );
     },
     [getDomainColor],
+  );
+
+  const renderActiveDomainOption = useCallback<
+    (option: SelectOption | undefined, label: string) => ReactNode
+  >(
+    (option, label) => {
+      let displayLabel =
+        parseInt(option?.value || `${ROOT_DOMAIN_ID}`, 10) === ROOT_DOMAIN_ID
+          ? `${formatMessage(MSG.createDomain)} ${label}`
+          : `${formatMessage(MSG.createDomain)} ${formatMessage({
+              id: 'domain.root',
+            })}/${label}`;
+
+      if (!option) {
+        displayLabel = `${formatMessage({ id: 'domain.root' })}`;
+      }
+      return <div className={styles.motionActiveItem}>{displayLabel}</div>;
+    },
+    [formatMessage],
   );
 
   const filterDomains = useCallback((optionDomain) => {
@@ -189,6 +212,7 @@ const useEscrowFundsDialog = (colonyName: string) => {
     handleMotionDomainChange,
     loading,
     sectionRowRef,
+    renderActiveDomainOption,
   };
 };
 

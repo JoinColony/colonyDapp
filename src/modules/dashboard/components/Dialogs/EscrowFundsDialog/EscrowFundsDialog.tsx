@@ -14,7 +14,6 @@ import Button from '~core/Button';
 import styles from './EscrowFundsDialog.css';
 import DomainDropdown from '~core/DomainDropdown';
 import useEscrowFundsDialog from './useEscrowFundsDialog';
-import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 import Dropdown from '~core/UserPickerWithSearch/Dropdown';
 import { SpinnerLoader } from '~core/Preloaders';
 import { ActionTypes } from '~redux/actionTypes';
@@ -25,10 +24,6 @@ const MSG = defineMessages({
   title: {
     id: 'dashboard.EscrowFundsDialog.title',
     defaultMessage: 'Create a motion to fund expenditure',
-  },
-  creationTarget: {
-    id: 'dashboard.EscrowFundsDialog.creationTarget',
-    defaultMessage: 'Motion will be created in',
   },
   force: {
     id: 'dashboard.EscrowFundsDialog.force',
@@ -59,7 +54,7 @@ const MSG = defineMessages({
   },
   textareaLabel: {
     id: 'dashboard.EscrowFundsDialog.textareaLabel',
-    defaultMessage: `Explain why you're funding this expenditure (optional)`,
+    defaultMessage: `Explain why you're creating expanditure`,
   },
   confirmText: {
     id: 'dashboard.EscrowFundsDialog.confirmText',
@@ -106,6 +101,7 @@ const EscrowFundsDialog = ({
     domainID,
     loading,
     sectionRowRef,
+    renderActiveDomainOption,
   } = useEscrowFundsDialog(colonyName);
   const [isForce, setIsForce] = useState(false);
 
@@ -143,20 +139,24 @@ const EscrowFundsDialog = ({
             <>
               <div className={styles.dialogContainer}>
                 <DialogSection appearance={{ theme: 'heading' }}>
-                  <FormSection>
-                    {loading ? (
-                      <SpinnerLoader />
-                    ) : (
-                      colonyData && (
-                        <MotionDomainSelect
+                  {loading ? (
+                    <SpinnerLoader />
+                  ) : (
+                    colonyData && (
+                      <div>
+                        <DomainDropdown
                           colony={colonyData.processedColony}
+                          name="motionDomainId"
+                          currentDomainId={domainID}
+                          renderActiveOptionFn={renderActiveDomainOption}
+                          filterOptionsFn={filterDomains}
                           onDomainChange={handleMotionDomainChange}
-                          initialSelectedDomain={domainID}
-                          {...formValues}
+                          showAllDomains={false}
+                          showDescription={false}
                         />
-                      )
-                    )}
-                  </FormSection>
+                      </div>
+                    )
+                  )}
                   <div className={styles.forceContainer}>
                     <div className={styles.margin}>
                       <Toggle

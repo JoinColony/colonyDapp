@@ -24,3 +24,4 @@ export const tooltip: string;
 export const questionIcon: string;
 export const forceContainer: string;
 export const margin: string;
+export const motionActiveItem: string;
