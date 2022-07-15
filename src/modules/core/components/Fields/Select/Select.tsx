@@ -315,9 +315,11 @@ const Select = ({
         >
           <div className={styles.selectInner}>
             <div className={styles.activeOption}>{activeOptionDisplay}</div>
-            <span className={styles.selectExpandContainer}>
-              <Icon name="caret-down-small" title={MSG.expandIconHTMLTitle} />
-            </span>
+            <Icon
+              name="caret-down"
+              className={styles.selectIcon}
+              title={MSG.expandIconHTMLTitle}
+            />
           </div>
         </button>
         {isOpen && !!options.length && (

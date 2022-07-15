@@ -5,10 +5,12 @@ import { SimpleMessageValues } from '~types/index';
 
 export { Props } from './Select';
 
+export type DropdownSize = 'normal' | 'medium' | 'mediumLarge' | 'large';
+
 export interface Appearance {
   alignOptions?: 'left' | 'center' | 'right';
   borderedOptions?: 'true' | 'false';
-  size?: 'medium' | 'mediumLarge' | 'large';
+  size?: DropdownSize;
   theme?: 'default' | 'alt' | 'grey' | 'grid';
   width?: 'content' | 'fluid' | 'strict';
 }

@@ -1,0 +1,107 @@
+.titleContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 35px;
+  min-width: 722px;
+  border-bottom: 1px solid var(--temp-grey-13);
+}
+
+.titleContainer > h3 {
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.titleLeft {
+  display: flex;
+  align-items: center;
+}
+
+.titleLeft > h3 {
+  margin-bottom: 0px;
+}
+
+.titleLeft > form > div > div > div > button {
+  padding: 0;
+  border: 0;
+  font-size: var(--size-medium);
+  color: var(--dark);
+}
+
+.titleSelect {
+  margin-left: 6px;
+}
+
+.searchContainer {
+  margin-top: 15px;
+
+  /* pull down to cover HR */
+  margin-bottom: -1px;
+  padding-right: 42px;
+  width: 300px;
+  position: relative;
+  border-bottom: 1px solid var(--temp-grey-13);
+
+  &:hover {
+    border-bottom: 1px solid var(--primary);
+  }
+
+  &:hover > i > svg {
+    stroke: var(--colony-blue);
+  }
+
+  &:focus-within > i > svg {
+    stroke: var(--colony-blue);
+  }
+}
+
+.icon {
+  height: 20px;
+  width: 20px;
+  position: absolute;
+  top: 40%;
+  right: 2px;
+  z-index: 1;
+  transform: translateY(-50%);
+
+  & svg {
+    stroke: color-mod(var(--temp-grey-blue-7) alpha(65%));
+
+    &:hover {
+      stroke: var(--colony-blue);
+    }
+  }
+}
+
+.input {
+  padding: 4px;
+  height: 32px;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+  border: 0;
+  background-color: transparent;
+  font-size: var(--size-normal);
+  line-height: 32px;
+  color: var(--text);
+  outline: none;
+  letter-spacing: var(--spacing-normal);
+  transition: border-color 0.1s ease-in;
+
+  &::placeholder {
+    font-size: var(--size-normal);
+    color: var(--grey-4);
+    letter-spacing: var(--spacing-normal);
+  }
+}
+
+.clearButton {
+  composes: button from '~styles/reset.css';
+  position: absolute;
+  top: 50%;
+  right: 25px;
+  z-index: 2;
+  transform: translateY(-50%);
+}

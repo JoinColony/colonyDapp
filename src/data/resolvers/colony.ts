@@ -11,6 +11,7 @@ import {
   ROOT_DOMAIN_ID,
   getHistoricColonyRoles,
   formatColonyRoles,
+  ColonyRole,
 } from '@colony/colony-js';
 
 import { Color } from '~core/ColorTag';
@@ -37,6 +38,18 @@ import {
   UserQuery,
   UserQueryVariables,
   UserDocument,
+  ColonyMembersWithReputationQuery,
+  ColonyMembersWithReputationQueryVariables,
+  ColonyMembersWithReputationDocument,
+  ColonyFromNameQuery,
+  ColonyFromNameQueryVariables,
+  ColonyFromNameDocument,
+  ColonyMembersQuery,
+  ColonyMembersQueryVariables,
+  ColonyMembersDocument,
+  BannedUsersQuery,
+  BannedUsersQueryVariables,
+  BannedUsersDocument,
 } from '~data/index';
 
 import { createAddress } from '~utils/web3';
@@ -45,6 +58,7 @@ import { parseSubgraphEvent } from '~utils/events';
 import { Address } from '~types/index';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import { getAllUserRolesForDomain } from '~modules/transformers';
 
 import { getToken } from './token';
 import {
@@ -52,6 +66,7 @@ import {
   getPayoutClaimedTransfers,
   getColonyUnclaimedTransfers,
 } from './transactions';
+import { getUserReputation } from './user';
 
 export const getLatestSubgraphBlock = async (
   apolloClient: ApolloClient<object>,
@@ -318,7 +333,7 @@ export const colonyResolvers = ({
       _,
       {
         colonyAddress,
-        domainId = COLONY_TOTAL_BALANCE_DOMAIN_ID,
+        domainId = ROOT_DOMAIN_ID,
       }: { colonyAddress: Address; domainId: number },
     ) {
       const colonyClient = await colonyManager.getClient(
@@ -328,6 +343,205 @@ export const colonyResolvers = ({
       const { skillId } = await colonyClient.getDomain(domainId);
       const { addresses } = await colonyClient.getMembersReputation(skillId);
       return addresses || [];
+    },
+    async contributorsAndWatchers(
+      _,
+      {
+        colonyAddress,
+        colonyName,
+        domainId = COLONY_TOTAL_BALANCE_DOMAIN_ID,
+      }: { colonyAddress: Address; colonyName: string; domainId: number },
+    ) {
+      const { data: colony } = await apolloClient.query<
+        ColonyFromNameQuery,
+        ColonyFromNameQueryVariables
+      >({
+        query: ColonyFromNameDocument,
+        variables: {
+          name: colonyName,
+          address: colonyAddress.toLowerCase(),
+        },
+        fetchPolicy: 'network-only',
+      });
+      const verifiedAddresses = colony?.processedColony.whitelistedAddresses;
+
+      const domainIdchecked =
+        domainId === COLONY_TOTAL_BALANCE_DOMAIN_ID ? ROOT_DOMAIN_ID : domainId;
+
+      const domainRoles = getAllUserRolesForDomain(
+        colony?.processedColony,
+        domainIdchecked,
+      );
+      const directDomainRoles = getAllUserRolesForDomain(
+        colony?.processedColony,
+        domainIdchecked,
+        true,
+      );
+
+      const inheritedDomainRoles = getAllUserRolesForDomain(
+        colony?.processedColony,
+        ROOT_DOMAIN_ID,
+        true,
+      );
+
+      const domainRolesArray = domainRoles
+        .sort(({ roles }) => (roles.includes(ColonyRole.Root) ? -1 : 1))
+        .filter(({ roles }) => !!roles.length)
+        .map(({ address, roles }) => {
+          const directUserRoles = directDomainRoles.find(
+            ({ address: userAddress }) => userAddress === address,
+          );
+          const rootRoles = inheritedDomainRoles.find(
+            ({ address: userAddress }) => userAddress === address,
+          );
+          const allUserRoles = [
+            ...new Set([
+              ...(directUserRoles?.roles || []),
+              ...(rootRoles?.roles || []),
+            ]),
+          ];
+          return {
+            userAddress: address,
+            roles,
+            directRoles: allUserRoles,
+          };
+        });
+
+      const { data: membersWithReputationData } = await apolloClient.query<
+        ColonyMembersWithReputationQuery,
+        ColonyMembersWithReputationQueryVariables
+      >({
+        query: ColonyMembersWithReputationDocument,
+        variables: {
+          colonyAddress: colonyAddress.toLowerCase(),
+          domainId: domainIdchecked,
+        },
+        fetchPolicy: 'network-only',
+      });
+
+      const membersWithReputation = [
+        ...(membersWithReputationData?.colonyMembersWithReputation || []),
+      ];
+
+      const { data: members } = await apolloClient.query<
+        ColonyMembersQuery,
+        ColonyMembersQueryVariables
+      >({
+        query: ColonyMembersDocument,
+        variables: {
+          colonyAddress,
+        },
+        fetchPolicy: 'network-only',
+      });
+
+      const { data: bannedUsers } = await apolloClient.query<
+        BannedUsersQuery,
+        BannedUsersQueryVariables
+      >({
+        query: BannedUsersDocument,
+        variables: {
+          colonyAddress,
+        },
+        fetchPolicy: 'network-only',
+      });
+
+      const contributors: any[] = [];
+      const watchers: any[] = [];
+
+      members?.subscribedUsers.forEach((user) => {
+        const {
+          profile: { walletAddress },
+        } = user;
+        const isWhitelisted = verifiedAddresses?.includes(
+          createAddress(walletAddress),
+        );
+
+        const isUserBanned = bannedUsers?.bannedUsers?.find(
+          ({
+            id: bannedUserWalletAddress,
+            banned,
+          }: {
+            id: Address;
+            banned: boolean;
+          }) =>
+            banned &&
+            createAddress(bannedUserWalletAddress) ===
+              createAddress(walletAddress),
+        );
+
+        const domainRole = domainRolesArray.find(
+          (rolesObject) =>
+            createAddress(rolesObject.userAddress) ===
+            createAddress(walletAddress),
+        );
+
+        const indexInReputationArr = membersWithReputation.indexOf(
+          walletAddress.toLowerCase(),
+        );
+        if (indexInReputationArr > -1) {
+          membersWithReputation.splice(indexInReputationArr, 1);
+        }
+
+        if (domainRole || indexInReputationArr > -1) {
+          contributors.push({
+            ...user,
+            roles: domainRole ? domainRole.roles : [],
+            directRoles: domainRole ? domainRole.directRoles : [],
+            banned: !!isUserBanned,
+            isWhitelisted,
+          });
+        } else {
+          watchers.push({ ...user, banned: !!isUserBanned, isWhitelisted });
+        }
+      });
+
+      membersWithReputation.forEach((walletAddress) => {
+        const address = createAddress(walletAddress);
+        const isWhitelisted = verifiedAddresses?.includes(address);
+
+        const isUserBanned = bannedUsers?.bannedUsers?.find(
+          ({
+            id: bannedUserWalletAddress,
+            banned,
+          }: {
+            id: Address;
+            banned: boolean;
+          }) => banned && createAddress(bannedUserWalletAddress) === address,
+        );
+
+        contributors.push({
+          __typename: 'User',
+          id: address,
+          profile: {
+            __typename: 'UserProfile',
+            walletAddress: address,
+            avatarHash: null,
+            displayName: null,
+            username: null,
+          },
+          roles: [],
+          directRoles: [],
+          banned: !!isUserBanned,
+          isWhitelisted,
+        });
+      });
+
+      const contributorsWithReputation = await Promise.all(
+        contributors.map(async (contributor) => {
+          const contributorReputation = await getUserReputation(
+            colonyManager,
+            contributor.profile.walletAddress,
+            colonyAddress,
+            domainId,
+          );
+          return {
+            ...contributor,
+            userReputation: contributorReputation.toString(),
+          };
+        }),
+      );
+
+      return { contributors: contributorsWithReputation, watchers };
     },
     async colonyDomain(_, { colonyAddress, domainId }) {
       const { data } = await apolloClient.query<

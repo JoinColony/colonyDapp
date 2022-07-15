@@ -21,30 +21,9 @@
    */
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.2;
   white-space: nowrap;
   color: var(--dark);
   letter-spacing: 0px;
   cursor: default;
-}
-
-.colonyMenu {
-  composes: flexContainerRow flexAlignCenter from '~styles/layout.css';
-  margin-top: -4px;
-}
-
-.colonyAddress {
-  padding: 4px 5px;
-  height: 24px;
-  border-radius: var(--radius-normal);
-  text-align: center;
-  line-height: var(--size-smallish);
-  color: var(--temp-grey-blue-7);
-  cursor: pointer;
-  user-select: none;
-  outline: 0;
-}
-
-.colonyAddress:hover {
-  background-color: color-mod(var(--colony-blue) alpha(10%));
-  color: var(--colony-blue);
 }

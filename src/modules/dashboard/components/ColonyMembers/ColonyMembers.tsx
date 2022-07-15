@@ -1,72 +1,68 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
-import { ColonyVersion, Extension } from '@colony/colony-js';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+import Decimal from 'decimal.js';
+import { AddressZero } from 'ethers/constants';
 
-import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
-import { BanUserDialog } from '~core/Comment';
+import Heading from '~core/Heading';
+import Numeral from '~core/Numeral';
+import {
+  COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  DEFAULT_TOKEN_DECIMALS,
+} from '~constants';
 
 import LoadingTemplate from '~pages/LoadingTemplate';
 import Members from '~dashboard/Members';
-import PermissionManagementDialog from '~dialogs/PermissionManagementDialog';
 import WrongNetworkDialog from '~dialogs/WrongNetworkDialog';
+import InviteLinkButton from '~dashboard/InviteLinkButton';
 
 import {
   useColonyFromNameQuery,
-  Colony,
-  useColonyExtensionsQuery,
-  useBannedUsersQuery,
   useLoggedInUser,
+  useUserReputationQuery,
 } from '~data/index';
-import { useTransformer } from '~utils/hooks';
-import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
+import { getFormattedTokenValue } from '~utils/tokens';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
-import { getAllUserRoles } from '~modules/transformers';
-import { hasRoot, canAdminister } from '~modules/users/checks';
-import { oneTxMustBeUpgraded } from '~modules/dashboard/checks';
 
+import MembersFilter, {
+  BannedStatus,
+  FormValues,
+  MemberType,
+  VerificationType,
+} from './MembersFilter';
+import MemberControls from './MemberControls';
 import styles from './ColonyMembers.css';
-import ManageWhitelistDialog from '~dashboard/Dialogs/ManageWhitelistDialog';
 
 const displayName = 'dashboard.ColonyMembers';
 
 const MSG = defineMessages({
-  editPermissions: {
-    id: 'dashboard.ColonyMembers.editPermissions',
-    defaultMessage: 'Edit permissions',
-  },
-  banAddress: {
-    id: 'dashboard.ColonyMembers.banAddress',
-    defaultMessage: 'Ban address',
-  },
-  unbanAddress: {
-    id: 'dashboard.ColonyMembers.unbanAddress',
-    defaultMessage: 'Unban address',
-  },
-  manageWhitelist: {
-    id: 'dashboard.ColonyMembers.manageWhitelist',
-    defaultMessage: 'Manage address book',
-  },
   loadingText: {
     id: 'dashboard.ColonyMembers.loadingText',
     defaultMessage: 'Loading Colony',
   },
+  totalReputationTitle: {
+    id: 'dashboard.ColonyMembers.totalReputationTitle',
+    defaultMessage: 'Total reputation in team',
+  },
 });
 
 const ColonyMembers = () => {
-  const {
-    networkId,
-    username,
-    ethereal,
-    walletAddress: currentUserWalletAddress,
-  } = useLoggedInUser();
+  const [filters, setFilters] = useState<FormValues>({
+    memberType: MemberType.ALL,
+    verificationType: VerificationType.ALL,
+    bannedStatus: BannedStatus.ALL,
+  });
+
+  const { networkId, ethereal } = useLoggedInUser();
+  const { domainId } = useParams<{
+    domainId: string;
+  }>();
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
-  const hasRegisteredProfile = !!username && !ethereal;
 
   const openWrongNetworkDialog = useDialog(WrongNetworkDialog);
-  const openToggleBanningDialog = useDialog(BanUserDialog);
 
   const { colonyName } = useParams<{
     colonyName: string;
@@ -79,83 +75,55 @@ const ColonyMembers = () => {
 
   const colonyAddress = colonyData?.processedColony?.colonyAddress || '';
 
-  const { isVotingExtensionEnabled } = useEnabledExtensions({
-    colonyAddress,
-  });
-
   useEffect(() => {
     if (!ethereal && !isNetworkAllowed) {
       openWrongNetworkDialog();
     }
   }, [ethereal, isNetworkAllowed, openWrongNetworkDialog]);
 
-  const {
-    data: colonyExtensions,
-    loading: colonyExtensionLoading,
-  } = useColonyExtensionsQuery({
-    variables: { address: colonyAddress },
-  });
-
-  const {
-    data: bannedMembers,
-    loading: loadingBannedUsers,
-  } = useBannedUsersQuery({
-    variables: {
-      colonyAddress,
-    },
-  });
-
-  const openPermissionManagementDialog = useDialog(PermissionManagementDialog);
-
-  const handlePermissionManagementDialog = useCallback(() => {
-    openPermissionManagementDialog({
-      colony: colonyData?.processedColony as Colony,
-      isVotingExtensionEnabled,
-    });
-  }, [openPermissionManagementDialog, colonyData, isVotingExtensionEnabled]);
-
-  const openToggleManageWhitelistDialog = useDialog(ManageWhitelistDialog);
-
-  const handleToggleWhitelistDialog = useCallback(() => {
-    // @ts-ignore
-    return openToggleManageWhitelistDialog({
-      colony: colonyData?.processedColony as Colony,
-    });
-  }, [openToggleManageWhitelistDialog, colonyData]);
-
-  // eslint-disable-next-line max-len
-  const oneTxPaymentExtension = colonyExtensions?.processedColony?.installedExtensions.find(
-    ({ details, extensionId: extensionName }) =>
-      details?.initialized &&
-      !details?.missingPermissions.length &&
-      extensionName === Extension.OneTxPayment,
+  const [selectedDomainId, setSelectedDomainId] = useState<number>(
+    /*
+     * @NOTE DomainId param sanitization
+     *
+     * We don't actually need to worry about sanitizing the domainId that's
+     * coming in from the params.
+     * The value that reaches us through the hook is being processes by `react-router`
+     * and will always be a string.
+     *
+     * So if we can change that string into a number, we use it as domain, otherwise
+     * we fall back to the "All Domains" selection
+     */
+    parseInt(domainId, 10) || COLONY_TOTAL_BALANCE_DOMAIN_ID,
   );
-  const mustUpgradeOneTx = oneTxMustBeUpgraded(oneTxPaymentExtension);
 
-  const isSupportedColonyVersion =
-    parseInt(colonyData?.processedColony?.version || '1', 10) >=
-    ColonyVersion.LightweightSpaceship;
+  const isRootDomain = useMemo(
+    () =>
+      selectedDomainId === ROOT_DOMAIN_ID ||
+      selectedDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID,
+    [selectedDomainId],
+  );
 
-  const currentUserRoles = useTransformer(getAllUserRoles, [
-    colonyData?.processedColony,
-    currentUserWalletAddress,
-  ]);
-  const canAdministerComments =
-    hasRegisteredProfile &&
-    (hasRoot(currentUserRoles) || canAdminister(currentUserRoles));
-  const canManageWhitelist = hasRegisteredProfile && hasRoot(currentUserRoles);
+  const { data: totalReputation } = useUserReputationQuery({
+    variables: {
+      address: AddressZero,
+      colonyAddress,
+      domainId: selectedDomainId,
+    },
+    fetchPolicy: 'cache-and-network',
+  });
 
-  const controlsDisabled =
-    !isSupportedColonyVersion ||
-    !isNetworkAllowed ||
-    !hasRegisteredProfile ||
-    !colonyData?.processedColony?.isDeploymentFinished ||
-    mustUpgradeOneTx;
+  const nativeToken = colonyData?.processedColony?.tokens.find(
+    ({ address }) =>
+      address === colonyData?.processedColony?.nativeTokenAddress,
+  );
+
+  const formattedTotalDomainRep = getFormattedTokenValue(
+    new Decimal(totalReputation?.userReputation || '0').abs().toString(),
+    nativeToken?.decimals || DEFAULT_TOKEN_DECIMALS,
+  );
 
   if (
     loading ||
-    colonyExtensionLoading ||
-    loadingBannedUsers ||
     (colonyData?.colonyAddress &&
       !colonyData.processedColony &&
       !((colonyData.colonyAddress as any) instanceof Error))
@@ -178,68 +146,41 @@ const ColonyMembers = () => {
         <div className={styles.mainContent}>
           {colonyData && colonyData.processedColony && (
             <Members
-              colony={colonyData.processedColony}
-              bannedUsers={bannedMembers?.bannedUsers || []}
+              selectedDomain={selectedDomainId}
+              handleDomainChange={setSelectedDomainId}
+              filters={filters}
+              colony={colonyData?.processedColony}
             />
           )}
         </div>
         <aside className={styles.rightAside}>
-          {!controlsDisabled && (
-            <ul className={styles.controls}>
+          <div className={styles.teamReputationPointsContainer}>
+            <Heading
+              text={MSG.totalReputationTitle}
+              appearance={{ size: 'normal', theme: 'dark' }}
+            />
+            <p className={styles.reputationPoints}>
+              <Numeral
+                value={formattedTotalDomainRep}
+                suffix="reputation points"
+              />
+            </p>
+          </div>
+          <ul className={styles.controls}>
+            {isRootDomain && (
               <li>
-                <Button
-                  appearance={{ theme: 'blue' }}
-                  text={MSG.editPermissions}
-                  onClick={handlePermissionManagementDialog}
-                  disabled={
-                    !isSupportedColonyVersion ||
-                    !isNetworkAllowed ||
-                    !hasRegisteredProfile ||
-                    !colonyData?.processedColony?.isDeploymentFinished ||
-                    mustUpgradeOneTx
-                  }
+                <InviteLinkButton
+                  colonyName={colonyName}
+                  buttonAppearance={{ theme: 'blue' }}
                 />
               </li>
-              {canAdministerComments && (
-                <>
-                  <li>
-                    <Button
-                      appearance={{ theme: 'blue' }}
-                      text={MSG.banAddress}
-                      onClick={() =>
-                        openToggleBanningDialog({
-                          colonyAddress:
-                            colonyData?.processedColony?.colonyAddress,
-                        })
-                      }
-                    />
-                  </li>
-                  <li>
-                    <Button
-                      appearance={{ theme: 'blue' }}
-                      text={MSG.unbanAddress}
-                      onClick={() =>
-                        openToggleBanningDialog({
-                          isBanning: false,
-                          colonyAddress:
-                            colonyData?.processedColony?.colonyAddress,
-                        })
-                      }
-                    />
-                  </li>
-                </>
-              )}
-              {canManageWhitelist && (
-                <li>
-                  <Button
-                    appearance={{ theme: 'blue' }}
-                    text={MSG.manageWhitelist}
-                    onClick={handleToggleWhitelistDialog}
-                  />
-                </li>
-              )}
-            </ul>
-          )}
+            )}
+            <MemberControls colony={colonyData?.processedColony} />
+          </ul>
+          <MembersFilter
+            handleFiltersCallback={setFilters}
+            isRoot={isRootDomain}
+          />
         </aside>
       </div>
     </div>

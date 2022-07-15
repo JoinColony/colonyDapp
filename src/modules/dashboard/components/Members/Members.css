@@ -1,5 +1,10 @@
+.membersContainer {
+  display: flex;
+}
+
 .main {
   margin-top: 20px;
+  min-width: 618px;
 }
 
 .main table .tableBody {
@@ -78,17 +83,9 @@
   background-color: var(--temp-grey-12);
 }
 
-.titleContainer {
+.noResults {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  margin-bottom: 35px;
-  border-bottom: 1px solid var(--temp-grey-13);
-}
-
-.titleContainer h3 {
-  max-width: 250px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  margin-bottom: 50px;
 }

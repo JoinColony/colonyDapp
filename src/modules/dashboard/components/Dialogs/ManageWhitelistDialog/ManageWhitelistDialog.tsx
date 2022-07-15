@@ -31,14 +31,17 @@ export interface FormValues {
   annotation: string;
   isWhitelistActivated: boolean;
   whitelistedAddresses: Address[];
+  whitelistAddress?: Address;
 }
 
 interface CustomWizardDialogProps {
-  prevStep?: string;
   colony: Colony;
+  userAddress?: string;
 }
 
-type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
+type Props = DialogProps &
+  Partial<WizardDialogType<object>> &
+  CustomWizardDialogProps;
 
 const displayName = 'dashboard.ManageWhitelistDialog';
 
@@ -55,6 +58,7 @@ const ManageWhitelistDialog = ({
     tokenAddresses,
     nativeTokenAddress,
   },
+  userAddress,
 }: Props) => {
   const [showInput, setShowInput] = useState<boolean>(true);
   const [formSuccess, setFormSuccess] = useState<boolean>(false);
@@ -165,6 +169,7 @@ const ManageWhitelistDialog = ({
         isWhitelistActivated: colonyData?.processedColony?.isWhitelistActivated,
         whitelistedAddresses: storedVerifiedRecipients,
         isSubmitting: false,
+        whitelistAddress: userAddress,
       }}
       submit={ActionTypes.VERIFIED_RECIPIENTS_MANAGE}
       error={ActionTypes.VERIFIED_RECIPIENTS_MANAGE_ERROR}
@@ -185,7 +190,7 @@ const ManageWhitelistDialog = ({
             {...formValues}
             colony={colony}
             whitelistedUsers={data?.verifiedUsers || []}
-            back={prevStep ? () => callStep(prevStep) : cancel}
+            back={prevStep && callStep ? () => callStep(prevStep) : cancel}
             showInput={showInput}
             toggleShowInput={handleToggleShowInput}
             formSuccess={formSuccess}

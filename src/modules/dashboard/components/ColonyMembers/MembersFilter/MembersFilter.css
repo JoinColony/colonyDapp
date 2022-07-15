@@ -1,0 +1,24 @@
+.divider {
+  margin: 30px 0;
+  width: 220px;
+  background-color: var(--temp-grey-13);
+}
+
+.titleContainer {
+  margin-bottom: 17px;
+}
+
+.title {
+  margin-right: 15px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.filters {
+  margin-bottom: 110px;
+}
+
+.filters > div {
+  width: 206px;
+}

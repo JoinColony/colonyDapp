@@ -2,12 +2,15 @@ import React, { useEffect } from 'react';
 import { defineMessages } from 'react-intl';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
+import Decimal from 'decimal.js';
 
+import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import { useUserReputationQuery } from '~data/index';
 import { Address } from '~types/index';
 import Numeral from '~core/Numeral';
 import Icon from '~core/Icon';
 import { calculatePercentageReputation, ZeroValue } from '~utils/reputation';
+import { getFormattedTokenValue } from '~utils/tokens';
 
 import styles from './MemberReputation.css';
 
@@ -29,6 +32,8 @@ interface Props {
   rootHash?: string;
   onReputationLoaded?: (reputationLoaded: boolean) => void;
   showIconTitle?: boolean;
+  showReputationPoints?: boolean;
+  nativeTokenDecimals?: number;
 }
 
 const displayName = 'MemberReputation';
@@ -40,6 +45,8 @@ const MemberReputation = ({
   rootHash,
   onReputationLoaded = () => null,
   showIconTitle = true,
+  showReputationPoints = false,
+  nativeTokenDecimals = DEFAULT_TOKEN_DECIMALS,
 }: Props) => {
   const { data: userReputationData } = useUserReputationQuery({
     variables: { address: walletAddress, colonyAddress, domainId, rootHash },
@@ -59,6 +66,10 @@ const MemberReputation = ({
   const userPercentageReputation = calculatePercentageReputation(
     userReputationData?.userReputation,
     totalReputation?.userReputation,
+  );
+  const formattedReputationPoints = getFormattedTokenValue(
+    new Decimal(userReputationData?.userReputation || 0).toString(),
+    nativeTokenDecimals,
   );
 
   useEffect(() => {
@@ -92,6 +103,17 @@ const MemberReputation = ({
             suffix="%"
           />
         )}
+      {showReputationPoints && (
+        <div className={styles.reputationPointsContainer}>
+          <span className={styles.reputationPoints}>(</span>
+          <Numeral
+            className={styles.reputationPoints}
+            appearance={{ theme: 'primary' }}
+            value={formattedReputationPoints}
+            suffix="pts)"
+          />
+        </div>
+      )}
       <Icon
         name="star"
         appearance={{ size: 'extraTiny' }}

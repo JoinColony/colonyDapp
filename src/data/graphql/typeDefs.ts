@@ -250,11 +250,38 @@ export default gql`
     reputationPercentage: String!
   }
 
+  type ColonyContributor {
+    id: String!
+    directRoles: [Int!]!
+    roles: [Int!]!
+    banned: Boolean!
+    profile: UserProfile!
+    isWhitelisted: Boolean!
+    userReputation: String!
+  }
+
+  type ColonyWatcher {
+    id: String!
+    profile: UserProfile!
+    banned: Boolean!
+    isWhitelisted: Boolean!
+  }
+
+  type ContributorsAndWatchers {
+    contributors: [ColonyContributor!]!
+    watchers: [ColonyWatcher!]!
+  }
+
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
     colonyName(address: String!): String!
     colonyReputation(address: String!, domainId: Int): String
+    contributorsAndWatchers(
+      colonyAddress: String!
+      colonyName: String!
+      domainId: Int
+    ): ContributorsAndWatchers
     colonyMembersWithReputation(
       colonyAddress: String!
       domainId: Int

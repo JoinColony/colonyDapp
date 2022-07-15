@@ -18,3 +18,11 @@
   composes: content;
   margin-top: 30px;
 }
+
+.content button i {
+  min-width: 10px;
+}
+
+.content button > div {
+  height: 21px;
+}

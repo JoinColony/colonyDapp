@@ -1,6 +1,6 @@
 .main {
   display: block;
-  margin-top: 40px;
+  margin-top: 25px;
 }
 
 .main a h4 {
@@ -41,19 +41,25 @@
 .remaningAvatars {
   display: inline-block;
   margin: 0;
-  padding-top: 5px;
+  vertical-align: top;
+}
+
+.remaningAvatars > a {
+  display: inline-block;
+  padding-top: 6px;
   height: 30px;
   width: 30px;
-  vertical-align: top;
-  border: 2px solid transparent;
   border-radius: 50px;
   background-color: var(--colony-white);
   font-size: var(--size-tiny);
-  font-weight: var(--weight-bold);
   text-align: center;
   color: var(--temp-grey-blue-7);
-  cursor: default;
   letter-spacing: var(--spacing-medium);
+}
+
+.remaningAvatars:hover > a {
+  background-color: color-mod(var(--action-secondary) alpha(12%));
+  color: var(--action-secondary);
 }
 
 .loadingText {
@@ -72,4 +78,22 @@
   margin: -12px -4px -8px 0;
   position: relative;
   float: right;
+}
+
+.tooltip {
+  width: 170px;
+}
+
+.heading {
+  display: flex;
+  align-items: flex-start;
+}
+
+.heading > span + span,
+.heading > span:last-child {
+  margin-left: 4px;
+}
+
+.heading > span:first-child {
+  margin-left: 0;
 }

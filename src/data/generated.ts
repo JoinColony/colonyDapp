@@ -250,6 +250,7 @@ export type Query = {
   colonyMembersWithReputation?: Maybe<Array<Scalars['String']>>;
   colonyName: Scalars['String'];
   colonyReputation?: Maybe<Scalars['String']>;
+  contributorsAndWatchers?: Maybe<ContributorsAndWatchers>;
   currentPeriodTokens: CurrentPeriodTokens;
   domain: SubgraphUnusedDomain;
   domainBalance: Scalars['String'];
@@ -434,6 +435,13 @@ export type QueryColonyNameArgs = {
 
 export type QueryColonyReputationArgs = {
   address: Scalars['String'];
+  domainId?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryContributorsAndWatchersArgs = {
+  colonyAddress: Scalars['String'];
+  colonyName: Scalars['String'];
   domainId?: Maybe<Scalars['Int']>;
 };
 
@@ -1113,6 +1121,28 @@ export type ActionThatNeedsAttention = {
 export type UserDomainReputation = {
   domainId: Scalars['Int'];
   reputationPercentage: Scalars['String'];
+};
+
+export type ColonyContributor = {
+  id: Scalars['String'];
+  directRoles: Array<Scalars['Int']>;
+  roles: Array<Scalars['Int']>;
+  banned: Scalars['Boolean'];
+  profile: UserProfile;
+  isWhitelisted: Scalars['Boolean'];
+  userReputation: Scalars['String'];
+};
+
+export type ColonyWatcher = {
+  id: Scalars['String'];
+  profile: UserProfile;
+  banned: Scalars['Boolean'];
+  isWhitelisted: Scalars['Boolean'];
+};
+
+export type ContributorsAndWatchers = {
+  contributors: Array<ColonyContributor>;
+  watchers: Array<ColonyWatcher>;
 };
 
 export type ByColonyFilter = {
@@ -2031,6 +2061,21 @@ export type ColonyMembersWithReputationQueryVariables = Exact<{
 
 
 export type ColonyMembersWithReputationQuery = Pick<Query, 'colonyMembersWithReputation'>;
+
+export type ContributorsAndWatchersQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  colonyName: Scalars['String'];
+  domainId?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type ContributorsAndWatchersQuery = { contributorsAndWatchers?: Maybe<{ contributors: Array<(
+      Pick<ColonyContributor, 'id' | 'directRoles' | 'roles' | 'banned' | 'isWhitelisted' | 'userReputation'>
+      & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
+    )>, watchers: Array<(
+      Pick<ColonyWatcher, 'id' | 'banned' | 'isWhitelisted'>
+      & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
+    )> }> };
 
 export type ColonyReputationQueryVariables = Exact<{
   address: Scalars['String'];
@@ -5121,6 +5166,65 @@ export function useColonyMembersWithReputationLazyQuery(baseOptions?: Apollo.Laz
 export type ColonyMembersWithReputationQueryHookResult = ReturnType<typeof useColonyMembersWithReputationQuery>;
 export type ColonyMembersWithReputationLazyQueryHookResult = ReturnType<typeof useColonyMembersWithReputationLazyQuery>;
 export type ColonyMembersWithReputationQueryResult = Apollo.QueryResult<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>;
+export const ContributorsAndWatchersDocument = gql`
+    query ContributorsAndWatchers($colonyAddress: String!, $colonyName: String!, $domainId: Int) {
+  contributorsAndWatchers(colonyAddress: $colonyAddress, colonyName: $colonyName, domainId: $domainId) @client {
+    contributors {
+      id
+      directRoles
+      roles
+      banned
+      isWhitelisted
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+      userReputation
+    }
+    watchers {
+      id
+      banned
+      isWhitelisted
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useContributorsAndWatchersQuery__
+ *
+ * To run a query within a React component, call `useContributorsAndWatchersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useContributorsAndWatchersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useContributorsAndWatchersQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      colonyName: // value for 'colonyName'
+ *      domainId: // value for 'domainId'
+ *   },
+ * });
+ */
+export function useContributorsAndWatchersQuery(baseOptions?: Apollo.QueryHookOptions<ContributorsAndWatchersQuery, ContributorsAndWatchersQueryVariables>) {
+        return Apollo.useQuery<ContributorsAndWatchersQuery, ContributorsAndWatchersQueryVariables>(ContributorsAndWatchersDocument, baseOptions);
+      }
+export function useContributorsAndWatchersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ContributorsAndWatchersQuery, ContributorsAndWatchersQueryVariables>) {
+          return Apollo.useLazyQuery<ContributorsAndWatchersQuery, ContributorsAndWatchersQueryVariables>(ContributorsAndWatchersDocument, baseOptions);
+        }
+export type ContributorsAndWatchersQueryHookResult = ReturnType<typeof useContributorsAndWatchersQuery>;
+export type ContributorsAndWatchersLazyQueryHookResult = ReturnType<typeof useContributorsAndWatchersLazyQuery>;
+export type ContributorsAndWatchersQueryResult = Apollo.QueryResult<ContributorsAndWatchersQuery, ContributorsAndWatchersQueryVariables>;
 export const ColonyReputationDocument = gql`
     query ColonyReputation($address: String!, $domainId: Int) {
   colonyReputation(address: $address, domainId: $domainId) @client

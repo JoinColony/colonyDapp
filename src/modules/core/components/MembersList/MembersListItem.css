@@ -1,7 +1,8 @@
 .main {
   display: flex;
   align-items: center;
-  overflow-y: auto;
+  padding-right: 15px;
+  min-width: 722px;
 }
 
 .section {
@@ -14,8 +15,12 @@
 
 .usernameSection {
   composes: section;
-  composes: inlineEllipsis from '~styles/text.css';
-  flex-grow: 1;
+  flex-grow: 0.5;
+  margin-right: auto;
+  width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .displayName {
@@ -24,6 +29,7 @@
 }
 
 .displayName + .username {
+  display: inline-flex;
   margin-left: 5px;
 }
 
@@ -34,15 +40,16 @@
 }
 
 .address span {
+  font-size: var(--size-normal);
   font-weight: 500;
 }
 
 .reputationSection {
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-left: 26px;
-  width: 69px;
+  justify-content: flex-end;
+  margin-right: 20px;
+  width: 170px;
 }
 
 .stateHasReputation {
@@ -64,5 +71,5 @@
 }
 
 .whitelistedIconTooltip {
-  width: initial;
+  width: 130px;
 }
