@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import React, { useCallback, useMemo, useState } from 'react';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import * as yup from 'yup';
 import { useApolloClient } from '@apollo/client';
 
@@ -23,7 +23,7 @@ import { checkIfNetworkIsAllowed } from '~utils/networks';
 import styles from './StepColonyName.css';
 
 interface FormValues {
-  colonyUniqueURL: string;
+  displayName: string;
   colonyName: string;
   username: string;
 }
@@ -49,12 +49,12 @@ const MSG = defineMessages({
     id: 'dashboard.CreateColonyWizard.StepColonyName.descriptionOne',
     defaultMessage: `What would you like to name your colony? Note, it is not possible to change it later.`,
   },
-  label: {
-    id: 'dashboard.CreateColonyWizard.StepColonyName.label',
+  colonyUniqueURLlabel: {
+    id: 'dashboard.CreateColonyWizard.StepColonyName.colonyUniqueURLlabel',
     defaultMessage: 'Colony Unique URL',
   },
-  labelDisplay: {
-    id: 'dashboard.CreateColonyWizard.StepColonyName.labelDisplay',
+  colonyNameLabel: {
+    id: 'dashboard.CreateColonyWizard.StepColonyName.colonyNameLabel',
     defaultMessage: 'Colony Name',
   },
   continue: {
@@ -73,14 +73,13 @@ const MSG = defineMessages({
     id: 'users.CreateColonyWizard.StepColonyName.tooltip',
     defaultMessage: `We use ENS to create a .{displayENSDomain} subdomain for your colony. You can use this to create a custom URL and invite people to join your colony.`,
   },
+  keyRequired: {
+    id: 'users.CreateColonyWizard.StepColonyName.keyRequired',
+    defaultMessage: `{key} is a required field`,
+  },
 });
 
 const displayName = 'dashboard.CreateColonyWizard.StepColonyName';
-
-const validationSchema = yup.object({
-  colonyName: yup.string().required().ensAddress(),
-  colonyUniqueURL: yup.string().required(),
-});
 
 const StepColonyName = ({
   wizardForm,
@@ -88,6 +87,29 @@ const StepColonyName = ({
   stepCompleted,
   wizardValues,
 }: Props) => {
+  const { formatMessage } = useIntl();
+  const validationSchema = useMemo(
+    () =>
+      yup.object({
+        colonyName: yup
+          .string()
+          .required(
+            // use 'UI' fieldname in error message
+            formatMessage(MSG.keyRequired, {
+              key: formatMessage(MSG.colonyUniqueURLlabel),
+            }),
+          )
+          .ensAddress(),
+        displayName: yup.string().required(
+          // use 'UI' fieldname in error message
+          formatMessage(MSG.keyRequired, {
+            key: formatMessage(MSG.colonyNameLabel),
+          }),
+        ),
+      }),
+    [formatMessage],
+  );
+
   const apolloClient = useApolloClient();
 
   const checkDomainTaken = useCallback(
@@ -123,7 +145,10 @@ const StepColonyName = ({
   const [currentENSName, setCurrentENSName] = useState<string | undefined>();
 
   // @TODO debounce colony name validation
-  // @BODY this is a bit harder than you'd expect. We have to make sure that validation still works and that the user can't just remove a character quickly and then move on without the validation to happen.
+  // @BODY this is a bit harder than you'd expect.
+  // We have to make sure that validation still works
+  // and that the user can't just remove a character
+  // quickly and then move on without the validation to happen.
   const validateDomain = useCallback(
     async (values: FormValues) => {
       if (values && currentENSName === values.colonyName) {
@@ -147,7 +172,7 @@ const StepColonyName = ({
       setCurrentENSName(values.colonyName);
       return {};
     },
-    [checkDomainTaken, currentENSName, setCurrentENSName],
+    [checkDomainTaken, currentENSName, validationSchema],
   );
 
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
@@ -197,18 +222,18 @@ const StepColonyName = ({
             <div className={styles.nameForm}>
               <Input
                 appearance={{ theme: 'fat' }}
-                name="colonyName"
+                name="displayName" // In Metatdata corresponds to: colonyDisplayName
                 data-test="claimColonyDisplayNameInput"
-                label={MSG.labelDisplay}
+                label={MSG.colonyNameLabel}
                 disabled={!isNetworkAllowed || isSubmitting}
               />
               <Input
                 appearance={{ theme: 'fat' }}
-                name="colonyUniqueURL"
+                name="colonyName" // In Metatdata corresponds to: colonyName
                 data-test="claimColonyNameInput"
                 // eslint-disable-next-line max-len
                 extensionString={`.colony.${DEFAULT_NETWORK_INFO.displayENSDomain}`}
-                label={MSG.label}
+                label={MSG.colonyUniqueURLlabel}
                 status={normalized !== colonyName ? MSG.statusText : undefined}
                 formattingOptions={{ lowercase: true, blocks: [256] }}
                 statusValues={{ normalized }}
