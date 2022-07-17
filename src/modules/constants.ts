@@ -110,6 +110,7 @@ export const GOERLI_NETWORK: NetworkInfo = {
   tokenExplorerLink: 'https://goerli.etherscan.io/tokens',
   contractAddressLink: 'https://goerli.etherscan.io/address',
   rpcUrl: 'https://goerli.infura.io/v3',
+  gnosisTxService: 'https://safe-transaction.goerli.gnosis.io/',
 };
 
 const ARBITRUM_NETWORK: NetworkInfo = {
@@ -199,6 +200,7 @@ export const SUPPORTED_NETWORKS = {
   [GANACHE_NETWORK.chainId]: GANACHE_NETWORK,
 };
 
+// @TODO: Update with complete list.
 export const GNOSIS_SAFE_NETWORKS: NetworkInfo[] = [
   GNOSIS_NETWORK,
   ETHEREUM_NETWORK,
@@ -208,6 +210,7 @@ export const GNOSIS_SAFE_NETWORKS: NetworkInfo[] = [
   BINANCE_NETWORK,
   OPTIMISM_NETWORK,
   POLYGON_NETWORK,
+  GOERLI_NETWORK,
 ];
 
 export const DEFAULT_NETWORK_TOKEN = TOKEN_DATA[DEFAULT_NETWORK];
