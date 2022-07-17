@@ -1,10 +1,12 @@
-import React, { useCallback, useState } from 'react';
-import { FormikProps, FormikState } from 'formik';
-import { defineMessages } from 'react-intl';
+import React, { useEffect, useState } from 'react';
+import { FormikProps, useField } from 'formik';
+import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Select, Input, Annotations, SelectOption } from '~core/Fields';
 import Heading from '~core/Heading';
+import { GNOSIS_SAFE_NETWORKS } from '~constants';
+import { SimpleMessageValues } from '~types/index';
 
 import { FormValues } from './AddExistingSafeDialog';
 
@@ -25,7 +27,7 @@ const MSG = defineMessages({
   },
   annotation: {
     id: 'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.annotation',
-    defaultMessage: 'Explain why you’re adding this Gnosis Safe (optional)',
+    defaultMessage: "Explain why you're adding this Gnosis Safe (optional)",
   },
   contract: {
     id: 'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.contract',
@@ -42,71 +44,147 @@ const MSG = defineMessages({
       other {not found}
     } on {selectedChain}`,
   },
+  fetchFailed: {
+    id: 'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.fetchFailed',
+    defaultMessage:
+      'Could not fetch Safe details. Please check your connection and try again.',
+  },
 });
-
-const getStatusText = (
-  selectedChain: SelectOption,
-  isLoadingAddress: boolean,
-  status: FormikState<FormValues>,
-  safeData?: any, // @TODO ADD IN Safe data Type when wiring up
-) => {
-  if (!status?.touched?.contractAddress || status?.errors?.contractAddress) {
-    return {};
-  }
-  if (isLoadingAddress) {
-    return { status: MSG.safeLoading };
-  }
-  if (safeData === null) {
-    return {
-      status: MSG.safeCheck,
-      statusValues: {
-        safeData,
-        selectedChain: selectedChain.label.toString(),
-      },
-    };
-  }
-  return {
-    status: MSG.safeCheck,
-    statusValues: {
-      safeData,
-      selectedChain: selectedChain.label.toString(),
-    },
-  };
-};
 
 interface Props {
   back: () => void;
-  status: FormikState<FormValues>;
   networkOptions: SelectOption[];
 }
+
+interface SafeContract {
+  address: string;
+  name: string;
+  displayName: string;
+  logoUri: string;
+  contractAbi: any;
+  trustedForDelegateCall: boolean;
+}
+
+interface StatusText {
+  status: MessageDescriptor;
+  statusValues?: SimpleMessageValues;
+}
+
+type SafeData = SafeContract | undefined | null;
 
 const AddExistingSafeDialogForm = ({
   back,
   networkOptions,
-  status,
   handleSubmit,
   isSubmitting,
   isValid,
-}: Props & FormikProps<FormValues>) => {
+}: Props & Partial<FormikProps<FormValues>>) => {
+  const { formatMessage } = useIntl();
+
   const [selectedChain, setSelectedChain] = useState<SelectOption>(
     networkOptions[0],
   );
+  const [safeData, setSafeData] = useState<SafeData>(undefined);
+  const [isLoadingSafe, setIsLoadingSafe] = useState<boolean>(false);
 
-  // @TODO Add in actual API check when wiring up.
-  const safeData = true;
-  const isLoadingSafe = false;
+  // Get base API url for the selected chain
+  const baseURL = GNOSIS_SAFE_NETWORKS.filter(
+    (network) => network.name === selectedChain.label,
+  )[0].gnosisTxService;
 
-  const handleNetworkChange = useCallback(
-    (fromNetworkValue) => {
-      const selectedNetwork = networkOptions.find(
-        (option) => option.value === fromNetworkValue,
-      );
-      if (selectedNetwork) {
-        setSelectedChain(selectedNetwork);
+  // Get Safe Address field status
+  const [
+    ,
+    { error: addressError, touched: addressTouched, value: address },
+  ] = useField<string>('contractAddress');
+
+  // When selected chain or address changes
+  useEffect(() => {
+    // If there's a valid address in the address input
+    if (addressTouched && !addressError) {
+      // Get safe data
+      setIsLoadingSafe(true);
+      getSafeData(`${baseURL}api/v1/safes/${address}/`);
+    }
+  }, [baseURL, address, addressTouched, addressError]);
+
+  const getSafeData = async (url: string) => {
+    try {
+      // Make request to get safe data
+      const response = await fetch(url);
+      if (response.status === 200) {
+        // If safe address is found
+        const data = (await response.json()) as SafeContract;
+        setSafeData(data);
+      } else {
+        // If fetching is successful but returns any status code other than 200
+        setSafeData(undefined);
       }
-    },
-    [networkOptions, setSelectedChain],
-  );
+    } catch (e) {
+      // If fetching produces an error (e.g. network error)
+      setSafeData(null);
+    }
+    setIsLoadingSafe(false);
+  };
+
+  const handleNetworkChange = (fromNetworkValue: string) => {
+    const selectedNetwork = networkOptions.find(
+      (option) => option.value === fromNetworkValue,
+    );
+    if (selectedNetwork) {
+      setSelectedChain(selectedNetwork);
+    }
+  };
+
+  const getStatusText = (
+    selectedChain: SelectOption,
+    isLoadingSafe: boolean,
+    safeData?: SafeContract | null,
+  ): StatusText | {} => {
+    if (!addressTouched || addressError) {
+      return {};
+    }
+    if (isLoadingSafe) {
+      return { status: MSG.safeLoading };
+    }
+    if (safeData === undefined) {
+      return {
+        status: MSG.safeCheck,
+        statusValues: {
+          safeData,
+          selectedChain: selectedChain.label.toString(),
+        },
+      };
+    }
+    if (safeData === null) {
+      return {
+        status: MSG.fetchFailed,
+      };
+    }
+    return {
+      status: MSG.safeCheck,
+      statusValues: {
+        safeData: true,
+        selectedChain: selectedChain.label.toString(),
+      },
+    };
+  };
+
+  // If safe is not found, show error message
+  let safeNotFoundError: string | undefined = undefined;
+  if (addressTouched && !addressError && !isLoadingSafe) {
+    if (safeData === undefined || safeData === null) {
+      const notFoundMsg = getStatusText(
+        selectedChain,
+        isLoadingSafe,
+        safeData,
+      ) as StatusText;
+      safeNotFoundError = formatMessage(
+        notFoundMsg.status,
+        notFoundMsg?.statusValues,
+      );
+    }
+  }
 
   return (
     <>
@@ -136,7 +214,8 @@ const AddExistingSafeDialogForm = ({
           label={MSG.contract}
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
           disabled={isSubmitting}
-          {...getStatusText(selectedChain, isLoadingSafe, status, safeData)}
+          forcedFieldError={safeNotFoundError}
+          {...getStatusText(selectedChain, isLoadingSafe, safeData)}
         />
       </DialogSection>
       <DialogSection>
@@ -149,7 +228,6 @@ const AddExistingSafeDialogForm = ({
           maxLength={20}
         />
       </DialogSection>
-
       <DialogSection>
         <Annotations
           label={MSG.annotation}
@@ -166,8 +244,9 @@ const AddExistingSafeDialogForm = ({
         />
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
-          onClick={() => handleSubmit()}
+          onClick={handleSubmit && (() => handleSubmit())}
           text={{ id: 'button.confirm' }}
+          type="submit"
           loading={isSubmitting}
           disabled={!isValid}
           style={{ width: styles.wideButton }}
