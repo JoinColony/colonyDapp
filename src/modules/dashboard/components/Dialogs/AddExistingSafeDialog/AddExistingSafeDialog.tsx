@@ -4,7 +4,7 @@ import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
-import { ActionForm } from '~core/Fields';
+import { ActionForm, SelectOption } from '~core/Fields';
 import { GNOSIS_SAFE_NETWORKS } from '~modules/constants';
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
@@ -43,7 +43,7 @@ const AddExistingSafeDialog = ({
   });
 
   // Create array for Network options
-  const networkOptions = GNOSIS_SAFE_NETWORKS.map((option) => {
+  const networkOptions: SelectOption[] = GNOSIS_SAFE_NETWORKS.map((option) => {
     return {
       label: option.name,
       value: option.chainId.toString(),
@@ -90,13 +90,17 @@ const AddExistingSafeDialog = ({
       transform={transform}
       onSuccess={close}
     >
-      {(status, values: FormikProps<FormValues>) => {
+      {(formProps: FormikProps<FormValues>) => {
+        const { isSubmitting, isValid, handleSubmit } = formProps;
         return (
           <Dialog cancel={cancel}>
             <DialogForm
-              {...values}
-              status={status}
-              networkOptions={networkOptions}
+              {...{
+                isSubmitting,
+                isValid,
+                handleSubmit,
+                networkOptions,
+              }}
               back={() => callStep(prevStep)}
             />
           </Dialog>
