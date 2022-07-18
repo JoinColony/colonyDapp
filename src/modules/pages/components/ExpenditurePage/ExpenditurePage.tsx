@@ -1,6 +1,10 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import * as yup from 'yup';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  MessageDescriptor,
+} from 'react-intl';
 import { nanoid } from 'nanoid';
 import { RouteChildrenProps, useParams } from 'react-router';
 import { Formik, FormikErrors } from 'formik';
@@ -25,6 +29,8 @@ import {
 } from '~dashboard/ExpenditurePage/Stages/constants';
 import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import { useLoggedInUser } from '~data/helpers';
+import { SpinnerLoader } from '~core/Preloaders';
+import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
 import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
 import { useDialog } from '~core/Dialog';
 import EscrowFundsDialog from '~dashboard/Dialogs/EscrowFundsDialog';
@@ -126,26 +132,53 @@ const validationSchema = yup.object().shape({
   filteredDomainId: yup
     .string()
     .required(() => <FormattedMessage {...MSG.teamRequiredError} />),
-  recipients: yup.array(
-    yup.object().shape({
-      recipient: yup.object().required(),
-      value: yup
-        .array(
-          yup.object().shape({
-            amount: yup
-              .number()
-              .transform((value) => toFinite(value))
-              .required(() => MSG.valueError)
-              .moreThan(0, () => MSG.amountZeroError),
-            tokenAddress: yup.string().required(),
-          }),
-        )
-        .min(1),
-    }),
-  ),
+  recipients: yup.array().when('expenditure', {
+    is: (expenditure) => expenditure === 'advanced',
+    then: yup.array().of(
+      yup.object().shape({
+        recipient: yup.object().required(),
+        value: yup
+          .array(
+            yup.object().shape({
+              amount: yup
+                .number()
+                .transform((value) => toFinite(value))
+                .required(() => MSG.valueError)
+                .moreThan(0, () => MSG.amountZeroError),
+              tokenAddress: yup.string().required(),
+            }),
+          )
+          .min(1),
+      }),
+    ),
+  }),
   title: yup.string().min(3).required(),
   description: yup.string().max(4000),
+  split: yup.object().when('expenditure', {
+    is: (expenditure) => expenditure === 'split',
+    then: yup.object().shape({
+      unequal: yup.boolean().required(),
+    }),
+  }),
 });
+
+export interface State {
+  id: string;
+  label: string | MessageDescriptor;
+  buttonText: string | MessageDescriptor;
+  buttonAction: () => void;
+  buttonTooltip?: string | MessageDescriptor;
+}
+
+export interface ValuesType {
+  expenditure: string;
+  filteredDomainId: string;
+  owner: string;
+  recipients: Recipient[];
+  title: string;
+  description?: string;
+  split: { unequal: boolean };
+}
 
 export type InitialValuesType = typeof initialValues;
 
