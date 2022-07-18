@@ -1,0 +1,129 @@
+@value paddingRightLeft: 54px;
+
+.paymentContainer {
+  padding-bottom: 80px;
+}
+
+.recipientContainer {
+  padding: 0 paddingRightLeft;
+}
+
+.payments {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--dark);
+}
+
+.recipientLabel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--dark);
+}
+
+.singleRecipient {
+  padding-bottom: 4px;
+  position: relative;
+}
+
+.signWrapper {
+  height: 30px;
+  width: 30px;
+  position: absolute;
+
+  /* negative margin is used to set the position of the button,
+  which collapses and expands single recipient fields,
+  on the left side of the form */
+  left: -34px;
+}
+
+.signWrapper:hover {
+  cursor: pointer;
+}
+
+.verticalDivider {
+  height: calc(100% - 124px);
+  position: absolute;
+  top: 56px;
+
+  /* negative margin is used to set the position of the vertical line
+  on the left side of the form, similar to margin in signWrapper class */
+  left: -20px;
+  border-left: 1px solid var(--temp-grey-blue-7);
+  opacity: 0.25;
+}
+
+.dividerInLastItem {
+  height: calc(100% - 84px);
+}
+
+.minus {
+  height: 1px;
+  width: 70%;
+  border-bottom: 1px solid var(--dark);
+  opacity: 1;
+}
+
+.addRecipientLabel {
+  display: flex;
+  align-items: center;
+}
+
+.circlePlusIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 2px;
+
+  /* a negative margin is used here to align the entire "Add recipient" row to the left */
+  margin-left: -8px;
+  height: 30px;
+  width: 30px;
+  fill: var(--action-secondary);
+}
+
+.deleteIcon {
+  height: 20px;
+  width: 20px;
+  fill: var(--temp-grey-blue-7);
+}
+
+.deleteIcon:hover {
+  cursor: pointer;
+}
+
+.recipientName {
+  display: flex;
+  align-items: center;
+  padding-bottom: 10px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.recipientName span {
+  margin-left: 4px;
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.editIcon {
+  margin-left: 10px;
+}
+
+.editIcon:hover {
+  cursor: pointer;
+}
+
+.editIcon svg {
+  height: 30px;
+  width: 30px;
+}

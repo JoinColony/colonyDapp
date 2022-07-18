@@ -1,0 +1,95 @@
+.container {
+  padding-right: 37px;
+  padding-bottom: 74px;
+  width: 100%;
+}
+
+.lockedSectionContainer {
+  padding: 6px 25px 74px;
+}
+
+.number {
+  margin-bottom: 16px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--temp-grey-blue-7);
+}
+
+.title {
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  line-height: 24px;
+  color: var(--dark);
+  letter-spacing: 0.5px;
+}
+
+.lockedTitle {
+  line-height: 18px;
+}
+
+.titleContainer {
+  margin-bottom: 21px;
+}
+
+.titleContainer input {
+  padding: 0;
+  border-bottom: none;
+  font-size: var(--size-medium-l);
+  line-height: 24px;
+  color: var(--dark);
+  letter-spacing: 0.5px;
+}
+
+.titleContainer input::placeholder {
+  font-style: normal;
+  color: var(--temp-grey-blue-7);
+  opacity: 0.65;
+  letter-spacing: 0.5px;
+}
+
+.titleContainer p {
+  margin-bottom: 2px;
+}
+
+.description {
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+  line-height: 18px;
+  color: var(--dark);
+  letter-spacing: 0.1px;
+}
+
+.descriptionContainer textarea {
+  padding: 0;
+  overflow: hidden;
+  border: none;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+  line-height: 18px;
+  color: var(--dark);
+  letter-spacing: 0.1px;
+}
+
+.descriptionContainer textarea::placeholder {
+  font-style: normal;
+  color: var(--temp-grey-blue-7);
+  opacity: 0.5;
+  letter-spacing: 0.1px;
+}
+
+.error textarea {
+  color: var(--danger);
+}
+
+.error textarea::placeholder {
+  color: var(--danger);
+}
+
+.error input {
+  color: var(--danger);
+}
+
+.error input::placeholder {
+  color: var(--danger);
+}

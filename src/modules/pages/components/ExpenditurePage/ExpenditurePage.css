@@ -1,0 +1,36 @@
+@value sidebarWidth: 449px;
+@value navBarHeight: 70px;
+
+.main {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+}
+
+.mainContainer {
+  min-height: 100%;
+  width: calc(100% - sidebarWidth);
+  background-color: var(--colony-white);
+}
+
+.mainContent {
+  display: flex;
+  justify-content: space-between;
+  padding: 70px 100px 70px 25px;
+  min-height: calc(100vh - navBarHeight);
+}
+
+.sidebar {
+  height: 600px;
+  min-height: calc(100vh - navBarHeight);
+  width: sidebarWidth;
+  overflow-y: auto;
+  background-color: var(--grey-blue-3);
+}
+
+.form {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { Route, Redirect, Switch } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
+import { generatePath } from 'react-router';
 
 import { WalletMethod } from '~immutable/index';
 import CreateColonyWizard from '~dashboard/CreateColonyWizard';
@@ -14,7 +15,13 @@ import Wallet from '~dashboard/Wallet';
 import ConnectWalletWizard from '~users/ConnectWalletWizard';
 import UserProfile from '~users/UserProfile';
 import UserProfileEdit from '~users/UserProfileEdit';
-import { NavBar, Plain, SimpleNav, Default } from '~pages/RouteLayouts/index';
+import {
+  NavBar,
+  Plain,
+  SimpleNav,
+  Default,
+  WrappedNavBar,
+} from '~pages/RouteLayouts/index';
 import { ColonyBackText } from '~pages/BackTexts';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import LadingPage from '~pages/LandingPage';
@@ -29,6 +36,7 @@ import { ActionTypes } from '~redux/index';
 import {
   COLONY_EVENTS_ROUTE,
   COLONY_EXTENSIONS_ROUTE,
+  COLONY_EXPENDITURE_ROUTE,
   COLONY_EXTENSION_DETAILS_ROUTE,
   COLONY_EXTENSION_SETUP_ROUTE,
   COLONY_FUNDING_ROUTE,
@@ -47,11 +55,13 @@ import {
   COIN_MACHINE_ROUTE,
   UNWRAP_TOKEN_ROUTE,
   CLAIM_TOKEN_ROUTE,
+  EXPENDITURE_ROUTE,
 } from './routeConstants';
 
 import AlwaysAccesibleRoute from './AlwaysAccesibleRoute';
 import WalletRequiredRoute from './WalletRequiredRoute';
 import { useTitle } from '~utils/hooks/useTitle';
+import ExpenditurePage from '~pages/ExpenditurePage';
 
 const MSG = defineMessages({
   userProfileEditBack: {
@@ -166,6 +176,7 @@ const Routes = () => {
             COLONY_HOME_ROUTE,
             COLONY_EVENTS_ROUTE,
             COLONY_EXTENSIONS_ROUTE,
+            COLONY_EXPENDITURE_ROUTE,
             COLONY_EXTENSION_DETAILS_ROUTE,
             COLONY_EXTENSION_SETUP_ROUTE,
           ]}
@@ -248,7 +259,17 @@ const Routes = () => {
             backRoute: `/colony/${colonyName}`,
           })}
         />
-
+        <AlwaysAccesibleRoute
+          path={EXPENDITURE_ROUTE}
+          component={ExpenditurePage}
+          layout={WrappedNavBar}
+          routeProps={({ colonyName }) => ({
+            backText: '',
+            backRoute: generatePath(COLONY_EXPENDITURE_ROUTE, {
+              colonyName,
+            }),
+          })}
+        />
         {/*
          * Redirect anything else that's not found to the 404 route
          */}
