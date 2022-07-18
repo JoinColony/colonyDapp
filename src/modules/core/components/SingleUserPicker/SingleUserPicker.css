@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   composes: field from '~styles/fields.css';
   width: 100%;
@@ -158,4 +160,28 @@
 .arrowIconActive svg {
   fill: var(--primary);
   transform: rotate(180deg);
+}
+
+@media screen and query700 {
+  .container {
+    display: flex;
+    align-items: center;
+  }
+
+  .arrowIcon {
+    position: static;
+  }
+
+  .widthWide input {
+    width: auto;
+  }
+
+  .omniPickerContainer {
+    left: 0px;
+  }
+
+  .input:placeholder-shown {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }

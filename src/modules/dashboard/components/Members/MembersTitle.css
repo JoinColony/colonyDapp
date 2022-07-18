@@ -112,6 +112,7 @@
   .titleContainer {
     margin-bottom: 11px;
     padding: 0 14px;
+    min-width: 0px;
   }
 
   .titleLeft {
