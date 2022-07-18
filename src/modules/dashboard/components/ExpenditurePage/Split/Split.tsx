@@ -6,9 +6,8 @@ import classNames from 'classnames';
 import { FormSection, Toggle } from '~core/Fields';
 import { Colony } from '~data/index';
 
-import SplitEqual from './SplitEqual';
+import { SplitUnequal, SplitEqual } from '.';
 import styles from './Split.css';
-import { SplitUnequal } from '.';
 
 const MSG = defineMessages({
   split: {
