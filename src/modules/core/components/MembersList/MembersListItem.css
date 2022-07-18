@@ -78,6 +78,7 @@
 
 @media screen and query700 {
   .main {
+    min-width: 0px;
     position: relative;
     overflow: visible;
     background: white;
@@ -116,6 +117,16 @@
   }
 
   .reputationSection {
+    margin-top: 5px;
+    width: auto;
+  }
+
+  .reputationSection i {
+    display: flex;
+    align-items: center;
+  }
+
+  .usernameSection {
     width: auto;
   }
 }

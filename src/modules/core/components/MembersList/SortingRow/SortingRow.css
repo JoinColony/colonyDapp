@@ -35,6 +35,6 @@
 @media screen and query700 {
   .container {
     padding-right: 0;
-    gap: 0;
+    gap: 8px;
   }
 }

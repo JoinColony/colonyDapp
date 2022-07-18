@@ -40,6 +40,10 @@
     padding: 20px 14px;
   }
 
+  .content button > div {
+    height: auto;
+  }
+
   .iconContainer {
     margin-bottom: 10px;
   }
