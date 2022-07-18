@@ -1,10 +1,6 @@
+import React, { useEffect, useCallback, useRef, useState } from 'react';
 import { useFormikContext } from 'formik';
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  defineMessages,
-  FormattedMessage,
-  MessageDescriptor,
-} from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import copyToClipboard from 'copy-to-clipboard';
 import classNames from 'classnames';
 
@@ -15,6 +11,11 @@ import { Tooltip } from '~core/Popover';
 import DeleteDraftDialog from '../../Dialogs/DeleteDraftDialog/DeleteDraftDialog';
 import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
 import StageItem from './StageItem';
+import {
+  InitialValuesType,
+  State,
+  ValuesType,
+} from '~pages/ExpenditurePage/ExpenditurePage';
 import styles from './Stages.css';
 import { Stage } from './constants';
 
@@ -31,46 +32,6 @@ const MSG = defineMessages({
     id: 'dashboard.Expenditures.Stages.submitDraft',
     defaultMessage: 'Submit draft',
   },
-  lockValues: {
-    id: 'dashboard.Expenditures.Stages.lockValues',
-    defaultMessage: 'Lock values',
-  },
-  escrowFunds: {
-    id: 'dashboard.Expenditures.Stages.escrowFunds',
-    defaultMessage: 'Escrow funds',
-  },
-  releaseFunds: {
-    id: 'dashboard.Expenditures.Stages.releaseFunds',
-    defaultMessage: 'Release funds',
-  },
-  claim: {
-    id: 'dashboard.Expenditures.Stages.claim',
-    defaultMessage: 'Claim',
-  },
-  completed: {
-    id: 'dashboard.Expenditures.Stages.completed',
-    defaultMessage: 'Completed',
-  },
-  draft: {
-    id: 'dashboard.Expenditures.Stages.draft',
-    defaultMessage: 'Draft',
-  },
-  locked: {
-    id: 'dashboard.Expenditures.Stages.locked',
-    defaultMessage: 'Locked',
-  },
-  funded: {
-    id: 'dashboard.Expenditures.Stages.funded',
-    defaultMessage: 'Funded',
-  },
-  released: {
-    id: 'dashboard.Expenditures.Stages.released',
-    defaultMessage: 'Released',
-  },
-  claimed: {
-    id: 'dashboard.Expenditures.Stages.claimed',
-    defaultMessage: 'Claimed',
-  },
   deleteDraft: {
     id: 'dashboard.Expenditures.Stages.deleteDraft',
     defaultMessage: 'Delete draft',
@@ -83,23 +44,21 @@ const MSG = defineMessages({
     id: 'dashboard.Expenditures.Stages.tooltipShareText',
     defaultMessage: 'Share expenditure URL',
   },
-  tooltipLockValuesText: {
-    id: 'dashboard.ExpenditurePage.Stages.tooltipLockValuesText',
-    defaultMessage: `This will lock the values of the expenditure. To change values after locking will require the right permissions or a motion.`,
-  },
   tooltipCancelText: {
     id: 'dashboard.ExpenditurePage.Stages.tooltipCancelText',
     defaultMessage: 'Click to cancel expenditure',
   },
+  tooltipNoPermissionToRealese: {
+    id: 'dashboard.ExpenditurePage.Stages.tooltipNoPermissionToRealese',
+    defaultMessage: 'You need to create a Motion to release funds.',
+  },
+  tooltipLockValuesText: {
+    id: 'dashboard.ExpenditurePage.Stages.tooltipLockValuesText',
+    defaultMessage: `This will lock the values of the expenditure. To change values after locking will require the right permissions or a motion.`,
+  },
 });
 
-interface ActiveState {
-  id: string;
-  label: string | MessageDescriptor;
-  buttonText: string | MessageDescriptor;
-  buttonAction: () => void;
-  stage: string;
-}
+const displayName = 'dashboard.ExpenditurePage.Stages';
 
 const buttonStyles = {
   height: styles.buttonHeight,
@@ -107,8 +66,16 @@ const buttonStyles = {
   padding: 0,
 };
 
-const Stages = () => {
-  const [activeStateId, setActiveStateId] = useState<string | null>(null);
+interface Props {
+  states: State[];
+  handleSubmit: (values: InitialValuesType) => void;
+  activeStateId?: string;
+}
+
+const Stages = ({ states, activeStateId }: Props) => {
+  const { values, handleSubmit, validateForm } =
+    useFormikContext<ValuesType>() || {};
+
   const { resetForm } = useFormikContext() || {};
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
@@ -116,56 +83,20 @@ const Stages = () => {
   const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
 
-  const handleLockExpenditure = () => {
-    // Call to backend will be added here, to lock the expenditure
-    // fetching active state shoud be added here as well,
-    // and saving the activeState in a state
-    setActiveStateId(Stage.Locked);
-  };
+  const handleSaveDraft = useCallback(async () => {
+    const errors = await validateForm(values);
+    const hasErrors = Object.keys(errors)?.length;
 
-  const states = [
-    {
-      id: Stage.Draft,
-      label: MSG.draft,
-      buttonText: MSG.lockValues,
-      buttonAction: handleLockExpenditure,
-      buttonTooltipt: MSG.tooltipLockValuesText,
-    },
-    {
-      id: Stage.Locked,
-      label: MSG.locked,
-      buttonText: MSG.escrowFunds,
-      buttonAction: () => {},
-      stage: Stage.Locked,
-    },
-    {
-      id: Stage.Funded,
-      label: MSG.funded,
-      buttonText: MSG.releaseFunds,
-      buttonAction: () => {},
-      stage: Stage.Funded,
-    },
-    {
-      id: Stage.Released,
-      label: MSG.released,
-      buttonText: MSG.claim,
-      buttonAction: () => {},
-      stage: Stage.Released,
-    },
-    {
-      id: Stage.Claimed,
-      label: MSG.claimed,
-      buttonText: MSG.completed,
-      buttonAction: () => {},
-      stage: Stage.Claimed,
-    },
-  ];
-
-  const handleSaveDraft = () =>
-    openDraftConfirmDialog({
-      onClick: () => setActiveStateId(Stage.Draft),
-      isVotingExtensionEnabled: true,
-    });
+    return (
+      !hasErrors &&
+      openDraftConfirmDialog({
+        onClick: () => {
+          handleSubmit(values as any);
+        },
+        isVotingExtensionEnabled: true,
+      })
+    );
+  }, [handleSubmit, openDraftConfirmDialog, validateForm, values]);
 
   const handleDeleteDraft = () =>
     openDeleteDraftDialog({
@@ -284,17 +215,17 @@ const Stages = () => {
                   </Tooltip>
                 </Button>
               )}
-              {activeState?.buttonTooltipt ? (
+              {activeState?.buttonTooltip ? (
                 <Tooltip
                   placement="top"
                   content={
-                    typeof activeState.buttonTooltipt === 'string' ? (
+                    typeof activeState.buttonTooltip === 'string' ? (
                       <div className={styles.buttonTooltip}>
-                        {activeState.buttonTooltipt}
+                        {activeState.buttonTooltip}
                       </div>
                     ) : (
                       <div className={styles.buttonTooltip}>
-                        <FormattedMessage {...activeState.buttonTooltipt} />
+                        <FormattedMessage {...activeState.buttonTooltip} />
                       </div>
                     )
                   }
@@ -337,5 +268,7 @@ const Stages = () => {
     </div>
   );
 };
+
+Stages.displayName = displayName;
 
 export default Stages;
