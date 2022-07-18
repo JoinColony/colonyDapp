@@ -129,7 +129,7 @@ const Popover = ({
       _setIsOpen(false);
       if (typeof onClose == 'function') onClose(data, modifiers);
     },
-    [isOpen, onClose],
+    [onClose],
   );
 
   const requestOpen = useCallback(() => {
