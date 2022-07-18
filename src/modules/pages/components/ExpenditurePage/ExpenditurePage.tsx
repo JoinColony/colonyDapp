@@ -10,7 +10,6 @@ import { nanoid } from 'nanoid';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { RouteChildrenProps, useParams } from 'react-router';
 import { Form } from '~core/Fields';
-import Payments from '~dashboard/ExpenditurePage/Payments';
 import Stages from '~dashboard/ExpenditurePage/Stages';
 import TitleDescriptionSection, {
   LockedTitleDescriptionSection,
@@ -18,15 +17,14 @@ import TitleDescriptionSection, {
 import { getMainClasses } from '~utils/css';
 import styles from './ExpenditurePage.css';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
-import Split from '~dashboard/ExpenditurePage/Split';
 import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
 import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import { useColonyFromNameQuery } from '~data/generated';
 import { useLoggedInUser } from '~data/helpers';
 import { SpinnerLoader } from '~core/Preloaders';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
-import { ExpenditureSettings } from '~dashboard/ExpenditurePage';
 import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
+import ExpenditureForm from './ExpenditureForm';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -98,24 +96,33 @@ const validationSchema = yup.object().shape({
   filteredDomainId: yup
     .string()
     .required(() => <FormattedMessage {...MSG.teamRequiredError} />),
-  recipients: yup.array(
-    yup.object().shape({
-      recipient: yup.object().required(),
-      value: yup
-        .array(
-          yup.object().shape({
-            amount: yup
-              .number()
-              .required(() => MSG.valueError)
-              .moreThan(0, () => MSG.amountZeroError),
-            tokenAddress: yup.string().required(),
-          }),
-        )
-        .min(1),
-    }),
-  ),
+  recipients: yup.array().when('expenditure', {
+    is: (expenditure) => expenditure === 'advanced',
+    then: yup.array().of(
+      yup.object().shape({
+        recipient: yup.object().required(),
+        value: yup
+          .array(
+            yup.object().shape({
+              amount: yup
+                .number()
+                .required(() => MSG.valueError)
+                .moreThan(0, () => MSG.amountZeroError),
+              tokenAddress: yup.string().required(),
+            }),
+          )
+          .min(1),
+      }),
+    ),
+  }),
   title: yup.string().min(3).required(),
   description: yup.string().max(4000),
+  split: yup.object().when('expenditure', {
+    is: (expenditure) => expenditure === 'split',
+    then: yup.object().shape({
+      unequal: yup.boolean().required(),
+    }),
+  }),
 });
 
 export interface State {
@@ -133,6 +140,7 @@ export interface ValuesType {
   recipients: Recipient[];
   title: string;
   description?: string;
+  split: { unequal: boolean };
 }
 
 const initialValues = {
@@ -142,6 +150,7 @@ const initialValues = {
   owner: undefined,
   title: undefined,
   description: undefined,
+  split: { unequal: true },
 };
 
 export type InitialValuesType = typeof initialValues;
@@ -287,21 +296,10 @@ const ExpenditurePage = ({ match }: Props) => {
             <SpinnerLoader appearance={{ size: 'medium' }} />
           ) : (
             colonyData && (
-              <>
-                <ExpenditureSettings
-                  colony={colonyData.processedColony}
-                  username={loggedInUser.username || ''}
-                  walletAddress={loggedInUser.walletAddress}
-                />
-                <Split
-                  sidebarRef={sidebarRef.current}
-                  colony={colonyData?.processedColony}
-                />
-                <Payments
-                  sidebarRef={sidebarRef.current}
-                  colony={colonyData.processedColony}
-                />
-              </>
+              <ExpenditureForm
+                sidebarRef={sidebarRef.current}
+                colony={colonyData.processedColony}
+              />
             )
           )}
         </aside>

@@ -9,7 +9,7 @@ import {
   SelectOption,
   FormSection,
 } from '~core/Fields';
-import { Colony } from '~data/index';
+import { Colony, useLoggedInUser } from '~data/index';
 import styles from './ExpenditureSettings.css';
 import UserAvatar from '~core/UserAvatar';
 import { tokens as tokensData } from './constants';
@@ -61,11 +61,10 @@ const displayName = 'dashboard.ExpenditurePage.ExpenditureSettings';
 
 interface Props {
   colony: Colony;
-  walletAddress: string;
-  username: string;
 }
 
-const ExpenditureSettings = ({ colony, walletAddress, username }: Props) => {
+const ExpenditureSettings = ({ colony }: Props) => {
+  const loggedInUser = useLoggedInUser();
   const [, { error }] = useField('filteredDomainId');
 
   const getDomainColor = useCallback<(domainId: string | undefined) => Color>(
@@ -164,9 +163,13 @@ const ExpenditureSettings = ({ colony, walletAddress, username }: Props) => {
             }}
           />
           <div className={styles.userAvatarContainer}>
-            <UserAvatar address={walletAddress} size="xs" notSet={false} />
+            <UserAvatar
+              address={loggedInUser.walletAddress}
+              size="xs"
+              notSet={false}
+            />
             <div className={styles.userName}>
-              <UserMention username={username || ''} />
+              <UserMention username={loggedInUser.username || ''} />
             </div>
           </div>
         </div>
