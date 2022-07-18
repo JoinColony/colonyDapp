@@ -1,3 +1,4 @@
+export const query700: string;
 export const main: string;
 export const childDomainIcon: string;
 export const mainContent: string;
@@ -9,4 +10,3 @@ export const editButtonCol: string;
 export const editButton: string;
 export const headingWrapper: string;
 export const activeDomain: string;
-export const query700: string;

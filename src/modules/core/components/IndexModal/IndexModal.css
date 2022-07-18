@@ -43,7 +43,7 @@
 
 @media screen and query700 {
   .header {
-    padding-top: secondaryPadding;
+    padding: secondaryPadding 24px 24px;
   }
 
   .header::after {

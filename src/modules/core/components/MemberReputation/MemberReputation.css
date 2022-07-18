@@ -1,4 +1,5 @@
 @value reputationColor: rgb(255, 176, 0);
+@value query700 from '~styles/queries.css';
 
 .reputationWrapper {
   display: flex;
@@ -40,4 +41,25 @@
   fill: transparent;
   stroke-width: 3px;
   stroke: reputationColor;
+}
+
+@media screen and query700 {
+  .reputationWrapper {
+    display: flex;
+    align-items: center;
+    padding-top: 2px;
+    padding-right: 0;
+    column-gap: 3px;
+  }
+
+  .reputationWrapper svg {
+    position: static;
+  }
+
+  .reputationWrapper i {
+    display: flex;
+    align-items: center;
+    position: static;
+    transform: none;
+  }
 }
