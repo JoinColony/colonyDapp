@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import classNames from 'classnames';
 import { FormikProps } from 'formik';
@@ -60,6 +60,25 @@ const EditExpenditureDialogForm = ({
   onClick,
 }: Props) => {
   const { formatMessage } = useIntl();
+  const noChanges =
+    confirmedValues && Object.keys(confirmedValues).length === 0;
+
+  const convertToValuesWithIds = useMemo(
+    () => (object: Partial<ValuesType> | undefined) => {
+      if (!object) {
+        return [];
+      }
+
+      return Object.entries(object).map(([key, value]) => ({
+        key,
+        value,
+        id: nanoid(),
+      }));
+    },
+    [],
+  );
+
+  const confirmedValuesWithIds = convertToValuesWithIds(confirmedValues);
 
   const renderRecipientChange = useCallback(
     (changedRecipient: Recipient) => {
@@ -112,6 +131,7 @@ const EditExpenditureDialogForm = ({
             );
             const multipleValues =
               recipientValues && recipientValues?.length > 1;
+
             return (
               <FormSection appearance={{ border: 'bottom' }} key={nanoid()}>
                 <div
@@ -125,13 +145,14 @@ const EditExpenditureDialogForm = ({
                   </div>
                   <div className={styles.valueContainer}>
                     {recipientValues?.map(
-                      ({ amount, token }) =>
+                      ({ amount, token }, index) =>
                         amount &&
                         token && (
                           <div
                             className={classNames(styles.value, {
                               [styles.paddingBottom]: multipleValues,
                             })}
+                            key={index}
                           >
                             <TokenIcon
                               className={styles.tokenIcon}
@@ -158,7 +179,7 @@ const EditExpenditureDialogForm = ({
                   <span className={styles.label}>
                     <FormattedMessage {...MSG.newClaimDelay} />
                   </span>
-                  <div className={styles.valueContainer}>
+                  <div className={styles.value}>
                     {!newValue.amount ? (
                       '-'
                     ) : (
@@ -241,6 +262,7 @@ const EditExpenditureDialogForm = ({
                   colony={colony}
                   onDomainChange={handleMotionDomainChange}
                   initialSelectedDomain={domainID}
+                  disabled={noChanges}
                 />
                 <div className={styles.forceContainer}>
                   <FormattedMessage {...MSG.force} />
@@ -248,7 +270,7 @@ const EditExpenditureDialogForm = ({
                     <Toggle
                       name="forceAction"
                       appearance={{ theme: 'danger' }}
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || noChanges}
                     />
                   </div>
 
@@ -285,8 +307,12 @@ const EditExpenditureDialogForm = ({
               </div>
             </DialogSection>
             <div className={styles.contentWrapper}>
-              {confirmedValues &&
-                Object.entries(confirmedValues).map(([key, value], index) => {
+              {!confirmedValues || noChanges ? (
+                <div className={styles.noChanges}>
+                  <FormattedMessage {...MSG.noChanges} />
+                </div>
+              ) : (
+                confirmedValuesWithIds.map(({ key, value, id }, index) => {
                   if (
                     Array.isArray(value) &&
                     Object.keys(value).length > 0 &&
@@ -377,7 +403,7 @@ const EditExpenditureDialogForm = ({
                     });
                   }
                   return (
-                    <>
+                    <React.Fragment key={id}>
                       <FormSection appearance={{ border: 'bottom' }}>
                         <div className={styles.changeContainer}>
                           <span>
@@ -416,15 +442,17 @@ const EditExpenditureDialogForm = ({
                           </span>
                         </div>
                       </FormSection>
-                    </>
+                    </React.Fragment>
                   );
-                })}
+                })
+              )}
             </div>
             <DialogSection appearance={{ theme: 'sidePadding' }}>
               <Annotations
                 label={isForce ? MSG.forceTextareaLabel : MSG.descriptionLabel}
                 name="annotationMessage"
                 maxLength={90}
+                disabled={noChanges}
               />
             </DialogSection>
             <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
@@ -445,9 +473,7 @@ const EditExpenditureDialogForm = ({
                   onClick(confirmedValues, isForce);
                   close();
                 }}
-                disabled={
-                  confirmedValues && Object.keys(confirmedValues).length === 0
-                }
+                disabled={noChanges}
               />
             </DialogSection>
           </Dialog>

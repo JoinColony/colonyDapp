@@ -87,6 +87,10 @@ export const MSG = defineMessages({
     id: 'dashboard.EditConfirmDialog.teamCaption',
     defaultMessage: 'Team',
   },
+  noChanges: {
+    id: 'dashboard.EditConfirmDialog.noChanges',
+    defaultMessage: 'No values have been changed!',
+  },
 });
 
 export const validationSchema = (annotationErrorMessage) =>

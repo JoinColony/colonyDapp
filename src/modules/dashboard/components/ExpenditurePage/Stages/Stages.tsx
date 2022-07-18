@@ -287,9 +287,8 @@ const Stages = ({
         </div>
       </div>
       {states.map(({ id, label }, index) => (
-        <div className={styles.stageWrapper}>
+        <div className={styles.stageWrapper} key={id}>
           <StageItem
-            key={id}
             label={label}
             isFirst={index === 0}
             isActive={activeState ? index <= activeIndex : false}

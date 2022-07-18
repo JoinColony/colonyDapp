@@ -1,4 +1,16 @@
-import { isEqual, uniq } from 'lodash';
+import { isEqual, uniq, isEmpty } from 'lodash';
+
+interface Delay {
+  amount?: string;
+  time: string;
+}
+
+const isDelayType = (obj: any): obj is Delay => {
+  return (
+    Object.prototype.hasOwnProperty.call(obj, 'amount') &&
+    Object.prototype.hasOwnProperty.call(obj, 'time')
+  );
+};
 
 export const findDifferences = (
   newValues: Record<string, any>,
@@ -44,8 +56,16 @@ export const findDifferences = (
               (acc, [currKey, currVal]) => {
                 const initialVal = oldValue[index][currKey];
 
+                // we don't want to check if 'isExpanded' and 'id' have been changed
                 if (currKey === 'isExpanded' || currKey === 'id') {
                   return acc;
+                }
+
+                // if delay amount hasn't been set
+                if (currKey === 'delay' && isDelayType(currVal)) {
+                  if (isEmpty(currVal.amount) && isEmpty(initialVal.amount)) {
+                    return acc;
+                  }
                 }
 
                 if (!isEqual(currVal, initialVal)) {
