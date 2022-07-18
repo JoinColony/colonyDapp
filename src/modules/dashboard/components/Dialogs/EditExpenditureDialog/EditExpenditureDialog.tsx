@@ -12,10 +12,6 @@ export const MSG = defineMessages({
     id: 'dashboard.EditConfirmDialog.header',
     defaultMessage: 'Create a motion to edit payment',
   },
-  headerForce: {
-    id: 'dashboard.EditConfirmDialog.headerForce',
-    defaultMessage: 'Create a motion to edit expenditure',
-  },
   force: {
     id: 'dashboard.EditConfirmDialog.force',
     defaultMessage: 'Force',
@@ -49,7 +45,7 @@ export const MSG = defineMessages({
   },
   confirmText: {
     id: 'dashboard.EditConfirmDialog.confirmText',
-    defaultMessage: 'Create motion',
+    defaultMessage: 'Create Motion',
   },
   confirmTexForce: {
     id: 'dashboard.EditConfirmDialog.confirmTexForce',

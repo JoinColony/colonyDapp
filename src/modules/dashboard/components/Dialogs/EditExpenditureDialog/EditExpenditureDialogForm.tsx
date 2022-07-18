@@ -298,9 +298,7 @@ const EditExpenditureDialogForm = ({
                 appearance={{ size: 'medium', margin: 'none' }}
                 className={styles.title}
               >
-                <FormattedMessage
-                  {...(isForce ? MSG.headerForce : MSG.header)}
-                />
+                <FormattedMessage {...MSG.header} />
               </Heading>
               <div className={styles.descriptionWrapper}>
                 <FormattedMessage {...MSG.descriptionText} />
