@@ -23,7 +23,6 @@ import { FormStages, LockedStages } from '~dashboard/ExpenditurePage/Stages';
 import TitleDescriptionSection, {
   LockedTitleDescriptionSection,
 } from '~dashboard/ExpenditurePage/TitleDescriptionSection';
-import Split from '~dashboard/ExpenditurePage/Split';
 import { getMainClasses } from '~utils/css';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import {
@@ -35,7 +34,6 @@ import {
 } from '~dashboard/ExpenditurePage/Stages/constants';
 import { SpinnerLoader } from '~core/Preloaders';
 import { useLoggedInUser } from '~data/helpers';
-import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
 import { useDialog } from '~core/Dialog';
 import EscrowFundsDialog from '~dashboard/Dialogs/EscrowFundsDialog';
 import EditExpenditureDialog from '~dashboard/Dialogs/EditExpenditureDialog';
