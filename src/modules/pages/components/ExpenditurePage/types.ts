@@ -31,7 +31,7 @@ export interface ValuesType {
   description?: string;
   split?: SplitType;
   staged?: StagedType;
-  batch: BatchType;
+  batch?: BatchType;
 }
 
 export interface State {

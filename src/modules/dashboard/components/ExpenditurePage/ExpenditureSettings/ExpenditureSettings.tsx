@@ -185,9 +185,13 @@ const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
             }}
           />
           <div className={styles.userAvatarContainer}>
-            <UserAvatar address={walletAddress} size="xs" notSet={false} />
+            <UserAvatar
+              address={loggedInUser.walletAddress}
+              size="xs"
+              notSet={false}
+            />
             <div className={styles.userName}>
-              <UserMention username={username || ''} />
+              <UserMention username={loggedInUser.username || ''} />
             </div>
           </div>
         </div>
