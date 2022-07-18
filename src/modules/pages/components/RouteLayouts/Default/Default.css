@@ -52,6 +52,7 @@
   .coloniesList {
     flex-shrink: 1;
     width: calc(100% - 90px);
+    position: static;
     border-right: 0;
   }
 
