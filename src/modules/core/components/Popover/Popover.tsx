@@ -54,8 +54,8 @@ interface Props {
   onClose?: (data?: any, modifiers?: { cancelled: boolean }) => void;
   /** Delay opening of popover for `openDelay` ms */
   openDelay?: number;
-  /** Close popover after `closeDelay` ms */
-  closeDelay?: number;
+  /** Should close popover after delay */
+  closeAfterDelay?: boolean;
   /** Popover placement */
   placement?: Placement;
   /** Options to pass to the underlying PopperJS element. See here for more: https://popper.js.org/docs/v2/constructors/#options. */
@@ -89,7 +89,7 @@ const Popover = ({
   isOpen: isOpenProp = false,
   onClose,
   openDelay,
-  closeDelay,
+  closeAfterDelay,
   placement: placementProp = 'auto',
   popperOptions = {},
   retainRefFocus,
@@ -120,14 +120,26 @@ const Popover = ({
 
   const lastIsOpenProp = usePrevious(isOpenProp);
 
+  const close = useCallback(
+    (data?: any, modifiers?: { cancelled: boolean }) => {
+      if (window) {
+        window.clearTimeout(openTimeoutRef.current);
+        window.clearTimeout(closeTimeoutRef.current);
+      }
+      _setIsOpen(false);
+      if (typeof onClose == 'function') onClose(data, modifiers);
+    },
+    [isOpen, onClose],
+  );
+
   const requestOpen = useCallback(() => {
     if (isOpen) {
       return;
     }
-    if (closeDelay && window) {
+    if (closeAfterDelay && window) {
       closeTimeoutRef.current = window.setTimeout(() => {
-        _setIsOpen(false);
-      }, closeDelay);
+        close();
+      }, 3000 + (openDelay || 0));
     }
     if (openDelay && window) {
       openTimeoutRef.current = window.setTimeout(() => {
@@ -136,20 +148,7 @@ const Popover = ({
       return;
     }
     _setIsOpen(true);
-  }, [isOpen, openDelay]);
-
-  const close = useCallback(
-    (data?: any, modifiers?: { cancelled: boolean }) => {
-      if (window) {
-        window.clearTimeout(openTimeoutRef.current);
-        window.clearTimeout(closeTimeoutRef.current);
-      }
-      if (!isOpen) return;
-      _setIsOpen(false);
-      if (typeof onClose == 'function') onClose(data, modifiers);
-    },
-    [isOpen, onClose],
-  );
+  }, [close, isOpen, openDelay, closeAfterDelay]);
 
   const handleWrapperFocus = useCallback(() => {
     if (retainRefFocus && referenceElement instanceof HTMLInputElement) {
