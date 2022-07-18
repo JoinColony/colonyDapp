@@ -35,7 +35,7 @@ export interface ValuesType {
     recipients?: { user?: AnyUser; amount?: number; percent?: number }[];
   };
   staged?: StagedType;
-  batch: BatchType;
+  batch?: BatchType;
 }
 
 export interface State {
