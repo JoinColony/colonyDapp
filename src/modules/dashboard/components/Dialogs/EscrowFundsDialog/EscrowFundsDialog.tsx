@@ -55,7 +55,7 @@ const MSG = defineMessages({
   },
   textareaLabel: {
     id: 'dashboard.EscrowFundsDialog.textareaLabel',
-    defaultMessage: `Explain why you're creating expanditure`,
+    defaultMessage: `Explain why you're funding this expenditure (optional)`,
   },
   confirmText: {
     id: 'dashboard.EscrowFundsDialog.confirmText',
