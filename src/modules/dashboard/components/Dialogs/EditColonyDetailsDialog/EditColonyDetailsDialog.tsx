@@ -6,6 +6,7 @@ import { useHistory } from 'react-router-dom';
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 
+import { useColonyFromNameQuery } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
@@ -38,14 +39,16 @@ const EditColonyDetailsDialog = ({
     avatarHash,
     tokenAddresses,
     nativeTokenAddress,
-    whitelistedAddresses,
-    isWhitelistActivated,
   },
   colony,
   isVotingExtensionEnabled,
 }: Props) => {
   const [isForce, setIsForce] = useState(false);
   const history = useHistory();
+
+  const { data: colonyData } = useColonyFromNameQuery({
+    variables: { name: colonyName, address: colonyAddress },
+  });
 
   const getFormAction = useCallback(
     (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
@@ -86,9 +89,10 @@ const EditColonyDetailsDialog = ({
           colonyTokens: tokenAddresses.filter(
             (tokenAddres) => tokenAddres !== nativeTokenAddress,
           ),
-          verifiedAddresses: whitelistedAddresses,
+          verifiedAddresses: colonyData?.processedColony?.whitelistedAddresses,
           annotationMessage,
-          isWhitelistActivated,
+          isWhitelistActivated:
+            colonyData?.processedColony?.isWhitelistActivated,
         }),
       ),
       withMeta({ history }),

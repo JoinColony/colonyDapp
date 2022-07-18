@@ -54,12 +54,13 @@ const useColonyMetadataChecks = (
   } catch (error) {
     // silent error
   }
+
   useEffect(() => {
     if (
       eventName === ColonyAndExtensionsEvents.ColonyMetadata ||
       eventName === ColonyActions.ColonyEdit
     ) {
-      if (colonyMetadataHistory?.data?.colony) {
+      if (colonyMetadataHistory?.data?.colony && actionData) {
         const {
           data: {
             colony: { metadataHistory },
@@ -70,36 +71,38 @@ const useColonyMetadataChecks = (
           sortedMetadataHistory,
           ({ transaction: { id: hash } }) => hash === transactionHash,
         );
-        /*
-         * We have a previous metadata entry
-         */
-        if (currentMetadataIndex > 0) {
-          const prevMetadata = sortedMetadataHistory[currentMetadataIndex - 1];
-          if (prevMetadata) {
-            if (prevMetadata.metadata !== metadataIpfsHash) {
-              setMetadataIpfsHash(prevMetadata.metadata);
-            }
 
-            if (metadataJSON) {
-              const prevColonyMetadata = parseColonyMetadata(metadataJSON);
-              /*
-               * If we have a metadata json, parse into the expected values and then
-               * compare them agains the ones from the current action
-               *
-               * This should be the default case for a colony with metadata history
-               */
-              const newMetadataChecks = getSpecificActionValuesCheck(
-                ColonyAndExtensionsEvents.ColonyMetadata,
-                actionData,
-                prevColonyMetadata,
-              );
+        // if we cannot find a previous transaction via supplied transactionHash,
+        // then make a best effort comparison and get the last chronological transaction.
+        const idx =
+          currentMetadataIndex === -1 // dont find a previous transaction
+            ? sortedMetadataHistory.length - 1 // last chronological transaction
+            : currentMetadataIndex - 1; //  previous transaction
+        const prevMetadata = sortedMetadataHistory[idx];
+        if (prevMetadata) {
+          if (prevMetadata.metadata !== metadataIpfsHash) {
+            setMetadataIpfsHash(prevMetadata.metadata);
+          }
 
-              if (!isEqual(newMetadataChecks, metadataChecks)) {
-                setMetadataChecks(newMetadataChecks);
-              }
+          if (metadataJSON) {
+            const prevColonyMetadata = parseColonyMetadata(metadataJSON);
+            /*
+             * If we have a metadata json, parse into the expected values and then
+             * compare them agains the ones from the current action
+             *
+             * This should be the default case for a colony with metadata history
+             */
+            const newMetadataChecks = getSpecificActionValuesCheck(
+              ColonyAndExtensionsEvents.ColonyMetadata,
+              actionData,
+              prevColonyMetadata,
+            );
+
+            if (!isEqual(newMetadataChecks, metadataChecks)) {
+              setMetadataChecks(newMetadataChecks);
             }
           }
-        } else if (actionData) {
+        } else {
           /*
            * We don't have a previous metadata entry, so fall back to the current
            * action's values if we can
