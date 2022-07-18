@@ -166,3 +166,20 @@
   font-weight: var(--weight-bold);
   color: var(--temp-grey-blue-7);
 }
+
+.dropdown {
+  width: 100%;
+}
+
+.dropdown > div {
+  justify-content: space-between;
+  width: 100%;
+}
+
+.dropdown ul {
+  right: 0;
+}
+
+.dropdown ul div:nth-of-type(2) {
+  width: auto;
+}

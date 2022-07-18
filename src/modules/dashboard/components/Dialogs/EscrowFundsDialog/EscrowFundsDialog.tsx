@@ -1,6 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FormikProps } from 'formik';
+import classNames from 'classnames';
+
 import Dialog, { DialogSection } from '~core/Dialog';
 import {
   ActionForm,
@@ -14,7 +16,6 @@ import Button from '~core/Button';
 import styles from './EscrowFundsDialog.css';
 import DomainDropdown from '~core/DomainDropdown';
 import useEscrowFundsDialog from './useEscrowFundsDialog';
-import Dropdown from '~core/UserPickerWithSearch/Dropdown';
 import { SpinnerLoader } from '~core/Preloaders';
 import { ActionTypes } from '~redux/actionTypes';
 import { Tooltip } from '~core/Popover';
@@ -100,7 +101,6 @@ const EscrowFundsDialog = ({
     handleMotionDomainChange,
     domainID,
     loading,
-    sectionRowRef,
     renderActiveDomainOption,
   } = useEscrowFundsDialog(colonyName);
   const [isForce, setIsForce] = useState(false);
@@ -204,39 +204,34 @@ const EscrowFundsDialog = ({
                     <FormattedMessage {...MSG.allocationHeader} />
                   </Heading>
                   <FormSection appearance={{ border: 'top' }}>
-                    <div ref={sectionRowRef} className={styles.sectionRow}>
-                      <Dropdown
-                        element={sectionRowRef.current}
-                        placement="exact"
-                      >
-                        <div className={styles.sectionRow}>
-                          <InputLabel
-                            label={MSG.allocationTeam}
-                            appearance={{
-                              direction: 'horizontal',
-                            }}
-                          />
+                    <div
+                      className={classNames(styles.sectionRow, styles.dropdown)}
+                    >
+                      <InputLabel
+                        label={MSG.allocationTeam}
+                        appearance={{
+                          direction: 'horizontal',
+                        }}
+                      />
 
-                          {loading ? (
-                            <SpinnerLoader />
-                          ) : (
-                            colonyData && (
-                              <span className={styles.teamSelectWrapper}>
-                                <DomainDropdown
-                                  colony={colonyData.processedColony}
-                                  name="filteredDomainId"
-                                  renderActiveOptionFn={renderActiveOption}
-                                  filterOptionsFn={filterDomains}
-                                  showAllDomains
-                                  showDescription
-                                  dataTest="colonyDomainSelector"
-                                  itemDataTest="colonyDomainSelectorItem"
-                                />
-                              </span>
-                            )
-                          )}
-                        </div>
-                      </Dropdown>
+                      {loading ? (
+                        <SpinnerLoader />
+                      ) : (
+                        colonyData && (
+                          <span className={styles.teamSelectWrapper}>
+                            <DomainDropdown
+                              colony={colonyData.processedColony}
+                              name="filteredDomainId"
+                              renderActiveOptionFn={renderActiveOption}
+                              filterOptionsFn={filterDomains}
+                              showAllDomains
+                              showDescription
+                              dataTest="colonyDomainSelector"
+                              itemDataTest="colonyDomainSelectorItem"
+                            />
+                          </span>
+                        )
+                      )}
                     </div>
                   </FormSection>
                   <FormSection appearance={{ border: 'top' }}>

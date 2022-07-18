@@ -1,11 +1,5 @@
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
-import React, {
-  useCallback,
-  ReactNode,
-  useMemo,
-  useState,
-  useRef,
-} from 'react';
+import React, { useCallback, ReactNode, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
@@ -41,7 +35,6 @@ const MSG = defineMessages({
 });
 
 const useEscrowFundsDialog = (colonyName: string) => {
-  const sectionRowRef = useRef<HTMLDivElement>(null);
   const [domainID, setDomainID] = useState<number>();
   const { formatMessage } = useIntl();
   const { data: colonyData, loading } = useColonyFromNameQuery({
@@ -211,7 +204,6 @@ const useEscrowFundsDialog = (colonyName: string) => {
     domainID,
     handleMotionDomainChange,
     loading,
-    sectionRowRef,
     renderActiveDomainOption,
   };
 };
