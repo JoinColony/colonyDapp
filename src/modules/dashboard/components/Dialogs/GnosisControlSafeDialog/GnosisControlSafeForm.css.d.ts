@@ -12,3 +12,7 @@ export const deleteTabTooltip: string;
 export const toggleTabIcon: string;
 export const tabContentClosed: string;
 export const transactionHeadingOpen: string;
+export const transactionTitle: string;
+export const detailsItem: string;
+export const detailsItemLabel: string;
+export const detailsItemValue: string;
