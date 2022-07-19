@@ -238,10 +238,10 @@
     "transaction.ColonyClient.emitDomainReputationReward.title": "Awarding user",
     "transaction.ColonyClient.emitDomainReputationReward.description": "Awarding user",
 
-    "transaction.WrappedToken.withdraw.title": "Unwrap Token",
-    "transaction.WrappedToken.withdraw.description": "Unwrap Token",
-    "transaction.VestingSimple.claimGrant.title": "Claim Colony Grant",
-    "transaction.VestingSimple.claimGrant.description": "Claim Colony Grant",
+    "transaction.WrappedTokenClient.withdraw.title": "Unwrap Token",
+    "transaction.WrappedTokenClient.withdraw.description": "Unwrap Token",
+    "transaction.VestingSimpleClient.claimGrant.title": "Claim Colony Grant",
+    "transaction.VestingSimpleClient.claimGrant.description": "Claim Colony Grant",
 
     "metatransaction.debug.description": "DEBUG: context: {context} methodName: {methodName}",
     "metatransaction.group.deposit.title": "Activate tokens",
@@ -406,10 +406,6 @@
     "metatransaction.group.emitDomainReputationReward.description": "Awarding user",
     "metatransaction.ColonyClient.emitDomainReputationReward.title": "Awarding user",
     "metatransaction.ColonyClient.emitDomainReputationReward.description": "Awarding user",
-    "metatransaction.WrappedToken.withdraw.title": "Unwrap Token",
-    "metatransaction.WrappedToken.withdraw.description": "Unwrap Token",
-    "metatransaction.VestingSimple.claimGrant.title": "Claim Colony Grant",
-    "metatransaction.VestingSimple.claimGrant.description": "Claim Colony Grant",
     "metatransaction.ColonyClient.annotateTransaction.title": "Annotate Transaction",
     "metatransaction.ColonyClient.annotateTransaction.description": "Annotate Transaction",
 
