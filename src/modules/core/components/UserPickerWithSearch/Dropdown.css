@@ -2,3 +2,8 @@
   width: 332px;
   position: absolute;
 }
+
+.optionSizeLarge li {
+  min-height: 40px;
+  line-height: 40px;
+}

@@ -6,12 +6,12 @@ import {
   MessageDescriptor,
 } from 'react-intl';
 import { nanoid } from 'nanoid';
+import { RouteChildrenProps, useParams } from 'react-router';
+import { Formik, FormikErrors } from 'formik';
 
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
-import { RouteChildrenProps, useParams } from 'react-router';
-import { FormikErrors } from 'formik';
-import { Form } from '~core/Fields';
-import Payments from '~dashboard/ExpenditurePage/Payments';
+import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
+import { LoggedInUser, useColonyFromNameQuery } from '~data/generated';
 import { FormStages, LockedStages } from '~dashboard/ExpenditurePage/Stages';
 import TitleDescriptionSection, {
   LockedTitleDescriptionSection,
@@ -19,17 +19,16 @@ import TitleDescriptionSection, {
 import { getMainClasses } from '~utils/css';
 import styles from './ExpenditurePage.css';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
+import { SpinnerLoader } from '~core/Preloaders';
+import ExpenditureForm from './ExpenditureForm';
 import {
   MotionStatus,
   Stage,
   Status,
 } from '~dashboard/ExpenditurePage/Stages/constants';
 import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
-import { LoggedInUser, useColonyFromNameQuery } from '~data/generated';
 import { useLoggedInUser } from '~data/helpers';
-import { SpinnerLoader } from '~core/Preloaders';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
-import { ExpenditureSettings } from '~dashboard/ExpenditurePage';
 import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
 import EditExpenditureDialog from '~dashboard/Dialogs/EditExpenditureDialog/EditExpenditureDialog';
 import { useDialog } from '~core/Dialog';
@@ -369,7 +368,7 @@ const ExpenditurePage = ({ match }: Props) => {
   );
 
   return isFormEditable ? (
-    <Form
+    <Formik
       initialValues={initialValuesData}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
@@ -397,14 +396,9 @@ const ExpenditurePage = ({ match }: Props) => {
                       </Tag>
                     </div>
                   )}
-                  <ExpenditureSettings
-                    colony={colonyData.processedColony}
-                    username={loggedInUser.username || ''}
-                    walletAddress={loggedInUser.walletAddress}
-                  />
-                  <Payments
+                  <ExpenditureForm
                     sidebarRef={sidebarRef.current}
-                    colony={colonyData.processedColony}
+                    colony={colonyData?.processedColony}
                   />
                 </>
               )
@@ -412,7 +406,16 @@ const ExpenditurePage = ({ match }: Props) => {
           </aside>
           <div className={styles.mainContainer}>
             <main className={styles.mainContent}>
-              <TitleDescriptionSection />
+              <div className={styles.titleCommentsContainer}>
+                <TitleDescriptionSection />
+                {loading ? (
+                  <div className={styles.spinnerContainer}>
+                    <SpinnerLoader appearance={{ size: 'medium' }} />
+                  </div>
+                ) : (
+                  <LogsSection colony={colonyData?.processedColony} />
+                )}
+              </div>
               {inEditMode ? (
                 <EditButtons
                   handleEditSubmit={() =>
@@ -426,7 +429,8 @@ const ExpenditurePage = ({ match }: Props) => {
                     states,
                     activeStateId,
                     setActiveStateId,
-                    setFormValues,
+                    lockValues,
+                    handleSubmit,
                   }}
                 />
               )}
@@ -434,7 +438,7 @@ const ExpenditurePage = ({ match }: Props) => {
           </div>
         </div>
       )}
-    </Form>
+    </Formik>
   ) : (
     <div className={getMainClasses({}, styles)}>
       <aside className={styles.sidebar} ref={sidebarRef}>
@@ -453,21 +457,30 @@ const ExpenditurePage = ({ match }: Props) => {
       </aside>
       <div className={styles.mainContainer}>
         <main className={styles.mainContent}>
-          <LockedTitleDescriptionSection
-            title={formValues?.title}
-            description={formValues?.description}
-          />
-          <div className={styles.tagStagesWrapper}>
-            <LockedStages
-              {...{
-                states,
-                activeStateId,
-                setActiveStateId,
-                motion,
-                status,
-              }}
+          <div className={styles.titleCommentsContainer}>
+            <LockedTitleDescriptionSection
+              title={formValues?.title}
+              description={formValues?.description}
             />
+            {loading ? (
+              <div className={styles.spinnerContainer}>
+                <SpinnerLoader appearance={{ size: 'medium' }} />
+              </div>
+            ) : (
+              <LogsSection colony={colonyData?.processedColony} />
+            )}
           </div>
+          <LockedStages
+            {...{
+              states,
+              activeStateId,
+              setActiveStateId,
+              lockValues,
+              handleSubmit,
+              motion,
+              status,
+            }}
+          />
         </main>
       </div>
     </div>
