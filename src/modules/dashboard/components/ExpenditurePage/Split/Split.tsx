@@ -28,7 +28,7 @@ const Split = () => {
   const [, { value: splitUnequal }] = useField('split.unequal');
 
   return (
-    <div className={styles.paymentContainer}>
+    <div className={styles.splitContainer}>
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.split}>
           <FormattedMessage {...MSG.split} />
