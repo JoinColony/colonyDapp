@@ -182,3 +182,9 @@
 .top {
   align-items: flex-start;
 }
+
+.motionActiveItem {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}

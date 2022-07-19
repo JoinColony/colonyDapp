@@ -21,3 +21,4 @@ export const paddingBottom: string;
 export const tokenIcon: string;
 export const tokensWarpper: string;
 export const top: string;
+export const motionActiveItem: string;
