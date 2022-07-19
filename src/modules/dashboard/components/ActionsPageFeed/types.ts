@@ -53,6 +53,22 @@ export enum SystemMessagesName {
   MotionRevealResultObjectionWon = 'MotionRevealResultObjectionWon',
   MotionRevealResultMotionWon = 'MotionRevealResultMotionWon',
   MotionCanBeEscalated = 'MotionCanBeEscalated',
+
+  ExpenditureStaked = 'ExpenditureStaked',
+  ExpenditureCreatedDraft = 'ExpenditureCreatedDraft',
+  ExpenditureCancelledDraft = 'ExpenditureCancelledDraft',
+  ExpenditureClaimedStake = 'ExpenditureClaimedStake',
+  ExpenditureLocked = 'ExpenditureLocked',
+  ExpenditureModified = 'ExpenditureModified',
+  ExpenditureMotionModified = 'ExpenditureMotionModified',
+  ExpenditureOwnerChange = 'ExpenditureOwnerChange',
+  ExpenditureMotionOwnerChange = 'ExpenditureMotionOwnerChange',
+  ExpenditureFunding = 'ExpenditureFunding',
+  ExpenditureMotionFunding = 'ExpenditureMotionFunding',
+  ExpenditureFunded = 'ExpenditureFunded',
+  ExpenditureReleaseFunds = 'ExpenditureReleaseFunds',
+  ExpenditureFundsClaimed = 'ExpenditureFundsClaimed',
+  ExpenditureAllFundsClaimed = 'ExpenditureAllFundsClaimed',
 }
 
 export interface SystemMessage {
