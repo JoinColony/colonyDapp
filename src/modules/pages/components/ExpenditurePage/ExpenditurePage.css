@@ -24,6 +24,10 @@
   min-height: calc(100vh - navBarHeight);
 }
 
+.titleCommentsContainer {
+  min-width: 458px;
+}
+
 .sidebar {
   height: 600px;
   min-height: calc(100vh - navBarHeight);

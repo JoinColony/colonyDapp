@@ -4,6 +4,10 @@
   width: 100%;
 }
 
+.lockedSectionContainer {
+  padding: 6px 25px 74px;
+}
+
 .number {
   margin-bottom: 16px;
   font-size: var(--size-tiny);
@@ -18,6 +22,10 @@
   line-height: 24px;
   color: var(--dark);
   letter-spacing: 0.5px;
+}
+
+.lockedTitle {
+  line-height: 18px;
 }
 
 .titleContainer {

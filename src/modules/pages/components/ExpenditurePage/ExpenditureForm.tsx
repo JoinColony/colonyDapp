@@ -17,11 +17,11 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  colony?: Colony;
+  colony: Colony;
   sidebarRef: HTMLElement | null;
 }
 
-const ExpenditureForm = ({ sidebarRef }: Props) => {
+const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
   const { values, handleSubmit, validateForm } = useFormikContext() || {};
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
 
@@ -48,8 +48,8 @@ const ExpenditureForm = ({ sidebarRef }: Props) => {
 
   return (
     <Form onSubmit={onSubmit}>
-      <ExpenditureSettings />
-      <Payments sidebarRef={sidebarRef} />
+      <ExpenditureSettings {...{ sidebarRef, colony }} />
+      <Payments {...{ sidebarRef, colony }} />
       <button type="submit" tabIndex={-1} className={styles.hiddenSubmit}>
         <FormattedMessage {...MSG.submit} />
       </button>

@@ -22,11 +22,7 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.ExpenditurePage.TitleDescriptionSection';
 
-interface Props {
-  isEditable?: boolean;
-}
-
-const TitleDescriptionSection = ({ isEditable }: Props) => {
+const TitleDescriptionSection = () => {
   const [, { value: title, error: inputError }] = useField('title');
   const [, { value: description, error: descriptionError }] = useField(
     'description',
@@ -42,17 +38,13 @@ const TitleDescriptionSection = ({ isEditable }: Props) => {
           inputError && styles.error,
         )}
       >
-        {isEditable ? (
-          <Input
-            name="title"
-            placeholder={MSG.titlePlaceholder}
-            appearance={{ theme: 'minimal' }}
-            defaultValue={title}
-            elementOnly
-          />
-        ) : (
-          <div className={styles.title}>{title}</div>
-        )}
+        <Input
+          name="title"
+          placeholder={MSG.titlePlaceholder}
+          appearance={{ theme: 'minimal' }}
+          defaultValue={title}
+          elementOnly
+        />
       </div>
       <div
         className={classNames(
@@ -60,18 +52,15 @@ const TitleDescriptionSection = ({ isEditable }: Props) => {
           descriptionError && styles.error,
         )}
       >
-        {isEditable ? (
-          <TextareaAutoresize
-            name="description"
-            placeholder={MSG.descriptionPlaceholder}
-            label=""
-            minRows={1}
-            maxRows={100}
-            elementOnly
-          />
-        ) : (
-          <div className={styles.description}>{description}</div>
-        )}
+        <TextareaAutoresize
+          name="description"
+          placeholder={MSG.descriptionPlaceholder}
+          label=""
+          minRows={1}
+          maxRows={100}
+          defaultValue={description}
+          elementOnly
+        />
       </div>
     </div>
   );
