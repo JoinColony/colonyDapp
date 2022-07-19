@@ -6,11 +6,12 @@ import {
   MessageDescriptor,
 } from 'react-intl';
 import { nanoid } from 'nanoid';
+import { RouteChildrenProps, useParams } from 'react-router';
+import { Formik } from 'formik';
 
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
-import { RouteChildrenProps, useParams } from 'react-router';
-import { Form } from '~core/Fields';
-import Payments from '~dashboard/ExpenditurePage/Payments';
+import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
+import { useColonyFromNameQuery } from '~data/generated';
 import Stages from '~dashboard/ExpenditurePage/Stages';
 import TitleDescriptionSection, {
   LockedTitleDescriptionSection,
@@ -18,13 +19,12 @@ import TitleDescriptionSection, {
 import { getMainClasses } from '~utils/css';
 import styles from './ExpenditurePage.css';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
+import { SpinnerLoader } from '~core/Preloaders';
+import ExpenditureForm from './ExpenditureForm';
 import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
 import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
-import { useColonyFromNameQuery } from '~data/generated';
 import { useLoggedInUser } from '~data/helpers';
-import { SpinnerLoader } from '~core/Preloaders';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
-import { ExpenditureSettings } from '~dashboard/ExpenditurePage';
 import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
 
 const displayName = 'pages.ExpenditurePage';
@@ -271,7 +271,7 @@ const ExpenditurePage = ({ match }: Props) => {
   }, [shouldValidate]);
 
   return isFormEditable ? (
-    <Form
+    <Formik
       initialValues={initialValuesData}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
@@ -286,23 +286,25 @@ const ExpenditurePage = ({ match }: Props) => {
             <SpinnerLoader appearance={{ size: 'medium' }} />
           ) : (
             colonyData && (
-              <>
-                <ExpenditureSettings
-                  colony={colonyData.processedColony}
-                  username={loggedInUser.username || ''}
-                  walletAddress={loggedInUser.walletAddress}
-                />
-                <Payments
-                  sidebarRef={sidebarRef.current}
-                  colony={colonyData.processedColony}
-                />
-              </>
+              <ExpenditureForm
+                sidebarRef={sidebarRef.current}
+                colony={colonyData.processedColony}
+              />
             )
           )}
         </aside>
         <div className={styles.mainContainer}>
           <main className={styles.mainContent}>
-            <TitleDescriptionSection />
+            <div className={styles.titleCommentsContainer}>
+              <TitleDescriptionSection />
+              {loading ? (
+                <div className={styles.spinnerContainer}>
+                  <SpinnerLoader appearance={{ size: 'medium' }} />
+                </div>
+              ) : (
+                <LogsSection colony={colonyData?.processedColony} />
+              )}
+            </div>
             <Stages
               {...{
                 states,
@@ -316,7 +318,7 @@ const ExpenditurePage = ({ match }: Props) => {
           </main>
         </div>
       </div>
-    </Form>
+    </Formik>
   ) : (
     <div className={getMainClasses({}, styles)}>
       <aside className={styles.sidebar} ref={sidebarRef}>
@@ -333,10 +335,19 @@ const ExpenditurePage = ({ match }: Props) => {
       </aside>
       <div className={styles.mainContainer}>
         <main className={styles.mainContent}>
-          <LockedTitleDescriptionSection
-            title={formValues?.title}
-            description={formValues?.description}
-          />
+          <div className={styles.titleCommentsContainer}>
+            <LockedTitleDescriptionSection
+              title={formValues?.title}
+              description={formValues?.description}
+            />
+            {loading ? (
+              <div className={styles.spinnerContainer}>
+                <SpinnerLoader appearance={{ size: 'medium' }} />
+              </div>
+            ) : (
+              <LogsSection colony={colonyData?.processedColony} />
+            )}
+          </div>
           <Stages
             {...{
               states,

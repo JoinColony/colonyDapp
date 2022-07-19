@@ -69,6 +69,8 @@ export interface EventValues {
   objectionTag?: ReactElement;
   reputationChange?: string;
   isSmiteAction?: boolean;
+  changes?: ReactElement[];
+  funds?: ReactElement[];
 }
 
 export type FeedItemWithId<T> = T & { uniqueId: string };
