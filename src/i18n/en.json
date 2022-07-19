@@ -408,6 +408,10 @@
     "metatransaction.ColonyClient.emitDomainReputationReward.description": "Awarding user",
     "metatransaction.ColonyClient.annotateTransaction.title": "Annotate Transaction",
     "metatransaction.ColonyClient.annotateTransaction.description": "Annotate Transaction",
+    "metatransaction.WrappedTokenClient.withdraw.title": "Unwrap Token",
+    "metatransaction.WrappedTokenClient.withdraw.description": "Unwrap Token",
+    "metatransaction.VestingSimpleClient.claimGrant.title": "Claim Colony Grant",
+    "metatransaction.VestingSimpleClient.claimGrant.description": "Claim Colony Grant",
 
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",
