@@ -50,7 +50,7 @@ const displayName = 'dashboard.GnosisControlSafeDialog.GnosisNFTTransfer';
 
 interface Props {
   colonyAddress: Address;
-  isSubmitting: boolean;
+  inputDisabled: boolean;
   nftCatalogue: NFT[];
   values;
 }
@@ -67,15 +67,13 @@ const renderAvatar = (address: string, item) => (
 
 const GnosisNFTTransfer = ({
   colonyAddress,
-  isSubmitting,
+  inputDisabled,
   nftCatalogue,
   values,
 }: Props) => {
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress },
   });
-
-  const inputDisabled = !isSubmitting; // @TODO check if transfer requires certain permissions
 
   const filteredNFTData = useMemo(
     () => nftCatalogue.find((item) => item?.address === values?.nft?.id),
