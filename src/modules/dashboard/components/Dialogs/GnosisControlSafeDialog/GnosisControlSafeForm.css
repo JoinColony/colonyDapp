@@ -115,3 +115,28 @@
 .transactionHeadingOpen .toggleTabIcon {
   transform: none;
 }
+
+.transactionTitle {
+  font-size: var(--size-normal);
+  color: var(dark);
+  margin-bottom: 20px;
+  font-weight: var(--weight-bold);
+}
+
+.detailsItem {
+  display: flex;
+  height: 46px;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+  font-size: var(--size-smallish);
+}
+
+.detailsItemLabel {
+  color: var(--temp-grey-blue-7);
+}
+
+.detailsItemValue {
+  color: var(dark);
+}
