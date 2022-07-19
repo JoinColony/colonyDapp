@@ -24,9 +24,9 @@ import { Colony, useLoggedInUser } from '~data/index';
 import { Address, PrimitiveType } from '~types/index';
 
 import SafeTransactionPreview from './SafeTransactionPreview';
-import GnosisNFTTransfer from './GnosisNFTTransfer';
 import { FormValues } from './GnosisControlSafeDialog';
 import {
+  GnosisNFTTransfer,
   TransferFundsSection,
   RawTransactionSection,
   ContractInteractionSection,
@@ -197,6 +197,7 @@ const GnosisControlSafeForm = ({
         contract: '',
         abi: '',
         contractFunction: '',
+        nft: null,
       });
       setTransactionTabStatus([
         ...Array(transactionTabStatus.length).fill(false),
@@ -390,8 +391,9 @@ const GnosisControlSafeForm = ({
                         <GnosisNFTTransfer
                           colonyAddress={colonyAddress}
                           nftCatalogue={testNFTData}
+                          transactionFormIndex={index}
                           values={values}
-                          isSubmitting
+                          disabledInput={!userHasPermission || isSubmitting}
                         />
                       )}
                     </div>
