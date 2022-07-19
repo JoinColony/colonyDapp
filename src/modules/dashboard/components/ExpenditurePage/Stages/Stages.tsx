@@ -73,10 +73,8 @@ interface Props {
 }
 
 const Stages = ({ states, activeStateId }: Props) => {
-  const { values, handleSubmit, validateForm } =
+  const { values, handleSubmit, validateForm, resetForm } =
     useFormikContext<ValuesType>() || {};
-
-  const { resetForm } = useFormikContext() || {};
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
 
