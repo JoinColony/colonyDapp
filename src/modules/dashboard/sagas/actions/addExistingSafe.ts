@@ -114,7 +114,7 @@ function* addExistingSafeAction({
       fetchPolicy: 'network-only',
     });
 
-    let updatatedColonyMetadata: any = {};
+    let updatedColonyMetadata: any = {};
     const safeData = { safeName, contractAddress, chainId };
 
     /*
@@ -124,7 +124,7 @@ function* addExistingSafeAction({
       /*
        * ... add the safe to a new metadata object.
        */
-      updatatedColonyMetadata = { colonySafes: [safeData] };
+      updatedColonyMetadata = { colonySafes: [safeData] };
     } else {
       /*
        *  ... otherwise, fetch the metadata from IPFS...
@@ -136,7 +136,7 @@ function* addExistingSafeAction({
 
       const colonyMetadata = JSON.parse(currentMetadata);
       const safes = colonyMetadata.colonySafes;
-      updatatedColonyMetadata = {
+      updatedColonyMetadata = {
         ...colonyMetadata,
         colonySafes: safes
           ? [...colonyMetadata.colonySafes, safeData]
@@ -149,7 +149,7 @@ function* addExistingSafeAction({
      */
     const updatedColonyMetadataIpfsHash = yield call(
       ipfsUpload,
-      JSON.stringify(updatatedColonyMetadata),
+      JSON.stringify(updatedColonyMetadata),
     );
 
     yield put(
