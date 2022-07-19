@@ -1,22 +1,21 @@
 import React, { ReactNode, useCallback } from 'react';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
-
 import { defineMessages } from 'react-intl';
-import { useField } from 'formik';
+
 import {
   InputLabel,
   SelectHorizontal,
   SelectOption,
   FormSection,
 } from '~core/Fields';
-import { Colony } from '~data/index';
+import { Colony, useLoggedInUser } from '~data/index';
 import styles from './ExpenditureSettings.css';
 import UserAvatar from '~core/UserAvatar';
 import { tokens as tokensData } from './constants';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import UserMention from '~core/UserMention';
-import DomainDropdown from '~core/DomainDropdown';
 import ColorTag, { Color } from '~core/ColorTag';
+import DomainDropdown from '~core/DomainDropdown';
 import BalanceSelect from './BalanceSelect';
 
 export const MSG = defineMessages({
@@ -45,13 +44,12 @@ export const MSG = defineMessages({
 const displayName = 'dashboard.ExpenditurePage.ExpenditureSettings';
 
 interface Props {
+  sidebarRef: HTMLElement | null;
   colony: Colony;
-  walletAddress: string;
-  username: string;
 }
 
-const ExpenditureSettings = ({ colony, walletAddress, username }: Props) => {
-  const [, { error }] = useField('filteredDomainId');
+const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
+  const { walletAddress, username } = useLoggedInUser();
 
   const getDomainColor = useCallback<(domainId: string | undefined) => Color>(
     (domainId) => {
@@ -115,6 +113,9 @@ const ExpenditureSettings = ({ colony, walletAddress, username }: Props) => {
                 value: 'advanced',
               },
             ]}
+            scrollContainer={sidebarRef}
+            placement="bottom"
+            withDropdownElelment
             optionSizeLarge
           />
         </div>
@@ -129,14 +130,16 @@ const ExpenditureSettings = ({ colony, walletAddress, username }: Props) => {
           />
           {colony && (
             <DomainDropdown
-              name="filteredDomainId"
               colony={colony}
+              name="filteredDomainId"
               renderActiveOptionFn={renderActiveOption}
               filterOptionsFn={filterDomains}
+              scrollContainer={sidebarRef}
+              placement="bottom"
+              withDropdownElelment
             />
           )}
         </div>
-        {error && <div className={styles.error}>{error}</div>}
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
         <BalanceSelect

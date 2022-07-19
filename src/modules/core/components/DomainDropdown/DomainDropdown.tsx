@@ -56,6 +56,10 @@ interface Props {
 
   /** Provides value for data-test prop in select items used on cypress testing */
   itemDataTest?: string;
+
+  withDropdownElelment?: boolean;
+  scrollContainer?: HTMLElement | null;
+  placement?: 'right' | 'bottom' | 'exact';
 }
 
 const displayName = 'DomainDropdown';
@@ -74,6 +78,9 @@ const DomainDropdown = ({
   disabled = false,
   dataTest,
   itemDataTest,
+  withDropdownElelment = false,
+  scrollContainer,
+  placement,
 }: Props) => {
   const handleSubmit = useCallback(
     (domainId: number) => {
@@ -164,6 +171,9 @@ const DomainDropdown = ({
       disabled={disabled}
       dataTest={dataTest}
       itemDataTest={itemDataTest}
+      scrollContainer={scrollContainer}
+      placement={placement}
+      withDropdownElelment={withDropdownElelment}
     />
   );
 };

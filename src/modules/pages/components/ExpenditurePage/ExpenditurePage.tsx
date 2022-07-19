@@ -289,8 +289,7 @@ const ExpenditurePage = ({ match }: Props) => {
               <>
                 <ExpenditureSettings
                   colony={colonyData.processedColony}
-                  username={loggedInUser.username || ''}
-                  walletAddress={loggedInUser.walletAddress}
+                  sidebarRef={sidebarRef.current}
                 />
                 <Payments
                   sidebarRef={sidebarRef.current}
