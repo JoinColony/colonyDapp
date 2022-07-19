@@ -93,6 +93,14 @@ const MSG = defineMessages({
     id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.previewTitle',
     defaultMessage: 'Confirm transaction details',
   },
+  targetContract: {
+    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.targetContract`,
+    defaultMessage: 'Target contract',
+  },
+  function: {
+    id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.function',
+    defaultMessage: 'Function',
+  },
   [TransactionTypes.TRANSFER_FUNDS]: {
     id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.${TransactionTypes.TRANSFER_FUNDS}`,
     defaultMessage: 'Transfer funds',
@@ -238,7 +246,17 @@ const GnosisControlSafeForm = ({
     [values.transactions.length],
   );
 
-  return !showPreview ? (
+  const DetailsItem = ({ label, value }) => (
+    <div className={styles.detailsItem}>
+      <div className={styles.detailsItemLabel}>
+        <FormattedMessage {...label} />
+      </div>
+      <div className={styles.detailsItemValue}>{value}</div>
+    </div>
+  );
+
+  // return !showPreview ? (
+  return false ? (
     <>
       <DialogSection>
         <div className={styles.heading}>
@@ -416,10 +434,14 @@ const GnosisControlSafeForm = ({
         </div>
       </DialogSection>
       <DialogSection>
-        <div>
+        <div className={styles.transactionTitle}>
           1. <FormattedMessage {...MSG[values.transactionType]} />
         </div>
-        <div>transaction details</div>
+        <DetailsItem label={MSG.targetContract} value={values.safe} />
+        <DetailsItem
+          label={MSG.function}
+          value={<FormattedMessage {...MSG[values.transactionType]} />}
+        />
       </DialogSection>
       <DialogSection>
         <Input
