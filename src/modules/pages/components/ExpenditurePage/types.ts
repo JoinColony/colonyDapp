@@ -10,6 +10,7 @@ import { LoggedInUser } from '~data/generated';
 
 export enum ExpenditureTypes {
   Advanced = 'advanced',
+  Split = 'split',
 }
 
 export interface ValuesType {

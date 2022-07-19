@@ -5,7 +5,7 @@ import { ExpenditureSettings } from '~dashboard/ExpenditurePage';
 import Payments from '~dashboard/ExpenditurePage/Payments';
 import Split from '~dashboard/ExpenditurePage/Split';
 import { Colony } from '~data/index';
-import { ValuesType } from './ExpenditurePage';
+import { ValuesType } from './types';
 
 interface Props {
   colony: Colony;
@@ -31,7 +31,7 @@ const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
 
   return (
     <>
-      <ExpenditureSettings colony={colony} />
+      <ExpenditureSettings colony={colony} sidebarRef={sidebarRef} />
       {secondFormSection}
     </>
   );
