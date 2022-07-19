@@ -1,23 +1,23 @@
 import React, { ReactNode, useCallback } from 'react';
-import { ROOT_DOMAIN_ID } from '@colony/colony-js';
-
 import { defineMessages } from 'react-intl';
 import { useField } from 'formik';
+
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import {
   InputLabel,
   SelectHorizontal,
   SelectOption,
   FormSection,
 } from '~core/Fields';
-import { Colony } from '~data/index';
-import styles from './ExpenditureSettings.css';
-import UserAvatar from '~core/UserAvatar';
-
-import { tokens as tokensData } from './constants';
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import UserMention from '~core/UserMention';
 import DomainDropdown from '~core/DomainDropdown';
 import ColorTag, { Color } from '~core/ColorTag';
+import UserAvatar from '~core/UserAvatar';
+import { Colony } from '~data/index';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+
+import styles from './ExpenditureSettings.css';
+import { tokens as tokensData } from './constants';
 import BalanceSelect from './BalanceSelect';
 
 export const MSG = defineMessages({

@@ -219,8 +219,9 @@ const ExpenditurePage = ({ match }: Props) => {
 
   const handleFundExpenditure = useCallback(
     () =>
+      colonyData &&
       openEscrowFundsDialog({
-        colonyName: colonyData?.processedColony.colonyName || '',
+        colony: colonyData?.processedColony,
         onClick: () => setActiveStateId?.(Stage.Funded), // add call to backend
         isVotingExtensionEnabled: true, // temporary value
       }),
