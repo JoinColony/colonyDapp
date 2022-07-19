@@ -16,8 +16,30 @@ const systemMessagesMessageDescriptors = {
       ${SystemMessagesName.MotionRevealResultObjectionWon} {{motionTag} failed. {voteResultsWidget} The motion will fail at the end of the escalation period unless the dispute is escalated to a higher team.}
       ${SystemMessagesName.MotionRevealResultMotionWon} {{motionTag} passed! {voteResultsWidget} The motion will pass at the end of the escalation period unless the dispute is escalated to a higher team.}
       ${SystemMessagesName.MotionCanBeEscalated} {{escalateTag} period started. {spaceBreak}{spaceBreak} If you believe this result was unfair, and would be different if more people were involved, you may escalate it to a higher team.}
+
+      ${SystemMessagesName.ExpenditureStaked} {{user} {reputation} staked {amount} to create a draft expenditure; they can change parameters until they lock the expenditure.}
+      ${SystemMessagesName.ExpenditureCreatedDraft} {{user} {reputation} created a draft expenditure; they can change parameters until they lock the expenditure.}
+      ${SystemMessagesName.ExpenditureCancelledDraft} {{user} {reputation} cancelled this draft expenditure and may reclaim their stake.}
+      ${SystemMessagesName.ExpenditureClaimedStake} {{user} {reputation} reclaimed their stake.}
+      ${SystemMessagesName.ExpenditureLocked} {{user} {reputation} locked the expenditure. Parameters can be modified by either a motion, or a member with the /"Arbitration/" permission until the funds have been claimed.}
+      ${SystemMessagesName.ExpenditureModified} {{user} {reputation} changed the expenditure. {changes}}
+      ${SystemMessagesName.ExpenditureMotionModified} {{user} {reputation} created a motion to change the expenditure. {changes}}
+      ${SystemMessagesName.ExpenditureOwnerChange} {{user} {reputation} changed the owner of this expenditure to {recipient}.}
+      ${SystemMessagesName.ExpenditureMotionOwnerChange} {{user} {reputation} created a motion to change the owner of this expenditure to {recipient}.}
+      ${SystemMessagesName.ExpenditureFunding} {{user} {reputation} added funding of {funds}}
+      ${SystemMessagesName.ExpenditureMotionFunding} {{user} {reputation} created a motion to fund this expenditure with {founds}.}
+      ${SystemMessagesName.ExpenditureFunded} {The expenditure is fully funded. {user} may release the funds when appropriate.}
+      ${SystemMessagesName.ExpenditureReleaseFunds} {{user} {reputation} released the funds. Funds may be claimed after the security delay.}
+      ${SystemMessagesName.ExpenditureFundsClaimed} {{user} {reputation} claimed their funds of {funds}.}
+      ${SystemMessagesName.ExpenditureAllFundsClaimed} {All funds have been claimed.}
       other {Generic system message}
     }`,
+  /*
+   * Changes needs to be declared separely since we can't nest select declarations
+   */
+  [`systemMessage.change.recipient`]: `{prevState} recipient was changed to {recipient}`,
+  [`systemMessage.change.value`]: `value was changed to {value}`,
+  [`systemMessage.change.claimDelay`]: `claim delay was changed to {value}`,
 };
 
 export default systemMessagesMessageDescriptors;

@@ -1,8 +1,7 @@
 import React, { ReactNode, useCallback } from 'react';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
-
 import { defineMessages } from 'react-intl';
-import { useField } from 'formik';
+
 import {
   InputLabel,
   SelectHorizontal,
@@ -15,8 +14,8 @@ import UserAvatar from '~core/UserAvatar';
 import { tokens as tokensData } from './constants';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import UserMention from '~core/UserMention';
-import DomainDropdown from '~core/DomainDropdown';
 import ColorTag, { Color } from '~core/ColorTag';
+import DomainDropdown from '~core/DomainDropdown';
 import BalanceSelect from './BalanceSelect';
 
 export const MSG = defineMessages({
@@ -60,12 +59,12 @@ const expeditureTypes = [
 const displayName = 'dashboard.ExpenditurePage.ExpenditureSettings';
 
 interface Props {
+  sidebarRef: HTMLElement | null;
   colony: Colony;
 }
 
-const ExpenditureSettings = ({ colony }: Props) => {
-  const loggedInUser = useLoggedInUser();
-  const [, { error }] = useField('filteredDomainId');
+const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
+  const { walletAddress, username } = useLoggedInUser();
 
   const getDomainColor = useCallback<(domainId: string | undefined) => Color>(
     (domainId) => {
@@ -124,6 +123,9 @@ const ExpenditureSettings = ({ colony }: Props) => {
               width: 'content',
             }}
             options={expeditureTypes}
+            scrollContainer={sidebarRef}
+            placement="bottom"
+            withDropdownElelment
             optionSizeLarge
           />
         </div>
@@ -138,14 +140,16 @@ const ExpenditureSettings = ({ colony }: Props) => {
           />
           {colony && (
             <DomainDropdown
-              name="filteredDomainId"
               colony={colony}
+              name="filteredDomainId"
               renderActiveOptionFn={renderActiveOption}
               filterOptionsFn={filterDomains}
+              scrollContainer={sidebarRef}
+              placement="bottom"
+              withDropdownElelment
             />
           )}
         </div>
-        {error && <div className={styles.error}>{error}</div>}
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
         <BalanceSelect
@@ -163,13 +167,9 @@ const ExpenditureSettings = ({ colony }: Props) => {
             }}
           />
           <div className={styles.userAvatarContainer}>
-            <UserAvatar
-              address={loggedInUser.walletAddress}
-              size="xs"
-              notSet={false}
-            />
+            <UserAvatar address={walletAddress} size="xs" notSet={false} />
             <div className={styles.userName}>
-              <UserMention username={loggedInUser.username || ''} />
+              <UserMention username={username || ''} />
             </div>
           </div>
         </div>
