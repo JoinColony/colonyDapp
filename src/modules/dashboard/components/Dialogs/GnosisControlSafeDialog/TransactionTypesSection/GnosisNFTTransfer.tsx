@@ -50,8 +50,9 @@ const displayName = 'dashboard.GnosisControlSafeDialog.GnosisNFTTransfer';
 
 interface Props {
   colonyAddress: Address;
-  inputDisabled: boolean;
+  disabledInput: boolean;
   nftCatalogue: NFT[];
+  transactionFormIndex: number;
   values;
 }
 
@@ -67,8 +68,9 @@ const renderAvatar = (address: string, item) => (
 
 const GnosisNFTTransfer = ({
   colonyAddress,
-  inputDisabled,
+  disabledInput,
   nftCatalogue,
+  transactionFormIndex,
   values,
 }: Props) => {
   const { data: colonyMembers } = useMembersSubscription({
@@ -76,8 +78,12 @@ const GnosisNFTTransfer = ({
   });
 
   const filteredNFTData = useMemo(
-    () => nftCatalogue.find((item) => item?.address === values?.nft?.id),
-    [nftCatalogue, values],
+    () =>
+      nftCatalogue.find(
+        (item) =>
+          item?.address === values?.transactions[transactionFormIndex]?.nft?.id,
+      ),
+    [nftCatalogue, transactionFormIndex, values],
   );
 
   return (
@@ -88,11 +94,11 @@ const GnosisNFTTransfer = ({
           <SingleNFTPicker
             appearance={{ width: 'wide' }}
             label={MSG.selectNFT}
-            name="nft"
+            name={`transactions.${transactionFormIndex}.nft`}
             filter={filterUserSelection}
             renderAvatar={renderAvatar}
             data={nftCatalogue}
-            disabled={inputDisabled}
+            disabled={disabledInput}
             placeholder={MSG.NFTPickerPlaceholder}
           />
         </div>
@@ -145,11 +151,11 @@ const GnosisNFTTransfer = ({
             appearance={{ width: 'wide' }}
             data={colonyMembers?.subscribedUsers || []}
             label={MSG.selectRecipient}
-            name="recipient"
+            name={`transactions.${transactionFormIndex}.recipient`}
             filter={filterUserSelection}
             renderAvatar={renderAvatar}
             placeholder={MSG.userPickerPlaceholder}
-            disabled={inputDisabled}
+            disabled={disabledInput}
             showMaskedAddress
             dataTest="NFTRecipientSelector"
             itemDataTest="NFTRecipientSelectorItem"
