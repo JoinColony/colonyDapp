@@ -11,7 +11,9 @@ import { ActionForm } from '~core/Fields';
 import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
 
-import GnosisControlSafeForm from './GnosisControlSafeForm';
+import GnosisControlSafeForm, {
+  TransactionTypes,
+} from './GnosisControlSafeForm';
 
 const MSG = defineMessages({
   requiredFieldError: {
@@ -52,25 +54,6 @@ export interface FormValues {
   safe: string;
   forceAction: boolean;
 }
-
-export const transactionOptions = [
-  {
-    value: 'transferFunds',
-    label: 'Transfer funds',
-  },
-  {
-    value: 'transferNft',
-    label: 'Transfer NFT',
-  },
-  {
-    value: 'contractInteraction',
-    label: 'Contract interaction',
-  },
-  {
-    value: 'rawTransaction',
-    label: 'Raw transaction',
-  },
-];
 
 const displayName = 'dashboard.GnosisControlSafeDialog';
 
