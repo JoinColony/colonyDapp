@@ -2,8 +2,6 @@ import { Form, useFormikContext } from 'formik';
 import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { useDialog } from '~core/Dialog';
-import StakeExpenditureDialog from '~dashboard/Dialogs/StakeExpenditureDialog';
 import { ExpenditureSettings } from '~dashboard/ExpenditurePage';
 import Payments from '~dashboard/ExpenditurePage/Payments';
 import Split from '~dashboard/ExpenditurePage/Split';
