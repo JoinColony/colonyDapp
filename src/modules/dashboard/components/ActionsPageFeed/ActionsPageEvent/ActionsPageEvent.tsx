@@ -41,6 +41,7 @@ import { EVENT_ROLES_MAP } from '../../ActionsPage/staticMaps';
 import motionSpecificStyles from '../../ActionsPage/ActionsComponents/DefaultMotion.css';
 
 import styles from './ActionsPageEvent.css';
+import { isSystemMessage } from '~dashboard/ExpenditurePage/LogsSection/LogsSection';
 
 const displayName = 'dashboard.ActionsPageFeed.ActionsPageEvent';
 
@@ -290,6 +291,10 @@ const ActionsPageEvent = ({
   }, [domainMetadataHistory, actionData, metadataJSON, eventName]);
 
   const getEventTitleMessageDescriptor = useMemo(() => {
+    if (isSystemMessage(eventName)) {
+      return 'systemMessage.title';
+    }
+
     switch (eventName) {
       case ColonyAndExtensionsEvents.ColonyMetadata:
         return getColonyMetadataMessageDescriptorsIds(
