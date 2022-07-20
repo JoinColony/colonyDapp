@@ -97,6 +97,14 @@ const MSG = defineMessages({
     id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.previewTitle',
     defaultMessage: 'Confirm transaction details',
   },
+  transactionsSetTitle: {
+    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.transactionsSetTitle`,
+    defaultMessage: 'Title of the set of all the arbitrary transactions',
+  },
+  explainWhy: {
+    id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.explainWhy',
+    defaultMessage: `Explain why you’re making arbitrary transaction (optional)`,
+  },
   targetContract: {
     id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.targetContract`,
     defaultMessage: 'Target contract',
@@ -566,13 +574,13 @@ const GnosisControlSafeForm = ({
       <DialogSection>
         <Input
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
-          label="Set title"
+          label={MSG.transactionsSetTitle}
           name="transactionSetTitle"
           disabled={false}
         />
       </DialogSection>
       <DialogSection>
-        <Annotations label="Explain why" name="annotation" />
+        <Annotations label={MSG.explainWhy} name="annotation" />
       </DialogSection>
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
