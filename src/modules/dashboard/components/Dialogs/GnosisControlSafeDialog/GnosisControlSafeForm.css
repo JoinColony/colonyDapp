@@ -117,26 +117,48 @@
 }
 
 .transactionTitle {
-  font-size: var(--size-normal);
-  color: var(dark);
   margin-bottom: 20px;
+  font-size: var(--size-normal);
   font-weight: var(--weight-bold);
+  color: var(dark);
 }
 
 .detailsItem {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   height: 46px;
   width: 100%;
-  align-items: center;
-  justify-content: space-between;
   border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
   font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
 }
 
 .detailsItemLabel {
   color: var(--temp-grey-blue-7);
 }
 
+.nftValue {
+  color: var(--pink);
+}
+
 .detailsItemValue {
-  color: var(dark);
+  color: var(--dark);
+}
+
+.tokenAmount {
+  display: flex;
+  align-items: center;
+}
+
+.tokenAmount > figure {
+  margin-right: 8px;
+}
+
+.tokenAmount > span {
+  font-size: var(--size-smallish);
+}
+
+.tokenAmount > figure > div {
+  border-radius: 0;
 }
