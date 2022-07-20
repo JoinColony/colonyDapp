@@ -1,11 +1,12 @@
 import React, { useCallback, useState } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, useIntl } from 'react-intl';
 import * as yup from 'yup';
 
 import { ActionTypes } from '~redux/actionTypes';
 import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 import { Colony } from '~data/index';
 import EditExpenditureDialogForm from './EditExpenditureDialogForm';
+import { ActionForm } from '~core/Fields';
 
 export const MSG = defineMessages({
   header: {
@@ -132,6 +133,7 @@ const EditExpenditureDialog = ({
   const [isForce, setIsForce] = useState(false);
   const [domainID, setDomainID] = useState<number>();
   const [confirmedValues, setConfirmedValues] = useState(newValues);
+  const { formatMessage } = useIntl();
 
   const handleMotionDomainChange = useCallback(
     (motionDomainId) => setDomainID(motionDomainId),
@@ -186,22 +188,30 @@ const EditExpenditureDialog = ({
   );
 
   return (
-    <EditExpenditureDialogForm
-      {...{
-        close,
-        handleMotionDomainChange,
-        colony,
-        confirmedValues,
-        discardChange,
-        discardRecipientChange,
-        getFormAction,
-        isForce,
-        oldValues,
-        onClick,
-        setIsForce,
-        domainID,
-      }}
-    />
+    <ActionForm
+      initialValues={{ forceAction: false }}
+      submit={getFormAction('SUBMIT')}
+      error={getFormAction('ERROR')}
+      success={getFormAction('SUCCESS')}
+      onSuccess={close}
+      validationSchema={validationSchema(formatMessage(MSG.errorAnnotation))}
+    >
+      <EditExpenditureDialogForm
+        {...{
+          close,
+          handleMotionDomainChange,
+          colony,
+          confirmedValues,
+          discardChange,
+          discardRecipientChange,
+          isForce,
+          oldValues,
+          onClick,
+          setIsForce,
+          domainID,
+        }}
+      />
+    </ActionForm>
   );
 };
 

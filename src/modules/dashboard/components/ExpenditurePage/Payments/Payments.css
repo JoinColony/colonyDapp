@@ -14,7 +14,6 @@
   margin-bottom: 18px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
-  line-height: 18px;
   color: var(--dark);
 }
 
@@ -125,11 +124,6 @@
 
 .editIcon:hover {
   cursor: pointer;
-}
-
-.editIcon svg {
-  height: 30px;
-  width: 30px;
 }
 
 .recipientNameWrapper {

@@ -1,13 +1,13 @@
-import React, { useCallback, useMemo } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import { FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
-import { FormikProps } from 'formik';
+import { useFormikContext } from 'formik';
 import { nanoid } from 'nanoid';
 
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
-import { ActionForm, Annotations, FormSection, Toggle } from '~core/Fields';
+import { Annotations, FormSection, Toggle } from '~core/Fields';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
-import { FormValuesType, MSG, validationSchema } from './EditExpenditureDialog';
+import { FormValuesType, MSG } from './EditExpenditureDialog';
 import styles from './EditExpenditureDialog.css';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
@@ -28,7 +28,6 @@ import ColorTag, { Color } from '~core/ColorTag';
 const displayName = 'dashboard.EditExpenditureDialogForm';
 
 interface Props {
-  getFormAction: (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => any;
   close: () => void;
   isForce: boolean;
   setIsForce: React.Dispatch<React.SetStateAction<boolean>>;
@@ -46,7 +45,6 @@ interface Props {
 }
 
 const EditExpenditureDialogForm = ({
-  getFormAction,
   close,
   isForce,
   setIsForce,
@@ -59,7 +57,9 @@ const EditExpenditureDialogForm = ({
   discardChange,
   onClick,
 }: Props) => {
-  const { formatMessage } = useIntl();
+  const { values, isSubmitting, handleSubmit } = useFormikContext<
+    FormValuesType
+  >();
   const noChanges =
     confirmedValues && Object.keys(confirmedValues).length === 0;
 
@@ -77,6 +77,12 @@ const EditExpenditureDialogForm = ({
     },
     [],
   );
+
+  useEffect(() => {
+    if (values.forceAction !== isForce) {
+      setIsForce(values.forceAction);
+    }
+  }, [isForce, setIsForce, values]);
 
   const confirmedValuesWithIds = convertToValuesWithIds(confirmedValues);
 
@@ -232,252 +238,226 @@ const EditExpenditureDialogForm = ({
   );
 
   return (
-    <ActionForm
-      initialValues={{ forceAction: false }}
-      submit={getFormAction('SUBMIT')}
-      error={getFormAction('ERROR')}
-      success={getFormAction('SUCCESS')}
-      onSuccess={close}
-      validationSchema={validationSchema(formatMessage(MSG.errorAnnotation))}
-    >
-      {({
-        values,
-        handleSubmit,
-        isSubmitting,
-      }: FormikProps<FormValuesType>) => {
-        if (values.forceAction !== isForce) {
-          setIsForce(values.forceAction);
-        }
-        return (
-          <Dialog cancel={close}>
-            <DialogSection>
-              <div
-                className={classNames(
-                  styles.row,
-                  styles.withoutPadding,
-                  styles.forceRow,
-                )}
-              >
-                <MotionDomainSelect
-                  colony={colony}
-                  onDomainChange={handleMotionDomainChange}
-                  initialSelectedDomain={domainID}
-                  disabled={noChanges}
-                />
-                <div className={styles.forceContainer}>
-                  <FormattedMessage {...MSG.force} />
-                  <div className={styles.toggleContainer}>
-                    <Toggle
-                      name="forceAction"
-                      appearance={{ theme: 'danger' }}
-                      disabled={isSubmitting || noChanges}
-                    />
-                  </div>
-
-                  <Tooltip
-                    content={
-                      <div className={styles.tooltip}>
-                        <FormattedMessage id="tooltip.forceAction" />
-                      </div>
-                    }
-                    trigger="hover"
-                    popperOptions={{
-                      placement: 'top-end',
-                      strategy: 'fixed',
-                    }}
-                  >
-                    <Icon
-                      name="question-mark"
-                      className={styles.questionIcon}
-                    />
-                  </Tooltip>
-                </div>
-              </div>
-
-              <Heading
-                appearance={{ size: 'medium', margin: 'none' }}
-                className={styles.title}
-              >
-                <FormattedMessage {...MSG.header} />
-              </Heading>
-              <div className={styles.descriptionWrapper}>
-                <FormattedMessage {...MSG.descriptionText} />
-              </div>
-            </DialogSection>
-            <div className={styles.contentWrapper}>
-              {!confirmedValues || noChanges ? (
-                <div className={styles.noChanges}>
-                  <FormattedMessage {...MSG.noChanges} />
-                </div>
-              ) : (
-                confirmedValuesWithIds.map(({ key, value, id }, index) => {
-                  if (
-                    Array.isArray(value) &&
-                    Object.keys(value).length > 0 &&
-                    key === 'recipients'
-                  ) {
-                    return value.map((changedItem, changeIndex) => {
-                      const oldValue:
-                        | Recipient
-                        | undefined = oldValues.recipients.find(
-                        (recipient) => recipient?.id === changedItem?.id,
-                      );
-                      const recipientValues =
-                        oldValue && getRecipientTokens(oldValue, colony);
-
-                      return (
-                        <React.Fragment key={oldValue?.id || index}>
-                          <FormSection appearance={{ border: 'bottom' }}>
-                            <div className={styles.reicpientButtonContainer}>
-                              <div className={styles.recipientContainer}>
-                                {changeIndex + 1}:{' '}
-                                {!oldValue ? (
-                                  <FormattedMessage {...MSG.newRecipient} />
-                                ) : (
-                                  <>
-                                    <UserMention
-                                      username={
-                                        oldValue.recipient?.profile.username ||
-                                        oldValue.recipient?.profile
-                                          .displayName ||
-                                        ''
-                                      }
-                                    />
-                                    {', '}
-                                    {recipientValues?.map(
-                                      ({ amount, token }, idx) =>
-                                        token &&
-                                        amount && (
-                                          <div
-                                            className={styles.valueAmount}
-                                            key={idx}
-                                          >
-                                            <span className={styles.icon}>
-                                              <TokenIcon
-                                                className={styles.tokenIcon}
-                                                token={token}
-                                                name={
-                                                  token.name || token.address
-                                                }
-                                              />
-                                            </span>
-
-                                            <Numeral
-                                              // eslint-disable-next-line max-len
-                                              unit={getTokenDecimalsWithFallback(
-                                                0,
-                                              )}
-                                              value={amount}
-                                            />
-                                            <span className={styles.symbol}>
-                                              {token.symbol}
-                                            </span>
-                                          </div>
-                                        ),
-                                    )}
-                                    {oldValue?.delay?.amount && (
-                                      <>
-                                        {', '}
-                                        {oldValue.delay?.amount}
-                                        {oldValue.delay?.time}
-                                      </>
-                                    )}
-                                  </>
-                                )}
-                              </div>
-                              <Button
-                                appearance={{ theme: 'dangerLink' }}
-                                onClick={() =>
-                                  discardRecipientChange(changedItem?.id || '')
-                                }
-                              >
-                                <FormattedMessage {...MSG.discard} />
-                              </Button>
-                            </div>
-                          </FormSection>
-                          {renderRecipientChange(changedItem)}
-                        </React.Fragment>
-                      );
-                    });
-                  }
-                  return (
-                    <React.Fragment key={id}>
-                      <FormSection appearance={{ border: 'bottom' }}>
-                        <div className={styles.changeContainer}>
-                          <span>
-                            <FormattedMessage {...MSG.change} />{' '}
-                            {key === 'filteredDomainId' ? (
-                              <FormattedMessage {...MSG.teamCaption} />
-                            ) : (
-                              key
-                            )}
-                          </span>
-                          <Button
-                            appearance={{ theme: 'dangerLink' }}
-                            onClick={() => discardChange(key)}
-                          >
-                            <FormattedMessage {...MSG.discard} />
-                          </Button>
-                        </div>
-                      </FormSection>
-                      <FormSection appearance={{ border: 'bottom' }}>
-                        <div
-                          className={classNames(
-                            styles.changeContainer,
-                            styles.changeItem,
-                          )}
-                        >
-                          <span>
-                            <FormattedMessage {...MSG.new} />{' '}
-                            {key === 'filteredDomainId' ? (
-                              <FormattedMessage {...MSG.teamCaption} />
-                            ) : (
-                              key
-                            )}
-                          </span>
-                          <span className={styles.changeWrapper}>
-                            {renderChange(value, key)}
-                          </span>
-                        </div>
-                      </FormSection>
-                    </React.Fragment>
-                  );
-                })
-              )}
+    <Dialog cancel={close}>
+      <DialogSection>
+        <div
+          className={classNames(
+            styles.row,
+            styles.withoutPadding,
+            styles.forceRow,
+          )}
+        >
+          <MotionDomainSelect
+            colony={colony}
+            onDomainChange={handleMotionDomainChange}
+            initialSelectedDomain={domainID}
+            disabled={noChanges}
+          />
+          <div className={styles.forceContainer}>
+            <FormattedMessage {...MSG.force} />
+            <div className={styles.toggleContainer}>
+              <Toggle
+                name="forceAction"
+                appearance={{ theme: 'danger' }}
+                disabled={isSubmitting || noChanges}
+              />
             </div>
-            <DialogSection appearance={{ theme: 'sidePadding' }}>
-              <Annotations
-                label={isForce ? MSG.forceTextareaLabel : MSG.descriptionLabel}
-                name="annotationMessage"
-                maxLength={90}
-                disabled={noChanges}
-              />
-            </DialogSection>
-            <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
-              <Button
-                appearance={{ theme: 'secondary', size: 'large' }}
-                text={MSG.cancelText}
-                onClick={close}
-              />
-              <Button
-                appearance={{
-                  theme: isForce ? 'danger' : 'primary',
-                  size: 'large',
-                }}
-                autoFocus
-                text={isForce ? MSG.confirmTexForce : MSG.confirmText}
-                onClick={(e) => {
-                  handleSubmit(e as any);
-                  onClick(confirmedValues, isForce);
-                  close();
-                }}
-                disabled={noChanges}
-              />
-            </DialogSection>
-          </Dialog>
-        );
-      }}
-    </ActionForm>
+
+            <Tooltip
+              content={
+                <div className={styles.tooltip}>
+                  <FormattedMessage id="tooltip.forceAction" />
+                </div>
+              }
+              trigger="hover"
+              popperOptions={{
+                placement: 'top-end',
+                strategy: 'fixed',
+              }}
+            >
+              <Icon name="question-mark" className={styles.questionIcon} />
+            </Tooltip>
+          </div>
+        </div>
+
+        <Heading
+          appearance={{ size: 'medium', margin: 'none' }}
+          className={styles.title}
+        >
+          <FormattedMessage {...MSG.header} />
+        </Heading>
+        <div className={styles.descriptionWrapper}>
+          <FormattedMessage {...MSG.descriptionText} />
+        </div>
+      </DialogSection>
+      <div className={styles.contentWrapper}>
+        {!confirmedValues || noChanges ? (
+          <div className={styles.noChanges}>
+            <FormattedMessage {...MSG.noChanges} />
+          </div>
+        ) : (
+          confirmedValuesWithIds.map(({ key, value, id }, index) => {
+            if (
+              Array.isArray(value) &&
+              Object.keys(value).length > 0 &&
+              key === 'recipients'
+            ) {
+              return value.map((changedItem, changeIndex) => {
+                const oldValue:
+                  | Recipient
+                  | undefined = oldValues.recipients.find(
+                  (recipient) => recipient?.id === changedItem?.id,
+                );
+                const recipientValues =
+                  oldValue && getRecipientTokens(oldValue, colony);
+
+                return (
+                  <React.Fragment key={oldValue?.id || index}>
+                    <FormSection appearance={{ border: 'bottom' }}>
+                      <div className={styles.reicpientButtonContainer}>
+                        <div className={styles.recipientContainer}>
+                          {changeIndex + 1}:{' '}
+                          {!oldValue ? (
+                            <FormattedMessage {...MSG.newRecipient} />
+                          ) : (
+                            <>
+                              <UserMention
+                                username={
+                                  oldValue.recipient?.profile.username ||
+                                  oldValue.recipient?.profile.displayName ||
+                                  ''
+                                }
+                              />
+                              {', '}
+                              {recipientValues?.map(
+                                ({ amount, token }, idx) =>
+                                  token &&
+                                  amount && (
+                                    <div
+                                      className={styles.valueAmount}
+                                      key={idx}
+                                    >
+                                      <span className={styles.icon}>
+                                        <TokenIcon
+                                          className={styles.tokenIcon}
+                                          token={token}
+                                          name={token.name || token.address}
+                                        />
+                                      </span>
+
+                                      <Numeral
+                                        // eslint-disable-next-line max-len
+                                        unit={getTokenDecimalsWithFallback(0)}
+                                        value={amount}
+                                      />
+                                      <span className={styles.symbol}>
+                                        {token.symbol}
+                                      </span>
+                                    </div>
+                                  ),
+                              )}
+                              {oldValue?.delay?.amount && (
+                                <>
+                                  {', '}
+                                  {oldValue.delay?.amount}
+                                  {oldValue.delay?.time}
+                                </>
+                              )}
+                            </>
+                          )}
+                        </div>
+                        <Button
+                          appearance={{ theme: 'dangerLink' }}
+                          onClick={() =>
+                            discardRecipientChange(changedItem?.id || '')
+                          }
+                        >
+                          <FormattedMessage {...MSG.discard} />
+                        </Button>
+                      </div>
+                    </FormSection>
+                    {renderRecipientChange(changedItem)}
+                  </React.Fragment>
+                );
+              });
+            }
+            return (
+              <React.Fragment key={id}>
+                <FormSection appearance={{ border: 'bottom' }}>
+                  <div className={styles.changeContainer}>
+                    <span>
+                      <FormattedMessage {...MSG.change} />{' '}
+                      {key === 'filteredDomainId' ? (
+                        <FormattedMessage {...MSG.teamCaption} />
+                      ) : (
+                        key
+                      )}
+                    </span>
+                    <Button
+                      appearance={{ theme: 'dangerLink' }}
+                      onClick={() => discardChange(key)}
+                    >
+                      <FormattedMessage {...MSG.discard} />
+                    </Button>
+                  </div>
+                </FormSection>
+                <FormSection appearance={{ border: 'bottom' }}>
+                  <div
+                    className={classNames(
+                      styles.changeContainer,
+                      styles.changeItem,
+                    )}
+                  >
+                    <span>
+                      <FormattedMessage {...MSG.new} />{' '}
+                      {key === 'filteredDomainId' ? (
+                        <FormattedMessage {...MSG.teamCaption} />
+                      ) : (
+                        key
+                      )}
+                    </span>
+                    <span className={styles.changeWrapper}>
+                      {renderChange(value, key)}
+                    </span>
+                  </div>
+                </FormSection>
+              </React.Fragment>
+            );
+          })
+        )}
+      </div>
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <div className={styles.annotationsWrapper}>
+          <Annotations
+            label={isForce ? MSG.forceTextareaLabel : MSG.descriptionLabel}
+            name="annotationMessage"
+            maxLength={90}
+            disabled={noChanges}
+          />
+        </div>
+      </DialogSection>
+      <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
+        <Button
+          appearance={{ theme: 'secondary', size: 'large' }}
+          text={MSG.cancelText}
+          onClick={close}
+        />
+        <Button
+          appearance={{
+            theme: isForce ? 'danger' : 'primary',
+            size: 'large',
+          }}
+          autoFocus
+          text={isForce ? MSG.confirmTexForce : MSG.confirmText}
+          onClick={(e) => {
+            handleSubmit(e as any);
+            onClick(confirmedValues, isForce);
+            close();
+          }}
+          disabled={noChanges}
+        />
+      </DialogSection>
+    </Dialog>
   );
 };
 

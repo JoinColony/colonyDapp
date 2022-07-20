@@ -30,3 +30,4 @@ export const changeItem: string;
 export const changeWrapper: string;
 export const teamWrapper: string;
 export const noChanges: string;
+export const annotationsWrapper: string;

@@ -97,7 +97,7 @@
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   line-height: 18px;
-  color: var(--temp-grey-blue-7);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
 }
 
 .valueLabel {
@@ -121,15 +121,18 @@
   display: flex;
   justify-content: left;
   align-items: center;
-  padding: 8px 0;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   line-height: 18px;
-  color: var(--dark);
+  color: color-mod(var(--dark) alpha(85%));
 }
 
 .recipientContainer span {
   margin-left: 4px;
+  color: inherit;
+}
+
+.recipientContainer div {
   color: inherit;
 }
 
@@ -143,7 +146,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 27px 0 13px;
+  padding: 27px 0 8px;
 }
 
 .valueContainer {
@@ -233,4 +236,8 @@
 .noChanges {
   font-weight: var(--weight-bold);
   color: var(--pink);
+}
+
+.annotationsWrapper {
+  margin-bottom: 11px;
 }

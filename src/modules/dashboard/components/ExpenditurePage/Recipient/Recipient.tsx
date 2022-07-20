@@ -37,7 +37,7 @@ export const MSG = defineMessages({
   },
   tooltipMessageDescription: {
     id: 'dashboard.ExpenditurePage.Recipient.tooltipMessageDescription',
-    defaultMessage: `F.ex. once the work is finished, recipient has to wait before funds can be claimed.`,
+    defaultMessage: `For example, once the work is finished, recipient has to wait before funds can be claimed.`,
   },
   addTokenText: {
     id: 'dashboard.ExpenditurePage.Recipient.addTokenText',

@@ -57,12 +57,14 @@ const LockedPayments = ({
       <div className={styles.recipientContainer}>
         <div className={styles.payments}>
           <FormattedMessage {...MSG.payments} />
-          <Icon
-            name="edit"
-            className={styles.editIcon}
-            title="Edit expenditure"
-            onClick={editForm}
-          />
+          <span className={styles.editIcon}>
+            <Icon
+              name="edit"
+              appearance={{ size: 'medium' }}
+              title="Edit expenditure"
+              onClick={editForm}
+            />
+          </span>
         </div>
         {recipients?.map((recipient, index) => {
           const isOpen =
@@ -92,7 +94,8 @@ const LockedPayments = ({
                     {recipient?.delay?.amount && (
                       <>
                         {', '}
-                        {recipient.delay.amount} {recipient.delay.time}
+                        {recipient.delay.amount}
+                        {recipient.delay.time.substring(0, 1)}
                       </>
                     )}
                   </div>
