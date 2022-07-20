@@ -14,14 +14,18 @@ import Button, { AddItemButton } from '~core/Button';
 import Icon from '~core/Icon';
 import { SingleSafePicker, filterUserSelection } from '~core/SingleUserPicker';
 import IconTooltip from '~core/IconTooltip';
+import Numeral from '~core/Numeral';
+import TokenIcon from '~dashboard/HookedTokenIcon';
 
 import { getUserRolesForDomain } from '~modules/transformers';
 import { userHasRole } from '~modules/users/checks';
 import { useTransformer } from '~utils/hooks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import { GNOSIS_SAFE_INTEGRATION_LEARN_MORE } from '~externalUrls';
-import { Colony, useLoggedInUser } from '~data/index';
+import { Colony, useLoggedInUser, AnyUser } from '~data/index';
 import { Address } from '~types/index';
+
+import AddressDetailsView from './TransactionPreview/AddressDetailsView';
 
 import { FormValues } from './GnosisControlSafeDialog';
 import {
@@ -101,6 +105,38 @@ const MSG = defineMessages({
     id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.function',
     defaultMessage: 'Function',
   },
+  to: {
+    id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.to',
+    defaultMessage: 'To',
+  },
+  amount: {
+    id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.amount',
+    defaultMessage: 'Amount',
+  },
+  contract: {
+    id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.contract',
+    defaultMessage: 'Contract',
+  },
+  abi: {
+    id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.abi',
+    defaultMessage: 'ABI',
+  },
+  nft: {
+    id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.nft',
+    defaultMessage: 'NFT',
+  },
+  data: {
+    id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.data',
+    defaultMessage: 'Data',
+  },
+  contractFunction: {
+    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.contractFunction`,
+    defaultMessage: 'Contract function',
+  },
+  value: {
+    id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.value',
+    defaultMessage: 'Value',
+  },
   [TransactionTypes.TRANSFER_FUNDS]: {
     id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.${TransactionTypes.TRANSFER_FUNDS}`,
     defaultMessage: 'Transfer funds',
@@ -138,6 +174,57 @@ export const transactionOptions = [
   },
 ];
 
+const transactionTypeFieldsMap = {
+  [TransactionTypes.TRANSFER_FUNDS]: [
+    {
+      key: 'amount',
+      label: MSG.amount,
+      value: (amount, token) => (
+        <div className={styles.tokenAmount}>
+          <TokenIcon token={token} size="xxs" />
+          <Numeral value={amount} suffix={token.symbol} />
+        </div>
+      ),
+    },
+  ],
+  [TransactionTypes.TRANSFER_NFT]: [
+    {
+      key: 'nft',
+      label: MSG.nft,
+      value: (nft) => <span>{`${nft.name} #${nft.number}`}</span>,
+    },
+  ],
+  [TransactionTypes.CONTRACT_INTERACTION]: [
+    {
+      key: 'contract',
+      label: MSG.contract,
+      value: (contract) => contract,
+    },
+    {
+      key: 'abi',
+      label: MSG.abi,
+      value: (abi) => abi,
+    },
+    {
+      key: 'contractFunction',
+      label: MSG.contractFunction,
+      value: (contractFunction) => contractFunction,
+    },
+  ],
+  [TransactionTypes.RAW_TRANSACTION]: [
+    {
+      key: 'value',
+      label: MSG.value,
+      value: (value) => value,
+    },
+    {
+      key: 'data',
+      label: MSG.data,
+      value: (data) => data,
+    },
+  ],
+};
+
 const displayName = 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm';
 
 export interface GnosisSafe {
@@ -165,6 +252,7 @@ const renderAvatar = (address: string, item) => (
 
 const GnosisControlSafeForm = ({
   colony,
+  colony: { tokens },
   back,
   handleSubmit,
   safes,
@@ -246,7 +334,17 @@ const GnosisControlSafeForm = ({
     [values.transactions.length],
   );
 
-  const DetailsItem = ({ label, value }) => (
+  const transactionDetails = useMemo(
+    () => transactionTypeFieldsMap[values.transactionType],
+    [values],
+  );
+
+  const token = useMemo(
+    () => tokens.find((item) => item.address === values.tokenAddress),
+    [values, tokens],
+  );
+
+  const DetailsItem = ({ label, value }: { label: any; value: any }) => (
     <div className={styles.detailsItem}>
       <div className={styles.detailsItemLabel}>
         <FormattedMessage {...label} />
@@ -255,8 +353,8 @@ const GnosisControlSafeForm = ({
     </div>
   );
 
-  // return !showPreview ? (
-  return false ? (
+  return !showPreview ? (
+    // return false ? (
     <>
       <DialogSection>
         <div className={styles.heading}>
@@ -437,11 +535,33 @@ const GnosisControlSafeForm = ({
         <div className={styles.transactionTitle}>
           1. <FormattedMessage {...MSG[values.transactionType]} />
         </div>
-        <DetailsItem label={MSG.targetContract} value={values.safe} />
+        <DetailsItem
+          label={MSG.targetContract}
+          value={
+            <AddressDetailsView
+              item={(values.safe as never) as AnyUser}
+              isSafeItem
+            />
+          }
+        />
         <DetailsItem
           label={MSG.function}
           value={<FormattedMessage {...MSG[values.transactionType]} />}
         />
+        {values.transactionType !== TransactionTypes.CONTRACT_INTERACTION && (
+          <DetailsItem
+            label={MSG.to}
+            value={
+              <AddressDetailsView
+                item={(values.recipient as never) as AnyUser}
+                isSafeItem={false}
+              />
+            }
+          />
+        )}
+        {transactionDetails.map(({ key, label, value }) => (
+          <DetailsItem label={label} value={value(values[key], token)} />
+        ))}
       </DialogSection>
       <DialogSection>
         <Input
