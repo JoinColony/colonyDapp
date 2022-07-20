@@ -5,6 +5,7 @@ import {
   MotionStatus,
   MotionType,
 } from '~dashboard/ExpenditurePage/Stages/constants';
+import { AnyUser } from '~data/index';
 import { LoggedInUser } from '~data/generated';
 
 export enum ExpenditureTypes {
@@ -20,9 +21,14 @@ export interface ValuesType {
         LoggedInUser,
         'walletAddress' | 'balance' | 'username' | 'ethereal' | 'networkId'
       >;
-  recipients: Recipient[];
+  recipients?: Recipient[];
   title: string;
   description?: string;
+  split?: {
+    unequal: boolean;
+    amount: { amount?: string; tokenAddress?: string };
+    recipients?: { recipient: AnyUser }[];
+  };
 }
 
 export interface State {

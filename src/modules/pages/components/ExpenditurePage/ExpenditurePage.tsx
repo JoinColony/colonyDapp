@@ -29,7 +29,6 @@ import {
 } from '~dashboard/ExpenditurePage/Stages/constants';
 import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import { useLoggedInUser } from '~data/helpers';
-import { SpinnerLoader } from '~core/Preloaders';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
 import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
 import { useDialog } from '~core/Dialog';
@@ -44,6 +43,7 @@ import { findDifferences, updateValues, setClaimDate } from './utils';
 import ExpenditureForm from './ExpenditureForm';
 import { ExpenditureTypes, ValuesType } from './types';
 import styles from './ExpenditurePage.css';
+import { AnyUser } from '~data/index';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -118,15 +118,6 @@ const MSG = defineMessages({
   },
 });
 
-const initialValues = {
-  expenditure: ExpenditureTypes.Advanced,
-  filteredDomainId: String(ROOT_DOMAIN_ID),
-  owner: undefined,
-  title: undefined,
-  description: undefined,
-  recipients: [newRecipient],
-};
-
 const validationSchema = yup.object().shape({
   expenditure: yup.string().required(),
   filteredDomainId: yup
@@ -158,6 +149,16 @@ const validationSchema = yup.object().shape({
     is: (expenditure) => expenditure === 'split',
     then: yup.object().shape({
       unequal: yup.boolean().required(),
+      amount: yup.object().shape({
+        value: yup
+          .number()
+          .required(() => MSG.valueError)
+          .moreThan(0, () => MSG.amountZeroError),
+        tokenAddress: yup.string().required(),
+      }),
+      recipients: yup
+        .array()
+        .of(yup.object().shape({ recipient: yup.object().required() })),
     }),
   }),
 });
@@ -170,15 +171,16 @@ export interface State {
   buttonTooltip?: string | MessageDescriptor;
 }
 
-export interface ValuesType {
-  expenditure: string;
-  filteredDomainId: string;
-  owner: string;
-  recipients: Recipient[];
-  title: string;
-  description?: string;
-  split: { unequal: boolean };
-}
+
+const initialValues = {
+  expenditure: 'advanced',
+  recipients: [newRecipient],
+  filteredDomainId: String(ROOT_DOMAIN_ID),
+  owner: undefined,
+  title: undefined,
+  description: undefined,
+  split: { unequal: false, recipients: [undefined] },
+};
 
 export type InitialValuesType = typeof initialValues;
 
@@ -233,15 +235,19 @@ const ExpenditurePage = ({ match }: Props) => {
             ],
           },
         ],
+        split: {
+          ...initialValues.split,
+          amount: {
+            tokenAddress: colonyData?.processedColony.nativeTokenAddress,
+          },
+        },
       }
     );
   }, [colonyData, formValues, loggedInUser]);
 
   const handleSubmit = useCallback((values) => {
     setShouldValidate(true);
-
-    // claimDate assignment here is temporary
-    // Claim date will be calculated on backend
+    setActiveStateId(Stage.Draft);
 
     if (values) {
       setFormValues({
