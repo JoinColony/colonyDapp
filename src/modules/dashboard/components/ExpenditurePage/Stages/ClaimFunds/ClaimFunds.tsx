@@ -43,6 +43,10 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Stages.ClaimFunds.nothingToClaim',
     defaultMessage: 'Nothing to claim',
   },
+  now: {
+    id: 'dashboard.ExpenditurePage.Stages.ClaimFunds.now',
+    defaultMessage: 'now',
+  },
 });
 
 export type Token = Record<string, number>;
@@ -91,6 +95,27 @@ const ClaimFunds = ({
   const claimableNowWithId = convertToTokensWithIds(claimableNow);
   const claimedWithId = convertToTokensWithIds(claimed);
 
+  const nextClaimLabel = useMemo(() => {
+    if (!claimDate) {
+      return claimableNowWithId.length === 0 ? (
+        <FormattedMessage {...MSG.nothingToClaim} />
+      ) : (
+        <>
+          <FormattedMessage {...MSG.claim} />{' '}
+          <span className={styles.claimValue}>
+            <FormattedMessage {...MSG.now} />
+          </span>
+        </>
+      );
+    }
+    return (
+      <>
+        <FormattedMessage {...MSG.claim} />{' '}
+        <TimeRelativeShort value={new Date(claimDate)} />
+      </>
+    );
+  }, [claimDate, claimableNowWithId]);
+
   return (
     <div className={styles.container}>
       <FormSection appearance={{ border: 'bottom' }}>
@@ -105,14 +130,7 @@ const ClaimFunds = ({
                 colorSchema: 'fullColor',
               }}
             >
-              {claimDate ? (
-                <>
-                  <FormattedMessage {...MSG.claim} />{' '}
-                  <TimeRelativeShort value={new Date(claimDate)} />
-                </>
-              ) : (
-                <FormattedMessage {...MSG.nothingToClaim} />
-              )}
+              {nextClaimLabel}
             </Tag>
           </div>
         </div>

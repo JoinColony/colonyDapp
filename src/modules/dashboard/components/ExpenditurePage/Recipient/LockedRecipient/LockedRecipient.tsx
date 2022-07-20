@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import classNames from 'classnames';
 
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { FormSection, InputLabel } from '~core/Fields';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
@@ -12,7 +13,25 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import Numeral from '~core/Numeral';
 import { Colony } from '~data/index';
 import { getRecipientTokens } from '~dashboard/ExpenditurePage/utils';
-import { MSG } from '../Recipient';
+
+export const MSG = defineMessages({
+  recipientLabel: {
+    id: 'dashboard.ExpenditurePage.Recipient.recipientLabel',
+    defaultMessage: 'Recipient',
+  },
+  valueLabel: {
+    id: 'dashboard.ExpenditurePage.Recipient.valueLabel',
+    defaultMessage: 'Value',
+  },
+  delayLabel: {
+    id: 'dashboard.ExpenditurePage.Recipient.delayLabel',
+    defaultMessage: 'Claim delay',
+  },
+  none: {
+    id: 'dashboard.ExpenditurePage.Recipient.none',
+    defaultMessage: 'None',
+  },
+});
 
 const displayNameLockedRecipient = 'dashboard.ExpenditurePage.LockedRecipient';
 
@@ -93,21 +112,26 @@ const LockedRecipient = ({ recipient, colony }: Props) => {
               </div>
             </div>
           </FormSection>
-          {delay?.amount && (
-            <FormSection appearance={{ border: 'bottom' }}>
-              <div className={styles.itemContainer}>
-                <InputLabel
-                  label={MSG.delayLabel}
-                  appearance={{
-                    direction: 'horizontal',
-                  }}
-                />
-                <span className={styles.delayControlsContainer}>
-                  {delay.amount} {delay.time}
-                </span>
-              </div>
-            </FormSection>
-          )}
+
+          <FormSection appearance={{ border: 'bottom' }}>
+            <div className={styles.itemContainer}>
+              <InputLabel
+                label={MSG.delayLabel}
+                appearance={{
+                  direction: 'horizontal',
+                }}
+              />
+              <span className={styles.delayControlsContainer}>
+                {delay?.amount ? (
+                  <>
+                    {delay.amount} {delay.time}
+                  </>
+                ) : (
+                  <FormattedMessage {...MSG.none} />
+                )}
+              </span>
+            </div>
+          </FormSection>
         </div>
       )}
     </div>

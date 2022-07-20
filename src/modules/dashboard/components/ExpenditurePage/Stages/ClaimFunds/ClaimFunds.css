@@ -45,3 +45,9 @@
   width: 100%;
   text-align: right;
 }
+
+.claimValue {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}

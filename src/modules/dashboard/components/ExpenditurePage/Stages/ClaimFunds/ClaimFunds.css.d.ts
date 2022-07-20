@@ -6,3 +6,4 @@ export const valueContainer: string;
 export const firstRow: string;
 export const tagWrapper: string;
 export const buttonWrapper: string;
+export const claimValue: string;

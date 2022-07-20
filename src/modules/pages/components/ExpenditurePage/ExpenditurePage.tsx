@@ -209,7 +209,7 @@ const ExpenditurePage = ({ match }: Props) => {
                   amount: reicpient.delay.amount,
                   time: reicpient.delay.time,
                 })
-              : null,
+              : new Date(),
           };
         }),
       });

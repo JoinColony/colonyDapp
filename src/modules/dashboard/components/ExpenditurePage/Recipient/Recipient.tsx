@@ -14,8 +14,8 @@ import UserAvatar from '~core/UserAvatar';
 import UserPickerWithSearch from '~core/UserPickerWithSearch';
 import { AnyUser, Colony } from '~data/index';
 import { Address } from '~types/index';
-import { Recipient as RecipientType } from '../Payments/types';
 
+import { Recipient as RecipientType } from '../Payments/types';
 import styles from './Recipient.css';
 
 export const MSG = defineMessages({
@@ -99,7 +99,6 @@ const Recipient = ({
 }: Props) => {
   const { setFieldValue } = useFormikContext();
   const { isExpanded, value: tokens } = recipient;
-  // const [, { error: tokenErrors }] = useField(`recipients[${index}].value`);
   const { tokens: colonyTokens } = colony || {};
 
   const newTokenData = useMemo(() => {
