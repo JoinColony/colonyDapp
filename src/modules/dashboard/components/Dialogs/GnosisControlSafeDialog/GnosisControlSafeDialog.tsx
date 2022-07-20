@@ -10,6 +10,7 @@ import { ActionForm } from '~core/Fields';
 
 import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
+import { Address } from '~types/index';
 
 import GnosisControlSafeForm, {
   TransactionTypes,
@@ -50,6 +51,7 @@ export interface FormValues {
     contract?: string;
     abi?: string;
     contractFunction?: string;
+    nft?: string;
   }[];
   safe: string;
   forceAction: boolean;
