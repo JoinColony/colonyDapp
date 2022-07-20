@@ -5,7 +5,6 @@ import sortBy from 'lodash/sortBy';
 import { AddressZero } from 'ethers/constants';
 import { ROOT_DOMAIN_ID, ColonyRole } from '@colony/colony-js';
 import Decimal from 'decimal.js';
-import { useMediaQuery } from 'react-responsive';
 
 import Button from '~core/Button';
 import { ItemDataType } from '~core/OmniPicker';
@@ -43,7 +42,6 @@ import { userHasRole } from '~modules/users/checks';
 import { ManageReputationDialogFormValues } from '../types';
 import TeamDropdownItem from './TeamDropdownItem';
 
-import { query700 as query } from '~styles/queries.css';
 import styles from './ManageReputationDialogForm.css';
 
 const MSG = defineMessages({
@@ -282,8 +280,6 @@ const ManageReputationDialogForm = ({
     [setFieldValue],
   );
 
-  const isMobile = useMediaQuery({ query });
-
   return (
     <>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
@@ -397,7 +393,7 @@ const ManageReputationDialogForm = ({
                 tailPrefix: true,
                 numeralDecimalScale: 10,
               }}
-              elementOnly={!isMobile}
+              elementOnly
               maxButtonParams={
                 isSmiteAction
                   ? {
