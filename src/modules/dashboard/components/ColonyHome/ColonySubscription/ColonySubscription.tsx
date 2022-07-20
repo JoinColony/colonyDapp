@@ -3,7 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import classnames from 'classnames';
 
 import { SpinnerLoader } from '~core/Preloaders';
-import Icon from '~core/Icon';
+import ThreeDotsButton from '~core/Button/ThreeDotsButton';
 import Button from '~core/Button';
 import Link from '~core/Link';
 import MaskedAddress from '~core/MaskedAddress';
@@ -100,24 +100,17 @@ const ColonySubscription = ({
             canUnsubscribe={isNetworkAllowed}
           >
             {({ isOpen, toggle, ref, id }) => (
-              <div
+              <ThreeDotsButton
                 id={id}
-                ref={ref}
+                innerRef={ref}
                 className={classnames(styles.menuIconContainer, {
                   [styles.menuActive]: isOpen,
                 })}
                 onClick={toggle}
-                onKeyDown={toggle}
-                role="button"
                 tabIndex={0}
                 data-test="colonyMenuPopover"
-              >
-                <Icon
-                  className={styles.menuIcon}
-                  name="three-dots-row"
-                  title={MSG.colonyMenuTitle}
-                />
-              </div>
+                title={MSG.colonyMenuTitle}
+              />
             )}
           </ColonySubscriptionInfoPopover>
         )}

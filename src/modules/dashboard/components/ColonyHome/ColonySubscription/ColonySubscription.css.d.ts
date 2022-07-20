@@ -5,5 +5,4 @@ export const colonyJoin: string;
 export const colonyAddress: string;
 export const menuIconContainer: string;
 export const menuActive: string;
-export const menuIcon: string;
 export const colonyJoinBtn: string;

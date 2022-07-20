@@ -13,3 +13,7 @@
   top: 0;
   left: 0;
 }
+
+.icon:hover {
+  fill: var(--action-secondary);
+}

@@ -33,38 +33,18 @@
 }
 
 .menuIconContainer {
+  padding: 0;
   height: 14px;
   width: 6px;
   position: relative;
   vertical-align: bottom;
+  border: 1px solid transparent;
   border-radius: var(--radius-normal);
   cursor: pointer;
 }
 
 .menuIconContainer:hover, .menuIconContainer.menuActive {
   background-color: color-mod(var(--colony-blue) alpha(10%));
-}
-
-.menuIcon {
-  height: 10px;
-  width: 10px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  fill: var(--temp-grey-blue-7);
-}
-
-.menuIconContainer:hover .menuIcon, .menuIconContainer.menuActive .menuIcon {
-  fill: var(--action-secondary);
-}
-
-.menuIcon svg {
-  height: 10px;
-  width: 10px;
-  position: absolute;
-  top: 0;
-  left: 0;
 }
 
 .colonyJoinBtn {
