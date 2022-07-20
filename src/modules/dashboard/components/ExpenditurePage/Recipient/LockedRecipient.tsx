@@ -4,15 +4,15 @@ import classNames from 'classnames';
 import { FormSection, InputLabel } from '~core/Fields';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
-import { Recipient as RecipientType } from '../Payments/types';
+import Numeral from '~core/Numeral';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { Colony } from '~data/index';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 
 import styles from './LockedRecipient.css';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import Numeral from '~core/Numeral';
-import { Colony } from '~data/index';
 import { getRecipientTokens } from '../utils';
 import { MSG } from './Recipient';
+import { Recipient as RecipientType } from '../Payments/types';
 
 const displayNameLockedRecipient = 'dashboard.ExpenditurePage.LockedRecipient';
 

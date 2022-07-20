@@ -4,8 +4,3 @@ export const split: string;
 export const splitToggle: string;
 export const splitLabel: string;
 export const activeOption: string;
-export const recipientWrapper: string;
-export const recipientsWrapper: string;
-export const deleteIcon: string;
-export const addRecipientLabel: string;
-export const circlePlusIcon: string;
