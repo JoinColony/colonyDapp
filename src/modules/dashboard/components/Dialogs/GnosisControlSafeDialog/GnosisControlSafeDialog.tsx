@@ -44,7 +44,7 @@ const safes = [
 export interface FormValues {
   transactions: {
     transactionType: string;
-    tokenAddress?: string;
+    tokenAddress?: Address;
     amount?: number;
     recipient?: AnyUser;
     data?: string;
