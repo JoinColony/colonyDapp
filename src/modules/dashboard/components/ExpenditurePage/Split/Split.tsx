@@ -1,4 +1,4 @@
-import { FieldArray, useField } from 'formik';
+import { useField } from 'formik';
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
