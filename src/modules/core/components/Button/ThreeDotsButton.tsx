@@ -15,7 +15,7 @@ interface Props extends DefaultButtonProps {
 }
 
 const ThreeDotsButton = ({
-  icon = 'three-dots-icon',
+  icon = 'three-dots-row',
   title,
   innerRef,
   ...props
