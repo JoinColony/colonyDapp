@@ -167,18 +167,22 @@ export const transactionOptions = [
   {
     value: TransactionTypes.TRANSFER_FUNDS,
     label: MSG[TransactionTypes.TRANSFER_FUNDS],
+    labelString: 'Transfer funds',
   },
   {
     value: TransactionTypes.TRANSFER_NFT,
     label: MSG[TransactionTypes.TRANSFER_NFT],
+    labelString: 'Transfer NFT',
   },
   {
     value: TransactionTypes.CONTRACT_INTERACTION,
     label: MSG[TransactionTypes.CONTRACT_INTERACTION],
+    labelString: 'Contract interaction',
   },
   {
     value: TransactionTypes.RAW_TRANSACTION,
     label: MSG[TransactionTypes.RAW_TRANSACTION],
+    labelString: 'Raw transaction',
   },
 ];
 
@@ -333,7 +337,7 @@ const GnosisControlSafeForm = ({
       const transactionType = transactionOptions.find(
         (transaction) => transaction.value === transactionTypeValue,
       );
-      return transactionType?.label;
+      return transactionType?.labelString;
     },
     [],
   );
@@ -476,7 +480,7 @@ const GnosisControlSafeForm = ({
                     </div>
                   </DialogSection>
                   {values.transactions[index]?.transactionType ===
-                    'transferFunds' && (
+                    TransactionTypes.TRANSFER_FUNDS && (
                     <TransferFundsSection
                       colony={colony}
                       disabledInput={!userHasPermission || isSubmitting}
@@ -486,7 +490,7 @@ const GnosisControlSafeForm = ({
                     />
                   )}
                   {values.transactions[index]?.transactionType ===
-                    'rawTransaction' && (
+                    TransactionTypes.RAW_TRANSACTION && (
                     <RawTransactionSection
                       colony={colony}
                       disabledInput={!userHasPermission || isSubmitting}
@@ -494,7 +498,7 @@ const GnosisControlSafeForm = ({
                     />
                   )}
                   {values.transactions[index]?.transactionType ===
-                    'contractInteraction' && (
+                    TransactionTypes.CONTRACT_INTERACTION && (
                     <ContractInteractionSection
                       disabledInput={!userHasPermission || isSubmitting}
                       transactionFormIndex={index}
