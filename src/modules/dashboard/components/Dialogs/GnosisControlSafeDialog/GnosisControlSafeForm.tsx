@@ -343,12 +343,15 @@ const GnosisControlSafeForm = ({
   );
 
   const transactionDetails = useMemo(
-    () => transactionTypeFieldsMap[values.transactionType],
+    () => transactionTypeFieldsMap[values.transactions[0].transactionType],
     [values],
   );
 
   const token = useMemo(
-    () => tokens.find((item) => item.address === values.tokenAddress),
+    () =>
+      tokens.find(
+        (item) => item.address === values.transactions[0].tokenAddress,
+      ),
     [values, tokens],
   );
 
@@ -541,7 +544,8 @@ const GnosisControlSafeForm = ({
       </DialogSection>
       <DialogSection>
         <div className={styles.transactionTitle}>
-          1. <FormattedMessage {...MSG[values.transactionType]} />
+          1.{' '}
+          <FormattedMessage {...MSG[values.transactions[0].transactionType]} />
         </div>
         <DetailsItem
           label={MSG.targetContract}
@@ -554,21 +558,30 @@ const GnosisControlSafeForm = ({
         />
         <DetailsItem
           label={MSG.function}
-          value={<FormattedMessage {...MSG[values.transactionType]} />}
+          value={
+            <FormattedMessage
+              {...MSG[values.transactions[0].transactionType]}
+            />
+          }
         />
-        {values.transactionType !== TransactionTypes.CONTRACT_INTERACTION && (
+        {values.transactions[0].transactionType !==
+          TransactionTypes.CONTRACT_INTERACTION && (
           <DetailsItem
             label={MSG.to}
             value={
               <AddressDetailsView
-                item={(values.recipient as never) as AnyUser}
+                item={(values.transactions[0].recipient as never) as AnyUser}
                 isSafeItem={false}
               />
             }
           />
         )}
         {transactionDetails.map(({ key, label, value }) => (
-          <DetailsItem label={label} value={value(values[key], token)} />
+          <DetailsItem
+            key={key}
+            label={label}
+            value={value(values.transactions[0][key], token)}
+          />
         ))}
       </DialogSection>
       <DialogSection>
