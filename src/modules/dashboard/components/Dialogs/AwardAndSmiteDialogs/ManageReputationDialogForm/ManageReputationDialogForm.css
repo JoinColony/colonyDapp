@@ -112,20 +112,23 @@
 
 @media screen and query700 {
   .percentageSign {
-    padding-top: 45px;
+    /*
+     * Negative margin maintains the container above the input
+     * instead of to the side, same as on desktop.
+     */
+    margin-left: -28px;
+    padding-top: 38px;
     position: static;
   }
 
   .inputText {
     margin-top: 0;
-    padding-right: 28px;
+    padding-top: 5px;
     float: none;
     text-align: right;
   }
 
   .inputContainer {
-    margin-bottom: -10px; /* Necessary (because of the min-height) to reduce distance from next section */
-    min-height: 127px;
     width: auto;
     column-gap: 6px;
   }
@@ -155,6 +158,6 @@
   }
 
   .inputContainer input {
-    padding-right: 0px;
+    padding-right: 28px;
   }
 }

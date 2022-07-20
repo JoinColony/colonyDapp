@@ -1,7 +1,7 @@
 @value query700 from '~styles/queries.css';
 
 .main {
-  composes: field from '~styles/fields.css';
+  composes: field from "~styles/fields.css";
   width: 100%;
 }
 
@@ -169,7 +169,10 @@
   }
 
   .arrowIcon {
+    display: flex;
+    padding: 11px 0;
     position: static;
+    border-bottom: 1px solid var(--temp-grey-blue-7);
   }
 
   .widthWide input {
@@ -183,5 +186,15 @@
   .input:placeholder-shown {
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  .arrowIconActive {
+    border-bottom-color: var(--primary);
+  }
+
+  .baseInput,
+  .omniPickerContainer,
+  .recipientName {
+    max-width: none;
   }
 }
