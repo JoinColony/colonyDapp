@@ -71,7 +71,8 @@ const validationSchema = yup.object().shape({
       recipient: yup.object().shape({
         profile: yup.object().shape({
           walletAddress: yup.string().when('transactionType', {
-            is: (transactionType) => transactionType === 'transferFunds',
+            is: (transactionType) =>
+              transactionType === TransactionTypes.TRANSFER_FUNDS,
             then: yup
               .string()
               .address()
@@ -82,8 +83,8 @@ const validationSchema = yup.object().shape({
       }),
       amount: yup.number().when('transactionType', {
         is: (transactionType) =>
-          transactionType === 'transferFunds' ||
-          transactionType === 'rawTransaction',
+          transactionType === TransactionTypes.TRANSFER_FUNDS ||
+          transactionType === TransactionTypes.RAW_TRANSACTION,
         then: yup
           .number()
           .transform((value) => toFinite(value))
@@ -92,7 +93,8 @@ const validationSchema = yup.object().shape({
         otherwise: false,
       }),
       tokenAddress: yup.string().when('transactionType', {
-        is: (transactionType) => transactionType === 'transferFunds',
+        is: (transactionType) =>
+          transactionType === TransactionTypes.TRANSFER_FUNDS,
         then: yup
           .string()
           .address()
@@ -100,12 +102,14 @@ const validationSchema = yup.object().shape({
         otherwise: false,
       }),
       data: yup.string().when('transactionType', {
-        is: (transactionType) => transactionType === 'rawTransaction',
+        is: (transactionType) =>
+          transactionType === TransactionTypes.RAW_TRANSACTION,
         then: yup.string().required(() => MSG.requiredFieldError),
         otherwise: false,
       }),
       contract: yup.string().when('transactionType', {
-        is: (transactionType) => transactionType === 'contractInteraction',
+        is: (transactionType) =>
+          transactionType === TransactionTypes.CONTRACT_INTERACTION,
         then: yup
           .string()
           .address()
@@ -113,12 +117,14 @@ const validationSchema = yup.object().shape({
         otherwise: false,
       }),
       abi: yup.string().when('transactionType', {
-        is: (transactionType) => transactionType === 'contractInteraction',
+        is: (transactionType) =>
+          transactionType === TransactionTypes.CONTRACT_INTERACTION,
         then: yup.string().required(() => MSG.requiredFieldError),
         otherwise: false,
       }),
       contractFunction: yup.string().when('transactionType', {
-        is: (transactionType) => transactionType === 'contractInteraction',
+        is: (transactionType) =>
+          transactionType === TransactionTypes.CONTRACT_INTERACTION,
         then: yup.string().required(() => MSG.requiredFieldError),
         otherwise: false,
       }),
