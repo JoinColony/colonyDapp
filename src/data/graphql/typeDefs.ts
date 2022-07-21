@@ -448,6 +448,12 @@ export default gql`
     processedBalances(colonyAddress: String!): [ProcessedTokenBalances!]!
   }
 
+  type ColonySafe {
+    safeName: String!
+    contractAddress: String!
+    chainId: String!
+  }
+
   type ProcessedColony {
     id: Int!
     colonyAddress: String!
@@ -458,6 +464,7 @@ export default gql`
     nativeTokenAddress: String!
     tokenAddresses: [String]!
     extensionAddresses: [String!]
+    safes: [ColonySafe!]!
     domains: [ProcessedDomain!]!
     roles: [ProcessedRoles!]!
     tokens: [ProcessedTokens!]!
