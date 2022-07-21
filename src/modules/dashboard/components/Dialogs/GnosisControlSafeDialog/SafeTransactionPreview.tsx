@@ -11,7 +11,7 @@ import { Colony, AnyUser } from '~data/index';
 
 import AddressDetailsView from './TransactionPreview/AddressDetailsView';
 import { FormValues } from './GnosisControlSafeDialog';
-import { TransactionTypes } from './constants';
+import { TransactionTypes, MSG as ConstantsMSG } from './constants';
 import DetailsItem from './DetailsItem';
 import styles from './GnosisControlSafeForm.css';
 
@@ -155,7 +155,9 @@ const SafeTransactionPreview = ({ colony: { tokens }, values }: Props) => {
       <DialogSection>
         <div className={styles.transactionTitle}>
           1.{' '}
-          <FormattedMessage {...MSG[values.transactions[0].transactionType]} />
+          <FormattedMessage
+            {...ConstantsMSG[values.transactions[0].transactionType]}
+          />
         </div>
         <DetailsItem
           label={MSG.targetContract}
@@ -170,7 +172,7 @@ const SafeTransactionPreview = ({ colony: { tokens }, values }: Props) => {
           label={MSG.function}
           value={
             <FormattedMessage
-              {...MSG[values.transactions[0].transactionType]}
+              {...ConstantsMSG[values.transactions[0].transactionType]}
             />
           }
         />
