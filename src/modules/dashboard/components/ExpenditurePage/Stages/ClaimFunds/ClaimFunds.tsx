@@ -10,11 +10,12 @@ import { nanoid } from 'nanoid';
 import { FormSection } from '~core/Fields';
 import Tag from '~core/Tag';
 import TimeRelativeShort from '~dashboard/ExpenditurePage/TimeRelativeShort/TimeRelativeShort';
-import styles from './ClaimFunds.css';
 import Button from '~core/Button';
-import { buttonStyles } from '../Stages';
 import Numeral from '~core/Numeral';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
+
+import { buttonStyles } from '../Stages';
+import styles from './ClaimFunds.css';
 
 const displayName = 'dashboard.ExpenditurePage.ClaimFunds';
 
@@ -45,7 +46,7 @@ const MSG = defineMessages({
   },
   now: {
     id: 'dashboard.ExpenditurePage.Stages.ClaimFunds.now',
-    defaultMessage: 'now',
+    defaultMessage: 'Now',
   },
 });
 
@@ -100,12 +101,9 @@ const ClaimFunds = ({
       return claimableNowWithId.length === 0 ? (
         <FormattedMessage {...MSG.nothingToClaim} />
       ) : (
-        <>
-          <FormattedMessage {...MSG.claim} />{' '}
-          <span className={styles.claimValue}>
-            <FormattedMessage {...MSG.now} />
-          </span>
-        </>
+        <div className={styles.claim}>
+          <FormattedMessage {...MSG.now} />
+        </div>
       );
     }
     return (

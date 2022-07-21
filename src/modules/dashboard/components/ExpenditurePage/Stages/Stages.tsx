@@ -14,22 +14,23 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-
-import styles from './Stages.css';
-import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
-import StageItem from './StageItem';
+import DeleteDraftDialog from '~dashboard/Dialogs/DeleteDraftDialog/DeleteDraftDialog';
+import Tag from '~core/Tag';
+import { Colony } from '~data/index';
 import {
   InitialValuesType,
   State,
   ValuesType,
 } from '~pages/ExpenditurePage/ExpenditurePage';
+
 import { Stage } from './constants';
 import ClaimFunds from './ClaimFunds';
 import { Recipient, Recipient as RecipientType } from '../Payments/types';
 import { getRecipientTokens } from '../utils';
-import { Colony } from '~data/index';
 import { useCalculateTokens } from '../hooks';
-import DeleteDraftDialog from '~dashboard/Dialogs/DeleteDraftDialog/DeleteDraftDialog';
+import styles from './Stages.css';
+import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
+import StageItem from './StageItem';
 
 const MSG = defineMessages({
   stages: {
@@ -152,6 +153,9 @@ const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
   const isLogedIn = true;
 
   const renderButton = useCallback(() => {
+    if (activeStateId === Stage.Claimed) {
+      return <Tag text={activeState?.buttonText} className={styles.claimed} />;
+    }
     if (activeStateId === Stage.Released) {
       return null;
     }
@@ -227,11 +231,7 @@ const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
     }
 
     return (
-      <Button
-        onClick={activeState?.buttonAction}
-        style={buttonStyles}
-        disabled={activeStateId === Stage.Claimed}
-      >
+      <Button onClick={activeState?.buttonAction} style={buttonStyles}>
         {typeof activeState?.buttonText === 'string' ? (
           activeState.buttonText
         ) : (

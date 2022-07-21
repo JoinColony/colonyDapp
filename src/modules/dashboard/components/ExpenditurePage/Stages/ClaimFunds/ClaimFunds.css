@@ -46,8 +46,7 @@
   text-align: right;
 }
 
-.claimValue {
-  font-size: var(--size-tiny);
-  font-weight: var(--weight-bold);
-  color: var(--dark);
+.claim {
+  min-width: 100px;
+  text-align: center;
 }

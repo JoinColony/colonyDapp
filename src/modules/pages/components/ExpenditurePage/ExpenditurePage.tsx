@@ -161,7 +161,7 @@ const ExpenditurePage = ({ match }: Props) => {
   const [isFormEditable, setFormEditable] = useState(true);
   const [formValues, setFormValues] = useState<ValuesType>();
   const [shouldValidate, setShouldValidate] = useState(false);
-  const [activeStateId, setActiveStateId] = useState<string>();
+  const [activeStateId, setActiveStateId] = useState<string>(Stage.Claimed);
   const sidebarRef = useRef<HTMLElement>(null);
 
   const { data: colonyData, loading } = useColonyFromNameQuery({
