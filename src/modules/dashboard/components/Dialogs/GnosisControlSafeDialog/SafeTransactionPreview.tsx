@@ -17,55 +17,6 @@ import { TransactionTypes } from './constants';
 import styles from './GnosisControlSafeForm.css';
 
 const MSG = defineMessages({
-  title: {
-    id: 'dashboard.GnosisControlSafeDialog.SafeTransactionPreview.title',
-    defaultMessage: 'Control Safe',
-  },
-  description: {
-    id: 'dashboard.GnosisControlSafeDialog.SafeTransactionPreview.description',
-    defaultMessage: `You can use Control Safe to interact with other third party smart contracts. Be careful. <a>Learn more</a>`,
-  },
-  selectSafe: {
-    id: 'dashboard.GnosisControlSafeDialog.SafeTransactionPreview.selectSafe',
-    defaultMessage: 'Select Safe',
-  },
-  safePickerPlaceholder: {
-    id: `dashboard.GnosisControlSafeDialog.SafeTransactionPreview.safePickerPlaceholder`,
-    defaultMessage: 'Select Safe to control',
-  },
-  transactionLabel: {
-    id: `dashboard.GnosisControlSafeDialog.SafeTransactionPreview.transactionLabel`,
-    defaultMessage: 'Select transaction type',
-  },
-  transactionPlaceholder: {
-    id: `dashboard.GnosisControlSafeDialog.SafeTransactionPreview.transactionPlaceholder`,
-    defaultMessage: 'Select transaction',
-  },
-  buttonTransaction: {
-    id: `dashboard.GnosisControlSafeDialog.SafeTransactionPreview.buttonTransaction`,
-    defaultMessage: 'Add another transaction',
-  },
-  buttonCreateTransaction: {
-    id: `dashboard.GnosisControlSafeDialog.SafeTransactionPreview.buttonCreateTransaction`,
-    defaultMessage: 'Create transaction',
-  },
-  transactionTitle: {
-    id: `dashboard.GnosisControlSafeDialog.SafeTransactionPreview.transactionTitle`,
-    defaultMessage: `Transaction #{transactionNumber} {transactionType, select, undefined {} other {({transactionType})}}`,
-  },
-  toggleTransaction: {
-    id: `dashboard.GnosisControlSafeDialog.SafeTransactionPreview.toggleTransaction`,
-    defaultMessage:
-      '{tabToggleStatus, select, true {Expand} false {Close}} transaction',
-  },
-  deleteTransaction: {
-    id: `dashboard.GnosisControlSafeDialog.SafeTransactionPreview.deleteTransaction`,
-    defaultMessage: 'Delete transaction',
-  },
-  deleteTransactionTooltipText: {
-    id: `dashboard.GnosisControlSafeDialog.SafeTransactionPreview.deleteTransactionTooltipText`,
-    defaultMessage: `Delete transaction.\nBe careful, data can be lost.`,
-  },
   previewTitle: {
     id: 'dashboard.GnosisControlSafeDialog.SafeTransactionPreview.previewTitle',
     defaultMessage: 'Confirm transaction details',
@@ -118,46 +69,7 @@ const MSG = defineMessages({
     id: 'dashboard.GnosisControlSafeDialog.SafeTransactionPreview.value',
     defaultMessage: 'Value',
   },
-  [TransactionTypes.TRANSFER_FUNDS]: {
-    id: `dashboard.GnosisControlSafeDialog.SafeTransactionPreview.${TransactionTypes.TRANSFER_FUNDS}`,
-    defaultMessage: 'Transfer funds',
-  },
-  [TransactionTypes.TRANSFER_NFT]: {
-    id: `dashboard.GnosisControlSafeDialog.SafeTransactionPreview.${TransactionTypes.TRANSFER_NFT}`,
-    defaultMessage: 'Transfer NFT',
-  },
-  [TransactionTypes.CONTRACT_INTERACTION]: {
-    id: `dashboard.GnosisControlSafeDialog.SafeTransactionPreview.${TransactionTypes.CONTRACT_INTERACTION}`,
-    defaultMessage: 'Contract interaction',
-  },
-  [TransactionTypes.RAW_TRANSACTION]: {
-    id: `dashboard.GnosisControlSafeDialog.SafeTransactionPreview.${TransactionTypes.RAW_TRANSACTION}`,
-    defaultMessage: 'Raw transaction',
-  },
 });
-
-export const transactionOptions = [
-  {
-    value: TransactionTypes.TRANSFER_FUNDS,
-    label: MSG[TransactionTypes.TRANSFER_FUNDS],
-    labelString: 'Transfer funds',
-  },
-  {
-    value: TransactionTypes.TRANSFER_NFT,
-    label: MSG[TransactionTypes.TRANSFER_NFT],
-    labelString: 'Transfer NFT',
-  },
-  {
-    value: TransactionTypes.CONTRACT_INTERACTION,
-    label: MSG[TransactionTypes.CONTRACT_INTERACTION],
-    labelString: 'Contract interaction',
-  },
-  {
-    value: TransactionTypes.RAW_TRANSACTION,
-    label: MSG[TransactionTypes.RAW_TRANSACTION],
-    labelString: 'Raw transaction',
-  },
-];
 
 const transactionTypeFieldsMap = {
   [TransactionTypes.TRANSFER_FUNDS]: [
