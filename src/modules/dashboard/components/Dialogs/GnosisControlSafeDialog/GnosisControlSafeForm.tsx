@@ -7,41 +7,32 @@ import { nanoid } from 'nanoid';
 
 import Avatar from '~core/Avatar';
 import { DialogSection } from '~core/Dialog';
-import { Annotations, Input, Select } from '~core/Fields';
+import { Select } from '~core/Fields';
 import Heading from '~core/Heading';
 import ExternalLink from '~core/ExternalLink';
 import Button, { AddItemButton } from '~core/Button';
 import Icon from '~core/Icon';
 import { SingleSafePicker, filterUserSelection } from '~core/SingleUserPicker';
 import IconTooltip from '~core/IconTooltip';
-import Numeral from '~core/Numeral';
-import TokenIcon from '~dashboard/HookedTokenIcon';
 
 import { getUserRolesForDomain } from '~modules/transformers';
 import { userHasRole } from '~modules/users/checks';
 import { useTransformer } from '~utils/hooks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import { GNOSIS_SAFE_INTEGRATION_LEARN_MORE } from '~externalUrls';
-import { Colony, useLoggedInUser, AnyUser } from '~data/index';
-import { Address } from '~types/index';
-
-import AddressDetailsView from './TransactionPreview/AddressDetailsView';
+import { Colony, useLoggedInUser } from '~data/index';
+import { Address, PrimitiveType } from '~types/index';
 
 import { FormValues } from './GnosisControlSafeDialog';
+import SafeTransactionPreview from './SafeTransactionPreview';
 import {
   TransferFundsSection,
   RawTransactionSection,
   ContractInteractionSection,
 } from './TransactionTypesSection';
+import { TransactionTypes } from './constants';
 
 import styles from './GnosisControlSafeForm.css';
-
-export enum TransactionTypes {
-  TRANSFER_FUNDS = 'transferFunds',
-  TRANSFER_NFT = 'transferNft',
-  CONTRACT_INTERACTION = 'contractInteraction',
-  RAW_TRANSACTION = 'rawTransaction',
-}
 
 const MSG = defineMessages({
   title: {
@@ -186,57 +177,6 @@ export const transactionOptions = [
   },
 ];
 
-const transactionTypeFieldsMap = {
-  [TransactionTypes.TRANSFER_FUNDS]: [
-    {
-      key: 'amount',
-      label: MSG.amount,
-      value: (amount, token) => (
-        <div className={styles.tokenAmount}>
-          <TokenIcon token={token} size="xxs" />
-          <Numeral value={amount} suffix={token.symbol} />
-        </div>
-      ),
-    },
-  ],
-  [TransactionTypes.TRANSFER_NFT]: [
-    {
-      key: 'nft',
-      label: MSG.nft,
-      value: (nft) => <span>{`${nft.name} #${nft.number}`}</span>,
-    },
-  ],
-  [TransactionTypes.CONTRACT_INTERACTION]: [
-    {
-      key: 'contract',
-      label: MSG.contract,
-      value: (contract) => contract,
-    },
-    {
-      key: 'abi',
-      label: MSG.abi,
-      value: (abi) => abi,
-    },
-    {
-      key: 'contractFunction',
-      label: MSG.contractFunction,
-      value: (contractFunction) => contractFunction,
-    },
-  ],
-  [TransactionTypes.RAW_TRANSACTION]: [
-    {
-      key: 'value',
-      label: MSG.value,
-      value: (value) => value,
-    },
-    {
-      key: 'data',
-      label: MSG.data,
-      value: (data) => data,
-    },
-  ],
-};
-
 const displayName = 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm';
 
 export interface GnosisSafe {
@@ -264,7 +204,6 @@ const renderAvatar = (address: string, item) => (
 
 const GnosisControlSafeForm = ({
   colony,
-  colony: { tokens },
   back,
   handleSubmit,
   safes,
@@ -337,7 +276,9 @@ const GnosisControlSafeForm = ({
       const transactionType = transactionOptions.find(
         (transaction) => transaction.value === transactionTypeValue,
       );
-      return transactionType?.labelString;
+      return transactionType ? (
+        <FormattedMessage {...transactionType.label} />
+      ) : null;
     },
     [],
   );
@@ -346,269 +287,176 @@ const GnosisControlSafeForm = ({
     [values.transactions.length],
   );
 
-  const transactionDetails = useMemo(
-    () => transactionTypeFieldsMap[values.transactions[0].transactionType],
-    [values],
-  );
-
-  const token = useMemo(
-    () =>
-      tokens.find(
-        (item) => item.address === values.transactions[0].tokenAddress,
-      ),
-    [values, tokens],
-  );
-
-  const DetailsItem = ({ label, value }: { label: any; value: any }) => (
-    <div className={styles.detailsItem}>
-      <div className={styles.detailsItemLabel}>
-        <FormattedMessage {...label} />
-      </div>
-      <div className={styles.detailsItemValue}>{value}</div>
-    </div>
-  );
-
-  return !showPreview ? (
-    // return false ? (
+  return (
     <>
-      <DialogSection>
-        <div className={styles.heading}>
-          <Heading
-            appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
-            text={MSG.title}
-          />
-        </div>
-      </DialogSection>
-      <DialogSection appearance={{ theme: 'sidePadding' }}>
-        <FormattedMessage
-          {...MSG.description}
-          values={{
-            a: (chunks) => (
-              <ExternalLink href={GNOSIS_SAFE_INTEGRATION_LEARN_MORE}>
-                {chunks}
-              </ExternalLink>
-            ),
-          }}
-        />
-      </DialogSection>
-      <DialogSection>
-        <div className={styles.safePicker}>
-          <SingleSafePicker
-            appearance={{ width: 'wide' }}
-            label={MSG.selectSafe}
-            name="safe"
-            filter={filterUserSelection}
-            renderAvatar={renderAvatar}
-            data={safes}
-            showMaskedAddress
-            disabled={!userHasPermission || isSubmitting}
-            placeholder={MSG.safePickerPlaceholder}
-          />
-        </div>
-      </DialogSection>
-      <FieldArray
-        name="transactions"
-        render={(arrayHelpers) => (
-          <>
-            {values.transactions.map((transaction, index) => (
-              <div key={autogeneratedIds[index]}>
-                {values.transactions.length > 1 && (
-                  <div
-                    className={classnames(styles.transactionHeading, {
-                      [styles.transactionHeadingOpen]:
-                        transactionTabStatus[index],
-                    })}
-                  >
-                    <Heading
-                      appearance={{
-                        size: 'normal',
-                        margin: 'none',
-                        theme: 'dark',
-                      }}
-                      text={MSG.transactionTitle}
-                      textValues={{
-                        transactionNumber: index + 1,
-                        transactionType: getTransactionTypeLabel(
-                          transaction.transactionType,
-                        ),
-                      }}
-                    />
-                    <Button
-                      className={styles.tabButton}
-                      onClick={() => handleTabRemoval(arrayHelpers, index)}
-                    >
-                      <IconTooltip
-                        icon="trash"
-                        className={styles.deleteTabIcon}
-                        tooltipClassName={styles.deleteTabTooltip}
-                        iconTitle={MSG.deleteTransaction}
-                        tooltipText={MSG.deleteTransactionTooltipText}
-                      />
-                    </Button>
-                    <Button
-                      className={styles.tabButton}
-                      onClick={() => handleTabToggle(index)}
-                    >
-                      <Icon
-                        name="caret-up-small"
-                        className={styles.toggleTabIcon}
-                        title={MSG.toggleTransaction}
-                        titleValues={{
-                          tabToggleStatus: transactionTabStatus[index],
-                        }}
-                      />
-                    </Button>
-                  </div>
-                )}
-                <div
-                  className={classnames({
-                    [styles.tabContentClosed]:
-                      values.transactions.length > 1 &&
-                      !transactionTabStatus[index],
-                  })}
-                >
-                  <DialogSection appearance={{ theme: 'sidePadding' }}>
-                    <div className={styles.transactionTypeSelectContainer}>
-                      <Select
-                        options={transactionOptions}
-                        label={MSG.transactionLabel}
-                        name={`transactions.${index}.transactionType`}
-                        appearance={{ theme: 'grey', width: 'fluid' }}
-                        placeholder={MSG.transactionPlaceholder}
-                        disabled={!userHasPermission || isSubmitting}
-                      />
-                    </div>
-                  </DialogSection>
-                  {values.transactions[index]?.transactionType ===
-                    TransactionTypes.TRANSFER_FUNDS && (
-                    <TransferFundsSection
-                      colony={colony}
-                      disabledInput={!userHasPermission || isSubmitting}
-                      values={values}
-                      transactionFormIndex={index}
-                      setFieldValue={setFieldValue}
-                    />
-                  )}
-                  {values.transactions[index]?.transactionType ===
-                    TransactionTypes.RAW_TRANSACTION && (
-                    <RawTransactionSection
-                      colony={colony}
-                      disabledInput={!userHasPermission || isSubmitting}
-                      transactionFormIndex={index}
-                    />
-                  )}
-                  {values.transactions[index]?.transactionType ===
-                    TransactionTypes.CONTRACT_INTERACTION && (
-                    <ContractInteractionSection
-                      disabledInput={!userHasPermission || isSubmitting}
-                      transactionFormIndex={index}
-                    />
-                  )}
-                </div>
-              </div>
-            ))}
-            <DialogSection>
-              <div className={styles.addTransaction}>
-                <AddItemButton
-                  text={MSG.buttonTransaction}
-                  disabled={isSubmitting || !isValid}
-                  handleClick={() => handleNewTab(arrayHelpers)}
-                />
-              </div>
-            </DialogSection>
-          </>
-        )}
-      />
-      <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
-        <Button
-          appearance={{ theme: 'secondary', size: 'large' }}
-          onClick={back}
-          text={{ id: 'button.back' }}
-        />
-        <Button
-          appearance={{ theme: 'primary', size: 'large' }}
-          onClick={() => setShowPreview(!showPreview)}
-          // onClick={() => handleSubmit()}
-          text={MSG.buttonCreateTransaction}
-          // loading={isSubmitting}
-          disabled={!isValid || isSubmitting}
-          style={{ width: styles.wideButton }}
-        />
-      </DialogSection>
-    </>
-  ) : (
-    <>
-      <DialogSection>
-        <div className={styles.heading}>
-          <Heading
-            appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
-            text={MSG.previewTitle}
-          />
-        </div>
-      </DialogSection>
-      <DialogSection>
-        <div className={styles.transactionTitle}>
-          1.{' '}
-          <FormattedMessage {...MSG[values.transactions[0].transactionType]} />
-        </div>
-        <DetailsItem
-          label={MSG.targetContract}
-          value={
-            <AddressDetailsView
-              item={(values.safe as never) as AnyUser}
-              isSafeItem
-            />
-          }
-        />
-        <DetailsItem
-          label={MSG.function}
-          value={
-            <FormattedMessage
-              {...MSG[values.transactions[0].transactionType]}
-            />
-          }
-        />
-        {values.transactions[0].transactionType !==
-          TransactionTypes.CONTRACT_INTERACTION && (
-          <DetailsItem
-            label={MSG.to}
-            value={
-              <AddressDetailsView
-                item={(values.transactions[0].recipient as never) as AnyUser}
-                isSafeItem={false}
+      {!showPreview ? (
+        <>
+          <DialogSection>
+            <div className={styles.heading}>
+              <Heading
+                appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+                text={MSG.title}
               />
-            }
+            </div>
+          </DialogSection>
+          <DialogSection appearance={{ theme: 'sidePadding' }}>
+            <FormattedMessage
+              {...MSG.description}
+              values={{
+                a: (chunks) => (
+                  <ExternalLink href={GNOSIS_SAFE_INTEGRATION_LEARN_MORE}>
+                    {chunks}
+                  </ExternalLink>
+                ),
+              }}
+            />
+          </DialogSection>
+          <DialogSection>
+            <div className={styles.safePicker}>
+              <SingleSafePicker
+                appearance={{ width: 'wide' }}
+                label={MSG.selectSafe}
+                name="safe"
+                filter={filterUserSelection}
+                renderAvatar={renderAvatar}
+                data={safes}
+                showMaskedAddress
+                disabled={!userHasPermission || isSubmitting}
+                placeholder={MSG.safePickerPlaceholder}
+              />
+            </div>
+          </DialogSection>
+          <FieldArray
+            name="transactions"
+            render={(arrayHelpers) => (
+              <>
+                {values.transactions.map((transaction, index) => (
+                  <div key={autogeneratedIds[index]}>
+                    {values.transactions.length > 1 && (
+                      <div
+                        className={classnames(styles.transactionHeading, {
+                          [styles.transactionHeadingOpen]:
+                            transactionTabStatus[index],
+                        })}
+                      >
+                        <Heading
+                          appearance={{
+                            size: 'normal',
+                            margin: 'none',
+                            theme: 'dark',
+                          }}
+                          text={MSG.transactionTitle}
+                          textValues={{
+                            transactionNumber: index + 1,
+                            transactionType: getTransactionTypeLabel(
+                              transaction.transactionType,
+                              /* Need casting as `formatValues` func used in Heading
+                            doesn't have correct types (coming from react-intl) */
+                            ) as PrimitiveType,
+                          }}
+                        />
+                        <Button
+                          className={styles.tabButton}
+                          onClick={() => handleTabRemoval(arrayHelpers, index)}
+                        >
+                          <IconTooltip
+                            icon="trash"
+                            className={styles.deleteTabIcon}
+                            tooltipClassName={styles.deleteTabTooltip}
+                            iconTitle={MSG.deleteTransaction}
+                            tooltipText={MSG.deleteTransactionTooltipText}
+                          />
+                        </Button>
+                        <Button
+                          className={styles.tabButton}
+                          onClick={() => handleTabToggle(index)}
+                        >
+                          <Icon
+                            name="caret-up-small"
+                            className={styles.toggleTabIcon}
+                            title={MSG.toggleTransaction}
+                            titleValues={{
+                              tabToggleStatus: transactionTabStatus[index],
+                            }}
+                          />
+                        </Button>
+                      </div>
+                    )}
+                    <div
+                      className={classnames({
+                        [styles.tabContentClosed]:
+                          values.transactions.length > 1 &&
+                          !transactionTabStatus[index],
+                      })}
+                    >
+                      <DialogSection appearance={{ theme: 'sidePadding' }}>
+                        <div className={styles.transactionTypeSelectContainer}>
+                          <Select
+                            options={transactionOptions}
+                            label={MSG.transactionLabel}
+                            name={`transactions.${index}.transactionType`}
+                            appearance={{ theme: 'grey', width: 'fluid' }}
+                            placeholder={MSG.transactionPlaceholder}
+                            disabled={!userHasPermission || isSubmitting}
+                          />
+                        </div>
+                      </DialogSection>
+                      {values.transactions[index]?.transactionType ===
+                        TransactionTypes.TRANSFER_FUNDS && (
+                        <TransferFundsSection
+                          colony={colony}
+                          disabledInput={!userHasPermission || isSubmitting}
+                          values={values}
+                          transactionFormIndex={index}
+                          setFieldValue={setFieldValue}
+                        />
+                      )}
+                      {values.transactions[index]?.transactionType ===
+                        TransactionTypes.RAW_TRANSACTION && (
+                        <RawTransactionSection
+                          colony={colony}
+                          disabledInput={!userHasPermission || isSubmitting}
+                          transactionFormIndex={index}
+                        />
+                      )}
+                      {values.transactions[index]?.transactionType ===
+                        TransactionTypes.CONTRACT_INTERACTION && (
+                        <ContractInteractionSection
+                          disabledInput={!userHasPermission || isSubmitting}
+                          transactionFormIndex={index}
+                        />
+                      )}
+                    </div>
+                  </div>
+                ))}
+                <DialogSection>
+                  <div className={styles.addTransaction}>
+                    <AddItemButton
+                      text={MSG.buttonTransaction}
+                      disabled={isSubmitting || !isValid}
+                      handleClick={() => handleNewTab(arrayHelpers)}
+                    />
+                  </div>
+                </DialogSection>
+              </>
+            )}
           />
-        )}
-        {transactionDetails.map(({ key, label, value }) => (
-          <DetailsItem
-            key={key}
-            label={label}
-            value={value(values.transactions[0][key], token)}
-          />
-        ))}
-      </DialogSection>
-      <DialogSection>
-        <Input
-          appearance={{ colorSchema: 'grey', theme: 'fat' }}
-          label={MSG.transactionsSetTitle}
-          name="transactionSetTitle"
-          disabled={false}
-        />
-      </DialogSection>
-      <DialogSection>
-        <Annotations label={MSG.explainWhy} name="annotation" />
-      </DialogSection>
+        </>
+      ) : (
+        <SafeTransactionPreview values={values} colony={colony} />
+      )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
-          onClick={() => setShowPreview(!showPreview)}
+          onClick={showPreview ? () => setShowPreview(!showPreview) : back}
           text={{ id: 'button.back' }}
         />
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
-          onClick={() => handleSubmit()}
-          text={{ id: 'button.confirm' }}
+          onClick={() =>
+            showPreview ? handleSubmit() : setShowPreview(!showPreview)
+          }
+          text={MSG.buttonCreateTransaction}
           loading={isSubmitting}
           disabled={!isValid || isSubmitting}
           style={{ width: styles.wideButton }}
