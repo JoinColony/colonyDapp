@@ -18,6 +18,7 @@ import ColonyDomainDescription from './ColonyDomainDescription';
 import ColonyUpgrade from './ColonyUpgrade';
 import ColonyFinishDeployment from './ColonyFinishDeployment';
 import ExtensionUpgrade from './ExtensionUpgrade';
+import ColonySafes from './ColonySafes';
 
 import styles from './ColonyHomeLayout.css';
 import { query700 as query } from '~styles/queries.css';
@@ -92,6 +93,7 @@ const ColonyHomeLayout = ({
             />
             <ColonyUnclaimedTransfers colony={colony} />
             <ColonyFunding colony={colony} currentDomainId={filteredDomainId} />
+            <ColonySafes colony={colony} />
             <ColonyMembers colony={colony} currentDomainId={filteredDomainId} />
             <ColonyExtensions colony={colony} />
           </aside>
