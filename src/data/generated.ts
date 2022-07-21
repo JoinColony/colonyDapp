@@ -1152,6 +1152,12 @@ export type ProcessedTokensProcessedBalancesArgs = {
   colonyAddress: Scalars['String'];
 };
 
+export type ColonySafe = {
+  safeName: Scalars['String'];
+  contractAddress: Scalars['String'];
+  chainId: Scalars['String'];
+};
+
 export type ProcessedColony = {
   id: Scalars['Int'];
   colonyAddress: Scalars['String'];
@@ -1162,6 +1168,7 @@ export type ProcessedColony = {
   nativeTokenAddress: Scalars['String'];
   tokenAddresses: Array<Maybe<Scalars['String']>>;
   extensionAddresses?: Maybe<Array<Scalars['String']>>;
+  safes: Array<ColonySafe>;
   domains: Array<ProcessedDomain>;
   roles: Array<ProcessedRoles>;
   tokens: Array<ProcessedTokens>;
@@ -1399,7 +1406,7 @@ export type TokensFragment = (
 
 export type DomainFieldsFragment = Pick<ProcessedDomain, 'id' | 'color' | 'description' | 'ethDomainId' | 'name' | 'ethParentDomainId'>;
 
-export type ColonyProfileFragment = Pick<ProcessedColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL' | 'extensionAddresses' | 'whitelistedAddresses' | 'isWhitelistActivated'>;
+export type ColonyProfileFragment = Pick<ProcessedColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL' | 'extensionAddresses' | 'whitelistedAddresses' | 'isWhitelistActivated' | 'safes'>;
 
 export type FullColonyFragment = (
   Pick<ProcessedColony, 'version' | 'canColonyMintNativeToken' | 'canColonyUnlockNativeToken' | 'isInRecoveryMode' | 'isNativeTokenLocked' | 'isDeploymentFinished'>
@@ -2754,6 +2761,7 @@ export const ColonyProfileFragmentDoc = gql`
   extensionAddresses
   whitelistedAddresses
   isWhitelistActivated
+  safes
 }
     `;
 export const TokensFragmentDoc = gql`
