@@ -34,6 +34,7 @@ fragment ColonyProfile on ProcessedColony {
   extensionAddresses
   whitelistedAddresses
   isWhitelistActivated
+  safes
 }
 
 fragment FullColony on ProcessedColony {

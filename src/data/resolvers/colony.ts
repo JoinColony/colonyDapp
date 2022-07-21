@@ -114,6 +114,11 @@ export const getProcessedColony = async (
   let tokenAddresses: Array<Address> = [];
   let whitelistedAddresses: Array<Address> = [];
   let whitelistActivated = false;
+  let safes: Array<{
+    safeName: string;
+    contractAddress: string;
+    chainId: number;
+  }> = [];
 
   const sortedMetadataHistory = sortMetadataHistory(metadataHistory);
   const currentMetadataIndex = sortedMetadataHistory.findIndex(
@@ -145,6 +150,7 @@ export const getProcessedColony = async (
         colonyTokens = [],
         verifiedAddresses = [],
         isWhitelistActivated = null,
+        colonySafes = [],
       } = JSON.parse(ipfsMetadata);
 
       displayName = colonyDisplayName;
@@ -154,6 +160,8 @@ export const getProcessedColony = async (
       if (isWhitelistActivated !== null) {
         whitelistActivated = isWhitelistActivated;
       }
+      safes = colonySafes;
+
       /*
        * Fetch the colony's avatar
        */
@@ -201,6 +209,7 @@ export const getProcessedColony = async (
     extensionAddresses: colonyExtensions.map(({ address }) => address),
     whitelistedAddresses,
     isWhitelistActivated: whitelistActivated,
+    safes,
   };
 };
 
