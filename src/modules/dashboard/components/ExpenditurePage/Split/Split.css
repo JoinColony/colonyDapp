@@ -12,7 +12,7 @@
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   line-height: 18px;
-  color: color-mod(var(--dark), alpha(85%));
+  color: color-mod(var(--dark) alpha(85%));
 }
 
 .splitToggle {

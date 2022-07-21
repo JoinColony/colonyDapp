@@ -60,7 +60,7 @@
 
 .valueContainer label {
   margin-bottom: 0;
-  color: var(--temp-grey-blue-7) alpha(85%);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
 }
 
 .valueContainer input {
@@ -106,7 +106,7 @@
   min-height: 45px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
-  color: var(--temp-grey-blue-7) alpha(85%);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
 }
 
 .tokenCounterWrapper {
