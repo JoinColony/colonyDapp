@@ -6,7 +6,8 @@ export enum TransactionTypes {
   CONTRACT_INTERACTION = 'contractInteraction',
   RAW_TRANSACTION = 'rawTransaction',
 }
-const MSG = defineMessages({
+
+export const MSG = defineMessages({
   [TransactionTypes.TRANSFER_FUNDS]: {
     id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.${TransactionTypes.TRANSFER_FUNDS}`,
     defaultMessage: 'Transfer funds',
@@ -29,21 +30,17 @@ export const transactionOptions = [
   {
     value: TransactionTypes.TRANSFER_FUNDS,
     label: MSG[TransactionTypes.TRANSFER_FUNDS],
-    labelString: 'Transfer funds',
   },
   {
     value: TransactionTypes.TRANSFER_NFT,
     label: MSG[TransactionTypes.TRANSFER_NFT],
-    labelString: 'Transfer NFT',
   },
   {
     value: TransactionTypes.CONTRACT_INTERACTION,
     label: MSG[TransactionTypes.CONTRACT_INTERACTION],
-    labelString: 'Contract interaction',
   },
   {
     value: TransactionTypes.RAW_TRANSACTION,
     label: MSG[TransactionTypes.RAW_TRANSACTION],
-    labelString: 'Raw transaction',
   },
 ];
