@@ -151,7 +151,7 @@ interface Props {
 }
 
 const ExtensionDetails = ({
-  colony: { colonyAddress, version: colonyVersion, nativeTokenAddress },
+  colony: { colonyAddress, version: colonyVersion },
   colony,
 }: Props) => {
   const { colonyName, extensionId } = useParams<{
@@ -408,7 +408,6 @@ const ExtensionDetails = ({
                     extension={extension}
                     installedExtension={installedExtension}
                     colony={colony}
-                    nativeTokenAddress={nativeTokenAddress}
                   />
                 ) : (
                   <Redirect to={extensionUrl} />

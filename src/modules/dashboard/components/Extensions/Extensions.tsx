@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { extensions, getExtensionHash } from '@colony/colony-js';
+import { Extension, getExtensionHash } from '@colony/colony-js';
+
 import camelCase from 'lodash/camelCase';
 
 import BreadCrumb from '~core/BreadCrumb';
@@ -13,6 +14,7 @@ import { Address } from '~types/index';
 import { SpinnerLoader } from '~core/Preloaders';
 import extensionData from '~data/staticData/extensionData';
 
+import { dappExtensions } from './index';
 import styles from './Extensions.css';
 
 import ExtensionCard from './ExtensionCard';
@@ -51,25 +53,32 @@ const Extensions = ({ colonyAddress }: Props) => {
 
   const { data: networkExtensionData } = useNetworkExtensionVersionQuery();
 
+  // @NOTE get list of installed extensions that are only allowed to be
+  // used within the dapp
+  const dappInstalledExtensions = useMemo(
+    () =>
+      data?.processedColony?.installedExtensions?.filter(({ extensionId }) =>
+        dappExtensions.includes(Extension[extensionId]),
+      ),
+    [data],
+  );
+
   const installedExtensionsData = useMemo(() => {
-    if (data?.processedColony?.installedExtensions) {
-      const { installedExtensions } = data.processedColony;
-      return installedExtensions.map(
-        ({ extensionId, address, details: { version } }) => ({
+    return (
+      dappInstalledExtensions?.map(({ extensionId, address, details }) => {
+        return {
           ...extensionData[extensionId],
           address,
-          currentVersion: version,
-        }),
-      );
-    }
-    return [];
-  }, [data]);
+          currentVersion: details?.version || 0,
+        };
+      }) || []
+    );
+  }, [dappInstalledExtensions]);
 
   const availableExtensionsData = useMemo(() => {
-    if (data?.processedColony?.installedExtensions) {
-      const { installedExtensions } = data.processedColony;
-      return extensions.reduce((availableExtensions, extensionName) => {
-        const installedExtension = installedExtensions.find(
+    if (dappInstalledExtensions) {
+      return dappExtensions.reduce((availableExtensions, extensionName) => {
+        const installedExtension = dappInstalledExtensions.find(
           ({ extensionId }) => extensionName === extensionId,
         );
         if (
@@ -93,7 +102,21 @@ const Extensions = ({ colonyAddress }: Props) => {
       }, []);
     }
     return [];
-  }, [data, networkExtensionData]);
+  }, [dappInstalledExtensions, networkExtensionData]);
+
+  const getDappInstalledExtension = useCallback(
+    (index: number) => {
+      // guard against stepping outside of the array
+      if (
+        !dappInstalledExtensions ||
+        index >= dappInstalledExtensions?.length
+      ) {
+        return undefined;
+      }
+      return dappInstalledExtensions[index];
+    },
+    [dappInstalledExtensions],
+  );
 
   if (loading) {
     return (
@@ -105,10 +128,6 @@ const Extensions = ({ colonyAddress }: Props) => {
       </div>
     );
   }
-
-  const installedExtensions = data
-    ? data.processedColony.installedExtensions
-    : [];
 
   return (
     <div className={styles.main}>
@@ -130,7 +149,9 @@ const Extensions = ({ colonyAddress }: Props) => {
                 <ExtensionCard
                   key={extension.extensionId}
                   extension={extension}
-                  installedExtension={installedExtensions[idx]}
+                  // be careful to use matching data with both
+                  // installedExtensionsData & dappInstalledExtensions
+                  installedExtension={getDappInstalledExtension(idx)}
                   dataTest={`${camelCase(extension.extensionId)}ExtensionCard`}
                 />
               ))}

@@ -21,7 +21,6 @@ const DownloadTemplate = () => {
   );
 };
 
-DownloadTemplate.displayName =
-  'dashboard.Whitelist.UploadAddressesWidget.DownloadTemplate';
+DownloadTemplate.displayName = 'core.UploadAddresses.DownloadTemplate';
 
 export default DownloadTemplate;

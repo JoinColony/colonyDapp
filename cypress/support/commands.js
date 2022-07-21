@@ -23,9 +23,6 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-
-import { Extension } from '@colony/colony-js';
-
 import { splitAddress } from '~utils/strings';
 
 import { buildUser } from './generate';
@@ -166,13 +163,10 @@ Cypress.Commands.add('installExtension', () => {
   cy.getBySel('disabledStatusTag', { timeout: 30000 }).should('exist');
 });
 
-Cypress.Commands.add('enableExtension', (extensionId) => {
+Cypress.Commands.add('enableExtension', () => {
   cy.getBySel('closeGasStationButton').click();
   cy.getBySel('enableExtensionButton').click();
-  if (extensionId === Extension.Whitelist) {
-    cy.getBySel('policySelector').eq(1).click({ force: true });
-    cy.getBySel('policySelector').eq(1).click({ force: true });
-  }
+
   // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.getBySel('setupExtensionConfirmButton').click().wait(7000);
   cy.getBySel('closeGasStationButton').click();

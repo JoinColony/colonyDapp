@@ -3,7 +3,6 @@ import {
   id as topicId,
   bigNumberify,
   hexlify,
-  BigNumber,
 } from 'ethers/utils';
 import { ColonyRole } from '@colony/colony-js';
 
@@ -184,32 +183,6 @@ const storageSlotArgumentParser = (values: {
  * @NOTE Only use internally
  *
  * Specific function to parse known, expected, values
- * This parses values for coin machine specific events
- */
-const coinMachineEventsArgumentParser = (values: {
-  numTokens?: string;
-  totalCost?: string;
-}): {
-  numTokens?: BigNumber;
-  totalCost?: BigNumber;
-} => {
-  const parsedValues: {
-    numTokens?: BigNumber;
-    totalCost?: BigNumber;
-  } = {};
-  if (values?.numTokens) {
-    parsedValues.numTokens = bigNumberify(values.numTokens);
-  }
-  if (values?.totalCost) {
-    parsedValues.totalCost = bigNumberify(values.totalCost);
-  }
-  return parsedValues;
-};
-
-/*
- * @NOTE Only use internally
- *
- * Specific function to parse known, expected, values
  * This parses values for whitelist specific events
  */
 const whitelistEventsArgumentParser = (values: {
@@ -260,7 +233,6 @@ export const parseSubgraphEvent = ({
       ...addressArgumentParser(parsedArguments),
       ...motionArgumentparser(parsedArguments),
       ...storageSlotArgumentParser(parsedArguments),
-      ...coinMachineEventsArgumentParser(parsedArguments),
       ...whitelistEventsArgumentParser(parsedArguments),
     },
   };
