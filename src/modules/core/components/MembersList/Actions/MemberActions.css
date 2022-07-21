@@ -17,24 +17,3 @@
 .actionsButton:hover {
   border-color: var(--action-secondary);
 }
-
-.actionsIcon {
-  height: 10px;
-  width: 10px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  fill: var(--temp-grey-blue-7);
-}
-
-.actionsIcon svg {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.activeDropdown .actionsIcon,
-.actionsButton:hover .actionsIcon {
-  fill: var(--action-secondary);
-}

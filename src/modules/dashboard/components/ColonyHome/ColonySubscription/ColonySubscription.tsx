@@ -1,6 +1,5 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import classnames from 'classnames';
 
 import { SpinnerLoader } from '~core/Preloaders';
 import ThreeDotsButton from '~core/Button/ThreeDotsButton';
@@ -103,9 +102,9 @@ const ColonySubscription = ({
               <ThreeDotsButton
                 id={id}
                 innerRef={ref}
-                className={classnames(styles.menuIconContainer, {
-                  [styles.menuActive]: isOpen,
-                })}
+                isOpen={isOpen}
+                className={styles.menuIconContainer}
+                activeStyles={styles.menuActive}
                 onClick={toggle}
                 tabIndex={0}
                 data-test="colonyMenuPopover"

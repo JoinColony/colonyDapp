@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { defineMessages } from 'react-intl';
 
-import classnames from 'classnames';
 import { COMMENT_MODERATION } from '~immutable/index';
 import Popover from '~core/Popover';
 
@@ -80,9 +79,9 @@ const CommentActions = ({
         <ThreeDotsButton
           id={id}
           innerRef={ref}
-          className={classnames(styles.actionsButton, {
-            [styles.activeDropdown]: isOpen,
-          })}
+          isOpen={isOpen}
+          className={styles.actionsButton}
+          activeStyles={styles.activeDropdown}
           onClick={() => setOpen(true)}
           data-test="commentActionsButton"
           title={MSG.commentActionsTitle}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { MessageDescriptor } from 'react-intl';
 
+import classnames from 'classnames';
 import Button, { Props as DefaultButtonProps } from './Button';
 import Icon from '~core/Icon';
 
@@ -9,21 +10,33 @@ import styles from './ThreeDotsButton.css';
 const displayName = 'ThreeDotsButton';
 
 interface Props extends DefaultButtonProps {
-  icon?: string;
+  activeStyles: string;
+  isOpen: boolean;
   title: MessageDescriptor;
   innerRef?: (ref: HTMLInputElement | null) => void;
 }
 
 const ThreeDotsButton = ({
-  icon = 'three-dots-row',
+  className,
+  isOpen,
   title,
+  activeStyles,
   innerRef,
   ...props
-}: Props) => (
-  <Button innerRef={innerRef} {...props}>
-    <Icon className={styles.icon} name={icon} title={title} />
-  </Button>
-);
+}: Props) => {
+  const active = activeStyles || styles.menuActive;
+  return (
+    <Button
+      className={classnames(styles.main, className, {
+        [active]: isOpen,
+      })}
+      innerRef={innerRef}
+      {...props}
+    >
+      <Icon className={styles.icon} name="three-dots-row" title={title} />
+    </Button>
+  );
+};
 
 ThreeDotsButton.displayName = displayName;
 

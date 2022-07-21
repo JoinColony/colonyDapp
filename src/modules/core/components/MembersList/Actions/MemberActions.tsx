@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { defineMessages } from 'react-intl';
-import classnames from 'classnames';
 
 import Popover from '~core/Popover';
 import { Colony } from '~data/index';
@@ -67,9 +66,9 @@ const MemberActions = ({
         <ThreeDotsButton
           id={id}
           innerRef={ref}
-          className={classnames(styles.actionsButton, {
-            [styles.activeDropdown]: isOpen,
-          })}
+          isOpen={isOpen}
+          className={styles.actionsButton}
+          activeStyles={styles.activeDropdown}
           onClick={() => setOpen(true)}
           title={MSG.memberActionsTitle}
         />
