@@ -84,6 +84,12 @@ const transactionTypeFieldsMap = {
     },
   ],
   [TransactionTypes.TRANSFER_NFT]: [
+    // To be finished once NFT part of the form is merged
+    {
+      key: 'function',
+      label: MSG.function,
+      value: () => <FormattedMessage {...ConstantsMSG.transferNft} />,
+    },
     {
       key: 'nft',
       label: MSG.nft,
@@ -91,21 +97,7 @@ const transactionTypeFieldsMap = {
     },
   ],
   [TransactionTypes.CONTRACT_INTERACTION]: [
-    {
-      key: 'contract',
-      label: MSG.contract,
-      value: (contract) => contract,
-    },
-    {
-      key: 'abi',
-      label: MSG.abi,
-      value: (abi) => abi,
-    },
-    {
-      key: 'contractFunction',
-      label: MSG.contractFunction,
-      value: (contractFunction) => contractFunction,
-    },
+    // To be finished once NFT part of the form is merged
   ],
   [TransactionTypes.RAW_TRANSACTION]: [
     {
@@ -169,14 +161,6 @@ const SafeTransactionPreview = ({ colony: { tokens }, values }: Props) => {
             <AddressDetailsView
               item={(values.safe as never) as AnyUser}
               isSafeItem
-            />
-          }
-        />
-        <DetailsItem
-          label={MSG.function}
-          value={
-            <FormattedMessage
-              {...ConstantsMSG[values.transactions[0].transactionType]}
             />
           }
         />
