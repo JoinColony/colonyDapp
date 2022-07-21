@@ -12,9 +12,8 @@ import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
 import { Address } from '~types/index';
 
-import GnosisControlSafeForm, {
-  TransactionTypes,
-} from './GnosisControlSafeForm';
+import { TransactionTypes } from './constants';
+import GnosisControlSafeForm from './GnosisControlSafeForm';
 
 const MSG = defineMessages({
   requiredFieldError: {
