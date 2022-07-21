@@ -66,7 +66,7 @@ const MSG = defineMessages({
   },
   value: {
     id: 'dashboard.GnosisControlSafeDialog.SafeTransactionPreview.value',
-    defaultMessage: 'Value',
+    defaultMessage: 'Value (wei)',
   },
 });
 
@@ -109,14 +109,18 @@ const transactionTypeFieldsMap = {
   ],
   [TransactionTypes.RAW_TRANSACTION]: [
     {
-      key: 'value',
+      key: 'amount',
       label: MSG.value,
-      value: (value) => value,
+      value: (value) => (
+        <div className={styles.rawTransactionValues}>{value}</div>
+      ),
     },
     {
       key: 'data',
       label: MSG.data,
-      value: (data) => data,
+      value: (data) => (
+        <div className={styles.rawTransactionValues}>{data}</div>
+      ),
     },
   ],
 };
