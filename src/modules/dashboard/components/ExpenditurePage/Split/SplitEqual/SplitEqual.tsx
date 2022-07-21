@@ -144,9 +144,12 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
           render={({ push, remove }) => (
             <>
               <div className={styles.recipientsWrapper}>
-                {recipients?.map((_, index) => {
+                {recipients?.map((recipient, index) => {
                   return (
-                    <div className={styles.recipientWrapper}>
+                    <div
+                      className={styles.recipientWrapper}
+                      key={recipient?.recipient?.id || index}
+                    >
                       <div>
                         <UserPickerWithSearch
                           data={colonyMembers?.subscribedUsers || []}
