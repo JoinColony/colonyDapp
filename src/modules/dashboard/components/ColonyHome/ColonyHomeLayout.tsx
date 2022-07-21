@@ -19,6 +19,7 @@ import ColonyUpgrade from './ColonyUpgrade';
 import ColonyFinishDeployment from './ColonyFinishDeployment';
 import ExtensionUpgrade from './ExtensionUpgrade';
 import WrongNetworkDialog from './WrongNetworkDialog';
+import ColonySafes from './ColonySafes';
 
 import styles from './ColonyHomeLayout.css';
 
@@ -100,6 +101,7 @@ const ColonyHomeLayout = ({
               currentDomainId={filteredDomainId}
             />
             <ColonyFunding colony={colony} currentDomainId={filteredDomainId} />
+            <ColonySafes colony={colony} />
             <ColonyMembers colony={colony} currentDomainId={filteredDomainId} />
             <ColonyExtensions colony={colony} />
           </aside>
