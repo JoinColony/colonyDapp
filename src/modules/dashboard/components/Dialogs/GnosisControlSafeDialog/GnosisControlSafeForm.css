@@ -143,3 +143,10 @@
 .tokenAmount > figure > div {
   border-radius: 0;
 }
+
+.rawTransactionValues {
+  padding: 10px 0;
+  max-width: 270px;
+  font-weight: var(--weight-normal);
+  overflow-wrap: anywhere;
+}
