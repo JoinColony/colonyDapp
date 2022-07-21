@@ -123,10 +123,12 @@ export const getProcessedColony = async (
         colonyDisplayName = null,
         colonyAvatarHash = null,
         colonyTokens = [],
+        colonySafes = [],
       } = JSON.parse(ipfsMetadata);
       displayName = colonyDisplayName;
       avatarHash = colonyAvatarHash;
       tokenAddresses = colonyTokens;
+      safes = colonySafes;
 
       /*
        * Fetch the colony's avatar
@@ -168,6 +170,7 @@ export const getProcessedColony = async (
       ? [...tokenAddresses, token.tokenAddress].map(createAddress)
       : [],
     extensionAddresses: colonyExtensions.map(({ address }) => address),
+    safes,
   };
 };
 
