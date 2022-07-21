@@ -190,6 +190,7 @@ const SafeTransactionPreview = ({ colony: { tokens }, values }: Props) => {
           label={MSG.transactionsSetTitle}
           name="transactionSetTitle"
           disabled={false}
+          placeholder=""
         />
       </DialogSection>
       <DialogSection>
