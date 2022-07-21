@@ -10,10 +10,9 @@ import TokenIcon from '~dashboard/HookedTokenIcon';
 import { Colony, AnyUser } from '~data/index';
 
 import AddressDetailsView from './TransactionPreview/AddressDetailsView';
-
 import { FormValues } from './GnosisControlSafeDialog';
-
 import { TransactionTypes } from './constants';
+import DetailsItem from './DetailsItem';
 import styles from './GnosisControlSafeForm.css';
 
 const MSG = defineMessages({
@@ -141,15 +140,6 @@ const SafeTransactionPreview = ({ colony: { tokens }, values }: Props) => {
         (item) => item.address === values.transactions[0].tokenAddress,
       ),
     [values, tokens],
-  );
-
-  const DetailsItem = ({ label, value }: { label: any; value: any }) => (
-    <div className={styles.detailsItem}>
-      <div className={styles.detailsItemLabel}>
-        <FormattedMessage {...label} />
-      </div>
-      <div className={styles.detailsItemValue}>{value}</div>
-    </div>
   );
 
   return (
