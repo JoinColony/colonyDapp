@@ -7,13 +7,12 @@ import DialogSection from '~core/Dialog/DialogSection';
 import Heading from '~core/Heading';
 
 import { ActionDialogProps } from '~core/Dialog';
-import { useLoggedInUser } from '~data/index';
+import { ColonySafe, useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '~modules/transformers';
 import { canEnterRecoveryMode } from '~modules/users/checks';
 
 import SafeListItem from './SafeListItem';
-import { Safe } from './types';
 import { FormValues } from './RemoveSafeDialog';
 
 import styles from './RemoveSafeDialogForm.css';
@@ -34,7 +33,7 @@ const MSG = defineMessages({
 });
 
 interface Props extends Omit<ActionDialogProps, 'isVotingExtensionEnabled'> {
-  safeList: Safe[];
+  safeList: ColonySafe[];
 }
 
 const RemoveSafeDialogForm = ({
@@ -77,9 +76,9 @@ const RemoveSafeDialogForm = ({
             <div className={styles.content}>
               {safeList.map((item) => (
                 <SafeListItem
-                  key={item.address}
+                  key={item.contractAddress}
                   safe={item}
-                  isChecked={values?.safeList?.includes(item.address)}
+                  isChecked={values?.safeList?.includes(item.contractAddress)}
                 />
               ))}
             </div>

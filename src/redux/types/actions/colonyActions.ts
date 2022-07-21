@@ -264,4 +264,22 @@ export type ColonyActionsActionTypes =
   | ActionTypeWithMeta<
       ActionTypes.ACTION_ADD_EXISTING_SAFE_SUCCESS,
       MetaWithHistory<object>
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_ACTION_REMOVE_EXISTING_SAFES,
+      {
+        colonyName: string;
+        colonyAddress: Address;
+        safeAddresses: Address[];
+        annotationMessage?: string;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<
+      ActionTypes.COLONY_ACTION_REMOVE_EXISTING_SAFES_ERROR,
+      object
+    >
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_ACTION_REMOVE_EXISTING_SAFES_SUCCESS,
+      MetaWithHistory<object>
     >;

@@ -1,11 +1,12 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
+import { GNOSIS_SAFE_NETWORKS } from '~constants';
 import Avatar from '~core/Avatar';
 import { Checkbox } from '~core/Fields';
 import MaskedAddress from '~core/MaskedAddress';
 import InvisibleCopyableAddress from '~core/InvisibleCopyableAddress';
-import { Safe } from './types';
+import { ColonySafe } from '~data/index';
 
 import styles from './SafeListItem.css';
 
@@ -17,11 +18,14 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  safe: Safe;
+  safe: ColonySafe;
   isChecked: boolean;
 }
 
 const SafeListItem = ({ safe, isChecked }: Props) => {
+  const safeNetwork = GNOSIS_SAFE_NETWORKS.find(
+    (network) => network.chainId === Number(safe.chainId),
+  );
   return (
     <div
       className={`${styles.main} ${isChecked && styles.checked}`}
@@ -30,28 +34,27 @@ const SafeListItem = ({ safe, isChecked }: Props) => {
       <Checkbox
         name="safeList"
         appearance={{ theme: 'pink' }}
-        value={safe.address}
+        value={safe.contractAddress}
         className={styles.checkbox}
       />
       <Avatar
-        avatarURL={undefined}
         placeholderIcon="circle-close"
-        seed={safe.address}
-        title={safe.name || safe.address}
+        seed={safe.contractAddress}
+        title={safe.safeName || safe.contractAddress}
         size="xs"
         className={styles.avatar}
       />
 
       <span className={`${isChecked ? styles.selectedLabel : styles.label}`}>
-        {`${safe.name} (${safe.chain})`}
+        {`${safe.safeName} (${safeNetwork?.name || 'Unknown'})`}
       </span>
 
       <InvisibleCopyableAddress
-        address={safe.address}
+        address={safe.contractAddress}
         copyMessage={MSG.copyMessage}
       >
         <div className={styles.address}>
-          <MaskedAddress address={safe.address} />
+          <MaskedAddress address={safe.contractAddress} />
         </div>
       </InvisibleCopyableAddress>
     </div>
