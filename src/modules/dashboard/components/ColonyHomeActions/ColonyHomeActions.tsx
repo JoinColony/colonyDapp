@@ -228,7 +228,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         colony,
       },
     },
-    // @todo - ready to be implemented in another PR.
     {
       component: AddExistingSafeDialog,
       props: {
@@ -236,15 +235,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         colony,
       },
     },
-    // {
-    //   component: RemoveSafeDialog,
-    //   props: {
-    //     prevStep: 'dashboard.RemoveSafeDialog',
-    //     colony,
-    //     isVotingExtensionEnabled,
-    //     ethDomainId,
-    //   },
-    // },
     {
       component: GnosisControlSafeDialog,
       props: {
@@ -260,15 +250,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         colony,
       },
     },
-    // {
-    //   component: ControlSafeDialog,
-    //   props: {
-    //     prevStep: 'dashboard.ManageGnosisSafeDialog',
-    //     colony,
-    //     isVotingExtensionEnabled,
-    //     ethDomainId,
-    //   },
-    // },
 
     {
       component: PermissionManagementDialog,

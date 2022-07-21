@@ -1,10 +1,13 @@
+import { ColonyRole } from '@colony/colony-js';
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, useIntl } from 'react-intl';
 
 import { DialogProps, ActionDialogProps } from '~core/Dialog';
 import IndexModal from '~core/IndexModal';
-
-import { WizardDialogType } from '~utils/hooks';
+import { useLoggedInUser } from '~data/index';
+import { getAllUserRoles } from '~modules/transformers';
+import { userHasRole } from '~modules/users/checks';
+import { useTransformer, WizardDialogType } from '~utils/hooks';
 
 const MSG = defineMessages({
   dialogHeader: {
@@ -36,6 +39,11 @@ const MSG = defineMessages({
     id: 'dashboard.ManageGnosisSafeDialog.controlSafeDescription',
     defaultMessage: 'Get your colony’s Gnosis Safe to do stuff.',
   },
+  permissionText: {
+    id: 'dashboard.ManageReputationDialog.permissionsText',
+    defaultMessage: `You must have the {permission} permissions in the
+      relevant teams, in order to take this action`,
+  },
 });
 
 interface CustomWizardDialogProps extends ActionDialogProps {
@@ -50,6 +58,7 @@ type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
 const displayName = 'dashboard.ManageGnosisSafeDialog';
 
 const ManageGnosisSafeDialog = ({
+  colony,
   cancel,
   close,
   callStep,
@@ -58,6 +67,15 @@ const ManageGnosisSafeDialog = ({
   nextStepRemoveSafe,
   nextStepControlSafe,
 }: Props) => {
+  const { walletAddress, username, ethereal } = useLoggedInUser();
+  const { formatMessage } = useIntl();
+  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+
+  const hasRegisteredProfile = !!username && !ethereal;
+  const canManageGnosisSafes =
+    (hasRegisteredProfile &&
+      userHasRole(allUserRoles, ColonyRole.Administration)) ||
+    userHasRole(allUserRoles, ColonyRole.Funding);
   const items = [
     {
       title: MSG.addExistingSafeTitle,
@@ -65,6 +83,15 @@ const ManageGnosisSafeDialog = ({
       icon: 'plus-heavy',
       dataTest: 'gnosisAddExistingItem',
       onClick: () => callStep(nextStepAddExistingSafe),
+      permissionRequired: !canManageGnosisSafes,
+      permissionInfoText: MSG.permissionText,
+      permissionInfoTextValues: {
+        permission: `${formatMessage({
+          id: `role.${ColonyRole.Administration}`,
+        }).toLowerCase()} and ${formatMessage({
+          id: `role.${ColonyRole.Funding}`,
+        }).toLowerCase()}`,
+      },
     },
     {
       title: MSG.removeSafeTitle,
@@ -72,6 +99,15 @@ const ManageGnosisSafeDialog = ({
       icon: 'trash-can',
       dataTest: 'gnosisRemoveSafeItem',
       onClick: () => callStep(nextStepRemoveSafe),
+      permissionRequired: !canManageGnosisSafes,
+      permissionInfoText: MSG.permissionText,
+      permissionInfoTextValues: {
+        permission: `${formatMessage({
+          id: `role.${ColonyRole.Administration}`,
+        }).toLowerCase()} and ${formatMessage({
+          id: `role.${ColonyRole.Funding}`,
+        }).toLowerCase()}`,
+      },
     },
     {
       title: MSG.controlSafeTitle,
