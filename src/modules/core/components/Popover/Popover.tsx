@@ -104,8 +104,8 @@ const Popover = ({
   const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
   const [arrowElement, setArrowElement] = useState<HTMLElement | null>(null);
 
-  const openTimeoutRef = useRef<number>();
-  const closeTimeoutRef = useRef<number>();
+  const openTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
   const { current: elementId } = useRef<string>(nanoid());
 
   const { attributes, styles, state } = usePopper(
@@ -122,9 +122,11 @@ const Popover = ({
 
   const close = useCallback(
     (data?: any, modifiers?: { cancelled: boolean }) => {
-      if (window) {
-        window.clearTimeout(openTimeoutRef.current);
-        window.clearTimeout(closeTimeoutRef.current);
+      if (openTimeoutRef.current) {
+        clearTimeout(openTimeoutRef.current);
+      }
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
       }
       _setIsOpen(false);
       if (typeof onClose == 'function') onClose(data, modifiers);
@@ -136,13 +138,13 @@ const Popover = ({
     if (isOpen) {
       return;
     }
-    if (closeAfterDelay && window) {
-      closeTimeoutRef.current = window.setTimeout(() => {
+    if (closeAfterDelay) {
+      closeTimeoutRef.current = setTimeout(() => {
         close();
       }, 3000 + (openDelay || 0));
     }
-    if (openDelay && window) {
-      openTimeoutRef.current = window.setTimeout(() => {
+    if (openDelay) {
+      openTimeoutRef.current = setTimeout(() => {
         _setIsOpen(true);
       }, openDelay);
       return;
@@ -264,11 +266,11 @@ const Popover = ({
     const currentOpenTimeoutRef = openTimeoutRef && openTimeoutRef.current;
     const currentCloseTimeoutRef = closeTimeoutRef && closeTimeoutRef.current;
     return () => {
-      if (window && currentOpenTimeoutRef) {
-        window.clearTimeout(currentOpenTimeoutRef);
+      if (currentOpenTimeoutRef) {
+        clearTimeout(currentOpenTimeoutRef);
       }
-      if (window && currentCloseTimeoutRef) {
-        window.clearTimeout(currentCloseTimeoutRef);
+      if (currentCloseTimeoutRef) {
+        clearTimeout(currentCloseTimeoutRef);
       }
     };
   }, []);
