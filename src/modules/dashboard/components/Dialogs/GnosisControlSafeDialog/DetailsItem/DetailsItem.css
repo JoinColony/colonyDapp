@@ -1,0 +1,18 @@
+.detailsItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 46px;
+  width: 100%;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+}
+
+.detailsItemLabel {
+  color: var(--temp-grey-blue-7);
+}
+
+.detailsItemValue {
+  color: var(--dark);
+}
