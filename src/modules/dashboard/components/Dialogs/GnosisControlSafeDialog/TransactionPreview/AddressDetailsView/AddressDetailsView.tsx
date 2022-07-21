@@ -1,18 +1,10 @@
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
 
 import MaskedAddress from '~core/MaskedAddress';
 import Avatar from '~core/Avatar';
 import { AnyUser } from '~data/index';
 
 import styles from './AddressDetailsView.css';
-
-const MSG = defineMessages({
-  contract: {
-    id: 'dashboard.GnosisControlSafeDialog.AddressDetailsView.contract',
-    defaultMessage: 'Contract',
-  },
-});
 
 interface Props {
   item: AnyUser;
@@ -32,13 +24,7 @@ const AddressDetailsView = ({ item, isSafeItem }: Props) => {
         title="avatar"
         placeholderIcon={isSafeItem ? 'gnosis-logo' : 'circle-person'}
       />
-      <span className={styles.name}>
-        {isSafeItem ? (
-          <FormattedMessage {...MSG.contract} />
-        ) : (
-          userDisplayName || `@${username}`
-        )}
-      </span>
+      <span className={styles.name}>{userDisplayName || `@${username}`}</span>
       <MaskedAddress address={item.id} />
     </div>
   );
