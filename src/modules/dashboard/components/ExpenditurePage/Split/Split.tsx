@@ -32,7 +32,7 @@ interface Props {
   colony: Colony;
 }
 
-const Split = ({ sidebarRef, colony }: Props) => {
+const Split = ({ colony, sidebarRef }: Props) => {
   const [, { value: splitUnequal }] = useField('split.unequal');
   return (
     <div className={styles.splitContainer}>
