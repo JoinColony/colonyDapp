@@ -8,6 +8,7 @@ import { Colony } from '~data/index';
 
 import { SplitUnequal, SplitEqual } from '.';
 import styles from './Split.css';
+import { SplitUnequal } from '.';
 
 const MSG = defineMessages({
   split: {
