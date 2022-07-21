@@ -99,6 +99,8 @@ interface Props {
   safes: GnosisSafe[];
   isVotingExtensionEnabled: boolean;
   back?: () => void;
+  showPreview: boolean;
+  handleSHowPreview: (showPreview: boolean) => void;
 }
 
 const renderAvatar = (address: string, item) => (
@@ -121,9 +123,10 @@ const GnosisControlSafeForm = ({
   values,
   isVotingExtensionEnabled,
   setFieldValue,
+  showPreview,
+  handleSHowPreview,
 }: Props & FormikProps<FormValues>) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState([true]);
-  const [showPreview, setShowPreview] = useState(false);
 
   const { walletAddress } = useLoggedInUser();
   const fromDomainRoles = useTransformer(getUserRolesForDomain, [
@@ -357,13 +360,13 @@ const GnosisControlSafeForm = ({
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
-          onClick={showPreview ? () => setShowPreview(!showPreview) : back}
+          onClick={showPreview ? () => handleSHowPreview(!showPreview) : back}
           text={{ id: 'button.back' }}
         />
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() =>
-            showPreview ? handleSubmit() : setShowPreview(!showPreview)
+            showPreview ? handleSubmit() : handleSHowPreview(!showPreview)
           }
           text={MSG.buttonCreateTransaction}
           loading={isSubmitting}
