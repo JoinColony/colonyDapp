@@ -30,7 +30,7 @@ import {
   RawTransactionSection,
   ContractInteractionSection,
 } from './TransactionTypesSection';
-import { TransactionTypes } from './constants';
+import { TransactionTypes, transactionOptions } from './constants';
 
 import styles from './GnosisControlSafeForm.css';
 
@@ -84,98 +84,7 @@ const MSG = defineMessages({
     id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.deleteTransactionTooltipText`,
     defaultMessage: `Delete transaction.\nBe careful, data can be lost.`,
   },
-  previewTitle: {
-    id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.previewTitle',
-    defaultMessage: 'Confirm transaction details',
-  },
-  transactionsSetTitle: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.transactionsSetTitle`,
-    defaultMessage: 'Title of the set of all the arbitrary transactions',
-  },
-  explainWhy: {
-    id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.explainWhy',
-    defaultMessage: `Explain why you’re making arbitrary transaction (optional)`,
-  },
-  targetContract: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.targetContract`,
-    defaultMessage: 'Target contract',
-  },
-  function: {
-    id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.function',
-    defaultMessage: 'Function',
-  },
-  to: {
-    id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.to',
-    defaultMessage: 'To',
-  },
-  amount: {
-    id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.amount',
-    defaultMessage: 'Amount',
-  },
-  contract: {
-    id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.contract',
-    defaultMessage: 'Contract',
-  },
-  abi: {
-    id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.abi',
-    defaultMessage: 'ABI',
-  },
-  nft: {
-    id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.nft',
-    defaultMessage: 'NFT',
-  },
-  data: {
-    id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.data',
-    defaultMessage: 'Data',
-  },
-  contractFunction: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.contractFunction`,
-    defaultMessage: 'Contract function',
-  },
-  value: {
-    id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.value',
-    defaultMessage: 'Value',
-  },
-  [TransactionTypes.TRANSFER_FUNDS]: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.${TransactionTypes.TRANSFER_FUNDS}`,
-    defaultMessage: 'Transfer funds',
-  },
-  [TransactionTypes.TRANSFER_NFT]: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.${TransactionTypes.TRANSFER_NFT}`,
-    defaultMessage: 'Transfer NFT',
-  },
-  [TransactionTypes.CONTRACT_INTERACTION]: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.${TransactionTypes.CONTRACT_INTERACTION}`,
-    defaultMessage: 'Contract interaction',
-  },
-  [TransactionTypes.RAW_TRANSACTION]: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.${TransactionTypes.RAW_TRANSACTION}`,
-    defaultMessage: 'Raw transaction',
-  },
 });
-
-export const transactionOptions = [
-  {
-    value: TransactionTypes.TRANSFER_FUNDS,
-    label: MSG[TransactionTypes.TRANSFER_FUNDS],
-    labelString: 'Transfer funds',
-  },
-  {
-    value: TransactionTypes.TRANSFER_NFT,
-    label: MSG[TransactionTypes.TRANSFER_NFT],
-    labelString: 'Transfer NFT',
-  },
-  {
-    value: TransactionTypes.CONTRACT_INTERACTION,
-    label: MSG[TransactionTypes.CONTRACT_INTERACTION],
-    labelString: 'Contract interaction',
-  },
-  {
-    value: TransactionTypes.RAW_TRANSACTION,
-    label: MSG[TransactionTypes.RAW_TRANSACTION],
-    labelString: 'Raw transaction',
-  },
-];
 
 const displayName = 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm';
 
