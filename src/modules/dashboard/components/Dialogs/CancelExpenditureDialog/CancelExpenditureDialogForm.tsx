@@ -195,7 +195,7 @@ const CancelExpenditureDialogForm = ({
           })}
         >
           <FormattedMessage {...MSG.ownersStake} />
-          <div className={styles.tokensWarpper}>
+          <div className={styles.tokensWrapper}>
             {tokens?.map((token, index) => (
               <div
                 className={classNames(styles.value, {

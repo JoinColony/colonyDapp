@@ -19,6 +19,6 @@ export const tokens: string;
 export const value: string;
 export const paddingBottom: string;
 export const tokenIcon: string;
-export const tokensWarpper: string;
+export const tokensWrapper: string;
 export const top: string;
 export const motionActiveItem: string;

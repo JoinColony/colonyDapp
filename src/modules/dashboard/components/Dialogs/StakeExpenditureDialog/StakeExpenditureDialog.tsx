@@ -48,7 +48,7 @@ const MSG = defineMessages({
   descriptionText2: {
     id: 'dashboard.Expenditures.Stages.draftConfirmDialog.descriptionText2',
     defaultMessage: `
-    Until expenditure is staked it won’t show up publicly on list. 
+    Until expenditure is staked it won't show up publicly on list. 
     It works like an anti-spam filter.`,
   },
   cancelText: {
@@ -114,7 +114,10 @@ const StakeExpenditureDialog = ({
                 <div className={styles.forceContainer}>
                   <FormattedMessage {...MSG.force} />
                   <div className={styles.toggleContainer}>
-                    <Toggle name="force" appearance={{ theme: 'danger' }} />
+                    <Toggle
+                      name="forceAction"
+                      appearance={{ theme: 'danger' }}
+                    />
                   </div>
 
                   <Tooltip
