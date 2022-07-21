@@ -1,18 +1,19 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { Recipient as RecipientType } from './types';
-import styles from './Payments.css';
 import { FormSection } from '~core/Fields';
-import LockedRecipient from '../Recipient/LockedRecipient/LockedRecipient';
 import UserMention from '~core/UserMention';
 import Tag from '~core/Tag';
-import { Stage } from '../Stages/constants';
-import TimeRelativeShort from '../TimeRelativeShort/TimeRelativeShort';
 import Button from '~core/Button';
 import { State } from '~pages/ExpenditurePage/ExpenditurePage';
 import { Colony } from '~data/index';
+
 import CollapseExpandButtons from './CollapseExpandButtons';
+import { Stage } from '../Stages/constants';
+import TimeRelativeShort from '../TimeRelativeShort/TimeRelativeShort';
+import LockedRecipient from '../Recipient/LockedRecipient/LockedRecipient';
+import { Recipient as RecipientType } from './types';
+import styles from './Payments.css';
 
 const MSG = defineMessages({
   payments: {
@@ -118,6 +119,26 @@ const LockedPayments = ({ recipients, activeState, colony }: Props) => {
     [activeState],
   );
 
+  const displayDelay = useMemo(
+    () => (recipientDelay: { amount?: string; time: string } | undefined) => {
+      if (!recipientDelay) {
+        return null;
+      }
+
+      const { amount, time } = recipientDelay;
+
+      if (!amount) {
+        return null;
+      }
+
+      if (time === 'months') {
+        return amount === '1' ? `, ${amount}mth` : `, ${amount}mths`;
+      }
+      return `, ${amount}${time.slice(0, 1)}`;
+    },
+    [],
+  );
+
   return (
     <div className={styles.paymentContainer}>
       <div className={styles.recipientContainer}>
@@ -144,12 +165,7 @@ const LockedPayments = ({ recipients, activeState, colony }: Props) => {
                       isLocked
                     />
                     {index + 1}: <UserMention username={recipientName} />
-                    {recipient?.delay?.amount && (
-                      <>
-                        {', '}
-                        {recipient.delay.amount} {recipient.delay.time}
-                      </>
-                    )}
+                    {displayDelay(recipient?.delay)}
                   </div>
                   {activeState?.id === Stage.Released &&
                     claimDate &&
