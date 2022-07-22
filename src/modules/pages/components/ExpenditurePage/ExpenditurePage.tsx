@@ -253,7 +253,6 @@ const ExpenditurePage = ({ match }: Props) => {
   }>();
   const [isFormEditable, setFormEditable] = useState(true);
   const [formValues, setFormValues] = useState<ValuesType>();
-  const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStateId, setActiveStateId] = useState<string>();
   const [status, setStatus] = useState<Status>();
   const [motion, setMotion] = useState<Motion>();
@@ -307,7 +306,6 @@ const ExpenditurePage = ({ match }: Props) => {
 
   const handleSubmit = useCallback(
     (values) => {
-      setShouldValidate(true);
       if (!activeStateId) {
         setActiveStateId(Stage.Draft);
       }
@@ -518,12 +516,6 @@ const ExpenditurePage = ({ match }: Props) => {
     },
   ];
 
-  const handleValidate = useCallback(() => {
-    if (!shouldValidate) {
-      setShouldValidate(true);
-    }
-  }, [shouldValidate]);
-
   const handleCancelExpenditure = () =>
     colonyData &&
     openCancelExpenditureDialog({
@@ -615,9 +607,6 @@ const ExpenditurePage = ({ match }: Props) => {
       initialValues={initialValuesData}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
-      validateOnBlur={shouldValidate}
-      validateOnChange={shouldValidate}
-      validate={handleValidate}
       enableReinitialize
     >
       {({ values, validateForm }) => (
