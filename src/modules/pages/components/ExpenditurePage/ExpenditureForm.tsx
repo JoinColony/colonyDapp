@@ -5,7 +5,17 @@ import { ExpenditureSettings } from '~dashboard/ExpenditurePage';
 import Payments from '~dashboard/ExpenditurePage/Payments';
 import Split from '~dashboard/ExpenditurePage/Split';
 import { Colony } from '~data/index';
-import { ValuesType } from './types';
+
+import { ValuesType } from './ExpenditurePage';
+import styles from './ExpenditurePage.css';
+import { ExpenditureTypes } from './types';
+
+const MSG = defineMessages({
+  submit: {
+    id: 'dashboard.ExpenditureForm.submit',
+    defaultMessage: 'Submit',
+  },
+});
 
 interface Props {
   colony: Colony;
@@ -18,11 +28,11 @@ const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
   const secondFormSection = useMemo(() => {
     const expenditureType = values.expenditure;
     switch (expenditureType) {
-      case 'advanced': {
-        return <Payments {...{ colony, sidebarRef }} />;
+      case ExpenditureTypes.Advanced: {
+        return <Payments sidebarRef={sidebarRef} colony={colony} />;
       }
-      case 'split': {
-        return <Split {...{ colony, sidebarRef }} />;
+      case ExpenditureTypes.Split: {
+        return <Split />;
       }
       default:
         return null;

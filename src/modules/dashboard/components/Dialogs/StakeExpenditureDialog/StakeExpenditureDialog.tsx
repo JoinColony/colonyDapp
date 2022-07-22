@@ -1,6 +1,4 @@
 import React, { useCallback, useState } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
-import { FormikProps } from 'formik';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Dialog, { DialogSection } from '~core/Dialog';

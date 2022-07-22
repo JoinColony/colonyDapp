@@ -14,6 +14,7 @@ import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import UserMention from '~core/UserMention';
 import ColorTag, { Color } from '~core/ColorTag';
 import DomainDropdown from '~core/DomainDropdown';
+import { ExpenditureTypes } from '~pages/ExpenditurePage/types';
 
 import BalanceSelect from './BalanceSelect';
 import { tokens as tokensData } from './constants';
@@ -49,11 +50,11 @@ export const MSG = defineMessages({
 const expeditureTypes = [
   {
     label: MSG.optionAdvanced,
-    value: 'advanced',
+    value: ExpenditureTypes.Advanced,
   },
   {
     label: MSG.split,
-    value: 'split',
+    value: ExpenditureTypes.Split,
   },
 ];
 
