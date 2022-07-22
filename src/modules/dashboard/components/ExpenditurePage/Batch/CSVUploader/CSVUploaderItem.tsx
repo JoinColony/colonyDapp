@@ -1,14 +1,14 @@
 import React, { useEffect, SyntheticEvent, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 import { useField } from 'formik';
+import { isEmpty } from 'lodash';
 
 import { UploadItemComponentProps } from '~core/FileUpload/types';
 import { UploadFile } from '~core/FileUpload';
 import { SpinnerLoader } from '~core/Preloaders';
+import Button from '~core/Button';
 
 import styles from './CSVUploaderItem.css';
-
-import Button from '~core/Button';
 
 const displayName = `dashboard.ExpenditurePage.Batch.CSVUploader.CSVUploaderItem`;
 
@@ -28,12 +28,10 @@ const MSG = defineMessages({
 });
 
 const CSVUploaderItem = ({
-  error,
   idx,
   name,
   remove,
   upload,
-  handleError,
   processingData,
   handleProcessingData,
 }: UploadItemComponentProps) => {
@@ -42,6 +40,7 @@ const CSVUploaderItem = ({
     {
       value: { file, uploaded },
       value,
+      error,
     },
     { setValue },
   ] = useField<UploadFile>(name);
@@ -63,20 +62,14 @@ const CSVUploaderItem = ({
       upload(value.file);
       setValue({ ...value, uploaded: true });
     }
+  }, [file, error, value, handleProcessingData, upload, setValue, uploaded]);
 
-    if (error && handleError) {
-      handleError();
+  useEffect(() => {
+    if (error && !isEmpty(value.parsedData)) {
+      upload(null);
+      remove(idx);
     }
-  }, [
-    file,
-    error,
-    value,
-    handleProcessingData,
-    handleError,
-    upload,
-    setValue,
-    uploaded,
-  ]);
+  }, [error, idx, remove, upload, value.parsedData]);
 
   if (processingData || !file) {
     return (

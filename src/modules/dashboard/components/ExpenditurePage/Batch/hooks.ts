@@ -34,6 +34,10 @@ export const useCalculateBatchPayment = (
       const tokensData = await Promise.all(
         uniq
           .map(async ({ token }) => {
+            if (!token) {
+              return undefined;
+            }
+
             try {
               const { data: tokenData } = await apolloClient.query<
                 TokenQuery,
@@ -86,6 +90,10 @@ export const useCalculateBatchPayment = (
     });
 
     const amount = filteredData.reduce((acc, item) => {
+      if (!item || !item.token) {
+        return acc;
+      }
+
       if (item.token in acc) {
         return {
           ...acc,
