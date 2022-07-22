@@ -18,14 +18,14 @@ const AddressDetailsView = ({ item, isSafeItem }: Props) => {
   return (
     <div className={styles.main}>
       <Avatar
-        seed={item.id.toLowerCase()}
+        seed={item?.id?.toLowerCase()}
         size="xs"
         avatarURL={item?.profile?.avatarHash || ''}
         title="avatar"
         placeholderIcon={isSafeItem ? 'gnosis-logo' : 'circle-person'}
       />
       <span className={styles.name}>{userDisplayName || `@${username}`}</span>
-      <MaskedAddress address={item.id} />
+      <MaskedAddress address={item?.id} />
     </div>
   );
 };
