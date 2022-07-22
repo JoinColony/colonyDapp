@@ -340,6 +340,7 @@ const ExpenditurePage = ({ match }: Props) => {
           },
         };
         setFormValues(splitValues);
+        return;
       }
 
       if (values.expenditure === ExpenditureTypes.Staged) {
