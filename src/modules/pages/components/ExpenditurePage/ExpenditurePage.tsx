@@ -626,9 +626,6 @@ const ExpenditurePage = ({ match }: Props) => {
       initialValues={initialValuesData}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
-      validateOnBlur={shouldValidate}
-      validateOnChange={shouldValidate}
-      validate={handleValidate}
       enableReinitialize
     >
       {({ values, validateForm }) => (
