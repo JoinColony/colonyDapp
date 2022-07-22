@@ -8,6 +8,7 @@ import { Colony } from '~data/index';
 
 import SplitEqual from './SplitEqual';
 import styles from './Split.css';
+import { SplitUnequal } from '.';
 
 const MSG = defineMessages({
   split: {
@@ -57,7 +58,11 @@ const Split = ({ sidebarRef, colony }: Props) => {
           </div>
         </div>
       </FormSection>
-      {splitUnequal ? null : <SplitEqual {...{ colony, sidebarRef }} />}
+      {splitUnequal ? (
+        <SplitUnequal {...{ colony, sidebarRef }} />
+      ) : (
+        <SplitEqual {...{ colony, sidebarRef }} />
+      )}
     </div>
   );
 };

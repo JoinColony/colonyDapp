@@ -1,0 +1,62 @@
+.recipientWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 15px 0 20px;
+}
+
+.recipientWrapper:last-of-type {
+  margin-bottom: 0;
+}
+
+.recipientsWrapper label {
+  margin-right: 0;
+}
+
+.deleteIcon {
+  height: 20px;
+  width: 20px;
+  fill: var(--pink);
+}
+
+.deleteIcon:hover {
+  cursor: pointer;
+}
+
+.addRecipientLabel {
+  display: flex;
+  align-items: center;
+  padding-top: 4px;
+}
+
+.circlePlusIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 2px;
+
+  /* a negative margin is used here to align the entire "Add recipient" row to the left */
+  margin-left: -8px;
+  height: 30px;
+  width: 30px;
+  fill: var(--action-secondary);
+}
+
+.sliderWrapper {
+  display: grid;
+  align-items: center;
+  margin: 22px 0 20px;
+  grid-template-columns: 8fr 1fr;
+  column-gap: 10px;
+}
+
+.sliderWrapper > span {
+  margin-left: 10px;
+}
+
+.percent {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--dark) alpha(85%));
+  letter-spacing: 0.5px;
+}
