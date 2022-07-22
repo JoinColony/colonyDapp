@@ -29,7 +29,6 @@ import {
 } from '~dashboard/ExpenditurePage/Stages/constants';
 import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import { useLoggedInUser } from '~data/helpers';
-import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
 import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
 import { useDialog } from '~core/Dialog';
 import EscrowFundsDialog from '~dashboard/Dialogs/EscrowFundsDialog';
@@ -37,7 +36,6 @@ import EditExpenditureDialog from '~dashboard/Dialogs/EditExpenditureDialog';
 import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
 import Tag from '~core/Tag';
 import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
-import Split from '~dashboard/ExpenditurePage/Split';
 
 import { findDifferences, updateValues, setClaimDate } from './utils';
 import ExpenditureForm from './ExpenditureForm';
@@ -322,7 +320,7 @@ const ExpenditurePage = ({ match }: Props) => {
     const updatedFormValues = {
       ...{
         ...formValues,
-        recipients: formValues?.recipients.map((recipient) => {
+        recipients: formValues?.recipients?.map((recipient) => {
           if (!recipient.claimed && recipient.claimDate) {
             const isClaimable = recipient.claimDate < new Date().getTime();
             return { ...{ ...recipient, claimed: !!isClaimable } };
@@ -332,7 +330,7 @@ const ExpenditurePage = ({ match }: Props) => {
       },
     };
 
-    const isClaimed = updatedFormValues?.recipients.every(
+    const isClaimed = updatedFormValues?.recipients?.every(
       (recipient) => recipient.claimed,
     );
 
