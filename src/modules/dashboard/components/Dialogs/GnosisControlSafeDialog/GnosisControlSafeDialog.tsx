@@ -50,7 +50,6 @@ export interface FormValues {
     contract?: string;
     abi?: string;
     contractFunction?: string;
-    nft?: string;
   }[];
   safe: string;
   forceAction: boolean;
@@ -164,6 +163,7 @@ const GnosisControlSafeDialog = ({
       submit={ActionTypes.COLONY_ACTION_GENERIC}
       success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
       error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
+      validateOnMount
     >
       {(formValues: FormikProps<FormValues>) => (
         <Dialog cancel={cancel}>
