@@ -4,8 +4,10 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
 
 import { FormSection, Toggle } from '~core/Fields';
+import { Colony } from '~data/index';
 
 import styles from './Split.css';
+import { SplitUnequal } from '.';
 
 const MSG = defineMessages({
   split: {
@@ -24,9 +26,13 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.ExpenditurePage.Split';
 
-const Split = () => {
-  const [, { value: splitUnequal }] = useField('split.unequal');
+interface Props {
+  sidebarRef: HTMLElement | null;
+  colony: Colony;
+}
 
+const Split = ({ colony, sidebarRef }: Props) => {
+  const [, { value: splitUnequal }] = useField('split.unequal');
   return (
     <div className={styles.splitContainer}>
       <FormSection appearance={{ border: 'bottom' }}>
@@ -51,7 +57,7 @@ const Split = () => {
           </div>
         </div>
       </FormSection>
-      <FormSection />
+      {splitUnequal ? <SplitUnequal {...{ colony, sidebarRef }} /> : null}
     </div>
   );
 };
