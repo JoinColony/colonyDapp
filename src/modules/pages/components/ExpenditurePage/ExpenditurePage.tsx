@@ -161,7 +161,7 @@ const ExpenditurePage = ({ match }: Props) => {
   const [isFormEditable, setFormEditable] = useState(true);
   const [formValues, setFormValues] = useState<ValuesType>();
   const [shouldValidate, setShouldValidate] = useState(false);
-  const [activeStateId, setActiveStateId] = useState<string>(Stage.Claimed);
+  const [activeStateId, setActiveStateId] = useState<string>();
   const sidebarRef = useRef<HTMLElement>(null);
 
   const { data: colonyData, loading } = useColonyFromNameQuery({
@@ -239,10 +239,37 @@ const ExpenditurePage = ({ match }: Props) => {
     setActiveStateId(Stage.Released);
   };
 
-  const handleClaimExpenditure = () => {
+  const handleClaimExpenditure = useCallback(() => {
     // Call to backend will be added here, to claim the expenditure
-    setActiveStateId(Stage.Claimed);
-  };
+    if (!formValues) {
+      return;
+    }
+
+    // if the claim date has passed and the amount hasn't been claimed yet it should be claimed now,
+    // so we set claimed property to true
+    const updatedFormValues = {
+      ...{
+        ...formValues,
+        recipients: formValues?.recipients.map((recipient) => {
+          if (!recipient.claimed && recipient.claimDate) {
+            const isClaimable = recipient.claimDate < new Date().getTime();
+            return { ...{ ...recipient, claimed: !!isClaimable } };
+          }
+          return recipient;
+        }),
+      },
+    };
+
+    const isClaimed = updatedFormValues?.recipients.every(
+      (recipient) => recipient.claimed,
+    );
+
+    if (isClaimed) {
+      setActiveStateId(Stage.Claimed);
+    }
+
+    setFormValues(updatedFormValues);
+  }, [formValues]);
 
   const states = [
     {

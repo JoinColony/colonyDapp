@@ -108,7 +108,7 @@ const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
     claimableNow,
     claimed,
     totalClaimable,
-    nextClaim,
+    nextClaimableRecipient,
     buttonIsActive,
   } = useCalculateTokens(recipientsWithTokens as Recipient[]);
 
@@ -251,7 +251,7 @@ const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
           claimableNow={claimableNow}
           claimed={claimed}
           totalClaimable={totalClaimable}
-          claimDate={nextClaim}
+          nextClaimableRecipient={nextClaimableRecipient}
         />
       )}
       <div className={styles.stagesContainer}>

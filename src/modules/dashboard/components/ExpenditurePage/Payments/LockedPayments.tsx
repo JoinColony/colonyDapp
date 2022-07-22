@@ -80,8 +80,7 @@ const LockedPayments = ({ recipients, activeState, colony }: Props) => {
         return null;
       }
 
-      // it's temporary value
-      const isClaimable = claimDate < new Date().getTime();
+      const isClaimable = claimDate < new Date().getTime() && !claimed;
 
       if (isClaimable) {
         return (

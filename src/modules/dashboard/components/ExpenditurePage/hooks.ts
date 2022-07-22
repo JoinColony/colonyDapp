@@ -48,9 +48,9 @@ export const useCalculateTokens = (recipients?: Recipient[]) => {
 
   const findNextClaim = useCallback((recipientsArr?: Recipient[]) => {
     const futureTokens = recipientsArr?.filter(
-      (recipient) =>
-        recipient.claimDate && recipient.claimDate > new Date().getTime(),
+      (recipient) => recipient.claimDate && !recipient.claimed,
     );
+
     return minBy(futureTokens, (recipient) => recipient.claimDate);
   }, []);
 
@@ -67,7 +67,9 @@ export const useCalculateTokens = (recipients?: Recipient[]) => {
   const claimableNow = calculateTokens(
     recipients?.filter((recipient) => {
       const res =
-        recipient.claimDate && recipient.claimDate < new Date().getTime();
+        recipient.claimDate &&
+        recipient.claimDate < new Date().getTime() &&
+        !recipient.claimed;
       return res;
     }) as any,
     pattern,
@@ -88,7 +90,7 @@ export const useCalculateTokens = (recipients?: Recipient[]) => {
     totalClaimable,
     claimableNow,
     claimed,
-    nextClaim: nextClaim?.claimDate,
+    nextClaimableRecipient: nextClaim,
     buttonIsActive,
   };
 };

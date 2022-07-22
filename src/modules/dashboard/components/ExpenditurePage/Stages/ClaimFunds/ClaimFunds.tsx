@@ -3,6 +3,7 @@ import {
   defineMessages,
   FormattedMessage,
   MessageDescriptor,
+  useIntl,
 } from 'react-intl';
 import classNames from 'classnames';
 import { nanoid } from 'nanoid';
@@ -16,13 +17,14 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import { buttonStyles } from '../Stages';
 import styles from './ClaimFunds.css';
+import { Recipient } from '~dashboard/ExpenditurePage/hooks';
 
 const displayName = 'dashboard.ExpenditurePage.ClaimFunds';
 
 const MSG = defineMessages({
   claim: {
     id: 'dashboard.ExpenditurePage.Stages.ClaimFunds.claim',
-    defaultMessage: 'Next claim',
+    defaultMessage: 'Next claim {claimDate}',
   },
   claimFunds: {
     id: 'dashboard.ExpenditurePage.Stages.ClaimFunds.claimFunds',
@@ -46,7 +48,7 @@ const MSG = defineMessages({
   },
   now: {
     id: 'dashboard.ExpenditurePage.Stages.ClaimFunds.now',
-    defaultMessage: 'Now',
+    defaultMessage: 'now',
   },
 });
 
@@ -62,7 +64,7 @@ interface Props {
   buttonAction?: () => void;
   buttonText?: string | MessageDescriptor;
   buttonIsActive: boolean;
-  claimDate?: number;
+  nextClaimableRecipient?: Recipient;
   totalClaimable?: Token;
   claimableNow?: Token;
   claimed: Token;
@@ -72,11 +74,12 @@ const ClaimFunds = ({
   buttonAction,
   buttonText,
   buttonIsActive,
-  claimDate,
+  nextClaimableRecipient,
   totalClaimable,
   claimableNow,
   claimed,
 }: Props) => {
+  const { formatMessage } = useIntl();
   const convertToTokensWithIds = useMemo(
     () => (object: Token | undefined): TokenWithId[] => {
       if (!object) {
@@ -97,22 +100,24 @@ const ClaimFunds = ({
   const claimedWithId = convertToTokensWithIds(claimed);
 
   const nextClaimLabel = useMemo(() => {
-    if (!claimDate) {
-      return claimableNowWithId.length === 0 ? (
-        <FormattedMessage {...MSG.nothingToClaim} />
-      ) : (
-        <div className={styles.claim}>
-          <FormattedMessage {...MSG.now} />
-        </div>
-      );
+    if (!nextClaimableRecipient || !nextClaimableRecipient.claimDate) {
+      return <FormattedMessage {...MSG.nothingToClaim} />;
     }
-    return (
-      <>
-        <FormattedMessage {...MSG.claim} />{' '}
-        <TimeRelativeShort value={new Date(claimDate)} />
-      </>
-    );
-  }, [claimDate, claimableNowWithId]);
+    if (
+      nextClaimableRecipient?.claimDate < new Date().getTime() &&
+      !nextClaimableRecipient.claimed
+    ) {
+      // if the claim date has passed and the amount hasn't been claimed yet
+      return formatMessage(MSG.claim, {
+        claimDate: <FormattedMessage {...MSG.now} />,
+      });
+    }
+    return formatMessage(MSG.claim, {
+      claimDate: (
+        <TimeRelativeShort value={new Date(nextClaimableRecipient.claimDate)} />
+      ),
+    });
+  }, [formatMessage, nextClaimableRecipient]);
 
   return (
     <div className={styles.container}>
