@@ -126,7 +126,10 @@ interface Props {
 
 const SafeTransactionPreview = ({ colony: { tokens }, values }: Props) => {
   const transactionDetails = useMemo(
-    () => transactionTypeFieldsMap[values.transactions[0].transactionType],
+    () =>
+      values.transactions[0].transactionType === ''
+        ? []
+        : transactionTypeFieldsMap[values.transactions[0].transactionType],
     [values],
   );
 
@@ -149,12 +152,14 @@ const SafeTransactionPreview = ({ colony: { tokens }, values }: Props) => {
         </div>
       </DialogSection>
       <DialogSection>
-        <div className={styles.transactionTitle}>
-          1.{' '}
-          <FormattedMessage
-            {...ConstantsMSG[values.transactions[0].transactionType]}
-          />
-        </div>
+        {values.transactions[0].transactionType !== '' && (
+          <div className={styles.transactionTitle}>
+            1.{' '}
+            <FormattedMessage
+              {...ConstantsMSG[values.transactions[0].transactionType]}
+            />
+          </div>
+        )}
         <DetailsItem
           label={MSG.targetContract}
           value={
@@ -176,7 +181,7 @@ const SafeTransactionPreview = ({ colony: { tokens }, values }: Props) => {
             }
           />
         )}
-        {transactionDetails.map(({ key, label, value }) => (
+        {transactionDetails?.map(({ key, label, value }) => (
           <DetailsItem
             key={key}
             label={label}
