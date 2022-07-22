@@ -6,7 +6,7 @@ import { nanoid } from 'nanoid';
 
 import { FormSection, Input, TokenSymbolSelector } from '~core/Fields';
 import { AnyUser, Colony, useMembersSubscription } from '~data/index';
-import { ValuesType } from '~pages/ExpenditurePage/types';
+import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 import UserPickerWithSearch from '~core/UserPickerWithSearch';
 import { filterUserSelection } from '~core/SingleUserPicker';
 import { supRenderAvatar } from '~dashboard/ExpenditurePage/Recipient/Recipient';
