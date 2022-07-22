@@ -90,11 +90,6 @@ const transactionTypeFieldsMap = {
       label: MSG.function,
       value: () => <FormattedMessage {...ConstantsMSG.transferNft} />,
     },
-    {
-      key: 'nft',
-      label: MSG.nft,
-      value: (nft) => <span>{`${nft.name} #${nft.number}`}</span>,
-    },
   ],
   [TransactionTypes.CONTRACT_INTERACTION]: [
     // To be finished once NFT part of the form is merged
