@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { useField } from 'formik';
 import classNames from 'classnames';
@@ -12,9 +12,10 @@ import { useDialog } from '~core/Dialog';
 import IconTooltip from '~core/IconTooltip';
 
 import CSVUploader from './CSVUploader';
-import PreviewDialog from './PreviewDialog';
 import { useCalculateBatchPayment } from './hooks';
 import DownloadTemplate from './DownloadTemplate';
+import PreviewDialog from './PreviewDialog';
+import { Batch as BatchType } from './types';
 import styles from './Batch.css';
 
 export const MSG = defineMessages({
@@ -62,6 +63,10 @@ export const MSG = defineMessages({
     id: `dashboard.ExpenditurePage.Batch.tooltipText`,
     defaultMessage: `Download and use the .csv import template. Be sure to remove the sample data and confirm the details are correct once imported.`,
   },
+  fileError: {
+    id: 'dashboard.ExpenditurePage.Batch.fileError',
+    defaultMessage: `File structure is incorrect, try again using the template.`,
+  },
 });
 
 const displayName = 'dashboard.ExpenditurePage.Batch';
@@ -73,11 +78,42 @@ interface Props {
 const Batch = ({ colony }: Props) => {
   const [processingCSVData, setProcessingCSVData] = useState<boolean>(false);
   const { formatMessage } = useIntl();
-  const [, { value: batch }] = useField('batch');
-  const batchData = batch?.dataCSVUploader?.[0]?.parsedData;
+  const [, { value: dataCSVUploader, error }] = useField<
+    BatchType['dataCSVUploader']
+  >('batch.dataCSVUploader');
+  const [, , { setValue: setData }] = useField<BatchType['data']>('batch.data');
+  const [, , { setValue: setRecipients }] = useField<BatchType['recipients']>(
+    'batch.recipients',
+  );
+  const [, , { setValue: setBatchValue }] = useField<BatchType['value']>(
+    'batch.value',
+  );
 
-  const data = useCalculateBatchPayment(colony, batchData);
+  const data = useCalculateBatchPayment(
+    colony,
+    dataCSVUploader?.[0]?.parsedData,
+  );
   const { invalidRows, recipientsCount, tokens, validatedData } = data || {};
+
+  useEffect(() => {
+    setRecipients(recipientsCount, false);
+    setData(validatedData, false);
+    setBatchValue(tokens, false);
+
+    // adding setRecipients, setData and setBatchValue to the dependency array causes 'Maximum update depth exceeded' error
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error, recipientsCount, tokens, validatedData]);
+
+  const errorMessage = useMemo(() => {
+    if (typeof error === 'string') {
+      return error;
+    }
+    if (error) {
+      const fileError = error?.[0]?.['parsedData'];
+      return fileError && 'id' in fileError && formatMessage(fileError);
+    }
+    return undefined;
+  }, [error, formatMessage]);
 
   const openPreviewDialog = useDialog(PreviewDialog);
 
@@ -117,16 +153,17 @@ const Batch = ({ colony }: Props) => {
               setProcessingData={setProcessingCSVData}
             />
           </div>
-          {!isNil(batchData) && (
+          {validatedData && (
             <Button
               type="button"
-              onClick={() => openPreviewDialog({ values: batchData, colony })}
+              onClick={() => openPreviewDialog({ values: validatedData })}
               appearance={{ theme: 'blue' }}
               text={MSG.viewAll}
             />
           )}
         </div>
       </FormSection>
+      {error && <div className={styles.error}>{errorMessage}</div>}
       {data && (
         <>
           <FormSection appearance={{ border: 'bottom' }}>
@@ -156,6 +193,7 @@ const Batch = ({ colony }: Props) => {
                 ) : (
                   tokens?.map((singleToken, index) => {
                     const { token, value } = singleToken || {};
+
                     if (!token) {
                       return null;
                     }
@@ -166,21 +204,24 @@ const Batch = ({ colony }: Props) => {
                           [styles.marginBottom]:
                             tokens.length > 1 && index + 1 !== tokens.length,
                         })}
-                        key={`${token.id}_${index}`}
+                        key={token.id}
                       >
-                        {formatMessage(MSG.valueWithToken, {
-                          token: token.symbol,
-                          amount: value,
-                          icon: (
-                            <span className={styles.icon}>
-                              <TokenIcon
-                                className={styles.tokenIcon}
-                                token={token}
-                                name={token?.name || token?.address}
-                              />
-                            </span>
-                          ),
-                        })}
+                        <FormattedMessage
+                          {...MSG.valueWithToken}
+                          values={{
+                            token: token.symbol,
+                            amount: value,
+                            icon: (
+                              <span className={styles.icon}>
+                                <TokenIcon
+                                  className={styles.tokenIcon}
+                                  token={token}
+                                  name={token?.name || token?.address}
+                                />
+                              </span>
+                            ),
+                          }}
+                        />
                       </div>
                     );
                   })

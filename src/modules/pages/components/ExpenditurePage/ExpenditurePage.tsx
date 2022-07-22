@@ -15,7 +15,7 @@ import { nanoid } from 'nanoid';
 import { RouteChildrenProps, useParams } from 'react-router';
 import { Formik, FormikErrors } from 'formik';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
-import { toFinite } from 'lodash';
+import { isEmpty, toFinite } from 'lodash';
 
 import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
 import { useColonyFromNameQuery } from '~data/generated';
@@ -41,12 +41,12 @@ import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
 import Tag from '~core/Tag';
 import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
 import { initalMilestone } from '~dashboard/ExpenditurePage/Staged/constants';
+import { isBatchPaymentType } from '~dashboard/ExpenditurePage/Batch/utils';
 import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
 
 import { findDifferences, updateValues, setClaimDate } from './utils';
 import { ExpenditureTypes, ValuesType } from './types';
 import { ExpenditureForm, LockedSidebar } from '.';
-import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
 import styles from './ExpenditurePage.css';
 
 const displayName = 'pages.ExpenditurePage';
@@ -128,6 +128,14 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.milestoneAmountError',
     defaultMessage: 'Amount is required',
   },
+  amountError: {
+    id: 'dashboard.ExpenditurePage.amountError',
+    defaultMessage: 'Your file exceeds the max. of 400 entries.',
+  },
+  fileError: {
+    id: 'dashboard.ExpenditurePage.fileError',
+    defaultMessage: `File structure is incorrect, try again using the template.`,
+  },
 });
 
 const validationSchema = yup.object().shape({
@@ -206,6 +214,32 @@ const validationSchema = yup.object().shape({
         )
         .min(2),
     }),
+  }),
+  batch: yup.object().when('expenditure', {
+    is: (expenditure) => expenditure === ExpenditureTypes.Batch,
+    then: yup
+      .object()
+      .shape({
+        dataCSVUploader: yup.array().of(
+          yup.object().shape({
+            parsedData: yup
+              .array()
+              .min(1, () => MSG.fileError)
+              .max(400, () => MSG.amountError)
+              .test(
+                'valid-payment',
+                () => MSG.fileError,
+                (value) =>
+                  isEmpty(
+                    value?.filter(
+                      (payment: string) => !isBatchPaymentType(payment),
+                    ),
+                  ),
+              ),
+          }),
+        ),
+      })
+      .required(() => MSG.fileError),
   }),
 });
 
@@ -626,6 +660,9 @@ const ExpenditurePage = ({ match }: Props) => {
       initialValues={initialValuesData}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
+      validateOnBlur={shouldValidate}
+      validateOnChange={shouldValidate}
+      validate={handleValidate}
       enableReinitialize
     >
       {({ values, validateForm }) => (
@@ -652,6 +689,7 @@ const ExpenditurePage = ({ match }: Props) => {
                   <ExpenditureForm
                     sidebarRef={sidebarRef.current}
                     colony={colonyData.processedColony}
+                    setShouldValidate={setShouldValidate}
                   />
                 </>
               )

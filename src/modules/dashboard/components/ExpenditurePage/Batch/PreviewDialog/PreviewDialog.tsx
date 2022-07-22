@@ -1,7 +1,6 @@
 import React from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import classNames from 'classnames';
-import { nanoid } from 'nanoid';
 
 import Dialog, { DialogSection } from '~core/Dialog';
 import MaskedAddress from '~core/MaskedAddress';

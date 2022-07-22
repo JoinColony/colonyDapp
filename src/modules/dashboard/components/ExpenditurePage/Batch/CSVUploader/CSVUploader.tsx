@@ -59,7 +59,7 @@ const CSVUploader = ({ name, processingData, setProcessingData }: Props) => {
     }
 
     if (parsedCSV && value[0] && isNil(value[0].parsedData)) {
-      setValue([{ ...value[0], parsedData: parsedCSV.data }]);
+      setValue([{ ...value[0], parsedData: parsedCSV.data }], true);
     }
 
     if (processingData) {
