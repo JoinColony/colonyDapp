@@ -64,69 +64,67 @@ const SplitUnequal = ({ sidebarRef, colony }: Props) => {
       name="split.recipients"
       render={({ push, remove }) => (
         <>
-          <div>
-            {recipients?.map((recipient, index) => {
-              return (
-                <FormSection appearance={{ border: 'bottom' }}>
-                  <div
-                    className={styles.recipientWrapper}
-                    key={recipient?.user?.id || index}
-                  >
-                    <div>
-                      <UserPickerWithSearch
-                        data={colonyMembers?.subscribedUsers || []}
-                        label=""
-                        name={`split.recipients[${index}].user`}
-                        filter={filterUserSelection}
-                        renderAvatar={supRenderAvatar}
-                        placeholder="Search"
-                        sidebarRef={sidebarRef}
-                      />
-                    </div>
-                    <Icon
-                      name="trash"
-                      className={styles.deleteIcon}
-                      onClick={() => remove(index)}
-                      title={MSG.deleteIconTitle}
+          {recipients?.map((recipient, index) => {
+            return (
+              <FormSection
+                appearance={{ border: 'bottom' }}
+                key={recipient?.user?.id || index}
+              >
+                <div className={styles.recipientWrapper}>
+                  <div>
+                    <UserPickerWithSearch
+                      data={colonyMembers?.subscribedUsers || []}
+                      label=""
+                      name={`split.recipients[${index}].user`}
+                      filter={filterUserSelection}
+                      renderAvatar={supRenderAvatar}
+                      placeholder="Search"
+                      sidebarRef={sidebarRef}
                     />
                   </div>
-                  <div className={styles.sliderWrapper}>
-                    <Slider
-                      value={values?.split?.recipients?.[index].amount || 0}
-                      name={`split.recipients[${index}].amount`}
-                      step={1}
-                      min={0}
-                      max={100}
-                      limit={remainingToStake[index]}
-                      handleStyle={{
-                        height: 18,
-                        width: 18,
-                        marginTop: -7,
-                      }}
-                      trackStyle={{
-                        height: 14,
-                        width: 18,
-                        marginTop: '-5px',
-                        opacity: '0.85',
-                      }}
-                      railStyle={{
-                        backgroundColor: 'white',
-                        height: 14,
-                        position: 'absolute',
-                        top: 0,
-                        backgroundImage: 'none',
-                        boxShadow: 'inset 0px 2px 4px rgba(14, 37, 88, 0.07)',
-                        border: '1px solid #EEF2F5',
-                      }}
-                    />
-                    <span className={styles.percent}>
-                      {recipients[index].amount}%
-                    </span>
-                  </div>
-                </FormSection>
-              );
-            })}
-          </div>
+                  <Icon
+                    name="trash"
+                    className={styles.deleteIcon}
+                    onClick={() => remove(index)}
+                    title={MSG.deleteIconTitle}
+                  />
+                </div>
+                <div className={styles.sliderWrapper}>
+                  <Slider
+                    value={values?.split?.recipients?.[index].amount || 0}
+                    name={`split.recipients[${index}].amount`}
+                    step={1}
+                    min={0}
+                    max={100}
+                    limit={remainingToStake[index]}
+                    handleStyle={{
+                      height: 18,
+                      width: 18,
+                      marginTop: -7,
+                    }}
+                    trackStyle={{
+                      height: 14,
+                      width: 18,
+                      marginTop: '-5px',
+                      opacity: '0.85',
+                    }}
+                    railStyle={{
+                      backgroundColor: 'white',
+                      height: 14,
+                      position: 'absolute',
+                      top: 0,
+                      backgroundImage: 'none',
+                      boxShadow: 'inset 0px 2px 4px rgba(14, 37, 88, 0.07)',
+                      border: '1px solid #EEF2F5',
+                    }}
+                  />
+                  <span className={styles.percent}>
+                    {recipients[index].amount}%
+                  </span>
+                </div>
+              </FormSection>
+            );
+          })}
           <Button
             onClick={() => push({ user: undefined, amount: 0 })}
             appearance={{ theme: 'blue' }}
