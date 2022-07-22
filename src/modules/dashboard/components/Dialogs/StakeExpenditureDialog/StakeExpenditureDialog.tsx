@@ -118,7 +118,7 @@ const StakeExpenditureDialog = ({
       success={getFormAction('SUCCESS')}
       onSuccess={close}
     >
-      {({ values, handleSubmit, isSubmitting }: FormikProps<FormValues>) => {
+      {({ values, handleSubmit, isSubmitting }: <FormikProps></FormikProps><FormValues>) => {
         if (values.forceAction !== isForce) {
           setIsForce(values.forceAction);
         }
