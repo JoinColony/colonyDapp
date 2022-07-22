@@ -55,31 +55,23 @@ export const MSG = defineMessages({
   },
 });
 
+const expeditureTypes = [
+  {
+    label: MSG.optionAdvanced,
+    value: ExpenditureTypes.Advanced,
+  },
+  {
+    label: MSG.split,
+    value: 'split',
+  },
+];
+
 const displayName = 'dashboard.ExpenditurePage.ExpenditureSettings';
 
 interface Props {
   sidebarRef: HTMLElement | null;
   colony: Colony;
 }
-
-const expeditureTypes = [
-  {
-    label: MSG.advancedPayment,
-    value: ExpenditureTypes.Advanced,
-  },
-  {
-    label: MSG.split,
-    value: ExpenditureTypes.Split,
-  },
-  {
-    label: MSG.staged,
-    value: ExpenditureTypes.Staged,
-  },
-  {
-    label: MSG.staged,
-    value: ExpenditureTypes.Batch,
-  },
-];
 
 const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
   const { walletAddress, username } = useLoggedInUser();
@@ -185,13 +177,9 @@ const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
             }}
           />
           <div className={styles.userAvatarContainer}>
-            <UserAvatar
-              address={loggedInUser.walletAddress}
-              size="xs"
-              notSet={false}
-            />
+            <UserAvatar address={walletAddress} size="xs" notSet={false} />
             <div className={styles.userName}>
-              <UserMention username={loggedInUser.username || ''} />
+              <UserMention username={username || ''} />
             </div>
           </div>
         </div>
