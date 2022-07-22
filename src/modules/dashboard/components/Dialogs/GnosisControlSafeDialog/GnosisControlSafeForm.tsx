@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FieldArray, FieldArrayRenderProps, FormikProps } from 'formik';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
@@ -127,6 +127,7 @@ const GnosisControlSafeForm = ({
   handleSHowPreview,
 }: Props & FormikProps<FormValues>) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState([true]);
+  const [hasTitle, setHasTitle] = useState(true);
 
   const { walletAddress } = useLoggedInUser();
   const fromDomainRoles = useTransformer(getUserRolesForDomain, [
@@ -198,6 +199,16 @@ const GnosisControlSafeForm = ({
     () => [...new Array(values.transactions.length)].map(nanoid),
     [values.transactions.length],
   );
+
+  /* This is necessary as the form validation doesn't work on the first render
+  when we switch to showing preview */
+  useEffect(() => {
+    if (showPreview && values.transactionSetTitle === undefined) {
+      setHasTitle(false);
+    } else {
+      setHasTitle(true);
+    }
+  }, [values, showPreview]);
 
   return (
     <>
@@ -370,7 +381,7 @@ const GnosisControlSafeForm = ({
           }
           text={MSG.buttonCreateTransaction}
           loading={isSubmitting}
-          disabled={!isValid || isSubmitting}
+          disabled={!isValid || isSubmitting || !hasTitle}
           style={{ width: styles.wideButton }}
         />
       </DialogSection>

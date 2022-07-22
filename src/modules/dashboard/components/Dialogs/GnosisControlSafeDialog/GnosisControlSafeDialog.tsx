@@ -53,6 +53,7 @@ export interface FormValues {
   }[];
   safe: string;
   forceAction: boolean;
+  transactionSetTitle: string;
 }
 
 const displayName = 'dashboard.GnosisControlSafeDialog';
