@@ -281,16 +281,15 @@ const getDomainValuesFromIPFS = async (
          */
         const domainMetadata = JSON.parse(ipfsMetadata);
         domainValues = {
-          domainName: domainMetadata.domainName,
-          domainColor: domainMetadata.domainColor,
-          domainPurpose: domainMetadata.domainPurpose,
+          domainName: domainMetadata?.domainName || null,
+          domainColor: domainMetadata?.domainColor || null,
+          domainPurpose: domainMetadata?.domainPurpose || null,
         };
       } else {
         /*
          * new metadata format
          */
         const domainMetadata = getDomainMetadataFromResponse(ipfsMetadata);
-
         domainValues = {
           domainName: domainMetadata?.domainName || null,
           domainColor: domainMetadata?.domainColor || null,
