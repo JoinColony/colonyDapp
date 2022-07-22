@@ -175,7 +175,7 @@ const Stages = ({
               <Button
                 onClick={handleSaveDraft}
                 style={buttonStyles}
-                disabled={!isEmpty(errors)}
+                disabled={!isEmpty(errors) || !dirty}
               >
                 <FormattedMessage {...MSG.submitDraft} />
               </Button>
