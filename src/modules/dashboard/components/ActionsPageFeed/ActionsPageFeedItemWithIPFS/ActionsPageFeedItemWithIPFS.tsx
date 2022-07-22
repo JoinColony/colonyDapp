@@ -59,7 +59,7 @@ const ActionsPageFeedItemWithIPFS = ({
        * original metadata format
        */
       const annotationObject = JSON.parse(ipfsDataJSON);
-      if (annotationObject && annotationObject.annotationMessage) {
+      if (annotationObject?.annotationMessage) {
         return annotationObject.annotationMessage;
       }
     } else {
