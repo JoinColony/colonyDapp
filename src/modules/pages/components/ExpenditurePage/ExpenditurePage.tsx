@@ -251,7 +251,6 @@ const ExpenditurePage = ({ match }: Props) => {
   }>();
   const [isFormEditable, setFormEditable] = useState(true);
   const [formValues, setFormValues] = useState<ValuesType>();
-  const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStateId, setActiveStateId] = useState<string>();
   const [status, setStatus] = useState<Status>();
   const [motion, setMotion] = useState<Motion>();
@@ -624,9 +623,6 @@ const ExpenditurePage = ({ match }: Props) => {
       initialValues={initialValuesData}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
-      validateOnBlur={shouldValidate}
-      validateOnChange={shouldValidate}
-      validate={handleValidate}
       enableReinitialize
     >
       {({ values, validateForm }) => (
