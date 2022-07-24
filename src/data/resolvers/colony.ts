@@ -62,6 +62,7 @@ import { createAddress } from '~utils/web3';
 import { log } from '~utils/debug';
 import { parseSubgraphEvent } from '~utils/events';
 import { Address } from '~types/index';
+import { sortMetadataHistory } from '~utils/colonyActions';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { getAllUserRolesForDomain } from '~modules/transformers';
@@ -119,13 +120,13 @@ export const getProcessedColony = async (
   let whitelistedAddresses: Array<Address> = [];
   let whitelistActivated = false;
 
-  /*
-   * @FIX: the metadata key in metadataHistory is a string, and sorted as such.
-   * Cannot therefore be used to determine the most recent metadata.
-   */
+  const sortedMetadataHistory = sortMetadataHistory(metadataHistory);
+  const currentMetadataIndex = sortedMetadataHistory.findIndex(
+    ({ metadata: metadataHash }) => metadataHash === metadata,
+  );
+  const prevMetadata = sortedMetadataHistory[currentMetadataIndex - 1];
+  const ipfsHash = metadata || prevMetadata?.metadata || null;
 
-  const prevIpfsHash = metadataHistory.slice(-1).pop();
-  const ipfsHash = metadata || prevIpfsHash?.metadata || null;
   /*
    * Fetch the colony's metadata
    */
