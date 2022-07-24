@@ -94,6 +94,11 @@ export const getProcessedColony = async (
   let avatarObject: { image: string | null } | null = { image: null };
   let tokenAddresses: Array<Address> = [];
 
+  /*
+   * @FIX: the metadata key in metadataHistory is a string, and sorted as such.
+   * Cannot therefore be used to determine the most recent metadata.
+   */
+
   const prevIpfsHash = metadataHistory.slice(-1).pop();
   const ipfsHash = metadata || prevIpfsHash?.metadata || null;
 
