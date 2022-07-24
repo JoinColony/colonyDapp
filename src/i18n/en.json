@@ -393,6 +393,11 @@
     "metatransaction.VestingSimpleClient.claimGrant.title": "Claim Colony Grant",
     "metatransaction.VestingSimpleClient.claimGrant.description": "Claim Colony Grant",
 
+    "transaction.group.addExistingSafe.title": "Add Existing Safe",
+    "transaction.group.addExistingSafe.description": "Add Existing Safe",
+    "transaction.ColonyClient.addExistingSafe.title": "Add Existing Safe",
+    "transaction.ColonyClient.addExistingSafe.description": "Add Existing Safe",
+
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",
     "message.metaMintTokens.title": "Mint Tokens Signature",
