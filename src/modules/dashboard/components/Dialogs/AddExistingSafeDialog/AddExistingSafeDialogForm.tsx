@@ -47,6 +47,7 @@ const MSG = defineMessages({
   fetchFailed: {
     id: 'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.fetchFailed',
     defaultMessage:
+      // eslint-disable-next-line max-len
       'Could not fetch Safe details. Please check your connection and try again.',
   },
 });
@@ -98,16 +99,6 @@ const AddExistingSafeDialogForm = ({
     { error: addressError, touched: addressTouched, value: address },
   ] = useField<string>('contractAddress');
 
-  // When selected chain or address changes
-  useEffect(() => {
-    // If there's a valid address in the address input
-    if (addressTouched && !addressError) {
-      // Get safe data
-      setIsLoadingSafe(true);
-      getSafeData(`${baseURL}api/v1/safes/${address}/`);
-    }
-  }, [baseURL, address, addressTouched, addressError]);
-
   const getSafeData = async (url: string) => {
     try {
       // Make request to get safe data
@@ -127,6 +118,16 @@ const AddExistingSafeDialogForm = ({
     setIsLoadingSafe(false);
   };
 
+  // When selected chain or address changes
+  useEffect(() => {
+    // If there's a valid address in the address input
+    if (addressTouched && !addressError) {
+      // Get safe data
+      setIsLoadingSafe(true);
+      getSafeData(`${baseURL}api/v1/safes/${address}/`);
+    }
+  }, [baseURL, address, addressTouched, addressError]);
+
   const handleNetworkChange = (fromNetworkValue: string) => {
     const selectedNetwork = networkOptions.find(
       (option) => option.value === fromNetworkValue,
@@ -136,17 +137,19 @@ const AddExistingSafeDialogForm = ({
     }
   };
 
-  const getStatusText = (
-    selectedChain: SelectOption,
-    isLoadingSafe: boolean,
-    safeData?: SafeContract | null,
-  ): StatusText | {} => {
+  const getStatusText = (): StatusText | {} => {
     if (!addressTouched || addressError) {
       return {};
     }
     if (isLoadingSafe) {
       return { status: MSG.safeLoading };
     }
+
+    /*
+     * safeData will be undefined if fetching did not return a status code of 200
+     * (i.e. safe is not present on selected chain)
+     */
+
     if (safeData === undefined) {
       return {
         status: MSG.safeCheck,
@@ -156,6 +159,11 @@ const AddExistingSafeDialogForm = ({
         },
       };
     }
+
+    /*
+     * safeData will be null if fetching failed (e.g. network error)
+     */
+
     if (safeData === null) {
       return {
         status: MSG.fetchFailed,
@@ -171,14 +179,11 @@ const AddExistingSafeDialogForm = ({
   };
 
   // If safe is not found, show error message
-  let safeNotFoundError: string | undefined = undefined;
+  let safeNotFoundError: string | undefined;
+
   if (addressTouched && !addressError && !isLoadingSafe) {
     if (safeData === undefined || safeData === null) {
-      const notFoundMsg = getStatusText(
-        selectedChain,
-        isLoadingSafe,
-        safeData,
-      ) as StatusText;
+      const notFoundMsg = getStatusText() as StatusText;
       safeNotFoundError = formatMessage(
         notFoundMsg.status,
         notFoundMsg?.statusValues,
@@ -215,7 +220,7 @@ const AddExistingSafeDialogForm = ({
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
           disabled={isSubmitting}
           forcedFieldError={safeNotFoundError}
-          {...getStatusText(selectedChain, isLoadingSafe, safeData)}
+          {...getStatusText()}
         />
       </DialogSection>
       <DialogSection>

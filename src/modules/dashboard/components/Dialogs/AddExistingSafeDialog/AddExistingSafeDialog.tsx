@@ -50,26 +50,25 @@ const AddExistingSafeDialog = ({
     };
   });
 
-  // @TODO change this accordingly when wiring up
   const transform = useCallback(
     pipe(
-      mapPayload((payload) => {
-        const {
+      mapPayload(
+        ({
+          chainId,
           contractAddress,
+          safeName,
           annotation: annotationMessage,
-          chainId,
-          safeName,
-        } = payload;
-
-        return {
-          colonyName,
-          colonyAddress,
-          chainId,
-          safeName,
-          contractAddress,
-          annotationMessage,
-        };
-      }),
+        }) => {
+          return {
+            colonyName,
+            colonyAddress,
+            chainId,
+            safeName,
+            contractAddress,
+            annotationMessage,
+          };
+        },
+      ),
       withMeta({ history }),
     ),
     [],
@@ -84,9 +83,9 @@ const AddExistingSafeDialog = ({
         contractAddress: undefined,
       }}
       validationSchema={validationSchema}
-      submit={ActionTypes.COLONY_ACTION_GENERIC}
-      error={ActionTypes.COLONY_ACTION_GENERIC}
-      success={ActionTypes.COLONY_ACTION_GENERIC}
+      submit={ActionTypes.ACTION_ADD_EXISTING_SAFE}
+      error={ActionTypes.ACTION_ADD_EXISTING_SAFE_ERROR}
+      success={ActionTypes.ACTION_ADD_EXISTING_SAFE_SUCCESS}
       transform={transform}
       onSuccess={close}
     >
