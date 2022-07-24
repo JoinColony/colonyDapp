@@ -34,7 +34,6 @@ const AddExistingSafeDialog = ({
   close,
 }: Props) => {
   const history = useHistory();
-
   const validationSchema = yup.object().shape({
     chainId: yup.string().required(),
     contractAddress: yup.string().address().required(),
