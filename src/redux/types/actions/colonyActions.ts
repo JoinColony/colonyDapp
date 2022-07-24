@@ -247,4 +247,21 @@ export type ColonyActionsActionTypes =
   | ActionTypeWithMeta<
       ActionTypes.ACTION_MANAGE_REPUTATION_SUCCESS,
       MetaWithHistory<object>
+    >
+  | UniqueActionType<
+      ActionTypes.ACTION_ADD_EXISTING_SAFE,
+      {
+        colonyName: string;
+        colonyAddress: Address;
+        chainId: number;
+        safeName: string;
+        contractAddress: string;
+        annotationMessage?: string;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.ACTION_ADD_EXISTING_SAFE_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.ACTION_ADD_EXISTING_SAFE_SUCCESS,
+      MetaWithHistory<object>
     >;

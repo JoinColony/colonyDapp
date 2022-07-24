@@ -11,6 +11,7 @@ import managePermissionsActionSaga from './managePermissions';
 import unlockTokenActionSaga from './unlockToken';
 import enterRecoveryActionSaga from './enterRecovery';
 import manageReputationActionSaga from './manageReputation';
+import addExistingSafeSaga from './addExistingSafe';
 
 export default function* actionsSagas() {
   yield all([
@@ -21,6 +22,7 @@ export default function* actionsSagas() {
     call(createDomainActionSaga),
     call(editDomainActionSaga),
     call(editColonyActionSaga),
+    call(addExistingSafeSaga),
     call(managePermissionsActionSaga),
     call(unlockTokenActionSaga),
     call(enterRecoveryActionSaga),
