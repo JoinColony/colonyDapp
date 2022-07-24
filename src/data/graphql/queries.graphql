@@ -337,6 +337,11 @@ query SubgraphColony($address: String!) {
     metadataHistory {
       id
       metadata
+      transaction {
+        block {
+          timestamp
+        }
+      }
     }
     token {
       tokenAddress: id
@@ -363,6 +368,11 @@ query SubgraphColonies($colonyAddresses: [String!]!) {
     metadataHistory {
       id
       metadata
+      transaction {
+        block {
+          timestamp
+        }
+      }
     }
     token {
       tokenAddress: id
