@@ -46,9 +46,7 @@ const MSG = defineMessages({
   },
   fetchFailed: {
     id: 'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.fetchFailed',
-    defaultMessage:
-      // eslint-disable-next-line max-len
-      'Could not fetch Safe details. Please check your connection and try again.',
+    defaultMessage: `Could not fetch Safe details. Please check your connection and try again.`,
   },
 });
 

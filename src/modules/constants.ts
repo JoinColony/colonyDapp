@@ -161,6 +161,51 @@ const POLYGON_NETWORK: NetworkInfo = {
   gnosisTxService: 'https://safe-transaction.polygon.gnosis.io/',
 };
 
+const RINKEBY_TEST_NETWORK: NetworkInfo = {
+  name: 'Rinkeby Testnet',
+  chainId: 4,
+  shortName: 'RIN',
+  contractAddressLink: '',
+  gnosisTxService: 'https://safe-transaction.rinkeby.gnosis.io/',
+};
+
+/*
+ * @NOTE: Although officially supported, 
+ * I cannot find the Safe Transaction API address for those commented out below.
+
+const KOVAN_TEST_NETWORK: NetworkInfo = {
+  name: 'Kovan Testnet',
+  chainId: 42,
+  shortName: 'KOV',
+  contractAddressLink: '',
+  gnosisTxService: '',
+};
+
+const ROPSTEN_TEST_NETWORK: NetworkInfo = {
+  name: 'Ropsten Testnet',
+  chainId: 3,
+  shortName: 'ROP',
+  contractAddressLink: '',
+  gnosisTxService: '',
+};
+
+const ENERGY_WEB_CHAIN_NETWORK: NetworkInfo = {
+  name: 'Energy Web Chain',
+  chainId: 246,
+  shortName: 'EWT',
+  contractAddressLink: '',
+  gnosisTxService: '',
+};
+*/
+
+const VOLTA_TEST_NETWORK: NetworkInfo = {
+  name: 'Energy Web Volta Testnet',
+  chainId: 73799,
+  shortName: 'VT',
+  contractAddressLink: '',
+  gnosisTxService: 'https://safe-transaction.volta.gnosis.io/',
+};
+
 /*
  * @NOTE Local Network
  * ChainId is manually set by us, since ganache randomizes it on each start
@@ -200,7 +245,6 @@ export const SUPPORTED_NETWORKS = {
   [GANACHE_NETWORK.chainId]: GANACHE_NETWORK,
 };
 
-// @TODO: Update with complete list.
 export const GNOSIS_SAFE_NETWORKS: NetworkInfo[] = [
   GNOSIS_NETWORK,
   ETHEREUM_NETWORK,
@@ -211,6 +255,8 @@ export const GNOSIS_SAFE_NETWORKS: NetworkInfo[] = [
   OPTIMISM_NETWORK,
   POLYGON_NETWORK,
   GOERLI_NETWORK,
+  RINKEBY_TEST_NETWORK,
+  VOLTA_TEST_NETWORK,
 ];
 
 export const DEFAULT_NETWORK_TOKEN = TOKEN_DATA[DEFAULT_NETWORK];
