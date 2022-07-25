@@ -45,7 +45,7 @@ const SplitUnequal = ({ sidebarRef, colony }: Props) => {
     variables: { colonyAddress: colonyAddress || '' },
   });
 
-  const remainingToStake = useMemo(() => {
+  const remainingStake = useMemo(() => {
     const limitForRecipient = recipients.map((_, index) => {
       const sum = recipients.reduce((acc, recipient, idx) => {
         if (index === idx) {
@@ -96,7 +96,7 @@ const SplitUnequal = ({ sidebarRef, colony }: Props) => {
                     step={1}
                     min={0}
                     max={100}
-                    limit={remainingToStake[index]}
+                    limit={remainingStake[index]}
                     handleStyle={{
                       height: 18,
                       width: 18,
