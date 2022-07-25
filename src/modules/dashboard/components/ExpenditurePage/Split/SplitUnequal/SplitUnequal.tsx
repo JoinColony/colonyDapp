@@ -46,16 +46,13 @@ const SplitUnequal = ({ sidebarRef, colony }: Props) => {
   });
 
   const remainingStake = useMemo(() => {
-    const limitForRecipient = recipients.map((_, index) => {
-      const sum = recipients.reduce((acc, recipient, idx) => {
-        if (index === idx) {
-          return acc;
-        }
-        return acc + Number(recipient.amount);
-      }, 0);
+    const sum = recipients.reduce((acc, recipient) => {
+      return acc + Number(recipient.amount);
+    }, 0);
 
-      return new Decimal(100 - sum).div(100);
-    });
+    const limitForRecipient = recipients.map((recipient) =>
+      new Decimal(100 - (sum - recipient.amount)).div(100),
+    );
     return limitForRecipient;
   }, [recipients]);
 
