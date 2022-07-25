@@ -24,10 +24,10 @@ interface Props {
   step?: number;
   onReset?: (val: any) => void;
   handleLimitExceeded?: (val: boolean) => void;
-  handleStyle?: React.CSSProperties | undefined;
-  dotStyle?: React.CSSProperties | undefined;
-  railStyle?: React.CSSProperties | undefined;
-  trackStyle?: React.CSSProperties | undefined;
+  handleStyle?: React.CSSProperties;
+  dotStyle?: React.CSSProperties;
+  railStyle?: React.CSSProperties;
+  trackStyle?: React.CSSProperties;
 }
 
 const displayName = 'Slider';
