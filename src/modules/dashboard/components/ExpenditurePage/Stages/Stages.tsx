@@ -75,7 +75,8 @@ interface Props {
 }
 
 const Stages = ({ states, activeStateId }: Props) => {
-  const { values, handleSubmit, errors } = useFormikContext<ValuesType>() || {};
+  const { values, handleSubmit, errors, dirty } =
+    useFormikContext<ValuesType>() || {};
 
   const { resetForm } = useFormikContext() || {};
   const [valueIsCopied, setValueIsCopied] = useState(false);
@@ -151,7 +152,7 @@ const Stages = ({ states, activeStateId }: Props) => {
               <Button
                 onClick={handleSaveDraft}
                 style={buttonStyles}
-                disabled={!isEmpty(errors)}
+                disabled={!isEmpty(errors) || !dirty}
               >
                 <FormattedMessage {...MSG.submitDraft} />
               </Button>

@@ -8,8 +8,10 @@ import { ExpenditureSettings } from '~dashboard/ExpenditurePage';
 import Payments from '~dashboard/ExpenditurePage/Payments';
 import Split from '~dashboard/ExpenditurePage/Split';
 import { Colony } from '~data/index';
+
 import { ValuesType } from './ExpenditurePage';
 import styles from './ExpenditurePage.css';
+import { ExpenditureTypes } from './types';
 
 const MSG = defineMessages({
   submit: {
@@ -52,7 +54,7 @@ const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
   const secondFormSection = useMemo(() => {
     const expenditureType = values.expenditure;
     switch (expenditureType) {
-      case 'advanced': {
+      case ExpenditureTypes.Advanced: {
         return <Payments sidebarRef={sidebarRef} colony={colony} />;
       }
       case 'split': {
