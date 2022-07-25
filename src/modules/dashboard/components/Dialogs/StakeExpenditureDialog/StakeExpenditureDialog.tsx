@@ -1,4 +1,6 @@
 import React, { useCallback, useState } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
+import { FormikProps } from 'formik';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Dialog, { DialogSection } from '~core/Dialog';
@@ -65,6 +67,10 @@ const MSG = defineMessages({
 });
 
 const displayName = 'dashboard.StakeExpenditureDialog';
+
+interface FormValues {
+  forceAction: boolean;
+}
 
 type Props = {
   onClick: () => void;
