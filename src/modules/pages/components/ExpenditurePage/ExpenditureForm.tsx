@@ -1,14 +1,14 @@
 import { useFormikContext } from 'formik';
 import React, { useMemo } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { ExpenditureSettings } from '~dashboard/ExpenditurePage';
 import Payments from '~dashboard/ExpenditurePage/Payments';
 import Split from '~dashboard/ExpenditurePage/Split';
 import { Colony } from '~data/index';
 
-import { ValuesType } from './ExpenditurePage';
+import { ValuesType, ExpenditureTypes } from './types';
 import styles from './ExpenditurePage.css';
-import { ExpenditureTypes } from './types';
 
 const MSG = defineMessages({
   submit: {
@@ -32,7 +32,7 @@ const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
         return <Payments sidebarRef={sidebarRef} colony={colony} />;
       }
       case ExpenditureTypes.Split: {
-        return <Split />;
+        return <Split sidebarRef={sidebarRef} colony={colony} />;
       }
       default:
         return null;
@@ -43,6 +43,9 @@ const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
     <>
       <ExpenditureSettings colony={colony} sidebarRef={sidebarRef} />
       {secondFormSection}
+      <button type="submit" tabIndex={-1} className={styles.hiddenSubmit}>
+        <FormattedMessage {...MSG.submit} />
+      </button>
     </>
   );
 };
