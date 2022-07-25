@@ -32,7 +32,7 @@ const MSG = defineMessages({
     defaultMessage: 'Remove a Gnosis Safe you previously added to your Colony.',
   },
   controlSafeTitle: {
-    id: 'dashboard.ManageReputationDialog.controlSafeTitle',
+    id: 'dashboard.ManageGnosisSafeDialog.controlSafeTitle',
     defaultMessage: 'Control Safe',
   },
   controlSafeDescription: {
@@ -40,7 +40,7 @@ const MSG = defineMessages({
     defaultMessage: 'Get your colony’s Gnosis Safe to do stuff.',
   },
   permissionText: {
-    id: 'dashboard.ManageReputationDialog.permissionsText',
+    id: 'dashboard.ManageGnosisSafeDialog.permissionsText',
     defaultMessage: `You must have the {permission} permissions in the
       relevant teams, in order to take this action`,
   },
