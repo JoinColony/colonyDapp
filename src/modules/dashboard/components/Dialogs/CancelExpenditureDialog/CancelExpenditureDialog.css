@@ -26,38 +26,21 @@
   max-width: 200px;
 }
 
-.forceContainer {
-  display: flex;
-  align-items: center;
-  font-size: var(--size-smallish);
-  color: var(--dark);
+.toggleContainer i {
+  margin: 0 -20px 4px 21px;
+
+  /* next lines are used for the correct tooltip arrow placement */
+  transform: translateX(-25px);
 }
 
-.toggleContainer {
-  /* negative margin here corrects the position of the toggle input */
-  margin-bottom: -6px;
-  margin-left: 4px;
-  margin-right: 20px;
-}
-
-.tooltip {
+/* this selector is for tooltip wrapper */
+.toggleContainer > div > div:last-child {
   max-width: 250px;
   white-space: normal;
 }
 
-.questionIcon {
-  display: block;
-
-  /* next lines are used for the correct tooltip arrow placement */
-  margin-right: -20px;
-  margin-bottom: -3px;
-  margin-left: 11px;
-  height: 16px;
-  width: 16px;
-  border-radius: 50%;
-  background-color: white;
-  stroke: none;
-  transform: translateX(-20px);
+.toggleContainer label {
+  margin-bottom: 4px;
 }
 
 .title {

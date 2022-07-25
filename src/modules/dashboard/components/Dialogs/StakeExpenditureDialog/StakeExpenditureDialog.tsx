@@ -28,35 +28,35 @@ const activeToken = {
 
 const MSG = defineMessages({
   header: {
-    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.header',
+    id: 'dashboard.StakeExpenditureDialog.header',
     defaultMessage: 'Stake to Create Expenditure',
   },
   force: {
-    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.force',
+    id: 'dashboard.StakeExpenditureDialog.force',
     defaultMessage: 'Force',
   },
   stake: {
-    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.stake',
+    id: 'dashboard.StakeExpenditureDialog.stake',
     defaultMessage: 'Stake',
   },
   descriptionText: {
-    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.descriptionText',
+    id: 'dashboard.StakeExpenditureDialog.descriptionText',
     defaultMessage: `Almost there! You have to provide a stake first. 
     Imagine it is like renting a permission. 
     If motion succeeds you will get your stake back.`,
   },
   descriptionText2: {
-    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.descriptionText2',
+    id: 'dashboard.StakeExpenditureDialog.descriptionText2',
     defaultMessage: `
     Until expenditure is staked it won't show up publicly on list. 
     It works like an anti-spam filter.`,
   },
   cancelText: {
-    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.cancelText',
+    id: 'dashboard.StakeExpenditureDialog.cancelText',
     defaultMessage: 'Cancel',
   },
   confirmText: {
-    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.confirmText',
+    id: 'dashboard.StakeExpenditureDialog.confirmText',
     defaultMessage: 'Stake',
   },
 });

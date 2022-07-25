@@ -3,27 +3,28 @@ import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import Link from '~core/Link';
 
 import Tag from '~core/Tag';
+import { MotionStatus } from '../constants';
 import styles from './LinkedMotions.css';
 
 const MSG = defineMessages({
   linkedMotions: {
-    id: 'dashboard.Expenditures.Stages.linkedMotions',
+    id: 'dashboard.ExpenditurePage.Stages.LinkedMotions.linkedMotions',
     defaultMessage: 'Linked motions',
   },
   foundExp: {
-    id: 'dashboard.Expenditures.Stages.foundExp',
+    id: 'dashboard.ExpenditurePage.Stages.LinkedMotions.foundExp',
     defaultMessage: '{motion} Exp - {id}',
   },
   passed: {
-    id: 'dashboard.Expenditures.Stages.passed',
+    id: 'dashboard.ExpenditurePage.Stages.LinkedMotions.passed',
     defaultMessage: 'Passed',
   },
   failed: {
-    id: 'dashboard.Expenditures.Stages.failed',
+    id: 'dashboard.ExpenditurePage.Stages.LinkedMotions.failed',
     defaultMessage: 'Failed',
   },
   motion: {
-    id: 'dashboard.Expenditures.Stages.motion',
+    id: 'dashboard.ExpenditurePage.Stages.LinkedMotions.motion',
     defaultMessage: 'Motion',
   },
 });
@@ -31,7 +32,7 @@ const MSG = defineMessages({
 const displayName = 'dashboard.ExpenditurePage.Stages.LinkedMotions';
 
 interface Props {
-  status: 'passed' | 'failed' | 'pending';
+  status: MotionStatus;
   motionLink?: string;
   motion: string;
   id: string;
@@ -52,17 +53,19 @@ const LinkedMotions = ({ status, motionLink, motion, id }: Props) => {
       </div>
       <div className={styles.statusWrapper}>
         {formatMessage(MSG.foundExp, { motion, id })}
-        {status === 'pending' && motionLink ? (
+        {status === MotionStatus.Pending && motionLink ? (
           <Link to={motionLink} className={styles.link}>
             <FormattedMessage {...MSG.motion} />
           </Link>
         ) : (
           <Tag
-            text={status === 'passed' ? MSG.passed : MSG.failed}
+            text={status === MotionStatus.Passed ? MSG.passed : MSG.failed}
             data-test="deprecatedStatusTag"
             style={{
               color:
-                status === 'passed' ? styles.passedColor : styles.failedColor,
+                status === MotionStatus.Passed
+                  ? styles.passedColor
+                  : styles.failedColor,
             }}
             appearance={{ theme: 'light' }}
           />

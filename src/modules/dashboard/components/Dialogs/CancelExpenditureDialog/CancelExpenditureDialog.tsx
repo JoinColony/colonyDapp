@@ -4,7 +4,9 @@ import * as yup from 'yup';
 import { ActionForm } from '~core/Fields';
 import { ActionTypes } from '~redux/actionTypes';
 import { Colony } from '~data/index';
+
 import CancelExpenditureDialogForm from './CancelExpenditureDialogForm';
+import { UserConsequences } from './types';
 
 const displayName = 'dashboard.CancelExpenditureDialog';
 
@@ -22,11 +24,17 @@ export interface FormValues {
 
 interface Props {
   close: () => void;
-  colony?: Colony;
-  onClick: (isForce: boolean) => void;
+  colony: Colony;
+  onCancelExpenditure: (isForce: boolean) => void;
+  isVotingExtensionEnabled: boolean;
 }
 
-const CancelExpenditureDialog = ({ close, colony, onClick }: Props) => {
+const CancelExpenditureDialog = ({
+  close,
+  colony,
+  onCancelExpenditure,
+  isVotingExtensionEnabled,
+}: Props) => {
   const [isForce, setIsForce] = useState(false);
 
   const getFormAction = useCallback(
@@ -42,7 +50,7 @@ const CancelExpenditureDialog = ({ close, colony, onClick }: Props) => {
 
   return (
     <ActionForm
-      initialValues={{ forceAction: false, effect: 'penalize' }}
+      initialValues={{ forceAction: false, effect: UserConsequences.Penalize }}
       submit={getFormAction('SUBMIT')}
       error={getFormAction('ERROR')}
       success={getFormAction('SUCCESS')}
@@ -50,7 +58,14 @@ const CancelExpenditureDialog = ({ close, colony, onClick }: Props) => {
       validationSchema={validationSchema}
     >
       <CancelExpenditureDialogForm
-        {...{ close, isForce, onClick, setIsForce, colony }}
+        {...{
+          close,
+          isForce,
+          onCancelExpenditure,
+          setIsForce,
+          colony,
+          isVotingExtensionEnabled,
+        }}
       />
     </ActionForm>
   );

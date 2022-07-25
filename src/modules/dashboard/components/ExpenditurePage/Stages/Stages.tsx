@@ -29,7 +29,7 @@ import {
   ValuesType,
 } from '~pages/ExpenditurePage/ExpenditurePage';
 import styles from './Stages.css';
-import { MotionStatus, Stage, Status } from './constants';
+import { MotionStatus, MotionType, Stage, Status } from './constants';
 import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
 import { Colony } from '~data/index';
 import PermissionsLabel from '~core/PermissionsLabel';
@@ -93,7 +93,7 @@ const buttonStyles = {
 };
 
 interface Motion {
-  type: 'Cancel';
+  type: MotionType;
   status: MotionStatus;
 }
 
@@ -145,21 +145,23 @@ const Stages = ({ colony, states, activeStateId }: Props) => {
     });
 
   const handleCancelExpenditure = () =>
+    colony &&
     openCancelExpenditureDialog({
-      onClick: (isForce: boolean) => {
+      onCancelExpenditure: (isForce: boolean) => {
         if (isForce) {
           // temporary action
           setStatus(Status.ForceCancelled);
         } else {
-          // temporary action
-          setMotion({ type: 'Cancel', status: MotionStatus.Pending });
+          // setTimeout is temporary, call to backend should be added here
+          setMotion({ type: MotionType.Cancel, status: MotionStatus.Pending });
           setTimeout(() => {
             setStatus(Status.Cancelled);
-            setMotion({ type: 'Cancel', status: MotionStatus.Passed });
+            setMotion({ type: MotionType.Cancel, status: MotionStatus.Passed });
           }, 5000);
         }
       },
       colony,
+      isVotingExtensionEnabled: true, // temporary value
     });
 
   const handleClipboardCopy = () => {
@@ -175,7 +177,7 @@ const Stages = ({ colony, states, activeStateId }: Props) => {
   const activeState = states.find((state) => state.id === activeStateId);
 
   const renderButton = useCallback(() => {
-    if (status === 'cancelled' || status === 'forceCancelled') {
+    if (status === Status.Cancelled || status === Status.ForceCancelled) {
       return (
         <Button style={buttonStyles} disabled>
           <FormattedMessage {...MSG.cancelled} />
@@ -247,7 +249,7 @@ const Stages = ({ colony, states, activeStateId }: Props) => {
       const role = ColonyRole.Arbitration;
 
       // if forced cancellation - it shows different label with icon
-      if (status === 'forceCancelled' && index === activeIndex) {
+      if (status === Status.ForceCancelled && index === activeIndex) {
         return (
           <div className={styles.labelComponent}>
             {typeof label === 'object' && label?.id ? (
@@ -266,7 +268,7 @@ const Stages = ({ colony, states, activeStateId }: Props) => {
       }
 
       // if forced cancellation - it shows different label
-      if (status === 'cancelled' && index === activeIndex) {
+      if (status === Status.Cancelled && index === activeIndex) {
         return (
           <div className={styles.labelComponent}>
             {typeof label === 'object' && label?.id ? (
@@ -284,7 +286,8 @@ const Stages = ({ colony, states, activeStateId }: Props) => {
     [activeIndex, formatMessage, status],
   );
 
-  const isCancelled = status === 'cancelled' || status === 'forceCancelled';
+  const isCancelled =
+    status === Status.Cancelled || status === Status.ForceCancelled;
 
   const formattedLabel = useMemo(
     () => (text: string | MessageDescriptor | undefined): string => {
