@@ -123,23 +123,26 @@ const validationSchema = yup.object().shape({
         then: yup.string().required(() => MSG.requiredFieldError),
         otherwise: false,
       }),
-      nft: yup.object().shape({
-        profile: yup.object().shape({
-          displayName: yup.string().when('transactionType', {
-            is: (transactionType) => transactionType === 'transferNft',
-            then: yup.string().required(() => MSG.requiredFieldError),
-            otherwise: false,
+      nft: yup
+        .object()
+        .shape({
+          profile: yup.object().shape({
+            displayName: yup.string().when('transactionType', {
+              is: (transactionType) => transactionType === 'transferNft',
+              then: yup.string().required(() => MSG.requiredFieldError),
+              otherwise: false,
+            }),
+            walletAddress: yup.string().when('transactionType', {
+              is: (transactionType) => transactionType === 'transferNft',
+              then: yup
+                .string()
+                .address()
+                .required(() => MSG.requiredFieldError),
+              otherwise: false,
+            }),
           }),
-          walletAddress: yup.string().when('transactionType', {
-            is: (transactionType) => transactionType === 'transferNft',
-            then: yup
-              .string()
-              .address()
-              .required(() => MSG.requiredFieldError),
-            otherwise: false,
-          }),
-        }),
-      }),
+        })
+        .nullable(),
     }),
   ),
 });
