@@ -46,12 +46,12 @@ const SplitUnequal = ({ sidebarRef, colony }: Props) => {
   });
 
   const remainingToStake = useMemo(() => {
-    const limitForRecipient = recipients.map((recipient, index) => {
-      const sum = recipients.reduce((acc, rec, idx) => {
+    const limitForRecipient = recipients.map((_, index) => {
+      const sum = recipients.reduce((acc, recipient, idx) => {
         if (index === idx) {
           return acc;
         }
-        return acc + Number(rec.amount);
+        return acc + Number(recipient.amount);
       }, 0);
 
       return new Decimal(100 - sum).div(100);
@@ -100,22 +100,21 @@ const SplitUnequal = ({ sidebarRef, colony }: Props) => {
                     handleStyle={{
                       height: 18,
                       width: 18,
-                      marginTop: -7,
                     }}
                     trackStyle={{
                       height: 14,
                       width: 18,
-                      marginTop: '-5px',
-                      opacity: '0.85',
+                      transform: 'translateY(-5px)',
+                      opacity: 0.85,
                     }}
                     railStyle={{
-                      backgroundColor: 'white',
+                      backgroundColor: styles.white,
                       height: 14,
                       position: 'absolute',
                       top: 0,
                       backgroundImage: 'none',
-                      boxShadow: 'inset 0px 2px 4px rgba(14, 37, 88, 0.07)',
-                      border: '1px solid #EEF2F5',
+                      boxShadow: styles.boxShadow,
+                      border: styles.border,
                     }}
                   />
                   <span className={styles.percent}>

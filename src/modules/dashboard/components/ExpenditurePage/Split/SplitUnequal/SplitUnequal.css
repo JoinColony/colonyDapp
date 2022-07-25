@@ -1,3 +1,7 @@
+@value white: rgb(255, 255, 255);
+@value boxShadow: inset 0px 2px 4px rgba(14, 37, 88, 0.07);
+@value border: 1px solid var(--temp-grey-blue-8);
+
 .recipientWrapper {
   display: flex;
   align-items: center;
@@ -33,12 +37,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-right: 2px;
-
-  /* a negative margin is used here to align the entire "Add recipient" row to the left */
-  margin-left: -8px;
   height: 30px;
   width: 30px;
+  transform: translateX(-8px);
   fill: var(--action-secondary);
 }
 
@@ -46,12 +47,12 @@
   display: grid;
   align-items: center;
   margin: 22px 0 20px;
-  grid-template-columns: 8fr 1fr;
+  grid-template-columns: 294px 33px;
   column-gap: 10px;
 }
 
 .sliderWrapper > span {
-  margin-left: 10px;
+  justify-self: end;
 }
 
 .percent {
