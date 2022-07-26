@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { FormikProps, useField } from 'formik';
 import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
+import { isAddress } from 'web3-utils';
 
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Select, Input, Annotations, SelectOption } from '~core/Fields';
 import Heading from '~core/Heading';
-import { GNOSIS_SAFE_NETWORKS } from '~constants';
+import { GNOSIS_SAFE_NETWORKS, SAFE_ALREADY_EXISTS } from '~constants';
 import { SimpleMessageValues } from '~types/index';
+import { ColonySafe } from '~data/index';
 
 import { FormValues } from './AddExistingSafeDialog';
 
@@ -38,6 +40,11 @@ const MSG = defineMessages({
     id: 'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.safeLoading',
     defaultMessage: 'Loading Safe details...',
   },
+  alreadyExists: {
+    id:
+      'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.alreadyExists',
+    defaultMessage: 'Safe already exists in this colony.',
+  },
   safeCheck: {
     id: 'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.safeCheck',
     defaultMessage: `Safe {safeData, select,
@@ -54,6 +61,7 @@ const MSG = defineMessages({
 interface Props {
   back: () => void;
   networkOptions: SelectOption[];
+  colonySafes: ColonySafe[];
 }
 
 interface SafeContract {
@@ -70,7 +78,7 @@ interface StatusText {
   statusValues?: SimpleMessageValues;
 }
 
-type SafeData = SafeContract | undefined | null | {};
+type SafeData = SafeContract | undefined | null | {} | 'alreadyExists';
 
 const AddExistingSafeDialogForm = ({
   back,
@@ -79,6 +87,7 @@ const AddExistingSafeDialogForm = ({
   isSubmitting,
   isValid,
   dirty,
+  colonySafes,
 }: Props & FormikProps<FormValues>) => {
   const { formatMessage } = useIntl();
 
@@ -149,6 +158,12 @@ const AddExistingSafeDialogForm = ({
         status: MSG.fetchFailed,
       };
     }
+
+    if (safeData === SAFE_ALREADY_EXISTS) {
+      return {
+        status: MSG.alreadyExists,
+      };
+    }
     return {
       status: MSG.safeCheck,
       statusValues: {
@@ -177,13 +192,35 @@ const AddExistingSafeDialogForm = ({
   // When selected chain or address changes
   useEffect(() => {
     // If there's a valid address in the address input
-    if (addressTouched && !addressError) {
-      // Get safe data
-      setSafeNotFoundError(undefined);
-      setIsLoadingSafe(true);
-      getSafeData(`${baseURL}api/v1/safes/${address}/`);
+    if (addressTouched && !addressError && isAddress(address)) {
+      /*
+       * Check if safe already exists in colony
+       */
+      const isSafeAlreadyAdded = colonySafes.find(
+        (safe) =>
+          safe?.chainId === selectedChain.value &&
+          safe?.contractAddress === address,
+      );
+
+      if (isSafeAlreadyAdded) {
+        setSafeData(SAFE_ALREADY_EXISTS);
+      } else {
+        /*
+         * If not, run api check
+         */
+        setSafeNotFoundError(undefined);
+        setIsLoadingSafe(true);
+        getSafeData(`${baseURL}api/v1/safes/${address}/`);
+      }
     }
-  }, [baseURL, address, addressTouched, addressError]);
+  }, [
+    baseURL,
+    address,
+    selectedChain,
+    addressTouched,
+    addressError,
+    colonySafes,
+  ]);
 
   const handleNetworkChange = (fromNetworkValue: string) => {
     const selectedNetwork = networkOptions.find(
@@ -195,7 +232,12 @@ const AddExistingSafeDialogForm = ({
   };
 
   useEffect(() => {
-    if (!isLoadingSafe && (safeData === undefined || safeData === null)) {
+    if (
+      !isLoadingSafe &&
+      (safeData === undefined ||
+        safeData === null ||
+        safeData === SAFE_ALREADY_EXISTS)
+    ) {
       getCustomAddressError();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
