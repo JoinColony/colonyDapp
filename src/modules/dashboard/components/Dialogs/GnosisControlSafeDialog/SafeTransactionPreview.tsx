@@ -190,8 +190,7 @@ const SafeTransactionPreview = ({ colony: { tokens }, values }: Props) => {
         <Input
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
           label={MSG.transactionsTitle}
-          name="transactionSetTitle"
-          disabled={false}
+          name="transactionsTitle"
           placeholder=""
         />
       </DialogSection>
