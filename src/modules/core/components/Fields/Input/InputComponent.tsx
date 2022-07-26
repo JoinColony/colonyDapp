@@ -171,6 +171,7 @@ const InputComponent = ({
           placeholder={placeholder}
           onInit={(cleaveInstance) => setCleave(cleaveInstance)}
           data-test={dataTest}
+          value={value || ''}
         />
       </div>
     );
