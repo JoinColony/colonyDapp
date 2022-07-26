@@ -27,7 +27,7 @@ type Props = Required<DialogProps> &
 const displayName = 'dashboard.AddExistingSafeDialog';
 
 const AddExistingSafeDialog = ({
-  colony: { colonyAddress, colonyName },
+  colony: { colonyAddress, colonyName, safes },
   callStep,
   prevStep,
   cancel,
@@ -98,6 +98,7 @@ const AddExistingSafeDialog = ({
             <DialogForm
               {...formProps}
               networkOptions={networkOptions}
+              colonySafes={safes}
               back={() => callStep(prevStep)}
             />
           </Dialog>
