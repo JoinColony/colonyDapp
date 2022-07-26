@@ -203,7 +203,7 @@ const GnosisControlSafeForm = ({
   /* This is necessary as the form validation doesn't work on the first render
   when we switch to showing preview */
   useEffect(() => {
-    if (showPreview && values.transactionSetTitle === undefined) {
+    if (showPreview && values.transactionsTitle === undefined) {
       setHasTitle(false);
     } else {
       setHasTitle(true);

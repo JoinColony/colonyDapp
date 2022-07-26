@@ -53,7 +53,7 @@ export interface FormValues {
   }[];
   safe: string;
   forceAction: boolean;
-  transactionSetTitle: string;
+  transactionsTitle: string;
 }
 
 const displayName = 'dashboard.GnosisControlSafeDialog';
@@ -65,7 +65,7 @@ type Props = DialogProps &
 const validationSchema = (isPreview) =>
   yup.object().shape({
     safe: yup.string().required(() => MSG.requiredFieldError),
-    ...(isPreview ? { transactionSetTitle: yup.string().required() } : {}),
+    ...(isPreview ? { transactionsTitle: yup.string().required() } : {}),
     transactions: yup.array(
       yup.object().shape({
         transactionType: yup.string().required(() => MSG.requiredFieldError),
@@ -146,7 +146,7 @@ const GnosisControlSafeDialog = ({
     <ActionForm
       initialValues={{
         safe: '',
-        transactionSetTitle: undefined,
+        transactionsTitle: undefined,
         transactions: [
           {
             transactionType: '',
