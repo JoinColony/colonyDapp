@@ -1,10 +1,4 @@
-import React, {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import classNames from 'classnames';
 import { FormikProps } from 'formik';
@@ -203,93 +197,6 @@ const EscrowFundsDialogForm = ({
     return optionDomainId !== COLONY_TOTAL_BALANCE_DOMAIN_ID;
   }, []);
 
-  // @TODO replace the mock with real data
-  const balanceOptions = useMemo(
-    () =>
-      tokens.map((token, index) => ({
-        label: token.name,
-        value: token.id,
-        children: (
-          <div
-            className={classNames(styles.label, styles.option, {
-              [styles.firstOption]: index === 0,
-            })}
-          >
-            <span className={styles.icon}>
-              <TokenIcon
-                className={styles.tokenIcon}
-                token={token}
-                name={token.name || token.address}
-              />
-            </span>
-            <Numeral
-              unit={getTokenDecimalsWithFallback(token.decimals)}
-              value={token.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount}
-              className={styles.tokenNumeral}
-            />
-            <span className={styles.symbol}>{token.symbol}</span>
-          </div>
-        ),
-      })),
-    [],
-  );
-
-  // @TODO replace the mock with real data
-  const requiredFunds = useMemo(
-    () =>
-      requiredFundsMock.map((token) => ({
-        label: token.name,
-        value: token.id,
-        children: (
-          <FormSection appearance={{ border: 'top' }}>
-            <div className={styles.requiredFundsRow}>
-              <span>
-                {token.isPartial ? (
-                  <>
-                    <FormattedMessage
-                      {...MSG.partialFund}
-                      values={{ name: token.name }}
-                    />
-                    <span className={styles.tokenTotal}>
-                      {` (${formatMessage(MSG.total)} ${token.name} `}
-                      <Numeral
-                        className={styles.tokenNumeralTiny}
-                        unit={getTokenDecimalsWithFallback(token.decimals)}
-                        value={
-                          token.total?.[COLONY_TOTAL_BALANCE_DOMAIN_ID]
-                            .amount ?? 0
-                        }
-                      />
-                      )
-                    </span>
-                  </>
-                ) : (
-                  <FormattedMessage
-                    {...MSG.fullFund}
-                    values={{ name: token.name }}
-                  />
-                )}
-              </span>
-              <span className={styles.icon}>
-                <TokenIcon
-                  className={styles.tokenIcon}
-                  token={token}
-                  name={token.name || token.address}
-                />
-              </span>
-              <Numeral
-                unit={getTokenDecimalsWithFallback(token.decimals)}
-                value={token.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount}
-                className={styles.tokenNumeralNormal}
-              />
-              <span className={styles.symbolNormal}>{token.symbol}</span>
-            </div>
-          </FormSection>
-        ),
-      })),
-    [formatMessage],
-  );
-
   return (
     <>
       <div className={styles.dialogContainer}>
@@ -383,13 +290,30 @@ const EscrowFundsDialogForm = ({
                 }}
               />
               <div>
-                {balanceOptions.map((balanceOption) => {
-                  return (
-                    <div key={balanceOption.value}>
-                      {balanceOption.children}
-                    </div>
-                  );
-                })}
+                {tokens.map((token, index) => (
+                  <div
+                    className={classNames(styles.label, styles.option, {
+                      [styles.firstOption]: index === 0,
+                    })}
+                    key={token.id}
+                  >
+                    <span className={styles.icon}>
+                      <TokenIcon
+                        className={styles.tokenIcon}
+                        token={token}
+                        name={token.name || token.address}
+                      />
+                    </span>
+                    <Numeral
+                      unit={getTokenDecimalsWithFallback(token.decimals)}
+                      value={
+                        token.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount
+                      }
+                      className={styles.tokenNumeral}
+                    />
+                    <span className={styles.symbol}>{token.symbol}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </FormSection>
@@ -407,9 +331,58 @@ const EscrowFundsDialogForm = ({
               <FormattedMessage {...MSG.fundsHeader} />
             </div>
           </Heading>
-          {requiredFunds.map((balanceOption) => {
+          {requiredFundsMock.map((token) => {
             return (
-              <span key={balanceOption.value}>{balanceOption.children}</span>
+              <span key={token.id}>
+                <FormSection appearance={{ border: 'top' }}>
+                  <div className={styles.requiredFundsRow}>
+                    <span>
+                      {token.isPartial ? (
+                        <>
+                          <FormattedMessage
+                            {...MSG.partialFund}
+                            values={{ name: token.name }}
+                          />
+                          <span className={styles.tokenTotal}>
+                            {` (${formatMessage(MSG.total)} ${token.name} `}
+                            <Numeral
+                              className={styles.tokenNumeralTiny}
+                              unit={getTokenDecimalsWithFallback(
+                                token.decimals,
+                              )}
+                              value={
+                                token.total?.[COLONY_TOTAL_BALANCE_DOMAIN_ID]
+                                  .amount ?? 0
+                              }
+                            />
+                            )
+                          </span>
+                        </>
+                      ) : (
+                        <FormattedMessage
+                          {...MSG.fullFund}
+                          values={{ name: token.name }}
+                        />
+                      )}
+                    </span>
+                    <span className={styles.icon}>
+                      <TokenIcon
+                        className={styles.tokenIcon}
+                        token={token}
+                        name={token.name || token.address}
+                      />
+                    </span>
+                    <Numeral
+                      unit={getTokenDecimalsWithFallback(token.decimals)}
+                      value={
+                        token.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount
+                      }
+                      className={styles.tokenNumeralNormal}
+                    />
+                    <span className={styles.symbolNormal}>{token.symbol}</span>
+                  </div>
+                </FormSection>
+              </span>
             );
           })}
         </DialogSection>
