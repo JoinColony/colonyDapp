@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useEffect, useState } from 'react';
+import React, { ReactNode, useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import classNames from 'classnames';
 import { FormikProps } from 'formik';
@@ -95,16 +95,12 @@ const MSG = defineMessages({
 
 interface Props {
   colony: Colony;
-  isForce: boolean;
-  setIsForce: React.Dispatch<React.SetStateAction<boolean>>;
   onSubmitClick: () => void;
   isVotingExtensionEnabled: boolean;
 }
 
 const EscrowFundsDialogForm = ({
   colony,
-  isForce,
-  setIsForce,
   onSubmitClick,
   isVotingExtensionEnabled,
   values,
@@ -123,14 +119,8 @@ const EscrowFundsDialogForm = ({
     colony.colonyAddress,
     canCancelExpenditure,
     isVotingExtensionEnabled,
-    isForce,
+    values.forceAction,
   );
-
-  useEffect(() => {
-    if (values.forceAction !== isForce) {
-      setIsForce(values.forceAction);
-    }
-  }, [isForce, setIsForce, values]);
 
   const handleMotionDomainChange = useCallback(
     (motionDomainId) => setDomainID(motionDomainId),

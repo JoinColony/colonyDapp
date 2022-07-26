@@ -58,19 +58,22 @@ const EscrowFundsDialog = ({
         success={getFormAction('SUCCESS')}
         initialValues={{ forceAction: false }}
       >
-        {(formValues: FormikProps<FormValues>) => (
-          <EscrowFundsDialogForm
-            {...{
-              colony,
-              isForce,
-              setIsForce,
-              close,
-              onSubmitClick,
-              isVotingExtensionEnabled,
-              ...formValues,
-            }}
-          />
-        )}
+        {(formValues: FormikProps<FormValues>) => {
+          if (formValues.values.forceAction !== isForce) {
+            setIsForce(formValues.values.forceAction);
+          }
+          return (
+            <EscrowFundsDialogForm
+              {...{
+                colony,
+                close,
+                onSubmitClick,
+                isVotingExtensionEnabled,
+                ...formValues,
+              }}
+            />
+          );
+        }}
       </ActionForm>
     </Dialog>
   );
