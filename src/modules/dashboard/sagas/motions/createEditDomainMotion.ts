@@ -9,7 +9,6 @@ import {
 import { getStringForMetadataDomain } from '@colony/colony-event-metadata-parser';
 
 import { AddressZero } from 'ethers/constants';
-
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';

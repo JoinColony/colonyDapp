@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
-
 import {
   getAnnotationMsgFromResponse,
   getEventMetadataVersion,
