@@ -140,23 +140,6 @@
   max-width: 250px;
 }
 
-.questionIcon {
-  display: block;
-
-  /* next lines are used for the correct tooltip arrow placement */
-  margin-right: -20px;
-  margin-left: 11px;
-  width: 16px;
-  z-index: var(--z-index-popover);
-  transform: translateX(-20px);
-}
-
-.forceContainer {
-  display: flex;
-  align-items: center;
-  font-size: var(--size-smallish);
-}
-
 .margin {
   margin-right: 20px;
 }
@@ -182,4 +165,21 @@
 
 .dropdown ul div:nth-of-type(2) {
   width: auto;
+}
+
+.toggleContainer i {
+  margin: 0 -20px 4px 21px;
+
+  /* next lines are used for the correct tooltip arrow placement */
+  transform: translateX(-25px);
+}
+
+/* this selector is for tooltip wrapper */
+.toggleContainer > div > div:last-child {
+  max-width: 250px;
+  white-space: normal;
+}
+
+.toggleContainer label {
+  margin-bottom: 4px;
 }

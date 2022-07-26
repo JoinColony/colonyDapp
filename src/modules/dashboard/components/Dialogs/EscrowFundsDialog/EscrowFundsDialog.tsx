@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import { FormikProps } from 'formik';
 
 import Dialog from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
@@ -10,7 +11,7 @@ import EscrowFundsDialogForm from './EscrowFundsDialogForm';
 const displayName = 'dashboard.EscrowFundsDialog';
 
 export interface FormValues {
-  force: boolean;
+  forceAction: boolean;
   filteredDomainId: string;
   annotationMessage?: string;
 }
@@ -32,7 +33,7 @@ const EscrowFundsDialog = ({
 }: Props) => {
   const [isForce, setIsForce] = useState(false);
 
-  const onSubmit = useCallback(() => {
+  const onSubmitClick = useCallback(() => {
     onClick();
     close();
   }, [onClick, close]);
@@ -55,11 +56,21 @@ const EscrowFundsDialog = ({
         submit={getFormAction('SUBMIT')}
         error={getFormAction('ERROR')}
         success={getFormAction('SUCCESS')}
-        initialValues={{ force: false }}
+        initialValues={{ forceAction: false }}
       >
-        <EscrowFundsDialogForm
-          {...{ colony, isForce, setIsForce, close, onSubmit }}
-        />
+        {(formValues: FormikProps<FormValues>) => (
+          <EscrowFundsDialogForm
+            {...{
+              colony,
+              isForce,
+              setIsForce,
+              close,
+              onSubmitClick,
+              isVotingExtensionEnabled,
+              ...formValues,
+            }}
+          />
+        )}
       </ActionForm>
     </Dialog>
   );

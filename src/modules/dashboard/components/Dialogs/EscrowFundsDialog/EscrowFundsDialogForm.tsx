@@ -7,9 +7,9 @@ import React, {
 } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import classNames from 'classnames';
-import { useFormikContext } from 'formik';
-
+import { FormikProps } from 'formik';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+
 import { DialogSection } from '~core/Dialog';
 import DomainDropdown from '~core/DomainDropdown';
 import {
@@ -20,9 +20,7 @@ import {
   Toggle,
 } from '~core/Fields';
 import Heading from '~core/Heading';
-import Icon from '~core/Icon';
-import { Tooltip } from '~core/Popover';
-import { Colony } from '~data/index';
+import { Colony, useLoggedInUser } from '~data/index';
 import Button from '~core/Button';
 import ColorTag, { Color } from '~core/ColorTag';
 import Numeral from '~core/Numeral';
@@ -33,6 +31,10 @@ import {
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { useTransformer } from '~utils/hooks';
+import { getAllUserRoles } from '~modules/transformers';
+import { hasRoot } from '~modules/users/checks';
+import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 
 import styles from './EscrowFundsDialog.css';
 import { FormValues } from './EscrowFundsDialog';
@@ -41,58 +43,58 @@ const displayName = 'dashboard.EscrowFundsDialog.EscrowFundsDialogForm';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.EscrowFundsDialog.title',
+    id: 'dashboard.EscrowFundsDialog.EscrowFundsDialogForm.title',
     defaultMessage: 'Create a motion to fund expenditure',
   },
   force: {
-    id: 'dashboard.EscrowFundsDialog.force',
+    id: 'dashboard.EscrowFundsDialog.EscrowFundsDialogForm.force',
     defaultMessage: 'Force',
   },
   descriptionText: {
-    id: 'dashboard.EscrowFundsDialog.descriptionText',
+    id: 'dashboard.EscrowFundsDialog.EscrowFundsDialogForm.descriptionText',
     defaultMessage: `To create this expenditure you need to get 
     collective approval first. To do so create a motion. 
     It is like asking your teammates if they agree to fund your expenditure.
     `,
   },
   allocationHeader: {
-    id: 'dashboard.EscrowFundsDialog.allocationHeader',
+    id: 'dashboard.EscrowFundsDialog.EscrowFundsDialogForm.allocationHeader',
     defaultMessage: 'Allocation and resources',
   },
   allocationTeam: {
-    id: 'dashboard.EscrowFundsDialog.allocationTeam',
+    id: 'dashboard.EscrowFundsDialog.EscrowFundsDialogForm.allocationTeam',
     defaultMessage: 'Team',
   },
   allocationBalance: {
-    id: 'dashboard.EscrowFundsDialog.allocationTeam',
+    id: 'dashboard.EscrowFundsDialog.EscrowFundsDialogForm.allocationBalance',
     defaultMessage: 'Balance',
   },
   fundsHeader: {
-    id: 'dashboard.EscrowFundsDialog.fundsHeader',
+    id: 'dashboard.EscrowFundsDialog.EscrowFundsDialogForm.fundsHeader',
     defaultMessage: 'Required funds',
   },
   textareaLabel: {
-    id: 'dashboard.EscrowFundsDialog.textareaLabel',
+    id: 'dashboard.EscrowFundsDialog.EscrowFundsDialogForm.textareaLabel',
     defaultMessage: `Explain why you're funding this expenditure (optional)`,
   },
   confirmText: {
-    id: 'dashboard.EscrowFundsDialog.confirmText',
+    id: 'dashboard.EscrowFundsDialog.EscrowFundsDialogForm.confirmText',
     defaultMessage: 'Create motion',
   },
   fullFund: {
-    id: 'dashboard.EscrowFundsDialog.fullFund',
+    id: 'dashboard.EscrowFundsDialog.EscrowFundsDialogForm.fullFund',
     defaultMessage: 'Total {name} to fund',
   },
   partialFund: {
-    id: 'dashboard.EscrowFundsDialog.partialFund',
+    id: 'dashboard.EscrowFundsDialog.EscrowFundsDialogForm.partialFund',
     defaultMessage: '{name} to fund',
   },
   total: {
-    id: 'dashboard.EscrowFundsDialog.total',
+    id: 'dashboard.EscrowFundsDialog.EscrowFundsDialogForm.total',
     defaultMessage: 'Total',
   },
   createDomain: {
-    id: 'dashboard.EscrowFundsDialog.creationTarget',
+    id: 'dashboard.EscrowFundsDialog.EscrowFundsDialogForm.createDomain',
     defaultMessage: 'Motion will be created in',
   },
 });
@@ -101,22 +103,38 @@ interface Props {
   colony: Colony;
   isForce: boolean;
   setIsForce: React.Dispatch<React.SetStateAction<boolean>>;
-  onSubmit: () => void;
+  onSubmitClick: () => void;
+  isVotingExtensionEnabled: boolean;
 }
 
 const EscrowFundsDialogForm = ({
   colony,
   isForce,
   setIsForce,
-  onSubmit,
-}: Props) => {
-  const { values } = useFormikContext<FormValues>();
+  onSubmitClick,
+  isVotingExtensionEnabled,
+  values,
+  handleSubmit,
+  isSubmitting,
+}: Props & FormikProps<FormValues>) => {
   const [domainID, setDomainID] = useState<number>();
   const { formatMessage } = useIntl();
+  const { walletAddress, username, ethereal } = useLoggedInUser();
+  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+
+  const hasRegisteredProfile = !!username && !ethereal;
+  const canCancelExpenditure = hasRegisteredProfile && hasRoot(allUserRoles);
+
+  const [userHasPermission] = useDialogActionPermissions(
+    colony.colonyAddress,
+    canCancelExpenditure,
+    isVotingExtensionEnabled,
+    isForce,
+  );
 
   useEffect(() => {
-    if (values.force !== isForce) {
-      setIsForce(values.force);
+    if (values.forceAction !== isForce) {
+      setIsForce(values.forceAction);
     }
   }, [isForce, setIsForce, values]);
 
@@ -204,7 +222,6 @@ const EscrowFundsDialogForm = ({
                 name={token.name || token.address}
               />
             </span>
-
             <Numeral
               unit={getTokenDecimalsWithFallback(token.decimals)}
               value={token.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount}
@@ -253,7 +270,6 @@ const EscrowFundsDialogForm = ({
                   />
                 )}
               </span>
-
               <span className={styles.icon}>
                 <TokenIcon
                   className={styles.tokenIcon}
@@ -261,7 +277,6 @@ const EscrowFundsDialogForm = ({
                   name={token.name || token.address}
                 />
               </span>
-
               <Numeral
                 unit={getTokenDecimalsWithFallback(token.decimals)}
                 value={token.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount}
@@ -291,27 +306,29 @@ const EscrowFundsDialogForm = ({
               showDescription={false}
             />
           </div>
-
-          <div className={styles.forceContainer}>
-            <div className={styles.margin}>
+          {canCancelExpenditure && isVotingExtensionEnabled && (
+            <div className={styles.toggleContainer}>
               <Toggle
                 label={{ id: 'label.force' }}
-                name="force"
+                name="forceAction"
                 appearance={{ theme: 'danger' }}
+                disabled={!userHasPermission || isSubmitting}
+                tooltipText={{ id: 'tooltip.forceAction' }}
+                tooltipPopperOptions={{
+                  placement: 'top-end',
+                  modifiers: [
+                    {
+                      name: 'offset',
+                      options: {
+                        offset: [-5, 6],
+                      },
+                    },
+                  ],
+                  strategy: 'fixed',
+                }}
               />
             </div>
-            <Tooltip
-              content={
-                <div className={styles.tooltip}>
-                  <FormattedMessage id="tooltip.forceAction" />
-                </div>
-              }
-              trigger="hover"
-              placement="top-end"
-            >
-              <Icon name="question-mark" className={styles.questionIcon} />
-            </Tooltip>
-          </div>
+          )}
         </DialogSection>
         <Heading
           appearance={{ size: 'medium', margin: 'none' }}
@@ -411,8 +428,8 @@ const EscrowFundsDialogForm = ({
           type="submit"
           text={MSG.confirmText}
           onClick={() => {
-            // onClick and close are temporary, only handleSubmit should stay here
-            onSubmit();
+            onSubmitClick();
+            handleSubmit();
           }}
           autoFocus
         />
