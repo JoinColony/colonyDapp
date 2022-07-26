@@ -1,12 +1,10 @@
-import { ReactNode, ReactElement } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { defineMessages, MessageDescriptor } from 'react-intl';
 import { ColonyRole, Extension } from '@colony/colony-js';
 import * as yup from 'yup';
 import toFinite from 'lodash/toFinite';
 
-import { CustomRadioProps } from '~core/Fields';
 import { Colony } from '~data/index';
-import { Address } from '~types/index';
 
 export interface ExtensionBodyProps {
   colony: Colony;
@@ -16,27 +14,19 @@ export enum ExtensionParamType {
   Input = 'Input',
   Radio = 'Radio',
   Textarea = 'Textarea',
-  ColonyPolicySelector = 'ColonyPolicySelector',
-  TokenSelector = 'TokenSelector',
 }
 
 export interface ExtensionInitParams {
   title: string | MessageDescriptor;
-  fieldName?: string | MessageDescriptor;
   description?: string | MessageDescriptor;
   defaultValue?: string | number;
   paramName: string;
   validation: object;
   type: ExtensionParamType;
-  options?: CustomRadioProps[];
-  disabled?: (props: any) => boolean;
   complementaryLabel?: 'hours' | 'periods' | 'percent';
-  tokenLabel?: 'tokenToBeSold' | 'purchaseToken';
-  orderNumber?: number;
 }
 
 export interface ExtensionData {
-  address?: Address;
   extensionId: Extension | 'Unknown';
   name: string | MessageDescriptor;
   header?: string | MessageDescriptor;
@@ -44,13 +34,11 @@ export interface ExtensionData {
   descriptionLong: string | MessageDescriptor;
   descriptionExtended?: string | MessageDescriptor;
   descriptionLinks?: ReactElement[];
-  tokenContractAddress?: (address: string) => ReactElement;
   info?: string | MessageDescriptor;
   currentVersion: number;
   createdAt: number;
   neededColonyPermissions: ColonyRole[];
   initializationParams?: ExtensionInitParams[];
-  extraInitParams?: ExtensionInitParams[];
   uninstallable: boolean;
   enabledExtensionBody?: (props: ExtensionBodyProps) => ReactNode;
 }

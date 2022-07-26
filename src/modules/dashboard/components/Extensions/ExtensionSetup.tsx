@@ -7,15 +7,8 @@ import { Extension } from '@colony/colony-js';
 import Decimal from 'decimal.js';
 
 import { IconButton, ActionButton } from '~core/Button';
-import {
-  Input,
-  ActionForm,
-  Textarea,
-  TokenSymbolSelector,
-  InputLabel,
-} from '~core/Fields';
+import { Input, ActionForm, Textarea } from '~core/Fields';
 import Heading from '~core/Heading';
-import MaskedAddress from '~core/MaskedAddress';
 
 import { Colony, ColonyExtension } from '~data/index';
 
@@ -86,14 +79,8 @@ interface Props {
   installedExtension: ColonyExtension;
 }
 const ExtensionSetup = ({
-  colony: { colonyAddress, tokens },
-  extension: {
-    initializationParams,
-    extraInitParams,
-    descriptionExtended,
-    descriptionLinks,
-    tokenContractAddress,
-  },
+  colony: { colonyAddress },
+  extension: { initializationParams },
   installedExtension,
 }: Props) => {
   const { colonyName, extensionId } = useParams<{
@@ -101,11 +88,6 @@ const ExtensionSetup = ({
     extensionId: string;
   }>();
   const history = useHistory();
-
-  const getToken = useCallback(
-    (address) => tokens.find((token) => token.address === address),
-    [tokens],
-  );
 
   const handleFormSuccess = useCallback(() => {
     history.replace(`/colony/${colonyName}/extensions/${extensionId}`);
@@ -181,16 +163,7 @@ const ExtensionSetup = ({
 
   const displayParams = (params, formikBag, isExtraParams) =>
     params.map(
-      ({
-        paramName,
-        title,
-        fieldName,
-        description,
-        type,
-        disabled,
-        complementaryLabel,
-        tokenLabel,
-      }) => (
+      ({ paramName, title, description, type, complementaryLabel }) => (
         <div
           key={paramName}
           className={isExtraParams ? styles.extraParams : ''}
@@ -224,13 +197,9 @@ const ExtensionSetup = ({
                   }}
                 />
               </p>
-              {(complementaryLabel || tokenLabel) && (
+              {complementaryLabel && (
                 <span className={styles.complementaryLabel}>
-                  {complementaryLabel ? (
-                    <FormattedMessage {...MSG[complementaryLabel]} />
-                  ) : (
-                    getToken(formikBag.values[tokenLabel])?.symbol
-                  )}
+                  <FormattedMessage {...MSG[complementaryLabel]} />
                 </span>
               )}
             </div>
@@ -241,10 +210,7 @@ const ExtensionSetup = ({
                 appearance={{ colorSchema: 'grey' }}
                 label={title}
                 name={paramName}
-                disabled={
-                  (disabled && disabled(formikBag.values)) ||
-                  formikBag.isSubmitting
-                }
+                disabled={formikBag.isSubmitting}
                 extra={
                   description && (
                     <p className={styles.textAreaDescription}>
@@ -253,49 +219,6 @@ const ExtensionSetup = ({
                   )
                 }
               />
-            </div>
-          )}
-          {type === ExtensionParamType.TokenSelector && (
-            <div>
-              <InputLabel
-                label={title}
-                appearance={{
-                  theme: 'minimal',
-                  size: 'medium',
-                }}
-              />
-              <div className={styles.tokenSelectorContainer}>
-                {fieldName && (
-                  <p>
-                    <FormattedMessage {...fieldName} />
-                  </p>
-                )}
-                <TokenSymbolSelector
-                  tokens={tokens}
-                  name={paramName}
-                  appearance={{ alignOptions: 'right', theme: 'grey' }}
-                  elementOnly
-                  label={paramName}
-                  disabled={formikBag.isSubmitting}
-                />
-              </div>
-              <div className={styles.tokenAddessLink}>
-                {tokenContractAddress &&
-                  tokenContractAddress(formikBag.values[paramName])}
-                <div>
-                  <MaskedAddress address={formikBag.values[paramName]} full />
-                </div>
-              </div>
-              {description && (
-                <p className={styles.inputsDescription}>
-                  <FormattedMessage {...description} />
-                </p>
-              )}
-              {formikBag?.status?.[`${paramName}Error`] && (
-                <p className={styles.tokenErrors}>
-                  <FormattedMessage {...MSG.tokenValidationError} />
-                </p>
-              )}
             </div>
           )}
         </div>
@@ -323,31 +246,7 @@ const ExtensionSetup = ({
             appearance={{ size: 'medium', margin: 'none' }}
             text={MSG.title}
           />
-          <div
-            className={descriptionExtended ? styles.extensionDescription : ''}
-          >
-            <FormattedMessage {...MSG.description} />
-          </div>
-          {descriptionExtended && (
-            <div className={styles.descriptionExtended}>
-              <FormattedMessage
-                {...descriptionExtended}
-                values={{
-                  link1: descriptionLinks?.[1],
-                  link2: descriptionLinks?.[2],
-                }}
-              />
-            </div>
-          )}
-          {extraInitParams && (
-            <div className={styles.inputContainer}>
-              {displayParams(extraInitParams, formikBag, true)}
-              <Heading
-                appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
-                text={MSG.initParams}
-              />
-            </div>
-          )}
+          <FormattedMessage {...MSG.description} />
           <div className={styles.inputContainer}>
             {displayParams(
               initializationParams,
@@ -355,7 +254,6 @@ const ExtensionSetup = ({
               false,
             )}
           </div>
-          {extraInitParams && <div className={styles.divider} />}
           <IconButton
             appearance={{ theme: 'primary', size: 'large' }}
             onClick={() => handleSubmit()}
