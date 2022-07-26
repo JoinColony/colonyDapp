@@ -197,7 +197,6 @@ const ExpenditurePage = ({ match }: Props) => {
 
   const [isFormEditable, setFormEditable] = useState(true);
   const [formValues, setFormValues] = useState<ValuesType>();
-  const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStateId, setActiveStateId] = useState<string>();
   const sidebarRef = useRef<HTMLElement>(null);
 
@@ -235,7 +234,6 @@ const ExpenditurePage = ({ match }: Props) => {
   }, [colonyData, formValues, loggedInUser]);
 
   const handleSubmit = useCallback((values) => {
-    setShouldValidate(true);
     setActiveStateId(Stage.Draft);
 
     if (values) {
@@ -307,20 +305,11 @@ const ExpenditurePage = ({ match }: Props) => {
 
   const { expenditure, filteredDomainId } = formValues || {};
 
-  const handleValidate = useCallback(() => {
-    if (!shouldValidate) {
-      setShouldValidate(true);
-    }
-  }, [shouldValidate]);
-
   return isFormEditable ? (
     <Formik
       initialValues={initialValuesData}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
-      validateOnBlur={shouldValidate}
-      validateOnChange={shouldValidate}
-      validate={handleValidate}
       enableReinitialize
     >
       <div className={getMainClasses({}, styles)}>

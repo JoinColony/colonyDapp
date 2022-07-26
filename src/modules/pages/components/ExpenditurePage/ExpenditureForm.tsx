@@ -11,6 +11,7 @@ import { Colony } from '~data/index';
 
 import { ValuesType } from './ExpenditurePage';
 import styles from './ExpenditurePage.css';
+import { ExpenditureTypes } from './types';
 
 const MSG = defineMessages({
   submit: {
@@ -53,11 +54,11 @@ const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
   const secondFormSection = useMemo(() => {
     const expenditureType = values.expenditure;
     switch (expenditureType) {
-      case 'advanced': {
-        return <Payments {...{ colony, sidebarRef }} />;
+      case ExpenditureTypes.Advanced: {
+        return <Payments sidebarRef={sidebarRef} colony={colony} />;
       }
-      case 'split': {
-        return <Split {...{ colony, sidebarRef }} />;
+      case ExpenditureTypes.Split: {
+        return <Split sidebarRef={sidebarRef} colony={colony} />;
       }
       default:
         return null;

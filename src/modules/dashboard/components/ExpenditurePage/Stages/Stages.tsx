@@ -3,19 +3,21 @@ import { useFormikContext } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import copyToClipboard from 'copy-to-clipboard';
 import classNames from 'classnames';
+import { isEmpty } from 'lodash';
 
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import DeleteDraftDialog from '../../Dialogs/DeleteDraftDialog/DeleteDraftDialog';
-import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
-import StageItem from './StageItem';
 import {
   InitialValuesType,
   State,
   ValuesType,
 } from '~pages/ExpenditurePage/ExpenditurePage';
+
+import DeleteDraftDialog from '../../Dialogs/DeleteDraftDialog/DeleteDraftDialog';
+import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
+import StageItem from './StageItem';
 import styles from './Stages.css';
 import { Stage } from './constants';
 
@@ -73,7 +75,7 @@ interface Props {
 }
 
 const Stages = ({ states, activeStateId }: Props) => {
-  const { values, handleSubmit, validateForm, resetForm } =
+  const { values, handleSubmit, errors, dirty, resetForm } =
     useFormikContext<ValuesType>() || {};
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
@@ -82,11 +84,8 @@ const Stages = ({ states, activeStateId }: Props) => {
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
 
   const handleSaveDraft = useCallback(async () => {
-    const errors = await validateForm(values);
-    const hasErrors = Object.keys(errors)?.length;
-
     return (
-      !hasErrors &&
+      isEmpty(errors) &&
       openDraftConfirmDialog({
         onClick: () => {
           handleSubmit(values as any);
@@ -94,7 +93,7 @@ const Stages = ({ states, activeStateId }: Props) => {
         isVotingExtensionEnabled: true,
       })
     );
-  }, [handleSubmit, openDraftConfirmDialog, validateForm, values]);
+  }, [errors, handleSubmit, openDraftConfirmDialog, values]);
 
   const handleDeleteDraft = () =>
     openDeleteDraftDialog({
@@ -148,7 +147,11 @@ const Stages = ({ states, activeStateId }: Props) => {
                   </div>
                 </Tooltip>
               </Button>
-              <Button onClick={handleSaveDraft} style={buttonStyles}>
+              <Button
+                onClick={handleSaveDraft}
+                style={buttonStyles}
+                disabled={!isEmpty(errors) || !dirty}
+              >
                 <FormattedMessage {...MSG.submitDraft} />
               </Button>
             </>
