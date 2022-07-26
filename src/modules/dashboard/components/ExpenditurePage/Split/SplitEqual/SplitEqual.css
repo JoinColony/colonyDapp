@@ -84,7 +84,7 @@
 }
 
 .inputContainer input {
-  padding: 20px 0 4px;
+  padding: 20px 0 4px 32px;
   height: 42px;
   font-size: var(--size-normal);
   color: var(--dark);
