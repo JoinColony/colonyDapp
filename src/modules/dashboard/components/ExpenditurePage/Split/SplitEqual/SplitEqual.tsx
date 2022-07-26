@@ -91,6 +91,16 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
     return isNaN(result) ? 0 : result;
   }, [amount, recipientsCount]);
 
+  useEffect(() => {
+    setFieldValue(
+      'split.recipients',
+      recipients.map((recipient) => {
+        return { ...recipient, amount: calculatedAmount };
+      }),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [calculatedAmount, setFieldValue]);
+
   return (
     <>
       <FormSection appearance={{ border: 'bottom' }}>
