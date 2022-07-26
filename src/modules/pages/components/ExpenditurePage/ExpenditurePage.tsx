@@ -158,7 +158,14 @@ const validationSchema = yup.object().shape({
       }),
       recipients: yup
         .array()
-        .of(yup.object().shape({ recipient: yup.object().required() })),
+        .of(
+          yup.object().shape({
+            user: yup.object().required(),
+            amount: yup.number().required(),
+          }),
+        )
+        .min(2)
+        .required(),
     }),
   }),
 });
@@ -171,7 +178,6 @@ export interface State {
   buttonTooltip?: string | MessageDescriptor;
 }
 
-
 const initialValues = {
   expenditure: 'advanced',
   recipients: [newRecipient],
@@ -179,7 +185,10 @@ const initialValues = {
   owner: undefined,
   title: undefined,
   description: undefined,
-  split: { unequal: false, recipients: [undefined] },
+  split: {
+    unequal: false,
+    recipients: [{ user: undefined, amount: undefined }],
+  },
 };
 
 export type InitialValuesType = typeof initialValues;

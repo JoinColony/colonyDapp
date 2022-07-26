@@ -1,5 +1,5 @@
 import { FieldArray, useField, useFormikContext } from 'formik';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 
 import { FormSection, Input, TokenSymbolSelector } from '~core/Fields';
@@ -49,9 +49,9 @@ interface Props {
 const SplitEqual = ({ colony, sidebarRef }: Props) => {
   const { formatMessage } = useIntl();
   const { setFieldValue } = useFormikContext<ValuesType>();
-  const [, { value: recipients }] = useField<{ recipient: AnyUser }[]>(
-    'split.recipients',
-  );
+  const [, { value: recipients }] = useField<
+    { user?: AnyUser; amount?: number }[]
+  >('split.recipients');
   const { tokens: colonyTokens } = colony || {};
   const [, { value: amount }] = useField<{
     value: string;
@@ -65,9 +65,17 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
     variables: { colonyAddress: colonyAddress || '' },
   });
 
+  const selectedToken = useMemo(
+    () =>
+      colonyTokens.find(
+        (colonyToken) => colonyToken.address === amount.tokenAddress,
+      ),
+    [colonyTokens, amount.tokenAddress],
+  );
+
   const recipientsCount = useMemo(() => {
     return (
-      recipients?.filter((recipient) => recipient?.recipient?.id !== undefined)
+      recipients?.filter((recipient) => recipient?.user?.id !== undefined)
         .length || 0
     );
   }, [recipients]);
@@ -75,6 +83,16 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
   const calculatedAmount = useMemo(() => {
     return !amount.value ? 0 : Number(amount?.value) / (recipientsCount || 1);
   }, [amount, recipientsCount]);
+
+  useEffect(() => {
+    setFieldValue(
+      'split.recipients',
+      recipients.map((recipient) => {
+        return { ...recipient, amount: calculatedAmount };
+      }),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [calculatedAmount, setFieldValue]);
 
   return (
     <>
@@ -91,12 +109,15 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
               placeholder="Not set"
               formattingOptions={{
                 numeral: true,
-                numeralDecimalScale: 10,
+                numeralDecimalScale: getTokenDecimalsWithFallback(
+                  selectedToken && selectedToken.decimals,
+                ),
+                numeralPositiveOnly: true,
               }}
               maxButtonParams={{
                 setFieldValue,
                 // mock, needs to be changed to the actual value
-                maxAmount: '0',
+                maxAmount: '100',
                 fieldName: 'split.amount.value',
               }}
             />
@@ -144,14 +165,17 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
           render={({ push, remove }) => (
             <>
               <div className={styles.recipientsWrapper}>
-                {recipients?.map((_, index) => {
+                {recipients?.map((recipient, index) => {
                   return (
-                    <div className={styles.recipientWrapper}>
+                    <div
+                      className={styles.recipientWrapper}
+                      key={recipient?.user?.id || index}
+                    >
                       <div>
                         <UserPickerWithSearch
                           data={colonyMembers?.subscribedUsers || []}
                           label=""
-                          name={`split.recipients[${index}].recipient`}
+                          name={`split.recipients[${index}].user`}
                           filter={filterUserSelection}
                           renderAvatar={supRenderAvatar}
                           placeholder="Search"
