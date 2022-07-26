@@ -24,7 +24,6 @@ import {
   getTxChannel,
 } from '../../../core/sagas';
 import { ipfsUpload } from '../../../core/sagas/ipfs';
-
 import {
   transactionReady,
   transactionPending,
