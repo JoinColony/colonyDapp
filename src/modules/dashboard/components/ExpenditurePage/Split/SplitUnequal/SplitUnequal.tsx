@@ -188,6 +188,9 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
                         boxShadow: styles.boxShadow,
                         border: styles.border,
                       }}
+                      dotStyle={{
+                        backgroundColor: 'transparent',
+                      }}
                     />
                     <span className={styles.percent}>
                       {recipients[index].amount}%
