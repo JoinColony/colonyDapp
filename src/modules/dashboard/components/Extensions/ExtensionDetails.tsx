@@ -363,27 +363,35 @@ const ExtensionDetails = ({
                     }}
                     text={extension.header || extension.name}
                   />
-                  <FormattedMessage
-                    {...extension.descriptionLong}
-                    values={{
-                      h4: (chunks) => (
-                        <Heading
-                          tagName="h4"
-                          appearance={{ size: 'medium', margin: 'small' }}
-                          text={chunks}
-                        />
-                      ),
-                      link0: extension.descriptionLinks?.[0],
-                    }}
-                  />
+                  {typeof extension.descriptionLong === 'object' ? (
+                    <FormattedMessage
+                      {...extension.descriptionLong}
+                      values={{
+                        h4: (chunks) => (
+                          <Heading
+                            tagName="h4"
+                            appearance={{ size: 'medium', margin: 'small' }}
+                            text={chunks}
+                          />
+                        ),
+                        link0: extension.descriptionLinks?.[0],
+                      }}
+                    />
+                  ) : (
+                    extension.descriptionLong
+                  )}
                   {extension.info && (
                     <div className={styles.extensionSubtext}>
-                      <FormattedMessage
-                        {...extension.info}
-                        values={{
-                          link0: extension.descriptionLinks?.[0],
-                        }}
-                      />
+                      {typeof extension.info === 'object' ? (
+                        <FormattedMessage
+                          {...extension.info}
+                          values={{
+                            link0: extension.descriptionLinks?.[0],
+                          }}
+                        />
+                      ) : (
+                        extension.info
+                      )}
                     </div>
                   )}
                   {extensionEnabled &&
