@@ -147,44 +147,46 @@ const SafeTransactionPreview = ({ colony: { tokens }, values }: Props) => {
         </div>
       </DialogSection>
       <DialogSection>
-        {values.transactions[0].transactionType !== '' && (
-          <div className={styles.transactionTitle}>
-            1.{' '}
-            <FormattedMessage
-              {...ConstantsMSG[values.transactions[0].transactionType]}
-            />
-          </div>
-        )}
-        <DetailsItem
-          label={MSG.safe}
-          value={
-            <AddressDetailsView
-              item={(values.safe as never) as AnyUser}
-              isSafeItem
-            />
-          }
-        />
-        {values.transactions[0].transactionType !==
-          TransactionTypes.CONTRACT_INTERACTION && (
+        <div className={styles.transactionDetailsSection}>
+          {values.transactions[0].transactionType !== '' && (
+            <div className={styles.transactionTitle}>
+              1.{' '}
+              <FormattedMessage
+                {...ConstantsMSG[values.transactions[0].transactionType]}
+              />
+            </div>
+          )}
           <DetailsItem
-            label={MSG.to}
+            label={MSG.safe}
             value={
               <AddressDetailsView
-                item={(values.transactions[0].recipient as never) as AnyUser}
-                isSafeItem={false}
+                item={(values.safe as never) as AnyUser}
+                isSafeItem
               />
             }
           />
-        )}
-        {transactionDetails?.map(({ key, label, value }) => (
-          <DetailsItem
-            key={key}
-            label={label}
-            value={value(values.transactions[0][key], token)}
-          />
-        ))}
+          {values.transactions[0].transactionType !==
+            TransactionTypes.CONTRACT_INTERACTION && (
+            <DetailsItem
+              label={MSG.to}
+              value={
+                <AddressDetailsView
+                  item={(values.transactions[0].recipient as never) as AnyUser}
+                  isSafeItem={false}
+                />
+              }
+            />
+          )}
+          {transactionDetails?.map(({ key, label, value }) => (
+            <DetailsItem
+              key={key}
+              label={label}
+              value={value(values.transactions[0][key], token)}
+            />
+          ))}
+        </div>
       </DialogSection>
-      <DialogSection>
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
         <Input
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
           label={MSG.transactionsTitle}

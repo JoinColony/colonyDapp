@@ -15,4 +15,5 @@ export const transactionHeadingOpen: string;
 export const transactionTitle: string;
 export const nftValue: string;
 export const tokenAmount: string;
+export const transactionDetailsSection: string;
 export const rawTransactionValues: string;
