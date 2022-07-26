@@ -37,10 +37,9 @@ import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog'
 
 import { findDifferences, updateValues, setClaimDate } from './utils';
 import ExpenditureForm from './ExpenditureForm';
-import { ValuesType } from './types';
+import { ExpenditureTypes, ValuesType } from './types';
 import LockedSidebar from './LockedSidebar';
 import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
-import { ExpenditureTypes } from './types';
 import styles from './ExpenditurePage.css';
 
 const displayName = 'pages.ExpenditurePage';

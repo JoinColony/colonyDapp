@@ -28,7 +28,7 @@ export interface ValuesType {
   split?: {
     unequal: boolean;
     amount: { amount?: string; tokenAddress?: string };
-    recipients?: { recipient: AnyUser }[];
+    recipients?: { user: AnyUser; amount: number }[];
   };
 }
 
