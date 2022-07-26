@@ -100,7 +100,7 @@ interface Props {
   isVotingExtensionEnabled: boolean;
   back?: () => void;
   showPreview: boolean;
-  handleSHowPreview: (showPreview: boolean) => void;
+  handleShowPreview: (showPreview: boolean) => void;
 }
 
 const renderAvatar = (address: string, item) => (
@@ -124,7 +124,7 @@ const GnosisControlSafeForm = ({
   isVotingExtensionEnabled,
   setFieldValue,
   showPreview,
-  handleSHowPreview,
+  handleShowPreview,
 }: Props & FormikProps<FormValues>) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState([true]);
   const [hasTitle, setHasTitle] = useState(true);
@@ -371,13 +371,13 @@ const GnosisControlSafeForm = ({
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
-          onClick={showPreview ? () => handleSHowPreview(!showPreview) : back}
+          onClick={showPreview ? () => handleShowPreview(!showPreview) : back}
           text={{ id: 'button.back' }}
         />
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() =>
-            showPreview ? handleSubmit() : handleSHowPreview(!showPreview)
+            showPreview ? handleSubmit() : handleShowPreview(!showPreview)
           }
           text={MSG.buttonCreateTransaction}
           loading={isSubmitting}

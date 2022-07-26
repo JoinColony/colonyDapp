@@ -20,17 +20,17 @@ const MSG = defineMessages({
     id: 'dashboard.GnosisControlSafeDialog.SafeTransactionPreview.previewTitle',
     defaultMessage: 'Confirm transaction details',
   },
-  transactionsSetTitle: {
-    id: `dashboard.GnosisControlSafeDialog.SafeTransactionPreview.transactionsSetTitle`,
-    defaultMessage: 'Title of the set of all the arbitrary transactions',
+  transactionsTitle: {
+    id: `dashboard.GnosisControlSafeDialog.SafeTransactionPreview.transactionsTitle`,
+    defaultMessage: 'Title',
   },
-  explainWhy: {
-    id: 'dashboard.GnosisControlSafeDialog.SafeTransactionPreview.explainWhy',
-    defaultMessage: `Explain why you’re making arbitrary transaction (optional)`,
+  description: {
+    id: 'dashboard.GnosisControlSafeDialog.SafeTransactionPreview.description',
+    defaultMessage: 'Description (optional)',
   },
-  targetContract: {
-    id: `dashboard.GnosisControlSafeDialog.SafeTransactionPreview.targetContract`,
-    defaultMessage: 'Target contract',
+  safe: {
+    id: `dashboard.GnosisControlSafeDialog.SafeTransactionPreview.safe`,
+    defaultMessage: 'Safe',
   },
   function: {
     id: 'dashboard.GnosisControlSafeDialog.SafeTransactionPreview.function',
@@ -156,7 +156,7 @@ const SafeTransactionPreview = ({ colony: { tokens }, values }: Props) => {
           </div>
         )}
         <DetailsItem
-          label={MSG.targetContract}
+          label={MSG.safe}
           value={
             <AddressDetailsView
               item={(values.safe as never) as AnyUser}
@@ -187,14 +187,14 @@ const SafeTransactionPreview = ({ colony: { tokens }, values }: Props) => {
       <DialogSection>
         <Input
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
-          label={MSG.transactionsSetTitle}
+          label={MSG.transactionsTitle}
           name="transactionSetTitle"
           disabled={false}
           placeholder=""
         />
       </DialogSection>
       <DialogSection>
-        <Annotations label={MSG.explainWhy} name="annotation" />
+        <Annotations label={MSG.description} name="annotation" />
       </DialogSection>
     </>
   );
