@@ -1,5 +1,5 @@
 import { FieldArray, useField, useFormikContext } from 'formik';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import Decimal from 'decimal.js';
 
@@ -13,10 +13,10 @@ import Icon from '~core/Icon';
 import Slider from '~core/Slider';
 import Button from '~core/Button';
 import TokenIcon from '~dashboard/HookedTokenIcon';
-
-import styles from './SplitUnequal.css';
 import Numeral from '~core/Numeral';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
+
+import styles from './SplitUnequal.css';
 
 const MSG = defineMessages({
   reserve: {
@@ -50,10 +50,10 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
   const { tokens: colonyTokens } = colony || {};
 
   const [, { value: recipients }] = useField<
-    { user: AnyUser; amount: number }[]
+    { user: AnyUser; amount: number; percent: number }[]
   >('split.recipients');
   const [, { value: amount }] = useField<{
-    amount?: string;
+    value?: string;
     tokenAddress?: string;
   }>('split.amount');
 
@@ -71,16 +71,28 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
 
   const sum = useMemo(() => {
     return recipients.reduce((acc, recipient) => {
-      return acc + Number(recipient.amount);
+      return acc + Number(recipient.percent);
     }, 0);
   }, [recipients]);
 
   const remainingStake = useMemo(() => {
     const limitForRecipient = recipients.map((recipient) =>
-      new Decimal(100 - (sum - recipient.amount)).div(100),
+      new Decimal(100 - (sum - recipient.percent)).div(100),
     );
     return limitForRecipient;
   }, [recipients, sum]);
+
+  useEffect(() => {
+    setFieldValue(
+      'split.recipients',
+      recipients.map((recipient) => {
+        const userAmount =
+          amount.value && (recipient.percent / 100) * Number(amount.value);
+        return { ...recipient, amount: userAmount };
+      }),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [amount.value, setFieldValue, sum]);
 
   return (
     <>
@@ -163,8 +175,8 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
                   </div>
                   <div className={styles.sliderWrapper}>
                     <Slider
-                      value={recipients?.[index].amount || 0}
-                      name={`split.recipients[${index}].amount`}
+                      value={recipients?.[index].percent || 0}
+                      name={`split.recipients[${index}].percent`}
                       step={1}
                       min={0}
                       max={100}
@@ -193,7 +205,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
                       }}
                     />
                     <span className={styles.percent}>
-                      {recipients[index].amount}%
+                      {recipients[index].percent}%
                     </span>
                   </div>
                   {token && amount && (
@@ -206,7 +218,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
                         />
                         <Numeral
                           unit={getTokenDecimalsWithFallback(0)}
-                          value={amount.amount || 0}
+                          value={recipient.amount || 0}
                         />{' '}
                         {token.symbol}
                       </div>
@@ -216,7 +228,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
               );
             })}
             <Button
-              onClick={() => push({ user: undefined, amount: 0 })}
+              onClick={() => push({ user: undefined, amount: 0, percent: 0 })}
               appearance={{ theme: 'blue' }}
             >
               <div className={styles.addRecipientLabel}>

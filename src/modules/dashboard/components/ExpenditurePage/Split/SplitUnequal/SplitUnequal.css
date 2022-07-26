@@ -6,7 +6,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 15px 0 20px;
+  margin: 13px 0 20px;
 }
 
 .recipientWrapper:last-of-type {
@@ -46,7 +46,7 @@
 .sliderWrapper {
   display: grid;
   align-items: center;
-  margin: 22px 0 20px;
+  margin: 20px 0;
   grid-template-columns: 280px 40px;
   column-gap: 10px;
 }
@@ -89,7 +89,6 @@
   background-color: color-mod(var(--golden) alpha(85%));
 }
 
-/* create separete component from this one  */
 .valueContainer {
   display: flex;
   align-items: flex-start;
@@ -144,6 +143,7 @@
 .amountWrapper {
   display: flex;
   align-items: center;
+  margin-bottom: 16px;
 }
 
 .value {

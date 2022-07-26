@@ -128,7 +128,7 @@ const validationSchema = yup.object().shape({
         yup.object().shape({
           recipient: yup
             .object()
-            .shape({ user: yup.object(), amount: yup.number() })
+            .shape({ user: yup.object().required(), amount: yup.number() })
             .required(),
         }),
       ),
@@ -154,7 +154,7 @@ export interface ValuesType {
   split: {
     unequal: boolean;
     amount: { amount?: string; tokenAddress?: string };
-    recipients?: { user: AnyUser; amount: number }[];
+    recipients?: { user: AnyUser; amount: number; percent?: number }[];
   };
 }
 
@@ -167,7 +167,7 @@ const initialValues = {
   description: undefined,
   split: {
     unequal: true,
-    recipients: [{ user: undefined, amount: 0 }],
+    recipients: [{ user: undefined, amount: 0, percent: 0 }],
   },
 };
 
@@ -214,6 +214,12 @@ const ExpenditurePage = ({ match }: Props) => {
             ],
           },
         ],
+        split: {
+          ...initialValues.split,
+          amount: {
+            tokenAddress: colonyData?.processedColony.nativeTokenAddress,
+          },
+        },
       }
     );
   }, [colonyData, formValues, loggedInUser]);
