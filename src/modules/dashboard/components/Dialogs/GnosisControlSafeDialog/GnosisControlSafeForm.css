@@ -144,9 +144,12 @@
   border-radius: 0;
 }
 
+.transactionDetailsSection {
+  padding-bottom: 20px;
+}
+
 .rawTransactionValues {
   padding: 10px 0;
   max-width: 270px;
-  font-weight: var(--weight-normal);
   overflow-wrap: anywhere;
 }
