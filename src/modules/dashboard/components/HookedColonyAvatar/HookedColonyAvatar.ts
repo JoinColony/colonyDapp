@@ -2,6 +2,7 @@ import {
   getColonyAvatarImage,
   getEventMetadataVersion,
 } from '@colony/colony-event-metadata-parser';
+
 import ColonyAvatar, { Props as ColonyAvatarProps } from '~core/ColonyAvatar';
 import { useDataFetcher } from '~utils/hooks';
 import { withHooks } from '~utils/hoc';

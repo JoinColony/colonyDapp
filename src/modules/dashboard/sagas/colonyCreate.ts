@@ -7,9 +7,9 @@ import {
   ClientType,
   ROOT_DOMAIN_ID,
 } from '@colony/colony-js';
-import { poll } from 'ethers/utils';
-
 import { getStringForMetadataColony } from '@colony/colony-event-metadata-parser';
+
+import { poll } from 'ethers/utils';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import {
@@ -42,7 +42,6 @@ import {
 } from '../../core/actionCreators';
 import { createTransaction, createTransactionChannels } from '../../core/sagas';
 import { ipfsUpload } from '../../core/sagas/ipfs';
-
 import { createUserWithSecondAttempt } from '../../users/sagas/utils';
 import { log } from '~utils/debug';
 
