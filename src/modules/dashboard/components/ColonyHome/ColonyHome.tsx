@@ -70,6 +70,8 @@ const ColonyHome = ({ match, location }: Props) => {
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
     pollInterval: 5000,
+    fetchPolicy: 'network-only',
+    nextFetchPolicy: 'cache-first',
   });
   if (error) console.error(error);
 

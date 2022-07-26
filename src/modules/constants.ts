@@ -240,3 +240,5 @@ export const SMALL_TOKEN_AMOUNT_FORMAT = '0.00000...';
 // to identify the type of motion as a Decision
 export const ACTION_DECISION_MOTION_CODE = '0x12345678';
 export const LOCAL_STORAGE_DECISION_KEY = 'decision';
+
+export const SAFE_ALREADY_EXISTS = 'alreadyExists';
