@@ -175,7 +175,7 @@ const GnosisControlSafeDialog = ({
             safes={safes}
             isVotingExtensionEnabled={isVotingExtensionEnabled}
             showPreview={showPreview}
-            handleSHowPreview={setShowPreview}
+            handleShowPreview={setShowPreview}
           />
         </Dialog>
       )}
