@@ -12,8 +12,11 @@ import { supRenderAvatar } from '~dashboard/ExpenditurePage/Recipient/Recipient'
 import Icon from '~core/Icon';
 import Slider from '~core/Slider';
 import Button from '~core/Button';
+import TokenIcon from '~dashboard/HookedTokenIcon';
 
 import styles from './SplitUnequal.css';
+import Numeral from '~core/Numeral';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 const MSG = defineMessages({
   reserve: {
@@ -42,30 +45,42 @@ interface Props {
 }
 
 const SplitUnequal = ({ colony, sidebarRef }: Props) => {
-  const { setFieldValue, values } = useFormikContext<ValuesType>();
+  const { setFieldValue } = useFormikContext<ValuesType>();
 
   const { tokens: colonyTokens } = colony || {};
-  const reservedPercentage = 75;
 
   const [, { value: recipients }] = useField<
     { user: AnyUser; amount: number }[]
   >('split.recipients');
+  const [, { value: amount }] = useField<{
+    amount?: string;
+    tokenAddress?: string;
+  }>('split.amount');
+
+  const token = useMemo(() => {
+    return colonyTokens?.find(
+      (tokenItem) =>
+        amount?.tokenAddress && tokenItem.address === amount?.tokenAddress,
+    );
+  }, [amount, colonyTokens]);
 
   const { colonyAddress } = colony || {};
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress: colonyAddress || '' },
   });
 
-  const remainingStake = useMemo(() => {
-    const sum = recipients.reduce((acc, recipient) => {
+  const sum = useMemo(() => {
+    return recipients.reduce((acc, recipient) => {
       return acc + Number(recipient.amount);
     }, 0);
+  }, [recipients]);
 
+  const remainingStake = useMemo(() => {
     const limitForRecipient = recipients.map((recipient) =>
       new Decimal(100 - (sum - recipient.amount)).div(100),
     );
     return limitForRecipient;
-  }, [recipients]);
+  }, [recipients, sum]);
 
   return (
     <>
@@ -111,10 +126,10 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
           <div className={styles.reserveBar}>
             <div
               className={styles.reserveIndicator}
-              style={{ width: `${reservedPercentage}%` }}
+              style={{ width: `${sum}%` }}
             />
           </div>
-          <span className={styles.percent}>{reservedPercentage}%</span>
+          <span className={styles.percent}>{sum}%</span>
         </div>
       </FormSection>
       <FieldArray
@@ -148,7 +163,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
                   </div>
                   <div className={styles.sliderWrapper}>
                     <Slider
-                      value={values?.split?.recipients?.[index].amount || 0}
+                      value={recipients?.[index].amount || 0}
                       name={`split.recipients[${index}].amount`}
                       step={1}
                       min={0}
@@ -178,6 +193,22 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
                       {recipients[index].amount}%
                     </span>
                   </div>
+                  {token && amount && (
+                    <div className={styles.amountWrapper}>
+                      <div className={styles.value}>
+                        <TokenIcon
+                          className={styles.tokenIcon}
+                          token={token}
+                          name={token.name || token.address}
+                        />
+                        <Numeral
+                          unit={getTokenDecimalsWithFallback(0)}
+                          value={amount.amount || 0}
+                        />{' '}
+                        {token.symbol}
+                      </div>
+                    </div>
+                  )}
                 </FormSection>
               );
             })}

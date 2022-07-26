@@ -15,3 +15,6 @@ export const valueContainer: string;
 export const container: string;
 export const inputContainer: string;
 export const tokenWrapper: string;
+export const amountWrapper: string;
+export const value: string;
+export const tokenIcon: string;
