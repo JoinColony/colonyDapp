@@ -7,6 +7,7 @@ import {
   ColonyFromNameDocument,
   ColonyFromNameQuery,
   ColonyFromNameQueryVariables,
+  ColonySafe,
   SubgraphColonyDocument,
   SubgraphColonyQuery,
   SubgraphColonyQueryVariables,
@@ -119,8 +120,11 @@ function* removeExistingSafesAction({
 
     const colonyMetadata = JSON.parse(currentMetadata);
 
-    const updatedColonySafes = colonyMetadata.colonySafes.filter((safe) =>
-      safeAddresses.find((safeAddress) => safeAddress !== safe.contractAddress),
+    const updatedColonySafes = colonyMetadata.colonySafes.filter(
+      (safe: ColonySafe) =>
+        !safeAddresses.some(
+          (safeAddress) => safeAddress === safe.contractAddress,
+        ),
     );
     const updatedColonyMetadata = {
       ...colonyMetadata,
