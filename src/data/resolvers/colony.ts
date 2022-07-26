@@ -68,7 +68,6 @@ import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { getAllUserRolesForDomain } from '~modules/transformers';
 
 import { getToken } from './token';
-
 import {
   getColonyFundsClaimedTransfers,
   getPayoutClaimedTransfers,

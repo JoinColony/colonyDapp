@@ -1,6 +1,7 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType } from '@colony/colony-js';
 import { getStringForMetadataAnnotation } from '@colony/colony-event-metadata-parser';
+
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
   ProcessedColonyQuery,
