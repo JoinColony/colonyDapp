@@ -1,5 +1,6 @@
 import { call } from 'redux-saga/effects';
 import { getStringForMetadataAnnotation } from '@colony/colony-event-metadata-parser';
+
 import { ipfsUpload } from '../../../core/sagas/ipfs';
 
 export function* uploadIfpsAnnotation(annotationMessage: string) {

@@ -54,7 +54,6 @@ import { Address } from '~types/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 
 import { getToken } from './token';
-
 import {
   getColonyFundsClaimedTransfers,
   getPayoutClaimedTransfers,
