@@ -7,9 +7,9 @@ import {
   ClientType,
   ROOT_DOMAIN_ID,
 } from '@colony/colony-js';
-import { poll } from 'ethers/utils';
-
 import { getStringForMetadataColony } from '@colony/colony-event-metadata-parser';
+
+import { poll } from 'ethers/utils';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import {
@@ -41,12 +41,8 @@ import {
   transactionPending,
 } from '../../core/actionCreators';
 import { createTransaction, createTransactionChannels } from '../../core/sagas';
-<<<<<<< HEAD
-import { getMetadataStringForColony } from '~utils/eventMetadataHandler';
-=======
 import { ipfsUpload } from '../../core/sagas/ipfs';
 
->>>>>>> 3400595eb (Feat:q:using `@colony/colony-event-metadata-parser`)
 import { createUserWithSecondAttempt } from '../../users/sagas/utils';
 import { uploadIfsWithFallback } from '../sagas/utils';
 
