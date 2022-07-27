@@ -15,7 +15,7 @@ import styles from './ExpenditurePage.css';
 
 const MSG = defineMessages({
   submit: {
-    id: 'dashboard.ExpenditureForm.submit',
+    id: 'dashboard.ExpenditurePage.ExpenditureForm.submit',
     defaultMessage: 'Submit',
   },
 });
