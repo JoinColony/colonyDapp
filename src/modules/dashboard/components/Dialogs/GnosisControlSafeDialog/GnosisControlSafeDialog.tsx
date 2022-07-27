@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import toFinite from 'lodash/toFinite';
@@ -10,7 +10,9 @@ import { ActionForm } from '~core/Fields';
 
 import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
+import { Address } from '~types/index';
 
+import { TransactionTypes } from './constants';
 import GnosisControlSafeForm from './GnosisControlSafeForm';
 
 const MSG = defineMessages({
@@ -41,7 +43,7 @@ const safes = [
 export interface FormValues {
   transactions: {
     transactionType: string;
-    tokenAddress?: string;
+    tokenAddress?: Address;
     amount?: number;
     recipient?: AnyUser;
     data?: string;
@@ -51,26 +53,8 @@ export interface FormValues {
   }[];
   safe: string;
   forceAction: boolean;
+  transactionsTitle: string;
 }
-
-export const transactionOptions = [
-  {
-    value: 'transferFunds',
-    label: 'Transfer funds',
-  },
-  {
-    value: 'transferNft',
-    label: 'Transfer NFT',
-  },
-  {
-    value: 'contractInteraction',
-    label: 'Contract interaction',
-  },
-  {
-    value: 'rawTransaction',
-    label: 'Raw transaction',
-  },
-];
 
 const displayName = 'dashboard.GnosisControlSafeDialog';
 
@@ -78,68 +62,76 @@ type Props = DialogProps &
   Partial<WizardDialogType<object>> &
   ActionDialogProps;
 
-const validationSchema = yup.object().shape({
-  safe: yup.string().required(() => MSG.requiredFieldError),
-  transactions: yup.array(
-    yup.object().shape({
-      transactionType: yup.string().required(() => MSG.requiredFieldError),
-      recipient: yup.object().shape({
-        profile: yup.object().shape({
-          walletAddress: yup.string().when('transactionType', {
-            is: (transactionType) => transactionType === 'transferFunds',
-            then: yup
-              .string()
-              .address()
-              .required(() => MSG.requiredFieldError),
-            otherwise: false,
+const validationSchema = (isPreview) =>
+  yup.object().shape({
+    safe: yup.string().required(() => MSG.requiredFieldError),
+    ...(isPreview ? { transactionsTitle: yup.string().required() } : {}),
+    transactions: yup.array(
+      yup.object().shape({
+        transactionType: yup.string().required(() => MSG.requiredFieldError),
+        recipient: yup.object().shape({
+          profile: yup.object().shape({
+            walletAddress: yup.string().when('transactionType', {
+              is: (transactionType) =>
+                transactionType === TransactionTypes.TRANSFER_FUNDS,
+              then: yup
+                .string()
+                .address()
+                .required(() => MSG.requiredFieldError),
+              otherwise: false,
+            }),
           }),
         }),
+        amount: yup.number().when('transactionType', {
+          is: (transactionType) =>
+            transactionType === TransactionTypes.TRANSFER_FUNDS ||
+            transactionType === TransactionTypes.RAW_TRANSACTION,
+          then: yup
+            .number()
+            .transform((value) => toFinite(value))
+            .required(() => MSG.requiredFieldError)
+            .moreThan(0, () => MSG.amountZero),
+          otherwise: false,
+        }),
+        tokenAddress: yup.string().when('transactionType', {
+          is: (transactionType) =>
+            transactionType === TransactionTypes.TRANSFER_FUNDS,
+          then: yup
+            .string()
+            .address()
+            .required(() => MSG.requiredFieldError),
+          otherwise: false,
+        }),
+        data: yup.string().when('transactionType', {
+          is: (transactionType) =>
+            transactionType === TransactionTypes.RAW_TRANSACTION,
+          then: yup.string().required(() => MSG.requiredFieldError),
+          otherwise: false,
+        }),
+        contract: yup.string().when('transactionType', {
+          is: (transactionType) =>
+            transactionType === TransactionTypes.CONTRACT_INTERACTION,
+          then: yup
+            .string()
+            .address()
+            .required(() => MSG.requiredFieldError),
+          otherwise: false,
+        }),
+        abi: yup.string().when('transactionType', {
+          is: (transactionType) =>
+            transactionType === TransactionTypes.CONTRACT_INTERACTION,
+          then: yup.string().required(() => MSG.requiredFieldError),
+          otherwise: false,
+        }),
+        contractFunction: yup.string().when('transactionType', {
+          is: (transactionType) =>
+            transactionType === TransactionTypes.CONTRACT_INTERACTION,
+          then: yup.string().required(() => MSG.requiredFieldError),
+          otherwise: false,
+        }),
       }),
-      amount: yup.number().when('transactionType', {
-        is: (transactionType) =>
-          transactionType === 'transferFunds' ||
-          transactionType === 'rawTransaction',
-        then: yup
-          .number()
-          .transform((value) => toFinite(value))
-          .required(() => MSG.requiredFieldError)
-          .moreThan(0, () => MSG.amountZero),
-        otherwise: false,
-      }),
-      tokenAddress: yup.string().when('transactionType', {
-        is: (transactionType) => transactionType === 'transferFunds',
-        then: yup
-          .string()
-          .address()
-          .required(() => MSG.requiredFieldError),
-        otherwise: false,
-      }),
-      data: yup.string().when('transactionType', {
-        is: (transactionType) => transactionType === 'rawTransaction',
-        then: yup.string().required(() => MSG.requiredFieldError),
-        otherwise: false,
-      }),
-      contract: yup.string().when('transactionType', {
-        is: (transactionType) => transactionType === 'contractInteraction',
-        then: yup
-          .string()
-          .address()
-          .required(() => MSG.requiredFieldError),
-        otherwise: false,
-      }),
-      abi: yup.string().when('transactionType', {
-        is: (transactionType) => transactionType === 'contractInteraction',
-        then: yup.string().required(() => MSG.requiredFieldError),
-        otherwise: false,
-      }),
-      contractFunction: yup.string().when('transactionType', {
-        is: (transactionType) => transactionType === 'contractInteraction',
-        then: yup.string().required(() => MSG.requiredFieldError),
-        otherwise: false,
-      }),
-    }),
-  ),
-});
+    ),
+  });
 
 const GnosisControlSafeDialog = ({
   colony,
@@ -148,10 +140,13 @@ const GnosisControlSafeDialog = ({
   prevStep,
   isVotingExtensionEnabled,
 }: Props) => {
+  const [showPreview, setShowPreview] = useState(false);
+
   return (
     <ActionForm
       initialValues={{
         safe: '',
+        transactionsTitle: undefined,
         transactions: [
           {
             transactionType: '',
@@ -165,10 +160,11 @@ const GnosisControlSafeDialog = ({
           },
         ],
       }}
-      validationSchema={validationSchema}
+      validationSchema={validationSchema(showPreview)}
       submit={ActionTypes.COLONY_ACTION_GENERIC}
       success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
       error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
+      validateOnMount
     >
       {(formValues: FormikProps<FormValues>) => (
         <Dialog cancel={cancel}>
@@ -178,6 +174,8 @@ const GnosisControlSafeDialog = ({
             colony={colony}
             safes={safes}
             isVotingExtensionEnabled={isVotingExtensionEnabled}
+            showPreview={showPreview}
+            handleShowPreview={setShowPreview}
           />
         </Dialog>
       )}
