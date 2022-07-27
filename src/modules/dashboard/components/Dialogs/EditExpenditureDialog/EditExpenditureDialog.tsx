@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import * as yup from 'yup';
 
+import { FormikProps } from 'formik';
 import { ActionTypes } from '~redux/actionTypes';
 import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 import { Colony } from '~data/index';
@@ -10,82 +11,78 @@ import { ActionForm } from '~core/Fields';
 
 export const MSG = defineMessages({
   header: {
-    id: 'dashboard.EditConfirmDialog.header',
+    id: 'dashboard.EditExpenditureDialog.header',
     defaultMessage: 'Create a motion to edit payment',
   },
-  force: {
-    id: 'dashboard.EditConfirmDialog.force',
-    defaultMessage: 'Force',
-  },
   descriptionText: {
-    id: 'dashboard.EditConfirmDialog.descriptionText',
+    id: 'dashboard.EditExpenditureDialog.descriptionText',
     defaultMessage: `Payment is currently at the locked stage.
     Any edits require at this point an action to be made.
     You can either enforce permission,
     or create a motion to get collective approval.`,
   },
   newRecipient: {
-    id: 'dashboard.EditConfirmDialog.newRecipient',
+    id: 'dashboard.EditExpenditureDialog.newRecipient',
     defaultMessage: 'New recipient',
   },
   newAmount: {
-    id: 'dashboard.EditConfirmDialog.newAmount',
+    id: 'dashboard.EditExpenditureDialog.newAmount',
     defaultMessage: 'New amount',
   },
   newClaimDelay: {
-    id: 'dashboard.EditConfirmDialog.newClaimDelay',
+    id: 'dashboard.EditExpenditureDialog.newClaimDelay',
     defaultMessage: 'New claim delay',
   },
   descriptionLabel: {
-    id: 'dashboard.EditConfirmDialog.descriptionLabel',
+    id: 'dashboard.EditExpenditureDialog.descriptionLabel',
     defaultMessage: `Explain why you're changing the payment (optional)`,
   },
   cancelText: {
-    id: 'dashboard.EditConfirmDialog.cancelText',
+    id: 'dashboard.EditExpenditureDialog.cancelText',
     defaultMessage: 'Back',
   },
   confirmText: {
-    id: 'dashboard.EditConfirmDialog.confirmText',
+    id: 'dashboard.EditExpenditureDialog.confirmText',
     defaultMessage: 'Create Motion',
   },
   confirmTexForce: {
-    id: 'dashboard.EditConfirmDialog.confirmTexForce',
+    id: 'dashboard.EditExpenditureDialog.confirmTexForce',
     defaultMessage: 'Force change',
   },
   forceTextareaLabel: {
-    id: 'dashboard.EditConfirmDialog.textareaLabel',
+    id: 'dashboard.EditExpenditureDialog.textareaLabel',
     defaultMessage: `Explain why you're changing the expenditure`,
   },
   errorAnnotation: {
-    id: 'dashboard.EditConfirmDialog.errorAnnotation',
+    id: 'dashboard.EditExpenditureDialog.errorAnnotation',
     defaultMessage: 'Annotation is required',
   },
   change: {
-    id: 'dashboard.EditConfirmDialog.change',
+    id: 'dashboard.EditExpenditureDialog.change',
     defaultMessage: 'Change',
   },
   new: {
-    id: 'dashboard.EditConfirmDialog.new',
+    id: 'dashboard.EditExpenditureDialog.new',
     defaultMessage: 'New',
   },
   discard: {
-    id: 'dashboard.EditConfirmDialog.discard',
+    id: 'dashboard.EditExpenditureDialog.discard',
     defaultMessage: 'Discard',
   },
   removed: {
-    id: 'dashboard.EditConfirmDialog.removed',
+    id: 'dashboard.EditExpenditureDialog.removed',
     defaultMessage: 'Recipient has been deleted',
   },
   removedDelay: {
-    id: 'dashboard.EditConfirmDialog.removedDelay',
+    id: 'dashboard.EditExpenditureDialog.removedDelay',
     defaultMessage: 'Removed claim delay',
   },
   teamCaption: {
-    id: 'dashboard.EditConfirmDialog.teamCaption',
+    id: 'dashboard.EditExpenditureDialog.teamCaption',
     defaultMessage: 'Team',
   },
   noChanges: {
-    id: 'dashboard.EditConfirmDialog.noChanges',
+    id: 'dashboard.EditExpenditureDialog.noChanges',
     defaultMessage: 'No values have been changed!',
   },
 });
@@ -111,7 +108,7 @@ export interface FormValuesType {
 }
 
 type Props = {
-  onClick: (
+  onSubmitClick: (
     values: Partial<ValuesType> | undefined,
     wasForced: boolean,
   ) => void;
@@ -124,7 +121,7 @@ type Props = {
 
 const EditExpenditureDialog = ({
   close,
-  onClick,
+  onSubmitClick,
   isVotingExtensionEnabled,
   colony,
   newValues,
@@ -196,21 +193,28 @@ const EditExpenditureDialog = ({
       onSuccess={close}
       validationSchema={validationSchema(formatMessage(MSG.errorAnnotation))}
     >
-      <EditExpenditureDialogForm
-        {...{
-          close,
-          handleMotionDomainChange,
-          colony,
-          confirmedValues,
-          discardChange,
-          discardRecipientChange,
-          isForce,
-          oldValues,
-          onClick,
-          setIsForce,
-          domainID,
-        }}
-      />
+      {(formValues: FormikProps<FormValuesType>) => {
+        if (formValues.values.forceAction !== isForce) {
+          setIsForce(formValues.values.forceAction);
+        }
+        return (
+          <EditExpenditureDialogForm
+            {...{
+              close,
+              handleMotionDomainChange,
+              colony,
+              confirmedValues,
+              discardChange,
+              discardRecipientChange,
+              oldValues,
+              onSubmitClick,
+              domainID,
+              isVotingExtensionEnabled,
+              ...formValues,
+            }}
+          />
+        );
+      }}
     </ActionForm>
   );
 };

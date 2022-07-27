@@ -1,14 +1,12 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
-import { useFormikContext } from 'formik';
+import { FormikProps } from 'formik';
 import { nanoid } from 'nanoid';
-
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+
 import { Annotations, FormSection, Toggle } from '~core/Fields';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
-import { FormValuesType, MSG } from './EditExpenditureDialog';
-import styles from './EditExpenditureDialog.css';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
 import { getRecipientTokens } from '~dashboard/ExpenditurePage/utils';
@@ -17,20 +15,23 @@ import Numeral from '~core/Numeral';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import Dialog, { DialogSection } from '~core/Dialog';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
-import { Colony } from '~data/index';
-import { Tooltip } from '~core/Popover';
-import Icon from '~core/Icon';
+import { Colony, useLoggedInUser } from '~data/index';
 import Heading from '~core/Heading';
 import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 import Button from '~core/Button';
 import ColorTag, { Color } from '~core/ColorTag';
+import { useTransformer } from '~utils/hooks';
+import { getAllUserRoles } from '~modules/transformers';
+import { hasRoot } from '~modules/users/checks';
+import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 
-const displayName = 'dashboard.EditExpenditureDialogForm';
+import { FormValuesType, MSG } from './EditExpenditureDialog';
+import styles from './EditExpenditureDialog.css';
+
+const displayName = 'dashboard.EditExpenditureDialog.EditExpenditureDialogForm';
 
 interface Props {
   close: () => void;
-  isForce: boolean;
-  setIsForce: React.Dispatch<React.SetStateAction<boolean>>;
   colony: Colony;
   handleMotionDomainChange: (motionDomainId: number) => void;
   domainID?: number;
@@ -38,16 +39,15 @@ interface Props {
   oldValues: ValuesType;
   discardRecipientChange: (id: string) => void;
   discardChange: (name: string) => void;
-  onClick: (
+  onSubmitClick: (
     values: Partial<ValuesType> | undefined,
     wasForced: boolean,
   ) => void;
+  isVotingExtensionEnabled: boolean;
 }
 
 const EditExpenditureDialogForm = ({
   close,
-  isForce,
-  setIsForce,
   colony,
   handleMotionDomainChange,
   domainID,
@@ -55,11 +55,24 @@ const EditExpenditureDialogForm = ({
   oldValues,
   discardRecipientChange,
   discardChange,
-  onClick,
-}: Props) => {
-  const { values, isSubmitting, handleSubmit } = useFormikContext<
-    FormValuesType
-  >();
+  onSubmitClick,
+  isVotingExtensionEnabled,
+  isSubmitting,
+  handleSubmit,
+  values,
+}: Props & FormikProps<FormValuesType>) => {
+  const { walletAddress, username, ethereal } = useLoggedInUser();
+  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+
+  const hasRegisteredProfile = !!username && !ethereal;
+  const canCancelExpenditure = hasRegisteredProfile && hasRoot(allUserRoles);
+
+  const [userHasPermission] = useDialogActionPermissions(
+    colony.colonyAddress,
+    canCancelExpenditure,
+    isVotingExtensionEnabled,
+    values.forceAction,
+  );
   const noChanges =
     confirmedValues && Object.keys(confirmedValues).length === 0;
 
@@ -77,12 +90,6 @@ const EditExpenditureDialogForm = ({
     },
     [],
   );
-
-  useEffect(() => {
-    if (values.forceAction !== isForce) {
-      setIsForce(values.forceAction);
-    }
-  }, [isForce, setIsForce, values]);
 
   const confirmedValuesWithIds = convertToValuesWithIds(confirmedValues);
 
@@ -253,33 +260,30 @@ const EditExpenditureDialogForm = ({
             initialSelectedDomain={domainID}
             disabled={noChanges}
           />
-          <div className={styles.forceContainer}>
-            <FormattedMessage {...MSG.force} />
+          {canCancelExpenditure && isVotingExtensionEnabled && (
             <div className={styles.toggleContainer}>
               <Toggle
+                label={{ id: 'label.force' }}
                 name="forceAction"
                 appearance={{ theme: 'danger' }}
-                disabled={isSubmitting || noChanges}
+                disabled={!userHasPermission || isSubmitting || noChanges}
+                tooltipText={{ id: 'tooltip.forceAction' }}
+                tooltipPopperOptions={{
+                  placement: 'top-end',
+                  modifiers: [
+                    {
+                      name: 'offset',
+                      options: {
+                        offset: [-5, 6],
+                      },
+                    },
+                  ],
+                  strategy: 'fixed',
+                }}
               />
             </div>
-
-            <Tooltip
-              content={
-                <div className={styles.tooltip}>
-                  <FormattedMessage id="tooltip.forceAction" />
-                </div>
-              }
-              trigger="hover"
-              popperOptions={{
-                placement: 'top-end',
-                strategy: 'fixed',
-              }}
-            >
-              <Icon name="question-mark" className={styles.questionIcon} />
-            </Tooltip>
-          </div>
+          )}
         </div>
-
         <Heading
           appearance={{ size: 'medium', margin: 'none' }}
           className={styles.title}
@@ -429,7 +433,9 @@ const EditExpenditureDialogForm = ({
       <DialogSection appearance={{ theme: 'sidePadding' }}>
         <div className={styles.annotationsWrapper}>
           <Annotations
-            label={isForce ? MSG.forceTextareaLabel : MSG.descriptionLabel}
+            label={
+              values.forceAction ? MSG.forceTextareaLabel : MSG.descriptionLabel
+            }
             name="annotationMessage"
             maxLength={90}
             disabled={noChanges}
@@ -444,14 +450,14 @@ const EditExpenditureDialogForm = ({
         />
         <Button
           appearance={{
-            theme: isForce ? 'danger' : 'primary',
+            theme: values.forceAction ? 'danger' : 'primary',
             size: 'large',
           }}
           autoFocus
-          text={isForce ? MSG.confirmTexForce : MSG.confirmText}
+          text={values.forceAction ? MSG.confirmTexForce : MSG.confirmText}
           onClick={(e) => {
             handleSubmit(e as any);
-            onClick(confirmedValues, isForce);
+            onSubmitClick(confirmedValues, values.forceAction);
             close();
           }}
           disabled={noChanges}

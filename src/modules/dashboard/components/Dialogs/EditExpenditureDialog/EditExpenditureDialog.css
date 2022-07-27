@@ -41,7 +41,8 @@
   padding: 0;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
-  color: var(--temp-grey-blue-7);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+  letter-spacing: 0.5px;
 }
 
 .icon figure {
@@ -49,44 +50,13 @@
 }
 
 .tokenIcon {
-  margin-right: 4px;
+  margin-right: 6px;
   height: 16px;
   width: 16px;
 }
 
 .symbol {
   margin-left: 4px;
-}
-
-.questionIcon {
-  display: block;
-
-  /* next lines are used for the correct tooltip arrow placement */
-  margin-right: -20px;
-  margin-bottom: -3px;
-  margin-left: 11px;
-  height: 16px;
-  width: 16px;
-  border-radius: 50%;
-  background-color: white;
-  stroke: none;
-  transform: translateX(-20px);
-}
-
-.toggleContainer {
-  /* negative margin here corrects the position of the toggle input */
-  margin-bottom: -6px;
-  margin-left: 4px;
-  margin-right: 20px;
-}
-
-.messageParagraph {
-  padding-top: 14px;
-}
-
-.tooltip {
-  max-width: 250px;
-  white-space: normal;
 }
 
 .row {
@@ -114,6 +84,7 @@
 
 .forceRow {
   align-items: baseline;
+  padding-top: 16px;
   white-space: nowrap;
 }
 
@@ -176,7 +147,7 @@
 }
 
 .userAvatarContainer > span {
-  margin-left: 4px;
+  margin-left: 8px;
 }
 
 .contentWrapper {
@@ -240,4 +211,21 @@
 
 .annotationsWrapper {
   margin-bottom: 11px;
+}
+
+.toggleContainer i {
+  margin: 0 -20px 4px 21px;
+
+  /* next lines are used for the correct tooltip arrow placement */
+  transform: translateX(-25px);
+}
+
+/* this selector is for tooltip wrapper */
+.toggleContainer > div > div:last-child {
+  max-width: 250px;
+  white-space: normal;
+}
+
+.toggleContainer label {
+  margin-bottom: 4px;
 }

@@ -8,8 +8,8 @@ import {
 import { nanoid } from 'nanoid';
 import { RouteChildrenProps, useParams } from 'react-router';
 import { Formik, FormikErrors } from 'formik';
-
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+
 import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
 import { LoggedInUser, useColonyFromNameQuery } from '~data/generated';
 import { FormStages, LockedStages } from '~dashboard/ExpenditurePage/Stages';
@@ -17,10 +17,9 @@ import TitleDescriptionSection, {
   LockedTitleDescriptionSection,
 } from '~dashboard/ExpenditurePage/TitleDescriptionSection';
 import { getMainClasses } from '~utils/css';
-import styles from './ExpenditurePage.css';
+
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import { SpinnerLoader } from '~core/Preloaders';
-import ExpenditureForm from './ExpenditureForm';
 import {
   MotionStatus,
   Stage,
@@ -34,7 +33,10 @@ import EditExpenditureDialog from '~dashboard/Dialogs/EditExpenditureDialog/Edit
 import { useDialog } from '~core/Dialog';
 import Tag from '~core/Tag';
 import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
+
 import { findDifferences } from './utils';
+import ExpenditureForm from './ExpenditureForm';
+import styles from './ExpenditurePage.css';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -356,7 +358,7 @@ const ExpenditurePage = ({ match }: Props) => {
         colonyData &&
         oldValues.current &&
         openEditExpenditureDialog({
-          onClick: handleConfirmEition,
+          onSubmitClick: handleConfirmEition,
           isVotingExtensionEnabled: true,
           colony: colonyData?.processedColony,
           newValues: differentValues,
