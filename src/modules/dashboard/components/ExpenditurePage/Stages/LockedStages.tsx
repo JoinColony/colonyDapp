@@ -1,10 +1,12 @@
 import React, { useCallback } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
+
 import Tag from '~core/Tag';
 import { Motion, State } from '~pages/ExpenditurePage/ExpenditurePage';
-import { MotionStatus, Status } from './constants';
 
+import { MotionStatus, Status } from './constants';
 import Stages from './Stages';
+import styles from './Stages.css';
 
 const MSG = defineMessages({
   motion: {
@@ -38,7 +40,7 @@ const LockedStages = ({
   }, [activeState]);
 
   return (
-    <>
+    <div className={styles.tagStagesWrapper}>
       {motion?.status === MotionStatus.Pending && (
         <Tag
           appearance={{
@@ -70,7 +72,7 @@ const LockedStages = ({
           id="25"
         />
       )} */}
-    </>
+    </div>
   );
 };
 

@@ -16,3 +16,4 @@ export const cancelIcon: string;
 export const stageWrapper: string;
 export const iconTooltip: string;
 export const labelComponent: string;
+export const tagStagesWrapper: string;
