@@ -23,12 +23,12 @@ export interface ValuesType {
         'walletAddress' | 'balance' | 'username' | 'ethereal' | 'networkId'
       >;
   recipients?: Recipient[];
-  title: string;
+  title?: string;
   description?: string;
   split?: {
     unequal: boolean;
-    amount: { amount?: string; tokenAddress?: string };
-    recipients?: { user: AnyUser; amount: number }[];
+    amount: { value?: string; tokenAddress?: string };
+    recipients?: { user?: AnyUser; amount?: number; percent?: number }[];
   };
 }
 

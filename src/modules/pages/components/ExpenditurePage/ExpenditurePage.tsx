@@ -227,11 +227,10 @@ const ExpenditurePage = ({ match }: Props) => {
   });
   const loggedInUser = useLoggedInUser();
 
-  const initialValuesData = useMemo(() => {
+  const initialValuesData = useMemo((): ValuesType => {
     return (
       formValues || {
         ...initialValues,
-        id: nanoid(),
         owner: loggedInUser,
         recipients: [
           {
@@ -273,7 +272,13 @@ const ExpenditurePage = ({ match }: Props) => {
           ...values.split,
           recipients: values.split.recipients?.map((recipient) => {
             const amount = values.split.amount.value;
-
+            if (values.split.unequal) {
+              const userAmount =
+                amount &&
+                recipient?.percent &&
+                (recipient.percent / 100) * Number(values.split.amount.value);
+              return { ...recipient, amount: userAmount };
+            }
             return {
               ...recipient,
               amount: !amount ? 0 : Number(amount) / (recipientsCount || 1),
