@@ -400,7 +400,7 @@ const ExpenditurePage = ({ match }: Props) => {
                   )}
                   <ExpenditureForm
                     sidebarRef={sidebarRef.current}
-                    colony={colonyData?.processedColony}
+                    colony={colonyData.processedColony}
                   />
                 </>
               )
@@ -433,6 +433,7 @@ const ExpenditurePage = ({ match }: Props) => {
                     setActiveStateId,
                     lockValues,
                     handleSubmit,
+                    colony: colonyData?.processedColony,
                   }}
                 />
               )}

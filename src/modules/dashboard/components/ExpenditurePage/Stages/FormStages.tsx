@@ -1,9 +1,12 @@
 import { useFormikContext } from 'formik';
 import React, { useCallback } from 'react';
+
 import { useDialog } from '~core/Dialog';
 import DeleteDraftDialog from '~dashboard/Dialogs/DeleteDraftDialog/DeleteDraftDialog';
 import StakeExpenditureDialog from '~dashboard/Dialogs/StakeExpenditureDialog';
+import { Colony } from '~data/index';
 import { State, ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
+
 import { Stage } from './constants';
 import Stages from './Stages';
 
@@ -14,6 +17,7 @@ interface Props {
   activeStateId?: string;
   setActiveStateId?: React.Dispatch<React.SetStateAction<string | undefined>>;
   setFormValues?: React.Dispatch<React.SetStateAction<ValuesType | undefined>>;
+  colony?: Colony;
 }
 
 const FormStages = ({
@@ -21,6 +25,7 @@ const FormStages = ({
   activeStateId,
   setActiveStateId,
   setFormValues,
+  colony,
 }: Props) => {
   const { values, handleSubmit, validateForm, resetForm } =
     useFormikContext<ValuesType>() || {};
@@ -33,15 +38,18 @@ const FormStages = ({
 
     return (
       !hasErrors &&
+      colony &&
       openDraftConfirmDialog({
         onClick: () => {
           handleSubmit(values as any);
           setActiveStateId?.(Stage.Draft);
         },
         isVotingExtensionEnabled: true,
+        colony,
       })
     );
   }, [
+    colony,
     handleSubmit,
     openDraftConfirmDialog,
     setActiveStateId,
