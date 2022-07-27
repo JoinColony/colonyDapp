@@ -2,9 +2,7 @@ import React, { useCallback } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import Tag from '~core/Tag';
 import { Motion, State } from '~pages/ExpenditurePage/ExpenditurePage';
-import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
 import { MotionStatus, Status } from './constants';
-import LinkedMotions from './LinkedMotions';
 
 import Stages from './Stages';
 
@@ -60,6 +58,9 @@ const LockedStages = ({
           status,
         }}
       />
+      {/* 
+        uncomment this when LinkedMotions component is merged
+
       {motion && (
         // motion link needs to be changed and redirects to actual motions page
         <LinkedMotions
@@ -68,7 +69,7 @@ const LockedStages = ({
           motionLink={LANDING_PAGE_ROUTE}
           id="25"
         />
-      )}
+      )} */}
     </>
   );
 };
