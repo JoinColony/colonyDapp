@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import classNames from 'classnames';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { useFormikContext } from 'formik';
+import { FormikProps } from 'formik';
 
 import Dialog, { DialogSection } from '~core/Dialog';
 import { tokens as tokensMock } from '~dashboard/ExpenditurePage/ExpenditureSettings/constants';
@@ -19,78 +19,75 @@ import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissi
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 import IconTooltip from '~core/IconTooltip';
 
-import { UserConsequences } from './types';
+import { PenalizeType } from './types';
 import { FormValues } from './CancelExpenditureDialog';
 import styles from './CancelExpenditureDialog.css';
 
 const MSG = defineMessages({
   header: {
-    id: 'dashboard.CancelExpenditureDialog.CancelExpenditureDialogForm.header',
+    id: 'dashboard.CancelExpenditureDialog.CancelExpenditureForm.header',
     defaultMessage: 'Cancel payment',
   },
   ownersStake: {
-    id: `dashboard.CancelExpenditureDialog.CancelExpenditureDialogForm.ownersStake`,
+    id: `dashboard.CancelExpenditureDialog.CancelExpenditureForm.ownersStake`,
     defaultMessage: `Owner's stake`,
   },
   shouldBePenalized: {
-    id: `dashboard.CancelExpenditureDialog.CancelExpenditureDialogForm.shouldBePenalized`,
+    id: `dashboard.CancelExpenditureDialog.CancelExpenditureForm.shouldBePenalized`,
     defaultMessage: 'Do you want to penalize the owner?',
   },
   penalize: {
-    id: `dashboard.CancelExpenditureDialog.CancelExpenditureDialogForm.penalize`,
+    id: `dashboard.CancelExpenditureDialog.CancelExpenditureForm.penalize`,
     defaultMessage: 'Penalize',
   },
   showMercy: {
-    id: `dashboard.CancelExpenditureDialog.CancelExpenditureDialogForm.showMercy`,
+    id: `dashboard.CancelExpenditureDialog.CancelExpenditureForm.showMercy`,
     defaultMessage: 'Show mercy',
   },
   penalizeMessage: {
-    id: `dashboard.CancelExpenditureDialog.CancelExpenditureDialogForm.penalizeMessage`,
+    id: `dashboard.CancelExpenditureDialog.CancelExpenditureForm.penalizeMessage`,
     defaultMessage: 'Owner will lose their stake and equivalent reputation.',
   },
   mercyMessage: {
-    id: `dashboard.CancelExpenditureDialog.CancelExpenditureDialogForm.mercyMessage`,
+    id: `dashboard.CancelExpenditureDialog.CancelExpenditureForm.mercyMessage`,
     defaultMessage: 'Owner will keep their stake and reputation.',
   },
   submit: {
-    id: 'dashboard.CancelExpenditureDialog.CancelExpenditureDialogForm.submit',
+    id: 'dashboard.CancelExpenditureDialog.CancelExpenditureForm.submit',
     defaultMessage: 'Submit',
   },
   textareaLabel: {
-    id: `dashboard.CancelExpenditureDialog.CancelExpenditureDialogForm.textareaLabel`,
+    id: `dashboard.CancelExpenditureDialog.CancelExpenditureForm.textareaLabel`,
     defaultMessage: `Explain why you're cancelling this payment (optional)`,
   },
   effectTooltip: {
-    id: `dashboard.CancelExpenditureDialog.CancelExpenditureDialogForm.effectTooltip`,
+    id: `dashboard.CancelExpenditureDialog.CancelExpenditureForm.effectTooltip`,
     defaultMessage: `Decide what to do with the owner's stake when cancelling this Advanced Payment.`,
   },
   createDomain: {
-    id: `dashboard.EscrowFundsDialog.CancelExpenditureDialogForm.creationTarget`,
+    id: `dashboard.CancelExpenditureDialog.CancelExpenditureForm.creationTarget`,
     defaultMessage: 'Motion will be created in',
   },
 });
 
-const displayName =
-  'dashboard.CancelExpenditureDialog.CancelExpenditureDialogForm';
+const displayName = 'dashboard.CancelExpenditureDialog.CancelExpenditureForm';
 
 interface Props {
   close: () => void;
   colony: Colony;
   onCancelExpenditure: (isForce: boolean) => void;
-  isForce: boolean;
-  setIsForce: React.Dispatch<React.SetStateAction<boolean>>;
   isVotingExtensionEnabled: boolean;
 }
 
-const CancelExpenditureDialogForm = ({
+const CancelExpenditureForm = ({
   close,
   colony,
   onCancelExpenditure,
-  isForce,
-  setIsForce,
   isVotingExtensionEnabled,
-}: Props) => {
-  const { isSubmitting, values, handleSubmit } = useFormikContext<FormValues>();
+  values,
+  isSubmitting,
+  handleSubmit,
+}: Props & FormikProps<FormValues>) => {
   const [domainID, setDomainID] = useState<number>();
   // temporary value
   const [token] = tokensMock;
@@ -104,19 +101,13 @@ const CancelExpenditureDialogForm = ({
     colony.colonyAddress,
     canCancelExpenditure,
     isVotingExtensionEnabled,
-    isForce,
+    values.forceAction,
   );
 
   const handleMotionDomainChange = useCallback(
     (motionDomainId) => setDomainID(motionDomainId),
     [],
   );
-
-  useEffect(() => {
-    if (values.forceAction !== isForce) {
-      setIsForce(values.forceAction);
-    }
-  }, [isForce, setIsForce, values]);
 
   return (
     <Dialog cancel={close}>
@@ -196,13 +187,13 @@ const CancelExpenditureDialogForm = ({
           </div>
           <div
             className={classNames(styles.radioWrapper, {
-              [styles.selected]: values.effect === UserConsequences.Penalize,
+              [styles.selected]: values.effect === PenalizeType.Penalize,
             })}
           >
             <Radio
               name="effect"
-              value={UserConsequences.Penalize}
-              checked={values.effect === UserConsequences.Penalize}
+              value={PenalizeType.Penalize}
+              checked={values.effect === PenalizeType.Penalize}
               elementOnly
             >
               <FormattedMessage {...MSG.penalize} />
@@ -210,13 +201,13 @@ const CancelExpenditureDialogForm = ({
           </div>
           <div
             className={classNames(styles.radioWrapper, {
-              [styles.selected]: values.effect === UserConsequences.Mercy,
+              [styles.selected]: values.effect === PenalizeType.Mercy,
             })}
           >
             <Radio
               name="effect"
-              value={UserConsequences.Mercy}
-              checked={values.effect === UserConsequences.Mercy}
+              value={PenalizeType.Mercy}
+              checked={values.effect === PenalizeType.Mercy}
               elementOnly
             >
               <FormattedMessage {...MSG.showMercy} />
@@ -225,12 +216,11 @@ const CancelExpenditureDialogForm = ({
         </div>
         <div
           className={classNames(styles.message, {
-            [styles.messageWarning]:
-              values.effect === UserConsequences.Penalize,
+            [styles.messageWarning]: values.effect === PenalizeType.Penalize,
           })}
         >
           <FormattedMessage
-            {...(values.effect === UserConsequences.Penalize
+            {...(values.effect === PenalizeType.Penalize
               ? MSG.penalizeMessage
               : MSG.mercyMessage)}
           />
@@ -258,7 +248,7 @@ const CancelExpenditureDialogForm = ({
           text={MSG.submit}
           type="submit"
           onClick={() => {
-            onCancelExpenditure(isForce);
+            onCancelExpenditure(values.forceAction);
             close();
             handleSubmit();
           }}
@@ -268,6 +258,6 @@ const CancelExpenditureDialogForm = ({
   );
 };
 
-CancelExpenditureDialogForm.displayName = displayName;
+CancelExpenditureForm.displayName = displayName;
 
-export default CancelExpenditureDialogForm;
+export default CancelExpenditureForm;

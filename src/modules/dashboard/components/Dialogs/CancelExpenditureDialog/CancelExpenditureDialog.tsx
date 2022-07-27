@@ -1,12 +1,13 @@
 import React, { useCallback, useState } from 'react';
 import * as yup from 'yup';
 
+import { FormikProps } from 'formik';
 import { ActionForm } from '~core/Fields';
 import { ActionTypes } from '~redux/actionTypes';
 import { Colony } from '~data/index';
 
-import CancelExpenditureDialogForm from './CancelExpenditureDialogForm';
-import { UserConsequences } from './types';
+import { CancelExpenditureForm } from '.';
+import { PenalizeType } from './types';
 
 const displayName = 'dashboard.CancelExpenditureDialog';
 
@@ -18,7 +19,7 @@ export const validationSchema = yup.object().shape({
 
 export interface FormValues {
   forceAction: boolean;
-  effect: string;
+  effect: PenalizeType;
   annotation: string;
 }
 
@@ -50,23 +51,29 @@ const CancelExpenditureDialog = ({
 
   return (
     <ActionForm
-      initialValues={{ forceAction: false, effect: UserConsequences.Penalize }}
+      initialValues={{ forceAction: false, effect: PenalizeType.Penalize }}
       submit={getFormAction('SUBMIT')}
       error={getFormAction('ERROR')}
       success={getFormAction('SUCCESS')}
       onSuccess={close}
       validationSchema={validationSchema}
     >
-      <CancelExpenditureDialogForm
-        {...{
-          close,
-          isForce,
-          onCancelExpenditure,
-          setIsForce,
-          colony,
-          isVotingExtensionEnabled,
-        }}
-      />
+      {(formValues: FormikProps<FormValues>) => {
+        if (formValues.values.forceAction !== isForce) {
+          setIsForce(formValues.values.forceAction);
+        }
+        return (
+          <CancelExpenditureForm
+            {...{
+              close,
+              onCancelExpenditure,
+              colony,
+              isVotingExtensionEnabled,
+              ...formValues,
+            }}
+          />
+        );
+      }}
     </ActionForm>
   );
 };
