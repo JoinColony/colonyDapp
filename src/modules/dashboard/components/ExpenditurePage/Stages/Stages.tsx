@@ -14,52 +14,51 @@ import {
 } from 'react-intl';
 import copyToClipboard from 'copy-to-clipboard';
 import classNames from 'classnames';
-
 import { ColonyRole } from '@colony/colony-js';
+
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import DeleteDraftDialog from '../../Dialogs/DeleteDraftDialog/DeleteDraftDialog';
-import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
-import StageItem from './StageItem';
 import {
   InitialValuesType,
   State,
   ValuesType,
 } from '~pages/ExpenditurePage/ExpenditurePage';
-import styles from './Stages.css';
-import { MotionStatus, MotionType, Stage, Status } from './constants';
 import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
 import { Colony } from '~data/index';
 import PermissionsLabel from '~core/PermissionsLabel';
 import Tag from '~core/Tag';
-import { LinkedMotions } from '.';
-import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
+
+import DeleteDraftDialog from '../../Dialogs/DeleteDraftDialog/DeleteDraftDialog';
+import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
+import StageItem from './StageItem';
+import { MotionStatus, MotionType, Stage, Status } from './constants';
+import styles from './Stages.css';
 
 const MSG = defineMessages({
   stages: {
-    id: 'dashboard.Expenditures.Stages.stages',
+    id: 'dashboard.ExpenditurePage.Stages.stages',
     defaultMessage: 'Stages',
   },
   notSaved: {
-    id: 'dashboard.Expenditures.Stages.notSaved',
+    id: 'dashboard.ExpenditurePage.Stages.notSaved',
     defaultMessage: 'Not saved',
   },
   submitDraft: {
-    id: 'dashboard.Expenditures.Stages.submitDraft',
+    id: 'dashboard.ExpenditurePage.Stages.submitDraft',
     defaultMessage: 'Submit draft',
   },
   deleteDraft: {
-    id: 'dashboard.Expenditures.Stages.deleteDraft',
+    id: 'dashboard.ExpenditurePage.Stages.deleteDraft',
     defaultMessage: 'Delete draft',
   },
   tooltipDeleteText: {
-    id: 'dashboard.Expenditures.Stages.tooltipDeleteText',
+    id: 'dashboard.ExpenditurePage.Stages.tooltipDeleteText',
     defaultMessage: 'Delete the expenditure',
   },
   tooltipShareText: {
-    id: 'dashboard.Expenditures.Stages.tooltipShareText',
+    id: 'dashboard.ExpenditurePage.Stages.tooltipShareText',
     defaultMessage: 'Share expenditure URL',
   },
   tooltipCancelText: {
@@ -399,41 +398,45 @@ const Stages = ({ colony, states, activeStateId }: Props) => {
                   </Tooltip>
                 </Button>
               )}
-              {!isCancelled && activeStateId !== Stage.Draft && (
-                <Button
-                  className={classNames(styles.iconButton, {
-                    [styles.cancelIcon]:
-                      motion?.status !== MotionStatus.Pending,
-                    [styles.iconButtonDisabled]:
-                      motion?.status === MotionStatus.Pending,
-                  })}
-                  onClick={handleCancelExpenditure}
-                  disabled={
-                    isCancelled || motion?.status === MotionStatus.Pending
-                  }
-                >
-                  {motion?.status === MotionStatus.Pending ? (
-                    <Icon
-                      name="circle-minus"
-                      className={styles.icon}
-                      title={MSG.deleteDraft}
-                    />
-                  ) : (
-                    <Tooltip
-                      placement="top-start"
-                      content={<FormattedMessage {...MSG.tooltipCancelText} />}
-                    >
-                      <div className={styles.iconWrapper}>
-                        <Icon
-                          name="circle-minus"
-                          className={styles.icon}
-                          title={MSG.deleteDraft}
-                        />
-                      </div>
-                    </Tooltip>
-                  )}
-                </Button>
-              )}
+              {!isCancelled &&
+                activeStateId !== Stage.Draft &&
+                activeStateId !== Stage.Claimed && (
+                  <Button
+                    className={classNames(styles.iconButton, {
+                      [styles.cancelIcon]:
+                        motion?.status !== MotionStatus.Pending,
+                      [styles.iconButtonDisabled]:
+                        motion?.status === MotionStatus.Pending,
+                    })}
+                    onClick={handleCancelExpenditure}
+                    disabled={
+                      isCancelled || motion?.status === MotionStatus.Pending
+                    }
+                  >
+                    {motion?.status === MotionStatus.Pending ? (
+                      <Icon
+                        name="circle-minus"
+                        className={styles.icon}
+                        title={MSG.deleteDraft}
+                      />
+                    ) : (
+                      <Tooltip
+                        placement="top-start"
+                        content={
+                          <FormattedMessage {...MSG.tooltipCancelText} />
+                        }
+                      >
+                        <div className={styles.iconWrapper}>
+                          <Icon
+                            name="circle-minus"
+                            className={styles.icon}
+                            title={MSG.deleteDraft}
+                          />
+                        </div>
+                      </Tooltip>
+                    )}
+                  </Button>
+                )}
               {renderButton()}
             </>
           )}
@@ -449,6 +452,9 @@ const Stages = ({ colony, states, activeStateId }: Props) => {
           labelComponent={labelComponent({ label, index })}
         />
       ))}
+      {/* 
+      add this part when LinkedMotions is merged
+
       {motion && (
         <LinkedMotions
           status={motion.status}
@@ -456,7 +462,7 @@ const Stages = ({ colony, states, activeStateId }: Props) => {
           id="25"
           motionLink={LANDING_PAGE_ROUTE}
         />
-      )}
+      )} */}
     </div>
   );
 };

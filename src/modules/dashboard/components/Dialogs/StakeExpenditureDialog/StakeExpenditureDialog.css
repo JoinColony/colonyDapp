@@ -45,10 +45,6 @@
   color: var(--dark);
 }
 
-.label span {
-  font-size: var(--size-smallish);
-}
-
 .icon {
   margin-right: 10px;
 }
