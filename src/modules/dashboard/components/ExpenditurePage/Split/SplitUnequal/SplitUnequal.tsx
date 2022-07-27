@@ -24,7 +24,7 @@ const MSG = defineMessages({
     defaultMessage: 'Reserve',
   },
   amountLabel: {
-    id: 'dashboard.ExpenditurePage.Split.amountLabel',
+    id: 'dashboard.ExpenditurePage.Split.SplitUnequal.amountLabel',
     defaultMessage: 'Amount',
   },
   deleteIconTitle: {
@@ -37,7 +37,7 @@ const MSG = defineMessages({
   },
 });
 
-const displayName = 'dashboard.ExpenditurePage.SplitUnequal.Split';
+const displayName = 'dashboard.ExpenditurePage.Split.SplitUnequal';
 
 interface Props {
   sidebarRef: HTMLElement | null;
