@@ -125,6 +125,7 @@ const GnosisControlSafeForm = ({
   setFieldValue,
   showPreview,
   handleShowPreview,
+  validateForm,
 }: Props & FormikProps<FormValues>) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState([true]);
   const [hasTitle, setHasTitle] = useState(true);
@@ -209,6 +210,12 @@ const GnosisControlSafeForm = ({
       setHasTitle(true);
     }
   }, [values, showPreview]);
+
+  useEffect(() => {
+    if (!showPreview) {
+      validateForm();
+    }
+  }, [showPreview, validateForm]);
 
   return (
     <>
