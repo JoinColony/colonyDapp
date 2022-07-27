@@ -1,14 +1,12 @@
 import { useFormikContext } from 'formik';
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-// import classNames from 'classnames';
 
 import { FormSection, Input, TokenSymbolSelector } from '~core/Fields';
 import { Colony } from '~data/index';
+import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 
 import styles from './SplitUnequal.css';
-
-import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 
 const MSG = defineMessages({
   reserve: {
@@ -16,15 +14,14 @@ const MSG = defineMessages({
     defaultMessage: 'Reserve',
   },
   amountLabel: {
-    id: 'dashboard.ExpenditurePage.Split.amountLabel',
+    id: 'dashboard.ExpenditurePage.Split.SplitUnequal.amountLabel',
     defaultMessage: 'Amount',
   },
 });
 
-const displayName = 'dashboard.ExpenditurePage.Split';
+const displayName = 'dashboard.ExpenditurePage.Split.SplitUnequal';
 
 interface Props {
-  // sidebarRef: HTMLElement | null;
   colony: Colony;
 }
 

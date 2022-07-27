@@ -3,8 +3,10 @@
   align-items: center;
   min-height: 45px;
   width: 100%;
+  font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+  letter-spacing: 0.5px;
 }
 
 .reserveBar {
@@ -29,7 +31,6 @@
   color: color-mod(var(--dark) alpha(85%));
 }
 
-/* create separete component from this one  */
 .valueContainer {
   display: flex;
   align-items: flex-start;
