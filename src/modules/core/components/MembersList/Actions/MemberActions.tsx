@@ -6,7 +6,6 @@ import { Colony } from '~data/index';
 
 import MemberActionsPopover from './MemberActionsPopover';
 
-import styles from './MemberActions.css';
 import ThreeDotsButton from '~core/Button/ThreeDotsButton';
 
 const MSG = defineMessages({
@@ -67,8 +66,6 @@ const MemberActions = ({
           id={id}
           innerRef={ref}
           isOpen={isOpen}
-          className={styles.actionsButton}
-          activeStyles={styles.activeDropdown}
           onClick={() => setOpen(true)}
           title={MSG.memberActionsTitle}
         />

@@ -10,7 +10,7 @@ import styles from './ThreeDotsButton.css';
 const displayName = 'ThreeDotsButton';
 
 interface Props extends DefaultButtonProps {
-  activeStyles: string;
+  activeStyles?: string;
   isOpen: boolean;
   title: MessageDescriptor;
   innerRef?: (ref: HTMLInputElement | null) => void;

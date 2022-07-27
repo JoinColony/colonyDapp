@@ -33,14 +33,11 @@
 }
 
 .menuIconContainer {
-  padding: 0;
   height: 14px;
   width: 6px;
-  position: relative;
   vertical-align: bottom;
-  border: 1px solid transparent;
   border-radius: var(--radius-normal);
-  cursor: pointer;
+  border: 0px;
 }
 
 .menuIconContainer:hover, .menuIconContainer.menuActive {

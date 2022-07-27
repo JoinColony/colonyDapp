@@ -8,7 +8,6 @@ import { Props as CommentProps } from '../Comment';
 
 import CommentActionsPopover from './CommentActionsPopover';
 
-import styles from './CommentActions.css';
 import ThreeDotsButton from '~core/Button/ThreeDotsButton';
 
 const MSG = defineMessages({
@@ -80,8 +79,6 @@ const CommentActions = ({
           id={id}
           innerRef={ref}
           isOpen={isOpen}
-          className={styles.actionsButton}
-          activeStyles={styles.activeDropdown}
           onClick={() => setOpen(true)}
           data-test="commentActionsButton"
           title={MSG.commentActionsTitle}
