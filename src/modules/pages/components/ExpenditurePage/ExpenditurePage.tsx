@@ -204,8 +204,7 @@ const validationSchema = yup.object().shape({
             amount: yup.number().required(),
           }),
         )
-        .min(2)
-        .required(),
+        .min(2),
     }),
   }),
 });

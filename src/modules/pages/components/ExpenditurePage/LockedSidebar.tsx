@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 
 import { LockedExpenditureSettings } from '~dashboard/ExpenditurePage/ExpenditureSettings';
 import { LockedPayments } from '~dashboard/ExpenditurePage/Payments';
+import { LockedSplit } from '~dashboard/ExpenditurePage/Split';
 import LockedStaged from '~dashboard/ExpenditurePage/Staged/LockedStaged/LockedStaged';
 import { Status } from '~dashboard/ExpenditurePage/Stages/constants';
 import { Colony } from '~data/index';
@@ -33,7 +34,7 @@ const LockedSidebar = ({
   activeStateId,
   handleReleaseMilestone,
 }: Props) => {
-  const { expenditure, recipients, filteredDomainId, staged } =
+  const { expenditure, recipients, filteredDomainId, staged, split } =
     formValues || {};
 
   const secondFormSection = useMemo(() => {
@@ -52,7 +53,7 @@ const LockedSidebar = ({
         );
       }
       case ExpenditureTypes.Split: {
-        return null;
+        return <LockedSplit colony={colony} split={split} />;
       }
       case ExpenditureTypes.Staged: {
         return (
@@ -77,6 +78,7 @@ const LockedSidebar = ({
     pendingChanges,
     pendingMotion,
     recipients,
+    split,
     staged,
     status,
   ]);
