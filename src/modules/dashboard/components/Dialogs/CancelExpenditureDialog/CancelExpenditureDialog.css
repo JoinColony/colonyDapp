@@ -91,6 +91,16 @@
   color: var(--text);
 }
 
+.textWrapper > span {
+  height: 16px;
+}
+
+/* this selector is for tooltip wrapper */
+.textWrapper > span ~ div {
+  max-width: 250px;
+  white-space: normal;
+}
+
 .message {
   display: flex;
   align-items: center;

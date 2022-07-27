@@ -17,11 +17,11 @@ import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot } from '~modules/users/checks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
-import IconTooltip from '~core/IconTooltip';
 
 import { PenalizeType } from './types';
 import { FormValues } from './CancelExpenditureDialog';
 import styles from './CancelExpenditureDialog.css';
+import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
 const MSG = defineMessages({
   header: {
@@ -175,10 +175,8 @@ const CancelExpenditureForm = ({
         <div className={styles.radioGroup}>
           <div className={styles.textWrapper}>
             <FormattedMessage {...MSG.shouldBePenalized} />
-            <IconTooltip
-              icon="question-mark"
+            <QuestionMarkTooltip
               tooltipText={MSG.effectTooltip}
-              appearance={{ size: 'huge' }}
               tooltipPopperOptions={{
                 placement: 'top',
                 strategy: 'fixed',
@@ -245,7 +243,7 @@ const CancelExpenditureForm = ({
             width: styles.buttonWidth,
           }}
           autoFocus
-          text={MSG.submit}
+          text={{ id: 'button.submit' }}
           type="submit"
           onClick={() => {
             onCancelExpenditure(values.forceAction);

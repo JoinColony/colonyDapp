@@ -29,11 +29,13 @@ import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog'
 import { Colony } from '~data/index';
 import PermissionsLabel from '~core/PermissionsLabel';
 import Tag from '~core/Tag';
+import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
 
 import DeleteDraftDialog from '../../Dialogs/DeleteDraftDialog/DeleteDraftDialog';
 import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
 import StageItem from './StageItem';
 import { MotionStatus, MotionType, Stage, Status } from './constants';
+import LinkedMotions from './LinkedMotions/LinkedMotions';
 import styles from './Stages.css';
 
 const MSG = defineMessages({
@@ -452,9 +454,6 @@ const Stages = ({ colony, states, activeStateId }: Props) => {
           labelComponent={labelComponent({ label, index })}
         />
       ))}
-      {/* 
-      add this part when LinkedMotions is merged
-
       {motion && (
         <LinkedMotions
           status={motion.status}
@@ -462,7 +461,7 @@ const Stages = ({ colony, states, activeStateId }: Props) => {
           id="25"
           motionLink={LANDING_PAGE_ROUTE}
         />
-      )} */}
+      )}
     </div>
   );
 };
