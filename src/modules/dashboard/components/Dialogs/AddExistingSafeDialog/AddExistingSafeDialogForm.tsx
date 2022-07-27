@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FormikProps, useField } from 'formik';
 import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
+
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Select, Input, Annotations, SelectOption } from '~core/Fields';
@@ -52,6 +53,7 @@ const MSG = defineMessages({
 
 interface Props {
   back: () => void;
+  formProps: FormikProps<FormValues>;
   networkOptions: SelectOption[];
 }
 
@@ -69,21 +71,22 @@ interface StatusText {
   statusValues?: SimpleMessageValues;
 }
 
-type SafeData = SafeContract | undefined | null;
+type SafeData = SafeContract | undefined | null | {};
 
 const AddExistingSafeDialogForm = ({
   back,
   networkOptions,
-  handleSubmit,
-  isSubmitting,
-  isValid,
+  formProps: { handleSubmit, isSubmitting, isValid, dirty },
 }: Props & Partial<FormikProps<FormValues>>) => {
   const { formatMessage } = useIntl();
 
   const [selectedChain, setSelectedChain] = useState<SelectOption>(
     networkOptions[0],
   );
-  const [safeData, setSafeData] = useState<SafeData>(undefined);
+  const [safeData, setSafeData] = useState<SafeData>({});
+  const [safeNotFoundError, setSafeNotFoundError] = useState<
+    string | undefined
+  >(undefined);
   const [isLoadingSafe, setIsLoadingSafe] = useState<boolean>(false);
 
   // Get base API url for the selected chain
@@ -114,25 +117,6 @@ const AddExistingSafeDialogForm = ({
       setSafeData(null);
     }
     setIsLoadingSafe(false);
-  };
-
-  // When selected chain or address changes
-  useEffect(() => {
-    // If there's a valid address in the address input
-    if (addressTouched && !addressError) {
-      // Get safe data
-      setIsLoadingSafe(true);
-      getSafeData(`${baseURL}api/v1/safes/${address}/`);
-    }
-  }, [baseURL, address, addressTouched, addressError]);
-
-  const handleNetworkChange = (fromNetworkValue: string) => {
-    const selectedNetwork = networkOptions.find(
-      (option) => option.value === fromNetworkValue,
-    );
-    if (selectedNetwork) {
-      setSelectedChain(selectedNetwork);
-    }
   };
 
   const getStatusText = (): StatusText | {} => {
@@ -176,18 +160,48 @@ const AddExistingSafeDialogForm = ({
     };
   };
 
-  // If safe is not found, show error message
-  let safeNotFoundError: string | undefined;
-
-  if (addressTouched && !addressError && !isLoadingSafe) {
-    if (safeData === undefined || safeData === null) {
+  const getCustomAddressError = () => {
+    /*
+     * If there is no validation error (via yup schema),
+     * get the appropriate error and set in custom error state.
+     * Basically a custom implementation of setFieldError. See: (https://github.com/jaredpalmer/formik/issues/1309)
+     */
+    if (!addressError) {
       const notFoundMsg = getStatusText() as StatusText;
-      safeNotFoundError = formatMessage(
+      const error = formatMessage(
         notFoundMsg.status,
         notFoundMsg?.statusValues,
       );
+      setSafeNotFoundError(error);
     }
-  }
+  };
+
+  // When selected chain or address changes
+  useEffect(() => {
+    // If there's a valid address in the address input
+    if (addressTouched && !addressError) {
+      // Get safe data
+      setSafeNotFoundError(undefined);
+      setIsLoadingSafe(true);
+      getSafeData(`${baseURL}api/v1/safes/${address}/`);
+    }
+  }, [baseURL, address, addressTouched, addressError]);
+
+  const handleNetworkChange = (fromNetworkValue: string) => {
+    const selectedNetwork = networkOptions.find(
+      (option) => option.value === fromNetworkValue,
+    );
+    if (selectedNetwork) {
+      setSelectedChain(selectedNetwork);
+    }
+  };
+
+  useEffect(() => {
+    if (!isLoadingSafe && (safeData === undefined || safeData === null)) {
+      getCustomAddressError();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [safeData, isLoadingSafe]);
 
   return (
     <>
@@ -251,7 +265,7 @@ const AddExistingSafeDialogForm = ({
           text={{ id: 'button.confirm' }}
           type="submit"
           loading={isSubmitting}
-          disabled={!isValid}
+          disabled={!isValid || !dirty || isLoadingSafe || !!safeNotFoundError}
           style={{ width: styles.wideButton }}
         />
       </DialogSection>

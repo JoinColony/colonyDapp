@@ -89,16 +89,11 @@ const AddExistingSafeDialog = ({
       onSuccess={close}
     >
       {(formProps: FormikProps<FormValues>) => {
-        const { isSubmitting, isValid, handleSubmit } = formProps;
         return (
           <Dialog cancel={cancel}>
             <DialogForm
-              {...{
-                isSubmitting,
-                isValid,
-                handleSubmit,
-                networkOptions,
-              }}
+              formProps={formProps}
+              networkOptions={networkOptions}
               back={() => callStep(prevStep)}
             />
           </Dialog>
