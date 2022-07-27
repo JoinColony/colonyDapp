@@ -65,6 +65,7 @@
 .reserveWrapper {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   min-height: 45px;
   width: 100%;
   font-size: var(--size-smallish);
@@ -74,10 +75,11 @@
 }
 
 .reserveBar {
-  margin: 0 10px 0 44px;
+  margin: 0 27px 0 44px;
   height: 14px;
   width: 184px;
   position: relative;
+  border: border;
   border-radius: 7px;
   background-color: var(--colony-white);
   box-shadow: inset 0px 2px 4px rgba(14, 37, 88, 0.07);
