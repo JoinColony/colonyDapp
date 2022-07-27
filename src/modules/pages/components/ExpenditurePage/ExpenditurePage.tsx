@@ -222,7 +222,10 @@ const ExpenditurePage = ({ match }: Props) => {
       colonyData &&
       openEscrowFundsDialog({
         colony: colonyData?.processedColony,
-        onClick: () => setActiveStateId?.(Stage.Funded), // add call to backend
+        handleSubmitClick: () => {
+          setActiveStateId?.(Stage.Funded);
+          // add call to backend
+        },
         isVotingExtensionEnabled: true, // temporary value
       }),
     [colonyData, openEscrowFundsDialog],

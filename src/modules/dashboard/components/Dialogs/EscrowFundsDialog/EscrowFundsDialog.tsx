@@ -19,14 +19,14 @@ export interface FormValues {
 interface Props {
   cancel: VoidFunction;
   close: VoidFunction;
-  onClick: VoidFunction;
+  handleSubmitClick: VoidFunction;
   colony: Colony;
   isVotingExtensionEnabled: boolean;
 }
 
 const EscrowFundsDialog = ({
   cancel,
-  onClick,
+  handleSubmitClick,
   close,
   colony,
   isVotingExtensionEnabled,
@@ -34,9 +34,9 @@ const EscrowFundsDialog = ({
   const [isForce, setIsForce] = useState(false);
 
   const onSubmitClick = useCallback(() => {
-    onClick();
+    handleSubmitClick();
     close();
-  }, [onClick, close]);
+  }, [handleSubmitClick, close]);
 
   const getFormAction = useCallback(
     (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
