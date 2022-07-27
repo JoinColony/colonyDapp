@@ -9,11 +9,7 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import {
-  InitialValuesType,
-  State,
-  ValuesType,
-} from '~pages/ExpenditurePage/ExpenditurePage';
+import { State, ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 
 import DeleteDraftDialog from '../../Dialogs/DeleteDraftDialog/DeleteDraftDialog';
 import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
@@ -70,7 +66,7 @@ const buttonStyles = {
 
 interface Props {
   states: State[];
-  handleSubmit: (values: InitialValuesType) => void;
+  handleSubmit: (values: ValuesType) => void;
   activeStateId?: string;
 }
 

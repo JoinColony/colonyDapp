@@ -11,7 +11,7 @@ import { Formik } from 'formik';
 
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
-import { useColonyFromNameQuery } from '~data/generated';
+import { LoggedInUser, useColonyFromNameQuery } from '~data/generated';
 import Stages from '~dashboard/ExpenditurePage/Stages';
 import TitleDescriptionSection, {
   LockedTitleDescriptionSection,
@@ -25,8 +25,10 @@ import { useLoggedInUser } from '~data/helpers';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
 import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
 import { AnyUser } from '~data/index';
+import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
 
 import ExpenditureForm from './ExpenditureForm';
+import { ExpenditureTypes } from './types';
 import styles from './ExpenditurePage.css';
 
 const displayName = 'pages.ExpenditurePage';
@@ -121,17 +123,21 @@ const validationSchema = yup.object().shape({
   title: yup.string().min(3).required(),
   description: yup.string().max(4000),
   split: yup.object().when('expenditure', {
-    is: (expenditure) => expenditure === 'split',
+    is: (expenditure) => expenditure === ExpenditureTypes.Split,
     then: yup.object().shape({
       unequal: yup.boolean().required(),
-      recipients: yup.array().of(
-        yup.object().shape({
-          recipient: yup
+      recipients: yup
+        .array()
+        .of(
+          yup
             .object()
-            .shape({ user: yup.object().required(), amount: yup.number() })
+            .shape({
+              user: yup.object().required(),
+              amount: yup.number().required(),
+            })
             .required(),
-        }),
-      ),
+        )
+        .min(2),
     }),
   }),
 });
@@ -147,14 +153,17 @@ export interface State {
 export interface ValuesType {
   expenditure: string;
   filteredDomainId: string;
-  owner: string;
-  recipients: Recipient[];
-  title: string;
+  owner?: Pick<
+    LoggedInUser,
+    'walletAddress' | 'balance' | 'username' | 'ethereal' | 'networkId'
+  >;
+  recipients?: Recipient[];
+  title?: string;
   description?: string;
   split: {
     unequal: boolean;
-    amount: { amount?: string; tokenAddress?: string };
-    recipients?: { user: AnyUser; amount: number; percent?: number }[];
+    amount: { value?: string; tokenAddress?: string };
+    recipients?: { user?: AnyUser; amount?: number; percent?: number }[];
   };
 }
 
@@ -167,7 +176,7 @@ const initialValues = {
   description: undefined,
   split: {
     unequal: true,
-    recipients: [{ user: undefined, amount: 0, percent: 0 }],
+    recipients: [initalRecipient, initalRecipient],
   },
 };
 
@@ -196,7 +205,7 @@ const ExpenditurePage = ({ match }: Props) => {
   });
   const loggedInUser = useLoggedInUser();
 
-  const initialValuesData = useMemo(() => {
+  const initialValuesData = useMemo((): ValuesType => {
     return (
       formValues || {
         ...initialValues,
@@ -224,8 +233,38 @@ const ExpenditurePage = ({ match }: Props) => {
     );
   }, [colonyData, formValues, loggedInUser]);
 
-  const handleSubmit = useCallback((values) => {
+  const handleSubmit = useCallback((values: ValuesType) => {
     setActiveStateId(Stage.Draft);
+    if (values.expenditure === ExpenditureTypes.Split) {
+      const recipientsCount =
+        values.split.recipients?.filter(
+          (recipient) => recipient?.user?.id !== undefined,
+        ).length || 0;
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const splitValues = {
+        ...values,
+        recipients: undefined,
+        split: {
+          ...values.split,
+          recipients: values.split.recipients?.map((recipient) => {
+            const amount = values.split.amount.value;
+            if (values.split.unequal) {
+              const userAmount =
+                amount &&
+                recipient?.percent &&
+                (recipient.percent / 100) * Number(values.split.amount.value);
+              return { ...recipient, amount: userAmount };
+            }
+            return {
+              ...recipient,
+              amount: !amount ? 0 : Number(amount) / (recipientsCount || 1),
+            };
+          }),
+        },
+      };
+      // if expenditure type is "Split" then splitValues, not values should be send to backend
+    }
 
     if (values) {
       setFormValues(values);

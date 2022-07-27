@@ -1,5 +1,5 @@
 import { FieldArray, useField, useFormikContext } from 'formik';
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import Decimal from 'decimal.js';
 
@@ -16,6 +16,7 @@ import TokenIcon from '~dashboard/HookedTokenIcon';
 import Numeral from '~core/Numeral';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
+import { initalRecipient } from '../constants';
 import styles from './SplitUnequal.css';
 
 const MSG = defineMessages({
@@ -69,30 +70,26 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
     variables: { colonyAddress: colonyAddress || '' },
   });
 
-  const sum = useMemo(() => {
-    return recipients.reduce((acc, recipient) => {
+  const calculated = useMemo(() => {
+    const sum = recipients.reduce((acc, recipient) => {
       return acc + Number(recipient.percent);
     }, 0);
-  }, [recipients]);
 
-  const remainingStake = useMemo(() => {
-    const limitForRecipient = recipients.map((recipient) =>
+    const remainingStake = recipients.map((recipient) =>
       new Decimal(100 - (sum - recipient.percent)).div(100),
     );
-    return limitForRecipient;
-  }, [recipients, sum]);
 
-  useEffect(() => {
-    setFieldValue(
-      'split.recipients',
-      recipients.map((recipient) => {
-        const userAmount =
-          amount.value && (recipient.percent / 100) * Number(amount.value);
-        return { ...recipient, amount: userAmount };
-      }),
+    const usersAmount = recipients.map(
+      (recipient) =>
+        amount.value && (recipient.percent / 100) * Number(amount.value),
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [amount.value, setFieldValue, sum]);
+
+    return {
+      sum,
+      remainingStake,
+      usersAmount,
+    };
+  }, [amount.value, recipients]);
 
   return (
     <>
@@ -138,10 +135,10 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
           <div className={styles.reserveBar}>
             <div
               className={styles.reserveIndicator}
-              style={{ width: `${sum}%` }}
+              style={{ width: `${calculated.sum}%` }}
             />
           </div>
-          <span className={styles.percent}>{sum}%</span>
+          <span className={styles.percent}>{calculated.sum}%</span>
         </div>
       </FormSection>
       <FieldArray
@@ -180,7 +177,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
                       step={1}
                       min={0}
                       max={100}
-                      limit={remainingStake[index]}
+                      limit={calculated.remainingStake[index]}
                       handleStyle={{
                         height: 18,
                         width: 18,
@@ -218,7 +215,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
                         />
                         <Numeral
                           unit={getTokenDecimalsWithFallback(0)}
-                          value={recipient.amount || 0}
+                          value={calculated.usersAmount[index] || 0}
                         />{' '}
                         {token.symbol}
                       </div>
@@ -228,7 +225,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
               );
             })}
             <Button
-              onClick={() => push({ user: undefined, amount: 0, percent: 0 })}
+              onClick={() => push(initalRecipient)}
               appearance={{ theme: 'blue' }}
             >
               <div className={styles.addRecipientLabel}>
@@ -242,6 +239,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
     </>
   );
 };
+
 SplitUnequal.displayName = displayName;
 
 export default SplitUnequal;
