@@ -103,7 +103,7 @@ export const findDifferences = (
   return differentValues;
 };
 
-export const updateForcedValues = (values, confirmedValues) => {
+export const updateValues = (values, confirmedValues) => {
   if ('recipients' in confirmedValues) {
     const changedRecipients = values.recipients.filter((recipient) =>
       confirmedValues.recipients.find((confRec) => confRec.id === recipient.id),
@@ -128,19 +128,31 @@ export const updateForcedValues = (values, confirmedValues) => {
             (recip) => recip.id === recipient.id,
           );
 
-          return { ...recipient, ...newValue };
+          return { ...recipient, ...newValue, isChanged: true };
         }),
         ...newRecipients.map((newRecip) => ({
           ...newRecip,
           created: undefined,
+          isChanged: true,
         })),
       ].filter((rec) => !rec.removed),
     };
 
-    const newConfirmed = Object.keys(confirmedValues).filter(
-      (key) => key !== 'recipients',
+    const newConfirmed = Object.entries(confirmedValues).reduce(
+      (acc, [key, value]) => {
+        if (key !== 'recipients') {
+          return {
+            ...acc,
+            ...{ [key]: value },
+          };
+        }
+        return acc;
+      },
+      {},
     );
-    return assign({}, newValues, newConfirmed);
+    const here = assign({}, newValues, newConfirmed);
+
+    return here;
   }
   return assign({}, values, confirmedValues);
 };
