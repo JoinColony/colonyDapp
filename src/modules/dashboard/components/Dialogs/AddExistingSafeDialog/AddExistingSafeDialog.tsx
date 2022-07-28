@@ -92,7 +92,7 @@ const AddExistingSafeDialog = ({
         return (
           <Dialog cancel={cancel}>
             <DialogForm
-              formProps={formProps}
+              {...formProps}
               networkOptions={networkOptions}
               back={() => callStep(prevStep)}
             />

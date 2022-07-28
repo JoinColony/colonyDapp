@@ -28,7 +28,7 @@ const MSG = defineMessages({
   },
   annotation: {
     id: 'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.annotation',
-    defaultMessage: "Explain why you're adding this Gnosis Safe (optional)",
+    defaultMessage: `Explain why you're adding this Gnosis Safe (optional)`,
   },
   contract: {
     id: 'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.contract',
@@ -53,7 +53,6 @@ const MSG = defineMessages({
 
 interface Props {
   back: () => void;
-  formProps: FormikProps<FormValues>;
   networkOptions: SelectOption[];
 }
 
@@ -76,8 +75,11 @@ type SafeData = SafeContract | undefined | null | {};
 const AddExistingSafeDialogForm = ({
   back,
   networkOptions,
-  formProps: { handleSubmit, isSubmitting, isValid, dirty },
-}: Props & Partial<FormikProps<FormValues>>) => {
+  handleSubmit,
+  isSubmitting,
+  isValid,
+  dirty,
+}: Props & FormikProps<FormValues>) => {
   const { formatMessage } = useIntl();
 
   const [selectedChain, setSelectedChain] = useState<SelectOption>(
@@ -126,12 +128,10 @@ const AddExistingSafeDialogForm = ({
     if (isLoadingSafe) {
       return { status: MSG.safeLoading };
     }
-
     /*
      * safeData will be undefined if fetching did not return a status code of 200
      * (i.e. safe is not present on selected chain)
      */
-
     if (safeData === undefined) {
       return {
         status: MSG.safeCheck,
@@ -141,11 +141,9 @@ const AddExistingSafeDialogForm = ({
         },
       };
     }
-
     /*
      * safeData will be null if fetching failed (e.g. network error)
      */
-
     if (safeData === null) {
       return {
         status: MSG.fetchFailed,
@@ -261,11 +259,17 @@ const AddExistingSafeDialogForm = ({
         />
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
-          onClick={handleSubmit && (() => handleSubmit())}
+          onClick={() => handleSubmit()}
           text={{ id: 'button.confirm' }}
           type="submit"
           loading={isSubmitting}
-          disabled={!isValid || !dirty || isLoadingSafe || !!safeNotFoundError}
+          disabled={
+            !isValid ||
+            isSubmitting ||
+            !dirty ||
+            isLoadingSafe ||
+            !!safeNotFoundError
+          }
           style={{ width: styles.wideButton }}
         />
       </DialogSection>
