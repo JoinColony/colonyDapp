@@ -27,7 +27,7 @@ export interface ExtensionInitParams {
 }
 
 export interface ExtensionData {
-  extensionId: Extension | 'Unknown';
+  extensionId: Extension;
   name: string | MessageDescriptor;
   header?: string | MessageDescriptor;
   descriptionShort: string | MessageDescriptor;
@@ -42,17 +42,6 @@ export interface ExtensionData {
   uninstallable: boolean;
   enabledExtensionBody?: (props: ExtensionBodyProps) => ReactNode;
 }
-
-const unknownExtensionMessages = {
-  unknownName: {
-    id: 'extensions.Unknown.name',
-    defaultMessage: 'Unknown Extension',
-  },
-  unknownDescription: {
-    id: 'extensions.Unknown.description',
-    defaultMessage: 'I do not know this extension',
-  },
-};
 
 const oneTransactionPaymentMessages = {
   oneTxPaymentName: {
@@ -165,12 +154,19 @@ const votingReputationMessages = {
 };
 
 const MSG = defineMessages({
-  ...unknownExtensionMessages,
   ...oneTransactionPaymentMessages,
   ...votingReputationMessages,
 });
 
-const extensions: { [key: string]: ExtensionData } = {
+type ExtensionDataPartialMap = Partial<
+  {
+    [E in Extension]: ExtensionData;
+  }
+>;
+
+// @NOTE List of extensions allowed for use within the Dapp
+// should be defined here.
+const extensions: ExtensionDataPartialMap = {
   OneTxPayment: {
     extensionId: Extension.OneTxPayment,
     name: MSG.oneTxPaymentName,
@@ -310,16 +306,6 @@ const extensions: { [key: string]: ExtensionData } = {
       },
     ],
     uninstallable: true,
-  },
-  Unknown: {
-    extensionId: 'Unknown',
-    createdAt: 0,
-    name: MSG.unknownName,
-    descriptionShort: MSG.unknownDescription,
-    descriptionLong: MSG.unknownDescription,
-    currentVersion: 0,
-    neededColonyPermissions: [],
-    uninstallable: false,
   },
 };
 
