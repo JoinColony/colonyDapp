@@ -180,27 +180,6 @@ const storageSlotArgumentParser = (values: {
 };
 
 /*
- * @NOTE Only use internally
- *
- * Specific function to parse known, expected, values
- * This parses values for whitelist specific events
- */
-const whitelistEventsArgumentParser = (values: {
-  _status?: string;
-}): {
-  _status?: boolean;
-} => {
-  const parsedValues: {
-    _status?: boolean;
-  } = {};
-  if (values?._status) {
-    // eslint-disable-next-line no-underscore-dangle
-    parsedValues._status = values._status === 'true';
-  }
-  return parsedValues;
-};
-
-/*
  * Utility to parse events that come from the subgraph handler
  * into events that resemble the Log format that we get directly from the chain
  */
@@ -233,7 +212,6 @@ export const parseSubgraphEvent = ({
       ...addressArgumentParser(parsedArguments),
       ...motionArgumentparser(parsedArguments),
       ...storageSlotArgumentParser(parsedArguments),
-      ...whitelistEventsArgumentParser(parsedArguments),
     },
   };
   /*
