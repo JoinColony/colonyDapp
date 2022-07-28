@@ -44,7 +44,7 @@ function* addExistingSafeAction({
     const ipfsWithFallback = TEMP_getContext(ContextModule.IPFSWithFallback);
 
     if (!contractAddress) {
-      throw new Error('A contract address is required to add an existing safe');
+      throw new Error('A Safe contract address is required.');
     }
 
     txChannel = yield call(getTxChannel, metaId);
@@ -99,7 +99,6 @@ function* addExistingSafeAction({
      * Fetch colony data from the subgraph
      * And destructure the metadata hash.
      */
-
     const {
       data: {
         colony: { metadata: currentMetadataIPFSHash },
@@ -121,18 +120,15 @@ function* addExistingSafeAction({
     /*
      * If there isn't metadata in the colony ...
      */
-
     if (!currentMetadataIPFSHash) {
       /*
        * ... add the safe to a new metadata object.
        */
-
       updatatedColonyMetadata = { colonySafes: [safeData] };
     } else {
       /*
        *  ... otherwise, fetch the metadata from IPFS...
        */
-
       const currentMetadata = yield call(
         ipfsWithFallback.getString,
         currentMetadataIPFSHash,
@@ -151,7 +147,6 @@ function* addExistingSafeAction({
     /*
      * Upload updated metadata object to IPFS
      */
-
     const updatedColonyMetadataIpfsHash = yield call(
       ipfsUpload,
       JSON.stringify(updatatedColonyMetadata),

@@ -394,9 +394,9 @@
     "metatransaction.VestingSimpleClient.claimGrant.description": "Claim Colony Grant",
 
     "transaction.group.addExistingSafe.title": "Add Existing Safe",
-    "transaction.group.addExistingSafe.description": "Add Existing Safe",
+    "transaction.group.addExistingSafe.description": "Add an existing Safe to this Colony",
     "transaction.ColonyClient.addExistingSafe.title": "Add Existing Safe",
-    "transaction.ColonyClient.addExistingSafe.description": "Add Existing Safe",
+    "transaction.ColonyClient.addExistingSafe.description": "Add an existing Safe to this Colony",
 
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",
