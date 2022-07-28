@@ -1,4 +1,4 @@
-import { isEqual, uniq, isEmpty } from 'lodash';
+import { isEqual, uniq, isEmpty, assign } from 'lodash';
 
 interface Delay {
   amount?: string;
@@ -101,4 +101,46 @@ export const findDifferences = (
   }, {});
 
   return differentValues;
+};
+
+export const updateForcedValues = (values, confirmedValues) => {
+  if ('recipients' in confirmedValues) {
+    const changedRecipients = values.recipients.filter((recipient) =>
+      confirmedValues.recipients.find((confRec) => confRec.id === recipient.id),
+    );
+
+    const sameRecipients = values.recipients.filter((recipient) =>
+      confirmedValues.recipients.every(
+        (confRec) => confRec.id !== recipient.id,
+      ),
+    );
+
+    const newRecipients = confirmedValues.recipients.filter(
+      (value) => value.created,
+    );
+
+    const newValues = {
+      ...values,
+      recipients: [
+        ...sameRecipients,
+        ...changedRecipients.map((recipient) => {
+          const newValue = confirmedValues.recipients.find(
+            (recip) => recip.id === recipient.id,
+          );
+
+          return { ...recipient, ...newValue };
+        }),
+        ...newRecipients.map((newRecip) => ({
+          ...newRecip,
+          created: undefined,
+        })),
+      ].filter((rec) => !rec.removed),
+    };
+
+    const newConfirmed = Object.keys(confirmedValues).filter(
+      (key) => key !== 'recipients',
+    );
+    return assign({}, newValues, newConfirmed);
+  }
+  return assign({}, values, confirmedValues);
 };

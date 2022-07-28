@@ -34,7 +34,7 @@ import { useDialog } from '~core/Dialog';
 import Tag from '~core/Tag';
 import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
 
-import { findDifferences } from './utils';
+import { findDifferences, updateForcedValues } from './utils';
 import ExpenditureForm from './ExpenditureForm';
 import styles from './ExpenditurePage.css';
 
@@ -319,7 +319,9 @@ const ExpenditurePage = ({ match }: Props) => {
       // updating them on backend and then fetching changes
       if (isForced) {
         setStatus(Status.ForceEdited);
-        // call to backend to set new values goes here
+        const data = updateForcedValues(formValues, confirmedValues);
+        // call to backend to set new values goes here, setting state is temorary
+        setFormValues(data);
       } else {
         setPendingChanges(confirmedValues);
         setMotion({ type: 'Edit', status: MotionStatus.Pending });
@@ -327,7 +329,7 @@ const ExpenditurePage = ({ match }: Props) => {
         // setting pendigChanges is temporary, it should be replaced with call to api
       }
     },
-    [],
+    [formValues],
   );
 
   const handleEditLockedForm = useCallback(() => {
