@@ -108,14 +108,14 @@ export interface NFT {
 const testNFTData: NFT[] = [
   {
     name: 'BoredApeYachtClub',
-    avatar: '',
+    avatar: 'bla',
     address: '0xb97D57F4959eAfA0339424b83FcFaf9c15407461',
     tokenID: '45161',
     safeID: '9995',
   },
   {
     name: 'NFT 2',
-    avatar: '',
+    avatar: 'doh',
     address: '0xb17D57F4959eAfA0339424b83FcFaf9c15407462',
     tokenID: '45161',
     safeID: '9996',
