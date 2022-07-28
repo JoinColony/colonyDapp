@@ -13,11 +13,9 @@ import Tag from '~core/Tag';
 import TimeRelativeShort from '~dashboard/ExpenditurePage/TimeRelativeShort/TimeRelativeShort';
 import Button from '~core/Button';
 import Numeral from '~core/Numeral';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import { buttonStyles } from '../Stages';
 import styles from './ClaimFunds.css';
-import { Recipient } from '~dashboard/ExpenditurePage/hooks';
 
 const displayName = 'dashboard.ExpenditurePage.ClaimFunds';
 
@@ -52,72 +50,43 @@ const MSG = defineMessages({
   },
 });
 
-export type Token = Record<string, number>;
-
-interface TokenWithId {
-  symbol: string;
-  amount: number;
-  id: string;
-}
+export type TokensAmount = Record<string, number>;
 
 interface Props {
   buttonAction?: () => void;
   buttonText?: string | MessageDescriptor;
   buttonIsActive: boolean;
-  nextClaimableRecipient?: Recipient;
-  totalClaimable?: Token;
-  claimableNow?: Token;
-  claimed: Token;
+  nextClaim?: { claimDate?: number; claimed?: boolean };
+  totalClaimable?: TokensAmount;
+  claimableNow?: TokensAmount;
+  claimed: TokensAmount;
 }
 
 const ClaimFunds = ({
   buttonAction,
   buttonText,
   buttonIsActive,
-  nextClaimableRecipient,
+  nextClaim,
   totalClaimable,
   claimableNow,
   claimed,
 }: Props) => {
   const { formatMessage } = useIntl();
-  const convertToTokensWithIds = useMemo(
-    () => (object: Token | undefined): TokenWithId[] => {
-      if (!object) {
-        return [];
-      }
-
-      return Object.entries(object).map(([symbol, amount]) => ({
-        symbol,
-        amount,
-        id: nanoid(),
-      }));
-    },
-    [],
-  );
-
-  const totalClaimableWithId = convertToTokensWithIds(totalClaimable);
-  const claimableNowWithId = convertToTokensWithIds(claimableNow);
-  const claimedWithId = convertToTokensWithIds(claimed);
 
   const nextClaimLabel = useMemo(() => {
-    if (!nextClaimableRecipient || !nextClaimableRecipient.claimDate) {
+    if (!nextClaim || !nextClaim.claimDate) {
       return <FormattedMessage {...MSG.nothingToClaim} />;
     }
-    if (
-      nextClaimableRecipient?.claimDate < new Date().getTime() &&
-      !nextClaimableRecipient.claimed
-    ) {
+    if (nextClaim?.claimDate < new Date().getTime() && !nextClaim.claimed) {
       // if the claim date has passed and the amount hasn't been claimed yet
       return formatMessage(MSG.claim, {
         claimDate: <FormattedMessage {...MSG.now} />,
       });
     }
     return formatMessage(MSG.claim, {
-      claimDate: (
-        <TimeRelativeShort value={new Date(nextClaimableRecipient.claimDate)} />
-      ),
+      claimDate: <TimeRelativeShort value={new Date(nextClaim.claimDate)} />,
     });
-  }, [formatMessage, nextClaimableRecipient]);
+  }, [formatMessage, nextClaim]);
 
   return (
     <div className={styles.container}>
@@ -145,13 +114,9 @@ const ClaimFunds = ({
               <FormattedMessage {...MSG.totalClaimable} />
             </span>
             <div className={styles.valueContainer}>
-              {totalClaimableWithId.map(({ symbol, amount, id }) => (
-                <div className={styles.value} key={id}>
-                  <Numeral
-                    unit={getTokenDecimalsWithFallback(0)}
-                    value={amount || 0}
-                  />{' '}
-                  {symbol}
+              {Object.entries(totalClaimable).map(([symbol, amount]) => (
+                <div className={styles.value} key={nanoid()}>
+                  <Numeral value={amount || 0} /> {symbol}
                 </div>
               ))}
             </div>
@@ -165,13 +130,9 @@ const ClaimFunds = ({
               <FormattedMessage {...MSG.claimableNow} />
             </span>
             <div className={styles.valueContainer}>
-              {claimableNowWithId.map(({ symbol, amount, id }) => (
-                <div className={styles.value} key={id}>
-                  <Numeral
-                    unit={getTokenDecimalsWithFallback(0)}
-                    value={amount || 0}
-                  />{' '}
-                  {symbol}
+              {Object.entries(claimableNow).map(([symbol, amount]) => (
+                <div className={styles.value} key={nanoid()}>
+                  <Numeral value={amount || 0} /> {symbol}
                 </div>
               ))}
             </div>
@@ -185,13 +146,9 @@ const ClaimFunds = ({
               <FormattedMessage {...MSG.claimed} />
             </span>
             <div className={styles.valueContainer}>
-              {claimedWithId.map(({ symbol, amount, id }) => (
-                <div className={styles.value} key={id}>
-                  <Numeral
-                    unit={getTokenDecimalsWithFallback(0)}
-                    value={amount || 0}
-                  />{' '}
-                  {symbol}
+              {Object.entries(claimed).map(([symbol, amount]) => (
+                <div className={styles.value} key={nanoid()}>
+                  <Numeral value={amount || 0} /> {symbol}
                 </div>
               ))}
             </div>

@@ -137,26 +137,3 @@
   height: 30px;
   width: 30px;
 }
-
-.tagWrapper > span {
-  padding: 2px 14px 3px;
-  border-radius: 12px;
-}
-
-.claimButton {
-  composes: main themePrimary from '~core/Button/Button.css';
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1px 13px 2px;
-  height: 21px;
-  border-radius: 12px;
-  font-size: var(--size-tiny);
-}
-
-.claimedTagWrapper span {
-  padding: 1px 13px 2px;
-  border-radius: 12px;
-  background-color: var(--text-disabled);
-  color: var(--colony-white);
-}

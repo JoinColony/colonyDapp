@@ -79,10 +79,6 @@ interface Props {
   colony: Colony;
 }
 
-export const setInitialTokenAddress = (nativeTokenAddress: string) => {
-  return nativeTokenAddress;
-};
-
 export const newToken = {
   id: nanoid(),
   amount: undefined,

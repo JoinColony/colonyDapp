@@ -108,7 +108,7 @@ const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
     claimableNow,
     claimed,
     totalClaimable,
-    nextClaimableRecipient,
+    nextClaim,
     buttonIsActive,
   } = useCalculateTokens(recipientsWithTokens as Recipient[]);
 
@@ -251,7 +251,7 @@ const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
           claimableNow={claimableNow}
           claimed={claimed}
           totalClaimable={totalClaimable}
-          nextClaimableRecipient={nextClaimableRecipient}
+          nextClaim={nextClaim}
         />
       )}
       <div className={styles.stagesContainer}>
@@ -332,25 +332,31 @@ const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
                     </Tooltip>
                   </Button>
                 )}
-                {activeStateId !== Stage.Draft && (
-                  <Button
-                    className={classNames(styles.iconButton, styles.cancelIcon)}
-                    onClick={() => {}}
-                  >
-                    <Tooltip
-                      placement="top-start"
-                      content={<FormattedMessage {...MSG.tooltipCancelText} />}
+                {activeStateId !== Stage.Draft &&
+                  activeStateId !== Stage.Claimed && (
+                    <Button
+                      className={classNames(
+                        styles.iconButton,
+                        styles.cancelIcon,
+                      )}
+                      onClick={() => {}}
                     >
-                      <div className={styles.iconWrapper}>
-                        <Icon
-                          name="circle-minus"
-                          appearance={{ size: 'normal' }}
-                          style={{ fill: styles.iconColor }}
-                        />
-                      </div>
-                    </Tooltip>
-                  </Button>
-                )}
+                      <Tooltip
+                        placement="top-start"
+                        content={
+                          <FormattedMessage {...MSG.tooltipCancelText} />
+                        }
+                      >
+                        <div className={styles.iconWrapper}>
+                          <Icon
+                            name="circle-minus"
+                            appearance={{ size: 'normal' }}
+                            style={{ fill: styles.iconColor }}
+                          />
+                        </div>
+                      </Tooltip>
+                    </Button>
+                  )}
                 {renderButton()}
               </>
             )}

@@ -51,7 +51,15 @@ export const useCalculateTokens = (recipients?: Recipient[]) => {
       (recipient) => recipient.claimDate && !recipient.claimed,
     );
 
-    return minBy(futureTokens, (recipient) => recipient.claimDate);
+    const nextClaimableRecipient = minBy(
+      futureTokens,
+      (recipient) => recipient.claimDate,
+    );
+
+    return {
+      claimDate: nextClaimableRecipient?.claimDate,
+      claimed: nextClaimableRecipient?.claimed,
+    };
   }, []);
 
   const totalClaimable = recipients ? calculateTokens(recipients) : {};
@@ -90,7 +98,7 @@ export const useCalculateTokens = (recipients?: Recipient[]) => {
     totalClaimable,
     claimableNow,
     claimed,
-    nextClaimableRecipient: nextClaim,
+    nextClaim,
     buttonIsActive,
   };
 };

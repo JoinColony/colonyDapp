@@ -16,24 +16,25 @@ import { getRecipientTokens } from '~dashboard/ExpenditurePage/utils';
 
 export const MSG = defineMessages({
   recipientLabel: {
-    id: 'dashboard.ExpenditurePage.Recipient.recipientLabel',
+    id: 'dashboard.ExpenditurePage.Recipient.LockedRecipient.recipientLabel',
     defaultMessage: 'Recipient',
   },
   valueLabel: {
-    id: 'dashboard.ExpenditurePage.Recipient.valueLabel',
+    id: 'dashboard.ExpenditurePage.Recipient.LockedRecipient.valueLabel',
     defaultMessage: 'Value',
   },
   delayLabel: {
-    id: 'dashboard.ExpenditurePage.Recipient.delayLabel',
+    id: 'dashboard.ExpenditurePage.Recipient.LockedRecipient.delayLabel',
     defaultMessage: 'Claim delay',
   },
   none: {
-    id: 'dashboard.ExpenditurePage.Recipient.none',
+    id: 'dashboard.ExpenditurePage.Recipient.LockedRecipient.none',
     defaultMessage: 'None',
   },
 });
 
-const displayNameLockedRecipient = 'dashboard.ExpenditurePage.LockedRecipient';
+const displayNameLockedRecipient =
+  'dashboard.ExpenditurePage.Recipient.LockedRecipient';
 
 interface Props {
   recipient: RecipientType;
