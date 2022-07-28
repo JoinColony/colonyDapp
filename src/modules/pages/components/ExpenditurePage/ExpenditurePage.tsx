@@ -34,7 +34,7 @@ import { useDialog } from '~core/Dialog';
 import Tag from '~core/Tag';
 import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
 
-import { findDifferences, updateForcedValues } from './utils';
+import { findDifferences, updateValues } from './utils';
 import ExpenditureForm from './ExpenditureForm';
 import styles from './ExpenditurePage.css';
 
@@ -314,19 +314,23 @@ const ExpenditurePage = ({ match }: Props) => {
       setInEditMode(false);
       setFormEditable(false);
 
-      // setting state is temporary
-      // changes won't be visible now, they will be displayed after
-      // updating them on backend and then fetching changes
       if (isForced) {
         setStatus(Status.ForceEdited);
-        const data = updateForcedValues(formValues, confirmedValues);
+        const data = updateValues(formValues, confirmedValues);
         // call to backend to set new values goes here, setting state is temorary
         setFormValues(data);
       } else {
         setPendingChanges(confirmedValues);
         setMotion({ type: 'Edit', status: MotionStatus.Pending });
         setStatus(Status.Edited);
-        // setting pendigChanges is temporary, it should be replaced with call to api
+        // setTimeout is temporary, it should be replaced with call to api
+        setTimeout(() => {
+          const data = updateValues(formValues, confirmedValues);
+          setPendingChanges(undefined);
+          setFormValues(data);
+          setStatus(undefined);
+          setMotion({ type: 'Edit', status: MotionStatus.Passed });
+        }, 5000);
       }
     },
     [formValues],
@@ -458,6 +462,7 @@ const ExpenditurePage = ({ match }: Props) => {
           colony={colonyData?.processedColony}
           editForm={handleEditLockedForm}
           pendingChanges={pendingChanges}
+          status={status}
         />
       </aside>
       <div className={styles.mainContainer}>

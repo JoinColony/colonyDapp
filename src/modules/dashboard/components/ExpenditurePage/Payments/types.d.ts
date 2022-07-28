@@ -11,4 +11,5 @@ export interface Recipient {
   isExpanded?: boolean;
   removed?: boolean;
   created?: boolean;
+  isChanged?: boolean;
 }

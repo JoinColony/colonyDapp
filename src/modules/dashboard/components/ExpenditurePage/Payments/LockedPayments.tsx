@@ -31,7 +31,6 @@ const LockedPayments = ({
   colony,
   editForm,
   pendingChanges,
-  status,
 }: Props) => {
   const [expandedRecipients, setExpandedRecipients] = useState<
     number[] | undefined
@@ -99,13 +98,14 @@ const LockedPayments = ({
                       </>
                     )}
                   </div>
-                  {inPendingState && <div className={styles.dot} />}
-                  {/* temporary value to show that recipient was updated in locked state
-                  it should be fetched from backend */}
-                  {status === Status.ForceEdited && index === 0 && (
-                    <Tooltip content={<FormattedMessage {...MSG.newValue} />}>
-                      <div className={classNames(styles.dot, styles.blue)} />
-                    </Tooltip>
+                  {inPendingState ? (
+                    <div className={styles.dot} />
+                  ) : (
+                    recipient.isChanged && (
+                      <Tooltip content={<FormattedMessage {...MSG.newValue} />}>
+                        <div className={classNames(styles.dot, styles.blue)} />
+                      </Tooltip>
+                    )
                   )}
                 </div>
               </FormSection>
