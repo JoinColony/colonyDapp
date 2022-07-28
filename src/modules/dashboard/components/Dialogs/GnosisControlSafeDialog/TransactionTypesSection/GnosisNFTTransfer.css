@@ -1,5 +1,3 @@
-@value width from '../GnosisControlSafeForm.css';
-
 .nftPicker,
 .recipientPicker {
   margin: 20px 0;
@@ -11,14 +9,11 @@
 }
 
 .nftPicker input,
-.recipientPicker input {
-  width: width;
-  max-width: width;
-}
-
 .nftPicker button,
+.recipientPicker input,
 .recipientPicker button {
-  max-width: width;
+  width: 100%;
+  max-width: 419px;
 }
 
 .nftPicker label,

@@ -1,4 +1,3 @@
-export const width: string;
 export const nftPicker: string;
 export const recipientPicker: string;
 export const nftDetailsContainer: string;
