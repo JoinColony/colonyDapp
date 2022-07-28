@@ -208,6 +208,7 @@ const StakingSlider = ({
                   new Decimal(minUserStake).sub(userActivatedTokens).toString(),
                   nativeToken?.decimals,
                 )}
+                key={1}
               />
             ),
             tokenSymbol: nativeToken?.symbol,
