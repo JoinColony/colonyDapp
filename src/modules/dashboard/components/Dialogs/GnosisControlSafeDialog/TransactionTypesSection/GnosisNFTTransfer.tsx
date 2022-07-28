@@ -111,7 +111,14 @@ const GnosisNFTTransfer = ({
               <FormattedMessage {...MSG.nftDetails} />
             </div>
             <div className={styles.nftImage}>
-              <p>NFT image</p>
+              <Avatar
+                avatarURL={undefined}
+                notSet={!filteredNFTData?.avatar}
+                seed={filteredNFTData?.address?.toLocaleLowerCase()}
+                placeholderIcon="nft-icon"
+                title="nftImage"
+                size="l"
+              />
             </div>
           </div>
           <div className={styles.nftDetails}>
@@ -124,7 +131,7 @@ const GnosisNFTTransfer = ({
                   <Avatar
                     avatarURL={undefined}
                     placeholderIcon="circle-close"
-                    seed={filteredNFTData.address.toLocaleLowerCase()}
+                    seed={filteredNFTData?.address?.toLocaleLowerCase()}
                     title=""
                     size="xs"
                     className={styles.nftContractAvatar}
