@@ -77,40 +77,42 @@ const LockedSplit = ({ colony, split }: Props) => {
       </FormSection>
       {recipients?.map((recipient) => {
         return (
-          <FormSection appearance={{ border: 'bottom' }}>
-            <div className={styles.lockedRecipient}>
-              <div className={styles.userName}>
-                <UserAvatar
-                  address={recipient.user.profile.walletAddress}
-                  size="xs"
-                  notSet={false}
-                />
-                <UserMention
-                  username={
-                    recipient.user.profile.username ||
-                    recipient.user.profile.displayName ||
-                    ''
-                  }
-                />
+          recipient?.user && (
+            <FormSection appearance={{ border: 'bottom' }}>
+              <div className={styles.lockedRecipient}>
+                <div className={styles.userName}>
+                  <UserAvatar
+                    address={recipient.user.profile.walletAddress}
+                    size="xs"
+                    notSet={false}
+                  />
+                  <UserMention
+                    username={
+                      recipient.user.profile.username ||
+                      recipient.user.profile.displayName ||
+                      ''
+                    }
+                  />
+                </div>
+                {token && (
+                  <>
+                    <div className={styles.recipientAmountWrapper}>
+                      <TokenIcon
+                        className={styles.tokenIcon}
+                        token={token}
+                        name={token.name || token.address}
+                      />
+                      <Numeral
+                        unit={getTokenDecimalsWithFallback(0)}
+                        value={recipient.amount || 0}
+                      />
+                      {token.symbol}
+                    </div>
+                  </>
+                )}
               </div>
-              {token && (
-                <>
-                  <div className={styles.recipientAmountWrapper}>
-                    <TokenIcon
-                      className={styles.tokenIcon}
-                      token={token}
-                      name={token.name || token.address}
-                    />
-                    <Numeral
-                      unit={getTokenDecimalsWithFallback(0)}
-                      value={recipient.amount || 0}
-                    />
-                    {token.symbol}
-                  </div>
-                </>
-              )}
-            </div>
-          </FormSection>
+            </FormSection>
+          )
         );
       })}
     </div>
