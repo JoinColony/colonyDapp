@@ -37,7 +37,9 @@
 
 .tagWrapper > span {
   padding: 2px 14px 3px;
+  min-width: 100px;
   border-radius: 12px;
+  text-align: center;
 }
 
 .buttonWrapper {

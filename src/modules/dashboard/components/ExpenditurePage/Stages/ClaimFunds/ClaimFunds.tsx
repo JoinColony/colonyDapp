@@ -49,7 +49,7 @@ const MSG = defineMessages({
   },
   now: {
     id: 'dashboard.ExpenditurePage.Stages.ClaimFunds.now',
-    defaultMessage: 'now',
+    defaultMessage: 'Now',
   },
 });
 
@@ -91,9 +91,7 @@ const ClaimFunds = ({
     }
     if (nextClaim?.claimDate < new Date().getTime() && !nextClaim.claimed) {
       // if the claim date has passed and the amount hasn't been claimed yet
-      return formatMessage(MSG.claim, {
-        claimDate: <FormattedMessage {...MSG.now} />,
-      });
+      return <FormattedMessage {...MSG.now} />;
     }
     return formatMessage(MSG.claim, {
       claimDate: <TimeRelativeShort value={new Date(nextClaim.claimDate)} />,
