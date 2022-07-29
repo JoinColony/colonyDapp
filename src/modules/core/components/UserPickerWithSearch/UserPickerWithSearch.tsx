@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useRef } from 'react';
+import React, { ReactNode, useCallback, useMemo, useRef } from 'react';
 import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 import compose from 'recompose/compose';
 import classNames from 'classnames';
@@ -125,6 +125,7 @@ const UserPickerWithSearch = ({
   valueDataTest,
   registerTriggerNode,
   sidebarRef,
+  data,
 }: EnhancedProps) => {
   const [, { error, value }, { setValue }] = useField<AnyUser | null>(name);
   const { formatMessage } = useIntl();
@@ -160,6 +161,11 @@ const UserPickerWithSearch = ({
     !placeholder || typeof placeholder === 'string'
       ? placeholder
       : formatMessage(placeholder);
+
+  const dropdownHeight = useMemo(() => {
+    const height = data.length * 56;
+    return height > 160 ? 160 : height;
+  }, [data]);
 
   return (
     <OmniPickerWrapper className={getMainClasses({}, styles)}>
@@ -209,7 +215,11 @@ const UserPickerWithSearch = ({
             </button>
           )}
           {omniPickerIsOpen && (
-            <Dropdown element={ref.current} scrollContainer={sidebarRef}>
+            <Dropdown
+              element={ref.current}
+              scrollContainer={sidebarRef}
+              dropdownHeight={dropdownHeight}
+            >
               <div className={styles.omniPickerContainer}>
                 <OmniPicker
                   renderItem={renderItem || defaultRenderItem}
