@@ -29,19 +29,19 @@ const MSG = defineMessages({
     defaultMessage: 'Select Recipient',
   },
   userPickerPlaceholder: {
-    id: `dashboard.ManageReputationContainer.GnosisNFTTransfer.userPickerPlaceholder`,
+    id: `dashboard.GnosisControlSafeDialog.GnosisNFTTransfer.userPickerPlaceholder`,
     defaultMessage: 'Search for a user or paste wallet address',
   },
   contract: {
-    id: `dashboard.ManageReputationContainer.GnosisNFTTransfer.contract`,
+    id: `dashboard.GnosisControlSafeDialog.GnosisNFTTransfer.contract`,
     defaultMessage: 'Contract',
   },
   idLabel: {
-    id: `dashboard.ManageReputationContainer.GnosisNFTTransfer.idLabel`,
+    id: `dashboard.GnosisControlSafeDialog.GnosisNFTTransfer.idLabel`,
     defaultMessage: 'Id',
   },
   nftDetails: {
-    id: `dashboard.ManageReputationContainer.GnosisNFTTransfer.nftDetails`,
+    id: `dashboard.GnosisControlSafeDialog.GnosisNFTTransfer.nftDetails`,
     defaultMessage: 'NFT details',
   },
 });
