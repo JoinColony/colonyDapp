@@ -1,26 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="256" height="256" viewBox="0 0 256 256" xml:space="preserve">
-
-<g style="stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: none; fill-rule: nonzero; opacity: 1;" transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)" >
-	<path d="M 81.736 23.718 L 44.994 2.456 L 8.264 23.73 v 42.477 l 36.8 21.25 l 36.672 -21.262 V 23.718 z" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(255,255,255); fill-rule: nonzero; opacity: 1;" transform=" matrix(1 0 0 1 0 0) " stroke-linecap="round" />
-	<radialGradient id="SVGID_4" gradientUnits="userSpaceOnUse" cx="44.9101" cy="46.8595" r="43.9732" fx="44.9101" fy="46.8595">
-<stop offset="0%" style="stop-color:rgb(63,201,168);stop-opacity: 1"/>
-<stop offset="100%" style="stop-color:rgb(28,162,196);stop-opacity: 1"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30px" height="30px" viewBox="0 0 30 30" version="1.1">
+<defs>
+<radialGradient id="radial0" gradientUnits="userSpaceOnUse" cx="44.9101" cy="46.8595" fx="44.9101" fy="46.8595" r="43.9732" gradientTransform="matrix(0.329297,0,0,0.329297,0.164835,0.164835)">
+<stop offset="0" style="stop-color:rgb(24.705882%,78.823529%,65.882353%);stop-opacity:1;"/>
+<stop offset="1" style="stop-color:rgb(10.980392%,63.529412%,76.862745%);stop-opacity:1;"/>
 </radialGradient>
-<path d="M 24.473 45.997 c -1.734 -5.59 -5.732 -18.507 -5.732 -18.816 L 14.629 29.5 v 32.99 l 4.113 2.363 V 41.947 l 7.219 27.062 l 3.5 2.013 V 20.094 l -4.944 2.713 L 24.473 45.997 z" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: url(#SVGID_4); fill-rule: nonzero; opacity: 1;" transform=" matrix(1 0 0 1 0 0) " stroke-linecap="round" />
-	<radialGradient id="SVGID_5" gradientUnits="userSpaceOnUse" cx="44.9101" cy="46.8595" r="43.9733" fx="44.9101" fy="46.8595">
-<stop offset="0%" style="stop-color:rgb(63,201,168);stop-opacity: 1"/>
-<stop offset="100%" style="stop-color:rgb(28,162,196);stop-opacity: 1"/>
+<radialGradient id="radial1" gradientUnits="userSpaceOnUse" cx="44.9101" cy="46.8595" fx="44.9101" fy="46.8595" r="43.9733" gradientTransform="matrix(0.329297,0,0,0.329297,0.164835,0.164835)">
+<stop offset="0" style="stop-color:rgb(24.705882%,78.823529%,65.882353%);stop-opacity:1;"/>
+<stop offset="1" style="stop-color:rgb(10.980392%,63.529412%,76.862745%);stop-opacity:1;"/>
 </radialGradient>
-<polygon points="45.01,15.85 56.67,22.63 59.34,18.48 45.01,10.07 33.66,16.86 33.66,73.21 38.3,76.27 38.3,47.83 55.58,47.83 55.58,42.1 38.3,42.1 38.3,19.66 " style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: url(#SVGID_5); fill-rule: nonzero; opacity: 1;" transform="  matrix(1 0 0 1 0 0) "/>
-	<radialGradient id="SVGID_6" gradientUnits="userSpaceOnUse" cx="44.91" cy="46.8595" r="43.9731" fx="44.91" fy="46.8595">
-<stop offset="0%" style="stop-color:rgb(63,201,168);stop-opacity: 1"/>
-<stop offset="100%" style="stop-color:rgb(28,162,196);stop-opacity: 1"/>
+<radialGradient id="radial2" gradientUnits="userSpaceOnUse" cx="44.91" cy="46.8595" fx="44.91" fy="46.8595" r="43.9731" gradientTransform="matrix(0.329297,0,0,0.329297,0.164835,0.164835)">
+<stop offset="0" style="stop-color:rgb(24.705882%,78.823529%,65.882353%);stop-opacity:1;"/>
+<stop offset="1" style="stop-color:rgb(10.980392%,63.529412%,76.862745%);stop-opacity:1;"/>
 </radialGradient>
-<polygon points="59.08,23.94 65.25,27.97 65.25,69.23 70.37,66.38 70.37,30.77 76.71,35.1 76.71,29.68 61.62,20.14 " style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: url(#SVGID_6); fill-rule: nonzero; opacity: 1;" transform="  matrix(1 0 0 1 0 0) "/>
-	<radialGradient id="SVGID_7" gradientUnits="userSpaceOnUse" cx="44.9101" cy="46.8595" r="43.9733" fx="44.9101" fy="46.8595">
-<stop offset="0%" style="stop-color:rgb(63,201,168);stop-opacity: 1"/>
-<stop offset="100%" style="stop-color:rgb(28,162,196);stop-opacity: 1"/>
+<radialGradient id="radial3" gradientUnits="userSpaceOnUse" cx="44.9101" cy="46.8595" fx="44.9101" fy="46.8595" r="43.9733" gradientTransform="matrix(0.329297,0,0,0.329297,0.164835,0.164835)">
+<stop offset="0" style="stop-color:rgb(24.705882%,78.823529%,65.882353%);stop-opacity:1;"/>
+<stop offset="1" style="stop-color:rgb(10.980392%,63.529412%,76.862745%);stop-opacity:1;"/>
 </radialGradient>
-<path d="M 44.994 0 L 5.969 22.631 v 44.847 L 45.06 90 l 38.97 -22.533 V 22.62 L 44.994 0 z M 10.604 64.853 V 25.081 L 44.994 5.163 L 79.396 25.07 v 39.772 L 45.06 84.75 L 10.604 64.853 z" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: url(#SVGID_7); fill-rule: nonzero; opacity: 1;" transform=" matrix(1 0 0 1 0 0) " stroke-linecap="round" />
+</defs>
+<g id="surface1">
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(100%,100%,100%);fill-opacity:1;" d="M 27.082031 7.976562 L 14.980469 0.972656 L 2.886719 7.980469 L 2.886719 21.964844 L 15.003906 28.964844 L 27.082031 21.960938 Z M 27.082031 7.976562 "/>
+<path style=" stroke:none;fill-rule:nonzero;fill:url(#radial0);" d="M 8.222656 15.3125 C 7.652344 13.472656 6.335938 9.21875 6.335938 9.117188 L 4.980469 9.878906 L 4.980469 20.742188 L 6.335938 21.519531 L 6.335938 13.976562 L 8.714844 22.890625 L 9.867188 23.550781 L 9.867188 6.78125 L 8.238281 7.675781 Z M 8.222656 15.3125 "/>
+<path style=" stroke:none;fill-rule:nonzero;fill:url(#radial1);" d="M 14.988281 5.382812 L 18.824219 7.617188 L 19.707031 6.25 L 14.988281 3.480469 L 11.25 5.714844 L 11.25 24.273438 L 12.777344 25.28125 L 12.777344 15.914062 L 18.46875 15.914062 L 18.46875 14.027344 L 12.777344 14.027344 L 12.777344 6.640625 Z M 14.988281 5.382812 "/>
+<path style=" stroke:none;fill-rule:nonzero;fill:url(#radial2);" d="M 19.621094 8.046875 L 21.652344 9.375 L 21.652344 22.960938 L 23.335938 22.023438 L 23.335938 10.296875 L 25.425781 11.722656 L 25.425781 9.9375 L 20.457031 6.796875 Z M 19.621094 8.046875 "/>
+<path style=" stroke:none;fill-rule:nonzero;fill:url(#radial3);" d="M 14.980469 0.164062 L 2.128906 7.617188 L 2.128906 22.386719 L 15.003906 29.800781 L 27.835938 22.382812 L 27.835938 7.613281 Z M 3.65625 21.519531 L 3.65625 8.425781 L 14.980469 1.863281 L 26.308594 8.421875 L 26.308594 21.515625 L 15.003906 28.074219 Z M 3.65625 21.519531 "/>
 </g>
 </svg>
