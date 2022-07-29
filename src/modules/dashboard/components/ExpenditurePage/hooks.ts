@@ -1,25 +1,43 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import minBy from 'lodash/minBy';
 
-import { TokensFragment } from '~data/index';
+import { uniqBy } from 'lodash';
+import { Token } from '~data/index';
 import { Recipient as RecipientType } from './Payments/types';
 
-export interface Token {
+export interface TokenWithAmount {
   amount?: string;
-  token?: TokensFragment;
+  token?: Token;
 }
 
 export interface Recipient extends Omit<RecipientType, 'value'> {
-  value?: Token[];
+  value?: TokenWithAmount[];
 }
 
-export const hasSymbolKey = (obj: any): obj is { symbol: string } => {
-  return Object.keys(obj).some((key) => key === 'symbol');
-};
-
 export const useCalculateTokens = (recipients?: Recipient[]) => {
+  const basicTokens = useMemo(() => {
+    if (!recipients) {
+      return undefined;
+    }
+
+    const allTokens = recipients?.reduce((acc, recipient) => {
+      if (!recipient.value) {
+        return acc;
+      }
+      return [...acc, ...recipient.value];
+    }, []);
+
+    return uniqBy(allTokens, 'token.id').map((token) => ({
+      ...token,
+      amount: 0,
+    }));
+  }, [recipients]);
+
   const calculateTokens = useCallback(
-    (recipientsArr: Recipient[], initailAcc?: Record<string, number>) => {
+    (recipientsArr?: Recipient[]) => {
+      if (!recipientsArr || recipientsArr.length === 0) {
+        return basicTokens;
+      }
       const allTokens = recipientsArr?.reduce((acc, recipient) => {
         if (!recipient.value) {
           return acc;
@@ -27,23 +45,28 @@ export const useCalculateTokens = (recipients?: Recipient[]) => {
         return [...acc, ...recipient.value];
       }, []);
 
-      return allTokens?.reduce((accumulator, singleToken) => {
-        const { token, amount: tokenAmount } = singleToken;
-        if (!hasSymbolKey(token)) {
-          return accumulator;
-        }
+      const result = allTokens?.reduce((acc, token) => {
+        const accIndex = acc?.findIndex(
+          (accToken) => accToken?.token?.id === token?.token?.id,
+        );
 
-        if (token.symbol in accumulator) {
-          return {
-            ...accumulator,
-            [token?.symbol]: accumulator[token.symbol] + Number(tokenAmount),
-          };
+        if (accIndex !== undefined) {
+          return acc?.map((accToken, index) => {
+            if (index === accIndex) {
+              return {
+                ...accToken,
+                amount: accToken.amount + Number(token.amount),
+              };
+            }
+            return accToken;
+          });
         }
+        return acc;
+      }, basicTokens);
 
-        return { ...accumulator, [token.symbol]: Number(tokenAmount) };
-      }, initailAcc || {});
+      return result;
     },
-    [],
+    [basicTokens],
   );
 
   const findNextClaim = useCallback((recipientsArr?: Recipient[]) => {
@@ -62,15 +85,7 @@ export const useCalculateTokens = (recipients?: Recipient[]) => {
     };
   }, []);
 
-  const totalClaimable = recipients ? calculateTokens(recipients) : {};
-
-  const pattern =
-    typeof totalClaimable === 'object'
-      ? Object.keys(totalClaimable).reduce(
-          (acc, key) => ({ ...acc, [key]: 0 }),
-          {},
-        )
-      : {};
+  const totalClaimable = calculateTokens(recipients);
 
   const claimableNow = calculateTokens(
     recipients?.filter((recipient) => {
@@ -79,20 +94,18 @@ export const useCalculateTokens = (recipients?: Recipient[]) => {
         recipient.claimDate < new Date().getTime() &&
         !recipient.claimed;
       return res;
-    }) as any,
-    pattern,
+    }),
   );
 
   const claimed = calculateTokens(
-    recipients?.filter((recipient) => recipient.claimed, {}) as any,
-    pattern,
+    recipients?.filter((recipient) => recipient.claimed),
   );
 
   const nextClaim = findNextClaim(recipients);
 
   const buttonIsActive =
-    typeof claimableNow === 'object' &&
-    Object.values(claimableNow)?.some((value) => value > 0);
+    claimableNow &&
+    claimableNow.reduce((acc, curr) => acc + Number(curr.amount), 0) > 0;
 
   return {
     totalClaimable,

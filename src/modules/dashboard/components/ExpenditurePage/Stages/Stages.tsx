@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useCallback,
-  useRef,
-  useState,
-  useMemo,
-} from 'react';
+import React, { useEffect, useCallback, useRef, useState } from 'react';
 import { useFormikContext } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import copyToClipboard from 'copy-to-clipboard';
@@ -25,9 +19,7 @@ import {
 
 import { Stage } from './constants';
 import ClaimFunds from './ClaimFunds';
-import { Recipient, Recipient as RecipientType } from '../Payments/types';
-import { getRecipientTokens } from '../utils';
-import { useCalculateTokens } from '../hooks';
+import { Recipient as RecipientType } from '../Payments/types';
 import styles from './Stages.css';
 import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
 import StageItem from './StageItem';
@@ -96,21 +88,6 @@ const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
 
   const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
-
-  const recipientsWithTokens = useMemo(() => {
-    return recipients?.map((recipient) => {
-      const token = getRecipientTokens(recipient, colony);
-      return { ...recipient, value: token };
-    });
-  }, [colony, recipients]);
-
-  const {
-    claimableNow,
-    claimed,
-    totalClaimable,
-    nextClaim,
-    buttonIsActive,
-  } = useCalculateTokens(recipientsWithTokens as Recipient[]);
 
   const handleSaveDraft = useCallback(async () => {
     const errors = await validateForm(values);
@@ -245,13 +222,10 @@ const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
     <div className={styles.mainContainer}>
       {isLogedIn && activeStateId === Stage.Released && (
         <ClaimFunds
+          recipients={recipients}
+          colony={colony}
           buttonAction={activeState?.buttonAction}
           buttonText={activeState?.buttonText}
-          buttonIsActive={buttonIsActive}
-          claimableNow={claimableNow}
-          claimed={claimed}
-          totalClaimable={totalClaimable}
-          nextClaim={nextClaim}
         />
       )}
       <div className={styles.stagesContainer}>
