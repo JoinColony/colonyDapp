@@ -536,9 +536,9 @@ const getColonyEditActionValues = async (
         const colonyMetadata = getColonyMetadataFromResponse(ipfsMetadata);
 
         colonyEditValues.colonyDisplayName =
-          colonyMetadata?.colonyDisplayName ?? '';
+          colonyMetadata?.colonyDisplayName || null;
         colonyEditValues.colonyAvatarHash =
-          colonyMetadata?.colonyAvatarHash || '';
+          colonyMetadata?.colonyAvatarHash || null;
         colonyEditValues.colonyTokens = colonyMetadata?.colonyTokens || [];
         colonyEditValues.verifiedAddresses =
           colonyMetadata?.verifiedAddresses || [];
