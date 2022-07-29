@@ -3,12 +3,11 @@ import { defineMessages } from 'react-intl';
 
 import { COMMENT_MODERATION } from '~immutable/index';
 import Popover from '~core/Popover';
+import ThreeDotsButton from '~core/Button/ThreeDotsButton';
 
 import { Props as CommentProps } from '../Comment';
 
 import CommentActionsPopover from './CommentActionsPopover';
-
-import ThreeDotsButton from '~core/Button/ThreeDotsButton';
 
 const MSG = defineMessages({
   commentActionsTitle: {

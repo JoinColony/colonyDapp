@@ -1,10 +1,10 @@
 import React from 'react';
 import { MessageDescriptor } from 'react-intl';
-
 import classnames from 'classnames';
-import Button, { Props as DefaultButtonProps } from './Button';
+
 import Icon from '~core/Icon';
 
+import Button, { Props as DefaultButtonProps } from './Button';
 import styles from './ThreeDotsButton.css';
 
 const displayName = 'ThreeDotsButton';

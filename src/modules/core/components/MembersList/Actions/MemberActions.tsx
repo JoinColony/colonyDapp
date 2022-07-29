@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { defineMessages } from 'react-intl';
 
 import Popover from '~core/Popover';
+import ThreeDotsButton from '~core/Button/ThreeDotsButton';
 import { Colony } from '~data/index';
 
 import MemberActionsPopover from './MemberActionsPopover';
-
-import ThreeDotsButton from '~core/Button/ThreeDotsButton';
 
 const MSG = defineMessages({
   memberActionsTitle: {
