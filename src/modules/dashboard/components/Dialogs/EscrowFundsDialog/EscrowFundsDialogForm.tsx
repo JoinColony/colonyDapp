@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { FormikProps } from 'formik';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { DialogSection } from '~core/Dialog';
+import Dialog, { DialogSection } from '~core/Dialog';
 import DomainDropdown from '~core/DomainDropdown';
 import {
   Annotations,
@@ -29,6 +29,7 @@ import { useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot } from '~modules/users/checks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
+import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
 import styles from './EscrowFundsDialog.css';
 import { FormValues } from './EscrowFundsDialog';
@@ -97,6 +98,7 @@ interface Props {
   colony: Colony;
   onSubmitClick: () => void;
   isVotingExtensionEnabled: boolean;
+  cancel: VoidFunction;
 }
 
 const EscrowFundsDialogForm = ({
@@ -106,6 +108,7 @@ const EscrowFundsDialogForm = ({
   values,
   handleSubmit,
   isSubmitting,
+  cancel,
 }: Props & FormikProps<FormValues>) => {
   const [domainID, setDomainID] = useState<number>();
   const { formatMessage } = useIntl();
@@ -162,25 +165,6 @@ const EscrowFundsDialogForm = ({
     [getDomainColor],
   );
 
-  const renderActiveDomainOption = useCallback<
-    (option: SelectOption | undefined, label: string) => ReactNode
-  >(
-    (option, label) => {
-      let displayLabel =
-        parseInt(option?.value || `${ROOT_DOMAIN_ID}`, 10) === ROOT_DOMAIN_ID
-          ? `${formatMessage(MSG.createDomain)} ${label}`
-          : `${formatMessage(MSG.createDomain)} ${formatMessage({
-              id: 'domain.root',
-            })}/${label}`;
-
-      if (!option) {
-        displayLabel = `${formatMessage({ id: 'domain.root' })}`;
-      }
-      return <div className={styles.motionActiveItem}>{displayLabel}</div>;
-    },
-    [formatMessage],
-  );
-
   const filterDomains = useCallback((optionDomain) => {
     const optionDomainId = parseInt(optionDomain.value, 10);
 
@@ -188,21 +172,15 @@ const EscrowFundsDialogForm = ({
   }, []);
 
   return (
-    <>
+    <Dialog cancel={cancel}>
       <div className={styles.dialogContainer}>
         <DialogSection appearance={{ theme: 'heading' }}>
-          <div>
-            <DomainDropdown
-              colony={colony}
-              name="motionDomainId"
-              currentDomainId={domainID}
-              renderActiveOptionFn={renderActiveDomainOption}
-              filterOptionsFn={filterDomains}
-              onDomainChange={handleMotionDomainChange}
-              showAllDomains={false}
-              showDescription={false}
-            />
-          </div>
+          <MotionDomainSelect
+            colony={colony}
+            filterDomains={filterDomains}
+            onDomainChange={handleMotionDomainChange}
+            initialSelectedDomain={domainID}
+          />
           {canCancelExpenditure && isVotingExtensionEnabled && (
             <div className={styles.toggleContainer}>
               <Toggle
@@ -397,7 +375,7 @@ const EscrowFundsDialogForm = ({
           autoFocus
         />
       </DialogSection>
-    </>
+    </Dialog>
   );
 };
 

@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { FormikProps } from 'formik';
 
-import Dialog from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 import { ActionTypes } from '~redux/actionTypes';
 import { Colony } from '~data/index';
@@ -51,31 +50,30 @@ const EscrowFundsDialog = ({
   );
 
   return (
-    <Dialog cancel={cancel}>
-      <ActionForm
-        submit={getFormAction('SUBMIT')}
-        error={getFormAction('ERROR')}
-        success={getFormAction('SUCCESS')}
-        initialValues={{ forceAction: false }}
-      >
-        {(formValues: FormikProps<FormValues>) => {
-          if (formValues.values.forceAction !== isForce) {
-            setIsForce(formValues.values.forceAction);
-          }
-          return (
-            <EscrowFundsDialogForm
-              {...{
-                colony,
-                close,
-                onSubmitClick,
-                isVotingExtensionEnabled,
-                ...formValues,
-              }}
-            />
-          );
-        }}
-      </ActionForm>
-    </Dialog>
+    <ActionForm
+      submit={getFormAction('SUBMIT')}
+      error={getFormAction('ERROR')}
+      success={getFormAction('SUCCESS')}
+      initialValues={{ forceAction: false }}
+    >
+      {(formValues: FormikProps<FormValues>) => {
+        if (formValues.values.forceAction !== isForce) {
+          setIsForce(formValues.values.forceAction);
+        }
+        return (
+          <EscrowFundsDialogForm
+            {...{
+              colony,
+              close,
+              cancel,
+              onSubmitClick,
+              isVotingExtensionEnabled,
+              ...formValues,
+            }}
+          />
+        );
+      }}
+    </ActionForm>
   );
 };
 

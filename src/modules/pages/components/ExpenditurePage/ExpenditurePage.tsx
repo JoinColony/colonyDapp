@@ -27,7 +27,7 @@ import { useLoggedInUser } from '~data/helpers';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
 import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
 import { useDialog } from '~core/Dialog';
-import EscrowFundsDialog from '~dashboard/Dialogs/EscrowFundsDialog/EscrowFundsDialog';
+import EscrowFundsDialog from '~dashboard/Dialogs/EscrowFundsDialog';
 
 const displayName = 'pages.ExpenditurePage';
 
