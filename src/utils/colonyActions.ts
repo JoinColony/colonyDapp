@@ -203,15 +203,18 @@ export const getAssignmentEventDescriptorsIds = (
     : `${eventMessageType}.${eventName}.remove`;
 };
 
-export const parseColonyMetadata = (
-  jsonMetadata: string,
-): {
+export interface ColonyMetadata {
   colonyDisplayName: string | null;
   colonyAvatarHash: string | null;
   colonyTokens: string[] | null;
   verifiedAddresses: string[] | null;
   isWhitelistActivated: boolean | null;
-} => {
+  domainName?: string;
+  domainPurpose?: string;
+  domainColor?: string;
+}
+
+export const parseColonyMetadata = (jsonMetadata: string): ColonyMetadata => {
   try {
     if (jsonMetadata) {
       const {
@@ -301,7 +304,7 @@ export const getSpecificActionValuesCheck = (
     domainColor: currentDomainColor,
     verifiedAddresses: currentVerifiedAddresses,
     isWhitelistActivated: currentIsWhitelistActivated,
-  }: Partial<ColonyAction>,
+  }: Partial<ColonyAction> | ColonyMetadata,
   {
     colonyDisplayName: prevColonyDisplayName,
     colonyAvatarHash: prevColonyAvatarHash,
@@ -329,9 +332,9 @@ export const getSpecificActionValuesCheck = (
 
       const verifiedAddressesChanged =
         !isEqual(prevVerifiedAddresses, currentVerifiedAddresses) ||
-        // purposely using loose equality here to compare IsWhitelistActivated flags
-        // eslint-disable-next-line eqeqeq
-        prevIsWhitelistActivated != currentIsWhitelistActivated;
+        // @NOTE casting to Boolean as IsWhitelistActivated could have a value, null, undefined.
+        Boolean(prevIsWhitelistActivated) !==
+          Boolean(currentIsWhitelistActivated);
 
       /*
        * Tokens arrays might come from a subgraph query, in which case
