@@ -12,6 +12,7 @@ import { useDialog } from '~core/Dialog';
 
 import { ValuesType, ExpenditureTypes } from './types';
 import styles from './ExpenditurePage.css';
+import { ExpenditureTypes } from './types';
 
 const MSG = defineMessages({
   submit: {
