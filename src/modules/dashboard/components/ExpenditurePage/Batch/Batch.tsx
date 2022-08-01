@@ -7,10 +7,11 @@ import { isEmpty, isNil } from 'lodash';
 import { FormSection } from '~core/Fields';
 import { Colony } from '~data/index';
 import TokenIcon from '~dashboard/HookedTokenIcon';
+import Button from '~core/Button';
 
 import CSVUploader from './CSVUploader';
-import { calculateBatch } from './utils';
 import DownloadTemplate from './DownloadTemplate';
+import { useCalculateBatchPayment } from './hooks';
 import styles from './Batch.css';
 
 export const MSG = defineMessages({

@@ -73,6 +73,17 @@ interface Props {
   colony: Colony;
 }
 
+const expeditureTypes = [
+  {
+    label: MSG.advancedPayment,
+    value: ExpenditureTypes.Advanced,
+  },
+  {
+    label: MSG.staged,
+    value: ExpenditureTypes.Staged,
+  },
+];
+
 const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
   const { walletAddress, username } = useLoggedInUser();
 
