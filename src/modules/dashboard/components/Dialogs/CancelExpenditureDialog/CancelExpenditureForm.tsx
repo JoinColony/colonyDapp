@@ -65,7 +65,7 @@ const MSG = defineMessages({
     defaultMessage: `Decide what to do with the owner's stake when cancelling this Advanced Payment.`,
   },
   createDomain: {
-    id: `dashboard.CancelExpenditureDialog.CancelExpenditureForm.creationTarget`,
+    id: `dashboard.CancelExpenditureDialog.CancelExpenditureForm.createDomain`,
     defaultMessage: 'Motion will be created in',
   },
 });
