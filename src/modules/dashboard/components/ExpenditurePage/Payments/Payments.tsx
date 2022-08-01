@@ -1,19 +1,19 @@
 import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { FieldArray, useField } from 'formik';
+import { FieldArray, useField, useFormikContext } from 'formik';
 import { nanoid } from 'nanoid';
 
 import Button from '~core/Button';
-import Recipient from '../Recipient';
-
-import styles from './Payments.css';
 import Icon from '~core/Icon';
 import { FormSection } from '~core/Fields';
-import { newRecipient } from './constants';
 import { useMembersSubscription } from '~data/generated';
 import { SpinnerLoader } from '~core/Preloaders';
 import { Colony } from '~data/index';
+
+import Recipient from '../Recipient';
+import { newRecipient } from './constants';
 import CollapseExpandButtons from './CollapseExpandButtons';
+import styles from './Payments.css';
 
 export const MSG = defineMessages({
   payments: {
@@ -51,6 +51,7 @@ interface Props {
 
 const Payments = ({ sidebarRef, colony }: Props) => {
   const [, { value: recipients }, { setValue }] = useField('recipients');
+  const { setFieldTouched } = useFormikContext();
 
   const { colonyAddress } = colony || {};
 
@@ -130,7 +131,12 @@ const Payments = ({ sidebarRef, colony }: Props) => {
                   </div>
                 ))}
                 <Button
-                  onClick={() => push({ ...newRecipientData, id: nanoid() })}
+                  onClick={() => {
+                    push({ ...newRecipientData, id: nanoid() });
+                    setFieldTouched(
+                      `recipients[${recipients.length}].value[0].amount`,
+                    );
+                  }}
                   appearance={{ theme: 'blue' }}
                 >
                   <div className={styles.addRecipientLabel}>
