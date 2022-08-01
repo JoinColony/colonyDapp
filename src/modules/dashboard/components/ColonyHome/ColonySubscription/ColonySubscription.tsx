@@ -2,8 +2,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { SpinnerLoader } from '~core/Preloaders';
-import ThreeDotsButton from '~core/Button/ThreeDotsButton';
-import Button from '~core/Button';
+import Button, { ThreeDotsButton } from '~core/Button';
 import Link from '~core/Link';
 import MaskedAddress from '~core/MaskedAddress';
 import InvisibleCopyableAddress from '~core/InvisibleCopyableAddress';

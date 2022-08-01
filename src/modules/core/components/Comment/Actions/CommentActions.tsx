@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl';
 
 import { COMMENT_MODERATION } from '~immutable/index';
 import Popover from '~core/Popover';
-import ThreeDotsButton from '~core/Button/ThreeDotsButton';
+import { ThreeDotsButton } from '~core/Button';
 
 import { Props as CommentProps } from '../Comment';
 

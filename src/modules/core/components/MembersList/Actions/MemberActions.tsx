@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { defineMessages } from 'react-intl';
 
 import Popover from '~core/Popover';
-import ThreeDotsButton from '~core/Button/ThreeDotsButton';
+import { ThreeDotsButton } from '~core/Button';
 import { Colony } from '~data/index';
 
 import MemberActionsPopover from './MemberActionsPopover';
