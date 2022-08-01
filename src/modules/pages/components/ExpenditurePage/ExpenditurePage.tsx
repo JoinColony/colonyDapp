@@ -41,6 +41,7 @@ import { ExpenditureTypes, ValuesType } from './types';
 import LockedSidebar from './LockedSidebar';
 import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
 import styles from './ExpenditurePage.css';
+import { initalMilestone } from '~dashboard/ExpenditurePage/Staged/constants';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -140,6 +141,31 @@ const validationSchema = yup.object().shape({
       }),
     ),
   }),
+  staged: yup.object().when('expenditure', {
+    is: (expenditure) => expenditure === ExpenditureTypes.Staged,
+    then: yup.object().shape({
+      user: yup.object().required(),
+      amount: yup.object().shape({
+        amount: yup
+          .number()
+          .required(() => MSG.valueError)
+          .moreThan(0, () => MSG.amountZeroError),
+        tokenAddress: yup.string().required(),
+      }),
+      milestone: yup
+        .array(
+          yup.object().shape({
+            name: yup.string().required(),
+            amount: yup
+              .number()
+              .moreThan(0, () => MSG.amountZeroError)
+              .required(),
+          }),
+        )
+        .min(1)
+        .required(),
+    }),
+  }),
   title: yup.string().min(3).required(),
   description: yup.string().max(4000),
   split: yup.object().when('expenditure', {
@@ -183,6 +209,9 @@ const initialValues = {
   owner: undefined,
   title: undefined,
   description: undefined,
+  staged: {
+    milestones: [{ ...initalMilestone, id: nanoid() }],
+  },
   split: {
     unequal: false,
     recipients: [

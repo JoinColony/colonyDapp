@@ -11,6 +11,7 @@ import { LoggedInUser } from '~data/generated';
 export enum ExpenditureTypes {
   Advanced = 'advanced',
   Split = 'split',
+  Staged = 'staged',
 }
 
 export interface ValuesType {
@@ -29,6 +30,15 @@ export interface ValuesType {
     unequal: boolean;
     amount: { value?: string; tokenAddress?: string };
     recipients?: { user?: AnyUser; amount?: number; percent?: number }[];
+  };
+  staged?: {
+    user?: AnyUser;
+    amount?: { value?: string; tokenAddress?: string };
+    milestones?: {
+      id: string;
+      name?: string;
+      amount?: number;
+    }[];
   };
 }
 
