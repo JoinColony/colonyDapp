@@ -130,11 +130,11 @@ const ActionsListItem = ({
   const [fetchTokenInfo, { data: tokenData }] = useTokenInfoLazyQuery();
 
   const colonyObject = parseColonyMetadata(metadataJSON);
-  const colonyMetadataChecks = useColonyMetadataChecks(
+  const { tokensChanged, verifiedAddressesChanged } = useColonyMetadataChecks(
     actionType,
     colony,
     transactionHash,
-    { verifiedAddresses: colonyObject.verifiedAddresses || [] },
+    colonyObject,
   );
   useEffect(() => {
     if (transactionTokenAddress) {
@@ -294,8 +294,10 @@ const ActionsListItem = ({
             <span className={styles.title}>
               <FormattedMessage
                 id={
-                  (colonyMetadataChecks.verifiedAddressesChanged &&
+                  (verifiedAddressesChanged &&
                     `action.${ColonyActions.ColonyEdit}.verifiedAddresses`) ||
+                  (tokensChanged &&
+                    `action.${ColonyActions.ColonyEdit}.tokens`) ||
                   roleMessageDescriptorId ||
                   'action.title'
                 }

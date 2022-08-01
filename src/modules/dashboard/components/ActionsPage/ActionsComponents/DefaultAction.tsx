@@ -97,7 +97,7 @@ const DefaultAction = ({
   );
 
   let domainMetadata;
-  const colonyMetadataChecks = useColonyMetadataChecks(
+  const { verifiedAddressesChanged, tokensChanged } = useColonyMetadataChecks(
     actionType,
     colony,
     transactionHash,
@@ -247,8 +247,10 @@ const DefaultAction = ({
           <h1 className={styles.heading} data-test="actionHeading">
             <FormattedMessage
               id={
-                (colonyMetadataChecks.verifiedAddressesChanged &&
+                (verifiedAddressesChanged &&
                   `action.${ColonyActions.ColonyEdit}.verifiedAddresses`) ||
+                (tokensChanged &&
+                  `action.${ColonyActions.ColonyEdit}.tokens`) ||
                 roleMessageDescriptorId ||
                 'action.title'
               }
