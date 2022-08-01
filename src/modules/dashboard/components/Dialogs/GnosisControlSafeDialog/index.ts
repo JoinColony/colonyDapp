@@ -1,2 +1,2 @@
 export { default } from './GnosisControlSafeDialog';
-export { GnosisSafe } from './GnosisControlSafeForm';
+export { GnosisSafe, NFT } from './GnosisControlSafeForm';

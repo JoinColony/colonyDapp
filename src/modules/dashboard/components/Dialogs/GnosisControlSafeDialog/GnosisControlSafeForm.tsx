@@ -23,9 +23,10 @@ import { GNOSIS_SAFE_INTEGRATION_LEARN_MORE } from '~externalUrls';
 import { Colony, useLoggedInUser } from '~data/index';
 import { Address, PrimitiveType } from '~types/index';
 
-import { FormValues } from './GnosisControlSafeDialog';
 import SafeTransactionPreview from './SafeTransactionPreview';
+import { FormValues } from './GnosisControlSafeDialog';
 import {
+  GnosisNFTTransfer,
   TransferFundsSection,
   RawTransactionSection,
   ContractInteractionSection,
@@ -94,6 +95,33 @@ export interface GnosisSafe {
   chain: string;
 }
 
+// @TODO - figure out the mapping of the nftCatalogue to the safe
+export interface NFT {
+  name: string;
+  avatar: string;
+  address: Address;
+  tokenID: string;
+  safeID: string; // @TODO check this property - perhaps should be moved
+}
+
+// Test data for dev - should be obtained from the safe
+const testNFTData: NFT[] = [
+  {
+    name: 'BoredApeYachtClub',
+    avatar: 'bla',
+    address: '0xb97D57F4959eAfA0339424b83FcFaf9c15407461',
+    tokenID: '45161',
+    safeID: '9995',
+  },
+  {
+    name: 'NFT 2',
+    avatar: 'doh',
+    address: '0xb17D57F4959eAfA0339424b83FcFaf9c15407462',
+    tokenID: '45161',
+    safeID: '9996',
+  },
+];
+
 interface Props {
   colony: Colony;
   safes: GnosisSafe[];
@@ -115,6 +143,7 @@ const renderAvatar = (address: string, item) => (
 
 const GnosisControlSafeForm = ({
   colony,
+  colony: { colonyAddress },
   back,
   handleSubmit,
   safes,
@@ -168,6 +197,7 @@ const GnosisControlSafeForm = ({
         contract: '',
         abi: '',
         contractFunction: '',
+        nft: null,
       });
       setTransactionTabStatus([
         ...Array(transactionTabStatus.length).fill(false),
@@ -354,6 +384,16 @@ const GnosisControlSafeForm = ({
                         <ContractInteractionSection
                           disabledInput={!userHasPermission || isSubmitting}
                           transactionFormIndex={index}
+                        />
+                      )}
+                      {values.transactions[index]?.transactionType ===
+                        'transferNft' && (
+                        <GnosisNFTTransfer
+                          colonyAddress={colonyAddress}
+                          nftCatalogue={testNFTData}
+                          transactionFormIndex={index}
+                          values={values}
+                          disabledInput={!userHasPermission || isSubmitting}
                         />
                       )}
                     </div>
