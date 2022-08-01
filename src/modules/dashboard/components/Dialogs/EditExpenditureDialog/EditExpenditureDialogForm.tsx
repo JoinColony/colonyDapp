@@ -102,7 +102,6 @@ const EditExpenditureDialogForm = ({
       if (changedRecipient.removed) {
         return (
           <div className={styles.row}>
-            <div />
             <FormattedMessage {...MSG.removed} />
           </div>
         );
