@@ -1,8 +1,7 @@
 import React, { ComponentProps, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
-import { Extension } from '@colony/colony-js';
 
-import { useColonyExtensionsQuery, Colony } from '~data/index';
+import { Colony } from '~data/index';
 
 import NavItem from './NavItem';
 
@@ -20,10 +19,6 @@ const MSG = defineMessages({
   linkTextExtensions: {
     id: 'dashboard.ColonyHome.ColonyNavigation.linkTextExtensions',
     defaultMessage: 'Extensions',
-  },
-  linkTextCoinMachine: {
-    id: 'dashboard.ColonyHome.ColonyNavigation.linkTextCoinMachine',
-    defaultMessage: 'Buy Tokens',
   },
   linkTextUnwrapTokens: {
     id: 'dashboard.ColonyHome.ColonyNavigation.linkTextUnwrapTokens',
@@ -45,10 +40,7 @@ type Props = {
 
 const displayName = 'dashboard.ColonyHome.ColonyNavigation';
 
-const ColonyNavigation = ({ colony: { colonyAddress, colonyName } }: Props) => {
-  const { data } = useColonyExtensionsQuery({
-    variables: { address: colonyAddress },
-  });
+const ColonyNavigation = ({ colony: { colonyName } }: Props) => {
   /*
    * @TODO actually determine these
    * This can be easily inferred from the subgraph queries
@@ -76,32 +68,9 @@ const ColonyNavigation = ({ colony: { colonyAddress, colonyName } }: Props) => {
         dataTest: 'extensionsNavigationButton',
       },
     ];
-    if (data?.processedColony?.installedExtensions) {
-      const { installedExtensions } = data.processedColony;
-      const coinMachineExtension = installedExtensions.find(
-        ({ extensionId }) => extensionId === Extension.CoinMachine,
-      );
-      /*
-       * Only show the Buy Tokens navigation link if the Coin Machine extension is:
-       * - installed
-       * - enable
-       * - not deprecated
-       */
-      if (
-        coinMachineExtension &&
-        coinMachineExtension?.details?.initialized &&
-        !coinMachineExtension?.details?.deprecated
-      ) {
-        navigationItems.push({
-          linkTo: `/colony/${colonyName}/buy-tokens`,
-          showDot: false,
-          text: MSG.linkTextCoinMachine,
-        });
-      }
-    }
 
     return navigationItems;
-  }, [colonyName, hasNewActions, hasNewExtensions, data]);
+  }, [colonyName, hasNewActions, hasNewExtensions]);
 
   return (
     <nav role="navigation" className={styles.main}>

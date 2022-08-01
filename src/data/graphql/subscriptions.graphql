@@ -189,26 +189,3 @@ subscription SubgraphMotions($skip: Int = 0, $first: Int = 1000, $colonyAddress:
     }
   }
 }
-
-subscription SubgraphTokenBoughtEvents($colonyAddress: String!, $extensionAddress: String!, $sortDirection: String = asc) {
-  tokenBoughtEvents: events(
-    orderBy: "timestamp",
-    orderDirection: $sortDirection,
-    where: {
-      name_contains: "TokensBought"
-      address: $extensionAddress
-    }
-  ) {
-    transaction {
-      transactionHash: id
-      block {
-        number: id
-        timestamp
-      }
-    }
-    address
-    name
-    args
-    timestamp
-  }
-}

@@ -17,15 +17,6 @@ export const getBlockscoutUserURL = (userAddress: string) =>
   `https://blockscout.com/xdai/mainnet/address/${userAddress}/transactions`;
 
 /*
- * Coin Machine
- */
-export const CM_LEARN_MORE = `https://colony.gitbook.io/colony/extensions/coin-machine`;
-export const CM_GET_WHITELISTED = `https://colony.gitbook.io/colony/get-started/how-to-get-whitelisted-for-the-clny-sale.`;
-export const CM_BLOG_POST = `https://blog.colony.io/introducing-coin-machine/`;
-export const CM_GOOGLE_SHEET = `https://docs.google.com/spreadsheets/d/1ZCuFcwqI4S6ZK5OwTl1yN7AK8mjv5d_V3g-_kMen01Y/edit#gid=2013814210`;
-export const CM_DESCRIPTION = 'https://colony.gitbook.io/colony/';
-
-/*
  * Motions and Disputes
  */
 export const MD_OBJECTIONS_HELP = `https://colony.io/dev/docs/colonynetwork/whitepaper-tldr-objections-and-disputes#objections`;

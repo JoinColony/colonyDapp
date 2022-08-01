@@ -87,9 +87,6 @@ const ColonyEventsListItem = ({
     storageSlotValue,
     motionId,
     vote,
-    whiteListStatus,
-    activePeriod,
-    currentPeriod,
   },
   colony: { tokens, nativeTokenAddress },
   colony,
@@ -135,18 +132,12 @@ const ColonyEventsListItem = ({
     ) {
       return getAssignmentEventDescriptorsIds(setTo, eventName);
     }
-    if (eventName === ColonyAndExtensionsEvents.UserApproved) {
-      return getAssignmentEventDescriptorsIds(
-        whiteListStatus,
-        eventName,
-        'event',
-      );
-    }
+
     if (eventName === ColonyAndExtensionsEvents.ArbitraryReputationUpdate) {
       return `eventList.${eventName}.title`;
     }
     return 'eventList.event';
-  }, [eventName, setTo, whiteListStatus]);
+  }, [eventName, setTo]);
 
   const roleNameMessage = { id: `role.${role}` };
   const getFormattedRole = () => formatMessage(roleNameMessage).toLowerCase();
@@ -210,8 +201,6 @@ const ColonyEventsListItem = ({
     storageSlotValue,
     motionId,
     voteSide: <FormattedMessage {...MSG.voteSide} values={{ vote }} />,
-    activePeriod,
-    currentPeriod,
     reputationChange: formattedReputationChange,
     reputationChangeNumeral: <Numeral value={formattedReputationChange} />,
     isSmiteAction: new Decimal(amount).isNegative(),

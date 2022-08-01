@@ -1,4 +1,3 @@
-import { Extension } from '@colony/colony-js';
 import * as yup from 'yup';
 
 import { ExtensionInitParams } from '~data/staticData/extensionData';
@@ -31,25 +30,7 @@ export const createExtensionDefaultValues = (
   }, {});
 };
 
-export const getButtonAction = (
-  actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS',
-  extensionId: string,
-) => {
+export const getButtonAction = (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
   const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
-  let actionBeginning: string;
-
-  switch (extensionId) {
-    case Extension.CoinMachine: {
-      actionBeginning = 'COIN_MACHINE';
-      break;
-    }
-    case Extension.Whitelist: {
-      actionBeginning = 'WHITELIST';
-      break;
-    }
-    default:
-      actionBeginning = 'EXTENSION';
-  }
-
-  return ActionTypes[`${actionBeginning}_ENABLE${actionEnd}`];
+  return ActionTypes[`EXTENSION_ENABLE${actionEnd}`];
 };

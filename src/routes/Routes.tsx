@@ -44,7 +44,6 @@ import {
   LANDING_PAGE_ROUTE,
   MEMBERS_ROUTE,
   ACTIONS_PAGE_ROUTE,
-  COIN_MACHINE_ROUTE,
   UNWRAP_TOKEN_ROUTE,
   CLAIM_TOKEN_ROUTE,
 } from './routeConstants';
@@ -222,13 +221,6 @@ const Routes = () => {
             backText: '',
             backRoute: `/colony/${colonyName}`,
           })}
-        />
-        <AlwaysAccesibleRoute
-          exact
-          path={COIN_MACHINE_ROUTE}
-          component={ColonyHome}
-          layout={Default}
-          routeProps={{ hasBackLink: false }}
         />
         <AlwaysAccesibleRoute
           path={UNWRAP_TOKEN_ROUTE}

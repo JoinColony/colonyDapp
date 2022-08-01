@@ -13,9 +13,9 @@ import { Address } from '~types/index';
 import { SpinnerLoader } from '~core/Preloaders';
 import extensionData from '~data/staticData/extensionData';
 
-import styles from './Extensions.css';
-
 import ExtensionCard from './ExtensionCard';
+
+import styles from './Extensions.css';
 
 const MSG = defineMessages({
   title: {
@@ -68,29 +68,38 @@ const Extensions = ({ colonyAddress }: Props) => {
   const availableExtensionsData = useMemo(() => {
     if (data?.processedColony?.installedExtensions) {
       const { installedExtensions } = data.processedColony;
-      return extensions.reduce((availableExtensions, extensionName) => {
-        const installedExtension = installedExtensions.find(
-          ({ extensionId }) => extensionName === extensionId,
-        );
-        if (
-          !installedExtension &&
-          networkExtensionData?.networkExtensionVersion
-        ) {
-          const { networkExtensionVersion } = networkExtensionData;
-          const networkExtension = networkExtensionVersion?.find(
-            (extension) =>
-              extension?.extensionHash === getExtensionHash(extensionName),
+
+      // get all extensions that are allowed to be installed
+      const allAllowedExtensions = extensions.filter(
+        (extensionName) => extensionData[extensionName],
+      );
+
+      return allAllowedExtensions.reduce(
+        (availableExtensions, extensionName) => {
+          const installedExtension = installedExtensions.find(
+            ({ extensionId }) => extensionName === extensionId,
           );
-          return [
-            ...availableExtensions,
-            {
-              ...extensionData[extensionName],
-              currentVersion: networkExtension?.version || 0,
-            },
-          ];
-        }
-        return availableExtensions;
-      }, []);
+          if (
+            !installedExtension &&
+            networkExtensionData?.networkExtensionVersion
+          ) {
+            const { networkExtensionVersion } = networkExtensionData;
+            const networkExtension = networkExtensionVersion?.find(
+              (extension) =>
+                extension?.extensionHash === getExtensionHash(extensionName),
+            );
+            return [
+              ...availableExtensions,
+              {
+                ...extensionData[extensionName],
+                currentVersion: networkExtension?.version || 0,
+              },
+            ];
+          }
+          return availableExtensions;
+        },
+        [],
+      );
     }
     return [];
   }, [data, networkExtensionData]);
