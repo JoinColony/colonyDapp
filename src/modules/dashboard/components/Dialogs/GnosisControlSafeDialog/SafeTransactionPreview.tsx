@@ -144,13 +144,14 @@ const SafeTransactionPreview = ({ colony, values }: Props) => {
     Array(values.transactions.length).fill(true),
   );
 
-  const token = useMemo(
-    () =>
-      colony.tokens.find(
-        (item) => item.address === values.transactions[0].tokenAddress,
-      ),
-    [values, colony.tokens],
-  );
+  const tokens = useMemo(() => {
+    return values.transactions.map((transaction) => {
+      const token = colony.tokens.find(
+        (item) => item.address === transaction.tokenAddress,
+      );
+      return token;
+    });
+  }, [values, colony.tokens]);
 
   const handleTabToggle = useCallback(
     (newIndex: number) => {
@@ -288,7 +289,7 @@ const SafeTransactionPreview = ({ colony, values }: Props) => {
                             label={label}
                             value={value(
                               values.transactions[index][key],
-                              token,
+                              tokens[index],
                             )}
                           />
                         ))}
