@@ -8,8 +8,8 @@ import {
 import { nanoid } from 'nanoid';
 import { RouteChildrenProps, useParams } from 'react-router';
 import { Formik } from 'formik';
-
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+
 import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
 import { useColonyFromNameQuery } from '~data/generated';
 import Stages from '~dashboard/ExpenditurePage/Stages';
@@ -17,15 +17,19 @@ import TitleDescriptionSection, {
   LockedTitleDescriptionSection,
 } from '~dashboard/ExpenditurePage/TitleDescriptionSection';
 import { getMainClasses } from '~utils/css';
-import styles from './ExpenditurePage.css';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import { SpinnerLoader } from '~core/Preloaders';
-import ExpenditureForm from './ExpenditureForm';
 import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
 import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import { useLoggedInUser } from '~data/helpers';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
 import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
+import { AnyUser } from '~data/index';
+import { initalMilestone } from '~dashboard/ExpenditurePage/Staged/constants';
+
+import ExpenditureForm from './ExpenditureForm';
+import { ExpenditureTypes } from './types';
+import styles from './ExpenditurePage.css';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -113,6 +117,31 @@ const validationSchema = yup.object().shape({
         .min(1),
     }),
   ),
+  staged: yup.object().when('expenditure', {
+    is: (expenditure) => expenditure === ExpenditureTypes.Staged,
+    then: yup.object().shape({
+      user: yup.object().required(),
+      amount: yup.object().shape({
+        amount: yup
+          .number()
+          .required(() => MSG.valueError)
+          .moreThan(0, () => MSG.amountZeroError),
+        tokenAddress: yup.string().required(),
+      }),
+      milestone: yup
+        .array(
+          yup.object().shape({
+            name: yup.string().required(),
+            amount: yup
+              .number()
+              .moreThan(0, () => MSG.amountZeroError)
+              .required(),
+          }),
+        )
+        .min(1)
+        .required(),
+    }),
+  }),
   title: yup.string().min(3).required(),
   description: yup.string().max(4000),
 });
@@ -132,6 +161,15 @@ export interface ValuesType {
   recipients: Recipient[];
   title: string;
   description?: string;
+  staged: {
+    user: AnyUser;
+    amount: { value?: string; tokenAddress?: string };
+    milestones?: {
+      id: string;
+      name?: string;
+      amount?: number;
+    }[];
+  };
 }
 
 const initialValues = {
@@ -141,6 +179,9 @@ const initialValues = {
   owner: undefined,
   title: undefined,
   description: undefined,
+  staged: {
+    milestones: [{ ...initalMilestone, id: nanoid() }],
+  },
 };
 
 export type InitialValuesType = typeof initialValues;

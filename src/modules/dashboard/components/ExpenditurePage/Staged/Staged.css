@@ -1,0 +1,215 @@
+@value paddingRightLeft: 54px;
+@value white: rgb(255, 255, 255);
+@value boxShadow: inset 0px 2px 4px rgba(14, 37, 88, 0.07);
+@value border: 1px solid var(--temp-grey-blue-8);
+
+.stagedContainer {
+  padding: 0 paddingRightLeft 80px;
+}
+
+.label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 6px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: color-mod(var(--dark) alpha(85%));
+}
+
+.user {
+  padding: 7px 0;
+}
+
+.user label {
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
+.user i {
+  transform: translateX(7px);
+}
+
+.user button {
+  padding: 1px 0 1px 6px;
+}
+
+.valueContainer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-top: 11px;
+}
+
+.valueContainer .container {
+  width: 100%;
+}
+
+.valueContainer label {
+  margin-bottom: 0;
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
+.valueContainer input {
+  padding: 0;
+  height: 42px;
+  width: 100%;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(65%));
+}
+
+.inputContainer {
+  margin-right: 15px;
+  width: 100%;
+}
+
+.inputContainer button {
+  padding-left: 0;
+  right: unset;
+  bottom: 4px;
+  left: 0;
+  font-size: var(--size-small);
+}
+
+.inputContainer input {
+  padding: 20px 0 4px;
+  height: 42px;
+  font-size: var(--size-normal);
+  color: var(--dark);
+}
+
+.inputContainer input::placeholder {
+  color: var(--dark);
+}
+
+.tokenWrapper {
+  margin-top: 21px;
+}
+
+.reserveWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 45px;
+  width: 100%;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+  letter-spacing: 0.5px;
+}
+
+.reserveBar {
+  margin: 0 10px 0 30px;
+  height: 14px;
+  width: 184px;
+  position: relative;
+  border-radius: 7px;
+  background-color: var(--colony-white);
+  box-shadow: inset 0px 2px 4px rgba(14, 37, 88, 0.07);
+}
+
+.reserveIndicator {
+  height: 14px;
+  position: absolute;
+  left: 0;
+  border-radius: 7px;
+  background-color: color-mod(var(--golden) alpha(85%));
+}
+
+.percent {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--dark) alpha(85%));
+  letter-spacing: 0.5px;
+}
+
+.nameWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 13px;
+}
+
+.nameWrapper > div {
+  margin-right: 40px;
+  width: 100%;
+}
+
+.nameWrapper input {
+  padding: 0 0 2px;
+  height: 18px;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  text-align: left;
+  line-height: 18px;
+  color: var(--dark);
+  letter-spacing: 0.25px;
+}
+
+.nameWrapper input::placeholder {
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+  line-height: 18px;
+  color: var(--temp-grey-blue-7);
+  letter-spacing: 0.1px;
+}
+
+.deleteIcon {
+  margin-bottom: 14px;
+  height: 20px;
+  width: 20px;
+  fill: var(--pink);
+}
+
+.sliderWrapper {
+  display: grid;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  grid-template-columns: 278px 40px;
+  column-gap: 10px;
+}
+
+.sliderWrapper > span {
+  justify-self: end;
+}
+
+.amountWrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.value {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+  color: var(--dark);
+}
+
+.value > span {
+  margin-right: 4px;
+}
+
+.tokenIcon {
+  margin-right: 4px;
+  height: 16px;
+  width: 16px;
+}
+
+.addLabel {
+  display: flex;
+  align-items: center;
+  padding-top: 4px;
+}
+
+.circlePlusIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  width: 30px;
+  transform: translateX(-8px);
+  fill: var(--action-secondary);
+}

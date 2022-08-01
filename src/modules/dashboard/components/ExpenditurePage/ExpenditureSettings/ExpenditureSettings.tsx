@@ -17,6 +17,7 @@ import UserMention from '~core/UserMention';
 import ColorTag, { Color } from '~core/ColorTag';
 import DomainDropdown from '~core/DomainDropdown';
 import BalanceSelect from './BalanceSelect';
+import { ExpenditureTypes } from '~pages/ExpenditurePage/types';
 
 export const MSG = defineMessages({
   typeLabel: {
@@ -35,9 +36,13 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.ExpenditureSettings.defaultOwnerLabel',
     defaultMessage: 'Owner',
   },
-  optionAdvanced: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.defaultAdvancedOption',
+  advancedPayment: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.AdvancedPayment',
     defaultMessage: 'Advanced payment',
+  },
+  staged: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.Staged',
+    defaultMessage: 'Staged',
   },
 });
 
@@ -47,6 +52,17 @@ interface Props {
   sidebarRef: HTMLElement | null;
   colony: Colony;
 }
+
+const expeditureTypes = [
+  {
+    label: MSG.advancedPayment,
+    value: ExpenditureTypes.Advanced,
+  },
+  {
+    label: MSG.staged,
+    value: ExpenditureTypes.Staged,
+  },
+];
 
 const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
   const { walletAddress, username } = useLoggedInUser();
@@ -107,12 +123,7 @@ const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
               theme: 'alt',
               width: 'content',
             }}
-            options={[
-              {
-                label: MSG.optionAdvanced,
-                value: 'advanced',
-              },
-            ]}
+            options={expeditureTypes}
             scrollContainer={sidebarRef}
             placement="bottom"
             withDropdownElelment
