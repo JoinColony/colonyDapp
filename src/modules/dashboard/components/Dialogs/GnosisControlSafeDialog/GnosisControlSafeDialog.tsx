@@ -12,6 +12,7 @@ import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
 import { Address } from '~types/index';
 
+import { TransactionTypes } from './constants';
 import GnosisControlSafeForm, { NFT } from './GnosisControlSafeForm';
 
 const MSG = defineMessages({
@@ -62,78 +63,18 @@ type Props = DialogProps &
   Partial<WizardDialogType<object>> &
   ActionDialogProps;
 
-const validationSchema = yup.object().shape({
-  safe: yup.string().required(() => MSG.requiredFieldError),
-  transactions: yup.array(
-    yup.object().shape({
-      transactionType: yup.string().required(() => MSG.requiredFieldError),
-      recipient: yup.object().shape({
-        profile: yup.object().shape({
-          walletAddress: yup.string().when('transactionType', {
-            is: (transactionType) =>
-              transactionType === 'transferFunds' ||
-              transactionType === 'transferNft',
-            then: yup
-              .string()
-              .address()
-              .required(() => MSG.requiredFieldError),
-            otherwise: false,
-          }),
-        }),
-      }),
-      amount: yup.number().when('transactionType', {
-        is: (transactionType) =>
-          transactionType === 'transferFunds' ||
-          transactionType === 'rawTransaction',
-        then: yup
-          .number()
-          .transform((value) => toFinite(value))
-          .required(() => MSG.requiredFieldError)
-          .moreThan(0, () => MSG.amountZero),
-        otherwise: false,
-      }),
-      tokenAddress: yup.string().when('transactionType', {
-        is: (transactionType) => transactionType === 'transferFunds',
-        then: yup
-          .string()
-          .address()
-          .required(() => MSG.requiredFieldError),
-        otherwise: false,
-      }),
-      data: yup.string().when('transactionType', {
-        is: (transactionType) => transactionType === 'rawTransaction',
-        then: yup.string().required(() => MSG.requiredFieldError),
-        otherwise: false,
-      }),
-      contract: yup.string().when('transactionType', {
-        is: (transactionType) => transactionType === 'contractInteraction',
-        then: yup
-          .string()
-          .address()
-          .required(() => MSG.requiredFieldError),
-        otherwise: false,
-      }),
-      abi: yup.string().when('transactionType', {
-        is: (transactionType) => transactionType === 'contractInteraction',
-        then: yup.string().required(() => MSG.requiredFieldError),
-        otherwise: false,
-      }),
-      contractFunction: yup.string().when('transactionType', {
-        is: (transactionType) => transactionType === 'contractInteraction',
-        then: yup.string().required(() => MSG.requiredFieldError),
-        otherwise: false,
-      }),
-      nft: yup
-        .object()
-        .shape({
+const validationSchema = (isPreview) =>
+  yup.object().shape({
+    safe: yup.string().required(() => MSG.requiredFieldError),
+    ...(isPreview ? { transactionsTitle: yup.string().required() } : {}),
+    transactions: yup.array(
+      yup.object().shape({
+        transactionType: yup.string().required(() => MSG.requiredFieldError),
+        recipient: yup.object().shape({
           profile: yup.object().shape({
-            displayName: yup.string().when('transactionType', {
-              is: (transactionType) => transactionType === 'transferNft',
-              then: yup.string().required(() => MSG.requiredFieldError),
-              otherwise: false,
-            }),
             walletAddress: yup.string().when('transactionType', {
-              is: (transactionType) => transactionType === 'transferNft',
+              is: (transactionType) =>
+                transactionType === TransactionTypes.TRANSFER_FUNDS,
               then: yup
                 .string()
                 .address()
@@ -141,11 +82,79 @@ const validationSchema = yup.object().shape({
               otherwise: false,
             }),
           }),
-        })
-        .nullable(),
-    }),
-  ),
-});
+        }),
+        amount: yup.number().when('transactionType', {
+          is: (transactionType) =>
+            transactionType === TransactionTypes.TRANSFER_FUNDS ||
+            transactionType === TransactionTypes.RAW_TRANSACTION,
+          then: yup
+            .number()
+            .transform((value) => toFinite(value))
+            .required(() => MSG.requiredFieldError)
+            .moreThan(0, () => MSG.amountZero),
+          otherwise: false,
+        }),
+        tokenAddress: yup.string().when('transactionType', {
+          is: (transactionType) =>
+            transactionType === TransactionTypes.TRANSFER_FUNDS,
+          then: yup
+            .string()
+            .address()
+            .required(() => MSG.requiredFieldError),
+          otherwise: false,
+        }),
+        data: yup.string().when('transactionType', {
+          is: (transactionType) =>
+            transactionType === TransactionTypes.RAW_TRANSACTION,
+          then: yup.string().required(() => MSG.requiredFieldError),
+          otherwise: false,
+        }),
+        contract: yup.string().when('transactionType', {
+          is: (transactionType) =>
+            transactionType === TransactionTypes.CONTRACT_INTERACTION,
+          then: yup
+            .string()
+            .address()
+            .required(() => MSG.requiredFieldError),
+          otherwise: false,
+        }),
+        abi: yup.string().when('transactionType', {
+          is: (transactionType) =>
+            transactionType === TransactionTypes.CONTRACT_INTERACTION,
+          then: yup.string().required(() => MSG.requiredFieldError),
+          otherwise: false,
+        }),
+        contractFunction: yup.string().when('transactionType', {
+          is: (transactionType) =>
+            transactionType === TransactionTypes.CONTRACT_INTERACTION,
+          then: yup.string().required(() => MSG.requiredFieldError),
+          otherwise: false,
+        }),
+        nft: yup
+          .object()
+          .shape({
+            profile: yup.object().shape({
+              displayName: yup.string().when('transactionType', {
+                is: (transactionType) =>
+                  transactionType === TransactionTypes.TRANSFER_NFT,
+                then: yup.string().required(() => MSG.requiredFieldError),
+                otherwise: false,
+              }),
+              walletAddress: yup.string().when('transactionType', {
+                is: (transactionType) =>
+                  transactionType === TransactionTypes.TRANSFER_NFT,
+                then: yup
+                  .string()
+                  .address()
+                  .required(() => MSG.requiredFieldError),
+                otherwise: false,
+              }),
+            }),
+          })
+          .nullable(),
+      }),
+    ),
+  });
 
 const GnosisControlSafeDialog = ({
   colony,
@@ -164,7 +173,6 @@ const GnosisControlSafeDialog = ({
         transactions: [
           {
             transactionType: '',
-            // transactionType: 'transferNft', // For dev testing - set to transferNft
             tokenAddress: colony.nativeTokenAddress,
             amount: undefined,
             recipient: null,
