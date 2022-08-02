@@ -1,6 +1,6 @@
 import { ColonyRole } from '@colony/colony-js';
 import React from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { DialogProps, ActionDialogProps } from '~core/Dialog';
 import IndexModal from '~core/IndexModal';
@@ -41,8 +41,12 @@ const MSG = defineMessages({
   },
   permissionText: {
     id: 'dashboard.ManageGnosisSafeDialog.permissionsText',
-    defaultMessage: `You must have the {permission} permissions in the
+    defaultMessage: `You must have the {permissionsList} permissions in the
       relevant teams, in order to take this action`,
+  },
+  adminFundingPermissions: {
+    id: 'dashboard.AdvancedDialog.gnosisPermissionsList',
+    defaultMessage: 'administration and funding ',
   },
 });
 
@@ -68,14 +72,14 @@ const ManageGnosisSafeDialog = ({
   nextStepControlSafe,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
-  const { formatMessage } = useIntl();
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   const hasRegisteredProfile = !!username && !ethereal;
   const canManageGnosisSafes =
-    (hasRegisteredProfile &&
-      userHasRole(allUserRoles, ColonyRole.Administration)) ||
+    hasRegisteredProfile &&
+    userHasRole(allUserRoles, ColonyRole.Administration) &&
     userHasRole(allUserRoles, ColonyRole.Funding);
+
   const items = [
     {
       title: MSG.addExistingSafeTitle,
@@ -86,11 +90,7 @@ const ManageGnosisSafeDialog = ({
       permissionRequired: !canManageGnosisSafes,
       permissionInfoText: MSG.permissionText,
       permissionInfoTextValues: {
-        permission: `${formatMessage({
-          id: `role.${ColonyRole.Administration}`,
-        }).toLowerCase()} and ${formatMessage({
-          id: `role.${ColonyRole.Funding}`,
-        }).toLowerCase()}`,
+        permissionsList: <FormattedMessage {...MSG.adminFundingPermissions} />,
       },
     },
     {
@@ -102,11 +102,7 @@ const ManageGnosisSafeDialog = ({
       permissionRequired: !canManageGnosisSafes,
       permissionInfoText: MSG.permissionText,
       permissionInfoTextValues: {
-        permission: `${formatMessage({
-          id: `role.${ColonyRole.Administration}`,
-        }).toLowerCase()} and ${formatMessage({
-          id: `role.${ColonyRole.Funding}`,
-        }).toLowerCase()}`,
+        permissionsList: <FormattedMessage {...MSG.adminFundingPermissions} />,
       },
     },
     {
@@ -115,6 +111,11 @@ const ManageGnosisSafeDialog = ({
       icon: 'joystick',
       dataTest: 'gnosisControlSafeItem',
       onClick: () => callStep(nextStepControlSafe),
+      permissionRequired: !canManageGnosisSafes,
+      permissionInfoText: MSG.permissionText,
+      permissionInfoTextValues: {
+        permissionsList: <FormattedMessage {...MSG.adminFundingPermissions} />,
+      },
     },
   ];
   return (
