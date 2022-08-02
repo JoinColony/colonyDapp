@@ -6,17 +6,16 @@ import { nanoid } from 'nanoid';
 
 import { FormSection, Input, TokenSymbolSelector } from '~core/Fields';
 import Icon from '~core/Icon';
-import Numeral from '~core/Numeral';
 import { filterUserSelection } from '~core/SingleUserPicker';
-import Slider from '~core/Slider';
 import UserPickerWithSearch from '~core/UserPickerWithSearch';
-import TokenIcon from '~dashboard/HookedTokenIcon';
+
 import { supRenderAvatar } from '~dashboard/ExpenditurePage/Recipient/Recipient';
 import { Colony, useMembersSubscription } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 import Button from '~core/Button';
 
 import { initalMilestone } from './constants';
+import { Milestone } from '.';
 import styles from './Staged.css';
 
 const MSG = defineMessages({
@@ -39,14 +38,6 @@ const MSG = defineMessages({
   addMilestone: {
     id: 'dashboard.ExpenditurePage.Staged.addMilestone',
     defaultMessage: 'Add milestone',
-  },
-  deleteIconTitle: {
-    id: 'dashboard.ExpenditurePage.Staged.deleteIconTitle',
-    defaultMessage: 'Delete milestone',
-  },
-  placeholder: {
-    id: 'dashboard.ExpenditurePage.Staged.placeholder',
-    defaultMessage: 'Enter Milestone name',
   },
 });
 
@@ -176,76 +167,19 @@ const Staged = ({ colony, sidebarRef }: Props) => {
         name="staged.milestones"
         render={({ push, remove }) => (
           <>
-            {milestones?.map((milestone, index) => (
-              <FormSection
-                appearance={{ border: 'bottom' }}
-                key={milestone?.id}
-              >
-                <div className={styles.nameWrapper}>
-                  <div>
-                    <Input
-                      name={`staged.milestones[${index}].name`}
-                      placeholder={MSG.placeholder}
-                      appearance={{ theme: 'underlined' }}
-                    />
-                  </div>
-                  <Icon
-                    name="trash"
-                    className={styles.deleteIcon}
-                    onClick={() => remove(index)}
-                    title={MSG.deleteIconTitle}
-                  />
-                </div>
-                <div className={styles.sliderWrapper}>
-                  <Slider
-                    value={milestones?.[index].percent || 0}
-                    name={`staged.milestones[${index}].percent`}
-                    limit={calculated.remainingStake[index]}
-                    step={1}
-                    min={0}
-                    max={100}
-                    handleStyle={{
-                      height: 18,
-                      width: 18,
-                    }}
-                    trackStyle={{
-                      height: 14,
-                      width: 18,
-                      transform: 'translateY(-5px)',
-                      opacity: 0.85,
-                    }}
-                    railStyle={{
-                      backgroundColor: styles.white,
-                      height: 14,
-                      position: 'absolute',
-                      top: 0,
-                      backgroundImage: 'none',
-                      boxShadow: styles.boxShadow,
-                      border: styles.border,
-                    }}
-                    dotStyle={{
-                      backgroundColor: 'transparent',
-                    }}
-                  />
-                  <span className={styles.percent}>
-                    {milestones[index].percent}%
-                  </span>
-                </div>
-                {token && amount && (
-                  <div className={styles.amountWrapper}>
-                    <div className={styles.value}>
-                      <TokenIcon
-                        className={styles.tokenIcon}
-                        token={token}
-                        name={token.name || token.address}
-                      />
-                      <Numeral value={calculated.milestoneAmount[index] || 0} />
-                      {token.symbol}
-                    </div>
-                  </div>
-                )}
-              </FormSection>
-            ))}
+            {milestones?.map((milestone, index) => {
+              return (
+                <Milestone
+                  milestone={milestone}
+                  index={index}
+                  remove={remove}
+                  token={token}
+                  amount={amount?.value}
+                  calculated={calculated}
+                  name={`staged.milestones[${index}].name`}
+                />
+              );
+            })}
             <Button
               onClick={() => {
                 push({ ...initalMilestone, id: nanoid() });
