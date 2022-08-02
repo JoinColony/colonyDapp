@@ -907,7 +907,7 @@ export type ColonyAction = {
   newVersion: Scalars['String'];
   colonyDisplayName: Scalars['String'];
   colonyAvatarHash: Scalars['String'];
-  colonyTokens: Array<Maybe<Scalars['String']>>;
+  colonyTokens: Array<Scalars['String']>;
   domainName: Scalars['String'];
   domainPurpose: Scalars['String'];
   domainColor: Scalars['String'];

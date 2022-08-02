@@ -13,6 +13,7 @@ import {
   getSpecificActionValuesCheck,
   sortMetadataHistory,
   parseColonyMetadata,
+  ColonyMetadata,
 } from '~utils/colonyActions';
 import { useDataFetcher } from '~utils/hooks';
 
@@ -24,7 +25,7 @@ const useColonyMetadataChecks = (
   eventName: string,
   colony: Colony,
   transactionHash: string,
-  actionData: Partial<ColonyAction>,
+  actionData: ColonyMetadata | Partial<ColonyAction>,
 ) => {
   let metadataJSON: string | null = null;
   const [metadataIpfsHash, setMetadataIpfsHash] = useState<string>('');
