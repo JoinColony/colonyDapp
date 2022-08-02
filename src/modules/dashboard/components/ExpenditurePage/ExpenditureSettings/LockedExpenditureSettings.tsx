@@ -1,37 +1,33 @@
 import React, { useCallback, useMemo } from 'react';
 import classNames from 'classnames';
-
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+
 import { InputLabel, FormSection, Form } from '~core/Fields';
-
-import styles from './ExpenditureSettings.css';
 import UserAvatar from '~core/UserAvatar';
-
-import { tokens as tokensData } from './constants';
 import UserMention from '~core/UserMention';
 import ColorTag, { Color } from '~core/ColorTag';
-import { Colony } from '~data/index';
+import { Colony, useLoggedInUser } from '~data/index';
+
 import { MSG } from './ExpenditureSettings';
 import BalanceSelect from './BalanceSelect';
+import { tokens as tokensData } from './constants';
+import styles from './ExpenditureSettings.css';
 
 const displayName = 'dashboard.ExpenditurePage.LockedExpenditureSettings';
 
 interface Props {
   expenditure?: string;
   filteredDomainId?: string;
-  walletAddress: string;
-  username: string;
   colony?: Colony;
 }
 
 const LockedExpenditureSettings = ({
   expenditure,
-  walletAddress,
-  username,
   filteredDomainId,
   colony,
 }: Props) => {
   const [activeToken, ...tokens] = tokensData;
+  const { username, walletAddress } = useLoggedInUser();
 
   const domain = useMemo(
     () =>
@@ -112,7 +108,7 @@ const LockedExpenditureSettings = ({
             <div className={styles.userAvatarContainer}>
               <UserAvatar address={walletAddress} size="xs" notSet={false} />
               <div className={styles.userName}>
-                <UserMention username={username} />
+                <UserMention username={username || ''} />
               </div>
             </div>
           </div>

@@ -20,16 +20,14 @@ import { getMainClasses } from '~utils/css';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import { SpinnerLoader } from '~core/Preloaders';
 import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
-import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import { useLoggedInUser } from '~data/helpers';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
-import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
 import { AnyUser } from '~data/index';
 import { initalMilestone } from '~dashboard/ExpenditurePage/Staged/constants';
 import { useDialog } from '~core/Dialog';
 import EscrowFundsDialog from '~dashboard/Dialogs/EscrowFundsDialog';
 
-import ExpenditureForm from './ExpenditureForm';
+import { ExpenditureForm, LockedSidebar } from '.';
 import { ExpenditureTypes } from './types';
 import styles from './ExpenditurePage.css';
 
@@ -182,6 +180,7 @@ export interface ValuesType {
       id: string;
       name?: string;
       amount?: number;
+      percent?: number;
     }[];
   };
 }
@@ -356,8 +355,6 @@ const ExpenditurePage = ({ match }: Props) => {
     },
   ];
 
-  const { expenditure, filteredDomainId } = formValues || {};
-
   const handleValidate = useCallback(() => {
     if (!shouldValidate) {
       setShouldValidate(true);
@@ -436,16 +433,12 @@ const ExpenditurePage = ({ match }: Props) => {
   ) : (
     <div className={getMainClasses({}, styles)}>
       <aside className={styles.sidebar} ref={sidebarRef}>
-        <LockedExpenditureSettings
-          {...{ expenditure, filteredDomainId }}
-          username={loggedInUser?.username || ''}
-          walletAddress={loggedInUser?.walletAddress}
-          colony={colonyData?.processedColony}
-        />
-        <LockedPayments
-          recipients={formValues?.recipients}
-          colony={colonyData?.processedColony}
-        />
+        {colonyData && (
+          <LockedSidebar
+            formValues={formValues}
+            colony={colonyData.processedColony}
+          />
+        )}
       </aside>
       <div className={styles.mainContainer}>
         <main className={styles.mainContent}>
