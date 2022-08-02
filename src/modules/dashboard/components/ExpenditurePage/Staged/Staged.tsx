@@ -11,7 +11,7 @@ import UserPickerWithSearch from '~core/UserPickerWithSearch';
 
 import { supRenderAvatar } from '~dashboard/ExpenditurePage/Recipient/Recipient';
 import { Colony, useMembersSubscription } from '~data/index';
-import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
+import { ValuesType } from '~pages/ExpenditurePage/types';
 import Button from '~core/Button';
 
 import { initalMilestone } from './constants';
