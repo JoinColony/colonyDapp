@@ -29,10 +29,11 @@ import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import { useLoggedInUser } from '~data/helpers';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
 import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
-import EditExpenditureDialog from '~dashboard/Dialogs/EditExpenditureDialog/EditExpenditureDialog';
 import { useDialog } from '~core/Dialog';
-import Tag from '~core/Tag';
+import EscrowFundsDialog from '~dashboard/Dialogs/EscrowFundsDialog';
+import EditExpenditureDialog from '~dashboard/Dialogs/EditExpenditureDialog/EditExpenditureDialog';
 import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
+import Tag from '~core/Tag';
 
 import { findDifferences, updateValues } from './utils';
 import ExpenditureForm from './ExpenditureForm';
@@ -244,10 +245,21 @@ const ExpenditurePage = ({ match }: Props) => {
     lockValues();
   }, [lockValues]);
 
-  const handleFundExpenditure = () => {
-    // Call to backend will be added here, to found the expenditure
-    setActiveStateId(Stage.Funded);
-  };
+  const openEscrowFundsDialog = useDialog(EscrowFundsDialog);
+
+  const handleFundExpenditure = useCallback(
+    () =>
+      colonyData &&
+      openEscrowFundsDialog({
+        colony: colonyData?.processedColony,
+        handleSubmitClick: () => {
+          setActiveStateId?.(Stage.Funded);
+          // add call to backend
+        },
+        isVotingExtensionEnabled: true, // temporary value
+      }),
+    [colonyData, openEscrowFundsDialog],
+  );
 
   const handleReleaseFounds = () => {
     // Call to backend will be added here, to realese founds

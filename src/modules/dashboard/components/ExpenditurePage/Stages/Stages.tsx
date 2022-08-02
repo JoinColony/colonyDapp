@@ -11,19 +11,20 @@ import { ColonyRole } from '@colony/colony-js';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import StageItem from './StageItem/StageItem';
-import { Motion, State } from '~pages/ExpenditurePage/ExpenditurePage';
-import styles from './Stages.css';
-import { MotionStatus, Stage, Status } from './constants';
 import PermissionsLabel from '~core/PermissionsLabel';
+import { Motion, State } from '~pages/ExpenditurePage/ExpenditurePage';
+
+import { MotionStatus, Stage, Status } from './constants';
+import StageItem from './StageItem/StageItem';
+import styles from './Stages.css';
 
 const MSG = defineMessages({
   stages: {
-    id: 'dashboard.Expenditures.Stages.stages',
+    id: 'dashboard.ExpenditurePage.Stages.stages',
     defaultMessage: 'Stages',
   },
   notSaved: {
-    id: 'dashboard.Expenditures.Stages.notSaved',
+    id: 'dashboard.ExpenditurePage.Stages.notSaved',
     defaultMessage: 'Not saved',
   },
   submitDraft: {
