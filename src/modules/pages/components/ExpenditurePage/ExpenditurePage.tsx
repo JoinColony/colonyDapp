@@ -46,6 +46,7 @@ import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
 import { findDifferences, updateValues, setClaimDate } from './utils';
 import { ExpenditureTypes, ValuesType } from './types';
 import { ExpenditureForm, LockedSidebar } from '.';
+import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
 import styles from './ExpenditurePage.css';
 
 const displayName = 'pages.ExpenditurePage';
