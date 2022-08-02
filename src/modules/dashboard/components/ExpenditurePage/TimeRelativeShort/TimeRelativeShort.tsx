@@ -39,11 +39,12 @@ const TimeRelativeShort = ({
         {(formattedDate: string) => {
           const dateArr = formattedDate.split(/([0-9]+)/);
           const [preposition, ...time] = dateArr;
+          const remainingTime = time.join(' ');
 
           return (
             <>
               {preposition}{' '}
-              <span style={{ color: 'rgb(64,71,80)' }}>{...time}</span>
+              <span style={{ color: 'rgb(64,71,80)' }}>{remainingTime}</span>
             </>
           );
         }}
