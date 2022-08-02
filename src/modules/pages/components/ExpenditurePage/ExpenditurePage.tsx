@@ -18,7 +18,6 @@ import TitleDescriptionSection, {
   LockedTitleDescriptionSection,
 } from '~dashboard/ExpenditurePage/TitleDescriptionSection';
 import { getMainClasses } from '~utils/css';
-import { SpinnerLoader } from '~core/Preloaders';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import {
   Motion,
@@ -27,6 +26,7 @@ import {
   Stage,
   Status,
 } from '~dashboard/ExpenditurePage/Stages/constants';
+import { SpinnerLoader } from '~core/Preloaders';
 import { useLoggedInUser } from '~data/helpers';
 import { useDialog } from '~core/Dialog';
 import EscrowFundsDialog from '~dashboard/Dialogs/EscrowFundsDialog';
@@ -34,6 +34,7 @@ import EditExpenditureDialog from '~dashboard/Dialogs/EditExpenditureDialog';
 import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
 import Tag from '~core/Tag';
 import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
+import { initalMilestone } from '~dashboard/ExpenditurePage/Staged/constants';
 
 import { findDifferences, updateValues, setClaimDate } from './utils';
 import ExpenditureForm from './ExpenditureForm';
@@ -41,7 +42,6 @@ import { ExpenditureTypes, ValuesType } from './types';
 import LockedSidebar from './LockedSidebar';
 import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
 import styles from './ExpenditurePage.css';
-import { initalMilestone } from '~dashboard/ExpenditurePage/Staged/constants';
 
 const displayName = 'pages.ExpenditurePage';
 

@@ -8,9 +8,9 @@ import UserMention from '~core/UserMention';
 import ColorTag, { Color } from '~core/ColorTag';
 import { Colony, useLoggedInUser } from '~data/index';
 
-import { tokens as tokensData } from './constants';
 import { MSG } from './ExpenditureSettings';
 import BalanceSelect from './BalanceSelect';
+import { tokens as tokensData } from './constants';
 import styles from './ExpenditureSettings.css';
 
 const displayName =

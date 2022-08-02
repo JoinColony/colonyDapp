@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 
 import { LockedExpenditureSettings } from '~dashboard/ExpenditurePage/ExpenditureSettings';
 import { LockedPayments } from '~dashboard/ExpenditurePage/Payments';
+import LockedStaged from '~dashboard/ExpenditurePage/Staged/LockedStaged/LockedStaged';
 import { Status } from '~dashboard/ExpenditurePage/Stages/constants';
 import { Colony } from '~data/index';
 
@@ -28,7 +29,8 @@ const LockedSidebar = ({
   pendingMotion,
   status,
 }: Props) => {
-  const { expenditure, recipients, filteredDomainId } = formValues || {};
+  const { expenditure, recipients, filteredDomainId, staged } =
+    formValues || {};
 
   const secondFormSection = useMemo(() => {
     switch (expenditure) {
@@ -48,6 +50,9 @@ const LockedSidebar = ({
       case ExpenditureTypes.Split: {
         return null;
       }
+      case ExpenditureTypes.Staged: {
+        return <LockedStaged colony={colony} staged={staged} />;
+      }
       default:
         return null;
     }
@@ -59,6 +64,7 @@ const LockedSidebar = ({
     pendingChanges,
     pendingMotion,
     recipients,
+    staged,
     status,
   ]);
 
