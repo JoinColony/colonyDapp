@@ -20,16 +20,12 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import {
-  InitialValuesType,
-  State,
-  ValuesType,
-} from '~pages/ExpenditurePage/ExpenditurePage';
-import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
+import { State, ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
+import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
 import { Colony } from '~data/index';
+import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
 import PermissionsLabel from '~core/PermissionsLabel';
 import Tag from '~core/Tag';
-import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
 
 import DeleteDraftDialog from '../../Dialogs/DeleteDraftDialog/DeleteDraftDialog';
 import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
@@ -73,7 +69,7 @@ const MSG = defineMessages({
   },
   motion: {
     id: 'dashboard.ExpenditurePage.Stages.motion',
-    defaultMessage: 'You can’t {action} unless motion ends',
+    defaultMessage: `You can't {action} unless motion ends`,
   },
   tooltipNoPermissionToRealese: {
     id: 'dashboard.ExpenditurePage.Stages.tooltipNoPermissionToRealese',
@@ -100,7 +96,6 @@ interface Motion {
 
 interface Props {
   states: State[];
-  handleSubmit: (values: InitialValuesType) => void;
   activeStateId?: string;
   colony?: Colony;
 }
