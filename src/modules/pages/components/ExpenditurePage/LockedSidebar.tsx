@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 
-import Batch from '~dashboard/ExpenditurePage/Batch';
 import { LockedExpenditureSettings } from '~dashboard/ExpenditurePage/ExpenditureSettings';
 import { LockedPayments } from '~dashboard/ExpenditurePage/Payments';
 import { LockedSplit } from '~dashboard/ExpenditurePage/Split';
