@@ -8,21 +8,17 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import DeleteDraftDialog from '~dashboard/Dialogs/DeleteDraftDialog/DeleteDraftDialog';
-import Tag from '~core/Tag';
 import { Colony } from '~data/index';
-import {
-  InitialValuesType,
-  State,
-  ValuesType,
-} from '~pages/ExpenditurePage/ExpenditurePage';
+import Tag from '~core/Tag';
 
 import { Stage } from './constants';
 import ClaimFunds from './ClaimFunds';
 import { Recipient as RecipientType } from '../Payments/types';
-import styles from './Stages.css';
+import DeleteDraftDialog from '../../Dialogs/DeleteDraftDialog/DeleteDraftDialog';
 import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
 import StageItem from './StageItem';
+import { State, ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
+import styles from './Stages.css';
 
 const MSG = defineMessages({
   stages: {
@@ -73,7 +69,6 @@ export const buttonStyles = {
 
 interface Props {
   states: State[];
-  handleSubmit: (values: InitialValuesType) => void;
   activeStateId?: string;
   recipients?: RecipientType[];
   colony?: Colony;
