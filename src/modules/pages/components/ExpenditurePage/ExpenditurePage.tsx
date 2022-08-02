@@ -43,9 +43,8 @@ import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog'
 import { initalMilestone } from '~dashboard/ExpenditurePage/Staged/constants';
 
 import { findDifferences, updateValues, setClaimDate } from './utils';
-import ExpenditureForm from './ExpenditureForm';
 import { ExpenditureTypes, ValuesType } from './types';
-import LockedSidebar from './LockedSidebar';
+import { ExpenditureForm, LockedSidebar } from '.';
 import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
 import styles from './ExpenditurePage.css';
 
