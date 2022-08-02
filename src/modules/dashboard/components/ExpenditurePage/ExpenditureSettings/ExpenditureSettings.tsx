@@ -9,15 +9,16 @@ import {
   FormSection,
 } from '~core/Fields';
 import { Colony, useLoggedInUser } from '~data/index';
-import styles from './ExpenditureSettings.css';
 import UserAvatar from '~core/UserAvatar';
-import { tokens as tokensData } from './constants';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import UserMention from '~core/UserMention';
 import ColorTag, { Color } from '~core/ColorTag';
 import DomainDropdown from '~core/DomainDropdown';
-import BalanceSelect from './BalanceSelect';
 import { ExpenditureTypes } from '~pages/ExpenditurePage/types';
+
+import BalanceSelect from './BalanceSelect';
+import { tokens as tokensData } from './constants';
+import styles from './ExpenditureSettings.css';
 
 export const MSG = defineMessages({
   typeLabel: {

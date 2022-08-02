@@ -2,6 +2,7 @@ import Decimal from 'decimal.js';
 import { FieldArray, useField, useFormikContext } from 'formik';
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { nanoid } from 'nanoid';
 
 import { FormSection, Input, TokenSymbolSelector } from '~core/Fields';
 import Icon from '~core/Icon';
@@ -57,7 +58,7 @@ interface Props {
 }
 
 const Staged = ({ colony, sidebarRef }: Props) => {
-  const { setFieldValue } = useFormikContext<ValuesType>();
+  const { setFieldValue, setFieldTouched } = useFormikContext<ValuesType>();
   const [, { value: amount }] = useField<{
     value?: string;
     tokenAddress?: string;
@@ -246,7 +247,10 @@ const Staged = ({ colony, sidebarRef }: Props) => {
               </FormSection>
             ))}
             <Button
-              onClick={() => push(initalMilestone)}
+              onClick={() => {
+                push({ ...initalMilestone, id: nanoid() });
+                setFieldTouched(`staged.milestones[${milestones.length}].name`);
+              }}
               appearance={{ theme: 'blue' }}
             >
               <div className={styles.addLabel}>

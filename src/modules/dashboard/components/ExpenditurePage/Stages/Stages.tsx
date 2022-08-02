@@ -11,11 +11,7 @@ import { Tooltip } from '~core/Popover';
 import DeleteDraftDialog from '../../Dialogs/DeleteDraftDialog/DeleteDraftDialog';
 import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
 import StageItem from './StageItem';
-import {
-  InitialValuesType,
-  State,
-  ValuesType,
-} from '~pages/ExpenditurePage/ExpenditurePage';
+import { State, ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 import styles from './Stages.css';
 import { Stage } from './constants';
 
@@ -68,7 +64,6 @@ const buttonStyles = {
 
 interface Props {
   states: State[];
-  handleSubmit: (values: InitialValuesType) => void;
   activeStateId?: string;
 }
 
