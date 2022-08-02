@@ -74,7 +74,7 @@ const Payments = ({ sidebarRef, colony }: Props) => {
   const onToggleButtonClick = useCallback(
     (index) => {
       setValue(
-        recipients.map((recipient, idx) =>
+        recipients?.map((recipient, idx) =>
           index === idx
             ? { ...recipient, isExpanded: !recipient.isExpanded }
             : recipient,
@@ -97,7 +97,7 @@ const Payments = ({ sidebarRef, colony }: Props) => {
             name="recipients"
             render={({ push, remove }) => (
               <>
-                {recipients.map((recipient, index) => (
+                {recipients?.map((recipient, index) => (
                   <div className={styles.singleRecipient} key={recipient.id}>
                     <FormSection>
                       <div className={styles.recipientLabel}>
@@ -107,7 +107,7 @@ const Payments = ({ sidebarRef, colony }: Props) => {
                           isLastitem={index === recipients?.length - 1}
                         />
                         {index + 1}: <FormattedMessage {...MSG.recipient} />
-                        {recipients.length > 1 && (
+                        {recipients?.length > 1 && (
                           <Icon
                             name="trash"
                             className={styles.deleteIcon}

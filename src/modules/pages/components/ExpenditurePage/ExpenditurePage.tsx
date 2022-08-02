@@ -94,6 +94,10 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.amountZeroError',
     defaultMessage: 'Value must be greater than zero',
   },
+  milestoneNameError: {
+    id: 'dashboard.ExpenditurePage.milestoneNameError',
+    defaultMessage: 'Name is required',
+  },
 });
 
 const validationSchema = yup.object().shape({
@@ -101,41 +105,45 @@ const validationSchema = yup.object().shape({
   filteredDomainId: yup
     .string()
     .required(() => <FormattedMessage {...MSG.teamRequiredError} />),
-  recipients: yup.array(
-    yup.object().shape({
-      recipient: yup.object().required(),
-      value: yup
-        .array(
-          yup.object().shape({
-            amount: yup
-              .number()
-              .required(() => MSG.valueError)
-              .moreThan(0, () => MSG.amountZeroError),
-            tokenAddress: yup.string().required(),
-          }),
-        )
-        .min(1),
-    }),
-  ),
+  recipients: yup.array().when('expenditure', {
+    is: (expenditure) => expenditure === 'advanced',
+    then: yup.array().of(
+      yup.object().shape({
+        recipient: yup.object().required(),
+        value: yup
+          .array(
+            yup.object().shape({
+              amount: yup
+                .number()
+                .required(() => MSG.valueError)
+                .moreThan(0, () => MSG.amountZeroError),
+              tokenAddress: yup.string().required(),
+            }),
+          )
+          .min(1),
+      }),
+    ),
+  }),
   staged: yup.object().when('expenditure', {
     is: (expenditure) => expenditure === ExpenditureTypes.Staged,
     then: yup.object().shape({
       user: yup.object().required(),
       amount: yup.object().shape({
-        amount: yup
+        value: yup
           .number()
           .required(() => MSG.valueError)
           .moreThan(0, () => MSG.amountZeroError),
         tokenAddress: yup.string().required(),
       }),
-      milestone: yup
+      milestones: yup
         .array(
           yup.object().shape({
-            name: yup.string().required(),
-            amount: yup
+            name: yup.string().required(() => MSG.milestoneNameError),
+            percent: yup
               .number()
               .moreThan(0, () => MSG.amountZeroError)
               .required(),
+            amount: yup.number(),
           }),
         )
         .min(1)
@@ -158,7 +166,7 @@ export interface ValuesType {
   expenditure: string;
   filteredDomainId: string;
   owner: string;
-  recipients: Recipient[];
+  recipients?: Recipient[];
   title: string;
   description?: string;
   staged: {
@@ -228,6 +236,12 @@ const ExpenditurePage = ({ match }: Props) => {
             ],
           },
         ],
+        staged: {
+          ...initialValues.staged,
+          amount: {
+            tokenAddress: colonyData?.processedColony.nativeTokenAddress,
+          },
+        },
       }
     );
   }, [colonyData, formValues, loggedInUser]);
@@ -235,6 +249,28 @@ const ExpenditurePage = ({ match }: Props) => {
   const handleSubmit = useCallback((values) => {
     setShouldValidate(true);
     setActiveStateId(Stage.Draft);
+
+    if (values.expenditure === ExpenditureTypes.Staged) {
+      const stagedValues = {
+        ...values,
+        recipients: undefined,
+        staged: {
+          ...values.staged,
+          milestones: values.staged.milestones?.map((milestone) => {
+            const amount = values.staged.amount.value;
+
+            const milestoneAmount =
+              amount &&
+              milestone?.percent &&
+              (milestone.percent / 100) * Number(values.staged.amount.value);
+            return { ...milestone, amount: milestoneAmount };
+          }),
+        },
+      };
+
+      setFormValues(stagedValues as ValuesType);
+      return;
+    }
 
     if (values) {
       setFormValues(values);
@@ -319,6 +355,27 @@ const ExpenditurePage = ({ match }: Props) => {
       validateOnBlur={shouldValidate}
       validateOnChange={shouldValidate}
       validate={handleValidate}
+      initialTouched={{
+        recipients: [
+          {
+            value: [
+              {
+                amount: true,
+              },
+            ],
+          },
+        ],
+        staged: {
+          amount: {
+            value: true,
+          },
+          milestones: [
+            {
+              name: true,
+            },
+          ],
+        },
+      }}
       enableReinitialize
     >
       <div className={getMainClasses({}, styles)}>

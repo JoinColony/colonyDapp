@@ -2,6 +2,7 @@ import Decimal from 'decimal.js';
 import { FieldArray, useField, useFormikContext } from 'formik';
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+
 import { FormSection, Input, TokenSymbolSelector } from '~core/Fields';
 import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
@@ -10,14 +11,12 @@ import Slider from '~core/Slider';
 import UserPickerWithSearch from '~core/UserPickerWithSearch';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import { supRenderAvatar } from '~dashboard/ExpenditurePage/Recipient/Recipient';
-
 import { Colony, useMembersSubscription } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
-
-import styles from './Staged.css';
 import Button from '~core/Button';
+
 import { initalMilestone } from './constants';
+import styles from './Staged.css';
 
 const MSG = defineMessages({
   staged: {
@@ -41,11 +40,11 @@ const MSG = defineMessages({
     defaultMessage: 'Add milestone',
   },
   deleteIconTitle: {
-    id: 'dashboard.ExpenditurePage.Split.SplitUnequal.deleteIconTitle',
+    id: 'dashboard.ExpenditurePage.Staged.deleteIconTitle',
     defaultMessage: 'Delete milestone',
   },
   placeholder: {
-    id: 'dashboard.ExpenditurePage.Split.SplitUnequal.placeholder',
+    id: 'dashboard.ExpenditurePage.Staged.placeholder',
     defaultMessage: 'Enter Milestone name',
   },
 });
@@ -142,7 +141,7 @@ const Staged = ({ colony, sidebarRef }: Props) => {
               maxButtonParams={{
                 setFieldValue,
                 // mock, needs to be changed to the actual value
-                maxAmount: '0',
+                maxAmount: '100',
                 fieldName: 'staged.amount.value',
               }}
             />
@@ -172,7 +171,6 @@ const Staged = ({ colony, sidebarRef }: Props) => {
           <span className={styles.percent}>{calculated.reserve}%</span>
         </div>
       </FormSection>
-
       <FieldArray
         name="staged.milestones"
         render={({ push, remove }) => (
@@ -240,10 +238,7 @@ const Staged = ({ colony, sidebarRef }: Props) => {
                         token={token}
                         name={token.name || token.address}
                       />
-                      <Numeral
-                        unit={getTokenDecimalsWithFallback(token.decimals)}
-                        value={calculated.milestoneAmount[index] || 0}
-                      />{' '}
+                      <Numeral value={calculated.milestoneAmount[index] || 0} />
                       {token.symbol}
                     </div>
                   </div>
