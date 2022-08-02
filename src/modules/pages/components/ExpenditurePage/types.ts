@@ -27,11 +27,11 @@ export interface ValuesType {
   title?: string;
   description?: string;
   split?: {
-    unequal: boolean;
-    amount: { value?: string; tokenAddress?: string };
+    unequal?: boolean;
+    amount?: { value?: string; tokenAddress?: string };
     recipients?: { user?: AnyUser; amount?: number; percent?: number }[];
   };
-  staged?: {
+  staged: {
     user?: AnyUser;
     amount?: { value?: string; tokenAddress?: string };
     milestones?: {

@@ -28,6 +28,7 @@ interface Props {
 const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
   const { values, handleSubmit, validateForm } =
     useFormikContext<ValuesType>() || {};
+
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
 
   const onSubmit = useCallback(
