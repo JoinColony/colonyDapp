@@ -23,6 +23,7 @@ import {
   ACTIONS_PAGE_ROUTE,
   USER_ROUTE,
   MEMBERS_ROUTE,
+  COLONY_DECISIONS_ROUTE,
   COLONY_EXTENSION_SETUP_ROUTE,
   COLONY_EXTENSION_DETAILS_ROUTE,
   COLONY_EXTENSIONS_ROUTE,
@@ -84,6 +85,11 @@ const MSG = defineMessages({
   colonyFunds: {
     id: 'utils.hooks.useTitle.colonyFunds',
     defaultMessage: `Funds | Colony - {colonyName}`,
+  },
+
+  colonyDecisions: {
+    id: 'utils.hooks.useTitle.colonyDecisions',
+    defaultMessage: `Decisions | Colony - {colonyName}`,
   },
 
   colonyExtensions: {
@@ -150,6 +156,7 @@ const routeMessages: Record<string, MessageDescriptor> = {
   [COLONY_HOME_ROUTE]: MSG.colonyHome,
   [COLONY_EVENTS_ROUTE]: MSG.colonyEvents,
   [COLONY_FUNDING_ROUTE]: MSG.colonyFunds,
+  [COLONY_DECISIONS_ROUTE]: MSG.colonyDecisions,
   [COLONY_EXTENSIONS_ROUTE]: MSG.colonyExtensions,
   [COLONY_EXTENSION_DETAILS_ROUTE]: MSG.colonyExtensionDetails,
   [COLONY_EXTENSION_SETUP_ROUTE]: MSG.colonyExtensionSetup,

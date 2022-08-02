@@ -29,6 +29,7 @@ import { ActionTypes } from '~redux/index';
 
 import {
   COLONY_EVENTS_ROUTE,
+  COLONY_DECISIONS_ROUTE,
   COLONY_EXTENSIONS_ROUTE,
   COLONY_EXTENSION_DETAILS_ROUTE,
   COLONY_EXTENSION_SETUP_ROUTE,
@@ -165,6 +166,10 @@ const Routes = () => {
         <AlwaysAccesibleRoute
           exact
           path={[
+            COLONY_HOME_ROUTE,
+            COLONY_EVENTS_ROUTE,
+            COLONY_DECISIONS_ROUTE,
+            COLONY_EXTENSIONS_ROUTE,
             COLONY_EXTENSION_DETAILS_ROUTE,
             COLONY_EXTENSIONS_ROUTE,
             COLONY_EXTENSION_SETUP_ROUTE,
