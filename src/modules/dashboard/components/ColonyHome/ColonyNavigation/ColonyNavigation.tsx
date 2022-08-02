@@ -55,6 +55,7 @@ const ColonyNavigation = ({ colony: { colonyName } }: Props) => {
    * Problem is I couldn't get @client resolvers to work with subgrap queries :(
    */
   const hasNewActions = false;
+  const hasNewDecisions = false;
   const hasNewExtensions = false;
 
   const items = useMemo<ComponentProps<typeof NavItem>[]>(() => {
@@ -66,6 +67,13 @@ const ColonyNavigation = ({ colony: { colonyName } }: Props) => {
       },
       {
         exact: false,
+        linkTo: `/colony/${colonyName}/decisions`,
+        showDot: hasNewDecisions,
+        text: MSG.linkTextDecisions,
+        dataTest: 'decisionsNavigationButton',
+      },
+      {
+        exact: false,
         linkTo: `/colony/${colonyName}/extensions`,
         showDot: hasNewExtensions,
         text: MSG.linkTextExtensions,
@@ -74,7 +82,7 @@ const ColonyNavigation = ({ colony: { colonyName } }: Props) => {
     ];
 
     return navigationItems;
-  }, [colonyName, hasNewActions, hasNewExtensions]);
+  }, [colonyName, hasNewActions, hasNewExtensions, hasNewDecisions]);
 
   return (
     <nav role="navigation" className={styles.main}>
