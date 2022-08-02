@@ -20,6 +20,10 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.ColonyNavigation.linkTextExtensions',
     defaultMessage: 'Extensions',
   },
+  linkTextDecisions: {
+    id: 'dashboard.ColonyHome.ColonyNavigation.linkTextDecisions',
+    defaultMessage: 'Decisions',
+  },
   linkTextUnwrapTokens: {
     id: 'dashboard.ColonyHome.ColonyNavigation.linkTextUnwrapTokens',
     defaultMessage: 'Unwrap Tokens',
