@@ -17,6 +17,7 @@ import { useColonyFromNameQuery } from '~data/index';
 
 import ColonyActions from '~dashboard/ColonyActions';
 import ColonyEvents from '~dashboard/ColonyEvents';
+import ColonyDecisions from '~dashboard/ColonyDecisions';
 
 import ColonyHomeLayout from './ColonyHomeLayout';
 
@@ -24,6 +25,7 @@ import styles from './ColonyHomeLayout.css';
 
 import {
   COLONY_EVENTS_ROUTE,
+  COLONY_DECISIONS_ROUTE,
   COLONY_EXTENSIONS_ROUTE,
   COLONY_EXTENSION_DETAILS_ROUTE,
   COLONY_EXTENSION_SETUP_ROUTE,
@@ -87,6 +89,22 @@ const ColonyHome = ({ match, location }: Props) => {
                 showActions={false}
               >
                 <ColonyEvents colony={colony} ethDomainId={filteredDomainId} />
+              </ColonyHomeLayout>
+            )}
+          />
+          <Route
+            path={COLONY_DECISIONS_ROUTE}
+            component={() => (
+              <ColonyHomeLayout
+                colony={colony}
+                filteredDomainId={filteredDomainId}
+                onDomainChange={setDomainIdFilter}
+                showActions={false}
+              >
+                <ColonyDecisions
+                  colony={colony}
+                  ethDomainId={filteredDomainId}
+                />
               </ColonyHomeLayout>
             )}
           />
