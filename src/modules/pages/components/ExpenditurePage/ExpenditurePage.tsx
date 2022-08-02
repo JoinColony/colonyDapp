@@ -26,6 +26,8 @@ import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import { useLoggedInUser } from '~data/helpers';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
 import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
+import { useDialog } from '~core/Dialog';
+import EscrowFundsDialog from '~dashboard/Dialogs/EscrowFundsDialog';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -213,10 +215,21 @@ const ExpenditurePage = ({ match }: Props) => {
     lockValues();
   };
 
-  const handleFoundExpenditure = () => {
-    // Call to backend will be added here, to found the expenditure
-    setActiveStateId(Stage.Funded);
-  };
+  const openEscrowFundsDialog = useDialog(EscrowFundsDialog);
+
+  const handleFundExpenditure = useCallback(
+    () =>
+      colonyData &&
+      openEscrowFundsDialog({
+        colony: colonyData?.processedColony,
+        handleSubmitClick: () => {
+          setActiveStateId?.(Stage.Funded);
+          // add call to backend
+        },
+        isVotingExtensionEnabled: true, // temporary value
+      }),
+    [colonyData, openEscrowFundsDialog],
+  );
 
   const handleReleaseFounds = () => {
     // Call to backend will be added here, to realese founds
@@ -240,7 +253,7 @@ const ExpenditurePage = ({ match }: Props) => {
       id: Stage.Locked,
       label: MSG.locked,
       buttonText: MSG.escrowFunds,
-      buttonAction: handleFoundExpenditure,
+      buttonAction: handleFundExpenditure,
     },
     {
       id: Stage.Funded,
