@@ -148,7 +148,7 @@ const AdvancedDialog = ({
   const canManageGnosisSafes =
     hasRegisteredProfile &&
     canFund(allUserRoles) &&
-    canAdminister(allUserRoles);
+    (canAdminister(allUserRoles) || hasRoot(allUserRoles));
 
   const items = [
     {
