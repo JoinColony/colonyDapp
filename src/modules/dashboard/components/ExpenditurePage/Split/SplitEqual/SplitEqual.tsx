@@ -39,10 +39,6 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Split.SplitEqual.addRecipientLabel',
     defaultMessage: 'Add recipient',
   },
-  noReicpients: {
-    id: 'dashboard.ExpenditurePage.Split.SplitEqual.noReicpients',
-    defaultMessage: 'No recipients',
-  },
 });
 
 const displayName = 'dashboard.ExpenditurePage.Split.SplitEqual';
@@ -171,11 +167,9 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
           name="split.recipients"
           render={({ push, remove }) => (
             <>
-              <div className={styles.recipientsWrapper}>
-                {recipients?.length === 0 ? (
-                  <FormattedMessage {...MSG.noReicpients} />
-                ) : (
-                  recipients?.map((recipient, index) => {
+              {recipients?.length > 0 && (
+                <div className={styles.recipientsWrapper}>
+                  {recipients?.map((recipient, index) => {
                     return (
                       <div
                         className={styles.recipientWrapper}
@@ -202,9 +196,9 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
                         />
                       </div>
                     );
-                  })
-                )}
-              </div>
+                  })}
+                </div>
+              )}
               <Button
                 onClick={() => push({ ...initalRecipient, key: nanoid() })}
                 appearance={{ theme: 'blue' }}
