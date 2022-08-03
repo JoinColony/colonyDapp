@@ -12,6 +12,9 @@
 .recipientsWrapper {
   padding: 11px 0 14px;
   border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
 }
 
 .recipientsWrapper label {
