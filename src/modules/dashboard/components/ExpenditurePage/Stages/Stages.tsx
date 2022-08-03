@@ -124,7 +124,7 @@ const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
   const activeIndex = states.findIndex((state) => state.id === activeStateId);
   const activeState = states.find((state) => state.id === activeStateId);
   // temporary value, there's need to add logic to check if realese founds can be made
-  const canRealeseFounds = false;
+  const canRealeseFounds = true;
   const isLogedIn = true;
 
   const renderButton = useCallback(() => {
