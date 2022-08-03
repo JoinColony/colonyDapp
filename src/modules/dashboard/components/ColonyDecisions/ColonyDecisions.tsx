@@ -45,7 +45,7 @@ type Props = {
 const ColonyDecisions = ({ colony }: Props) => {
   // temp values, to be removed when queries are wired in
   const isLoading = false;
-  const data = ['m'];
+  const data = ['placeholder'];
 
   if (isLoading) {
     return (
@@ -82,6 +82,9 @@ const ColonyDecisions = ({ colony }: Props) => {
               </div>
             </Form>
           </div>
+          {data.map((item) => (
+            <div>{item}</div>
+          ))}
         </>
       ) : (
         <div className={styles.emptyState}>
