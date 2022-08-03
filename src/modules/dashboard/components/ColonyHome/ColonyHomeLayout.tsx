@@ -2,9 +2,7 @@ import React, { ReactChild, useEffect } from 'react';
 import { useMediaQuery } from 'react-responsive';
 
 import { useDialog } from '~core/Dialog';
-
 import ColonyDomainSelector from '~dashboard/ColonyHome/ColonyDomainSelector';
-import ColonyHomeActions from '~dashboard/ColonyHomeActions';
 import ColonyTotalFunds from '~dashboard/ColonyTotalFunds';
 import WrongNetworkDialog from '~dialogs/WrongNetworkDialog';
 
@@ -36,8 +34,7 @@ type Props = {
   showControls?: boolean;
   showNavigation?: boolean;
   showSidebar?: boolean;
-  showActions?: boolean;
-  ethDomainId?: number;
+  newItemButton?: ReactChild;
 };
 
 const displayName = 'dashboard.ColonyHome.ColonyHomeLayout';
@@ -49,9 +46,8 @@ const ColonyHomeLayout = ({
   showControls = true,
   showNavigation = true,
   showSidebar = true,
-  showActions = true,
   onDomainChange = () => null,
-  ethDomainId,
+  newItemButton,
 }: Props) => {
   const { ethereal, networkId } = useLoggedInUser();
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
@@ -82,12 +78,13 @@ const ColonyHomeLayout = ({
                     colony={colony}
                   />
                 </div>
-                {showActions && (
+                {newItemButton}
+                {/* {showActions && (
                   <ColonyHomeActions
                     colony={colony}
                     ethDomainId={ethDomainId}
                   />
-                )}
+                )} */}
               </div>
             </>
           )}
