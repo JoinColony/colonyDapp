@@ -1,9 +1,10 @@
 import React, { useEffect, useCallback, useRef, useState } from 'react';
 import { useFormikContext } from 'formik';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import copyToClipboard from 'copy-to-clipboard';
 import classNames from 'classnames';
 
+import { State, ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
@@ -11,13 +12,14 @@ import { Tooltip } from '~core/Popover';
 import { Colony } from '~data/index';
 import Tag from '~core/Tag';
 
-import { Stage } from './constants';
-import ClaimFunds from './ClaimFunds';
-import { Recipient as RecipientType } from '../Payments/types';
 import DeleteDraftDialog from '../../Dialogs/DeleteDraftDialog/DeleteDraftDialog';
 import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
+
+import { Recipient as RecipientType } from '../Payments/types';
+
+import { Stage } from './constants';
+import ClaimFunds from './ClaimFunds';
 import StageItem from './StageItem';
-import { State, ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 import styles from './Stages.css';
 
 const MSG = defineMessages({
@@ -77,6 +79,7 @@ interface Props {
 const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
   const { values, handleSubmit, validateForm, resetForm } =
     useFormikContext<ValuesType>() || {};
+  const { formatMessage } = useIntl();
 
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
@@ -121,12 +124,17 @@ const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
   const activeIndex = states.findIndex((state) => state.id === activeStateId);
   const activeState = states.find((state) => state.id === activeStateId);
   // temporary value, there's need to add logic to check if realese founds can be made
-  const canRealeseFounds = true;
+  const canRealeseFounds = false;
   const isLogedIn = true;
 
   const renderButton = useCallback(() => {
+    const buttonText =
+      typeof activeState?.buttonText === 'string'
+        ? activeState.buttonText
+        : activeState?.buttonText && formatMessage(activeState.buttonText);
+
     if (activeStateId === Stage.Claimed) {
-      return <Tag text={activeState?.buttonText} className={styles.claimed} />;
+      return <Tag text={buttonText} className={styles.claimed} />;
     }
     if (activeStateId === Stage.Released) {
       return null;
@@ -136,82 +144,59 @@ const Stages = ({ states, activeStateId, recipients, colony }: Props) => {
         <>
           {canRealeseFounds ? (
             <Button onClick={activeState?.buttonAction} style={buttonStyles}>
-              {typeof activeState?.buttonText === 'string' ? (
-                activeState.buttonText
-              ) : (
-                <FormattedMessage {...activeState?.buttonText} />
-              )}
+              {buttonText}
             </Button>
           ) : (
-            <div>
-              <Tooltip
-                placement="top"
-                content={
-                  <div className={styles.buttonTooltip}>
-                    <FormattedMessage {...MSG.tooltipNoPermissionToRealese} />
-                  </div>
-                }
+            <Tooltip
+              placement="top"
+              isOpen
+              content={
+                <div className={styles.buttonTooltip}>
+                  <FormattedMessage {...MSG.tooltipNoPermissionToRealese} />
+                </div>
+              }
+            >
+              <Button
+                onClick={activeState?.buttonAction}
+                style={buttonStyles}
+                disabled
               >
-                <Button
-                  onClick={activeState?.buttonAction}
-                  style={buttonStyles}
-                  disabled
-                >
-                  {typeof activeState?.buttonText === 'string' ? (
-                    activeState.buttonText
-                  ) : (
-                    <FormattedMessage {...activeState?.buttonText} />
-                  )}
-                </Button>
-              </Tooltip>
-            </div>
+                {buttonText}
+              </Button>
+            </Tooltip>
           )}
         </>
       );
     }
     if (activeState?.buttonTooltip) {
       return (
-        <div>
-          <Tooltip
-            placement="top"
-            content={
-              typeof activeState.buttonTooltip === 'string' ? (
-                <div className={styles.buttonTooltip}>
-                  {activeState.buttonTooltip}
-                </div>
-              ) : (
-                <div className={styles.buttonTooltip}>
-                  <FormattedMessage {...activeState.buttonTooltip} />
-                </div>
-              )
-            }
+        <Tooltip
+          placement="top"
+          content={
+            <div className={styles.buttonTooltip}>
+              {typeof activeState.buttonTooltip === 'string'
+                ? activeState.buttonTooltip
+                : formatMessage(activeState.buttonTooltip)}
+            </div>
+          }
+        >
+          <Button
+            onClick={activeState?.buttonAction}
+            style={buttonStyles}
+            disabled={activeStateId === Stage.Claimed}
           >
-            <Button
-              onClick={activeState?.buttonAction}
-              style={buttonStyles}
-              disabled={activeStateId === Stage.Claimed}
-            >
-              {typeof activeState?.buttonText === 'string' ? (
-                activeState.buttonText
-              ) : (
-                <FormattedMessage {...activeState?.buttonText} />
-              )}
-            </Button>
-          </Tooltip>
-        </div>
+            {buttonText}
+          </Button>
+        </Tooltip>
       );
     }
 
     return (
       <Button onClick={activeState?.buttonAction} style={buttonStyles}>
-        {typeof activeState?.buttonText === 'string' ? (
-          activeState.buttonText
-        ) : (
-          <FormattedMessage {...activeState?.buttonText} />
-        )}
+        {buttonText}
       </Button>
     );
-  }, [activeState, activeStateId, canRealeseFounds]);
+  }, [activeState, activeStateId, canRealeseFounds, formatMessage]);
 
   return (
     <div className={styles.mainContainer}>

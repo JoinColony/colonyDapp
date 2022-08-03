@@ -11,6 +11,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 import { Colony } from '~data/index';
 
 import Recipient from '../Recipient';
+
 import { newRecipient } from './constants';
 import CollapseExpandButtons from './CollapseExpandButtons';
 import styles from './Payments.css';

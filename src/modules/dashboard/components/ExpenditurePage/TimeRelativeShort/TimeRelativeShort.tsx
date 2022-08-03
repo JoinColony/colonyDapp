@@ -12,7 +12,7 @@ interface Props extends HTMLAttributes<HTMLSpanElement> {
 const nearestIntervalOf = (value: number, increment: number) =>
   Math.round(value / increment) * increment;
 
-const displayName = 'TimeRelative';
+const displayName = 'dashboard.ExpenditurePage.TimeRelativeShort';
 
 const TimeRelativeShort = ({
   value: valueProp,
@@ -33,7 +33,6 @@ const TimeRelativeShort = ({
         numeric="auto"
         updateIntervalInSeconds={updateInterval}
         value={valueInSeconds}
-        // eslint-disable-next-line react/style-prop-object
         style={formatting}
       >
         {(formattedDate: string) => {

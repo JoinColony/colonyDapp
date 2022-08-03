@@ -9,18 +9,19 @@ import classNames from 'classnames';
 
 import { FormSection } from '~core/Fields';
 import Tag from '~core/Tag';
-import TimeRelativeShort from '~dashboard/ExpenditurePage/TimeRelativeShort/TimeRelativeShort';
 import Button from '~core/Button';
 import Numeral from '~core/Numeral';
-
-import { buttonStyles } from '../Stages';
-import styles from './ClaimFunds.css';
-import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
-import { Colony } from '~data/index';
+import TimeRelativeShort from '~dashboard/ExpenditurePage/TimeRelativeShort';
 import { getRecipientTokens } from '~dashboard/ExpenditurePage/utils';
 import { useCalculateTokens } from '~dashboard/ExpenditurePage/hooks';
+import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
+import { Colony } from '~data/index';
 
-const displayName = 'dashboard.ExpenditurePage.ClaimFunds';
+import { buttonStyles } from '../Stages';
+
+import styles from './ClaimFunds.css';
+
+const displayName = 'dashboard.ExpenditurePage.Stages.ClaimFunds';
 
 const MSG = defineMessages({
   claim: {

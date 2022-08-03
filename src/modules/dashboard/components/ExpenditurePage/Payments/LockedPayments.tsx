@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { FormSection } from '~core/Fields';
@@ -6,11 +6,12 @@ import UserMention from '~core/UserMention';
 import { State } from '~pages/ExpenditurePage/ExpenditurePage';
 import { Colony } from '~data/index';
 
-import CollapseExpandButtons from './CollapseExpandButtons';
 import { Stage } from '../Stages/constants';
 import LockedRecipient from '../Recipient/LockedRecipient/LockedRecipient';
+
+import CollapseExpandButtons from './CollapseExpandButtons';
 import { Recipient as RecipientType } from './types';
-import { ClaimTag } from '.';
+import ClaimTag from './ClaimTag';
 import styles from './Payments.css';
 
 const MSG = defineMessages({
@@ -60,8 +61,8 @@ const LockedPayments = ({ recipients, activeState, colony }: Props) => {
     });
   }, []);
 
-  const displayDelay = useMemo(
-    () => (recipientDelay: { amount?: string; time: string } | undefined) => {
+  const displayDelay = useCallback(
+    (recipientDelay: { amount?: string; time: string } | undefined) => {
       if (!recipientDelay) {
         return null;
       }

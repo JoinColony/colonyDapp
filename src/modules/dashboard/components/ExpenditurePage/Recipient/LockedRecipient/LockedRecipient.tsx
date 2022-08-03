@@ -1,18 +1,19 @@
 import React, { useMemo } from 'react';
 import classNames from 'classnames';
-
 import { defineMessages, FormattedMessage } from 'react-intl';
+
 import { FormSection, InputLabel } from '~core/Fields';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
-import { Recipient as RecipientType } from '../../Payments/types';
 import TokenIcon from '~dashboard/HookedTokenIcon';
-
-import styles from './LockedRecipient.css';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import Numeral from '~core/Numeral';
 import { Colony } from '~data/index';
 import { getRecipientTokens } from '~dashboard/ExpenditurePage/utils';
+
+import { Recipient as RecipientType } from '../../Payments/types';
+
+import styles from './LockedRecipient.css';
 
 export const MSG = defineMessages({
   recipientLabel: {

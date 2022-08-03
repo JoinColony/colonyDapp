@@ -8,8 +8,8 @@ import {
 import { nanoid } from 'nanoid';
 import { RouteChildrenProps, useParams } from 'react-router';
 import { Formik } from 'formik';
-
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+
 import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
 import { useColonyFromNameQuery } from '~data/generated';
 import Stages from '~dashboard/ExpenditurePage/Stages';
@@ -17,10 +17,8 @@ import TitleDescriptionSection, {
   LockedTitleDescriptionSection,
 } from '~dashboard/ExpenditurePage/TitleDescriptionSection';
 import { getMainClasses } from '~utils/css';
-import styles from './ExpenditurePage.css';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import { SpinnerLoader } from '~core/Preloaders';
-import ExpenditureForm from './ExpenditureForm';
 import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
 import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import { useLoggedInUser } from '~data/helpers';
@@ -28,7 +26,11 @@ import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
 import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
 import { useDialog } from '~core/Dialog';
 import EscrowFundsDialog from '~dashboard/Dialogs/EscrowFundsDialog';
+
 import { setClaimDate } from './utils';
+import { ExpenditureTypes } from './types';
+import ExpenditureForm from './ExpenditureForm';
+import styles from './ExpenditurePage.css';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -105,7 +107,7 @@ const initialValues = {
 };
 
 export interface ValuesType {
-  expenditure: string;
+  expenditure: ExpenditureTypes;
   filteredDomainId: string;
   owner: string;
   recipients: Recipient[];

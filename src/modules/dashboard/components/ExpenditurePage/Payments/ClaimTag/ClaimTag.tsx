@@ -3,7 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
 import Tag from '~core/Tag';
-import TimeRelativeShort from '~dashboard/ExpenditurePage/TimeRelativeShort/TimeRelativeShort';
+import TimeRelativeShort from '~dashboard/ExpenditurePage/TimeRelativeShort';
 import { State } from '~pages/ExpenditurePage/ExpenditurePage';
 
 import styles from './ClaimTag.css';
