@@ -8,8 +8,8 @@ import {
 import { nanoid } from 'nanoid';
 import { RouteChildrenProps, useParams } from 'react-router';
 import { Formik } from 'formik';
-
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+
 import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
 import { useColonyFromNameQuery } from '~data/generated';
 import Stages from '~dashboard/ExpenditurePage/Stages';
@@ -20,14 +20,14 @@ import { getMainClasses } from '~utils/css';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import { SpinnerLoader } from '~core/Preloaders';
 import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
-import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import { useLoggedInUser } from '~data/helpers';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
-import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
 import { AnyUser } from '~data/index';
+import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
 
 import ExpenditureForm from './ExpenditureForm';
 import styles from './ExpenditurePage.css';
+import LockedSidebar from './LockedSidebar';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -176,7 +176,10 @@ const initialValues = {
   description: undefined,
   split: {
     unequal: false,
-    recipients: [{ user: undefined, amount: undefined }],
+    recipients: [
+      { ...initalRecipient, key: nanoid() },
+      { ...initalRecipient, key: nanoid() },
+    ],
   },
 };
 
@@ -303,8 +306,6 @@ const ExpenditurePage = ({ match }: Props) => {
     },
   ];
 
-  const { expenditure, filteredDomainId } = formValues || {};
-
   return isFormEditable ? (
     <Formik
       initialValues={initialValuesData}
@@ -315,7 +316,9 @@ const ExpenditurePage = ({ match }: Props) => {
       <div className={getMainClasses({}, styles)}>
         <aside className={styles.sidebar} ref={sidebarRef}>
           {loading ? (
-            <SpinnerLoader appearance={{ size: 'medium' }} />
+            <div className={styles.wrapper}>
+              <SpinnerLoader appearance={{ size: 'medium' }} />
+            </div>
           ) : (
             colonyData && (
               <ExpenditureForm
@@ -353,16 +356,12 @@ const ExpenditurePage = ({ match }: Props) => {
   ) : (
     <div className={getMainClasses({}, styles)}>
       <aside className={styles.sidebar} ref={sidebarRef}>
-        <LockedExpenditureSettings
-          {...{ expenditure, filteredDomainId }}
-          username={loggedInUser?.username || ''}
-          walletAddress={loggedInUser?.walletAddress}
-          colony={colonyData?.processedColony}
-        />
-        <LockedPayments
-          recipients={formValues?.recipients}
-          colony={colonyData?.processedColony}
-        />
+        {colonyData && (
+          <LockedSidebar
+            colony={colonyData?.processedColony}
+            formValues={formValues}
+          />
+        )}
       </aside>
       <div className={styles.mainContainer}>
         <main className={styles.mainContent}>
