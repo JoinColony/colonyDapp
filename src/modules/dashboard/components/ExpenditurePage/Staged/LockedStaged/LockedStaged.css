@@ -89,7 +89,13 @@
 .amountWrapper {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 16px;
+}
+
+.amountWrapper button {
+  height: 29px;
+  width: 100px;
 }
 
 .value {

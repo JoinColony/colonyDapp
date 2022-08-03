@@ -60,6 +60,10 @@ const expeditureTypes = [
     label: MSG.split,
     value: ExpenditureTypes.Split,
   },
+  {
+    label: MSG.staged,
+    value: ExpenditureTypes.Staged,
+  },
 ];
 
 const displayName = 'dashboard.ExpenditurePage.ExpenditureSettings';

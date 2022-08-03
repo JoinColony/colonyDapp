@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import * as yup from 'yup';
 import {
   defineMessages,
@@ -445,6 +451,39 @@ const ExpenditurePage = ({ match }: Props) => {
     setFormValues(updatedFormValues);
   }, [formValues]);
 
+  useEffect(() => {
+    const allReleased = formValues?.staged?.milestones?.every(
+      (milestone) => milestone.released,
+    );
+
+    if (allReleased) {
+      setActiveStateId(Stage.Released);
+    }
+  }, [formValues]);
+
+  const handleReleaseMilestone = useCallback((id: string) => {
+    setFormValues((stateValues) => {
+      const newValues = {
+        ...{
+          ...stateValues,
+          expenditure: stateValues?.expenditure || ExpenditureTypes.Staged,
+          filteredDomainId:
+            stateValues?.filteredDomainId || String(ROOT_DOMAIN_ID),
+          staged: {
+            ...stateValues?.staged,
+            milestones: stateValues?.staged?.milestones?.map((milestone) => {
+              if (milestone.id === id) {
+                return { ...milestone, released: true };
+              }
+              return milestone;
+            }),
+          },
+        },
+      };
+      return newValues;
+    });
+  }, []);
+
   const states = [
     {
       id: Stage.Draft,
@@ -668,6 +707,8 @@ const ExpenditurePage = ({ match }: Props) => {
             status={status}
             isCancelled={status === Status.Cancelled}
             pendingMotion={motion?.status === MotionStatus.Pending}
+            activeStateId={activeStateId}
+            handleReleaseMilestone={handleReleaseMilestone}
           />
         )}
       </aside>

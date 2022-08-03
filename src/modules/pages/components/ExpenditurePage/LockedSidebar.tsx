@@ -18,6 +18,8 @@ interface Props {
   status?: Status;
   isCancelled?: boolean;
   pendingMotion?: boolean;
+  activeStateId?: string;
+  handleReleaseMilestone: (id: string) => void;
 }
 
 const LockedSidebar = ({
@@ -28,6 +30,8 @@ const LockedSidebar = ({
   isCancelled,
   pendingMotion,
   status,
+  activeStateId,
+  handleReleaseMilestone,
 }: Props) => {
   const { expenditure, recipients, filteredDomainId, staged } =
     formValues || {};
@@ -51,15 +55,24 @@ const LockedSidebar = ({
         return null;
       }
       case ExpenditureTypes.Staged: {
-        return <LockedStaged colony={colony} staged={staged} />;
+        return (
+          <LockedStaged
+            colony={colony}
+            staged={staged}
+            activeStateId={activeStateId}
+            handleReleaseMilestone={handleReleaseMilestone}
+          />
+        );
       }
       default:
         return null;
     }
   }, [
+    activeStateId,
     colony,
     editForm,
     expenditure,
+    handleReleaseMilestone,
     isCancelled,
     pendingChanges,
     pendingMotion,

@@ -7,6 +7,7 @@ import {
 } from '~dashboard/ExpenditurePage/Stages/constants';
 import { AnyUser } from '~data/index';
 import { LoggedInUser } from '~data/generated';
+import { Staged as StagedType } from '~dashboard/ExpenditurePage/Staged/types';
 
 export enum ExpenditureTypes {
   Advanced = 'advanced',
@@ -17,7 +18,7 @@ export enum ExpenditureTypes {
 export interface ValuesType {
   expenditure: ExpenditureTypes;
   filteredDomainId: string;
-  owner:
+  owner?:
     | string
     | Pick<
         LoggedInUser,
@@ -31,15 +32,7 @@ export interface ValuesType {
     amount?: { value?: string; tokenAddress?: string };
     recipients?: { user?: AnyUser; amount?: number; percent?: number }[];
   };
-  staged: {
-    user?: AnyUser;
-    amount?: { value?: string; tokenAddress?: string };
-    milestones?: {
-      id: string;
-      name?: string;
-      amount?: number;
-    }[];
-  };
+  staged?: StagedType;
 }
 
 export interface State {
