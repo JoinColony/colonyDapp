@@ -5,6 +5,7 @@ export const mainContainer: string;
 export const mainContent: string;
 export const titleCommentsContainer: string;
 export const sidebar: string;
+export const wrapper: string;
 export const form: string;
 export const tagWrapper: string;
 export const tagStagesWrapper: string;

@@ -36,6 +36,14 @@
   background-color: var(--grey-blue-3);
 }
 
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
 .form {
   display: flex;
   justify-content: center;

@@ -27,9 +27,7 @@ import {
   Stage,
   Status,
 } from '~dashboard/ExpenditurePage/Stages/constants';
-import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import { useLoggedInUser } from '~data/helpers';
-import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
 import { useDialog } from '~core/Dialog';
 import EscrowFundsDialog from '~dashboard/Dialogs/EscrowFundsDialog';
 import EditExpenditureDialog from '~dashboard/Dialogs/EditExpenditureDialog';
@@ -40,6 +38,8 @@ import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog'
 import { findDifferences, updateValues, setClaimDate } from './utils';
 import ExpenditureForm from './ExpenditureForm';
 import { ValuesType } from './types';
+import LockedSidebar from './LockedSidebar';
+import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
 import styles from './ExpenditurePage.css';
 
 const displayName = 'pages.ExpenditurePage';
@@ -184,7 +184,10 @@ const initialValues = {
   description: undefined,
   split: {
     unequal: false,
-    recipients: [{ user: undefined, amount: undefined }],
+    recipients: [
+      { ...initalRecipient, key: nanoid() },
+      { ...initalRecipient, key: nanoid() },
+    ],
   },
 };
 
@@ -373,9 +376,6 @@ const ExpenditurePage = ({ match }: Props) => {
       buttonAction: () => {},
     },
   ];
-  const activeState = states.find((state) => state.id === activeStateId);
-
-  const { expenditure, filteredDomainId } = formValues || {};
 
   const handleValidate = useCallback(() => {
     if (!shouldValidate) {
@@ -546,22 +546,17 @@ const ExpenditurePage = ({ match }: Props) => {
   ) : (
     <div className={getMainClasses({}, styles)}>
       <aside className={styles.sidebar} ref={sidebarRef}>
-        <LockedExpenditureSettings
-          {...{ expenditure, filteredDomainId }}
-          username={loggedInUser?.username || ''}
-          walletAddress={loggedInUser?.walletAddress}
-          colony={colonyData?.processedColony}
-        />
-        <LockedPayments
-          recipients={formValues?.recipients}
-          activeState={activeState}
-          colony={colonyData?.processedColony}
-          editForm={handleEditLockedForm}
-          pendingChanges={pendingChanges}
-          status={status}
-          isCancelled={status === Status.Cancelled}
-          pendingMotion={motion?.status === MotionStatus.Pending}
-        />
+        {colonyData && (
+          <LockedSidebar
+            colony={colonyData?.processedColony}
+            formValues={formValues}
+            editForm={handleEditLockedForm}
+            pendingChanges={pendingChanges}
+            status={status}
+            isCancelled={status === Status.Cancelled}
+            pendingMotion={motion?.status === MotionStatus.Pending}
+          />
+        )}
       </aside>
       <div className={styles.mainContainer}>
         <main className={styles.mainContent}>
