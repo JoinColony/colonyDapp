@@ -11,17 +11,17 @@ import { parse as parseQS } from 'query-string';
 
 import LoadingTemplate from '~pages/LoadingTemplate';
 import Extensions, { ExtensionDetails } from '~dashboard/Extensions';
-
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
-import { useColonyFromNameQuery } from '~data/index';
+import ColonyHomeActions from '~dashboard/ColonyHomeActions';
 import { allAllowedExtensions } from '~data/staticData/';
 
 import ColonyActions from '~dashboard/ColonyActions';
 import ColonyEvents from '~dashboard/ColonyEvents';
 import ColonyDecisions from '~dashboard/ColonyDecisions';
 
-import ColonyHomeLayout from './ColonyHomeLayout';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import { useColonyFromNameQuery } from '~data/index';
 
+import ColonyHomeLayout from './ColonyHomeLayout';
 import styles from './ColonyHomeLayout.css';
 
 import {
@@ -93,7 +93,6 @@ const ColonyHome = ({ match, location }: Props) => {
                 colony={colony}
                 filteredDomainId={filteredDomainId}
                 onDomainChange={setDomainIdFilter}
-                showActions={false}
               >
                 <ColonyEvents colony={colony} ethDomainId={filteredDomainId} />
               </ColonyHomeLayout>
@@ -106,7 +105,12 @@ const ColonyHome = ({ match, location }: Props) => {
                 colony={colony}
                 filteredDomainId={filteredDomainId}
                 onDomainChange={setDomainIdFilter}
-                showActions={false}
+                newItemButton={
+                  <ColonyHomeActions
+                    colony={colony}
+                    ethDomainId={filteredDomainId}
+                  />
+                }
               >
                 <ColonyDecisions
                   colony={colony}
@@ -155,7 +159,12 @@ const ColonyHome = ({ match, location }: Props) => {
                 colony={colony}
                 filteredDomainId={filteredDomainId}
                 onDomainChange={setDomainIdFilter}
-                ethDomainId={filteredDomainId}
+                newItemButton={
+                  <ColonyHomeActions
+                    colony={colony}
+                    ethDomainId={filteredDomainId}
+                  />
+                }
               >
                 <ColonyActions colony={colony} ethDomainId={filteredDomainId} />
               </ColonyHomeLayout>
