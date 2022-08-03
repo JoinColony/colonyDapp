@@ -75,9 +75,14 @@ const ManageGnosisSafeDialog = ({
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   const hasRegisteredProfile = !!username && !ethereal;
-  const canManageGnosisSafes =
+  const canAddRemoveSafes =
     hasRegisteredProfile &&
     userHasRole(allUserRoles, ColonyRole.Administration) &&
+    userHasRole(allUserRoles, ColonyRole.Funding);
+
+  const canControlSafes =
+    hasRegisteredProfile &&
+    userHasRole(allUserRoles, ColonyRole.Root) &&
     userHasRole(allUserRoles, ColonyRole.Funding);
 
   const items = [
@@ -87,7 +92,7 @@ const ManageGnosisSafeDialog = ({
       icon: 'plus-heavy',
       dataTest: 'gnosisAddExistingItem',
       onClick: () => callStep(nextStepAddExistingSafe),
-      permissionRequired: !canManageGnosisSafes,
+      permissionRequired: !canAddRemoveSafes,
       permissionInfoText: MSG.permissionText,
       permissionInfoTextValues: {
         permissionsList: <FormattedMessage {...MSG.adminFundingPermissions} />,
@@ -99,7 +104,7 @@ const ManageGnosisSafeDialog = ({
       icon: 'trash-can',
       dataTest: 'gnosisRemoveSafeItem',
       onClick: () => callStep(nextStepRemoveSafe),
-      permissionRequired: !canManageGnosisSafes,
+      permissionRequired: !canAddRemoveSafes,
       permissionInfoText: MSG.permissionText,
       permissionInfoTextValues: {
         permissionsList: <FormattedMessage {...MSG.adminFundingPermissions} />,
@@ -111,7 +116,7 @@ const ManageGnosisSafeDialog = ({
       icon: 'joystick',
       dataTest: 'gnosisControlSafeItem',
       onClick: () => callStep(nextStepControlSafe),
-      permissionRequired: !canManageGnosisSafes,
+      permissionRequired: !canControlSafes,
       permissionInfoText: MSG.permissionText,
       permissionInfoTextValues: {
         permissionsList: <FormattedMessage {...MSG.adminFundingPermissions} />,
