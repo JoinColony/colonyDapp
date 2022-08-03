@@ -45,11 +45,11 @@ const MSG = defineMessages({
       relevant teams, in order to take this action`,
   },
   adminFundingPermissions: {
-    id: 'dashboard.AdvancedDialog.gnosisPermissionsList',
+    id: 'dashboard.ManageGnosisSafeDialog.adminFundingPermissions',
     defaultMessage: 'administration and funding ',
   },
   rootFundingPermissions: {
-    id: 'dashboard.AdvancedDialog.rootFundingPermissions',
+    id: 'dashboard.ManageGnosisSafeDialog.rootFundingPermissions',
     defaultMessage: 'root and funding ',
   },
 });
