@@ -41,11 +41,11 @@ import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
 import Tag from '~core/Tag';
 import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
 import { initalMilestone } from '~dashboard/ExpenditurePage/Staged/constants';
+import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
 
 import { findDifferences, updateValues, setClaimDate } from './utils';
 import { ExpenditureTypes, ValuesType } from './types';
 import { ExpenditureForm, LockedSidebar } from '.';
-import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
 import styles from './ExpenditurePage.css';
 
 const displayName = 'pages.ExpenditurePage';
