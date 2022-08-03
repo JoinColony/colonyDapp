@@ -96,7 +96,7 @@ const MSG = defineMessages({
   },
   adminFundingPermissions: {
     id: 'dashboard.AdvancedDialog.gnosisPermissionsList',
-    defaultMessage: 'administration and funding ',
+    defaultMessage: 'funding and administration or root',
   },
 });
 

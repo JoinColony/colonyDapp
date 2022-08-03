@@ -48,6 +48,10 @@ const MSG = defineMessages({
     id: 'dashboard.AdvancedDialog.gnosisPermissionsList',
     defaultMessage: 'administration and funding ',
   },
+  rootFundingPermissions: {
+    id: 'dashboard.AdvancedDialog.rootFundingPermissions',
+    defaultMessage: 'root and funding ',
+  },
 });
 
 interface CustomWizardDialogProps extends ActionDialogProps {
@@ -119,7 +123,7 @@ const ManageGnosisSafeDialog = ({
       permissionRequired: !canControlSafes,
       permissionInfoText: MSG.permissionText,
       permissionInfoTextValues: {
-        permissionsList: <FormattedMessage {...MSG.adminFundingPermissions} />,
+        permissionsList: <FormattedMessage {...MSG.rootFundingPermissions} />,
       },
     },
   ];
