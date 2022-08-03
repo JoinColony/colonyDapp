@@ -164,7 +164,7 @@ const UserPickerWithSearch = ({
 
   const dropdownHeight = useMemo(() => {
     const height = data.length * 56;
-    return height > 160 ? 160 : height;
+    return height > 180 ? 180 : height;
   }, [data]);
 
   return (
