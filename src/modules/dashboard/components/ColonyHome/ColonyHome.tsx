@@ -17,13 +17,10 @@ import { allAllowedExtensions } from '~data/staticData/';
 import ColonyActions from '~dashboard/ColonyActions';
 import ColonyEvents from '~dashboard/ColonyEvents';
 import ColonyDecisions from '~dashboard/ColonyDecisions';
+import ColonyNewDecision from '~dashboard/ColonyNewDecision';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { useColonyFromNameQuery } from '~data/index';
-
-import ColonyHomeLayout from './ColonyHomeLayout';
-import styles from './ColonyHomeLayout.css';
-
 import {
   COLONY_EVENTS_ROUTE,
   COLONY_DECISIONS_ROUTE,
@@ -33,6 +30,9 @@ import {
   COLONY_HOME_ROUTE,
   NOT_FOUND_ROUTE,
 } from '~routes/index';
+
+import ColonyHomeLayout from './ColonyHomeLayout';
+import styles from './ColonyHomeLayout.css';
 
 const MSG = defineMessages({
   loadingText: {
@@ -106,7 +106,7 @@ const ColonyHome = ({ match, location }: Props) => {
                 filteredDomainId={filteredDomainId}
                 onDomainChange={setDomainIdFilter}
                 newItemButton={
-                  <ColonyHomeActions
+                  <ColonyNewDecision
                     colony={colony}
                     ethDomainId={filteredDomainId}
                   />
