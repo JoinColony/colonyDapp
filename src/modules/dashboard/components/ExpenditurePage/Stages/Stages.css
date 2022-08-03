@@ -1,17 +1,9 @@
 @value buttonHeight: 29px;
 @value buttonWidth: 100px;
-@value iconColor: var(--temp-grey-blue-7);
 
 .mainContainer {
-  min-width: 340px;
-}
-
-.paddingSmall {
-  padding-top: 4px;
-}
-
-.stagesContainer {
   padding-top: 20px;
+  min-width: 340px;
 }
 
 .status {
@@ -39,12 +31,8 @@
 .statusContainer {
   display: flex;
   justify-content: space-between;
-  padding: 26px 0 10px;
+  padding: 10px 0;
   border-bottom: 1px solid var(--temp-grey-6);
-}
-
-.withTag {
-  padding: 14px 0 10px;
 }
 
 .icon svg {
@@ -58,13 +46,15 @@
   align-items: center;
 }
 
-.buttonsContainer > span:not(:last-of-type) {
-  margin-right: 20px;
+.buttonsContainer > span > button {
+  margin-left: 20px;
+}
+
+.buttonsContainer button:not(:last-of-type) {
+  margin-right: 30px;
 }
 
 .buttonsContainer button {
-  margin-left: 30px;
-
   &:disabled {
     height: 20px;
     border: none;
@@ -79,6 +69,10 @@
     color: var(--temp-grey-blue-7);
     cursor: default;
   }
+}
+
+.iconButton > div {
+  margin-bottom: 7px;
 }
 
 .iconButton {
@@ -123,33 +117,21 @@
   cursor: not-allowed;
 }
 
+.buttonTooltip {
+  max-width: 192px;
+}
+
 .cancelIcon:hover svg {
   fill: var(--pink);
   transition: fill 200ms ease-in-out;
 }
 
-.stageWrapper {
-  display: flex;
-  align-items: center;
-}
-
-.iconTooltip svg {
-  margin-left: 8px;
-  width: 12px;
-}
-
-.tagStagesWrapper > span {
-  height: 21px;
-  width: 100%;
-  border-radius: 12px;
-  text-align: center;
-}
-
-.tagWrapper span {
-  width: 100%;
-  text-align: center;
-}
-
-.disableIcon svg {
-  fill: var(--text-disabled);
+.claimed {
+  composes: themeLight from '~core/Tag/Tag.css';
+  margin-left: 30px;
+  padding: 1px 12px 2px;
+  height: 20px;
+  border-radius: 5px;
+  color: var(--temp-grey-blue-7);
+  letter-spacing: 0.5px;
 }

@@ -252,6 +252,7 @@ const ExpenditurePage = ({ match }: Props) => {
   }>();
   const [isFormEditable, setFormEditable] = useState(true);
   const [formValues, setFormValues] = useState<ValuesType>();
+  const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStateId, setActiveStateId] = useState<string>();
   const [status, setStatus] = useState<Status>();
   const [motion, setMotion] = useState<Motion>();
@@ -481,6 +482,36 @@ const ExpenditurePage = ({ match }: Props) => {
     });
   }, []);
 
+  useEffect(() => {
+    const allReleased = formValues?.staged?.milestones?.every(
+      (milestone) => milestone.released,
+    );
+
+    if (allReleased) {
+      setActiveStateId(Stage.Released);
+    }
+  }, [formValues]);
+
+  const handleReleaseMilestone = useCallback((id: string) => {
+    setFormValues((stateValues) => {
+      const newValues = {
+        ...{
+          ...stateValues,
+          staged: {
+            ...stateValues?.staged,
+            milestones: stateValues?.staged?.milestones?.map((milestone) => {
+              if (milestone.id === id) {
+                return { ...milestone, released: true };
+              }
+              return milestone;
+            }),
+          },
+        },
+      };
+      return newValues;
+    });
+  }, []);
+
   const states = [
     {
       id: Stage.Draft,
@@ -600,6 +631,12 @@ const ExpenditurePage = ({ match }: Props) => {
     },
     [colonyData, handleConfirmEition, openEditExpenditureDialog],
   );
+
+  const handleValidate = useCallback(() => {
+    if (!shouldValidate) {
+      setShouldValidate(true);
+    }
+  }, [shouldValidate]);
 
   return isFormEditable ? (
     <Formik
