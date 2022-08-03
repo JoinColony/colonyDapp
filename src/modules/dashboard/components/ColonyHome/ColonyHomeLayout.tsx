@@ -79,12 +79,6 @@ const ColonyHomeLayout = ({
                   />
                 </div>
                 {newItemButton}
-                {/* {showActions && (
-                  <ColonyHomeActions
-                    colony={colony}
-                    ethDomainId={ethDomainId}
-                  />
-                )} */}
               </div>
             </>
           )}
