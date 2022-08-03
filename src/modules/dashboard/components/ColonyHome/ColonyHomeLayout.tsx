@@ -1,4 +1,4 @@
-import React, { ReactChild, useEffect } from 'react';
+import React, { ReactChild, ReactElement, useEffect } from 'react';
 
 import { useDialog } from '~core/Dialog';
 import ColonyDomainSelector from '~dashboard/ColonyHome/ColonyDomainSelector';
@@ -33,7 +33,7 @@ type Props = {
   showControls?: boolean;
   showNavigation?: boolean;
   showSidebar?: boolean;
-  newItemButton?: ReactChild;
+  newItemButton?: ReactElement;
 };
 
 const displayName = 'dashboard.ColonyHome.ColonyHomeLayout';
@@ -80,12 +80,6 @@ const ColonyHomeLayout = ({
                   />
                 </div>
                 {newItemButton}
-                {/* {showActions && (
-                  <ColonyHomeActions
-                    colony={colony}
-                    ethDomainId={ethDomainId}
-                  />
-                )} */}
               </div>
             </>
           )}
