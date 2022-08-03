@@ -95,7 +95,7 @@ const MSG = defineMessages({
     defaultMessage: 'Control a safe to interact with external contracts.',
   },
   adminFundingPermissions: {
-    id: 'dashboard.AdvancedDialog.gnosisPermissionsList',
+    id: 'dashboard.AdvancedDialog.adminFundingPermissions',
     defaultMessage: 'funding and administration or root',
   },
 });
