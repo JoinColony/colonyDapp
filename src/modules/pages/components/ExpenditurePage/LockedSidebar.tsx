@@ -13,9 +13,16 @@ const displayName = 'pages.ExpenditurePage.LockedSidebar';
 interface Props {
   colony: Colony;
   formValues?: ValuesType;
+  activeStateId?: string;
+  handleReleaseMilestone: (id: string) => void;
 }
 
-const LockedSidebar = ({ colony, formValues }: Props) => {
+const LockedSidebar = ({
+  colony,
+  formValues,
+  activeStateId,
+  handleReleaseMilestone,
+}: Props) => {
   const { expenditure, recipients, filteredDomainId, staged } =
     formValues || {};
 
@@ -25,12 +32,26 @@ const LockedSidebar = ({ colony, formValues }: Props) => {
         return <LockedPayments recipients={recipients} colony={colony} />;
       }
       case ExpenditureTypes.Staged: {
-        return <LockedStaged colony={colony} staged={staged} />;
+        return (
+          <LockedStaged
+            colony={colony}
+            staged={staged}
+            activeStateId={activeStateId}
+            handleReleaseMilestone={handleReleaseMilestone}
+          />
+        );
       }
       default:
         return null;
     }
-  }, [colony, expenditure, recipients, staged]);
+  }, [
+    colony,
+    expenditure,
+    recipients,
+    staged,
+    activeStateId,
+    handleReleaseMilestone,
+  ]);
 
   return (
     <>

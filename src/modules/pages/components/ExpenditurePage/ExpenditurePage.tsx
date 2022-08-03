@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import * as yup from 'yup';
 import {
   defineMessages,
@@ -22,10 +28,10 @@ import { SpinnerLoader } from '~core/Preloaders';
 import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
 import { useLoggedInUser } from '~data/helpers';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
-import { AnyUser } from '~data/index';
 import { initalMilestone } from '~dashboard/ExpenditurePage/Staged/constants';
 import { useDialog } from '~core/Dialog';
 import EscrowFundsDialog from '~dashboard/Dialogs/EscrowFundsDialog';
+import { Staged } from '~dashboard/ExpenditurePage/Staged/types';
 
 import { ExpenditureForm, LockedSidebar } from '.';
 import { ExpenditureTypes } from './types';
@@ -167,22 +173,13 @@ export interface State {
 }
 
 export interface ValuesType {
-  expenditure: string;
-  filteredDomainId: string;
-  owner: string;
+  expenditure?: ExpenditureTypes;
+  filteredDomainId?: string;
+  owner?: string;
   recipients?: Recipient[];
-  title: string;
+  title?: string;
   description?: string;
-  staged: {
-    user: AnyUser;
-    amount: { value?: string; tokenAddress?: string };
-    milestones?: {
-      id: string;
-      name?: string;
-      amount?: number;
-      percent?: number;
-    }[];
-  };
+  staged?: Staged;
 }
 
 const initialValues = {
@@ -321,6 +318,36 @@ const ExpenditurePage = ({ match }: Props) => {
     setActiveStateId(Stage.Claimed);
   };
 
+  useEffect(() => {
+    const allReleased = formValues?.staged?.milestones?.every(
+      (milestone) => milestone.released,
+    );
+
+    if (allReleased) {
+      setActiveStateId(Stage.Released);
+    }
+  }, [formValues]);
+
+  const handleReleaseMilestone = useCallback((id: string) => {
+    setFormValues((stateValues) => {
+      const newValues = {
+        ...{
+          ...stateValues,
+          staged: {
+            ...stateValues?.staged,
+            milestones: stateValues?.staged?.milestones?.map((milestone) => {
+              if (milestone.id === id) {
+                return { ...milestone, released: true };
+              }
+              return milestone;
+            }),
+          },
+        },
+      };
+      return newValues;
+    });
+  }, []);
+
   const states = [
     {
       id: Stage.Draft,
@@ -437,6 +464,8 @@ const ExpenditurePage = ({ match }: Props) => {
           <LockedSidebar
             formValues={formValues}
             colony={colonyData.processedColony}
+            activeStateId={activeStateId}
+            handleReleaseMilestone={handleReleaseMilestone}
           />
         )}
       </aside>
@@ -456,13 +485,9 @@ const ExpenditurePage = ({ match }: Props) => {
             )}
           </div>
           <Stages
-            {...{
-              states,
-              activeStateId,
-              setActiveStateId,
-              lockValues,
-              handleSubmit,
-            }}
+            states={states}
+            activeStateId={activeStateId}
+            formValues={formValues}
           />
         </main>
       </div>

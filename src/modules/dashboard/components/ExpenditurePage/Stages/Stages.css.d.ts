@@ -12,3 +12,4 @@ export const iconButtonDisabled: string;
 export const iconWrapper: string;
 export const buttonTooltip: string;
 export const cancelIcon: string;
+export const claimed: string;

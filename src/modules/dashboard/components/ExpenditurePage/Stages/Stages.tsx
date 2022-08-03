@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useRef, useState } from 'react';
 import { useFormikContext } from 'formik';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import copyToClipboard from 'copy-to-clipboard';
 import classNames from 'classnames';
 
@@ -8,36 +8,40 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
+import { State, ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
+import { ExpenditureTypes } from '~pages/ExpenditurePage/types';
+import Tag from '~core/Tag';
+
 import DeleteDraftDialog from '../../Dialogs/DeleteDraftDialog/DeleteDraftDialog';
 import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
+
 import StageItem from './StageItem';
-import { State, ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
-import styles from './Stages.css';
 import { Stage } from './constants';
+import styles from './Stages.css';
 
 const MSG = defineMessages({
   stages: {
-    id: 'dashboard.Expenditures.Stages.stages',
+    id: 'dashboard.ExpenditurePage.Stages.stages',
     defaultMessage: 'Stages',
   },
   notSaved: {
-    id: 'dashboard.Expenditures.Stages.notSaved',
+    id: 'dashboard.ExpenditurePage.Stages.notSaved',
     defaultMessage: 'Not saved',
   },
   submitDraft: {
-    id: 'dashboard.Expenditures.Stages.submitDraft',
+    id: 'dashboard.ExpenditurePage.Stages.submitDraft',
     defaultMessage: 'Submit draft',
   },
   deleteDraft: {
-    id: 'dashboard.Expenditures.Stages.deleteDraft',
+    id: 'dashboard.ExpenditurePage.Stages.deleteDraft',
     defaultMessage: 'Delete draft',
   },
   tooltipDeleteText: {
-    id: 'dashboard.Expenditures.Stages.tooltipDeleteText',
+    id: 'dashboard.ExpenditurePage.Stages.tooltipDeleteText',
     defaultMessage: 'Delete the expenditure',
   },
   tooltipShareText: {
-    id: 'dashboard.Expenditures.Stages.tooltipShareText',
+    id: 'dashboard.ExpenditurePage.Stages.tooltipShareText',
     defaultMessage: 'Share expenditure URL',
   },
   tooltipCancelText: {
@@ -65,13 +69,14 @@ const buttonStyles = {
 interface Props {
   states: State[];
   activeStateId?: string;
+  formValues?: ValuesType;
 }
 
-const Stages = ({ states, activeStateId }: Props) => {
-  const { values, handleSubmit, validateForm } =
+const Stages = ({ states, activeStateId, formValues }: Props) => {
+  const { values, handleSubmit, validateForm, resetForm } =
     useFormikContext<ValuesType>() || {};
+  const { formatMessage } = useIntl();
 
-  const { resetForm } = useFormikContext() || {};
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
 
@@ -114,6 +119,51 @@ const Stages = ({ states, activeStateId }: Props) => {
 
   const activeIndex = states.findIndex((state) => state.id === activeStateId);
   const activeState = states.find((state) => state.id === activeStateId);
+
+  const renderButton = useCallback(() => {
+    const buttonText =
+      typeof activeState?.buttonText === 'string'
+        ? activeState.buttonText
+        : activeState?.buttonText && formatMessage(activeState.buttonText);
+
+    if (activeStateId === Stage.Claimed) {
+      return <Tag text={buttonText} className={styles.claimed} />;
+    }
+    if (
+      activeStateId === Stage.Funded &&
+      formValues?.expenditure === ExpenditureTypes.Staged
+    ) {
+      return null;
+    }
+    if (activeState?.buttonTooltip) {
+      return (
+        <Tooltip
+          placement="top"
+          content={
+            <div className={styles.buttonTooltip}>
+              {typeof activeState.buttonTooltip === 'string'
+                ? activeState.buttonTooltip
+                : formatMessage(activeState.buttonTooltip)}
+            </div>
+          }
+        >
+          <Button
+            onClick={activeState?.buttonAction}
+            style={buttonStyles}
+            disabled={activeStateId === Stage.Claimed}
+          >
+            {buttonText}
+          </Button>
+        </Tooltip>
+      );
+    }
+
+    return (
+      <Button onClick={activeState?.buttonAction} style={buttonStyles}>
+        {buttonText}
+      </Button>
+    );
+  }, [activeState, activeStateId, formatMessage, formValues]);
 
   return (
     <div className={styles.mainContainer}>
@@ -210,44 +260,7 @@ const Stages = ({ states, activeStateId }: Props) => {
                   </Tooltip>
                 </Button>
               )}
-              {activeState?.buttonTooltip ? (
-                <Tooltip
-                  placement="top"
-                  content={
-                    typeof activeState.buttonTooltip === 'string' ? (
-                      <div className={styles.buttonTooltip}>
-                        {activeState.buttonTooltip}
-                      </div>
-                    ) : (
-                      <div className={styles.buttonTooltip}>
-                        <FormattedMessage {...activeState.buttonTooltip} />
-                      </div>
-                    )
-                  }
-                >
-                  <Button
-                    onClick={activeState?.buttonAction}
-                    style={buttonStyles}
-                  >
-                    {typeof activeState?.buttonText === 'string' ? (
-                      activeState.buttonText
-                    ) : (
-                      <FormattedMessage {...activeState?.buttonText} />
-                    )}
-                  </Button>
-                </Tooltip>
-              ) : (
-                <Button
-                  onClick={activeState?.buttonAction}
-                  style={buttonStyles}
-                >
-                  {typeof activeState?.buttonText === 'string' ? (
-                    activeState.buttonText
-                  ) : (
-                    <FormattedMessage {...activeState?.buttonText} />
-                  )}
-                </Button>
-              )}
+              {renderButton()}
             </>
           )}
         </div>
