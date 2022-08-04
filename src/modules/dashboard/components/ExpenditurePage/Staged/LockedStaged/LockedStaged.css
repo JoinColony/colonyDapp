@@ -143,3 +143,12 @@
   color: var(--temp-grey-blue-7);
   letter-spacing: 0.5px;
 }
+
+.claimed {
+  composes: themeLight from '~core/Tag/Tag.css';
+  padding: 1px 12px 2px;
+  height: 20px;
+  border-radius: 5px;
+  color: var(--temp-grey-blue-7);
+  letter-spacing: 0.5px;
+}
