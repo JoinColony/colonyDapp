@@ -8,8 +8,8 @@ import {
 import { nanoid } from 'nanoid';
 import { RouteChildrenProps, useParams } from 'react-router';
 import { Formik } from 'formik';
-
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+
 import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
 import { useColonyFromNameQuery } from '~data/generated';
 import Stages from '~dashboard/ExpenditurePage/Stages';
@@ -24,6 +24,8 @@ import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import { useLoggedInUser } from '~data/helpers';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
 import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
+import { useDialog } from '~core/Dialog';
+import EscrowFundsDialog from '~dashboard/Dialogs/EscrowFundsDialog';
 
 import ExpenditureForm from './ExpenditureForm';
 import styles from './ExpenditurePage.css';
@@ -98,25 +100,22 @@ const validationSchema = yup.object().shape({
   filteredDomainId: yup
     .string()
     .required(() => <FormattedMessage {...MSG.teamRequiredError} />),
-  recipients: yup.array().when('expenditure', {
-    is: (expenditure) => expenditure === 'advanced',
-    then: yup.array().of(
-      yup.object().shape({
-        recipient: yup.object().required(),
-        value: yup
-          .array(
-            yup.object().shape({
-              amount: yup
-                .number()
-                .required(() => MSG.valueError)
-                .moreThan(0, () => MSG.amountZeroError),
-              tokenAddress: yup.string().required(),
-            }),
-          )
-          .min(1),
-      }),
-    ),
-  }),
+  recipients: yup.array(
+    yup.object().shape({
+      recipient: yup.object().required(),
+      value: yup
+        .array(
+          yup.object().shape({
+            amount: yup
+              .number()
+              .required(() => MSG.valueError)
+              .moreThan(0, () => MSG.amountZeroError),
+            tokenAddress: yup.string().required(),
+          }),
+        )
+        .min(1),
+    }),
+  ),
   title: yup.string().min(3).required(),
   description: yup.string().max(4000),
   split: yup.object().when('expenditure', {
@@ -223,10 +222,21 @@ const ExpenditurePage = ({ match }: Props) => {
     lockValues();
   };
 
-  const handleFoundExpenditure = () => {
-    // Call to backend will be added here, to found the expenditure
-    setActiveStateId(Stage.Funded);
-  };
+  const openEscrowFundsDialog = useDialog(EscrowFundsDialog);
+
+  const handleFundExpenditure = useCallback(
+    () =>
+      colonyData &&
+      openEscrowFundsDialog({
+        colony: colonyData?.processedColony,
+        handleSubmitClick: () => {
+          setActiveStateId?.(Stage.Funded);
+          // add call to backend
+        },
+        isVotingExtensionEnabled: true, // temporary value
+      }),
+    [colonyData, openEscrowFundsDialog],
+  );
 
   const handleReleaseFounds = () => {
     // Call to backend will be added here, to realese founds
@@ -250,7 +260,7 @@ const ExpenditurePage = ({ match }: Props) => {
       id: Stage.Locked,
       label: MSG.locked,
       buttonText: MSG.escrowFunds,
-      buttonAction: handleFoundExpenditure,
+      buttonAction: handleFundExpenditure,
     },
     {
       id: Stage.Funded,
