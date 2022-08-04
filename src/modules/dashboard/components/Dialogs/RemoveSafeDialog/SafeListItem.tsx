@@ -52,6 +52,7 @@ const SafeListItem = ({ safe, isChecked }: Props) => {
       <InvisibleCopyableAddress
         address={safe.contractAddress}
         copyMessage={MSG.copyMessage}
+        tooltipPlacement="top"
       >
         <div className={styles.address}>
           <MaskedAddress address={safe.contractAddress} />
