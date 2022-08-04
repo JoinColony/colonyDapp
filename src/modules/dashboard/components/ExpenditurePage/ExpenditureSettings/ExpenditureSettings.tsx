@@ -55,6 +55,13 @@ export const MSG = defineMessages({
   },
 });
 
+const displayName = 'dashboard.ExpenditurePage.ExpenditureSettings';
+
+interface Props {
+  sidebarRef: HTMLElement | null;
+  colony: Colony;
+}
+
 const expeditureTypes = [
   {
     label: MSG.advancedPayment,
@@ -73,13 +80,6 @@ const expeditureTypes = [
     value: ExpenditureTypes.Batch,
   },
 ];
-
-const displayName = 'dashboard.ExpenditurePage.ExpenditureSettings';
-
-interface Props {
-  sidebarRef: HTMLElement | null;
-  colony: Colony;
-}
 
 const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
   const { walletAddress, username } = useLoggedInUser();
