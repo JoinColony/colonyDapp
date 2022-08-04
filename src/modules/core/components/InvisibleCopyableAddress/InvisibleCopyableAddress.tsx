@@ -5,6 +5,7 @@ import {
   MessageDescriptor,
   useIntl,
 } from 'react-intl';
+import { Placement } from '@popperjs/core';
 
 import copyToClipboard from 'copy-to-clipboard';
 import { Address } from '~types/index';
@@ -19,6 +20,8 @@ interface Props {
   address: Address;
   /** Text which will display in tooltip when hovering on address */
   copyMessage?: MessageDescriptor;
+  /** Determines the position of the tooltip's text */
+  tooltipPlacement?: Placement;
 }
 
 const MSG = defineMessages({
@@ -41,6 +44,7 @@ const InvisibleCopyableAddress = ({
   children,
   address,
   copyMessage,
+  tooltipPlacement = 'right',
 }: Props) => {
   const [copied, setCopied] = useState(false);
   const { formatMessage } = useIntl();
@@ -64,7 +68,7 @@ const InvisibleCopyableAddress = ({
     formatMessage(MSG.copyMessage);
   return (
     <Tooltip
-      placement="right"
+      placement={tooltipPlacement}
       trigger="hover"
       content={
         <FormattedMessage
