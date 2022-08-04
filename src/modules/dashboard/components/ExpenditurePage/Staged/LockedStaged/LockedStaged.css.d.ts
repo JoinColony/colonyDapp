@@ -15,3 +15,4 @@ export const amountWrapper: string;
 export const reserveBar: string;
 export const reserveIndicator: string;
 export const percent: string;
+export const claimed: string;
