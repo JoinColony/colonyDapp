@@ -188,3 +188,7 @@
   color: var(--action-secondary);
   cursor: pointer;
 }
+
+.maxButton + input {
+  padding-left: 30px;
+}
