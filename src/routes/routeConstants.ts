@@ -5,6 +5,7 @@ export const CONNECT_ROUTE = '/connect';
 export const COLONY_HOME_ROUTE = '/colony/:colonyName';
 export const COLONY_EVENTS_ROUTE = `${COLONY_HOME_ROUTE}/events`;
 export const COLONY_DECISIONS_ROUTE = `${COLONY_HOME_ROUTE}/decisions`;
+export const COLONY_DECISIONS_PREVIEW_ROUTE = `${COLONY_HOME_ROUTE}/decisions/preview`;
 export const COLONY_FUNDING_ROUTE = `${COLONY_HOME_ROUTE}/funds`;
 export const COLONY_EXTENSIONS_ROUTE = `${COLONY_HOME_ROUTE}/extensions`;
 export const COLONY_EXTENSION_DETAILS_ROUTE = `${COLONY_HOME_ROUTE}/extensions/:extensionId`;
