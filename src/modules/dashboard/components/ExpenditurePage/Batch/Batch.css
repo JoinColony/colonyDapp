@@ -1,0 +1,27 @@
+@value paddingRightLeft: 54px;
+
+.rowStyles {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: color-mod(var(--dark) alpha(85%));
+  letter-spacing: 0.5px;
+}
+
+.batchContainer {
+  padding: 0 paddingRightLeft 80px;
+}
+
+.wrapper {
+  composes: rowStyles;
+  padding: 11px 0;
+}
+
+.data {
+  composes: rowStyles;
+  padding: 11px 0;
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}

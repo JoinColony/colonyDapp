@@ -8,11 +8,13 @@ import {
 import { AnyUser } from '~data/index';
 import { LoggedInUser } from '~data/generated';
 import { Staged as StagedType } from '~dashboard/ExpenditurePage/Staged/types';
+import { Batch as BatchType } from '~dashboard/ExpenditurePage/Batch/types';
 
 export enum ExpenditureTypes {
   Advanced = 'advanced',
   Split = 'split',
   Staged = 'staged',
+  Batch = 'batch',
 }
 
 export interface ValuesType {
@@ -33,6 +35,7 @@ export interface ValuesType {
     recipients?: { user?: AnyUser; amount?: number; percent?: number }[];
   };
   staged?: StagedType;
+  batch: BatchType;
 }
 
 export interface State {

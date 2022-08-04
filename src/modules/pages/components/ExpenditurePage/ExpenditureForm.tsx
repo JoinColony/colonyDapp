@@ -5,6 +5,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { useDialog } from '~core/Dialog';
 import StakeExpenditureDialog from '~dashboard/Dialogs/StakeExpenditureDialog';
 import { ExpenditureSettings } from '~dashboard/ExpenditurePage';
+import Batch from '~dashboard/ExpenditurePage/Batch';
 import Payments from '~dashboard/ExpenditurePage/Payments';
 import Split from '~dashboard/ExpenditurePage/Split';
 import Staged from '~dashboard/ExpenditurePage/Staged';
@@ -64,6 +65,9 @@ const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
       }
       case ExpenditureTypes.Split: {
         return <Split sidebarRef={sidebarRef} colony={colony} />;
+      }
+      case ExpenditureTypes.Batch: {
+        return <Batch />;
       }
       default:
         return null;
