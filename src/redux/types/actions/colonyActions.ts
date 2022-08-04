@@ -11,6 +11,7 @@ import {
   UniqueActionType,
   ActionTypeWithMeta,
   MetaWithHistory,
+  ActionType,
 } from './index';
 
 /*
@@ -259,11 +260,11 @@ export type ColonyActionsActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<
-      ActionTypes.ACTION_MANAGE_EXISTING_SAFES_ERROR,
-      object
-    >
+  | ErrorActionType<ActionTypes.ACTION_MANAGE_EXISTING_SAFES_ERROR, object>
   | ActionTypeWithMeta<
       ActionTypes.ACTION_MANAGE_EXISTING_SAFES_SUCCESS,
       MetaWithHistory<object>
-    >;
+    >
+  | ActionType<typeof ActionTypes.ACTION_GENERIC>
+  | ActionType<typeof ActionTypes.ACTION_GENERIC_SUCCESS>
+  | ErrorActionType<typeof ActionTypes.ACTION_GENERIC_ERROR, object>;
