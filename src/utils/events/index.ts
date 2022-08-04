@@ -494,8 +494,8 @@ const getColonyEditActionValues = async (
         colonyDisplayName,
         colonyAvatarHash,
         colonyTokens,
-        isWhitelistActivated,
-        verifiedAddresses,
+        isWhitelistActivated = false,
+        verifiedAddresses = [],
       } = JSON.parse(ipfsMetadata);
 
       colonyEditValues.colonyDisplayName = colonyDisplayName;

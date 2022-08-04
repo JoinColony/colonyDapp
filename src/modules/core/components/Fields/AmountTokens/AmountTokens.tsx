@@ -87,11 +87,11 @@ const AmountTokens = ({
   maxButtonParams,
 }: Props) => (
   <div className={styles.tokenAmount}>
-      <div
-        className={classnames(styles.tokenAmountInputContainer, {
-          [styles.inputContainerMaxButton]: !!maxButtonParams,
-        })}
-      >
+    <div
+      className={classnames(styles.tokenAmountInputContainer, {
+        [styles.inputContainerMaxButton]: !!maxButtonParams,
+      })}
+    >
       <Input
         label={MSG.amount}
         name={inputName || 'amount'}
@@ -108,9 +108,9 @@ const AmountTokens = ({
         }}
         disabled={disabledInput}
         /*
-          * Force the input component into an error state
-          * This is needed for our custom error state to work
-          */
+         * Force the input component into an error state
+         * This is needed for our custom error state to work
+         */
         forcedFieldError={customAmountError}
         dataTest="paymentAmountInput"
         maxButtonParams={maxButtonParams}
@@ -164,10 +164,10 @@ const AmountTokens = ({
             appearance={{ theme: 'grey' }}
             value={
               /*
-                * @NOTE Set value to 0 if amount is only the decimal point
-                * Just entering the decimal point will pass it through to EthUsd
-                * and that will try to fetch the balance for, which, obviously, will fail
-                */
+               * @NOTE Set value to 0 if amount is only the decimal point
+               * Just entering the decimal point will pass it through to EthUsd
+               * and that will try to fetch the balance for, which, obviously, will fail
+               */
               values[inputName || 'amount'] &&
               values[inputName || 'amount'] !== '.'
                 ? values[inputName || 'amount']
