@@ -94,6 +94,11 @@ export const getProcessedColony = async (
   let avatarHash: string | null = null;
   let avatarObject: { image: string | null } | null = { image: null };
   let tokenAddresses: Array<Address> = [];
+  let safes: Array<{
+    safeName: string;
+    contractAddress: string;
+    chainId: number;
+  }> = [];
 
   const sortedMetdataHistory = sortMetdataHistory(metadataHistory);
   const currentMetadataIndex = sortedMetdataHistory.findIndex(
@@ -123,10 +128,12 @@ export const getProcessedColony = async (
         colonyDisplayName = null,
         colonyAvatarHash = null,
         colonyTokens = [],
+        colonySafes = [],
       } = JSON.parse(ipfsMetadata);
       displayName = colonyDisplayName;
       avatarHash = colonyAvatarHash;
       tokenAddresses = colonyTokens;
+      safes = colonySafes;
 
       /*
        * Fetch the colony's avatar
@@ -168,6 +175,7 @@ export const getProcessedColony = async (
       ? [...tokenAddresses, token.tokenAddress].map(createAddress)
       : [],
     extensionAddresses: colonyExtensions.map(({ address }) => address),
+    safes,
   };
 };
 

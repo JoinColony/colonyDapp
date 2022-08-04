@@ -32,6 +32,7 @@ fragment ColonyProfile on ProcessedColony {
   avatarHash
   avatarURL
   extensionAddresses
+  safes
 }
 
 fragment FullColony on ProcessedColony {
