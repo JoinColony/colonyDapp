@@ -7,6 +7,7 @@ import { FormSection, Toggle } from '~core/Fields';
 import { Colony } from '~data/index';
 
 import SplitEqual from './SplitEqual';
+import SplitUnequal from './SplitUnequal';
 import styles from './Split.css';
 
 const MSG = defineMessages({
@@ -31,7 +32,7 @@ interface Props {
   colony: Colony;
 }
 
-const Split = ({ sidebarRef, colony }: Props) => {
+const Split = ({ colony, sidebarRef }: Props) => {
   const [, { value: splitUnequal }] = useField('split.unequal');
   return (
     <div className={styles.splitContainer}>
@@ -57,7 +58,11 @@ const Split = ({ sidebarRef, colony }: Props) => {
           </div>
         </div>
       </FormSection>
-      {splitUnequal ? null : <SplitEqual {...{ colony, sidebarRef }} />}
+      {splitUnequal ? (
+        <SplitUnequal {...{ colony, sidebarRef }} />
+      ) : (
+        <SplitEqual {...{ colony, sidebarRef }} />
+      )}
     </div>
   );
 };

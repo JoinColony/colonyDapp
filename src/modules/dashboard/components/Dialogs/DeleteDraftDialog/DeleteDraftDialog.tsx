@@ -7,16 +7,16 @@ import styles from './DeleteDraftDialog.css';
 
 const MSG = defineMessages({
   header: {
-    id: 'dashboard.ExpenditurePage.Stages.DeleteDraftDialog.header',
+    id: 'dashboard.DeleteDraftDialog.header',
     defaultMessage: 'Delete Advanced Payment',
   },
   description: {
-    id: 'dashboard.ExpenditurePage.Stages.DeleteDraftDialog.description',
+    id: 'dashboard.DeleteDraftDialog.description',
     defaultMessage:
       'Are you sure you want to delete this draft Advanced Payment?',
   },
   deleteText: {
-    id: 'dashboard.ExpenditurePage.Stages.DeleteDraftDialog.deleteText',
+    id: 'dashboard.DeleteDraftDialog.deleteText',
     defaultMessage: 'Delete',
   },
 });

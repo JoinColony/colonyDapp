@@ -1,0 +1,185 @@
+.dialogContainer {
+  padding: 34px 20px 0px 20px;
+}
+
+.dialogContainer section {
+  padding: 0;
+  font-size: var(--size-smallish);
+}
+
+.dialogContainer h5 {
+  font-size: var(--size-smallish);
+}
+
+.title {
+  align-items: center;
+  padding: 20px 0;
+  width: 100%;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.description {
+  margin-bottom: 20px;
+  font-size: var(--size-normal);
+}
+
+.requiredFundsHeader {
+  margin-top: 20px;
+}
+
+.requiredFundsRow {
+  composes: flexContainerRow flexAlignCenter from '~styles/layout.css';
+  min-height: 41px;
+}
+
+.requiredFundsRow:nth-child(2) {
+  margin-left: auto;
+}
+
+.sectionRow {
+  composes: flexContainerRow flexAlignCenter flexJustifyBetween from '~styles/layout.css';
+  min-height: 41px;
+}
+
+#balanceRow label:first-child {
+  align-self: flex-start;
+  margin-top: 15px;
+}
+
+.activeItem {
+  display: flex;
+  align-items: center;
+  margin-right: 2px;
+}
+
+.activeItemLabel {
+  margin-left: 8px;
+  padding-bottom: 2px;
+  font-size: var(--size-smallish);
+  color: var(--text);
+}
+
+.annotations {
+  margin-top: 20px;
+}
+
+.label {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+  color: var(--dark);
+}
+
+.option {
+  margin-bottom: 12px;
+  padding: 0px;
+  font-size: var(--size-smallish);
+}
+
+.firstOption {
+  padding: 12px 0 0 0;
+}
+
+.icon {
+  margin-right: 4px;
+  margin-left: auto;
+}
+
+.icon figure {
+  display: block;
+}
+
+.tokenTotal {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.tokenIcon {
+  height: 18px;
+  width: 18px;
+}
+
+.symbol {
+  margin-left: 4px;
+  font-size: var(--size-smallish);
+  color: var(--dark);
+}
+
+.symbolNormal {
+  composes: symbol;
+  font-size: var(--size-normal);
+}
+
+.tokenNumeral {
+  font-size: var(--size-smallish);
+  color: var(--dark);
+}
+
+.tokenNumeralTiny {
+  composes: tokenNumeral;
+  font-size: var(--size-tiny);
+}
+
+.tokenNumeralNormal {
+  composes: tokenNumeral;
+  font-size: var(--size-normal);
+}
+
+.teamSelectWrapper svg {
+  fill: var(--action-secondary);
+  stroke: var(--action-secondary);
+}
+
+.tooltip {
+  max-width: 250px;
+}
+
+.margin {
+  margin-right: 20px;
+}
+
+.motionActiveItem {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
+
+.dropdown {
+  width: 100%;
+}
+
+.dropdown > div {
+  justify-content: space-between;
+  width: 100%;
+}
+
+.dropdown ul {
+  right: 0;
+}
+
+.dropdown ul div:nth-of-type(2) {
+  width: auto;
+}
+
+.toggleContainer i {
+  margin: 0 -20px 4px 21px;
+
+  /* next lines are used for the correct tooltip arrow placement */
+  transform: translateX(-25px);
+}
+
+/* this selector is for tooltip wrapper */
+.toggleContainer > div > div:last-child {
+  max-width: 250px;
+  white-space: normal;
+}
+
+.toggleContainer label {
+  margin-bottom: 4px;
+}
