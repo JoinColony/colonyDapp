@@ -1,0 +1,39 @@
+.main {
+  padding: 90px 0;
+  height: 100%;
+  width: 100%;
+  background-color: white;
+}
+
+.setMarginWidth {
+  /*
+   * @NOTE On specs
+   *
+   * The specs designed this for 1440. On this resolution it looks exactly as spec'd.
+   * But as you widen the view port more and more the offset will blur out more and more
+   * and it will start to look centered (due to the percentage margins).
+   *
+   * This is not a bug, this is by design.
+   */
+  margin: 0 13.19% 0 24.3%;
+  width: 900px;
+}
+
+.dividerTop {
+  composes: setMarginWidth;
+  height: 1px;
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.container {
+  composes: setMarginWidth;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.content {
+  margin-top: 17px;
+  width: 460px;
+  word-break: break-word;
+}
