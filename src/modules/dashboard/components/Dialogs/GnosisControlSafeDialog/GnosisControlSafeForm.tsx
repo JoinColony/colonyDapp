@@ -387,7 +387,7 @@ const GnosisControlSafeForm = ({
                         />
                       )}
                       {values.transactions[index]?.transactionType ===
-                        'transferNft' && (
+                        TransactionTypes.TRANSFER_NFT && (
                         <GnosisNFTTransfer
                           colonyAddress={colonyAddress}
                           nftCatalogue={testNFTData}
