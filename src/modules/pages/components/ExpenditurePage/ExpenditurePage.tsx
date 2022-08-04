@@ -24,6 +24,7 @@ import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import { useLoggedInUser } from '~data/helpers';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
 import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
+import { AnyUser } from '~data/index';
 import { useDialog } from '~core/Dialog';
 import EscrowFundsDialog from '~dashboard/Dialogs/EscrowFundsDialog';
 
@@ -122,6 +123,14 @@ const validationSchema = yup.object().shape({
     is: (expenditure) => expenditure === 'split',
     then: yup.object().shape({
       unequal: yup.boolean().required(),
+      recipients: yup.array().of(
+        yup.object().shape({
+          recipient: yup
+            .object()
+            .shape({ user: yup.object(), amount: yup.number() })
+            .required(),
+        }),
+      ),
     }),
   }),
 });
@@ -141,7 +150,11 @@ export interface ValuesType {
   recipients: Recipient[];
   title: string;
   description?: string;
-  split: { unequal: boolean };
+  split: {
+    unequal: boolean;
+    amount: { amount?: string; tokenAddress?: string };
+    recipients?: { user: AnyUser; amount: number }[];
+  };
 }
 
 const initialValues = {
@@ -151,7 +164,10 @@ const initialValues = {
   owner: undefined,
   title: undefined,
   description: undefined,
-  split: { unequal: true },
+  split: {
+    unequal: true,
+    recipients: [{ user: undefined, amount: 0 }],
+  },
 };
 
 export type InitialValuesType = typeof initialValues;

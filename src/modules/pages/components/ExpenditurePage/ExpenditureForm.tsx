@@ -57,8 +57,8 @@ const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
       case ExpenditureTypes.Advanced: {
         return <Payments sidebarRef={sidebarRef} colony={colony} />;
       }
-      case ExpenditureTypes.Split: {
-        return <Split />;
+      case 'split': {
+        return <Split sidebarRef={sidebarRef} colony={colony} />;
       }
       default:
         return null;
