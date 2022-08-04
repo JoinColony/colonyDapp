@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, useIntl } from 'react-intl';
 
 import { GNOSIS_SAFE_NETWORKS } from '~constants';
 import Avatar from '~core/Avatar';
@@ -15,6 +15,10 @@ const MSG = defineMessages({
     id: 'dashboard.Dialogs.RemoveSafeDialog.SafeListItem.copyMessage',
     defaultMessage: 'Click to copy Gnosis Safe address',
   },
+  safeNamePlaceholder: {
+    id: 'dashboard.Dialogs.RemoveSafeDialog.SafeListItem.safeNamePlaceholder',
+    defaultMessage: 'Unknown',
+  },
 });
 
 interface Props {
@@ -23,6 +27,7 @@ interface Props {
 }
 
 const SafeListItem = ({ safe, isChecked }: Props) => {
+  const { formatMessage } = useIntl();
   const safeNetwork = GNOSIS_SAFE_NETWORKS.find(
     (network) => network.chainId === Number(safe.chainId),
   );
@@ -46,7 +51,9 @@ const SafeListItem = ({ safe, isChecked }: Props) => {
       />
 
       <span className={`${isChecked ? styles.selectedLabel : styles.label}`}>
-        {`${safe.safeName} (${safeNetwork?.name || 'Unknown'})`}
+        {`${safe.safeName} (${
+          safeNetwork?.name || formatMessage(MSG.safeNamePlaceholder)
+        })`}
       </span>
 
       <InvisibleCopyableAddress
