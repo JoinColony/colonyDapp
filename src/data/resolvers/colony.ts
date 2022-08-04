@@ -94,6 +94,11 @@ export const getProcessedColony = async (
   let avatarHash: string | null = null;
   let avatarObject: { image: string | null } | null = { image: null };
   let tokenAddresses: Array<Address> = [];
+  let safes: Array<{
+    safeName: string;
+    contractAddress: string;
+    chainId: number;
+  }> = [];
 
   const sortedMetdataHistory = sortMetdataHistory(metadataHistory);
   const currentMetadataIndex = sortedMetdataHistory.findIndex(
