@@ -80,7 +80,7 @@ const MSG = defineMessages({
   },
   transactionTitle: {
     id: `dashboard.GnosisControlSafeDialog.SafeTransactionPreview.transactionTitle`,
-    defaultMessage: `Transaction #{transactionNumber} {transactionType, select, undefined {} other {({transactionType})}}`,
+    defaultMessage: `{transactionNumber}. {transactionType, select, undefined {} other {{transactionType}}}`,
   },
   toggleTransaction: {
     id: `dashboard.GnosisControlSafeDialog.SafeTransactionPreview.toggleTransaction`,
