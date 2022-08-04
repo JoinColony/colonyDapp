@@ -21,38 +21,35 @@ import { tokens as tokensData } from './constants';
 import styles from './ExpenditureSettings.css';
 
 export const MSG = defineMessages({
-  typeLabel: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.defaultExpenditureLabel',
+  type: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.type',
     defaultMessage: 'Expenditure type',
   },
-  teamLabel: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.defaultTeamLabel',
+  team: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.team',
     defaultMessage: 'Team',
   },
-  balanceLabel: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.defaultBalanceLabel',
+  balance: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.balance',
     defaultMessage: 'Balance',
   },
-  ownerLabel: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.defaultOwnerLabel',
+  owner: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.owner',
     defaultMessage: 'Owner',
   },
   advancedPayment: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.AdvancedPayment',
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.advancedPayment',
     defaultMessage: 'Advanced payment',
   },
   staged: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.Staged',
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.staged',
     defaultMessage: 'Staged',
   },
+  split: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.split',
+    defaultMessage: 'Split',
+  },
 });
-
-const displayName = 'dashboard.ExpenditurePage.ExpenditureSettings';
-
-interface Props {
-  sidebarRef: HTMLElement | null;
-  colony: Colony;
-}
 
 const expeditureTypes = [
   {
@@ -60,10 +57,21 @@ const expeditureTypes = [
     value: ExpenditureTypes.Advanced,
   },
   {
+    label: MSG.split,
+    value: ExpenditureTypes.Split,
+  },
+  {
     label: MSG.staged,
     value: ExpenditureTypes.Staged,
   },
 ];
+
+const displayName = 'dashboard.ExpenditurePage.ExpenditureSettings';
+
+interface Props {
+  sidebarRef: HTMLElement | null;
+  colony: Colony;
+}
 
 const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
   const { walletAddress, username } = useLoggedInUser();
@@ -119,7 +127,7 @@ const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
         <div className={styles.blue}>
           <SelectHorizontal
             name="expenditure"
-            label={MSG.typeLabel}
+            label={MSG.type}
             appearance={{
               theme: 'alt',
               width: 'content',
@@ -135,7 +143,7 @@ const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.settingsRow}>
           <InputLabel
-            label={MSG.teamLabel}
+            label={MSG.team}
             appearance={{
               direction: 'horizontal',
             }}
@@ -163,7 +171,7 @@ const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.userContainer}>
           <InputLabel
-            label={MSG.ownerLabel}
+            label={MSG.owner}
             appearance={{
               direction: 'horizontal',
             }}

@@ -58,7 +58,7 @@ const LockedExpenditureSettings = ({
         <FormSection appearance={{ border: 'bottom' }}>
           <div className={styles.expenditureContainer}>
             <InputLabel
-              label={MSG.typeLabel}
+              label={MSG.type}
               appearance={{
                 direction: 'horizontal',
               }}
@@ -69,7 +69,7 @@ const LockedExpenditureSettings = ({
         <FormSection appearance={{ border: 'bottom' }}>
           <div className={styles.settingsRow}>
             <InputLabel
-              label={MSG.teamLabel}
+              label={MSG.team}
               appearance={{
                 direction: 'horizontal',
               }}
@@ -100,7 +100,7 @@ const LockedExpenditureSettings = ({
         <FormSection appearance={{ border: 'bottom' }}>
           <div className={styles.userContainer}>
             <InputLabel
-              label={MSG.ownerLabel}
+              label={MSG.owner}
               appearance={{
                 direction: 'horizontal',
               }}

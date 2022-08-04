@@ -156,6 +156,20 @@ const validationSchema = yup.object().shape({
   }),
   title: yup.string().min(3).required(),
   description: yup.string().max(4000),
+  split: yup.object().when('expenditure', {
+    is: (expenditure) => expenditure === 'split',
+    then: yup.object().shape({
+      unequal: yup.boolean().required(),
+      recipients: yup.array().of(
+        yup.object().shape({
+          recipient: yup
+            .object()
+            .shape({ user: yup.object(), amount: yup.number() })
+            .required(),
+        }),
+      ),
+    }),
+  }),
 });
 
 export interface State {
@@ -183,6 +197,11 @@ export interface ValuesType {
       percent?: number;
     }[];
   };
+  split: {
+    unequal: boolean;
+    amount: { amount?: string; tokenAddress?: string };
+    recipients?: { user: AnyUser; amount: number }[];
+  };
 }
 
 const initialValues = {
@@ -194,6 +213,10 @@ const initialValues = {
   description: undefined,
   staged: {
     milestones: [{ ...initalMilestone, id: nanoid() }],
+  },
+  split: {
+    unequal: true,
+    recipients: [{ user: undefined, amount: 0 }],
   },
 };
 
@@ -214,7 +237,6 @@ const ExpenditurePage = ({ match }: Props) => {
 
   const [isFormEditable, setFormEditable] = useState(true);
   const [formValues, setFormValues] = useState<ValuesType>();
-  const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStateId, setActiveStateId] = useState<string>();
   const sidebarRef = useRef<HTMLElement>(null);
 
@@ -252,7 +274,6 @@ const ExpenditurePage = ({ match }: Props) => {
   }, [colonyData, formValues, loggedInUser]);
 
   const handleSubmit = useCallback((values) => {
-    setShouldValidate(true);
     setActiveStateId(Stage.Draft);
 
     if (values.expenditure === ExpenditureTypes.Staged) {
@@ -355,20 +376,11 @@ const ExpenditurePage = ({ match }: Props) => {
     },
   ];
 
-  const handleValidate = useCallback(() => {
-    if (!shouldValidate) {
-      setShouldValidate(true);
-    }
-  }, [shouldValidate]);
-
   return isFormEditable ? (
     <Formik
       initialValues={initialValuesData}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
-      validateOnBlur={shouldValidate}
-      validateOnChange={shouldValidate}
-      validate={handleValidate}
       initialTouched={{
         recipients: [
           {
