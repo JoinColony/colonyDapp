@@ -5,6 +5,7 @@ import Button from '~core/Button';
 import { FormSection } from '~core/Fields';
 import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
+import Tag from '~core/Tag';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
 import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
@@ -32,6 +33,10 @@ const MSG = defineMessages({
   release: {
     id: 'dashboard.ExpenditurePage.Staged.LockedStaged.release',
     defaultMessage: 'Release',
+  },
+  completed: {
+    id: 'dashboard.ExpenditurePage.Staged.LockedStaged.completed',
+    defaultMessage: 'Completed',
   },
 });
 
@@ -146,13 +151,18 @@ const LockedStaged = ({
                   )}
                 </div>
                 {activeStateId === Stage.Funded && (
-                  <Button
-                    type="button"
-                    onClick={() => handleReleaseMilestone(milestone.id)}
-                    disabled={milestone.released}
-                  >
-                    <FormattedMessage {...MSG.release} />
-                  </Button>
+                  <>
+                    {milestone.released ? (
+                      <Tag text={MSG.completed} className={styles.claimed} />
+                    ) : (
+                      <Button
+                        type="button"
+                        onClick={() => handleReleaseMilestone(milestone.id)}
+                      >
+                        <FormattedMessage {...MSG.release} />
+                      </Button>
+                    )}
+                  </>
                 )}
               </div>
             </div>
