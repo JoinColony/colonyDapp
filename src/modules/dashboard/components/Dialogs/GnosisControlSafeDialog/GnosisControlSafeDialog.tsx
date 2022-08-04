@@ -185,9 +185,9 @@ const GnosisControlSafeDialog = ({
         ],
       }}
       validationSchema={validationSchema(showPreview)}
-      submit={ActionTypes.COLONY_ACTION_GENERIC}
-      success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
-      error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
+      submit={ActionTypes.ACTION_GENERIC}
+      success={ActionTypes.ACTION_GENERIC_SUCCESS}
+      error={ActionTypes.ACTION_GENERIC_ERROR}
       validateOnMount
     >
       {(formValues: FormikProps<FormValues>) => (
