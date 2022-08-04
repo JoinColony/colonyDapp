@@ -15,11 +15,11 @@ import styles from './Milestone.css';
 
 const MSG = defineMessages({
   deleteIconTitle: {
-    id: 'dashboard.ExpenditurePage.Staged.deleteIconTitle',
+    id: 'dashboard.ExpenditurePage.Staged.Milestone.deleteIconTitle',
     defaultMessage: 'Delete milestone',
   },
   placeholder: {
-    id: 'dashboard.ExpenditurePage.Staged.placeholder',
+    id: 'dashboard.ExpenditurePage.Staged.Milestone.placeholder',
     defaultMessage: 'Enter Milestone name',
   },
 });
