@@ -1,12 +1,16 @@
 import { Form, useFormikContext } from 'formik';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { useDialog } from '~core/Dialog';
 import StakeExpenditureDialog from '~dashboard/Dialogs/StakeExpenditureDialog';
 import { ExpenditureSettings } from '~dashboard/ExpenditurePage';
+import Batch from '~dashboard/ExpenditurePage/Batch';
 import Payments from '~dashboard/ExpenditurePage/Payments';
 import { Colony } from '~data/index';
+
+import { ValuesType } from './ExpenditurePage';
+import { ExpenditureTypes } from './types';
 import styles from './ExpenditurePage.css';
 
 const MSG = defineMessages({
@@ -22,7 +26,8 @@ interface Props {
 }
 
 const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
-  const { values, handleSubmit, validateForm } = useFormikContext() || {};
+  const { values, handleSubmit, validateForm } =
+    useFormikContext<ValuesType>() || {};
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
 
   const onSubmit = useCallback(
@@ -46,10 +51,24 @@ const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
     [handleSubmit, openDraftConfirmDialog, validateForm, values],
   );
 
+  const secondFormSection = useMemo(() => {
+    const expenditureType = values.expenditure;
+    switch (expenditureType) {
+      case ExpenditureTypes.Advanced: {
+        return <Payments sidebarRef={sidebarRef} colony={colony} />;
+      }
+      case ExpenditureTypes.Batch: {
+        return <Batch />;
+      }
+      default:
+        return null;
+    }
+  }, [colony, sidebarRef, values]);
+
   return (
     <Form onSubmit={onSubmit}>
       <ExpenditureSettings {...{ sidebarRef, colony }} />
-      <Payments {...{ sidebarRef, colony }} />
+      {secondFormSection}
       <button type="submit" tabIndex={-1} className={styles.hiddenSubmit}>
         <FormattedMessage {...MSG.submit} />
       </button>

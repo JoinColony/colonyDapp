@@ -8,8 +8,8 @@ import {
 import { nanoid } from 'nanoid';
 import { RouteChildrenProps, useParams } from 'react-router';
 import { Formik } from 'formik';
-
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+
 import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
 import { useColonyFromNameQuery } from '~data/generated';
 import Stages from '~dashboard/ExpenditurePage/Stages';
@@ -17,17 +17,19 @@ import TitleDescriptionSection, {
   LockedTitleDescriptionSection,
 } from '~dashboard/ExpenditurePage/TitleDescriptionSection';
 import { getMainClasses } from '~utils/css';
-import styles from './ExpenditurePage.css';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import { SpinnerLoader } from '~core/Preloaders';
-import ExpenditureForm from './ExpenditureForm';
 import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
-import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import { useLoggedInUser } from '~data/helpers';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
-import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
 import { useDialog } from '~core/Dialog';
 import EscrowFundsDialog from '~dashboard/Dialogs/EscrowFundsDialog';
+import { Batch } from '~dashboard/ExpenditurePage/Batch/types';
+
+import ExpenditureForm from './ExpenditureForm';
+import { ExpenditureTypes } from './types';
+import LockedSidebar from './LockedSidebar';
+import styles from './ExpenditurePage.css';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -99,22 +101,45 @@ const validationSchema = yup.object().shape({
   filteredDomainId: yup
     .string()
     .required(() => <FormattedMessage {...MSG.teamRequiredError} />),
-  recipients: yup.array(
-    yup.object().shape({
-      recipient: yup.object().required(),
-      value: yup
+  recipients: yup.array().when('expenditure', {
+    is: (expenditure) => expenditure === 'advanced',
+    then: yup.array().of(
+      yup.object().shape({
+        recipient: yup.object().required(),
+        value: yup
+          .array(
+            yup.object().shape({
+              amount: yup
+                .number()
+                .required(() => MSG.valueError)
+                .moreThan(0, () => MSG.amountZeroError),
+              tokenAddress: yup.string().required(),
+            }),
+          )
+          .min(1),
+      }),
+    ),
+  }),
+  batch: yup.object().when('expenditure', {
+    is: (expenditure) => expenditure === ExpenditureTypes.Batch,
+    then: yup.object().shape({
+      user: yup.object().required(),
+      amount: yup.object().shape({
+        value: yup.number().moreThan(0, () => MSG.amountZeroError),
+        tokenAddress: yup.string().required(),
+      }),
+      data: yup
         .array(
           yup.object().shape({
-            amount: yup
-              .number()
-              .required(() => MSG.valueError)
-              .moreThan(0, () => MSG.amountZeroError),
-            tokenAddress: yup.string().required(),
+            user: yup.string().required(),
+            token: yup.string().required(),
+            amount: yup.number().required(),
           }),
         )
-        .min(1),
+        .min(1)
+        .required(),
     }),
-  ),
+  }),
   title: yup.string().min(3).required(),
   description: yup.string().max(4000),
 });
@@ -134,6 +159,7 @@ export interface ValuesType {
   recipients: Recipient[];
   title: string;
   description?: string;
+  batch: Batch;
 }
 
 const initialValues = {
@@ -275,8 +301,6 @@ const ExpenditurePage = ({ match }: Props) => {
     },
   ];
 
-  const { expenditure, filteredDomainId } = formValues || {};
-
   const handleValidate = useCallback(() => {
     if (!shouldValidate) {
       setShouldValidate(true);
@@ -334,16 +358,12 @@ const ExpenditurePage = ({ match }: Props) => {
   ) : (
     <div className={getMainClasses({}, styles)}>
       <aside className={styles.sidebar} ref={sidebarRef}>
-        <LockedExpenditureSettings
-          {...{ expenditure, filteredDomainId }}
-          username={loggedInUser?.username || ''}
-          walletAddress={loggedInUser?.walletAddress}
-          colony={colonyData?.processedColony}
-        />
-        <LockedPayments
-          recipients={formValues?.recipients}
-          colony={colonyData?.processedColony}
-        />
+        {colonyData && (
+          <LockedSidebar
+            formValues={formValues}
+            colony={colonyData?.processedColony}
+          />
+        )}
       </aside>
       <div className={styles.mainContainer}>
         <main className={styles.mainContent}>
