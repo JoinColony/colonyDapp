@@ -1,0 +1,38 @@
+@value paddingRightLeft: 54px;
+
+.splitContainer {
+  padding: 0 paddingRightLeft 80px;
+}
+
+.split {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 6px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: color-mod(var(--dark) alpha(85%));
+}
+
+.splitToggle {
+  display: flex;
+  line-height: 14px;
+}
+
+.splitToggle > div {
+  margin: 0 5px;
+}
+
+/* this selector is for switch thumb element */
+.splitToggle input + span > span {
+  background-color: var(--primary);
+}
+
+.splitLabel {
+  color: var(--temp-grey-blue-7);
+}
+
+.activeOption {
+  color: var(--primary);
+}

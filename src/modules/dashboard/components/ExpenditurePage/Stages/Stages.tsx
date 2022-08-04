@@ -3,41 +3,44 @@ import { useFormikContext } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import copyToClipboard from 'copy-to-clipboard';
 import classNames from 'classnames';
+import { isEmpty } from 'lodash';
 
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
+import { State, ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
+
 import DeleteDraftDialog from '../../Dialogs/DeleteDraftDialog/DeleteDraftDialog';
 import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
+
 import StageItem from './StageItem';
-import { State, ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
-import styles from './Stages.css';
 import { Stage } from './constants';
+import styles from './Stages.css';
 
 const MSG = defineMessages({
   stages: {
-    id: 'dashboard.Expenditures.Stages.stages',
+    id: 'dashboard.ExpenditurePage.Stages.stages',
     defaultMessage: 'Stages',
   },
   notSaved: {
-    id: 'dashboard.Expenditures.Stages.notSaved',
+    id: 'dashboard.ExpenditurePage.Stages.notSaved',
     defaultMessage: 'Not saved',
   },
   submitDraft: {
-    id: 'dashboard.Expenditures.Stages.submitDraft',
+    id: 'dashboard.ExpenditurePage.Stages.submitDraft',
     defaultMessage: 'Submit draft',
   },
   deleteDraft: {
-    id: 'dashboard.Expenditures.Stages.deleteDraft',
+    id: 'dashboard.ExpenditurePage.Stages.deleteDraft',
     defaultMessage: 'Delete draft',
   },
   tooltipDeleteText: {
-    id: 'dashboard.Expenditures.Stages.tooltipDeleteText',
+    id: 'dashboard.ExpenditurePage.Stages.tooltipDeleteText',
     defaultMessage: 'Delete the expenditure',
   },
   tooltipShareText: {
-    id: 'dashboard.Expenditures.Stages.tooltipShareText',
+    id: 'dashboard.ExpenditurePage.Stages.tooltipShareText',
     defaultMessage: 'Share expenditure URL',
   },
   tooltipCancelText: {
@@ -68,7 +71,7 @@ interface Props {
 }
 
 const Stages = ({ states, activeStateId }: Props) => {
-  const { values, handleSubmit, validateForm } =
+  const { values, handleSubmit, errors, dirty } =
     useFormikContext<ValuesType>() || {};
 
   const { resetForm } = useFormikContext() || {};
@@ -79,11 +82,8 @@ const Stages = ({ states, activeStateId }: Props) => {
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
 
   const handleSaveDraft = useCallback(async () => {
-    const errors = await validateForm(values);
-    const hasErrors = Object.keys(errors)?.length;
-
     return (
-      !hasErrors &&
+      isEmpty(errors) &&
       openDraftConfirmDialog({
         onClick: () => {
           handleSubmit(values as any);
@@ -91,7 +91,7 @@ const Stages = ({ states, activeStateId }: Props) => {
         isVotingExtensionEnabled: true,
       })
     );
-  }, [handleSubmit, openDraftConfirmDialog, validateForm, values]);
+  }, [errors, handleSubmit, openDraftConfirmDialog, values]);
 
   const handleDeleteDraft = () =>
     openDeleteDraftDialog({
@@ -145,7 +145,11 @@ const Stages = ({ states, activeStateId }: Props) => {
                   </div>
                 </Tooltip>
               </Button>
-              <Button onClick={handleSaveDraft} style={buttonStyles}>
+              <Button
+                onClick={handleSaveDraft}
+                style={buttonStyles}
+                disabled={!isEmpty(errors) || !dirty}
+              >
                 <FormattedMessage {...MSG.submitDraft} />
               </Button>
             </>
