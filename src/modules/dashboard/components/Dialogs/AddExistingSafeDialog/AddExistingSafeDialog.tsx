@@ -61,9 +61,13 @@ const AddExistingSafeDialog = ({
           return {
             colonyName,
             colonyAddress,
-            chainId,
-            safeName,
-            contractAddress,
+            safeAddresses: [
+              {
+                chainId,
+                safeName,
+                contractAddress,
+              },
+            ],
             annotationMessage,
           };
         },
@@ -82,9 +86,9 @@ const AddExistingSafeDialog = ({
         contractAddress: undefined,
       }}
       validationSchema={validationSchema}
-      submit={ActionTypes.COLONY_ACTION_ADD_EXISTING_SAFE}
-      error={ActionTypes.COLONY_ACTION_ADD_EXISTING_SAFE_ERROR}
-      success={ActionTypes.COLONY_ACTION_ADD_EXISTING_SAFE_SUCCESS}
+      submit={ActionTypes.COLONY_ACTION_MANAGE_EXISTING_SAFES}
+      error={ActionTypes.COLONY_ACTION_MANAGE_EXISTING_SAFES_ERROR}
+      success={ActionTypes.COLONY_ACTION_MANAGE_EXISTING_SAFES_SUCCESS}
       transform={transform}
       onSuccess={close}
     >
