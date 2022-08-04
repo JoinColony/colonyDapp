@@ -9,41 +9,38 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import {
-  InitialValuesType,
-  State,
-  ValuesType,
-} from '~pages/ExpenditurePage/ExpenditurePage';
+import { State, ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 
 import DeleteDraftDialog from '../../Dialogs/DeleteDraftDialog/DeleteDraftDialog';
 import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
+
 import StageItem from './StageItem';
-import styles from './Stages.css';
 import { Stage } from './constants';
+import styles from './Stages.css';
 
 const MSG = defineMessages({
   stages: {
-    id: 'dashboard.Expenditures.Stages.stages',
+    id: 'dashboard.ExpenditurePage.Stages.stages',
     defaultMessage: 'Stages',
   },
   notSaved: {
-    id: 'dashboard.Expenditures.Stages.notSaved',
+    id: 'dashboard.ExpenditurePage.Stages.notSaved',
     defaultMessage: 'Not saved',
   },
   submitDraft: {
-    id: 'dashboard.Expenditures.Stages.submitDraft',
+    id: 'dashboard.ExpenditurePage.Stages.submitDraft',
     defaultMessage: 'Submit draft',
   },
   deleteDraft: {
-    id: 'dashboard.Expenditures.Stages.deleteDraft',
+    id: 'dashboard.ExpenditurePage.Stages.deleteDraft',
     defaultMessage: 'Delete draft',
   },
   tooltipDeleteText: {
-    id: 'dashboard.Expenditures.Stages.tooltipDeleteText',
+    id: 'dashboard.ExpenditurePage.Stages.tooltipDeleteText',
     defaultMessage: 'Delete the expenditure',
   },
   tooltipShareText: {
-    id: 'dashboard.Expenditures.Stages.tooltipShareText',
+    id: 'dashboard.ExpenditurePage.Stages.tooltipShareText',
     defaultMessage: 'Share expenditure URL',
   },
   tooltipCancelText: {
@@ -70,7 +67,6 @@ const buttonStyles = {
 
 interface Props {
   states: State[];
-  handleSubmit: (values: InitialValuesType) => void;
   activeStateId?: string;
 }
 
