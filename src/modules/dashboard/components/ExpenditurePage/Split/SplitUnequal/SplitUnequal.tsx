@@ -2,6 +2,7 @@ import { FieldArray, useField, useFormikContext } from 'formik';
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import Decimal from 'decimal.js';
+import { nanoid } from 'nanoid';
 
 import { FormSection, Input, TokenSymbolSelector } from '~core/Fields';
 import { AnyUser, Colony, useMembersSubscription } from '~data/index';
@@ -51,7 +52,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
   const { tokens: colonyTokens } = colony || {};
 
   const [, { value: recipients }] = useField<
-    { user: AnyUser; amount: number; percent: number }[]
+    { user: AnyUser; amount: number; percent: number; key: string }[]
   >('split.recipients');
   const [, { value: amount }] = useField<{
     value?: string;
@@ -75,6 +76,8 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
       return acc + Number(recipient.percent);
     }, 0);
 
+    const remainingAmount = 100 - sum;
+
     const remainingStake = recipients.map((recipient) =>
       new Decimal(100 - (sum - recipient.percent)).div(100),
     );
@@ -86,6 +89,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
 
     return {
       sum,
+      remainingAmount,
       remainingStake,
       usersAmount,
     };
@@ -135,10 +139,10 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
           <div className={styles.reserveBar}>
             <div
               className={styles.reserveIndicator}
-              style={{ width: `${calculated.sum}%` }}
+              style={{ width: `${calculated.remainingAmount}%` }}
             />
           </div>
-          <span className={styles.percent}>{calculated.sum}%</span>
+          <span className={styles.percent}>{calculated.remainingAmount}%</span>
         </div>
       </FormSection>
       <FieldArray
@@ -149,7 +153,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
               return (
                 <FormSection
                   appearance={{ border: 'bottom' }}
-                  key={recipient?.user?.id || index}
+                  key={recipient?.key}
                 >
                   <div className={styles.recipientWrapper}>
                     <div>
@@ -225,7 +229,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
               );
             })}
             <Button
-              onClick={() => push(initalRecipient)}
+              onClick={() => push({ ...initalRecipient, key: nanoid() })}
               appearance={{ theme: 'blue' }}
             >
               <div className={styles.addRecipientLabel}>
