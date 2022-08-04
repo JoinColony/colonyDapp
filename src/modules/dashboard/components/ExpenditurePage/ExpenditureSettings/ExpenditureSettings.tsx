@@ -38,11 +38,11 @@ export const MSG = defineMessages({
     defaultMessage: 'Owner',
   },
   advancedPayment: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.AdvancedPayment',
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.advancedPayment',
     defaultMessage: 'Advanced payment',
   },
   staged: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.Staged',
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.staged',
     defaultMessage: 'Staged',
   },
   split: {
