@@ -88,9 +88,9 @@ const ExtensionActionButton = ({
     return (
       <ActionButton
         button={IconButton}
-        submit={getButtonAction('SUBMIT', extension.extensionId)}
-        error={getButtonAction('ERROR', extension.extensionId)}
-        success={getButtonAction('SUCCESS', extension.extensionId)}
+        submit={getButtonAction('SUBMIT')}
+        error={getButtonAction('ERROR')}
+        success={getButtonAction('SUCCESS')}
         values={{
           colonyAddress,
           extensionId: extension.extensionId,

@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 import { defineMessages } from 'react-intl';
-import classnames from 'classnames';
 
-import Icon from '~core/Icon';
 import Popover from '~core/Popover';
+import { ThreeDotsButton } from '~core/Button';
 import { Colony } from '~data/index';
 
 import MemberActionsPopover from './MemberActionsPopover';
-
-import styles from './MemberActions.css';
 
 const MSG = defineMessages({
   memberActionsTitle: {
@@ -64,21 +61,13 @@ const MemberActions = ({
       }}
     >
       {({ ref, id }) => (
-        <button
+        <ThreeDotsButton
           id={id}
-          ref={ref}
-          className={classnames(styles.actionsButton, {
-            [styles.activeDropdown]: isOpen,
-          })}
+          innerRef={ref}
+          isOpen={isOpen}
           onClick={() => setOpen(true)}
-          type="button"
-        >
-          <Icon
-            className={styles.actionsIcon}
-            name="three-dots-row"
-            title={MSG.memberActionsTitle}
-          />
-        </button>
+          title={MSG.memberActionsTitle}
+        />
       )}
     </Popover>
   );

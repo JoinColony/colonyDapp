@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { defineMessages } from 'react-intl';
 
-import classnames from 'classnames';
 import { COMMENT_MODERATION } from '~immutable/index';
-import Icon from '~core/Icon';
 import Popover from '~core/Popover';
+import { ThreeDotsButton } from '~core/Button';
 
 import { Props as CommentProps } from '../Comment';
 
 import CommentActionsPopover from './CommentActionsPopover';
-
-import styles from './CommentActions.css';
 
 const MSG = defineMessages({
   commentActionsTitle: {
@@ -77,22 +74,14 @@ const CommentActions = ({
       }}
     >
       {({ ref, id }) => (
-        <button
+        <ThreeDotsButton
           id={id}
-          ref={ref}
-          className={classnames(styles.actionsButton, {
-            [styles.activeDropdown]: isOpen,
-          })}
+          innerRef={ref}
+          isOpen={isOpen}
           onClick={() => setOpen(true)}
-          type="button"
           data-test="commentActionsButton"
-        >
-          <Icon
-            className={styles.actionsIcon}
-            name="three-dots-row"
-            title={MSG.commentActionsTitle}
-          />
-        </button>
+          title={MSG.commentActionsTitle}
+        />
       )}
     </Popover>
   );

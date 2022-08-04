@@ -474,12 +474,6 @@ export const getEventsListData = (
         toValue,
         motionId,
         vote,
-        _user: whitelistedUserAddress,
-        _status: whiteListStatus,
-        buyer,
-        numTokens,
-        activePeriod,
-        currentPeriod,
       } = JSON.parse(args || '{}');
       const checksummedColonyAddress = createAddress(colonyAddress);
       const getRecipient = () => {
@@ -492,14 +486,7 @@ export const getEventsListData = (
         return checksummedColonyAddress;
       };
       const getAgent = () => {
-        const userAddress =
-          agent ||
-          user ||
-          creator ||
-          staker ||
-          escalator ||
-          whitelistedUserAddress ||
-          buyer;
+        const userAddress = agent || user || creator || staker || escalator;
         if (userAddress) {
           return createAddress(userAddress);
         }
@@ -523,7 +510,7 @@ export const getEventsListData = (
           tokenAddress: token ? createAddress(token) : null,
           paymentId,
           decimals: parseInt(decimals, 10),
-          amount: amount || payoutRemainder || numTokens || '0',
+          amount: amount || payoutRemainder || '0',
           role,
           setTo: setTo === 'true',
           extensionHash: extensionId,
@@ -534,9 +521,6 @@ export const getEventsListData = (
           storageSlotValue: toValue || AddressZero,
           motionId,
           vote,
-          whiteListStatus: whiteListStatus === 'true',
-          activePeriod,
-          currentPeriod,
         },
       ];
     } catch (error) {

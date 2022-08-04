@@ -27,12 +27,6 @@ export default gql`
     hash: String!
   }
 
-  type KYCAddress {
-    id: String!
-    walletAddress: String!
-    status: Boolean
-  }
-
   extend type Query {
     colonyExtension(
       colonyAddress: String!

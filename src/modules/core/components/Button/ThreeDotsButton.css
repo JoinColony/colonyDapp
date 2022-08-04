@@ -1,4 +1,4 @@
-.actionsButton {
+.main {
   padding: 0;
   height: 18px;
   width: 8px;
@@ -9,16 +9,19 @@
   cursor: pointer;
 }
 
-.actionsButton:focus {
-  outline: 0;
-}
-
-.activeDropdown,
-.actionsButton:hover {
+.menuActive, .main:hover {
   border-color: var(--action-secondary);
 }
 
-.actionsIcon {
+.menuActive .icon, .main:hover .icon {
+  fill: var(--action-secondary);
+}
+
+.main:focus {
+  outline: 0;
+}
+
+.icon {
   height: 10px;
   width: 10px;
   position: absolute;
@@ -28,13 +31,12 @@
   fill: var(--temp-grey-blue-7);
 }
 
-.actionsIcon svg {
+.icon svg {
   position: absolute;
   top: 0;
   left: 0;
 }
 
-.activeDropdown .actionsIcon,
-.actionsButton:hover .actionsIcon {
+.icon:hover {
   fill: var(--action-secondary);
 }

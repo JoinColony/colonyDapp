@@ -35,6 +35,7 @@ const actionsMessageDescriptors = {
   [`action.${ColonyActions.SetUserRoles}.assignAndRemove`]: `{roles} in {fromDomain} to/from {recipient}`,
   [`action.${ColonyMotions.SetUserRolesMotion}.assignAndRemove`]: `{roles} in {fromDomain} to/from {recipient}`,
   [`action.${ColonyActions.ColonyEdit}.verifiedAddresses`]: `Address book was updated`,
+  [`action.${ColonyActions.ColonyEdit}.tokens`]: `Colony tokens were updated`,
   'action.type': `{actionType, select,
       ${ColonyActions.WrongColony} {Not part of the Colony}
       ${ColonyActions.Payment} {Payment}

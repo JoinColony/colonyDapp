@@ -1,22 +1,10 @@
-import React, { ReactNode, ReactElement } from 'react';
-import {
-  defineMessages,
-  FormattedMessage,
-  MessageDescriptor,
-} from 'react-intl';
+import { ReactElement, ReactNode } from 'react';
+import { defineMessages, MessageDescriptor } from 'react-intl';
 import { ColonyRole, Extension } from '@colony/colony-js';
-import { AddressZero } from 'ethers/constants';
 import * as yup from 'yup';
 import toFinite from 'lodash/toFinite';
 
-import Whitelist from '~dashboard/Whitelist';
-import { CustomRadioProps } from '~core/Fields';
-import ExternalLink from '~core/ExternalLink';
 import { Colony } from '~data/index';
-import { getBlockExplorerLink } from '~utils/external';
-import { DEFAULT_NETWORK_INFO } from '~constants';
-import { Address, WhitelistPolicy } from '~types/index';
-import { CM_BLOG_POST, CM_GOOGLE_SHEET, CM_DESCRIPTION } from '~externalUrls';
 
 export interface ExtensionBodyProps {
   colony: Colony;
@@ -26,55 +14,34 @@ export enum ExtensionParamType {
   Input = 'Input',
   Radio = 'Radio',
   Textarea = 'Textarea',
-  ColonyPolicySelector = 'ColonyPolicySelector',
-  TokenSelector = 'TokenSelector',
 }
 
 export interface ExtensionInitParams {
   title: string | MessageDescriptor;
-  fieldName?: string | MessageDescriptor;
   description?: string | MessageDescriptor;
   defaultValue?: string | number;
   paramName: string;
   validation: object;
   type: ExtensionParamType;
-  options?: CustomRadioProps[];
-  disabled?: (props: any) => boolean;
   complementaryLabel?: 'hours' | 'periods' | 'percent';
-  tokenLabel?: 'tokenToBeSold' | 'purchaseToken';
-  orderNumber?: number;
 }
 
 export interface ExtensionData {
-  address?: Address;
-  extensionId: Extension | 'Unknown';
+  extensionId: Extension;
   name: string | MessageDescriptor;
   header?: string | MessageDescriptor;
   descriptionShort: string | MessageDescriptor;
   descriptionLong: string | MessageDescriptor;
   descriptionExtended?: string | MessageDescriptor;
   descriptionLinks?: ReactElement[];
-  tokenContractAddress?: (address: string) => ReactElement;
   info?: string | MessageDescriptor;
   currentVersion: number;
   createdAt: number;
   neededColonyPermissions: ColonyRole[];
   initializationParams?: ExtensionInitParams[];
-  extraInitParams?: ExtensionInitParams[];
   uninstallable: boolean;
   enabledExtensionBody?: (props: ExtensionBodyProps) => ReactNode;
 }
-
-const unknownExtensionMessages = {
-  unknownName: {
-    id: 'extensions.Unknown.name',
-    defaultMessage: 'Unknown Extension',
-  },
-  unknownDescription: {
-    id: 'extensions.Unknown.description',
-    defaultMessage: 'I do not know this extension',
-  },
-};
 
 const oneTransactionPaymentMessages = {
   oneTxPaymentName: {
@@ -88,121 +55,6 @@ const oneTransactionPaymentMessages = {
   oneTxPaymentDescriptionLong: {
     id: 'extensions.OneTxPayment.descriptionLong',
     defaultMessage: 'Pay a single account one type of token.',
-  },
-};
-
-const coinMachineMessages = {
-  coinMachineName: {
-    id: 'extensions.CoinMachine.name',
-    defaultMessage: 'Coin Machine',
-  },
-  coinMachineDescriptionShort: {
-    id: 'extensions.CoinMachine.descriptionShort',
-    defaultMessage: 'A simple way to continually sell tokens.',
-  },
-  coinMachineDescriptionLong: {
-    id: 'extensions.CoinMachine.descriptionLong',
-    defaultMessage: `Coin Machine is a simple way to sell your Colony’s token.\n\nCoin Machine sells limited amounts of tokens in fixed-price batches, adjusting prices up or down in between sale periods based on recent demand.\n\nThink of it like a series of hard-capped micro-ICOs in which token price is determined by performance in prior sales: if demand for the token is high, then the price will increase, if demand decreases as price increases, then price will decrease to attract more buyers.\n\nCoin Machine sacrifices continual availability and real-time price adjustment for the simplicity of fixed price and fixed supply, thereby also sidestepping the challenges of price manipulation, volatility, and front-running.\n\nRaised funds are deposited directly to your Colony’s working capital, and therefore immediately available for your DAO to use.\n\nUse alongside Colony’s Whitelist extension to permission participation in your Coin Machine sale using your own KYC/AML process, and / or Agreement signing.\n\nFor more detail on Coin Machine, please read this introductory blog post: {link0}`,
-  },
-  coinMachineDescriptionExtended: {
-    id: 'extensions.CoinMachine.descriptionExtended',
-    defaultMessage: `\nAfter enabling Coin Machine, to start your sale simply send the quantity of the token you wish to sell to your Coin Machine’s “Contract address” (available on the right side of this screen) and the sale will start immediately. The sale will end once either all the tokens are sold, or the extension is deprecated.\n\nTo better understand how the following parameters will affect your token sale, you may copy and experiment with this {link1} to model your own sale.\n\nTo learn more about Coin Machine, please see {link2}.`,
-  },
-  coinMachineDescriptionBlogPostLink: {
-    id: 'extensions.CoinMachine.coinMachineDescriptionBlogPostLink',
-    defaultMessage: 'A simple way to sell tokens',
-  },
-  coinMachineDescriptionGoogleSheetLink: {
-    id: 'extensions.CoinMachine.coinMachineDescriptionLink',
-    defaultMessage: 'Google Sheet',
-  },
-  coinMachineDescriptionHereLink: {
-    id: 'extensions.CoinMachine.coinMachineDescriptionLink',
-    defaultMessage: 'here',
-  },
-  coinMachineTokenContractAddress: {
-    id: 'extensions.CoinMachine.tokenContractAddress',
-    defaultMessage: 'Token contract address {link}',
-  },
-  coinMachinePurchaseTokenTitle: {
-    id: 'extensions.CoinMachine.param.purchaseToken.title',
-    defaultMessage: 'Purchase Token',
-  },
-  coinMachinePurchaseTokenFieldName: {
-    id: 'extensions.CoinMachine.param.purchaseToken.fieldName',
-    defaultMessage: `Select the token you wish to receive in exchange for the token you are selling.`,
-  },
-  coinMachinePurchaseTokenDescription: {
-    id: 'extensions.CoinMachine.param.purchaseToken.description',
-    defaultMessage: `If the token is not in this list, you must add it to your colony by going to New Action / Manage Funds / Manage tokens.`,
-  },
-  coinMachineTokenToBeSoldTitle: {
-    id: 'extensions.CoinMachine.param.tokenToBeSold.title',
-    defaultMessage: 'Token To Be Sold',
-  },
-  coinMachineTokenToBeSoldFieldName: {
-    id: 'extensions.CoinMachine.param.tokenToBeSold.fieldName',
-    defaultMessage: 'Select the token you wish to sell.',
-  },
-  coinMachineTokenToBeSoldDescription: {
-    id: 'extensions.CoinMachine.param.tokenToBeSold.description',
-    defaultMessage: `If the token is not in this list, you must add it to your colony by going to New Action / Manage Funds / Manage tokens.`,
-  },
-  coinMachinePeriodLengthTitle: {
-    id: 'extensions.CoinMachine.param.periodLength.title',
-    defaultMessage: 'Period Length',
-  },
-  coinMachinePeriodLengthDescription: {
-    id: 'extensions.CoinMachine.param.periodLength.description',
-    defaultMessage: 'How long in hours each period of the sale should last.',
-  },
-  coinMachineWindowSizeTitle: {
-    id: 'extensions.CoinMachine.param.windowSize.title',
-    defaultMessage: 'Window Size',
-  },
-  coinMachineWindowSizeDescription: {
-    id: 'extensions.CoinMachine.param.windowSize.description',
-    defaultMessage: `This is the number of periods over which the moving average of your token’s price will be calculated. In the long term, 86% of the weighting will be in this window size. The higher the number, the slower the price will be to adjust.`,
-  },
-  coinMachineTargetPerPeriodTitle: {
-    id: 'extensions.CoinMachine.param.targetPerPeriod.title',
-    defaultMessage: 'Target Per Period',
-  },
-  coinMachineTargetPerPeriodDescription: {
-    id: 'extensions.CoinMachine.param.targetPerPeriod.description',
-    defaultMessage: `The number of tokens to aim to sell per period. If this target is not met, the price in the next period will be lower. If this target is exceeded, the price in the next period will be higher.`,
-  },
-  coinMachineMaxPerPeriodTitle: {
-    id: 'extensions.CoinMachine.param.maxPerPeriod.title',
-    defaultMessage: 'Maximum Per Period',
-  },
-  coinMachineMaxPerPeriodDescription: {
-    id: 'extensions.CoinMachine.param.maxPerPeriod.description',
-    defaultMessage: `The maximum number of tokens that can be sold per period. If this limit is reached, the batch will appear sold out and prospective purchasers will be advised to wait for the next period.`,
-  },
-  coinMachineUserLimitFractionTitle: {
-    id: 'extensions.CoinMachine.param.userLimitFraction.title',
-    defaultMessage: 'Per user purchase limit',
-  },
-  coinMachineUserLimitFractionDescription: {
-    id: 'extensions.CoinMachine.param.userLimitFraction.description',
-    defaultMessage: `The maximum percent of the total tokens that a single account can purchase.`,
-  },
-  coinMachineStartingPriceTitle: {
-    id: 'extensions.CoinMachine.param.startingPriceTitle.title',
-    defaultMessage: 'Starting Price',
-  },
-  coinMachineStartingPriceDescription: {
-    id: 'extensions.CoinMachine.param.startingPriceTitle.description',
-    defaultMessage: `The price at which the first period’s tokens will be sold.`,
-  },
-  coinMachineWhitelistAddressTitle: {
-    id: 'extensions.CoinMachine.param.whitelistAddress.title',
-    defaultMessage: 'Whitelist Address',
-  },
-  coinMachineWhitelistAddressDescription: {
-    id: 'extensions.CoinMachine.param.whitelistAddress.description',
-    defaultMessage: `If you are using Colony’s whitelist extension to control which accounts are permitted to purchase tokens, please enter the contract address here.`,
   },
 };
 
@@ -301,69 +153,20 @@ const votingReputationMessages = {
   },
 };
 
-const WHITELIST_TERMS_AND_CONDITIONS_LINK = 'https://colony.io/pdf/terms.pdf';
-
-const whitelistMessages = {
-  whitelistName: {
-    id: 'extensions.whitelist.name',
-    defaultMessage: 'Whitelist',
-  },
-  whitelistHeader: {
-    id: 'extensions.whitelist.header',
-    defaultMessage: 'What is the Whitelist extension?',
-  },
-  whitelistDescriptionShort: {
-    id: 'extensions.whitelist.description',
-    defaultMessage: `Curate a list of addresses permitted to participate in your Coin Machine sale.`,
-  },
-  whitelistDescriptionLong: {
-    id: 'extensions.whitelist.descriptionLong',
-    defaultMessage: `The Whitelist extension is an utility which can be used for whitelisting wallet addresses.`,
-  },
-  whitelistTermsCondition: {
-    id: 'extensions.whitelist.termsCondition',
-    defaultMessage: `Terms and Conditions.`,
-  },
-  whitelistInfo: {
-    id: 'extensions.whitelist.info',
-    defaultMessage: `The responsibility is on the issuer to ensure being compliant with the local rules. {link0}`,
-  },
-  agreementTitle: {
-    id: 'extensions.whitelist.param.agreement.title',
-    defaultMessage: 'Paste agreement',
-  },
-  agreementDescription: {
-    id: 'extensions.whitelist.param.agreement.description',
-    defaultMessage:
-      'This agreement will be displayed during whitelisting process modal ',
-  },
-  whitelistColonyPolicySelectorTitle: {
-    id: `extensions.whitelist.param.policy.title`,
-    defaultMessage: 'What is the colony policy on whitelisting?',
-  },
-  whitelistColonyPolicySelectorAgreementOnly: {
-    id: `extensions.whitelist.param.policy.option.agreementOnly`,
-    defaultMessage: 'Agreement only',
-  },
-  whitelistColonyPolicySelectorKYCOnly: {
-    id: 'extensions.whitelist.param.policy.option.KYCOnly',
-    defaultMessage: 'KYC only',
-  },
-  whitelistColonyPolicySelectorAgreementAndKYC: {
-    id: `extensions.whitelist.param.policy.option.agreementAndKYC`,
-    defaultMessage: 'KYC and agreement',
-  },
-};
-
 const MSG = defineMessages({
-  ...unknownExtensionMessages,
   ...oneTransactionPaymentMessages,
-  ...coinMachineMessages,
   ...votingReputationMessages,
-  ...whitelistMessages,
 });
 
-const extensions: { [key: string]: ExtensionData } = {
+type ExtensionDataPartialMap = Partial<
+  {
+    [E in Extension]: ExtensionData;
+  }
+>;
+
+// @NOTE List of extensions allowed for use within the Dapp
+// should be defined here.
+const extensions: ExtensionDataPartialMap = {
   OneTxPayment: {
     extensionId: Extension.OneTxPayment,
     name: MSG.oneTxPaymentName,
@@ -373,165 +176,6 @@ const extensions: { [key: string]: ExtensionData } = {
     createdAt: 1557698400000,
     neededColonyPermissions: [ColonyRole.Administration, ColonyRole.Funding],
     uninstallable: false,
-  },
-  CoinMachine: {
-    extensionId: Extension.CoinMachine,
-    name: MSG.coinMachineName,
-    descriptionShort: MSG.coinMachineDescriptionShort,
-    descriptionLong: MSG.coinMachineDescriptionLong,
-    descriptionExtended: MSG.coinMachineDescriptionExtended,
-    descriptionLinks: [
-      <ExternalLink
-        text={MSG.coinMachineDescriptionBlogPostLink}
-        href={CM_BLOG_POST}
-      />,
-      <ExternalLink
-        text={MSG.coinMachineDescriptionGoogleSheetLink}
-        href={CM_GOOGLE_SHEET}
-      />,
-      <ExternalLink
-        text={MSG.coinMachineDescriptionHereLink}
-        href={CM_DESCRIPTION}
-      />,
-    ],
-    currentVersion: 1,
-    createdAt: 1603915271852,
-    neededColonyPermissions: [ColonyRole.Root],
-    tokenContractAddress: (tokenAddress) => (
-      <FormattedMessage
-        {...MSG.coinMachineTokenContractAddress}
-        values={{
-          link: (
-            <ExternalLink
-              href={getBlockExplorerLink({
-                linkType: 'token',
-                addressOrHash: tokenAddress,
-              })}
-              text={DEFAULT_NETWORK_INFO.blockExplorerName}
-            />
-          ),
-        }}
-      />
-    ),
-    extraInitParams: [
-      {
-        paramName: 'whitelistAddress',
-        validation: yup.string().required(),
-        defaultValue: AddressZero,
-        title: MSG.coinMachineWhitelistAddressTitle,
-        description: MSG.coinMachineWhitelistAddressDescription,
-        type: ExtensionParamType.Input,
-        orderNumber: 9,
-      },
-      {
-        paramName: 'tokenToBeSold',
-        validation: yup.string().required(),
-        defaultValue: AddressZero,
-        title: MSG.coinMachineTokenToBeSoldTitle,
-        fieldName: MSG.coinMachineTokenToBeSoldFieldName,
-        description: MSG.coinMachineTokenToBeSoldDescription,
-        type: ExtensionParamType.TokenSelector,
-        orderNumber: 1,
-      },
-      {
-        paramName: 'purchaseToken',
-        validation: yup.string().required(),
-        defaultValue: AddressZero,
-        title: MSG.coinMachinePurchaseTokenTitle,
-        fieldName: MSG.coinMachinePurchaseTokenFieldName,
-        description: MSG.coinMachinePurchaseTokenDescription,
-        type: ExtensionParamType.TokenSelector,
-        orderNumber: 2,
-      },
-    ],
-    initializationParams: [
-      {
-        paramName: 'periodLength',
-        validation: yup
-          .number()
-          .transform((value) => toFinite(value))
-          .positive()
-          .required(),
-        title: MSG.coinMachinePeriodLengthTitle,
-        description: MSG.coinMachinePeriodLengthDescription,
-        defaultValue: 1,
-        type: ExtensionParamType.Input,
-        complementaryLabel: 'hours',
-        orderNumber: 3,
-      },
-      {
-        paramName: 'windowSize',
-        validation: yup
-          .number()
-          .transform((value) => toFinite(value))
-          .positive()
-          .required(),
-        title: MSG.coinMachineWindowSizeTitle,
-        description: MSG.coinMachineWindowSizeDescription,
-        defaultValue: 24,
-        type: ExtensionParamType.Input,
-        complementaryLabel: 'periods',
-        orderNumber: 4,
-      },
-      {
-        paramName: 'targetPerPeriod',
-        validation: yup
-          .number()
-          .transform((value) => toFinite(value))
-          .positive()
-          .required(),
-        title: MSG.coinMachineTargetPerPeriodTitle,
-        description: MSG.coinMachineTargetPerPeriodDescription,
-        defaultValue: 200000,
-        type: ExtensionParamType.Input,
-        tokenLabel: 'tokenToBeSold',
-        orderNumber: 5,
-      },
-      {
-        paramName: 'maxPerPeriod',
-        validation: yup
-          .number()
-          .transform((value) => toFinite(value))
-          .positive()
-          .required(),
-        title: MSG.coinMachineMaxPerPeriodTitle,
-        description: MSG.coinMachineMaxPerPeriodDescription,
-        defaultValue: 400000,
-        type: ExtensionParamType.Input,
-        tokenLabel: 'tokenToBeSold',
-        orderNumber: 6,
-      },
-      {
-        paramName: 'userLimitFraction',
-        validation: yup
-          .number()
-          .transform((value) => toFinite(value))
-          .positive()
-          .required()
-          .max(100, () => MSG.votingReputationLessThan100Error),
-        title: MSG.coinMachineUserLimitFractionTitle,
-        description: MSG.coinMachineUserLimitFractionDescription,
-        defaultValue: 100,
-        type: ExtensionParamType.Input,
-        complementaryLabel: 'percent',
-        orderNumber: 7,
-      },
-      {
-        paramName: 'startingPrice',
-        validation: yup
-          .number()
-          .transform((value) => toFinite(value))
-          .min(0)
-          .required(),
-        title: MSG.coinMachineStartingPriceTitle,
-        description: MSG.coinMachineStartingPriceDescription,
-        defaultValue: 0.1,
-        type: ExtensionParamType.Input,
-        tokenLabel: 'purchaseToken',
-        orderNumber: 8,
-      },
-    ],
-    uninstallable: true,
   },
   VotingReputation: {
     extensionId: Extension.VotingReputation,
@@ -662,89 +306,6 @@ const extensions: { [key: string]: ExtensionData } = {
       },
     ],
     uninstallable: true,
-  },
-  Whitelist: {
-    extensionId: Extension.Whitelist,
-    name: MSG.whitelistName,
-    header: MSG.whitelistHeader,
-    descriptionShort: MSG.whitelistDescriptionShort,
-    descriptionLong: MSG.whitelistDescriptionLong,
-    info: MSG.whitelistInfo,
-    descriptionLinks: [
-      <ExternalLink
-        text={MSG.whitelistTermsCondition}
-        href={WHITELIST_TERMS_AND_CONDITIONS_LINK}
-      />,
-    ],
-    currentVersion: 1,
-    createdAt: 1603915271852,
-    neededColonyPermissions: [],
-    enabledExtensionBody: (props) => Whitelist(props),
-    initializationParams: [
-      {
-        paramName: 'policy',
-        validation: yup.number().required(),
-        defaultValue: '',
-        title: MSG.whitelistColonyPolicySelectorTitle,
-        type: ExtensionParamType.ColonyPolicySelector,
-        options: [
-          {
-            value: WhitelistPolicy.AgreementOnly,
-            label: MSG.whitelistColonyPolicySelectorAgreementOnly,
-            name: 'policy',
-            appearance: {
-              theme: 'greyWithCircle',
-            },
-            checked: false,
-          },
-          {
-            value: WhitelistPolicy.KycOnly,
-            label: MSG.whitelistColonyPolicySelectorKYCOnly,
-            name: 'policy',
-            appearance: {
-              theme: 'greyWithCircle',
-            },
-            checked: false,
-          },
-          {
-            value: WhitelistPolicy.KycAndAgreement,
-            label: MSG.whitelistColonyPolicySelectorAgreementAndKYC,
-            name: 'policy',
-            appearance: {
-              theme: 'greyWithCircle',
-            },
-            checked: false,
-          },
-        ],
-      },
-      {
-        paramName: 'agreement',
-        validation: yup.string().when('policy', {
-          is: (policy) =>
-            policy === WhitelistPolicy.AgreementOnly ||
-            policy === WhitelistPolicy.KycAndAgreement,
-          then: yup.string().required().min(100),
-          otherwise: false,
-        }),
-        defaultValue: undefined,
-        title: MSG.agreementTitle,
-        description: MSG.agreementDescription,
-        type: ExtensionParamType.Textarea,
-        disabled: (values) =>
-          !values.policy || values.policy === WhitelistPolicy.KycOnly,
-      },
-    ],
-    uninstallable: true,
-  },
-  Unknown: {
-    extensionId: 'Unknown',
-    createdAt: 0,
-    name: MSG.unknownName,
-    descriptionShort: MSG.unknownDescription,
-    descriptionLong: MSG.unknownDescription,
-    currentVersion: 0,
-    neededColonyPermissions: [],
-    uninstallable: false,
   },
 };
 

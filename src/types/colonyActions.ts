@@ -69,7 +69,6 @@ export enum ColonyAndExtensionsEvents {
   TokenLockingAddressSet = 'TokenLockingAddressSet',
   MiningCycleResolverSet = 'MiningCycleResolverSet',
   NetworkFeeInverseSet = 'NetworkFeeInverseSet',
-  TokenWhitelisted = 'TokenWhitelisted',
   ColonyVersionAdded = 'ColonyVersionAdded',
   MetaColonyCreated = 'MetaColonyCreated',
   ColonyAdded = 'ColonyAdded',
@@ -106,11 +105,6 @@ export enum ColonyAndExtensionsEvents {
    */
   OneTxPaymentMade = 'OneTxPaymentMade',
   /*
-   * Extension: Coin Machine events
-   */
-  TokensBought = 'TokensBought',
-  PeriodUpdated = 'PeriodUpdated',
-  /*
    * Motion events
    */
   MotionCreated = 'MotionCreated',
@@ -122,11 +116,6 @@ export enum ColonyAndExtensionsEvents {
   MotionRewardClaimed = 'MotionRewardClaimed',
   MotionEventSet = 'MotionEventSet',
   ObjectionRaised = 'ObjectionRaised',
-  /*
-   * Extension: Whitelist events
-   */
-  UserApproved = 'UserApproved',
-  AgreementSigned = 'AgreementSigned',
 }
 
 export interface FormattedAction {

@@ -54,12 +54,6 @@ export default new InMemoryCache({
         actionsThatNeedAttention: {
           merge: false,
         },
-        whitelistedUsers: {
-          merge: false,
-        },
-        kycaddresses: {
-          merge: false,
-        },
         bannedUsers: {
           merge: false,
         },
