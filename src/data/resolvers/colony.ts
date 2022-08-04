@@ -49,6 +49,7 @@ import {
   getPayoutClaimedTransfers,
   getColonyUnclaimedTransfers,
 } from './transactions';
+import { sortMetdataHistory } from '~utils/colonyActions';
 
 export const getLatestSubgraphBlock = async (
   apolloClient: ApolloClient<object>,
@@ -94,8 +95,12 @@ export const getProcessedColony = async (
   let avatarObject: { image: string | null } | null = { image: null };
   let tokenAddresses: Array<Address> = [];
 
-  const prevIpfsHash = metadataHistory.slice(-1).pop();
-  const ipfsHash = metadata || prevIpfsHash?.metadata || null;
+  const sortedMetdataHistory = sortMetdataHistory(metadataHistory);
+  const currentMetadataIndex = sortedMetdataHistory.findIndex(
+    ({ metadata: metadataHash }) => metadataHash === metadata,
+  );
+  const prevMetadata = sortedMetdataHistory[currentMetadataIndex - 1];
+  const ipfsHash = metadata || prevMetadata?.metadata || null;
 
   /*
    * Fetch the colony's metadata

@@ -110,6 +110,7 @@ const GOERLI_NETWORK: NetworkInfo = {
   tokenExplorerLink: 'https://goerli.etherscan.io/tokens',
   contractAddressLink: 'https://goerli.etherscan.io/address',
   rpcUrl: 'https://goerli.infura.io/v3',
+  gnosisTxService: 'https://safe-transaction.goerli.gnosis.io/',
 };
 
 const ARBITRUM_NETWORK: NetworkInfo = {
@@ -160,6 +161,14 @@ const POLYGON_NETWORK: NetworkInfo = {
   gnosisTxService: 'https://safe-transaction.polygon.gnosis.io/',
 };
 
+const RINKEBY_TEST_NETWORK: NetworkInfo = {
+  name: 'Rinkeby Testnet',
+  chainId: 4,
+  shortName: 'RIN',
+  contractAddressLink: '',
+  gnosisTxService: 'https://safe-transaction.rinkeby.gnosis.io/',
+};
+
 /*
  * @NOTE Local Network
  * ChainId is manually set by us, since ganache randomizes it on each start
@@ -208,6 +217,7 @@ export const GNOSIS_SAFE_NETWORKS: NetworkInfo[] = [
   BINANCE_NETWORK,
   OPTIMISM_NETWORK,
   POLYGON_NETWORK,
+  RINKEBY_TEST_NETWORK,
 ];
 
 export const DEFAULT_NETWORK_TOKEN = TOKEN_DATA[DEFAULT_NETWORK];

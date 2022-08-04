@@ -1916,7 +1916,10 @@ export type SubgraphColonyQueryVariables = Exact<{
 
 export type SubgraphColonyQuery = { colony: (
     Pick<SubgraphColony, 'id' | 'colonyChainId' | 'ensName' | 'metadata'>
-    & { metadataHistory: Array<Pick<SubgraphColonyMetadata, 'id' | 'metadata'>>, token: (
+    & { metadataHistory: Array<(
+      Pick<SubgraphColonyMetadata, 'id' | 'metadata'>
+      & { transaction: { block: Pick<SubgraphBlock, 'timestamp'> } }
+    )>, token: (
       Pick<SubgraphToken, 'decimals' | 'symbol'>
       & { tokenAddress: SubgraphToken['id'] }
     ), extensions?: Maybe<Array<(
@@ -1932,7 +1935,10 @@ export type SubgraphColoniesQueryVariables = Exact<{
 
 export type SubgraphColoniesQuery = { colonies: Array<(
     Pick<SubgraphColony, 'id' | 'colonyChainId' | 'ensName' | 'metadata'>
-    & { metadataHistory: Array<Pick<SubgraphColonyMetadata, 'id' | 'metadata'>>, token: (
+    & { metadataHistory: Array<(
+      Pick<SubgraphColonyMetadata, 'id' | 'metadata'>
+      & { transaction: { block: Pick<SubgraphBlock, 'timestamp'> } }
+    )>, token: (
       Pick<SubgraphToken, 'decimals' | 'symbol'>
       & { tokenAddress: SubgraphToken['id'] }
     ) }
@@ -4678,6 +4684,11 @@ export const SubgraphColonyDocument = gql`
     metadataHistory {
       id
       metadata
+      transaction {
+        block {
+          timestamp
+        }
+      }
     }
     token {
       tokenAddress: id
@@ -4727,6 +4738,11 @@ export const SubgraphColoniesDocument = gql`
     metadataHistory {
       id
       metadata
+      transaction {
+        block {
+          timestamp
+        }
+      }
     }
     token {
       tokenAddress: id

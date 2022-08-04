@@ -13,6 +13,7 @@ import {
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 
+import { uploadIfpsAnnotation } from '../utils';
 import {
   createTransaction,
   createTransactionChannels,
@@ -24,43 +25,36 @@ import {
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
-import { updateColonyDisplayCache, uploadIfpsAnnotation } from '../utils';
 
-function* editColonyAction({
+function* addExistingSafeAction({
   payload: {
-    colonyAddress,
     colonyName,
-    colonyDisplayName,
-    colonyAvatarImage,
-    colonyAvatarHash,
-    hasAvatarChanged,
-    colonyTokens = [],
+    colonyAddress,
+    chainId,
+    safeName,
+    contractAddress,
     annotationMessage,
   },
   meta: { id: metaId, history },
   meta,
-}: Action<ActionTypes.COLONY_ACTION_EDIT_COLONY>) {
+}: Action<ActionTypes.COLONY_ACTION_ADD_EXISTING_SAFE>) {
   let txChannel;
   try {
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
     const ipfsWithFallback = TEMP_getContext(ContextModule.IPFSWithFallback);
 
-    /*
-     * Validate the required values for the payment
-     */
-    if (!colonyDisplayName && colonyDisplayName !== null) {
-      throw new Error('A colony name is required in order to edit the colony');
+    if (!contractAddress) {
+      throw new Error('A Safe contract address is required.');
     }
 
     txChannel = yield call(getTxChannel, metaId);
-
-    const batchKey = 'editColonyAction';
+    const batchKey = 'addExistingSafe';
     const {
-      editColonyAction: editColony,
-      annotateEditColonyAction: annotateEditColony,
+      addExistingSafeAction: addExistingSafe,
+      annotateAddExistingSafeAction: annotateAddExistingSafe,
     } = yield createTransactionChannels(metaId, [
-      'editColonyAction',
-      'annotateEditColonyAction',
+      'addExistingSafeAction',
+      'annotateAddExistingSafeAction',
     ]);
 
     const createGroupTransaction = ({ id, index }, config) =>
@@ -73,7 +67,7 @@ function* editColonyAction({
         },
       });
 
-    yield createGroupTransaction(editColony, {
+    yield createGroupTransaction(addExistingSafe, {
       context: ClientType.ColonyClient,
       methodName: 'editColony',
       identifier: colonyAddress,
@@ -82,7 +76,7 @@ function* editColonyAction({
     });
 
     if (annotationMessage) {
-      yield createGroupTransaction(annotateEditColony, {
+      yield createGroupTransaction(annotateAddExistingSafe, {
         context: ClientType.ColonyClient,
         methodName: 'annotateTransaction',
         identifier: colonyAddress,
@@ -91,40 +85,20 @@ function* editColonyAction({
       });
     }
 
-    yield takeFrom(editColony.channel, ActionTypes.TRANSACTION_CREATED);
-
+    yield takeFrom(addExistingSafe.channel, ActionTypes.TRANSACTION_CREATED);
     if (annotationMessage) {
       yield takeFrom(
-        annotateEditColony.channel,
+        annotateAddExistingSafe.channel,
         ActionTypes.TRANSACTION_CREATED,
       );
     }
 
-    yield put(transactionPending(editColony.id));
-
-    /*
-     * Upload colony metadata to IPFS
-     *
-     * @NOTE Only (re)upload the avatar if it has changed, otherwise just use
-     * the old hash.
-     * This cuts down on some transaction signing wait time, since IPFS uplaods
-     * tend to be on the slower side :(
-     */
-    let colonyAvatarIpfsHash = null;
-    if (colonyAvatarImage && hasAvatarChanged) {
-      colonyAvatarIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          image: colonyAvatarImage,
-        }),
-      );
-    }
+    yield put(transactionPending(addExistingSafe.id));
 
     /*
      * Fetch colony data from the subgraph
      * And destructure the metadata hash.
      */
-
     const {
       data: {
         colony: { metadata: currentMetadataIPFSHash },
@@ -140,63 +114,66 @@ function* editColonyAction({
       fetchPolicy: 'network-only',
     });
 
-    let updatedColonyMetadata = {
-      colonyDisplayName,
-      colonyAvatarHash: hasAvatarChanged
-        ? colonyAvatarIpfsHash
-        : colonyAvatarHash,
-      colonyTokens,
-    };
+    let updatatedColonyMetadata: any = {};
+    const safeData = { safeName, contractAddress, chainId };
 
     /*
-     * If metadata exists,
-     * fetch most recent metadata stored in IPFS.
+     * If there isn't metadata in the colony ...
      */
-
-    if (currentMetadataIPFSHash) {
+    if (!currentMetadataIPFSHash) {
+      /*
+       * ... add the safe to a new metadata object.
+       */
+      updatatedColonyMetadata = { colonySafes: [safeData] };
+    } else {
+      /*
+       *  ... otherwise, fetch the metadata from IPFS...
+       */
       const currentMetadata = yield call(
         ipfsWithFallback.getString,
         currentMetadataIPFSHash,
       );
-      const currentColonyMetadata = JSON.parse(currentMetadata);
-      updatedColonyMetadata = {
-        ...currentColonyMetadata,
-        ...updatedColonyMetadata,
+
+      const colonyMetadata = JSON.parse(currentMetadata);
+      const safes = colonyMetadata.colonySafes;
+      updatatedColonyMetadata = {
+        ...colonyMetadata,
+        colonySafes: safes
+          ? [...colonyMetadata.colonySafes, safeData]
+          : [safeData],
       };
     }
 
     /*
-     * Upload updated colony metadata to IPFS
+     * Upload updated metadata object to IPFS
      */
-
-    const colonyMetadataIpfsHash = yield call(
+    const updatedColonyMetadataIpfsHash = yield call(
       ipfsUpload,
-      JSON.stringify({
-        ...updatedColonyMetadata,
-      }),
+      JSON.stringify(updatatedColonyMetadata),
     );
 
     yield put(
-      transactionAddParams(editColony.id, [
-        (colonyMetadataIpfsHash as unknown) as string,
+      transactionAddParams(addExistingSafe.id, [
+        (updatedColonyMetadataIpfsHash as unknown) as string,
       ]),
     );
 
-    yield put(transactionReady(editColony.id));
+    yield put(transactionReady(addExistingSafe.id));
 
     const {
       payload: { hash: txHash },
     } = yield takeFrom(
-      editColony.channel,
+      addExistingSafe.channel,
       ActionTypes.TRANSACTION_HASH_RECEIVED,
     );
-    yield takeFrom(editColony.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    yield takeFrom(addExistingSafe.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
-      yield put(transactionPending(annotateEditColony.id));
+      yield put(transactionPending(annotateAddExistingSafe.id));
 
       /*
-       * Upload annotation metadata to IPFS
+       * Upload annotationMessage to IPFS
        */
       const annotationMessageIpfsHash = yield call(
         uploadIfpsAnnotation,
@@ -204,16 +181,16 @@ function* editColonyAction({
       );
 
       yield put(
-        transactionAddParams(annotateEditColony.id, [
+        transactionAddParams(annotateAddExistingSafe.id, [
           txHash,
           annotationMessageIpfsHash,
         ]),
       );
 
-      yield put(transactionReady(annotateEditColony.id));
+      yield put(transactionReady(annotateAddExistingSafe.id));
 
       yield takeFrom(
-        annotateEditColony.channel,
+        annotateAddExistingSafe.channel,
         ActionTypes.TRANSACTION_SUCCEEDED,
       );
     }
@@ -229,19 +206,8 @@ function* editColonyAction({
       },
     );
 
-    /*
-     * Update apollo's cache for the current colony to reflect the recently
-     * made changes
-     */
-    yield updateColonyDisplayCache(
-      colonyAddress,
-      colonyDisplayName,
-      colonyAvatarIpfsHash,
-      colonyAvatarImage as string | null,
-    );
-
     yield put<AllActions>({
-      type: ActionTypes.COLONY_ACTION_EDIT_COLONY_SUCCESS,
+      type: ActionTypes.COLONY_ACTION_ADD_EXISTING_SAFE_SUCCESS,
       meta,
     });
 
@@ -250,7 +216,7 @@ function* editColonyAction({
     }
   } catch (error) {
     return yield putError(
-      ActionTypes.COLONY_ACTION_EDIT_COLONY_ERROR,
+      ActionTypes.COLONY_ACTION_ADD_EXISTING_SAFE_ERROR,
       error,
       meta,
     );
@@ -260,6 +226,9 @@ function* editColonyAction({
   return null;
 }
 
-export default function* editColonyActionSaga() {
-  yield takeEvery(ActionTypes.COLONY_ACTION_EDIT_COLONY, editColonyAction);
+export default function* addExistingSafeSaga() {
+  yield takeEvery(
+    ActionTypes.COLONY_ACTION_ADD_EXISTING_SAFE,
+    addExistingSafeAction,
+  );
 }

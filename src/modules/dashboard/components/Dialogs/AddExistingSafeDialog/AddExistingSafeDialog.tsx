@@ -4,7 +4,7 @@ import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
-import { ActionForm } from '~core/Fields';
+import { ActionForm, SelectOption } from '~core/Fields';
 import { GNOSIS_SAFE_NETWORKS } from '~modules/constants';
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
@@ -34,7 +34,6 @@ const AddExistingSafeDialog = ({
   close,
 }: Props) => {
   const history = useHistory();
-
   const validationSchema = yup.object().shape({
     chainId: yup.string().required(),
     contractAddress: yup.string().address().required(),
@@ -43,33 +42,32 @@ const AddExistingSafeDialog = ({
   });
 
   // Create array for Network options
-  const networkOptions = GNOSIS_SAFE_NETWORKS.map((option) => {
+  const networkOptions: SelectOption[] = GNOSIS_SAFE_NETWORKS.map((option) => {
     return {
       label: option.name,
       value: option.chainId.toString(),
     };
   });
 
-  // @TODO change this accordingly when wiring up
   const transform = useCallback(
     pipe(
-      mapPayload((payload) => {
-        const {
+      mapPayload(
+        ({
+          chainId,
           contractAddress,
+          safeName,
           annotation: annotationMessage,
-          chainId,
-          safeName,
-        } = payload;
-
-        return {
-          colonyName,
-          colonyAddress,
-          chainId,
-          safeName,
-          contractAddress,
-          annotationMessage,
-        };
-      }),
+        }) => {
+          return {
+            colonyName,
+            colonyAddress,
+            chainId,
+            safeName,
+            contractAddress,
+            annotationMessage,
+          };
+        },
+      ),
       withMeta({ history }),
     ),
     [],
@@ -84,18 +82,17 @@ const AddExistingSafeDialog = ({
         contractAddress: undefined,
       }}
       validationSchema={validationSchema}
-      submit={ActionTypes.COLONY_ACTION_GENERIC}
-      error={ActionTypes.COLONY_ACTION_GENERIC}
-      success={ActionTypes.COLONY_ACTION_GENERIC}
+      submit={ActionTypes.COLONY_ACTION_ADD_EXISTING_SAFE}
+      error={ActionTypes.COLONY_ACTION_ADD_EXISTING_SAFE_ERROR}
+      success={ActionTypes.COLONY_ACTION_ADD_EXISTING_SAFE_SUCCESS}
       transform={transform}
       onSuccess={close}
     >
-      {(status, values: FormikProps<FormValues>) => {
+      {(formProps: FormikProps<FormValues>) => {
         return (
           <Dialog cancel={cancel}>
             <DialogForm
-              {...values}
-              status={status}
+              {...formProps}
               networkOptions={networkOptions}
               back={() => callStep(prevStep)}
             />
