@@ -28,28 +28,36 @@ import {
   transactionAddParams,
 } from '../../../core/actionCreators';
 
-function* removeExistingSafesAction({
-  payload: { colonyName, colonyAddress, safeAddresses, annotationMessage },
+function* manageExistingSafesAction({
+  payload: {
+    colonyName,
+    colonyAddress,
+    safeAddresses,
+    annotationMessage,
+    isRemovingSafes,
+  },
   meta: { id: metaId, history },
   meta,
-}: Action<ActionTypes.COLONY_ACTION_REMOVE_EXISTING_SAFES>) {
+}: Action<ActionTypes.ACTION_MANAGE_EXISTING_SAFES>) {
   let txChannel;
   try {
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
     const ipfsWithFallback = TEMP_getContext(ContextModule.IPFSWithFallback);
 
     if (isEmpty(safeAddresses)) {
-      throw new Error('A list with safe addresses is required to remove safes');
+      throw new Error('A list with safe addresses is required to manage safes');
     }
 
     txChannel = yield call(getTxChannel, metaId);
-    const batchKey = 'removeExistingSafes';
+    const batchKey = !isRemovingSafes
+      ? 'addExistingSafe'
+      : 'removeExistingSafes';
     const {
-      removeExistingSafesAction: removeExistingSafes,
-      annotateRemoveExistingSafesAction: annotateRemoveExistingSafes,
+      manageExistingSafesAction: manageExistingSafes,
+      annotateManageExistingSafesAction: annotateManageExistingSafes,
     } = yield createTransactionChannels(metaId, [
-      'removeExistingSafesAction',
-      'annotateRemoveExistingSafesAction',
+      'manageExistingSafesAction',
+      'annotateManageExistingSafesAction',
     ]);
 
     const createGroupTransaction = ({ id, index }, config) =>
@@ -62,7 +70,7 @@ function* removeExistingSafesAction({
         },
       });
 
-    yield createGroupTransaction(removeExistingSafes, {
+    yield createGroupTransaction(manageExistingSafes, {
       context: ClientType.ColonyClient,
       methodName: 'editColony',
       identifier: colonyAddress,
@@ -71,7 +79,7 @@ function* removeExistingSafesAction({
     });
 
     if (annotationMessage) {
-      yield createGroupTransaction(annotateRemoveExistingSafes, {
+      yield createGroupTransaction(annotateManageExistingSafes, {
         context: ClientType.ColonyClient,
         methodName: 'annotateTransaction',
         identifier: colonyAddress,
@@ -81,17 +89,17 @@ function* removeExistingSafesAction({
     }
 
     yield takeFrom(
-      removeExistingSafes.channel,
+      manageExistingSafes.channel,
       ActionTypes.TRANSACTION_CREATED,
     );
     if (annotationMessage) {
       yield takeFrom(
-        annotateRemoveExistingSafes.channel,
+        annotateManageExistingSafes.channel,
         ActionTypes.TRANSACTION_CREATED,
       );
     }
 
-    yield put(transactionPending(removeExistingSafes.id));
+    yield put(transactionPending(manageExistingSafes.id));
 
     /*
      * Fetch colony data from the subgraph
@@ -120,16 +128,27 @@ function* removeExistingSafesAction({
 
     const colonyMetadata = JSON.parse(currentMetadata);
 
-    const updatedColonySafes = colonyMetadata.colonySafes.filter(
-      (safe: ColonySafe) =>
-        !safeAddresses.some(
-          (safeAddress) => safeAddress === safe.contractAddress,
-        ),
-    );
-    const updatedColonyMetadata = {
-      ...colonyMetadata,
-      colonySafes: updatedColonySafes,
-    };
+    let updatedColonyMetadata: any = {};
+
+    if (!isRemovingSafes) {
+      updatedColonyMetadata = {
+        ...colonyMetadata,
+        colonySafes: colonyMetadata.colonySafes
+          ? [...colonyMetadata.colonySafes, ...safeAddresses]
+          : safeAddresses,
+      };
+    } else {
+      const updatedColonySafes = colonyMetadata.colonySafes.filter(
+        (safe: ColonySafe) =>
+          !safeAddresses.some(
+            (safeAddress) => safeAddress === safe.contractAddress,
+          ),
+      );
+      updatedColonyMetadata = {
+        ...colonyMetadata,
+        colonySafes: updatedColonySafes,
+      };
+    }
 
     /*
      * Upload updated metadata object to IPFS
@@ -141,27 +160,27 @@ function* removeExistingSafesAction({
     );
 
     yield put(
-      transactionAddParams(removeExistingSafes.id, [
+      transactionAddParams(manageExistingSafes.id, [
         (updatedColonyMetadataIpfsHash as unknown) as string,
       ]),
     );
 
-    yield put(transactionReady(removeExistingSafes.id));
+    yield put(transactionReady(manageExistingSafes.id));
 
     const {
       payload: { hash: txHash },
     } = yield takeFrom(
-      removeExistingSafes.channel,
+      manageExistingSafes.channel,
       ActionTypes.TRANSACTION_HASH_RECEIVED,
     );
 
     yield takeFrom(
-      removeExistingSafes.channel,
+      manageExistingSafes.channel,
       ActionTypes.TRANSACTION_SUCCEEDED,
     );
 
     if (annotationMessage) {
-      yield put(transactionPending(annotateRemoveExistingSafes.id));
+      yield put(transactionPending(annotateManageExistingSafes.id));
 
       /*
        * Upload annotationMessage to IPFS
@@ -172,16 +191,16 @@ function* removeExistingSafesAction({
       );
 
       yield put(
-        transactionAddParams(annotateRemoveExistingSafes.id, [
+        transactionAddParams(annotateManageExistingSafes.id, [
           txHash,
           annotationMessageIpfsHash,
         ]),
       );
 
-      yield put(transactionReady(annotateRemoveExistingSafes.id));
+      yield put(transactionReady(annotateManageExistingSafes.id));
 
       yield takeFrom(
-        annotateRemoveExistingSafes.channel,
+        annotateManageExistingSafes.channel,
         ActionTypes.TRANSACTION_SUCCEEDED,
       );
     }
@@ -198,7 +217,7 @@ function* removeExistingSafesAction({
     );
 
     yield put<AllActions>({
-      type: ActionTypes.COLONY_ACTION_REMOVE_EXISTING_SAFES_SUCCESS,
+      type: ActionTypes.ACTION_MANAGE_EXISTING_SAFES_SUCCESS,
       meta,
     });
 
@@ -207,7 +226,7 @@ function* removeExistingSafesAction({
     }
   } catch (error) {
     return yield putError(
-      ActionTypes.COLONY_ACTION_REMOVE_EXISTING_SAFES_ERROR,
+      ActionTypes.ACTION_MANAGE_EXISTING_SAFES_ERROR,
       error,
       meta,
     );
@@ -219,7 +238,7 @@ function* removeExistingSafesAction({
 
 export default function* addExistingSafeSaga() {
   yield takeEvery(
-    ActionTypes.COLONY_ACTION_REMOVE_EXISTING_SAFES,
-    removeExistingSafesAction,
+    ActionTypes.ACTION_MANAGE_EXISTING_SAFES,
+    manageExistingSafesAction,
   );
 }

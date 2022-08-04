@@ -40,6 +40,7 @@ const RemoveSafeDialog = ({
           colonyAddress: colony.colonyAddress,
           safeAddresses: safeList,
           annotationMessage,
+          isRemovingSafes: true,
         };
       }),
       withMeta({ history }),
@@ -53,9 +54,9 @@ const RemoveSafeDialog = ({
         // if there's only 1 safe then that safe is already checked.
         safeList: safes.length === 1 ? [safes[0].contractAddress] : [],
       }}
-      submit={ActionTypes.COLONY_ACTION_REMOVE_EXISTING_SAFES}
-      error={ActionTypes.COLONY_ACTION_REMOVE_EXISTING_SAFES_ERROR}
-      success={ActionTypes.COLONY_ACTION_REMOVE_EXISTING_SAFES_SUCCESS}
+      submit={ActionTypes.ACTION_MANAGE_EXISTING_SAFES}
+      error={ActionTypes.ACTION_MANAGE_EXISTING_SAFES_ERROR}
+      success={ActionTypes.ACTION_MANAGE_EXISTING_SAFES_SUCCESS}
       onSuccess={close}
       transform={transform}
     >
