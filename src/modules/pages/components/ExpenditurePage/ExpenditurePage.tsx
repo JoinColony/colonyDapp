@@ -8,8 +8,8 @@ import {
 import { nanoid } from 'nanoid';
 import { RouteChildrenProps, useParams } from 'react-router';
 import { Formik } from 'formik';
-
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+
 import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
 import { useColonyFromNameQuery } from '~data/generated';
 import Stages from '~dashboard/ExpenditurePage/Stages';
@@ -17,10 +17,8 @@ import TitleDescriptionSection, {
   LockedTitleDescriptionSection,
 } from '~dashboard/ExpenditurePage/TitleDescriptionSection';
 import { getMainClasses } from '~utils/css';
-import styles from './ExpenditurePage.css';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import { SpinnerLoader } from '~core/Preloaders';
-import ExpenditureForm from './ExpenditureForm';
 import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
 import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import { useLoggedInUser } from '~data/helpers';
@@ -28,6 +26,9 @@ import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
 import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
 import { useDialog } from '~core/Dialog';
 import EscrowFundsDialog from '~dashboard/Dialogs/EscrowFundsDialog';
+
+import ExpenditureForm from './ExpenditureForm';
+import styles from './ExpenditurePage.css';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -117,6 +118,12 @@ const validationSchema = yup.object().shape({
   ),
   title: yup.string().min(3).required(),
   description: yup.string().max(4000),
+  split: yup.object().when('expenditure', {
+    is: (expenditure) => expenditure === 'split',
+    then: yup.object().shape({
+      unequal: yup.boolean().required(),
+    }),
+  }),
 });
 
 export interface State {
@@ -134,6 +141,7 @@ export interface ValuesType {
   recipients: Recipient[];
   title: string;
   description?: string;
+  split: { unequal: boolean };
 }
 
 const initialValues = {
@@ -143,6 +151,7 @@ const initialValues = {
   owner: undefined,
   title: undefined,
   description: undefined,
+  split: { unequal: true },
 };
 
 export type InitialValuesType = typeof initialValues;
@@ -162,7 +171,6 @@ const ExpenditurePage = ({ match }: Props) => {
 
   const [isFormEditable, setFormEditable] = useState(true);
   const [formValues, setFormValues] = useState<ValuesType>();
-  const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStateId, setActiveStateId] = useState<string>();
   const sidebarRef = useRef<HTMLElement>(null);
 
@@ -194,7 +202,6 @@ const ExpenditurePage = ({ match }: Props) => {
   }, [colonyData, formValues, loggedInUser]);
 
   const handleSubmit = useCallback((values) => {
-    setShouldValidate(true);
     setActiveStateId(Stage.Draft);
 
     if (values) {
@@ -277,20 +284,11 @@ const ExpenditurePage = ({ match }: Props) => {
 
   const { expenditure, filteredDomainId } = formValues || {};
 
-  const handleValidate = useCallback(() => {
-    if (!shouldValidate) {
-      setShouldValidate(true);
-    }
-  }, [shouldValidate]);
-
   return isFormEditable ? (
     <Formik
       initialValues={initialValuesData}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
-      validateOnBlur={shouldValidate}
-      validateOnChange={shouldValidate}
-      validate={handleValidate}
       enableReinitialize
     >
       <div className={getMainClasses({}, styles)}>

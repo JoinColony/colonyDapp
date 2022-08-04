@@ -14,33 +14,49 @@ import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import UserMention from '~core/UserMention';
 import ColorTag, { Color } from '~core/ColorTag';
 import DomainDropdown from '~core/DomainDropdown';
+import { ExpenditureTypes } from '~pages/ExpenditurePage/types';
 
 import BalanceSelect from './BalanceSelect';
 import { tokens as tokensData } from './constants';
 import styles from './ExpenditureSettings.css';
 
 export const MSG = defineMessages({
-  typeLabel: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.defaultExpenditureLabel',
+  type: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.type',
     defaultMessage: 'Expenditure type',
   },
-  teamLabel: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.defaultTeamLabel',
+  team: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.team',
     defaultMessage: 'Team',
   },
-  balanceLabel: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.defaultBalanceLabel',
+  balance: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.balance',
     defaultMessage: 'Balance',
   },
-  ownerLabel: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.defaultOwnerLabel',
+  owner: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.owner',
     defaultMessage: 'Owner',
   },
-  optionAdvanced: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.defaultAdvancedOption',
+  advancedPayment: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.advancedPayment',
     defaultMessage: 'Advanced payment',
   },
+  split: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.split',
+    defaultMessage: 'Split',
+  },
 });
+
+const expeditureTypes = [
+  {
+    label: MSG.advancedPayment,
+    value: ExpenditureTypes.Advanced,
+  },
+  {
+    label: MSG.split,
+    value: ExpenditureTypes.Split,
+  },
+];
 
 const displayName = 'dashboard.ExpenditurePage.ExpenditureSettings';
 
@@ -103,17 +119,12 @@ const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
         <div className={styles.blue}>
           <SelectHorizontal
             name="expenditure"
-            label={MSG.typeLabel}
+            label={MSG.type}
             appearance={{
               theme: 'alt',
               width: 'content',
             }}
-            options={[
-              {
-                label: MSG.optionAdvanced,
-                value: 'advanced',
-              },
-            ]}
+            options={expeditureTypes}
             scrollContainer={sidebarRef}
             placement="bottom"
             withDropdownElelment
@@ -124,7 +135,7 @@ const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.settingsRow}>
           <InputLabel
-            label={MSG.teamLabel}
+            label={MSG.team}
             appearance={{
               direction: 'horizontal',
             }}
@@ -152,7 +163,7 @@ const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.userContainer}>
           <InputLabel
-            label={MSG.ownerLabel}
+            label={MSG.owner}
             appearance={{
               direction: 'horizontal',
             }}

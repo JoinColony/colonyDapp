@@ -1,0 +1,61 @@
+import { useField } from 'formik';
+import React from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
+import classNames from 'classnames';
+
+import { FormSection, Toggle } from '~core/Fields';
+
+import styles from './Split.css';
+
+const MSG = defineMessages({
+  split: {
+    id: 'dashboard.ExpenditurePage.Split.split',
+    defaultMessage: 'Split',
+  },
+  equal: {
+    id: 'dashboard.ExpenditurePage.Split.equal',
+    defaultMessage: 'Equal',
+  },
+  unequal: {
+    id: 'dashboard.ExpenditurePage.Split.unequal',
+    defaultMessage: 'Unequal',
+  },
+});
+
+const displayName = 'dashboard.ExpenditurePage.Split';
+
+const Split = () => {
+  const [, { value: splitUnequal }] = useField('split.unequal');
+
+  return (
+    <div className={styles.splitContainer}>
+      <FormSection appearance={{ border: 'bottom' }}>
+        <div className={styles.split}>
+          <FormattedMessage {...MSG.split} />
+          <div className={styles.splitToggle}>
+            <div
+              className={classNames(styles.splitLabel, {
+                [styles.activeOption]: !splitUnequal,
+              })}
+            >
+              <FormattedMessage {...MSG.equal} />
+            </div>
+            <Toggle name="split.unequal" elementOnly />
+            <div
+              className={classNames(styles.splitLabel, {
+                [styles.activeOption]: splitUnequal,
+              })}
+            >
+              <FormattedMessage {...MSG.unequal} />
+            </div>
+          </div>
+        </div>
+      </FormSection>
+      <FormSection />
+    </div>
+  );
+};
+
+Split.displayName = displayName;
+
+export default Split;
