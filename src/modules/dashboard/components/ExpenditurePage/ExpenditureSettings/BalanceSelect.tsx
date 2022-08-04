@@ -80,7 +80,7 @@ const BalanceSelect = ({ activeToken, tokens, name, isLocked }: Props) => {
     <div className={styles.balance}>
       <SelectHorizontal
         name={name}
-        label={MSG.balanceLabel}
+        label={MSG.balance}
         appearance={{
           theme: 'alt',
         }}

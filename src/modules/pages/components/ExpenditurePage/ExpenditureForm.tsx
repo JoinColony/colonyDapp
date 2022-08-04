@@ -7,6 +7,7 @@ import StakeExpenditureDialog from '~dashboard/Dialogs/StakeExpenditureDialog';
 import { ExpenditureSettings } from '~dashboard/ExpenditurePage';
 import Batch from '~dashboard/ExpenditurePage/Batch';
 import Payments from '~dashboard/ExpenditurePage/Payments';
+import Split from '~dashboard/ExpenditurePage/Split';
 import { Colony } from '~data/index';
 
 import { ValuesType } from './ExpenditurePage';
@@ -56,6 +57,9 @@ const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
     switch (expenditureType) {
       case ExpenditureTypes.Advanced: {
         return <Payments sidebarRef={sidebarRef} colony={colony} />;
+      }
+      case ExpenditureTypes.Split: {
+        return <Split sidebarRef={sidebarRef} colony={colony} />;
       }
       case ExpenditureTypes.Batch: {
         return <Batch />;
