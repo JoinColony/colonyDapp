@@ -46,8 +46,8 @@ const displayName = 'dashboard.EditExpenditureDialog.Recipient';
 interface Props {
   discardRecipientChange: (id: string) => void;
   oldValues: ValuesType;
-  changedItem;
-  changeIndex;
+  changedItem: RecipientType;
+  index: number;
   colony: Colony;
 }
 
@@ -55,7 +55,7 @@ const Recipient = ({
   discardRecipientChange,
   oldValues,
   changedItem,
-  changeIndex,
+  index,
   colony,
 }: Props) => {
   const oldValue: RecipientType | undefined = oldValues.recipients.find(
@@ -103,7 +103,7 @@ const Recipient = ({
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.reicpientButtonContainer}>
           <div className={styles.recipientContainer}>
-            {changeIndex + 1}:{' '}
+            {index + 1}:{' '}
             {!oldValue ? (
               <FormattedMessage {...MSG.newRecipient} />
             ) : (

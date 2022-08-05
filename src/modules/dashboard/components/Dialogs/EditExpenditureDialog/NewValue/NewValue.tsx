@@ -1,4 +1,3 @@
-import { nanoid } from 'nanoid';
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
@@ -9,6 +8,7 @@ import Numeral from '~core/Numeral';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { FormSection } from '~core/Fields';
 import { Colony } from '~data/index';
+import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
 
 import styles from './NewValue.css';
 
@@ -23,7 +23,7 @@ const displayName = 'dashboard.EditExpenditureDialog.NewValue';
 
 interface Props {
   colony: Colony;
-  changedRecipient: any;
+  changedRecipient: Recipient;
 }
 
 const NewValue = ({ colony, changedRecipient }: Props) => {
@@ -31,7 +31,7 @@ const NewValue = ({ colony, changedRecipient }: Props) => {
   const multipleValues = recipientValues && recipientValues?.length > 1;
 
   return (
-    <FormSection appearance={{ border: 'bottom' }} key={nanoid()}>
+    <FormSection appearance={{ border: 'bottom' }}>
       <div
         className={classNames(styles.row, {
           [styles.valueLabel]: multipleValues,

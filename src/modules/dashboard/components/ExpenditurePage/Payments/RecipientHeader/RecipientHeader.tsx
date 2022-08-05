@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
 
 import { FormSection } from '~core/Fields';
 import UserMention from '~core/UserMention';
 import { Tooltip } from '~core/Popover';
+import { getRecipientTokens } from '~dashboard/ExpenditurePage/utils';
+import { Colony } from '~data/index';
+import Numeral from '~core/Numeral';
 
 import CollapseExpandButtons from '../CollapseExpandButtons';
 import { Recipient } from '../types';
@@ -16,6 +19,10 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Payments.RecipientHeader.newValue',
     defaultMessage: 'New value. See activity feed.',
   },
+  userHeader: {
+    id: 'dashboard.ExpenditurePage.Payments.RecipientHeader.userHeader',
+    defaultMessage: '{count}: {name}, {value}, {delay}',
+  },
 });
 
 const displayName = 'dashboard.ExpenditurePage.Payments.RecipientHeader';
@@ -26,6 +33,7 @@ interface Props {
   inPendingState: boolean;
   recipient: Recipient;
   index: number;
+  colony: Colony;
 }
 
 const RecipientHeader = ({
@@ -34,7 +42,13 @@ const RecipientHeader = ({
   inPendingState,
   recipient,
   index,
+  colony,
 }: Props) => {
+  const recipientValues = useMemo(() => getRecipientTokens(recipient, colony), [
+    colony,
+    recipient,
+  ]);
+
   return (
     <FormSection>
       <div className={styles.recipientNameWrapper}>
@@ -44,21 +58,37 @@ const RecipientHeader = ({
             onToogleButtonClick={() => onToggleButtonClick(index)}
             isLocked
           />
-          {index + 1}:
-          <UserMention
-            username={
-              recipient.recipient?.profile.username ||
-              recipient.recipient?.profile.displayName ||
-              ''
-            }
+          <FormattedMessage
+            {...MSG.userHeader}
+            values={{
+              count: index + 1,
+              name: (
+                <UserMention
+                  username={
+                    recipient.recipient?.profile.username ||
+                    recipient.recipient?.profile.displayName ||
+                    ''
+                  }
+                />
+              ),
+              value: recipientValues?.map(
+                ({ amount, token }, idx) =>
+                  token &&
+                  amount && (
+                    <div className={styles.value} key={idx}>
+                      <Numeral value={amount} />
+                      {token.symbol}
+                    </div>
+                  ),
+              ),
+              delay: recipient?.delay?.amount && (
+                <span>
+                  {recipient.delay.amount}
+                  {recipient.delay.time.substring(0, 1)}
+                </span>
+              ),
+            }}
           />
-          {recipient?.delay?.amount && (
-            <>
-              {', '}
-              {recipient.delay.amount}
-              {recipient.delay.time.substring(0, 1)}
-            </>
-          )}
         </div>
         {inPendingState ? (
           <div className={styles.dot} />

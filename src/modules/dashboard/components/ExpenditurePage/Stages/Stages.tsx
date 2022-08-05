@@ -63,6 +63,10 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Stages.updatedByArbitrator',
     defaultMessage: 'Value updated by arbitrator',
   },
+  label: {
+    id: 'dashboard.ExpenditurePage.Stages.label',
+    defaultMessage: '{label} {icon}',
+  },
 });
 
 const displayName = 'dashboard.ExpenditurePage.Stages';
@@ -123,16 +127,24 @@ const Stages = ({
       if (status === Status.ForceEdited && index === activeIndex) {
         return (
           <div className={styles.labelComponent}>
-            {typeof label === 'object' && label?.id ? (
-              <FormattedMessage {...label} />
-            ) : (
-              label
-            )}{' '}
-            <PermissionsLabel
-              permission={role}
-              appearance={{ theme: 'white' }}
-              infoMessage={MSG.updatedByArbitrator}
-              minimal
+            <FormattedMessage
+              {...MSG.label}
+              values={{
+                label:
+                  typeof label === 'object' && label?.id ? (
+                    <FormattedMessage {...label} />
+                  ) : (
+                    label
+                  ),
+                icon: (
+                  <PermissionsLabel
+                    permission={role}
+                    appearance={{ theme: 'white' }}
+                    infoMessage={MSG.updatedByArbitrator}
+                    minimal
+                  />
+                ),
+              }}
             />
           </div>
         );

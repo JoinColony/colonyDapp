@@ -1,4 +1,3 @@
-import { nanoid } from 'nanoid';
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
@@ -8,10 +7,11 @@ import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
 
 import styles from './NewRecipient.css';
+import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
 
 export const MSG = defineMessages({
   newRecipient: {
-    id: 'dashboard.EditExpenditureDialog.newRecipient',
+    id: 'dashboard.EditExpenditureDialog.NewRecipient.newRecipient',
     defaultMessage: 'New recipient',
   },
 });
@@ -19,12 +19,12 @@ export const MSG = defineMessages({
 const displayName = 'dashboard.EditExpenditureDialog.NewRecipient';
 
 interface Props {
-  newValue: any;
+  newValue: Recipient['recipient'];
 }
 
 const NewRecipient = ({ newValue }: Props) => {
   return (
-    <FormSection appearance={{ border: 'bottom' }} key={nanoid()}>
+    <FormSection appearance={{ border: 'bottom' }}>
       <div className={classNames(styles.row, styles.smallerPadding)}>
         <span className={styles.label}>
           <FormattedMessage {...MSG.newRecipient} />
@@ -32,13 +32,15 @@ const NewRecipient = ({ newValue }: Props) => {
         <div className={styles.valueContainer}>
           <div className={styles.userAvatarContainer}>
             <UserAvatar
-              address={newValue.profile.walletAddress}
+              address={newValue?.profile.walletAddress || ''}
               size="xs"
               notSet={false}
             />
             <UserMention
               username={
-                newValue.profile.username || newValue.profile.displayName || ''
+                newValue?.profile.username ||
+                newValue?.profile.displayName ||
+                ''
               }
             />
           </div>

@@ -88,6 +88,7 @@ const LockedPayments = ({
                     inPendingState={!!inPendingState}
                     recipient={recipient}
                     index={index}
+                    colony={colony}
                   />
                   <LockedRecipient
                     recipient={{

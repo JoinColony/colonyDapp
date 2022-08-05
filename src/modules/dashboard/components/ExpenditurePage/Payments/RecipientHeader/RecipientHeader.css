@@ -2,21 +2,23 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-bottom: 10px;
 }
 
 .recipientName {
   display: flex;
   align-items: center;
-  padding-bottom: 10px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
-  color: var(--dark);
+  line-height: 18px;
+  color: color-mod(var(--dark) alpha(85%));
+  letter-spacing: var(--spacing-medium);
 }
 
 .recipientName span {
   margin-left: 4px;
-  font-weight: var(--weight-bold);
-  color: var(--dark);
+  line-height: 18px;
+  color: color-mod(var(--dark) alpha(85%));
 }
 
 .dot {
@@ -28,4 +30,8 @@
 
 .blue {
   background-color: var(--action-secondary);
+}
+
+.value {
+  margin-left: 4px;
 }

@@ -20,59 +20,58 @@ import { Colony, useLoggedInUser } from '~data/index';
 
 import { FormValuesType } from './EditExpenditureDialog';
 import Recipient from './Recipient';
-
 import styles from './EditExpenditureDialogForm.css';
 
 export const MSG = defineMessages({
   header: {
-    id: 'dashboard.EditExpenditureDialog.header',
+    id: 'dashboard.EditExpenditureDialog.EditExpenditureDialogForm.header',
     defaultMessage: 'Create a motion to edit payment',
   },
   descriptionText: {
-    id: 'dashboard.EditExpenditureDialog.descriptionText',
+    id: `dashboard.EditExpenditureDialog.EditExpenditureDialogForm.descriptionText`,
     defaultMessage: `Payment is currently at the locked stage.
     Any edits require at this point an action to be made.
     You can either enforce permission,
     or create a motion to get collective approval.`,
   },
   descriptionLabel: {
-    id: 'dashboard.EditExpenditureDialog.descriptionLabel',
+    id: `dashboard.EditExpenditureDialog.EditExpenditureDialogFormdescriptionLabel`,
     defaultMessage: `Explain why you're changing the payment (optional)`,
   },
   cancelText: {
-    id: 'dashboard.EditExpenditureDialog.cancelText',
+    id: 'dashboard.EditExpenditureDialog.EditExpenditureDialogForm.cancelText',
     defaultMessage: 'Back',
   },
   confirmText: {
-    id: 'dashboard.EditExpenditureDialog.confirmText',
+    id: 'dashboard.EditExpenditureDialog.EditExpenditureDialogForm.confirmText',
     defaultMessage: 'Create Motion',
   },
   confirmTexForce: {
-    id: 'dashboard.EditExpenditureDialog.confirmTexForce',
+    id: `dashboard.EditExpenditureDialog.EditExpenditureDialogForm.confirmTexForce`,
     defaultMessage: 'Force change',
   },
   forceTextareaLabel: {
-    id: 'dashboard.EditExpenditureDialog.textareaLabel',
+    id: `dashboard.EditExpenditureDialog.EditExpenditureDialogForm.textareaLabel`,
     defaultMessage: `Explain why you're changing the expenditure`,
   },
   change: {
-    id: 'dashboard.EditExpenditureDialog.change',
+    id: 'dashboard.EditExpenditureDialog.EditExpenditureDialogForm.change',
     defaultMessage: 'Change',
   },
   new: {
-    id: 'dashboard.EditExpenditureDialog.new',
+    id: 'dashboard.EditExpenditureDialog.EditExpenditureDialogForm.new',
     defaultMessage: 'New',
   },
   discard: {
-    id: 'dashboard.EditExpenditureDialog.discard',
+    id: 'dashboard.EditExpenditureDialog.EditExpenditureDialogForm.discard',
     defaultMessage: 'Discard',
   },
   teamCaption: {
-    id: 'dashboard.EditExpenditureDialog.teamCaption',
+    id: 'dashboard.EditExpenditureDialog.EditExpenditureDialogForm.teamCaption',
     defaultMessage: 'Team',
   },
   noChanges: {
-    id: 'dashboard.EditExpenditureDialog.noChanges',
+    id: 'dashboard.EditExpenditureDialog.EditExpenditureDialogForm.noChanges',
     defaultMessage: 'No values have been changed!',
   },
 });
@@ -121,22 +120,17 @@ const EditExpenditureDialogForm = ({
   const noChanges =
     confirmedValues && Object.keys(confirmedValues).length === 0;
 
-  const convertToValuesWithIds = useMemo(
-    () => (object: Partial<ValuesType> | undefined) => {
-      if (!object) {
-        return [];
-      }
+  const confirmedValuesWithIds = useMemo(() => {
+    if (!confirmedValues) {
+      return [];
+    }
 
-      return Object.entries(object).map(([key, value]) => ({
-        key,
-        value,
-        id: nanoid(),
-      }));
-    },
-    [],
-  );
-
-  const confirmedValuesWithIds = convertToValuesWithIds(confirmedValues);
+    return Object.entries(confirmedValues).map(([key, value]) => ({
+      key,
+      value,
+      id: nanoid(),
+    }));
+  }, [confirmedValues]);
 
   const renderChange = useCallback(
     (change: any, key: string) => {
@@ -231,7 +225,7 @@ const EditExpenditureDialogForm = ({
                   <Recipient
                     key={id}
                     oldValues={oldValues}
-                    changeIndex={changeIndex}
+                    index={changeIndex}
                     changedItem={changedItem}
                     colony={colony}
                     discardRecipientChange={discardRecipientChange}

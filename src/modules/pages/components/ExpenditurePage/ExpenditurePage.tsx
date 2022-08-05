@@ -22,6 +22,7 @@ import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import { SpinnerLoader } from '~core/Preloaders';
 import {
   MotionStatus,
+  MotionType,
   Stage,
   Status,
 } from '~dashboard/ExpenditurePage/Stages/constants';
@@ -146,7 +147,7 @@ export interface State {
 }
 
 export interface Motion {
-  type: 'Cancel' | 'Edit';
+  type: MotionType;
   status: MotionStatus;
 }
 
@@ -333,7 +334,7 @@ const ExpenditurePage = ({ match }: Props) => {
         setFormValues(data);
       } else {
         setPendingChanges(confirmedValues);
-        setMotion({ type: 'Edit', status: MotionStatus.Pending });
+        setMotion({ type: MotionType.Edit, status: MotionStatus.Pending });
         setStatus(Status.Edited);
         // setTimeout is temporary, it should be replaced with call to api
         setTimeout(() => {
@@ -341,7 +342,7 @@ const ExpenditurePage = ({ match }: Props) => {
           setPendingChanges(undefined);
           setFormValues(data);
           setStatus(undefined);
-          setMotion({ type: 'Edit', status: MotionStatus.Passed });
+          setMotion({ type: MotionType.Edit, status: MotionStatus.Passed });
         }, 5000);
       }
     },
