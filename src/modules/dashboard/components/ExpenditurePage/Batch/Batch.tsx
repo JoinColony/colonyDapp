@@ -10,7 +10,8 @@ import TokenIcon from '~dashboard/HookedTokenIcon';
 import Button from '~core/Button';
 
 import CSVUploader from './CSVUploader';
-import DownloadTemplate from './DownloadTemplate';
+import DownloadTemplate from './DownloadTemplate/DownloadTemplate';
+
 import { useCalculateBatchPayment } from './hooks';
 import styles from './Batch.css';
 
