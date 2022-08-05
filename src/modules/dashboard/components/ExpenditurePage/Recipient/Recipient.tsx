@@ -104,7 +104,7 @@ const Recipient = ({
       ...newToken,
       tokenAddress: colony.nativeTokenAddress,
     };
-  }, [colony.nativeTokenAddress]);
+  }, [colony]);
 
   return (
     <div className={styles.container}>

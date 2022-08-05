@@ -124,21 +124,7 @@ const validationSchema = yup.object().shape({
   batch: yup.object().when('expenditure', {
     is: (expenditure) => expenditure === ExpenditureTypes.Batch,
     then: yup.object().shape({
-      user: yup.object().required(),
-      amount: yup.object().shape({
-        value: yup.number().moreThan(0, () => MSG.amountZeroError),
-        tokenAddress: yup.string().required(),
-      }),
-      data: yup
-        .array(
-          yup.object().shape({
-            user: yup.string().required(),
-            token: yup.string().required(),
-            amount: yup.number().required(),
-          }),
-        )
-        .min(1)
-        .required(),
+      dataCSVUploader: yup.array().required(),
     }),
   }),
   title: yup.string().min(3).required(),
