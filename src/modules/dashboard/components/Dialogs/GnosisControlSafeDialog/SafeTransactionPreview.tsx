@@ -277,7 +277,7 @@ const SafeTransactionPreview = ({ colony, values }: Props) => {
                 {values.transactions[index].transactionType !== '' &&
                   transactionTypeFieldsMap[
                     values.transactions[index].transactionType
-                  ].map(({ key, label, value }) => (
+                  ].map(({ key, label, value }, idx, arr) => (
                     <DetailsItem
                       key={key}
                       label={label}
@@ -285,6 +285,7 @@ const SafeTransactionPreview = ({ colony, values }: Props) => {
                         values.transactions[index][key],
                         tokens[index],
                       )}
+                      isLastItem={idx + 1 === arr.length}
                     />
                   ))}
               </div>
