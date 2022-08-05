@@ -1,0 +1,69 @@
+.reicpientButtonContainer button {
+  padding: 0;
+  height: auto;
+  color: var(--action-secondary);
+}
+
+.reicpientButtonContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 27px 0 8px;
+}
+
+.recipientContainer {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: color-mod(var(--dark) alpha(85%));
+}
+
+.recipientContainer span {
+  margin-left: 4px;
+  color: inherit;
+}
+
+.recipientContainer div {
+  color: inherit;
+}
+
+.valueAmount {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.valueAmount > span {
+  font-size: var(--size-smallish);
+  line-height: 18px;
+  color: color-mod(var(--dark) alpha(85%));
+  letter-spacing: var(--spacing-medium);
+}
+
+.tokenIcon {
+  margin-right: 6px;
+  height: 16px;
+  width: 16px;
+}
+
+.icon figure {
+  display: block;
+}
+
+.symbol {
+  margin-left: 4px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0 13px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}

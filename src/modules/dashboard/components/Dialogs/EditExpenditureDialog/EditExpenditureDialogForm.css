@@ -1,0 +1,111 @@
+@value submitButtonWidth: 160px;
+
+.title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 0 20px;
+  width: 100%;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.withoutPadding {
+  padding: 0;
+}
+
+.forceRow {
+  align-items: baseline;
+  padding-top: 16px;
+  white-space: nowrap;
+}
+
+.contentWrapper {
+  padding: 0 20px 54px;
+}
+
+.descriptionWrapper {
+  padding-top: 10px;
+}
+
+.changeContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 27px 0 13px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: color-mod(var(--dark) alpha(85%));
+}
+
+.changeItem {
+  padding: 8px 0 13px;
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+  letter-spacing: var(--spacing-medium);
+}
+
+.changeContainer button {
+  padding: 0;
+  height: auto;
+  color: var(--action-secondary);
+}
+
+.changeWrapper {
+  max-width: 70%;
+  overflow: elipsis;
+  overflow: hidden;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--dark);
+  letter-spacing: 0.1px;
+}
+
+.teamWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.teamWrapper > div {
+  margin-right: 4px;
+}
+
+.noChanges {
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
+
+.annotationsWrapper {
+  margin-bottom: 11px;
+}
+
+.toggleContainer i {
+  margin: 0 -20px 4px 21px;
+
+  /* next lines are used for the correct tooltip arrow placement */
+  transform: translateX(-25px);
+}
+
+/* this selector is for tooltip wrapper */
+.toggleContainer > div > div:last-child {
+  max-width: 250px;
+  white-space: normal;
+}
+
+.toggleContainer label {
+  margin-bottom: 4px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0 13px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}

@@ -59,14 +59,6 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Recipient.monthsLabel',
     defaultMessage: 'months',
   },
-  valueError: {
-    id: 'dashboard.ExpenditurePage.Recipient.valueError',
-    defaultMessage: 'Value is required',
-  },
-  pending: {
-    id: 'dashboard.ExpenditurePage.Recipient.pending',
-    defaultMessage: '(Pending)',
-  },
 });
 
 const displayName = 'dashboard.ExpenditurePage.Recipient';

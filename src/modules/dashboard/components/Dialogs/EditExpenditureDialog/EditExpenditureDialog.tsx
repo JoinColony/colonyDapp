@@ -1,91 +1,24 @@
 import React, { useCallback, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import * as yup from 'yup';
-
 import { FormikProps } from 'formik';
-import { ActionTypes } from '~redux/actionTypes';
+
 import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
-import { Colony } from '~data/index';
-import EditExpenditureDialogForm from './EditExpenditureDialogForm';
 import { ActionForm } from '~core/Fields';
+import Dialog from '~core/Dialog';
+import { Colony } from '~data/index';
+import { ActionTypes } from '~redux/actionTypes';
+
+import EditExpenditureDialogForm from './EditExpenditureDialogForm';
 
 export const MSG = defineMessages({
-  header: {
-    id: 'dashboard.EditExpenditureDialog.header',
-    defaultMessage: 'Create a motion to edit payment',
-  },
-  descriptionText: {
-    id: 'dashboard.EditExpenditureDialog.descriptionText',
-    defaultMessage: `Payment is currently at the locked stage.
-    Any edits require at this point an action to be made.
-    You can either enforce permission,
-    or create a motion to get collective approval.`,
-  },
-  newRecipient: {
-    id: 'dashboard.EditExpenditureDialog.newRecipient',
-    defaultMessage: 'New recipient',
-  },
-  newAmount: {
-    id: 'dashboard.EditExpenditureDialog.newAmount',
-    defaultMessage: 'New amount',
-  },
-  newClaimDelay: {
-    id: 'dashboard.EditExpenditureDialog.newClaimDelay',
-    defaultMessage: 'New claim delay',
-  },
-  descriptionLabel: {
-    id: 'dashboard.EditExpenditureDialog.descriptionLabel',
-    defaultMessage: `Explain why you're changing the payment (optional)`,
-  },
-  cancelText: {
-    id: 'dashboard.EditExpenditureDialog.cancelText',
-    defaultMessage: 'Back',
-  },
-  confirmText: {
-    id: 'dashboard.EditExpenditureDialog.confirmText',
-    defaultMessage: 'Create Motion',
-  },
-  confirmTexForce: {
-    id: 'dashboard.EditExpenditureDialog.confirmTexForce',
-    defaultMessage: 'Force change',
-  },
-  forceTextareaLabel: {
-    id: 'dashboard.EditExpenditureDialog.textareaLabel',
-    defaultMessage: `Explain why you're changing the expenditure`,
-  },
   errorAnnotation: {
     id: 'dashboard.EditExpenditureDialog.errorAnnotation',
     defaultMessage: 'Annotation is required',
   },
-  change: {
-    id: 'dashboard.EditExpenditureDialog.change',
-    defaultMessage: 'Change',
-  },
-  new: {
-    id: 'dashboard.EditExpenditureDialog.new',
-    defaultMessage: 'New',
-  },
-  discard: {
-    id: 'dashboard.EditExpenditureDialog.discard',
-    defaultMessage: 'Discard',
-  },
-  removed: {
-    id: 'dashboard.EditExpenditureDialog.removed',
-    defaultMessage: 'Recipient has been deleted',
-  },
-  removedDelay: {
-    id: 'dashboard.EditExpenditureDialog.removedDelay',
-    defaultMessage: 'Removed claim delay',
-  },
-  teamCaption: {
-    id: 'dashboard.EditExpenditureDialog.teamCaption',
-    defaultMessage: 'Team',
-  },
-  noChanges: {
-    id: 'dashboard.EditExpenditureDialog.noChanges',
-    defaultMessage: 'No values have been changed!',
-  },
 });
+
+const displayName = 'dashboard.EditExpenditureDialog';
 
 export const validationSchema = (annotationErrorMessage) =>
   yup.object().shape({
@@ -128,14 +61,8 @@ const EditExpenditureDialog = ({
   oldValues,
 }: Props) => {
   const [isForce, setIsForce] = useState(false);
-  const [domainID, setDomainID] = useState<number>();
   const [confirmedValues, setConfirmedValues] = useState(newValues);
   const { formatMessage } = useIntl();
-
-  const handleMotionDomainChange = useCallback(
-    (motionDomainId) => setDomainID(motionDomainId),
-    [],
-  );
 
   const discardChange = useCallback(
     (name: keyof ValuesType) => {
@@ -198,25 +125,27 @@ const EditExpenditureDialog = ({
           setIsForce(formValues.values.forceAction);
         }
         return (
-          <EditExpenditureDialogForm
-            {...{
-              close,
-              handleMotionDomainChange,
-              colony,
-              confirmedValues,
-              discardChange,
-              discardRecipientChange,
-              oldValues,
-              onSubmitClick,
-              domainID,
-              isVotingExtensionEnabled,
-              ...formValues,
-            }}
-          />
+          <Dialog cancel={close}>
+            <EditExpenditureDialogForm
+              {...{
+                close,
+                colony,
+                confirmedValues,
+                discardChange,
+                discardRecipientChange,
+                oldValues,
+                onSubmitClick,
+                isVotingExtensionEnabled,
+                ...formValues,
+              }}
+            />
+          </Dialog>
         );
       }}
     </ActionForm>
   );
 };
+
+EditExpenditureDialog.displayName = displayName;
 
 export default EditExpenditureDialog;

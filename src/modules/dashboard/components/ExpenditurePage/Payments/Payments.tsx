@@ -4,16 +4,17 @@ import { FieldArray, useField } from 'formik';
 import { nanoid } from 'nanoid';
 
 import Button from '~core/Button';
-import Recipient from '../Recipient';
-
-import styles from './Payments.css';
 import Icon from '~core/Icon';
 import { FormSection } from '~core/Fields';
-import { newRecipient } from './constants';
 import { useMembersSubscription } from '~data/generated';
 import { SpinnerLoader } from '~core/Preloaders';
 import { Colony } from '~data/index';
+
+import Recipient from '../Recipient';
+
 import CollapseExpandButtons from './CollapseExpandButtons';
+import { newRecipient } from './constants';
+import styles from './Payments.css';
 
 export const MSG = defineMessages({
   payments: {
@@ -28,21 +29,9 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Payments.addRecipientLabel',
     defaultMessage: 'Add recipient',
   },
-  minusIconTitle: {
-    id: 'dashboard.ExpenditurePage.Payments.minusIconTitle',
-    defaultMessage: 'Collapse a single recipient settings',
-  },
-  plusIconTitle: {
-    id: 'dashboard.ExpenditurePage.Payments.plusIconTitle',
-    defaultMessage: 'Expand a single recipient settings',
-  },
   deleteIconTitle: {
     id: 'dashboard.ExpenditurePage.Payments.deleteIconTitle',
     defaultMessage: 'Delete recipient',
-  },
-  newValue: {
-    id: 'dashboard.ExpenditurePage.Payments.deleteIconTitle',
-    defaultMessage: 'New value. See activity feed.',
   },
 });
 

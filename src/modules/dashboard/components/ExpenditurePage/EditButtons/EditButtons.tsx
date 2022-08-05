@@ -2,18 +2,21 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
+
 import styles from './EditButton.css';
 
 const MSG = defineMessages({
   cancel: {
-    id: 'dashboard.Expenditures.ExpenditurePage.EditButtons.cancel',
+    id: 'dashboard.ExpenditurePage.EditButtons.cancel',
     defaultMessage: 'Cancel',
   },
   update: {
-    id: 'dashboard.Expenditures.ExpenditurePage.EditButtons.update',
+    id: 'dashboard.ExpenditurePage.EditButtons.update',
     defaultMessage: 'Update',
   },
 });
+
+const displayName = 'dashboard.ExpenditurePage.EditButtons';
 
 interface Props {
   handleEditSubmit: () => void;
@@ -32,5 +35,7 @@ const EditButtons = ({ handleEditCancel, handleEditSubmit }: Props) => {
     </div>
   );
 };
+
+EditButtons.displayName = displayName;
 
 export default EditButtons;

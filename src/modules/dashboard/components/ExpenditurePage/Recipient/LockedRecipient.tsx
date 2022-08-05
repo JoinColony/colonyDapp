@@ -1,22 +1,42 @@
 import React, { useMemo } from 'react';
 import classNames from 'classnames';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { FormattedMessage } from 'react-intl';
 import { FormSection, InputLabel } from '~core/Fields';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
-import { Recipient as RecipientType } from '../Payments/types';
 import TokenIcon from '~dashboard/HookedTokenIcon';
-
-import styles from './LockedRecipient.css';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import Numeral from '~core/Numeral';
 import { Colony } from '~data/index';
-import { getRecipientTokens } from '../utils';
-import { MSG } from './Recipient';
 import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 
-const displayNameLockedRecipient = 'dashboard.ExpenditurePage.LockedRecipient';
+import { getRecipientTokens } from '../utils';
+import { Recipient as RecipientType } from '../Payments/types';
+
+import styles from './LockedRecipient.css';
+
+export const MSG = defineMessages({
+  recipientLabel: {
+    id: 'dashboard.ExpenditurePage.Recipient.LockedRecipient.recipientLabel',
+    defaultMessage: 'Recipient',
+  },
+  valueLabel: {
+    id: 'dashboard.ExpenditurePage.Recipient.LockedRecipient.valueLabel',
+    defaultMessage: 'Value',
+  },
+  delayLabel: {
+    id: 'dashboard.ExpenditurePage.Recipient.LockedRecipient.delayLabel',
+    defaultMessage: 'Claim delay',
+  },
+  pending: {
+    id: 'dashboard.ExpenditurePage.Recipient.LockedRecipient.pending',
+    defaultMessage: '(Pending)',
+  },
+});
+
+const displayNameLockedRecipient =
+  'dashboard.ExpenditurePage.Recipient.LockedRecipient';
 
 interface Props {
   recipient: RecipientType;
@@ -102,7 +122,6 @@ const LockedRecipient = ({ recipient, colony, pendingChanges }: Props) => {
                             name={token.name || token.address}
                           />
                         </span>
-
                         <Numeral
                           unit={getTokenDecimalsWithFallback(0)}
                           value={amount}

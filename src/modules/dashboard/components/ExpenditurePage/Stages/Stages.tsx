@@ -15,7 +15,7 @@ import PermissionsLabel from '~core/PermissionsLabel';
 import { Motion, State } from '~pages/ExpenditurePage/ExpenditurePage';
 
 import { MotionStatus, Stage, Status } from './constants';
-import StageItem from './StageItem/StageItem';
+import StageItem from './StageItem';
 import styles from './Stages.css';
 
 const MSG = defineMessages({

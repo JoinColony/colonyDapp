@@ -1,40 +1,87 @@
 import React, { useCallback, useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
 import { FormikProps } from 'formik';
 import { nanoid } from 'nanoid';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { Annotations, FormSection, Toggle } from '~core/Fields';
-import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
-import UserAvatar from '~core/UserAvatar';
-import UserMention from '~core/UserMention';
-import { getRecipientTokens } from '~dashboard/ExpenditurePage/utils';
-import TokenIcon from '~dashboard/HookedTokenIcon';
-import Numeral from '~core/Numeral';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import Dialog, { DialogSection } from '~core/Dialog';
+import { DialogSection } from '~core/Dialog';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
-import { Colony, useLoggedInUser } from '~data/index';
 import Heading from '~core/Heading';
 import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 import Button from '~core/Button';
 import ColorTag, { Color } from '~core/ColorTag';
-import { useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot } from '~modules/users/checks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
+import { useTransformer } from '~utils/hooks';
+import { Colony, useLoggedInUser } from '~data/index';
 
-import { FormValuesType, MSG } from './EditExpenditureDialog';
-import styles from './EditExpenditureDialog.css';
+import { FormValuesType } from './EditExpenditureDialog';
+import Recipient from './Recipient';
+
+import styles from './EditExpenditureDialogForm.css';
+
+export const MSG = defineMessages({
+  header: {
+    id: 'dashboard.EditExpenditureDialog.header',
+    defaultMessage: 'Create a motion to edit payment',
+  },
+  descriptionText: {
+    id: 'dashboard.EditExpenditureDialog.descriptionText',
+    defaultMessage: `Payment is currently at the locked stage.
+    Any edits require at this point an action to be made.
+    You can either enforce permission,
+    or create a motion to get collective approval.`,
+  },
+  descriptionLabel: {
+    id: 'dashboard.EditExpenditureDialog.descriptionLabel',
+    defaultMessage: `Explain why you're changing the payment (optional)`,
+  },
+  cancelText: {
+    id: 'dashboard.EditExpenditureDialog.cancelText',
+    defaultMessage: 'Back',
+  },
+  confirmText: {
+    id: 'dashboard.EditExpenditureDialog.confirmText',
+    defaultMessage: 'Create Motion',
+  },
+  confirmTexForce: {
+    id: 'dashboard.EditExpenditureDialog.confirmTexForce',
+    defaultMessage: 'Force change',
+  },
+  forceTextareaLabel: {
+    id: 'dashboard.EditExpenditureDialog.textareaLabel',
+    defaultMessage: `Explain why you're changing the expenditure`,
+  },
+  change: {
+    id: 'dashboard.EditExpenditureDialog.change',
+    defaultMessage: 'Change',
+  },
+  new: {
+    id: 'dashboard.EditExpenditureDialog.new',
+    defaultMessage: 'New',
+  },
+  discard: {
+    id: 'dashboard.EditExpenditureDialog.discard',
+    defaultMessage: 'Discard',
+  },
+  teamCaption: {
+    id: 'dashboard.EditExpenditureDialog.teamCaption',
+    defaultMessage: 'Team',
+  },
+  noChanges: {
+    id: 'dashboard.EditExpenditureDialog.noChanges',
+    defaultMessage: 'No values have been changed!',
+  },
+});
 
 const displayName = 'dashboard.EditExpenditureDialog.EditExpenditureDialogForm';
 
 interface Props {
   close: () => void;
   colony: Colony;
-  handleMotionDomainChange: (motionDomainId: number) => void;
-  domainID?: number;
   confirmedValues: Partial<ValuesType> | undefined;
   oldValues: ValuesType;
   discardRecipientChange: (id: string) => void;
@@ -49,8 +96,6 @@ interface Props {
 const EditExpenditureDialogForm = ({
   close,
   colony,
-  handleMotionDomainChange,
-  domainID,
   confirmedValues,
   oldValues,
   discardRecipientChange,
@@ -93,125 +138,6 @@ const EditExpenditureDialogForm = ({
 
   const confirmedValuesWithIds = convertToValuesWithIds(confirmedValues);
 
-  const renderRecipientChange = useCallback(
-    (changedRecipient: Recipient) => {
-      if (!changedRecipient) {
-        return null;
-      }
-
-      if (changedRecipient.removed) {
-        return (
-          <div className={styles.row}>
-            <FormattedMessage {...MSG.removed} />
-          </div>
-        );
-      }
-
-      return Object.entries(changedRecipient).map(([type, newValue]) => {
-        switch (type) {
-          case 'recipient': {
-            return (
-              <FormSection appearance={{ border: 'bottom' }} key={nanoid()}>
-                <div className={classNames(styles.row, styles.smallerPadding)}>
-                  <span className={styles.label}>
-                    <FormattedMessage {...MSG.newRecipient} />
-                  </span>
-                  <div className={styles.valueContainer}>
-                    <div className={styles.userAvatarContainer}>
-                      <UserAvatar
-                        address={newValue.profile.walletAddress}
-                        size="xs"
-                        notSet={false}
-                      />
-                      <UserMention
-                        username={
-                          newValue.profile.username ||
-                          newValue.profile.displayName ||
-                          ''
-                        }
-                      />
-                    </div>
-                  </div>
-                </div>
-              </FormSection>
-            );
-          }
-          case 'value': {
-            const recipientValues = getRecipientTokens(
-              changedRecipient,
-              colony,
-            );
-            const multipleValues =
-              recipientValues && recipientValues?.length > 1;
-
-            return (
-              <FormSection appearance={{ border: 'bottom' }} key={nanoid()}>
-                <div
-                  className={classNames(styles.row, {
-                    [styles.valueLabel]: multipleValues,
-                    [styles.smallerPadding]: multipleValues,
-                  })}
-                >
-                  <div className={styles.label}>
-                    <FormattedMessage {...MSG.newAmount} />
-                  </div>
-                  <div className={styles.valueContainer}>
-                    {recipientValues?.map(
-                      ({ amount, token }, index) =>
-                        amount &&
-                        token && (
-                          <div
-                            className={classNames(styles.value, {
-                              [styles.paddingBottom]: multipleValues,
-                            })}
-                            key={index}
-                          >
-                            <TokenIcon
-                              className={styles.tokenIcon}
-                              token={token}
-                              name={token.name || token.address}
-                            />
-                            <Numeral
-                              unit={getTokenDecimalsWithFallback(0)}
-                              value={amount}
-                            />{' '}
-                            {token.symbol}
-                          </div>
-                        ),
-                    )}
-                  </div>
-                </div>
-              </FormSection>
-            );
-          }
-          case 'delay': {
-            return (
-              <FormSection appearance={{ border: 'bottom' }} key={nanoid()}>
-                <div className={styles.row}>
-                  <span className={styles.label}>
-                    <FormattedMessage {...MSG.newClaimDelay} />
-                  </span>
-                  <div className={styles.value}>
-                    {!newValue.amount ? (
-                      '-'
-                    ) : (
-                      <>
-                        {newValue.amount} {newValue.time}
-                      </>
-                    )}
-                  </div>
-                </div>
-              </FormSection>
-            );
-          }
-          default:
-            return null;
-        }
-      });
-    },
-    [colony],
-  );
-
   const renderChange = useCallback(
     (change: any, key: string) => {
       switch (key) {
@@ -244,7 +170,7 @@ const EditExpenditureDialogForm = ({
   );
 
   return (
-    <Dialog cancel={close}>
+    <>
       <DialogSection>
         <div
           className={classNames(
@@ -253,12 +179,7 @@ const EditExpenditureDialogForm = ({
             styles.forceRow,
           )}
         >
-          <MotionDomainSelect
-            colony={colony}
-            onDomainChange={handleMotionDomainChange}
-            initialSelectedDomain={domainID}
-            disabled={noChanges}
-          />
+          <MotionDomainSelect colony={colony} disabled={noChanges} />
           {canCancelExpenditure && isVotingExtensionEnabled && (
             <div className={styles.toggleContainer}>
               <Toggle
@@ -299,88 +220,22 @@ const EditExpenditureDialogForm = ({
             <FormattedMessage {...MSG.noChanges} />
           </div>
         ) : (
-          confirmedValuesWithIds.map(({ key, value, id }, index) => {
+          confirmedValuesWithIds.map(({ key, value, id }) => {
             if (
               Array.isArray(value) &&
               Object.keys(value).length > 0 &&
               key === 'recipients'
             ) {
               return value.map((changedItem, changeIndex) => {
-                const oldValue:
-                  | Recipient
-                  | undefined = oldValues.recipients.find(
-                  (recipient) => recipient?.id === changedItem?.id,
-                );
-                const recipientValues =
-                  oldValue && getRecipientTokens(oldValue, colony);
-
                 return (
-                  <React.Fragment key={oldValue?.id || index}>
-                    <FormSection appearance={{ border: 'bottom' }}>
-                      <div className={styles.reicpientButtonContainer}>
-                        <div className={styles.recipientContainer}>
-                          {changeIndex + 1}:{' '}
-                          {!oldValue ? (
-                            <FormattedMessage {...MSG.newRecipient} />
-                          ) : (
-                            <>
-                              <UserMention
-                                username={
-                                  oldValue.recipient?.profile.username ||
-                                  oldValue.recipient?.profile.displayName ||
-                                  ''
-                                }
-                              />
-                              {', '}
-                              {recipientValues?.map(
-                                ({ amount, token }, idx) =>
-                                  token &&
-                                  amount && (
-                                    <div
-                                      className={styles.valueAmount}
-                                      key={idx}
-                                    >
-                                      <span className={styles.icon}>
-                                        <TokenIcon
-                                          className={styles.tokenIcon}
-                                          token={token}
-                                          name={token.name || token.address}
-                                        />
-                                      </span>
-
-                                      <Numeral
-                                        // eslint-disable-next-line max-len
-                                        unit={getTokenDecimalsWithFallback(0)}
-                                        value={amount}
-                                      />
-                                      <span className={styles.symbol}>
-                                        {token.symbol}
-                                      </span>
-                                    </div>
-                                  ),
-                              )}
-                              {oldValue?.delay?.amount && (
-                                <>
-                                  {', '}
-                                  {oldValue.delay?.amount}
-                                  {oldValue.delay?.time}
-                                </>
-                              )}
-                            </>
-                          )}
-                        </div>
-                        <Button
-                          appearance={{ theme: 'dangerLink' }}
-                          onClick={() =>
-                            discardRecipientChange(changedItem?.id || '')
-                          }
-                        >
-                          <FormattedMessage {...MSG.discard} />
-                        </Button>
-                      </div>
-                    </FormSection>
-                    {renderRecipientChange(changedItem)}
-                  </React.Fragment>
+                  <Recipient
+                    key={id}
+                    oldValues={oldValues}
+                    changeIndex={changeIndex}
+                    changedItem={changedItem}
+                    colony={colony}
+                    discardRecipientChange={discardRecipientChange}
+                  />
                 );
               });
             }
@@ -462,7 +317,7 @@ const EditExpenditureDialogForm = ({
           disabled={noChanges}
         />
       </DialogSection>
-    </Dialog>
+    </>
   );
 };
 

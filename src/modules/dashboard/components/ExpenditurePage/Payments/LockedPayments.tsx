@@ -1,22 +1,28 @@
 /* eslint-disable max-len */
 import React, { useCallback, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import classNames from 'classnames';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { Recipient as RecipientType } from './types';
-import styles from './Payments.css';
 import { FormSection } from '~core/Fields';
-import LockedRecipient from '../Recipient/LockedRecipient';
 import UserMention from '~core/UserMention';
 import { Colony } from '~data/index';
-import { MSG } from './Payments';
-import CollapseExpandButtons from './CollapseExpandButtons';
 import Icon from '~core/Icon';
 import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
-import { Tooltip } from '~core/Popover';
-import { Status } from '../Stages/constants';
 
-const displayName = 'dashboard.ExpenditurePage.LockedPayments';
+import { Status } from '../Stages/constants';
+import LockedRecipient from '../Recipient/LockedRecipient';
+
+import { Recipient as RecipientType } from './types';
+import RecipientHeader from './RecipientHeader';
+import styles from './Payments.css';
+
+export const MSG = defineMessages({
+  payments: {
+    id: 'dashboard.ExpenditurePage.Payments.LockedPayments.payments',
+    defaultMessage: 'Payments',
+  },
+});
+
+const displayName = 'dashboard.ExpenditurePage.Payments.LockedPayments';
 
 interface Props {
   recipients?: RecipientType[];
@@ -74,50 +80,24 @@ const LockedPayments = ({
 
           return (
             <div className={styles.singleRecipient} key={recipient.id}>
-              <FormSection>
-                <div className={styles.recipientNameWrapper}>
-                  <div className={styles.recipientName}>
-                    <CollapseExpandButtons
-                      isExpanded={isOpen}
-                      onToogleButtonClick={() => onToggleButtonClick(index)}
-                      isLocked
-                    />
-                    {index + 1}:{' '}
-                    <UserMention
-                      username={
-                        recipient.recipient?.profile.username ||
-                        recipient.recipient?.profile.displayName ||
-                        ''
-                      }
-                    />
-                    {recipient?.delay?.amount && (
-                      <>
-                        {', '}
-                        {recipient.delay.amount}
-                        {recipient.delay.time.substring(0, 1)}
-                      </>
-                    )}
-                  </div>
-                  {inPendingState ? (
-                    <div className={styles.dot} />
-                  ) : (
-                    recipient.isChanged && (
-                      <Tooltip content={<FormattedMessage {...MSG.newValue} />}>
-                        <div className={classNames(styles.dot, styles.blue)} />
-                      </Tooltip>
-                    )
-                  )}
-                </div>
-              </FormSection>
               {colony && (
-                <LockedRecipient
-                  recipient={{
-                    ...recipient,
-                    isExpanded: isOpen,
-                  }}
-                  colony={colony}
-                  pendingChanges={pendingChanges}
-                />
+                <>
+                  <RecipientHeader
+                    isOpen={isOpen}
+                    onToggleButtonClick={onToggleButtonClick}
+                    inPendingState={!!inPendingState}
+                    recipient={recipient}
+                    index={index}
+                  />
+                  <LockedRecipient
+                    recipient={{
+                      ...recipient,
+                      isExpanded: isOpen,
+                    }}
+                    colony={colony}
+                    pendingChanges={pendingChanges}
+                  />
+                </>
               )}
             </div>
           );
@@ -130,7 +110,7 @@ const LockedPayments = ({
               <FormSection>
                 <div className={styles.recipientNameWrapper}>
                   <div className={styles.recipientName}>
-                    {recipients ? index + recipients?.length + 1 : index + 1}:{' '}
+                    {recipients ? index + recipients?.length + 1 : index + 1}
                     <UserMention
                       username={
                         newRecipient.recipient?.profile.username ||

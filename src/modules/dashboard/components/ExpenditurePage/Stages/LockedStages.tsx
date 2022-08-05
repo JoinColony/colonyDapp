@@ -10,12 +10,12 @@ import styles from './Stages.css';
 
 const MSG = defineMessages({
   motion: {
-    id: 'dashboard.ExpenditurePage.Stages.motion',
+    id: 'dashboard.ExpenditurePage.Stages.LockedStages.motion',
     defaultMessage: `There is an active motion for this expenditure`,
   },
 });
 
-const displayName = 'dashboard.ExpenditurePage.LockedStages';
+const displayName = 'dashboard.ExpenditurePage.Stages.LockedStages';
 
 interface Props {
   states: State[];

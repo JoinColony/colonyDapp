@@ -1,0 +1,31 @@
+.recipientNameWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.recipientName {
+  display: flex;
+  align-items: center;
+  padding-bottom: 10px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.recipientName span {
+  margin-left: 4px;
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.dot {
+  height: 9px;
+  width: 9px;
+  border-radius: 50%;
+  background-color: var(--golden);
+}
+
+.blue {
+  background-color: var(--action-secondary);
+}

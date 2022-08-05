@@ -10,7 +10,7 @@ import { State, ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 import { Stage } from './constants';
 import Stages from './Stages';
 
-const displayName = 'dashboard.ExpenditurePage.FormStages';
+const displayName = 'dashboard.ExpenditurePage.Stages.FormStages';
 
 interface Props {
   states: State[];
