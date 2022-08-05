@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { extensions, getExtensionHash } from '@colony/colony-js';
+import { getExtensionHash } from '@colony/colony-js';
 import camelCase from 'lodash/camelCase';
 
 import BreadCrumb from '~core/BreadCrumb';
@@ -11,7 +11,7 @@ import {
 } from '~data/index';
 import { Address } from '~types/index';
 import { SpinnerLoader } from '~core/Preloaders';
-import extensionData from '~data/staticData/extensionData';
+import { extensionData, allAllowedExtensions } from '~data/staticData/';
 
 import ExtensionCard from './ExtensionCard';
 
@@ -68,11 +68,6 @@ const Extensions = ({ colonyAddress }: Props) => {
   const availableExtensionsData = useMemo(() => {
     if (data?.processedColony?.installedExtensions) {
       const { installedExtensions } = data.processedColony;
-
-      // get all extensions that are allowed to be installed
-      const allAllowedExtensions = extensions.filter(
-        (extensionName) => extensionData[extensionName],
-      );
 
       return allAllowedExtensions.reduce(
         (availableExtensions, extensionName) => {
