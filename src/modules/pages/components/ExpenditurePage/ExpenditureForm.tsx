@@ -67,7 +67,7 @@ const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
         return <Split sidebarRef={sidebarRef} colony={colony} />;
       }
       case ExpenditureTypes.Batch: {
-        return <Batch />;
+        return <Batch colony={colony} />;
       }
       default:
         return null;
