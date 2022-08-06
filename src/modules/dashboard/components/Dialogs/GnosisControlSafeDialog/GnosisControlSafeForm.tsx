@@ -336,7 +336,7 @@ const GnosisControlSafeForm = ({
                           onClick={() => handleTabToggle(index)}
                         >
                           <Icon
-                            name="caret-up-small"
+                            name="caret-up"
                             className={styles.toggleTabIcon}
                             title={MSG.toggleTransaction}
                             titleValues={{
