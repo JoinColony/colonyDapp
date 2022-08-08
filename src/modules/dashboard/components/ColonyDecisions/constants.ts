@@ -2,11 +2,11 @@ import { defineMessages } from 'react-intl';
 
 const SORT_MSG = defineMessages({
   soonest: {
-    id: 'dashboard.Sort.soonest',
+    id: 'dashboard.ColonyDecisions.soonest',
     defaultMessage: 'Ending soonest',
   },
   latest: {
-    id: 'dashboard.Sort.latest',
+    id: 'dashboard.ColonyDecisions.latest',
     defaultMessage: 'Ending latest',
   },
 });
