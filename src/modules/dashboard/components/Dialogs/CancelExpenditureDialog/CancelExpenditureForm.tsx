@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FormikProps } from 'formik';
@@ -17,11 +17,11 @@ import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot } from '~modules/users/checks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
+import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
 import { PenalizeType } from './types';
 import { FormValues } from './CancelExpenditureDialog';
 import styles from './CancelExpenditureDialog.css';
-import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
 const MSG = defineMessages({
   header: {
@@ -88,7 +88,6 @@ const CancelExpenditureForm = ({
   isSubmitting,
   handleSubmit,
 }: Props & FormikProps<FormValues>) => {
-  const [domainID, setDomainID] = useState<number>();
   // temporary value
   const [token] = tokensMock;
   const { walletAddress, username, ethereal } = useLoggedInUser();
@@ -104,11 +103,6 @@ const CancelExpenditureForm = ({
     values.forceAction,
   );
 
-  const handleMotionDomainChange = useCallback(
-    (motionDomainId) => setDomainID(motionDomainId),
-    [],
-  );
-
   return (
     <Dialog cancel={close}>
       <DialogSection>
@@ -119,13 +113,7 @@ const CancelExpenditureForm = ({
             styles.forceRow,
           )}
         >
-          {colony && (
-            <MotionDomainSelect
-              colony={colony}
-              onDomainChange={handleMotionDomainChange}
-              initialSelectedDomain={domainID}
-            />
-          )}
+          {colony && <MotionDomainSelect colony={colony} />}
           {canCancelExpenditure && isVotingExtensionEnabled && (
             <div className={styles.toggleContainer}>
               <Toggle
