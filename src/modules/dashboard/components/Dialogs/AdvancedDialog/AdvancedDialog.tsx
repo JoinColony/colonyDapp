@@ -12,6 +12,8 @@ import {
   canEnterRecoveryMode,
   hasRoot,
   canArchitect,
+  canFund,
+  canAdminister,
 } from '~modules/users/checks';
 
 const MSG = defineMessages({
@@ -91,6 +93,10 @@ const MSG = defineMessages({
     id: 'dashboard.AdvancedDialog.manageGnosisSafeDescription',
     defaultMessage: 'Control a safe to interact with external contracts.',
   },
+  adminFundingPermissions: {
+    id: 'dashboard.AdvancedDialog.adminFundingPermissions',
+    defaultMessage: 'funding and administration or root',
+  },
 });
 
 interface CustomWizardDialogProps extends ActionDialogProps {
@@ -135,6 +141,11 @@ const AdvancedDialog = ({
 
   const canEnterPermissionManagement =
     (hasRegisteredProfile && canArchitect(allUserRoles)) || hasRootPermission;
+
+  const canManageGnosisSafes =
+    hasRegisteredProfile &&
+    canFund(allUserRoles) &&
+    (canAdminister(allUserRoles) || hasRoot(allUserRoles));
 
   const items = [
     {
@@ -197,6 +208,11 @@ const AdvancedDialog = ({
       icon: 'gnosis-logo',
       dataTest: 'manageGnosisSafeItem',
       onClick: () => callStep(nextStepManageGnosisSafe),
+      permissionRequired: !canManageGnosisSafes,
+      permissionInfoText: MSG.permissionsText,
+      permissionInfoTextValues: {
+        permissionsList: <FormattedMessage {...MSG.adminFundingPermissions} />,
+      },
     },
     {
       title: MSG.makeArbitraryTransactionTitle,
