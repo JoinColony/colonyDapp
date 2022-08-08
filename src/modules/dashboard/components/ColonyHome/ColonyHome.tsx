@@ -11,25 +11,26 @@ import { parse as parseQS } from 'query-string';
 
 import LoadingTemplate from '~pages/LoadingTemplate';
 import Extensions, { ExtensionDetails } from '~dashboard/Extensions';
+import ColonyHomeActions from '~dashboard/ColonyHomeActions';
+import ColonyActions from '~dashboard/ColonyActions';
+import ColonyEvents from '~dashboard/ColonyEvents';
+import ColonyDecisions from '~dashboard/ColonyDecisions';
+import ColonyNewDecision from '~dashboard/ColonyNewDecision';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { useColonyFromNameQuery } from '~data/index';
-
-import ColonyActions from '~dashboard/ColonyActions';
-import ColonyEvents from '~dashboard/ColonyEvents';
-
-import ColonyHomeLayout from './ColonyHomeLayout';
-
-import styles from './ColonyHomeLayout.css';
-
 import {
   COLONY_EVENTS_ROUTE,
+  COLONY_DECISIONS_ROUTE,
   COLONY_EXTENSIONS_ROUTE,
   COLONY_EXTENSION_DETAILS_ROUTE,
   COLONY_EXTENSION_SETUP_ROUTE,
   COLONY_HOME_ROUTE,
   NOT_FOUND_ROUTE,
 } from '~routes/index';
+
+import ColonyHomeLayout from './ColonyHomeLayout';
+import styles from './ColonyHomeLayout.css';
 
 const MSG = defineMessages({
   loadingText: {
@@ -84,9 +85,29 @@ const ColonyHome = ({ match, location }: Props) => {
                 colony={colony}
                 filteredDomainId={filteredDomainId}
                 onDomainChange={setDomainIdFilter}
-                showActions={false}
               >
                 <ColonyEvents colony={colony} ethDomainId={filteredDomainId} />
+              </ColonyHomeLayout>
+            )}
+          />
+          <Route
+            path={COLONY_DECISIONS_ROUTE}
+            component={() => (
+              <ColonyHomeLayout
+                colony={colony}
+                filteredDomainId={filteredDomainId}
+                onDomainChange={setDomainIdFilter}
+                newItemButton={
+                  <ColonyNewDecision
+                    colony={colony}
+                    ethDomainId={filteredDomainId}
+                  />
+                }
+              >
+                <ColonyDecisions
+                  colony={colony}
+                  ethDomainId={filteredDomainId}
+                />
               </ColonyHomeLayout>
             )}
           />
@@ -130,7 +151,12 @@ const ColonyHome = ({ match, location }: Props) => {
                 colony={colony}
                 filteredDomainId={filteredDomainId}
                 onDomainChange={setDomainIdFilter}
-                ethDomainId={filteredDomainId}
+                newItemButton={
+                  <ColonyHomeActions
+                    colony={colony}
+                    ethDomainId={filteredDomainId}
+                  />
+                }
               >
                 <ColonyActions colony={colony} ethDomainId={filteredDomainId} />
               </ColonyHomeLayout>
