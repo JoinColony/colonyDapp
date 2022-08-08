@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { useField } from 'formik';
 import classNames from 'classnames';
+import { isEmpty } from 'lodash';
 
 import classNames from 'classnames';
 import { isEmpty, isNil } from 'lodash';
@@ -9,7 +10,6 @@ import { isEmpty, isNil } from 'lodash';
 import { FormSection } from '~core/Fields';
 import { Colony } from '~data/index';
 import TokenIcon from '~dashboard/HookedTokenIcon';
-import { SpinnerLoader } from '~core/Preloaders';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import Button from '~core/Button';
 
@@ -60,22 +60,6 @@ export const MSG = defineMessages({
     id: `dashboard.ExpenditurePage.Batch.CSVUploader.CSVUploaderItem.viewAll`,
     defaultMessage: 'View all',
   },
-  clear: {
-    id: 'dashboard.ExpenditurePage.Batch.clear',
-    defaultMessage: 'Clear',
-  },
-  recipients: {
-    id: 'dashboard.ExpenditurePage.Batch.recipients',
-    defaultMessage: 'Recipients',
-  },
-  value: {
-    id: 'dashboard.ExpenditurePage.Batch.value',
-    defaultMessage: 'Value',
-  },
-  valueWithToken: {
-    id: 'dashboard.ExpenditurePage.Batch.valueWithToken',
-    defaultMessage: '{icon} {token} {amount}',
-  },
 });
 
 const displayName = 'dashboard.ExpenditurePage.Batch';
@@ -89,6 +73,10 @@ const Batch = ({ colony }: Props) => {
   const { formatMessage } = useIntl();
   const [, { value: batch }] = useField('batch');
   const batchData = batch?.dataCSVUploader?.[0]?.parsedData;
+  const processedData = useMemo(() => calculateBatch(colony, batchData), [
+    batchData,
+    colony,
+  ]);
 
   const data = useCalculateBatchPayment(colony, batchData);
   const { invalidRows, recipientsCount, tokens, validatedData } = data || {};
