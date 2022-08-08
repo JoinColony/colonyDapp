@@ -18,6 +18,7 @@ interface Props {
   setActiveStateId?: React.Dispatch<React.SetStateAction<string | undefined>>;
   setFormValues?: React.Dispatch<React.SetStateAction<ValuesType | undefined>>;
   colony?: Colony;
+  handleCancelExpenditure: () => void;
 }
 
 const FormStages = ({
@@ -26,6 +27,7 @@ const FormStages = ({
   setActiveStateId,
   setFormValues,
   colony,
+  handleCancelExpenditure,
 }: Props) => {
   const { values, handleSubmit, validateForm, resetForm } =
     useFormikContext<ValuesType>() || {};
@@ -87,6 +89,7 @@ const FormStages = ({
         handleButtonClick,
         handleDeleteDraft,
         handleSaveDraft,
+        handleCancelExpenditure,
       }}
     />
   );

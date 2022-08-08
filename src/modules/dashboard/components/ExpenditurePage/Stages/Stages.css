@@ -2,7 +2,6 @@
 @value buttonWidth: 100px;
 
 .mainContainer {
-  padding-top: 20px;
   min-width: 340px;
 }
 
@@ -35,8 +34,12 @@
 .statusContainer {
   display: flex;
   justify-content: space-between;
-  padding: 10px 0;
+  padding: 26px 0 10px;
   border-bottom: 1px solid var(--temp-grey-6);
+}
+
+.withTag {
+  padding: 14px 0 10px;
 }
 
 .icon svg {
@@ -106,6 +109,16 @@
   transition: fill 200ms ease-in-out;
 }
 
+.claimed {
+  composes: themeLight from '~core/Tag/Tag.css';
+  margin-left: 30px;
+  padding: 1px 12px 2px;
+  height: 20px;
+  border-radius: 5px;
+  color: var(--temp-grey-blue-7);
+  letter-spacing: 0.5px;
+}
+
 .stageWrapper {
   display: flex;
   align-items: center;
@@ -129,4 +142,13 @@
   width: 100%;
   border-radius: 12px;
   text-align: center;
+}
+
+.tagWrapper span {
+  width: 100%;
+  text-align: center;
+}
+
+.disableIcon svg {
+  fill: var(--text-disabled);
 }

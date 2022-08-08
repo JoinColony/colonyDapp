@@ -35,6 +35,7 @@ import EscrowFundsDialog from '~dashboard/Dialogs/EscrowFundsDialog';
 import EditExpenditureDialog from '~dashboard/Dialogs/EditExpenditureDialog';
 import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
 import Tag from '~core/Tag';
+import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
 
 import { findDifferences, updateValues } from './utils';
 import ExpenditureForm from './ExpenditureForm';
@@ -247,6 +248,7 @@ const ExpenditurePage = ({ match }: Props) => {
   }, [lockValues]);
 
   const openEscrowFundsDialog = useDialog(EscrowFundsDialog);
+  const openCancelExpenditureDialog = useDialog(CancelExpenditureDialog);
 
   const handleFundExpenditure = useCallback(
     () =>
@@ -321,6 +323,26 @@ const ExpenditurePage = ({ match }: Props) => {
   >();
   const [motion, setMotion] = useState<Motion>();
   const [status, setStatus] = useState<Status>();
+
+  const handleCancelExpenditure = () =>
+    colonyData &&
+    openCancelExpenditureDialog({
+      onCancelExpenditure: (isForce: boolean) => {
+        if (isForce) {
+          // temporary action
+          setStatus(Status.ForceCancelled);
+        } else {
+          // setTimeout is temporary, call to backend should be added here
+          setMotion({ type: MotionType.Cancel, status: MotionStatus.Pending });
+          setTimeout(() => {
+            setStatus(Status.Cancelled);
+            setMotion({ type: MotionType.Cancel, status: MotionStatus.Passed });
+          }, 5000);
+        }
+      },
+      colony: colonyData.processedColony,
+      isVotingExtensionEnabled: true, // temporary value
+    });
 
   const handleConfirmEition = useCallback(
     (confirmedValues: Partial<ValuesType> | undefined, isForced: boolean) => {
@@ -453,6 +475,7 @@ const ExpenditurePage = ({ match }: Props) => {
                     lockValues,
                     handleSubmit,
                     colony: colonyData?.processedColony,
+                    handleCancelExpenditure,
                   }}
                 />
               )}
@@ -502,6 +525,7 @@ const ExpenditurePage = ({ match }: Props) => {
               handleSubmit,
               motion,
               status,
+              handleCancelExpenditure,
             }}
           />
         </main>

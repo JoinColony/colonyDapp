@@ -40,3 +40,12 @@
 .activeLabel {
   color: var(--temp-grey-blue-7);
 }
+
+.cancelled {
+  border: 1px solid var(--pink);
+  background-color: var(--pink);
+}
+
+.cancelledLabel {
+  color: var(--text-disabled);
+}

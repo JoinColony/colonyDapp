@@ -1,17 +1,19 @@
-import React, { useCallback } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import React, { useCallback, useMemo } from 'react';
+import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 
 import Tag from '~core/Tag';
 import { Motion, State } from '~pages/ExpenditurePage/ExpenditurePage';
+import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
 
 import { MotionStatus, Status } from './constants';
+import LinkedMotions from './LinkedMotions';
 import Stages from './Stages';
 import styles from './Stages.css';
 
 const MSG = defineMessages({
   motion: {
-    id: 'dashboard.ExpenditurePage.Stages.LockedStages.motion',
-    defaultMessage: `There is an active motion for this expenditure`,
+    id: 'dashboard.ExpenditurePage.Stages.motion',
+    defaultMessage: `You can't {action} unless motion ends`,
   },
 });
 
@@ -23,6 +25,7 @@ interface Props {
   activeStateId?: string;
   motion?: Motion;
   status?: Status;
+  handleCancelExpenditure?: () => void;
 }
 
 const LockedStages = ({
@@ -31,6 +34,7 @@ const LockedStages = ({
   setActiveStateId,
   motion,
   status,
+  handleCancelExpenditure,
 }: Props) => {
   const activeState = states.find((state) => state.id === activeStateId);
   const { formatMessage } = useIntl();
@@ -39,15 +43,34 @@ const LockedStages = ({
     activeState?.buttonAction();
   }, [activeState]);
 
+  const formattedLabel = useMemo(
+    () => (text: string | MessageDescriptor | undefined): string => {
+      if (undefined) {
+        return '';
+      }
+      if (typeof text === 'string') {
+        return text;
+      }
+      if (typeof text === 'object' && text?.id) {
+        return formatMessage(text);
+      }
+      return '';
+    },
+    [formatMessage],
+  );
+
   return (
     <div className={styles.tagStagesWrapper}>
       {motion?.status === MotionStatus.Pending && (
         <Tag
           appearance={{
             theme: 'golden',
+            colorSchema: 'fullColor',
           }}
         >
-          {formatMessage(MSG.motion)}
+          {formatMessage(MSG.motion, {
+            action: formattedLabel(activeState?.buttonText),
+          })}
         </Tag>
       )}
       <Stages
@@ -58,11 +81,9 @@ const LockedStages = ({
           handleButtonClick,
           motion,
           status,
+          handleCancelExpenditure,
         }}
       />
-      {/* 
-        uncomment this when LinkedMotions component is merged
-
       {motion && (
         // motion link needs to be changed and redirects to actual motions page
         <LinkedMotions
@@ -71,7 +92,7 @@ const LockedStages = ({
           motionLink={LANDING_PAGE_ROUTE}
           id="25"
         />
-      )} */}
+      )}
     </div>
   );
 };

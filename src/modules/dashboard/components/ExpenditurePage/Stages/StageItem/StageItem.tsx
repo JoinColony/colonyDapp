@@ -8,10 +8,18 @@ interface Props {
   label?: string | MessageDescriptor;
   isActive: boolean;
   isFirst?: boolean;
+  isCancelled: boolean;
   labelComponent?: ReactNode;
 }
+const displayName = 'dashboard.ExpenditurePage.Stages.StageItem';
 
-const StageItem = ({ label, isActive, isFirst, labelComponent }: Props) => {
+const StageItem = ({
+  label,
+  isActive,
+  isFirst,
+  isCancelled,
+  labelComponent,
+}: Props) => {
   const { formatMessage } = useIntl();
 
   const labelText =
@@ -20,7 +28,10 @@ const StageItem = ({ label, isActive, isFirst, labelComponent }: Props) => {
   return (
     <div className={styles.container}>
       <div
-        className={classNames(styles.dot, { [styles.activeDot]: isActive })}
+        className={classNames(styles.dot, {
+          [styles.activeDot]: isActive,
+          [styles.cancelled]: isCancelled && isActive,
+        })}
       />
       {!isFirst && (
         <div
@@ -33,6 +44,7 @@ const StageItem = ({ label, isActive, isFirst, labelComponent }: Props) => {
         <div
           className={classNames(styles.label, {
             [styles.activeLabel]: isActive,
+            [styles.cancelledLabel]: !isActive && isCancelled,
           })}
         >
           {labelText}
@@ -43,5 +55,7 @@ const StageItem = ({ label, isActive, isFirst, labelComponent }: Props) => {
     </div>
   );
 };
+
+StageItem.displayName = displayName;
 
 export default StageItem;
