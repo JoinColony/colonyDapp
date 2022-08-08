@@ -2,12 +2,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { useField } from 'formik';
 import classNames from 'classnames';
+import { isEmpty } from 'lodash';
 
 import Button from '~core/Button';
 import { FormSection } from '~core/Fields';
 import { Colony } from '~data/index';
 import TokenIcon from '~dashboard/HookedTokenIcon';
-import { SpinnerLoader } from '~core/Preloaders';
 
 import CSVUploader from './CSVUploader';
 import { calculateBatch } from './utils';
@@ -29,18 +29,6 @@ export const MSG = defineMessages({
   upload: {
     id: 'dashboard.ExpenditurePage.Batch.upload',
     defaultMessage: 'Upload .CSV',
-  },
-  hide: {
-    id: 'dashboard.ExpenditurePage.Batch.hide',
-    defaultMessage: 'Hide',
-  },
-  viewAll: {
-    id: 'dashboard.ExpenditurePage.Batch.viewAll',
-    defaultMessage: 'View all',
-  },
-  clear: {
-    id: 'dashboard.ExpenditurePage.Batch.clear',
-    defaultMessage: 'Clear',
   },
   recipients: {
     id: 'dashboard.ExpenditurePage.Batch.recipients',
@@ -86,13 +74,9 @@ const Batch = ({ colony }: Props) => {
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.wrapper}>
           <FormattedMessage {...MSG.batch} />
-          {!batchData ? (
+          {!batchData && (
             <Button appearance={{ theme: 'blue' }} type="button">
               {formatMessage(MSG.downloadTemplate)}
-            </Button>
-          ) : (
-            <Button appearance={{ theme: 'blue' }} type="button">
-              {formatMessage(MSG.clear)}
             </Button>
           )}
         </div>
@@ -100,37 +84,17 @@ const Batch = ({ colony }: Props) => {
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.data}>
           <FormattedMessage {...MSG.data} />
-          <div>
-            {processingCSVData && <SpinnerLoader />}
-            {!isOpen && !batchData && (
-              <Button
-                appearance={{ theme: 'blue' }}
-                type="button"
-                onClick={() => setOpen((open) => !open)}
-              >
-                {formatMessage(MSG.upload)}
-              </Button>
-            )}
-            {batchData && (
-              <Button
-                appearance={{ theme: 'blue' }}
-                type="button"
-                onClick={() => {}}
-              >
-                {formatMessage(MSG.viewAll)}
-              </Button>
-            )}
+          <div className={styles.dropzone}>
+            <CSVUploader
+              name="batch.dataCSVUploader"
+              processingData={processingCSVData}
+              setProcessingData={setProcessingCSVData}
+              isOpen={isOpen}
+            />
           </div>
         </div>
-        <CSVUploader
-          name="batch.dataCSVUploader"
-          error={undefined}
-          processingData={processingCSVData}
-          setProcessingData={setProcessingCSVData}
-          isOpen={isOpen}
-        />
       </FormSection>
-      {recipientsCount && (
+      {!!recipientsCount && (
         <FormSection appearance={{ border: 'bottom' }}>
           <div className={styles.dataRow}>
             <FormattedMessage {...MSG.recipients} />
@@ -138,7 +102,7 @@ const Batch = ({ colony }: Props) => {
           </div>
         </FormSection>
       )}
-      {value && (
+      {!isEmpty(value) && (
         <FormSection appearance={{ border: 'bottom' }}>
           <div
             className={classNames(styles.valueRow, {
