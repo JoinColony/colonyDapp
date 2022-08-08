@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import Batch from '~dashboard/ExpenditurePage/Batch';
 
 import { LockedExpenditureSettings } from '~dashboard/ExpenditurePage/ExpenditureSettings';
 import { LockedPayments } from '~dashboard/ExpenditurePage/Payments';
@@ -24,7 +23,7 @@ const LockedSidebar = ({ colony, formValues }: Props) => {
         return <LockedPayments recipients={recipients} colony={colony} />;
       }
       case ExpenditureTypes.Batch: {
-        return <Batch colony={colony} />;
+        return null;
       }
       default:
         return null;

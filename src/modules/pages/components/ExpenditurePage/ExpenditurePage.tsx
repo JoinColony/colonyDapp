@@ -28,7 +28,6 @@ import { Batch } from '~dashboard/ExpenditurePage/Batch/types';
 import { AnyUser } from '~data/index';
 
 import ExpenditureForm from './ExpenditureForm';
-import { ExpenditureTypes } from './types';
 import LockedSidebar from './LockedSidebar';
 import styles from './ExpenditurePage.css';
 
@@ -120,12 +119,6 @@ const validationSchema = yup.object().shape({
           .min(1),
       }),
     ),
-  }),
-  batch: yup.object().when('expenditure', {
-    is: (expenditure) => expenditure === ExpenditureTypes.Batch,
-    then: yup.object().shape({
-      dataCSVUploader: yup.array().required(),
-    }),
   }),
   title: yup.string().min(3).required(),
   description: yup.string().max(4000),
