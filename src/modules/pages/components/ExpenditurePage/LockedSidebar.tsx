@@ -24,7 +24,7 @@ const LockedSidebar = ({ colony, formValues }: Props) => {
         return <LockedPayments recipients={recipients} colony={colony} />;
       }
       case ExpenditureTypes.Batch: {
-        return <Batch />;
+        return <Batch colony={colony} />;
       }
       default:
         return null;
