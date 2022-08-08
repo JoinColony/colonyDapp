@@ -1,3 +1,5 @@
+@value wideButton: 160px;
+
 .main {
   padding: 90px 0;
   height: 100%;
@@ -25,15 +27,38 @@
   background-color: color-mod(var(--temp-grey-blue-7) alpha(15%));
 }
 
-.container {
+.contentContainer {
   composes: setMarginWidth;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
 }
 
-.content {
+.upperContainer {
+  composes: contentContainer;
+  align-items: baseline;
+}
+
+.tagWrapper {
+  margin-bottom: 13px;
+}
+
+.leftContent {
   margin-top: 17px;
   width: 460px;
   word-break: break-word;
+}
+
+.rightContent {
+  margin-top: 17px;
+}
+
+.userinfo {
+  display: flex;
+  color: red;
+}
+
+.title {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }

@@ -38,6 +38,7 @@
     "button.next": "Next",
     "button.save": "Save",
     "button.modify": "Modify",
+    "button.publish": "Publish",
     "button.upgrade": "Upgrade",
     "input.resetText": "Cancel",
     "label.amount": "Amount",
