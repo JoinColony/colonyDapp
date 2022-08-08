@@ -43,9 +43,15 @@ interface Props {
   recipients?: RecipientType[];
   activeState?: State;
   colony?: Colony;
+  isCancelled?: boolean;
 }
 
-const LockedPayments = ({ recipients, activeState, colony }: Props) => {
+const LockedPayments = ({
+  recipients,
+  activeState,
+  colony,
+  isCancelled,
+}: Props) => {
   const [expandedRecipients, setExpandedRecipients] = useState<
     number[] | undefined
   >(recipients?.map((_, idx) => idx));
@@ -109,13 +115,15 @@ const LockedPayments = ({ recipients, activeState, colony }: Props) => {
                     {index + 1}: <UserMention username={recipientName} />
                     {displayDelay(recipient?.delay)}
                   </div>
-                  {activeState?.id === Stage.Released && claimDate && (
-                    <ClaimTag
-                      claimDate={claimDate}
-                      claimed={claimed}
-                      activeState={activeState}
-                    />
-                  )}
+                  {activeState?.id === Stage.Released &&
+                    claimDate &&
+                    !isCancelled && (
+                      <ClaimTag
+                        claimDate={claimDate}
+                        claimed={claimed}
+                        activeState={activeState}
+                      />
+                    )}
                 </div>
               </FormSection>
               {colony && (

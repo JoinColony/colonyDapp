@@ -1,0 +1,66 @@
+@value passedColor: var(--primary);
+@value failedColor: var(--pink);
+
+.wrapper {
+  margin-top: 60px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--dark);
+}
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--temp-grey-blue-6);
+}
+
+.statusWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.line {
+  width: 7px;
+  border-top: 1px solid var(--dark);
+}
+
+.dot {
+  margin: 0 2px;
+  height: 7px;
+  width: 7px;
+  min-width: 7px;
+  border: 1px solid var(--dark);
+  border-radius: 50%;
+  background-color: white;
+}
+
+.title {
+  margin-left: 8px;
+}
+
+.passed {
+  color: var(--primary);
+}
+
+.failed {
+  color: var(--pink);
+}
+
+.link {
+  padding: 0px 10px;
+  height: 20px;
+  border-radius: var(--radius-large);
+  background-color: var(--primary);
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--colony-white);
+}
+
+.link:hover {
+  background-color: color-mod(var(--primary) shade(15%));
+  color: var(--colony-white);
+}

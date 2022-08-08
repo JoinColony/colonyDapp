@@ -19,7 +19,7 @@ import TitleDescriptionSection, {
 import { getMainClasses } from '~utils/css';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import { SpinnerLoader } from '~core/Preloaders';
-import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
+import { Stage, Status } from '~dashboard/ExpenditurePage/Stages/constants';
 import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import { useLoggedInUser } from '~data/helpers';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
@@ -166,6 +166,7 @@ const ExpenditurePage = ({ match }: Props) => {
   const [formValues, setFormValues] = useState<ValuesType>();
   const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStateId, setActiveStateId] = useState<string>();
+  const [status, setStatus] = useState<Status>();
   const sidebarRef = useRef<HTMLElement>(null);
 
   const { data: colonyData, loading } = useColonyFromNameQuery({
@@ -375,15 +376,20 @@ const ExpenditurePage = ({ match }: Props) => {
                 <LogsSection colony={colonyData?.processedColony} />
               )}
             </div>
-            <Stages
-              {...{
-                states,
-                activeStateId,
-                setActiveStateId,
-                lockValues,
-                handleSubmit,
-              }}
-            />
+            {colonyData && (
+              <Stages
+                {...{
+                  states,
+                  activeStateId,
+                  setActiveStateId,
+                  lockValues,
+                  handleSubmit,
+                }}
+                colony={colonyData.processedColony}
+                status={status}
+                setStatus={setStatus}
+              />
+            )}
           </main>
         </div>
       </div>
@@ -401,6 +407,7 @@ const ExpenditurePage = ({ match }: Props) => {
           recipients={formValues?.recipients}
           activeState={activeState}
           colony={colonyData?.processedColony}
+          isCancelled={status === Status.Cancelled}
         />
       </aside>
       <div className={styles.mainContainer}>
@@ -426,9 +433,11 @@ const ExpenditurePage = ({ match }: Props) => {
                 setActiveStateId,
                 lockValues,
                 handleSubmit,
-                colony: colonyData.processedColony,
-                recipients: formValues?.recipients,
               }}
+              colony={colonyData.processedColony}
+              recipients={formValues?.recipients}
+              status={status}
+              setStatus={setStatus}
             />
           )}
         </main>

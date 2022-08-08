@@ -1,16 +1,24 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { MessageDescriptor, useIntl } from 'react-intl';
 import classNames from 'classnames';
 
 import styles from './StageItem.css';
 
 interface Props {
-  label: string | MessageDescriptor;
+  label?: string | MessageDescriptor;
   isActive: boolean;
   isFirst?: boolean;
+  isCancelled: boolean;
+  labelComponent?: ReactNode;
 }
 
-const StageItem = ({ label, isActive, isFirst }: Props) => {
+const StageItem = ({
+  label,
+  isActive,
+  isFirst,
+  isCancelled,
+  labelComponent,
+}: Props) => {
   const { formatMessage } = useIntl();
 
   const labelText =
@@ -19,7 +27,10 @@ const StageItem = ({ label, isActive, isFirst }: Props) => {
   return (
     <div className={styles.container}>
       <div
-        className={classNames(styles.dot, { [styles.activeDot]: isActive })}
+        className={classNames(styles.dot, {
+          [styles.activeDot]: isActive,
+          [styles.cancelled]: isCancelled && isActive,
+        })}
       />
       {!isFirst && (
         <div
@@ -28,13 +39,18 @@ const StageItem = ({ label, isActive, isFirst }: Props) => {
           })}
         />
       )}
-      <div
-        className={classNames(styles.label, {
-          [styles.activeLabel]: isActive,
-        })}
-      >
-        {labelText}
-      </div>
+      {!labelComponent ? (
+        <div
+          className={classNames(styles.label, {
+            [styles.activeLabel]: isActive,
+            [styles.cancelledLabel]: !isActive && isCancelled,
+          })}
+        >
+          {labelText}
+        </div>
+      ) : (
+        labelComponent
+      )}
     </div>
   );
 };

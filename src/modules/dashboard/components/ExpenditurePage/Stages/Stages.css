@@ -35,8 +35,18 @@
 .statusContainer {
   display: flex;
   justify-content: space-between;
-  padding: 10px 0;
+  padding: 26px 0 10px;
   border-bottom: 1px solid var(--temp-grey-6);
+}
+
+.withTag {
+  padding: 14px 0 10px;
+}
+
+.icon svg {
+  height: 18px;
+  width: 18px;
+  fill: var(--temp-grey-blue-7);
 }
 
 .buttonsContainer {
@@ -122,12 +132,6 @@
   transition: fill 200ms ease-in-out;
 }
 
-.icon svg {
-  height: 18px;
-  width: 18px;
-  fill: var(--temp-grey-blue-7);
-}
-
 .claimed {
   composes: themeLight from '~core/Tag/Tag.css';
   margin-left: 30px;
@@ -136,4 +140,21 @@
   border-radius: 5px;
   color: var(--temp-grey-blue-7);
   letter-spacing: 0.5px;
+}
+
+.labelComponent {
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.tagWrapper span {
+  width: 100%;
+  text-align: center;
+}
+
+.disableIcon svg {
+  fill: var(--text-disabled);
 }
