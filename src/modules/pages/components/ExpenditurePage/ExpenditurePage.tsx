@@ -326,6 +326,7 @@ const ExpenditurePage = ({ match }: Props) => {
                 lockValues,
                 handleSubmit,
               }}
+              colony={colonyData?.processedColony}
             />
           </main>
         </div>
@@ -368,6 +369,7 @@ const ExpenditurePage = ({ match }: Props) => {
               lockValues,
               handleSubmit,
             }}
+            colony={colonyData?.processedColony}
           />
         </main>
       </div>

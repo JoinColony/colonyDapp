@@ -5,3 +5,18 @@ export enum Stage {
   Released = 'Released',
   Claimed = 'Claimed',
 }
+
+export enum MotionStatus {
+  Passed = 'passed',
+  Failed = 'failed',
+  Pending = 'pending',
+}
+
+export enum MotionType {
+  Cancel = 'cancel',
+}
+
+export enum Status {
+  Cancelled = 'cancelled',
+  ForceCancelled = 'forceCancelled',
+}
