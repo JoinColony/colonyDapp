@@ -46,7 +46,7 @@ const CSVUploader = ({
 
   useEffect(() => {
     if (parsedCSV && value[0] && isNil(value[0].parsedData)) {
-      setValue([{ ...value[0], parsedData: parsedCSV.data[0] }]);
+      setValue([{ ...value[0], parsedData: parsedCSV.data }]);
     }
 
     if (processingData) {
