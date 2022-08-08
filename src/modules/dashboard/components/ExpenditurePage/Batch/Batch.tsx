@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { useField } from 'formik';
+import classNames from 'classnames';
+
 import Button from '~core/Button';
 import { FormSection } from '~core/Fields';
 import { Colony } from '~data/index';
-
-import { Batch as BatchType } from './types';
-import styles from './Batch.css';
+import TokenIcon from '~dashboard/HookedTokenIcon';
 import { SpinnerLoader } from '~core/Preloaders';
-import UploadAddressesWidget from '~dashboard/Whitelist/UploadAddressesWidget';
-import CSVUploader from './CSVUploader/CSVUploader';
+
+import CSVUploader from './CSVUploader';
+import { calculateBatch } from './utils';
+import styles from './Batch.css';
 
 export const MSG = defineMessages({
   batch: {
@@ -36,12 +38,27 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Batch.viewAll',
     defaultMessage: 'View all',
   },
+  clear: {
+    id: 'dashboard.ExpenditurePage.Batch.clear',
+    defaultMessage: 'Clear',
+  },
+  recipients: {
+    id: 'dashboard.ExpenditurePage.Batch.recipients',
+    defaultMessage: 'Recipients',
+  },
+  value: {
+    id: 'dashboard.ExpenditurePage.Batch.value',
+    defaultMessage: 'Value',
+  },
+  valueWithToken: {
+    id: 'dashboard.ExpenditurePage.Batch.valueWithToken',
+    defaultMessage: '{icon} {token} {amount}',
+  },
 });
 
 const displayName = 'dashboard.ExpenditurePage.Batch';
 
 interface Props {
-  batch?: BatchType;
   colony: Colony;
 }
 
@@ -50,6 +67,13 @@ const Batch = ({ colony }: Props) => {
   const [isOpen, setOpen] = useState<boolean>(false);
   const { formatMessage } = useIntl();
   const [, { value: batch }] = useField('batch');
+  const batchData = batch?.dataCSVUploader?.[0]?.parsedData;
+  const processedData = useMemo(() => calculateBatch(colony, batchData), [
+    batchData,
+    colony,
+  ]);
+
+  const { value, tokens, recipientsCount } = processedData || {};
 
   useEffect(() => {
     if (processingCSVData) {
@@ -62,9 +86,15 @@ const Batch = ({ colony }: Props) => {
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.wrapper}>
           <FormattedMessage {...MSG.batch} />
-          <Button appearance={{ theme: 'blue' }} type="button">
-            {formatMessage(MSG.downloadTemplate)}
-          </Button>
+          {!batchData ? (
+            <Button appearance={{ theme: 'blue' }} type="button">
+              {formatMessage(MSG.downloadTemplate)}
+            </Button>
+          ) : (
+            <Button appearance={{ theme: 'blue' }} type="button">
+              {formatMessage(MSG.clear)}
+            </Button>
+          )}
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
@@ -72,7 +102,7 @@ const Batch = ({ colony }: Props) => {
           <FormattedMessage {...MSG.data} />
           <div>
             {processingCSVData && <SpinnerLoader />}
-            {!isOpen && (
+            {!isOpen && !batchData && (
               <Button
                 appearance={{ theme: 'blue' }}
                 type="button"
@@ -81,13 +111,13 @@ const Batch = ({ colony }: Props) => {
                 {formatMessage(MSG.upload)}
               </Button>
             )}
-            {batch?.dataCSVUploader?.uploaded && (
+            {batchData && (
               <Button
                 appearance={{ theme: 'blue' }}
                 type="button"
                 onClick={() => {}}
               >
-                {formatMessage(MSG.upload)}
+                {formatMessage(MSG.viewAll)}
               </Button>
             )}
           </div>
@@ -100,7 +130,54 @@ const Batch = ({ colony }: Props) => {
           isOpen={isOpen}
         />
       </FormSection>
-      <UploadAddressesWidget colony={colony} />
+      {recipientsCount && (
+        <FormSection appearance={{ border: 'bottom' }}>
+          <div className={styles.dataRow}>
+            <FormattedMessage {...MSG.recipients} />
+            <div className={styles.value}>{recipientsCount}</div>
+          </div>
+        </FormSection>
+      )}
+      {value && (
+        <FormSection appearance={{ border: 'bottom' }}>
+          <div
+            className={classNames(styles.valueRow, {
+              [styles.valueContainer]: tokens?.length && tokens.length > 1,
+            })}
+          >
+            <FormattedMessage {...MSG.value} />
+            <div className={styles.tokenWrapper}>
+              {tokens?.map(
+                ({ token, amount }, index) =>
+                  token && (
+                    <div
+                      className={classNames(styles.value, {
+                        [styles.marginBottom]:
+                          tokens.length > 1 && index + 1 !== tokens.length,
+                      })}
+                      key={token.id}
+                    >
+                      {formatMessage(MSG.valueWithToken, {
+                        token: token.symbol,
+                        amount:
+                          typeof amount === 'number' ? amount.toString() : '',
+                        icon: (
+                          <span className={styles.icon}>
+                            <TokenIcon
+                              className={styles.tokenIcon}
+                              token={token}
+                              name={token?.name || token?.address}
+                            />
+                          </span>
+                        ),
+                      })}
+                    </div>
+                  ),
+              )}
+            </div>
+          </div>
+        </FormSection>
+      )}
     </div>
   );
 };
