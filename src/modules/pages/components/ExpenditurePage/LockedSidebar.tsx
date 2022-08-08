@@ -67,7 +67,7 @@ const LockedSidebar = ({
         );
       }
       case ExpenditureTypes.Batch: {
-        return <Batch colony={colony} />;
+        return null;
       }
       default:
         return null;

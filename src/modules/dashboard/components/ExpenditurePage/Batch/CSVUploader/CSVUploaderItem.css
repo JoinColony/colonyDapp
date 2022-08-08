@@ -1,0 +1,23 @@
+.main {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.fileName {
+  align-items: center;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
+
+.loadingSpinnerContainer > div {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
+
+.clear {
+  composes: themeBlue from '~core/Button/Button.css';
+  transform: translate(60px, -47px);
+}

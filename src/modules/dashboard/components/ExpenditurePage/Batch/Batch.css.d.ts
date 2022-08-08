@@ -11,3 +11,4 @@ export const valueContainer: string;
 export const icon: string;
 export const tokenIcon: string;
 export const tokenWrapper: string;
+export const dropzone: string;
