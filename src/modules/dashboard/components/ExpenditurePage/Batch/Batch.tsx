@@ -7,6 +7,8 @@ import { isEmpty, isNil } from 'lodash';
 import { FormSection } from '~core/Fields';
 import { Colony } from '~data/index';
 import TokenIcon from '~dashboard/HookedTokenIcon';
+import { SpinnerLoader } from '~core/Preloaders';
+import TokenIcon from '~dashboard/HookedTokenIcon';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import IconTooltip from '~core/IconTooltip';
