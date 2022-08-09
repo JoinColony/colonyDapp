@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory } from 'react-router-dom';
 
@@ -58,6 +58,9 @@ const data = [
     createdAt: new Date(
       'Sun Aug 17 2022 12:48:59 GMT+0300 (Eastern European Summer Time)',
     ),
+    ending: new Date(
+      'Sun Aug 27 2022 12:48:59 GMT+0300 (Eastern European Summer Time)',
+    ),
   },
   {
     title: 'Update the logo design',
@@ -68,6 +71,9 @@ const data = [
     commentCount: 0,
     createdAt: new Date(
       'Sun Aug 14 2022 12:48:59 GMT+0300 (Eastern European Summer Time)',
+    ),
+    ending: new Date(
+      'Sun Aug 24 2022 12:48:59 GMT+0300 (Eastern European Summer Time)',
     ),
     decimals: '18',
     fromDomain: '1',
@@ -98,6 +104,9 @@ const data = [
     createdAt: new Date(
       'Sun Aug 18 2022 12:48:59 GMT+0300 (Eastern European Summer Time)',
     ),
+    ending: new Date(
+      'Sun Aug 28 2022 12:48:59 GMT+0300 (Eastern European Summer Time)',
+    ),
     decimals: '18',
     fromDomain: '2',
     id: `0xeabe562c979679dc4023dd23e8c6aa782448c2e7_motion_0xa1e73506f3ef6dc19dc27b750adf585fd0f30c63_3`,
@@ -124,6 +133,9 @@ const ColonyDecisions = ({
   colony: { colonyName },
   ethDomainId,
 }: Props) => {
+  const [sortOption, setSortOption] = useState<string>(
+    SortOptions.ENDING_SOONEST,
+  );
   // temp values, to be removed when queries are wired in
   const isLoading = false;
 
@@ -140,13 +152,24 @@ const ColonyDecisions = ({
       !ethDomainId || ethDomainId === ROOT_DOMAIN_ID
         ? data
         : data.filter(
-            (item) =>
-              item.toDomain === ethDomainId.toString() ||
-              item.fromDomain === ethDomainId.toString() ||
+            (decision) =>
+              decision.toDomain === ethDomainId.toString() ||
+              decision.fromDomain === ethDomainId.toString() ||
               /* when no specific domain in the action it is displayed in Root */
-              (ethDomainId === ROOT_DOMAIN_ID && item.fromDomain === undefined),
+              (ethDomainId === ROOT_DOMAIN_ID &&
+                decision.fromDomain === undefined),
           ),
     [ethDomainId],
+  );
+
+  const sortedActions = useMemo(
+    () =>
+      filteredDecisions.sort((first, second) =>
+        sortOption === SortOptions.ENDING_SOONEST
+          ? first.ending.getTime() - second.ending.getTime()
+          : second.ending.getTime() - first.ending.getTime(),
+      ),
+    [sortOption, filteredDecisions],
   );
 
   if (isLoading) {
@@ -180,12 +203,13 @@ const ColonyDecisions = ({
                   name="filter"
                   options={SortSelectOptions}
                   placeholder={MSG.placeholderFilter}
+                  onChange={setSortOption}
                 />
               </div>
             </Form>
           </div>
           <ActionsList
-            items={filteredDecisions}
+            items={sortedActions}
             handleItemClick={handleActionRedirect}
             colony={colony}
           />
