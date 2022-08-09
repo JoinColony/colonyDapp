@@ -14,6 +14,7 @@ import Extensions, { ExtensionDetails } from '~dashboard/Extensions';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { useColonyFromNameQuery } from '~data/index';
+import { allAllowedExtensions } from '~data/staticData/';
 
 import ColonyActions from '~dashboard/ColonyActions';
 import ColonyEvents from '~dashboard/ColonyEvents';
@@ -38,7 +39,7 @@ const MSG = defineMessages({
   },
 });
 
-type Props = RouteChildrenProps<{ colonyName: string }>;
+type Props = RouteChildrenProps<{ colonyName: string; extensionId?: string }>;
 
 const displayName = 'dashboard.ColonyHome';
 
@@ -49,8 +50,9 @@ const ColonyHome = ({ match, location }: Props) => {
     );
   }
 
-  const { colonyName } = useParams<{
+  const { colonyName, extensionId } = useParams<{
     colonyName: string;
+    extensionId?: string;
   }>();
 
   const { domainFilter: queryDomainFilterId } = parseQS(location.search) as {
@@ -68,11 +70,16 @@ const ColonyHome = ({ match, location }: Props) => {
     variables: { name: colonyName, address: '' },
     pollInterval: 5000,
   });
-
   if (error) console.error(error);
 
+  const isExtensionIdValid = useMemo(
+    // if no extensionId is provided, assume it's valid
+    () => (extensionId ? allAllowedExtensions.includes(extensionId) : true),
+    [extensionId],
+  );
+
   const memoizedSwitch = useMemo(() => {
-    if (data?.processedColony) {
+    if (data?.processedColony && isExtensionIdValid) {
       const { processedColony: colony } = data;
       const { colonyAddress } = colony;
       return (
@@ -140,7 +147,7 @@ const ColonyHome = ({ match, location }: Props) => {
       );
     }
     return null;
-  }, [data, setDomainIdFilter, filteredDomainId]);
+  }, [data, isExtensionIdValid, filteredDomainId]);
 
   /*
    * Keep the page loaded when the colony name changes, but we have data
@@ -174,7 +181,8 @@ const ColonyHome = ({ match, location }: Props) => {
     !colonyName ||
     error ||
     !data?.processedColony ||
-    (data?.colonyAddress as any) instanceof Error
+    (data?.colonyAddress as any) instanceof Error ||
+    !isExtensionIdValid
   ) {
     return <Redirect to={NOT_FOUND_ROUTE} />;
   }
