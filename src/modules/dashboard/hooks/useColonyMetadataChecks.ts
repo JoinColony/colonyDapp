@@ -36,6 +36,7 @@ const useColonyMetadataChecks = (
     logoChanged: false,
     tokensChanged: false,
     verifiedAddressesChanged: false,
+    safeRemoved: false,
   });
 
   const colonyMetadataHistory = useSubgraphColonyMetadataQuery({
@@ -119,6 +120,7 @@ const useColonyMetadataChecks = (
             logoChanged: !!actionColonyAvatarHash,
             tokensChanged: !!actionColonyTokens?.length,
             verifiedAddressesChanged: !!actionVerifiedAddresses?.length,
+            safeRemoved: false,
           };
 
           if (!isEqual(newMetadataValues, metadataChecks)) {

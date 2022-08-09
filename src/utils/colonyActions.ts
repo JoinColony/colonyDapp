@@ -214,6 +214,7 @@ export interface ColonyMetadata {
   colonyTokens: string[] | null;
   verifiedAddresses: string[] | null;
   isWhitelistActivated: boolean | null;
+  colonySafes: string[] | null;
 }
 
 export const parseColonyMetadata = (jsonMetadata: string): ColonyMetadata => {
@@ -223,6 +224,7 @@ export const parseColonyMetadata = (jsonMetadata: string): ColonyMetadata => {
     colonyTokens: [],
     isWhitelistActivated: false,
     verifiedAddresses: [],
+    colonySafes: [],
   };
   try {
     if (jsonMetadata) {
@@ -237,12 +239,14 @@ export const parseColonyMetadata = (jsonMetadata: string): ColonyMetadata => {
           colonyTokens,
           isWhitelistActivated,
           verifiedAddresses,
+          colonySafes,
         } = JSON.parse(jsonMetadata);
         metadata.colonyDisplayName = colonyDisplayName;
         metadata.colonyAvatarHash = colonyAvatarHash;
         metadata.colonyTokens = colonyTokens;
         metadata.isWhitelistActivated = isWhitelistActivated;
         metadata.verifiedAddresses = verifiedAddresses;
+        metadata.colonySafes = colonySafes;
       } else {
         /*
          * new metadata format
@@ -254,6 +258,7 @@ export const parseColonyMetadata = (jsonMetadata: string): ColonyMetadata => {
         metadata.verifiedAddresses = colonyMetadata?.verifiedAddresses || [];
         metadata.isWhitelistActivated =
           colonyMetadata?.isWhitelistActivated || false;
+        metadata.colonySafes = colonyMetadata?.colonySafes || [];
       }
     }
   } catch (error) {
@@ -335,6 +340,7 @@ export const getColonyValuesCheck = (
     colonyTokens: currentColonyTokens,
     verifiedAddresses: currentVerifiedAddresses,
     isWhitelistActivated: currentIsWhitelistActivated,
+    colonySafes: currentColonySafes,
   }: Partial<ColonyAction> | ColonyMetadata,
   {
     colonyDisplayName: prevColonyDisplayName,
@@ -342,12 +348,14 @@ export const getColonyValuesCheck = (
     colonyTokens: prevColonyTokens,
     verifiedAddresses: prevVerifiedAddresses,
     isWhitelistActivated: prevIsWhitelistActivated,
+    colonySafes: prevColonySafes,
   }: {
     colonyDisplayName?: string | null;
     colonyAvatarHash?: string | null;
     colonyTokens?: string[] | null;
     verifiedAddresses?: string[] | null;
     isWhitelistActivated?: boolean | null;
+    colonySafes?: string[] | null;
   },
 ): { [key: string]: boolean } => {
   if (actionType === ColonyAndExtensionsEvents.ColonyMetadata) {
@@ -368,14 +376,16 @@ export const getColonyValuesCheck = (
       prevColonyTokens ? prevColonyTokens.slice(0).sort() : [],
       currentColonyTokens?.slice(0).sort() || [],
     );
+    const safeRemoved =
+      (currentColonySafes || []).length < (prevColonySafes || []).length;
     return {
       nameChanged,
       logoChanged,
       tokensChanged,
       verifiedAddressesChanged,
+      safeRemoved,
     };
   }
-
   return {
     hasValues: false,
   };
