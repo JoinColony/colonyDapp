@@ -7,6 +7,7 @@ import ActionsList, {
   ClickHandlerProps as RedirectHandlerProps,
 } from '~core/ActionsList';
 import { Select, Form } from '~core/Fields';
+import LoadMoreButton from '~core/LoadMoreButton';
 import { SpinnerLoader } from '~core/Preloaders';
 
 import { Colony } from '~data/index';
@@ -128,6 +129,8 @@ const data = [
   },
 ];
 
+const ITEMS_PER_PAGE = 1;
+
 const ColonyDecisions = ({
   colony,
   colony: { colonyName },
@@ -136,6 +139,8 @@ const ColonyDecisions = ({
   const [sortOption, setSortOption] = useState<string>(
     SortOptions.ENDING_SOONEST,
   );
+  const [dataPage, setDataPage] = useState<number>(1);
+
   // temp values, to be removed when queries are wired in
   const isLoading = false;
 
@@ -162,7 +167,7 @@ const ColonyDecisions = ({
     [ethDomainId],
   );
 
-  const sortedActions = useMemo(
+  const sortedDecisions = useMemo(
     () =>
       filteredDecisions.sort((first, second) =>
         sortOption === SortOptions.ENDING_SOONEST
@@ -170,6 +175,11 @@ const ColonyDecisions = ({
           : second.ending.getTime() - first.ending.getTime(),
       ),
     [sortOption, filteredDecisions],
+  );
+
+  const paginatedDecisions = useMemo(
+    () => sortedDecisions.slice(0, ITEMS_PER_PAGE * dataPage),
+    [dataPage, sortedDecisions],
   );
 
   if (isLoading) {
@@ -209,10 +219,16 @@ const ColonyDecisions = ({
             </Form>
           </div>
           <ActionsList
-            items={sortedActions}
+            items={paginatedDecisions}
             handleItemClick={handleActionRedirect}
             colony={colony}
           />
+          {ITEMS_PER_PAGE * dataPage < data.length && (
+            <LoadMoreButton
+              onClick={() => setDataPage(dataPage + 1)}
+              isLoadingData={isLoading}
+            />
+          )}
         </>
       ) : (
         <div className={styles.emptyState}>
