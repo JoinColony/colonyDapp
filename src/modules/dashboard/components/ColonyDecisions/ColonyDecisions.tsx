@@ -1,7 +1,8 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory } from 'react-router-dom';
 
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import ActionsList, {
   ClickHandlerProps as RedirectHandlerProps,
 } from '~core/ActionsList';
@@ -109,7 +110,7 @@ const data = [
     status: undefined,
     symbol: '???',
     timeoutPeriods: undefined,
-    toDomain: '1',
+    toDomain: '2',
     tokenAddress: '0x0000000000000000000000000000000000000000',
     totalNayStake: '0',
     transactionHash:
@@ -118,7 +119,11 @@ const data = [
   },
 ];
 
-const ColonyDecisions = ({ colony, colony: { colonyName } }: Props) => {
+const ColonyDecisions = ({
+  colony,
+  colony: { colonyName },
+  ethDomainId,
+}: Props) => {
   // temp values, to be removed when queries are wired in
   const isLoading = false;
 
@@ -128,6 +133,20 @@ const ColonyDecisions = ({ colony, colony: { colonyName } }: Props) => {
     ({ transactionHash }: RedirectHandlerProps) =>
       history.push(`/colony/${colonyName}/tx/${transactionHash}`),
     [colonyName, history],
+  );
+
+  const filteredDecisions = useMemo(
+    () =>
+      !ethDomainId || ethDomainId === ROOT_DOMAIN_ID
+        ? data
+        : data.filter(
+            (item) =>
+              item.toDomain === ethDomainId.toString() ||
+              item.fromDomain === ethDomainId.toString() ||
+              /* when no specific domain in the action it is displayed in Root */
+              (ethDomainId === ROOT_DOMAIN_ID && item.fromDomain === undefined),
+          ),
+    [ethDomainId],
   );
 
   if (isLoading) {
@@ -166,7 +185,7 @@ const ColonyDecisions = ({ colony, colony: { colonyName } }: Props) => {
             </Form>
           </div>
           <ActionsList
-            items={data}
+            items={filteredDecisions}
             handleItemClick={handleActionRedirect}
             colony={colony}
           />
