@@ -257,6 +257,7 @@ export const colonyActionsResolvers = ({
           rootHash: null,
           isWhitelistActivated: false,
           verifiedAddresses: [],
+          colonySafes: [],
           ...actionValues,
         };
       }
