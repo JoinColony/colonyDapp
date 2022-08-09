@@ -105,6 +105,8 @@ const ActionsListItem = ({
     requiredStake,
     transactionTokenAddress,
     reputationChange,
+    title,
+    isDecision,
   },
   colony,
   handleOnClick,
@@ -143,7 +145,7 @@ const ActionsListItem = ({
   }, [fetchTokenInfo, transactionTokenAddress]);
 
   const initiatorUserProfile = useUser(createAddress(initiator || AddressZero));
-  const recipientAddress = createAddress(recipient);
+  const recipientAddress = createAddress(recipient || AddressZero);
   const isColonyAddress = recipientAddress === colony.colonyAddress;
   const fallbackRecipientProfile = useUser(
     isColonyAddress ? '' : recipientAddress,
@@ -194,11 +196,13 @@ const ActionsListItem = ({
   }
   const motionStyles =
     MOTION_TAG_MAP[
-      motionState ||
-        (isVotingExtensionEnabled &&
-          !actionType?.endsWith('Motion') &&
-          MotionState.Forced) ||
-        MotionState.Invalid
+      isDecision && motionState === MotionState.Staked
+        ? MotionState.Notice
+        : motionState ||
+          (isVotingExtensionEnabled &&
+            !actionType?.endsWith('Motion') &&
+            MotionState.Forced) ||
+          MotionState.Invalid
     ];
 
   const decimals =
@@ -292,60 +296,64 @@ const ActionsListItem = ({
         <div className={styles.content}>
           <div className={styles.titleWrapper}>
             <span className={styles.title}>
-              <FormattedMessage
-                id={
-                  (verifiedAddressesChanged &&
-                    `action.${ColonyActions.ColonyEdit}.verifiedAddresses`) ||
-                  (tokensChanged &&
-                    `action.${ColonyActions.ColonyEdit}.tokens`) ||
-                  roleMessageDescriptorId ||
-                  'action.title'
-                }
-                values={{
-                  actionType,
-                  initiator: (
-                    <span className={styles.titleDecoration}>
-                      <FriendlyName
-                        user={initiatorUserProfile}
-                        autoShrinkAddress
+              {isDecision && title ? (
+                title
+              ) : (
+                <FormattedMessage
+                  id={
+                    (verifiedAddressesChanged &&
+                      `action.${ColonyActions.ColonyEdit}.verifiedAddresses`) ||
+                    (tokensChanged &&
+                      `action.${ColonyActions.ColonyEdit}.tokens`) ||
+                    roleMessageDescriptorId ||
+                    'action.title'
+                  }
+                  values={{
+                    actionType,
+                    initiator: (
+                      <span className={styles.titleDecoration}>
+                        <FriendlyName
+                          user={initiatorUserProfile}
+                          autoShrinkAddress
+                        />
+                      </span>
+                    ),
+                    /*
+                     * @TODO Add user mention popover back in
+                     */
+                    recipient: (
+                      <span className={styles.titleDecoration}>
+                        <FriendlyName
+                          user={fallbackRecipientProfile}
+                          autoShrinkAddress
+                          colony={colony}
+                        />
+                      </span>
+                    ),
+                    amount: (
+                      <Numeral
+                        value={
+                          actionType === ColonyActions.Payment ||
+                          actionType === ColonyMotions.PaymentMotion
+                            ? paymentReceivedFn(amount)
+                            : amount
+                        }
+                        unit={getTokenDecimalsWithFallback(decimals)}
                       />
-                    </span>
-                  ),
-                  /*
-                   * @TODO Add user mention popover back in
-                   */
-                  recipient: (
-                    <span className={styles.titleDecoration}>
-                      <FriendlyName
-                        user={fallbackRecipientProfile}
-                        autoShrinkAddress
-                        colony={colony}
-                      />
-                    </span>
-                  ),
-                  amount: (
-                    <Numeral
-                      value={
-                        actionType === ColonyActions.Payment ||
-                        actionType === ColonyMotions.PaymentMotion
-                          ? paymentReceivedFn(amount)
-                          : amount
-                      }
-                      unit={getTokenDecimalsWithFallback(decimals)}
-                    />
-                  ),
-                  tokenSymbol: symbol,
-                  decimals: getTokenDecimalsWithFallback(decimals),
-                  fromDomain: domainName || fromDomain?.name || '',
-                  toDomain: toDomain?.name || '',
-                  roles: roleTitle,
-                  newVersion: newVersion || '0',
-                  reputationChange: formattedReputationChange,
-                  reputationChangeNumeral: (
-                    <Numeral value={formattedReputationChange} />
-                  ),
-                }}
-              />
+                    ),
+                    tokenSymbol: symbol,
+                    decimals: getTokenDecimalsWithFallback(decimals),
+                    fromDomain: domainName || fromDomain?.name || '',
+                    toDomain: toDomain?.name || '',
+                    roles: roleTitle,
+                    newVersion: newVersion || '0',
+                    reputationChange: formattedReputationChange,
+                    reputationChangeNumeral: (
+                      <Numeral value={formattedReputationChange} />
+                    ),
+                  }}
+                />
+              )}
             </span>
             {(motionState || isVotingExtensionEnabled) && (
               <>
