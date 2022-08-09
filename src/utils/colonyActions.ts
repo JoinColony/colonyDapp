@@ -209,6 +209,7 @@ export interface ColonyMetadata {
   colonyTokens: string[] | null;
   verifiedAddresses: string[] | null;
   isWhitelistActivated: boolean | null;
+  colonySafes: string[] | null;
   domainName?: string;
   domainPurpose?: string;
   domainColor?: string;
@@ -223,6 +224,7 @@ export const parseColonyMetadata = (jsonMetadata: string): ColonyMetadata => {
         colonyTokens = [],
         verifiedAddresses = [],
         isWhitelistActivated = null,
+        colonySafes = [],
       } = JSON.parse(jsonMetadata);
       return {
         colonyDisplayName,
@@ -230,6 +232,7 @@ export const parseColonyMetadata = (jsonMetadata: string): ColonyMetadata => {
         colonyTokens,
         verifiedAddresses,
         isWhitelistActivated,
+        colonySafes,
       };
     }
   } catch (error) {
@@ -242,6 +245,7 @@ export const parseColonyMetadata = (jsonMetadata: string): ColonyMetadata => {
     colonyTokens: [],
     verifiedAddresses: [],
     isWhitelistActivated: null,
+    colonySafes: [],
   };
 };
 
@@ -304,6 +308,7 @@ export const getSpecificActionValuesCheck = (
     domainColor: currentDomainColor,
     verifiedAddresses: currentVerifiedAddresses,
     isWhitelistActivated: currentIsWhitelistActivated,
+    colonySafes: currentColonySafes,
   }: Partial<ColonyAction> | ColonyMetadata,
   {
     colonyDisplayName: prevColonyDisplayName,
@@ -314,6 +319,7 @@ export const getSpecificActionValuesCheck = (
     domainColor: prevDomainColor,
     verifiedAddresses: prevVerifiedAddresses,
     isWhitelistActivated: prevIsWhitelistActivated,
+    colonySafes: prevColonySafes,
   }: {
     colonyDisplayName?: string | null;
     colonyAvatarHash?: string | null;
@@ -323,6 +329,7 @@ export const getSpecificActionValuesCheck = (
     domainColor?: string | null;
     verifiedAddresses?: string[] | null;
     isWhitelistActivated?: boolean | null;
+    colonySafes?: string[] | null;
   },
 ): { [key: string]: boolean } => {
   switch (actionType) {
@@ -345,11 +352,16 @@ export const getSpecificActionValuesCheck = (
         prevColonyTokens ? prevColonyTokens.slice(0).sort() : [],
         currentColonyTokens?.slice(0).sort() || [],
       );
+
+      const safeRemoved =
+        (currentColonySafes || []).length < (prevColonySafes || []).length;
+
       return {
         nameChanged,
         logoChanged,
         tokensChanged,
         verifiedAddressesChanged,
+        safeRemoved,
       };
     }
     case ColonyAndExtensionsEvents.DomainMetadata: {

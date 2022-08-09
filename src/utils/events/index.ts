@@ -466,6 +466,7 @@ const getColonyEditActionValues = async (
     colonyTokens?: string[];
     isWhitelistActivated?: boolean;
     verifiedAddresses?: string[];
+    colonySafes?: string[];
   } = {
     address,
     colonyDisplayName: null,
@@ -473,6 +474,7 @@ const getColonyEditActionValues = async (
     colonyTokens: [],
     isWhitelistActivated: false,
     verifiedAddresses: [],
+    colonySafes: [],
   };
 
   /*
@@ -496,6 +498,7 @@ const getColonyEditActionValues = async (
         colonyTokens,
         isWhitelistActivated = false,
         verifiedAddresses = [],
+        colonySafes = [],
       } = JSON.parse(ipfsMetadata);
 
       colonyEditValues.colonyDisplayName = colonyDisplayName;
@@ -503,6 +506,7 @@ const getColonyEditActionValues = async (
       colonyEditValues.colonyTokens = colonyTokens;
       colonyEditValues.isWhitelistActivated = isWhitelistActivated;
       colonyEditValues.verifiedAddresses = verifiedAddresses;
+      colonyEditValues.colonySafes = colonySafes;
     }
   } catch (error) {
     log.verbose(
