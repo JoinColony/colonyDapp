@@ -44,6 +44,7 @@ interface Props {
   activeState?: State;
   colony?: Colony;
   isCancelled?: boolean;
+  pendingMotion?: boolean;
 }
 
 const LockedPayments = ({
@@ -51,6 +52,7 @@ const LockedPayments = ({
   activeState,
   colony,
   isCancelled,
+  pendingMotion,
 }: Props) => {
   const [expandedRecipients, setExpandedRecipients] = useState<
     number[] | undefined
@@ -122,6 +124,7 @@ const LockedPayments = ({
                         claimDate={claimDate}
                         claimed={claimed}
                         activeState={activeState}
+                        pendingMotion={pendingMotion}
                       />
                     )}
                 </div>

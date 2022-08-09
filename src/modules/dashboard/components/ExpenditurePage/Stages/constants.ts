@@ -20,3 +20,8 @@ export enum Status {
   Cancelled = 'cancelled',
   ForceCancelled = 'forceCancelled',
 }
+
+export interface Motion {
+  type: MotionType;
+  status: MotionStatus;
+}

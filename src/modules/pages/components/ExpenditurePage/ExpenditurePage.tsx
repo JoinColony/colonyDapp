@@ -19,7 +19,12 @@ import TitleDescriptionSection, {
 import { getMainClasses } from '~utils/css';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import { SpinnerLoader } from '~core/Preloaders';
-import { Stage, Status } from '~dashboard/ExpenditurePage/Stages/constants';
+import {
+  Motion,
+  MotionStatus,
+  Stage,
+  Status,
+} from '~dashboard/ExpenditurePage/Stages/constants';
 import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import { useLoggedInUser } from '~data/helpers';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
@@ -167,6 +172,7 @@ const ExpenditurePage = ({ match }: Props) => {
   const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStateId, setActiveStateId] = useState<string>();
   const [status, setStatus] = useState<Status>();
+  const [motion, setMotion] = useState<Motion>();
   const sidebarRef = useRef<HTMLElement>(null);
 
   const { data: colonyData, loading } = useColonyFromNameQuery({
@@ -388,6 +394,8 @@ const ExpenditurePage = ({ match }: Props) => {
                 colony={colonyData.processedColony}
                 status={status}
                 setStatus={setStatus}
+                motion={motion}
+                setMotion={setMotion}
               />
             )}
           </main>
@@ -408,6 +416,7 @@ const ExpenditurePage = ({ match }: Props) => {
           activeState={activeState}
           colony={colonyData?.processedColony}
           isCancelled={status === Status.Cancelled}
+          pendingMotion={motion?.status === MotionStatus.Pending}
         />
       </aside>
       <div className={styles.mainContainer}>
@@ -438,6 +447,8 @@ const ExpenditurePage = ({ match }: Props) => {
               recipients={formValues?.recipients}
               status={status}
               setStatus={setStatus}
+              motion={motion}
+              setMotion={setMotion}
             />
           )}
         </main>

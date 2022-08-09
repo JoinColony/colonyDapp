@@ -29,8 +29,14 @@ interface Props {
   claimDate: number | null;
   claimed?: boolean;
   activeState?: State;
+  pendingMotion?: boolean;
 }
-const ClaimTag = ({ claimDate, claimed, activeState }: Props) => {
+const ClaimTag = ({
+  claimDate,
+  claimed,
+  activeState,
+  pendingMotion,
+}: Props) => {
   if (!claimDate) {
     return null;
   }
@@ -42,6 +48,7 @@ const ClaimTag = ({ claimDate, claimed, activeState }: Props) => {
       <Button
         className={styles.claimButton}
         onClick={activeState?.buttonAction}
+        disabled={pendingMotion}
       >
         <FormattedMessage {...MSG.claimNow} />
       </Button>

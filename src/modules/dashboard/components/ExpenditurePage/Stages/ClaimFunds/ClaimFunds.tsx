@@ -61,6 +61,7 @@ interface Props {
   buttonText?: string | MessageDescriptor;
   recipients?: Recipient[];
   colony?: Colony;
+  isDisabled?: boolean;
 }
 
 const ClaimFunds = ({
@@ -68,6 +69,7 @@ const ClaimFunds = ({
   buttonText,
   recipients,
   colony,
+  isDisabled,
 }: Props) => {
   const { formatMessage } = useIntl();
 
@@ -164,7 +166,7 @@ const ClaimFunds = ({
         <Button
           onClick={buttonAction}
           style={buttonStyles}
-          disabled={!buttonIsActive}
+          disabled={!buttonIsActive || isDisabled}
         >
           {typeof buttonText === 'string' ? (
             buttonText

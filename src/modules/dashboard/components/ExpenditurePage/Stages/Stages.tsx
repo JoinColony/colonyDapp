@@ -32,7 +32,7 @@ import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
 import { Recipient as RecipientType } from '../Payments/types';
 
 import StageItem from './StageItem';
-import { MotionStatus, MotionType, Stage, Status } from './constants';
+import { Motion, MotionStatus, MotionType, Stage, Status } from './constants';
 import LinkedMotions from './LinkedMotions/LinkedMotions';
 import ClaimFunds from './ClaimFunds';
 import styles from './Stages.css';
@@ -92,11 +92,6 @@ export const buttonStyles = {
   padding: 0,
 };
 
-interface Motion {
-  type: MotionType;
-  status: MotionStatus;
-}
-
 interface Props {
   states: State[];
   activeStateId?: string;
@@ -104,6 +99,8 @@ interface Props {
   recipients?: RecipientType[];
   status?: Status;
   setStatus: React.Dispatch<React.SetStateAction<Status | undefined>>;
+  motion?: Motion;
+  setMotion: React.Dispatch<React.SetStateAction<Motion | undefined>>;
 }
 
 const Stages = ({
@@ -113,6 +110,8 @@ const Stages = ({
   recipients,
   status,
   setStatus,
+  motion,
+  setMotion,
 }: Props) => {
   const { values, handleSubmit, validateForm, resetForm } =
     useFormikContext<ValuesType>() || {};
@@ -120,7 +119,6 @@ const Stages = ({
 
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
-  const [motion, setMotion] = useState<Motion>();
 
   const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
@@ -158,6 +156,7 @@ const Stages = ({
         if (isForce) {
           // temporary action
           setStatus(Status.ForceCancelled);
+          setMotion({ type: MotionType.Cancel, status: MotionStatus.Pending });
         } else {
           // setTimeout is temporary, call to backend should be added here
           setMotion({ type: MotionType.Cancel, status: MotionStatus.Pending });
@@ -353,6 +352,7 @@ const Stages = ({
             colony={colony}
             buttonAction={activeState?.buttonAction}
             buttonText={activeState?.buttonText}
+            isDisabled={motion?.status === MotionStatus.Pending}
           />
         )}
       <div
