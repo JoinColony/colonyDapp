@@ -488,6 +488,7 @@ const getColonyEditActionValues = async (
     colonyTokens?: string[];
     isWhitelistActivated?: boolean;
     verifiedAddresses?: string[];
+    colonySafes?: string[];
   } = {
     address,
     colonyDisplayName: null,
@@ -495,6 +496,7 @@ const getColonyEditActionValues = async (
     colonyTokens: [],
     isWhitelistActivated: false,
     verifiedAddresses: [],
+    colonySafes: [],
   };
 
   /*
@@ -523,6 +525,7 @@ const getColonyEditActionValues = async (
           colonyTokens,
           isWhitelistActivated,
           verifiedAddresses,
+          colonySafes,
         } = JSON.parse(ipfsMetadata);
 
         colonyEditValues.colonyDisplayName = colonyDisplayName;
@@ -530,6 +533,7 @@ const getColonyEditActionValues = async (
         colonyEditValues.colonyTokens = colonyTokens;
         colonyEditValues.isWhitelistActivated = isWhitelistActivated;
         colonyEditValues.verifiedAddresses = verifiedAddresses;
+        colonyEditValues.colonySafes = colonySafes;
       } else {
         /*
          * new metadata format
@@ -545,6 +549,7 @@ const getColonyEditActionValues = async (
           colonyMetadata?.verifiedAddresses || [];
         colonyEditValues.isWhitelistActivated =
           colonyMetadata?.isWhitelistActivated;
+        colonyEditValues.colonySafes = colonyMetadata?.colonySafes || [];
       }
     }
   } catch (error) {
