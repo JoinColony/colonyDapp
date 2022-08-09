@@ -9,11 +9,11 @@ import TokenIcon from '~dashboard/HookedTokenIcon';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import Numeral from '~core/Numeral';
 import { Colony } from '~data/index';
-import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 
-import { getRecipientTokens } from '../utils';
-import { Recipient as RecipientType } from '../Payments/types';
+import { getRecipientTokens } from '../../utils';
+import { Recipient as RecipientType } from '../../Payments/types';
 
+import { ValuesType } from '~pages/ExpenditurePage/types';
 import styles from './LockedRecipient.css';
 
 export const MSG = defineMessages({
@@ -32,6 +32,10 @@ export const MSG = defineMessages({
   pending: {
     id: 'dashboard.ExpenditurePage.Recipient.LockedRecipient.pending',
     defaultMessage: '(Pending)',
+  },
+  none: {
+    id: 'dashboard.ExpenditurePage.Recipient.LockedRecipient.none',
+    defaultMessage: 'None',
   },
 });
 
@@ -150,7 +154,13 @@ const LockedRecipient = ({ recipient, colony, pendingChanges }: Props) => {
                   )}
                 </div>
                 <span className={styles.delayControlsContainer}>
-                  {delay.amount} {delay.time}
+                  {delay?.amount ? (
+                    <>
+                      {delay.amount} {delay.time}
+                    </>
+                  ) : (
+                    <FormattedMessage {...MSG.none} />
+                  )}
                 </span>
               </div>
             </FormSection>

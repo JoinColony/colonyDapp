@@ -14,8 +14,8 @@ import UserAvatar from '~core/UserAvatar';
 import UserPickerWithSearch from '~core/UserPickerWithSearch';
 import { AnyUser, Colony } from '~data/index';
 import { Address } from '~types/index';
-import { Recipient as RecipientType } from '../Payments/types';
 
+import { Recipient as RecipientType } from '../Payments/types';
 import styles from './Recipient.css';
 
 export const MSG = defineMessages({
@@ -89,7 +89,7 @@ const Recipient = ({
   isLast,
   colony,
 }: Props) => {
-  const { setFieldValue } = useFormikContext();
+  const { setFieldValue, setFieldTouched } = useFormikContext();
   const { isExpanded, value: tokens } = recipient;
   const { tokens: colonyTokens } = colony || {};
 
@@ -177,9 +177,15 @@ const Recipient = ({
                       {tokens.length === idx + 1 && (
                         <Button
                           type="button"
-                          onClick={() =>
-                            arrayHelpers.push({ ...newTokenData, id: nanoid() })
-                          }
+                          onClick={() => {
+                            arrayHelpers.push({
+                              ...newTokenData,
+                              id: nanoid(),
+                            });
+                            setFieldTouched(
+                              `recipients[${index}].value[${idx + 1}].amount`,
+                            );
+                          }}
                           appearance={{ theme: 'blue' }}
                           style={{ margin: styles.buttonMargin }}
                         >

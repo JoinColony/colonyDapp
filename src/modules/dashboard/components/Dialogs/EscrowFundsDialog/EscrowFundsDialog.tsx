@@ -4,6 +4,7 @@ import { FormikProps } from 'formik';
 import { ActionForm } from '~core/Fields';
 import { ActionTypes } from '~redux/actionTypes';
 import { Colony } from '~data/index';
+import Dialog from '~core/Dialog';
 
 import EscrowFundsDialogForm from './EscrowFundsDialogForm';
 
@@ -61,16 +62,17 @@ const EscrowFundsDialog = ({
           setIsForce(formValues.values.forceAction);
         }
         return (
-          <EscrowFundsDialogForm
-            {...{
-              colony,
-              close,
-              cancel,
-              onSubmitClick,
-              isVotingExtensionEnabled,
-              ...formValues,
-            }}
-          />
+          <Dialog cancel={cancel}>
+            <EscrowFundsDialogForm
+              {...{
+                colony,
+                close,
+                onSubmitClick,
+                isVotingExtensionEnabled,
+                ...formValues,
+              }}
+            />
+          </Dialog>
         );
       }}
     </ActionForm>

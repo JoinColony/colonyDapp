@@ -12,7 +12,7 @@ export const minus: string;
 export const addRecipientLabel: string;
 export const circlePlusIcon: string;
 export const deleteIcon: string;
+export const recipientNameWrapper: string;
 export const recipientName: string;
 export const editIcon: string;
-export const recipientNameWrapper: string;
 export const dot: string;

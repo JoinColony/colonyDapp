@@ -5,7 +5,7 @@ import { useDialog } from '~core/Dialog';
 import DeleteDraftDialog from '~dashboard/Dialogs/DeleteDraftDialog/DeleteDraftDialog';
 import StakeExpenditureDialog from '~dashboard/Dialogs/StakeExpenditureDialog';
 import { Colony } from '~data/index';
-import { State, ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
+import { State, ValuesType } from '~pages/ExpenditurePage/types';
 
 import { Stage } from './constants';
 import Stages from './Stages';
@@ -17,7 +17,7 @@ interface Props {
   activeStateId?: string;
   setActiveStateId?: React.Dispatch<React.SetStateAction<string | undefined>>;
   setFormValues?: React.Dispatch<React.SetStateAction<ValuesType | undefined>>;
-  colony?: Colony;
+  colony: Colony;
   handleCancelExpenditure: () => void;
 }
 
@@ -90,6 +90,7 @@ const FormStages = ({
         handleDeleteDraft,
         handleSaveDraft,
         handleCancelExpenditure,
+        colony,
       }}
     />
   );

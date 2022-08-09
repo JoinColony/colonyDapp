@@ -18,13 +18,16 @@ import { ColonyRole } from '@colony/colony-js';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import { Motion, State } from '~pages/ExpenditurePage/ExpenditurePage';
 import PermissionsLabel from '~core/PermissionsLabel';
 import Tag from '~core/Tag';
 
 import StageItem from './StageItem';
-import { MotionStatus, Stage, Status } from './constants';
+import { Motion, MotionStatus, Stage, Status } from './constants';
+import ClaimFunds from './ClaimFunds';
 import styles from './Stages.css';
+import { State } from '~pages/ExpenditurePage/types';
+import { Recipient } from '../Payments/types';
+import { Colony } from '~data/index';
 
 const MSG = defineMessages({
   stages: {
@@ -79,6 +82,10 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Stages.label',
     defaultMessage: '{label} {icon}',
   },
+  motion: {
+    id: 'dashboard.ExpenditurePage.Stages.motion',
+    defaultMessage: `You can't {action} unless motion ends`,
+  },
 });
 
 const displayName = 'dashboard.ExpenditurePage.Stages';
@@ -98,6 +105,8 @@ export interface Props {
   status?: Status;
   motion?: Motion;
   handleCancelExpenditure?: () => void;
+  recipients?: Recipient[];
+  colony: Colony;
 }
 
 const Stages = ({
@@ -109,6 +118,8 @@ const Stages = ({
   status,
   motion,
   handleCancelExpenditure,
+  recipients,
+  colony,
 }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
@@ -126,6 +137,9 @@ const Stages = ({
 
   const activeIndex = states.findIndex((state) => state.id === activeStateId);
   const activeState = states.find((state) => state.id === activeStateId);
+  // temporary value, there's need to add logic to check if realese founds can be made
+  const canRealeseFounds = true;
+  const isLogedIn = true;
 
   const renderButton = useCallback(() => {
     const buttonText =
@@ -139,37 +153,68 @@ const Stages = ({
     if (activeStateId === Stage.Claimed) {
       return <Tag text={buttonText} className={styles.claimed} />;
     }
-    if (activeState?.buttonTooltip) {
+
+    if (activeStateId === Stage.Claimed) {
+      return <Tag text={buttonText} className={styles.claimed} />;
+    }
+    if (activeStateId === Stage.Released) {
+      return null;
+    }
+    if (activeStateId === Stage.Funded) {
       return (
-        <div>
-          <Tooltip
-            placement="top"
-            content={
-              typeof activeState.buttonTooltip === 'string' ? (
-                <div className={styles.buttonTooltip}>
-                  {activeState.buttonTooltip}
-                </div>
-              ) : (
-                <div className={styles.buttonTooltip}>
-                  <FormattedMessage {...activeState.buttonTooltip} />
-                </div>
-              )
-            }
-          >
-            <Button
-              onClick={handleButtonClick}
-              style={buttonStyles}
-              disabled={
-                activeStateId === Stage.Claimed ||
-                motion?.status === MotionStatus.Pending
-              }
-            >
+        <>
+          {canRealeseFounds ? (
+            <Button onClick={activeState?.buttonAction} style={buttonStyles}>
               {buttonText}
             </Button>
-          </Tooltip>
-        </div>
+          ) : (
+            <Tooltip
+              placement="top"
+              isOpen
+              content={
+                <div className={styles.buttonTooltip}>
+                  <FormattedMessage {...MSG.tooltipNoPermissionToRealese} />
+                </div>
+              }
+            >
+              <Button
+                onClick={activeState?.buttonAction}
+                style={buttonStyles}
+                disabled
+              >
+                {buttonText}
+              </Button>
+            </Tooltip>
+          )}
+        </>
       );
     }
+    if (activeState?.buttonTooltip) {
+      return (
+        <Tooltip
+          placement="top"
+          content={
+            <div className={styles.buttonTooltip}>
+              {typeof activeState.buttonTooltip === 'string'
+                ? activeState.buttonTooltip
+                : formatMessage(activeState.buttonTooltip)}
+            </div>
+          }
+        >
+          <Button
+            onClick={handleButtonClick}
+            style={buttonStyles}
+            disabled={
+              activeStateId === Stage.Claimed ||
+              motion?.status === MotionStatus.Pending
+            }
+          >
+            {buttonText}
+          </Button>
+        </Tooltip>
+      );
+    }
+
     return (
       <Button
         onClick={handleButtonClick}
@@ -185,11 +230,12 @@ const Stages = ({
     );
   }, [
     activeState,
-    formatMessage,
-    status,
     activeStateId,
+    canRealeseFounds,
+    formatMessage,
     handleButtonClick,
     motion,
+    status,
   ]);
 
   const labelComponent = useMemo(
@@ -237,8 +283,49 @@ const Stages = ({
   const isCancelled =
     status === Status.Cancelled || status === Status.ForceCancelled;
 
+  const formattedLabel = useMemo(
+    () => (text: string | MessageDescriptor | undefined): string => {
+      if (undefined) {
+        return '';
+      }
+      if (typeof text === 'string') {
+        return text;
+      }
+      if (typeof text === 'object' && text?.id) {
+        return formatMessage(text);
+      }
+      return '';
+    },
+    [formatMessage],
+  );
+
   return (
     <div className={styles.mainContainer}>
+      {motion?.status === MotionStatus.Pending && (
+        <div className={styles.tagWrapper}>
+          <Tag
+            appearance={{
+              theme: 'golden',
+              colorSchema: 'fullColor',
+            }}
+          >
+            {formatMessage(MSG.motion, {
+              action: formattedLabel(activeState?.buttonText),
+            })}
+          </Tag>
+        </div>
+      )}
+      {isLogedIn &&
+        activeStateId === Stage.Released &&
+        status !== Status.Cancelled && (
+          <ClaimFunds
+            recipients={recipients}
+            colony={colony}
+            buttonAction={activeState?.buttonAction}
+            buttonText={activeState?.buttonText}
+            isDisabled={motion?.status === MotionStatus.Pending}
+          />
+        )}
       <div
         className={classNames(styles.statusContainer, {
           [styles.withTag]: motion?.status === MotionStatus.Pending,
@@ -309,9 +396,9 @@ const Stages = ({
                     <div className={styles.iconWrapper}>
                       <Icon
                         name="trash"
-                        className={styles.icon}
-                        onClick={handleDeleteDraft}
                         title={MSG.deleteDraft}
+                        appearance={{ size: 'normal' }}
+                        style={{ fill: styles.iconColor }}
                       />
                     </div>
                   </Tooltip>
@@ -335,8 +422,8 @@ const Stages = ({
                     {motion?.status === MotionStatus.Pending ? (
                       <Icon
                         name="circle-minus"
-                        className={styles.icon}
-                        title={MSG.deleteDraft}
+                        appearance={{ size: 'normal' }}
+                        style={{ fill: styles.iconColor }}
                       />
                     ) : (
                       <Tooltip
@@ -348,8 +435,8 @@ const Stages = ({
                         <div className={styles.iconWrapper}>
                           <Icon
                             name="circle-minus"
-                            className={styles.icon}
-                            title={MSG.deleteDraft}
+                            appearance={{ size: 'normal' }}
+                            style={{ fill: styles.iconColor }}
                           />
                         </div>
                       </Tooltip>

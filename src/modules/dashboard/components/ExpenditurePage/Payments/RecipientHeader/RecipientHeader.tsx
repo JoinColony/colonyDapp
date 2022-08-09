@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { ReactNode, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
 
@@ -21,7 +21,11 @@ export const MSG = defineMessages({
   },
   userHeader: {
     id: 'dashboard.ExpenditurePage.Payments.RecipientHeader.userHeader',
-    defaultMessage: '{count}: {name}, {value}, {delay}',
+    defaultMessage: `{count}: {name}, {value}`,
+  },
+  delay: {
+    id: 'dashboard.ExpenditurePage.Payments.RecipientHeader.delay',
+    defaultMessage: `, {amount}{time}`,
   },
 });
 
@@ -34,6 +38,7 @@ interface Props {
   recipient: Recipient;
   index: number;
   colony: Colony;
+  ClaimTag?: ReactNode;
 }
 
 const RecipientHeader = ({
@@ -43,6 +48,7 @@ const RecipientHeader = ({
   recipient,
   index,
   colony,
+  ClaimTag,
 }: Props) => {
   const recipientValues = useMemo(() => getRecipientTokens(recipient, colony), [
     colony,
@@ -58,37 +64,51 @@ const RecipientHeader = ({
             onToogleButtonClick={() => onToggleButtonClick(index)}
             isLocked
           />
-          <FormattedMessage
-            {...MSG.userHeader}
-            values={{
-              count: index + 1,
-              name: (
-                <UserMention
-                  username={
-                    recipient.recipient?.profile.username ||
-                    recipient.recipient?.profile.displayName ||
-                    ''
-                  }
-                />
-              ),
-              value: recipientValues?.map(
-                ({ amount, token }, idx) =>
-                  token &&
-                  amount && (
-                    <div className={styles.value} key={idx}>
-                      <Numeral value={amount} />
-                      {token.symbol}
-                    </div>
+          <div className={styles.header}>
+            <div className={styles.name}>
+              <FormattedMessage
+                {...MSG.userHeader}
+                values={{
+                  count: index + 1,
+                  name: (
+                    <UserMention
+                      username={
+                        recipient.recipient?.profile.username ||
+                        recipient.recipient?.profile.displayName ||
+                        ''
+                      }
+                    />
                   ),
-              ),
-              delay: recipient?.delay?.amount && (
-                <span>
-                  {recipient.delay.amount}
-                  {recipient.delay.time.substring(0, 1)}
-                </span>
-              ),
-            }}
-          />
+                  value: recipientValues?.map(
+                    ({ amount, token }, idx) =>
+                      token &&
+                      amount && (
+                        <div className={styles.value} key={idx}>
+                          <Numeral value={amount} />
+                          {token.symbol}
+                        </div>
+                      ),
+                  ),
+                }}
+              />
+              {recipient.delay?.amount && (
+                <FormattedMessage
+                  {...MSG.delay}
+                  values={{
+                    amount: recipient.delay.amount,
+                    time:
+                      // eslint-disable-next-line no-nested-ternary
+                      recipient.delay.time === 'months'
+                        ? recipient.delay.amount === '1'
+                          ? 'mth'
+                          : 'mths'
+                        : recipient.delay.time.slice(0, 1),
+                  }}
+                />
+              )}
+            </div>
+            {ClaimTag}
+          </div>
         </div>
         {inPendingState ? (
           <div className={styles.dot} />

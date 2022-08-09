@@ -23,3 +23,8 @@ export enum Status {
   Edited = 'edited',
   ForceEdited = 'forceEdited',
 }
+
+export interface Motion {
+  type: MotionType;
+  status: MotionStatus;
+}

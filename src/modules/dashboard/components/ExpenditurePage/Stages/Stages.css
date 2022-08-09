@@ -1,5 +1,6 @@
 @value buttonHeight: 29px;
 @value buttonWidth: 100px;
+@value iconColor: var(--temp-grey-blue-7);
 
 .mainContainer {
   min-width: 340px;
@@ -7,6 +8,10 @@
 
 .paddingSmall {
   padding-top: 4px;
+}
+
+.stagesContainer {
+  padding-top: 20px;
 }
 
 .status {
@@ -53,12 +58,34 @@
   align-items: center;
 }
 
+.buttonsContainer > span:not(:last-of-type) {
+  margin-right: 20px;
+}
+
+.buttonsContainer button {
+  margin-left: 30px;
+
+  &:disabled {
+    height: 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--colony-light-blue);
+    font-weight: var(--weight-bold);
+    color: var(--temp-grey-blue-7);
+  }
+
+  &:disabled:hover {
+    background-color: var(--colony-light-blue);
+    color: var(--temp-grey-blue-7);
+    cursor: default;
+  }
+}
+
 .iconButton > div {
   margin-bottom: 7px;
 }
 
 .iconButton {
-  margin-right: 20px;
   margin-left: 0;
   padding: 0;
   border: none;

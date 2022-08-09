@@ -1,26 +1,22 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import * as yup from 'yup';
-import {
-  defineMessages,
-  FormattedMessage,
-  MessageDescriptor,
-} from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { nanoid } from 'nanoid';
 import { RouteChildrenProps, useParams } from 'react-router';
 import { Formik, FormikErrors } from 'formik';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
-import { LoggedInUser, useColonyFromNameQuery } from '~data/generated';
+import { useColonyFromNameQuery } from '~data/generated';
 import { FormStages, LockedStages } from '~dashboard/ExpenditurePage/Stages';
 import TitleDescriptionSection, {
   LockedTitleDescriptionSection,
 } from '~dashboard/ExpenditurePage/TitleDescriptionSection';
 import { getMainClasses } from '~utils/css';
-
-import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import { SpinnerLoader } from '~core/Preloaders';
+import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import {
+  Motion,
   MotionStatus,
   MotionType,
   Stage,
@@ -28,7 +24,6 @@ import {
 } from '~dashboard/ExpenditurePage/Stages/constants';
 import LockedPayments from '~dashboard/ExpenditurePage/Payments/LockedPayments';
 import { useLoggedInUser } from '~data/helpers';
-import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
 import LockedExpenditureSettings from '~dashboard/ExpenditurePage/ExpenditureSettings/LockedExpenditureSettings';
 import { useDialog } from '~core/Dialog';
 import EscrowFundsDialog from '~dashboard/Dialogs/EscrowFundsDialog';
@@ -37,8 +32,9 @@ import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
 import Tag from '~core/Tag';
 import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
 
-import { findDifferences, updateValues } from './utils';
+import { findDifferences, updateValues, setClaimDate } from './utils';
 import ExpenditureForm from './ExpenditureForm';
+import { ValuesType } from './types';
 import styles from './ExpenditurePage.css';
 
 const displayName = 'pages.ExpenditurePage';
@@ -114,6 +110,15 @@ const MSG = defineMessages({
   },
 });
 
+const initialValues = {
+  expenditure: 'advanced',
+  filteredDomainId: String(ROOT_DOMAIN_ID),
+  owner: undefined,
+  title: undefined,
+  description: undefined,
+  recipients: [newRecipient],
+};
+
 const validationSchema = yup.object().shape({
   expenditure: yup.string().required(),
   filteredDomainId: yup
@@ -139,42 +144,6 @@ const validationSchema = yup.object().shape({
   description: yup.string().max(4000),
 });
 
-export interface State {
-  id: string;
-  label: string | MessageDescriptor;
-  buttonText: string | MessageDescriptor;
-  buttonAction: () => void;
-  buttonTooltip?: string | MessageDescriptor;
-}
-
-export interface Motion {
-  type: MotionType;
-  status: MotionStatus;
-}
-
-export interface ValuesType {
-  expenditure: string;
-  filteredDomainId: string;
-  owner:
-    | string
-    | Pick<
-        LoggedInUser,
-        'walletAddress' | 'balance' | 'username' | 'ethereal' | 'networkId'
-      >;
-  recipients: Recipient[];
-  title: string;
-  description?: string;
-}
-
-const initialValues = {
-  expenditure: 'advanced',
-  recipients: [newRecipient],
-  filteredDomainId: String(ROOT_DOMAIN_ID),
-  owner: undefined,
-  title: undefined,
-  description: undefined,
-};
-
 export type InitialValuesType = typeof initialValues;
 
 type Props = RouteChildrenProps<{ colonyName: string }>;
@@ -189,11 +158,17 @@ const ExpenditurePage = ({ match }: Props) => {
   const { colonyName } = useParams<{
     colonyName: string;
   }>();
-
   const [isFormEditable, setFormEditable] = useState(true);
   const [formValues, setFormValues] = useState<ValuesType>();
   const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStateId, setActiveStateId] = useState<string>();
+  const [status, setStatus] = useState<Status>();
+  const [motion, setMotion] = useState<Motion>();
+  const [inEditMode, setInEditMode] = useState(false);
+  const oldValues = useRef<ValuesType>();
+  const [pendingChanges, setPendingChanges] = useState<
+    Partial<ValuesType> | undefined
+  >();
   const sidebarRef = useRef<HTMLElement>(null);
 
   const openEditExpenditureDialog = useDialog(EditExpenditureDialog);
@@ -229,8 +204,24 @@ const ExpenditurePage = ({ match }: Props) => {
   const handleSubmit = useCallback((values) => {
     setShouldValidate(true);
 
+    // claimDate assignment here is temporary
+    // Claim date will be calculated on backend
+
     if (values) {
-      setFormValues(values);
+      setFormValues({
+        ...values,
+        recipients: values.recipients.map((reicpient) => {
+          return {
+            ...reicpient,
+            claimDate: reicpient.delay.amount
+              ? setClaimDate({
+                  amount: reicpient.delay.amount,
+                  time: reicpient.delay.time,
+                })
+              : new Date(),
+          };
+        }),
+      });
     }
     // add sending form values to backend
   }, []);
@@ -269,10 +260,37 @@ const ExpenditurePage = ({ match }: Props) => {
     setActiveStateId(Stage.Released);
   };
 
-  const handleClaimExpenditure = () => {
+  const handleClaimExpenditure = useCallback(() => {
     // Call to backend will be added here, to claim the expenditure
-    setActiveStateId(Stage.Claimed);
-  };
+    if (!formValues) {
+      return;
+    }
+
+    // if the claim date has passed and the amount hasn't been claimed yet it should be claimed now,
+    // so we set claimed property to true
+    const updatedFormValues = {
+      ...{
+        ...formValues,
+        recipients: formValues?.recipients.map((recipient) => {
+          if (!recipient.claimed && recipient.claimDate) {
+            const isClaimable = recipient.claimDate < new Date().getTime();
+            return { ...{ ...recipient, claimed: !!isClaimable } };
+          }
+          return recipient;
+        }),
+      },
+    };
+
+    const isClaimed = updatedFormValues?.recipients.every(
+      (recipient) => recipient.claimed,
+    );
+
+    if (isClaimed) {
+      setActiveStateId(Stage.Claimed);
+    }
+
+    setFormValues(updatedFormValues);
+  }, [formValues]);
 
   const states = [
     {
@@ -307,6 +325,7 @@ const ExpenditurePage = ({ match }: Props) => {
       buttonAction: () => {},
     },
   ];
+  const activeState = states.find((state) => state.id === activeStateId);
 
   const { expenditure, filteredDomainId } = formValues || {};
 
@@ -315,14 +334,6 @@ const ExpenditurePage = ({ match }: Props) => {
       setShouldValidate(true);
     }
   }, [shouldValidate]);
-
-  const [inEditMode, setInEditMode] = useState(false);
-  const oldValues = useRef<ValuesType>();
-  const [pendingChanges, setPendingChanges] = useState<
-    Partial<ValuesType> | undefined
-  >();
-  const [motion, setMotion] = useState<Motion>();
-  const [status, setStatus] = useState<Status>();
 
   const handleCancelExpenditure = () =>
     colonyData &&
@@ -418,6 +429,17 @@ const ExpenditurePage = ({ match }: Props) => {
       validateOnBlur={shouldValidate}
       validateOnChange={shouldValidate}
       validate={handleValidate}
+      initialTouched={{
+        recipients: [
+          {
+            value: [
+              {
+                amount: true,
+              },
+            ],
+          },
+        ],
+      }}
       enableReinitialize
     >
       {({ values, validateForm }) => (
@@ -467,17 +489,15 @@ const ExpenditurePage = ({ match }: Props) => {
                   handleEditCancel={handleEditCancel}
                 />
               ) : (
-                <FormStages
-                  {...{
-                    states,
-                    activeStateId,
-                    setActiveStateId,
-                    lockValues,
-                    handleSubmit,
-                    colony: colonyData?.processedColony,
-                    handleCancelExpenditure,
-                  }}
-                />
+                colonyData && (
+                  <FormStages
+                    states={states}
+                    activeStateId={activeStateId}
+                    setActiveStateId={setActiveStateId}
+                    handleCancelExpenditure={handleCancelExpenditure}
+                    colony={colonyData.processedColony}
+                  />
+                )
               )}
             </main>
           </div>
@@ -495,10 +515,13 @@ const ExpenditurePage = ({ match }: Props) => {
         />
         <LockedPayments
           recipients={formValues?.recipients}
+          activeState={activeState}
           colony={colonyData?.processedColony}
           editForm={handleEditLockedForm}
           pendingChanges={pendingChanges}
           status={status}
+          isCancelled={status === Status.Cancelled}
+          pendingMotion={motion?.status === MotionStatus.Pending}
         />
       </aside>
       <div className={styles.mainContainer}>
@@ -516,18 +539,18 @@ const ExpenditurePage = ({ match }: Props) => {
               <LogsSection colony={colonyData?.processedColony} />
             )}
           </div>
-          <LockedStages
-            {...{
-              states,
-              activeStateId,
-              setActiveStateId,
-              lockValues,
-              handleSubmit,
-              motion,
-              status,
-              handleCancelExpenditure,
-            }}
-          />
+          {colonyData && (
+            <LockedStages
+              recipients={formValues?.recipients}
+              status={status}
+              motion={motion}
+              states={states}
+              activeStateId={activeStateId}
+              setActiveStateId={setActiveStateId}
+              handleCancelExpenditure={handleCancelExpenditure}
+              colony={colonyData.processedColony}
+            />
+          )}
         </main>
       </div>
     </div>

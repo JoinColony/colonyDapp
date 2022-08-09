@@ -7,7 +7,9 @@
 
 .recipientName {
   display: flex;
+  justify-content: space-between;
   align-items: center;
+  width: 100%;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   line-height: 18px;
@@ -34,4 +36,15 @@
 
 .value {
   margin-left: 4px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.name {
+  display: flex;
+  align-items: center;
 }

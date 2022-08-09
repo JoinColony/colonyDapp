@@ -2,10 +2,13 @@ import React, { useCallback, useMemo } from 'react';
 import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 
 import Tag from '~core/Tag';
-import { Motion, State } from '~pages/ExpenditurePage/ExpenditurePage';
-import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
+import { Colony } from '~data/index';
+import { State } from '~pages/ExpenditurePage/types';
 
-import { MotionStatus, Status } from './constants';
+import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
+import { Recipient } from '../Payments/types';
+
+import { Motion, MotionStatus, Status } from './constants';
 import LinkedMotions from './LinkedMotions';
 import Stages from './Stages';
 import styles from './Stages.css';
@@ -26,6 +29,8 @@ interface Props {
   motion?: Motion;
   status?: Status;
   handleCancelExpenditure?: () => void;
+  recipients?: Recipient[];
+  colony: Colony;
 }
 
 const LockedStages = ({
@@ -35,6 +40,8 @@ const LockedStages = ({
   motion,
   status,
   handleCancelExpenditure,
+  recipients,
+  colony,
 }: Props) => {
   const activeState = states.find((state) => state.id === activeStateId);
   const { formatMessage } = useIntl();
@@ -82,6 +89,8 @@ const LockedStages = ({
           motion,
           status,
           handleCancelExpenditure,
+          recipients,
+          colony,
         }}
       />
       {motion && (

@@ -4,21 +4,39 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { FormSection } from '~core/Fields';
 import UserMention from '~core/UserMention';
-import { Colony } from '~data/index';
-import Icon from '~core/Icon';
-import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 
-import { Status } from '../Stages/constants';
-import LockedRecipient from '../Recipient/LockedRecipient';
+import { Colony } from '~data/index';
+
+import { Stage, Status } from '../Stages/constants';
+import LockedRecipient from '../Recipient/LockedRecipient/LockedRecipient';
 
 import { Recipient as RecipientType } from './types';
-import RecipientHeader from './RecipientHeader';
+import ClaimTag from './ClaimTag';
 import styles from './Payments.css';
+import Icon from '~core/Icon';
+import RecipientHeader from './RecipientHeader';
+import { State, ValuesType } from '~pages/ExpenditurePage/types';
 
-export const MSG = defineMessages({
+const MSG = defineMessages({
   payments: {
     id: 'dashboard.ExpenditurePage.Payments.LockedPayments.payments',
     defaultMessage: 'Payments',
+  },
+  recipient: {
+    id: 'dashboard.ExpenditurePage.Payments.LockedPayments.recipient',
+    defaultMessage: 'Recipient',
+  },
+  addRecipientLabel: {
+    id: 'dashboard.ExpenditurePage.Payments.LockedPayments.addRecipientLabel',
+    defaultMessage: 'Add recipient',
+  },
+  minusIconTitle: {
+    id: 'dashboard.ExpenditurePage.Payments.LockedPayments.minusIconTitle',
+    defaultMessage: 'Collapse a single recipient settings',
+  },
+  plusIconTitle: {
+    id: 'dashboard.ExpenditurePage.Payments.LockedPayments.plusIconTitle',
+    defaultMessage: 'Expand a single recipient settings',
   },
 });
 
@@ -26,10 +44,13 @@ const displayName = 'dashboard.ExpenditurePage.Payments.LockedPayments';
 
 interface Props {
   recipients?: RecipientType[];
+  activeState?: State;
   colony?: Colony;
   editForm: () => void;
   pendingChanges?: Partial<ValuesType>;
   status?: Status;
+  isCancelled?: boolean;
+  pendingMotion?: boolean;
 }
 
 const LockedPayments = ({
@@ -37,6 +58,9 @@ const LockedPayments = ({
   colony,
   editForm,
   pendingChanges,
+  activeState,
+  isCancelled,
+  pendingMotion,
 }: Props) => {
   const [expandedRecipients, setExpandedRecipients] = useState<
     number[] | undefined
@@ -71,9 +95,10 @@ const LockedPayments = ({
             />
           </span>
         </div>
-        {recipients?.map((recipient, index) => {
+        {recipients?.map(({ claimed, claimDate, ...recipient }, index) => {
           const isOpen =
             expandedRecipients?.find((idx) => idx === index) !== undefined;
+
           const inPendingState = pendingChanges?.recipients?.find(
             (item) => item.id === recipient.id,
           );
@@ -89,6 +114,18 @@ const LockedPayments = ({
                     recipient={recipient}
                     index={index}
                     colony={colony}
+                    ClaimTag={
+                      activeState?.id === Stage.Released &&
+                      claimDate &&
+                      !isCancelled && (
+                        <ClaimTag
+                          claimDate={claimDate}
+                          claimed={claimed}
+                          activeState={activeState}
+                          pendingMotion={pendingMotion}
+                        />
+                      )
+                    }
                   />
                   <LockedRecipient
                     recipient={{
