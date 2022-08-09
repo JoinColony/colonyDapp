@@ -16,11 +16,11 @@ import copyToClipboard from 'copy-to-clipboard';
 import classNames from 'classnames';
 import { ColonyRole } from '@colony/colony-js';
 
+import { State, ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import { State, ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
 import { Colony } from '~data/index';
 import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
@@ -29,9 +29,12 @@ import Tag from '~core/Tag';
 
 import DeleteDraftDialog from '../../Dialogs/DeleteDraftDialog/DeleteDraftDialog';
 import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
+import { Recipient as RecipientType } from '../Payments/types';
+
 import StageItem from './StageItem';
-import { MotionStatus, MotionType, Stage, Status } from './constants';
+import { Motion, MotionStatus, MotionType, Stage, Status } from './constants';
 import LinkedMotions from './LinkedMotions/LinkedMotions';
+import ClaimFunds from './ClaimFunds';
 import styles from './Stages.css';
 
 const MSG = defineMessages({
@@ -83,33 +86,39 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.ExpenditurePage.Stages';
 
-const buttonStyles = {
+export const buttonStyles = {
   height: styles.buttonHeight,
   width: styles.buttonWidth,
   padding: 0,
 };
 
-interface Motion {
-  type: MotionType;
-  status: MotionStatus;
-}
-
 interface Props {
   states: State[];
   activeStateId?: string;
-  colony?: Colony;
+  colony: Colony;
+  recipients?: RecipientType[];
+  status?: Status;
+  setStatus: React.Dispatch<React.SetStateAction<Status | undefined>>;
+  motion?: Motion;
+  setMotion: React.Dispatch<React.SetStateAction<Motion | undefined>>;
 }
 
-const Stages = ({ colony, states, activeStateId }: Props) => {
-  const { values, handleSubmit, validateForm } =
+const Stages = ({
+  colony,
+  states,
+  activeStateId,
+  recipients,
+  status,
+  setStatus,
+  motion,
+  setMotion,
+}: Props) => {
+  const { values, handleSubmit, validateForm, resetForm } =
     useFormikContext<ValuesType>() || {};
+  const { formatMessage } = useIntl();
 
-  const { resetForm } = useFormikContext() || {};
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
-  const [motion, setMotion] = useState<Motion>();
-  const [status, setStatus] = useState<Status>();
-  const { formatMessage } = useIntl();
 
   const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
@@ -147,6 +156,7 @@ const Stages = ({ colony, states, activeStateId }: Props) => {
         if (isForce) {
           // temporary action
           setStatus(Status.ForceCancelled);
+          setMotion({ type: MotionType.Cancel, status: MotionStatus.Pending });
         } else {
           // setTimeout is temporary, call to backend should be added here
           setMotion({ type: MotionType.Cancel, status: MotionStatus.Pending });
@@ -171,67 +181,84 @@ const Stages = ({ colony, states, activeStateId }: Props) => {
 
   const activeIndex = states.findIndex((state) => state.id === activeStateId);
   const activeState = states.find((state) => state.id === activeStateId);
+  // temporary value, there's need to add logic to check if realese founds can be made
+  const canRealeseFounds = true;
+  const isLogedIn = true;
 
   const renderButton = useCallback(() => {
+    const buttonText =
+      typeof activeState?.buttonText === 'string'
+        ? activeState.buttonText
+        : activeState?.buttonText && formatMessage(activeState.buttonText);
+
     if (status === Status.Cancelled || status === Status.ForceCancelled) {
+      return <Tag text={MSG.cancelled} className={styles.claimed} />;
+    }
+
+    if (activeStateId === Stage.Claimed) {
+      return <Tag text={buttonText} className={styles.claimed} />;
+    }
+    if (activeStateId === Stage.Released) {
+      return null;
+    }
+    if (activeStateId === Stage.Funded) {
       return (
-        <Button style={buttonStyles} disabled>
-          <FormattedMessage {...MSG.cancelled} />
-        </Button>
+        <>
+          {canRealeseFounds ? (
+            <Button onClick={activeState?.buttonAction} style={buttonStyles}>
+              {buttonText}
+            </Button>
+          ) : (
+            <Tooltip
+              placement="top"
+              isOpen
+              content={
+                <div className={styles.buttonTooltip}>
+                  <FormattedMessage {...MSG.tooltipNoPermissionToRealese} />
+                </div>
+              }
+            >
+              <Button
+                onClick={activeState?.buttonAction}
+                style={buttonStyles}
+                disabled
+              >
+                {buttonText}
+              </Button>
+            </Tooltip>
+          )}
+        </>
       );
     }
     if (activeState?.buttonTooltip) {
       return (
-        <div>
-          <Tooltip
-            placement="top"
-            content={
-              typeof activeState.buttonTooltip === 'string' ? (
-                <div className={styles.buttonTooltip}>
-                  {activeState.buttonTooltip}
-                </div>
-              ) : (
-                <div className={styles.buttonTooltip}>
-                  <FormattedMessage {...activeState.buttonTooltip} />
-                </div>
-              )
-            }
+        <Tooltip
+          placement="top"
+          content={
+            <div className={styles.buttonTooltip}>
+              {typeof activeState.buttonTooltip === 'string'
+                ? activeState.buttonTooltip
+                : formatMessage(activeState.buttonTooltip)}
+            </div>
+          }
+        >
+          <Button
+            onClick={activeState?.buttonAction}
+            style={buttonStyles}
+            disabled={activeStateId === Stage.Claimed}
           >
-            <Button
-              onClick={activeState?.buttonAction}
-              style={buttonStyles}
-              disabled={
-                activeStateId === Stage.Claimed ||
-                motion?.status === MotionStatus.Pending
-              }
-            >
-              {typeof activeState?.buttonText === 'string' ? (
-                activeState.buttonText
-              ) : (
-                <FormattedMessage {...activeState?.buttonText} />
-              )}
-            </Button>
-          </Tooltip>
-        </div>
+            {buttonText}
+          </Button>
+        </Tooltip>
       );
     }
+
     return (
-      <Button
-        onClick={activeState?.buttonAction}
-        style={buttonStyles}
-        disabled={
-          activeStateId === Stage.Claimed ||
-          motion?.status === MotionStatus.Pending
-        }
-      >
-        {typeof activeState?.buttonText === 'string' ? (
-          activeState.buttonText
-        ) : (
-          <FormattedMessage {...activeState?.buttonText} />
-        )}
+      <Button onClick={activeState?.buttonAction} style={buttonStyles}>
+        {buttonText}
       </Button>
     );
-  }, [status, activeState, activeStateId, motion]);
+  }, [activeState, activeStateId, canRealeseFounds, formatMessage, status]);
 
   const labelComponent = useMemo(
     () => ({
@@ -317,6 +344,17 @@ const Stages = ({ colony, states, activeStateId }: Props) => {
           </Tag>
         </div>
       )}
+      {isLogedIn &&
+        activeStateId === Stage.Released &&
+        status !== Status.Cancelled && (
+          <ClaimFunds
+            recipients={recipients}
+            colony={colony}
+            buttonAction={activeState?.buttonAction}
+            buttonText={activeState?.buttonText}
+            isDisabled={motion?.status === MotionStatus.Pending}
+          />
+        )}
       <div
         className={classNames(styles.statusContainer, {
           [styles.withTag]: motion?.status === MotionStatus.Pending,
@@ -387,9 +425,9 @@ const Stages = ({ colony, states, activeStateId }: Props) => {
                     <div className={styles.iconWrapper}>
                       <Icon
                         name="trash"
-                        className={styles.icon}
-                        onClick={handleDeleteDraft}
                         title={MSG.deleteDraft}
+                        appearance={{ size: 'normal' }}
+                        style={{ fill: styles.iconColor }}
                       />
                     </div>
                   </Tooltip>
@@ -413,8 +451,8 @@ const Stages = ({ colony, states, activeStateId }: Props) => {
                     {motion?.status === MotionStatus.Pending ? (
                       <Icon
                         name="circle-minus"
-                        className={styles.icon}
-                        title={MSG.deleteDraft}
+                        appearance={{ size: 'normal' }}
+                        style={{ fill: styles.iconColor }}
                       />
                     ) : (
                       <Tooltip
@@ -426,8 +464,8 @@ const Stages = ({ colony, states, activeStateId }: Props) => {
                         <div className={styles.iconWrapper}>
                           <Icon
                             name="circle-minus"
-                            className={styles.icon}
-                            title={MSG.deleteDraft}
+                            appearance={{ size: 'normal' }}
+                            style={{ fill: styles.iconColor }}
                           />
                         </div>
                       </Tooltip>

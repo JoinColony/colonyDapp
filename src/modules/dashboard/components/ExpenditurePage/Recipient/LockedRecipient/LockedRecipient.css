@@ -18,6 +18,10 @@
   display: flex;
 }
 
+.singleUserContainer {
+  padding: 6px 0;
+}
+
 .formContainer {
   margin-bottom: 36px;
   border-top: 1px solid var(--grey-blue-0);
@@ -28,12 +32,18 @@
   align-items: center;
   justify-content: space-between;
   padding: 15px 0;
+}
+
+.delayContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
 }
 
 .tokensContainer {
-  align-items: flex-end;
+  align-items: flex-start;
 }
 
 .delayControlsContainer {

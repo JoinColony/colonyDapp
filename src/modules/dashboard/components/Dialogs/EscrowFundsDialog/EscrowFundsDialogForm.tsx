@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { FormikProps } from 'formik';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import Dialog, { DialogSection } from '~core/Dialog';
+import { DialogSection } from '~core/Dialog';
 import DomainDropdown from '~core/DomainDropdown';
 import {
   Annotations,
@@ -31,8 +31,8 @@ import { hasRoot } from '~modules/users/checks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
-import styles from './EscrowFundsDialog.css';
 import { FormValues } from './EscrowFundsDialog';
+import styles from './EscrowFundsDialog.css';
 
 const displayName = 'dashboard.EscrowFundsDialog.EscrowFundsDialogForm';
 
@@ -98,7 +98,6 @@ interface Props {
   colony: Colony;
   onSubmitClick: () => void;
   isVotingExtensionEnabled: boolean;
-  cancel: VoidFunction;
 }
 
 const EscrowFundsDialogForm = ({
@@ -108,7 +107,6 @@ const EscrowFundsDialogForm = ({
   values,
   handleSubmit,
   isSubmitting,
-  cancel,
 }: Props & FormikProps<FormValues>) => {
   const [domainID, setDomainID] = useState<number>();
   const { formatMessage } = useIntl();
@@ -172,7 +170,7 @@ const EscrowFundsDialogForm = ({
   }, []);
 
   return (
-    <Dialog cancel={cancel}>
+    <>
       <div className={styles.dialogContainer}>
         <DialogSection appearance={{ theme: 'heading' }}>
           <MotionDomainSelect
@@ -375,7 +373,7 @@ const EscrowFundsDialogForm = ({
           autoFocus
         />
       </DialogSection>
-    </Dialog>
+    </>
   );
 };
 

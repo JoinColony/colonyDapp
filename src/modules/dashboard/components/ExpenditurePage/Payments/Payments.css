@@ -65,6 +65,10 @@
   height: calc(100% - 84px);
 }
 
+.dividerInLockedItem {
+  height: calc(100% - 120px);
+}
+
 .minus {
   height: 1px;
   width: 70%;
@@ -100,10 +104,16 @@
   cursor: pointer;
 }
 
+.recipientNameWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+}
+
 .recipientName {
   display: flex;
   align-items: center;
-  padding-bottom: 10px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--dark);

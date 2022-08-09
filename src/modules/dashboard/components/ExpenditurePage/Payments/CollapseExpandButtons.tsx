@@ -9,6 +9,7 @@ interface Props {
   isExpanded: boolean;
   onToogleButtonClick: () => void;
   isLastitem?: boolean;
+  isLocked?: boolean;
 }
 
 const displayName = 'dashboard.ExpenditurePage.CollapseExpandButtons';
@@ -17,6 +18,7 @@ const CollapseExpandButtons = ({
   isExpanded,
   onToogleButtonClick,
   isLastitem,
+  isLocked,
 }: Props) => {
   return isExpanded ? (
     <>
@@ -29,6 +31,7 @@ const CollapseExpandButtons = ({
       <div
         className={classNames(styles.verticalDivider, {
           [styles.dividerInLastItem]: isLastitem,
+          [styles.dividerInLockedItem]: isLocked,
         })}
       />
     </>

@@ -1,20 +1,41 @@
 import React, { useMemo } from 'react';
 import classNames from 'classnames';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { FormSection, InputLabel } from '~core/Fields';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
-import { Recipient as RecipientType } from '../Payments/types';
 import TokenIcon from '~dashboard/HookedTokenIcon';
-
-import styles from './LockedRecipient.css';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import Numeral from '~core/Numeral';
 import { Colony } from '~data/index';
-import { getRecipientTokens } from '../utils';
-import { MSG } from './Recipient';
+import { getRecipientTokens } from '~dashboard/ExpenditurePage/utils';
 
-const displayNameLockedRecipient = 'dashboard.ExpenditurePage.LockedRecipient';
+import { Recipient as RecipientType } from '../../Payments/types';
+
+import styles from './LockedRecipient.css';
+
+export const MSG = defineMessages({
+  recipientLabel: {
+    id: 'dashboard.ExpenditurePage.Recipient.LockedRecipient.recipientLabel',
+    defaultMessage: 'Recipient',
+  },
+  valueLabel: {
+    id: 'dashboard.ExpenditurePage.Recipient.LockedRecipient.valueLabel',
+    defaultMessage: 'Value',
+  },
+  delayLabel: {
+    id: 'dashboard.ExpenditurePage.Recipient.LockedRecipient.delayLabel',
+    defaultMessage: 'Claim delay',
+  },
+  none: {
+    id: 'dashboard.ExpenditurePage.Recipient.LockedRecipient.none',
+    defaultMessage: 'None',
+  },
+});
+
+const displayNameLockedRecipient =
+  'dashboard.ExpenditurePage.Recipient.LockedRecipient';
 
 interface Props {
   recipient: RecipientType;
@@ -93,21 +114,26 @@ const LockedRecipient = ({ recipient, colony }: Props) => {
               </div>
             </div>
           </FormSection>
-          {delay?.amount && (
-            <FormSection appearance={{ border: 'bottom' }}>
-              <div className={styles.itemContainer}>
-                <InputLabel
-                  label={MSG.delayLabel}
-                  appearance={{
-                    direction: 'horizontal',
-                  }}
-                />
-                <span className={styles.delayControlsContainer}>
-                  {delay.amount} {delay.time}
-                </span>
-              </div>
-            </FormSection>
-          )}
+
+          <FormSection appearance={{ border: 'bottom' }}>
+            <div className={styles.itemContainer}>
+              <InputLabel
+                label={MSG.delayLabel}
+                appearance={{
+                  direction: 'horizontal',
+                }}
+              />
+              <span className={styles.delayControlsContainer}>
+                {delay?.amount ? (
+                  <>
+                    {delay.amount} {delay.time}
+                  </>
+                ) : (
+                  <FormattedMessage {...MSG.none} />
+                )}
+              </span>
+            </div>
+          </FormSection>
         </div>
       )}
     </div>
