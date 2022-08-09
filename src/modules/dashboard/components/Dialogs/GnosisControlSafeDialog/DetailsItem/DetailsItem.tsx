@@ -9,13 +9,15 @@ const DetailsItem = ({
 }: {
   label: MessageDescriptor;
   value: JSX.Element;
-}) => (
-  <div className={styles.detailsItem}>
-    <div className={styles.detailsItemLabel}>
-      <FormattedMessage {...label} />
+}) => {
+  return (
+    <div className={styles.detailsItem}>
+      <div className={styles.detailsItemLabel}>
+        <FormattedMessage {...label} />
+      </div>
+      <div className={styles.detailsItemValue}>{value}</div>
     </div>
-    <div className={styles.detailsItemValue}>{value}</div>
-  </div>
-);
+  );
+};
 
 export default DetailsItem;

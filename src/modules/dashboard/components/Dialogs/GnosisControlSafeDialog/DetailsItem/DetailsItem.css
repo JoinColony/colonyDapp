@@ -9,6 +9,10 @@
   font-weight: var(--weight-bold);
 }
 
+.detailsItem:last-child {
+  border-bottom: none;
+}
+
 .detailsItemLabel {
   color: var(--temp-grey-blue-7);
 }
