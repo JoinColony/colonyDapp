@@ -126,7 +126,7 @@ export default gql`
     reputationChange: String!
     isWhitelistActivated: Boolean!
     verifiedAddresses: [String!]!
-    colonySafes: [String!]!
+    colonySafes: [ColonySafe!]!
   }
 
   input NetworkContractsInput {
