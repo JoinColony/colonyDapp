@@ -4,13 +4,13 @@ import { useField } from 'formik';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 
-import Button from '~core/Button';
 import { FormSection } from '~core/Fields';
 import { Colony } from '~data/index';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 
 import CSVUploader from './CSVUploader';
 import { calculateBatch } from './utils';
+import DownloadTemplate from './DownloadTemplate';
 import styles from './Batch.css';
 
 export const MSG = defineMessages({
@@ -21,10 +21,6 @@ export const MSG = defineMessages({
   data: {
     id: 'dashboard.ExpenditurePage.Batch.data.',
     defaultMessage: 'Data (max. 400)',
-  },
-  downloadTemplate: {
-    id: 'dashboard.ExpenditurePage.Batch.downloadTemplate',
-    defaultMessage: 'Download template',
   },
   upload: {
     id: 'dashboard.ExpenditurePage.Batch.upload',
@@ -74,11 +70,7 @@ const Batch = ({ colony }: Props) => {
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.wrapper}>
           <FormattedMessage {...MSG.batch} />
-          {!batchData && (
-            <Button appearance={{ theme: 'blue' }} type="button">
-              {formatMessage(MSG.downloadTemplate)}
-            </Button>
-          )}
+          {!batchData && <DownloadTemplate />}
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>

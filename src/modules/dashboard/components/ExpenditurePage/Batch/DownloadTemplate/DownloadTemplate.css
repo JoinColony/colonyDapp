@@ -1,0 +1,11 @@
+.link {
+  padding: 0;
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+  color: var(--colony-blue);
+}
+
+.link:hover {
+  text-decoration: underline;
+  color: var(--colony-blue);
+}
