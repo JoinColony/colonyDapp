@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import Decimal from 'decimal.js';
 import { useMediaQuery } from 'react-responsive';
@@ -27,7 +27,11 @@ import {
   AnyUser,
   SafeTransaction,
 } from '~data/index';
-import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
+import {
+  ColonyActions,
+  ColonyAndExtensionsEvents,
+  ColonyExtendedActions,
+} from '~types/index';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import {
@@ -373,6 +377,7 @@ const DefaultAction = ({
               }
               values={{
                 ...actionAndEventValues,
+                actionType: extendedActionType,
                 fromDomain: actionAndEventValues.fromDomain?.name,
                 toDomain: actionAndEventValues.toDomain?.name,
                 roles: roleTitle,
