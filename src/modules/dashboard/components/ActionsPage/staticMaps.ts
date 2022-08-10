@@ -3,6 +3,8 @@ import {
   ColonyAndExtensionsEvents,
   ColonyActions,
   ColonyMotions,
+  AddedActions,
+  ColonyExtendedActions,
 } from '~types/index';
 
 import { STATUS } from './types';
@@ -18,6 +20,7 @@ export enum ActionPageDetails {
   Permissions = 'Permissions',
   ReputationChange = 'ReputationChange',
   Author = 'Author',
+  Safe = 'Safe',
 }
 
 type EventRolesMap = Partial<
@@ -34,7 +37,7 @@ type ActionsEventsMap = Partial<
 
 type ActionsDetailsMap = Partial<
   {
-    [key in ColonyActions | ColonyMotions]: ActionPageDetails[];
+    [key in ColonyActions | ColonyMotions | AddedActions]: ActionPageDetails[];
   }
 >;
 
@@ -73,7 +76,7 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
  * Which icons correspond to which action types in the details widget
  */
 export const ACTION_TYPES_ICONS_MAP: {
-  [key in ColonyActions | ColonyMotions]: string;
+  [key in ColonyActions | ColonyMotions | AddedActions]: string;
 } = {
   [ColonyActions.WrongColony]: 'forbidden-signal',
   [ColonyActions.Payment]: 'emoji-dollar-stack',
@@ -99,6 +102,9 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyMotions.EmitDomainReputationPenaltyMotion]: 'emoji-firebolt',
   [ColonyMotions.EmitDomainReputationRewardMotion]: 'emoji-shooting-star',
   [ColonyMotions.UnlockTokenMotion]: 'emoji-padlock',
+  [ColonyExtendedActions.AddressBookUpdated]: 'emoji-edit-tools',
+  [ColonyExtendedActions.TokensUpdated]: 'emoji-edit-tools',
+  [ColonyExtendedActions.SafeRemoved]: 'gnosis-logo',
   [ColonyMotions.CreateDecisionMotion]: 'emoji-decisions',
   [ColonyMotions.NullMotion]: 'forbidden-signal',
   [ColonyActions.Generic]: 'circle-check-primary',
@@ -247,6 +253,7 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.ToRecipient,
     ActionPageDetails.ReputationChange,
   ],
+  [ColonyExtendedActions.SafeRemoved]: [ActionPageDetails.Safe],
   [ColonyMotions.MintTokensMotion]: [ActionPageDetails.Amount],
   [ColonyMotions.PaymentMotion]: [
     ActionPageDetails.FromDomain,
