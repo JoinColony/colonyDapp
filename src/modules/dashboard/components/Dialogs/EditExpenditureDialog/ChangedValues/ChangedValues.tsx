@@ -36,7 +36,7 @@ const displayName = 'dashboard.EditExpenditureDialog.ChangedValues';
 interface Props {
   newValues?: {
     key: string;
-    value:
+    value?:
       | string
       | Pick<
           LoggedInUser,
