@@ -39,15 +39,16 @@ export default withHooks<
       [avatarHash as string], // Technically a bug, shouldn't need type override
       [avatarHash],
     );
-
-    try {
-      const metadataVersion = getEventMetadataVersion(avatar);
-      avatarObject =
-        metadataVersion === 1
-          ? JSON.parse(avatar) // original metadata format
-          : { image: getColonyAvatarImage(avatar) }; // new metadata format
-    } catch (error) {
-      // silent error
+    if (avatar) {
+      try {
+        const metadataVersion = getEventMetadataVersion(avatar);
+        avatarObject =
+          metadataVersion === 1
+            ? JSON.parse(avatar) // original metadata format
+            : { image: getColonyAvatarImage(avatar) }; // new metadata format
+      } catch (error) {
+        // silent error
+      }
     }
     result.avatarURL = avatarObject?.image || null;
   }
