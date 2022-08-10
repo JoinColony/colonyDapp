@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import Decimal from 'decimal.js';
 
@@ -23,7 +23,11 @@ import {
   TokenInfoQuery,
   AnyUser,
 } from '~data/index';
-import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
+import {
+  ColonyActions,
+  ColonyAndExtensionsEvents,
+  ColonyExtendedActions,
+} from '~types/index';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import useColonyMetadataChecks from '~modules/dashboard/hooks/useColonyMetadataChecks';
@@ -38,6 +42,7 @@ import { ipfsDataFetcher } from '../../../../core/fetchers';
 import DetailsWidget from '../DetailsWidget';
 
 import styles from './DefaultAction.css';
+import MaskedAddress from '~core/MaskedAddress';
 
 const displayName = 'dashboard.ActionsPage.DefaultAction';
 
@@ -97,7 +102,11 @@ const DefaultAction = ({
   );
 
   let domainMetadata;
-  const { verifiedAddressesChanged, tokensChanged } = useColonyMetadataChecks(
+  const {
+    verifiedAddressesChanged,
+    tokensChanged,
+    removedSafes,
+  } = useColonyMetadataChecks(
     actionType,
     colony,
     transactionHash,
@@ -188,6 +197,10 @@ const DefaultAction = ({
     reputationChange: formattedReputationChange,
     reputationChangeNumeral: <Numeral value={formattedReputationChange} />,
     isSmiteAction: new Decimal(reputationChange).isNegative(),
+    removedSafes,
+    safe: (
+      <MaskedAddress address="0xb77D57F4959eAfA0339424b83FcFaf9c15407461" />
+    ),
   };
 
   const actionAndEventValuesForDocumentTitle = {
@@ -221,6 +234,23 @@ const DefaultAction = ({
     )} | Action | Colony - ${colony.displayName ?? colony.colonyName ?? ``}`,
   );
 
+  const extendedActionType = useMemo(() => {
+    if (actionType === ColonyActions.ColonyEdit) {
+      if (verifiedAddressesChanged) {
+        return ColonyExtendedActions.AddressBookUpdated;
+      }
+
+      if (tokensChanged) {
+        return ColonyExtendedActions.TokensUpdated;
+      }
+
+      if ((removedSafes || []).length > 0) {
+        return ColonyExtendedActions.SafeRemoved;
+      }
+    }
+    return actionType;
+  }, [actionType, verifiedAddressesChanged, tokensChanged, removedSafes]);
+
   return (
     <div className={styles.main}>
       {isVotingExtensionEnabled && (
@@ -246,16 +276,10 @@ const DefaultAction = ({
            */}
           <h1 className={styles.heading} data-test="actionHeading">
             <FormattedMessage
-              id={
-                (verifiedAddressesChanged &&
-                  `action.${ColonyActions.ColonyEdit}.verifiedAddresses`) ||
-                (tokensChanged &&
-                  `action.${ColonyActions.ColonyEdit}.tokens`) ||
-                roleMessageDescriptorId ||
-                'action.title'
-              }
+              id={roleMessageDescriptorId || 'action.title'}
               values={{
                 ...actionAndEventValues,
+                actionType: extendedActionType,
                 fromDomain: actionAndEventValues.fromDomain?.name,
                 toDomain: actionAndEventValues.toDomain?.name,
                 roles: roleTitle,
@@ -294,7 +318,7 @@ const DefaultAction = ({
         </div>
         <div className={styles.details}>
           <DetailsWidget
-            actionType={actionType as ColonyActions}
+            actionType={extendedActionType as ColonyActions}
             recipient={recipient}
             transactionHash={transactionHash}
             values={actionAndEventValues}
