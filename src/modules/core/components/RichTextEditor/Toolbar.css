@@ -22,6 +22,8 @@
 }
 
 .inputWrapper {
+  display: flex;
+  align-items: center;
   position: relative;
   cursor: pointer;
 }
@@ -36,7 +38,14 @@
   opacity: 0;
 }
 
-.inputWrapper input[type='file']::-webkit-file-upload-button {
-  /* overrides this bug: https://stackoverflow.com/a/23860302/15865154 */
-  cursor: pointer;
+.main svg path {
+  stroke: inherit;
+}
+
+.main use {
+  stroke: var(--temp-grey-blue-7);
+}
+
+.selected use {
+  stroke: var(--primary);
 }
