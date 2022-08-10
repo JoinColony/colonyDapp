@@ -198,6 +198,7 @@ export const getProcessedColony = async (
       }
     }
   } catch (error) {
+    log.verbose(error.message);
     log.verbose(
       `Could not parse IPFS metadata for colony:`,
       ensName,
@@ -287,6 +288,7 @@ export const getProcessedDomain = async (
       }
     }
   } catch (error) {
+    log.verbose(error.message);
     log.verbose(
       `Could not parse IPFS metadata for domain:`,
       domainChainId,
