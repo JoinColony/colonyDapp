@@ -6,6 +6,7 @@ import {
   useSubgraphColonyMetadataQuery,
   Colony,
   ColonyAction,
+  ColonySafe,
 } from '~data/index';
 import { ipfsDataFetcher } from '~modules/core/fetchers';
 import { ColonyAndExtensionsEvents, ColonyActions } from '~types/colonyActions';
@@ -16,6 +17,15 @@ import {
   ColonyMetadata,
 } from '~utils/colonyActions';
 import { useDataFetcher } from '~utils/hooks';
+
+export interface ColonyMetadataChecks {
+  removedSafes?: ColonySafe[];
+  nameChanged?: boolean;
+  logoChanged?: boolean;
+  tokensChanged?: boolean;
+  verifiedAddressesChanged?: boolean;
+  hasValues?: boolean;
+}
 
 /*
  * Determine if the current medata is different from the previous one,
@@ -29,14 +39,12 @@ const useColonyMetadataChecks = (
 ) => {
   let metadataJSON: string | null = null;
   const [metadataIpfsHash, setMetadataIpfsHash] = useState<string>('');
-  const [metadataChecks, setMetadataChecks] = useState<{
-    [key: string]: boolean;
-  }>({
+  const [metadataChecks, setMetadataChecks] = useState<ColonyMetadataChecks>({
     nameChanged: false,
     logoChanged: false,
     tokensChanged: false,
     verifiedAddressesChanged: false,
-    safeRemoved: false,
+    removedSafes: [],
   });
 
   const colonyMetadataHistory = useSubgraphColonyMetadataQuery({
@@ -120,7 +128,7 @@ const useColonyMetadataChecks = (
             logoChanged: !!actionColonyAvatarHash,
             tokensChanged: !!actionColonyTokens?.length,
             verifiedAddressesChanged: !!actionVerifiedAddresses?.length,
-            safeRemoved: false,
+            removedSafes: [],
           };
 
           if (!isEqual(newMetadataValues, metadataChecks)) {

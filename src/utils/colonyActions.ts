@@ -9,12 +9,17 @@ import {
   FormattedAction,
   Address,
 } from '~types/index';
-import { ColonyAction, SugraphEventProcessedValues } from '~data/index';
+import {
+  ColonyAction,
+  ColonySafe,
+  SugraphEventProcessedValues,
+} from '~data/index';
 
 import {
   DETAILS_FOR_ACTION,
   ActionPageDetails,
 } from '~dashboard/ActionsPage/staticMaps';
+import { ColonyMetadataChecks } from '~modules/dashboard/hooks/useColonyMetadataChecks';
 
 type DetailsValuesMap = Partial<
   {
@@ -137,7 +142,8 @@ export const getColonyMetadataMessageDescriptorsIds = (
     logoChanged,
     tokensChanged,
     verifiedAddressesChanged,
-  }: { [key: string]: boolean },
+    removedSafes,
+  }: ColonyMetadataChecks,
 ) => {
   if (actionType === ColonyAndExtensionsEvents.ColonyMetadata) {
     if (nameChanged && logoChanged) {
@@ -154,6 +160,10 @@ export const getColonyMetadataMessageDescriptorsIds = (
     }
     if (verifiedAddressesChanged) {
       return `event.${ColonyAndExtensionsEvents.ColonyMetadata}.verifiedAddresses`;
+    }
+
+    if ((removedSafes || []).length > 0) {
+      return `event.${ColonyAndExtensionsEvents.ColonyMetadata}.safeRemoved`;
     }
   }
   return `event.${ColonyAndExtensionsEvents.ColonyMetadata}.fallback`;
@@ -209,7 +219,7 @@ export interface ColonyMetadata {
   colonyTokens: string[] | null;
   verifiedAddresses: string[] | null;
   isWhitelistActivated: boolean | null;
-  colonySafes: string[] | null;
+  colonySafes: ColonySafe[];
   domainName?: string;
   domainPurpose?: string;
   domainColor?: string;
@@ -329,9 +339,9 @@ export const getSpecificActionValuesCheck = (
     domainColor?: string | null;
     verifiedAddresses?: string[] | null;
     isWhitelistActivated?: boolean | null;
-    colonySafes?: string[] | null;
+    colonySafes?: ColonySafe[];
   },
-): { [key: string]: boolean } => {
+): ColonyMetadataChecks | { [key: string]: boolean } => {
   switch (actionType) {
     case ColonyAndExtensionsEvents.ColonyMetadata: {
       const nameChanged = prevColonyDisplayName !== currentColonyDisplayName;
@@ -353,15 +363,19 @@ export const getSpecificActionValuesCheck = (
         currentColonyTokens?.slice(0).sort() || [],
       );
 
-      const safeRemoved =
-        (currentColonySafes || []).length < (prevColonySafes || []).length;
+      const removedSafes =
+        (currentColonySafes || []).length < (prevColonySafes || []).length
+          ? (prevColonySafes || []).filter(
+              (safe) => !(currentColonySafes || []).includes(safe),
+            )
+          : [];
 
       return {
         nameChanged,
         logoChanged,
         tokensChanged,
         verifiedAddressesChanged,
-        safeRemoved,
+        removedSafes,
       };
     }
     case ColonyAndExtensionsEvents.DomainMetadata: {
