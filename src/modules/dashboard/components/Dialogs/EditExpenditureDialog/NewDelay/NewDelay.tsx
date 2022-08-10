@@ -11,6 +11,10 @@ export const MSG = defineMessages({
     id: 'dashboard.EditExpenditureDialog.NewDelay.newClaimDelay',
     defaultMessage: 'New claim delay',
   },
+  none: {
+    id: 'dashboard.EditExpenditureDialog.NewDelay.none',
+    defaultMessage: 'None',
+  },
 });
 
 const displayName = 'dashboard.EditExpenditureDialog.NewDelay';
@@ -28,7 +32,7 @@ const NewDelay = ({ newValue }: Props) => {
         </span>
         <div className={styles.value}>
           {!newValue?.amount ? (
-            '-'
+            <FormattedMessage {...MSG.none} />
           ) : (
             <>
               {newValue?.amount} {newValue?.time}

@@ -1,25 +1,26 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
-import { FormikProps } from 'formik';
+import { FormikProps, useField } from 'formik';
 import { nanoid } from 'nanoid';
-import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { isEmpty } from 'lodash';
 
-import { Annotations, FormSection, Toggle } from '~core/Fields';
+import { Annotations, Toggle } from '~core/Fields';
 import { DialogSection } from '~core/Dialog';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 import Heading from '~core/Heading';
-import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 import Button from '~core/Button';
-import ColorTag, { Color } from '~core/ColorTag';
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot } from '~modules/users/checks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import { useTransformer } from '~utils/hooks';
 import { Colony, useLoggedInUser } from '~data/index';
+import { ValuesType } from '~pages/ExpenditurePage/types';
+import { Recipient as RecipientType } from '~dashboard/ExpenditurePage/Payments/types';
 
 import { FormValuesType } from './EditExpenditureDialog';
-import Recipient from './Recipient';
+import ChangedRecipients from './ChnagedRecipients';
+import ChangedValues from './ChangedValues';
 import styles from './EditExpenditureDialogForm.css';
 
 export const MSG = defineMessages({
@@ -29,10 +30,7 @@ export const MSG = defineMessages({
   },
   descriptionText: {
     id: `dashboard.EditExpenditureDialog.EditExpenditureDialogForm.descriptionText`,
-    defaultMessage: `Payment is currently at the locked stage.
-    Any edits require at this point an action to be made.
-    You can either enforce permission,
-    or create a motion to get collective approval.`,
+    defaultMessage: `This Payment is currently Locked. Either a Motion, or a member with the Arbitration permission are required to make changes.`,
   },
   descriptionLabel: {
     id: `dashboard.EditExpenditureDialog.EditExpenditureDialogFormdescriptionLabel`,
@@ -54,22 +52,6 @@ export const MSG = defineMessages({
     id: `dashboard.EditExpenditureDialog.EditExpenditureDialogForm.textareaLabel`,
     defaultMessage: `Explain why you're changing the expenditure`,
   },
-  change: {
-    id: 'dashboard.EditExpenditureDialog.EditExpenditureDialogForm.change',
-    defaultMessage: 'Change',
-  },
-  new: {
-    id: 'dashboard.EditExpenditureDialog.EditExpenditureDialogForm.new',
-    defaultMessage: 'New',
-  },
-  discard: {
-    id: 'dashboard.EditExpenditureDialog.EditExpenditureDialogForm.discard',
-    defaultMessage: 'Discard',
-  },
-  teamCaption: {
-    id: 'dashboard.EditExpenditureDialog.EditExpenditureDialogForm.teamCaption',
-    defaultMessage: 'Team',
-  },
   noChanges: {
     id: 'dashboard.EditExpenditureDialog.EditExpenditureDialogForm.noChanges',
     defaultMessage: 'No values have been changed!',
@@ -81,9 +63,9 @@ const displayName = 'dashboard.EditExpenditureDialog.EditExpenditureDialogForm';
 interface Props {
   close: () => void;
   colony: Colony;
-  confirmedValues: Partial<ValuesType> | undefined;
+  confirmedValues?: Partial<ValuesType>;
   oldValues: ValuesType;
-  discardRecipientChange: (id: string) => void;
+  discardRecipientChange: (recipients: Partial<RecipientType>[]) => void;
   discardChange: (name: string) => void;
   onSubmitClick: (
     values: Partial<ValuesType> | undefined,
@@ -107,6 +89,13 @@ const EditExpenditureDialogForm = ({
 }: Props & FormikProps<FormValuesType>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+  const [, { value: recipients }] = useField('recipients');
+
+  useEffect(() => {
+    // discarding changes is done with FieldArray helper functions,
+    // so if recipients changes, we need to update state by calling discardRecipientChange funciton
+    discardRecipientChange(recipients);
+  }, [discardRecipientChange, recipients]);
 
   const hasRegisteredProfile = !!username && !ethereal;
   const canCancelExpenditure = hasRegisteredProfile && hasRoot(allUserRoles);
@@ -117,8 +106,7 @@ const EditExpenditureDialogForm = ({
     isVotingExtensionEnabled,
     values.forceAction,
   );
-  const noChanges =
-    confirmedValues && Object.keys(confirmedValues).length === 0;
+  const noChanges = confirmedValues && isEmpty(confirmedValues);
 
   const confirmedValuesWithIds = useMemo(() => {
     if (!confirmedValues) {
@@ -132,36 +120,18 @@ const EditExpenditureDialogForm = ({
     }));
   }, [confirmedValues]);
 
-  const renderChange = useCallback(
-    (change: any, key: string) => {
-      switch (key) {
-        case 'title': {
-          return change || '-';
-        }
-        case 'description': {
-          return change || '-';
-        }
-        case 'filteredDomainId': {
-          const domain = colony?.domains.find(
-            ({ ethDomainId }) => Number(change) === ethDomainId,
-          );
-          const defaultColor =
-            change === String(ROOT_DOMAIN_ID) ? Color.LightPink : Color.Yellow;
-
-          const color = domain ? domain.color : defaultColor;
-          return (
-            <div className={styles.teamWrapper}>
-              <ColorTag color={color} />
-              {domain?.name}
-            </div>
-          );
-        }
-        default:
-          return null;
-      }
-    },
-    [colony],
-  );
+  const newData = useMemo(() => {
+    const newRecipients = confirmedValuesWithIds.find(
+      (newValue) => newValue.key === 'recipients',
+    );
+    const newValues = confirmedValuesWithIds.filter(
+      (newValue) => newValue.key !== 'recipients',
+    );
+    return {
+      newRecipients,
+      newValues,
+    };
+  }, [confirmedValuesWithIds]);
 
   return (
     <>
@@ -214,68 +184,18 @@ const EditExpenditureDialogForm = ({
             <FormattedMessage {...MSG.noChanges} />
           </div>
         ) : (
-          confirmedValuesWithIds.map(({ key, value, id }) => {
-            if (
-              Array.isArray(value) &&
-              Object.keys(value).length > 0 &&
-              key === 'recipients'
-            ) {
-              return value.map((changedItem, changeIndex) => {
-                return (
-                  <Recipient
-                    key={id}
-                    oldValues={oldValues}
-                    index={changeIndex}
-                    changedItem={changedItem}
-                    colony={colony}
-                    discardRecipientChange={discardRecipientChange}
-                  />
-                );
-              });
-            }
-            return (
-              <React.Fragment key={id}>
-                <FormSection appearance={{ border: 'bottom' }}>
-                  <div className={styles.changeContainer}>
-                    <span>
-                      <FormattedMessage {...MSG.change} />{' '}
-                      {key === 'filteredDomainId' ? (
-                        <FormattedMessage {...MSG.teamCaption} />
-                      ) : (
-                        key
-                      )}
-                    </span>
-                    <Button
-                      appearance={{ theme: 'dangerLink' }}
-                      onClick={() => discardChange(key)}
-                    >
-                      <FormattedMessage {...MSG.discard} />
-                    </Button>
-                  </div>
-                </FormSection>
-                <FormSection appearance={{ border: 'bottom' }}>
-                  <div
-                    className={classNames(
-                      styles.changeContainer,
-                      styles.changeItem,
-                    )}
-                  >
-                    <span>
-                      <FormattedMessage {...MSG.new} />{' '}
-                      {key === 'filteredDomainId' ? (
-                        <FormattedMessage {...MSG.teamCaption} />
-                      ) : (
-                        key
-                      )}
-                    </span>
-                    <span className={styles.changeWrapper}>
-                      {renderChange(value, key)}
-                    </span>
-                  </div>
-                </FormSection>
-              </React.Fragment>
-            );
-          })
+          <>
+            <ChangedRecipients
+              colony={colony}
+              newRecipients={newData.newRecipients?.value}
+              oldValues={oldValues}
+            />
+            <ChangedValues
+              newValues={newData.newValues}
+              colony={colony}
+              discardChange={discardChange}
+            />
+          </>
         )}
       </div>
       <DialogSection appearance={{ theme: 'sidePadding' }}>

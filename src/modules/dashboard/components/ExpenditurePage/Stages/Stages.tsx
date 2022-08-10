@@ -1,33 +1,22 @@
-import React, {
-  useEffect,
-  useCallback,
-  useRef,
-  useState,
-  useMemo,
-} from 'react';
-import {
-  defineMessages,
-  FormattedMessage,
-  MessageDescriptor,
-  useIntl,
-} from 'react-intl';
+import React, { useEffect, useRef, useState } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import copyToClipboard from 'copy-to-clipboard';
 import classNames from 'classnames';
-import { ColonyRole } from '@colony/colony-js';
 
 import Button from '~core/Button';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import PermissionsLabel from '~core/PermissionsLabel';
-import Tag from '~core/Tag';
+import { State } from '~pages/ExpenditurePage/types';
+import { Colony } from '~data/index';
+
+import { Recipient } from '../Payments/types';
 
 import StageItem from './StageItem';
 import { Motion, MotionStatus, Stage, Status } from './constants';
 import ClaimFunds from './ClaimFunds';
+import Label from './StageItem/Label';
+import StagesButton from './StagesButton';
 import styles from './Stages.css';
-import { State } from '~pages/ExpenditurePage/types';
-import { Recipient } from '../Payments/types';
-import { Colony } from '~data/index';
 
 const MSG = defineMessages({
   stages: {
@@ -58,14 +47,6 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Stages.tooltipCancelText',
     defaultMessage: 'Click to cancel expenditure',
   },
-  cancelled: {
-    id: 'dashboard.ExpenditurePage.Stages.cancelled',
-    defaultMessage: 'Cancelled',
-  },
-  tooltipNoPermissionToRealese: {
-    id: 'dashboard.ExpenditurePage.Stages.tooltipNoPermissionToRealese',
-    defaultMessage: 'You need to create a Motion to release funds.',
-  },
   tooltipLockValuesText: {
     id: 'dashboard.ExpenditurePage.Stages.tooltipLockValuesText',
     defaultMessage: `This will lock the values of the expenditure. To change values after locking will require the right permissions or a motion.`,
@@ -73,14 +54,6 @@ const MSG = defineMessages({
   tooltipForcedUpdate: {
     id: 'dashboard.ExpenditurePage.Stages.tooltipForcedUpdate',
     defaultMessage: 'Value updated by arbitrator',
-  },
-  updatedByArbitrator: {
-    id: 'dashboard.ExpenditurePage.Stages.updatedByArbitrator',
-    defaultMessage: 'Value updated by arbitrator',
-  },
-  label: {
-    id: 'dashboard.ExpenditurePage.Stages.label',
-    defaultMessage: '{label} {icon}',
   },
   motion: {
     id: 'dashboard.ExpenditurePage.Stages.motion',
@@ -123,7 +96,6 @@ const Stages = ({
 }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
-  const { formatMessage } = useIntl();
 
   const handleClipboardCopy = () => {
     copyToClipboard(window.location.href);
@@ -137,184 +109,13 @@ const Stages = ({
 
   const activeIndex = states.findIndex((state) => state.id === activeStateId);
   const activeState = states.find((state) => state.id === activeStateId);
-  // temporary value, there's need to add logic to check if realese founds can be made
-  const canRealeseFounds = true;
   const isLogedIn = true;
-
-  const renderButton = useCallback(() => {
-    const buttonText =
-      typeof activeState?.buttonText === 'string'
-        ? activeState.buttonText
-        : activeState?.buttonText && formatMessage(activeState.buttonText);
-
-    if (status === Status.Cancelled || status === Status.ForceCancelled) {
-      return <Tag text={MSG.cancelled} className={styles.claimed} />;
-    }
-    if (activeStateId === Stage.Claimed) {
-      return <Tag text={buttonText} className={styles.claimed} />;
-    }
-
-    if (activeStateId === Stage.Claimed) {
-      return <Tag text={buttonText} className={styles.claimed} />;
-    }
-    if (activeStateId === Stage.Released) {
-      return null;
-    }
-    if (activeStateId === Stage.Funded) {
-      return (
-        <>
-          {canRealeseFounds ? (
-            <Button onClick={activeState?.buttonAction} style={buttonStyles}>
-              {buttonText}
-            </Button>
-          ) : (
-            <Tooltip
-              placement="top"
-              isOpen
-              content={
-                <div className={styles.buttonTooltip}>
-                  <FormattedMessage {...MSG.tooltipNoPermissionToRealese} />
-                </div>
-              }
-            >
-              <Button
-                onClick={activeState?.buttonAction}
-                style={buttonStyles}
-                disabled
-              >
-                {buttonText}
-              </Button>
-            </Tooltip>
-          )}
-        </>
-      );
-    }
-    if (activeState?.buttonTooltip) {
-      return (
-        <Tooltip
-          placement="top"
-          content={
-            <div className={styles.buttonTooltip}>
-              {typeof activeState.buttonTooltip === 'string'
-                ? activeState.buttonTooltip
-                : formatMessage(activeState.buttonTooltip)}
-            </div>
-          }
-        >
-          <Button
-            onClick={handleButtonClick}
-            style={buttonStyles}
-            disabled={
-              activeStateId === Stage.Claimed ||
-              motion?.status === MotionStatus.Pending
-            }
-          >
-            {buttonText}
-          </Button>
-        </Tooltip>
-      );
-    }
-
-    return (
-      <Button
-        onClick={handleButtonClick}
-        style={buttonStyles}
-        disabled={
-          activeStateId === Stage.Claimed ||
-          motion?.status === MotionStatus.Pending
-        }
-        type="submit"
-      >
-        {buttonText}
-      </Button>
-    );
-  }, [
-    activeState,
-    activeStateId,
-    canRealeseFounds,
-    formatMessage,
-    handleButtonClick,
-    motion,
-    status,
-  ]);
-
-  const labelComponent = useMemo(
-    () => ({
-      label,
-      index,
-    }: {
-      label: string | MessageDescriptor;
-      index: number;
-    }) => {
-      // role is temporary mock value
-      const role = ColonyRole.Arbitration;
-
-      if (status === Status.ForceEdited && index === activeIndex) {
-        return (
-          <div className={styles.labelComponent}>
-            <FormattedMessage
-              {...MSG.label}
-              values={{
-                label:
-                  typeof label === 'object' && label?.id ? (
-                    <FormattedMessage {...label} />
-                  ) : (
-                    label
-                  ),
-                icon: (
-                  <PermissionsLabel
-                    permission={role}
-                    appearance={{ theme: 'white' }}
-                    infoMessage={MSG.updatedByArbitrator}
-                    minimal
-                  />
-                ),
-              }}
-            />
-          </div>
-        );
-      }
-
-      return undefined;
-    },
-    [activeIndex, status],
-  );
 
   const isCancelled =
     status === Status.Cancelled || status === Status.ForceCancelled;
 
-  const formattedLabel = useMemo(
-    () => (text: string | MessageDescriptor | undefined): string => {
-      if (undefined) {
-        return '';
-      }
-      if (typeof text === 'string') {
-        return text;
-      }
-      if (typeof text === 'object' && text?.id) {
-        return formatMessage(text);
-      }
-      return '';
-    },
-    [formatMessage],
-  );
-
   return (
     <div className={styles.mainContainer}>
-      {motion?.status === MotionStatus.Pending && (
-        <div className={styles.tagWrapper}>
-          <Tag
-            appearance={{
-              theme: 'golden',
-              colorSchema: 'fullColor',
-            }}
-          >
-            {formatMessage(MSG.motion, {
-              action: formattedLabel(activeState?.buttonText),
-            })}
-          </Tag>
-        </div>
-      )}
       {isLogedIn &&
         activeStateId === Stage.Released &&
         status !== Status.Cancelled && (
@@ -348,6 +149,16 @@ const Stages = ({
                 <Tooltip
                   placement="top-start"
                   content={<FormattedMessage {...MSG.tooltipDeleteText} />}
+                  popperOptions={{
+                    modifiers: [
+                      {
+                        name: 'offset',
+                        options: {
+                          offset: [0, 14],
+                        },
+                      },
+                    ],
+                  }}
                 >
                   <div className={styles.iconWrapper}>
                     <Icon
@@ -443,7 +254,13 @@ const Stages = ({
                     )}
                   </Button>
                 )}
-              {renderButton()}
+              <StagesButton
+                activeState={activeState}
+                handleButtonClick={handleButtonClick}
+                motion={motion}
+                status={status}
+                canReleaseFunds // it's temporary value
+              />
             </>
           )}
         </div>
@@ -455,7 +272,10 @@ const Stages = ({
           isFirst={index === 0}
           isActive={activeState ? index <= activeIndex : false}
           isCancelled={isCancelled && status === Status.ForceCancelled}
-          labelComponent={labelComponent({ label, index })}
+          labelComponent={
+            status === Status.ForceEdited &&
+            index === activeIndex && <Label label={label} />
+          }
         />
       ))}
     </div>

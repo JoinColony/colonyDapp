@@ -86,14 +86,16 @@ const LockedPayments = ({
       <div className={styles.recipientContainer}>
         <div className={styles.payments}>
           <FormattedMessage {...MSG.payments} />
-          <span className={styles.editIcon}>
-            <Icon
-              name="edit"
-              appearance={{ size: 'medium' }}
-              title="Edit expenditure"
-              onClick={editForm}
-            />
-          </span>
+          {activeState?.id !== Stage.Claimed && (
+            <span className={styles.editIcon}>
+              <Icon
+                name="edit"
+                appearance={{ size: 'medium' }}
+                title="Edit expenditure"
+                onClick={editForm}
+              />
+            </span>
+          )}
         </div>
         {recipients?.map(({ claimed, claimDate, ...recipient }, index) => {
           const isOpen =

@@ -2,6 +2,7 @@ import { AnyUser } from '~data/index';
 
 export interface Recipient {
   id?: string;
+  key?: string;
   recipient?: AnyUser;
   value?: { amount?: string; tokenAddress?: string; id: string }[];
   delay?: {

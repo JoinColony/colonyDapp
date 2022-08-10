@@ -40,11 +40,14 @@
 
 .header {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
+  align-items: center;
   width: 100%;
 }
 
 .name {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
 }

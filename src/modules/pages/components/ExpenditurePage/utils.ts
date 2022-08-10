@@ -1,4 +1,5 @@
-import { isEqual, uniq, isEmpty, assign } from 'lodash';
+import { isEqual, uniq, isEmpty, assign, isNil } from 'lodash';
+import { nanoid } from 'nanoid';
 
 interface Delay {
   amount?: string;
@@ -10,6 +11,41 @@ const isDelayType = (obj: any): obj is Delay => {
     Object.prototype.hasOwnProperty.call(obj, 'amount') &&
     Object.prototype.hasOwnProperty.call(obj, 'time')
   );
+};
+
+const timeMultiplier = (time: 'hours' | 'days' | 'months') => {
+  switch (time) {
+    case 'hours': {
+      return 3600;
+    }
+    case 'days': {
+      return 86400;
+    }
+    case 'months': {
+      return 2629743.83;
+    }
+    default: {
+      return 1;
+    }
+  }
+};
+
+export const getTimeDifference = ({
+  amount,
+  time,
+}: GetTimeDifferenceParameters): number => {
+  const multiplicator = timeMultiplier(time);
+
+  return Number(amount) * multiplicator;
+};
+
+export const setClaimDate = ({
+  amount,
+  time,
+}: GetTimeDifferenceParameters): number => {
+  const differenceInSeconds = getTimeDifference({ amount, time });
+  const currentDate = new Date();
+  return currentDate.setSeconds(currentDate.getSeconds() + differenceInSeconds);
 };
 
 export const findDifferences = (
@@ -128,12 +164,30 @@ export const updateValues = (values, confirmedValues) => {
             (recip) => recip.id === recipient.id,
           );
 
-          return { ...recipient, ...newValue, isChanged: true };
+          return {
+            ...recipient,
+            ...newValue,
+            key: nanoid(),
+            isChanged: true,
+            ...(!isNil(newValue.delay?.amount) && {
+              claimDate: setClaimDate({
+                amount: newValue.delay.amount,
+                time: newValue.delay.time,
+              }),
+            }),
+          };
         }),
         ...newRecipients.map((newRecip) => ({
           ...newRecip,
           created: undefined,
           isChanged: true,
+          key: nanoid(),
+          claimDate: newRecip.delay.amount
+            ? setClaimDate({
+                amount: newRecip.delay.amount,
+                time: newRecip.delay.time,
+              })
+            : new Date(),
         })),
       ].filter((rec) => !rec.removed),
     };
@@ -160,39 +214,4 @@ export const updateValues = (values, confirmedValues) => {
 type GetTimeDifferenceParameters = {
   amount: string;
   time: 'hours' | 'days' | 'months';
-};
-
-const timeMultiplier = (time: 'hours' | 'days' | 'months') => {
-  switch (time) {
-    case 'hours': {
-      return 3600;
-    }
-    case 'days': {
-      return 86400;
-    }
-    case 'months': {
-      return 2629743.83;
-    }
-    default: {
-      return 1;
-    }
-  }
-};
-
-export const getTimeDifference = ({
-  amount,
-  time,
-}: GetTimeDifferenceParameters): number => {
-  const multiplicator = timeMultiplier(time);
-
-  return Number(amount) * multiplicator;
-};
-
-export const setClaimDate = ({
-  amount,
-  time,
-}: GetTimeDifferenceParameters): number => {
-  const differenceInSeconds = getTimeDifference({ amount, time });
-  const currentDate = new Date();
-  return currentDate.setSeconds(currentDate.getSeconds() + differenceInSeconds);
 };

@@ -3,7 +3,7 @@ import { defineMessages, useIntl } from 'react-intl';
 import * as yup from 'yup';
 import { FormikProps } from 'formik';
 
-import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
+import { ValuesType } from '~pages/ExpenditurePage/types';
 import { ActionForm } from '~core/Fields';
 import Dialog from '~core/Dialog';
 import { Colony } from '~data/index';
@@ -79,18 +79,15 @@ const EditExpenditureDialog = ({
     [confirmedValues],
   );
 
-  const discardRecipientChange = useCallback((id: string) => {
+  const discardRecipientChange = useCallback((newRecipients) => {
     setConfirmedValues((confirmedVal) => {
-      const newRecipients = confirmedVal?.recipients?.filter(
-        (recipient) => recipient.id !== id,
-      );
-
       if (newRecipients?.length === 0) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { recipients: rec, ...updatedValues } = confirmedVal || {};
 
         return updatedValues;
       }
+
       const newVal = {
         ...confirmedVal,
         recipients: newRecipients,
@@ -113,7 +110,7 @@ const EditExpenditureDialog = ({
 
   return (
     <ActionForm
-      initialValues={{ forceAction: false }}
+      initialValues={{ forceAction: false, recipients: newValues?.recipients }}
       submit={getFormAction('SUBMIT')}
       error={getFormAction('ERROR')}
       success={getFormAction('SUCCESS')}

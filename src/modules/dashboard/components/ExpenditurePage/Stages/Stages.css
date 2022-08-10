@@ -81,10 +81,6 @@
   }
 }
 
-.iconButton > div {
-  margin-bottom: 7px;
-}
-
 .iconButton {
   margin-left: 0;
   padding: 0;
@@ -127,23 +123,9 @@
   cursor: not-allowed;
 }
 
-.buttonTooltip {
-  max-width: 192px;
-}
-
 .cancelIcon:hover svg {
   fill: var(--pink);
   transition: fill 200ms ease-in-out;
-}
-
-.claimed {
-  composes: themeLight from '~core/Tag/Tag.css';
-  margin-left: 30px;
-  padding: 1px 12px 2px;
-  height: 20px;
-  border-radius: 5px;
-  color: var(--temp-grey-blue-7);
-  letter-spacing: 0.5px;
 }
 
 .stageWrapper {
@@ -154,14 +136,6 @@
 .iconTooltip svg {
   margin-left: 8px;
   width: 12px;
-}
-
-.labelComponent {
-  display: flex;
-  align-items: center;
-  font-size: 11px;
-  font-weight: var(--weight-bold);
-  color: var(--dark);
 }
 
 .tagStagesWrapper > span {

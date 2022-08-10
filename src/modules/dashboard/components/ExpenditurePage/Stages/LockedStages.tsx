@@ -15,7 +15,7 @@ import styles from './Stages.css';
 
 const MSG = defineMessages({
   motion: {
-    id: 'dashboard.ExpenditurePage.Stages.motion',
+    id: 'dashboard.ExpenditurePage.Stages.LockedStages.motion',
     defaultMessage: `You can't {action} unless motion ends`,
   },
 });

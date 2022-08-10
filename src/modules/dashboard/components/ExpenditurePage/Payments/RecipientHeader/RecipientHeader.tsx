@@ -19,6 +19,10 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Payments.RecipientHeader.newValue',
     defaultMessage: 'New value. See activity feed.',
   },
+  activeMotion: {
+    id: 'dashboard.ExpenditurePage.Payments.RecipientHeader.activeMotion',
+    defaultMessage: 'There is an active Motion to change this payment.',
+  },
   userHeader: {
     id: 'dashboard.ExpenditurePage.Payments.RecipientHeader.userHeader',
     defaultMessage: `{count}: {name}, {value}`,
@@ -107,18 +111,20 @@ const RecipientHeader = ({
                 />
               )}
             </div>
+            {inPendingState ? (
+              <Tooltip content={<FormattedMessage {...MSG.activeMotion} />}>
+                <div className={styles.dot} />
+              </Tooltip>
+            ) : (
+              recipient.isChanged && (
+                <Tooltip content={<FormattedMessage {...MSG.newValue} />}>
+                  <div className={classNames(styles.dot, styles.blue)} />
+                </Tooltip>
+              )
+            )}
             {ClaimTag}
           </div>
         </div>
-        {inPendingState ? (
-          <div className={styles.dot} />
-        ) : (
-          recipient.isChanged && (
-            <Tooltip content={<FormattedMessage {...MSG.newValue} />}>
-              <div className={classNames(styles.dot, styles.blue)} />
-            </Tooltip>
-          )
-        )}
       </div>
     </FormSection>
   );
