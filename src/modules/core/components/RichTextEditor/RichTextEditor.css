@@ -20,6 +20,7 @@
   padding-right: 2px;
   height: 233px;
   overflow-y: auto;
+  font-family: sans-serif;
   color: color-mod(var(--dark) alpha(65%));
 }
 
@@ -78,6 +79,7 @@
 .main p[class*='is-editor-empty']:first-child::before {
   height: 0;
   float: left;
+  font-family: var(--family-primary);
   line-height: 18px;
   color: var(--grey-5);
   pointer-events: none;
@@ -104,4 +106,18 @@
 
 .main a {
   text-decoration: underline;
+}
+
+.main pre {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background-color: color-mod(var(--temp-grey-0) alpha(50%));
+  color: black;
+}
+
+.main pre code {
+  padding: 4px 0;
+  background: none;
+  font-size: 0.8rem;
+  color: inherit;
 }
