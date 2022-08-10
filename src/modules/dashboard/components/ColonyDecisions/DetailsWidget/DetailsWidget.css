@@ -1,0 +1,39 @@
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 45px;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.value, .label {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--spacing-medium);
+}
+
+.label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  line-height: 18px;
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
+.value {
+  composes: inlineEllipsis from '~styles/text.css';
+  display: flex;
+  align-items: center;
+  max-width: 200px;
+  line-height: 18px;
+  color: color-mod(var(--dark) alpha(85%));
+}
+
+.value i {
+  display: inline-block;
+}
+
+.text {
+  display: inline-block;
+  margin-left: 8px;
+}
