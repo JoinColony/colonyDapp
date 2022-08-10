@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { EditorContent, Editor } from '@tiptap/react';
 import classnames from 'classnames';
-
 import { useField } from 'formik';
+
+import { InputStatus } from '~core/Fields';
 import Toolbar from './Toolbar';
 
 import styles from './RichTextEditor.css';
-import { InputStatus } from '~core/Fields';
 
 const displayName = 'RichTextEditor';
 
@@ -23,18 +23,17 @@ const RichTextEditor = ({ editor, isSubmitting, limit }: Props) => {
     { setValue: setContentValue, setTouched: setContentTouched },
   ] = useField('content');
 
-  /* Manually update form state on change to Editor component */
-  const handleUpdate = ({ editor: editorContent }) =>
-    setContentValue(editorContent.getHTML());
-
   useEffect(() => {
-    editor?.on('update', handleUpdate);
+    /* Manually update form state on change to Editor component */
+    const handleUpdate = ({ editor: editorContent }) =>
+      setContentValue(editorContent.getHTML());
+
+    editor.on('update', handleUpdate);
 
     return () => {
       editor.off('update', handleUpdate);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [editor, setContentValue]);
 
   return (
     <div
