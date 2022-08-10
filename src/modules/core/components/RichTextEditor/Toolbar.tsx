@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { MutableRefObject, useRef, useState } from 'react';
 import { Editor } from '@tiptap/core';
-import Icon from '~core/Icon';
+import classnames from 'classnames';
 
+import Icon from '~core/Icon';
 import styles from './Toolbar.css';
 import Button from '~core/Button';
 
 const displayName = 'RichText.Toolbar';
+
+export type IconRefs = MutableRefObject<HTMLButtonElement | null>[];
 
 interface Props {
   editor: Editor;
@@ -20,14 +23,14 @@ enum ICONS {
   underline = 'underline',
   link = 'link',
   image = 'image',
-  color = 'color',
+  droplet = 'droplet',
 }
 
 // @ts-ignore. userAgentData does exist on the Navigator object, contrary to TS's assertion
 const OS = window.navigator.userAgentData.platform;
 const ctrl = OS === 'macOS' ? 'Cmd' : 'Ctrl';
 
-const toolbarActions = (editor: Editor) => [
+export const toolbarActions = (editor: Editor) => [
   {
     icon: ICONS.bulletList,
     onClick: () => editor.chain().focus().toggleBulletList().run(),
@@ -71,13 +74,18 @@ const Toolbar = ({ editor }: Props) => {
     editor.getAttributes('textStyle').color || '#2f2f2f',
   );
 
+  const colorPickerRef = useRef<HTMLButtonElement | null>(null);
   return (
     <div className={styles.main}>
       {toolbarActions(editor).map((action) => (
         <Button
           appearance={{ theme: 'ghost' }}
           onClick={action.onClick}
+          className={classnames({
+            [styles.selected]: editor.isActive(action.icon),
+          })}
           key={action.icon}
+          name={action.icon}
         >
           <Icon
             name={action.icon}
@@ -86,13 +94,20 @@ const Toolbar = ({ editor }: Props) => {
         </Button>
       ))}
       <div className={styles.inputWrapper} title="Change text color">
-        <Button appearance={{ theme: 'ghost' }}>
-          <Icon name={ICONS.color} />
+        <Button
+          appearance={{ theme: 'ghost' }}
+          innerRef={colorPickerRef}
+          className={classnames({
+            [styles.selected]: editor.isActive('textStyle'),
+          })}
+        >
+          <Icon name={ICONS.droplet} />
         </Button>
         <input
           type="color"
           defaultValue={colorValue}
-          onInput={(event: React.ChangeEvent<HTMLInputElement>) => {
+          onFocus={() => editor.chain().focus().unsetColor().run()}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             editor.chain().focus().setColor(event.target.value).run();
             setColorValue(event.target.value);
           }}

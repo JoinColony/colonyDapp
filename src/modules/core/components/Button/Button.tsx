@@ -44,7 +44,9 @@ export interface Props
   disabled?: boolean;
 
   /** Pass a ref to the `<button>` element */
-  innerRef?: (ref: HTMLElement | null) => void;
+  innerRef?:
+    | ((ref: HTMLElement | null) => void)
+    | React.MutableRefObject<HTMLButtonElement | null>;
 
   /** Use a link instead of a button. Like ReactRouter's `to` property */
   linkTo?: NavLinkProps['to'];
