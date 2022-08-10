@@ -4,6 +4,7 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Tag from '~core/Tag';
 import HookedUserAvatar from '~users/HookedUserAvatar';
+// import DetailsWidget from './DetailsWidget/DetailsWidget';
 
 import styles from './DecisionPreview.css';
 
@@ -100,6 +101,15 @@ const DecisionPreview = ({ back, handleSubmit, username }: Props) => {
             style={{ minWidth: styles.wideButton }}
             data-test="decisionPublishButton"
           />
+          {/* <div className={styles.details}>
+            <DetailsWidget
+              actionType={actionType as ColonyActions}
+              recipient={recipient}
+              transactionHash={transactionHash}
+              values={actionAndEventValues}
+              colony={colony}
+            />
+          </div> */}
         </div>
       </div>
     </div>
