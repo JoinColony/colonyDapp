@@ -16,6 +16,7 @@ const useUserAvatarImageFromIPFS = (ipfsHash: string): IPFSAvatarImage => {
     [ipfsHash],
   );
 
+  if (!avatar) return avatarObject;
   try {
     const metadataVersion = getEventMetadataVersion(avatar);
     avatarObject =
