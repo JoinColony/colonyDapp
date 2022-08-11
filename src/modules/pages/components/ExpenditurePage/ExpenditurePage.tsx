@@ -121,7 +121,7 @@ const validationSchema = yup.object().shape({
     .string()
     .required(() => <FormattedMessage {...MSG.teamRequiredError} />),
   recipients: yup.array().when('expenditure', {
-    is: (expenditure) => expenditure === 'advanced',
+    is: (expenditure) => expenditure === ExpenditureTypes.Advanced,
     then: yup.array().of(
       yup.object().shape({
         recipient: yup.object().required(),
@@ -131,7 +131,6 @@ const validationSchema = yup.object().shape({
               amount: yup
                 .number()
                 .transform((value) => toFinite(value))
-                .required()
                 .required(() => MSG.valueError)
                 .moreThan(0, () => MSG.amountZeroError),
               tokenAddress: yup.string().required(),
