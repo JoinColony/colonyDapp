@@ -638,16 +638,6 @@ const ExpenditurePage = ({ match }: Props) => {
             ],
           },
         ],
-        staged: {
-          amount: {
-            value: true,
-          },
-          milestones: [
-            {
-              name: true,
-            },
-          ],
-        },
       }}
       enableReinitialize
     >
