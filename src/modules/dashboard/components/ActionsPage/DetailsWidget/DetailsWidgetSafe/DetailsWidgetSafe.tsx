@@ -4,6 +4,7 @@ import Avatar from '~core/Avatar';
 import MaskedAddress from '~core/MaskedAddress';
 import InvisibleCopyableAddress from '~core/InvisibleCopyableAddress';
 import { ColonySafe } from '~data/index';
+import { GNOSIS_SAFE_NAMES_MAP } from '~constants';
 
 import styles from './DetailsWidgetSafe.css';
 
@@ -16,8 +17,6 @@ interface Props {
 const DetailsWidgetSafe = ({
   safe: { chainId, contractAddress, safeName },
 }: Props) => {
-  const userDisplayName = chainId;
-  const username = safeName;
   return (
     <div className={styles.main}>
       <Avatar
@@ -27,11 +26,9 @@ const DetailsWidgetSafe = ({
         placeholderIcon="gnosis-logo"
       />
       <div className={styles.textContainer}>
-        {(userDisplayName || username) && (
-          <div className={styles.displayName}>
-            {userDisplayName || `@${username}`}
-          </div>
-        )}
+        <div
+          className={styles.displayName}
+        >{`${safeName} (${GNOSIS_SAFE_NAMES_MAP[chainId]})`}</div>
         <InvisibleCopyableAddress address={contractAddress}>
           <div className={styles.address}>
             <MaskedAddress address={contractAddress} />

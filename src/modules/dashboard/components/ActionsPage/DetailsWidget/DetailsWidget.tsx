@@ -16,6 +16,7 @@ import { ACTION_TYPES_ICONS_MAP } from '../../ActionsPage/staticMaps';
 
 import DetailsWidgetTeam from './DetailsWidgetTeam';
 import DetailsWidgetRoles from './DetailsWidgetRoles';
+import DetailsWidgetSafe from './DetailsWidgetSafe';
 
 import styles from './DetailsWidget.css';
 
@@ -77,6 +78,10 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.DetailsWidget.colonyName',
     defaultMessage: 'Author',
   },
+  safe: {
+    id: 'dashboard.ActionsPage.DetailsWidget.safe',
+    defaultMessage: 'Safe',
+  },
 });
 
 interface Props {
@@ -127,7 +132,7 @@ const DetailsWidget = ({
             title={formatMessage(
               { id: messageId },
               {
-                actionType: values?.actionType,
+                actionType,
               },
             )}
             appearance={{ size: 'small' }}
@@ -142,7 +147,7 @@ const DetailsWidget = ({
                * of two separate strings (apparently you can't pass it just a plain
                * string with spaces...)
                */
-              values={{ actionType: values?.actionType }}
+              values={{ actionType }}
             />
           </div>
         </div>
@@ -278,6 +283,18 @@ const DetailsWidget = ({
           <div className={styles.value}>{values.colonyName}</div>
         </div>
       )}
+      {detailsForAction.Safe &&
+        (values?.removedSafes || []).length > 0 &&
+        values?.removedSafes?.map((safe, index) => (
+          <div className={styles.item}>
+            <div className={styles.label}>
+              <FormattedMessage {...MSG.safe} />
+            </div>
+            <div className={styles.value} key={index}>
+              <DetailsWidgetSafe safe={safe} />
+            </div>
+          </div>
+        ))}
       {!!shortenedHash && (
         <div className={styles.item}>
           <div className={styles.label}>
