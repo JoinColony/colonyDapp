@@ -221,6 +221,14 @@ export const GNOSIS_SAFE_NETWORKS: NetworkInfo[] = [
   RINKEBY_TEST_NETWORK,
 ];
 
+export const GNOSIS_SAFE_NAMES_MAP = GNOSIS_SAFE_NETWORKS.reduce(
+  (acc, safe) => ({
+    ...acc,
+    [safe.chainId]: safe.name,
+  }),
+  {},
+);
+
 export const DEFAULT_NETWORK_TOKEN = TOKEN_DATA[DEFAULT_NETWORK];
 
 export const DEFAULT_NETWORK_INFO = NETWORK_DATA[DEFAULT_NETWORK];
