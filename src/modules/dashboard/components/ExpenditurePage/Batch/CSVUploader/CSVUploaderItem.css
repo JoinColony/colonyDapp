@@ -19,5 +19,5 @@
 
 .clear {
   composes: themeBlue from '~core/Button/Button.css';
-  transform: translate(60px, -47px);
+  transform: translate(120px, -47px);
 }
