@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-export const useReputationEarned = (
+const useReputationEarned = (
   reputation: number,
   rating: number,
   didFailToRate: boolean,
@@ -15,3 +15,5 @@ export const useReputationEarned = (
     [didFailToRate, rating, ratingMultipliers, reputation],
   );
 };
+
+export default useReputationEarned;
