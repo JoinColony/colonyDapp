@@ -6,7 +6,7 @@ import Dialog, { DialogSection } from '~core/Dialog';
 import MaskedAddress from '~core/MaskedAddress';
 import { AnyToken } from '~data/index';
 
-import { BatchDataItem } from '../types';
+import { ValidatedBatchDataItem } from '../types';
 
 import styles from './PreviewDialog.css';
 
@@ -34,12 +34,6 @@ export const MSG = defineMessages({
     defaultMessage: 'Token not found',
   },
 });
-
-interface ValidatedBatchDataItem extends Omit<BatchDataItem, 'token'> {
-  error?: boolean;
-  token?: AnyToken;
-  id: string;
-}
 
 interface Props {
   cancel: () => void;

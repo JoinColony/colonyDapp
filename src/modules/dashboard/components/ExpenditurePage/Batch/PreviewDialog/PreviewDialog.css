@@ -1,12 +1,12 @@
 .wrapper {
-  padding: 10px 0 28px;
+  padding: 10px 0 38px;
 }
 
 .header {
   font-size: var(--size-medium-l);
   font-weight: var(--weight-bold);
+  color: var(--dark);
   letter-spacing: var(--spacing-medium);
-  columns: var(--dark);
 }
 
 .row {
@@ -17,15 +17,11 @@
 }
 
 .borderTop {
-  border-top: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
-}
-
-.lastRow {
-  border-bottom: none;
+  border-top: 1px solid color-mod(var(--temp-grey-blue-7) alpha(10%));
 }
 
 .cell {
-  padding: 8px 0;
+  padding: 10px 0;
   width: 33%;
   font-size: var(--size-normal);
   text-align: right;
@@ -34,6 +30,7 @@
 
 .left {
   composes: cell;
+  font-weight: var(--weight-bold);
   text-align: left;
 }
 

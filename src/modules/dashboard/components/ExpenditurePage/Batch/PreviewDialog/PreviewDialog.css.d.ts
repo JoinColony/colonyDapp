@@ -2,7 +2,6 @@ export const wrapper: string;
 export const header: string;
 export const row: string;
 export const borderTop: string;
-export const lastRow: string;
 export const cell: string;
 export const left: string;
 export const validUser: string;
