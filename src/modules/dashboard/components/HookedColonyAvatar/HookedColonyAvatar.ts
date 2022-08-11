@@ -33,7 +33,7 @@ export default withHooks<
   const avatarURL = result.colony ? result.colony.avatarURL : null;
   result.avatarURL = avatarURL;
 
-  if (!avatarURL) {
+  if (!avatarURL && avatarHash) {
     const { data: avatar } = useDataFetcher(
       ipfsDataFetcher,
       [avatarHash as string], // Technically a bug, shouldn't need type override
