@@ -254,6 +254,8 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.ReputationChange,
   ],
   [ColonyExtendedActions.SafeRemoved]: [ActionPageDetails.Safe],
+  [ColonyExtendedActions.TokensUpdated]: [ActionPageDetails.Name],
+  [ColonyExtendedActions.AddressBookUpdated]: [ActionPageDetails.Name],
   [ColonyMotions.MintTokensMotion]: [ActionPageDetails.Amount],
   [ColonyMotions.PaymentMotion]: [
     ActionPageDetails.FromDomain,
