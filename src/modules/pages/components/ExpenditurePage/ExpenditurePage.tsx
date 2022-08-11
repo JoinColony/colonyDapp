@@ -478,6 +478,7 @@ const ExpenditurePage = ({ match }: Props) => {
             formValues={formValues}
             colony={colonyData.processedColony}
             handleReleaseMilestone={handleReleaseMilestone}
+            activeStateId={activeStateId}
           />
         )}
       </aside>
