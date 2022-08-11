@@ -16,6 +16,7 @@ import Button from '~core/Button';
 import { initalMilestone } from './constants';
 import Milestone from './Milestone';
 import styles from './Staged.css';
+import { nanoid } from 'nanoid';
 
 const MSG = defineMessages({
   staged: {
@@ -180,7 +181,9 @@ const Staged = ({ colony, sidebarRef }: Props) => {
               );
             })}
             <Button
-              onClick={() => push(initalMilestone)}
+              onClick={() => {
+                push({ ...initalMilestone, id: nanoid() });
+              }}
               appearance={{ theme: 'blue' }}
             >
               <div className={styles.addLabel}>

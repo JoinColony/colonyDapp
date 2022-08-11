@@ -152,7 +152,8 @@ const validationSchema = yup.object().shape({
       amount: yup.object().shape({
         value: yup
           .number()
-          .required(() => MSG.valueError)
+          .transform((value) => toFinite(value))
+          .required(() => MSG.milestoneAmountError)
           .moreThan(0, () => MSG.amountZeroError),
         tokenAddress: yup.string().required(),
       }),
@@ -414,7 +415,7 @@ const ExpenditurePage = ({ match }: Props) => {
     const updatedFormValues = {
       ...{
         ...formValues,
-        recipients: formValues?.recipients?.map((recipient) => {
+        recipients: formValues?.recipients.map((recipient) => {
           if (!recipient.claimed && recipient.claimDate) {
             const isClaimable = recipient.claimDate < new Date().getTime();
             return { ...{ ...recipient, claimed: !!isClaimable } };
@@ -424,18 +425,7 @@ const ExpenditurePage = ({ match }: Props) => {
       },
     };
 
-    const isClaimed = updatedFormValues?.recipients?.every(
-      (recipient) => recipient.claimed,
-    );
-
-    if (isClaimed) {
-      setActiveStateId(Stage.Claimed);
-    }
-
-    setFormValues(updatedFormValues);
-  }, [formValues]);
-
-    const isClaimed = updatedFormValues?.recipients?.every(
+    const isClaimed = updatedFormValues?.recipients.every(
       (recipient) => recipient.claimed,
     );
 
@@ -590,16 +580,6 @@ const ExpenditurePage = ({ match }: Props) => {
             ],
           },
         ],
-        staged: {
-          amount: {
-            value: true,
-          },
-          milestones: [
-            {
-              name: true,
-            },
-          ],
-        },
       }}
       enableReinitialize
     >
