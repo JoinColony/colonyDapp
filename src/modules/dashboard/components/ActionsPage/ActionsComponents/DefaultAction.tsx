@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import Decimal from 'decimal.js';
 import { useMediaQuery } from 'react-responsive';
@@ -26,14 +26,13 @@ import {
   TokenInfoQuery,
   AnyUser,
 } from '~data/index';
-import {
-  ColonyActions,
-  ColonyAndExtensionsEvents,
-  ColonyExtendedActions,
-} from '~types/index';
+import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
-import useColonyMetadataChecks from '~modules/dashboard/hooks/useColonyMetadataChecks';
+import {
+  useColonyMetadataChecks,
+  useExtendedColonyActionType,
+} from '~modules/dashboard/hooks';
 import {
   getFormattedTokenValue,
   getTokenDecimalsWithFallback,
@@ -107,11 +106,14 @@ const DefaultAction = ({
   );
 
   let domainMetadata;
-  const {
-    verifiedAddressesChanged,
-    tokensChanged,
-    removedSafes,
-  } = useColonyMetadataChecks(
+  const { removedSafes } = useColonyMetadataChecks(
+    actionType,
+    colony,
+    transactionHash,
+    colonyAction,
+  );
+
+  const extendedActionType = useExtendedColonyActionType(
     actionType,
     colony,
     transactionHash,
@@ -266,23 +268,6 @@ const DefaultAction = ({
   );
 
   const isMobile = useMediaQuery({ query });
-
-  const extendedActionType = useMemo(() => {
-    if (actionType === ColonyActions.ColonyEdit) {
-      if (verifiedAddressesChanged) {
-        return ColonyExtendedActions.AddressBookUpdated;
-      }
-
-      if (tokensChanged) {
-        return ColonyExtendedActions.TokensUpdated;
-      }
-
-      if ((removedSafes || []).length > 0) {
-        return ColonyExtendedActions.SafeRemoved;
-      }
-    }
-    return actionType;
-  }, [actionType, verifiedAddressesChanged, tokensChanged, removedSafes]);
 
   return (
     <div className={styles.main}>
