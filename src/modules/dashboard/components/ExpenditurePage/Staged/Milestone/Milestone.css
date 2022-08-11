@@ -24,6 +24,7 @@
 .percent {
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
+  text-align: right;
   color: color-mod(var(--dark) alpha(85%));
   letter-spacing: 0.5px;
 }
@@ -64,6 +65,10 @@
   height: 20px;
   width: 20px;
   fill: var(--pink);
+}
+
+.deleteIcon:hover {
+  cursor: pointer;
 }
 
 .sliderWrapper {

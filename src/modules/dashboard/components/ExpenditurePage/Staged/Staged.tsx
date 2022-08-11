@@ -49,7 +49,7 @@ interface Props {
 }
 
 const Staged = ({ colony, sidebarRef }: Props) => {
-  const { setFieldValue, setFieldTouched } = useFormikContext<ValuesType>();
+  const { setFieldValue } = useFormikContext<ValuesType>();
   const [, { value: amount }] = useField<{
     value?: string;
     tokenAddress?: string;
@@ -183,7 +183,6 @@ const Staged = ({ colony, sidebarRef }: Props) => {
             <Button
               onClick={() => {
                 push({ ...initalMilestone, id: nanoid() });
-                setFieldTouched(`staged.milestones[${milestones.length}].name`);
               }}
               appearance={{ theme: 'blue' }}
             >
