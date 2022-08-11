@@ -181,19 +181,27 @@ export const getProcessedColony = async (
         try {
           response = await ipfs.getString(avatarHash);
           if (response) {
+            // checking version to be certain
+            const avatarMetadataVersion = getEventMetadataVersion(response);
             avatarObject =
-              metadataVersion === 1
+              avatarMetadataVersion === 1
                 ? JSON.parse(response) // original metadata format
                 : { image: getColonyAvatarImage(response) }; // new metadata format
           }
         } catch (error) {
-          log.verbose('Could not fetch colony avatar', response);
-          log.verbose(
-            `Could not parse IPFS avatar for colony:`,
-            ensName,
-            'with hash:',
-            avatarHash,
-          );
+          /*
+           * @NOTE Silent error if avatar hash is null
+           */
+          if (avatarHash) {
+            log.verbose(error.message);
+            log.verbose('Could not fetch colony avatar', response);
+            log.verbose(
+              `Could not parse IPFS avatar for colony:`,
+              ensName,
+              'with hash:',
+              avatarHash,
+            );
+          }
         }
       }
     }
