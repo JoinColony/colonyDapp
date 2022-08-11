@@ -13,6 +13,7 @@ import ActionsPageFeed, {
   ActionsPageFeedItemWithIPFS,
 } from '~dashboard/ActionsPageFeed';
 import { CommentInput } from '~core/Comment';
+import MaskedAddress from '~core/MaskedAddress';
 
 import {
   useLoggedInUser,
@@ -37,12 +38,13 @@ import {
 } from '~utils/tokens';
 import { useDataFetcher } from '~utils/hooks';
 import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
+import { GNOSIS_SAFE_NAMES_MAP } from '~constants';
+
 import { ipfsDataFetcher } from '../../../../core/fetchers';
 
 import DetailsWidget from '../DetailsWidget';
 
 import styles from './DefaultAction.css';
-import MaskedAddress from '~core/MaskedAddress';
 
 const displayName = 'dashboard.ActionsPage.DefaultAction';
 
@@ -150,6 +152,34 @@ const DefaultAction = ({
     new Decimal(reputationChange).abs().toString(),
     decimals,
   );
+
+  const removedSafesString = removedSafes?.reduce(
+    (acc, { chainId, contractAddress, safeName }, index) => {
+      const removedSafe = (
+        <>
+          <span>{`${safeName} (${GNOSIS_SAFE_NAMES_MAP[chainId]}) `}</span>
+          <MaskedAddress address={contractAddress} />
+        </>
+      );
+      if (index === 0) {
+        return removedSafe;
+      }
+      if (index === removedSafes.length - 1) {
+        return (
+          <>
+            {acc} and {removedSafe}
+          </>
+        );
+      }
+      return (
+        <>
+          {acc}, {removedSafe}
+        </>
+      );
+    },
+    <></>,
+  );
+
   /*
    * @NOTE We need to convert the action type name into a forced camel-case string
    *
@@ -198,9 +228,7 @@ const DefaultAction = ({
     reputationChangeNumeral: <Numeral value={formattedReputationChange} />,
     isSmiteAction: new Decimal(reputationChange).isNegative(),
     removedSafes,
-    safe: (
-      <MaskedAddress address="0xb77D57F4959eAfA0339424b83FcFaf9c15407461" />
-    ),
+    removedSafesString,
   };
 
   const actionAndEventValuesForDocumentTitle = {
