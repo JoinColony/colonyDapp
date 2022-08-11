@@ -9,6 +9,7 @@ import { nanoid } from 'nanoid';
 import { RouteChildrenProps, useParams } from 'react-router';
 import { Formik } from 'formik';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { toFinite } from 'lodash';
 
 import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
 import { useColonyFromNameQuery } from '~data/generated';
@@ -29,6 +30,7 @@ import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
 
 import ExpenditureForm from './ExpenditureForm';
 import LockedSidebar from './LockedSidebar';
+import { ExpenditureTypes } from './types';
 import styles from './ExpenditurePage.css';
 
 const displayName = 'pages.ExpenditurePage';
@@ -101,31 +103,37 @@ const validationSchema = yup.object().shape({
   filteredDomainId: yup
     .string()
     .required(() => <FormattedMessage {...MSG.teamRequiredError} />),
-  recipients: yup.array(
-    yup.object().shape({
-      recipient: yup.object().required(),
-      value: yup
-        .array(
-          yup.object().shape({
-            amount: yup
-              .number()
-              .required(() => MSG.valueError)
-              .moreThan(0, () => MSG.amountZeroError),
-            tokenAddress: yup.string().required(),
-          }),
-        )
-        .min(1),
-    }),
-  ),
+  recipients: yup.array().when('expenditure', {
+    is: (expenditure) => expenditure === 'advanced',
+    then: yup.array().of(
+      yup.object().shape({
+        recipient: yup.object().required(),
+        value: yup
+          .array(
+            yup.object().shape({
+              amount: yup
+                .number()
+                .transform((value) => toFinite(value))
+                .required()
+                .required(() => MSG.valueError)
+                .moreThan(0, () => MSG.amountZeroError),
+              tokenAddress: yup.string().required(),
+            }),
+          )
+          .min(1),
+      }),
+    ),
+  }),
   title: yup.string().min(3).required(),
   description: yup.string().max(4000),
   split: yup.object().when('expenditure', {
-    is: (expenditure) => expenditure === 'split',
+    is: (expenditure) => expenditure === ExpenditureTypes.Split,
     then: yup.object().shape({
       unequal: yup.boolean().required(),
       amount: yup.object().shape({
         value: yup
           .number()
+          .transform((value) => toFinite(value))
           .required(() => MSG.valueError)
           .moreThan(0, () => MSG.amountZeroError),
         tokenAddress: yup.string().required(),
@@ -167,7 +175,7 @@ export interface ValuesType {
 }
 
 const initialValues = {
-  expenditure: 'advanced',
+  expenditure: ExpenditureTypes.Advanced,
   recipients: [newRecipient],
   filteredDomainId: String(ROOT_DOMAIN_ID),
   owner: undefined,
@@ -237,6 +245,30 @@ const ExpenditurePage = ({ match }: Props) => {
 
   const handleSubmit = useCallback((values) => {
     setActiveStateId(Stage.Draft);
+
+    if (values.expenditure === ExpenditureTypes.Split) {
+      const recipientsCount =
+        values.split.recipients?.filter(
+          (recipient) => recipient?.user?.id !== undefined,
+        ).length || 0;
+
+      const splitValues = {
+        ...values,
+        recipients: undefined,
+        split: {
+          ...values.split,
+          recipients: values.split.recipients?.map((recipient) => {
+            const amount = values.split.amount.value;
+
+            return {
+              ...recipient,
+              amount: !amount ? 0 : Number(amount) / (recipientsCount || 1),
+            };
+          }),
+        },
+      };
+      setFormValues(splitValues);
+    }
 
     if (values) {
       setFormValues(values);

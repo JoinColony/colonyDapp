@@ -2,23 +2,24 @@ import React, { ReactNode, useCallback, useMemo, useRef } from 'react';
 import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 import compose from 'recompose/compose';
 import classNames from 'classnames';
-
 import { useField } from 'formik';
+
 import { AnyUser } from '~data/index';
 import { Address, SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
+import UserAvatar from '~core/UserAvatar';
+import { ItemDefault } from '~core/SingleUserPicker';
+import withAdditionalOmniPicker from '~core/OmniPicker/withAdditionalOmniPicker';
+import Button from '~core/Button';
 
 import { ItemDataType, WrappedComponentAdditionalProps } from '../OmniPicker';
 import { Props as WithOmnipickerInProps } from '../OmniPicker/withOmniPicker';
 import { InputLabel } from '../Fields';
 import Icon from '../Icon';
-import UserAvatar from '~core/UserAvatar';
 
-import styles from './UserPickerWithSearch.css';
-import { ItemDefault } from '~core/SingleUserPicker';
 import Dropdown from './Dropdown';
-import withAdditionalOmniPicker from '~core/OmniPicker/withAdditionalOmniPicker';
-import Button from '~core/Button';
+import { DROPDOWN_HEIGHT, DROPDOWN_ITEM_HEIGHT } from './constants';
+import styles from './UserPickerWithSearch.css';
 
 type AvatarRenderFn = (
   address: Address,
@@ -163,8 +164,8 @@ const UserPickerWithSearch = ({
       : formatMessage(placeholder);
 
   const dropdownHeight = useMemo(() => {
-    const height = data.length * 56;
-    return height > 180 ? 180 : height;
+    const height = data.length * DROPDOWN_ITEM_HEIGHT;
+    return height > DROPDOWN_HEIGHT ? DROPDOWN_HEIGHT : height;
   }, [data]);
 
   return (

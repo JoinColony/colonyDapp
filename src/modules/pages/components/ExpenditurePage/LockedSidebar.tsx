@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { LockedExpenditureSettings } from '~dashboard/ExpenditurePage/ExpenditureSettings';
 import { LockedPayments } from '~dashboard/ExpenditurePage/Payments';
@@ -17,25 +17,14 @@ interface Props {
 const LockedSidebar = ({ colony, formValues }: Props) => {
   const { expenditure, recipients, filteredDomainId } = formValues || {};
 
-  const secondFormSection = useMemo(() => {
-    switch (expenditure) {
-      case ExpenditureTypes.Advanced: {
-        return <LockedPayments recipients={recipients} colony={colony} />;
-      }
-      case ExpenditureTypes.Split: {
-        return null;
-      }
-      default:
-        return null;
-    }
-  }, [colony, expenditure, recipients]);
-
   return (
     <>
       <LockedExpenditureSettings
         {...{ expenditure, filteredDomainId, colony }}
       />
-      {secondFormSection}
+      {expenditure === ExpenditureTypes.Advanced && (
+        <LockedPayments recipients={recipients} colony={colony} />
+      )}
     </>
   );
 };

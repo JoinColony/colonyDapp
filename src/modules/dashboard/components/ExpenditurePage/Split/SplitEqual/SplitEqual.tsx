@@ -1,8 +1,8 @@
 import { FieldArray, useField, useFormikContext } from 'formik';
-import React, { useEffect, useMemo } from 'react';
-import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
-
+import React, { useMemo } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { nanoid } from 'nanoid';
+import { isNaN } from 'lodash';
 import { FormSection, Input, TokenSymbolSelector } from '~core/Fields';
 import { AnyUser, Colony, useMembersSubscription } from '~data/index';
 import TokenIcon from '~dashboard/HookedTokenIcon';
@@ -15,8 +15,9 @@ import { supRenderAvatar } from '~dashboard/ExpenditurePage/Recipient/Recipient'
 import Icon from '~core/Icon';
 import Button from '~core/Button';
 
-import styles from './SplitEqual.css';
 import { initalRecipient } from '../constants';
+
+import styles from './SplitEqual.css';
 
 const MSG = defineMessages({
   amountLabel: {
@@ -25,11 +26,11 @@ const MSG = defineMessages({
   },
   recipientsCounterText: {
     id: 'dashboard.ExpenditurePage.Split.SplitEqual.recipientsCounterText',
-    defaultMessage: 'recipient{s}',
+    defaultMessage: `{count} {recipientsCount, plural, one {recipient} other {recipients}}`,
   },
-  each: {
-    id: 'dashboard.ExpenditurePage.Split.SplitEqual.each',
-    defaultMessage: 'each',
+  tokenCounter: {
+    id: 'dashboard.ExpenditurePage.Split.SplitEqual.tokenCounter',
+    defaultMessage: '{icon} {amount} {token} each',
   },
   deleteIconTitle: {
     id: 'dashboard.ExpenditurePage.Split.SplitEqual.deleteIconTitle',
@@ -49,7 +50,6 @@ interface Props {
 }
 
 const SplitEqual = ({ colony, sidebarRef }: Props) => {
-  const { formatMessage } = useIntl();
   const { setFieldValue } = useFormikContext<ValuesType>();
   const [, { value: recipients }] = useField<
     { user?: AnyUser; amount?: number; key: string }[]
@@ -84,18 +84,11 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
   }, [recipients]);
 
   const calculatedAmount = useMemo(() => {
-    return !amount.value ? 0 : Number(amount?.value) / (recipientsCount || 1);
+    const result = !amount.value
+      ? 0
+      : Number(amount?.value) / (recipientsCount || 1);
+    return isNaN(result) ? 0 : result;
   }, [amount, recipientsCount]);
-
-  useEffect(() => {
-    setFieldValue(
-      'split.recipients',
-      recipients.map((recipient) => {
-        return { ...recipient, amount: calculatedAmount };
-      }),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [calculatedAmount, setFieldValue]);
 
   return (
     <>
@@ -111,11 +104,11 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
               label={MSG.amountLabel}
               placeholder="Not set"
               formattingOptions={{
+                delimiter: ',',
                 numeral: true,
                 numeralDecimalScale: getTokenDecimalsWithFallback(
                   selectedToken && selectedToken.decimals,
                 ),
-                numeralPositiveOnly: true,
               }}
               maxButtonParams={{
                 setFieldValue,
@@ -141,23 +134,35 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.counterWrapper}>
           <span>
-            {recipientsCount}{' '}
-            {formatMessage(MSG.recipientsCounterText, {
-              s: recipientsCount === 1 ? '' : 's',
-            })}
+            <FormattedMessage
+              {...MSG.recipientsCounterText}
+              values={{
+                recipientsCount,
+                count: recipientsCount,
+              }}
+            />
           </span>
           {token && (
             <div className={styles.tokenCounterWrapper}>
-              <TokenIcon
-                className={styles.tokenIcon}
-                token={token}
-                name={token?.name || token?.address}
-              />{' '}
-              <Numeral
-                unit={getTokenDecimalsWithFallback(0)}
-                value={calculatedAmount}
-              />{' '}
-              {token?.symbol} {formatMessage(MSG.each)}
+              <FormattedMessage
+                {...MSG.tokenCounter}
+                values={{
+                  icon: (
+                    <TokenIcon
+                      className={styles.tokenIcon}
+                      token={token}
+                      name={token?.name || token?.address}
+                    />
+                  ),
+                  amount: (
+                    <Numeral
+                      unit={getTokenDecimalsWithFallback(0)}
+                      value={calculatedAmount}
+                    />
+                  ),
+                  token: token?.symbol,
+                }}
+              />
             </div>
           )}
         </div>
@@ -169,34 +174,32 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
             <>
               {recipients?.length > 0 && (
                 <div className={styles.recipientsWrapper}>
-                  {recipients?.map((recipient, index) => {
-                    return (
-                      <div
-                        className={styles.recipientWrapper}
-                        key={recipient?.key}
-                      >
-                        <div>
-                          <UserPickerWithSearch
-                            data={colonyMembers?.subscribedUsers || []}
-                            label=""
-                            name={`split.recipients[${index}].user`}
-                            filter={filterUserSelection}
-                            renderAvatar={supRenderAvatar}
-                            placeholder="Search"
-                            sidebarRef={sidebarRef}
-                          />
-                        </div>
-                        <Icon
-                          name="trash"
-                          className={styles.deleteIcon}
-                          onClick={() => {
-                            remove(index);
-                          }}
-                          title={MSG.deleteIconTitle}
+                  {recipients?.map((recipient, index) => (
+                    <div
+                      className={styles.recipientWrapper}
+                      key={recipient?.key}
+                    >
+                      <div>
+                        <UserPickerWithSearch
+                          data={colonyMembers?.subscribedUsers || []}
+                          label=""
+                          name={`split.recipients[${index}].user`}
+                          filter={filterUserSelection}
+                          renderAvatar={supRenderAvatar}
+                          placeholder="Search"
+                          sidebarRef={sidebarRef}
                         />
                       </div>
-                    );
-                  })}
+                      <Icon
+                        name="trash"
+                        className={styles.deleteIcon}
+                        onClick={() => {
+                          remove(index);
+                        }}
+                        title={MSG.deleteIconTitle}
+                      />
+                    </div>
+                  ))}
                 </div>
               )}
               <Button

@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import classNames from 'classnames';
+import { defineMessages } from 'react-intl';
 
 import { FormSection, InputLabel } from '~core/Fields';
 import UserAvatar from '~core/UserAvatar';
@@ -9,12 +10,28 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { Colony } from '~data/index';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 
-import styles from './LockedRecipient.css';
 import { getRecipientTokens } from '../utils';
-import { MSG } from './Recipient';
 import { Recipient as RecipientType } from '../Payments/types';
 
-const displayNameLockedRecipient = 'dashboard.ExpenditurePage.LockedRecipient';
+import styles from './LockedRecipient.css';
+
+const displayNameLockedRecipient =
+  'dashboard.ExpenditurePage.Recipient.LockedRecipient';
+
+export const MSG = defineMessages({
+  recipientLabel: {
+    id: 'dashboard.ExpenditurePage.Recipient.LockedRecipient.recipientLabel',
+    defaultMessage: 'Recipient',
+  },
+  valueLabel: {
+    id: 'dashboard.ExpenditurePage.Recipient.LockedRecipient.valueLabel',
+    defaultMessage: 'Value',
+  },
+  delayLabel: {
+    id: 'dashboard.ExpenditurePage.Recipient.LockedRecipient.delayLabel',
+    defaultMessage: 'Claim delay',
+  },
+});
 
 interface Props {
   recipient: RecipientType;
