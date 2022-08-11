@@ -5,6 +5,7 @@ import { nanoid } from 'nanoid';
 import { RouteChildrenProps, useParams } from 'react-router';
 import { Formik, FormikErrors } from 'formik';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { toFinite } from 'lodash';
 
 import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
 import { useColonyFromNameQuery } from '~data/generated';
@@ -34,7 +35,7 @@ import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog'
 
 import { findDifferences, updateValues, setClaimDate } from './utils';
 import ExpenditureForm from './ExpenditureForm';
-import { ValuesType } from './types';
+import { ExpenditureTypes, ValuesType } from './types';
 import styles from './ExpenditurePage.css';
 
 const displayName = 'pages.ExpenditurePage';
@@ -111,7 +112,7 @@ const MSG = defineMessages({
 });
 
 const initialValues = {
-  expenditure: 'advanced',
+  expenditure: ExpenditureTypes.Advanced,
   filteredDomainId: String(ROOT_DOMAIN_ID),
   owner: undefined,
   title: undefined,
@@ -132,6 +133,7 @@ const validationSchema = yup.object().shape({
           yup.object().shape({
             amount: yup
               .number()
+              .transform((value) => toFinite(value))
               .required(() => MSG.valueError)
               .moreThan(0, () => MSG.amountZeroError),
             tokenAddress: yup.string().required(),
@@ -446,7 +448,9 @@ const ExpenditurePage = ({ match }: Props) => {
         <div className={getMainClasses({}, styles)}>
           <aside className={styles.sidebar} ref={sidebarRef}>
             {loading ? (
-              <SpinnerLoader appearance={{ size: 'medium' }} />
+              <div className={styles.spinnerContainer}>
+                <SpinnerLoader appearance={{ size: 'medium' }} />
+              </div>
             ) : (
               colonyData && (
                 <>
