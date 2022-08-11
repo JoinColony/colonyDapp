@@ -171,13 +171,8 @@ const ActionsListItem = ({
   const [fetchTokenInfo, { data: tokenData }] = useTokenInfoLazyQuery();
 
   const colonyObject = parseColonyMetadata(metadataJSON);
-  const { tokensChanged, verifiedAddressesChanged } = useColonyMetadataChecks(
-    actionType,
-    colony,
-    transactionHash,
-    colonyObject,
-  );
-  const { addedSafe } = useColonyMetadataChecks(
+
+  const { verifiedAddressesChanged, tokensChanged, addedSafe } = useColonyMetadataChecks(
     actionType,
     colony,
     transactionHash,
