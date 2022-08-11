@@ -1,0 +1,63 @@
+@value white: rgb(255, 255, 255);
+@value boxShadow: inset 0px 2px 4px rgba(14, 37, 88, 0.07);
+@value border: 1px solid var(--temp-grey-blue-8);
+
+.recipientWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 15px 0 20px;
+}
+
+.recipientWrapper:last-of-type {
+  margin-bottom: 0;
+}
+
+.recipientsWrapper label {
+  margin-right: 0;
+}
+
+.deleteIcon {
+  height: 20px;
+  width: 20px;
+  fill: var(--pink);
+}
+
+.deleteIcon:hover {
+  cursor: pointer;
+}
+
+.addRecipientLabel {
+  display: flex;
+  align-items: center;
+  padding-top: 4px;
+}
+
+.circlePlusIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  width: 30px;
+  transform: translateX(-8px);
+  fill: var(--action-secondary);
+}
+
+.sliderWrapper {
+  display: grid;
+  align-items: center;
+  margin: 22px 0 20px;
+  grid-template-columns: 280px 40px;
+  column-gap: 10px;
+}
+
+.sliderWrapper > span {
+  justify-self: end;
+}
+
+.percent {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--dark) alpha(85%));
+  letter-spacing: 0.5px;
+}

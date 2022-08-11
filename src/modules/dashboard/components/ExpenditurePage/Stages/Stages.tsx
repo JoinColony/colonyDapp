@@ -3,6 +3,7 @@ import { useFormikContext } from 'formik';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import copyToClipboard from 'copy-to-clipboard';
 import classNames from 'classnames';
+import { isEmpty } from 'lodash';
 
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
@@ -73,7 +74,7 @@ interface Props {
 }
 
 const Stages = ({ states, activeStateId, formValues }: Props) => {
-  const { values, handleSubmit, validateForm, resetForm } =
+  const { values, handleSubmit, errors, dirty, resetForm } =
     useFormikContext<ValuesType>() || {};
   const { formatMessage } = useIntl();
 
@@ -84,11 +85,8 @@ const Stages = ({ states, activeStateId, formValues }: Props) => {
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
 
   const handleSaveDraft = useCallback(async () => {
-    const errors = await validateForm(values);
-    const hasErrors = Object.keys(errors)?.length;
-
     return (
-      !hasErrors &&
+      isEmpty(errors) &&
       openDraftConfirmDialog({
         onClick: () => {
           handleSubmit(values as any);
@@ -96,7 +94,7 @@ const Stages = ({ states, activeStateId, formValues }: Props) => {
         isVotingExtensionEnabled: true,
       })
     );
-  }, [handleSubmit, openDraftConfirmDialog, validateForm, values]);
+  }, [errors, handleSubmit, openDraftConfirmDialog, values]);
 
   const handleDeleteDraft = () =>
     openDeleteDraftDialog({
@@ -195,7 +193,11 @@ const Stages = ({ states, activeStateId, formValues }: Props) => {
                   </div>
                 </Tooltip>
               </Button>
-              <Button onClick={handleSaveDraft} style={buttonStyles}>
+              <Button
+                onClick={handleSaveDraft}
+                style={buttonStyles}
+                disabled={!isEmpty(errors) || !dirty}
+              >
                 <FormattedMessage {...MSG.submitDraft} />
               </Button>
             </>

@@ -6,6 +6,7 @@ import { useDialog } from '~core/Dialog';
 import StakeExpenditureDialog from '~dashboard/Dialogs/StakeExpenditureDialog';
 import { ExpenditureSettings } from '~dashboard/ExpenditurePage';
 import Payments from '~dashboard/ExpenditurePage/Payments';
+import Split from '~dashboard/ExpenditurePage/Split';
 import Staged from '~dashboard/ExpenditurePage/Staged';
 import { Colony } from '~data/index';
 
@@ -28,7 +29,6 @@ interface Props {
 const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
   const { values, handleSubmit, validateForm } =
     useFormikContext<ValuesType>() || {};
-
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
 
   const onSubmit = useCallback(
@@ -60,6 +60,9 @@ const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
       }
       case ExpenditureTypes.Staged: {
         return <Staged colony={colony} sidebarRef={sidebarRef} />;
+      }
+      case ExpenditureTypes.Split: {
+        return <Split sidebarRef={sidebarRef} colony={colony} />;
       }
       default:
         return null;
