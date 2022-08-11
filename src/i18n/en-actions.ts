@@ -57,6 +57,8 @@ const actionsMessageDescriptors = {
       ${ColonyActions.EmitDomainReputationPenalty} {Smite}
       ${ColonyActions.EmitDomainReputationReward} {Award}
       ${ColonyExtendedActions.SafeRemoved} {Remove Safe}
+      ${ColonyExtendedActions.TokensUpdated} {Update Tokens}
+      ${ColonyExtendedActions.AddressBookUpdated} {Update Address Book}
       other {Generic}
     }`,
   [`${ColonyActions.ColonyEdit}.safeRemoved`]: `Remove Safe`,
