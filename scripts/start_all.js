@@ -215,26 +215,26 @@ addProcess('graph-node', async () => {
     );
   });
 
-  // await new Promise((resolve, reject) => {
-  //   const setupProcess = spawn('node', ['./setup_graph_node.js'], {
-  //     cwd: path.resolve(__dirname),
-  //   });
+  await new Promise((resolve, reject) => {
+    const setupProcess = spawn('node', ['./setup_graph_node.js'], {
+      cwd: path.resolve(__dirname),
+    });
 
-  //   console.log(); // New line
-  //   console.log('Setting up docker-compose with the local environment ...');
+    console.log(); // New line
+    console.log('Setting up docker-compose with the local environment ...');
 
-  //   if (args.foreground) {
-  //     setupProcess.stdout.pipe(process.stdout);
-  //     setupProcess.stderr.pipe(process.stderr);
-  //   }
+    if (args.foreground) {
+      setupProcess.stdout.pipe(process.stdout);
+      setupProcess.stderr.pipe(process.stderr);
+    }
 
-  //   setupProcess.on('exit', errorCode => {
-  //     if (errorCode) {
-  //       return reject(new Error(`Setup process exited with code ${errorCode}`));
-  //     }
-  //     resolve();
-  //   });
-  // });
+    setupProcess.on('exit', errorCode => {
+      if (errorCode) {
+        return reject(new Error(`Setup process exited with code ${errorCode}`));
+      }
+      resolve();
+    });
+  });
 
   const graphNodeProcess = spawn('docker-compose', ['up'], {
     cwd: path.resolve(__dirname, '..', 'src/lib/graph-node/docker'),

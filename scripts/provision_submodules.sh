@@ -119,7 +119,7 @@ then
     log "Building the '${SUBGRAPH}' submodule"
     cd "${ROOT_PATH}/${LIB_PATH}/${SUBGRAPH}"
     log "Installing the '${SUBGRAPH}' submodule node_modules"
-    npm install --update-binary --no-shrinkwrap
+    npm install
     cd ${ROOT_PATH}
 else
     warn "Skipping '${SUBGRAPH}' submodule provision"
