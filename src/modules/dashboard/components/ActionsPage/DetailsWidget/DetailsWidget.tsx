@@ -286,11 +286,11 @@ const DetailsWidget = ({
       {detailsForAction.Safe &&
         (values?.removedSafes || []).length > 0 &&
         values?.removedSafes?.map((safe, index) => (
-          <div className={styles.item}>
+          <div className={styles.item} key={index}>
             <div className={styles.label}>
               <FormattedMessage {...MSG.safe} />
             </div>
-            <div className={styles.value} key={index}>
+            <div className={styles.value}>
               <DetailsWidgetSafe safe={safe} />
             </div>
           </div>
