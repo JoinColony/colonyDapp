@@ -16,7 +16,6 @@ import Icon from '~core/Icon';
 import FriendlyName from '~core/FriendlyName';
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import CountDownTimer from '~dashboard/ActionsPage/CountDownTimer';
-import useColonyMetadataChecks from '~modules/dashboard/hooks/useColonyMetadataChecks';
 
 import { getMainClasses, removeValueUnits } from '~utils/css';
 import {
@@ -41,6 +40,8 @@ import {
   MotionState,
   MOTION_TAG_MAP,
 } from '~utils/colonyMotions';
+import { useExtendedColonyActionType } from '~modules/dashboard/hooks';
+
 import { ipfsDataFetcher } from '../../../core/fetchers';
 
 import { ClickHandlerProps } from './ActionsList';
@@ -130,12 +131,13 @@ const ActionsListItem = ({
   const [fetchTokenInfo, { data: tokenData }] = useTokenInfoLazyQuery();
 
   const colonyObject = parseColonyMetadata(metadataJSON);
-  const { tokensChanged, verifiedAddressesChanged } = useColonyMetadataChecks(
+  const extendedActionType = useExtendedColonyActionType(
     actionType,
     colony,
     transactionHash,
     colonyObject,
   );
+
   useEffect(() => {
     if (transactionTokenAddress) {
       fetchTokenInfo({ variables: { address: transactionTokenAddress } });
@@ -293,16 +295,9 @@ const ActionsListItem = ({
           <div className={styles.titleWrapper}>
             <span className={styles.title}>
               <FormattedMessage
-                id={
-                  (verifiedAddressesChanged &&
-                    `action.${ColonyActions.ColonyEdit}.verifiedAddresses`) ||
-                  (tokensChanged &&
-                    `action.${ColonyActions.ColonyEdit}.tokens`) ||
-                  roleMessageDescriptorId ||
-                  'action.title'
-                }
+                id={roleMessageDescriptorId || 'action.title'}
                 values={{
-                  actionType,
+                  actionType: extendedActionType,
                   initiator: (
                     <span className={styles.titleDecoration}>
                       <FriendlyName
