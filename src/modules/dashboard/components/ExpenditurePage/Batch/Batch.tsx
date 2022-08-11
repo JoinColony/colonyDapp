@@ -2,21 +2,19 @@ import React, { useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { useField } from 'formik';
 import classNames from 'classnames';
-import { isEmpty } from 'lodash';
-
-import classNames from 'classnames';
 import { isEmpty, isNil } from 'lodash';
 
 import { FormSection } from '~core/Fields';
 import { Colony } from '~data/index';
 import TokenIcon from '~dashboard/HookedTokenIcon';
-import TokenIcon from '~dashboard/HookedTokenIcon';
 import Button from '~core/Button';
+import { useDialog } from '~core/Dialog';
 
 import CSVUploader from './CSVUploader';
-import DownloadTemplate from './DownloadTemplate/DownloadTemplate';
+import PreviewDialog from './PreviewDialog';
 
 import { useCalculateBatchPayment } from './hooks';
+import DownloadTemplate from './DownloadTemplate';
 import styles from './Batch.css';
 
 export const MSG = defineMessages({
@@ -73,13 +71,11 @@ const Batch = ({ colony }: Props) => {
   const { formatMessage } = useIntl();
   const [, { value: batch }] = useField('batch');
   const batchData = batch?.dataCSVUploader?.[0]?.parsedData;
-  const processedData = useMemo(() => calculateBatch(colony, batchData), [
-    batchData,
-    colony,
-  ]);
 
   const data = useCalculateBatchPayment(colony, batchData);
   const { invalidRows, recipientsCount, tokens, validatedData } = data || {};
+
+  const openPreviewDialog = useDialog(PreviewDialog);
 
   return (
     <div className={styles.batchContainer}>
@@ -99,6 +95,14 @@ const Batch = ({ colony }: Props) => {
               setProcessingData={setProcessingCSVData}
             />
           </div>
+          {!isNil(batchData) && (
+            <Button
+              type="button"
+              onClick={() => openPreviewDialog({ values: batchData })}
+              appearance={{ theme: 'blue' }}
+              text={MSG.viewAll}
+            />
+          )}
         </div>
       </FormSection>
       {data && (

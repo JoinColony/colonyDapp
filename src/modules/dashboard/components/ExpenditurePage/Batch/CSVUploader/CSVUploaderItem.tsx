@@ -98,12 +98,6 @@ const CSVUploaderItem = ({
           text={MSG.removeCSVText}
           className={styles.clear}
         />
-        <Button
-          type="button"
-          onClick={() => {}}
-          appearance={{ theme: 'blue' }}
-          text={MSG.viewAll}
-        />
       </div>
     </div>
   );
