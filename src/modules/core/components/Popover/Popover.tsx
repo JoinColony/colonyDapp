@@ -134,15 +134,19 @@ const Popover = ({
     [onClose],
   );
 
-  const requestOpen = useCallback(() => {
-    if (isOpen) {
-      return;
-    }
+  useEffect(() => {
     if (closeAfterDelay) {
       closeTimeoutRef.current = setTimeout(() => {
         close();
       }, 3000 + (openDelay || 0));
     }
+  }, [close, openDelay, closeAfterDelay]);
+
+  const requestOpen = useCallback(() => {
+    if (isOpen) {
+      return;
+    }
+
     if (openDelay) {
       openTimeoutRef.current = setTimeout(() => {
         _setIsOpen(true);
@@ -150,7 +154,7 @@ const Popover = ({
       return;
     }
     _setIsOpen(true);
-  }, [isOpen, openDelay, closeAfterDelay]);
+  }, [isOpen, openDelay]);
 
   const handleWrapperFocus = useCallback(() => {
     if (retainRefFocus && referenceElement instanceof HTMLInputElement) {
