@@ -32,7 +32,7 @@ const actionsMessageDescriptors = {
       ${ColonyMotions.EmitDomainReputationRewardMotion} {Award {recipient} with a {reputationChangeNumeral} {reputationChange, plural, one {pt} other {pts}} reputation reward}
       ${ColonyExtendedActions.AddressBookUpdated} {Address book was updated}
       ${ColonyExtendedActions.TokensUpdated} {Colony tokens were updated}
-      ${ColonyExtendedActions.SafeRemoved} {Remove Gnosis Safe}
+      ${ColonyExtendedActions.SafeRemoved} {Remove Safe}
       ${ColonyMotions.CreateDecisionMotion} {Create Decision}
       other {Generic action we don't have information about}
     }`,
