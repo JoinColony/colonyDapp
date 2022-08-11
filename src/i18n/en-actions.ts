@@ -61,7 +61,6 @@ const actionsMessageDescriptors = {
       ${ColonyExtendedActions.AddressBookUpdated} {Update Address Book}
       other {Generic}
     }`,
-  [`${ColonyActions.ColonyEdit}.safeRemoved`]: `Remove Safe`,
 };
 
 export default actionsMessageDescriptors;
