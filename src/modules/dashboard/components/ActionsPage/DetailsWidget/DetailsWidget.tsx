@@ -8,7 +8,7 @@ import TransactionLink from '~core/TransactionLink';
 import Numeral from '~core/Numeral';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import { AnyUser, Colony } from '~data/index';
-import { ColonyActions, ColonyMotions } from '~types/index';
+import { AddedActions, ColonyActions, ColonyMotions } from '~types/index';
 import { splitTransactionHash } from '~utils/strings';
 import { getDetailsForAction } from '~utils/colonyActions';
 import { EventValues } from '../../ActionsPageFeed/ActionsPageFeed';
@@ -85,7 +85,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  actionType: ColonyActions | ColonyMotions;
+  actionType: ColonyActions | ColonyMotions | AddedActions;
   recipient?: AnyUser;
   values?: EventValues;
   transactionHash?: string;
