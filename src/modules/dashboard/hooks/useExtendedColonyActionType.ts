@@ -2,8 +2,8 @@ import { useMemo } from 'react';
 
 import { Colony } from '~data/index';
 import { ColonyActionQuery } from '~data/generated';
-
 import { ColonyActions, ColonyExtendedActions } from '~types/index';
+import { ColonyMetadata } from '~utils/colonyActions';
 
 import useColonyMetadataChecks from './useColonyMetadataChecks';
 
@@ -11,7 +11,7 @@ const useExtendedColonyActionType = (
   actionType: string,
   colony: Colony,
   transactionHash: string,
-  colonyAction: ColonyActionQuery['colonyAction'],
+  colonyAction: ColonyActionQuery['colonyAction'] | ColonyMetadata,
 ) => {
   const {
     verifiedAddressesChanged,
