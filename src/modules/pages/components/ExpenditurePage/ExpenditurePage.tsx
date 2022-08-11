@@ -8,6 +8,7 @@ import {
 import { nanoid } from 'nanoid';
 import { RouteChildrenProps, useParams } from 'react-router';
 import { Formik } from 'formik';
+import { toFinite } from 'lodash';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
@@ -103,28 +104,40 @@ const validationSchema = yup.object().shape({
   filteredDomainId: yup
     .string()
     .required(() => <FormattedMessage {...MSG.teamRequiredError} />),
-  recipients: yup.array(
-    yup.object().shape({
-      recipient: yup.object().required(),
-      value: yup
-        .array(
-          yup.object().shape({
-            amount: yup
-              .number()
-              .required(() => MSG.valueError)
-              .moreThan(0, () => MSG.amountZeroError),
-            tokenAddress: yup.string().required(),
-          }),
-        )
-        .min(1),
-    }),
-  ),
+  recipients: yup.array().when('expenditure', {
+    is: (expenditure) => expenditure === ExpenditureTypes.Advanced,
+    then: yup.array().of(
+      yup.object().shape({
+        recipient: yup.object().required(),
+        value: yup
+          .array(
+            yup.object().shape({
+              amount: yup
+                .number()
+                .transform((value) => toFinite(value))
+                .required(() => MSG.valueError)
+                .moreThan(0, () => MSG.amountZeroError),
+              tokenAddress: yup.string().required(),
+            }),
+          )
+          .min(1),
+      }),
+    ),
+  }),
   title: yup.string().min(3).required(),
   description: yup.string().max(4000),
   split: yup.object().when('expenditure', {
     is: (expenditure) => expenditure === ExpenditureTypes.Split,
     then: yup.object().shape({
       unequal: yup.boolean().required(),
+      amount: yup.object().shape({
+        value: yup
+          .number()
+          .transform((value) => toFinite(value))
+          .required(() => MSG.valueError)
+          .moreThan(0, () => MSG.amountZeroError),
+        tokenAddress: yup.string().required(),
+      }),
       recipients: yup
         .array()
         .of(

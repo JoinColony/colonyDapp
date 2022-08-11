@@ -37,6 +37,10 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Split.SplitUnequal.addRecipientLabel',
     defaultMessage: 'Add recipient',
   },
+  recipient: {
+    id: 'dashboard.ExpenditurePage.Split.SplitUnequal.recipient',
+    defaultMessage: 'Recipient',
+  },
 });
 
 const displayName = 'dashboard.ExpenditurePage.Split.SplitUnequal';
@@ -123,7 +127,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
           <div className={styles.tokenWrapper}>
             <div>
               <TokenSymbolSelector
-                label=""
+                label={MSG.amountLabel}
                 tokens={colonyTokens}
                 name="split.amount.tokenAddress"
                 appearance={{ alignOptions: 'right', theme: 'grey' }}
@@ -159,12 +163,13 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
                     <div>
                       <UserPickerWithSearch
                         data={colonyMembers?.subscribedUsers || []}
-                        label=""
+                        label={MSG.recipient}
                         name={`split.recipients[${index}].user`}
                         filter={filterUserSelection}
                         renderAvatar={supRenderAvatar}
                         placeholder="Search"
                         sidebarRef={sidebarRef}
+                        elementOnly
                       />
                     </div>
                     <Icon
