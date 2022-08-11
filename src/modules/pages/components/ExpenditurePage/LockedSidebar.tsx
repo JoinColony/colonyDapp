@@ -51,7 +51,16 @@ const LockedSidebar = ({
       default:
         return null;
     }
-  }, [colony, editForm, expenditure, pendingChanges, recipients]);
+  }, [
+    colony,
+    editForm,
+    expenditure,
+    isCancelled,
+    pendingChanges,
+    pendingMotion,
+    recipients,
+    status,
+  ]);
 
   return (
     <>

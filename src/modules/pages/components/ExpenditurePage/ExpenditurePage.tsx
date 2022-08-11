@@ -40,6 +40,7 @@ import ExpenditureForm from './ExpenditureForm';
 import { ValuesType } from './types';
 import LockedSidebar from './LockedSidebar';
 import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
+import { ExpenditureTypes } from './types';
 import styles from './ExpenditurePage.css';
 
 const displayName = 'pages.ExpenditurePage';
@@ -131,6 +132,7 @@ const validationSchema = yup.object().shape({
               amount: yup
                 .number()
                 .transform((value) => toFinite(value))
+                .required()
                 .required(() => MSG.valueError)
                 .moreThan(0, () => MSG.amountZeroError),
               tokenAddress: yup.string().required(),
@@ -143,12 +145,13 @@ const validationSchema = yup.object().shape({
   title: yup.string().min(3).required(),
   description: yup.string().max(4000),
   split: yup.object().when('expenditure', {
-    is: (expenditure) => expenditure === 'split',
+    is: (expenditure) => expenditure === ExpenditureTypes.Split,
     then: yup.object().shape({
       unequal: yup.boolean().required(),
       amount: yup.object().shape({
         value: yup
           .number()
+          .transform((value) => toFinite(value))
           .required(() => MSG.valueError)
           .moreThan(0, () => MSG.amountZeroError),
         tokenAddress: yup.string().required(),
@@ -176,7 +179,7 @@ export interface State {
 }
 
 const initialValues = {
-  expenditure: 'advanced',
+  expenditure: ExpenditureTypes.Advanced,
   recipients: [newRecipient],
   filteredDomainId: String(ROOT_DOMAIN_ID),
   owner: undefined,
@@ -257,6 +260,30 @@ const ExpenditurePage = ({ match }: Props) => {
   const handleSubmit = useCallback((values) => {
     setShouldValidate(true);
     setActiveStateId(Stage.Draft);
+
+    if (values.expenditure === ExpenditureTypes.Split) {
+      const recipientsCount =
+        values.split.recipients?.filter(
+          (recipient) => recipient?.user?.id !== undefined,
+        ).length || 0;
+
+      const splitValues = {
+        ...values,
+        recipients: undefined,
+        split: {
+          ...values.split,
+          recipients: values.split.recipients?.map((recipient) => {
+            const amount = values.split.amount.value;
+
+            return {
+              ...recipient,
+              amount: !amount ? 0 : Number(amount) / (recipientsCount || 1),
+            };
+          }),
+        },
+      };
+      setFormValues(splitValues);
+    }
 
     if (values) {
       setFormValues({
