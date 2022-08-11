@@ -231,7 +231,7 @@ const ActionsPageEvent = ({
       case ColonyAndExtensionsEvents.DomainMetadata:
         return getDomainMetadataMessageDescriptorsIds(
           ColonyAndExtensionsEvents.DomainMetadata,
-          getDomainMetadataChecks,
+          getDomainMetadataChecks as { [key: string]: boolean },
         );
       case ColonyAndExtensionsEvents.ColonyRoleSet:
         return getAssignmentEventDescriptorsIds(
