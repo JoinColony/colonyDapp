@@ -11,7 +11,7 @@
 .textContainer {
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: flex-end;
   flex-direction: column;
   margin-left: 12px;
   width: 100%;
