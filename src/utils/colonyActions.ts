@@ -8,6 +8,7 @@ import {
   ColonyAndExtensionsEvents,
   FormattedAction,
   Address,
+  AddedActions,
 } from '~types/index';
 import {
   ColonyAction,
@@ -37,7 +38,7 @@ type ValuesForActionTypesMap = Partial<
  * Get colony action details for DetailsWidget based on action type and ActionPageDetails map
  */
 export const getDetailsForAction = (
-  actionType: ColonyActions | ColonyMotions,
+  actionType: ColonyActions | ColonyMotions | AddedActions,
 ): DetailsValuesMap => {
   const detailsForActionType = DETAILS_FOR_ACTION[actionType];
   return Object.keys(ActionPageDetails).reduce((detailsMap, detailsKey) => {
