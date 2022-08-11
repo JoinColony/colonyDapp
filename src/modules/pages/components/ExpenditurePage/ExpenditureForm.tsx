@@ -11,8 +11,8 @@ import Staged from '~dashboard/ExpenditurePage/Staged';
 import { Colony } from '~data/index';
 
 import { ValuesType } from './ExpenditurePage';
-import styles from './ExpenditurePage.css';
 import { ExpenditureTypes } from './types';
+import styles from './ExpenditurePage.css';
 
 const MSG = defineMessages({
   submit: {
@@ -58,11 +58,11 @@ const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
       case ExpenditureTypes.Advanced: {
         return <Payments sidebarRef={sidebarRef} colony={colony} />;
       }
-      case ExpenditureTypes.Staged: {
-        return <Staged colony={colony} sidebarRef={sidebarRef} />;
-      }
       case ExpenditureTypes.Split: {
         return <Split sidebarRef={sidebarRef} colony={colony} />;
+      }
+      case ExpenditureTypes.Staged: {
+        return <Staged colony={colony} sidebarRef={sidebarRef} />;
       }
       default:
         return null;

@@ -15,7 +15,7 @@ import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 import Button from '~core/Button';
 
 import { initalMilestone } from './constants';
-import { Milestone } from '.';
+import Milestone from './Milestone';
 import styles from './Staged.css';
 
 const MSG = defineMessages({

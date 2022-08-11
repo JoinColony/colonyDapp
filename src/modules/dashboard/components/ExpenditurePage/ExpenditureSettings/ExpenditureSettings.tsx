@@ -41,13 +41,13 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.ExpenditureSettings.advancedPayment',
     defaultMessage: 'Advanced payment',
   },
+  staged: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.staged',
+    defaultMessage: 'Staged',
+  },
   split: {
     id: 'dashboard.ExpenditurePage.ExpenditureSettings.split',
     defaultMessage: 'Split',
-  },
-  staged: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.Staged',
-    defaultMessage: 'Staged',
   },
 });
 
