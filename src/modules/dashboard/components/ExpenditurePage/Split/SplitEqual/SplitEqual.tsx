@@ -4,11 +4,10 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { nanoid } from 'nanoid';
 import { isNaN } from 'lodash';
 
-import { nanoid } from 'nanoid';
 import { FormSection, Input, TokenSymbolSelector } from '~core/Fields';
 import { AnyUser, Colony, useMembersSubscription } from '~data/index';
 import TokenIcon from '~dashboard/HookedTokenIcon';
-import { ValuesType } from '~pages/ExpenditurePage/types';
+import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 import Numeral from '~core/Numeral';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import UserPickerWithSearch from '~core/UserPickerWithSearch';
@@ -20,7 +19,6 @@ import Button from '~core/Button';
 import { initalRecipient } from '../constants';
 
 import styles from './SplitEqual.css';
-import { initalRecipient } from '../constants';
 
 const MSG = defineMessages({
   amountLabel: {
@@ -42,10 +40,6 @@ const MSG = defineMessages({
   addRecipientLabel: {
     id: 'dashboard.ExpenditurePage.Split.SplitEqual.addRecipientLabel',
     defaultMessage: 'Add recipient',
-  },
-  noReicpients: {
-    id: 'dashboard.ExpenditurePage.Split.SplitEqual.noReicpients',
-    defaultMessage: 'No recipients',
   },
 });
 
@@ -96,16 +90,6 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
       : Number(amount?.value) / (recipientsCount || 1);
     return isNaN(result) ? 0 : result;
   }, [amount, recipientsCount]);
-
-  useEffect(() => {
-    setFieldValue(
-      'split.recipients',
-      recipients.map((recipient) => {
-        return { ...recipient, amount: calculatedAmount };
-      }),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [calculatedAmount, setFieldValue]);
 
   return (
     <>
