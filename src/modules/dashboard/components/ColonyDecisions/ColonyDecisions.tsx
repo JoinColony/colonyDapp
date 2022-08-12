@@ -186,9 +186,9 @@ const ColonyDecisions = ({
     [sortOption, filteredDecisions],
   );
 
-  const paginatedDecisions = useMemo(
-    () => sortedDecisions.slice(0, ITEMS_PER_PAGE * dataPage),
-    [dataPage, sortedDecisions],
+  const paginatedDecisions = sortedDecisions.slice(
+    0,
+    ITEMS_PER_PAGE * dataPage,
   );
 
   if (!isVotingExtensionEnabled) {
