@@ -39,6 +39,10 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Staged.addMilestone',
     defaultMessage: 'Add milestone',
   },
+  selectedToken: {
+    id: 'dashboard.ExpenditurePage.Staged.selectedToken',
+    defaultMessage: 'Selected token',
+  },
 });
 
 const displayName = 'dashboard.ExpenditurePage.Staged';
@@ -141,7 +145,7 @@ const Staged = ({ colony, sidebarRef }: Props) => {
           <div className={styles.tokenWrapper}>
             <div>
               <TokenSymbolSelector
-                label=""
+                label={MSG.selectedToken}
                 tokens={colonyTokens}
                 name="staged.amount.tokenAddress"
                 appearance={{ alignOptions: 'right', theme: 'grey' }}
