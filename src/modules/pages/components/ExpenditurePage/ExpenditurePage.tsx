@@ -8,11 +8,11 @@ import {
 import { nanoid } from 'nanoid';
 import { RouteChildrenProps, useParams } from 'react-router';
 import { Formik } from 'formik';
-import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { toFinite } from 'lodash';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
-import { useColonyFromNameQuery } from '~data/generated';
+import { LoggedInUser, useColonyFromNameQuery } from '~data/generated';
 import Stages from '~dashboard/ExpenditurePage/Stages';
 import TitleDescriptionSection, {
   LockedTitleDescriptionSection,
@@ -23,10 +23,10 @@ import { SpinnerLoader } from '~core/Preloaders';
 import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
 import { useLoggedInUser } from '~data/helpers';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
-import { AnyUser } from '~data/index';
 import { useDialog } from '~core/Dialog';
 import EscrowFundsDialog from '~dashboard/Dialogs/EscrowFundsDialog';
 import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
+import { Split } from '~dashboard/ExpenditurePage/Split/types';
 
 import ExpenditureForm from './ExpenditureForm';
 import LockedSidebar from './LockedSidebar';
@@ -104,7 +104,7 @@ const validationSchema = yup.object().shape({
     .string()
     .required(() => <FormattedMessage {...MSG.teamRequiredError} />),
   recipients: yup.array().when('expenditure', {
-    is: (expenditure) => expenditure === 'advanced',
+    is: (expenditure) => expenditure === ExpenditureTypes.Advanced,
     then: yup.array().of(
       yup.object().shape({
         recipient: yup.object().required(),
@@ -114,7 +114,6 @@ const validationSchema = yup.object().shape({
               amount: yup
                 .number()
                 .transform((value) => toFinite(value))
-                .required()
                 .required(() => MSG.valueError)
                 .moreThan(0, () => MSG.amountZeroError),
               tokenAddress: yup.string().required(),
@@ -163,15 +162,14 @@ export interface State {
 export interface ValuesType {
   expenditure: string;
   filteredDomainId: string;
-  owner: string;
-  recipients: Recipient[];
-  title: string;
+  owner?: Pick<
+    LoggedInUser,
+    'walletAddress' | 'balance' | 'username' | 'ethereal' | 'networkId'
+  >;
+  recipients?: Recipient[];
+  title?: string;
   description?: string;
-  split: {
-    unequal: boolean;
-    amount: { amount?: string; tokenAddress?: string };
-    recipients?: { user: AnyUser; amount: number }[];
-  };
+  split?: Split;
 }
 
 const initialValues = {
@@ -215,7 +213,7 @@ const ExpenditurePage = ({ match }: Props) => {
   });
   const loggedInUser = useLoggedInUser();
 
-  const initialValuesData = useMemo(() => {
+  const initialValuesData = useMemo((): ValuesType => {
     return (
       formValues || {
         ...initialValues,
@@ -243,12 +241,11 @@ const ExpenditurePage = ({ match }: Props) => {
     );
   }, [colonyData, formValues, loggedInUser]);
 
-  const handleSubmit = useCallback((values) => {
+  const handleSubmit = useCallback((values: ValuesType) => {
     setActiveStateId(Stage.Draft);
-
     if (values.expenditure === ExpenditureTypes.Split) {
       const recipientsCount =
-        values.split.recipients?.filter(
+        values.split?.recipients?.filter(
           (recipient) => recipient?.user?.id !== undefined,
         ).length || 0;
 
@@ -257,9 +254,15 @@ const ExpenditurePage = ({ match }: Props) => {
         recipients: undefined,
         split: {
           ...values.split,
-          recipients: values.split.recipients?.map((recipient) => {
-            const amount = values.split.amount.value;
-
+          recipients: values.split?.recipients?.map((recipient) => {
+            const amount = values.split?.amount?.value;
+            if (values.split?.unequal) {
+              const userAmount =
+                amount &&
+                recipient?.percent &&
+                (recipient.percent / 100) * Number(values.split?.amount?.value);
+              return { ...recipient, amount: userAmount };
+            }
             return {
               ...recipient,
               amount: !amount ? 0 : Number(amount) / (recipientsCount || 1),

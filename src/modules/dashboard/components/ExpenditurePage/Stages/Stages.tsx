@@ -67,6 +67,7 @@ const buttonStyles = {
 
 interface Props {
   states: State[];
+  handleSubmit: (values: ValuesType) => void;
   activeStateId?: string;
 }
 
