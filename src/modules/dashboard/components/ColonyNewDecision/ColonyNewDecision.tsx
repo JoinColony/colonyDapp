@@ -23,7 +23,7 @@ const MSG = defineMessages({
 
 interface Props {
   colony: Colony;
-  ethDomainId?: number;
+  ethDomainId: number;
 }
 
 interface RootState {
@@ -34,7 +34,7 @@ interface RootState {
   };
 }
 
-const ColonyNewDecision = ({ colony }: Props) => {
+const ColonyNewDecision = ({ colony, ethDomainId }: Props) => {
   const { networkId, username, ethereal } = useLoggedInUser();
   const { version: networkVersion } = useNetworkContracts();
 
@@ -70,7 +70,7 @@ const ColonyNewDecision = ({ colony }: Props) => {
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           text={MSG.newDecision}
-          onClick={() => openNewDecisionDialog({ colony })}
+          onClick={() => openNewDecisionDialog({ colony, ethDomainId })}
           disabled={
             mustUpgrade ||
             !isNetworkAllowed ||
