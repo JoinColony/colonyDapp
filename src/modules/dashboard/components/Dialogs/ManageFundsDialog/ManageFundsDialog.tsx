@@ -79,7 +79,7 @@ const MSG = defineMessages({
   unlockTokensDescription: {
     id: 'dashboard.ManageFundsDialog.unlockTokensDescription',
     defaultMessage:
-      'Allow your native token to be transferred between acccounts.',
+      'Allow your native token to be transferred between accounts.',
   },
 });
 
