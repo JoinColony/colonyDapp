@@ -49,7 +49,7 @@ const LockedStaged = ({ colony, staged }: Props) => {
   return (
     <div className={styles.stagedContainer}>
       <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.label}>
+        <div className={styles.staged}>
           <FormattedMessage {...MSG.staged} />
           <span className={styles.editIcon}>
             <Icon
