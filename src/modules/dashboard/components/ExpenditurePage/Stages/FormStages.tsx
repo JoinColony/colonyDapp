@@ -75,12 +75,13 @@ const FormStages = ({
   const handleButtonClick = useCallback(async () => {
     const errors = await validateForm(values);
     const hasErrors = Object.keys(errors)?.length;
+    setTouched(setNestedObjectValues<FormikTouched<ValuesType>>(errors, true));
 
     if (!hasErrors) {
       handleSubmit(values as any);
       activeState?.buttonAction();
     }
-  }, [activeState, handleSubmit, validateForm, values]);
+  }, [activeState, handleSubmit, setTouched, validateForm, values]);
 
   return (
     <Stages

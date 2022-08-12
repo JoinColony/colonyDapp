@@ -188,6 +188,16 @@ const Stages = ({
                   <Tooltip
                     placement="top-start"
                     content={<FormattedMessage {...MSG.tooltipShareText} />}
+                    popperOptions={{
+                      modifiers: [
+                        {
+                          name: 'offset',
+                          options: {
+                            offset: [0, 14],
+                          },
+                        },
+                      ],
+                    }}
                   >
                     <div className={styles.iconWrapper}>
                       <Icon name="share" className={styles.icon} />
@@ -203,6 +213,16 @@ const Stages = ({
                   <Tooltip
                     placement="top-start"
                     content={<FormattedMessage {...MSG.tooltipDeleteText} />}
+                    popperOptions={{
+                      modifiers: [
+                        {
+                          name: 'offset',
+                          options: {
+                            offset: [0, 14],
+                          },
+                        },
+                      ],
+                    }}
                   >
                     <div className={styles.iconWrapper}>
                       <Icon
@@ -242,6 +262,16 @@ const Stages = ({
                         content={
                           <FormattedMessage {...MSG.tooltipCancelText} />
                         }
+                        popperOptions={{
+                          modifiers: [
+                            {
+                              name: 'offset',
+                              options: {
+                                offset: [0, 14],
+                              },
+                            },
+                          ],
+                        }}
                       >
                         <div className={styles.iconWrapper}>
                           <Icon

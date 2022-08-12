@@ -46,25 +46,12 @@ const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
             handleSubmit(values as any);
           },
           isVotingExtensionEnabled: true,
+          colony,
         })
       );
     },
-    [handleSubmit, openDraftConfirmDialog, validateForm, values],
+    [colony, handleSubmit, openDraftConfirmDialog, validateForm, values],
   );
-
-  const secondFormSection = useMemo(() => {
-    const expenditureType = values.expenditure;
-    switch (expenditureType) {
-      case ExpenditureTypes.Advanced: {
-        return <Payments sidebarRef={sidebarRef} colony={colony} />;
-      }
-      case ExpenditureTypes.Split: {
-        return <Split sidebarRef={sidebarRef} colony={colony} />;
-      }
-      default:
-        return null;
-    }
-  }, [colony, sidebarRef, values]);
 
   const secondFormSection = useMemo(() => {
     const expenditureType = values.expenditure;
@@ -90,7 +77,7 @@ const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
       <button type="submit" tabIndex={-1} className={styles.hiddenSubmit}>
         <FormattedMessage {...MSG.submit} />
       </button>
-    </>
+    </Form>
   );
 };
 

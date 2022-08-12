@@ -118,6 +118,10 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.activeMotion',
     defaultMessage: 'There is an active motion for this expenditure',
   },
+  milestoneAmountError: {
+    id: 'dashboard.ExpenditurePage.milestoneAmountError',
+    defaultMessage: 'Amount is required',
+  },
 });
 
 const validationSchema = yup.object().shape({
@@ -295,80 +299,85 @@ const ExpenditurePage = ({ match }: Props) => {
     );
   }, [colonyData, formValues, loggedInUser]);
 
-  const handleSubmit = useCallback((values) => {
-    setShouldValidate(true);
-    setActiveStateId(Stage.Draft);
+  const handleSubmit = useCallback(
+    (values) => {
+      setShouldValidate(true);
+      if (!activeStateId) {
+        setActiveStateId(Stage.Draft);
+      }
 
-    if (values.expenditure === ExpenditureTypes.Split) {
-      const recipientsCount =
-        values.split.recipients?.filter(
-          (recipient) => recipient?.user?.id !== undefined,
-        ).length || 0;
+      if (values.expenditure === ExpenditureTypes.Split) {
+        const recipientsCount =
+          values.split.recipients?.filter(
+            (recipient) => recipient?.user?.id !== undefined,
+          ).length || 0;
 
-      const splitValues = {
-        ...values,
-        recipients: undefined,
-        split: {
-          ...values.split,
-          recipients: values.split.recipients?.map((recipient) => {
-            const amount = values.split.amount.value;
-            if (values.split.unequal) {
-              const userAmount =
+        const splitValues = {
+          ...values,
+          recipients: undefined,
+          split: {
+            ...values.split,
+            recipients: values.split.recipients?.map((recipient) => {
+              const amount = values.split.amount.value;
+              if (values.split.unequal) {
+                const userAmount =
+                  amount &&
+                  recipient?.percent &&
+                  (recipient.percent / 100) * Number(values.split.amount.value);
+                return { ...recipient, amount: userAmount };
+              }
+              return {
+                ...recipient,
+                amount: !amount ? 0 : Number(amount) / (recipientsCount || 1),
+              };
+            }),
+          },
+        };
+        setFormValues(splitValues);
+      }
+
+      if (values.expenditure === ExpenditureTypes.Staged) {
+        const stagedValues = {
+          ...values,
+          recipients: undefined,
+          staged: {
+            ...values.staged,
+            milestones: values.staged.milestones?.map((milestone) => {
+              const amount = values.staged.amount.value;
+
+              const milestoneAmount =
                 amount &&
-                recipient?.percent &&
-                (recipient.percent / 100) * Number(values.split.amount.value);
-              return { ...recipient, amount: userAmount };
-            }
+                milestone?.percent &&
+                (milestone.percent / 100) * Number(values.staged.amount.value);
+              return { ...milestone, amount: milestoneAmount };
+            }),
+          },
+        };
+
+        setFormValues(stagedValues as ValuesType);
+        return;
+      }
+
+      if (values) {
+        setFormValues({
+          ...values,
+          recipients: values.recipients.map((reicpient) => {
             return {
-              ...recipient,
-              amount: !amount ? 0 : Number(amount) / (recipientsCount || 1),
+              ...reicpient,
+              claimDate: reicpient.delay.amount
+                ? setClaimDate({
+                    amount: reicpient.delay.amount,
+                    time: reicpient.delay.time,
+                  })
+                : new Date(),
             };
           }),
-        },
-      };
-      setFormValues(splitValues);
-    }
-
-    if (values.expenditure === ExpenditureTypes.Staged) {
-      const stagedValues = {
-        ...values,
-        recipients: undefined,
-        staged: {
-          ...values.staged,
-          milestones: values.staged.milestones?.map((milestone) => {
-            const amount = values.staged.amount.value;
-
-            const milestoneAmount =
-              amount &&
-              milestone?.percent &&
-              (milestone.percent / 100) * Number(values.staged.amount.value);
-            return { ...milestone, amount: milestoneAmount };
-          }),
-        },
-      };
-
-      setFormValues(stagedValues as ValuesType);
-      return;
-    }
-
-    if (values) {
-      setFormValues({
-        ...values,
-        recipients: values.recipients.map((reicpient) => {
-          return {
-            ...reicpient,
-            claimDate: reicpient.delay.amount
-              ? setClaimDate({
-                  amount: reicpient.delay.amount,
-                  time: reicpient.delay.time,
-                })
-              : new Date(),
-          };
-        }),
-      });
-    }
-    // add sending form values to backend
-  }, []);
+        });
+      }
+      // add sending form values to backend
+    },
+    [activeStateId],
+  );
 
   const lockValues = useCallback(() => {
     setFormEditable(false);
@@ -415,7 +424,7 @@ const ExpenditurePage = ({ match }: Props) => {
     const updatedFormValues = {
       ...{
         ...formValues,
-        recipients: formValues?.recipients.map((recipient) => {
+        recipients: formValues?.recipients?.map((recipient) => {
           if (!recipient.claimed && recipient.claimDate) {
             const isClaimable = recipient.claimDate < new Date().getTime();
             return { ...{ ...recipient, claimed: !!isClaimable } };
@@ -425,7 +434,7 @@ const ExpenditurePage = ({ match }: Props) => {
       },
     };
 
-    const isClaimed = updatedFormValues?.recipients.every(
+    const isClaimed = updatedFormValues?.recipients?.every(
       (recipient) => recipient.claimed,
     );
 

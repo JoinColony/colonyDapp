@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
