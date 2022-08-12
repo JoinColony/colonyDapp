@@ -18,7 +18,6 @@ import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
 import { Colony } from '~data/index';
 
 import { buttonStyles } from '../Stages';
-
 import styles from './ClaimFunds.css';
 
 const displayName = 'dashboard.ExpenditurePage.Stages.ClaimFunds';

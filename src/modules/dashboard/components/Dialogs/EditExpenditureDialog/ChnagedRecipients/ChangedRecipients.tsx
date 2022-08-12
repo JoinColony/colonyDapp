@@ -1,6 +1,6 @@
 import { FieldArray } from 'formik';
 import { isEmpty, isNil } from 'lodash';
-import React, { useCallback } from 'react';
+import React, { useCallback, Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import Button from '~core/Button';
 import { FormSection } from '~core/Fields';
@@ -131,7 +131,7 @@ const ChangedRecipients = ({ newRecipients, colony, oldValues }: Props) => {
               oldValue && getRecipientTokens(oldValue, colony);
 
             return (
-              <>
+              <Fragment key={changedItem.key}>
                 <FormSection appearance={{ border: 'bottom' }}>
                   <div className={styles.reicpientButtonContainer}>
                     <div className={styles.recipientContainer}>
@@ -192,7 +192,7 @@ const ChangedRecipients = ({ newRecipients, colony, oldValues }: Props) => {
                   </div>
                 </FormSection>
                 {renderRecipientChange(changedItem)}
-              </>
+              </Fragment>
             );
           })}
         </>

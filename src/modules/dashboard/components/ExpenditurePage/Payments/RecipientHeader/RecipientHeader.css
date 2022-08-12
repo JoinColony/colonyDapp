@@ -24,6 +24,7 @@
 }
 
 .dot {
+  margin-left: 8px;
   height: 9px;
   width: 9px;
   border-radius: 50%;
@@ -34,16 +35,13 @@
   background-color: var(--action-secondary);
 }
 
-.value {
-  margin-left: 4px;
-}
-
 .header {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  row-gap: 8px;
 }
 
 .name {

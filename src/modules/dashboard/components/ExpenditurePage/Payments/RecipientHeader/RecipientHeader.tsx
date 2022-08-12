@@ -25,11 +25,11 @@ export const MSG = defineMessages({
   },
   userHeader: {
     id: 'dashboard.ExpenditurePage.Payments.RecipientHeader.userHeader',
-    defaultMessage: `{count}: {name}, {value}`,
+    defaultMessage: `{count}: {name}, {value}{comma} `,
   },
   delay: {
     id: 'dashboard.ExpenditurePage.Payments.RecipientHeader.delay',
-    defaultMessage: `, {amount}{time}`,
+    defaultMessage: `{amount}{time}`,
   },
 });
 
@@ -87,12 +87,13 @@ const RecipientHeader = ({
                     ({ amount, token }, idx) =>
                       token &&
                       amount && (
-                        <div className={styles.value} key={idx}>
+                        <div key={idx}>
                           <Numeral value={amount} />
                           {token.symbol}
                         </div>
                       ),
                   ),
+                  comma: recipient.delay?.amount ? ',' : '',
                 }}
               />
               {recipient.delay?.amount && (
