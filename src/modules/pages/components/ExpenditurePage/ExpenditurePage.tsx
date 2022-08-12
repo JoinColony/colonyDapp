@@ -8,6 +8,7 @@ import {
 import { nanoid } from 'nanoid';
 import { RouteChildrenProps, useParams } from 'react-router';
 import { Formik } from 'formik';
+import { toFinite } from 'lodash';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
@@ -119,6 +120,7 @@ const validationSchema = yup.object().shape({
             yup.object().shape({
               amount: yup
                 .number()
+                .transform((value) => toFinite(value))
                 .required(() => MSG.valueError)
                 .moreThan(0, () => MSG.amountZeroError),
               tokenAddress: yup.string().required(),
@@ -135,6 +137,7 @@ const validationSchema = yup.object().shape({
       amount: yup.object().shape({
         value: yup
           .number()
+          .transform((value) => toFinite(value))
           .required(() => MSG.milestoneAmountError)
           .moreThan(0, () => MSG.amountZeroError),
         tokenAddress: yup.string().required(),
@@ -391,16 +394,6 @@ const ExpenditurePage = ({ match }: Props) => {
             ],
           },
         ],
-        staged: {
-          amount: {
-            value: true,
-          },
-          milestones: [
-            {
-              name: true,
-            },
-          ],
-        },
       }}
       enableReinitialize
     >
