@@ -3,8 +3,8 @@ export interface Recipient {
   recipient?: AnyUser;
   value?: { amount?: number; tokenAddress?: string; id: string }[];
   delay?: {
-    amount: string;
-    time: string;
+    amount?: string;
+    time?: string;
   };
   isExpanded?: boolean;
 }
