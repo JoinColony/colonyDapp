@@ -11,6 +11,7 @@ import LoadMoreButton from '~core/LoadMoreButton';
 import { SpinnerLoader } from '~core/Preloaders';
 
 import { Colony } from '~data/index';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import { SortOptions, SortSelectOptions } from './constants';
 import styles from './ColonyDecisions.css';
@@ -35,6 +36,10 @@ const MSG = defineMessages({
   loading: {
     id: 'dashboard.ColonyDecisions.loading',
     defaultMessage: 'Loading decisions',
+  },
+  installExtension: {
+    id: 'dashboard.ColonyDecisions.loading',
+    defaultMessage: `You need to install Governance extension to use Decisions feature`,
   },
 });
 
@@ -129,7 +134,7 @@ const data = [
   },
 ];
 
-const ITEMS_PER_PAGE = 1;
+const ITEMS_PER_PAGE = 10;
 
 const ColonyDecisions = ({
   colony,
@@ -140,6 +145,10 @@ const ColonyDecisions = ({
     SortOptions.ENDING_SOONEST,
   );
   const [dataPage, setDataPage] = useState<number>(1);
+
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
 
   // temp values, to be removed when queries are wired in
   const isLoading = false;
@@ -181,6 +190,14 @@ const ColonyDecisions = ({
     () => sortedDecisions.slice(0, ITEMS_PER_PAGE * dataPage),
     [dataPage, sortedDecisions],
   );
+
+  if (!isVotingExtensionEnabled) {
+    return (
+      <div>
+        <FormattedMessage {...MSG.installExtension} />
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
