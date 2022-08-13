@@ -9,3 +9,4 @@ export const leftContent: string;
 export const rightContent: string;
 export const userinfo: string;
 export const title: string;
+export const details: string;

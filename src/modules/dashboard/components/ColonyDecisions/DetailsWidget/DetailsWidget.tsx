@@ -1,9 +1,13 @@
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  MessageDescriptor,
+  useIntl,
+} from 'react-intl';
 
 import DetailsWidgetUser from '~core/DetailsWidgetUser';
-import { AnyUser, Colony } from '~data/index';
-import { EventValues } from '../../ActionsPageFeed/ActionsPageFeed';
+import { AnyUser, Colony, OneDomain } from '~data/index';
 
 import DetailsWidgetTeam from '../../ActionsPage/DetailsWidget/DetailsWidgetTeam';
 
@@ -27,13 +31,15 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  decisionType: string;
+  decisionType: MessageDescriptor;
   author?: AnyUser;
-  values?: EventValues;
+  domain?: OneDomain;
   colony: Colony;
 }
 
-const DetailsWidget = ({ author, values, colony }: Props) => {
+const DetailsWidget = ({ decisionType, author, domain, colony }: Props) => {
+  const { formatMessage } = useIntl();
+  const decisionText = formatMessage(decisionType);
   return (
     <div>
       <div className={styles.item}>
@@ -41,20 +47,16 @@ const DetailsWidget = ({ author, values, colony }: Props) => {
           <FormattedMessage {...MSG.decisionType} />
         </div>
         <div className={styles.value}>
-          <div className={styles.text}>
-            <FormattedMessage {...MSG.decisionType} />
-          </div>
+          <div className={styles.text}>{decisionText}</div>
         </div>
       </div>
-      {values?.fromDomain && (
+      {domain && (
         <div className={styles.item}>
           <div className={styles.label}>
             <FormattedMessage {...MSG.domain} />
           </div>
           <div className={styles.value}>
-            {values?.fromDomain && (
-              <DetailsWidgetTeam domain={values.fromDomain} />
-            )}
+            {domain && <DetailsWidgetTeam domain={domain} />}
           </div>
         </div>
       )}
