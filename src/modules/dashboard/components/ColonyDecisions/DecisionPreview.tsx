@@ -33,10 +33,17 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyDecisions.DecisionPreview.publish',
     defaultMessage: `Publish`,
   },
-  placeholder: {
-    id: 'dashboard.ColonyDecisions.DecisionPreview.placeholder',
+  // this is mock data for the decision title until a later PR is created to retrieve this from local storage
+  title: {
+    id: 'dashboard.ColonyDecisions.DecisionPreview.title',
+    defaultMessage: `Should we build a Discord Bot?`,
+  },
+  // this is mock data for the decision description until a later PR is created to retrieve this from local storage
+  description: {
+    id: 'dashboard.ColonyDecisions.DecisionPreview.description',
     defaultMessage: `I think we should build a Discord bot that integrates with the Dapp and provides our community with greater transperency and also provides more convienience for us to be notified of things happening in our Colony.`,
   },
+  // this is a placeholder for the decision type until we have the data
   decisionType: {
     id: 'dashboard.ColonyDecisions.DecisionPreview.decisionType',
     defaultMessage: `Decision`,
@@ -110,11 +117,11 @@ const DecisionPreview = () => {
                   margin: 'small',
                   theme: 'dark',
                 }}
-                text="Should we build a Discord Bot?"
+                text={MSG.title}
               />
             </div>
             <FormattedMessage
-              {...MSG.placeholder}
+              {...MSG.description}
               values={{
                 h4: (chunks) => (
                   <Heading
