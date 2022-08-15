@@ -54,8 +54,16 @@
 }
 
 .userinfo {
+  composes: inlineEllipsis from '~styles/text.css';
   display: flex;
-  color: red;
+  align-items: center;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
+
+.userName {
+  margin-left: 5px;
 }
 
 .title {
@@ -65,4 +73,10 @@
 
 .details {
   margin: 0;
+  margin-top: 20px;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
 }
