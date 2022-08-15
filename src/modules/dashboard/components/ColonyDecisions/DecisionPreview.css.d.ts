@@ -8,5 +8,7 @@ export const tagWrapper: string;
 export const leftContent: string;
 export const rightContent: string;
 export const userinfo: string;
+export const userName: string;
 export const title: string;
 export const details: string;
+export const buttonContainer: string;
