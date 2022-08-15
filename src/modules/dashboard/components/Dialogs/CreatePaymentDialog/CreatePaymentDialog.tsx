@@ -121,15 +121,6 @@ const CreatePaymentDialog = ({
     return getVerifiedUsers(colony.whitelistedAddresses, subscribedUsers) || [];
   }, [subscribedUsers, colony]);
 
-  const showWarningForAddress = (walletAddress) => {
-    if (!walletAddress) return false;
-    return isWhitelistActivated
-      ? !colonyData?.processedColony?.whitelistedAddresses.some(
-          (el) => el.toLowerCase() === walletAddress.toLowerCase(),
-        )
-      : false;
-  };
-
   const transform = useCallback(
     pipe(
       mapPayload((payload) => {
@@ -214,9 +205,6 @@ const CreatePaymentDialog = ({
                 isWhitelistActivated ? verifiedUsers : subscribedUsers
               }
               ethDomainId={ethDomainId}
-              showWhitelistWarning={showWarningForAddress(
-                formValues.values?.recipient?.profile?.walletAddress,
-              )}
             />
           </Dialog>
         );

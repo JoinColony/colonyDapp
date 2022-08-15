@@ -82,21 +82,3 @@
 .motionVoteDomain {
   margin: 6px 0;
 }
-
-.warningContainer {
-  margin-top: 20px;
-  padding: 20px 15px;
-  border-radius: var(--radius-normal);
-  background-color: color-mod(var(--danger) alpha(15%));
-}
-
-.warningText {
-  font-size: var(--size-smallish);
-  font-weight: var(--weight-bold);
-  line-height: 18px;
-  color: var(--dark);
-}
-
-.warningLabel {
-  color: var(--danger);
-}
