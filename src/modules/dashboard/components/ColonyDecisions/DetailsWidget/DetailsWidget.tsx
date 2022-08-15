@@ -7,7 +7,7 @@ import {
 } from 'react-intl';
 
 import DetailsWidgetUser from '~core/DetailsWidgetUser';
-import { AnyUser, Colony, OneDomain } from '~data/index';
+import { Colony, OneDomain } from '~data/index';
 
 import DetailsWidgetTeam from '../../ActionsPage/DetailsWidget/DetailsWidgetTeam';
 
@@ -32,12 +32,17 @@ const MSG = defineMessages({
 
 interface Props {
   decisionType: MessageDescriptor;
-  author?: AnyUser;
+  walletAddress?: string;
   domain?: OneDomain;
   colony: Colony;
 }
 
-const DetailsWidget = ({ decisionType, author, domain, colony }: Props) => {
+const DetailsWidget = ({
+  decisionType,
+  walletAddress,
+  domain,
+  colony,
+}: Props) => {
   const { formatMessage } = useIntl();
   const decisionText = formatMessage(decisionType);
   return (
@@ -60,18 +65,13 @@ const DetailsWidget = ({ decisionType, author, domain, colony }: Props) => {
           </div>
         </div>
       )}
-      {author && (
+      {walletAddress && (
         <div className={styles.item}>
           <div className={styles.label}>
             <FormattedMessage {...MSG.author} />
           </div>
           <div className={styles.value}>
-            {author && (
-              <DetailsWidgetUser
-                colony={colony}
-                walletAddress={author?.profile.walletAddress as string}
-              />
-            )}
+            <DetailsWidgetUser colony={colony} walletAddress={walletAddress} />
           </div>
         </div>
       )}
