@@ -6,7 +6,7 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Tag from '~core/Tag';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import { useColonyFromNameQuery } from '~data/index';
+import { useLoggedInUser, useColonyFromNameQuery } from '~data/index';
 
 import DetailsWidget from './DetailsWidget/DetailsWidget';
 
@@ -43,45 +43,8 @@ const MSG = defineMessages({
   },
 });
 
-/* temp data */
-const decisionData = {
-  title: 'Update the actions design',
-  username: 'clashmoonpy',
-  userAddress: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
-  isDecision: true,
-  actionType: undefined,
-  amount: '0',
-  blockNumber: 853,
-  commentCount: 0,
-  createdAt: new Date(
-    'Sun Aug 18 2022 12:48:59 GMT+0300 (Eastern European Summer Time)',
-  ),
-  ending: new Date(
-    'Sun Aug 28 2022 12:48:59 GMT+0300 (Eastern European Summer Time)',
-  ),
-  decimals: '18',
-  fromDomain: '2',
-  id: `0xeabe562c979679dc4023dd23e8c6aa782448c2e7_motion_0xa1e73506f3ef6dc19dc27b750adf585fd0f30c63_3`,
-  initiator: '0xb77d57f4959eafa0339424b83fcfaf9c15407461',
-  motionId: '1',
-  motionState: 'Staked',
-  recipient: '0x0000000000000000000000000000000000000000',
-  reputationChange: '0',
-  requiredStake: '1010101010101010101',
-  status: undefined,
-  symbol: '???',
-  timeoutPeriods: undefined,
-  toDomain: '2',
-  tokenAddress: '0x0000000000000000000000000000000000000000',
-  totalNayStake: '0',
-  transactionHash:
-    '0x9c742b1392fadb48c0bc0d2cebdd518e7b11c0c1ab426c084a06c68ea77f8f70',
-  transactionTokenAddress: undefined,
-};
 const handleEdit = () => {};
 const handleSubmit = () => {};
-
-// type Props = RouteChildrenProps<{ colonyName: string }>;
 
 const displayName = 'dashboard.ColonyDecisions.DecisionPreview';
 
@@ -90,7 +53,7 @@ const DecisionPreview = () => {
     transactionHash?: string;
     colonyName: string;
   }>();
-
+  const { walletAddress, username } = useLoggedInUser();
   const { data, error } = useColonyFromNameQuery({
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
@@ -101,6 +64,7 @@ const DecisionPreview = () => {
 
   if (data?.processedColony) {
     const { processedColony: colony } = data;
+
     const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
     return (
@@ -114,8 +78,8 @@ const DecisionPreview = () => {
         <div className={styles.contentContainer}>
           <div className={styles.leftContent}>
             <span className={styles.userinfo}>
-              <UserAvatar size="s" address={decisionData.userAddress} />
-              {`@${decisionData.username}`}
+              <UserAvatar size="s" address={walletAddress} />
+              {`@${username}`}
             </span>
             <div className={styles.title}>
               <Heading
