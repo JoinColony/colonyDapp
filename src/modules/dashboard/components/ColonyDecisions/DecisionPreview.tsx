@@ -6,7 +6,7 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Tag from '~core/Tag';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import { useLoggedInUser, useColonyFromNameQuery } from '~data/index';
+import { useUser, useLoggedInUser, useColonyFromNameQuery } from '~data/index';
 
 import DetailsWidget from './DetailsWidget/DetailsWidget';
 
@@ -34,7 +34,7 @@ const MSG = defineMessages({
     defaultMessage: `Publish`,
   },
   placeholder: {
-    id: 'dashboard.ColonyDecisions.DecisionPreview.publish',
+    id: 'dashboard.ColonyDecisions.DecisionPreview.placeholder',
     defaultMessage: `I think we should build a Discord bot that integrates with the Dapp and provides our community with greater transperency and also provides more convienience for us to be notified of things happening in our Colony.`,
   },
   decisionType: {
@@ -54,6 +54,8 @@ const DecisionPreview = () => {
     colonyName: string;
   }>();
   const { walletAddress, username } = useLoggedInUser();
+  const userProfile = useUser(walletAddress);
+
   const { data, error } = useColonyFromNameQuery({
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
@@ -78,8 +80,27 @@ const DecisionPreview = () => {
         <div className={styles.contentContainer}>
           <div className={styles.leftContent}>
             <span className={styles.userinfo}>
-              <UserAvatar size="s" address={walletAddress} />
-              {`@${username}`}
+              <UserAvatar
+                colony={colony}
+                size="s"
+                notSet={false}
+                user={userProfile}
+                address={walletAddress || ''}
+                showInfo
+                popperOptions={{
+                  showArrow: false,
+                  placement: 'left',
+                  modifiers: [
+                    {
+                      name: 'offset',
+                      options: {
+                        offset: [0, 10],
+                      },
+                    },
+                  ],
+                }}
+              />
+              <span className={styles.userName}>{`@${username}`}</span>
             </span>
             <div className={styles.title}>
               <Heading
@@ -106,23 +127,27 @@ const DecisionPreview = () => {
             />
           </div>
           <div className={styles.rightContent}>
-            <Button
-              appearance={{ theme: 'secondary', size: 'large' }}
-              onClick={handleEdit}
-              text={{ id: 'button.edit' }}
-            />
-            <Button
-              appearance={{ theme: 'primary', size: 'large' }}
-              onClick={() => handleSubmit()}
-              text={{ id: 'button.publish' }}
-              style={{ minWidth: styles.wideButton }}
-              data-test="decisionPublishButton"
-            />
+            <div className={styles.buttonContainer}>
+              <Button
+                appearance={{ theme: 'secondary', size: 'large' }}
+                onClick={() => handleEdit()}
+                text={{ id: 'button.edit' }}
+                data-test="decisionEditButton"
+              />
+              <Button
+                appearance={{ theme: 'primary', size: 'large' }}
+                onClick={() => handleSubmit()}
+                text={{ id: 'button.publish' }}
+                style={{ minWidth: styles.wideButton }}
+                data-test="decisionPublishButton"
+              />
+            </div>
             <div className={styles.details}>
               <DetailsWidget
                 decisionType={MSG.decisionType}
                 domain={colony.domains[0]}
                 colony={colony}
+                walletAddress={walletAddress}
               />
             </div>
           </div>
