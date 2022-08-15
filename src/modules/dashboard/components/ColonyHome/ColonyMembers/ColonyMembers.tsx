@@ -43,6 +43,8 @@ const ColonyMembers = ({
       colonyName,
       domainId: currentDomainId,
     },
+    fetchPolicy: 'network-only',
+    nextFetchPolicy: 'cache-first',
   });
 
   if (loadingMembers) {

@@ -88,6 +88,8 @@ const Members = ({
       colonyName,
       domainId: selectedDomain,
     },
+    fetchPolicy: 'network-only',
+    nextFetchPolicy: 'cache-first',
   });
 
   useEffect(() => {
