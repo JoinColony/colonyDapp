@@ -10,6 +10,7 @@ import { ActionForm } from '~core/Fields';
 import { useLoggedInUser } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { pipe, mapPayload } from '~utils/actions';
+import { log } from '~utils/debug';
 
 import DialogForm, { Props as FormProps } from './RaiseObjectionDialogForm';
 
@@ -64,6 +65,14 @@ const RaiseObjectionDialog = ({
         } else {
           finalStake = stake.toString();
         }
+
+        log.verbose('Objection staking values: ', {
+          minUserStake,
+          maxUserStake,
+          remainingToFullyNayStaked,
+          stake: stake.toString(),
+          finalStake,
+        });
 
         return {
           amount: finalStake,
