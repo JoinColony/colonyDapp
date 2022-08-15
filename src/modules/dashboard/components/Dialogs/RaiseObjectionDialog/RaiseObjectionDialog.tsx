@@ -47,17 +47,26 @@ const RaiseObjectionDialog = ({
   const transform = useCallback(
     pipe(
       mapPayload(({ amount, annotation: annotationMessage }) => {
-        const { remainingToFullyNayStaked } = props;
+        const { remainingToFullyNayStaked, maxUserStake } = props;
         const remainingToStake = new Decimal(remainingToFullyNayStaked);
+
+        let finalStake;
+
         const stake = new Decimal(amount)
           .div(100)
           .times(remainingToStake.minus(minUserStake))
           .plus(minUserStake);
-        const stakeWithMin = new Decimal(minUserStake).gte(stake)
-          ? new Decimal(minUserStake)
-          : stake;
+
+        if (amount === 100) {
+          finalStake = maxUserStake;
+        } else if (amount === 0 || new Decimal(minUserStake).gte(stake)) {
+          finalStake = minUserStake;
+        } else {
+          finalStake = stake.toString();
+        }
+
         return {
-          amount: stakeWithMin.round().toString(),
+          amount: finalStake,
           userAddress: walletAddress,
           colonyAddress,
           motionId: bigNumberify(motionId),

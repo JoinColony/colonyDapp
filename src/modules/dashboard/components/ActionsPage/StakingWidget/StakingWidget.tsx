@@ -135,13 +135,21 @@ const StakingWidget = ({
     pipe(
       mapPayload(({ amount }) => {
         if (data?.motionStakes) {
-          const { minUserStake } = data.motionStakes;
+          const { minUserStake, maxUserStake } = data.motionStakes;
+
+          let finalStake;
           const stake = getDecimalStake(amount);
-          const stakeWithMin = new Decimal(minUserStake).gte(stake)
-            ? new Decimal(minUserStake)
-            : stake;
+
+          if (amount === 100) {
+            finalStake = maxUserStake;
+          } else if (amount === 0 || new Decimal(minUserStake).gte(stake)) {
+            finalStake = minUserStake;
+          } else {
+            finalStake = stake.toString();
+          }
+
           return {
-            amount: stakeWithMin.round().toString(),
+            amount: finalStake,
             userAddress: walletAddress,
             colonyAddress,
             motionId: bigNumberify(motionId),
