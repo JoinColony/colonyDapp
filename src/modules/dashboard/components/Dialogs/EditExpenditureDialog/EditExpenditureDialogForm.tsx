@@ -106,7 +106,10 @@ const EditExpenditureDialogForm = ({
     isVotingExtensionEnabled,
     values.forceAction,
   );
-  const noChanges = confirmedValues && isEmpty(confirmedValues);
+  const noChanges =
+    (confirmedValues && isEmpty(confirmedValues)) ||
+    (confirmedValues &&
+      Object.values(confirmedValues).every((value) => !value));
 
   const confirmedValuesWithIds = useMemo(() => {
     if (!confirmedValues) {

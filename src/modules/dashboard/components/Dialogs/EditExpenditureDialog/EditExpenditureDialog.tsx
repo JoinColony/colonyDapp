@@ -90,7 +90,7 @@ const EditExpenditureDialog = ({
 
       const newVal = {
         ...confirmedVal,
-        recipients: newRecipients,
+        ...(newRecipients && { recipients: newRecipients }),
       };
 
       return newVal;

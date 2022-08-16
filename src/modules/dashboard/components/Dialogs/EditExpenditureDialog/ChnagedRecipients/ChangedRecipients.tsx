@@ -109,11 +109,7 @@ const ChangedRecipients = ({ newRecipients, colony, oldValues }: Props) => {
     !Array.isArray(newRecipients) ||
     isEmpty(newRecipients)
   ) {
-    return (
-      <div className={styles.noChanges}>
-        <FormattedMessage {...MSG.noChanges} />
-      </div>
-    );
+    return null;
   }
 
   return (

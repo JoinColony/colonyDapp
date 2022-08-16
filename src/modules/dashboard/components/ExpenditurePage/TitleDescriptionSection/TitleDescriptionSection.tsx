@@ -58,7 +58,7 @@ const TitleDescriptionSection = () => {
           label=""
           minRows={1}
           maxRows={100}
-          defaultValue={description}
+          value={description}
           elementOnly
         />
       </div>
