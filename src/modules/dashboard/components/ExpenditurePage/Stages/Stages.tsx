@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import copyToClipboard from 'copy-to-clipboard';
 import classNames from 'classnames';
-import { isEmpty } from 'lodash';
 
 import Button from '~core/Button';
 import Icon from '~core/Icon';
@@ -172,11 +171,7 @@ const Stages = ({
                   </div>
                 </Tooltip>
               </Button>
-              <Button
-                onClick={handleSaveDraft}
-                style={buttonStyles}
-                disabled={!isEmpty(errors) || !dirty}
-              >
+              <Button onClick={handleSaveDraft} style={buttonStyles}>
                 <FormattedMessage {...MSG.submitDraft} />
               </Button>
             </>
