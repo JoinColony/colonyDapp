@@ -33,6 +33,7 @@ const actionsMessageDescriptors = {
       ${ColonyExtendedActions.AddressBookUpdated} {Address book was updated}
       ${ColonyExtendedActions.TokensUpdated} {Colony tokens were updated}
       ${ColonyExtendedActions.SafeRemoved} {Remove Safe}
+      ${ColonyExtendedActions.SafeAdded} {Add Safe from {chainName}}
       ${ColonyMotions.CreateDecisionMotion} {Create Decision}
       other {Generic action we don't have information about}
     }`,
@@ -56,6 +57,7 @@ const actionsMessageDescriptors = {
       ${ColonyActions.Recovery} {Recovery}
       ${ColonyActions.EmitDomainReputationPenalty} {Smite}
       ${ColonyActions.EmitDomainReputationReward} {Award}
+      ${ColonyExtendedActions.SafeAdded} {Add Safe}
       ${ColonyExtendedActions.SafeRemoved} {Remove Safe}
       ${ColonyExtendedActions.TokensUpdated} {Update Tokens}
       ${ColonyExtendedActions.AddressBookUpdated} {Update Address Book}
