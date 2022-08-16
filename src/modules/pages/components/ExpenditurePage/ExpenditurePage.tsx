@@ -177,7 +177,7 @@ export interface ValuesType {
     amount: { value?: string; tokenAddress?: string };
     recipients?: { user?: AnyUser; amount?: number; percent?: number }[];
   };
-  batch: Batch;
+  batch?: Batch;
 }
 
 const initialValues = {
