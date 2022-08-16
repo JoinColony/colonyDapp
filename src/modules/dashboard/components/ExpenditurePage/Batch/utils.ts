@@ -1,4 +1,5 @@
 import { Colony } from '~data/index';
+
 import { BatchDataItem } from './types';
 
 export const calculateBatch = (colony: Colony, data?: BatchDataItem[]) => {
@@ -16,10 +17,8 @@ export const calculateBatch = (colony: Colony, data?: BatchDataItem[]) => {
       return { ...acc, [item.Token]: Number(item.Value) };
     }, {});
 
-  const tokens = Object.entries(value || {})?.map(([tokenName, tokenValue]) => {
-    const token = colonyTokens?.find(
-      (tokenItem) => tokenItem.symbol === tokenName,
-    );
+  const tokens = Object.entries(value || {})?.map(([tokenId, tokenValue]) => {
+    const token = colonyTokens?.find((tokenItem) => tokenItem.id === tokenId);
 
     return {
       amount: tokenValue,

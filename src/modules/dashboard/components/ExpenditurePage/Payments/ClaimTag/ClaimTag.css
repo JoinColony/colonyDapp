@@ -33,4 +33,5 @@
   flex-basis: 100px;
   flex-grow: 1;
   justify-content: flex-end;
+  white-space: nowrap;
 }

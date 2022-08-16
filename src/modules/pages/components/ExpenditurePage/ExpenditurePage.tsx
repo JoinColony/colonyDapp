@@ -326,9 +326,9 @@ const ExpenditurePage = ({ match }: Props) => {
           recipients: undefined,
           split: {
             ...values.split,
-            recipients: values.split.recipients?.map((recipient) => {
-              const amount = values.split.amount.value;
-              if (values.split.unequal) {
+            recipients: values.split?.recipients?.map((recipient) => {
+              const amount = Number(values.split?.amount?.value);
+              if (values.split?.unequal) {
                 const userAmount =
                   amount &&
                   recipient?.percent &&
@@ -353,13 +353,14 @@ const ExpenditurePage = ({ match }: Props) => {
           recipients: undefined,
           staged: {
             ...values.staged,
-            milestones: values.staged.milestones?.map((milestone) => {
-              const amount = values.staged.amount.value;
+            milestones: values.staged?.milestones?.map((milestone) => {
+              const amount = values.staged?.amount?.value;
 
               const milestoneAmount =
                 amount &&
                 milestone?.percent &&
-                (milestone.percent / 100) * Number(values.staged.amount.value);
+                (milestone.percent / 100) *
+                  Number(values.staged?.amount?.value);
               return { ...milestone, amount: milestoneAmount };
             }),
           },
@@ -372,15 +373,15 @@ const ExpenditurePage = ({ match }: Props) => {
       if (values) {
         setFormValues({
           ...values,
-          recipients: values.recipients.map((reicpient) => {
+          recipients: values.recipients?.map((reicpient) => {
             return {
               ...reicpient,
-              claimDate: reicpient.delay.amount
+              claimDate: reicpient.delay?.amount
                 ? setClaimDate({
-                    amount: reicpient.delay.amount,
-                    time: reicpient.delay.time,
+                    amount: reicpient.delay?.amount,
+                    time: reicpient.delay?.time,
                   })
-                : new Date(),
+                : new Date().getTime(),
             };
           }),
         });
@@ -706,7 +707,7 @@ const ExpenditurePage = ({ match }: Props) => {
             status={status}
             isCancelled={status === Status.Cancelled}
             pendingMotion={motion?.status === MotionStatus.Pending}
-            activeStateId={activeStateId}
+            activeState={states.find((state) => state.id === activeStateId)}
             handleReleaseMilestone={handleReleaseMilestone}
           />
         )}

@@ -1,6 +1,8 @@
 import { isEqual, uniq, isEmpty, assign, isNil, merge } from 'lodash';
 import { nanoid } from 'nanoid';
 
+import { DelayTime } from './types';
+
 interface Delay {
   amount?: string;
   time: string;
@@ -11,6 +13,16 @@ const isDelayType = (obj: any): obj is Delay => {
     Object.prototype.hasOwnProperty.call(obj, 'amount') &&
     Object.prototype.hasOwnProperty.call(obj, 'time')
   );
+};
+
+export const isDelayTimeType = (time?: string): time is DelayTime => {
+  if (!time) {
+    return false;
+  }
+  if (time === 'hours' || time === 'days' || time === 'months') {
+    return true;
+  }
+  return false;
 };
 
 const timeMultiplier = (time: 'hours' | 'days' | 'months') => {
@@ -33,7 +45,10 @@ const timeMultiplier = (time: 'hours' | 'days' | 'months') => {
 export const getTimeDifference = ({
   amount,
   time,
-}: GetTimeDifferenceParameters): number => {
+}: {
+  amount: string;
+  time: DelayTime;
+}): number => {
   const multiplicator = timeMultiplier(time);
 
   return Number(amount) * multiplicator;
@@ -42,7 +57,11 @@ export const getTimeDifference = ({
 export const setClaimDate = ({
   amount,
   time,
-}: GetTimeDifferenceParameters): number => {
+}: GetTimeDifferenceParameters): number | undefined => {
+  if (!isDelayTimeType(time)) {
+    return undefined;
+  }
+
   const differenceInSeconds = getTimeDifference({ amount, time });
   const currentDate = new Date();
   return currentDate.setSeconds(currentDate.getSeconds() + differenceInSeconds);
@@ -221,7 +240,7 @@ export const updateValues = (values, confirmedValues) => {
                 amount: newRecip.delay.amount,
                 time: newRecip.delay.time,
               })
-            : new Date(),
+            : new Date().getTime(),
         })),
       ].filter((rec) => !rec.removed),
     };
@@ -247,5 +266,5 @@ export const updateValues = (values, confirmedValues) => {
 
 type GetTimeDifferenceParameters = {
   amount: string;
-  time: 'hours' | 'days' | 'months';
+  time: string;
 };

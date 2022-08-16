@@ -1,9 +1,11 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
+import { nanoid } from 'nanoid';
 
 import Dialog, { DialogSection } from '~core/Dialog';
 import MaskedAddress from '~core/MaskedAddress';
+import { Colony } from '~data/index';
 
 import { BatchDataItem } from '../types';
 
@@ -33,9 +35,23 @@ export const MSG = defineMessages({
 interface Props {
   cancel: () => void;
   values: BatchDataItem[];
+  colony: Colony;
 }
 
-const PreviewDialog = ({ cancel, values }: Props) => {
+const PreviewDialog = ({ cancel, values, colony }: Props) => {
+  const { tokens: colonyTokens } = colony || {};
+  const valuesWithTokens = values.map((value) => {
+    const token = colonyTokens?.find(
+      (tokenItem) => tokenItem.id === value.token,
+    );
+
+    return {
+      ...value,
+      token: token?.symbol || value.token,
+      id: nanoid(),
+    };
+  });
+
   return (
     <Dialog cancel={cancel}>
       <div className={styles.wrapper}>
@@ -58,19 +74,18 @@ const PreviewDialog = ({ cancel, values }: Props) => {
               </div>
             </div>
           </DialogSection>
-          {values?.map(({ Recipient, Token, Value }, index) => (
-            <DialogSection appearance={{ theme: 'sidePadding' }}>
+          {valuesWithTokens?.map(({ recipient, token, value, id }, index) => (
+            <DialogSection appearance={{ theme: 'sidePadding' }} key={id}>
               <div
                 className={classNames(styles.row, {
                   [styles.borderTop]: index === 0,
-                  [styles.lastRow]: index === values.length - 1,
                 })}
               >
                 <div className={styles.left}>
-                  <MaskedAddress address={Recipient} />
+                  <MaskedAddress address={recipient} />
                 </div>
-                <div className={styles.middle}>{Token}</div>
-                <div className={styles.right}>{Value}</div>
+                <div className={styles.middle}>{token}</div>
+                <div className={styles.right}>{value}</div>
               </div>
             </DialogSection>
           ))}

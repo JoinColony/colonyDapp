@@ -46,3 +46,5 @@ export interface Motion {
   type: MotionType;
   status: MotionStatus;
 }
+
+export type DelayTime = 'hours' | 'days' | 'months';

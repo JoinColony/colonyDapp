@@ -7,7 +7,7 @@ import LockedStaged from '~dashboard/ExpenditurePage/Staged/LockedStaged/LockedS
 import { Status } from '~dashboard/ExpenditurePage/Stages/constants';
 import { Colony } from '~data/index';
 
-import { ExpenditureTypes, ValuesType } from './types';
+import { ExpenditureTypes, State, ValuesType } from './types';
 
 const displayName = 'pages.ExpenditurePage.LockedSidebar';
 
@@ -19,7 +19,7 @@ interface Props {
   status?: Status;
   isCancelled?: boolean;
   pendingMotion?: boolean;
-  activeStateId?: string;
+  activeState?: State;
   handleReleaseMilestone: (id: string) => void;
 }
 
@@ -31,7 +31,7 @@ const LockedSidebar = ({
   isCancelled,
   pendingMotion,
   status,
-  activeStateId,
+  activeState,
   handleReleaseMilestone,
 }: Props) => {
   const { expenditure, recipients, filteredDomainId, staged, split } =
@@ -49,6 +49,7 @@ const LockedSidebar = ({
             status={status}
             isCancelled={isCancelled}
             pendingMotion={pendingMotion}
+            activeState={activeState}
           />
         );
       }
@@ -60,7 +61,7 @@ const LockedSidebar = ({
           <LockedStaged
             colony={colony}
             staged={staged}
-            activeStateId={activeStateId}
+            activeStateId={activeState?.id}
             handleReleaseMilestone={handleReleaseMilestone}
           />
         );
@@ -72,7 +73,7 @@ const LockedSidebar = ({
         return null;
     }
   }, [
-    activeStateId,
+    activeState,
     colony,
     editForm,
     expenditure,
