@@ -8,10 +8,11 @@ import {
 import { nanoid } from 'nanoid';
 import { RouteChildrenProps, useParams } from 'react-router';
 import { Formik } from 'formik';
+import { toFinite } from 'lodash';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
-import { useColonyFromNameQuery } from '~data/generated';
+import { LoggedInUser, useColonyFromNameQuery } from '~data/generated';
 import Stages from '~dashboard/ExpenditurePage/Stages';
 import TitleDescriptionSection, {
   LockedTitleDescriptionSection,
@@ -26,8 +27,10 @@ import { useDialog } from '~core/Dialog';
 import EscrowFundsDialog from '~dashboard/Dialogs/EscrowFundsDialog';
 import { Batch } from '~dashboard/ExpenditurePage/Batch/types';
 import { AnyUser } from '~data/index';
+import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
 
 import ExpenditureForm from './ExpenditureForm';
+import { ExpenditureTypes } from './types';
 import LockedSidebar from './LockedSidebar';
 import styles from './ExpenditurePage.css';
 
@@ -102,7 +105,7 @@ const validationSchema = yup.object().shape({
     .string()
     .required(() => <FormattedMessage {...MSG.teamRequiredError} />),
   recipients: yup.array().when('expenditure', {
-    is: (expenditure) => expenditure === 'advanced',
+    is: (expenditure) => expenditure === ExpenditureTypes.Advanced,
     then: yup.array().of(
       yup.object().shape({
         recipient: yup.object().required(),
@@ -111,6 +114,7 @@ const validationSchema = yup.object().shape({
             yup.object().shape({
               amount: yup
                 .number()
+                .transform((value) => toFinite(value))
                 .required(() => MSG.valueError)
                 .moreThan(0, () => MSG.amountZeroError),
               tokenAddress: yup.string().required(),
@@ -123,17 +127,29 @@ const validationSchema = yup.object().shape({
   title: yup.string().min(3).required(),
   description: yup.string().max(4000),
   split: yup.object().when('expenditure', {
-    is: (expenditure) => expenditure === 'split',
+    is: (expenditure) => expenditure === ExpenditureTypes.Split,
     then: yup.object().shape({
       unequal: yup.boolean().required(),
-      recipients: yup.array().of(
-        yup.object().shape({
-          recipient: yup
+      amount: yup.object().shape({
+        value: yup
+          .number()
+          .transform((value) => toFinite(value))
+          .required(() => MSG.valueError)
+          .moreThan(0, () => MSG.amountZeroError),
+        tokenAddress: yup.string().required(),
+      }),
+      recipients: yup
+        .array()
+        .of(
+          yup
             .object()
-            .shape({ user: yup.object(), amount: yup.number() })
+            .shape({
+              user: yup.object().required(),
+              amount: yup.number().required(),
+            })
             .required(),
-        }),
-      ),
+        )
+        .min(2),
     }),
   }),
 });
@@ -149,14 +165,17 @@ export interface State {
 export interface ValuesType {
   expenditure: string;
   filteredDomainId: string;
-  owner: string;
-  recipients: Recipient[];
-  title: string;
+  owner?: Pick<
+    LoggedInUser,
+    'walletAddress' | 'balance' | 'username' | 'ethereal' | 'networkId'
+  >;
+  recipients?: Recipient[];
+  title?: string;
   description?: string;
   split: {
     unequal: boolean;
-    amount: { amount?: string; tokenAddress?: string };
-    recipients?: { user: AnyUser; amount: number }[];
+    amount: { value?: string; tokenAddress?: string };
+    recipients?: { user?: AnyUser; amount?: number; percent?: number }[];
   };
   batch: Batch;
 }
@@ -170,7 +189,10 @@ const initialValues = {
   description: undefined,
   split: {
     unequal: true,
-    recipients: [{ user: undefined, amount: 0 }],
+    recipients: [
+      { ...initalRecipient, key: nanoid() },
+      { ...initalRecipient, key: nanoid() },
+    ],
   },
 };
 
@@ -199,7 +221,7 @@ const ExpenditurePage = ({ match }: Props) => {
   });
   const loggedInUser = useLoggedInUser();
 
-  const initialValuesData = useMemo(() => {
+  const initialValuesData = useMemo((): ValuesType => {
     return (
       formValues || {
         ...initialValues,
@@ -217,12 +239,48 @@ const ExpenditurePage = ({ match }: Props) => {
             ],
           },
         ],
+        split: {
+          ...initialValues.split,
+          amount: {
+            tokenAddress: colonyData?.processedColony.nativeTokenAddress,
+          },
+        },
       }
     );
   }, [colonyData, formValues, loggedInUser]);
 
-  const handleSubmit = useCallback((values) => {
+  const handleSubmit = useCallback((values: ValuesType) => {
     setActiveStateId(Stage.Draft);
+    if (values.expenditure === ExpenditureTypes.Split) {
+      const recipientsCount =
+        values.split.recipients?.filter(
+          (recipient) => recipient?.user?.id !== undefined,
+        ).length || 0;
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const splitValues = {
+        ...values,
+        recipients: undefined,
+        split: {
+          ...values.split,
+          recipients: values.split.recipients?.map((recipient) => {
+            const amount = values.split.amount.value;
+            if (values.split.unequal) {
+              const userAmount =
+                amount &&
+                recipient?.percent &&
+                (recipient.percent / 100) * Number(values.split.amount.value);
+              return { ...recipient, amount: userAmount };
+            }
+            return {
+              ...recipient,
+              amount: !amount ? 0 : Number(amount) / (recipientsCount || 1),
+            };
+          }),
+        },
+      };
+      // if expenditure type is "Split" then splitValues, not values should be send to backend
+    }
 
     if (values) {
       setFormValues(values);
