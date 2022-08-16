@@ -1,4 +1,4 @@
-import { useFormikContext } from 'formik';
+import { useFormikContext, setNestedObjectValues, FormikTouched } from 'formik';
 import React, { useCallback } from 'react';
 
 import { useDialog } from '~core/Dialog';
@@ -29,7 +29,7 @@ const FormStages = ({
   colony,
   handleCancelExpenditure,
 }: Props) => {
-  const { values, handleSubmit, validateForm, resetForm } =
+  const { values, handleSubmit, validateForm, resetForm, setTouched } =
     useFormikContext<ValuesType>() || {};
   const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
@@ -37,6 +37,7 @@ const FormStages = ({
   const handleSaveDraft = useCallback(async () => {
     const errors = await validateForm(values);
     const hasErrors = Object.keys(errors)?.length;
+    setTouched(setNestedObjectValues<FormikTouched<ValuesType>>(errors, true));
 
     return (
       !hasErrors &&
@@ -55,6 +56,7 @@ const FormStages = ({
     handleSubmit,
     openDraftConfirmDialog,
     setActiveStateId,
+    setTouched,
     validateForm,
     values,
   ]);
