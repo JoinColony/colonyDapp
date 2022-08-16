@@ -8,7 +8,7 @@ export interface Batch {
 }
 
 export interface BatchDataItem {
-  Recipient: string;
-  Token: string;
-  Value: string;
+  recipient: string;
+  token: string;
+  value: string;
 }
