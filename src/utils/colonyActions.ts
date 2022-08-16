@@ -390,7 +390,11 @@ export const getColonyValuesCheck = (
     const removedSafes =
     (currentColonySafes || []).length < (prevColonySafes || []).length
       ? (prevColonySafes || []).filter(
-          (safe) => !(currentColonySafes || []).includes(safe),
+          (safe) =>
+            !(currentColonySafes || []).some(
+              ({ contractAddress }) =>
+                contractAddress === safe.contractAddress,
+            ),
         )
       : [];
     return {
