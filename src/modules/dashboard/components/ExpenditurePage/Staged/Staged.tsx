@@ -174,6 +174,7 @@ const Staged = ({ colony, sidebarRef }: Props) => {
             {milestones?.map((milestone, index) => {
               return (
                 <Milestone
+                  key={milestone.id}
                   milestone={milestone}
                   index={index}
                   remove={remove}

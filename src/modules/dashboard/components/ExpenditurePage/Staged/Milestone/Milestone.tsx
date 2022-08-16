@@ -47,7 +47,6 @@ interface Props {
 }
 
 const Milestone = ({
-  milestone,
   token,
   amount,
   remove,
@@ -61,7 +60,7 @@ const Milestone = ({
   const [, { error }] = useField(name);
 
   return (
-    <FormSection appearance={{ border: 'bottom' }} key={milestone?.id}>
+    <FormSection appearance={{ border: 'bottom' }}>
       <div
         className={classNames(styles.nameWrapper, {
           [styles.nameError]: error,
