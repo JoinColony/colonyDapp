@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { useField } from 'formik';
 import classNames from 'classnames';
@@ -52,7 +52,6 @@ interface Props {
 
 const Batch = ({ colony }: Props) => {
   const [processingCSVData, setProcessingCSVData] = useState<boolean>(false);
-  const [isOpen, setOpen] = useState<boolean>(false);
   const { formatMessage } = useIntl();
   const [, { value: batch }] = useField('batch');
   const batchData = batch?.dataCSVUploader?.[0]?.parsedData;
@@ -62,12 +61,6 @@ const Batch = ({ colony }: Props) => {
   ]);
 
   const { value, tokens, recipientsCount } = processedData || {};
-
-  useEffect(() => {
-    if (processingCSVData) {
-      setOpen(false);
-    }
-  }, [processingCSVData]);
 
   return (
     <div className={styles.batchContainer}>
@@ -89,7 +82,6 @@ const Batch = ({ colony }: Props) => {
               name="batch.dataCSVUploader"
               processingData={processingCSVData}
               setProcessingData={setProcessingCSVData}
-              isOpen={isOpen}
             />
           </div>
         </div>

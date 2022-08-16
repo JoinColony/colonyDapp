@@ -8,12 +8,12 @@ export const calculateBatch = (colony: Colony, data?: BatchDataItem[]) => {
   const { tokens: colonyTokens } = colony || {};
 
   const value = data
-    .filter((item) => !!item.Recipient)
+    .filter((item) => !!item.recipient)
     .reduce((acc, item) => {
-      if (item.Token in acc) {
-        return { ...acc, [item.Token]: acc[item.Token] + Number(item.Value) };
+      if (item.token in acc) {
+        return { ...acc, [item.token]: acc[item.token] + Number(item.value) };
       }
-      return { ...acc, [item.Token]: Number(item.Value) };
+      return { ...acc, [item.token]: Number(item.value) };
     }, {});
 
   const tokens = Object.entries(value || {})?.map(([tokenName, tokenValue]) => {
@@ -29,8 +29,8 @@ export const calculateBatch = (colony: Colony, data?: BatchDataItem[]) => {
 
   const recipientsCount = data.filter((item) => {
     return (
-      !!item.Recipient &&
-      colonyTokens.find((token) => token.symbol === item.Token)
+      !!item.recipient &&
+      colonyTokens.find((token) => token.symbol === item.token)
     );
   }).length;
 
