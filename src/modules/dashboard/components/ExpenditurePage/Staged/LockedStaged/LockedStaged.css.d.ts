@@ -3,6 +3,8 @@ export const stagedContainer: string;
 export const editIcon: string;
 export const recipientAmountWrapper: string;
 export const label: string;
+export const row: string;
+export const staged: string;
 export const userWrapper: string;
 export const user: string;
 export const valueWrapper: string;
