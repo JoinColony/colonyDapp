@@ -103,7 +103,7 @@ const DefaultAction = ({
   );
 
   let domainMetadata;
-  const { removedSafes } = useColonyMetadataChecks(
+  const { removedSafes, addedSafe } = useColonyMetadataChecks(
     actionType,
     colony,
     transactionHash,
@@ -231,10 +231,15 @@ const DefaultAction = ({
     isSmiteAction: new Decimal(reputationChange).isNegative(),
     removedSafes,
     removedSafesString,
+    addedSafeAddress: addedSafe && (
+      <MaskedAddress address={addedSafe.contractAddress} />
+    ),
+    chainName: addedSafe && GNOSIS_SAFE_NAMES_MAP[addedSafe.chainId],
+    safeName: addedSafe?.safeName,
   };
 
   const actionAndEventValuesForDocumentTitle = {
-    actionType,
+    actionType: extendedActionType,
     initiator:
       initiator.profile?.displayName ??
       initiator.profile?.username ??
@@ -252,6 +257,7 @@ const DefaultAction = ({
     roles: roleTitle,
     reputationChange: actionAndEventValues.reputationChange,
     reputationChangeNumeral: actionAndEventValues.reputationChangeNumeral,
+    chainName: addedSafe && GNOSIS_SAFE_NAMES_MAP[addedSafe.chainId],
   };
 
   const motionStyles = MOTION_TAG_MAP[MotionState.Forced];

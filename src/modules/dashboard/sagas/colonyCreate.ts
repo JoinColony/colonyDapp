@@ -301,6 +301,7 @@ function* colonyCreate({
             colonyDisplayName: displayName,
             colonyAvatarHash: null,
             colonyTokens: [],
+            colonySafes: [],
           }),
         );
       } catch (error) {
@@ -317,6 +318,7 @@ function* colonyCreate({
             colonyDisplayName: displayName,
             colonyAvatarHash: null,
             colonyTokens: [],
+            colonySafes: [],
           }),
         );
       }
