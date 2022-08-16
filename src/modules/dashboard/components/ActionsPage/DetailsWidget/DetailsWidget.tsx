@@ -82,6 +82,18 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.DetailsWidget.safe',
     defaultMessage: 'Safe',
   },
+  chain: {
+    id: 'dashboard.ActionsPage.DetailsWidget.chain',
+    defaultMessage: 'Chain',
+  },
+  safeAddress: {
+    id: 'dashboard.ActionsPage.DetailsWidget.safeAddress',
+    defaultMessage: 'Safe Address',
+  },
+  safeName: {
+    id: 'dashboard.ActionsPage.DetailsWidget.safeName',
+    defaultMessage: 'Safe Name',
+  },
 });
 
 interface Props {
@@ -159,6 +171,36 @@ const DetailsWidget = ({
           </div>
           <div className={styles.value}>
             <DetailsWidgetTeam domain={values.motionDomain} />
+          </div>
+        </div>
+      )}
+      {detailsForAction.Chain && values?.chainName && (
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG.chain} />
+          </div>
+          <div className={styles.value}>
+            <span>{values.chainName}</span>
+          </div>
+        </div>
+      )}
+      {detailsForAction.SafeAddress && values?.addedSafeAddress && (
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG.safeAddress} />
+          </div>
+          <div className={styles.value}>
+            <span>{values.addedSafeAddress}</span>
+          </div>
+        </div>
+      )}
+      {detailsForAction.SafeName && values?.safeName && (
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG.safeName} />
+          </div>
+          <div className={styles.value}>
+            <span>{values.safeName}</span>
           </div>
         </div>
       )}

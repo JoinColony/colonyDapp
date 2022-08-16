@@ -46,7 +46,11 @@ import {
   MotionState,
   MOTION_TAG_MAP,
 } from '~utils/colonyMotions';
-import { useColonyMetadataChecks, useExtendedColonyActionType } from '~modules/dashboard/hooks';
+import {
+  useColonyMetadataChecks,
+  useExtendedColonyActionType,
+} from '~modules/dashboard/hooks';
+import { GNOSIS_SAFE_NAMES_MAP } from '~constants';
 
 import { ipfsDataFetcher } from '../../../core/fetchers';
 
@@ -161,6 +165,12 @@ const ActionsListItem = ({
 
   const colonyObject = parseColonyMetadata(metadataJSON);
   const { tokensChanged, verifiedAddressesChanged } = useColonyMetadataChecks(
+    actionType,
+    colony,
+    transactionHash,
+    colonyObject,
+  );
+  const { addedSafe } = useColonyMetadataChecks(
     actionType,
     colony,
     transactionHash,
@@ -403,6 +413,8 @@ const ActionsListItem = ({
                     reputationChangeNumeral: (
                       <Numeral value={formattedReputationChange} />
                     ),
+                    chainName:
+                      addedSafe && GNOSIS_SAFE_NAMES_MAP[addedSafe.chainId],
                   }}
                 />
               )}

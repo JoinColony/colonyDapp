@@ -71,6 +71,9 @@ export interface EventValues {
   reputationChange?: string;
   isSmiteAction?: boolean;
   removedSafes?: ColonySafe[];
+  addedSafeAddress?: JSX.Element | null;
+  chainName?: string | null;
+  safeName?: string;
 }
 
 export type FeedItemWithId<T> = T & { uniqueId: string };

@@ -17,6 +17,7 @@ const useExtendedColonyActionType = (
     verifiedAddressesChanged,
     tokensChanged,
     removedSafes,
+    addedSafe,
   } = useColonyMetadataChecks(
     actionType,
     colony,
@@ -37,9 +38,19 @@ const useExtendedColonyActionType = (
       if ((removedSafes || []).length > 0) {
         return ColonyExtendedActions.SafeRemoved;
       }
+
+      if (addedSafe) {
+        return ColonyExtendedActions.SafeAdded;
+      }
     }
     return actionType;
-  }, [actionType, verifiedAddressesChanged, tokensChanged, removedSafes]);
+  }, [
+    actionType,
+    verifiedAddressesChanged,
+    tokensChanged,
+    removedSafes,
+    addedSafe,
+  ]);
 };
 
 export default useExtendedColonyActionType;

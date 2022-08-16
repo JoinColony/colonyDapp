@@ -20,6 +20,7 @@ import { useDataFetcher } from '~utils/hooks';
 
 export interface ColonyMetadataChecks {
   removedSafes?: ColonySafe[];
+  addedSafe?: ColonySafe | null;
   nameChanged?: boolean;
   logoChanged?: boolean;
   tokensChanged?: boolean;
@@ -45,6 +46,7 @@ const useColonyMetadataChecks = (
     tokensChanged: false,
     verifiedAddressesChanged: false,
     removedSafes: [],
+    addedSafe: null,
   });
 
   const colonyMetadataHistory = useSubgraphColonyMetadataQuery({
@@ -129,6 +131,7 @@ const useColonyMetadataChecks = (
             tokensChanged: !!actionColonyTokens?.length,
             verifiedAddressesChanged: !!actionVerifiedAddresses?.length,
             removedSafes: [],
+            addedSafe: null,
           };
 
           if (!isEqual(newMetadataValues, metadataChecks)) {
