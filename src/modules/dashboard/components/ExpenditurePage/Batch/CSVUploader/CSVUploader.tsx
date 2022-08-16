@@ -13,7 +13,6 @@ interface Props {
   name: string;
   processingData: boolean;
   setProcessingData: React.Dispatch<React.SetStateAction<boolean>>;
-  isOpen: boolean;
 }
 
 export const MSG = defineMessages({
@@ -35,6 +34,7 @@ const CSVUploader = ({ name, processingData, setProcessingData }: Props) => {
       Papa.parse(CSVFile, {
         complete: setParsedCSV,
         header: true,
+        transformHeader: (header) => header.toLowerCase(),
       });
     } else if (!CSVFile && parsedCSV) {
       setParsedCSV(null);
