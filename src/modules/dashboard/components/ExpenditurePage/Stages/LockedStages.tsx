@@ -8,7 +8,7 @@ import { State } from '~pages/ExpenditurePage/types';
 import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
 import { Recipient } from '../Payments/types';
 
-import { Motion, MotionStatus, Status } from './constants';
+import { Motion, MotionStatus, MotionType, Status } from './constants';
 import LinkedMotions from './LinkedMotions';
 import Stages from './Stages';
 import styles from './Stages.css';
@@ -17,6 +17,10 @@ const MSG = defineMessages({
   motion: {
     id: 'dashboard.ExpenditurePage.Stages.LockedStages.motion',
     defaultMessage: `You can't {action} unless motion ends`,
+  },
+  activeMotion: {
+    id: 'dashboard.ExpenditurePage.Stages.LockedStages.activeMotion',
+    defaultMessage: 'There is an active motion for this expenditure',
   },
 });
 
@@ -75,9 +79,12 @@ const LockedStages = ({
             colorSchema: 'fullColor',
           }}
         >
-          {formatMessage(MSG.motion, {
-            action: formattedLabel(activeState?.buttonText),
-          })}
+          {motion.type === MotionType.Edit &&
+          motion.status === MotionStatus.Pending
+            ? formatMessage(MSG.activeMotion)
+            : formatMessage(MSG.motion, {
+                action: formattedLabel(activeState?.buttonText),
+              })}
         </Tag>
       )}
       <Stages
