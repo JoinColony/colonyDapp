@@ -120,7 +120,7 @@ const Batch = ({ colony }: Props) => {
           {!isNil(batchData) && (
             <Button
               type="button"
-              onClick={() => openPreviewDialog({ values: validatedData })}
+              onClick={() => openPreviewDialog({ values: batchData, colony })}
               appearance={{ theme: 'blue' }}
               text={MSG.viewAll}
             />
