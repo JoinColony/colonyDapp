@@ -21,6 +21,9 @@ export enum ActionPageDetails {
   ReputationChange = 'ReputationChange',
   Author = 'Author',
   Safe = 'Safe',
+  Chain = 'Chain',
+  SafeAddress = 'SafeAddress',
+  SafeName = 'SafeName',
 }
 
 type EventRolesMap = Partial<
@@ -105,6 +108,7 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyExtendedActions.AddressBookUpdated]: 'emoji-edit-tools',
   [ColonyExtendedActions.TokensUpdated]: 'emoji-edit-tools',
   [ColonyExtendedActions.SafeRemoved]: 'gnosis-logo',
+  [ColonyExtendedActions.SafeAdded]: 'gnosis-logo',
   [ColonyMotions.CreateDecisionMotion]: 'emoji-decisions',
   [ColonyMotions.NullMotion]: 'forbidden-signal',
   [ColonyActions.Generic]: 'circle-check-primary',
@@ -256,6 +260,11 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
   [ColonyExtendedActions.SafeRemoved]: [ActionPageDetails.Safe],
   [ColonyExtendedActions.TokensUpdated]: [ActionPageDetails.Name],
   [ColonyExtendedActions.AddressBookUpdated]: [ActionPageDetails.Name],
+  [ColonyExtendedActions.SafeAdded]: [
+    ActionPageDetails.Chain,
+    ActionPageDetails.SafeName,
+    ActionPageDetails.SafeAddress,
+  ],
   [ColonyMotions.MintTokensMotion]: [ActionPageDetails.Amount],
   [ColonyMotions.PaymentMotion]: [
     ActionPageDetails.FromDomain,

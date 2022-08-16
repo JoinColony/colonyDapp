@@ -23,7 +23,7 @@ import {
   FormattedAction,
   ActionUserRoles,
 } from '~types/index';
-import { ParsedEvent } from '~data/index';
+import { ColonySafe, ParsedEvent } from '~data/index';
 import { ProcessedEvent } from '~data/resolvers/colonyActions';
 
 import {
@@ -488,7 +488,7 @@ const getColonyEditActionValues = async (
     colonyTokens?: string[];
     isWhitelistActivated?: boolean;
     verifiedAddresses?: string[];
-    colonySafes?: string[];
+    colonySafes: ColonySafe[] | null;
   } = {
     address,
     colonyDisplayName: null,

@@ -28,6 +28,7 @@ export enum AddedActions {
   AddressBookUpdated = 'AddressBookUpdated',
   TokensUpdated = 'TokensUpdated',
   SafeRemoved = 'SafeRemoved',
+  SafeAdded = 'SafeAdded',
 }
 
 export const ColonyExtendedActions = { ...ColonyActions, ...AddedActions };
