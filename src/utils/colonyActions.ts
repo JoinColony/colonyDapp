@@ -367,7 +367,11 @@ export const getSpecificActionValuesCheck = (
       const removedSafes =
         (currentColonySafes || []).length < (prevColonySafes || []).length
           ? (prevColonySafes || []).filter(
-              (safe) => !(currentColonySafes || []).includes(safe),
+              (safe) =>
+                !(currentColonySafes || []).some(
+                  ({ contractAddress }) =>
+                    contractAddress === safe.contractAddress,
+                ),
             )
           : [];
 
