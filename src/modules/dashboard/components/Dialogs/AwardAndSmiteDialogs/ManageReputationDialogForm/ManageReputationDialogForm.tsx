@@ -29,7 +29,6 @@ import {
   OneDomain,
   useUserReputationQuery,
   useLoggedInUser,
-  useMembersSubscription,
 } from '~data/index';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import { useTransformer } from '~utils/hooks';
@@ -108,6 +107,7 @@ const MSG = defineMessages({
 interface Props extends ActionDialogProps {
   isVotingExtensionEnabled: boolean;
   nativeTokenDecimals: number;
+  verifiedUsers: AnyUser[];
   ethDomainId?: number;
   updateReputation?: (
     userPercentageReputation: number,
@@ -135,6 +135,7 @@ const ManageReputationDialogForm = ({
   ethDomainId: preselectedDomainId,
   isVotingExtensionEnabled,
   nativeTokenDecimals,
+  verifiedUsers,
   isSmiteAction = false,
 }: Props & FormikProps<ManageReputationDialogFormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
@@ -171,10 +172,6 @@ const ManageReputationDialogForm = ({
   );
 
   const inputDisabled = !userHasPermission || onlyForceAction;
-
-  const { data: colonyMembers } = useMembersSubscription({
-    variables: { colonyAddress },
-  });
 
   const { data: userReputationData } = useUserReputationQuery({
     variables: {
@@ -346,7 +343,7 @@ const ManageReputationDialogForm = ({
         <div className={styles.singleUserContainer}>
           <SingleUserPicker
             appearance={{ width: 'wide' }}
-            data={colonyMembers?.subscribedUsers || []}
+            data={verifiedUsers}
             label={MSG.recipient}
             name="user"
             filter={filterUserSelection}
