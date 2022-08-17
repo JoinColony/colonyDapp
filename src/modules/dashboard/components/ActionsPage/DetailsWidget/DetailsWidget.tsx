@@ -73,6 +73,10 @@ const MSG = defineMessages({
       false {reward}
     }`,
   },
+  author: {
+    id: 'dashboard.ActionsPage.DetailsWidget.colonyName',
+    defaultMessage: 'Author',
+  },
 });
 
 interface Props {
@@ -208,6 +212,21 @@ const DetailsWidget = ({
           <div className={styles.value}>
             {values?.fromDomain && (
               <DetailsWidgetTeam domain={values.fromDomain} />
+            )}
+          </div>
+        </div>
+      )}
+      {detailsForAction.Author && (
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG.author} />
+          </div>
+          <div className={styles.value}>
+            {recipient && detailsForAction.Author && (
+              <DetailsWidgetUser
+                colony={colony}
+                walletAddress={recipient?.profile.walletAddress as string}
+              />
             )}
           </div>
         </div>
