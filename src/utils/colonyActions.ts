@@ -392,8 +392,9 @@ export const getColonyValuesCheck = (
       ? (prevColonySafes || []).filter(
           (safe) =>
             !(currentColonySafes || []).some(
-              ({ contractAddress }) =>
-                contractAddress === safe.contractAddress,
+              ({ contractAddress, chainId }) =>
+                contractAddress === safe.contractAddress &&
+                chainId === safe.chainId,
             ),
         )
       : [];
