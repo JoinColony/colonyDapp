@@ -17,6 +17,7 @@ export enum ActionPageDetails {
   Name = 'Name',
   Permissions = 'Permissions',
   ReputationChange = 'ReputationChange',
+  Author = 'Author',
 }
 
 type EventRolesMap = Partial<
@@ -236,6 +237,10 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.Domain,
     ActionPageDetails.ToRecipient,
     ActionPageDetails.ReputationChange,
+  ],
+  [ColonyActions.Decision]: [
+    ActionPageDetails.Domain,
+    ActionPageDetails.Author,
   ],
   [ColonyActions.EmitDomainReputationReward]: [
     ActionPageDetails.Domain,

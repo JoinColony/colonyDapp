@@ -86,3 +86,15 @@
 .buttonContainer > button:last-child {
   min-width: 160px;
 }
+
+.titleDecoration {
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
+
+.loadingWrapper {
+  margin-left: 60px;
+  height: 100%;
+  width: calc(100% - 60px);
+  position: relative;
+}
