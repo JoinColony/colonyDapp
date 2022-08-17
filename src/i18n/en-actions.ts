@@ -51,6 +51,7 @@ const actionsMessageDescriptors = {
       ${ColonyActions.EmitDomainReputationPenalty} {Smite}
       ${ColonyActions.EmitDomainReputationReward} {Award}
       other {Generic}
+      ${ColonyActions.Decision} {Decision}
     }`,
 };
 
