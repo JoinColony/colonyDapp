@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { useEditor } from '@tiptap/react';
 import CharacterCount from '@tiptap/extension-character-count';
 import Color from '@tiptap/extension-color';
@@ -7,10 +8,12 @@ import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import StarterKit from '@tiptap/starter-kit';
 import * as yup from 'yup';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import Dialog, { DialogProps } from '~core/Dialog';
 import { Form } from '~core/Fields';
 import { Colony } from '~data/index';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 
 import DialogForm from './DecisionDialogForm';
 
@@ -18,8 +21,8 @@ const displayName = 'dashboard.DecisionDialog';
 
 export interface FormValues {
   motionDomainId: number;
-  decisionTitle?: string;
-  content?: string;
+  title: string;
+  content: string;
 }
 
 interface Props extends DialogProps {
@@ -31,13 +34,18 @@ interface Props extends DialogProps {
 
 const characterLimit = 4000;
 
+export const LOCAL_STORAGE_DECISION_KEY = 'decision';
+
 const DecisionDialog = ({
   cancel,
   colony,
   ethDomainId,
   decisionTitle,
   content,
+  close,
 }: Props) => {
+  const history = useHistory();
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -53,22 +61,30 @@ const DecisionDialog = ({
     content,
   });
 
-  const handleSubmit = () => {
+  const domainId =
+    ethDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID || ethDomainId === undefined
+      ? ROOT_DOMAIN_ID
+      : ethDomainId;
+
+  const handleSubmit = (values) => {
     if (editor) {
       editor.setEditable(false);
-      // Do something with form contents
     }
+
+    localStorage.setItem(LOCAL_STORAGE_DECISION_KEY, JSON.stringify(values));
+    close();
+    history.push(`/colony/${colonyName}/decisions/preview`);
   };
 
   const validationSchema = yup.object().shape({
-    decisionTitle: yup.string().required('Please enter a title'),
+    title: yup.string().required('Please enter a title'),
     motionDomainId: yup.number(),
     content: yup.string().notOneOf(['<p></p>']).required(),
   });
   return (
     <Form
       initialValues={{
-        motionDomainId: ethDomainId,
+        motionDomainId: domainId,
         decisionTitle,
         content,
       }}
