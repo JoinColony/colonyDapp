@@ -1,5 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
-import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+import React, { useCallback } from 'react';
 import { Editor } from '@tiptap/react';
 import { FormikProps } from 'formik';
 import { defineMessages } from 'react-intl';
@@ -56,41 +55,17 @@ interface Props extends Omit<DialogProps, 'close'> {
 const DecisionDialogForm = ({
   colony,
   setFieldValue,
-  values,
   isSubmitting,
   handleSubmit,
   isValid,
   cancel,
-  ethDomainId: preselectedDomainId,
   editor,
   limit,
   dirty,
 }: Props & FormikProps<FormValues>) => {
-  const selectedDomain =
-    preselectedDomainId === 0 || preselectedDomainId === undefined
-      ? ROOT_DOMAIN_ID
-      : preselectedDomainId;
-
-  const domainId = values.motionDomainId || selectedDomain;
-  const [currentFromDomain] = useState<number>(domainId);
-
   const handleMotionDomainChange = useCallback(
     (motionDomainId) => setFieldValue('motionDomainId', motionDomainId),
     [setFieldValue],
-  );
-
-  const handleFilterMotionDomains = useCallback(
-    (optionDomain) => {
-      const optionDomainId = parseInt(optionDomain.value, 10);
-      if (currentFromDomain === ROOT_DOMAIN_ID) {
-        return optionDomainId === ROOT_DOMAIN_ID;
-      }
-      return (
-        optionDomainId === currentFromDomain ||
-        optionDomainId === ROOT_DOMAIN_ID
-      );
-    },
-    [currentFromDomain],
   );
 
   const titleOnOpen = useRef(values.decisionTitle);
@@ -101,9 +76,8 @@ const DecisionDialogForm = ({
         <MotionDomainSelect
           colony={colony}
           onDomainChange={handleMotionDomainChange}
-          filterDomains={handleFilterMotionDomains}
-          initialSelectedDomain={domainId}
           dropdownLabel={MSG.domainDisplay}
+          disabled={isSubmitting}
         />
         <Heading
           appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
@@ -126,11 +100,10 @@ const DecisionDialogForm = ({
         </div>
         <Input
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
-          name="decisionTitle"
+          name="title"
           disabled={isSubmitting}
           maxLength={50}
           placeholder={MSG.titlePlaceholder}
-          dataTest="decisionTitleInput"
         />
       </DialogSection>
       <DialogSection>
@@ -161,7 +134,6 @@ const DecisionDialogForm = ({
           }}
           loading={isSubmitting}
           disabled={!isValid || isSubmitting || !dirty}
-          data-test="decisionPreviewButton"
         />
       </DialogSection>
     </div>
