@@ -189,7 +189,7 @@ const DefaultAction = ({
    * doesn't like that...
    */
   const actionAndEventValues = {
-    actionType,
+    actionType: extendedActionType,
     initiator: (
       <span className={styles.titleDecoration}>
         <FriendlyName user={initiator} autoShrinkAddress />
@@ -234,7 +234,7 @@ const DefaultAction = ({
   };
 
   const actionAndEventValuesForDocumentTitle = {
-    actionType,
+    actionType: extendedActionType,
     initiator:
       initiator.profile?.displayName ??
       initiator.profile?.username ??
@@ -292,7 +292,6 @@ const DefaultAction = ({
               id={roleMessageDescriptorId || 'action.title'}
               values={{
                 ...actionAndEventValues,
-                actionType: extendedActionType,
                 fromDomain: actionAndEventValues.fromDomain?.name,
                 toDomain: actionAndEventValues.toDomain?.name,
                 roles: roleTitle,
