@@ -1,54 +1,44 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { useParams, Redirect } from 'react-router-dom';
+import { defineMessages } from 'react-intl';
 
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Tag from '~core/Tag';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import { useUser, useLoggedInUser, useColonyFromNameQuery } from '~data/index';
+import {
+  useUser,
+  useLoggedInUser,
+  useColonyFromNameQuery,
+  AnyUser,
+  OneDomain,
+} from '~data/index';
+import { ColonyActions } from '~types/index';
+import { NOT_FOUND_ROUTE } from '~routes/index';
+import LoadingTemplate from '~pages/LoadingTemplate';
 
-import DetailsWidget from './DetailsWidget/DetailsWidget';
+import DetailsWidget from '../ActionsPage/DetailsWidget';
 
 import styles from './DecisionPreview.css';
 
 const MSG = defineMessages({
-  type: {
-    id: 'dashboard.ColonyDecisions.DecisionPreview.type',
-    defaultMessage: `Type`,
+  preview: {
+    id: 'dashboard.ColonyDecisions.DecisionPreview.preview',
+    defaultMessage: `Preview`,
   },
-  team: {
-    id: 'dashboard.ColonyDecisions.DecisionPreview.team',
-    defaultMessage: `Team`,
-  },
-  author: {
-    id: 'dashboard.ColonyDecisions.DecisionPreview.author',
-    defaultMessage: `Author`,
-  },
-  edit: {
-    id: 'dashboard.ColonyDecisions.DecisionPreview.edit',
-    defaultMessage: `Edit`,
-  },
-  publish: {
-    id: 'dashboard.ColonyDecisions.DecisionPreview.publish',
-    defaultMessage: `Publish`,
-  },
-  // this is mock data for the decision title until a later PR is created to retrieve this from local storage
-  title: {
-    id: 'dashboard.ColonyDecisions.DecisionPreview.title',
-    defaultMessage: `Should we build a Discord Bot?`,
-  },
-  // this is mock data for the decision description until a later PR is created to retrieve this from local storage
-  description: {
-    id: 'dashboard.ColonyDecisions.DecisionPreview.description',
-    defaultMessage: `I think we should build a Discord bot that integrates with the Dapp and provides our community with greater transperency and also provides more convienience for us to be notified of things happening in our Colony.`,
-  },
-  // this is a placeholder for the decision type until we have the data
-  decisionType: {
-    id: 'dashboard.ColonyDecisions.DecisionPreview.decisionType',
-    defaultMessage: `Decision`,
+  loadingText: {
+    id: 'dashboard.ColonyDecisions.DecisionPreview.loadingText',
+    defaultMessage: 'Loading Decision',
   },
 });
+
+/* mock data */
+const decisionData = {
+  title: 'Should we build a Discord Bot?',
+  description: `I think we should build a Discord bot that integrates with the Dapp and provides our community with greater transperency and also provides more convienience for us to be notified of things happening in our Colony.`,
+  actionType: 'Decision',
+  fromDomain: '1',
+};
 
 const handleEdit = () => {};
 const handleSubmit = () => {};
@@ -57,30 +47,54 @@ const displayName = 'dashboard.ColonyDecisions.DecisionPreview';
 
 const DecisionPreview = () => {
   const { colonyName } = useParams<{
-    transactionHash?: string;
     colonyName: string;
   }>();
   const { walletAddress, username } = useLoggedInUser();
-  const userProfile = useUser(walletAddress);
+  const userProfile = useUser(walletAddress) as AnyUser;
+  const actionType = decisionData.actionType as ColonyActions;
 
-  const { data, error } = useColonyFromNameQuery({
+  const { data: colonyData, error, loading } = useColonyFromNameQuery({
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
     pollInterval: 5000,
   });
 
-  if (error) console.error(error);
+  if (
+    loading ||
+    (colonyData?.colonyAddress &&
+      !colonyData.processedColony &&
+      !((colonyData.colonyAddress as any) instanceof Error))
+  ) {
+    return (
+      <div className={styles.loadingWrapper}>
+        <LoadingTemplate loadingText={MSG.loadingText} />
+      </div>
+    );
+  }
 
-  if (data?.processedColony) {
-    const { processedColony: colony } = data;
+  if (!colonyName || error || !colonyData?.processedColony) {
+    console.error('error', error);
+    return <Redirect to={NOT_FOUND_ROUTE} />;
+  }
+
+  if (colonyData?.processedColony) {
+    const { processedColony: colony } = colonyData;
 
     const UserAvatar = HookedUserAvatar({ fetchUser: false });
+
+    const actionAndEventValues = {
+      actionType,
+      fromDomain: colonyData.processedColony.domains.find(
+        ({ ethDomainId }) =>
+          ethDomainId === parseInt(decisionData.fromDomain, 10),
+      ) as OneDomain,
+    };
 
     return (
       <div className={styles.main}>
         <div className={styles.upperContainer}>
           <p className={styles.tagWrapper}>
-            <Tag text="Preview" appearance={{ theme: 'light' }} />
+            <Tag text={MSG.preview} appearance={{ theme: 'light' }} />
           </p>
         </div>
         <hr className={styles.dividerTop} />
@@ -117,44 +131,32 @@ const DecisionPreview = () => {
                   margin: 'small',
                   theme: 'dark',
                 }}
-                text={MSG.title}
+                text={decisionData.title}
               />
             </div>
-            <FormattedMessage
-              {...MSG.description}
-              values={{
-                h4: (chunks) => (
-                  <Heading
-                    tagName="h4"
-                    appearance={{ size: 'medium', margin: 'small' }}
-                    text={chunks}
-                  />
-                ),
-              }}
-            />
+            {decisionData.description}
           </div>
           <div className={styles.rightContent}>
             <div className={styles.buttonContainer}>
               <Button
                 appearance={{ theme: 'secondary', size: 'large' }}
-                onClick={() => handleEdit()}
+                onClick={handleEdit}
                 text={{ id: 'button.edit' }}
-                data-test="decisionEditButton"
               />
               <Button
                 appearance={{ theme: 'primary', size: 'large' }}
-                onClick={() => handleSubmit()}
+                onClick={handleSubmit}
                 text={{ id: 'button.publish' }}
-                style={{ minWidth: styles.wideButton }}
-                data-test="decisionPublishButton"
               />
             </div>
             <div className={styles.details}>
               <DetailsWidget
-                decisionType={MSG.decisionType}
-                domain={colony.domains[0]}
+                actionType={actionType as ColonyActions}
+                recipient={userProfile}
                 colony={colony}
-                walletAddress={walletAddress}
+                values={{
+                  ...actionAndEventValues,
+                }}
               />
             </div>
           </div>
