@@ -22,3 +22,12 @@
 .labelDescription {
   color: var(--temp-grey-blue-7);
 }
+
+/*
+  I can't think of any other way of overriding the theme styles
+  right now without adding another theme or prop just to change the color
+*/
+.inputParamContainer label span,
+.inputParamContainer input::placeholder {
+  color: var(--temp-grey-blue-7) !important;
+}
