@@ -56,7 +56,6 @@ const DecisionPreview = () => {
   const { data: colonyData, error, loading } = useColonyFromNameQuery({
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
-    pollInterval: 5000,
   });
 
   if (
@@ -77,94 +76,91 @@ const DecisionPreview = () => {
     return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
-  if (colonyData?.processedColony) {
-    const { processedColony: colony } = colonyData;
+  const { processedColony: colony } = colonyData;
 
-    const UserAvatar = HookedUserAvatar({ fetchUser: false });
+  const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
-    const actionAndEventValues = {
-      actionType,
-      fromDomain: colonyData.processedColony.domains.find(
-        ({ ethDomainId }) =>
-          ethDomainId === parseInt(decisionData.fromDomain, 10),
-      ) as OneDomain,
-    };
+  const actionAndEventValues = {
+    actionType,
+    fromDomain: colonyData.processedColony.domains.find(
+      ({ ethDomainId }) =>
+        ethDomainId === parseInt(decisionData.fromDomain, 10),
+    ) as OneDomain,
+  };
 
-    return (
-      <div className={styles.main}>
-        <div className={styles.upperContainer}>
-          <p className={styles.tagWrapper}>
-            <Tag text={MSG.preview} appearance={{ theme: 'light' }} />
-          </p>
-        </div>
-        <hr className={styles.dividerTop} />
-        <div className={styles.contentContainer}>
-          <div className={styles.leftContent}>
-            <span className={styles.userinfo}>
-              <UserAvatar
-                colony={colony}
-                size="s"
-                notSet={false}
-                user={userProfile}
-                address={walletAddress || ''}
-                showInfo
-                popperOptions={{
-                  showArrow: false,
-                  placement: 'left',
-                  modifiers: [
-                    {
-                      name: 'offset',
-                      options: {
-                        offset: [0, 10],
-                      },
+  return (
+    <div className={styles.main}>
+      <div className={styles.upperContainer}>
+        <p className={styles.tagWrapper}>
+          <Tag text={MSG.preview} appearance={{ theme: 'light' }} />
+        </p>
+      </div>
+      <hr className={styles.dividerTop} />
+      <div className={styles.contentContainer}>
+        <div className={styles.leftContent}>
+          <span className={styles.userinfo}>
+            <UserAvatar
+              colony={colony}
+              size="s"
+              notSet={false}
+              user={userProfile}
+              address={walletAddress || ''}
+              showInfo
+              popperOptions={{
+                showArrow: false,
+                placement: 'left',
+                modifiers: [
+                  {
+                    name: 'offset',
+                    options: {
+                      offset: [0, 10],
                     },
-                  ],
-                }}
-              />
-              <span className={styles.userName}>{`@${username}`}</span>
-            </span>
-            <div className={styles.title}>
-              <Heading
-                tagName="h3"
-                appearance={{
-                  size: 'medium',
-                  margin: 'small',
-                  theme: 'dark',
-                }}
-                text={decisionData.title}
-              />
-            </div>
-            {decisionData.description}
+                  },
+                ],
+              }}
+            />
+            <span className={styles.userName}>{`@${username}`}</span>
+          </span>
+          <div className={styles.title}>
+            <Heading
+              tagName="h3"
+              appearance={{
+                size: 'medium',
+                margin: 'small',
+                theme: 'dark',
+              }}
+              text={decisionData.title}
+            />
           </div>
-          <div className={styles.rightContent}>
-            <div className={styles.buttonContainer}>
-              <Button
-                appearance={{ theme: 'secondary', size: 'large' }}
-                onClick={handleEdit}
-                text={{ id: 'button.edit' }}
-              />
-              <Button
-                appearance={{ theme: 'primary', size: 'large' }}
-                onClick={handleSubmit}
-                text={{ id: 'button.publish' }}
-              />
-            </div>
-            <div className={styles.details}>
-              <DetailsWidget
-                actionType={actionType as ColonyActions}
-                recipient={userProfile}
-                colony={colony}
-                values={{
-                  ...actionAndEventValues,
-                }}
-              />
-            </div>
+          {decisionData.description}
+        </div>
+        <div className={styles.rightContent}>
+          <div className={styles.buttonContainer}>
+            <Button
+              appearance={{ theme: 'secondary', size: 'large' }}
+              onClick={handleEdit}
+              text={{ id: 'button.edit' }}
+            />
+            <Button
+              appearance={{ theme: 'primary', size: 'large' }}
+              onClick={handleSubmit}
+              text={{ id: 'button.publish' }}
+            />
+          </div>
+          <div className={styles.details}>
+            <DetailsWidget
+              actionType={actionType as ColonyActions}
+              recipient={userProfile}
+              colony={colony}
+              values={{
+                ...actionAndEventValues,
+              }}
+            />
           </div>
         </div>
       </div>
-    );
-  }
-  return null;
+    </div>
+  );
 };
 
 DecisionPreview.displayName = displayName;

@@ -5,7 +5,7 @@
   background-color: white;
 }
 
-.setMarginWidth {
+.containerMargin {
   /*
    * @NOTE On specs
    *
@@ -20,13 +20,13 @@
 }
 
 .dividerTop {
-  composes: setMarginWidth;
+  composes: containerMargin;
   height: 1px;
   background-color: color-mod(var(--temp-grey-blue-7) alpha(15%));
 }
 
 .contentContainer {
-  composes: setMarginWidth;
+  composes: containerMargin;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;

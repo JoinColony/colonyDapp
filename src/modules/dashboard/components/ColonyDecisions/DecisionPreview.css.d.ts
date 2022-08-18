@@ -1,5 +1,5 @@
 export const main: string;
-export const setMarginWidth: string;
+export const containerMargin: string;
 export const dividerTop: string;
 export const contentContainer: string;
 export const upperContainer: string;

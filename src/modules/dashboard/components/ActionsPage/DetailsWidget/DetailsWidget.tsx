@@ -179,7 +179,7 @@ const DetailsWidget = ({
             {recipient && detailsForAction.ToRecipient && (
               <DetailsWidgetUser
                 colony={colony}
-                walletAddress={recipient?.profile.walletAddress as string}
+                walletAddress={recipient?.profile.walletAddress}
               />
             )}
           </div>
@@ -225,7 +225,7 @@ const DetailsWidget = ({
             {recipient && detailsForAction.Author && (
               <DetailsWidgetUser
                 colony={colony}
-                walletAddress={recipient?.profile.walletAddress as string}
+                walletAddress={recipient?.profile.walletAddress}
               />
             )}
           </div>
