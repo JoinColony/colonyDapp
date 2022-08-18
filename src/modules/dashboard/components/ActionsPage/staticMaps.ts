@@ -98,7 +98,7 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyMotions.EmitDomainReputationPenaltyMotion]: 'emoji-firebolt',
   [ColonyMotions.EmitDomainReputationRewardMotion]: 'emoji-shooting-star',
   [ColonyMotions.UnlockTokenMotion]: 'emoji-padlock',
-  [ColonyActions.Decision]: 'circle-check-primary',
+  [ColonyActions.Decision]: 'emoji-decisions',
   [ColonyActions.Generic]: 'circle-check-primary',
 };
 
