@@ -161,12 +161,13 @@ const POLYGON_NETWORK: NetworkInfo = {
   gnosisTxService: 'https://safe-transaction.polygon.gnosis.io/',
 };
 
-const RINKEBY_TEST_NETWORK: NetworkInfo = {
+export const RINKEBY_TEST_NETWORK: NetworkInfo = {
   name: 'Rinkeby Testnet',
   chainId: 4,
   shortName: 'RIN',
   contractAddressLink: '',
   gnosisTxService: 'https://safe-transaction.rinkeby.gnosis.io/',
+  rpcUrl: 'https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
 };
 
 /*
