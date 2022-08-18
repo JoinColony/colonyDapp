@@ -23,11 +23,11 @@ import styles from './DecisionPreview.css';
 
 const MSG = defineMessages({
   preview: {
-    id: 'dashboard.ColonyDecisions.DecisionPreview.preview',
+    id: 'dashboard.DecisionPreview.preview',
     defaultMessage: `Preview`,
   },
   loadingText: {
-    id: 'dashboard.ColonyDecisions.DecisionPreview.loadingText',
+    id: 'dashboard.DecisionPreview.loadingText',
     defaultMessage: 'Loading Decision',
   },
 });
@@ -43,7 +43,7 @@ const decisionData = {
 const handleEdit = () => {};
 const handleSubmit = () => {};
 
-const displayName = 'dashboard.ColonyDecisions.DecisionPreview';
+const displayName = 'dashboard.DecisionPreview';
 
 const DecisionPreview = () => {
   const { colonyName } = useParams<{
