@@ -1,0 +1,76 @@
+@value paddingRightLeft: 54px;
+
+.batchContainer {
+  padding: 0 paddingRightLeft 80px;
+}
+
+.rowStyles {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: color-mod(var(--dark) alpha(85%));
+  letter-spacing: 0.5px;
+}
+
+.data {
+  composes: rowStyles;
+  padding: 11px 0;
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
+.dataRow {
+  composes: rowStyles;
+  padding: 12px 0;
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
+.valueRow {
+  composes: rowStyles;
+  padding: 10px 0;
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
+.valueContainer {
+  display: flex;
+  align-items: flex-start;
+}
+
+.value {
+  display: flex;
+  align-items: center;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+  color: var(--dark);
+  letter-spacing: 0.1px;
+}
+
+.value > span {
+  transform: translateY(2px);
+}
+
+.icon {
+  margin-right: 4px;
+}
+
+.tokenIcon {
+  height: 18px;
+  width: 18px;
+}
+
+.marginBottom {
+  margin-bottom: 6px;
+}
+
+.wrapper {
+  composes: rowStyles;
+  padding: 11px 0;
+}
+
+.tokenWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
