@@ -43,6 +43,7 @@ import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog'
 import { initalMilestone } from '~dashboard/ExpenditurePage/Staged/constants';
 import { isBatchPaymentType } from '~dashboard/ExpenditurePage/Batch/utils';
 import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
+import { isBatchPaymentType } from '~dashboard/ExpenditurePage/Batch/utils';
 
 import { findDifferences, updateValues, setClaimDate } from './utils';
 import { ExpenditureTypes, ValuesType } from './types';
