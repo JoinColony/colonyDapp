@@ -18,6 +18,7 @@ import {
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { mapPayload, pipe } from '~utils/actions';
+import { log } from '~utils/debug';
 
 import styles from './StakingWidget.css';
 import StakingSlider, { StakingAmounts } from './StakingSlider';
@@ -135,13 +136,35 @@ const StakingWidget = ({
     pipe(
       mapPayload(({ amount }) => {
         if (data?.motionStakes) {
-          const { minUserStake } = data.motionStakes;
+          const {
+            minUserStake,
+            maxUserStake,
+            remainingToFullyNayStaked,
+            remainingToFullyYayStaked,
+          } = data.motionStakes;
+
+          let finalStake;
           const stake = getDecimalStake(amount);
-          const stakeWithMin = new Decimal(minUserStake).gte(stake)
-            ? new Decimal(minUserStake)
-            : stake;
+
+          if (amount === 100) {
+            finalStake = maxUserStake;
+          } else if (amount === 0 || new Decimal(minUserStake).gte(stake)) {
+            finalStake = minUserStake;
+          } else {
+            finalStake = stake.toString();
+          }
+
+          log.verbose('Staking values: ', {
+            minUserStake,
+            maxUserStake,
+            remainingToFullyNayStaked,
+            remainingToFullyYayStaked,
+            stake: stake.toString(),
+            finalStake,
+          });
+
           return {
-            amount: stakeWithMin.round().toString(),
+            amount: finalStake,
             userAddress: walletAddress,
             colonyAddress,
             motionId: bigNumberify(motionId),
