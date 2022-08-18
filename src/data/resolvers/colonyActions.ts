@@ -257,6 +257,7 @@ export const colonyActionsResolvers = ({
           rootHash: null,
           isWhitelistActivated: false,
           verifiedAddresses: [],
+          colonySafes: [],
           ...actionValues,
         };
       }
@@ -301,6 +302,7 @@ export const colonyActionsResolvers = ({
         colonyDisplayName: null,
         colonyAvatarHash: null,
         colonyTokens: [],
+        colonySafes: [],
         blockNumber: null,
         motionState: null,
         motionDomain: null,

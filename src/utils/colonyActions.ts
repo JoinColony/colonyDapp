@@ -8,13 +8,19 @@ import {
   ColonyAndExtensionsEvents,
   FormattedAction,
   Address,
+  AddedActions,
 } from '~types/index';
-import { ColonyAction, SugraphEventProcessedValues } from '~data/index';
+import {
+  ColonyAction,
+  ColonySafe,
+  SugraphEventProcessedValues,
+} from '~data/index';
 
 import {
   DETAILS_FOR_ACTION,
   ActionPageDetails,
 } from '~dashboard/ActionsPage/staticMaps';
+import { ColonyMetadataChecks } from '~modules/dashboard/hooks/useColonyMetadataChecks';
 
 type DetailsValuesMap = Partial<
   {
@@ -32,7 +38,7 @@ type ValuesForActionTypesMap = Partial<
  * Get colony action details for DetailsWidget based on action type and ActionPageDetails map
  */
 export const getDetailsForAction = (
-  actionType: ColonyActions | ColonyMotions,
+  actionType: ColonyActions | ColonyMotions | AddedActions,
 ): DetailsValuesMap => {
   const detailsForActionType = DETAILS_FOR_ACTION[actionType];
   return Object.keys(ActionPageDetails).reduce((detailsMap, detailsKey) => {
@@ -137,7 +143,8 @@ export const getColonyMetadataMessageDescriptorsIds = (
     logoChanged,
     tokensChanged,
     verifiedAddressesChanged,
-  }: { [key: string]: boolean },
+    removedSafes,
+  }: ColonyMetadataChecks,
 ) => {
   if (actionType === ColonyAndExtensionsEvents.ColonyMetadata) {
     if (nameChanged && logoChanged) {
@@ -154,6 +161,10 @@ export const getColonyMetadataMessageDescriptorsIds = (
     }
     if (verifiedAddressesChanged) {
       return `event.${ColonyAndExtensionsEvents.ColonyMetadata}.verifiedAddresses`;
+    }
+
+    if ((removedSafes || []).length > 0) {
+      return `event.${ColonyAndExtensionsEvents.ColonyMetadata}.safeRemoved`;
     }
   }
   return `event.${ColonyAndExtensionsEvents.ColonyMetadata}.fallback`;
@@ -209,6 +220,7 @@ export interface ColonyMetadata {
   colonyTokens: string[] | null;
   verifiedAddresses: string[] | null;
   isWhitelistActivated: boolean | null;
+  colonySafes: ColonySafe[];
   domainName?: string;
   domainPurpose?: string;
   domainColor?: string;
@@ -223,6 +235,7 @@ export const parseColonyMetadata = (jsonMetadata: string): ColonyMetadata => {
         colonyTokens = [],
         verifiedAddresses = [],
         isWhitelistActivated = null,
+        colonySafes = [],
       } = JSON.parse(jsonMetadata);
       return {
         colonyDisplayName,
@@ -230,6 +243,7 @@ export const parseColonyMetadata = (jsonMetadata: string): ColonyMetadata => {
         colonyTokens,
         verifiedAddresses,
         isWhitelistActivated,
+        colonySafes,
       };
     }
   } catch (error) {
@@ -242,6 +256,7 @@ export const parseColonyMetadata = (jsonMetadata: string): ColonyMetadata => {
     colonyTokens: [],
     verifiedAddresses: [],
     isWhitelistActivated: null,
+    colonySafes: [],
   };
 };
 
@@ -304,6 +319,7 @@ export const getSpecificActionValuesCheck = (
     domainColor: currentDomainColor,
     verifiedAddresses: currentVerifiedAddresses,
     isWhitelistActivated: currentIsWhitelistActivated,
+    colonySafes: currentColonySafes,
   }: Partial<ColonyAction> | ColonyMetadata,
   {
     colonyDisplayName: prevColonyDisplayName,
@@ -314,6 +330,7 @@ export const getSpecificActionValuesCheck = (
     domainColor: prevDomainColor,
     verifiedAddresses: prevVerifiedAddresses,
     isWhitelistActivated: prevIsWhitelistActivated,
+    colonySafes: prevColonySafes,
   }: {
     colonyDisplayName?: string | null;
     colonyAvatarHash?: string | null;
@@ -323,8 +340,9 @@ export const getSpecificActionValuesCheck = (
     domainColor?: string | null;
     verifiedAddresses?: string[] | null;
     isWhitelistActivated?: boolean | null;
+    colonySafes?: ColonySafe[];
   },
-): { [key: string]: boolean } => {
+): ColonyMetadataChecks | { [key: string]: boolean } => {
   switch (actionType) {
     case ColonyAndExtensionsEvents.ColonyMetadata: {
       const nameChanged = prevColonyDisplayName !== currentColonyDisplayName;
@@ -345,11 +363,25 @@ export const getSpecificActionValuesCheck = (
         prevColonyTokens ? prevColonyTokens.slice(0).sort() : [],
         currentColonyTokens?.slice(0).sort() || [],
       );
+
+      const removedSafes =
+        (currentColonySafes || []).length < (prevColonySafes || []).length
+          ? (prevColonySafes || []).filter(
+              (safe) =>
+                !(currentColonySafes || []).some(
+                  ({ contractAddress, chainId }) =>
+                    contractAddress === safe.contractAddress &&
+                    chainId === safe.chainId,
+                ),
+            )
+          : [];
+
       return {
         nameChanged,
         logoChanged,
         tokensChanged,
         verifiedAddressesChanged,
+        removedSafes,
       };
     }
     case ColonyAndExtensionsEvents.DomainMetadata: {

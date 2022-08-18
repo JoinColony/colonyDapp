@@ -24,6 +24,14 @@ export enum ColonyActions {
   EmitDomainReputationReward = 'EmitDomainReputationReward',
 }
 
+export enum AddedActions {
+  AddressBookUpdated = 'AddressBookUpdated',
+  TokensUpdated = 'TokensUpdated',
+  SafeRemoved = 'SafeRemoved',
+}
+
+export const ColonyExtendedActions = { ...ColonyActions, ...AddedActions };
+
 export enum ColonyAndExtensionsEvents {
   Generic = 'Generic',
   /*

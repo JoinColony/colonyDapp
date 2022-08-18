@@ -8,7 +8,7 @@ import TransactionLink from '~core/TransactionLink';
 import Numeral from '~core/Numeral';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import { AnyUser, Colony } from '~data/index';
-import { ColonyActions, ColonyMotions } from '~types/index';
+import { AddedActions, ColonyActions, ColonyMotions } from '~types/index';
 import { splitTransactionHash } from '~utils/strings';
 import { getDetailsForAction } from '~utils/colonyActions';
 import { EventValues } from '../../ActionsPageFeed/ActionsPageFeed';
@@ -16,6 +16,7 @@ import { ACTION_TYPES_ICONS_MAP } from '../../ActionsPage/staticMaps';
 
 import DetailsWidgetTeam from './DetailsWidgetTeam';
 import DetailsWidgetRoles from './DetailsWidgetRoles';
+import DetailsWidgetSafe from './DetailsWidgetSafe';
 
 import styles from './DetailsWidget.css';
 
@@ -73,10 +74,14 @@ const MSG = defineMessages({
       false {reward}
     }`,
   },
+  safe: {
+    id: 'dashboard.ActionsPage.DetailsWidget.safe',
+    defaultMessage: 'Safe',
+  },
 });
 
 interface Props {
-  actionType: ColonyActions | ColonyMotions;
+  actionType: ColonyActions | ColonyMotions | AddedActions;
   recipient?: AnyUser;
   values?: EventValues;
   transactionHash?: string;
@@ -123,7 +128,7 @@ const DetailsWidget = ({
             title={formatMessage(
               { id: messageId },
               {
-                actionType: values?.actionType,
+                actionType,
               },
             )}
             appearance={{ size: 'small' }}
@@ -138,7 +143,7 @@ const DetailsWidget = ({
                * of two separate strings (apparently you can't pass it just a plain
                * string with spaces...)
                */
-              values={{ actionType: values?.actionType }}
+              values={{ actionType }}
             />
           </div>
         </div>
@@ -259,6 +264,18 @@ const DetailsWidget = ({
           <div className={styles.value}>{values.colonyName}</div>
         </div>
       )}
+      {detailsForAction.Safe &&
+        (values?.removedSafes || []).length > 0 &&
+        values?.removedSafes?.map((safe, index) => (
+          <div className={styles.item} key={index}>
+            <div className={styles.label}>
+              <FormattedMessage {...MSG.safe} />
+            </div>
+            <div className={styles.value}>
+              <DetailsWidgetSafe safe={safe} />
+            </div>
+          </div>
+        ))}
       {!!shortenedHash && (
         <div className={styles.item}>
           <div className={styles.label}>

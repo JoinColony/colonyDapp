@@ -18,6 +18,7 @@ import {
   useLoggedInUser,
   useCommentsSubscription,
   TokenInfoQuery,
+  ColonySafe,
 } from '~data/index';
 import { ActionUserRoles, ColonyActions, Address } from '~types/index';
 import { MotionVote } from '~utils/colonyMotions';
@@ -69,6 +70,7 @@ export interface EventValues {
   objectionTag?: ReactElement;
   reputationChange?: string;
   isSmiteAction?: boolean;
+  removedSafes?: ColonySafe[];
 }
 
 export type FeedItemWithId<T> = T & { uniqueId: string };

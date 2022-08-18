@@ -13,6 +13,7 @@ import ActionsPageFeed, {
   ActionsPageFeedItemWithIPFS,
 } from '~dashboard/ActionsPageFeed';
 import { CommentInput } from '~core/Comment';
+import MaskedAddress from '~core/MaskedAddress';
 
 import {
   useLoggedInUser,
@@ -26,13 +27,18 @@ import {
 import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
-import useColonyMetadataChecks from '~modules/dashboard/hooks/useColonyMetadataChecks';
+import {
+  useColonyMetadataChecks,
+  useExtendedColonyActionType,
+} from '~modules/dashboard/hooks';
 import {
   getFormattedTokenValue,
   getTokenDecimalsWithFallback,
 } from '~utils/tokens';
 import { useDataFetcher } from '~utils/hooks';
 import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
+import { GNOSIS_SAFE_NAMES_MAP } from '~constants';
+
 import { ipfsDataFetcher } from '../../../../core/fetchers';
 
 import DetailsWidget from '../DetailsWidget';
@@ -97,7 +103,14 @@ const DefaultAction = ({
   );
 
   let domainMetadata;
-  const { verifiedAddressesChanged, tokensChanged } = useColonyMetadataChecks(
+  const { removedSafes } = useColonyMetadataChecks(
+    actionType,
+    colony,
+    transactionHash,
+    colonyAction,
+  );
+
+  const extendedActionType = useExtendedColonyActionType(
     actionType,
     colony,
     transactionHash,
@@ -141,6 +154,34 @@ const DefaultAction = ({
     new Decimal(reputationChange).abs().toString(),
     decimals,
   );
+
+  const removedSafesString = removedSafes?.reduce(
+    (acc, { chainId, contractAddress, safeName }, index) => {
+      const removedSafe = (
+        <>
+          <span>{`${safeName} (${GNOSIS_SAFE_NAMES_MAP[chainId]}) `}</span>
+          <MaskedAddress address={contractAddress} />
+        </>
+      );
+      if (index === 0) {
+        return removedSafe;
+      }
+      if (index === removedSafes.length - 1) {
+        return (
+          <>
+            {acc} and {removedSafe}
+          </>
+        );
+      }
+      return (
+        <>
+          {acc}, {removedSafe}
+        </>
+      );
+    },
+    <></>,
+  );
+
   /*
    * @NOTE We need to convert the action type name into a forced camel-case string
    *
@@ -148,7 +189,7 @@ const DefaultAction = ({
    * doesn't like that...
    */
   const actionAndEventValues = {
-    actionType,
+    actionType: extendedActionType,
     initiator: (
       <span className={styles.titleDecoration}>
         <FriendlyName user={initiator} autoShrinkAddress />
@@ -188,10 +229,12 @@ const DefaultAction = ({
     reputationChange: formattedReputationChange,
     reputationChangeNumeral: <Numeral value={formattedReputationChange} />,
     isSmiteAction: new Decimal(reputationChange).isNegative(),
+    removedSafes,
+    removedSafesString,
   };
 
   const actionAndEventValuesForDocumentTitle = {
-    actionType,
+    actionType: extendedActionType,
     initiator:
       initiator.profile?.displayName ??
       initiator.profile?.username ??
@@ -246,14 +289,7 @@ const DefaultAction = ({
            */}
           <h1 className={styles.heading} data-test="actionHeading">
             <FormattedMessage
-              id={
-                (verifiedAddressesChanged &&
-                  `action.${ColonyActions.ColonyEdit}.verifiedAddresses`) ||
-                (tokensChanged &&
-                  `action.${ColonyActions.ColonyEdit}.tokens`) ||
-                roleMessageDescriptorId ||
-                'action.title'
-              }
+              id={roleMessageDescriptorId || 'action.title'}
               values={{
                 ...actionAndEventValues,
                 fromDomain: actionAndEventValues.fromDomain?.name,
@@ -294,7 +330,7 @@ const DefaultAction = ({
         </div>
         <div className={styles.details}>
           <DetailsWidget
-            actionType={actionType as ColonyActions}
+            actionType={extendedActionType as ColonyActions}
             recipient={recipient}
             transactionHash={transactionHash}
             values={actionAndEventValues}
