@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import toFinite from 'lodash/toFinite';
@@ -15,6 +15,7 @@ import { Address } from '~types/index';
 
 import { TransactionTypes } from './constants';
 import ControlSafeForm, { NFT } from './ControlSafeForm';
+import { AbiItemExtended } from '~modules/dashboard/hooks/useContractABIParser';
 
 const MSG = defineMessages({
   requiredFieldError: {
@@ -42,7 +43,7 @@ export interface FormValues {
     amount?: number;
     recipient?: AnyUser;
     data?: string;
-    contract?: string;
+    contract?: AnyUser;
     abi?: string;
     contractFunction?: string;
     nft: NFT;
@@ -58,10 +59,65 @@ type Props = DialogProps &
   Partial<WizardDialogType<object>> &
   ActionDialogProps;
 
-const validationSchema = (isPreview) =>
-  yup.object().shape({
+const ControlSafeDialog = ({
+  colony,
+  cancel,
+  callStep,
+  prevStep,
+  isVotingExtensionEnabled,
+}: Props) => {
+  const [showPreview, setShowPreview] = useState(false);
+  const [selectedContractMethod, setSelectedContractMethod] = useState<
+    AbiItemExtended
+  >();
+  const [expandedValidationSchema, setExpandedValidationSchema] = useState<
+    Record<string, any>
+  >({});
+  const { safes } = colony;
+
+  const getMethodInputValidation = (
+    inputType: string,
+    contractName: string,
+  ) => {
+    if (inputType === 'uint256') {
+      return yup.number().when('contractFunction', {
+        is: (contractFunction) => contractFunction === contractName,
+        then: yup.number().required(),
+        otherwise: false,
+      });
+    }
+    if (inputType === 'address') {
+      return yup.string().when('contractFunction', {
+        is: (contractFunction) => contractFunction === contractName,
+        then: yup.string().address().required(),
+        otherwise: false,
+      });
+    }
+    return yup.string().when('contractFunction', {
+      is: (contractFunction) => contractFunction === contractName,
+      then: yup.string().required(),
+      otherwise: false,
+    });
+  };
+
+  useEffect(() => {
+    if (selectedContractMethod) {
+      const updatedExpandedValidationSchema = {};
+
+      selectedContractMethod?.inputs?.map((input) => {
+        updatedExpandedValidationSchema[input.name] = getMethodInputValidation(
+          input.type,
+          selectedContractMethod.name,
+        );
+      });
+
+      setExpandedValidationSchema(updatedExpandedValidationSchema);
+    }
+  }, [selectedContractMethod]);
+
+  const validationSchema = yup.object().shape({
     safe: yup.string().required(() => MSG.requiredFieldError),
-    ...(isPreview ? { transactionsTitle: yup.string().required() } : {}),
+    ...(showPreview ? { transactionsTitle: yup.string().required() } : {}),
     transactions: yup.array(
       yup.object().shape({
         transactionType: yup.string().required(() => MSG.requiredFieldError),
@@ -156,19 +212,10 @@ const validationSchema = (isPreview) =>
             }),
           })
           .nullable(),
+        ...expandedValidationSchema,
       }),
     ),
   });
-
-const ControlSafeDialog = ({
-  colony,
-  cancel,
-  callStep,
-  prevStep,
-  isVotingExtensionEnabled,
-}: Props) => {
-  const [showPreview, setShowPreview] = useState(false);
-  const { safes } = colony;
 
   return (
     <ActionForm
@@ -189,7 +236,7 @@ const ControlSafeDialog = ({
           },
         ],
       }}
-      validationSchema={validationSchema(showPreview)}
+      validationSchema={validationSchema}
       submit={ActionTypes.ACTION_GENERIC}
       success={ActionTypes.ACTION_GENERIC_SUCCESS}
       error={ActionTypes.ACTION_GENERIC_ERROR}
@@ -205,6 +252,8 @@ const ControlSafeDialog = ({
             isVotingExtensionEnabled={isVotingExtensionEnabled}
             showPreview={showPreview}
             handleShowPreview={setShowPreview}
+            selectedContractMethod={selectedContractMethod}
+            handleSelectedContractMethod={setSelectedContractMethod}
           />
         </Dialog>
       )}
