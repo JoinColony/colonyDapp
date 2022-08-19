@@ -88,3 +88,21 @@
 .dropzone > div > div > div {
   margin: 0;
 }
+
+.empty {
+  font-weight: var(--weight-normal);
+  color: color-mod(var(--danger) alpha(85%));
+}
+
+.error {
+  padding-top: 4px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+  text-align: right;
+  color: color-mod(var(--danger) alpha(85%));
+  letter-spacing: var(--spacing-normal);
+}
+
+.fontSmall button {
+  font-size: var(--size-small);
+}
