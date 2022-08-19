@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid';
 import { useMemo } from 'react';
 import { Colony, useMembersSubscription } from '~data/index';
 import { BatchDataItem } from './types';
@@ -17,30 +18,35 @@ export const useCalculateBatchPayment = (
     const { tokens: colonyTokens } = colony || {};
 
     const validatedData = data.map(({ recipient, amount, token }) => {
-      const correctRecipient = colonyMembers?.subscribedUsers.find(
+      const correctRecipient = colonyMembers?.subscribedUsers?.find(
         (user) => user.id === recipient,
       );
       const correctToken = colonyTokens?.find(
         (tokenItem) => tokenItem.id === token,
       );
       return {
-        recipient: correctRecipient ? recipient : undefined,
+        recipient,
         amount,
         token: correctToken || undefined,
+        error: !correctRecipient || !correctToken,
+        id: nanoid(),
       };
     });
 
     const filteredData = data.filter((item) => {
-      const correctRecipient = colonyMembers?.subscribedUsers.find(
+      const correctRecipient = colonyMembers?.subscribedUsers?.find(
         (user) => user.id === item.recipient,
       );
       const correctToken = colonyTokens?.find(
         (tokenItem) => tokenItem.id === item.token,
       );
-      return !!item.amount && correctRecipient && correctToken;
+      return item.amount && correctRecipient && correctToken;
     });
 
     const amount = filteredData.reduce((acc, item) => {
+      if (!item.token) {
+        return acc;
+      }
       if (item.token in acc) {
         return {
           ...acc,

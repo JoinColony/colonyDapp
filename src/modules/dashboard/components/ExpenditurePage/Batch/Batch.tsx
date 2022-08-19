@@ -12,7 +12,6 @@ import { useDialog } from '~core/Dialog';
 
 import CSVUploader from './CSVUploader';
 import PreviewDialog from './PreviewDialog';
-
 import { useCalculateBatchPayment } from './hooks';
 import DownloadTemplate from './DownloadTemplate';
 import styles from './Batch.css';
