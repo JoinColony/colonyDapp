@@ -98,6 +98,11 @@
   margin: 6px 0;
 }
 
+.cannotCreateMotion {
+  composes: permissionsError;
+  margin: 0 0 30px;
+}
+
 @media screen and query700 {
   .domainPotBalance {
     margin-top: 0px;

@@ -3,7 +3,11 @@ import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import sortBy from 'lodash/sortBy';
 import { AddressZero } from 'ethers/constants';
-import { ROOT_DOMAIN_ID, ColonyRole } from '@colony/colony-js';
+import {
+  ROOT_DOMAIN_ID,
+  ColonyRole,
+  VotingReputationExtensionVersion,
+} from '@colony/colony-js';
 import Decimal from 'decimal.js';
 
 import Button from '~core/Button';
@@ -31,6 +35,7 @@ import {
   useLoggedInUser,
 } from '~data/index';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { useTransformer } from '~utils/hooks';
 import { getFormattedTokenValue } from '~utils/tokens';
 import { calculatePercentageReputation } from '~utils/reputation';
@@ -102,10 +107,13 @@ const MSG = defineMessages({
     id: `dashboard.ManageReputationContainer.ManageReputationDialogForm.noPermission`,
     defaultMessage: `Improper use of this feature can break your colony. <a>Learn more</a>`,
   },
+  cannotCreateMotion: {
+    id: `dashboard.ManageReputationContainer.ManageReputationDialogForm.cannotCreateMotion`,
+    defaultMessage: `Cannot create motions using the Governance v{version} Extension. Please upgrade to a newer version (when available)`,
+  },
 });
 
 interface Props extends ActionDialogProps {
-  isVotingExtensionEnabled: boolean;
   nativeTokenDecimals: number;
   verifiedUsers: AnyUser[];
   ethDomainId?: number;
@@ -133,7 +141,6 @@ const ManageReputationDialogForm = ({
   values,
   updateReputation,
   ethDomainId: preselectedDomainId,
-  isVotingExtensionEnabled,
   nativeTokenDecimals,
   verifiedUsers,
   isSmiteAction = false,
@@ -162,6 +169,13 @@ const ManageReputationDialogForm = ({
       domainRoles,
       isSmiteAction ? ColonyRole.Arbitration : ColonyRole.Root,
     );
+
+  const {
+    votingExtensionVersion,
+    isVotingExtensionEnabled,
+  } = useEnabledExtensions({
+    colonyAddress,
+  });
 
   const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
     colonyAddress,
@@ -276,6 +290,11 @@ const ManageReputationDialogForm = ({
     (motionDomainId) => setFieldValue('motionDomainId', motionDomainId),
     [setFieldValue],
   );
+
+  const cannotCreateMotion =
+    votingExtensionVersion ===
+      VotingReputationExtensionVersion.FuchsiaLightweightSpaceship &&
+    !values.forceAction;
 
   return (
     <>
@@ -453,6 +472,19 @@ const ManageReputationDialogForm = ({
           domainId={Number(domainId)}
         />
       )}
+      {cannotCreateMotion && (
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <div className={styles.noPermissionFromMessage}>
+            <FormattedMessage
+              {...MSG.cannotCreateMotion}
+              values={{
+                version:
+                  VotingReputationExtensionVersion.FuchsiaLightweightSpaceship,
+              }}
+            />
+          </div>
+        </DialogSection>
+      )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
@@ -468,7 +500,7 @@ const ManageReputationDialogForm = ({
               : { id: 'button.createMotion' }
           }
           loading={isSubmitting}
-          disabled={!isValid || inputDisabled}
+          disabled={cannotCreateMotion || !isValid || inputDisabled}
           style={{ minWidth: styles.wideButton }}
           data-test="reputationConfirmButton"
         />

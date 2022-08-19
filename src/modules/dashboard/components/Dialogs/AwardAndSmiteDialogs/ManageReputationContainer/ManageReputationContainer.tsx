@@ -14,6 +14,7 @@ import { ActionTypes } from '~redux/index';
 import { useMembersSubscription } from '~data/index';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 import { useSelectedUser } from '~utils/hooks/useSelectedUser';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { getVerifiedUsers } from '~utils/verifiedRecipients';
 
 import DialogForm from '../ManageReputationDialogForm';
@@ -34,7 +35,6 @@ const MSG = defineMessages({
 const ManageReputationContainer = ({
   colony: { colonyAddress, colonyName, tokens, nativeTokenAddress },
   colony,
-  isVotingExtensionEnabled,
   callStep,
   prevStep,
   cancel,
@@ -66,6 +66,10 @@ const ManageReputationContainer = ({
     setTotalReputationData(totalRep);
     setUserReputation(userRepPercentage);
   };
+
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress,
+  });
 
   const getFormAction = useCallback(
     (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
@@ -138,6 +142,7 @@ const ManageReputationContainer = ({
   const selectedUser = useSelectedUser(
     isWhitelistActivated ? verifiedUsers : subscribedUsers,
   );
+
   return (
     <ActionForm
       initialValues={{
@@ -169,7 +174,6 @@ const ManageReputationContainer = ({
               {...formValues}
               colony={colony}
               nativeTokenDecimals={nativeTokenDecimals}
-              isVotingExtensionEnabled={isVotingExtensionEnabled}
               back={() => callStep(prevStep)}
               ethDomainId={ethDomainId}
               verifiedUsers={

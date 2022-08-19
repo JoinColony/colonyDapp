@@ -2,7 +2,10 @@ import React from 'react';
 import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { ColonyRole } from '@colony/colony-js';
+import {
+  ColonyRole,
+  VotingReputationExtensionVersion,
+} from '@colony/colony-js';
 
 import Button from '~core/Button';
 import ExternalLink from '~core/ExternalLink';
@@ -20,6 +23,7 @@ import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 import { useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import { TOKEN_UNLOCK_INFO } from '~externalUrls';
 
@@ -58,12 +62,15 @@ const MSG = defineMessages({
     id: `dashboard.UnlockTokenDialog.UnlockTokenForm.annotation`,
     defaultMessage: "Explain why you're unlocking the native token (optional)",
   },
+  cannotCreateMotion: {
+    id: `dashboard.UnlockTokenDialog.UnlockTokenForm.cannotCreateMotion`,
+    defaultMessage: `Cannot create motions using the Governance v{version} Extension. Please upgrade to a newer version (when available)`,
+  },
 });
 
 const UnlockTokenForm = ({
   colony: { isNativeTokenLocked, canColonyUnlockNativeToken, colonyAddress },
   colony,
-  isVotingExtensionEnabled,
   back,
   isSubmitting,
   isValid,
@@ -77,6 +84,13 @@ const UnlockTokenForm = ({
   const canUserUnlockNativeToken =
     hasRootPermission && canColonyUnlockNativeToken && isNativeTokenLocked;
 
+  const {
+    votingExtensionVersion,
+    isVotingExtensionEnabled,
+  } = useEnabledExtensions({
+    colonyAddress,
+  });
+
   const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
     colonyAddress,
     canUserUnlockNativeToken,
@@ -86,6 +100,11 @@ const UnlockTokenForm = ({
 
   const inputDisabled =
     !userHasPermission || onlyForceAction || !isNativeTokenLocked;
+
+  const cannotCreateMotion =
+    votingExtensionVersion ===
+      VotingReputationExtensionVersion.FuchsiaLightweightSpaceship &&
+    !values.forceAction;
 
   return (
     <>
@@ -173,6 +192,19 @@ const UnlockTokenForm = ({
         </DialogSection>
       )}
       {onlyForceAction && isNativeTokenLocked && <NotEnoughReputation />}
+      {cannotCreateMotion && (
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <div className={styles.noPermissionMessage}>
+            <FormattedMessage
+              {...MSG.cannotCreateMotion}
+              values={{
+                version:
+                  VotingReputationExtensionVersion.FuchsiaLightweightSpaceship,
+              }}
+            />
+          </div>
+        </DialogSection>
+      )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
@@ -188,7 +220,7 @@ const UnlockTokenForm = ({
               : { id: 'button.createMotion' }
           }
           loading={isSubmitting}
-          disabled={!isValid || inputDisabled}
+          disabled={cannotCreateMotion || !isValid || inputDisabled}
           style={{ minWidth: styles.wideButton }}
           data-test="unlockTokenConfirmButton"
         />

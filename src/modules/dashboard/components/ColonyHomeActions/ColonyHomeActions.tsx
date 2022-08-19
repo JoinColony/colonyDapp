@@ -68,10 +68,7 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
 
   const [isLoadingUser, setIsLoadingUser] = useState<boolean>(!ethereal);
 
-  const {
-    isVotingExtensionEnabled,
-    isLoadingExtensions,
-  } = useEnabledExtensions({
+  const { isLoadingExtensions } = useEnabledExtensions({
     colonyAddress: colony.colonyAddress,
   });
 
@@ -105,7 +102,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         nextStep: 'dashboard.CreatePaymentDialog',
         prevStep: 'dashboard.ColonyActionsDialog',
         colony,
-        isVotingExtensionEnabled,
       },
     },
     {
@@ -113,7 +109,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
       props: {
         colony,
         prevStep: 'dashboard.ExpendituresDialog',
-        isVotingExtensionEnabled,
         ethDomainId,
       },
     },
@@ -126,7 +121,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         nextStepUnlockToken: 'dashboard.UnlockTokenDialog',
         prevStep: 'dashboard.ColonyActionsDialog',
         colony,
-        isVotingExtensionEnabled,
       },
     },
     {
@@ -134,7 +128,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
       props: {
         prevStep: 'dashboard.ManageFundsDialog',
         colony,
-        isVotingExtensionEnabled,
         ethDomainId,
       },
     },
@@ -143,7 +136,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
       props: {
         prevStep: 'dashboard.ManageFundsDialog',
         colony,
-        isVotingExtensionEnabled,
       },
     },
     {
@@ -154,7 +146,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         nextStepEdit: 'dashboard.EditDomainDialog',
         nextStepManageWhitelist: 'dashboard.ManageWhitelistDialog',
         colony,
-        isVotingExtensionEnabled,
       },
     },
     {
@@ -162,7 +153,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
       props: {
         prevStep: 'dashboard.ManageDomainsDialog',
         colony,
-        isVotingExtensionEnabled,
       },
     },
     {
@@ -170,7 +160,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
       props: {
         prevStep: 'dashboard.ManageDomainsDialog',
         colony,
-        isVotingExtensionEnabled,
         ethDomainId,
       },
     },
@@ -181,7 +170,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         nextStepSmiteReputation: 'dashboard.SmiteDialog',
         prevStep: 'dashboard.ColonyActionsDialog',
         colony,
-        isVotingExtensionEnabled,
       },
     },
     {
@@ -189,7 +177,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
       props: {
         prevStep: 'dashboard.ManageReputationDialog',
         colony,
-        isVotingExtensionEnabled,
         ethDomainId,
       },
     },
@@ -198,7 +185,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
       props: {
         prevStep: 'dashboard.ManageReputationDialog',
         colony,
-        isVotingExtensionEnabled,
         ethDomainId,
       },
     },
@@ -211,7 +197,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         nextStepEditDetails: 'dashboard.EditColonyDetailsDialog',
         nextStepVersionUpgrade: 'dashboard.NetworkContractUpgradeDialog',
         colony,
-        isVotingExtensionEnabled,
       },
     },
     {
@@ -219,7 +204,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
       props: {
         prevStep: 'dashboard.AdvancedDialog',
         colony,
-        isVotingExtensionEnabled,
         ethDomainId,
       },
     },
@@ -242,7 +226,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
       props: {
         prevStep: 'dashboard.AdvancedDialog',
         colony,
-        isVotingExtensionEnabled,
       },
     },
     {
@@ -250,7 +233,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
       props: {
         prevStep: 'dashboard.AdvancedDialog',
         colony,
-        isVotingExtensionEnabled,
       },
     },
     {
@@ -258,7 +240,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
       props: {
         prevStep: 'dashboard.ManageFundsDialog',
         colony,
-        isVotingExtensionEnabled,
       },
     },
     {
@@ -266,7 +247,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
       props: {
         prevStep: 'dashboard.ManageFundsDialog',
         colony,
-        isVotingExtensionEnabled,
       },
     },
   ]);

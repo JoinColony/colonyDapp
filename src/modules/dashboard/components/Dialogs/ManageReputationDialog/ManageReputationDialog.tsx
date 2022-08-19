@@ -6,6 +6,7 @@ import { DialogProps, ActionDialogProps } from '~core/Dialog';
 import IndexModal from '~core/IndexModal';
 
 import { WizardDialogType, useTransformer } from '~utils/hooks';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { useLoggedInUser, Colony } from '~data/index';
 
 import { getAllUserRoles } from '~modules/transformers';
@@ -57,7 +58,6 @@ const ManageReputation = ({
   callStep,
   prevStep,
   colony,
-  isVotingExtensionEnabled,
   nextStepSmiteReputation,
   nextStepAwardReputation,
 }: Props) => {
@@ -65,6 +65,10 @@ const ManageReputation = ({
   const { formatMessage } = useIntl();
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
 
   const hasRegisteredProfile = !!username && !ethereal;
   const canSmiteReputation =

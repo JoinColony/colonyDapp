@@ -6,6 +6,7 @@ import { DialogProps, ActionDialogProps } from '~core/Dialog';
 import IndexModal from '~core/IndexModal';
 
 import { WizardDialogType, useTransformer } from '~utils/hooks';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { useLoggedInUser, Colony } from '~data/index';
 import { getAllUserRoles } from '~modules/transformers';
 import {
@@ -109,7 +110,6 @@ const AdvancedDialog = ({
   nextStepVersionUpgrade,
   colony,
   colony: { version: colonyVersion },
-  isVotingExtensionEnabled,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -125,6 +125,10 @@ const AdvancedDialog = ({
 
   const canEnterPermissionManagement =
     (hasRegisteredProfile && canArchitect(allUserRoles)) || hasRootPermission;
+
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
 
   const items = [
     {

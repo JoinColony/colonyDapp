@@ -2,7 +2,11 @@ import { FormikProps } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as yup from 'yup';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { ROOT_DOMAIN_ID, ColonyRole } from '@colony/colony-js';
+import {
+  ROOT_DOMAIN_ID,
+  ColonyRole,
+  VotingReputationExtensionVersion,
+} from '@colony/colony-js';
 import { useHistory } from 'react-router-dom';
 import { isEqual, sortBy } from 'lodash';
 
@@ -27,6 +31,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 import { useLoggedInUser, useUser, AnyUser } from '~data/index';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import {
   getUserRolesForDomain,
   getAllRootAccounts,
@@ -82,11 +87,17 @@ const PermissionManagementDialog = ({
   close,
   callStep,
   prevStep,
-  isVotingExtensionEnabled,
   ethDomainId: preselectedDomainId,
 }: Props) => {
   const [isForce, setIsForce] = useState(false);
   const history = useHistory();
+
+  const {
+    isVotingExtensionEnabled,
+    votingExtensionVersion,
+  } = useEnabledExtensions({
+    colonyAddress,
+  });
 
   const getFormAction = useCallback(
     (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
@@ -233,7 +244,6 @@ const PermissionManagementDialog = ({
                   inputDisabled={inputDisabled || isSubmitting}
                   isSubmitting={isSubmitting}
                   userHasPermission={userHasPermission}
-                  isVotingExtensionEnabled={isVotingExtensionEnabled}
                 />
                 {!userHasPermission && (
                   <DialogSection appearance={{ theme: 'sidePadding' }}>
@@ -281,6 +291,10 @@ const PermissionManagementDialog = ({
                     type="submit"
                     style={{ minWidth: styles.wideButton }}
                     disabled={
+                      (votingExtensionVersion ===
+                        // eslint-disable-next-line max-len
+                        VotingReputationExtensionVersion.FuchsiaLightweightSpaceship &&
+                        !values.forceAction) ||
                       inputDisabled ||
                       !isValid ||
                       isEqual(

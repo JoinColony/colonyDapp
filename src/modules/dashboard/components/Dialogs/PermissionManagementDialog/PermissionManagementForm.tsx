@@ -1,6 +1,10 @@
 import React, { useCallback, useMemo } from 'react';
-import { defineMessages } from 'react-intl';
-import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { defineMessages, FormattedMessage } from 'react-intl';
+import {
+  ColonyRole,
+  ROOT_DOMAIN_ID,
+  VotingReputationExtensionVersion,
+} from '@colony/colony-js';
 import sortBy from 'lodash/sortBy';
 import { FormikProps } from 'formik';
 
@@ -18,6 +22,7 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import { Address } from '~types/index';
 import { useMembersSubscription, AnyUser, Colony } from '~data/index';
 import { useTransformer } from '~utils/hooks';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { getAllUserRolesForDomain } from '~modules/transformers';
 
 import { availableRoles } from './constants';
@@ -49,8 +54,12 @@ const MSG = defineMessages({
     defaultMessage: 'Member',
   },
   userPickerPlaceholder: {
-    id: 'SingleUserPicker.userPickerPlaceholder',
+    id: `dashboard.PermissionManagementDialog.PermissionManagementForm.userPickerPlaceholder`,
     defaultMessage: 'Search for a user or paste wallet address',
+  },
+  cannotCreateMotion: {
+    id: `dashboard.PermissionManagementDialog.PermissionManagementForm.cannotCreateMotion`,
+    defaultMessage: `Cannot create motions using the Governance v{version} Extension. Please upgrade to a newer version (when available)`,
   },
 });
 
@@ -67,7 +76,6 @@ interface Props {
   onMotionDomainChange: (domain: number) => void;
   inputDisabled: boolean;
   userHasPermission: boolean;
-  isVotingExtensionEnabled: boolean;
 }
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
@@ -87,7 +95,6 @@ const PermissionManagementForm = ({
   currentUserRolesInRoot,
   inputDisabled,
   userHasPermission,
-  isVotingExtensionEnabled,
   onDomainSelected,
   onMotionDomainChange,
   onChangeSelectedUser,
@@ -235,6 +242,18 @@ const PermissionManagementForm = ({
     [domainId],
   );
 
+  const {
+    votingExtensionVersion,
+    isVotingExtensionEnabled,
+  } = useEnabledExtensions({
+    colonyAddress,
+  });
+
+  const cannotCreateMotion =
+    votingExtensionVersion ===
+      VotingReputationExtensionVersion.FuchsiaLightweightSpaceship &&
+    !values.forceAction;
+
   return (
     <>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
@@ -327,6 +346,19 @@ const PermissionManagementForm = ({
           dataTest="permissionAnnotation"
         />
       </DialogSection>
+      {cannotCreateMotion && (
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <div className={styles.noPermissionFromMessage}>
+            <FormattedMessage
+              {...MSG.cannotCreateMotion}
+              values={{
+                version:
+                  VotingReputationExtensionVersion.FuchsiaLightweightSpaceship,
+              }}
+            />
+          </div>
+        </DialogSection>
+      )}
     </>
   );
 };

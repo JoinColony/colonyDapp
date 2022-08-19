@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
-import { ColonyRole } from '@colony/colony-js';
+import {
+  ColonyRole,
+  VotingReputationExtensionVersion,
+} from '@colony/colony-js';
 import { FormikProps } from 'formik';
 
 import AvatarUploader from '~core/AvatarUploader';
@@ -22,6 +25,7 @@ import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 import { useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot } from '~modules/users/checks';
 
@@ -59,6 +63,10 @@ const MSG = defineMessages({
     id: `dashboard.EditColonyDetailsDialog.EditColonyDetailsDialogForm.invalidAvatarFormat`,
     defaultMessage: `Image you tried to upload is in an invalid format`,
   },
+  cannotCreateMotion: {
+    id: `dashboard.EditColonyDetailsDialog.EditColonyDetailsDialogForm.cannotCreateMotion`,
+    defaultMessage: `Cannot create motions using the Governance v{version} Extension. Please upgrade to a newer version (when available)`,
+  },
 });
 
 const ColonyAvatarHooked = HookedColonyAvatar({ fetchColony: true });
@@ -70,7 +78,6 @@ const EditColonyDetailsDialogForm = ({
   handleSubmit,
   isSubmitting,
   isValid,
-  isVotingExtensionEnabled,
   values: { colonyAvatarImage, colonyDisplayName, forceAction },
   setFieldValue,
 }: ActionDialogProps & FormikProps<FormValues>) => {
@@ -83,6 +90,13 @@ const EditColonyDetailsDialogForm = ({
 
   const hasRegisteredProfile = !!username && !ethereal;
   const canEdit = hasRegisteredProfile && hasRoot(allUserRoles);
+
+  const {
+    votingExtensionVersion,
+    isVotingExtensionEnabled,
+  } = useEnabledExtensions({
+    colonyAddress,
+  });
 
   const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
     colony.colonyAddress,
@@ -135,6 +149,11 @@ const EditColonyDetailsDialogForm = ({
      */
     ((!!colonyAvatarImage || colonyAvatarImage === null) &&
       avatarURL !== colonyAvatarImage);
+
+  const cannotCreateMotion =
+    votingExtensionVersion ===
+      VotingReputationExtensionVersion.FuchsiaLightweightSpaceship &&
+    !forceAction;
 
   return (
     <>
@@ -267,6 +286,19 @@ const EditColonyDetailsDialogForm = ({
       {onlyForceAction && (
         <NotEnoughReputation appearance={{ marginTop: 'negative' }} />
       )}
+      {cannotCreateMotion && (
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <div className={styles.cannotCreateMotion}>
+            <FormattedMessage
+              {...MSG.cannotCreateMotion}
+              values={{
+                version:
+                  VotingReputationExtensionVersion.FuchsiaLightweightSpaceship,
+              }}
+            />
+          </div>
+        </DialogSection>
+      )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
@@ -283,6 +315,7 @@ const EditColonyDetailsDialogForm = ({
           onClick={() => handleSubmit()}
           loading={isSubmitting}
           disabled={
+            cannotCreateMotion ||
             inputDisabled ||
             !isValid ||
             avatarFileError ||

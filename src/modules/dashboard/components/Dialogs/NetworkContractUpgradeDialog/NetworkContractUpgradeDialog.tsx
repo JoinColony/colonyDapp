@@ -10,6 +10,7 @@ import { ActionForm } from '~core/Fields';
 import { ActionTypes } from '~redux/index';
 import { RootMotionOperationNames } from '~redux/types/actions';
 import { WizardDialogType } from '~utils/hooks';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import DialogForm from './NetworkContractUpgradeDialogForm';
 
@@ -35,10 +36,13 @@ const NetworkContractUpgradeDialog = ({
   prevStep,
   colony,
   colony: { colonyAddress, version, colonyName },
-  isVotingExtensionEnabled,
 }: Props) => {
   const [isForce, setIsForce] = useState(false);
   const history = useHistory();
+
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
 
   const getFormAction = useCallback(
     (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
@@ -97,7 +101,6 @@ const NetworkContractUpgradeDialog = ({
             <DialogForm
               {...formValues}
               colony={colony}
-              isVotingExtensionEnabled={isVotingExtensionEnabled}
               back={prevStep && callStep ? () => callStep(prevStep) : undefined}
             />
           </Dialog>

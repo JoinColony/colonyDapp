@@ -15,6 +15,7 @@ import { ActionTypes } from '~redux/index';
 import Dialog, { ActionDialogProps, DialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 import { WizardDialogType } from '~utils/hooks';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import DialogForm from './TransferFundsDialogForm';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -64,10 +65,13 @@ const TransferFundsDialog = ({
   prevStep,
   cancel,
   close,
-  isVotingExtensionEnabled,
 }: Props) => {
   const [isForce, setIsForce] = useState(false);
   const history = useHistory();
+
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
 
   const getFormAction = useCallback(
     (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
@@ -179,7 +183,6 @@ const TransferFundsDialog = ({
               {...formValues}
               colony={colony}
               domainOptions={domainOptions}
-              isVotingExtensionEnabled={isVotingExtensionEnabled}
               back={prevStep && callStep ? () => callStep(prevStep) : undefined}
             />
           </Dialog>

@@ -13,6 +13,7 @@ import { ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
 import { pipe, mapPayload, withMeta } from '~utils/actions';
 import { WizardDialogType, useAsyncFunction } from '~utils/hooks';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { createAddress } from '~utils/web3';
 
 import getTokenList from './getTokenList';
@@ -58,11 +59,14 @@ const ColonyTokenManagementDialog = ({
   close,
   callStep,
   prevStep,
-  isVotingExtensionEnabled,
 }: Props) => {
   const [isForce, setIsForce] = useState(false);
   const history = useHistory();
   const { formatMessage } = useIntl();
+
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress,
+  });
 
   const getFormAction = useCallback(
     (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
@@ -171,7 +175,6 @@ const ColonyTokenManagementDialog = ({
               back={prevStep && callStep ? () => callStep(prevStep) : undefined}
               tokensList={getTokenList}
               close={close}
-              isVotingExtensionEnabled={isVotingExtensionEnabled}
             />
           </Dialog>
         );

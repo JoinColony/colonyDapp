@@ -73,11 +73,13 @@ const ExpendituresDialog = ({
   prevStep,
   colony: { colonyAddress },
   colony,
-  isVotingExtensionEnabled,
   nextStep,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
-  const { isOneTxPaymentExtensionEnabled } = useEnabledExtensions({
+  const {
+    isOneTxPaymentExtensionEnabled,
+    isVotingExtensionEnabled,
+  } = useEnabledExtensions({
     colonyAddress,
   });
 

@@ -1,5 +1,9 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import {
+  ColonyRole,
+  ROOT_DOMAIN_ID,
+  VotingReputationExtensionVersion,
+} from '@colony/colony-js';
 import { FormikProps } from 'formik';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import sortBy from 'lodash/sortBy';
@@ -20,6 +24,7 @@ import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 import { useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { getAllUserRoles } from '~modules/transformers';
 import { canArchitect } from '~modules/users/checks';
 
@@ -55,6 +60,10 @@ const MSG = defineMessages({
       // eslint-disable-next-line max-len
       'You need the {roleRequired} permission in {domain} to take this action.',
   },
+  cannotCreateMotion: {
+    id: `dashboard.EditDomainDialog.EditDomainDialogForm.cannotCreateMotion`,
+    defaultMessage: `Cannot create motions using the Governance v{version} Extension. Please upgrade to a newer version (when available)`,
+  },
 });
 
 interface Props extends ActionDialogProps {
@@ -72,7 +81,6 @@ const EditDomainDialogForm = ({
   setFieldValue,
   setValues,
   values: { domainId, domainName, forceAction, motionDomainId },
-  isVotingExtensionEnabled,
 }: Props & FormikProps<FormValues>) => {
   const [domainColor, setDomainColor] = useState(Color.LightPink);
   const [currentFromDomain, setCurrentFromDomain] = useState<number>(
@@ -100,6 +108,13 @@ const EditDomainDialogForm = ({
   );
 
   const hasRoles = hasRegisteredProfile && canArchitect(allUserRoles);
+
+  const {
+    votingExtensionVersion,
+    isVotingExtensionEnabled,
+  } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
 
   const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
     colony.colonyAddress,
@@ -170,6 +185,11 @@ const EditDomainDialogForm = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const cannotCreateMotion =
+    votingExtensionVersion ===
+      VotingReputationExtensionVersion.FuchsiaLightweightSpaceship &&
+    !forceAction;
 
   return (
     <>
@@ -285,6 +305,19 @@ const EditDomainDialogForm = ({
           domainId={Number(domainId)}
         />
       )}
+      {cannotCreateMotion && (
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <div className={styles.noPermissionFromMessage}>
+            <FormattedMessage
+              {...MSG.cannotCreateMotion}
+              values={{
+                version:
+                  VotingReputationExtensionVersion.FuchsiaLightweightSpaceship,
+              }}
+            />
+          </div>
+        </DialogSection>
+      )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         {back && (
           <Button
@@ -302,7 +335,7 @@ const EditDomainDialogForm = ({
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() => handleSubmit()}
           loading={isSubmitting}
-          disabled={inputDisabled || !isValid}
+          disabled={cannotCreateMotion || inputDisabled || !isValid}
           style={{ minWidth: styles.wideButton }}
           data-test="editDomainConfirmButton"
         />

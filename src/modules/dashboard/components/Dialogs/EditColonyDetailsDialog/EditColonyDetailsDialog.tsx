@@ -9,6 +9,7 @@ import { ActionForm } from '~core/Fields';
 import { useColonyFromNameQuery } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 
 import DialogForm from './EditColonyDetailsDialogForm';
@@ -41,13 +42,16 @@ const EditColonyDetailsDialog = ({
     nativeTokenAddress,
   },
   colony,
-  isVotingExtensionEnabled,
 }: Props) => {
   const [isForce, setIsForce] = useState(false);
   const history = useHistory();
 
   const { data: colonyData } = useColonyFromNameQuery({
     variables: { name: colonyName, address: colonyAddress },
+  });
+
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress,
   });
 
   const getFormAction = useCallback(
@@ -130,7 +134,6 @@ const EditColonyDetailsDialog = ({
               {...formValues}
               colony={colony}
               back={() => callStep(prevStep)}
-              isVotingExtensionEnabled={isVotingExtensionEnabled}
             />
           </Dialog>
         );

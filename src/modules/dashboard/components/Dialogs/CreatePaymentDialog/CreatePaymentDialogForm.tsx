@@ -8,7 +8,11 @@ import {
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 import sortBy from 'lodash/sortBy';
-import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import {
+  ColonyRole,
+  ROOT_DOMAIN_ID,
+  VotingReputationExtensionVersion,
+} from '@colony/colony-js';
 import { isConfusing } from '@colony/unicode-confusables-noascii';
 import { AddressZero } from 'ethers/constants';
 
@@ -113,6 +117,10 @@ const MSG = defineMessages({
     id: `dashboard.CreatePaymentDialog.CreatePaymentDialogForm.warningText`,
     defaultMessage: `<span>Warning.</span> You are about to make a payment to an address not on the whitelist. Are you sure the address is correct?`,
   },
+  cannotCreateMotion: {
+    id: `dashboard.CreatePaymentDialog.CreatePaymentDialogForm.cannotCreateMotion`,
+    defaultMessage: `Cannot create motions using the Governance v{version} Extension. Please upgrade to a newer version (when available)`,
+  },
 });
 interface Props extends ActionDialogProps {
   verifiedUsers: AnyUser[];
@@ -153,7 +161,6 @@ const CreatePaymentDialogForm = ({
   back,
   colony,
   colony: { colonyAddress, domains, tokens },
-  isVotingExtensionEnabled,
   verifiedUsers,
   handleSubmit,
   setFieldValue,
@@ -184,6 +191,14 @@ const CreatePaymentDialogForm = ({
     () => tokens.find((token) => token.address === values.tokenAddress),
     [tokens, values.tokenAddress],
   );
+
+  const {
+    isOneTxPaymentExtensionEnabled,
+    votingExtensionVersion,
+    isVotingExtensionEnabled,
+  } = useEnabledExtensions({
+    colonyAddress,
+  });
 
   const { walletAddress } = useLoggedInUser();
 
@@ -311,9 +326,10 @@ const CreatePaymentDialogForm = ({
     domainId,
   );
 
-  const { isOneTxPaymentExtensionEnabled } = useEnabledExtensions({
-    colonyAddress,
-  });
+  const cannotCreateMotion =
+    votingExtensionVersion ===
+      VotingReputationExtensionVersion.FuchsiaLightweightSpaceship &&
+    !values.forceAction;
 
   const handleFromDomainChange = useCallback(
     (fromDomainValue) => {
@@ -603,6 +619,19 @@ const CreatePaymentDialogForm = ({
           domainId={domainId}
         />
       )}
+      {cannotCreateMotion && (
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <div className={styles.noPermissionFromMessage}>
+            <FormattedMessage
+              {...MSG.cannotCreateMotion}
+              values={{
+                version:
+                  VotingReputationExtensionVersion.FuchsiaLightweightSpaceship,
+              }}
+            />
+          </div>
+        </DialogSection>
+      )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
@@ -622,7 +651,12 @@ const CreatePaymentDialogForm = ({
            * Disable Form submissions if either the form is invalid, or
            * if our custom state was triggered.
            */
-          disabled={!isValid || !!customAmountError || inputDisabled}
+          disabled={
+            cannotCreateMotion ||
+            !isValid ||
+            !!customAmountError ||
+            inputDisabled
+          }
           style={{ minWidth: styles.wideButton }}
           data-test="paymentConfirmButton"
         />
