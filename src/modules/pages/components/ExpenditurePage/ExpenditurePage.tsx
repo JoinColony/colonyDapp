@@ -181,7 +181,7 @@ export interface ValuesType {
 }
 
 const initialValues = {
-  expenditure: 'advanced',
+  expenditure: ExpenditureTypes.Advanced,
   recipients: [newRecipient],
   filteredDomainId: String(ROOT_DOMAIN_ID),
   owner: undefined,
