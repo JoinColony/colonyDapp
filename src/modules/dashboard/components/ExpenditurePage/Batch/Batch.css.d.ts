@@ -12,3 +12,6 @@ export const icon: string;
 export const tokenIcon: string;
 export const tokenWrapper: string;
 export const dropzone: string;
+export const empty: string;
+export const error: string;
+export const fontSmall: string;
