@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { useField } from 'formik';
 import classNames from 'classnames';
-import { isEmpty } from 'lodash';
+import { isEmpty, isNil } from 'lodash';
 
 import { FormSection } from '~core/Fields';
 import { Colony } from '~data/index';
@@ -48,7 +48,6 @@ interface Props {
 
 const Batch = ({ colony }: Props) => {
   const [processingCSVData, setProcessingCSVData] = useState<boolean>(false);
-  const [isOpen, setOpen] = useState<boolean>(false);
   const { formatMessage } = useIntl();
   const [, { value: batch }] = useField('batch');
   const batchData = batch?.dataCSVUploader?.[0]?.parsedData;
@@ -57,20 +56,14 @@ const Batch = ({ colony }: Props) => {
     colony,
   ]);
 
-  const { value, tokens, recipientsCount } = processedData || {};
-
-  useEffect(() => {
-    if (processingCSVData) {
-      setOpen(false);
-    }
-  }, [processingCSVData]);
+  const { amount, tokens, recipientsCount } = processedData || {};
 
   return (
     <div className={styles.batchContainer}>
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.wrapper}>
           <FormattedMessage {...MSG.batch} />
-          {!batchData && <DownloadTemplate />}
+          {isNil(amount) && <DownloadTemplate />}
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
@@ -81,7 +74,6 @@ const Batch = ({ colony }: Props) => {
               name="batch.dataCSVUploader"
               processingData={processingCSVData}
               setProcessingData={setProcessingCSVData}
-              isOpen={isOpen}
             />
           </div>
         </div>
@@ -94,7 +86,7 @@ const Batch = ({ colony }: Props) => {
           </div>
         </FormSection>
       )}
-      {!isEmpty(value) && (
+      {!isEmpty(amount) && !isEmpty(tokens) && (
         <FormSection appearance={{ border: 'bottom' }}>
           <div
             className={classNames(styles.valueRow, {
@@ -103,8 +95,9 @@ const Batch = ({ colony }: Props) => {
           >
             <FormattedMessage {...MSG.value} />
             <div className={styles.tokenWrapper}>
-              {tokens?.map(
-                ({ token, amount }, index) =>
+              {tokens?.map((singleToken, index) => {
+                const { token, value } = singleToken || {};
+                return (
                   token && (
                     <div
                       className={classNames(styles.value, {
@@ -115,8 +108,7 @@ const Batch = ({ colony }: Props) => {
                     >
                       {formatMessage(MSG.valueWithToken, {
                         token: token.symbol,
-                        amount:
-                          typeof amount === 'number' ? amount.toString() : '',
+                        amount: value,
                         icon: (
                           <span className={styles.icon}>
                             <TokenIcon
@@ -128,8 +120,9 @@ const Batch = ({ colony }: Props) => {
                         ),
                       })}
                     </div>
-                  ),
-              )}
+                  )
+                );
+              })}
             </div>
           </div>
         </FormSection>

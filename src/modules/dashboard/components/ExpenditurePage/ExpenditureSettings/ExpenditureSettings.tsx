@@ -23,7 +23,7 @@ import styles from './ExpenditureSettings.css';
 export const MSG = defineMessages({
   type: {
     id: 'dashboard.ExpenditurePage.ExpenditureSettings.type',
-    defaultMessage: 'Expenditure type',
+    defaultMessage: 'Payment type',
   },
   team: {
     id: 'dashboard.ExpenditurePage.ExpenditureSettings.team',

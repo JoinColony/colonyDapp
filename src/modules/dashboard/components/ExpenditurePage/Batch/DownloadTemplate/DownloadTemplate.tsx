@@ -6,15 +6,15 @@ import ExternalLink from '~core/ExternalLink';
 import styles from './DownloadTemplate.css';
 
 export const MSG = defineMessages({
-  downloadTemplate: {
-    id: 'dashboard.ExpenditurePage.Batch.downloadTemplate',
+  linkText: {
+    id: 'dashboard.ExpenditurePage.Batch.DownloadTemplate.linkText',
     defaultMessage: 'Download template',
   },
 });
 
 const DownloadTemplate = () => {
   const fileDownloadUrl = useMemo(() => {
-    const CSV = ['"Recipient","Token","Value"', '"","",""'].join('\n');
+    const CSV = ['"Recipient","Token","Amount"', '"","",""'].join('\n');
     const blob = new Blob([CSV]);
     return URL.createObjectURL(blob);
   }, []);
@@ -25,7 +25,7 @@ const DownloadTemplate = () => {
       download="template.csv"
       className={styles.link}
     >
-      <FormattedMessage {...MSG.downloadTemplate} />
+      <FormattedMessage {...MSG.linkText} />
     </ExternalLink>
   );
 };
