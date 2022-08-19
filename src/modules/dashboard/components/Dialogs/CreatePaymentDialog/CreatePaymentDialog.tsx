@@ -20,6 +20,7 @@ import {
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 import { WizardDialogType } from '~utils/hooks';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { getVerifiedUsers } from '~utils/verifiedRecipients';
 
 import DialogForm, { calculateFee } from './CreatePaymentDialogForm';
@@ -56,7 +57,6 @@ const displayName = 'dashboard.CreatePaymentDialog';
 const CreatePaymentDialog = ({
   colony: { tokens = [], colonyAddress, nativeTokenAddress, colonyName },
   colony,
-  isVotingExtensionEnabled,
   callStep,
   prevStep,
   cancel,
@@ -65,6 +65,10 @@ const CreatePaymentDialog = ({
 }: Props) => {
   const [isForce, setIsForce] = useState(false);
   const history = useHistory();
+
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
 
   const getFormAction = useCallback(
     (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
@@ -208,7 +212,6 @@ const CreatePaymentDialog = ({
             <DialogForm
               {...formValues}
               colony={colony}
-              isVotingExtensionEnabled={isVotingExtensionEnabled}
               back={() => callStep(prevStep)}
               verifiedUsers={
                 isWhitelistActivated ? verifiedUsers : subscribedUsers
