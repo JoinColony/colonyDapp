@@ -10,5 +10,5 @@ export interface Batch {
 export interface BatchDataItem {
   recipient: string;
   token: string;
-  value: string;
+  amount: string;
 }

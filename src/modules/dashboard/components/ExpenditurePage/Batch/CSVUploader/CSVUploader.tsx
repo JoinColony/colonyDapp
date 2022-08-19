@@ -34,7 +34,8 @@ const CSVUploader = ({ name, processingData, setProcessingData }: Props) => {
       Papa.parse(CSVFile, {
         complete: setParsedCSV,
         header: true,
-        transformHeader: (header) => header.toLowerCase(),
+        transformHeader: (header) =>
+          header.toLowerCase().replace(/[\s.;,?%0-9]/g, ''),
       });
     } else if (!CSVFile && parsedCSV) {
       setParsedCSV(null);

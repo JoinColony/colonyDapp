@@ -1,4 +1,5 @@
 import { Colony } from '~data/index';
+
 import { BatchDataItem } from './types';
 
 export const calculateBatch = (colony: Colony, data?: BatchDataItem[]) => {
@@ -7,35 +8,34 @@ export const calculateBatch = (colony: Colony, data?: BatchDataItem[]) => {
   }
   const { tokens: colonyTokens } = colony || {};
 
-  const value = data
-    .filter((item) => !!item.recipient)
+  const amount = data
+    .filter((item) => !!item.token && !!item.amount)
     .reduce((acc, item) => {
       if (item.token in acc) {
-        return { ...acc, [item.token]: acc[item.token] + Number(item.value) };
+        return { ...acc, [item.token]: acc[item.token] + Number(item.amount) };
       }
-      return { ...acc, [item.token]: Number(item.value) };
+      return { ...acc, [item.token]: Number(item.amount) };
     }, {});
 
-  const tokens = Object.entries(value || {})?.map(([tokenName, tokenValue]) => {
-    const token = colonyTokens?.find(
-      (tokenItem) => tokenItem.symbol === tokenName,
-    );
+  const tokens = Object.entries(amount || {})
+    ?.map(([tokenId, tokenValue]) => {
+      const token = colonyTokens?.find((tokenItem) => tokenItem.id === tokenId);
 
-    return {
-      amount: tokenValue,
-      token,
-    };
-  });
+      if (!token) {
+        return undefined;
+      }
 
-  const recipientsCount = data.filter((item) => {
-    return (
-      !!item.recipient &&
-      colonyTokens.find((token) => token.symbol === item.token)
-    );
-  }).length;
+      return {
+        value: Number(tokenValue),
+        token,
+      };
+    })
+    .filter((item) => !!item);
+
+  const recipientsCount = data.filter((item) => !!item.recipient).length;
 
   return {
-    value,
+    amount,
     tokens,
     recipientsCount,
   };
