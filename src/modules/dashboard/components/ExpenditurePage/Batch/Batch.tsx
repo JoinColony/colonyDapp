@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { useField } from 'formik';
 import classNames from 'classnames';
-import { isEmpty } from 'lodash';
+import { isEmpty, isNil } from 'lodash';
 
 import { FormSection } from '~core/Fields';
 import { Colony } from '~data/index';
@@ -56,7 +56,7 @@ const Batch = ({ colony }: Props) => {
     colony,
   ]);
 
-  const { value, tokens, recipientsCount } = processedData || {};
+  const { amount, tokens, recipientsCount } = processedData || {};
 
   return (
     <div className={styles.batchContainer}>
@@ -86,7 +86,7 @@ const Batch = ({ colony }: Props) => {
           </div>
         </FormSection>
       )}
-      {!isEmpty(value) && (
+      {!isEmpty(amount) && !isEmpty(tokens) && (
         <FormSection appearance={{ border: 'bottom' }}>
           <div
             className={classNames(styles.valueRow, {
@@ -95,8 +95,9 @@ const Batch = ({ colony }: Props) => {
           >
             <FormattedMessage {...MSG.value} />
             <div className={styles.tokenWrapper}>
-              {tokens?.map(
-                ({ token, amount }, index) =>
+              {tokens?.map((singleToken, index) => {
+                const { token, value } = singleToken || {};
+                return (
                   token && (
                     <div
                       className={classNames(styles.value, {
@@ -107,8 +108,7 @@ const Batch = ({ colony }: Props) => {
                     >
                       {formatMessage(MSG.valueWithToken, {
                         token: token.symbol,
-                        amount:
-                          typeof amount === 'number' ? amount.toString() : '',
+                        amount: value,
                         icon: (
                           <span className={styles.icon}>
                             <TokenIcon
@@ -120,8 +120,9 @@ const Batch = ({ colony }: Props) => {
                         ),
                       })}
                     </div>
-                  ),
-              )}
+                  )
+                );
+              })}
             </div>
           </div>
         </FormSection>
