@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { useField } from 'formik';
 import classNames from 'classnames';
@@ -38,6 +38,22 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Batch.valueWithToken',
     defaultMessage: '{icon} {token} {amount}',
   },
+  noTokens: {
+    id: 'dashboard.ExpenditurePage.Batch.noTokens',
+    defaultMessage: 'No tokens',
+  },
+  noRecipients: {
+    id: 'dashboard.ExpenditurePage.Batch.noRecipients',
+    defaultMessage: 'No recipients',
+  },
+  invalidRows: {
+    id: 'dashboard.ExpenditurePage.Batch.invalidRows',
+    defaultMessage: 'Not all rows were imported, please review. {button}',
+  },
+  viewAll: {
+    id: `dashboard.ExpenditurePage.Batch.CSVUploader.CSVUploaderItem.viewAll`,
+    defaultMessage: 'View all',
+  },
 });
 
 const displayName = 'dashboard.ExpenditurePage.Batch';
@@ -51,19 +67,16 @@ const Batch = ({ colony }: Props) => {
   const { formatMessage } = useIntl();
   const [, { value: batch }] = useField('batch');
   const batchData = batch?.dataCSVUploader?.[0]?.parsedData;
-  const processedData = useMemo(() => calculateBatch(colony, batchData), [
-    batchData,
-    colony,
-  ]);
 
-  const { amount, tokens, recipientsCount } = processedData || {};
+  const data = useCalculateBatchPayment(colony, batchData);
+  const { invalidRows, recipientsCount, tokens, validatedData } = data || {};
 
   return (
     <div className={styles.batchContainer}>
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.wrapper}>
           <FormattedMessage {...MSG.batch} />
-          {!batchData && <DownloadTemplate />}
+          {isNil(validatedData) && <DownloadTemplate />}
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
@@ -78,54 +91,83 @@ const Batch = ({ colony }: Props) => {
           </div>
         </div>
       </FormSection>
-      {!!recipientsCount && (
-        <FormSection appearance={{ border: 'bottom' }}>
-          <div className={styles.dataRow}>
-            <FormattedMessage {...MSG.recipients} />
-            <div className={styles.value}>{recipientsCount}</div>
-          </div>
-        </FormSection>
-      )}
-      {!isEmpty(amount) && !isEmpty(tokens) && (
-        <FormSection appearance={{ border: 'bottom' }}>
-          <div
-            className={classNames(styles.valueRow, {
-              [styles.valueContainer]: tokens?.length && tokens.length > 1,
-            })}
-          >
-            <FormattedMessage {...MSG.value} />
-            <div className={styles.tokenWrapper}>
-              {tokens?.map((singleToken, index) => {
-                const { token, value } = singleToken || {};
-                return (
-                  token && (
-                    <div
-                      className={classNames(styles.value, {
-                        [styles.marginBottom]:
-                          tokens.length > 1 && index + 1 !== tokens.length,
-                      })}
-                      key={token.id}
-                    >
-                      {formatMessage(MSG.valueWithToken, {
-                        token: token.symbol,
-                        amount: value,
-                        icon: (
-                          <span className={styles.icon}>
-                            <TokenIcon
-                              className={styles.tokenIcon}
-                              token={token}
-                              name={token?.name || token?.address}
-                            />
-                          </span>
-                        ),
-                      })}
-                    </div>
-                  )
-                );
-              })}
+      {data && (
+        <>
+          <FormSection appearance={{ border: 'bottom' }}>
+            <div className={styles.dataRow}>
+              <FormattedMessage {...MSG.recipients} />
+              {recipientsCount ? (
+                <div className={styles.value}>{recipientsCount}</div>
+              ) : (
+                <div className={styles.empty}>
+                  <FormattedMessage {...MSG.noRecipients} />
+                </div>
+              )}
             </div>
-          </div>
-        </FormSection>
+          </FormSection>
+          <FormSection appearance={{ border: 'bottom' }}>
+            <div
+              className={classNames(styles.valueRow, {
+                [styles.valueContainer]: tokens?.length && tokens.length > 1,
+              })}
+            >
+              <FormattedMessage {...MSG.value} />
+              <div className={styles.tokenWrapper}>
+                {isEmpty(tokens) ? (
+                  <div className={styles.empty}>
+                    <FormattedMessage {...MSG.noTokens} />
+                  </div>
+                ) : (
+                  tokens?.map((singleToken, index) => {
+                    const { token, value } = singleToken || {};
+                    return (
+                      token && (
+                        <div
+                          className={classNames(styles.value, {
+                            [styles.marginBottom]:
+                              tokens.length > 1 && index + 1 !== tokens.length,
+                          })}
+                          key={token.id}
+                        >
+                          {formatMessage(MSG.valueWithToken, {
+                            token: token.symbol,
+                            amount: value,
+                            icon: (
+                              <span className={styles.icon}>
+                                <TokenIcon
+                                  className={styles.tokenIcon}
+                                  token={token}
+                                  name={token?.name || token?.address}
+                                />
+                              </span>
+                            ),
+                          })}
+                        </div>
+                      )
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          </FormSection>
+        </>
+      )}
+      {invalidRows && (
+        <div className={classNames(styles.error, styles.fontSmall)}>
+          <FormattedMessage
+            {...MSG.invalidRows}
+            values={{
+              button: (
+                <Button
+                  type="button"
+                  onClick={() => {}}
+                  appearance={{ theme: 'blue', size: 'small' }}
+                  text={MSG.viewAll}
+                />
+              ),
+            }}
+          />
+        </div>
       )}
     </div>
   );
