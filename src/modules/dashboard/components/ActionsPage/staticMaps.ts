@@ -17,6 +17,7 @@ export enum ActionPageDetails {
   Name = 'Name',
   Permissions = 'Permissions',
   ReputationChange = 'ReputationChange',
+  Author = 'Author',
 }
 
 type EventRolesMap = Partial<
@@ -97,6 +98,7 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyMotions.EmitDomainReputationPenaltyMotion]: 'emoji-firebolt',
   [ColonyMotions.EmitDomainReputationRewardMotion]: 'emoji-shooting-star',
   [ColonyMotions.UnlockTokenMotion]: 'emoji-padlock',
+  [ColonyActions.Decision]: 'emoji-decisions',
   [ColonyActions.Generic]: 'circle-check-primary',
 };
 
@@ -236,6 +238,10 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.Domain,
     ActionPageDetails.ToRecipient,
     ActionPageDetails.ReputationChange,
+  ],
+  [ColonyActions.Decision]: [
+    ActionPageDetails.Domain,
+    ActionPageDetails.Author,
   ],
   [ColonyActions.EmitDomainReputationReward]: [
     ActionPageDetails.Domain,

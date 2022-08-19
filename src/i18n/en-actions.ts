@@ -50,6 +50,7 @@ const actionsMessageDescriptors = {
       ${ColonyActions.Recovery} {Recovery}
       ${ColonyActions.EmitDomainReputationPenalty} {Smite}
       ${ColonyActions.EmitDomainReputationReward} {Award}
+      ${ColonyActions.Decision} {Decision}
       other {Generic}
     }`,
 };

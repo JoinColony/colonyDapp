@@ -20,6 +20,7 @@ import LoadingTemplate from '~pages/LoadingTemplate';
 import LadingPage from '~pages/LandingPage';
 import ActionsPage from '~dashboard/ActionsPage';
 import { ClaimTokensPage, UnwrapTokensPage } from '~dashboard/Vesting';
+import DecisionPreview from '~dashboard/DecisionPreview';
 
 import appLoadingContext from '~context/appLoadingState';
 import ColonyFunding from '~dashboard/ColonyFunding';
@@ -29,6 +30,7 @@ import { ActionTypes } from '~redux/index';
 import {
   COLONY_EVENTS_ROUTE,
   COLONY_DECISIONS_ROUTE,
+  COLONY_DECISIONS_PREVIEW_ROUTE,
   COLONY_EXTENSIONS_ROUTE,
   COLONY_EXTENSION_DETAILS_ROUTE,
   COLONY_EXTENSION_SETUP_ROUTE,
@@ -183,6 +185,16 @@ const Routes = () => {
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,
             hasSubscribedColonies: false,
+          })}
+        />
+        <AlwaysAccesibleRoute
+          exact
+          path={COLONY_DECISIONS_PREVIEW_ROUTE}
+          component={DecisionPreview}
+          layout={NavBar}
+          routeProps={({ colonyName }) => ({
+            backText: '',
+            backRoute: `/colony/${colonyName}`,
           })}
         />
         <AlwaysAccesibleRoute
