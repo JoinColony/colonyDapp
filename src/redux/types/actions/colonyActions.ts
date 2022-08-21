@@ -13,6 +13,7 @@ import {
   MetaWithHistory,
   ActionType,
 } from './index';
+import { ColonySafe } from '~data/index';
 
 /*
  * @NOTE About naming
@@ -254,7 +255,7 @@ export type ColonyActionsActionTypes =
       {
         colonyName: string;
         colonyAddress: Address;
-        safeAddresses: Address[];
+        safeAddresses: ColonySafe[] | Address[];
         annotationMessage?: string;
         isRemovingSafes?: boolean;
       },

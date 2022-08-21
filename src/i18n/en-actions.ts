@@ -33,6 +33,7 @@ const actionsMessageDescriptors = {
       ${ColonyExtendedActions.AddressBookUpdated} {Address book was updated}
       ${ColonyExtendedActions.TokensUpdated} {Colony tokens were updated}
       ${ColonyExtendedActions.SafeRemoved} {Remove Safe}
+      ${ColonyExtendedActions.SafeAdded} {Add Safe from {chainName}}
       other {Generic action we don't have information about}
     }`,
   [`action.${ColonyActions.SetUserRoles}.assign`]: `Assign the {roles} in {fromDomain} to {recipient}`,
@@ -55,6 +56,7 @@ const actionsMessageDescriptors = {
       ${ColonyActions.Recovery} {Recovery}
       ${ColonyActions.EmitDomainReputationPenalty} {Smite}
       ${ColonyActions.EmitDomainReputationReward} {Award}
+      ${ColonyExtendedActions.SafeAdded} {Add Safe}
       ${ColonyExtendedActions.SafeRemoved} {Remove Safe}
       ${ColonyExtendedActions.TokensUpdated} {Update Tokens}
       ${ColonyExtendedActions.AddressBookUpdated} {Update Address Book}

@@ -18,7 +18,7 @@ import {
   FormattedAction,
   ActionUserRoles,
 } from '~types/index';
-import { ParsedEvent } from '~data/index';
+import { ColonySafe, ParsedEvent } from '~data/index';
 import { ProcessedEvent } from '~data/resolvers/colonyActions';
 
 import {
@@ -466,7 +466,7 @@ const getColonyEditActionValues = async (
     colonyTokens?: string[];
     isWhitelistActivated?: boolean;
     verifiedAddresses?: string[];
-    colonySafes?: string[];
+    colonySafes: ColonySafe[] | null;
   } = {
     address,
     colonyDisplayName: null,
@@ -506,7 +506,7 @@ const getColonyEditActionValues = async (
       colonyEditValues.colonyTokens = colonyTokens;
       colonyEditValues.isWhitelistActivated = isWhitelistActivated;
       colonyEditValues.verifiedAddresses = verifiedAddresses;
-      colonyEditValues.colonySafes = colonySafes;
+      colonyEditValues.colonySafes = colonySafes || [];
     }
   } catch (error) {
     log.verbose(
