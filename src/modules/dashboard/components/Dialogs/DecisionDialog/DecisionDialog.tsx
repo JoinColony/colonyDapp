@@ -12,22 +12,32 @@ import Dialog, { DialogProps } from '~core/Dialog';
 import { Form } from '~core/Fields';
 import { Colony } from '~data/index';
 
-import DialogForm from './NewDecisionDialogForm';
+import DialogForm from './DecisionDialogForm';
 
-const displayName = 'dashboard.NewDecisionDialog';
+const displayName = 'dashboard.DecisionDialog';
 
 export interface FormValues {
   motionDomainId: number;
+  decisionTitle?: string;
+  content?: string;
 }
 
 interface Props extends DialogProps {
   colony: Colony;
   ethDomainId: number;
+  decisionTitle?: string;
+  content?: string;
 }
 
 const characterLimit = 4000;
 
-const NewDecisionDialog = ({ cancel, colony, ethDomainId }: Props) => {
+const DecisionDialog = ({
+  cancel,
+  colony,
+  ethDomainId,
+  decisionTitle,
+  content,
+}: Props) => {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -40,6 +50,7 @@ const NewDecisionDialog = ({ cancel, colony, ethDomainId }: Props) => {
         placeholder: 'Enter the description...',
       }),
     ],
+    content,
   });
 
   const handleSubmit = () => {
@@ -58,7 +69,8 @@ const NewDecisionDialog = ({ cancel, colony, ethDomainId }: Props) => {
     <Form
       initialValues={{
         motionDomainId: ethDomainId,
-        content: '<p></p>',
+        decisionTitle,
+        content,
       }}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
@@ -79,6 +91,6 @@ const NewDecisionDialog = ({ cancel, colony, ethDomainId }: Props) => {
   );
 };
 
-NewDecisionDialog.displayName = displayName;
+DecisionDialog.displayName = displayName;
 
-export default NewDecisionDialog;
+export default DecisionDialog;
