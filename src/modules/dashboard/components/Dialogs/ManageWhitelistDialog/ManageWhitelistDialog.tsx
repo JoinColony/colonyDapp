@@ -157,7 +157,7 @@ const ManageWhitelistDialog = ({
       ),
       withMeta({ history }),
     ),
-    [tabIndex],
+    [tabIndex, storedVerifiedRecipients],
   );
 
   return (
