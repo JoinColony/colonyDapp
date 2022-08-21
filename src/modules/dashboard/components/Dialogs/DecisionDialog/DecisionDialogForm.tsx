@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { Editor } from '@tiptap/react';
 import { FormikProps } from 'formik';
@@ -13,42 +13,38 @@ import RichTextEditor from '~core/RichTextEditor/RichTextEditor';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 import { Colony } from '~data/index';
 
-import { FormValues } from './NewDecisionDialog';
+import { FormValues } from './DecisionDialog';
 
-import styles from './NewDecisionDialogForm.css';
+import styles from './DecisionDialogForm.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.NewDecisionDialog.NewDecisionDialogForm.title',
+    id: 'dashboard.DecisionDialog.DecisionDialogForm.title',
     defaultMessage: 'Decision Details',
   },
   decisionTitle: {
-    id: 'dashboard.NewDecisionDialog.NewDecisionDialogForm.decisionTitle',
+    id: 'dashboard.DecisionDialog.DecisionDialogForm.decisionTitle',
     defaultMessage: 'Title',
   },
   titlePlaceholder: {
-    id: 'dashboard.NewDecisionDialog.NewDecisionDialogForm.titlePlaceholder',
+    id: 'dashboard.DecisionDialog.DecisionDialogForm.titlePlaceholder',
     defaultMessage: 'Enter a title for your decision...',
   },
   inputLabel: {
-    id: 'dashboard.NewDecisionDialog.NewDecisionDialogForm.inputLabel',
+    id: 'dashboard.DecisionDialog.DecisionDialogForm.inputLabel',
     defaultMessage: 'Describe the decision you need to make',
   },
-  preview: {
-    id: 'dashboard.NewDecisionDialog.NewDecisionDialogForm.preview',
-    defaultMessage: 'Preview',
-  },
   tooltip: {
-    id: 'dashboard.NewDecisionDialog.NewDecisionDialogForm.preview',
+    id: 'dashboard.DecisionDialog.DecisionDialogForm.preview',
     defaultMessage: `The title will be used on both the Decisions page and Decisions list. It should succinctly define the decision to be made.`,
   },
   domainDisplay: {
-    id: 'dashboard.NewDecisionDialog.NewDecisionDialogForm.domainDisplay',
+    id: 'dashboard.DecisionDialog.DecisionDialogForm.domainDisplay',
     defaultMessage: `Proposal will be created in `,
   },
 });
 
-const displayName = 'dashboard.NewDecisionDialogForm';
+const displayName = 'dashboard.DecisionDialogForm';
 
 interface Props extends Omit<DialogProps, 'close'> {
   colony: Colony;
@@ -57,7 +53,7 @@ interface Props extends Omit<DialogProps, 'close'> {
   limit: number;
 }
 
-const NewDecisionDialogForm = ({
+const DecisionDialogForm = ({
   colony,
   setFieldValue,
   values,
@@ -96,6 +92,8 @@ const NewDecisionDialogForm = ({
     },
     [currentFromDomain],
   );
+
+  const titleOnOpen = useRef(values.decisionTitle);
 
   return (
     <div className={styles.main}>
@@ -158,7 +156,9 @@ const NewDecisionDialogForm = ({
           appearance={{ theme: 'primary', size: 'large' }}
           style={{ width: styles.wideButton }}
           onClick={() => handleSubmit()}
-          text={MSG.preview}
+          text={{
+            id: titleOnOpen.current ? 'button.update' : 'button.preview',
+          }}
           loading={isSubmitting}
           disabled={!isValid || isSubmitting || !dirty}
           data-test="decisionPreviewButton"
@@ -168,6 +168,6 @@ const NewDecisionDialogForm = ({
   );
 };
 
-NewDecisionDialogForm.displayName = displayName;
+DecisionDialogForm.displayName = displayName;
 
-export default NewDecisionDialogForm;
+export default DecisionDialogForm;

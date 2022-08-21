@@ -5,6 +5,7 @@ import { defineMessages } from 'react-intl';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Tag from '~core/Tag';
+import { useDialog } from '~core/Dialog';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import {
   useUser,
@@ -16,6 +17,7 @@ import {
 import { ColonyActions } from '~types/index';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import LoadingTemplate from '~pages/LoadingTemplate';
+import DecisionDialog from '~dashboard/Dialogs/DecisionDialog';
 
 import DetailsWidget from '../ActionsPage/DetailsWidget';
 
@@ -36,11 +38,12 @@ const MSG = defineMessages({
 const decisionData = {
   title: 'Should we build a Discord Bot?',
   description: `I think we should build a Discord bot that integrates with the Dapp and provides our community with greater transperency and also provides more convienience for us to be notified of things happening in our Colony.`,
+  /* Using an HTML string for the dialog content ensures the dirty prop works as expected */
+  htmlDescription: `<p>I think we should build a Discord bot that integrates with the Dapp and provides our community with greater transperency and also provides more convienience for us to be notified of things happening in our Colony.</p>`,
   actionType: 'Decision',
   fromDomain: '1',
 };
 
-const handleEdit = () => {};
 const handleSubmit = () => {};
 
 const displayName = 'dashboard.DecisionPreview';
@@ -57,6 +60,8 @@ const DecisionPreview = () => {
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
   });
+
+  const openDecisionDialog = useDialog(DecisionDialog);
 
   if (
     loading ||
@@ -138,7 +143,14 @@ const DecisionPreview = () => {
           <div className={styles.buttonContainer}>
             <Button
               appearance={{ theme: 'secondary', size: 'large' }}
-              onClick={handleEdit}
+              onClick={() =>
+                openDecisionDialog({
+                  colony,
+                  ethDomainId: Number(decisionData.fromDomain),
+                  decisionTitle: decisionData.title,
+                  content: decisionData.htmlDescription,
+                })
+              }
               text={{ id: 'button.edit' }}
             />
             <Button
