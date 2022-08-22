@@ -96,7 +96,7 @@ export const ETHEREUM_NETWORK: NetworkInfo = {
   displayENSDomain: 'joincolony.eth',
   tokenExplorerLink: 'https://etherscan.io/tokens',
   contractAddressLink: 'https://etherscan.io/address',
-  rpcUrl: 'https://mainnet.infura.io/v3',
+  rpcUrl: 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
   gnosisTxService: 'https://safe-transaction.mainnet.gnosis.io/',
 };
 
@@ -109,7 +109,7 @@ export const GOERLI_NETWORK: NetworkInfo = {
   displayENSDomain: 'joincolony.eth',
   tokenExplorerLink: 'https://goerli.etherscan.io/tokens',
   contractAddressLink: 'https://goerli.etherscan.io/address',
-  rpcUrl: 'https://goerli.infura.io/v3',
+  rpcUrl: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
   gnosisTxService: 'https://safe-transaction.goerli.gnosis.io/',
 };
 
@@ -119,6 +119,7 @@ const ARBITRUM_NETWORK: NetworkInfo = {
   shortName: 'ETH',
   contractAddressLink: '',
   gnosisTxService: 'https://safe-transaction.arbitrum.gnosis.io/',
+  rpcUrl: 'https://rpc.ankr.com/arbitrum',
 };
 
 const AURORA_NETWORK: NetworkInfo = {
@@ -127,6 +128,7 @@ const AURORA_NETWORK: NetworkInfo = {
   shortName: 'ETH',
   contractAddressLink: '',
   gnosisTxService: 'https://safe-transaction.aurora.gnosis.io/',
+  rpcUrl: 'https://testnet.aurora.dev/',
 };
 
 const AVALANCHE_NETWORK: NetworkInfo = {
@@ -135,6 +137,7 @@ const AVALANCHE_NETWORK: NetworkInfo = {
   shortName: 'AVAX',
   contractAddressLink: '',
   gnosisTxService: 'https://safe-transaction.avalanche.gnosis.io/',
+  rpcUrl: 'https://api.avax.network/ext/bc/C/rpc',
 };
 
 const BINANCE_NETWORK: NetworkInfo = {
@@ -143,6 +146,7 @@ const BINANCE_NETWORK: NetworkInfo = {
   shortName: 'BNB',
   contractAddressLink: '',
   gnosisTxService: 'https://safe-transaction.bsc.gnosis.io/',
+  rpcUrl: 'https://bsc-dataseed.binance.org/',
 };
 
 const OPTIMISM_NETWORK: NetworkInfo = {
@@ -151,6 +155,7 @@ const OPTIMISM_NETWORK: NetworkInfo = {
   shortName: 'ETH',
   contractAddressLink: '',
   gnosisTxService: 'https://safe-transaction.optimism.gnosis.io/',
+  rpcUrl: 'https://mainnet.optimism.io',
 };
 
 const POLYGON_NETWORK: NetworkInfo = {
@@ -159,6 +164,7 @@ const POLYGON_NETWORK: NetworkInfo = {
   shortName: 'MATIC',
   contractAddressLink: '',
   gnosisTxService: 'https://safe-transaction.polygon.gnosis.io/',
+  rpcUrl: 'https://polygon-rpc.com',
 };
 
 export const RINKEBY_TEST_NETWORK: NetworkInfo = {
