@@ -39,8 +39,11 @@
 
 .left > span {
   font-size: var(--size-smallish);
-  color: var(--temp-grey-blue-7);
   letter-spacing: var(--spacing-medium);
+}
+
+.validUser > span {
+  color: var(--temp-grey-blue-7);
 }
 
 .middle {
@@ -59,4 +62,8 @@
   font-weight: var(--weight-bold);
   color: var(--dark);
   letter-spacing: var(--spacing-medium);
+}
+
+.error {
+  color: var(--danger);
 }

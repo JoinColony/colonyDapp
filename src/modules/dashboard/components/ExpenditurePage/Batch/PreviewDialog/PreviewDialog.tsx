@@ -1,15 +1,14 @@
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import classNames from 'classnames';
-import { nanoid } from 'nanoid';
 
 import Dialog, { DialogSection } from '~core/Dialog';
 import MaskedAddress from '~core/MaskedAddress';
-import { Colony } from '~data/index';
 
 import { BatchDataItem } from '../types';
 
 import styles from './PreviewDialog.css';
+import { AnyToken } from '~data/index';
 
 const displayName = 'dashboard.ExpenditurePage.Batch.PreviewDialog';
 
@@ -30,27 +29,25 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Batch.PreviewDialog.amount',
     defaultMessage: 'Amount',
   },
+  tokenNotFound: {
+    id: 'dashboard.ExpenditurePage.Batch.PreviewDialog.tokenNotFound',
+    defaultMessage: 'Token not found',
+  },
 });
+
+interface ValidatedBatchDataItem extends Omit<BatchDataItem, 'token'> {
+  error?: boolean;
+  token?: AnyToken;
+  id: string;
+}
 
 interface Props {
   cancel: () => void;
-  values: BatchDataItem[];
-  colony: Colony;
+  values?: ValidatedBatchDataItem[];
 }
 
-const PreviewDialog = ({ cancel, values, colony }: Props) => {
-  const { tokens: colonyTokens } = colony || {};
-  const valuesWithTokens = values.map((value) => {
-    const token = colonyTokens?.find(
-      (tokenItem) => tokenItem.id === value.token,
-    );
-
-    return {
-      ...value,
-      token: token?.symbol || value.token,
-      id: nanoid(),
-    };
-  });
+const PreviewDialog = ({ cancel, values }: Props) => {
+  const { formatMessage } = useIntl();
 
   return (
     <Dialog cancel={cancel}>
@@ -74,21 +71,30 @@ const PreviewDialog = ({ cancel, values, colony }: Props) => {
               </div>
             </div>
           </DialogSection>
-          {valuesWithTokens?.map(({ recipient, token, value, id }, index) => (
-            <DialogSection appearance={{ theme: 'sidePadding' }} key={id}>
-              <div
-                className={classNames(styles.row, {
-                  [styles.borderTop]: index === 0,
-                })}
-              >
-                <div className={styles.left}>
-                  <MaskedAddress address={recipient} />
+          {values?.map(({ recipient, token, amount, id, error }, index) => {
+            return (
+              <DialogSection appearance={{ theme: 'sidePadding' }} key={id}>
+                <div
+                  className={classNames(styles.row, {
+                    [styles.borderTop]: index === 0,
+                    [styles.error]: error,
+                  })}
+                >
+                  <div
+                    className={classNames(styles.left, {
+                      [styles.validUser]: !error,
+                    })}
+                  >
+                    <MaskedAddress address={recipient || ''} />
+                  </div>
+                  <div className={styles.middle}>
+                    {token?.symbol || formatMessage(MSG.tokenNotFound)}
+                  </div>
+                  <div className={styles.right}>{amount}</div>
                 </div>
-                <div className={styles.middle}>{token}</div>
-                <div className={styles.right}>{value}</div>
-              </div>
-            </DialogSection>
-          ))}
+              </DialogSection>
+            );
+          })}
         </div>
       </div>
     </Dialog>
