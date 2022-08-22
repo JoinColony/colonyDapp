@@ -1,12 +1,14 @@
 import React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
+import { Editor } from '@tiptap/react';
 import { FormikProps } from 'formik';
 import Decimal from 'decimal.js';
 
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import ExternalLink from '~core/ExternalLink';
-import { Annotations } from '~core/Fields';
+import { InputLabel } from '~core/Fields';
+import RichTextEditor from '~core/RichTextEditor/RichTextEditor';
 import Heading from '~core/Heading';
 import {
   StakingSlider,
@@ -45,6 +47,8 @@ export interface Props extends StakingAmounts {
   colony: Colony;
   canUserStake: boolean;
   userActivatedTokens: Decimal;
+  editor: Editor | null;
+  limit: number;
   cancel: () => void;
 }
 
@@ -54,6 +58,8 @@ const RaiseObjectionDialogForm = ({
   isSubmitting,
   canUserStake,
   values,
+  editor,
+  limit,
   cancel,
   userActivatedTokens,
   remainingToFullyNayStaked,
@@ -101,12 +107,19 @@ const RaiseObjectionDialogForm = ({
         </div>
       </DialogSection>
       <DialogSection appearance={{ border: 'top' }}>
-        <Annotations
-          label={MSG.annotation}
-          name="annotation"
-          maxLength={4000}
-          disabled={!canUserStake || isSubmitting}
-        />
+        <DialogSection>
+          <InputLabel
+            label={MSG.annotation}
+            appearance={{ colorSchema: 'grey' }}
+          />
+          {editor && (
+            <RichTextEditor
+              editor={editor}
+              isSubmitting={isSubmitting}
+              limit={limit}
+            />
+          )}
+        </DialogSection>
       </DialogSection>
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
