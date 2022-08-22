@@ -18,7 +18,7 @@ import { toFinite } from 'lodash';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
-import { useColonyFromNameQuery } from '~data/generated';
+import { LoggedInUser, useColonyFromNameQuery } from '~data/generated';
 import Stages from '~dashboard/ExpenditurePage/Stages';
 import TitleDescriptionSection, {
   LockedTitleDescriptionSection,
@@ -30,9 +30,10 @@ import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
 import { useLoggedInUser } from '~data/helpers';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
 import { AnyUser } from '~data/index';
-import { initalMilestone } from '~dashboard/ExpenditurePage/Staged/constants';
 import { useDialog } from '~core/Dialog';
 import EscrowFundsDialog from '~dashboard/Dialogs/EscrowFundsDialog';
+import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
+import { initalMilestone } from '~dashboard/ExpenditurePage/Staged/constants';
 import { Staged } from '~dashboard/ExpenditurePage/Staged/types';
 
 import { ExpenditureForm, LockedSidebar } from '.';
@@ -118,7 +119,7 @@ const validationSchema = yup.object().shape({
     .string()
     .required(() => <FormattedMessage {...MSG.teamRequiredError} />),
   recipients: yup.array().when('expenditure', {
-    is: (expenditure) => expenditure === 'advanced',
+    is: (expenditure) => expenditure === ExpenditureTypes.Advanced,
     then: yup.array().of(
       yup.object().shape({
         recipient: yup.object().required(),
@@ -167,17 +168,29 @@ const validationSchema = yup.object().shape({
   title: yup.string().min(3).required(),
   description: yup.string().max(4000),
   split: yup.object().when('expenditure', {
-    is: (expenditure) => expenditure === 'split',
+    is: (expenditure) => expenditure === ExpenditureTypes.Split,
     then: yup.object().shape({
       unequal: yup.boolean().required(),
-      recipients: yup.array().of(
-        yup.object().shape({
-          recipient: yup
+      amount: yup.object().shape({
+        value: yup
+          .number()
+          .transform((value) => toFinite(value))
+          .required(() => MSG.valueError)
+          .moreThan(0, () => MSG.amountZeroError),
+        tokenAddress: yup.string().required(),
+      }),
+      recipients: yup
+        .array()
+        .of(
+          yup
             .object()
-            .shape({ user: yup.object(), amount: yup.number() })
+            .shape({
+              user: yup.object().required(),
+              amount: yup.number().required(),
+            })
             .required(),
-        }),
-      ),
+        )
+        .min(2),
     }),
   }),
 });
@@ -191,22 +204,25 @@ export interface State {
 }
 
 export interface ValuesType {
-  expenditure?: ExpenditureTypes;
-  filteredDomainId?: string;
-  owner?: string;
+  expenditure: string;
+  filteredDomainId: string;
+  owner?: Pick<
+    LoggedInUser,
+    'walletAddress' | 'balance' | 'username' | 'ethereal' | 'networkId'
+  >;
   recipients?: Recipient[];
   title?: string;
   description?: string;
   split?: {
     unequal: boolean;
-    amount: { amount?: string; tokenAddress?: string };
-    recipients?: { user: AnyUser; amount: number }[];
+    amount?: { value?: string; tokenAddress?: string };
+    recipients?: { user?: AnyUser; amount?: number; percent?: number }[];
   };
   staged?: Staged;
 }
 
 const initialValues = {
-  expenditure: 'advanced',
+  expenditure: ExpenditureTypes.Advanced,
   recipients: [newRecipient],
   filteredDomainId: String(ROOT_DOMAIN_ID),
   owner: undefined,
@@ -217,7 +233,10 @@ const initialValues = {
   },
   split: {
     unequal: true,
-    recipients: [{ user: undefined, amount: 0 }],
+    recipients: [
+      { ...initalRecipient, key: nanoid(), amount: 0 },
+      { ...initalRecipient, key: nanoid(), amount: 0 },
+    ],
   },
 };
 
@@ -239,6 +258,7 @@ const ExpenditurePage = ({ match }: Props) => {
   const [isFormEditable, setFormEditable] = useState(true);
   const [formValues, setFormValues] = useState<ValuesType>();
   const [activeStateId, setActiveStateId] = useState<string>();
+  const [shouldValidate, setShouldValidate] = useState(false);
   const sidebarRef = useRef<HTMLElement>(null);
 
   const { data: colonyData, loading } = useColonyFromNameQuery({
@@ -246,7 +266,7 @@ const ExpenditurePage = ({ match }: Props) => {
   });
   const loggedInUser = useLoggedInUser();
 
-  const initialValuesData = useMemo(() => {
+  const initialValuesData = useMemo((): ValuesType => {
     return (
       formValues || {
         ...initialValues,
@@ -264,6 +284,12 @@ const ExpenditurePage = ({ match }: Props) => {
             ],
           },
         ],
+        split: {
+          ...initialValues.split,
+          amount: {
+            tokenAddress: colonyData?.processedColony.nativeTokenAddress,
+          },
+        },
         staged: {
           ...initialValues.staged,
           amount: {
@@ -274,7 +300,7 @@ const ExpenditurePage = ({ match }: Props) => {
     );
   }, [colonyData, formValues, loggedInUser]);
 
-  const handleSubmit = useCallback((values) => {
+  const handleSubmit = useCallback((values: ValuesType) => {
     setActiveStateId(Stage.Draft);
 
     if (values.expenditure === ExpenditureTypes.Staged) {
@@ -283,13 +309,13 @@ const ExpenditurePage = ({ match }: Props) => {
         recipients: undefined,
         staged: {
           ...values.staged,
-          milestones: values.staged.milestones?.map((milestone) => {
-            const amount = values.staged.amount.value;
+          milestones: values.staged?.milestones?.map((milestone) => {
+            const amount = values.staged?.amount?.value;
 
             const milestoneAmount =
               amount &&
               milestone?.percent &&
-              (milestone.percent / 100) * Number(values.staged.amount.value);
+              (milestone.percent / 100) * Number(values.staged?.amount?.value);
             return { ...milestone, amount: milestoneAmount };
           }),
         },
@@ -358,6 +384,9 @@ const ExpenditurePage = ({ match }: Props) => {
       const newValues = {
         ...{
           ...stateValues,
+          expenditure: stateValues?.expenditure || ExpenditureTypes.Staged,
+          filteredDomainId:
+            stateValues?.filteredDomainId || String(ROOT_DOMAIN_ID),
           staged: {
             ...stateValues?.staged,
             milestones: stateValues?.staged?.milestones?.map((milestone) => {
@@ -412,17 +441,8 @@ const ExpenditurePage = ({ match }: Props) => {
       initialValues={initialValuesData}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
-      initialTouched={{
-        recipients: [
-          {
-            value: [
-              {
-                amount: true,
-              },
-            ],
-          },
-        ],
-      }}
+      validateOnBlur={shouldValidate}
+      validateOnChange={shouldValidate}
       enableReinitialize
     >
       <div className={getMainClasses({}, styles)}>
@@ -457,6 +477,7 @@ const ExpenditurePage = ({ match }: Props) => {
                 setActiveStateId,
                 lockValues,
                 handleSubmit,
+                setShouldValidate,
               }}
             />
           </main>
@@ -491,9 +512,15 @@ const ExpenditurePage = ({ match }: Props) => {
             )}
           </div>
           <Stages
-            states={states}
-            activeStateId={activeStateId}
-            formValues={formValues}
+            {...{
+              states,
+              activeStateId,
+              setActiveStateId,
+              lockValues,
+              handleSubmit,
+              setShouldValidate,
+              formValues,
+            }}
           />
         </main>
       </div>

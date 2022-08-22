@@ -163,6 +163,7 @@ const InputComponent = ({
         />
         <Cleave
           {...props}
+          value={value || ''}
           key={dynamicCleaveOptionKey}
           className={getMainClasses(appearance, styles)}
           htmlRef={innerRef}

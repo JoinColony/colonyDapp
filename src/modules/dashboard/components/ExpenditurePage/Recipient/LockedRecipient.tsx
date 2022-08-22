@@ -22,13 +22,8 @@ interface Props {
 }
 
 const LockedRecipient = ({ recipient, colony }: Props) => {
-  const {
-    isExpanded,
-    recipient: {
-      profile: { walletAddress, username, displayName },
-    },
-    delay,
-  } = recipient;
+  const { isExpanded, recipient: user, delay } = recipient;
+  const { profile } = user || {};
 
   const recipientValues = useMemo(() => getRecipientTokens(recipient, colony), [
     colony,
@@ -48,9 +43,15 @@ const LockedRecipient = ({ recipient, colony }: Props) => {
                 }}
               />
               <div className={styles.userAvatarContainer}>
-                <UserAvatar address={walletAddress} size="xs" notSet={false} />
+                <UserAvatar
+                  address={profile?.walletAddress || ''}
+                  size="xs"
+                  notSet={false}
+                />
                 <div className={styles.userName}>
-                  <UserMention username={username || displayName || ''} />
+                  <UserMention
+                    username={profile?.username || profile?.displayName || ''}
+                  />
                 </div>
               </div>
             </div>
