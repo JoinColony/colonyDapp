@@ -5,6 +5,8 @@ export const borderTop: string;
 export const lastRow: string;
 export const cell: string;
 export const left: string;
+export const validUser: string;
 export const middle: string;
 export const right: string;
 export const tableHeader: string;
+export const error: string;
