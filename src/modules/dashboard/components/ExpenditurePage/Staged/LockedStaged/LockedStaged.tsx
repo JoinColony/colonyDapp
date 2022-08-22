@@ -94,7 +94,7 @@ const LockedStaged = ({ colony, staged }: Props) => {
               />
               <Numeral
                 unit={getTokenDecimalsWithFallback(0)}
-                value={staged?.amount.value || 0}
+                value={staged?.amount?.value || 0}
               />
               {token.symbol}
             </div>
@@ -103,7 +103,7 @@ const LockedStaged = ({ colony, staged }: Props) => {
       </FormSection>
       {staged?.milestones?.map((milestone) => {
         return (
-          <FormSection appearance={{ border: 'bottom' }}>
+          <FormSection appearance={{ border: 'bottom' }} key={milestone.id}>
             <div className={styles.milestoneWrapper}>
               <div className={styles.milestoneName}>{milestone.name}</div>
               <div className={styles.reserveWrapper}>

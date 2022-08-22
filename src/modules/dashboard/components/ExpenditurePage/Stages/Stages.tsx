@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useRef, useState } from 'react';
-import { useFormikContext } from 'formik';
+import { useFormikContext, setNestedObjectValues, FormikTouched } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import copyToClipboard from 'copy-to-clipboard';
 import classNames from 'classnames';
@@ -67,11 +67,13 @@ const buttonStyles = {
 
 interface Props {
   states: State[];
+  handleSubmit: (values: ValuesType) => void;
   activeStateId?: string;
+  setShouldValidate: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Stages = ({ states, activeStateId }: Props) => {
-  const { values, handleSubmit, errors, dirty } =
+const Stages = ({ states, activeStateId, setShouldValidate }: Props) => {
+  const { values, handleSubmit, errors, validateForm, setTouched } =
     useFormikContext<ValuesType>() || {};
 
   const { resetForm } = useFormikContext() || {};
@@ -82,8 +84,16 @@ const Stages = ({ states, activeStateId }: Props) => {
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
 
   const handleSaveDraft = useCallback(async () => {
+    setShouldValidate(true);
+    const submitErrorsData = await validateForm();
+
+    setTouched(
+      setNestedObjectValues<FormikTouched<ValuesType>>(submitErrorsData, true),
+    );
+
     return (
       isEmpty(errors) &&
+      isEmpty(submitErrorsData) &&
       openDraftConfirmDialog({
         onClick: () => {
           handleSubmit(values as any);
@@ -91,7 +101,15 @@ const Stages = ({ states, activeStateId }: Props) => {
         isVotingExtensionEnabled: true,
       })
     );
-  }, [errors, handleSubmit, openDraftConfirmDialog, values]);
+  }, [
+    errors,
+    handleSubmit,
+    openDraftConfirmDialog,
+    setShouldValidate,
+    setTouched,
+    validateForm,
+    values,
+  ]);
 
   const handleDeleteDraft = () =>
     openDeleteDraftDialog({
@@ -148,7 +166,7 @@ const Stages = ({ states, activeStateId }: Props) => {
               <Button
                 onClick={handleSaveDraft}
                 style={buttonStyles}
-                disabled={!isEmpty(errors) || !dirty}
+                disabled={!isEmpty(errors)}
               >
                 <FormattedMessage {...MSG.submitDraft} />
               </Button>
