@@ -40,10 +40,6 @@ export const useCalculateBatchPayment = (
       return !!item.amount && correctRecipient && correctToken;
     });
 
-    const recipientsCount = data.filter(({ recipient }) =>
-      colonyMembers?.subscribedUsers.find((user) => user.id === recipient),
-    ).length;
-
     const amount = filteredData.reduce((acc, item) => {
       if (item.token in acc) {
         return {
@@ -69,7 +65,7 @@ export const useCalculateBatchPayment = (
 
     return {
       tokens,
-      recipientsCount,
+      recipientsCount: filteredData.length,
       invalidRows: data.length !== filteredData.length,
       validatedData,
     };
