@@ -36,6 +36,15 @@ const CSVUploader = ({ name, processingData, setProcessingData }: Props) => {
         header: true,
         transformHeader: (header) =>
           header.toLowerCase().replace(/[\s.;,?%0-9]/g, ''),
+        skipEmptyLines: 'greedy',
+        delimitersToGuess: [
+          ',',
+          '\t',
+          '|',
+          ';',
+          Papa.RECORD_SEP,
+          Papa.UNIT_SEP,
+        ],
       });
     } else if (!CSVFile && parsedCSV) {
       setParsedCSV(null);
