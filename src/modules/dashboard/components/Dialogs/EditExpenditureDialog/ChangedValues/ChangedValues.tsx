@@ -101,7 +101,7 @@ const ChangedValues = ({ newValues, colony, discardChange }: Props) => {
                   )}
                 </span>
                 <Button
-                  appearance={{ theme: 'dangerLink' }}
+                  appearance={{ theme: 'dangerLink', size: 'large' }}
                   onClick={() => discardChange(key)}
                 >
                   <FormattedMessage {...MSG.discard} />

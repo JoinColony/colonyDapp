@@ -27,9 +27,13 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Payments.RecipientHeader.userHeader',
     defaultMessage: `{count}: {name}, {value}{comma} `,
   },
+  token: {
+    id: 'dashboard.ExpenditurePage.Payments.RecipientHeader.token',
+    defaultMessage: `{amount} {token}`,
+  },
   delay: {
     id: 'dashboard.ExpenditurePage.Payments.RecipientHeader.delay',
-    defaultMessage: `{amount}{time}`,
+    defaultMessage: `{amount} {time}`,
   },
 });
 
@@ -84,12 +88,17 @@ const RecipientHeader = ({
                     />
                   ),
                   value: recipientValues?.map(
-                    ({ amount, token }, idx) =>
+                    ({ amount, token }) =>
                       token &&
                       amount && (
-                        <div key={idx}>
-                          <Numeral value={amount} />
-                          {token.symbol}
+                        <div className={styles.tokenWrapper} key={token.id}>
+                          <FormattedMessage
+                            {...MSG.token}
+                            values={{
+                              amount: <Numeral value={amount} />,
+                              token: token.symbol,
+                            }}
+                          />
                         </div>
                       ),
                   ),
@@ -101,13 +110,7 @@ const RecipientHeader = ({
                   {...MSG.delay}
                   values={{
                     amount: recipient.delay.amount,
-                    time:
-                      // eslint-disable-next-line no-nested-ternary
-                      recipient.delay.time === 'months'
-                        ? recipient.delay.amount === '1'
-                          ? 'mth'
-                          : 'mths'
-                        : recipient.delay.time.slice(0, 1),
+                    time: recipient.delay.time,
                   }}
                 />
               )}

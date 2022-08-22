@@ -39,11 +39,15 @@ export const MSG = defineMessages({
   },
   userHeader: {
     id: 'dashboard.EditExpenditureDialog.ChangedRecipients.userHeader',
-    defaultMessage: `{count}: {name}, {value}`,
+    defaultMessage: `{count}: {name}, {value}{comma} `,
+  },
+  token: {
+    id: 'dashboard.ExpenditurePage.Payments.RecipientHeader.token',
+    defaultMessage: `{amount} {token}`,
   },
   delay: {
     id: 'dashboard.EditExpenditureDialog.ChangedRecipients.delay',
-    defaultMessage: `, {amount} {time}`,
+    defaultMessage: `{amount} {time}`,
   },
   noChanges: {
     id: 'dashboard.EditExpenditureDialog.ChangedRecipients.noChanges',
@@ -154,23 +158,29 @@ const ChangedRecipients = ({ newRecipients, colony, oldValues }: Props) => {
                                 />
                               ),
                               value: recipientValues?.map(
-                                ({ amount, token }, idx) =>
+                                ({ amount, token }) =>
                                   token &&
                                   amount && (
-                                    <div className={styles.value} key={idx}>
-                                      <Numeral value={amount} />
-                                      {token.symbol}
+                                    <div key={token.id}>
+                                      <FormattedMessage
+                                        {...MSG.token}
+                                        values={{
+                                          amount: <Numeral value={amount} />,
+                                          token: token.symbol,
+                                        }}
+                                      />
                                     </div>
                                   ),
                               ),
+                              comma: oldValue?.delay?.amount ? ',' : '',
                             }}
                           />
-                          {changedItem.delay?.amount && (
+                          {oldValue.delay?.amount && (
                             <FormattedMessage
                               {...MSG.delay}
                               values={{
-                                amount: changedItem.delay.amount,
-                                time: changedItem.delay.time,
+                                amount: oldValue.delay.amount,
+                                time: oldValue.delay.time,
                               }}
                             />
                           )}

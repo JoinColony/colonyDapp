@@ -62,14 +62,6 @@
   color: color-mod(var(--temp-grey-blue-7) alpha(85%));
 }
 
-.value {
-  margin-left: 4px;
-}
-
-.value span {
-  margin-right: 4px;
-}
-
 .name {
   display: flex;
   align-items: center;

@@ -23,6 +23,10 @@
   color: color-mod(var(--dark) alpha(85%));
 }
 
+.tokenWrapper > span {
+  font-size: var(--size-smallish);
+}
+
 .dot {
   margin-left: 8px;
   height: 9px;
