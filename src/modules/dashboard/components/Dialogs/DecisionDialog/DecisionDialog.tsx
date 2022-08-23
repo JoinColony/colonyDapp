@@ -22,7 +22,7 @@ const displayName = 'dashboard.DecisionDialog';
 export interface FormValues {
   motionDomainId: number;
   title: string;
-  content: string;
+  description: string;
 }
 
 interface Props extends DialogProps {
@@ -79,7 +79,7 @@ const DecisionDialog = ({
   const validationSchema = yup.object().shape({
     title: yup.string().required('Please enter a title'),
     motionDomainId: yup.number(),
-    content: yup.string().notOneOf(['<p></p>']).required(),
+    description: yup.string().notOneOf(['<p></p>']).required(),
   });
   return (
     <Form
