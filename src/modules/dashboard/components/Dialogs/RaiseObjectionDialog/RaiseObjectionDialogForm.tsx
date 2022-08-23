@@ -115,6 +115,7 @@ const RaiseObjectionDialogForm = ({
               editor={editor}
               isSubmitting={isSubmitting}
               limit={limit}
+              disabled={!canUserStake || isSubmitting}
             />
           )}
         </DialogSection>
