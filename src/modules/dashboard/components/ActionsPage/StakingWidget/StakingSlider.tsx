@@ -10,6 +10,7 @@ import Slider, { Appearance } from '~core/Slider';
 import { Tooltip } from '~core/Popover';
 import Numeral from '~core/Numeral';
 import StakingValidationError from '~dashboard/ActionsPage/StakingValidationError';
+import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
 import { Colony, useLoggedInUser } from '~data/index';
 import { getFormattedTokenValue } from '~utils/tokens';
@@ -173,6 +174,15 @@ const StakingSlider = ({
           text={isObjection ? MSG.titleObject : MSG.titleStake}
           className={styles.title}
           appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
+        />
+        <QuestionMarkTooltip
+          tooltipText={MSG.stakingToolTip}
+          className={styles.questionMarkIcon}
+          tooltipClassName={styles.tooltip}
+          showArrow={false}
+          tooltipPopperOptions={{
+            placement: 'top-end',
+          }}
         />
       </div>
       <p className={styles.description}>
