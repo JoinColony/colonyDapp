@@ -3,6 +3,13 @@ import { defineMessages } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
 import * as yup from 'yup';
 import { Decimal } from 'decimal.js';
+import { useEditor } from '@tiptap/react';
+import CharacterCount from '@tiptap/extension-character-count';
+import Color from '@tiptap/extension-color';
+import Placeholder from '@tiptap/extension-placeholder';
+import TextStyle from '@tiptap/extension-text-style';
+import Underline from '@tiptap/extension-underline';
+import StarterKit from '@tiptap/starter-kit';
 
 import { ActionForm } from '~core/Fields';
 import Button from '~core/Button';
@@ -61,6 +68,8 @@ const validationSchema = yup.object({
   amount: yup.number(),
 });
 
+const limit = 4000;
+
 const StakingWidget = ({
   colony,
   colony: { colonyAddress, nativeTokenAddress },
@@ -102,6 +111,20 @@ const StakingWidget = ({
 
   const openRaiseObjectionDialog = useDialog(RaiseObjectionDialog);
 
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Underline,
+      TextStyle,
+      Color,
+      CharacterCount.configure({ limit }),
+      Placeholder.configure({
+        emptyEditorClass: 'is-editor-empty',
+        placeholder: 'Enter the description...',
+      }),
+    ],
+  });
+
   const handleRaiseObjection = useCallback(
     (userHasPermission: boolean, stakingAmounts: StakingAmounts) =>
       openRaiseObjectionDialog({
@@ -110,8 +133,10 @@ const StakingWidget = ({
         canUserStake: userHasPermission,
         scrollToRef,
         ...stakingAmounts,
+        editor,
+        limit,
       }),
-    [colony, openRaiseObjectionDialog, scrollToRef, motionId],
+    [colony, openRaiseObjectionDialog, scrollToRef, motionId, editor],
   );
 
   const getDecimalStake = useCallback(
