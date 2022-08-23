@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import Button from '~core/Button';
 
+import Button from '~core/Button';
 import { FormSection } from '~core/Fields';
 import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
