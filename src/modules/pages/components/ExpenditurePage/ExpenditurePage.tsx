@@ -29,6 +29,7 @@ import { AnyUser } from '~data/index';
 import { useDialog } from '~core/Dialog';
 import EscrowFundsDialog from '~dashboard/Dialogs/EscrowFundsDialog';
 import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
+import { initalMilestone } from '~dashboard/ExpenditurePage/Staged/constants';
 
 import ExpenditureForm from './ExpenditureForm';
 import { ExpenditureTypes } from './types';
@@ -97,6 +98,14 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.amountZeroError',
     defaultMessage: 'Value must be greater than zero',
   },
+  milestoneNameError: {
+    id: 'dashboard.ExpenditurePage.milestoneNameError',
+    defaultMessage: 'Name is required',
+  },
+  milestoneAmountError: {
+    id: 'dashboard.ExpenditurePage.milestoneAmountError',
+    defaultMessage: 'Amount is required',
+  },
 });
 
 const validationSchema = yup.object().shape({
@@ -123,6 +132,33 @@ const validationSchema = yup.object().shape({
           .min(1),
       }),
     ),
+  }),
+  staged: yup.object().when('expenditure', {
+    is: (expenditure) => expenditure === ExpenditureTypes.Staged,
+    then: yup.object().shape({
+      user: yup.object().required(),
+      amount: yup.object().shape({
+        value: yup
+          .number()
+          .transform((value) => toFinite(value))
+          .required(() => MSG.milestoneAmountError)
+          .moreThan(0, () => MSG.amountZeroError),
+        tokenAddress: yup.string().required(),
+      }),
+      milestones: yup
+        .array(
+          yup.object().shape({
+            name: yup.string().required(() => MSG.milestoneNameError),
+            percent: yup
+              .number()
+              .moreThan(0, () => MSG.amountZeroError)
+              .required(),
+            amount: yup.number(),
+          }),
+        )
+        .min(1)
+        .required(),
+    }),
   }),
   title: yup.string().min(3).required(),
   description: yup.string().max(4000),
@@ -172,9 +208,18 @@ export interface ValuesType {
   recipients?: Recipient[];
   title?: string;
   description?: string;
-  split: {
+  staged?: {
+    user?: AnyUser;
+    amount?: { value?: string; tokenAddress?: string };
+    milestones?: {
+      id: string;
+      name?: string;
+      amount?: number;
+    }[];
+  };
+  split?: {
     unequal: boolean;
-    amount: { value?: string; tokenAddress?: string };
+    amount?: { value?: string; tokenAddress?: string };
     recipients?: { user?: AnyUser; amount?: number; percent?: number }[];
   };
 }
@@ -186,11 +231,14 @@ const initialValues = {
   owner: undefined,
   title: undefined,
   description: undefined,
+  staged: {
+    milestones: [{ ...initalMilestone, id: nanoid() }],
+  },
   split: {
     unequal: true,
     recipients: [
-      { ...initalRecipient, key: nanoid() },
-      { ...initalRecipient, key: nanoid() },
+      { ...initalRecipient, key: nanoid(), amount: 0 },
+      { ...initalRecipient, key: nanoid(), amount: 0 },
     ],
   },
 };
@@ -213,6 +261,7 @@ const ExpenditurePage = ({ match }: Props) => {
   const [isFormEditable, setFormEditable] = useState(true);
   const [formValues, setFormValues] = useState<ValuesType>();
   const [activeStateId, setActiveStateId] = useState<string>();
+  const [shouldValidate, setShouldValidate] = useState(false);
   const sidebarRef = useRef<HTMLElement>(null);
 
   const { data: colonyData, loading } = useColonyFromNameQuery({
@@ -244,42 +293,19 @@ const ExpenditurePage = ({ match }: Props) => {
             tokenAddress: colonyData?.processedColony.nativeTokenAddress,
           },
         },
+        staged: {
+          ...initialValues.staged,
+          amount: {
+            tokenAddress: colonyData?.processedColony.nativeTokenAddress,
+          },
+        },
       }
     );
   }, [colonyData, formValues, loggedInUser]);
 
   const handleSubmit = useCallback((values: ValuesType) => {
     setActiveStateId(Stage.Draft);
-    if (values.expenditure === ExpenditureTypes.Split) {
-      const recipientsCount =
-        values.split.recipients?.filter(
-          (recipient) => recipient?.user?.id !== undefined,
-        ).length || 0;
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const splitValues = {
-        ...values,
-        recipients: undefined,
-        split: {
-          ...values.split,
-          recipients: values.split.recipients?.map((recipient) => {
-            const amount = values.split.amount.value;
-            if (values.split.unequal) {
-              const userAmount =
-                amount &&
-                recipient?.percent &&
-                (recipient.percent / 100) * Number(values.split.amount.value);
-              return { ...recipient, amount: userAmount };
-            }
-            return {
-              ...recipient,
-              amount: !amount ? 0 : Number(amount) / (recipientsCount || 1),
-            };
-          }),
-        },
-      };
-      // if expenditure type is "Split" then splitValues, not values should be send to backend
-    }
+    // setShouldValidate(true);
 
     if (values) {
       setFormValues(values);
@@ -366,6 +392,8 @@ const ExpenditurePage = ({ match }: Props) => {
       initialValues={initialValuesData}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
+      validateOnBlur={shouldValidate}
+      validateOnChange={shouldValidate}
       enableReinitialize
     >
       <div className={getMainClasses({}, styles)}>
@@ -400,6 +428,7 @@ const ExpenditurePage = ({ match }: Props) => {
                 setActiveStateId,
                 lockValues,
                 handleSubmit,
+                setShouldValidate,
               }}
             />
           </main>
@@ -415,10 +444,12 @@ const ExpenditurePage = ({ match }: Props) => {
           walletAddress={loggedInUser?.walletAddress}
           colony={colonyData?.processedColony}
         />
-        <LockedPayments
-          recipients={formValues?.recipients}
-          colony={colonyData?.processedColony}
-        />
+        {formValues?.expenditure === ExpenditureTypes.Advanced && (
+          <LockedPayments
+            recipients={formValues?.recipients}
+            colony={colonyData?.processedColony}
+          />
+        )}
       </aside>
       <div className={styles.mainContainer}>
         <main className={styles.mainContent}>
@@ -442,6 +473,7 @@ const ExpenditurePage = ({ match }: Props) => {
               setActiveStateId,
               lockValues,
               handleSubmit,
+              setShouldValidate,
             }}
           />
         </main>
