@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import Maybe from 'graphql/tsutils/Maybe';
 
 import NavLink from '~core/NavLink';
 import Heading from '~core/Heading';
@@ -13,8 +12,6 @@ import useAvatarDisplayCounter from '~utils/hooks/useAvatarDisplayCounter';
 import {
   Colony,
   useLoggedInUser,
-  BannedUser,
-  UserProfile,
   ColonyContributor,
   ColonyWatcher,
 } from '~data/index';
@@ -62,14 +59,6 @@ const MSG = defineMessages({
     defaultMessage: 'View more',
   },
 });
-
-type BannedMember = Maybe<
-  Pick<BannedUser, 'id' | 'eventId' | 'banned'> & {
-    profile?:
-      | Maybe<Pick<UserProfile, 'displayName' | 'username' | 'walletAddress'>>
-      | undefined;
-  }
->;
 
 interface Props {
   colony: Colony;

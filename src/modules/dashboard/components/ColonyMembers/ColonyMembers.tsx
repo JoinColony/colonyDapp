@@ -45,7 +45,7 @@ const MSG = defineMessages({
   },
   totalReputationTitle: {
     id: 'dashboard.ColonyMembers.totalReputationTitle',
-    defaultMessage: 'Total reputation in team',
+    defaultMessage: 'Total reputation in the team',
   },
 });
 
