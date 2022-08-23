@@ -156,6 +156,14 @@ const Routes = () => {
             hasBackLink: false,
           }}
         />
+        <WalletRequiredRoute
+          isConnected={isConnected}
+          didClaimProfile={didClaimProfile}
+          path={COLONY_DECISIONS_PREVIEW_ROUTE}
+          component={DecisionPreview}
+          layout={NavBar}
+          routeProps={{ hasBackLink: true }}
+        />
 
         <AlwaysAccesibleRoute
           path={LANDING_PAGE_ROUTE}
@@ -193,16 +201,7 @@ const Routes = () => {
             hasSubscribedColonies: isMobile,
           })}
         />
-        <AlwaysAccesibleRoute
-          exact
-          path={COLONY_DECISIONS_PREVIEW_ROUTE}
-          component={DecisionPreview}
-          layout={NavBar}
-          routeProps={({ colonyName }) => ({
-            backText: '',
-            backRoute: `/colony/${colonyName}`,
-          })}
-        />
+
         <AlwaysAccesibleRoute
           path={USER_ROUTE}
           component={UserProfile}
