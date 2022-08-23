@@ -1,3 +1,5 @@
+import { AnyUser } from '~data/index';
+
 export interface Recipient {
   id?: string;
   recipient?: AnyUser;

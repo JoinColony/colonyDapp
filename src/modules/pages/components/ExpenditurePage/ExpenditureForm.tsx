@@ -6,12 +6,13 @@ import { useDialog } from '~core/Dialog';
 import StakeExpenditureDialog from '~dashboard/Dialogs/StakeExpenditureDialog';
 import { ExpenditureSettings } from '~dashboard/ExpenditurePage';
 import Payments from '~dashboard/ExpenditurePage/Payments';
+import Staged from '~dashboard/ExpenditurePage/Staged';
 import Split from '~dashboard/ExpenditurePage/Split';
 import { Colony } from '~data/index';
 
 import { ValuesType } from './ExpenditurePage';
-import styles from './ExpenditurePage.css';
 import { ExpenditureTypes } from './types';
+import styles from './ExpenditurePage.css';
 
 const MSG = defineMessages({
   submit: {
@@ -59,6 +60,9 @@ const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
       }
       case ExpenditureTypes.Split: {
         return <Split sidebarRef={sidebarRef} colony={colony} />;
+      }
+      case ExpenditureTypes.Staged: {
+        return <Staged colony={colony} sidebarRef={sidebarRef} />;
       }
       default:
         return null;

@@ -26,7 +26,9 @@ import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
 import { useDialog } from '~core/Dialog';
 import EscrowFundsDialog from '~dashboard/Dialogs/EscrowFundsDialog';
 import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
+import { initalMilestone } from '~dashboard/ExpenditurePage/Staged/constants';
 import { Split } from '~dashboard/ExpenditurePage/Split/types';
+import { AnyUser } from '~data/index';
 
 import ExpenditureForm from './ExpenditureForm';
 import LockedSidebar from './LockedSidebar';
@@ -96,6 +98,14 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.amountZeroError',
     defaultMessage: 'Value must be greater than zero',
   },
+  milestoneNameError: {
+    id: 'dashboard.ExpenditurePage.milestoneNameError',
+    defaultMessage: 'Name is required',
+  },
+  milestoneAmountError: {
+    id: 'dashboard.ExpenditurePage.milestoneAmountError',
+    defaultMessage: 'Amount is required',
+  },
 });
 
 const validationSchema = yup.object().shape({
@@ -122,6 +132,33 @@ const validationSchema = yup.object().shape({
           .min(1),
       }),
     ),
+  }),
+  staged: yup.object().when('expenditure', {
+    is: (expenditure) => expenditure === ExpenditureTypes.Staged,
+    then: yup.object().shape({
+      user: yup.object().required(),
+      amount: yup.object().shape({
+        value: yup
+          .number()
+          .transform((value) => toFinite(value))
+          .required(() => MSG.milestoneAmountError)
+          .moreThan(0, () => MSG.amountZeroError),
+        tokenAddress: yup.string().required(),
+      }),
+      milestones: yup
+        .array(
+          yup.object().shape({
+            name: yup.string().required(() => MSG.milestoneNameError),
+            percent: yup
+              .number()
+              .moreThan(0, () => MSG.amountZeroError)
+              .required(),
+            amount: yup.number(),
+          }),
+        )
+        .min(1)
+        .required(),
+    }),
   }),
   title: yup.string().min(3).required(),
   description: yup.string().max(4000),
@@ -170,6 +207,15 @@ export interface ValuesType {
   title?: string;
   description?: string;
   split?: Split;
+  staged?: {
+    user?: AnyUser;
+    amount?: { value?: string; tokenAddress?: string };
+    milestones?: {
+      id: string;
+      name?: string;
+      amount?: number;
+    }[];
+  };
 }
 
 const initialValues = {
@@ -179,11 +225,14 @@ const initialValues = {
   owner: undefined,
   title: undefined,
   description: undefined,
+  staged: {
+    milestones: [{ ...initalMilestone, id: nanoid() }],
+  },
   split: {
     unequal: false,
     recipients: [
-      { ...initalRecipient, key: nanoid() },
-      { ...initalRecipient, key: nanoid() },
+      { ...initalRecipient, key: nanoid(), amount: 0 },
+      { ...initalRecipient, key: nanoid(), amount: 0 },
     ],
   },
 };
@@ -206,6 +255,7 @@ const ExpenditurePage = ({ match }: Props) => {
   const [isFormEditable, setFormEditable] = useState(true);
   const [formValues, setFormValues] = useState<ValuesType>();
   const [activeStateId, setActiveStateId] = useState<string>();
+  const [shouldValidate, setShouldValidate] = useState(false);
   const sidebarRef = useRef<HTMLElement>(null);
 
   const { data: colonyData, loading } = useColonyFromNameQuery({
@@ -233,6 +283,12 @@ const ExpenditurePage = ({ match }: Props) => {
         ],
         split: {
           ...initialValues.split,
+          amount: {
+            tokenAddress: colonyData?.processedColony.nativeTokenAddress,
+          },
+        },
+        staged: {
+          ...initialValues.staged,
           amount: {
             tokenAddress: colonyData?.processedColony.nativeTokenAddress,
           },
@@ -356,6 +412,8 @@ const ExpenditurePage = ({ match }: Props) => {
       initialValues={initialValuesData}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
+      validateOnBlur={shouldValidate}
+      validateOnChange={shouldValidate}
       enableReinitialize
     >
       <div className={getMainClasses({}, styles)}>
@@ -392,6 +450,7 @@ const ExpenditurePage = ({ match }: Props) => {
                 setActiveStateId,
                 lockValues,
                 handleSubmit,
+                setShouldValidate,
               }}
             />
           </main>
@@ -430,6 +489,7 @@ const ExpenditurePage = ({ match }: Props) => {
               setActiveStateId,
               lockValues,
               handleSubmit,
+              setShouldValidate,
             }}
           />
         </main>
