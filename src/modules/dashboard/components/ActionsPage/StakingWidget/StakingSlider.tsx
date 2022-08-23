@@ -7,6 +7,7 @@ import Heading from '~core/Heading';
 import Slider, { Appearance } from '~core/Slider';
 import Numeral from '~core/Numeral';
 import StakingValidationError from '~dashboard/ActionsPage/StakingValidationError';
+import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
 import { Colony, useLoggedInUser } from '~data/index';
 import { getFormattedTokenValue } from '~utils/tokens';
@@ -58,6 +59,10 @@ const MSG = defineMessages({
   minimumAmount: {
     id: 'dashboard.ActionsPage.StakingSlider.minimumAmount',
     defaultMessage: 'at least {minStake}',
+  },
+  stakingToolTip: {
+    id: 'dashboard.ActionsPage.StakingSlider.stakingToolTip',
+    defaultMessage: `Staking involves committing an amount of tokens as collateral to support your decision.`,
   },
 });
 
@@ -152,6 +157,15 @@ const StakingSlider = ({
           text={isObjection ? MSG.titleObject : MSG.titleStake}
           className={styles.title}
           appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
+        />
+        <QuestionMarkTooltip
+          tooltipText={MSG.stakingToolTip}
+          className={styles.questionMarkIcon}
+          tooltipClassName={styles.tooltip}
+          showArrow={false}
+          tooltipPopperOptions={{
+            placement: 'top-end',
+          }}
         />
       </div>
       <p className={styles.description}>
