@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
 
@@ -7,6 +7,12 @@ import Button from '~core/Button';
 import Tag from '~core/Tag';
 import { useDialog } from '~core/Dialog';
 import HookedUserAvatar from '~users/HookedUserAvatar';
+import {
+  LOCAL_STORAGE_DECISION_KEY,
+  FormValues,
+} from '~dashboard/Dialogs/NewDecisionDialog';
+import DetailsWidget from '~dashboard/ActionsPage/DetailsWidget';
+
 import {
   useUser,
   useLoggedInUser,
@@ -17,9 +23,6 @@ import {
 import { ColonyActions } from '~types/index';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import LoadingTemplate from '~pages/LoadingTemplate';
-import DecisionDialog from '~dashboard/Dialogs/DecisionDialog';
-
-import DetailsWidget from '../ActionsPage/DetailsWidget';
 
 import styles from './DecisionPreview.css';
 
@@ -34,27 +37,24 @@ const MSG = defineMessages({
   },
 });
 
-/* mock data */
-const decisionData = {
-  title: 'Should we build a Discord Bot?',
-  description: `I think we should build a Discord bot that integrates with the Dapp and provides our community with greater transperency and also provides more convienience for us to be notified of things happening in our Colony.`,
-  /* Using an HTML string for the dialog content ensures the dirty prop works as expected */
-  htmlDescription: `<p>I think we should build a Discord bot that integrates with the Dapp and provides our community with greater transperency and also provides more convienience for us to be notified of things happening in our Colony.</p>`,
-  actionType: 'Decision',
-  fromDomain: '1',
-};
-
+const handleEdit = () => {};
 const handleSubmit = () => {};
 
 const displayName = 'dashboard.DecisionPreview';
 
 const DecisionPreview = () => {
+  const UserAvatar = HookedUserAvatar({ fetchUser: false });
+
   const { colonyName } = useParams<{
     colonyName: string;
   }>();
   const { walletAddress, username } = useLoggedInUser();
   const userProfile = useUser(walletAddress) as AnyUser;
-  const actionType = decisionData.actionType as ColonyActions;
+  const actionType = ColonyActions.Decision;
+
+  const [decisionData] = useState<FormValues>(
+    JSON.parse(localStorage.getItem(LOCAL_STORAGE_DECISION_KEY) || ''),
+  );
 
   const { data: colonyData, error, loading } = useColonyFromNameQuery({
     // We have to define an empty address here for type safety, will be replaced by the query
@@ -83,13 +83,10 @@ const DecisionPreview = () => {
 
   const { processedColony: colony } = colonyData;
 
-  const UserAvatar = HookedUserAvatar({ fetchUser: false });
-
   const actionAndEventValues = {
     actionType,
     fromDomain: colonyData.processedColony.domains.find(
-      ({ ethDomainId }) =>
-        ethDomainId === parseInt(decisionData.fromDomain, 10),
+      ({ ethDomainId }) => ethDomainId === decisionData.motionDomainId,
     ) as OneDomain,
   };
 
