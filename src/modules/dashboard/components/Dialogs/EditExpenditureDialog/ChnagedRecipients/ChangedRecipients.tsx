@@ -1,7 +1,9 @@
 import { FieldArray } from 'formik';
 import { isEmpty, isNil } from 'lodash';
+import { nanoid } from 'nanoid';
 import React, { useCallback, Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+
 import Button from '~core/Button';
 import { FormSection } from '~core/Fields';
 import Numeral from '~core/Numeral';
@@ -10,6 +12,7 @@ import { Recipient as RecipientType } from '~dashboard/ExpenditurePage/Payments/
 import { getRecipientTokens } from '~dashboard/ExpenditurePage/utils';
 import { Colony, LoggedInUser } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/types';
+
 import NewDelay from '../NewDelay';
 import NewRecipient from '../NewRecipient';
 import NewValue from '../NewValue';
@@ -87,18 +90,22 @@ const ChangedRecipients = ({ newRecipients, colony, oldValues }: Props) => {
       return Object.entries(changedRecipient).map(([type, newValue]) => {
         switch (type) {
           case 'recipient': {
-            return <NewRecipient newValue={newValue} />;
+            return <NewRecipient newValue={newValue} key={nanoid()} />;
           }
           case 'value': {
             return (
-              <NewValue colony={colony} changedRecipient={changedRecipient} />
+              <NewValue
+                colony={colony}
+                changedRecipient={changedRecipient}
+                key={nanoid()}
+              />
             );
           }
           case 'delay': {
             if (changedRecipient.created && isNil(newValue.amount)) {
               return null;
             }
-            return <NewDelay newValue={newValue} />;
+            return <NewDelay newValue={newValue} key={nanoid()} />;
           }
           default:
             return null;
@@ -131,7 +138,7 @@ const ChangedRecipients = ({ newRecipients, colony, oldValues }: Props) => {
               oldValue && getRecipientTokens(oldValue, colony);
 
             return (
-              <Fragment key={changedItem.key}>
+              <Fragment key={changedItem.id}>
                 <FormSection appearance={{ border: 'bottom' }}>
                   <div className={styles.reicpientButtonContainer}>
                     <div className={styles.recipientContainer}>
@@ -158,19 +165,22 @@ const ChangedRecipients = ({ newRecipients, colony, oldValues }: Props) => {
                                 />
                               ),
                               value: recipientValues?.map(
-                                ({ amount, token }) =>
-                                  token &&
-                                  amount && (
-                                    <div key={token.id}>
-                                      <FormattedMessage
-                                        {...MSG.token}
-                                        values={{
-                                          amount: <Numeral value={amount} />,
-                                          token: token.symbol,
-                                        }}
-                                      />
-                                    </div>
-                                  ),
+                                ({ amount, token, key }) => {
+                                  return (
+                                    token &&
+                                    amount && (
+                                      <div key={key}>
+                                        <FormattedMessage
+                                          {...MSG.token}
+                                          values={{
+                                            amount: <Numeral value={amount} />,
+                                            token: token.symbol,
+                                          }}
+                                        />
+                                      </div>
+                                    )
+                                  );
+                                },
                               ),
                               comma: oldValue?.delay?.amount ? ',' : '',
                             }}

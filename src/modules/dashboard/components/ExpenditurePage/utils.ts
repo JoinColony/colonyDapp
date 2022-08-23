@@ -1,4 +1,7 @@
+import { nanoid } from 'nanoid';
+
 import { Colony } from '~data/index';
+
 import { Recipient as RecipientType } from './Payments/types';
 
 export const getRecipientTokens = (
@@ -15,6 +18,7 @@ export const getRecipientTokens = (
     return {
       amount,
       token,
+      key: nanoid(),
     };
   });
 

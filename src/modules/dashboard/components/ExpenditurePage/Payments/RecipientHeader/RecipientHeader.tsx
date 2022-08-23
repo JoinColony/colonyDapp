@@ -88,10 +88,10 @@ const RecipientHeader = ({
                     />
                   ),
                   value: recipientValues?.map(
-                    ({ amount, token }) =>
+                    ({ amount, token, key }) =>
                       token &&
                       amount && (
-                        <div className={styles.tokenWrapper} key={token.id}>
+                        <div className={styles.tokenWrapper} key={key}>
                           <FormattedMessage
                             {...MSG.token}
                             values={{
