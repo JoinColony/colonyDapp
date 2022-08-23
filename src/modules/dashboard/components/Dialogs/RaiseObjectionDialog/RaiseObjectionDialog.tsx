@@ -1,11 +1,4 @@
 import React, { useCallback, RefObject } from 'react';
-import { useEditor } from '@tiptap/react';
-import CharacterCount from '@tiptap/extension-character-count';
-import Color from '@tiptap/extension-color';
-import Placeholder from '@tiptap/extension-placeholder';
-import TextStyle from '@tiptap/extension-text-style';
-import Underline from '@tiptap/extension-underline';
-import StarterKit from '@tiptap/starter-kit';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { bigNumberify } from 'ethers/utils';
@@ -35,8 +28,6 @@ interface Props extends FormProps {
 
 const displayName = 'dashboard.RaiseObjectionDialog';
 
-const characterLimit = 4000;
-
 const RaiseObjectionDialog = ({
   cancel,
   close,
@@ -47,20 +38,6 @@ const RaiseObjectionDialog = ({
   scrollToRef,
   ...props
 }: Props) => {
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Underline,
-      TextStyle,
-      Color,
-      CharacterCount.configure({ limit: characterLimit }),
-      Placeholder.configure({
-        emptyEditorClass: 'is-editor-empty',
-        placeholder: 'Enter the description...',
-      }),
-    ],
-  });
-
   const { walletAddress } = useLoggedInUser();
 
   const validationSchema = yup.object().shape({
@@ -142,7 +119,6 @@ const RaiseObjectionDialog = ({
             minUserStake={minUserStake}
             cancel={cancel}
             {...props}
-            editor={editor}
           />
         </Dialog>
       )}
