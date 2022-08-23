@@ -16,3 +16,4 @@ export const minStakeAmountContainer: string;
 export const requiredStakeText: string;
 export const requiredStakeUnderThreshold: string;
 export const requiredStakeAboveThreshold: string;
+export const questionMarkIcon: string;
