@@ -102,3 +102,10 @@
 .requiredStakeAboveThreshold {
   color: var(--primary);
 }
+
+.questionMarkIcon {
+  align-self: flex-end;
+  margin-top: 16px;
+  margin-left: 7px;
+  cursor: pointer;
+}
