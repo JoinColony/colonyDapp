@@ -27,6 +27,7 @@ import {
 } from '~dashboard/ActionsPage';
 import ipfs from '~context/ipfsWithFallbackContext';
 import { log } from '~utils/debug';
+import { ACTION_DECISION_MOTION_CODE } from '~constants';
 
 import { getMotionRequiredStake, MotionState } from '../colonyMotions';
 import { availableRoles } from '~dialogs/PermissionManagementDialog';
@@ -1108,6 +1109,14 @@ const getUnlockTokenMotionValues = async (
   return getMotionValues(processedEvents, votingClient, colonyClient);
 };
 
+const getCreateDecisionMotionValues = async (
+  processedEvents: ProcessedEvent[],
+  votingClient: ExtensionClient,
+  colonyClient: ColonyClient,
+): Promise<Partial<MotionValues>> => {
+  return getMotionValues(processedEvents, votingClient, colonyClient);
+};
+
 export const getActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
@@ -1313,6 +1322,18 @@ export const getActionValues = async (
         ...paymentValues,
       };
     }
+    case ColonyMotions.CreateDecisionMotion: {
+      const createDecisionMotionValues = await getCreateDecisionMotionValues(
+        processedEvents,
+        votingClient,
+        colonyClient,
+      );
+      return {
+        ...fallbackValues,
+        ...createDecisionMotionValues,
+      };
+    }
+
     case ColonyMotions.VersionUpgradeMotion: {
       const versionUpgradeMotionValues = await getVersionUpgradeMotionValues(
         processedEvents,
@@ -1437,6 +1458,9 @@ export const getMotionActionType = async (
   motionId: BigNumberish,
 ) => {
   const motion = await votingClient.getMotion(motionId);
+  if (motion?.action === ACTION_DECISION_MOTION_CODE) {
+    return motionNameMapping.createDecision;
+  }
   const values = colonyClient.interface.parseTransaction({
     data: motion.action,
   });
