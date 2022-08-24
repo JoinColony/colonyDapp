@@ -1,7 +1,8 @@
 import { MessageDescriptor, useIntl } from 'react-intl';
 import React from 'react';
+import isArray from 'lodash/isArray';
+import isNil from 'lodash/isNil';
 
-import { isNil } from 'lodash';
 import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
 
@@ -41,10 +42,17 @@ const InputStatus = ({
   touched,
 }: Props) => {
   const { formatMessage } = useIntl();
-  const errorText = typeof error === 'object' ? formatMessage(error) : error;
+  const getErrorText = () => {
+    switch (typeof error) {
+      case 'object':
+        return formatMessage(isArray(error) ? error[0] : error);
+      default:
+        return error;
+    }
+  };
   const statusText =
     typeof status === 'object' ? formatMessage(status, statusValues) : status;
-  const text = errorText || statusText;
+  const text = getErrorText() || statusText;
   const Element = appearance.direction === 'horizontal' ? 'span' : 'p';
   return (
     <Element
