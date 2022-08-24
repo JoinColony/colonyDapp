@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
@@ -14,6 +14,7 @@ import { ActionTypes } from '~redux/index';
 import { useMembersSubscription } from '~data/index';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 import { useSelectedUser } from '~utils/hooks/useSelectedUser';
+import { getVerifiedUsers } from '~utils/verifiedRecipients';
 
 import DialogForm from '../ManageReputationDialogForm';
 import {
@@ -51,6 +52,12 @@ const ManageReputationContainer = ({
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress },
   });
+
+  const subscribedUsers = colonyMembers?.subscribedUsers || [];
+
+  const verifiedUsers = useMemo(() => {
+    return getVerifiedUsers(colony.whitelistedAddresses, subscribedUsers) || [];
+  }, [subscribedUsers, colony]);
 
   const updateReputationCallback = (
     userRepPercentage: number,
@@ -127,8 +134,10 @@ const ManageReputationContainer = ({
     [totalReputationData, isSmiteAction],
   );
 
-  const selectedUser = useSelectedUser(colonyMembers);
-
+  const { isWhitelistActivated } = colony;
+  const selectedUser = useSelectedUser(
+    isWhitelistActivated ? verifiedUsers : subscribedUsers,
+  );
   return (
     <ActionForm
       initialValues={{
@@ -163,6 +172,9 @@ const ManageReputationContainer = ({
               isVotingExtensionEnabled={isVotingExtensionEnabled}
               back={() => callStep(prevStep)}
               ethDomainId={ethDomainId}
+              verifiedUsers={
+                isWhitelistActivated ? verifiedUsers : subscribedUsers
+              }
               updateReputation={
                 isSmiteAction ? updateReputationCallback : undefined
               }

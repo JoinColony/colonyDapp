@@ -115,7 +115,7 @@ const MSG = defineMessages({
   },
 });
 interface Props extends ActionDialogProps {
-  subscribedUsers: AnyUser[];
+  verifiedUsers: AnyUser[];
   showWhitelistWarning: boolean;
   ethDomainId?: number;
 }
@@ -154,7 +154,7 @@ const CreatePaymentDialogForm = ({
   colony,
   colony: { colonyAddress, domains, tokens },
   isVotingExtensionEnabled,
-  subscribedUsers,
+  verifiedUsers,
   handleSubmit,
   setFieldValue,
   isSubmitting,
@@ -438,7 +438,7 @@ const CreatePaymentDialogForm = ({
         <div className={styles.singleUserContainer}>
           <SingleUserPicker
             appearance={{ width: 'wide' }}
-            data={subscribedUsers}
+            data={verifiedUsers}
             label={MSG.to}
             name="recipient"
             filter={filterUserSelection}
