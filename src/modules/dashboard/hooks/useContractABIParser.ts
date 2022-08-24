@@ -1,5 +1,13 @@
+import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
-import { AbiItem, keccak256 } from 'web3-utils';
+import { AbiItem, isAddress, keccak256 } from 'web3-utils';
+
+import {
+  BINANCE_NETWORK,
+  GNOSIS_NETWORK,
+  GNOSIS_SAFE_NETWORKS,
+  POLYGON_NETWORK,
+} from '~constants';
 
 export interface AbiItemExtended extends AbiItem {
   name: string;
@@ -9,14 +17,35 @@ export interface AbiItemExtended extends AbiItem {
   signatureHash: string;
 }
 
-export const fetchContractABI = async (contractAddress: string) => {
+const fetchContractABI = async (
+  contractAddress: string,
+  safeChainId: number,
+) => {
   if (!contractAddress) {
     return [];
   }
 
   try {
-    const apiUri = `https://api.etherscan.io/api?module=contract&action=getAbi&address=${contractAddress}&apiKey=${process.env.ETHERSCAN_API_KEY}`;
-    const response = await fetch(apiUri);
+    const currentNetworkData =
+      GNOSIS_SAFE_NETWORKS.find((network) => network.chainId === safeChainId) ||
+      GNOSIS_NETWORK;
+    const getApiKey = () => {
+      if (currentNetworkData.chainId === POLYGON_NETWORK.chainId) {
+        return process.env.POLYGONSCAN_API_KEY;
+      }
+      if (currentNetworkData.chainId === BINANCE_NETWORK.chainId) {
+        return process.env.BSCSCAN_API_KEY;
+      }
+      if (currentNetworkData.chainId === GNOSIS_NETWORK.chainId) {
+        return process.env.GNOSIS_API_KEY;
+      }
+      return process.env.ETHERSCAN_API_KEY;
+    };
+    const getApiUri = () => {
+      const apiUri = `${currentNetworkData.apiUri}?module=contract&action=getabi&address=${contractAddress}`;
+      return `${apiUri}&apiKey=${getApiKey()}`;
+    };
+    const response = await fetch(getApiUri());
 
     if (!response.ok) {
       return [];
@@ -24,14 +53,14 @@ export const fetchContractABI = async (contractAddress: string) => {
 
     const responseJSON = await response.json();
 
-    return responseJSON.result;
+    return responseJSON.result || responseJSON.message;
   } catch (error) {
     console.error('Failed to retrieve ABI', error);
     return '';
   }
 };
 
-export const extractUsefulMethods = (abi: AbiItem[]): AbiItemExtended[] => {
+const extractUsefulMethods = (abi: AbiItem[]): AbiItemExtended[] => {
   const extendedAbiItems = abi.filter(
     ({ name, type }) => type === 'function' && !!name,
   ) as AbiItemExtended[];
@@ -61,33 +90,60 @@ export const extractUsefulMethods = (abi: AbiItem[]): AbiItemExtended[] => {
     });
 };
 
-export const useContractABIParser = (contractAddress?: string) => {
+export const useContractABIParser = (
+  contractAddress: string | undefined,
+  contractABI: string | undefined,
+  safeChainId: number,
+  handleContractABIChange: (abi: string) => void,
+) => {
   const [
     currentParsedContractAddress,
     setCurrentParsedContractAddress,
   ] = useState<string>('');
-  const [contractABI, setContractABI] = useState<string>('');
   const [usefulMethods, setUsefulMethods] = useState<AbiItemExtended[]>([]);
 
   useEffect(() => {
-    if (contractAddress && currentParsedContractAddress !== contractAddress) {
-      const contractPromise = fetchContractABI(contractAddress);
+    if (isEmpty(contractAddress) && currentParsedContractAddress) {
+      setCurrentParsedContractAddress('');
+      handleContractABIChange('');
+      setUsefulMethods([]);
+    }
+  }, [contractAddress, currentParsedContractAddress, handleContractABIChange]);
+
+  useEffect(() => {
+    if (
+      contractAddress &&
+      isAddress(contractAddress) &&
+      currentParsedContractAddress !== contractAddress
+    ) {
+      const contractPromise = fetchContractABI(contractAddress, safeChainId);
       contractPromise.then((data) => {
-        setContractABI(data);
+        handleContractABIChange(data);
       });
 
       setCurrentParsedContractAddress(contractAddress);
     }
-  }, [currentParsedContractAddress, contractAddress]);
+  }, [
+    currentParsedContractAddress,
+    contractAddress,
+    handleContractABIChange,
+    safeChainId,
+  ]);
 
   useEffect(() => {
     if (contractABI) {
-      setUsefulMethods(extractUsefulMethods(JSON.parse(contractABI)));
+      let parsedContractABI: AbiItem[];
+      try {
+        parsedContractABI = JSON.parse(contractABI);
+      } catch (error) {
+        console.error(error);
+        parsedContractABI = [];
+      }
+      setUsefulMethods(extractUsefulMethods(parsedContractABI));
     }
   }, [contractABI]);
 
   return {
-    contractABI,
     usefulMethods,
   };
 };
