@@ -61,7 +61,7 @@ const AddExistingSafeDialog = ({
           return {
             colonyName,
             colonyAddress,
-            safeAddresses: [
+            safeList: [
               {
                 chainId,
                 safeName,
