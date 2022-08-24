@@ -22,6 +22,7 @@ export enum ColonyActions {
   SetUserRoles = 'SetUserRoles',
   EmitDomainReputationPenalty = 'EmitDomainReputationPenalty',
   EmitDomainReputationReward = 'EmitDomainReputationReward',
+  Decision = 'Decision',
 }
 
 export enum ColonyAndExtensionsEvents {
