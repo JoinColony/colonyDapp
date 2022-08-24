@@ -19,7 +19,7 @@ import ActionsPageFeed, {
   ActionsPageFeedItemWithIPFS,
   SystemMessage,
 } from '~dashboard/ActionsPageFeed';
-
+// import ActionPageDecisionWithIPFS from '~dashboard/ActionsPage/ActionPageDecisionWithIPFS';
 import { getFormattedTokenValue } from '~utils/tokens';
 import {
   getUpdatedDecodedMotionRoles,
@@ -163,6 +163,7 @@ const DefaultMotion = ({
     },
     fetchPolicy: 'network-only',
   });
+
   const { data: motionEventsData } = useEventsForMotionQuery({
     variables: { colonyAddress: colony.colonyAddress, motionId },
     fetchPolicy: 'network-only',
@@ -215,6 +216,8 @@ const DefaultMotion = ({
     actionType,
     true,
   );
+  // console.log(`🚀 ~ roleTitle`, roleTitle);
+  // console.log(`🚀 ~ roleMessageDescriptorId`, roleMessageDescriptorId);
 
   const requiredStake = bigNumberify(
     motionStakeData?.stakeAmountsForMotion?.requiredStake || 0,
@@ -397,6 +400,9 @@ const DefaultMotion = ({
     )} | Motion | Colony - ${colony.displayName ?? colony.colonyName ?? ``}`,
   );
 
+  // Decision specific
+  // const isDecision = actionType === ColonyMotions.CreateDecisionMotion;
+
   return (
     <div className={styles.main}>
       <StakeRequiredBanner stakeRequired={hasBanner} />
@@ -501,6 +507,15 @@ const DefaultMotion = ({
       <hr className={styles.dividerTop} />
       <div className={styles.container}>
         <div className={styles.content}>
+          {/* {isDecision ? (
+            <ActionPageDecisionWithIPFS
+              colony={colony}
+              user={initiator}
+              username={currentUserName || ''}
+              walletAddress={walletAddress}
+              hash={annotationHash || ''}
+            />
+          ) : ( */}
           <h1 className={styles.heading} data-test="actionHeading">
             <FormattedMessage
               id={roleMessageDescriptorId || 'motion.title'}
@@ -512,6 +527,7 @@ const DefaultMotion = ({
               }}
             />
           </h1>
+          {/* )} */}
           {annotationHash && (
             <div className={motionSpecificStyles.annotation}>
               <ActionsPageFeedItemWithIPFS

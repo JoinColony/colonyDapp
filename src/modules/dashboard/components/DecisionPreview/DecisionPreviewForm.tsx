@@ -1,105 +1,113 @@
 import React, { useCallback } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { useParams, useHistory, Redirect } from 'react-router-dom';
+import { defineMessages } from 'react-intl';
 
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Tag from '~core/Tag';
+import { useDialog } from '~core/Dialog';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import { useUser, useLoggedInUser, useColonyFromNameQuery } from '~data/index';
+import {
+  useUser,
+  useLoggedInUser,
+  useColonyFromNameQuery,
+  AnyUser,
+  OneDomain,
+} from '~data/index';
+import { ColonyActions } from '~types/index';
+import { NOT_FOUND_ROUTE } from '~routes/index';
+import LoadingTemplate from '~pages/LoadingTemplate';
+import DecisionDialog from '~dashboard/Dialogs/DecisionDialog';
 import { ActionForm } from '~core/Fields';
 import { ActionTypes } from '~redux/index';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 
-// import DetailsWidget from './DetailsWidget/DetailsWidget';
+import DetailsWidget from '../ActionsPage/DetailsWidget';
 
 import styles from './DecisionPreviewForm.css';
 
 const MSG = defineMessages({
-  type: {
-    id: 'dashboard.ColonyDecisions.DecisionPreview.type',
-    defaultMessage: `Type`,
+  preview: {
+    id: 'dashboard.DecisionPreview.preview',
+    defaultMessage: `Preview`,
   },
-  team: {
-    id: 'dashboard.ColonyDecisions.DecisionPreview.team',
-    defaultMessage: `Team`,
-  },
-  author: {
-    id: 'dashboard.ColonyDecisions.DecisionPreview.author',
-    defaultMessage: `Author`,
-  },
-  edit: {
-    id: 'dashboard.ColonyDecisions.DecisionPreview.edit',
-    defaultMessage: `Edit`,
-  },
-  publish: {
-    id: 'dashboard.ColonyDecisions.DecisionPreview.publish',
-    defaultMessage: `Publish`,
-  },
-  // this is mock data for the decision title until a later PR is created to retrieve this from local storage
-  title: {
-    id: 'dashboard.ColonyDecisions.DecisionPreview.title',
-    defaultMessage: `Should we build a Discord Bot?`,
-  },
-  // this is mock data for the decision description until a later PR is created to retrieve this from local storage
-  description: {
-    id: 'dashboard.ColonyDecisions.DecisionPreview.description',
-    defaultMessage: `I think we should build a Discord bot that integrates with the Dapp and provides our community with greater transperency and also provides more convienience for us to be notified of things happening in our Colony.`,
-  },
-  // this is a placeholder for the decision type until we have the data
-  decisionType: {
-    id: 'dashboard.ColonyDecisions.DecisionPreview.decisionType',
-    defaultMessage: `Decision`,
+  loadingText: {
+    id: 'dashboard.DecisionPreview.loadingText',
+    defaultMessage: 'Loading Decision',
   },
 });
 
-const handleEdit = () => {};
-
-const displayName = 'dashboard.ColonyDecisions.DecisionPreviewForm';
-
-// mock data for the decision title until a later PR is created to retrieve this from local storage
+/* mock data */
 const decisionData = {
   title: 'Should we build a Discord Bot?',
-  description: `I think we should build a Discord bot that integrates
-   with the Dapp and provides our community with greater transperency
-   and also provides more convienience for us to be notified of things
-   happening in our Colony.`,
-  domainId: '01',
+  description: `I think we should build a Discord bot that integrates with the Dapp and provides our community with greater transperency and also provides more convienience for us to be notified of things happening in our Colony.`,
+  /* Using an HTML string for the dialog content ensures the dirty prop works as expected */
+  htmlDescription: `<p>I think we should build a Discord bot that integrates with the Dapp and provides our community with greater transperency and also provides more convienience for us to be notified of things happening in our Colony.</p>`,
+  actionType: 'Decision',
+  fromDomain: '1',
 };
+
+const displayName = 'dashboard.DecisionPreview';
 
 const DecisionPreviewForm = () => {
   const { colonyName } = useParams<{
-    transactionHash?: string;
     colonyName: string;
   }>();
   const history = useHistory();
   const { walletAddress, username } = useLoggedInUser();
-  const userProfile = useUser(walletAddress);
+  const userProfile = useUser(walletAddress) as AnyUser;
+  const actionType = decisionData.actionType as ColonyActions;
 
-  const { data, error } = useColonyFromNameQuery({
+  const { data: colonyData, error, loading } = useColonyFromNameQuery({
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
-    pollInterval: 5000,
   });
-  if (error) console.error(error);
 
-  const colonyAddress = data?.processedColony?.colonyAddress || '';
-
-  const UserAvatar = HookedUserAvatar({ fetchUser: false });
+  const openDecisionDialog = useDialog(DecisionDialog);
 
   const transform = useCallback(
     pipe(
       mapPayload(() => ({
-        colonyAddress,
+        colonyAddress: colonyData?.processedColony?.colonyAddress || '',
         colonyName,
         decisionTitle: decisionData.title,
         decisionDescription: decisionData.description,
-        domainId: decisionData.domainId,
+        domainId: decisionData.fromDomain,
       })),
       withMeta({ history }),
     ),
-    [],
+    [colonyData],
   );
+
+  if (
+    loading ||
+    (colonyData?.colonyAddress &&
+      !colonyData.processedColony &&
+      !((colonyData.colonyAddress as any) instanceof Error))
+  ) {
+    return (
+      <div className={styles.loadingWrapper}>
+        <LoadingTemplate loadingText={MSG.loadingText} />
+      </div>
+    );
+  }
+
+  if (!colonyName || error || !colonyData?.processedColony) {
+    console.error('error', error);
+    return <Redirect to={NOT_FOUND_ROUTE} />;
+  }
+
+  const { processedColony: colony } = colonyData;
+
+  const UserAvatar = HookedUserAvatar({ fetchUser: false });
+
+  const actionAndEventValues = {
+    actionType,
+    fromDomain: colonyData.processedColony.domains.find(
+      ({ ethDomainId }) =>
+        ethDomainId === parseInt(decisionData.fromDomain, 10),
+    ) as OneDomain,
+  };
 
   return (
     <ActionForm
@@ -113,7 +121,7 @@ const DecisionPreviewForm = () => {
         <div className={styles.main}>
           <div className={styles.upperContainer}>
             <p className={styles.tagWrapper}>
-              <Tag text="Preview" appearance={{ theme: 'light' }} />
+              <Tag text={MSG.preview} appearance={{ theme: 'light' }} />
             </p>
           </div>
           <hr className={styles.dividerTop} />
@@ -121,7 +129,7 @@ const DecisionPreviewForm = () => {
             <div className={styles.leftContent}>
               <span className={styles.userinfo}>
                 <UserAvatar
-                  colony={data?.processedColony}
+                  colony={colony}
                   size="s"
                   notSet={false}
                   user={userProfile}
@@ -150,30 +158,24 @@ const DecisionPreviewForm = () => {
                     margin: 'small',
                     theme: 'dark',
                   }}
-                  text={MSG.title}
+                  text={decisionData.title}
                 />
               </div>
-              <FormattedMessage
-                {...MSG.description}
-                values={{
-                  h4: (chunks) => (
-                    <Heading
-                      tagName="h4"
-                      appearance={{ size: 'medium', margin: 'small' }}
-                      text={chunks}
-                    />
-                  ),
-                }}
-              />
+              {decisionData.description}
             </div>
             <div className={styles.rightContent}>
               <div className={styles.buttonContainer}>
                 <Button
                   appearance={{ theme: 'secondary', size: 'large' }}
-                  onClick={() => handleEdit()}
+                  onClick={() =>
+                    openDecisionDialog({
+                      colony,
+                      ethDomainId: Number(decisionData.fromDomain),
+                      decisionTitle: decisionData.title,
+                      content: decisionData.htmlDescription,
+                    })
+                  }
                   text={{ id: 'button.edit' }}
-                  disabled={isSubmitting}
-                  data-test="decisionEditButton"
                 />
                 <Button
                   appearance={{ theme: 'primary', size: 'large' }}
@@ -181,17 +183,17 @@ const DecisionPreviewForm = () => {
                   text={{ id: 'button.publish' }}
                   loading={isSubmitting}
                   disabled={isSubmitting}
-                  style={{ minWidth: styles.wideButton }}
-                  data-test="decisionPublishButton"
                 />
               </div>
               <div className={styles.details}>
-                {/* <DetailsWidget
-                    decisionType={MSG.decisionType}
-                    domain={colony.domains[0]}
-                    colony={colony}
-                    walletAddress={walletAddress}
-                  /> */}
+                <DetailsWidget
+                  actionType={actionType as ColonyActions}
+                  recipient={userProfile}
+                  colony={colony}
+                  values={{
+                    ...actionAndEventValues,
+                  }}
+                />
               </div>
             </div>
           </div>
@@ -200,7 +202,6 @@ const DecisionPreviewForm = () => {
     </ActionForm>
   );
 };
-// return null;
 
 DecisionPreviewForm.displayName = displayName;
 

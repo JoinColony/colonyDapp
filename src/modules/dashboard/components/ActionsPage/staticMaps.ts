@@ -99,7 +99,8 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyMotions.EmitDomainReputationPenaltyMotion]: 'emoji-firebolt',
   [ColonyMotions.EmitDomainReputationRewardMotion]: 'emoji-shooting-star',
   [ColonyMotions.UnlockTokenMotion]: 'emoji-padlock',
-  [ColonyActions.Decision]: 'circle-check-primary',
+  [ColonyMotions.CreateDecisionMotion]: 'emoji-decisions',
+  [ColonyActions.Decision]: 'emoji-decisions',
   [ColonyActions.Generic]: 'circle-check-primary',
 };
 
@@ -283,7 +284,11 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.ReputationChange,
   ],
   [ColonyMotions.UnlockTokenMotion]: [],
-  [ColonyMotions.CreateDecisionMotion]: [
+  // [ColonyMotions.CreateDecisionMotion]: [
+  //   ActionPageDetails.Domain,
+  //   ActionPageDetails.Author,
+  // ],
+  [ColonyActions.Decision]: [
     ActionPageDetails.Domain,
     ActionPageDetails.Author,
   ],
