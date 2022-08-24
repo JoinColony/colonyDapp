@@ -19,7 +19,7 @@ import ActionsPageFeed, {
   ActionsPageFeedItemWithIPFS,
   SystemMessage,
 } from '~dashboard/ActionsPageFeed';
-// import ActionPageDecisionWithIPFS from '~dashboard/ActionsPage/ActionPageDecisionWithIPFS';
+import ActionPageDecisionWithIPFS from '~dashboard/ActionsPage/ActionPageDecisionWithIPFS';
 import { getFormattedTokenValue } from '~utils/tokens';
 import {
   getUpdatedDecodedMotionRoles,
@@ -401,7 +401,7 @@ const DefaultMotion = ({
   );
 
   // Decision specific
-  // const isDecision = actionType === ColonyMotions.CreateDecisionMotion;
+  const isDecision = actionType === ColonyMotions.CreateDecisionMotion;
 
   return (
     <div className={styles.main}>
@@ -507,7 +507,7 @@ const DefaultMotion = ({
       <hr className={styles.dividerTop} />
       <div className={styles.container}>
         <div className={styles.content}>
-          {/* {isDecision ? (
+          {isDecision ? (
             <ActionPageDecisionWithIPFS
               colony={colony}
               user={initiator}
@@ -515,19 +515,19 @@ const DefaultMotion = ({
               walletAddress={walletAddress}
               hash={annotationHash || ''}
             />
-          ) : ( */}
-          <h1 className={styles.heading} data-test="actionHeading">
-            <FormattedMessage
-              id={roleMessageDescriptorId || 'motion.title'}
-              values={{
-                ...actionAndEventValues,
-                fromDomainName: actionAndEventValues.fromDomain?.name,
-                toDomainName: actionAndEventValues.toDomain?.name,
-                roles: roleTitle,
-              }}
-            />
-          </h1>
-          {/* )} */}
+          ) : (
+            <h1 className={styles.heading} data-test="actionHeading">
+              <FormattedMessage
+                id={roleMessageDescriptorId || 'motion.title'}
+                values={{
+                  ...actionAndEventValues,
+                  fromDomainName: actionAndEventValues.fromDomain?.name,
+                  toDomainName: actionAndEventValues.toDomain?.name,
+                  roles: roleTitle,
+                }}
+              />
+            </h1>
+          )}
           {annotationHash && (
             <div className={motionSpecificStyles.annotation}>
               <ActionsPageFeedItemWithIPFS
