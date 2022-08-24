@@ -39,7 +39,7 @@ const SafeListItem = ({ safe, isChecked }: Props) => {
       <Checkbox
         name="safeList"
         appearance={{ theme: 'pink' }}
-        value={safe.contractAddress}
+        value={safe}
         className={styles.checkbox}
       />
       <Avatar

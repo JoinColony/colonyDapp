@@ -24,7 +24,7 @@ const MSG = defineMessages({
   },
   desc: {
     id: 'dashboard.RemoveSafeDialog.RemoveSafeDialogForm.desc',
-    defaultMessage: 'Select Safe you wish to remove',
+    defaultMessage: 'Select the Safe(s) you wish to remove',
   },
   emptySafeMsg: {
     id: 'dashboard.RemoveSafeDialog.RemoveSafeDialogForm.emptySafeMsg',
@@ -76,9 +76,15 @@ const RemoveSafeDialogForm = ({
             <div className={styles.content}>
               {safeList.map((item) => (
                 <SafeListItem
-                  key={item.contractAddress}
+                  key={`${item.chainId}-${item.contractAddress}`}
                   safe={item}
-                  isChecked={values?.safeList?.includes(item.contractAddress)}
+                  isChecked={
+                    !!values?.safeList?.find(
+                      (safe) =>
+                        item.contractAddress === safe.contractAddress &&
+                        item.chainId === safe.chainId,
+                    )
+                  }
                 />
               ))}
             </div>
