@@ -32,7 +32,10 @@ const ColonySafes = ({ colony: { safes } }: Props) => {
       </Heading>
       <ul>
         {safes.map((safe) => (
-          <li key={safe.contractAddress} className={styles.safeItem}>
+          <li
+            key={`${safe.chainId}-${safe.contractAddress}`}
+            className={styles.safeItem}
+          >
             {safe.safeName}
           </li>
         ))}
