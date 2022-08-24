@@ -1,3 +1,5 @@
+@value wideButton: 160px;
+
 .main {
   padding: 90px 0;
   height: 100%;
@@ -51,7 +53,6 @@
   margin-top: 17px;
   padding-bottom: 10px;
   border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
-  line-height: 18px;
   word-break: break-word;
 }
 
@@ -83,14 +84,13 @@
 }
 
 .title {
-  margin-top: 16px;
-  margin-bottom: 15px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .details {
   margin: 0;
   margin-top: 20px;
-  width: 340px;
 }
 
 .buttonContainer {
@@ -98,7 +98,7 @@
   justify-content: flex-end;
 }
 
-.buttonContainer > button:last-child {
+<<<<<<< head .buttonContainer > button:last-child {
   min-width: 160px;
 }
 
