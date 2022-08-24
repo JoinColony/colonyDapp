@@ -216,6 +216,8 @@ const DefaultMotion = ({
     actionType,
     true,
   );
+  // console.log(`🚀 ~ roleTitle`, roleTitle);
+  // console.log(`🚀 ~ roleMessageDescriptorId`, roleMessageDescriptorId);
 
   const requiredStake = bigNumberify(
     motionStakeData?.stakeAmountsForMotion?.requiredStake || 0,
