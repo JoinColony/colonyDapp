@@ -140,3 +140,9 @@ export enum MetamaskRpcErrors {
    */
   TypedDataSignDifferentChain = 'must match the active chainId',
 }
+
+export interface DecisionDetails {
+  title: string;
+  description: string;
+  domainId: number;
+}
