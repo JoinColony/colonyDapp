@@ -21,7 +21,7 @@ import LoadingTemplate from '~pages/LoadingTemplate';
 import LadingPage from '~pages/LandingPage';
 import ActionsPage from '~dashboard/ActionsPage';
 import { ClaimTokensPage, UnwrapTokensPage } from '~dashboard/Vesting';
-import DecisionPreview from '~dashboard/ColonyDecisions/DecisionPreview';
+import DecisionPreview from '~dashboard/DecisionPreview/DecisionPreview';
 
 import appLoadingContext from '~context/appLoadingState';
 import ColonyFunding from '~dashboard/ColonyFunding';
