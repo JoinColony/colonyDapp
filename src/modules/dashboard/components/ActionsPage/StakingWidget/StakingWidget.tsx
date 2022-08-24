@@ -151,7 +151,7 @@ const StakingWidget = ({
           } else if (amount === 0 || new Decimal(minUserStake).gte(stake)) {
             finalStake = minUserStake;
           } else {
-            finalStake = stake.toString();
+            finalStake = stake.round().toString();
           }
 
           log.verbose('Staking values: ', {
