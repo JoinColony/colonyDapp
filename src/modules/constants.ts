@@ -12,6 +12,7 @@ export type NetworkInfo = {
   name: string;
   chainId: number;
   shortName: string;
+  apiUri: string;
   description?: string;
   displayENSDomain?: string;
   /**
@@ -85,6 +86,7 @@ export const GNOSIS_NETWORK: NetworkInfo = {
   contractAddressLink: 'https://blockscout.com/poa/xdai/address',
   rpcUrl: 'https://rpc.gnosischain.com',
   safeTxService: 'https://safe-transaction.xdai.gnosis.io/',
+  apiUri: 'https://blockscout.com/xdai/mainnet/api',
 };
 
 export const ETHEREUM_NETWORK: NetworkInfo = {
@@ -98,6 +100,7 @@ export const ETHEREUM_NETWORK: NetworkInfo = {
   contractAddressLink: 'https://etherscan.io/address',
   rpcUrl: 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
   safeTxService: 'https://safe-transaction.mainnet.gnosis.io/',
+  apiUri: 'https://api.etherscan.io/api',
 };
 
 export const GOERLI_NETWORK: NetworkInfo = {
@@ -111,6 +114,7 @@ export const GOERLI_NETWORK: NetworkInfo = {
   contractAddressLink: 'https://goerli.etherscan.io/address',
   rpcUrl: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
   safeTxService: 'https://safe-transaction.goerli.gnosis.io/',
+  apiUri: 'https://api-goerli.etherscan.io/api',
 };
 
 const ARBITRUM_NETWORK: NetworkInfo = {
@@ -120,6 +124,7 @@ const ARBITRUM_NETWORK: NetworkInfo = {
   contractAddressLink: '',
   safeTxService: 'https://safe-transaction.arbitrum.gnosis.io/',
   rpcUrl: 'https://rpc.ankr.com/arbitrum',
+  apiUri: 'https://api.arbiscan.io/api',
 };
 
 const AURORA_NETWORK: NetworkInfo = {
@@ -129,6 +134,7 @@ const AURORA_NETWORK: NetworkInfo = {
   contractAddressLink: '',
   safeTxService: 'https://safe-transaction.aurora.gnosis.io/',
   rpcUrl: 'https://testnet.aurora.dev/',
+  apiUri: 'https://api.aurorascan.dev/api',
 };
 
 const AVALANCHE_NETWORK: NetworkInfo = {
@@ -138,15 +144,17 @@ const AVALANCHE_NETWORK: NetworkInfo = {
   contractAddressLink: '',
   safeTxService: 'https://safe-transaction.avalanche.gnosis.io/',
   rpcUrl: 'https://api.avax.network/ext/bc/C/rpc',
+  apiUri: 'https://api.snowtrace.io/api',
 };
 
-const BINANCE_NETWORK: NetworkInfo = {
+export const BINANCE_NETWORK: NetworkInfo = {
   name: 'Binance Smart Chain',
   chainId: 56,
   shortName: 'BNB',
   contractAddressLink: '',
   safeTxService: 'https://safe-transaction.bsc.gnosis.io/',
   rpcUrl: 'https://bsc-dataseed.binance.org/',
+  apiUri: 'https://api.bscscan.com/api',
 };
 
 const OPTIMISM_NETWORK: NetworkInfo = {
@@ -156,15 +164,17 @@ const OPTIMISM_NETWORK: NetworkInfo = {
   contractAddressLink: '',
   safeTxService: 'https://safe-transaction.optimism.gnosis.io/',
   rpcUrl: 'https://mainnet.optimism.io',
+  apiUri: 'https://api-optimistic.etherscan.io/api',
 };
 
-const POLYGON_NETWORK: NetworkInfo = {
+export const POLYGON_NETWORK: NetworkInfo = {
   name: 'Polygon',
   chainId: 137,
   shortName: 'MATIC',
   contractAddressLink: '',
   safeTxService: 'https://safe-transaction.polygon.gnosis.io/',
   rpcUrl: 'https://polygon-rpc.com',
+  apiUri: 'https://api.polygonscan.com/api',
 };
 
 export const RINKEBY_TEST_NETWORK: NetworkInfo = {
@@ -174,6 +184,7 @@ export const RINKEBY_TEST_NETWORK: NetworkInfo = {
   contractAddressLink: '',
   safeTxService: 'https://safe-transaction.rinkeby.gnosis.io/',
   rpcUrl: 'https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+  apiUri: 'https://api-rinkeby.etherscan.io/api',
 };
 
 /*
@@ -190,6 +201,7 @@ export const GANACHE_NETWORK: NetworkInfo = {
   tokenExplorerLink: 'http://localhost',
   contractAddressLink: 'http://localhost',
   rpcUrl: 'http://localhost:8545',
+  apiUri: '',
 };
 
 export const NETWORK_DATA: { [key: string]: NetworkInfo } = {
