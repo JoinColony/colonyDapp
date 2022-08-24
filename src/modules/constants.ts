@@ -159,3 +159,7 @@ export const ALLDOMAINS_DOMAIN_SELECTION = {
 };
 
 export const SMALL_TOKEN_AMOUNT_FORMAT = '0.00000...';
+
+// @NOTE this is the magic number used in the contract
+// to identify the type of motion as a Decision
+export const ACTION_DECISION_MOTION_CODE = '0x12345678';

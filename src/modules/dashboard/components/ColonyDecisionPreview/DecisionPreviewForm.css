@@ -44,14 +44,9 @@
 }
 
 .leftContent {
-  width: 460px;
-  line-height: 18px;
-}
-
-.decisionContent {
-  composes: leftContent;
   margin-top: 17px;
-  padding-bottom: 10px;
+  padding-bottom: 30px;
+  width: 460px;
   border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
   word-break: break-word;
 }
