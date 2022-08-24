@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
-import NewDecisionDialog from '~dialogs/NewDecisionDialog';
+import DecisionDialog from '~dashboard/Dialogs/DecisionDialog';
 import { SpinnerLoader } from '~core/Preloaders';
 
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
@@ -56,7 +56,7 @@ const ColonyNewDecision = ({ colony, ethDomainId }: Props) => {
     }
   });
 
-  const openNewDecisionDialog = useDialog(NewDecisionDialog);
+  const openDecisionDialog = useDialog(DecisionDialog);
 
   const hasRegisteredProfile = !!username && !ethereal;
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
@@ -70,7 +70,7 @@ const ColonyNewDecision = ({ colony, ethDomainId }: Props) => {
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           text={MSG.newDecision}
-          onClick={() => openNewDecisionDialog({ colony, ethDomainId })}
+          onClick={() => openDecisionDialog({ colony, ethDomainId })}
           disabled={
             mustUpgrade ||
             !isNetworkAllowed ||
