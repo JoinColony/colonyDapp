@@ -53,6 +53,7 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
   [ColonyAndExtensionsEvents.TokenUnlocked]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.TokensMinted]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.DomainAdded]: [ColonyRole.Architecture],
+  [ColonyAndExtensionsEvents.DecisionCreated]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.ColonyUpgraded]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.ColonyMetadata]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.DomainMetadata]: [ColonyRole.Architecture],
@@ -98,7 +99,7 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyMotions.EmitDomainReputationPenaltyMotion]: 'emoji-firebolt',
   [ColonyMotions.EmitDomainReputationRewardMotion]: 'emoji-shooting-star',
   [ColonyMotions.UnlockTokenMotion]: 'emoji-padlock',
-  [ColonyActions.Decision]: 'emoji-decisions',
+  [ColonyActions.Decision]: 'circle-check-primary',
   [ColonyActions.Generic]: 'circle-check-primary',
 };
 
@@ -157,6 +158,7 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
   [ColonyMotions.MoveFundsMotion]: MOTION_EVENTS,
   [ColonyMotions.EmitDomainReputationPenaltyMotion]: MOTION_EVENTS,
   [ColonyMotions.EmitDomainReputationRewardMotion]: MOTION_EVENTS,
+  [ColonyMotions.CreateDecisionMotion]: MOTION_EVENTS,
 };
 
 /*
@@ -239,10 +241,6 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.ToRecipient,
     ActionPageDetails.ReputationChange,
   ],
-  [ColonyActions.Decision]: [
-    ActionPageDetails.Domain,
-    ActionPageDetails.Author,
-  ],
   [ColonyActions.EmitDomainReputationReward]: [
     ActionPageDetails.Domain,
     ActionPageDetails.ToRecipient,
@@ -285,4 +283,8 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.ReputationChange,
   ],
   [ColonyMotions.UnlockTokenMotion]: [],
+  [ColonyMotions.CreateDecisionMotion]: [
+    ActionPageDetails.Domain,
+    ActionPageDetails.Author,
+  ],
 };
