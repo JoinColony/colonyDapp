@@ -6,7 +6,6 @@ export const upperContainer: string;
 export const tagWrapper: string;
 export const leftContent: string;
 export const decisionContent: string;
-export const noContent: string;
 export const rightContent: string;
 export const userinfo: string;
 export const userName: string;
