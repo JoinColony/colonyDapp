@@ -35,15 +35,17 @@ const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
 
       return (
         !hasErrors &&
+        colony &&
         openDraftConfirmDialog({
           onClick: () => {
             handleSubmit(values as any);
           },
           isVotingExtensionEnabled: true,
+          colony,
         })
       );
     },
-    [handleSubmit, openDraftConfirmDialog, validateForm, values],
+    [colony, handleSubmit, openDraftConfirmDialog, validateForm, values],
   );
 
   return (

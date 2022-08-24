@@ -37,7 +37,7 @@ export const MSG = defineMessages({
   },
   tooltipMessageDescription: {
     id: 'dashboard.ExpenditurePage.Recipient.tooltipMessageDescription',
-    defaultMessage: `F.ex. once the work is finished, recipient has to wait before funds can be claimed.`,
+    defaultMessage: `For example, once the work is finished, recipient has to wait before funds can be claimed.`,
   },
   addTokenText: {
     id: 'dashboard.ExpenditurePage.Recipient.addTokenText',
@@ -58,10 +58,6 @@ export const MSG = defineMessages({
   monthsLabel: {
     id: 'dashboard.ExpenditurePage.Recipient.monthsLabel',
     defaultMessage: 'months',
-  },
-  valueError: {
-    id: 'dashboard.ExpenditurePage.Recipient.valueError',
-    defaultMessage: 'Value is required',
   },
 });
 

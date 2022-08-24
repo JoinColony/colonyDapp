@@ -4,7 +4,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import Button from '~core/Button';
 import Tag from '~core/Tag';
 import TimeRelativeShort from '~dashboard/ExpenditurePage/TimeRelativeShort';
-import { State } from '~pages/ExpenditurePage/ExpenditurePage';
+import { State } from '~pages/ExpenditurePage/types';
 
 import styles from './ClaimTag.css';
 
@@ -45,13 +45,15 @@ const ClaimTag = ({
 
   if (isClaimable) {
     return (
-      <Button
-        className={styles.claimButton}
-        onClick={activeState?.buttonAction}
-        disabled={pendingMotion}
-      >
-        <FormattedMessage {...MSG.claimNow} />
-      </Button>
+      <div className={styles.tagWrapper}>
+        <Button
+          className={styles.claimButton}
+          onClick={activeState?.buttonAction}
+          disabled={pendingMotion}
+        >
+          <FormattedMessage {...MSG.claimNow} />
+        </Button>
+      </div>
     );
   }
   if (claimed) {

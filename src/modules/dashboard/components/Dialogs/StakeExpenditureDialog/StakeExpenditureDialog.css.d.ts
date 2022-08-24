@@ -7,7 +7,5 @@ export const label: string;
 export const icon: string;
 export const tokenIcon: string;
 export const symbol: string;
-export const questionIcon: string;
 export const toggleContainer: string;
 export const messageParagraph: string;
-export const tooltip: string;

@@ -1,0 +1,55 @@
+.recipientNameWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+}
+
+.recipientName {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: color-mod(var(--dark) alpha(85%));
+  letter-spacing: var(--spacing-medium);
+}
+
+.recipientName span {
+  margin-left: 4px;
+  line-height: 18px;
+  color: color-mod(var(--dark) alpha(85%));
+}
+
+.tokenWrapper > span {
+  font-size: var(--size-smallish);
+}
+
+.dot {
+  margin-left: 8px;
+  height: 9px;
+  width: 9px;
+  border-radius: 50%;
+  background-color: var(--golden);
+}
+
+.blue {
+  background-color: var(--action-secondary);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  row-gap: 8px;
+}
+
+.name {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}

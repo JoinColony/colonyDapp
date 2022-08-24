@@ -13,12 +13,15 @@ export enum MotionStatus {
 }
 
 export enum MotionType {
-  Cancel = 'cancel',
+  Cancel = 'Cancel',
+  Edit = 'Edit',
 }
 
 export enum Status {
   Cancelled = 'cancelled',
   ForceCancelled = 'forceCancelled',
+  Edited = 'edited',
+  ForceEdited = 'forceEdited',
 }
 
 export interface Motion {

@@ -16,7 +16,21 @@
   color: var(--colony-white);
 }
 
+.claimedTagWrapper {
+  display: flex;
+  flex-basis: 100px;
+  flex-grow: 1;
+  justify-content: flex-end;
+}
+
 .tagWrapper > span {
   padding: 2px 14px 3px;
   border-radius: 12px;
+}
+
+.tagWrapper {
+  display: flex;
+  flex-basis: 100px;
+  flex-grow: 1;
+  justify-content: flex-end;
 }

@@ -29,14 +29,6 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Payments.addRecipientLabel',
     defaultMessage: 'Add recipient',
   },
-  minusIconTitle: {
-    id: 'dashboard.ExpenditurePage.Payments.minusIconTitle',
-    defaultMessage: 'Collapse a single recipient settings',
-  },
-  plusIconTitle: {
-    id: 'dashboard.ExpenditurePage.Payments.plusIconTitle',
-    defaultMessage: 'Expand a single recipient settings',
-  },
   deleteIconTitle: {
     id: 'dashboard.ExpenditurePage.Payments.deleteIconTitle',
     defaultMessage: 'Delete recipient',

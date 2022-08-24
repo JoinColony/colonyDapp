@@ -13,3 +13,5 @@ export const symbol: string;
 export const icon: string;
 export const userName: string;
 export const tokens: string;
+export const pendingWrapper: string;
+export const pending: string;

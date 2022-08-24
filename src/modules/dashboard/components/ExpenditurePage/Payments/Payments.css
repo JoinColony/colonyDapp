@@ -14,7 +14,6 @@
   margin-bottom: 18px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
-  line-height: 18px;
   color: var(--dark);
 }
 
@@ -133,7 +132,9 @@
   cursor: pointer;
 }
 
-.editIcon svg {
-  height: 30px;
-  width: 30px;
+.dot {
+  height: 9px;
+  width: 9px;
+  border-radius: 50%;
+  background-color: var(--golden);
 }

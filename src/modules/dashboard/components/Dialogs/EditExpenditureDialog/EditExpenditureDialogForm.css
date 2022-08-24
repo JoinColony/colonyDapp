@@ -1,0 +1,67 @@
+@value submitButtonWidth: 160px;
+
+.title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 0 20px;
+  width: 100%;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.withoutPadding {
+  padding: 0;
+}
+
+.forceRow {
+  align-items: baseline;
+  padding-top: 16px;
+  white-space: nowrap;
+}
+
+.contentWrapper {
+  padding: 0 20px 54px;
+}
+
+.descriptionWrapper {
+  padding-top: 10px;
+}
+
+.noChanges {
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
+
+.annotationsWrapper {
+  margin-bottom: 11px;
+}
+
+.toggleContainer i {
+  margin: 0 -20px 4px 21px;
+
+  /* next lines are used for the correct tooltip arrow placement */
+  transform: translateX(-25px);
+}
+
+/* this selector is for tooltip wrapper */
+.toggleContainer > div > div:last-child {
+  max-width: 250px;
+  white-space: normal;
+}
+
+.toggleContainer label {
+  margin-bottom: 4px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 11px 0 12px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}

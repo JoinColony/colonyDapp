@@ -1,40 +1,21 @@
-import React, {
-  useEffect,
-  useCallback,
-  useRef,
-  useState,
-  useMemo,
-} from 'react';
-import { useFormikContext } from 'formik';
-import {
-  defineMessages,
-  FormattedMessage,
-  MessageDescriptor,
-  useIntl,
-} from 'react-intl';
+import React, { useEffect, useRef, useState } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import copyToClipboard from 'copy-to-clipboard';
 import classNames from 'classnames';
-import { ColonyRole } from '@colony/colony-js';
 
-import { State, ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 import Button from '~core/Button';
-import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
+import { State } from '~pages/ExpenditurePage/types';
 import { Colony } from '~data/index';
-import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
-import PermissionsLabel from '~core/PermissionsLabel';
-import Tag from '~core/Tag';
 
-import DeleteDraftDialog from '../../Dialogs/DeleteDraftDialog/DeleteDraftDialog';
-import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
-import { Recipient as RecipientType } from '../Payments/types';
+import { Recipient } from '../Payments/types';
 
 import StageItem from './StageItem';
-import { Motion, MotionStatus, MotionType, Stage, Status } from './constants';
-import LinkedMotions from './LinkedMotions/LinkedMotions';
+import { Motion, MotionStatus, Stage, Status } from './constants';
 import ClaimFunds from './ClaimFunds';
+import Label from './StageItem/Label';
+import StagesButton from './StagesButton';
 import styles from './Stages.css';
 
 const MSG = defineMessages({
@@ -66,21 +47,17 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Stages.tooltipCancelText',
     defaultMessage: 'Click to cancel expenditure',
   },
-  cancelled: {
-    id: 'dashboard.ExpenditurePage.Stages.cancelled',
-    defaultMessage: 'Cancelled',
+  tooltipLockValuesText: {
+    id: 'dashboard.ExpenditurePage.Stages.tooltipLockValuesText',
+    defaultMessage: `This will lock the values of the expenditure. To change values after locking will require the right permissions or a motion.`,
+  },
+  tooltipForcedUpdate: {
+    id: 'dashboard.ExpenditurePage.Stages.tooltipForcedUpdate',
+    defaultMessage: 'Value updated by arbitrator',
   },
   motion: {
     id: 'dashboard.ExpenditurePage.Stages.motion',
     defaultMessage: `You can't {action} unless motion ends`,
-  },
-  tooltipNoPermissionToRealese: {
-    id: 'dashboard.ExpenditurePage.Stages.tooltipNoPermissionToRealese',
-    defaultMessage: 'You need to create a Motion to release funds.',
-  },
-  tooltipLockValuesText: {
-    id: 'dashboard.ExpenditurePage.Stages.tooltipLockValuesText',
-    defaultMessage: `This will lock the values of the expenditure. To change values after locking will require the right permissions or a motion.`,
   },
 });
 
@@ -92,258 +69,53 @@ export const buttonStyles = {
   padding: 0,
 };
 
-interface Props {
+export interface Props {
   states: State[];
   activeStateId?: string;
-  colony: Colony;
-  recipients?: RecipientType[];
+  handleDeleteDraft?: () => void;
+  handleSaveDraft?: () => void;
+  handleButtonClick: () => void;
   status?: Status;
-  setStatus: React.Dispatch<React.SetStateAction<Status | undefined>>;
   motion?: Motion;
-  setMotion: React.Dispatch<React.SetStateAction<Motion | undefined>>;
+  handleCancelExpenditure?: () => void;
+  recipients?: Recipient[];
+  colony: Colony;
 }
 
 const Stages = ({
-  colony,
   states,
   activeStateId,
-  recipients,
+  handleDeleteDraft,
+  handleSaveDraft,
+  handleButtonClick,
   status,
-  setStatus,
   motion,
-  setMotion,
+  handleCancelExpenditure,
+  recipients,
+  colony,
 }: Props) => {
-  const { values, handleSubmit, validateForm, resetForm } =
-    useFormikContext<ValuesType>() || {};
-  const { formatMessage } = useIntl();
-
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
-
-  const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
-  const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
-  const openCancelExpenditureDialog = useDialog(CancelExpenditureDialog);
-
-  const handleSaveDraft = useCallback(async () => {
-    const errors = await validateForm(values);
-    const hasErrors = Object.keys(errors)?.length;
-
-    return (
-      !hasErrors &&
-      openDraftConfirmDialog({
-        onClick: () => {
-          handleSubmit(values as any);
-        },
-        isVotingExtensionEnabled: true,
-      })
-    );
-  }, [handleSubmit, openDraftConfirmDialog, validateForm, values]);
-
-  const handleDeleteDraft = () =>
-    openDeleteDraftDialog({
-      onClick: () => {
-        resetForm?.();
-        if (activeStateId === Stage.Draft) {
-          // add logic to delete the draft from database
-        }
-      },
-    });
-
-  const handleCancelExpenditure = () =>
-    colony &&
-    openCancelExpenditureDialog({
-      onCancelExpenditure: (isForce: boolean) => {
-        if (isForce) {
-          // temporary action
-          setStatus(Status.ForceCancelled);
-          setMotion({ type: MotionType.Cancel, status: MotionStatus.Pending });
-        } else {
-          // setTimeout is temporary, call to backend should be added here
-          setMotion({ type: MotionType.Cancel, status: MotionStatus.Pending });
-          setTimeout(() => {
-            setStatus(Status.Cancelled);
-            setMotion({ type: MotionType.Cancel, status: MotionStatus.Passed });
-          }, 5000);
-        }
-      },
-      colony,
-      isVotingExtensionEnabled: true, // temporary value
-    });
 
   const handleClipboardCopy = () => {
     copyToClipboard(window.location.href);
     setValueIsCopied(true);
     userFeedbackTimer.current = setTimeout(() => setValueIsCopied(false), 2000);
   };
+
   useEffect(() => () => clearTimeout(userFeedbackTimer.current), [
     userFeedbackTimer,
   ]);
 
   const activeIndex = states.findIndex((state) => state.id === activeStateId);
   const activeState = states.find((state) => state.id === activeStateId);
-  // temporary value, there's need to add logic to check if realese founds can be made
-  const canRealeseFounds = true;
   const isLogedIn = true;
-
-  const renderButton = useCallback(() => {
-    const buttonText =
-      typeof activeState?.buttonText === 'string'
-        ? activeState.buttonText
-        : activeState?.buttonText && formatMessage(activeState.buttonText);
-
-    if (status === Status.Cancelled || status === Status.ForceCancelled) {
-      return <Tag text={MSG.cancelled} className={styles.claimed} />;
-    }
-
-    if (activeStateId === Stage.Claimed) {
-      return <Tag text={buttonText} className={styles.claimed} />;
-    }
-    if (activeStateId === Stage.Released) {
-      return null;
-    }
-    if (activeStateId === Stage.Funded) {
-      return (
-        <>
-          {canRealeseFounds ? (
-            <Button onClick={activeState?.buttonAction} style={buttonStyles}>
-              {buttonText}
-            </Button>
-          ) : (
-            <Tooltip
-              placement="top"
-              isOpen
-              content={
-                <div className={styles.buttonTooltip}>
-                  <FormattedMessage {...MSG.tooltipNoPermissionToRealese} />
-                </div>
-              }
-            >
-              <Button
-                onClick={activeState?.buttonAction}
-                style={buttonStyles}
-                disabled
-              >
-                {buttonText}
-              </Button>
-            </Tooltip>
-          )}
-        </>
-      );
-    }
-    if (activeState?.buttonTooltip) {
-      return (
-        <Tooltip
-          placement="top"
-          content={
-            <div className={styles.buttonTooltip}>
-              {typeof activeState.buttonTooltip === 'string'
-                ? activeState.buttonTooltip
-                : formatMessage(activeState.buttonTooltip)}
-            </div>
-          }
-        >
-          <Button
-            onClick={activeState?.buttonAction}
-            style={buttonStyles}
-            disabled={activeStateId === Stage.Claimed}
-          >
-            {buttonText}
-          </Button>
-        </Tooltip>
-      );
-    }
-
-    return (
-      <Button onClick={activeState?.buttonAction} style={buttonStyles}>
-        {buttonText}
-      </Button>
-    );
-  }, [activeState, activeStateId, canRealeseFounds, formatMessage, status]);
-
-  const labelComponent = useMemo(
-    () => ({
-      label,
-      index,
-    }: {
-      label: string | MessageDescriptor;
-      index: number;
-    }) => {
-      // role is temporary mock value
-      const role = ColonyRole.Arbitration;
-
-      // if forced cancellation - it shows different label with icon
-      if (status === Status.ForceCancelled && index === activeIndex) {
-        return (
-          <div className={styles.labelComponent}>
-            {typeof label === 'object' && label?.id ? (
-              <FormattedMessage {...label} />
-            ) : (
-              label
-            )}{' '}
-            ({formatMessage(MSG.cancelled).toLocaleLowerCase()})
-            <PermissionsLabel
-              permission={role}
-              appearance={{ theme: 'white' }}
-              minimal
-            />
-          </div>
-        );
-      }
-
-      // if forced cancellation - it shows different label
-      if (status === Status.Cancelled && index === activeIndex) {
-        return (
-          <div className={styles.labelComponent}>
-            {typeof label === 'object' && label?.id ? (
-              <FormattedMessage {...label} />
-            ) : (
-              label
-            )}{' '}
-            ({formatMessage(MSG.cancelled).toLocaleLowerCase()})
-          </div>
-        );
-      }
-
-      return undefined;
-    },
-    [activeIndex, formatMessage, status],
-  );
 
   const isCancelled =
     status === Status.Cancelled || status === Status.ForceCancelled;
 
-  const formattedLabel = useMemo(
-    () => (text: string | MessageDescriptor | undefined): string => {
-      if (undefined) {
-        return '';
-      }
-      if (typeof text === 'string') {
-        return text;
-      }
-      if (typeof text === 'object' && text?.id) {
-        return formatMessage(text);
-      }
-      return '';
-    },
-    [formatMessage],
-  );
-
   return (
     <div className={styles.mainContainer}>
-      {motion?.status === MotionStatus.Pending && (
-        <div className={styles.tagWrapper}>
-          <Tag
-            appearance={{
-              theme: 'golden',
-              colorSchema: 'fullColor',
-            }}
-          >
-            {formatMessage(MSG.motion, {
-              action: formattedLabel(activeState?.buttonText),
-            })}
-          </Tag>
-        </div>
-      )}
       {isLogedIn &&
         activeStateId === Stage.Released &&
         status !== Status.Cancelled && (
@@ -377,6 +149,16 @@ const Stages = ({
                 <Tooltip
                   placement="top-start"
                   content={<FormattedMessage {...MSG.tooltipDeleteText} />}
+                  popperOptions={{
+                    modifiers: [
+                      {
+                        name: 'offset',
+                        options: {
+                          offset: [0, 14],
+                        },
+                      },
+                    ],
+                  }}
                 >
                   <div className={styles.iconWrapper}>
                     <Icon
@@ -472,7 +254,13 @@ const Stages = ({
                     )}
                   </Button>
                 )}
-              {renderButton()}
+              <StagesButton
+                activeState={activeState}
+                handleButtonClick={handleButtonClick}
+                motion={motion}
+                status={status}
+                canReleaseFunds // it's temporary value
+              />
             </>
           )}
         </div>
@@ -484,17 +272,12 @@ const Stages = ({
           isFirst={index === 0}
           isActive={activeState ? index <= activeIndex : false}
           isCancelled={isCancelled && status === Status.ForceCancelled}
-          labelComponent={labelComponent({ label, index })}
+          labelComponent={
+            status === Status.ForceEdited &&
+            index === activeIndex && <Label label={label} />
+          }
         />
       ))}
-      {motion && (
-        <LinkedMotions
-          status={motion.status}
-          motion={motion.type}
-          id="25"
-          motionLink={LANDING_PAGE_ROUTE}
-        />
-      )}
     </div>
   );
 };

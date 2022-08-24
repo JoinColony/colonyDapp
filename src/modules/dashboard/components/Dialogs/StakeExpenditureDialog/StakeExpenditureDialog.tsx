@@ -6,14 +6,19 @@ import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm, Toggle } from '~core/Fields';
 import Heading from '~core/Heading';
-import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
-import { Tooltip } from '~core/Popover';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import Button from '~core/Button';
-import styles from './StakeExpenditureDialog.css';
 import { ActionTypes } from '~redux/actionTypes';
+import { useLoggedInUser } from '~data/helpers';
+import { useTransformer } from '~utils/hooks';
+import { getAllUserRoles } from '~modules/transformers';
+import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
+import { hasRoot } from '~modules/users/checks';
+import { Colony } from '~data/index';
+
+import styles from './StakeExpenditureDialog.css';
 
 // Mock Data for Staking token, needs to be replaced with native token.
 const activeToken = {
@@ -28,35 +33,35 @@ const activeToken = {
 
 const MSG = defineMessages({
   header: {
-    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.header',
+    id: 'dashboard.StakeExpenditureDialog.header',
     defaultMessage: 'Stake to Create Expenditure',
   },
   force: {
-    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.force',
+    id: 'dashboard.StakeExpenditureDialog.force',
     defaultMessage: 'Force',
   },
   stake: {
-    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.stake',
+    id: 'dashboard.StakeExpenditureDialog.stake',
     defaultMessage: 'Stake',
   },
   descriptionText: {
-    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.descriptionText',
+    id: 'dashboard.StakeExpenditureDialog.descriptionText',
     defaultMessage: `Almost there! You have to provide a stake first. 
     Imagine it is like renting a permission. 
     If motion succeeds you will get your stake back.`,
   },
   descriptionText2: {
-    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.descriptionText2',
+    id: 'dashboard.StakeExpenditureDialog.descriptionText2',
     defaultMessage: `
-    Until expenditure is staked it won’t show up publicly on list. 
+    Until expenditure is staked it won't show up publicly on list. 
     It works like an anti-spam filter.`,
   },
   cancelText: {
-    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.cancelText',
+    id: 'dashboard.StakeExpenditureDialog.cancelText',
     defaultMessage: 'Cancel',
   },
   confirmText: {
-    id: 'dashboard.Expenditures.Stages.draftConfirmDialog.confirmText',
+    id: 'dashboard.StakeExpenditureDialog.confirmText',
     defaultMessage: 'Stake',
   },
 });
@@ -71,14 +76,28 @@ type Props = {
   onClick: () => void;
   close: () => void;
   isVotingExtensionEnabled: boolean;
+  colony: Colony;
 };
 
 const StakeExpenditureDialog = ({
   onClick,
   close,
   isVotingExtensionEnabled,
+  colony,
 }: Props) => {
   const [isForce, setIsForce] = useState(false);
+  const { walletAddress, username, ethereal } = useLoggedInUser();
+  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+
+  const hasRegisteredProfile = !!username && !ethereal;
+  const canCancelExpenditure = hasRegisteredProfile && hasRoot(allUserRoles);
+
+  const [userHasPermission] = useDialogActionPermissions(
+    colony.colonyAddress,
+    canCancelExpenditure,
+    isVotingExtensionEnabled,
+    isForce,
+  );
 
   const getFormAction = useCallback(
     (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
@@ -99,7 +118,7 @@ const StakeExpenditureDialog = ({
       success={getFormAction('SUCCESS')}
       onSuccess={close}
     >
-      {({ values, handleSubmit }: FormikProps<FormValues>) => {
+      {({ values, handleSubmit, isSubmitting }: FormikProps<FormValues>) => {
         if (values.forceAction !== isForce) {
           setIsForce(values.forceAction);
         }
@@ -111,27 +130,29 @@ const StakeExpenditureDialog = ({
                 className={styles.title}
               >
                 <FormattedMessage {...MSG.header} />
-                <div className={styles.forceContainer}>
-                  <FormattedMessage {...MSG.force} />
+                {canCancelExpenditure && isVotingExtensionEnabled && (
                   <div className={styles.toggleContainer}>
-                    <Toggle name="force" appearance={{ theme: 'danger' }} />
-                  </div>
-
-                  <Tooltip
-                    content={
-                      <div className={styles.tooltip}>
-                        <FormattedMessage id="tooltip.forceAction" />
-                      </div>
-                    }
-                    trigger="hover"
-                    placement="top-end"
-                  >
-                    <Icon
-                      name="question-mark"
-                      className={styles.questionIcon}
+                    <Toggle
+                      label={{ id: 'label.force' }}
+                      name="forceAction"
+                      appearance={{ theme: 'danger' }}
+                      disabled={!userHasPermission || isSubmitting}
+                      tooltipText={{ id: 'tooltip.forceAction' }}
+                      tooltipPopperOptions={{
+                        placement: 'top-end',
+                        modifiers: [
+                          {
+                            name: 'offset',
+                            options: {
+                              offset: [8, 2],
+                            },
+                          },
+                        ],
+                        strategy: 'fixed',
+                      }}
                     />
-                  </Tooltip>
-                </div>
+                  </div>
+                )}
               </Heading>
             </DialogSection>
             <DialogSection appearance={{ theme: 'sidePadding' }}>
@@ -145,7 +166,6 @@ const StakeExpenditureDialog = ({
                       name={activeToken.name || activeToken.address}
                     />
                   </span>
-
                   <Numeral
                     unit={getTokenDecimalsWithFallback(activeToken.decimals)}
                     value={

@@ -11,6 +11,7 @@ interface Props {
   isCancelled: boolean;
   labelComponent?: ReactNode;
 }
+const displayName = 'dashboard.ExpenditurePage.Stages.StageItem';
 
 const StageItem = ({
   label,
@@ -54,5 +55,7 @@ const StageItem = ({
     </div>
   );
 };
+
+StageItem.displayName = displayName;
 
 export default StageItem;

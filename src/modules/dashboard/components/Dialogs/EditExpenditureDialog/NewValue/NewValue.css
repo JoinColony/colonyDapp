@@ -1,0 +1,42 @@
+.row {
+  composes: row from '../EditExpenditureDialogForm.css';
+}
+
+.label {
+  composes: label from '../NewDelay/NewDelay.css';
+}
+
+.value {
+  composes: value from '../NewDelay/NewDelay.css';
+}
+
+.smallerPadding {
+  padding: 4px 0 8px;
+}
+
+.valueContainer {
+  text-align: right;
+}
+
+.userAvatarContainer {
+  display: flex;
+  align-items: center;
+}
+
+.userAvatarContainer > span {
+  margin-left: 8px;
+}
+
+.valueLabel {
+  align-items: flex-start;
+}
+
+.paddingBottom {
+  padding-bottom: 6px;
+}
+
+.tokenIcon {
+  margin-right: 6px;
+  height: 16px;
+  width: 16px;
+}

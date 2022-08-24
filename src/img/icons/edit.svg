@@ -1,0 +1,23 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 30 30"
+>
+  <g opacity=".65">
+    <path
+      d="M14.2,8.3h-5.9c-.4,0-.9,.2-1.2,.5s-.4,.8-.4,1.2v11.7c0,.4,.2,.9,.5,1.2,.3,.3,.7,.5,1.2,.5h11.6c.4,0,.9-.2,1.2-.5,.3-.3,.5-.7,.5-1.2v-5.8"
+      fill="none"
+      stroke="#76748b"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width=".83"
+    />
+    <path
+      d="M20.4,7.1c.3-.3,.8-.5,1.2-.5s.9,.2,1.2,.5c.3,.3,.5,.8,.5,1.2,0,.5-.2,.9-.5,1.2l-7.8,8-3.3,.8,.8-3.3,7.9-7.9Z"
+      fill="none"
+      stroke="#76748b"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width=".83"
+    />
+  </g>
+</svg>
