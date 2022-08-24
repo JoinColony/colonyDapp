@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { defineMessages } from 'react-intl';
+import { FormikErrors } from 'formik';
+import isEmpty from 'lodash/isEmpty';
 
+import { GNOSIS_NETWORK } from '~constants';
 import { AnyUser } from '~data/index';
 import { Address } from '~types/index';
 import { Input, Select, SelectOption, Textarea } from '~core/Fields';
@@ -13,6 +16,7 @@ import {
 } from '~modules/dashboard/hooks/useContractABIParser';
 
 import { FormValues } from '../GnosisControlSafeDialog';
+import { GnosisSafe } from '../GnosisControlSafeForm';
 
 import styles from './TransactionTypesSection.css';
 
@@ -46,10 +50,12 @@ interface Props {
   transactionFormIndex: number;
   values: FormValues;
   setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
+  validateForm: (values?: any) => Promise<FormikErrors<FormValues>>;
   selectedContractMethod: AbiItemExtended | undefined;
   handleSelectedContractMethod: React.Dispatch<
     React.SetStateAction<AbiItemExtended | undefined>
   >;
+  safes: GnosisSafe[];
 }
 
 const renderAvatar = (address: Address, item: AnyUser) => (
@@ -61,19 +67,28 @@ const ContractInteractionSection = ({
   transactionFormIndex,
   values,
   setFieldValue,
+  validateForm,
   selectedContractMethod,
   handleSelectedContractMethod,
+  safes,
 }: Props) => {
   const [formattedMethodOptions, setFormattedMethodOptions] = useState<
     SelectOption[]
   >([]);
   const transactionValues = values.transactions[transactionFormIndex];
-  const { contractABI, usefulMethods } = useContractABIParser(
+  const onContractABIChange = (abi: string) => {
+    setFieldValue(`transactions.${transactionFormIndex}.abi`, abi);
+    setFieldValue(`transactions.${transactionFormIndex}.contractFunction`, '');
+  };
+  const selectedSafe = safes.find((safe) => safe.address === values.safe);
+  const { usefulMethods } = useContractABIParser(
     transactionValues.contract?.profile?.walletAddress,
+    transactionValues.abi,
+    Number(selectedSafe?.chain) || GNOSIS_NETWORK.chainId,
+    onContractABIChange,
   );
-  useEffect(() => {
-    setFieldValue(`transactions.${transactionFormIndex}.abi`, contractABI);
 
+  useEffect(() => {
     const updatedFormattedMethodOptions =
       usefulMethods?.map((method) => {
         return {
@@ -83,7 +98,28 @@ const ContractInteractionSection = ({
       }) || [];
 
     setFormattedMethodOptions(updatedFormattedMethodOptions);
-  }, [contractABI, usefulMethods, transactionFormIndex, setFieldValue]);
+  }, [usefulMethods, transactionFormIndex, setFieldValue]);
+
+  useEffect(() => {
+    if (isEmpty(usefulMethods) && selectedContractMethod) {
+      handleSelectedContractMethod(undefined);
+      setFieldValue(
+        `transactions.${transactionFormIndex}.contractFunction`,
+        '',
+      );
+    }
+  }, [
+    handleSelectedContractMethod,
+    selectedContractMethod,
+    usefulMethods,
+    setFieldValue,
+    transactionFormIndex,
+  ]);
+
+  useEffect(() => {
+    validateForm();
+  }, [usefulMethods, selectedContractMethod, validateForm]);
+
   return (
     <>
       <DialogSection>
@@ -137,6 +173,14 @@ const ContractInteractionSection = ({
               appearance={{ colorSchema: 'grey', theme: 'fat' }}
               disabled={disabledInput}
               placeholder={`${input.name} (${input.type})`}
+              formattingOptions={
+                input.type === 'uint256'
+                  ? {
+                      numeral: true,
+                      numeralPositiveOnly: true,
+                    }
+                  : undefined
+              }
             />
           </div>
         </DialogSection>
