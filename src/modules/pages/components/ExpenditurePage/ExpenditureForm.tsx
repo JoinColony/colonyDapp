@@ -6,8 +6,8 @@ import { useDialog } from '~core/Dialog';
 import StakeExpenditureDialog from '~dashboard/Dialogs/StakeExpenditureDialog';
 import { ExpenditureSettings } from '~dashboard/ExpenditurePage';
 import Payments from '~dashboard/ExpenditurePage/Payments';
-import Staged from '~dashboard/ExpenditurePage/Staged';
 import Split from '~dashboard/ExpenditurePage/Split';
+import Staged from '~dashboard/ExpenditurePage/Staged';
 import { Colony } from '~data/index';
 
 import { ValuesType } from './ExpenditurePage';
