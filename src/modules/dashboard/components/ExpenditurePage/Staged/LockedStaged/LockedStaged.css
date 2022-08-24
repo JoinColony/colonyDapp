@@ -89,7 +89,13 @@
 .amountWrapper {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 16px;
+}
+
+.amountWrapper button {
+  height: 29px;
+  width: 100px;
 }
 
 .value {
@@ -127,4 +133,13 @@
   font-weight: var(--weight-bold);
   color: color-mod(var(--dark) alpha(85%));
   letter-spacing: var(--spacing-medium);
+}
+
+.claimed {
+  composes: themeLight from '~core/Tag/Tag.css';
+  padding: 1px 12px 2px;
+  height: 20px;
+  border-radius: 5px;
+  color: var(--temp-grey-blue-7);
+  letter-spacing: 0.5px;
 }

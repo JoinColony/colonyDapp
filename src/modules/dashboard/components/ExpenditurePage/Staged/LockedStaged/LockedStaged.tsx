@@ -1,15 +1,19 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import Button from '~core/Button';
 import { FormSection } from '~core/Fields';
 import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
+import Tag from '~core/Tag';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
+import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import { Colony } from '~data/index';
-import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
+
+import { Staged } from '../types';
 
 import styles from './LockedStaged.css';
 
@@ -26,16 +30,31 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Staged.LockedStaged.amount',
     defaultMessage: 'Amount',
   },
+  release: {
+    id: 'dashboard.ExpenditurePage.Staged.LockedStaged.release',
+    defaultMessage: 'Release',
+  },
+  completed: {
+    id: 'dashboard.ExpenditurePage.Staged.LockedStaged.completed',
+    defaultMessage: 'Completed',
+  },
 });
 
 const displayName = 'dashboard.ExpenditurePage.Staged.LockedStaged';
 
 interface Props {
   colony: Colony;
-  staged?: ValuesType['staged'];
+  staged?: Staged;
+  activeStateId?: string;
+  handleReleaseMilestone: (id: string) => void;
 }
 
-const LockedStaged = ({ colony, staged }: Props) => {
+const LockedStaged = ({
+  colony,
+  staged,
+  activeStateId,
+  handleReleaseMilestone,
+}: Props) => {
   const { tokens: colonyTokens } = colony || {};
 
   const token = useMemo(() => {
@@ -131,6 +150,21 @@ const LockedStaged = ({ colony, staged }: Props) => {
                     </>
                   )}
                 </div>
+                {(activeStateId === Stage.Funded ||
+                  activeStateId === Stage.Released) && (
+                  <>
+                    {milestone.released ? (
+                      <Tag text={MSG.completed} className={styles.claimed} />
+                    ) : (
+                      <Button
+                        type="button"
+                        onClick={() => handleReleaseMilestone(milestone.id)}
+                      >
+                        <FormattedMessage {...MSG.release} />
+                      </Button>
+                    )}
+                  </>
+                )}
               </div>
             </div>
           </FormSection>

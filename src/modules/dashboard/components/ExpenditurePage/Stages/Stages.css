@@ -46,12 +46,36 @@
   align-items: center;
 }
 
+.buttonsContainer > span > button {
+  margin-left: 20px;
+}
+
+.buttonsContainer button:not(:last-of-type) {
+  margin-right: 30px;
+}
+
+.buttonsContainer button {
+  &:disabled {
+    height: 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--colony-light-blue);
+    font-weight: var(--weight-bold);
+    color: var(--temp-grey-blue-7);
+  }
+
+  &:disabled:hover {
+    background-color: var(--colony-light-blue);
+    color: var(--temp-grey-blue-7);
+    cursor: default;
+  }
+}
+
 .iconButton > div {
   margin-bottom: 7px;
 }
 
 .iconButton {
-  margin-right: 20px;
   margin-left: 0;
   padding: 0;
   border: none;
@@ -100,4 +124,14 @@
 .cancelIcon:hover svg {
   fill: var(--pink);
   transition: fill 200ms ease-in-out;
+}
+
+.claimed {
+  composes: themeLight from '~core/Tag/Tag.css';
+  margin-left: 30px;
+  padding: 1px 12px 2px;
+  height: 20px;
+  border-radius: 5px;
+  color: var(--temp-grey-blue-7);
+  letter-spacing: 0.5px;
 }

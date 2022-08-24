@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import * as yup from 'yup';
 import {
   defineMessages,
@@ -28,6 +34,7 @@ import { useDialog } from '~core/Dialog';
 import EscrowFundsDialog from '~dashboard/Dialogs/EscrowFundsDialog';
 import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
 import { initalMilestone } from '~dashboard/ExpenditurePage/Staged/constants';
+import { Staged } from '~dashboard/ExpenditurePage/Staged/types';
 
 import { ExpenditureForm, LockedSidebar } from '.';
 import { ExpenditureTypes } from './types';
@@ -206,25 +213,16 @@ export interface ValuesType {
   recipients?: Recipient[];
   title?: string;
   description?: string;
-  staged?: {
-    user?: AnyUser;
-    amount?: { value?: string; tokenAddress?: string };
-    milestones?: {
-      id: string;
-      name?: string;
-      amount?: number;
-      percent?: number;
-    }[];
-  };
   split?: {
     unequal: boolean;
     amount?: { value?: string; tokenAddress?: string };
     recipients?: { user?: AnyUser; amount?: number; percent?: number }[];
   };
+  staged?: Staged;
 }
 
 const initialValues = {
-  expenditure: 'advanced',
+  expenditure: ExpenditureTypes.Advanced,
   recipients: [newRecipient],
   filteredDomainId: String(ROOT_DOMAIN_ID),
   owner: undefined,
@@ -304,7 +302,28 @@ const ExpenditurePage = ({ match }: Props) => {
 
   const handleSubmit = useCallback((values: ValuesType) => {
     setActiveStateId(Stage.Draft);
-    // setShouldValidate(true);
+
+    if (values.expenditure === ExpenditureTypes.Staged) {
+      const stagedValues = {
+        ...values,
+        recipients: undefined,
+        staged: {
+          ...values.staged,
+          milestones: values.staged?.milestones?.map((milestone) => {
+            const amount = values.staged?.amount?.value;
+
+            const milestoneAmount =
+              amount &&
+              milestone?.percent &&
+              (milestone.percent / 100) * Number(values.staged?.amount?.value);
+            return { ...milestone, amount: milestoneAmount };
+          }),
+        },
+      };
+
+      setFormValues(stagedValues as ValuesType);
+      return;
+    }
 
     if (values) {
       setFormValues(values);
@@ -349,6 +368,39 @@ const ExpenditurePage = ({ match }: Props) => {
     // Call to backend will be added here, to claim the expenditure
     setActiveStateId(Stage.Claimed);
   };
+
+  useEffect(() => {
+    const allReleased = formValues?.staged?.milestones?.every(
+      (milestone) => milestone.released,
+    );
+
+    if (allReleased) {
+      setActiveStateId(Stage.Released);
+    }
+  }, [formValues]);
+
+  const handleReleaseMilestone = useCallback((id: string) => {
+    setFormValues((stateValues) => {
+      const newValues = {
+        ...{
+          ...stateValues,
+          expenditure: stateValues?.expenditure || ExpenditureTypes.Staged,
+          filteredDomainId:
+            stateValues?.filteredDomainId || String(ROOT_DOMAIN_ID),
+          staged: {
+            ...stateValues?.staged,
+            milestones: stateValues?.staged?.milestones?.map((milestone) => {
+              if (milestone.id === id) {
+                return { ...milestone, released: true };
+              }
+              return milestone;
+            }),
+          },
+        },
+      };
+      return newValues;
+    });
+  }, []);
 
   const states = [
     {
@@ -439,6 +491,8 @@ const ExpenditurePage = ({ match }: Props) => {
           <LockedSidebar
             formValues={formValues}
             colony={colonyData.processedColony}
+            handleReleaseMilestone={handleReleaseMilestone}
+            activeStateId={activeStateId}
           />
         )}
       </aside>
@@ -465,6 +519,7 @@ const ExpenditurePage = ({ match }: Props) => {
               lockValues,
               handleSubmit,
               setShouldValidate,
+              formValues,
             }}
           />
         </main>

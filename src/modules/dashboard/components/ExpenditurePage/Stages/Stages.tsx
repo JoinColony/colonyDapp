@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useRef, useState } from 'react';
 import { useFormikContext, setNestedObjectValues, FormikTouched } from 'formik';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import copyToClipboard from 'copy-to-clipboard';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
@@ -10,6 +10,8 @@ import { useDialog } from '~core/Dialog';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
 import { State, ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
+import { ExpenditureTypes } from '~pages/ExpenditurePage/types';
+import Tag from '~core/Tag';
 
 import DeleteDraftDialog from '../../Dialogs/DeleteDraftDialog/DeleteDraftDialog';
 import StakeExpenditureDialog from '../../Dialogs/StakeExpenditureDialog';
@@ -70,11 +72,18 @@ interface Props {
   handleSubmit: (values: ValuesType) => void;
   activeStateId?: string;
   setShouldValidate: React.Dispatch<React.SetStateAction<boolean>>;
+  formValues?: ValuesType;
 }
 
-const Stages = ({ states, activeStateId, setShouldValidate }: Props) => {
+const Stages = ({
+  states,
+  activeStateId,
+  setShouldValidate,
+  formValues,
+}: Props) => {
   const { values, handleSubmit, errors, validateForm, setTouched } =
     useFormikContext<ValuesType>() || {};
+  const { formatMessage } = useIntl();
 
   const { resetForm } = useFormikContext() || {};
   const [valueIsCopied, setValueIsCopied] = useState(false);
@@ -132,6 +141,51 @@ const Stages = ({ states, activeStateId, setShouldValidate }: Props) => {
 
   const activeIndex = states.findIndex((state) => state.id === activeStateId);
   const activeState = states.find((state) => state.id === activeStateId);
+
+  const renderButton = useCallback(() => {
+    const buttonText =
+      typeof activeState?.buttonText === 'string'
+        ? activeState.buttonText
+        : activeState?.buttonText && formatMessage(activeState.buttonText);
+
+    if (activeStateId === Stage.Claimed) {
+      return <Tag text={buttonText} className={styles.claimed} />;
+    }
+    if (
+      activeStateId === Stage.Funded &&
+      formValues?.expenditure === ExpenditureTypes.Staged
+    ) {
+      return null;
+    }
+    if (activeState?.buttonTooltip) {
+      return (
+        <Tooltip
+          placement="top"
+          content={
+            <div className={styles.buttonTooltip}>
+              {typeof activeState.buttonTooltip === 'string'
+                ? activeState.buttonTooltip
+                : formatMessage(activeState.buttonTooltip)}
+            </div>
+          }
+        >
+          <Button
+            onClick={activeState?.buttonAction}
+            style={buttonStyles}
+            disabled={activeStateId === Stage.Claimed}
+          >
+            {buttonText}
+          </Button>
+        </Tooltip>
+      );
+    }
+
+    return (
+      <Button onClick={activeState?.buttonAction} style={buttonStyles}>
+        {buttonText}
+      </Button>
+    );
+  }, [activeState, activeStateId, formatMessage, formValues]);
 
   return (
     <div className={styles.mainContainer}>
@@ -232,44 +286,7 @@ const Stages = ({ states, activeStateId, setShouldValidate }: Props) => {
                   </Tooltip>
                 </Button>
               )}
-              {activeState?.buttonTooltip ? (
-                <Tooltip
-                  placement="top"
-                  content={
-                    typeof activeState.buttonTooltip === 'string' ? (
-                      <div className={styles.buttonTooltip}>
-                        {activeState.buttonTooltip}
-                      </div>
-                    ) : (
-                      <div className={styles.buttonTooltip}>
-                        <FormattedMessage {...activeState.buttonTooltip} />
-                      </div>
-                    )
-                  }
-                >
-                  <Button
-                    onClick={activeState?.buttonAction}
-                    style={buttonStyles}
-                  >
-                    {typeof activeState?.buttonText === 'string' ? (
-                      activeState.buttonText
-                    ) : (
-                      <FormattedMessage {...activeState?.buttonText} />
-                    )}
-                  </Button>
-                </Tooltip>
-              ) : (
-                <Button
-                  onClick={activeState?.buttonAction}
-                  style={buttonStyles}
-                >
-                  {typeof activeState?.buttonText === 'string' ? (
-                    activeState.buttonText
-                  ) : (
-                    <FormattedMessage {...activeState?.buttonText} />
-                  )}
-                </Button>
-              )}
+              {renderButton()}
             </>
           )}
         </div>
