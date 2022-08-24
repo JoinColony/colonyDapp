@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import { MessageDescriptor } from 'react-intl';
 import { nanoid } from 'nanoid';
+import findIndex from 'lodash/findIndex';
 
 import { PopperOptions } from 'react-popper-tooltip';
 
@@ -93,9 +94,9 @@ const Checkbox = ({
 
   const handleOnChange = useCallback(
     (e: SyntheticEvent<HTMLInputElement>) => {
-      const idx = values[name].indexOf(value);
+      const idx = findIndex(values[name], value);
       if (idx >= 0) {
-        remove(idx);
+        remove(idx.toString());
       } else {
         push(value);
       }
@@ -106,7 +107,7 @@ const Checkbox = ({
     [name, onChange, push, remove, value, values],
   );
 
-  const isChecked = values[name].indexOf(value) >= 0;
+  const isChecked = findIndex(values[name], value) >= 0;
   const mainClasses = getMainClasses(appearance, styles, {
     isChecked,
     disabled,
