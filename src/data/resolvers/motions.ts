@@ -1233,6 +1233,10 @@ export const motionsResolvers = ({
         };
       }
 
+      if (actionValues.name === 'createDecision') {
+        return actionValues.args[0];
+      }
+
       if (
         actionValues.signature ===
         'setUserRoles(uint256,uint256,address,uint256,bytes32)'
