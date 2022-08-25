@@ -255,7 +255,7 @@ export type ColonyActionsActionTypes =
       {
         colonyName: string;
         colonyAddress: Address;
-        safeAddresses: ColonySafe[] | Address[];
+        safeList: ColonySafe[];
         annotationMessage?: string;
         isRemovingSafes?: boolean;
       },

@@ -4,18 +4,18 @@ import { useHistory } from 'react-router';
 
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
-import { Address } from '~types/index';
 
 import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
+import { ColonySafe } from '~data/generated';
 
 import DialogForm from './RemoveSafeDialogForm';
 
 const displayName = 'dashboard.RemoveSafeDialog';
 
 export interface FormValues {
-  safeList: Address[];
+  safeList: ColonySafe[];
 }
 
 type Props = DialogProps &
@@ -38,7 +38,7 @@ const RemoveSafeDialog = ({
         return {
           colonyName: colony.colonyName,
           colonyAddress: colony.colonyAddress,
-          safeAddresses: safeList,
+          safeList,
           annotationMessage,
           isRemovingSafes: true,
         };
@@ -52,7 +52,7 @@ const RemoveSafeDialog = ({
     <ActionForm
       initialValues={{
         // if there's only 1 safe then that safe is already checked.
-        safeList: safes.length === 1 ? [safes[0].contractAddress] : [],
+        safeList: safes.length === 1 ? [safes[0]] : [],
       }}
       submit={ActionTypes.ACTION_MANAGE_EXISTING_SAFES}
       error={ActionTypes.ACTION_MANAGE_EXISTING_SAFES_ERROR}

@@ -32,7 +32,7 @@ function* manageExistingSafesAction({
   payload: {
     colonyName,
     colonyAddress,
-    safeAddresses,
+    safeList,
     annotationMessage,
     isRemovingSafes,
   },
@@ -44,7 +44,7 @@ function* manageExistingSafesAction({
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
     const ipfsWithFallback = TEMP_getContext(ContextModule.IPFSWithFallback);
 
-    if (isEmpty(safeAddresses)) {
+    if (isEmpty(safeList)) {
       throw new Error('A list with safe addresses is required to manage safes');
     }
 
@@ -134,14 +134,16 @@ function* manageExistingSafesAction({
       updatedColonyMetadata = {
         ...colonyMetadata,
         colonySafes: colonyMetadata.colonySafes
-          ? [...colonyMetadata.colonySafes, ...safeAddresses]
-          : safeAddresses,
+          ? [...colonyMetadata.colonySafes, ...safeList]
+          : safeList,
       };
     } else {
       const updatedColonySafes = colonyMetadata.colonySafes.filter(
         (safe: ColonySafe) =>
-          !safeAddresses.some(
-            (safeAddress) => safeAddress === safe.contractAddress,
+          !safeList.some(
+            (removedSafe) =>
+              removedSafe.contractAddress === safe.contractAddress &&
+              removedSafe.chainId === safe.chainId,
           ),
       );
       updatedColonyMetadata = {
