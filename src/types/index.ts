@@ -144,5 +144,6 @@ export enum MetamaskRpcErrors {
 export interface DecisionDetails {
   title: string;
   description: string;
+  htmlDescription?: string;
   domainId: number;
 }
