@@ -113,6 +113,7 @@ const RaiseObjectionDialogForm = ({
           {editor && (
             <RichTextEditor
               editor={editor}
+              name="annotation"
               isSubmitting={isSubmitting}
               limit={limit}
               disabled={!canUserStake || isSubmitting}
