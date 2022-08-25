@@ -98,3 +98,10 @@
   text-align: right;
   overflow-wrap: anywhere;
 }
+
+.nftContainer {
+  display: flex;
+  align-items: center;
+  color: var(--pink);
+  column-gap: 11px;
+}
