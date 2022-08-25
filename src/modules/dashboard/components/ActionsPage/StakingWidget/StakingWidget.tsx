@@ -260,9 +260,6 @@ const StakingWidget = ({
 
   const canBeStaked = isObjection ? canUserStakeNay : canUserStakeYay;
 
-  const objectButtonStyles =
-    isMinActivated && enoughActiveTokensToStakeMore ? styles.objectButton : '';
-
   return (
     <div className={styles.main} data-test="stakingWidget">
       <ActionForm
@@ -303,6 +300,13 @@ const StakingWidget = ({
                     : ''
                 }`}
               >
+                {!bigNumberify(totalNAYStakes).isZero() && (
+                  <Button
+                    appearance={{ theme: 'secondary', size: 'medium' }}
+                    text={{ id: 'button.back' }}
+                    onClick={() => handleWidgetState(true)}
+                  />
+                )}
                 <Button
                   appearance={{
                     theme: isObjection ? 'danger' : 'primary',
@@ -316,20 +320,15 @@ const StakingWidget = ({
                   text={MSG.stakeButton}
                   dataTest="stakeWidgetStakeButton"
                 />
-                <span
-                  className={
-                    !bigNumberify(totalNAYStakes).isZero()
-                      ? styles.backButtonWrapper
-                      : objectButtonStyles
-                  }
-                >
-                  {isObjection || !bigNumberify(totalNAYStakes).isZero() ? (
-                    <Button
-                      appearance={{ theme: 'secondary', size: 'medium' }}
-                      text={{ id: 'button.back' }}
-                      onClick={() => handleWidgetState(true)}
-                    />
-                  ) : (
+
+                {bigNumberify(totalNAYStakes).isZero() && (
+                  <span
+                    className={
+                      isMinActivated && enoughActiveTokensToStakeMore
+                        ? styles.objectButton
+                        : ''
+                    }
+                  >
                     <Button
                       appearance={{ theme: 'pink', size: 'medium' }}
                       text={MSG.objectButton}
@@ -344,8 +343,8 @@ const StakingWidget = ({
                       }
                       dataTest="stakeWidgetObjectButton"
                     />
-                  )}
-                </span>
+                  </span>
+                )}
                 {(!isMinActivated || !enoughActiveTokensToStakeMore) && (
                   <Button
                     appearance={{
