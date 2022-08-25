@@ -275,7 +275,6 @@ const StakingWidget = ({
       >
         {({ values }) => {
           setSliderAmount(values.amount);
-
           return (
             <div className={styles.wrapper}>
               <StakingSlider
@@ -315,7 +314,9 @@ const StakingWidget = ({
                   type="submit"
                   disabled={
                     !canBeStaked ||
-                    userActivatedTokens.lt(getDecimalStake(values.amount))
+                    userActivatedTokens.lt(
+                      getDecimalStake(values.amount).round(),
+                    )
                   }
                   text={MSG.stakeButton}
                   dataTest="stakeWidgetStakeButton"
