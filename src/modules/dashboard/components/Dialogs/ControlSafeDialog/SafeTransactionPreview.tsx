@@ -10,7 +10,7 @@ import Numeral from '~core/Numeral';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
-
+import Avatar from '~core/Avatar';
 import { Colony, AnyUser } from '~data/index';
 
 import AddressDetailsView from './TransactionPreview/AddressDetailsView';
@@ -23,6 +23,8 @@ import {
 import DetailsItem from './DetailsItem';
 
 import styles from './SafeTransactionPreview.css';
+import { testNFTData } from './ControlSafeForm';
+import { getFilteredNFTData } from './utils';
 
 const MSG = defineMessages({
   previewTitle: {
@@ -65,6 +67,22 @@ const MSG = defineMessages({
     id: 'dashboard.ControlSafeDialog.SafeTransactionPreview.nft',
     defaultMessage: 'NFT',
   },
+  transactionType: {
+    id: `dashboard.ControlSafeDialog.SafeTransactionPreview.transactionType`,
+    defaultMessage: 'Transaction type',
+  },
+  nftHeldByTheSafe: {
+    id: `dashboard.ControlSafeDialog.SafeTransactionPreview.nftHeldByTheSafe`,
+    defaultMessage: 'NFT held by the safe',
+  },
+  targetContract: {
+    id: `dashboard.ControlSafeDialog.SafeTransactionPreview.targetContract`,
+    defaultMessage: 'Target contract',
+  },
+  nftId: {
+    id: 'dashboard.ControlSafeDialog.SafeTransactionPreview.nftId',
+    defaultMessage: 'Id',
+  },
   data: {
     id: 'dashboard.ControlSafeDialog.SafeTransactionPreview.data',
     defaultMessage: 'Data',
@@ -102,11 +120,56 @@ const transactionTypeFieldsMap = {
     },
   ],
   [TransactionTypes.TRANSFER_NFT]: [
-    // To be finished once NFT part of the form is merged
     {
-      key: 'function',
-      label: MSG.function,
+      key: 'transactionType',
+      label: MSG.transactionType,
       value: () => <FormattedMessage {...ConstantsMSG.transferNft} />,
+    },
+    {
+      key: 'nft',
+      label: MSG.nftHeldByTheSafe,
+      value: (nft) => (
+        <div className={styles.nftContainer}>
+          <Avatar
+            avatarURL={undefined}
+            placeholderIcon="circle-close"
+            seed={nft.id.toLocaleLowerCase()}
+            title=""
+            size="xs"
+          />
+          <div>{nft.profile.displayName}</div>
+        </div>
+      ),
+    },
+    {
+      key: 'nft',
+      label: MSG.targetContract,
+      value: (nft) => (
+        <div className={styles.nftContainer}>
+          <Avatar
+            avatarURL={undefined}
+            placeholderIcon="circle-close"
+            seed={nft.id.toLocaleLowerCase()}
+            title=""
+            size="xs"
+          />
+          <div>{getFilteredNFTData(testNFTData, nft.id)?.name}</div>
+        </div>
+      ),
+    },
+    {
+      key: 'nft',
+      label: MSG.nftId,
+      value: (nft) => (
+        <div>{getFilteredNFTData(testNFTData, nft.id)?.tokenID}</div>
+      ),
+    },
+    {
+      key: 'recipient',
+      label: MSG.to,
+      value: (recipient) => (
+        <AddressDetailsView item={recipient} isSafeItem={false} />
+      ),
     },
   ],
   [TransactionTypes.CONTRACT_INTERACTION]: [
@@ -170,6 +233,10 @@ const SafeTransactionPreview = ({ colony, values }: Props) => {
     () => [...new Array(values.transactions.length)].map(nanoid),
     [values.transactions.length],
   );
+
+  const isNFT = (index) =>
+    values.transactions[index].transactionType ===
+    TransactionTypes.TRANSFER_NFT;
 
   return (
     <>
@@ -242,36 +309,39 @@ const SafeTransactionPreview = ({ colony, values }: Props) => {
                       />
                     </div>
                   )}
-                <DetailsItem
-                  label={MSG.safe}
-                  value={
-                    <AddressDetailsView
-                      item={(values.safe as never) as AnyUser}
-                      isSafeItem
-                    />
-                  }
-                />
-                {values.transactions[index].transactionType !==
-                  TransactionTypes.CONTRACT_INTERACTION && (
+                {!isNFT(index) && (
                   <DetailsItem
-                    label={MSG.to}
+                    label={MSG.safe}
                     value={
                       <AddressDetailsView
-                        item={
-                          (values.transactions[index]
-                            .recipient as never) as AnyUser
-                        }
-                        isSafeItem={false}
+                        item={(values.safe as never) as AnyUser}
+                        isSafeItem
                       />
                     }
                   />
                 )}
+                {values.transactions[index].transactionType !==
+                  TransactionTypes.CONTRACT_INTERACTION &&
+                  !isNFT(index) && (
+                    <DetailsItem
+                      label={MSG.to}
+                      value={
+                        <AddressDetailsView
+                          item={
+                            (values.transactions[index]
+                              .recipient as never) as AnyUser
+                          }
+                          isSafeItem={false}
+                        />
+                      }
+                    />
+                  )}
                 {values.transactions[index].transactionType !== '' &&
                   transactionTypeFieldsMap[
                     values.transactions[index].transactionType
                   ].map(({ key, label, value }) => (
                     <DetailsItem
-                      key={key}
+                      key={nanoid()}
                       label={label}
                       value={value(
                         values.transactions[index][key],

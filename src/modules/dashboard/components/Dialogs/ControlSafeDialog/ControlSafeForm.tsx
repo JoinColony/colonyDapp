@@ -104,7 +104,7 @@ export interface NFT {
 }
 
 // Test data for dev - should be obtained from the safe
-const testNFTData: NFT[] = [
+export const testNFTData: NFT[] = [
   {
     name: 'BoredApeYachtClub',
     avatar: 'bla',
