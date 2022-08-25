@@ -12,6 +12,7 @@ import { useMembersSubscription } from '~data/index';
 
 import { Address } from '~types/index';
 import { NFT } from '~dashboard/Dialogs/ControlSafeDialog';
+import { getFilteredNFTData } from '../utils';
 
 import styles from './TransferNFTSection.css';
 
@@ -79,11 +80,11 @@ const TransferNFTSection = ({
 
   const filteredNFTData = useMemo(
     () =>
-      nftCatalogue.find(
-        (item) =>
-          item?.address === values?.transactions[transactionFormIndex]?.nft?.id,
+      getFilteredNFTData(
+        nftCatalogue,
+        values?.transactions[transactionFormIndex]?.nft?.id,
       ),
-    [nftCatalogue, transactionFormIndex, values],
+    [nftCatalogue, values, transactionFormIndex],
   );
 
   return (
