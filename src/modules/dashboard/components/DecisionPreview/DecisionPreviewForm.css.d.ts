@@ -1,4 +1,3 @@
-export const wideButton: string;
 export const main: string;
 export const containerMargin: string;
 export const dividerTop: string;
@@ -14,3 +13,5 @@ export const userName: string;
 export const title: string;
 export const details: string;
 export const buttonContainer: string;
+export const titleDecoration: string;
+export const loadingWrapper: string;
