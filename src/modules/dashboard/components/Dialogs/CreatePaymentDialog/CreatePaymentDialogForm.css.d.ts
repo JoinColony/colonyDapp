@@ -15,3 +15,4 @@ export const motionVoteDomain: string;
 export const warningContainer: string;
 export const warningText: string;
 export const warningLabel: string;
+export const tooltip: string;

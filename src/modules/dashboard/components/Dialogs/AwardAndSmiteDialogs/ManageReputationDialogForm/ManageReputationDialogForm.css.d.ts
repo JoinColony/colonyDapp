@@ -13,3 +13,4 @@ export const warningContainer: string;
 export const warningTitle: string;
 export const warningText: string;
 export const divider: string;
+export const tooltip: string;

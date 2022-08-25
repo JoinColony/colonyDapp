@@ -109,6 +109,19 @@ const CreateDomainDialogForm = ({
                 label={{ id: 'label.force' }}
                 name="forceAction"
                 disabled={isSubmitting}
+                tooltipClassName={styles.tooltip}
+                tooltipText={{ id: 'tooltip.forceToggle' }}
+                tooltipPopperOptions={{
+                  placement: 'top-end',
+                  modifiers: [
+                    {
+                      name: 'offset',
+                      options: {
+                        offset: [10, 12],
+                      },
+                    },
+                  ],
+                }}
               />
             )}
           </div>
