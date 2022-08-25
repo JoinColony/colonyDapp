@@ -37,17 +37,16 @@ function* createDecisionMotion({
     /*
      * Validate the required values
      */
-    if (!decisionTitle) {
-      throw new Error('A Decision title is required when creating a Decision.');
+    if (!colonyAddress) {
+      throw new Error('Colony address is required when creating a Decision.');
     }
-    if (!decisionDescription) {
-      throw new Error(
-        'A Decision description is required when creating a Decision.',
-      );
+
+    if (!decisionTitle) {
+      throw new Error('Decision title is required when creating a Decision.');
     }
 
     if (!domainId) {
-      throw new Error('A domain id is required when creating a Decision.');
+      throw new Error('Domain id is required when creating a Decision.');
     }
 
     const context = TEMP_getContext(ContextModule.ColonyManager);
