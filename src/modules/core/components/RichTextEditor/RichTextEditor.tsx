@@ -14,14 +14,15 @@ interface Props {
   editor: Editor;
   isSubmitting: boolean;
   limit: number;
+  name: string;
 }
 
-const RichTextEditor = ({ editor, isSubmitting, limit }: Props) => {
+const RichTextEditor = ({ editor, isSubmitting, limit, name }: Props) => {
   const [
     ,
     { error: contentError, touched: contentTouched },
     { setValue: setContentValue, setTouched: setContentTouched },
-  ] = useField('content');
+  ] = useField(name);
 
   useEffect(() => {
     /* Manually update form state on change to Editor component */
@@ -47,7 +48,7 @@ const RichTextEditor = ({ editor, isSubmitting, limit }: Props) => {
         className={classnames(styles.editorContainer, {
           [styles.error]: contentError && contentTouched,
         })}
-        name="content"
+        name={name}
         onBlur={() => {
           setContentTouched(true);
         }}
