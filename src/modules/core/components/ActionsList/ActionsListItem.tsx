@@ -216,7 +216,7 @@ const ActionsListItem = ({
   const isMotionFinished =
     motionState === MotionState.Passed ||
     motionState === MotionState.Failed ||
-    motionState === MotionState.FailedNoFinalizable;
+    motionState === MotionState.FailedNotFinalizable;
 
   const stopPropagation = (event) => event.stopPropagation();
 
