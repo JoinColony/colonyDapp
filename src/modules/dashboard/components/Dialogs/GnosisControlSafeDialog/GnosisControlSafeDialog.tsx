@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import toFinite from 'lodash/toFinite';
 import { defineMessages } from 'react-intl';
+import { useHistory } from 'react-router';
 
 import { AnyUser } from '~data/index';
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
@@ -14,6 +15,7 @@ import { Address } from '~types/index';
 
 import { TransactionTypes } from './constants';
 import GnosisControlSafeForm, { NFT } from './GnosisControlSafeForm';
+import { mapPayload, pipe, withMeta } from '~utils/actions';
 
 const MSG = defineMessages({
   requiredFieldError: {
@@ -37,6 +39,12 @@ const safes = [
     name: '',
     address: '0x3a157280ca91bB49dAe3D1619C55Da7F9D4438c3',
     chain: 'Mainnet',
+  },
+  // Change to whichever Safe you would like to test with.
+  {
+    name: 'gracious-rinkeby-safe',
+    address: '0x358E6D7C8Fa5e55fc6A0D50E23b875c6c49fF09A',
+    chain: 'Rinkeby',
   },
 ];
 
@@ -157,13 +165,39 @@ const validationSchema = (isPreview) =>
   });
 
 const GnosisControlSafeDialog = ({
+  colony: { colonyAddress, colonyName },
   colony,
   cancel,
+  close,
   callStep,
   prevStep,
   isVotingExtensionEnabled,
 }: Props) => {
+  const history = useHistory();
   const [showPreview, setShowPreview] = useState(false);
+  const transform = useCallback(
+    pipe(
+      mapPayload(
+        ({
+          safe,
+          transactionsTitle,
+          transactions,
+          annotation: annotationMessage,
+        }) => {
+          return {
+            safe,
+            transactionsTitle,
+            transactions,
+            annotationMessage,
+            colonyAddress,
+            colonyName,
+          };
+        },
+      ),
+      withMeta({ history }),
+    ),
+    [],
+  );
 
   return (
     <ActionForm
@@ -185,10 +219,12 @@ const GnosisControlSafeDialog = ({
         ],
       }}
       validationSchema={validationSchema(showPreview)}
-      submit={ActionTypes.ACTION_GENERIC}
-      success={ActionTypes.ACTION_GENERIC_SUCCESS}
-      error={ActionTypes.ACTION_GENERIC_ERROR}
+      submit={ActionTypes.ACTION_INITIATE_SAFE_TRANSACTION}
+      success={ActionTypes.ACTION_INITIATE_SAFE_TRANSACTION_SUCCESS}
+      error={ActionTypes.ACTION_INITIATE_SAFE_TRANSACTION_ERROR}
       validateOnMount
+      transform={transform}
+      onSuccess={close}
     >
       {(formValues: FormikProps<FormValues>) => (
         <Dialog cancel={cancel}>
