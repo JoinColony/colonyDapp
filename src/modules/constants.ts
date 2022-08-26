@@ -252,6 +252,57 @@ export const DEFAULT_NETWORK_TOKEN = TOKEN_DATA[DEFAULT_NETWORK];
 
 export const DEFAULT_NETWORK_INFO = NETWORK_DATA[DEFAULT_NETWORK];
 
+/*
+ * "Home" here always refers to Gnosis Chain.
+ * "Foreign" is the chain to which we are bridging.
+ */
+
+interface AmbBridge {
+  homeAMB: string;
+  foreignAMB: string;
+  monitor?: string;
+  referenceUrl?: string;
+  homeGasLimit?: number;
+  foreignGasLimit?: number;
+  homeFinalizationRate?: number;
+  foreignFinalizationRate: number;
+}
+
+export const GNOSIS_AMB_BRIDGES: { [x: number]: AmbBridge } = {
+  [ETHEREUM_NETWORK.chainId]: {
+    homeAMB: '0x75Df5AF045d91108662D8080fD1FEFAd6aA0bb59',
+    foreignAMB: '0x4C36d2919e407f0Cc2Ee3c993ccF8ac26d9CE64e',
+    monitor: 'https://alm-xdai.herokuapp.com/',
+    referenceUrl:
+      'https://docs.tokenbridge.net/eth-xdai-amb-bridge/about-the-eth-xdai-amb',
+    homeGasLimit: 2000000,
+    foreignGasLimit: 2000000,
+    homeFinalizationRate: 20,
+    foreignFinalizationRate: 20,
+  },
+  [BINANCE_NETWORK.chainId]: {
+    homeAMB: '0x162E898bD0aacB578C8D5F8d6ca588c13d2A383F',
+    foreignAMB: '0x05185872898b6f94AA600177EF41B9334B1FA48B',
+    monitor: 'https://alm-bsc-xdai.herokuapp.com/',
+    referenceUrl:
+      'https://docs.tokenbridge.net/bsc-xdai-amb/about-the-bsc-xdai-amb',
+    homeGasLimit: 2000000,
+    foreignGasLimit: 2000000,
+    homeFinalizationRate: 20,
+    foreignFinalizationRate: 12,
+  },
+  [RINKEBY_NETWORK.chainId]: {
+    homeAMB: '0xc38D4991c951fE8BCE1a12bEef2046eF36b0FA4A',
+    foreignAMB: ' 0xD4075FB57fCf038bFc702c915Ef9592534bED5c1`',
+    monitor: 'https://alm-rinkeby.herokuapp.com/',
+    referenceUrl: `https://docs.tokenbridge.net/rinkeby-xdai-amb-bridge/about-the-rinkeby-xdai-amb`,
+    homeGasLimit: 3000000,
+    foreignGasLimit: 3000000,
+    homeFinalizationRate: 20,
+    foreignFinalizationRate: 12,
+  },
+};
+
 export const ALLDOMAINS_DOMAIN_SELECTION = {
   id: String(COLONY_TOTAL_BALANCE_DOMAIN_ID),
   color: Color.Yellow,

@@ -33,7 +33,10 @@ type EventRolesMap = Partial<
 
 type ActionsEventsMap = Partial<
   {
-    [key in ColonyActions | ColonyMotions]: ColonyAndExtensionsEvents[];
+    [key in
+      | ColonyActions
+      | ColonyMotions
+      | AddedActions]: ColonyAndExtensionsEvents[];
   }
 >;
 
@@ -107,6 +110,7 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyExtendedActions.TokensUpdated]: 'emoji-edit-tools',
   [ColonyExtendedActions.SafeRemoved]: 'safe-logo',
   [ColonyExtendedActions.SafeAdded]: 'safe-logo',
+  [ColonyExtendedActions.SafeTransactionInitiated]: 'safe-logo',
   [ColonyActions.Generic]: 'circle-check-primary',
 };
 
@@ -207,6 +211,10 @@ export const EVENTS_REQUIRED_FOR_ACTION: ActionsEventsMap = {
   ],
   [ColonyActions.EmitDomainReputationReward]: [
     ColonyAndExtensionsEvents.ArbitraryReputationUpdate,
+  ],
+  // Used by Gnosis Safe Control in the absence of a corresponding native Colony event
+  [AddedActions.SafeTransactionInitiated]: [
+    ColonyAndExtensionsEvents.Annotation,
   ],
 };
 
