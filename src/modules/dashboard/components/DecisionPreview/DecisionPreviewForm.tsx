@@ -14,7 +14,7 @@ import {
   AnyUser,
   OneDomain,
 } from '~data/index';
-import { ColonyActions } from '~types/index';
+import { ColonyMotions } from '~types/index';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import DecisionDialog from '~dashboard/Dialogs/DecisionDialog';
@@ -42,9 +42,11 @@ const decisionData = {
   title: 'Should we build a Discord Bot?',
   description: `I think we should build a Discord bot that integrates with the Dapp and provides our community with greater transperency and also provides more convienience for us to be notified of things happening in our Colony.`,
   /* Using an HTML string for the dialog content ensures the dirty prop works as expected */
-  htmlDescription: `<p>I think we should build a Discord bot that integrates with the Dapp and provides our community with greater transperency and also provides more convienience for us to be notified of things happening in our Colony.</p>`,
-  actionType: 'Decision',
-  fromDomain: '1',
+  htmlDescription: `<p>I think we should build a Discord bot that
+   integrates with the Dapp and provides our community with greater
+    transperency and also provides more convienience for us to be
+    notified of things happening in our Colony.</p>`,
+  fromDomain: 1,
 };
 
 const displayName = 'dashboard.DecisionPreview';
@@ -56,7 +58,6 @@ const DecisionPreviewForm = () => {
   const history = useHistory();
   const { walletAddress, username } = useLoggedInUser();
   const userProfile = useUser(walletAddress) as AnyUser;
-  const actionType = decisionData.actionType as ColonyActions;
 
   const { data: colonyData, error, loading } = useColonyFromNameQuery({
     // We have to define an empty address here for type safety, will be replaced by the query
@@ -72,7 +73,7 @@ const DecisionPreviewForm = () => {
         colonyName,
         decisionTitle: decisionData.title,
         decisionDescription: decisionData.description,
-        domainId: decisionData.fromDomain,
+        fromDomain: decisionData.fromDomain,
       })),
       withMeta({ history }),
     ),
@@ -102,81 +103,80 @@ const DecisionPreviewForm = () => {
   const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
   const actionAndEventValues = {
-    actionType,
+    actionType: ColonyMotions.CreateDecisionMotion,
     fromDomain: colonyData.processedColony.domains.find(
-      ({ ethDomainId }) =>
-        ethDomainId === parseInt(decisionData.fromDomain, 10),
+      ({ ethDomainId }) => ethDomainId === decisionData.fromDomain,
     ) as OneDomain,
   };
 
   return (
-    <ActionForm
-      initialValues={{}}
-      submit={ActionTypes.MOTION_CREATE_DECISION}
-      error={ActionTypes.MOTION_CREATE_DECISION_ERROR}
-      success={ActionTypes.MOTION_CREATE_DECISION_SUCCESS}
-      transform={transform}
-    >
-      {({ handleSubmit, isSubmitting }) => (
-        <div className={styles.main}>
-          <div className={styles.upperContainer}>
-            <p className={styles.tagWrapper}>
-              <Tag text={MSG.preview} appearance={{ theme: 'light' }} />
-            </p>
+    <div className={styles.main}>
+      <div className={styles.upperContainer}>
+        <p className={styles.tagWrapper}>
+          <Tag text={MSG.preview} appearance={{ theme: 'light' }} />
+        </p>
+      </div>
+      <hr className={styles.dividerTop} />
+      <div className={styles.contentContainer}>
+        <div className={styles.leftContent}>
+          <span className={styles.userinfo}>
+            <UserAvatar
+              colony={colony}
+              size="s"
+              notSet={false}
+              user={userProfile}
+              address={walletAddress || ''}
+              showInfo
+              popperOptions={{
+                showArrow: false,
+                placement: 'left',
+                modifiers: [
+                  {
+                    name: 'offset',
+                    options: {
+                      offset: [0, 10],
+                    },
+                  },
+                ],
+              }}
+            />
+            <span className={styles.userName}>{`@${username}`}</span>
+          </span>
+          <div className={styles.title}>
+            <Heading
+              tagName="h3"
+              appearance={{
+                size: 'medium',
+                margin: 'small',
+                theme: 'dark',
+              }}
+              text={decisionData.title}
+            />
           </div>
-          <hr className={styles.dividerTop} />
-          <div className={styles.contentContainer}>
-            <div className={styles.leftContent}>
-              <span className={styles.userinfo}>
-                <UserAvatar
-                  colony={colony}
-                  size="s"
-                  notSet={false}
-                  user={userProfile}
-                  address={walletAddress || ''}
-                  showInfo
-                  popperOptions={{
-                    showArrow: false,
-                    placement: 'left',
-                    modifiers: [
-                      {
-                        name: 'offset',
-                        options: {
-                          offset: [0, 10],
-                        },
-                      },
-                    ],
-                  }}
-                />
-                <span className={styles.userName}>{`@${username}`}</span>
-              </span>
-              <div className={styles.title}>
-                <Heading
-                  tagName="h3"
-                  appearance={{
-                    size: 'medium',
-                    margin: 'small',
-                    theme: 'dark',
-                  }}
-                  text={decisionData.title}
-                />
-              </div>
-              {decisionData.description}
-            </div>
-            <div className={styles.rightContent}>
-              <div className={styles.buttonContainer}>
-                <Button
-                  appearance={{ theme: 'secondary', size: 'large' }}
-                  onClick={() =>
-                    openDecisionDialog({
-                      colony,
-                      ethDomainId: Number(decisionData.fromDomain),
-                      decisionTitle: decisionData.title,
-                      content: decisionData.htmlDescription,
-                    })
-                  }
-                  text={{ id: 'button.edit' }}
-                />
+          {decisionData.description}
+        </div>
+        <div className={styles.rightContent}>
+          <div className={styles.buttonContainer}>
+            <Button
+              appearance={{ theme: 'secondary', size: 'large' }}
+              onClick={() =>
+                openDecisionDialog({
+                  colony,
+                  ethDomainId: decisionData.fromDomain,
+                  title: decisionData.title,
+                  description: decisionData.htmlDescription,
+                })
+              }
+              text={{ id: 'button.edit' }}
+            />
+            <ActionForm
+              initialValues={{}}
+              submit={ActionTypes.MOTION_CREATE_DECISION}
+              error={ActionTypes.MOTION_CREATE_DECISION_ERROR}
+              success={ActionTypes.MOTION_CREATE_DECISION_SUCCESS}
+              transform={transform}
+            >
+              {({ handleSubmit, isSubmitting }) => (
                 <Button
                   appearance={{ theme: 'primary', size: 'large' }}
                   onClick={() => handleSubmit()}
@@ -184,22 +184,22 @@ const DecisionPreviewForm = () => {
                   loading={isSubmitting}
                   disabled={isSubmitting}
                 />
-              </div>
-              <div className={styles.details}>
-                <DetailsWidget
-                  actionType={actionType as ColonyActions}
-                  recipient={userProfile}
-                  colony={colony}
-                  values={{
-                    ...actionAndEventValues,
-                  }}
-                />
-              </div>
-            </div>
+              )}
+            </ActionForm>
+          </div>
+          <div className={styles.details}>
+            <DetailsWidget
+              actionType={ColonyMotions.CreateDecisionMotion}
+              recipient={userProfile}
+              colony={colony}
+              values={{
+                ...actionAndEventValues,
+              }}
+            />
           </div>
         </div>
-      )}
-    </ActionForm>
+      </div>
+    </div>
   );
 };
 
