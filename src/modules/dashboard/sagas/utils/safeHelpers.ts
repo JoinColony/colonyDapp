@@ -1,15 +1,12 @@
 import Web3 from 'web3';
-import Web3Adapter from '@gnosis.pm/safe-web3-lib';
-import Safe from '@gnosis.pm/safe-core-sdk';
 import { Network } from '@colony/colony-js';
+import { ethers } from 'ethers';
+import abis from '@colony/colony-js/lib-esm/abis';
 
-import {
-  SAFE_NETWORKS,
-  DEFAULT_NETWORK,
-  NETWORK_DATA,
-  RINKEBY_NETWORK,
-} from '~constants';
+import { SafeTransaction } from '~redux/types/actions/colonyActions';
+import { ColonySafe } from '~data/index';
 import { Address } from '~types/index';
+import { GNOSIS_AMB_BRIDGES, SAFE_NETWORKS } from '~constants';
 
 export interface SelectedSafe {
   id: Address;
@@ -21,30 +18,102 @@ export interface SelectedSafe {
 
 export type SelectedNFT = SelectedSafe;
 
-export const getSafeCoreSDK = async (
-  walletAddress: string,
-  safeAddress: string,
-) => {
-  const onLocalDevEnvironment = process.env.NETWORK === Network.Local;
-  // @NOTE: RINKEBY can be replaced by any other network you would like to use for testing so long as they are supported by Safe
-  const currentNetworkData = onLocalDevEnvironment
-    ? RINKEBY_NETWORK
-    : NETWORK_DATA[process.env.NETWORK || DEFAULT_NETWORK];
-  const web3 = new Web3(
-    new Web3.providers.HttpProvider(currentNetworkData.rpcUrl || ''),
-  );
-  const ethAdapter = new Web3Adapter({ web3, signerAddress: walletAddress });
+const { ZodiacBridgeModule, AMB } = abis;
 
-  try {
-    const safeSdk = await Safe.create({
-      ethAdapter,
-      safeAddress,
-    });
-    return safeSdk;
-  } catch (error) {
-    console.error(error);
-    return null;
+// eslint-disable-next-line prefer-destructuring
+const LOCAL_HOME_BRIDGE_ADDRESS = process.env.LOCAL_HOME_BRIDGE_ADDRESS;
+// eslint-disable-next-line prefer-destructuring
+const LOCAL_FOREIGN_BRIDGE_ADDRESS = process.env.LOCAL_FOREIGN_BRIDGE_ADDRESS;
+const LOCAL_HOME_CHAIN = 'http://127.0.0.1:8545';
+const LOCAL_FOREIGN_CHAIN = 'http://127.0.0.1:8546';
+
+export const onLocalDevEnvironment =
+  process.env.NETWORK === Network.Local &&
+  process.env.NODE_ENV === 'development';
+
+const getHomeProvider = () => {
+  return onLocalDevEnvironment
+    ? new ethers.providers.JsonRpcProvider(LOCAL_HOME_CHAIN)
+    : new ethers.providers.Web3Provider(Web3.givenProvider);
+};
+
+const getForeignProvider = (safe: ColonySafe) => {
+  const network = SAFE_NETWORKS.find((n) => n.chainId === Number(safe.chainId));
+
+  if (!network) {
+    throw new Error(
+      `Network not found. Please ensure safe is deployed to a supported network.`,
+    );
   }
+
+  return new ethers.providers.JsonRpcProvider(
+    onLocalDevEnvironment ? LOCAL_FOREIGN_CHAIN : network.rpcUrl,
+  );
+};
+
+export const getHomeBridge = (safe: ColonySafe) => {
+  const homeProvider = getHomeProvider();
+  const homeSigner = homeProvider.getSigner();
+  const homeBridgeAddress: string | undefined = onLocalDevEnvironment
+    ? LOCAL_HOME_BRIDGE_ADDRESS
+    : GNOSIS_AMB_BRIDGES[safe.chainId]?.homeAMB;
+
+  if (!homeBridgeAddress) {
+    throw new Error(
+      `Home bridge address for chain with chainID ${safe.chainId} not found.`,
+    );
+  }
+  // @ts-ignore abi type is wrong.
+  return new ethers.Contract(homeBridgeAddress, AMB.default.abi, homeSigner);
+};
+
+export const getForeignBridgeMock = () => {
+  if (!onLocalDevEnvironment) {
+    return undefined;
+  }
+
+  if (!LOCAL_FOREIGN_BRIDGE_ADDRESS) {
+    throw new Error(
+      `Local foreign bridge address not found. Please set in your .env.`,
+    );
+  }
+
+  let ForeignBridgeMock;
+
+  // process.env.DEV is set by the QA server in case we want to have a debug build. We don't have access to the compiled contracts then.
+  if (!process.env.DEV) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires, max-len, global-require, import/no-dynamic-require
+      ForeignBridgeMock = require(`~lib/colonyNetwork/build/contracts/ForeignBridgeMock.json`);
+    } catch {
+      throw new Error(
+        `Ensure you're on the correct colonyNetwork branch and that the ForeignBridgeMock is in the build folder.`,
+      );
+    }
+  }
+
+  if (ForeignBridgeMock) {
+    return new ethers.Contract(
+      LOCAL_FOREIGN_BRIDGE_ADDRESS,
+      ForeignBridgeMock.abi,
+      new ethers.providers.JsonRpcProvider(LOCAL_FOREIGN_CHAIN),
+    );
+  }
+
+  return undefined;
+};
+
+export const getZodiacModule = (
+  zodiacModuleAddress: Address,
+  safe: ColonySafe,
+) => {
+  const foreignProvider = getForeignProvider(safe);
+  return new ethers.Contract(
+    zodiacModuleAddress,
+    // @ts-ignore abi type is wrong.
+    ZodiacBridgeModule.default.abi,
+    foreignProvider,
+  );
 };
 
 export const getTxServiceBaseUrl = (selectedChain: string) => {
@@ -63,6 +132,9 @@ export const getIdFromNFTDisplayName = (displayName: string) => {
   const chunks = displayName.split(' ');
   return chunks[chunks.length - 1].substring(1);
 };
+
+export const getRawTransactionData = (txs: SafeTransaction[]) =>
+  txs.filter((t) => t.transactionType === 'rawTransaction');
 
 export const getChainNameFromSafe = (safe: SelectedSafe) => {
   const splitDisplayName = safe.profile.displayName.split(' ');
