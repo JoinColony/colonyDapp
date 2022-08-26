@@ -49,7 +49,7 @@ const decisionData: DecisionDetails = {
    integrates with the Dapp and provides our community with greater
     transperency and also provides more convienience for us to be
     notified of things happening in our Colony.</p>`,
-  domainId: 1,
+  fromDomain: 1,
 };
 
 const displayName = 'dashboard.DecisionPreview';
@@ -76,7 +76,7 @@ const DecisionPreviewForm = () => {
         colonyName,
         decisionTitle: decisionData.title,
         decisionDescription: decisionData.description,
-        domainId: decisionData.domainId,
+        fromDomain: decisionData.fromDomain,
       })),
       withMeta({ history }),
     ),
@@ -108,7 +108,7 @@ const DecisionPreviewForm = () => {
   const actionAndEventValues = {
     actionType: ColonyActions.Decision,
     fromDomain: colonyData.processedColony.domains.find(
-      ({ ethDomainId }) => ethDomainId === decisionData.domainId,
+      ({ ethDomainId }) => ethDomainId === decisionData.fromDomain,
     ) as OneDomain,
   };
 
@@ -165,7 +165,7 @@ const DecisionPreviewForm = () => {
               onClick={() =>
                 openDecisionDialog({
                   colony,
-                  ethDomainId: decisionData.domainId,
+                  ethDomainId: decisionData.fromDomain,
                   decisionTitle: decisionData.title,
                   content: decisionData.htmlDescription,
                 })

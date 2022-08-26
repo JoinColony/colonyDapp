@@ -26,7 +26,7 @@ function* createDecisionMotion({
     colonyAddress,
     decisionTitle,
     decisionDescription,
-    domainId,
+    fromDomain,
   },
   meta: { id: metaId, history },
   meta,
@@ -45,7 +45,7 @@ function* createDecisionMotion({
       throw new Error('Decision title is required when creating a Decision.');
     }
 
-    if (!domainId) {
+    if (!fromDomain) {
       throw new Error('Domain id is required when creating a Decision.');
     }
 
@@ -140,7 +140,7 @@ function* createDecisionMotion({
     const details: DecisionDetails = {
       title: decisionTitle,
       description: decisionDescription,
-      domainId,
+      fromDomain,
     };
     /*
      * Upload Decision details to IPFS

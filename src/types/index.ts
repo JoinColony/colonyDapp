@@ -145,5 +145,5 @@ export interface DecisionDetails {
   title: string;
   description: string;
   htmlDescription?: string;
-  domainId: number;
+  fromDomain: number;
 }
