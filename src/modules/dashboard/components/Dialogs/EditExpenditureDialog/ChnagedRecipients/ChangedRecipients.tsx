@@ -131,7 +131,7 @@ const ChangedRecipients = ({ newRecipients, colony, oldValues }: Props) => {
           {newRecipients.map((changedItem, index) => {
             const oldValue:
               | RecipientType
-              | undefined = oldValues.recipients.find(
+              | undefined = oldValues.recipients?.find(
               (recipient) => recipient?.id === changedItem?.id,
             );
             const recipientValues =

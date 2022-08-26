@@ -2,6 +2,7 @@ import Decimal from 'decimal.js';
 import { FieldArray, useField, useFormikContext } from 'formik';
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { nanoid } from 'nanoid';
 
 import { FormSection, Input, TokenSymbolSelector } from '~core/Fields';
 import Icon from '~core/Icon';
@@ -10,13 +11,12 @@ import UserPickerWithSearch from '~core/UserPickerWithSearch';
 
 import { supRenderAvatar } from '~dashboard/ExpenditurePage/Recipient/Recipient';
 import { Colony, useMembersSubscription } from '~data/index';
-import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
+import { ValuesType } from '~pages/ExpenditurePage/types';
 import Button from '~core/Button';
 
 import { initalMilestone } from './constants';
 import Milestone from './Milestone';
 import styles from './Staged.css';
-import { nanoid } from 'nanoid';
 
 const MSG = defineMessages({
   staged: {

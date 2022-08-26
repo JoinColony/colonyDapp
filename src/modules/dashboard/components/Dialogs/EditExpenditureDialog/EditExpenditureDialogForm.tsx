@@ -190,11 +190,11 @@ const EditExpenditureDialogForm = ({
           <>
             <ChangedRecipients
               colony={colony}
-              newRecipients={newData.newRecipients?.value}
+              newRecipients={newData.newRecipients?.value as any}
               oldValues={oldValues}
             />
             <ChangedValues
-              newValues={newData.newValues}
+              newValues={newData.newValues as any}
               colony={colony}
               discardChange={discardChange}
             />

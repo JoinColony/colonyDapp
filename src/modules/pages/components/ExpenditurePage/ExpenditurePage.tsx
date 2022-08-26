@@ -709,7 +709,6 @@ const ExpenditurePage = ({ match }: Props) => {
             pendingMotion={motion?.status === MotionStatus.Pending}
             activeStateId={activeStateId}
             handleReleaseMilestone={handleReleaseMilestone}
-            activeStateId={activeStateId}
           />
         )}
       </aside>
