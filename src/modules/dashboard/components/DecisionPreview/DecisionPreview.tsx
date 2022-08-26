@@ -7,10 +7,10 @@ import Button from '~core/Button';
 import Tag from '~core/Tag';
 import { useDialog } from '~core/Dialog';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import {
+import DecisionDialog, {
   LOCAL_STORAGE_DECISION_KEY,
   FormValues,
-} from '~dashboard/Dialogs/NewDecisionDialog';
+} from '~dashboard/Dialogs/DecisionDialog';
 import DetailsWidget from '~dashboard/ActionsPage/DetailsWidget';
 
 import {
@@ -37,7 +37,6 @@ const MSG = defineMessages({
   },
 });
 
-const handleEdit = () => {};
 const handleSubmit = () => {};
 
 const displayName = 'dashboard.DecisionPreview';
@@ -143,9 +142,9 @@ const DecisionPreview = () => {
               onClick={() =>
                 openDecisionDialog({
                   colony,
-                  ethDomainId: Number(decisionData.fromDomain),
+                  ethDomainId: Number(decisionData.motionDomainId),
                   decisionTitle: decisionData.title,
-                  content: decisionData.htmlDescription,
+                  content: decisionData.description,
                 })
               }
               text={{ id: 'button.edit' }}
