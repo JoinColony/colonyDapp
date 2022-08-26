@@ -117,6 +117,7 @@ const DecisionDialogForm = ({
             editor={editor}
             isSubmitting={isSubmitting}
             limit={limit}
+            name="description"
           />
         )}
       </DialogSection>
