@@ -12,10 +12,10 @@ import { ActionForm } from '~core/Fields';
 import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
 import { Address } from '~types/index';
+import { AbiItemExtended } from '~utils/getContractUsefulMethods';
 
 import { TransactionTypes } from './constants';
 import ControlSafeForm, { NFT } from './ControlSafeForm';
-import { AbiItemExtended } from '~modules/dashboard/hooks/useContractABIParser';
 
 const MSG = defineMessages({
   requiredFieldError: {
@@ -71,9 +71,9 @@ const ControlSafeDialog = ({
   isVotingExtensionEnabled,
 }: Props) => {
   const [showPreview, setShowPreview] = useState(false);
-  const [selectedContractMethod, setSelectedContractMethod] = useState<
-    AbiItemExtended
-  >();
+  const [selectedContractMethods, setSelectedContractMethods] = useState<{
+    [key: number]: AbiItemExtended | undefined;
+  }>();
   const [expandedValidationSchema, setExpandedValidationSchema] = useState<
     Record<string, any>
   >({});
@@ -139,19 +139,20 @@ const ControlSafeDialog = ({
   );
 
   useEffect(() => {
-    if (selectedContractMethod) {
+    if (selectedContractMethods) {
       const updatedExpandedValidationSchema = {};
 
-      selectedContractMethod?.inputs?.map((input) => {
-        updatedExpandedValidationSchema[input.name] = getMethodInputValidation(
-          input.type,
-          selectedContractMethod.name,
-        );
+      Object.values(selectedContractMethods).forEach((method) => {
+        method?.inputs?.forEach((input) => {
+          updatedExpandedValidationSchema[
+            input.name
+          ] = getMethodInputValidation(input.type, method.name);
+        });
       });
 
       setExpandedValidationSchema(updatedExpandedValidationSchema);
     }
-  }, [selectedContractMethod, getMethodInputValidation]);
+  }, [selectedContractMethods, getMethodInputValidation]);
 
   const validationSchema = yup.object().shape({
     safe: yup.string().required(() => MSG.requiredFieldError),
@@ -161,7 +162,8 @@ const ControlSafeDialog = ({
         transactionType: yup.string().required(() => MSG.requiredFieldError),
         recipient: yup.object().when('transactionType', {
           is: (transactionType) =>
-            transactionType === TransactionTypes.TRANSFER_FUNDS,
+            transactionType === TransactionTypes.TRANSFER_FUNDS ||
+            transactionType === TransactionTypes.TRANSFER_NFT,
           then: yup.object().shape({
             id: yup.string().address().required(),
             profile: yup.object().shape({
@@ -171,7 +173,7 @@ const ControlSafeDialog = ({
                 .required(() => MSG.requiredFieldError),
             }),
           }),
-          otherwise: false,
+          otherwise: yup.object().nullable(),
         }),
         amount: yup.number().when('transactionType', {
           is: (transactionType) =>
@@ -218,7 +220,7 @@ const ControlSafeDialog = ({
                 .required(() => MSG.requiredFieldError),
             }),
           }),
-          otherwise: false,
+          otherwise: yup.object().nullable(),
         }),
         abi: yup.string().when('transactionType', {
           is: (transactionType) =>
@@ -232,28 +234,20 @@ const ControlSafeDialog = ({
           then: yup.string().required(() => MSG.requiredFieldError),
           otherwise: false,
         }),
-        nft: yup
-          .object()
-          .shape({
+        nft: yup.object().when('transactionType', {
+          is: (transactionType) =>
+            transactionType === TransactionTypes.TRANSFER_NFT,
+          then: yup.object().shape({
             profile: yup.object().shape({
-              displayName: yup.string().when('transactionType', {
-                is: (transactionType) =>
-                  transactionType === TransactionTypes.TRANSFER_NFT,
-                then: yup.string().required(() => MSG.requiredFieldError),
-                otherwise: false,
-              }),
-              walletAddress: yup.string().when('transactionType', {
-                is: (transactionType) =>
-                  transactionType === TransactionTypes.TRANSFER_NFT,
-                then: yup
-                  .string()
-                  .address()
-                  .required(() => MSG.requiredFieldError),
-                otherwise: false,
-              }),
+              displayName: yup.string().required(() => MSG.requiredFieldError),
+              walletAddress: yup
+                .string()
+                .address()
+                .required(() => MSG.requiredFieldError),
             }),
-          })
-          .nullable(),
+          }),
+          otherwise: yup.object().nullable(),
+        }),
         ...expandedValidationSchema,
       }),
     ),
@@ -294,8 +288,8 @@ const ControlSafeDialog = ({
             isVotingExtensionEnabled={isVotingExtensionEnabled}
             showPreview={showPreview}
             handleShowPreview={setShowPreview}
-            selectedContractMethod={selectedContractMethod}
-            handleSelectedContractMethod={setSelectedContractMethod}
+            selectedContractMethods={selectedContractMethods}
+            handleSelectedContractMethods={setSelectedContractMethods}
           />
         </Dialog>
       )}
