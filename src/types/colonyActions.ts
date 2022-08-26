@@ -29,6 +29,7 @@ export enum AddedActions {
   TokensUpdated = 'TokensUpdated',
   SafeRemoved = 'SafeRemoved',
   SafeAdded = 'SafeAdded',
+  SafeTransactionInitiated = 'SafeTransactionInitiated',
 }
 
 export const ColonyExtendedActions = { ...ColonyActions, ...AddedActions };
