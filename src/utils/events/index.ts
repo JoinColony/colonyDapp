@@ -22,6 +22,7 @@ import {
   Address,
   FormattedAction,
   ActionUserRoles,
+  AddedActions,
 } from '~types/index';
 import { ColonySafe, ParsedEvent } from '~data/index';
 import { ProcessedEvent } from '~data/resolvers/colonyActions';
@@ -33,9 +34,10 @@ import {
 import ipfs from '~context/ipfsWithFallbackContext';
 import { log } from '~utils/debug';
 import { ACTION_DECISION_MOTION_CODE } from '~constants';
+import { SafeTransaction } from '~redux/types/actions/colonyActions';
+import { availableRoles } from '~dialogs/PermissionManagementDialog';
 
 import { getMotionRequiredStake, MotionState } from '../colonyMotions';
-import { availableRoles } from '~dialogs/PermissionManagementDialog';
 
 interface ActionValues {
   recipient: Address;
@@ -184,6 +186,22 @@ export const formatEventName = (
   rawEventName: string,
 ): ColonyAndExtensionsEvents =>
   rawEventName.split('(')[0] as ColonyAndExtensionsEvents;
+
+const getColonyMetadataIPFS = async (ipfsHash: string) => {
+  /*
+   * Fetch the colony's metadata
+   */
+  let ipfsMetadata: any = null;
+  try {
+    ipfsMetadata = await ipfs.getString(ipfsHash);
+  } catch (error) {
+    log.verbose(
+      'Could not fetch IPFS metadata for colony with hash:',
+      ipfsHash,
+    );
+  }
+  return ipfsMetadata;
+};
 
 const getPaymentActionValues = async (
   processedEvents: ProcessedEvent[],
@@ -711,6 +729,47 @@ const getEmitDomainReputationPenaltyAndRewardValues = async (
   return domainReputationChangeAction;
 };
 
+const getSafeTransactionInitiatedValues = async (
+  processedEvents: ProcessedEvent[],
+): Promise<Partial<ActionValues>> => {
+  const colonyMetadataEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.Annotation,
+  ) as ProcessedEvent;
+  const {
+    address,
+    values: { agent, metadata },
+  } = colonyMetadataEvent;
+  const ipfsMetadata = await getColonyMetadataIPFS(metadata);
+
+  const initiateSafeTransactionValues: {
+    address: Address;
+    actionInitiator?: string;
+    safe: ColonySafe | null;
+    transactions: SafeTransaction[] | null;
+    transactionsTitle: string | null;
+  } = {
+    address,
+    safe: null,
+    transactions: null,
+    transactionsTitle: null,
+  };
+
+  if (ipfsMetadata) {
+    const { annotationMessage } = JSON.parse(ipfsMetadata);
+    if (annotationMessage) {
+      initiateSafeTransactionValues.safe = annotationMessage.safe;
+      initiateSafeTransactionValues.transactions =
+        annotationMessage.transactions;
+      initiateSafeTransactionValues.transactionsTitle =
+        annotationMessage.transactionsTitle;
+    }
+  }
+  if (agent) {
+    initiateSafeTransactionValues.actionInitiator = agent;
+  }
+  return initiateSafeTransactionValues;
+};
+
 // Motions
 export const getMotionState = async (
   motionNetworkState: NetworkMotionState,
@@ -1183,7 +1242,7 @@ export const getActionValues = async (
   colonyClient: ColonyClient,
   votingClient: ExtensionClient,
   oneTxPaymentClient: ExtensionClient,
-  actionType: ColonyActions | ColonyMotions,
+  actionType: ColonyActions | ColonyMotions | AddedActions,
 ): Promise<ActionValues> => {
   const fallbackValues = {
     recipient: AddressZero,
@@ -1303,6 +1362,16 @@ export const getActionValues = async (
       return {
         ...fallbackValues,
         ...emitDomainReputationPenaltyAndRewardActionValues,
+      };
+    }
+    case AddedActions.SafeTransactionInitiated: {
+      // eslint-disable-next-line max-len
+      const safeTransactionInitiatedActionValues = await getSafeTransactionInitiatedValues(
+        processedEvents,
+      );
+      return {
+        ...fallbackValues,
+        ...safeTransactionInitiatedActionValues,
       };
     }
     case ColonyMotions.MintTokensMotion: {

@@ -401,6 +401,10 @@
     "transaction.group.removeExistingSafes.description": "Remove existing Safes from this Colony",
     "transaction.ColonyClient.removeExistingSafes.title": "Remove Existing Safes",
     "transaction.ColonyClient.removeExistingSafes.description": "Remove existing Safes from this Colony",
+    "transaction.group.initiateSafeTx.title": "{title}",
+    "transaction.group.initiateSafeTx.description": "Initiate Safe transaction",
+    "transaction.ColonyClient.initiateSafeTx.title": "{title}",
+    "transaction.ColonyClient.initiateSafeTx.description": "Initiate Safe transaction",
 
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",

@@ -1,10 +1,18 @@
 import { call } from 'redux-saga/effects';
-
+import { ColonySafe } from '~data/generated';
+import { SafeTransaction } from '~redux/types/actions/colonyActions';
 import { log } from '~utils/debug';
 
 import { ipfsUpload } from '../../../core/sagas/ipfs';
 
-export function* ipfsUploadWithFallback(payload: string) {
+interface SafeTxData {
+  title: string;
+  transactions: SafeTransaction[];
+  safe: ColonySafe;
+  annotationMessage?: string;
+}
+
+export function* ipfsUploadWithFallback(payload: string | SafeTxData) {
   let ipfsHash: string | null = null;
   try {
     ipfsHash = yield call(ipfsUpload, payload);

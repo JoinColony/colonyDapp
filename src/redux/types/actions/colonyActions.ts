@@ -13,7 +13,19 @@ import {
   MetaWithHistory,
   ActionType,
 } from './index';
-import { ColonySafe } from '~data/index';
+import { ColonySafe, AnyUser } from '~data/index';
+
+export interface SafeTransaction {
+  transactionType: string;
+  tokenAddress: Address;
+  amount: string;
+  recipient: AnyUser;
+  data: string;
+  contract: string;
+  abi: string;
+  contractFunction: string;
+  nft: string;
+}
 
 /*
  * @NOTE About naming
@@ -264,6 +276,23 @@ export type ColonyActionsActionTypes =
   | ErrorActionType<ActionTypes.ACTION_MANAGE_EXISTING_SAFES_ERROR, object>
   | ActionTypeWithMeta<
       ActionTypes.ACTION_MANAGE_EXISTING_SAFES_SUCCESS,
+      MetaWithHistory<object>
+    >
+  | UniqueActionType<
+      ActionTypes.ACTION_INITIATE_SAFE_TRANSACTION,
+      {
+        safe: ColonySafe;
+        transactionsTitle: string;
+        transactions: SafeTransaction[];
+        colonyAddress: Address;
+        colonyName: string;
+        annotationMessage?: string;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.ACTION_INITIATE_SAFE_TRANSACTION_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.ACTION_INITIATE_SAFE_TRANSACTION_SUCCESS,
       MetaWithHistory<object>
     >
   | ActionType<typeof ActionTypes.ACTION_GENERIC>
