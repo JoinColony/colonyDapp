@@ -50,33 +50,6 @@
   height: 100%;
   width: 100%;
 }
-<<<<<<< HEAD
-
-.tagWrapper > span {
-  width: 100%;
-  border-radius: 12px;
-  text-align: center;
-}
-
-.tagWrapper {
-  margin-bottom: -50px;
-  padding: 34px 54px 0;
-}
-
-.tagStagesWrapper span {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
-.spinnerContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  width: 100%;
-}
 
 .tagWrapper > span {
   width: 100%;
