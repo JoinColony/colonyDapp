@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
-import { FormikErrors } from 'formik';
 import isEmpty from 'lodash/isEmpty';
+import omit from 'lodash/omit';
+import isEqual from 'lodash/isEqual';
 
 import { GNOSIS_NETWORK } from '~constants';
 import { AnyUser } from '~data/index';
@@ -12,8 +13,8 @@ import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import { DialogSection } from '~core/Dialog';
 import {
   AbiItemExtended,
-  useContractABIParser,
-} from '~modules/dashboard/hooks/useContractABIParser';
+  getContractUsefulMethods,
+} from '~utils/getContractUsefulMethods';
 
 import { FormValues } from '../GnosisControlSafeDialog';
 import { GnosisSafe } from '../GnosisControlSafeForm';
@@ -50,10 +51,18 @@ interface Props {
   transactionFormIndex: number;
   values: FormValues;
   setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
-  validateForm: (values?: any) => Promise<FormikErrors<FormValues>>;
-  selectedContractMethod: AbiItemExtended | undefined;
-  handleSelectedContractMethod: React.Dispatch<
-    React.SetStateAction<AbiItemExtended | undefined>
+  selectedContractMethods:
+    | {
+        [key: number]: AbiItemExtended | undefined;
+      }
+    | undefined;
+  handleSelectedContractMethods: React.Dispatch<
+    React.SetStateAction<
+      | {
+          [key: number]: AbiItemExtended | undefined;
+        }
+      | undefined
+    >
   >;
   safes: GnosisSafe[];
 }
@@ -67,26 +76,58 @@ const ContractInteractionSection = ({
   transactionFormIndex,
   values,
   setFieldValue,
-  validateForm,
-  selectedContractMethod,
-  handleSelectedContractMethod,
+  selectedContractMethods = {},
+  handleSelectedContractMethods,
   safes,
 }: Props) => {
   const [formattedMethodOptions, setFormattedMethodOptions] = useState<
     SelectOption[]
   >([]);
+
   const transactionValues = values.transactions[transactionFormIndex];
-  const onContractABIChange = (abi: string) => {
-    setFieldValue(`transactions.${transactionFormIndex}.abi`, abi);
-    setFieldValue(`transactions.${transactionFormIndex}.contractFunction`, '');
-  };
-  const selectedSafe = safes.find((safe) => safe.address === values.safe);
-  const { usefulMethods } = useContractABIParser(
-    transactionValues.contract?.profile?.walletAddress,
-    transactionValues.abi,
-    Number(selectedSafe?.chain) || GNOSIS_NETWORK.chainId,
-    onContractABIChange,
+  const contractAddress = transactionValues.contract?.profile?.walletAddress;
+  const onContractABIChange = useCallback(
+    (abi: string) => {
+      if (abi !== transactionValues.abi) {
+        const updatedSelectedContractMethods = omit(
+          selectedContractMethods,
+          transactionFormIndex,
+        );
+
+        setFieldValue(`transactions.${transactionFormIndex}.abi`, abi);
+        setFieldValue(
+          `transactions.${transactionFormIndex}.contractFunction`,
+          '',
+        );
+        handleSelectedContractMethods(updatedSelectedContractMethods);
+      }
+    },
+    [
+      transactionFormIndex,
+      setFieldValue,
+      transactionValues.abi,
+      selectedContractMethods,
+      handleSelectedContractMethods,
+    ],
   );
+  const selectedSafe = safes.find((safe) => safe.address === values.safe);
+
+  const usefulMethods: AbiItemExtended[] = useMemo(
+    () =>
+      getContractUsefulMethods(
+        contractAddress,
+        transactionValues.abi,
+        Number(selectedSafe?.chain) || GNOSIS_NETWORK.chainId,
+        onContractABIChange,
+      ),
+    [transactionValues.abi, selectedSafe, onContractABIChange, contractAddress],
+  );
+
+  useEffect(() => {
+    if (isEmpty(contractAddress) && !isEmpty(transactionValues.abi)) {
+      onContractABIChange('');
+    }
+  }, [contractAddress, onContractABIChange, transactionValues.abi]);
 
   useEffect(() => {
     const updatedFormattedMethodOptions =
@@ -97,28 +138,39 @@ const ContractInteractionSection = ({
         };
       }) || [];
 
-    setFormattedMethodOptions(updatedFormattedMethodOptions);
-  }, [usefulMethods, transactionFormIndex, setFieldValue]);
+    if (!isEqual(updatedFormattedMethodOptions, formattedMethodOptions)) {
+      setFormattedMethodOptions(updatedFormattedMethodOptions);
+    }
+  }, [
+    usefulMethods,
+    transactionFormIndex,
+    setFieldValue,
+    formattedMethodOptions,
+  ]);
 
   useEffect(() => {
-    if (isEmpty(usefulMethods) && selectedContractMethod) {
-      handleSelectedContractMethod(undefined);
+    if (
+      isEmpty(usefulMethods) &&
+      !isEmpty(selectedContractMethods[transactionFormIndex])
+    ) {
+      const updatedSelectedContractMethods = omit(
+        selectedContractMethods,
+        transactionFormIndex,
+      );
+
+      handleSelectedContractMethods(updatedSelectedContractMethods);
       setFieldValue(
         `transactions.${transactionFormIndex}.contractFunction`,
         '',
       );
     }
   }, [
-    handleSelectedContractMethod,
-    selectedContractMethod,
+    handleSelectedContractMethods,
+    selectedContractMethods,
     usefulMethods,
     setFieldValue,
     transactionFormIndex,
   ]);
-
-  useEffect(() => {
-    validateForm();
-  }, [usefulMethods, selectedContractMethod, validateForm]);
 
   return (
     <>
@@ -154,14 +206,18 @@ const ContractInteractionSection = ({
             disabled={disabledInput}
             options={formattedMethodOptions}
             onChange={(value) => {
-              handleSelectedContractMethod(
-                usefulMethods?.find((method) => method.name === value),
-              );
+              const updatedSelectedContractMethods = {
+                ...selectedContractMethods,
+                [transactionFormIndex]: usefulMethods.find(
+                  (method) => method.name === value,
+                ),
+              };
+              handleSelectedContractMethods(updatedSelectedContractMethods);
             }}
           />
         </div>
       </DialogSection>
-      {selectedContractMethod?.inputs?.map((input) => (
+      {selectedContractMethods[transactionFormIndex]?.inputs?.map((input) => (
         <DialogSection
           key={`${input.name}-${input.type}`}
           appearance={{ theme: 'sidePadding' }}
