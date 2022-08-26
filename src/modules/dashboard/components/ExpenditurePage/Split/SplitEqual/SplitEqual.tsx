@@ -7,7 +7,7 @@ import { isNaN } from 'lodash';
 import { FormSection, Input, TokenSymbolSelector } from '~core/Fields';
 import { AnyUser, Colony, useMembersSubscription } from '~data/index';
 import TokenIcon from '~dashboard/HookedTokenIcon';
-import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
+import { ValuesType } from '~pages/ExpenditurePage/types';
 import Numeral from '~core/Numeral';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import UserPickerWithSearch from '~core/UserPickerWithSearch';

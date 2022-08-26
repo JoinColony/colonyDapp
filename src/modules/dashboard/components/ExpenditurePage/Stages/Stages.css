@@ -140,3 +140,10 @@
 .withTag {
   padding: 14px 0 10px;
 }
+
+.tagStagesWrapper > span {
+  height: 21px;
+  width: 100%;
+  border-radius: 12px;
+  text-align: center;
+}
