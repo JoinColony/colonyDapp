@@ -80,6 +80,7 @@ export interface Props {
   handleCancelExpenditure?: () => void;
   recipients?: Recipient[];
   colony: Colony;
+  buttonDisabled?: boolean;
 }
 
 const Stages = ({
@@ -93,6 +94,7 @@ const Stages = ({
   handleCancelExpenditure,
   recipients,
   colony,
+  buttonDisabled,
 }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
@@ -154,7 +156,7 @@ const Stages = ({
                       {
                         name: 'offset',
                         options: {
-                          offset: [0, 14],
+                          offset: [0, 6],
                         },
                       },
                     ],
@@ -169,7 +171,11 @@ const Stages = ({
                   </div>
                 </Tooltip>
               </Button>
-              <Button onClick={handleSaveDraft} style={buttonStyles}>
+              <Button
+                onClick={handleSaveDraft}
+                style={buttonStyles}
+                disabled={buttonDisabled}
+              >
                 <FormattedMessage {...MSG.submitDraft} />
               </Button>
             </>
@@ -193,7 +199,7 @@ const Stages = ({
                         {
                           name: 'offset',
                           options: {
-                            offset: [0, 14],
+                            offset: [0, 6],
                           },
                         },
                       ],
@@ -218,7 +224,7 @@ const Stages = ({
                         {
                           name: 'offset',
                           options: {
-                            offset: [0, 14],
+                            offset: [0, 6],
                           },
                         },
                       ],
@@ -267,7 +273,7 @@ const Stages = ({
                             {
                               name: 'offset',
                               options: {
-                                offset: [0, 14],
+                                offset: [0, 6],
                               },
                             },
                           ],
@@ -289,6 +295,7 @@ const Stages = ({
                 handleButtonClick={handleButtonClick}
                 motion={motion}
                 status={status}
+                buttonDisabled={buttonDisabled}
                 canReleaseFunds // it's temporary value
               />
             </>

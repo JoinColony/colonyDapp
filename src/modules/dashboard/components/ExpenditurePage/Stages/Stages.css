@@ -1,5 +1,6 @@
 @value buttonHeight: 29px;
 @value buttonWidth: 100px;
+@value iconColor: var(--temp-grey-blue-7);
 
 .mainContainer {
   padding-top: 20px;
@@ -134,4 +135,8 @@
   border-radius: 5px;
   color: var(--temp-grey-blue-7);
   letter-spacing: 0.5px;
+}
+
+.withTag {
+  padding: 14px 0 10px;
 }

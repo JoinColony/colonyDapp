@@ -30,6 +30,7 @@ interface Props {
   handleButtonClick: () => void;
   status?: Status;
   motion?: Motion;
+  buttonDisabled?: boolean;
 }
 
 const StagesButton = ({
@@ -38,6 +39,7 @@ const StagesButton = ({
   handleButtonClick,
   status,
   motion,
+  buttonDisabled,
 }: Props) => {
   const { formatMessage } = useIntl();
   const buttonText =
@@ -69,7 +71,11 @@ const StagesButton = ({
     return (
       <>
         {canReleaseFunds ? (
-          <Button onClick={activeState?.buttonAction} style={buttonStyles}>
+          <Button
+            onClick={activeState?.buttonAction}
+            style={buttonStyles}
+            disabled={buttonDisabled}
+          >
             {buttonText}
           </Button>
         ) : (
@@ -112,7 +118,8 @@ const StagesButton = ({
           style={buttonStyles}
           disabled={
             activeState.id === Stage.Claimed ||
-            motion?.status === MotionStatus.Pending
+            motion?.status === MotionStatus.Pending ||
+            buttonDisabled
           }
         >
           {buttonText}
@@ -127,7 +134,8 @@ const StagesButton = ({
       style={buttonStyles}
       disabled={
         activeState.id === Stage.Claimed ||
-        motion?.status === MotionStatus.Pending
+        motion?.status === MotionStatus.Pending ||
+        buttonDisabled
       }
       type="submit"
     >
