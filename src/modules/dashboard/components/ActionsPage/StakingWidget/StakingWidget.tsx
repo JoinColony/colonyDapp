@@ -259,6 +259,10 @@ const StakingWidget = ({
     canUserStake && new Decimal(remainingToFullyNayStaked).gt(0);
 
   const canBeStaked = isObjection ? canUserStakeNay : canUserStakeYay;
+  const showActivateButton =
+    enoughReputation &&
+    canBeStaked &&
+    (!isMinActivated || !enoughActiveTokensToStakeMore);
 
   return (
     <div className={styles.main} data-test="stakingWidget">
@@ -294,9 +298,7 @@ const StakingWidget = ({
               />
               <div
                 className={`${styles.buttonGroup} ${
-                  !isMinActivated || !enoughActiveTokensToStakeMore
-                    ? styles.buttonGroupAlignment
-                    : ''
+                  showActivateButton ? styles.buttonGroupAlignment : ''
                 }`}
               >
                 {!bigNumberify(totalNAYStakes).isZero() && (
@@ -324,11 +326,7 @@ const StakingWidget = ({
 
                 {bigNumberify(totalNAYStakes).isZero() && (
                   <span
-                    className={
-                      isMinActivated && enoughActiveTokensToStakeMore
-                        ? styles.objectButton
-                        : ''
-                    }
+                    className={!showActivateButton ? styles.objectButton : ''}
                   >
                     <Button
                       appearance={{ theme: 'pink', size: 'medium' }}
@@ -346,7 +344,7 @@ const StakingWidget = ({
                     />
                   </span>
                 )}
-                {(!isMinActivated || !enoughActiveTokensToStakeMore) && (
+                {showActivateButton && (
                   <Button
                     appearance={{
                       theme: 'primary',
