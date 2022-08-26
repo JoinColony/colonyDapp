@@ -263,6 +263,12 @@ const ExpenditurePage = ({ match }: Props) => {
   >();
   const sidebarRef = useRef<HTMLElement>(null);
 
+  const handleValidate = useCallback(() => {
+    if (!shouldValidate) {
+      setShouldValidate(true);
+    }
+  }, [shouldValidate]);
+
   const openEditExpenditureDialog = useDialog(EditExpenditureDialog);
 
   const { data: colonyData, loading } = useColonyFromNameQuery({
@@ -327,7 +333,8 @@ const ExpenditurePage = ({ match }: Props) => {
                 const userAmount =
                   amount &&
                   recipient?.percent &&
-                  (recipient.percent / 100) * Number(values.split.amount.value);
+                  Number(recipient.percent / 100) *
+                    Number(values.split.amount.value);
                 return { ...recipient, amount: userAmount };
               }
               return {
@@ -338,6 +345,7 @@ const ExpenditurePage = ({ match }: Props) => {
           },
         };
         setFormValues(splitValues);
+        return;
       }
 
       if (values.expenditure === ExpenditureTypes.Staged) {
@@ -492,26 +500,6 @@ const ExpenditurePage = ({ match }: Props) => {
     }
   }, [formValues]);
 
-  const handleReleaseMilestone = useCallback((id: string) => {
-    setFormValues((stateValues) => {
-      const newValues = {
-        ...{
-          ...stateValues,
-          staged: {
-            ...stateValues?.staged,
-            milestones: stateValues?.staged?.milestones?.map((milestone) => {
-              if (milestone.id === id) {
-                return { ...milestone, released: true };
-              }
-              return milestone;
-            }),
-          },
-        },
-      };
-      return newValues;
-    });
-  }, []);
-
   const states = [
     {
       id: Stage.Draft,
@@ -632,17 +620,14 @@ const ExpenditurePage = ({ match }: Props) => {
     [colonyData, handleConfirmEition, openEditExpenditureDialog],
   );
 
-  const handleValidate = useCallback(() => {
-    if (!shouldValidate) {
-      setShouldValidate(true);
-    }
-  }, [shouldValidate]);
-
   return isFormEditable ? (
     <Formik
       initialValues={initialValuesData}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
+      validateOnBlur={shouldValidate}
+      validateOnChange={shouldValidate}
+      validate={handleValidate}
       enableReinitialize
     >
       {({ values, validateForm }) => (
@@ -699,6 +684,7 @@ const ExpenditurePage = ({ match }: Props) => {
                     states={states}
                     activeStateId={activeStateId}
                     setActiveStateId={setActiveStateId}
+                    setFormValues={setFormValues}
                     handleCancelExpenditure={handleCancelExpenditure}
                     colony={colonyData.processedColony}
                   />
@@ -723,7 +709,6 @@ const ExpenditurePage = ({ match }: Props) => {
             pendingMotion={motion?.status === MotionStatus.Pending}
             activeStateId={activeStateId}
             handleReleaseMilestone={handleReleaseMilestone}
-            activeStateId={activeStateId}
           />
         )}
       </aside>

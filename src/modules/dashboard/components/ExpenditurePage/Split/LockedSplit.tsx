@@ -10,7 +10,7 @@ import styles from './Split.css';
 import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
+import { ValuesType } from '~pages/ExpenditurePage/types';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
 
