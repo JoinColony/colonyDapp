@@ -39,6 +39,7 @@ export const LOCAL_STORAGE_DECISION_KEY = 'decision';
 const DecisionDialog = ({
   cancel,
   colony,
+  colony: { colonyName },
   ethDomainId,
   decisionTitle,
   content,

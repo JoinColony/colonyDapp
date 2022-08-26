@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { Editor } from '@tiptap/react';
 import { FormikProps } from 'formik';
 import { defineMessages } from 'react-intl';
@@ -55,6 +55,7 @@ interface Props extends Omit<DialogProps, 'close'> {
 const DecisionDialogForm = ({
   colony,
   setFieldValue,
+  values,
   isSubmitting,
   handleSubmit,
   isValid,
@@ -68,7 +69,7 @@ const DecisionDialogForm = ({
     [setFieldValue],
   );
 
-  const titleOnOpen = useRef(values.decisionTitle);
+  const titleOnOpen = useRef(values.title);
 
   return (
     <div className={styles.main}>
