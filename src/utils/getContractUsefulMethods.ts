@@ -1,5 +1,3 @@
-import { isEmpty } from 'lodash';
-import { useEffect, useState } from 'react';
 import { AbiItem, isAddress, keccak256 } from 'web3-utils';
 
 import {
@@ -90,60 +88,29 @@ const extractUsefulMethods = (abi: AbiItem[]): AbiItemExtended[] => {
     });
 };
 
-export const useContractABIParser = (
+export const getContractUsefulMethods = (
   contractAddress: string | undefined,
   contractABI: string | undefined,
   safeChainId: number,
   handleContractABIChange: (abi: string) => void,
 ) => {
-  const [
-    currentParsedContractAddress,
-    setCurrentParsedContractAddress,
-  ] = useState<string>('');
-  const [usefulMethods, setUsefulMethods] = useState<AbiItemExtended[]>([]);
+  let parsedContractABI: AbiItem[];
 
-  useEffect(() => {
-    if (isEmpty(contractAddress) && currentParsedContractAddress) {
-      setCurrentParsedContractAddress('');
-      handleContractABIChange('');
-      setUsefulMethods([]);
-    }
-  }, [contractAddress, currentParsedContractAddress, handleContractABIChange]);
+  if (!contractABI && contractAddress && isAddress(contractAddress)) {
+    const contractPromise = fetchContractABI(contractAddress, safeChainId);
+    contractPromise.then((data) => {
+      handleContractABIChange(data);
+    });
+  }
 
-  useEffect(() => {
-    if (
-      contractAddress &&
-      isAddress(contractAddress) &&
-      currentParsedContractAddress !== contractAddress
-    ) {
-      const contractPromise = fetchContractABI(contractAddress, safeChainId);
-      contractPromise.then((data) => {
-        handleContractABIChange(data);
-      });
+  try {
+    parsedContractABI = JSON.parse(contractABI || '[]');
+  } catch (error) {
+    console.error(error);
+    parsedContractABI = [];
+  }
 
-      setCurrentParsedContractAddress(contractAddress);
-    }
-  }, [
-    currentParsedContractAddress,
-    contractAddress,
-    handleContractABIChange,
-    safeChainId,
-  ]);
+  const usefulMethods = extractUsefulMethods(parsedContractABI);
 
-  useEffect(() => {
-    if (contractABI) {
-      let parsedContractABI: AbiItem[];
-      try {
-        parsedContractABI = JSON.parse(contractABI);
-      } catch (error) {
-        console.error(error);
-        parsedContractABI = [];
-      }
-      setUsefulMethods(extractUsefulMethods(parsedContractABI));
-    }
-  }, [contractABI]);
-
-  return {
-    usefulMethods,
-  };
+  return usefulMethods;
 };

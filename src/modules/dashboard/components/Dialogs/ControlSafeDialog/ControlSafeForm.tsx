@@ -22,8 +22,7 @@ import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissi
 import { SAFE_INTEGRATION_LEARN_MORE } from '~externalUrls';
 import { Colony, ColonySafe, useLoggedInUser } from '~data/index';
 import { Address, PrimitiveType } from '~types/index';
-
-import { AbiItemExtended } from '../../../hooks/useContractABIParser';
+import { AbiItemExtended } from '~utils/getContractUsefulMethods';
 
 import SafeTransactionPreview from './SafeTransactionPreview';
 import { FormValues } from './ControlSafeDialog';
@@ -129,9 +128,15 @@ interface Props {
   back?: () => void;
   showPreview: boolean;
   handleShowPreview: (showPreview: boolean) => void;
-  selectedContractMethod: AbiItemExtended | undefined;
-  handleSelectedContractMethod: React.Dispatch<
-    React.SetStateAction<AbiItemExtended>
+  selectedContractMethods:
+    | {
+        [key: number]: AbiItemExtended | undefined;
+      }
+    | undefined;
+  handleSelectedContractMethods: React.Dispatch<
+    React.SetStateAction<{
+      [key: number]: AbiItemExtended | undefined;
+    }>
   >;
 }
 
@@ -159,8 +164,8 @@ const ControlSafeForm = ({
   showPreview,
   handleShowPreview,
   validateForm,
-  selectedContractMethod,
-  handleSelectedContractMethod,
+  selectedContractMethods,
+  handleSelectedContractMethods,
 }: Props & FormikProps<FormValues>) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState([true]);
   const [hasTitle, setHasTitle] = useState(true);
@@ -392,10 +397,9 @@ const ControlSafeForm = ({
                           values={values}
                           safes={safes}
                           setFieldValue={setFieldValue}
-                          validateForm={validateForm}
-                          selectedContractMethod={selectedContractMethod}
-                          handleSelectedContractMethod={
-                            handleSelectedContractMethod
+                          selectedContractMethods={selectedContractMethods}
+                          handleSelectedContractMethods={
+                            handleSelectedContractMethods
                           }
                         />
                       )}
