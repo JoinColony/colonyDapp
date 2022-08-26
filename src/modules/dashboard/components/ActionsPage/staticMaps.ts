@@ -10,9 +10,9 @@ import { STATUS } from './types';
 export enum ActionPageDetails {
   FromDomain = 'FromDomain',
   ToDomain = 'ToDomain',
+  Domain = 'Domain',
   ToRecipient = 'ToRecipient',
   Amount = 'Amount',
-  Domain = 'Domain',
   Description = 'Description',
   Name = 'Name',
   Permissions = 'Permissions',
@@ -283,10 +283,10 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.ReputationChange,
   ],
   [ColonyMotions.UnlockTokenMotion]: [],
-  // [ColonyMotions.CreateDecisionMotion]: [
-  //   ActionPageDetails.Domain,
-  //   ActionPageDetails.Author,
-  // ],
+  [ColonyMotions.CreateDecisionMotion]: [
+    ActionPageDetails.Domain,
+    ActionPageDetails.Author,
+  ],
   [ColonyActions.Decision]: [
     ActionPageDetails.Domain,
     ActionPageDetails.Author,

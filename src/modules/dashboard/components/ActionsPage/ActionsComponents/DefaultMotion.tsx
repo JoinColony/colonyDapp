@@ -216,8 +216,6 @@ const DefaultMotion = ({
     actionType,
     true,
   );
-  // console.log(`🚀 ~ roleTitle`, roleTitle);
-  // console.log(`🚀 ~ roleMessageDescriptorId`, roleMessageDescriptorId);
 
   const requiredStake = bigNumberify(
     motionStakeData?.stakeAmountsForMotion?.requiredStake || 0,
@@ -297,9 +295,12 @@ const DefaultMotion = ({
     toDomain: domains.find(
       ({ ethDomainId }) => ethDomainId === toDomain,
     ) as OneDomain,
-    motionDomain: domains.find(
-      ({ ethDomainId }) => ethDomainId === motionDomain,
-    ) as OneDomain,
+    motionDomain:
+      actionType === ColonyMotions.CreateDecisionMotion
+        ? undefined
+        : (domains.find(
+            ({ ethDomainId }) => ethDomainId === motionDomain,
+          ) as OneDomain),
     roles: updatedRoles,
     recipient: (
       <span className={styles.titleDecoration}>
@@ -384,7 +385,7 @@ const DefaultMotion = ({
   const isMotionFinished =
     motionState === MotionState.Passed ||
     motionState === MotionState.Failed ||
-    motionState === MotionState.FailedNoFinalizable;
+    motionState === MotionState.FailedNotFinalizable;
 
   const objectionAnnotationUser = useUser(
     objectionAnnotation?.motionObjectionAnnotation?.address || '',
@@ -647,11 +648,12 @@ const DefaultMotion = ({
               fromDomain={fromDomain}
               motionAmount={amount}
               tokenAddress={tokenAddress}
+              isDecision={isDecision}
             />
           )}
           <DetailsWidget
             actionType={actionType as ColonyMotions}
-            recipient={recipient}
+            recipient={isDecision ? initiator : recipient}
             transactionHash={transactionHash}
             values={{
               ...actionAndEventValues,
