@@ -28,8 +28,8 @@ export interface FormValues {
 interface Props extends DialogProps {
   colony: Colony;
   ethDomainId: number;
-  decisionTitle?: string;
-  content?: string;
+  title?: string;
+  description?: string;
 }
 
 const characterLimit = 4000;
@@ -41,8 +41,8 @@ const DecisionDialog = ({
   colony,
   colony: { colonyName },
   ethDomainId,
-  decisionTitle,
-  content,
+  title,
+  description,
   close,
 }: Props) => {
   const history = useHistory();
@@ -59,7 +59,7 @@ const DecisionDialog = ({
         placeholder: 'Enter the description...',
       }),
     ],
-    content,
+    content: description,
   });
 
   const domainId =
@@ -86,8 +86,8 @@ const DecisionDialog = ({
     <Form
       initialValues={{
         motionDomainId: domainId,
-        decisionTitle,
-        content,
+        title,
+        description,
       }}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
