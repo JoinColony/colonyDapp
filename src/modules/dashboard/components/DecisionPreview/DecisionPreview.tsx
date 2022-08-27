@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import parse from 'html-react-parser';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import Heading from '~core/Heading';
 import Button from '~core/Button';
@@ -30,15 +31,21 @@ import styles from './DecisionPreview.css';
 const MSG = defineMessages({
   preview: {
     id: 'dashboard.DecisionPreview.preview',
-    defaultMessage: `Preview`,
+    defaultMessage: 'Preview',
   },
   loadingText: {
     id: 'dashboard.DecisionPreview.loadingText',
     defaultMessage: 'Loading Decision',
   },
+  noDecisionText: {
+    id: 'dashboard.DecisionPreview.noDecisionText',
+    defaultMessage: 'No draft Decision found.',
+  },
+  createDecision: {
+    id: 'dashboard.DecisionPreview.createDecision',
+    defaultMessage: 'Create a new Decision',
+  },
 });
-
-const handleSubmit = () => {};
 
 const displayName = 'dashboard.DecisionPreview';
 
@@ -51,8 +58,10 @@ const DecisionPreview = () => {
   const { walletAddress, username } = useLoggedInUser();
   const userProfile = useUser(walletAddress) as AnyUser;
 
-  const [decisionData] = useState<FormValues>(
-    JSON.parse(localStorage.getItem(LOCAL_STORAGE_DECISION_KEY) || ''),
+  const [decisionData, setDecisionData] = useState<FormValues | undefined>(
+    localStorage.getItem(LOCAL_STORAGE_DECISION_KEY) === null
+      ? undefined
+      : JSON.parse(localStorage.getItem(LOCAL_STORAGE_DECISION_KEY) || ''),
   );
 
   const { data: colonyData, error, loading } = useColonyFromNameQuery({
@@ -61,6 +70,12 @@ const DecisionPreview = () => {
   });
 
   const openDecisionDialog = useDialog(DecisionDialog);
+
+  const handleSubmit = () => {
+    localStorage.removeItem(LOCAL_STORAGE_DECISION_KEY);
+    setDecisionData(undefined);
+    /* Add rerouting to the decision motion page */
+  };
 
   if (
     loading ||
@@ -85,7 +100,9 @@ const DecisionPreview = () => {
   const actionAndEventValues = {
     actionType: ColonyActions.Decision,
     fromDomain: colonyData.processedColony.domains.find(
-      ({ ethDomainId }) => ethDomainId === decisionData.motionDomainId,
+      ({ ethDomainId }) =>
+        ethDomainId ===
+        (decisionData ? decisionData.motionDomainId : ROOT_DOMAIN_ID),
     ) as OneDomain,
   };
 
@@ -98,61 +115,84 @@ const DecisionPreview = () => {
       </div>
       <hr className={styles.dividerTop} />
       <div className={styles.contentContainer}>
-        <div className={styles.leftContent}>
-          <span className={styles.userinfo}>
-            <UserAvatar
-              colony={colony}
-              size="s"
-              notSet={false}
-              user={userProfile}
-              address={walletAddress || ''}
-              showInfo
-              popperOptions={{
-                showArrow: false,
-                placement: 'left',
-                modifiers: [
-                  {
-                    name: 'offset',
-                    options: {
-                      offset: [0, 10],
-                    },
-                  },
-                ],
-              }}
-            />
-            <span className={styles.userName}>{`@${username}`}</span>
-          </span>
-          <div className={styles.title}>
-            <Heading
-              tagName="h3"
-              appearance={{
-                size: 'medium',
-                margin: 'small',
-                theme: 'dark',
-              }}
-              text={decisionData.title}
-            />
-          </div>
-          {parse(decisionData.description)}
+        <div
+          className={decisionData ? styles.decisionContent : styles.noContent}
+        >
+          {decisionData ? (
+            <>
+              <span className={styles.userinfo}>
+                <UserAvatar
+                  colony={colony}
+                  size="s"
+                  notSet={false}
+                  user={userProfile}
+                  address={walletAddress || ''}
+                  showInfo
+                  popperOptions={{
+                    showArrow: false,
+                    placement: 'left',
+                    modifiers: [
+                      {
+                        name: 'offset',
+                        options: {
+                          offset: [0, 10],
+                        },
+                      },
+                    ],
+                  }}
+                />
+                <span className={styles.userName}>{`@${username}`}</span>
+              </span>
+              <div className={styles.title}>
+                <Heading
+                  tagName="h3"
+                  appearance={{
+                    size: 'medium',
+                    margin: 'small',
+                    theme: 'dark',
+                  }}
+                  text={decisionData.title}
+                />
+              </div>
+              {parse(decisionData.description)}
+            </>
+          ) : (
+            <>
+              <FormattedMessage {...MSG.noDecisionText} />
+              <Button
+                text={MSG.createDecision}
+                appearance={{ theme: 'blue' }}
+                onClick={() =>
+                  openDecisionDialog({
+                    colony,
+                    ethDomainId: ROOT_DOMAIN_ID,
+                  })
+                }
+              />
+            </>
+          )}
         </div>
         <div className={styles.rightContent}>
           <div className={styles.buttonContainer}>
-            <Button
-              appearance={{ theme: 'secondary', size: 'large' }}
-              onClick={() =>
-                openDecisionDialog({
-                  colony,
-                  ethDomainId: Number(decisionData.motionDomainId),
-                  title: decisionData.title,
-                  description: decisionData.description,
-                })
-              }
-              text={{ id: 'button.edit' }}
-            />
+            {decisionData && (
+              <Button
+                appearance={{ theme: 'secondary', size: 'large' }}
+                onClick={() =>
+                  openDecisionDialog({
+                    colony,
+                    ethDomainId: Number(decisionData?.motionDomainId),
+                    title: decisionData?.title,
+                    description: decisionData?.description,
+                  })
+                }
+                text={{ id: 'button.edit' }}
+              />
+            )}
             <Button
               appearance={{ theme: 'primary', size: 'large' }}
               onClick={handleSubmit}
               text={{ id: 'button.publish' }}
+              disabled={decisionData === undefined}
             />
           </div>
           <div className={styles.details}>
