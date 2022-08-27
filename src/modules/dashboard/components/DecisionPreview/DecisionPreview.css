@@ -43,7 +43,7 @@
 
 .leftContent {
   margin-top: 17px;
-  padding-bottom: 30px;
+  padding-bottom: 10px;
   width: 460px;
   border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
   line-height: 18px;
@@ -97,4 +97,8 @@
   height: 100%;
   width: calc(100% - 60px);
   position: relative;
+}
+
+.leftContent > p {
+  margin-bottom: 20px;
 }
