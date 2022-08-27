@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
+import parse from 'html-react-parser';
 
 import Heading from '~core/Heading';
 import Button from '~core/Button';
@@ -49,7 +50,6 @@ const DecisionPreview = () => {
   }>();
   const { walletAddress, username } = useLoggedInUser();
   const userProfile = useUser(walletAddress) as AnyUser;
-  const actionType = ColonyActions.Decision;
 
   const [decisionData] = useState<FormValues>(
     JSON.parse(localStorage.getItem(LOCAL_STORAGE_DECISION_KEY) || ''),
@@ -83,7 +83,7 @@ const DecisionPreview = () => {
   const { processedColony: colony } = colonyData;
 
   const actionAndEventValues = {
-    actionType,
+    actionType: ColonyActions.Decision,
     fromDomain: colonyData.processedColony.domains.find(
       ({ ethDomainId }) => ethDomainId === decisionData.motionDomainId,
     ) as OneDomain,
@@ -133,7 +133,7 @@ const DecisionPreview = () => {
               text={decisionData.title}
             />
           </div>
-          {decisionData.description}
+          {parse(decisionData.description)}
         </div>
         <div className={styles.rightContent}>
           <div className={styles.buttonContainer}>
@@ -157,7 +157,7 @@ const DecisionPreview = () => {
           </div>
           <div className={styles.details}>
             <DetailsWidget
-              actionType={actionType as ColonyActions}
+              actionType={ColonyActions.Decision}
               recipient={userProfile}
               colony={colony}
               values={{
