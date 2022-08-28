@@ -10,7 +10,7 @@ import { DialogSection, ActionDialogProps } from '~core/Dialog';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
-import Toggle from '~core/Fields/Toggle';
+import ForceToggle from '~core/Fields/ForceToggle';
 import { Annotations } from '~core/Fields';
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot } from '~modules/users/checks';
@@ -108,24 +108,7 @@ const UnlockTokenForm = ({
               text={MSG.title}
             />
             {canUserUnlockNativeToken && isVotingExtensionEnabled && (
-              <Toggle
-                label={{ id: 'label.force' }}
-                name="forceAction"
-                disabled={isSubmitting}
-                tooltipClassName={styles.tooltip}
-                tooltipText={{ id: 'tooltip.forceToggle' }}
-                tooltipPopperOptions={{
-                  placement: 'top-end',
-                  modifiers: [
-                    {
-                      name: 'offset',
-                      options: {
-                        offset: [10, 12],
-                      },
-                    },
-                  ],
-                }}
-              />
+              <ForceToggle disabled={isSubmitting} />
             )}
           </div>
         </div>

@@ -24,7 +24,7 @@ import { Select, Input, Annotations, TokenSymbolSelector } from '~core/Fields';
 import Heading from '~core/Heading';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
-import Toggle from '~core/Fields/Toggle';
+import ForceToggle from '~core/Fields/ForceToggle';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
@@ -382,24 +382,7 @@ const CreatePaymentDialogForm = ({
               text={MSG.title}
             />
             {hasRoles && isVotingExtensionEnabled && (
-              <Toggle
-                label={{ id: 'label.force' }}
-                name="forceAction"
-                disabled={!canMakePayment || isSubmitting}
-                tooltipClassName={styles.tooltip}
-                tooltipText={{ id: 'tooltip.forceToggle' }}
-                tooltipPopperOptions={{
-                  placement: 'top-end',
-                  modifiers: [
-                    {
-                      name: 'offset',
-                      options: {
-                        offset: [10, 12],
-                      },
-                    },
-                  ],
-                }}
-              />
+              <ForceToggle disabled={!canMakePayment || isSubmitting} />
             )}
           </div>
         </div>

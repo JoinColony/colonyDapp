@@ -12,4 +12,3 @@ export const loadingInfo: string;
 export const modalHeading: string;
 export const headingContainer: string;
 export const motionVoteDomain: string;
-export const tooltip: string;

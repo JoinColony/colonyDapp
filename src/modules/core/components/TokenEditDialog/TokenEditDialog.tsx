@@ -13,7 +13,7 @@ import Paragraph from '~core/Paragraph';
 import TokenSelector from '~dashboard/CreateColonyWizard/TokenSelector';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import PermissionsLabel from '~core/PermissionsLabel';
-import Toggle from '~core/Fields/Toggle';
+import ForceToggle from '~core/Fields/ForceToggle';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
@@ -146,24 +146,7 @@ const TokenEditDialog = ({
               text={MSG.title}
             />
             {canEditTokens && isVotingExtensionEnabled && (
-              <Toggle
-                label={{ id: 'label.force' }}
-                name="forceAction"
-                disabled={isSubmitting}
-                tooltipClassName={styles.tooltip}
-                tooltipText={{ id: 'tooltip.forceToggle' }}
-                tooltipPopperOptions={{
-                  placement: 'top-end',
-                  modifiers: [
-                    {
-                      name: 'offset',
-                      options: {
-                        offset: [10, 12],
-                      },
-                    },
-                  ],
-                }}
-              />
+              <ForceToggle disabled={isSubmitting} />
             )}
           </div>
         </div>

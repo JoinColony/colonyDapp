@@ -7,4 +7,3 @@ export const nativeToken: string;
 export const annotation: string;
 export const noPermissionMessage: string;
 export const motionVoteDomain: string;
-export const tooltip: string;

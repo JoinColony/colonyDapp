@@ -9,4 +9,3 @@ export const avatarUploadError: string;
 export const modalHeading: string;
 export const headingContainer: string;
 export const motionVoteDomain: string;
-export const tooltip: string;

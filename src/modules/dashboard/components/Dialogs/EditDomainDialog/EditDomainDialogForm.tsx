@@ -13,7 +13,7 @@ import { Input, Annotations, Select } from '~core/Fields';
 import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
-import Toggle from '~core/Fields/Toggle';
+import ForceToggle from '~core/Fields/ForceToggle';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
@@ -200,24 +200,7 @@ const EditDomainDialogForm = ({
               text={MSG.titleEdit}
             />
             {hasRoles && isVotingExtensionEnabled && (
-              <Toggle
-                label={{ id: 'label.force' }}
-                name="forceAction"
-                disabled={!canEditDomain || isSubmitting}
-                tooltipClassName={styles.tooltip}
-                tooltipText={{ id: 'tooltip.forceToggle' }}
-                tooltipPopperOptions={{
-                  placement: 'top-end',
-                  modifiers: [
-                    {
-                      name: 'offset',
-                      options: {
-                        offset: [10, 12],
-                      },
-                    },
-                  ],
-                }}
-              />
+              <ForceToggle disabled={!canEditDomain || isSubmitting} />
             )}
           </div>
         </div>

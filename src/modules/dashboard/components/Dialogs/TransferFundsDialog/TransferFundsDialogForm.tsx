@@ -26,7 +26,7 @@ import {
 import { ActionDialogProps } from '~core/Dialog';
 import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
-import Toggle from '~core/Fields/Toggle';
+import ForceToggle from '~core/Fields/ForceToggle';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import {
   getBalanceFromToken,
@@ -268,24 +268,7 @@ const TransferFundsDialogForm = ({
               text={MSG.title}
             />
             {canTransferFunds && isVotingExtensionEnabled && (
-              <Toggle
-                label={{ id: 'label.force' }}
-                name="forceAction"
-                disabled={isSubmitting}
-                tooltipClassName={styles.tooltip}
-                tooltipText={{ id: 'tooltip.forceToggle' }}
-                tooltipPopperOptions={{
-                  placement: 'top-end',
-                  modifiers: [
-                    {
-                      name: 'offset',
-                      options: {
-                        offset: [10, 12],
-                      },
-                    },
-                  ],
-                }}
-              />
+              <ForceToggle disabled={isSubmitting} />
             )}
           </div>
         </div>

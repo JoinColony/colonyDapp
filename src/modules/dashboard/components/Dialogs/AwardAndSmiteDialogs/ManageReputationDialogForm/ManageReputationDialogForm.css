@@ -108,9 +108,3 @@
   width: 100%;
   background-color: color-mod(var(--temp-grey-blue-7) alpha(15%));
 }
-
-.tooltip {
-  margin-left: 7px;
-  width: 150px;
-  cursor: pointer;
-}
