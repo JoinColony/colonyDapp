@@ -416,17 +416,37 @@ const DefaultMotion = ({
     ) : null;
 
     if (isDecision) {
-      return (
-        <div>
+      const decisionDetails = (
+        <ActionPageDecisionWithIPFS
+          colony={colony}
+          user={initiator}
+          username={currentUserName || ''}
+          walletAddress={walletAddress}
+          hash={annotationHash || ''}
+        />
+      );
+
+      const objectionDecisionDetails = objectionAnnotation
+        ?.motionObjectionAnnotation?.metadata ? (
+        <div className={motionSpecificStyles.annotation}>
           <ActionPageDecisionWithIPFS
             colony={colony}
-            user={initiator}
+            user={objectionAnnotationUser}
             username={currentUserName || ''}
             walletAddress={walletAddress}
-            hash={annotationHash || ''}
+            // hash={objectionAnnotation.motionObjectionAnnotation.metadata}
+            hash={annotationHash || ''} // @TODO used for dev -
+            isObjection
           />
-          {comment}
         </div>
+      ) : null;
+
+      return (
+        <>
+          {decisionDetails}
+          {objectionDecisionDetails}
+          {comment}
+        </>
       );
     }
 

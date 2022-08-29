@@ -26,17 +26,28 @@
   justify-content: space-between;
 }
 
+.objectionContentContainer {
+  composes: contentContainer;
+  padding: 0 16px 7px 18px;
+  border-radius: var(--radius-large);
+  background-color: color-mod(var(--pink) alpha(6%));
+}
+
 .tagWrapper {
   margin-bottom: 13px;
 }
 
 .leftContent {
   margin-top: 17px;
-  padding-bottom: 30px;
-  width: 460px;
-  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
-  line-height: 18px;
-  word-break: break-word;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+}
+
+.divider {
+  margin-top: 17px 0;
+  height: 1px;
+  width: 100%;
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(15%));
 }
 
 .userinfo {

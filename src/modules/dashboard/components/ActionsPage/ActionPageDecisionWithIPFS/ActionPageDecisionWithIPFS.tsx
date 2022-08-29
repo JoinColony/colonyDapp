@@ -37,6 +37,7 @@ interface Props {
   username: string;
   walletAddress: string;
   hash: string;
+  isObjection?: boolean;
 }
 // @NOTE For a Decision motions, the annotation stores the decision details.
 const ActionPageDecisionWithIPFS = ({
@@ -45,6 +46,7 @@ const ActionPageDecisionWithIPFS = ({
   username,
   walletAddress,
   hash,
+  isObjection = false,
 }: Props) => {
   const { data: ipfsDataJSON } = useDataFetcher(
     ipfsDataFetcher,
@@ -97,46 +99,55 @@ const ActionPageDecisionWithIPFS = ({
   const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
   return (
-    <div className={styles.contentContainer}>
-      <div className={styles.leftContent}>
-        <span className={styles.userinfo}>
-          <UserAvatar
-            colony={colony}
-            size="s"
-            notSet={false}
-            user={user}
-            address={walletAddress || ''}
-            showInfo
-            popperOptions={{
-              showArrow: false,
-              placement: 'left',
-              modifiers: [
-                {
-                  name: 'offset',
-                  options: {
-                    offset: [0, 10],
+    <>
+      <div
+        className={
+          isObjection
+            ? styles.objectionContentContainer
+            : styles.contentContainer
+        }
+      >
+        <div className={styles.leftContent}>
+          <span className={styles.userinfo}>
+            <UserAvatar
+              colony={colony}
+              size="s"
+              notSet={false}
+              user={user}
+              address={walletAddress || ''}
+              showInfo
+              popperOptions={{
+                showArrow: false,
+                placement: 'left',
+                modifiers: [
+                  {
+                    name: 'offset',
+                    options: {
+                      offset: [0, 10],
+                    },
                   },
-                },
-              ],
-            }}
-          />
-          <span className={styles.userName}>{`@${username}`}</span>
-        </span>
-        <div className={styles.title}>
-          <Heading
-            tagName="h3"
-            appearance={{
-              size: 'medium',
-              margin: 'small',
-              theme: 'dark',
-            }}
-            text={decisionDetails.title}
-          />
-          <p>{decisionDetails.title}</p>
+                ],
+              }}
+            />
+            <span className={styles.userName}>{`@${username}`}</span>
+          </span>
+          <div className={styles.title}>
+            <Heading
+              tagName="h3"
+              appearance={{
+                size: 'medium',
+                margin: 'small',
+                theme: 'dark',
+              }}
+              text={decisionDetails.title}
+            />
+            <p>{decisionDetails.title}</p>
+          </div>
+          {decisionDetails.description}
         </div>
-        {decisionDetails.description}
       </div>
-    </div>
+      {isObjection && <hr className={styles.divider} />}
+    </>
   );
 };
 
