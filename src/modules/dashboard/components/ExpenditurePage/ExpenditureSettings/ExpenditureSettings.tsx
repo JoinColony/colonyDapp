@@ -57,12 +57,20 @@ export const MSG = defineMessages({
 
 const expeditureTypes = [
   {
-    label: MSG.optionAdvanced,
+    label: MSG.advancedPayment,
     value: ExpenditureTypes.Advanced,
   },
   {
     label: MSG.split,
-    value: 'split',
+    value: ExpenditureTypes.Split,
+  },
+  {
+    label: MSG.staged,
+    value: ExpenditureTypes.Staged,
+  },
+  {
+    label: MSG.batch,
+    value: ExpenditureTypes.Batch,
   },
 ];
 
@@ -72,17 +80,6 @@ interface Props {
   sidebarRef: HTMLElement | null;
   colony: Colony;
 }
-
-const expeditureTypes = [
-  {
-    label: MSG.advancedPayment,
-    value: ExpenditureTypes.Advanced,
-  },
-  {
-    label: MSG.staged,
-    value: ExpenditureTypes.Staged,
-  },
-];
 
 const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
   const { walletAddress, username } = useLoggedInUser();

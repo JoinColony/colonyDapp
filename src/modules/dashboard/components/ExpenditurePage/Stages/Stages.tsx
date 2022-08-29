@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import { State } from '~pages/ExpenditurePage/types';
+import { ExpenditureTypes, State } from '~pages/ExpenditurePage/types';
 import { Colony } from '~data/index';
 
 import { Recipient } from '../Payments/types';
@@ -80,6 +80,7 @@ export interface Props {
   handleCancelExpenditure?: () => void;
   recipients?: Recipient[];
   colony: Colony;
+  expenditureType?: ExpenditureTypes;
 }
 
 const Stages = ({
@@ -93,6 +94,7 @@ const Stages = ({
   handleCancelExpenditure,
   recipients,
   colony,
+  expenditureType,
 }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
@@ -289,6 +291,7 @@ const Stages = ({
                 handleButtonClick={handleButtonClick}
                 motion={motion}
                 status={status}
+                expenditureType={expenditureType}
                 canReleaseFunds // it's temporary value
               />
             </>

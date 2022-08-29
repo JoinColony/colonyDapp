@@ -709,7 +709,6 @@ const ExpenditurePage = ({ match }: Props) => {
             pendingMotion={motion?.status === MotionStatus.Pending}
             activeStateId={activeStateId}
             handleReleaseMilestone={handleReleaseMilestone}
-            activeStateId={activeStateId}
           />
         )}
       </aside>
@@ -738,6 +737,7 @@ const ExpenditurePage = ({ match }: Props) => {
               setActiveStateId={setActiveStateId}
               handleCancelExpenditure={handleCancelExpenditure}
               colony={colonyData.processedColony}
+              expenditureType={formValues?.expenditure}
             />
           )}
         </main>
