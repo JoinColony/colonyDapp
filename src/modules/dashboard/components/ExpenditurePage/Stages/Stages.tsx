@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import { State } from '~pages/ExpenditurePage/types';
+import { ExpenditureTypes, State } from '~pages/ExpenditurePage/types';
 import { Colony } from '~data/index';
 
 import { Recipient } from '../Payments/types';
