@@ -3,7 +3,7 @@ import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 
 import Tag from '~core/Tag';
 import { Colony } from '~data/index';
-import { State } from '~pages/ExpenditurePage/types';
+import { ExpenditureTypes, State } from '~pages/ExpenditurePage/types';
 
 import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
 import { Recipient } from '../Payments/types';
@@ -35,6 +35,7 @@ interface Props {
   handleCancelExpenditure?: () => void;
   recipients?: Recipient[];
   colony: Colony;
+  expenditureType?: ExpenditureTypes;
 }
 
 const LockedStages = ({
@@ -46,6 +47,7 @@ const LockedStages = ({
   handleCancelExpenditure,
   recipients,
   colony,
+  expenditureType,
 }: Props) => {
   const activeState = states.find((state) => state.id === activeStateId);
   const { formatMessage } = useIntl();
@@ -98,6 +100,7 @@ const LockedStages = ({
           handleCancelExpenditure,
           recipients,
           colony,
+          expenditureType,
         }}
       />
       {motion && (
