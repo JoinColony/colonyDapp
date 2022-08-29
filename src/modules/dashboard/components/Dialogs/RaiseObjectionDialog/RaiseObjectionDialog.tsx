@@ -41,7 +41,6 @@ const RaiseObjectionDialog = ({
 
   const validationSchema = yup.object().shape({
     amount: yup.number().required(),
-    annotation: yup.string().max(4000),
   });
 
   const transform = useCallback(
