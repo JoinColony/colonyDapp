@@ -38,6 +38,14 @@ const MSG = defineMessages({
     id: 'dashboard.ControlSafeDialog.notHexError',
     defaultMessage: 'Value must be a valid hex string',
   },
+  notAddress: {
+    id: 'dashboard.GnosisControlSafeDialog.notAddress',
+    defaultMessage: 'Address must be formatted correctly',
+  },
+  notBooleanError: {
+    id: 'dashboard.GnosisControlSafeDialog.notBooleanError',
+    defaultMessage: 'Value must be a boolean',
+  },
 });
 
 export interface FormValues {
@@ -52,7 +60,7 @@ export interface FormValues {
     contractFunction?: string;
     nft: NFT;
   }[];
-  safe: string;
+  safe: AnyUser;
   forceAction: boolean;
   transactionsTitle: string;
 }
@@ -115,7 +123,9 @@ const ControlSafeDialog = ({
           },
           then: yup
             .string()
-            .address(() => (isArraySchema ? MSG.notAddressArray : null))
+            .address(() =>
+              isArraySchema ? MSG.notAddressArray : MSG.notAddress,
+            )
             .required(() => MSG.requiredFieldError),
           otherwise: false,
         });
@@ -124,7 +134,10 @@ const ControlSafeDialog = ({
         return yup.bool().when('contractFunction', {
           is: (contractFunction) =>
             contractFunction === contractName || isArraySchema,
-          then: yup.bool().required(() => MSG.requiredFieldError),
+          then: yup
+            .bool()
+            .typeError(() => MSG.notBooleanError)
+            .required(() => MSG.requiredFieldError),
           otherwise: false,
         });
       }
