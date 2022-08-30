@@ -11,12 +11,14 @@ import { Input, Select, SelectOption, Textarea } from '~core/Fields';
 import UserAvatar from '~core/UserAvatar';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import { DialogSection } from '~core/Dialog';
-import { AbiItemExtended } from '~utils/useContractUsefulMethods';
+import {
+  getContractUsefulMethods,
+  AbiItemExtended,
+} from '~utils/getContractUsefulMethods';
 
 import { FormValues } from '../GnosisControlSafeDialog';
 
 import styles from './TransactionTypesSection.css';
-import { getContractUsefulMethods } from '~utils/getContractUsefulMethods';
 
 const MSG = defineMessages({
   abiLabel: {
