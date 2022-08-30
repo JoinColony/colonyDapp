@@ -75,6 +75,7 @@ const LockedSidebar = ({
     }
   }, [
     activeState,
+    batch,
     colony,
     editForm,
     expenditure,

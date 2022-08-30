@@ -225,8 +225,6 @@ const validationSchema = yup.object().shape({
           yup.object().shape({
             parsedData: yup
               .array()
-              .min(1, () => MSG.fileError)
-              .max(400, () => MSG.amountError)
               .test(
                 'valid-payment',
                 () => MSG.fileError,
@@ -236,7 +234,9 @@ const validationSchema = yup.object().shape({
                       (payment: string) => !isBatchPaymentType(payment),
                     ),
                   ),
-              ),
+              )
+              .min(1, () => MSG.fileError)
+              .max(400, () => MSG.amountError),
           }),
         ),
       })
@@ -253,7 +253,7 @@ export interface State {
 }
 
 const initialValues = {
-  expenditure: ExpenditureTypes.Batch,
+  expenditure: ExpenditureTypes.Advanced,
   recipients: [newRecipient],
   filteredDomainId: String(ROOT_DOMAIN_ID),
   owner: undefined,
@@ -288,7 +288,6 @@ const ExpenditurePage = ({ match }: Props) => {
   const [isFormEditable, setFormEditable] = useState(true);
   const [formValues, setFormValues] = useState<ValuesType>();
   const [activeStateId, setActiveStateId] = useState<string>();
-  const [shouldValidate, setShouldValidate] = useState(false);
   const [status, setStatus] = useState<Status>();
   const [motion, setMotion] = useState<Motion>();
   const [inEditMode, setInEditMode] = useState(false);
@@ -661,9 +660,6 @@ const ExpenditurePage = ({ match }: Props) => {
       initialValues={initialValuesData}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
-      validateOnBlur={shouldValidate}
-      validateOnChange={shouldValidate}
-      validate={handleValidate}
       enableReinitialize
     >
       {({ values, validateForm }) => (
