@@ -45,7 +45,7 @@ const InputStatus = ({
   const getErrorText = () => {
     switch (typeof error) {
       case 'object':
-        return formatMessage(isArray(error) ? error[0] : error);
+        return formatMessage(isArray(error) ? error.find((e) => e) : error);
       default:
         return error;
     }

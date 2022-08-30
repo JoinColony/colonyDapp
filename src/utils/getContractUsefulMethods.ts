@@ -94,7 +94,8 @@ export const getContractUsefulMethods = (
   safeChainId: number,
   handleContractABIChange: (abi: string) => void,
 ) => {
-  let parsedContractABI: AbiItem[];
+  let parsedContractABI: AbiItem[] = [];
+  let usefulMethods: AbiItemExtended[] = [];
 
   if (!contractABI && contractAddress && isAddress(contractAddress)) {
     const contractPromise = fetchContractABI(contractAddress, safeChainId);
@@ -108,9 +109,9 @@ export const getContractUsefulMethods = (
   } catch (error) {
     console.error(error);
     parsedContractABI = [];
+  } finally {
+    usefulMethods = extractUsefulMethods(parsedContractABI);
   }
-
-  const usefulMethods = extractUsefulMethods(parsedContractABI);
 
   return usefulMethods;
 };

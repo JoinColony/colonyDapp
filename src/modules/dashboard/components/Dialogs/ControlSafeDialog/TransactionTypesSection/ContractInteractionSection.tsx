@@ -5,21 +5,18 @@ import omit from 'lodash/omit';
 import isEqual from 'lodash/isEqual';
 
 import { GNOSIS_NETWORK } from '~constants';
-import { AnyUser } from '~data/index';
+import { AnyUser, ColonySafe } from '~data/index';
 import { Address } from '~types/index';
 import { Input, Select, SelectOption, Textarea } from '~core/Fields';
 import UserAvatar from '~core/UserAvatar';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import { DialogSection } from '~core/Dialog';
-import {
-  AbiItemExtended,
-  getContractUsefulMethods,
-} from '~utils/getContractUsefulMethods';
+import { AbiItemExtended } from '~utils/useContractUsefulMethods';
 
 import { FormValues } from '../GnosisControlSafeDialog';
-import { GnosisSafe } from '../GnosisControlSafeForm';
 
 import styles from './TransactionTypesSection.css';
+import { getContractUsefulMethods } from '~utils/getContractUsefulMethods';
 
 const MSG = defineMessages({
   abiLabel: {
@@ -64,7 +61,7 @@ interface Props {
       | undefined
     >
   >;
-  safes: GnosisSafe[];
+  safes: ColonySafe[];
 }
 
 const renderAvatar = (address: Address, item: AnyUser) => (
@@ -83,7 +80,6 @@ const ContractInteractionSection = ({
   const [formattedMethodOptions, setFormattedMethodOptions] = useState<
     SelectOption[]
   >([]);
-
   const transactionValues = values.transactions[transactionFormIndex];
   const contractAddress = transactionValues.contract?.profile?.walletAddress;
   const onContractABIChange = useCallback(
@@ -110,14 +106,16 @@ const ContractInteractionSection = ({
       handleSelectedContractMethods,
     ],
   );
-  const selectedSafe = safes.find((safe) => safe.address === values.safe);
+  const selectedSafe = safes.find(
+    (safe) => safe.contractAddress === values.safe?.profile?.walletAddress,
+  );
 
   const usefulMethods: AbiItemExtended[] = useMemo(
     () =>
       getContractUsefulMethods(
         contractAddress,
         transactionValues.abi,
-        Number(selectedSafe?.chain) || GNOSIS_NETWORK.chainId,
+        Number(selectedSafe?.chainId) || GNOSIS_NETWORK.chainId,
         onContractABIChange,
       ),
     [transactionValues.abi, selectedSafe, onContractABIChange, contractAddress],
@@ -150,7 +148,11 @@ const ContractInteractionSection = ({
 
   useEffect(() => {
     if (
-      isEmpty(usefulMethods) &&
+      (isEmpty(usefulMethods) ||
+        !usefulMethods?.find(
+          (method) =>
+            method.name === selectedContractMethods[transactionFormIndex]?.name,
+        )) &&
       !isEmpty(selectedContractMethods[transactionFormIndex])
     ) {
       const updatedSelectedContractMethods = omit(
