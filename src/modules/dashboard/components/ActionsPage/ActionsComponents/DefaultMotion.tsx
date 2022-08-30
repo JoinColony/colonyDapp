@@ -216,8 +216,6 @@ const DefaultMotion = ({
     actionType,
     true,
   );
-  // console.log(`🚀 ~ roleTitle`, roleTitle);
-  // console.log(`🚀 ~ roleMessageDescriptorId`, roleMessageDescriptorId);
 
   const requiredStake = bigNumberify(
     motionStakeData?.stakeAmountsForMotion?.requiredStake || 0,
@@ -400,7 +398,7 @@ const DefaultMotion = ({
     )} | Motion | Colony - ${colony.displayName ?? colony.colonyName ?? ``}`,
   );
 
-  // Decision specific
+  // @TODO will be used in the following PR
   // const isDecision = actionType === ColonyMotions.CreateDecisionMotion;
 
   return (
@@ -507,7 +505,8 @@ const DefaultMotion = ({
       <hr className={styles.dividerTop} />
       <div className={styles.container}>
         <div className={styles.content}>
-          {/* {isDecision ? (
+          {/* @TODO will be used in the following PR
+          {isDecision ? (
             <ActionPageDecisionWithIPFS
               colony={colony}
               user={initiator}
