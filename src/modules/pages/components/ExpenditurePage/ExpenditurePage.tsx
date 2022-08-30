@@ -43,7 +43,6 @@ import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog'
 import { initalMilestone } from '~dashboard/ExpenditurePage/Staged/constants';
 import { isBatchPaymentType } from '~dashboard/ExpenditurePage/Batch/utils';
 import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
-import { isBatchPaymentType } from '~dashboard/ExpenditurePage/Batch/utils';
 
 import { findDifferences, updateValues, setClaimDate } from './utils';
 import { ExpenditureTypes, ValuesType } from './types';
@@ -225,6 +224,8 @@ const validationSchema = yup.object().shape({
           yup.object().shape({
             parsedData: yup
               .array()
+              .min(1, () => MSG.fileError)
+              .max(400, () => MSG.amountError)
               .test(
                 'valid-payment',
                 () => MSG.fileError,
@@ -234,9 +235,7 @@ const validationSchema = yup.object().shape({
                       (payment: string) => !isBatchPaymentType(payment),
                     ),
                   ),
-              )
-              .min(1, () => MSG.fileError)
-              .max(400, () => MSG.amountError),
+              ),
           }),
         ),
       })
@@ -291,6 +290,7 @@ const ExpenditurePage = ({ match }: Props) => {
   const [status, setStatus] = useState<Status>();
   const [motion, setMotion] = useState<Motion>();
   const [inEditMode, setInEditMode] = useState(false);
+  const [shouldValidate, setShouldValidate] = useState(false);
   const oldValues = useRef<ValuesType>();
   const [pendingChanges, setPendingChanges] = useState<
     Partial<ValuesType> | undefined
@@ -660,6 +660,9 @@ const ExpenditurePage = ({ match }: Props) => {
       initialValues={initialValuesData}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
+      validateOnBlur={shouldValidate}
+      validateOnChange={shouldValidate}
+      validate={handleValidate}
       enableReinitialize
     >
       {({ values, validateForm }) => (
