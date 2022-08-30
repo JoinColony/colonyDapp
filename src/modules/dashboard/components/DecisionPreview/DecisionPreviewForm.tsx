@@ -14,7 +14,7 @@ import {
   AnyUser,
   OneDomain,
 } from '~data/index';
-import { ColonyActions, DecisionDetails } from '~types/index';
+import { ColonyMotions, DecisionDetails } from '~types/index';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import DecisionDialog from '~dashboard/Dialogs/DecisionDialog';
@@ -106,7 +106,7 @@ const DecisionPreviewForm = () => {
   const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
   const actionAndEventValues = {
-    actionType: ColonyActions.Decision,
+    actionType: ColonyMotions.CreateDecisionMotion,
     fromDomain: colonyData.processedColony.domains.find(
       ({ ethDomainId }) => ethDomainId === decisionData.domainId,
     ) as OneDomain,
@@ -192,7 +192,7 @@ const DecisionPreviewForm = () => {
           </div>
           <div className={styles.details}>
             <DetailsWidget
-              actionType={ColonyActions.Decision}
+              actionType={ColonyMotions.CreateDecisionMotion}
               recipient={userProfile}
               colony={colony}
               values={{
