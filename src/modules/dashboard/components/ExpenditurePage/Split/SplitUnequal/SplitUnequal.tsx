@@ -18,6 +18,7 @@ import Numeral from '~core/Numeral';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import { initalRecipient } from '../constants';
+
 import styles from './SplitUnequal.css';
 
 const MSG = defineMessages({

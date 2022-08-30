@@ -4,15 +4,14 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { FormSection } from '~core/Fields';
 import { Colony } from '~data/index';
 import TokenIcon from '~dashboard/HookedTokenIcon';
-
-import styles from './Split.css';
-
 import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { ValuesType } from '~pages/ExpenditurePage/types';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
+
+import styles from './Split.css';
 
 const MSG = defineMessages({
   split: {
@@ -78,7 +77,7 @@ const LockedSplit = ({ colony, split }: Props) => {
       {recipients?.map((recipient) => {
         return (
           recipient?.user && (
-            <FormSection appearance={{ border: 'bottom' }}>
+            <FormSection appearance={{ border: 'bottom' }} key={recipient.key}>
               <div className={styles.lockedRecipient}>
                 <div className={styles.userName}>
                   <UserAvatar
