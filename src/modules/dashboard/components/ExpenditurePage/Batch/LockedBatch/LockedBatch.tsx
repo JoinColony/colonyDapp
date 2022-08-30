@@ -6,7 +6,6 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import { FormSection } from '~core/Fields';
 import TokenIcon from '~dashboard/HookedTokenIcon';
-import { Colony } from '~data/index';
 
 import PreviewDialog from '../PreviewDialog';
 import { Batch } from '../types';
@@ -43,11 +42,10 @@ export const MSG = defineMessages({
 const displayName = 'dashboard.ExpenditurePage.Batch.LockedBatch';
 
 interface Props {
-  colony: Colony;
   batch: Batch;
 }
 
-const LockedBatch = ({ colony, batch }: Props) => {
+const LockedBatch = ({ batch }: Props) => {
   const { formatMessage } = useIntl();
   const openPreviewDialog = useDialog(PreviewDialog);
 
@@ -64,7 +62,7 @@ const LockedBatch = ({ colony, batch }: Props) => {
           <Button
             type="button"
             onClick={() =>
-              batch.data && openPreviewDialog({ values: batch.data, colony })
+              batch.data && openPreviewDialog({ values: batch.data })
             }
             appearance={{ theme: 'blue' }}
             text={MSG.viewAll}
@@ -81,30 +79,29 @@ const LockedBatch = ({ colony, batch }: Props) => {
         <div
           className={classNames(styles.valueRow, {
             [styles.valueContainer]:
-              batch.tokens?.length && batch.tokens.length > 1,
+              batch.value?.length && batch.value.length > 1,
           })}
         >
           <FormattedMessage {...MSG.value} />
           <div className={styles.tokenWrapper}>
-            {batch.tokens?.map((tokenItem, index) => {
-              const { token, amount } = tokenItem || {};
+            {batch.value?.map((tokenItem, index) => {
+              const { token, value } = tokenItem || {};
 
               return (
                 token &&
-                amount && (
+                value && (
                   <div
                     className={classNames(styles.value, {
                       [styles.marginBottom]:
-                        batch.tokens &&
-                        batch.tokens.length > 1 &&
-                        index + 1 !== batch.tokens.length,
+                        batch.value &&
+                        batch.value.length > 1 &&
+                        index + 1 !== batch.value.length,
                     })}
-                    key={token.id}
+                    key={'id' in token ? token.id : index}
                   >
                     {formatMessage(MSG.valueWithToken, {
                       token: token.symbol,
-                      amount:
-                        typeof amount === 'number' ? amount.toString() : '',
+                      amount: value || '',
                       icon: (
                         <span className={styles.icon}>
                           <TokenIcon

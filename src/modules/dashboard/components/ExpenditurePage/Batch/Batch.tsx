@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { useField } from 'formik';
 import classNames from 'classnames';
@@ -6,8 +6,6 @@ import { isEmpty, isNil } from 'lodash';
 
 import { FormSection } from '~core/Fields';
 import { Colony } from '~data/index';
-import TokenIcon from '~dashboard/HookedTokenIcon';
-import { SpinnerLoader } from '~core/Preloaders';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
