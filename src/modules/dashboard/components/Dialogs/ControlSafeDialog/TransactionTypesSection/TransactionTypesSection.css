@@ -31,3 +31,7 @@
 .inputParamContainer input::placeholder {
   color: var(--temp-grey-blue-7) !important;
 }
+
+.inputParamContainer p {
+  margin-bottom: 10px;
+}
