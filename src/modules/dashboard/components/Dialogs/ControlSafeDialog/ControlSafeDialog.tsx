@@ -4,6 +4,9 @@ import * as yup from 'yup';
 import toFinite from 'lodash/toFinite';
 import { defineMessages } from 'react-intl';
 import { ethers } from 'ethers';
+import Decimal from 'decimal.js';
+import { isHexString } from 'ethers/utils';
+import { MaxUint256 } from 'ethers/constants';
 
 import { AnyUser } from '~data/index';
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
@@ -30,21 +33,25 @@ const MSG = defineMessages({
     id: 'dashboard.ControlSafeDialog.integer',
     defaultMessage: 'Amount must be an integer',
   },
-  notAddressArray: {
-    id: 'dashboard.GnosisControlSafeDialog.notAddressArray',
+  notAddressArrayError: {
+    id: 'dashboard.ControlSafeDialog.notAddressArray',
     defaultMessage: 'Addresses must be formatted correctly',
   },
   notHexError: {
     id: 'dashboard.ControlSafeDialog.notHexError',
     defaultMessage: 'Value must be a valid hex string',
   },
-  notAddress: {
-    id: 'dashboard.GnosisControlSafeDialog.notAddress',
+  notAddressError: {
+    id: 'dashboard.ControlSafeDialog.notAddress',
     defaultMessage: 'Address must be formatted correctly',
   },
   notBooleanError: {
-    id: 'dashboard.GnosisControlSafeDialog.notBooleanError',
-    defaultMessage: 'Value must be a boolean',
+    id: 'dashboard.ControlSafeDialog.notBooleanError',
+    defaultMessage: 'Value must be a valid boolean',
+  },
+  notSafeIntegerError: {
+    id: 'dashboard.ControlSafeDialog.notSafeIntegerError',
+    defaultMessage: 'Amount must be a safe integer',
   },
 });
 
@@ -105,13 +112,23 @@ const ControlSafeDialog = ({
           otherwise: false,
         });
       }
-      if (inputType === 'uint256') {
+      if (inputType === 'uint256' || inputType === 'int256') {
         return yup.number().when('contractFunction', {
           is: (contractFunction) =>
             contractFunction === contractName || isArraySchema,
           then: yup
             .number()
-            .transform((value) => toFinite(value))
+            .test(
+              'is-integer',
+              () => MSG.notIntegerError,
+              (value) => new Decimal(value || 0).isInteger(),
+            )
+            .test(
+              'is-integer-safe',
+              () => MSG.notSafeIntegerError,
+              (value) =>
+                new Decimal(value || 0).lte(new Decimal(MaxUint256.toString())),
+            )
             .required(() => MSG.requiredFieldError),
           otherwise: false,
         });
@@ -124,9 +141,25 @@ const ControlSafeDialog = ({
           then: yup
             .string()
             .address(() =>
-              isArraySchema ? MSG.notAddressArray : MSG.notAddress,
+              isArraySchema ? MSG.notAddressArrayError : MSG.notAddressError,
             )
             .required(() => MSG.requiredFieldError),
+          otherwise: false,
+        });
+      }
+      if (inputType === 'bytes') {
+        return yup.string().when('contractFunction', {
+          is: (contractFunction) => {
+            return contractFunction === contractName || isArraySchema;
+          },
+          then: yup
+            .string()
+            .required(() => MSG.requiredFieldError)
+            .test(
+              'is-hex',
+              () => MSG.notHexError,
+              (value) => isHexString(value),
+            ),
           otherwise: false,
         });
       }

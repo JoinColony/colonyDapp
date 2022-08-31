@@ -234,10 +234,11 @@ const ContractInteractionSection = ({
               disabled={disabledInput}
               placeholder={`${input.name} (${input.type})`}
               formattingOptions={
-                input.type === 'uint256'
+                input.type === 'uint256' || input.type === 'int256'
                   ? {
                       numeral: true,
-                      numeralPositiveOnly: true,
+                      numeralPositiveOnly: input.type === 'uint256',
+                      numeralDecimalScale: 0,
                     }
                   : undefined
               }
