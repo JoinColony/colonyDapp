@@ -66,7 +66,7 @@ const validationSchema = yup.object({
   amount: yup.number(),
 });
 
-const limit = 4000;
+const LIMIT = 4000;
 
 const StakingWidget = ({
   colony,
@@ -112,7 +112,7 @@ const StakingWidget = ({
       Underline,
       TextStyle,
       Color,
-      CharacterCount.configure({ limit }),
+      CharacterCount.configure({ limit: LIMIT }),
       Placeholder.configure({
         emptyEditorClass: 'is-editor-empty',
         placeholder: 'Enter the description...',
@@ -129,7 +129,7 @@ const StakingWidget = ({
         scrollToRef,
         ...stakingAmounts,
         editor,
-        limit,
+        limit: LIMIT,
       }),
     [colony, openRaiseObjectionDialog, scrollToRef, motionId, editor],
   );
