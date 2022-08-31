@@ -63,7 +63,9 @@ const RaiseObjectionDialogForm = ({
   const decimalAmount = new Decimal(values.amount)
     .times(new Decimal(remainingToFullyNayStaked).minus(minUserStake))
     .div(100)
-    .plus(minUserStake);
+    .plus(minUserStake)
+    .round();
+
   return (
     <>
       <DialogSection appearance={{ theme: 'heading' }}>

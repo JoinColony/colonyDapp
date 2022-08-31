@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { defineMessages } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
 import * as yup from 'yup';
@@ -69,6 +69,8 @@ const StakingWidget = ({
   handleWidgetState,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
+  const [sliderAmount, setSliderAmount] = useState(0);
+
   const { setIsOpen: openTokenActivationPopover } = useContext(
     TokenActivationContext,
   );
@@ -212,7 +214,23 @@ const StakingWidget = ({
     bigNumberify(maxUserStake).gt(0) &&
     bigNumberify(maxUserStake).gte(bigNumberify(minUserStake));
 
-  const enoughTokens = userActivatedTokens.gte(userStakeBottomLimit);
+  const remainingToStake = new Decimal(
+    isObjection ? remainingToFullyNayStaked : remainingToFullyYayStaked,
+  );
+
+  const maxStake = new Decimal(maxUserStake);
+
+  const userStakeLimitPercentage = remainingToStake.lte(minUserStake)
+    ? new Decimal(0)
+    : (maxStake.gte(userActivatedTokens) ? userActivatedTokens : maxStake)
+        .minus(minUserStake)
+        .div(remainingToStake.minus(minUserStake));
+
+  const enoughActiveTokensToStakeMore = userStakeLimitPercentage
+    .mul(100)
+    .gt(sliderAmount);
+
+  const isMinActivated = userActivatedTokens.gte(userStakeBottomLimit);
 
   const canUserStake =
     /*
@@ -226,7 +244,7 @@ const StakingWidget = ({
     /*
      * Activated tokens are more than the minimum required stake amount
      */
-    enoughTokens &&
+    isMinActivated &&
     /*
      * Has activated tokens
      */
@@ -241,8 +259,10 @@ const StakingWidget = ({
     canUserStake && new Decimal(remainingToFullyNayStaked).gt(0);
 
   const canBeStaked = isObjection ? canUserStakeNay : canUserStakeYay;
-
-  const objectButtonStyles = enoughTokens ? styles.objectButton : '';
+  const showActivateButton =
+    enoughReputation &&
+    canBeStaked &&
+    (!isMinActivated || !enoughActiveTokensToStakeMore);
 
   return (
     <div className={styles.main} data-test="stakingWidget">
@@ -257,84 +277,87 @@ const StakingWidget = ({
         transform={transform}
         onSuccess={handleSuccess}
       >
-        {({ values }) => (
-          <div className={styles.wrapper}>
-            <StakingSlider
-              colony={colony}
-              canUserStake={canBeStaked}
-              values={values}
-              appearance={{
-                theme: isObjection ? 'danger' : 'primary',
-                size: 'thick',
-              }}
-              isObjection={isObjection}
-              remainingToFullyYayStaked={remainingToFullyYayStaked}
-              remainingToFullyNayStaked={remainingToFullyNayStaked}
-              maxUserStake={maxUserStake}
-              minUserStake={minUserStake}
-              userActivatedTokens={userActivatedTokens}
-            />
-            <div
-              className={`${styles.buttonGroup} ${
-                !enoughTokens ? styles.buttonGroupAlignment : ''
-              }`}
-            >
-              <Button
+        {({ values }) => {
+          setSliderAmount(values.amount);
+          return (
+            <div className={styles.wrapper}>
+              <StakingSlider
+                colony={colony}
+                canUserStake={canBeStaked}
+                values={values}
                 appearance={{
                   theme: isObjection ? 'danger' : 'primary',
-                  size: 'medium',
+                  size: 'thick',
                 }}
-                type="submit"
-                disabled={
-                  !canBeStaked ||
-                  userActivatedTokens.lt(getDecimalStake(values.amount))
-                }
-                text={MSG.stakeButton}
-                dataTest="stakeWidgetStakeButton"
+                isObjection={isObjection}
+                remainingToFullyYayStaked={remainingToFullyYayStaked}
+                remainingToFullyNayStaked={remainingToFullyNayStaked}
+                maxUserStake={maxUserStake}
+                minUserStake={minUserStake}
+                userActivatedTokens={userActivatedTokens}
               />
-              <span
-                className={
-                  !bigNumberify(totalNAYStakes).isZero()
-                    ? styles.backButtonWrapper
-                    : objectButtonStyles
-                }
+              <div
+                className={`${styles.buttonGroup} ${
+                  showActivateButton ? styles.buttonGroupAlignment : ''
+                }`}
               >
-                {isObjection || !bigNumberify(totalNAYStakes).isZero() ? (
+                {!bigNumberify(totalNAYStakes).isZero() && (
                   <Button
                     appearance={{ theme: 'secondary', size: 'medium' }}
                     text={{ id: 'button.back' }}
                     onClick={() => handleWidgetState(true)}
                   />
-                ) : (
-                  <Button
-                    appearance={{ theme: 'pink', size: 'medium' }}
-                    text={MSG.objectButton}
-                    disabled={!canUserStakeNay}
-                    onClick={() =>
-                      bigNumberify(totalNAYStakes).isZero()
-                        ? handleRaiseObjection(canUserStake, {
-                            ...data.motionStakes,
-                            userActivatedTokens,
-                          })
-                        : handleWidgetState(true)
-                    }
-                    dataTest="stakeWidgetObjectButton"
-                  />
                 )}
-              </span>
-              {!enoughTokens && (
                 <Button
                   appearance={{
-                    theme: 'primary',
+                    theme: isObjection ? 'danger' : 'primary',
                     size: 'medium',
                   }}
-                  text={MSG.activateButton}
-                  onClick={() => openTokenActivationPopover(true)}
+                  type="submit"
+                  disabled={
+                    !canBeStaked ||
+                    userActivatedTokens.lt(
+                      getDecimalStake(values.amount).round(),
+                    )
+                  }
+                  text={MSG.stakeButton}
+                  dataTest="stakeWidgetStakeButton"
                 />
-              )}
+
+                {bigNumberify(totalNAYStakes).isZero() && (
+                  <span
+                    className={!showActivateButton ? styles.objectButton : ''}
+                  >
+                    <Button
+                      appearance={{ theme: 'pink', size: 'medium' }}
+                      text={MSG.objectButton}
+                      disabled={!canUserStakeNay}
+                      onClick={() =>
+                        bigNumberify(totalNAYStakes).isZero()
+                          ? handleRaiseObjection(canUserStake, {
+                              ...data.motionStakes,
+                              userActivatedTokens,
+                            })
+                          : handleWidgetState(true)
+                      }
+                      dataTest="stakeWidgetObjectButton"
+                    />
+                  </span>
+                )}
+                {showActivateButton && (
+                  <Button
+                    appearance={{
+                      theme: 'primary',
+                      size: 'medium',
+                    }}
+                    text={MSG.activateButton}
+                    onClick={() => openTokenActivationPopover(true)}
+                  />
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        }}
       </ActionForm>
     </div>
   );
