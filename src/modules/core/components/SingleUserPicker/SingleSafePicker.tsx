@@ -1,12 +1,13 @@
 import React, { ComponentProps, useMemo } from 'react';
 
-import { GnosisSafe } from '~dashboard/Dialogs/GnosisControlSafeDialog';
+import { GNOSIS_SAFE_NETWORKS } from '~constants';
+import { ColonySafe } from '~data/index';
 
 import SingleUserPicker from './SingleUserPicker';
 
 /* SingleSafePicker is a wrapper around SingleUserPicker component */
 interface Props extends ComponentProps<typeof SingleUserPicker> {
-  data: GnosisSafe[];
+  data: ColonySafe[];
 }
 
 const displayName = 'SingleUserPicker.SingleSafePicker';
@@ -14,13 +15,18 @@ const displayName = 'SingleUserPicker.SingleSafePicker';
 const SingleSafePicker = ({ data, ...props }: Props) => {
   const formattedData = useMemo(
     () =>
-      data.map((item) => ({
-        id: item.address,
-        profile: {
-          displayName: `${item.name} (${item.chain})`,
-          walletAddress: item.address,
-        },
-      })),
+      data.map((item) => {
+        const safeNetwork = GNOSIS_SAFE_NETWORKS.find(
+          (network) => network.chainId === Number(item.chainId),
+        );
+        return {
+          id: item.contractAddress,
+          profile: {
+            displayName: `${item.safeName} (${safeNetwork?.name})`,
+            walletAddress: item.contractAddress,
+          },
+        };
+      }),
     [data],
   );
 
