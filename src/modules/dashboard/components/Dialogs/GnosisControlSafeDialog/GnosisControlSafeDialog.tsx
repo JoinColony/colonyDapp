@@ -3,6 +3,7 @@ import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import toFinite from 'lodash/toFinite';
 import { defineMessages } from 'react-intl';
+import { ethers } from 'ethers';
 
 import { AnyUser } from '~data/index';
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
@@ -20,9 +21,17 @@ const MSG = defineMessages({
     id: 'dashboard.GnosisControlSafeDialog.requiredFieldError',
     defaultMessage: 'Please enter a value',
   },
-  amountZero: {
+  gtZeroError: {
     id: 'dashboard.GnosisControlSafeDialog.amountZero',
     defaultMessage: 'Amount must be greater than zero',
+  },
+  notIntegerError: {
+    id: 'dashboard.GnosisControlSafeDialog.integer',
+    defaultMessage: 'Amount must be an integer',
+  },
+  notHexError: {
+    id: 'dashboard.GnosisControlSafeDialog.notHexError',
+    defaultMessage: 'Value must be a valid hex string',
   },
 });
 
@@ -57,6 +66,7 @@ const validationSchema = (isPreview) =>
       yup.object().shape({
         transactionType: yup.string().required(() => MSG.requiredFieldError),
         recipient: yup.object().shape({
+          id: yup.string().address().required(),
           profile: yup.object().shape({
             walletAddress: yup.string().when('transactionType', {
               is: (transactionType) =>
@@ -77,7 +87,8 @@ const validationSchema = (isPreview) =>
             .number()
             .transform((value) => toFinite(value))
             .required(() => MSG.requiredFieldError)
-            .moreThan(0, () => MSG.amountZero),
+            .moreThan(0, () => MSG.gtZeroError)
+            .integer(() => MSG.notIntegerError),
           otherwise: false,
         }),
         tokenAddress: yup.string().when('transactionType', {
@@ -92,7 +103,14 @@ const validationSchema = (isPreview) =>
         data: yup.string().when('transactionType', {
           is: (transactionType) =>
             transactionType === TransactionTypes.RAW_TRANSACTION,
-          then: yup.string().required(() => MSG.requiredFieldError),
+          then: yup
+            .string()
+            .required(() => MSG.requiredFieldError)
+            .test(
+              'is-hex',
+              () => MSG.notHexError,
+              (value) => ethers.utils.isHexString(value),
+            ),
           otherwise: false,
         }),
         contract: yup.string().when('transactionType', {
