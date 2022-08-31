@@ -129,7 +129,7 @@ function* createDomainAction({
       yield put(transactionPending(annotateCreateDomain.id));
 
       /*
-       * Upload domain metadata to IPFS
+       * Upload annotaiton to IPFS
        */
       const annotationMessageIpfsHash = yield call(
         uploadIfpsAnnotation,
