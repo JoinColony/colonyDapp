@@ -20,7 +20,7 @@ import { userHasRole } from '~modules/users/checks';
 import { useTransformer } from '~utils/hooks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import { GNOSIS_SAFE_INTEGRATION_LEARN_MORE } from '~externalUrls';
-import { Colony, useLoggedInUser } from '~data/index';
+import { Colony, ColonySafe, useLoggedInUser } from '~data/index';
 import { Address, PrimitiveType } from '~types/index';
 
 import SafeTransactionPreview from './SafeTransactionPreview';
@@ -93,12 +93,6 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm';
 
-export interface GnosisSafe {
-  name: string;
-  address: Address;
-  chain: string;
-}
-
 // @TODO - figure out the mapping of the nftCatalogue to the safe
 export interface NFT {
   name: string;
@@ -128,7 +122,7 @@ const testNFTData: NFT[] = [
 
 interface Props {
   colony: Colony;
-  safes: GnosisSafe[];
+  safes: ColonySafe[];
   isVotingExtensionEnabled: boolean;
   back?: () => void;
   showPreview: boolean;
