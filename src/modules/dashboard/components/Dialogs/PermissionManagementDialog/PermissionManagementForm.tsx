@@ -9,7 +9,7 @@ import { DialogSection } from '~core/Dialog';
 import Heading from '~core/Heading';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
-import Toggle from '~core/Fields/Toggle';
+import ForceToggle from '~core/Fields/ForceToggle';
 import { ItemDataType } from '~core/OmniPicker';
 
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
@@ -261,11 +261,7 @@ const PermissionManagementForm = ({
               textValues={{ domain: domain?.name }}
             />
             {canEditPermissions && isVotingExtensionEnabled && (
-              <Toggle
-                label={{ id: 'label.force' }}
-                name="forceAction"
-                disabled={isSubmitting}
-              />
+              <ForceToggle disabled={isSubmitting} />
             )}
           </div>
         </div>

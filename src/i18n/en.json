@@ -406,5 +406,6 @@
     "permission.0": "Recovery",
     "permission.1": "Root",
 
-    "tooltip.lockedToken": "This token is locked. Colony native tokens are locked and non-transferrable by default to avoid unwanted project token transfer outside of the colony."
+    "tooltip.lockedToken": "This token is locked. Colony native tokens are locked and non-transferrable by default to avoid unwanted project token transfer outside of the colony.",
+    "tooltip.forceToggle" : "Toggle \"Force\" to bypass governance and perform this action immediately. This is only possible with the right permissions."
   }

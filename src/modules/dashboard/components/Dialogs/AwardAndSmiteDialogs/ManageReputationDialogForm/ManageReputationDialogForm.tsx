@@ -14,7 +14,7 @@ import { Select, Input, Annotations, SelectOption } from '~core/Fields';
 import Heading from '~core/Heading';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
-import Toggle from '~core/Fields/Toggle';
+import ForceToggle from '~core/Fields/ForceToggle';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import PermissionsLabel from '~core/PermissionsLabel';
@@ -305,11 +305,7 @@ const ManageReputationDialogForm = ({
               }}
             />
             {hasRoles && isVotingExtensionEnabled && (
-              <Toggle
-                label={{ id: 'label.force' }}
-                name="forceAction"
-                disabled={!userHasPermission || isSubmitting}
-              />
+              <ForceToggle disabled={!userHasPermission || isSubmitting} />
             )}
           </div>
           {!isSmiteAction && (

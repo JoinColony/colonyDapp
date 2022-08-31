@@ -15,7 +15,7 @@ import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 import ColonyAvatar from '~core/ColonyAvatar';
 import InputStatus from '~core/Fields/InputStatus';
-import Toggle from '~core/Fields/Toggle';
+import ForceToggle from '~core/Fields/ForceToggle';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
@@ -157,11 +157,7 @@ const EditColonyDetailsDialogForm = ({
               text={MSG.title}
             />
             {canEdit && isVotingExtensionEnabled && (
-              <Toggle
-                label={{ id: 'label.force' }}
-                name="forceAction"
-                disabled={isSubmitting}
-              />
+              <ForceToggle disabled={isSubmitting} />
             )}
           </div>
         </div>
