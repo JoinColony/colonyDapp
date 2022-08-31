@@ -101,7 +101,7 @@ export const ETHEREUM_NETWORK: NetworkInfo = {
 };
 
 export const GOERLI_NETWORK: NetworkInfo = {
-  name: 'Goerli Testnet',
+  name: 'Goerli',
   chainId: 5,
   shortName: 'GTH',
   blockExplorerName: 'Etherscan',
@@ -167,8 +167,8 @@ const POLYGON_NETWORK: NetworkInfo = {
   rpcUrl: 'https://polygon-rpc.com',
 };
 
-export const RINKEBY_TEST_NETWORK: NetworkInfo = {
-  name: 'Rinkeby Testnet',
+export const RINKEBY_NETWORK: NetworkInfo = {
+  name: 'Rinkeby',
   chainId: 4,
   shortName: 'RIN',
   contractAddressLink: '',
@@ -225,7 +225,7 @@ export const GNOSIS_SAFE_NETWORKS: NetworkInfo[] = [
   OPTIMISM_NETWORK,
   POLYGON_NETWORK,
   GOERLI_NETWORK,
-  RINKEBY_TEST_NETWORK,
+  RINKEBY_NETWORK,
 ];
 
 export const GNOSIS_SAFE_NAMES_MAP = GNOSIS_SAFE_NETWORKS.reduce(

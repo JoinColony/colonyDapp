@@ -90,10 +90,6 @@
   opacity: 0.65;
 }
 
-.inputInvalid {
-  border-color: var(--danger);
-}
-
 .input {
   composes: baseInput;
   width: 100%;
@@ -105,6 +101,11 @@
   &:disabled {
     border-color: var(--text-disabled);
   }
+}
+
+.inputInvalid {
+  composes: input;
+  border-color: var(--danger);
 }
 
 .recipientName {

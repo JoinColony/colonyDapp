@@ -18,6 +18,10 @@ import { TransactionTypes } from './constants';
 import GnosisControlSafeForm, { NFT } from './GnosisControlSafeForm';
 import { mapPayload, pipe, withMeta } from '~utils/actions';
 import { Safe } from '~redux/types/actions/colonyActions';
+import {
+  isSafeOnCurrentNetwork,
+  isSafeOwnedBySigner,
+} from '~modules/dashboard/sagas/utils/safeHelpers';
 
 const MSG = defineMessages({
   requiredFieldError: {
@@ -39,6 +43,11 @@ const MSG = defineMessages({
   validHex: {
     id: 'dashboard.GnosisControlSafeDialog.validHex',
     defaultMessage: `Data is not a valid hex string. Characters must be in the range of 0-9 a-F`,
+  },
+  invalidSafe: {
+    id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.invalidSafe',
+    defaultMessage:
+      'Safe must be on the current network and owned by the logged-in user.',
   },
 });
 
@@ -87,8 +96,61 @@ type Props = DialogProps &
 
 const validationSchema = (isPreview) =>
   yup.object().shape({
-    safe: yup.string().required(() => MSG.requiredFieldError),
-    ...(isPreview ? { transactionsTitle: yup.string().required() } : {}),
+    safe: yup
+      .object()
+      .shape({
+        id: yup.string().required(),
+        profile: yup
+          .object()
+          .shape({
+            displayName: yup.string().required(),
+            walletAddress: yup.string().address().required(),
+          })
+          .required(),
+      })
+      .test(
+        'valid-safe',
+        () => MSG.invalidSafe,
+        (safe) => {
+          if (safe?.id) {
+            /*
+             * Tests whether safe is on the right network
+             * and if it is owned by the signer.
+             */
+            return new Promise((resolve) => {
+              isSafeOnCurrentNetwork(safe)
+                .then((safeIsOnCurrentNetwork: boolean) => {
+                  if (!safeIsOnCurrentNetwork) {
+                    resolve(false);
+                  }
+
+                  isSafeOwnedBySigner(safe.id).then(
+                    (safeIsOwnedBySigner: boolean) => {
+                      resolve(safeIsOwnedBySigner);
+                    },
+                  );
+                })
+                .catch(() => resolve(false));
+            });
+          }
+          return true;
+        },
+      )
+      // Don't want to show message as it doesn't look nice with the async validation.
+      // But, still need to pass in something for the error object.
+      .required(() => {
+        return {
+          id: '',
+        };
+      })
+      .nullable(),
+    ...(isPreview
+      ? {
+          transactionsTitle: yup
+            .string()
+            .required(() => MSG.requiredFieldError),
+        }
+      : {}),
     transactions: yup.array(
       yup.object().shape({
         transactionType: yup.string().required(() => MSG.requiredFieldError),
@@ -226,7 +288,7 @@ const GnosisControlSafeDialog = ({
   return (
     <ActionForm
       initialValues={{
-        safe: '',
+        safe: null,
         transactionsTitle: undefined,
         transactions: [
           {

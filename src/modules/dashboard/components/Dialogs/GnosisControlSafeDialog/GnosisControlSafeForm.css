@@ -11,6 +11,7 @@
 
 .safePicker {
   margin: 20px 0;
+  min-height: 71px;
 }
 
 .safePicker > div {
@@ -37,6 +38,14 @@
 
 .safePicker label {
   color: var(--dark);
+}
+
+.invalidSafe button {
+  border-bottom-color: var(--danger);
+}
+
+.invalidSafe p {
+  padding-left: 5px;
 }
 
 .transactionTypeSelectContainer label {

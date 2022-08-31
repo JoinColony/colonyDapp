@@ -4,8 +4,15 @@ import Safe from '@gnosis.pm/safe-core-sdk';
 import SafeServiceClient from '@gnosis.pm/safe-service-client';
 
 import { Network } from '@colony/colony-js';
-import { GNOSIS_SAFE_NETWORKS, RINKEBY_TEST_NETWORK } from '~constants';
-import { SafeTransaction } from '~redux/types/actions/colonyActions';
+import {
+  GNOSIS_SAFE_NAMES_MAP,
+  GNOSIS_SAFE_NETWORKS,
+  RINKEBY_NETWORK,
+} from '~constants';
+import {
+  SafeTransaction,
+  Safe as ISafe,
+} from '~redux/types/actions/colonyActions';
 import { Address } from '~types/index';
 
 export const onLocalDevEnvironment = process.env.NETWORK === Network.Local;
@@ -15,7 +22,7 @@ export const onLocalDevEnvironment = process.env.NETWORK === Network.Local;
 
 export const getWeb3Provider = () => {
   return new Web3(
-    onLocalDevEnvironment ? RINKEBY_TEST_NETWORK.rpcUrl : Web3.givenProvider,
+    onLocalDevEnvironment ? RINKEBY_NETWORK.rpcUrl : Web3.givenProvider,
   );
 };
 
@@ -81,10 +88,7 @@ export const getSafeTransactionService = async () => {
 export const getRawTransactionData = (txs: SafeTransaction[]) =>
   txs.filter((t) => t.transactionType === 'rawTransaction');
 
-export const isSafeOwnedByUser = async (
-  safeAddress: Address,
-  userAddress: Address,
-) => {
+export const isSafeOwnedBySigner = async (safeAddress: Address) => {
   const currentChainId = await web3.eth.net.getId();
   const currentNetwork = GNOSIS_SAFE_NETWORKS.find(
     (network) => network.chainId === currentChainId,
@@ -94,7 +98,8 @@ export const isSafeOwnedByUser = async (
       `Network with chain Id ${currentChainId} is not currently supported.`,
     );
   }
-  const ownersSafesListApi = `api/v1/owners/${userAddress}/safes`;
+  const signerAddress = await getSignerAddress();
+  const ownersSafesListApi = `api/v1/owners/${signerAddress}/safes`;
   const safeOwnersUrl = currentNetwork.gnosisTxService + ownersSafesListApi;
   const response = await fetch(safeOwnersUrl);
   if (response.status === 200) {
@@ -102,4 +107,18 @@ export const isSafeOwnedByUser = async (
     return safeOwner.safes.some((address) => address === safeAddress);
   }
   throw new Error('Request to Safe Transaction Service failed.');
+};
+
+// Update when safe data is wired in, if necessary.
+
+const getChainNameFromSafe = (safe: ISafe) => {
+  const splitDisplayName = safe.profile.displayName.split(' ');
+  const chainNameInBrackets = splitDisplayName[splitDisplayName.length - 1];
+  return chainNameInBrackets.substring(1, chainNameInBrackets.length - 1);
+};
+
+export const isSafeOnCurrentNetwork = async (safe: ISafe) => {
+  const networkId = await getNetworkId();
+  const networkName = GNOSIS_SAFE_NAMES_MAP[networkId];
+  return getChainNameFromSafe(safe) === networkName;
 };
