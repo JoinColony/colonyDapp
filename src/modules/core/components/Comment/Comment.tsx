@@ -137,7 +137,7 @@ const Comment = ({
             )}
         </div>
         <div className={styles.text} data-test="comment">
-          <Decorate>{comment ? parse(comment) : comment}</Decorate>
+          {comment && <Decorate> {parse(comment)}</Decorate>}
         </div>
       </div>
       <div className={styles.actions}>
