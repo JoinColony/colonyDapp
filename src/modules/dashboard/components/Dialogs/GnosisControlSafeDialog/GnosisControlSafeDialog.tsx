@@ -26,20 +26,6 @@ const MSG = defineMessages({
   },
 });
 
-/* to remove when data is wired in */
-const safes = [
-  {
-    name: 'All Saints',
-    address: '0x3a157280ca91bB49dAe3D1619C55Da7F9D4438c2',
-    chain: 'Gnosis Chain',
-  },
-  {
-    name: '',
-    address: '0x3a157280ca91bB49dAe3D1619C55Da7F9D4438c3',
-    chain: 'Mainnet',
-  },
-];
-
 export interface FormValues {
   transactions: {
     transactionType: string;
@@ -164,6 +150,7 @@ const GnosisControlSafeDialog = ({
   isVotingExtensionEnabled,
 }: Props) => {
   const [showPreview, setShowPreview] = useState(false);
+  const { safes } = colony;
 
   return (
     <ActionForm
