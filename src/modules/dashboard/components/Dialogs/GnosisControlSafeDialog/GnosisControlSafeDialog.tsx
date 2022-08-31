@@ -5,6 +5,7 @@ import toFinite from 'lodash/toFinite';
 import { defineMessages } from 'react-intl';
 import { useHistory } from 'react-router';
 
+import { ethers } from 'ethers';
 import { AnyUser } from '~data/index';
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
@@ -16,6 +17,7 @@ import { Address } from '~types/index';
 import { TransactionTypes } from './constants';
 import GnosisControlSafeForm, { NFT } from './GnosisControlSafeForm';
 import { mapPayload, pipe, withMeta } from '~utils/actions';
+import { Safe } from '~redux/types/actions/colonyActions';
 
 const MSG = defineMessages({
   requiredFieldError: {
@@ -25,6 +27,18 @@ const MSG = defineMessages({
   amountZero: {
     id: 'dashboard.GnosisControlSafeDialog.amountZero',
     defaultMessage: 'Amount must be greater than zero',
+  },
+  integer: {
+    id: 'dashboard.GnosisControlSafeDialog.integer',
+    defaultMessage: 'Amount must be an integer',
+  },
+  startWith0x: {
+    id: 'dashboard.GnosisControlSafeDialog.startWith0x',
+    defaultMessage: 'Data must begin with 0x',
+  },
+  validHex: {
+    id: 'dashboard.GnosisControlSafeDialog.validHex',
+    defaultMessage: `Data is not a valid hex string. Characters must be in the range of 0-9 a-F`,
   },
 });
 
@@ -60,7 +74,7 @@ export interface FormValues {
     contractFunction?: string;
     nft: NFT;
   }[];
-  safe: string;
+  safe: Safe;
   forceAction: boolean;
   transactionsTitle: string;
 }
@@ -79,6 +93,7 @@ const validationSchema = (isPreview) =>
       yup.object().shape({
         transactionType: yup.string().required(() => MSG.requiredFieldError),
         recipient: yup.object().shape({
+          id: yup.string().address().required(),
           profile: yup.object().shape({
             walletAddress: yup.string().when('transactionType', {
               is: (transactionType) =>
@@ -99,7 +114,8 @@ const validationSchema = (isPreview) =>
             .number()
             .transform((value) => toFinite(value))
             .required(() => MSG.requiredFieldError)
-            .moreThan(0, () => MSG.amountZero),
+            .moreThan(0, () => MSG.amountZero)
+            .integer(() => MSG.integer),
           otherwise: false,
         }),
         tokenAddress: yup.string().when('transactionType', {
@@ -114,7 +130,15 @@ const validationSchema = (isPreview) =>
         data: yup.string().when('transactionType', {
           is: (transactionType) =>
             transactionType === TransactionTypes.RAW_TRANSACTION,
-          then: yup.string().required(() => MSG.requiredFieldError),
+          then: yup
+            .string()
+            .required(() => MSG.requiredFieldError)
+            .matches(/^0x/, () => MSG.startWith0x)
+            .test(
+              'is-hex',
+              () => MSG.validHex,
+              (value) => ethers.utils.isHexString(value),
+            ),
           otherwise: false,
         }),
         contract: yup.string().when('transactionType', {
