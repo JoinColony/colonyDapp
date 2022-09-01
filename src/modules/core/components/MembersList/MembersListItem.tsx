@@ -174,7 +174,7 @@ const MembersListItem = (props: Props) => {
               colonyAddress={colony.colonyAddress}
               domainId={domainId}
               onReputationLoaded={setReputationLoaded}
-              showReputationPoints
+              showReputationPoints={!isMobile}
               nativeTokenDecimals={nativeToken?.decimals}
             />
           </div>

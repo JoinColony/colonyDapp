@@ -138,4 +138,8 @@
     padding-bottom: 60px;
     width: 100%;
   }
+
+  .tagWrapper {
+    padding-top: 13px;
+  }
 }

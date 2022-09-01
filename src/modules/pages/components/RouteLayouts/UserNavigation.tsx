@@ -126,10 +126,6 @@ const UserNavigation = () => {
 
   return (
     <>
-      {
-        // Only render fade element when wallet connected.
-        !ethereal && <div className={styles.fade} />
-      }
       <div className={styles.main}>
         {userCanNavigate && (
           <div

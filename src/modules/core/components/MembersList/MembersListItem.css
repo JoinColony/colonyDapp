@@ -102,17 +102,27 @@
     stroke: none;
   }
 
-  .main div[role="tooltip"] {
+  .main div[role='tooltip'] {
     display: flex;
     align-items: center;
-    transform: translate(14px, 64px) !important;
+    padding: 7px 14px;
+    transform: translate(-17px, 64px) !important;
   }
 
-  .main div[role="tooltip"] button {
-    padding: 0;
+  .main div[role='tooltip'] > div {
+    min-width: 0px;
   }
 
-  .main div[role="tooltip"] > span {
+  .main div[role='tooltip'] button {
+    padding: 4px 0px;
+  }
+
+  .main div[role='tooltip'] button > * {
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  .main div[role='tooltip'] > span {
     transform: translateX(10px) !important;
   }
 
