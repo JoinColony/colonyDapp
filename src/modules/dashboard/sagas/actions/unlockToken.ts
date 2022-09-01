@@ -19,7 +19,7 @@ import {
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
-import { uploadIfpsAnnotation } from '../utils';
+import { uploadIfsWithFallback } from '../utils';
 
 function* tokenUnlockAction({
   meta,
@@ -115,7 +115,7 @@ function* tokenUnlockAction({
        * Upload annotation metadata to IPFS
        */
       const annotationMessageIpfsHash = yield call(
-        uploadIfpsAnnotation,
+        uploadIfsWithFallback,
         annotationMessage,
       );
 

@@ -29,7 +29,7 @@ import { putError, takeFrom } from '~utils/saga/effects';
 import { clearLastWallet } from '~utils/autoLogin';
 import { IPFSAvatarImage } from '~types/index';
 
-import { uploadIfpsAnnotation } from '../../dashboard/sagas/utils';
+import { uploadIfsWithFallback } from '../../dashboard/sagas/utils';
 import { clearToken } from '../../../api/auth';
 import {
   transactionLoadRelated,
@@ -74,7 +74,7 @@ function* userAvatarUpload({
     if (payload.data) {
       try {
         ipfsHash = yield call(
-          uploadIfpsAnnotation,
+          uploadIfsWithFallback,
           JSON.stringify({ image: payload.data } as IPFSAvatarImage),
         );
       } catch (error) {

@@ -1,7 +1,7 @@
 import { call } from 'redux-saga/effects';
 import { ipfsUpload } from '../../../core/sagas/ipfs';
 
-export function* uploadIfpsAnnotation(annotationMessage: string) {
+export function* uploadIfsWithFallback(annotationMessage: string) {
   let ipfsHash: string | null = null;
   ipfsHash = yield call(
     ipfsUpload,

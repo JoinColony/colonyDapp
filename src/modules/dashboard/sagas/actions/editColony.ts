@@ -21,7 +21,7 @@ import {
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
-import { updateColonyDisplayCache, uploadIfpsAnnotation } from '../utils';
+import { updateColonyDisplayCache, uploadIfsWithFallback } from '../utils';
 
 function* editColonyAction({
   payload: {
@@ -158,7 +158,7 @@ function* editColonyAction({
        * Upload annotation metadata to IPFS
        */
       const annotationMessageIpfsHash = yield call(
-        uploadIfpsAnnotation,
+        uploadIfsWithFallback,
         annotationMessage,
       );
 

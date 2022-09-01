@@ -10,7 +10,7 @@ import {
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 
-import { uploadIfpsAnnotation } from '../utils';
+import { uploadIfsWithFallback } from '../utils';
 import {
   createTransaction,
   createTransactionChannels,
@@ -130,7 +130,7 @@ function* editDomainAction({
        * Upload annotationMessage to IPFS
        */
       const annotationMessageIpfsHash = yield call(
-        uploadIfpsAnnotation,
+        uploadIfsWithFallback,
         annotationMessage,
       );
 

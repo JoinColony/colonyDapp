@@ -21,7 +21,7 @@ import {
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
-import { updateDomainReputation, uploadIfpsAnnotation } from '../utils';
+import { updateDomainReputation, uploadIfsWithFallback } from '../utils';
 
 function* manageReputationMotion({
   payload: {
@@ -181,7 +181,7 @@ function* manageReputationMotion({
       /*
        * Upload annotaiton to IPFS
        */
-      const ipfsHash = yield call(uploadIfpsAnnotation, annotationMessage);
+      const ipfsHash = yield call(uploadIfsWithFallback, annotationMessage);
 
       yield put(transactionPending(annotateManageReputationMotion.id));
 

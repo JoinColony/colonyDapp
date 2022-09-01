@@ -22,7 +22,7 @@ import {
   transactionAddParams,
 } from '../../../core/actionCreators';
 
-import { updateColonyDisplayCache, uploadIfpsAnnotation } from '../utils';
+import { updateColonyDisplayCache, uploadIfsWithFallback } from '../utils';
 
 function* manageVerifiedRecipients({
   payload: {
@@ -140,7 +140,7 @@ function* manageVerifiedRecipients({
        * Upload annotation metadata to IPFS
        */
       const annotationMessageIpfsHash = yield call(
-        uploadIfpsAnnotation,
+        uploadIfsWithFallback,
         annotationMessage,
       );
 

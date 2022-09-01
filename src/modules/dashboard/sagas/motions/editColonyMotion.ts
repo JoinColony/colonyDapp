@@ -6,7 +6,7 @@ import { ContextModule, TEMP_getContext } from '~context/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 
-import { uploadIfpsAnnotation } from '../utils';
+import { uploadIfsWithFallback } from '../utils';
 import {
   createTransaction,
   createTransactionChannels,
@@ -173,7 +173,7 @@ function* editColonyMotion({
     yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
-      const ipfsHash = yield call(uploadIfpsAnnotation, annotationMessage);
+      const ipfsHash = yield call(uploadIfsWithFallback, annotationMessage);
       yield put(transactionPending(annotateEditColonyMotion.id));
 
       yield put(
