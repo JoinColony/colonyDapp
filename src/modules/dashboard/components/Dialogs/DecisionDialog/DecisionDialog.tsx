@@ -74,7 +74,14 @@ const DecisionDialog = ({
 
     localStorage.setItem(LOCAL_STORAGE_DECISION_KEY, JSON.stringify(values));
     close();
-    history.push(`/colony/${colonyName}/decisions/preview`);
+
+    const previewUrl = `/colony/${colonyName}/decisions/preview`;
+
+    if (history.location.pathname === previewUrl) {
+      history.replace(previewUrl);
+    } else {
+      history.push(previewUrl);
+    }
   };
 
   const validationSchema = yup.object().shape({
