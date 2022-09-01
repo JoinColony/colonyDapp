@@ -28,6 +28,9 @@ export default new InMemoryCache({
         installedExtensions: {
           merge: false,
         },
+        safes: {
+          merge: false,
+        },
       },
     },
     User: {
