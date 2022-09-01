@@ -17,6 +17,7 @@
 .main[disabled] {
   background-color: color-mod(var(--text-disabled) alpha(12%));
   color: var(--text-disabled);
+  cursor: default;
 }
 
 .main i {
