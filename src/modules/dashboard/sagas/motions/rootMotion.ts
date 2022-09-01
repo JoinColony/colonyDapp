@@ -135,7 +135,7 @@ function* createRootMotionSaga({
     if (annotationMessage) {
       yield put(transactionPending(annotateRootMotion.id));
 
-      const ipfsHash = yield call(uploadIfsWithFallback, annotationMessage);
+      const ipfsHash = yield call(uploadIfsWithFallback, { annotationMessage });
 
       yield put(
         transactionAddParams(annotateRootMotion.id, [txHash, ipfsHash]),

@@ -196,7 +196,7 @@ function* moveFundsMotion({
     yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
-      const ipfsHash = yield call(uploadIfsWithFallback, annotationMessage);
+      const ipfsHash = yield call(uploadIfsWithFallback, { annotationMessage });
       yield put(transactionPending(annotateMoveFundsMotion.id));
 
       yield put(

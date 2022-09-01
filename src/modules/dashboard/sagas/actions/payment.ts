@@ -161,7 +161,7 @@ function* createPaymentAction({
     if (annotationMessage) {
       yield put(transactionPending(annotatePaymentAction.id));
 
-      const ipfsHash = yield call(uploadIfsWithFallback, annotationMessage);
+      const ipfsHash = yield call(uploadIfsWithFallback, { annotationMessage });
 
       yield put(
         transactionAddParams(annotatePaymentAction.id, [txHash, ipfsHash]),

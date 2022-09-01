@@ -125,10 +125,9 @@ function* managePermissionsAction({
     if (annotationMessage) {
       yield put(transactionPending(annotateSetUserRoles.id));
 
-      const annotationMessageIpfsHash = yield call(
-        uploadIfsWithFallback,
+      const annotationMessageIpfsHash = yield call(uploadIfsWithFallback, {
         annotationMessage,
-      );
+      });
 
       yield put(
         transactionAddParams(annotateSetUserRoles.id, [

@@ -133,10 +133,9 @@ function* manageVerifiedRecipients({
       /*
        * Upload annotation metadata to IPFS
        */
-      const annotationMessageIpfsHash = yield call(
-        uploadIfsWithFallback,
+      const annotationMessageIpfsHash = yield call(uploadIfsWithFallback, {
         annotationMessage,
-      );
+      });
 
       yield put(
         transactionAddParams(annotateEditColony.id, [

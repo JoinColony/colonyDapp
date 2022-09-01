@@ -121,7 +121,7 @@ function* createMintTokensAction({
     if (annotationMessage) {
       yield put(transactionPending(annotateMintTokens.id));
 
-      const ipfsHash = yield call(uploadIfsWithFallback, annotationMessage);
+      const ipfsHash = yield call(uploadIfsWithFallback, { annotationMessage });
 
       yield put(
         transactionAddParams(annotateMintTokens.id, [txHash, ipfsHash]),

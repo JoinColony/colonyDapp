@@ -112,10 +112,9 @@ function* manageReputationAction({
       /*
        * Upload annotaiton to IPFS
        */
-      const annotationMessageIpfsHash = yield call(
-        uploadIfsWithFallback,
+      const annotationMessageIpfsHash = yield call(uploadIfsWithFallback, {
         annotationMessage,
-      );
+      });
 
       yield put(
         transactionAddParams(annotateManageReputation.id, [

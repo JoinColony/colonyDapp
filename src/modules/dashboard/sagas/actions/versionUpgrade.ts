@@ -98,7 +98,7 @@ function* createVersionUpgradeAction({
     if (annotationMessage && supportAnnotation) {
       yield put(transactionPending(annotateUpgrade.id));
 
-      const ipfsHash = yield call(uploadIfsWithFallback, annotationMessage);
+      const ipfsHash = yield call(uploadIfsWithFallback, { annotationMessage });
 
       yield put(transactionAddParams(annotateUpgrade.id, [txHash, ipfsHash]));
 

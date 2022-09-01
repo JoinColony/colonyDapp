@@ -106,7 +106,7 @@ function* enterRecoveryAction({
     if (annotationMessage) {
       yield put(transactionPending(annotateRecoveryAction.id));
 
-      const ipfsHash = yield call(uploadIfsWithFallback, annotationMessage);
+      const ipfsHash = yield call(uploadIfsWithFallback, { annotationMessage });
 
       yield put(
         transactionAddParams(annotateRecoveryAction.id, [txHash, ipfsHash]),

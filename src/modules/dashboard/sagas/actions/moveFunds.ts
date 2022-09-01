@@ -150,7 +150,7 @@ function* createMoveFundsAction({
     if (annotationMessage) {
       yield put(transactionPending(annotateMoveFunds.id));
 
-      const ipfsHash = yield call(uploadIfsWithFallback, annotationMessage);
+      const ipfsHash = yield call(uploadIfsWithFallback, { annotationMessage });
 
       yield put(transactionAddParams(annotateMoveFunds.id, [txHash, ipfsHash]));
 

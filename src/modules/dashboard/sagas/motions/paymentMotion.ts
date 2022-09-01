@@ -206,7 +206,7 @@ function* createPaymentMotion({
     if (annotationMessage) {
       yield put(transactionPending(annotatePaymentMotion.id));
 
-      const ipfsHash = yield call(uploadIfsWithFallback, annotationMessage);
+      const ipfsHash = yield call(uploadIfsWithFallback, { annotationMessage });
 
       yield put(
         transactionAddParams(annotatePaymentMotion.id, [txHash, ipfsHash]),
