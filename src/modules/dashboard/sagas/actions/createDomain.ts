@@ -97,8 +97,7 @@ function* createDomainAction({
     /*
      * Upload domain metadata to IPFS
      */
-    let domainMetadataIpfsHash = null;
-    domainMetadataIpfsHash = yield call(uploadIfsWithFallback, {
+    const domainMetadataIpfsHash = yield call(uploadIfsWithFallback, {
       domainName,
       domainColor,
       domainPurpose,
