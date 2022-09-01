@@ -47,6 +47,7 @@ interface Props {
   staged?: Staged;
   activeStateId?: string;
   handleReleaseMilestone: (id: string) => void;
+  editForm: () => void;
 }
 
 const LockedStaged = ({
@@ -54,6 +55,7 @@ const LockedStaged = ({
   staged,
   activeStateId,
   handleReleaseMilestone,
+  editForm,
 }: Props) => {
   const { tokens: colonyTokens } = colony || {};
 
@@ -75,7 +77,7 @@ const LockedStaged = ({
               name="edit"
               appearance={{ size: 'medium' }}
               title="Edit expenditure"
-              onClick={() => {}}
+              onClick={editForm}
             />
           </span>
         </div>
@@ -92,8 +94,8 @@ const LockedStaged = ({
               />
               <UserMention
                 username={
-                  staged.user.profile.username ||
                   staged.user.profile.displayName ||
+                  staged.user.profile.username ||
                   ''
                 }
               />

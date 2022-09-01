@@ -3,7 +3,7 @@ import { defineMessages, useIntl } from 'react-intl';
 import * as yup from 'yup';
 import { FormikProps } from 'formik';
 
-import { ValuesType } from '~pages/ExpenditurePage/types';
+import { ExpenditureTypes, ValuesType } from '~pages/ExpenditurePage/types';
 import { ActionForm } from '~core/Fields';
 import Dialog from '~core/Dialog';
 import { Colony } from '~data/index';
@@ -96,6 +96,23 @@ const EditExpenditureDialog = ({
       return newVal;
     });
   }, []);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const discardPaymentChange = useCallback(
+    (payment: ExpenditureTypes, name: keyof ValuesType) => {
+      setConfirmedValues((confirmedVal) => {
+        if (confirmedVal && !(name in confirmedVal[payment])) {
+          return undefined;
+        }
+        const newPayment = confirmedVal && confirmedVal[payment];
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { [name]: removedProperty, ...updatedValues } = newPayment || {};
+
+        return { ...confirmedVal, [payment]: updatedValues };
+      });
+    },
+    [],
+  );
 
   const getFormAction = useCallback(
     (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {

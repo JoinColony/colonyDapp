@@ -7,6 +7,6 @@ export interface Split {
     user?: AnyUser;
     amount?: number;
     percent?: number;
-    key?: string;
+    id?: string;
   }[];
 }

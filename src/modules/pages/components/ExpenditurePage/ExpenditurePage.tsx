@@ -230,8 +230,8 @@ const initialValues = {
   split: {
     unequal: false,
     recipients: [
-      { ...initalRecipient, key: nanoid() },
-      { ...initalRecipient, key: nanoid() },
+      { ...initalRecipient, id: nanoid() },
+      { ...initalRecipient, id: nanoid() },
     ],
   },
 };
@@ -314,38 +314,6 @@ const ExpenditurePage = ({ match }: Props) => {
     (values) => {
       if (!activeStateId) {
         setActiveStateId(Stage.Draft);
-      }
-
-      if (values.expenditure === ExpenditureTypes.Split) {
-        const recipientsCount =
-          values.split.recipients?.filter(
-            (recipient) => recipient?.user?.id !== undefined,
-          ).length || 0;
-
-        const splitValues = {
-          ...values,
-          recipients: undefined,
-          split: {
-            ...values.split,
-            recipients: values.split.recipients?.map((recipient) => {
-              const amount = values.split.amount.value;
-              if (values.split.unequal) {
-                const userAmount =
-                  amount &&
-                  recipient?.percent &&
-                  Number(recipient.percent / 100) *
-                    Number(values.split.amount.value);
-                return { ...recipient, amount: userAmount };
-              }
-              return {
-                ...recipient,
-                amount: !amount ? 0 : Number(amount) / (recipientsCount || 1),
-              };
-            }),
-          },
-        };
-        setFormValues(splitValues);
-        return;
       }
 
       if (values.expenditure === ExpenditureTypes.Staged) {

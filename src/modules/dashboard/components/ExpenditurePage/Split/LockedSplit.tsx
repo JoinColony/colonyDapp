@@ -29,9 +29,10 @@ const displayName = 'dashboard.ExpenditurePage.Split.LockedSplit';
 interface Props {
   colony: Colony;
   split?: ValuesType['split'];
+  editForm: () => void;
 }
 
-const LockedSplit = ({ colony, split }: Props) => {
+const LockedSplit = ({ colony, split, editForm }: Props) => {
   const { amount, recipients } = split || {};
   const token = useMemo(() => {
     return colony.tokens?.find(
@@ -50,7 +51,7 @@ const LockedSplit = ({ colony, split }: Props) => {
               name="edit"
               appearance={{ size: 'medium' }}
               title="Edit expenditure"
-              onClick={() => {}}
+              onClick={editForm}
             />
           </span>
         </div>
@@ -77,7 +78,7 @@ const LockedSplit = ({ colony, split }: Props) => {
       {recipients?.map((recipient) => {
         return (
           recipient?.user && (
-            <FormSection appearance={{ border: 'bottom' }} key={recipient.key}>
+            <FormSection appearance={{ border: 'bottom' }} key={recipient.id}>
               <div className={styles.lockedRecipient}>
                 <div className={styles.userName}>
                   <UserAvatar
@@ -87,8 +88,8 @@ const LockedSplit = ({ colony, split }: Props) => {
                   />
                   <UserMention
                     username={
-                      recipient.user.profile.username ||
                       recipient.user.profile.displayName ||
+                      recipient.user.profile.username ||
                       ''
                     }
                   />
