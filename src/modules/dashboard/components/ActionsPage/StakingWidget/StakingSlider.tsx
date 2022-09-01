@@ -179,7 +179,6 @@ const StakingSlider = ({
           tooltipText={MSG.stakingToolTip}
           className={styles.questionMarkIcon}
           tooltipClassName={styles.tooltip}
-          showArrow={false}
           tooltipPopperOptions={{
             placement: 'top-end',
           }}
