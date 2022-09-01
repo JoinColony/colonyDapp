@@ -63,6 +63,7 @@ const DecisionDialogForm = ({
   editor,
   limit,
   dirty,
+  ethDomainId: preselectedDomainId,
 }: Props & FormikProps<FormValues>) => {
   const handleMotionDomainChange = useCallback(
     (motionDomainId) => setFieldValue('motionDomainId', motionDomainId),
@@ -79,6 +80,7 @@ const DecisionDialogForm = ({
           onDomainChange={handleMotionDomainChange}
           dropdownLabel={MSG.domainDisplay}
           disabled={isSubmitting}
+          initialSelectedDomain={preselectedDomainId}
         />
         <Heading
           appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
