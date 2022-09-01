@@ -72,6 +72,7 @@ const DecisionPreview = () => {
   const openDecisionDialog = useDialog(DecisionDialog);
 
   const handleSubmit = () => {
+    // Temporary place - need to move to `onSuccess` method when ActionForm is added
     localStorage.removeItem(LOCAL_STORAGE_DECISION_KEY);
     setDecisionData(undefined);
     /* Add rerouting to the decision motion page */
