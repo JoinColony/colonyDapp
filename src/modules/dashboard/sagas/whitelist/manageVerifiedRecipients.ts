@@ -15,7 +15,6 @@ import {
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
@@ -104,18 +103,13 @@ function* manageVerifiedRecipients({
     /*
      * Upload colony metadata to IPFS
      */
-    let colonyMetadataIpfsHash = null;
-
-    colonyMetadataIpfsHash = yield call(
-      ipfsUpload,
-      JSON.stringify({
-        colonyDisplayName,
-        colonyAvatarHash,
-        verifiedAddresses,
-        colonyTokens,
-        isWhitelistActivated,
-      }),
-    );
+    const colonyMetadataIpfsHash = yield call(uploadIfsWithFallback, {
+      colonyDisplayName,
+      colonyAvatarHash,
+      verifiedAddresses,
+      colonyTokens,
+      isWhitelistActivated,
+    });
 
     yield put(
       transactionAddParams(editColony.id, [

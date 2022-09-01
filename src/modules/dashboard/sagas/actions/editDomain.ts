@@ -16,7 +16,6 @@ import {
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
@@ -96,15 +95,11 @@ function* editDomainAction({
     /*
      * Upload domain metadata to IPFS
      */
-    let domainMetadataIpfsHash = null;
-    domainMetadataIpfsHash = yield call(
-      ipfsUpload,
-      JSON.stringify({
-        domainName,
-        domainColor,
-        domainPurpose,
-      }),
-    );
+    const domainMetadataIpfsHash = yield call(uploadIfsWithFallback, {
+      domainName,
+      domainColor,
+      domainPurpose,
+    });
 
     yield put(
       transactionAddParams(editDomain.id, [

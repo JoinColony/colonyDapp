@@ -15,7 +15,6 @@ import {
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
@@ -110,30 +109,23 @@ function* editColonyAction({
      */
     let colonyAvatarIpfsHash = null;
     if (colonyAvatarImage && hasAvatarChanged) {
-      colonyAvatarIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          image: colonyAvatarImage,
-        }),
-      );
+      colonyAvatarIpfsHash = yield call(uploadIfsWithFallback, {
+        image: colonyAvatarImage,
+      });
     }
 
     /*
      * Upload colony metadata to IPFS
      */
-    let colonyMetadataIpfsHash = null;
-    colonyMetadataIpfsHash = yield call(
-      ipfsUpload,
-      JSON.stringify({
-        colonyDisplayName,
-        colonyAvatarHash: hasAvatarChanged
-          ? colonyAvatarIpfsHash
-          : colonyAvatarHash,
-        colonyTokens,
-        verifiedAddresses,
-        isWhitelistActivated,
-      }),
-    );
+    const colonyMetadataIpfsHash = yield call(uploadIfsWithFallback, {
+      colonyDisplayName,
+      colonyAvatarHash: hasAvatarChanged
+        ? colonyAvatarIpfsHash
+        : colonyAvatarHash,
+      colonyTokens,
+      verifiedAddresses,
+      isWhitelistActivated,
+    });
 
     yield put(
       transactionAddParams(editColony.id, [

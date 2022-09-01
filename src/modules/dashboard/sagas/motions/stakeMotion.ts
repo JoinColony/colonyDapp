@@ -15,9 +15,8 @@ import {
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 
-import { updateMotionValues } from '../utils';
+import { updateMotionValues, uploadIfsWithFallback } from '../utils';
 
 function* stakeMotion({
   meta,
@@ -143,13 +142,9 @@ function* stakeMotion({
       /*
        * Upload annotation metadata to IPFS
        */
-      let annotationMessageIpfsHash = null;
-      annotationMessageIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
-      );
+      const annotationMessageIpfsHash = yield call(uploadIfsWithFallback, {
+        annotationMessage,
+      });
 
       yield put(
         transactionAddParams(annotateStaking.id, [
