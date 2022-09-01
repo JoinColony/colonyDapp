@@ -278,7 +278,6 @@ const GnosisControlSafeForm = ({
           <DialogSection>
             <div className={styles.safePicker}>
               <SingleSafePicker
-                appearance={{ width: 'wide' }}
                 label={MSG.selectSafe}
                 name="safe"
                 filter={filterUserSelection}
