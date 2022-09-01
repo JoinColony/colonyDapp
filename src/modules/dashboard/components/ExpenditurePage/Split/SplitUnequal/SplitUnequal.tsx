@@ -1,5 +1,5 @@
 import { FieldArray, useField, useFormikContext } from 'formik';
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import Decimal from 'decimal.js';
 import { nanoid } from 'nanoid';
@@ -56,8 +56,8 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
 
   const { tokens: colonyTokens } = colony || {};
 
-  const [, { value: recipients }] = useField<
-    { user: AnyUser; amount: number; percent: number; key: string }[]
+  const [, { value: recipients }, { setValue }] = useField<
+    { user: AnyUser; amount: number; percent: number; id: string }[]
   >('split.recipients');
   const [, { value: amount }] = useField<{
     value?: string;
@@ -77,28 +77,42 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
   });
 
   const calculated = useMemo(() => {
-    const sum = recipients.reduce((acc, recipient) => {
+    const sum = recipients?.reduce((acc, recipient) => {
       return acc + Number(recipient.percent);
     }, 0);
 
     const remainingAmount = 100 - sum;
 
-    const remainingStake = recipients.map((recipient) =>
+    const remainingStake = recipients?.map((recipient) =>
       new Decimal(100 - (sum - recipient.percent)).div(100),
-    );
-
-    const usersAmount = recipients.map(
-      (recipient) =>
-        amount.value && (recipient.percent / 100) * Number(amount.value),
     );
 
     return {
       sum,
       remainingAmount,
       remainingStake,
-      usersAmount,
     };
-  }, [amount.value, recipients]);
+  }, [recipients]);
+
+  const onSelectChange = useCallback(
+    (val: number, name: string) => {
+      setFieldValue(name, (Number(val) / 100) * Number(amount.value));
+    },
+    [amount.value, setFieldValue],
+  );
+
+  const onInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value } = e.target;
+      setValue(
+        recipients.map((rec) => ({
+          ...rec,
+          amount: (Number(rec.percent) / 100) * Number(value),
+        })),
+      );
+    },
+    [recipients, setValue],
+  );
 
   return (
     <>
@@ -123,6 +137,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
                 maxAmount: '0',
                 fieldName: 'split.amount.value',
               }}
+              onChange={onInputChange}
             />
           </div>
           <div className={styles.tokenWrapper}>
@@ -158,7 +173,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
               return (
                 <FormSection
                   appearance={{ border: 'bottom' }}
-                  key={recipient?.key}
+                  key={recipient?.id}
                 >
                   <div className={styles.recipientWrapper}>
                     <div>
@@ -210,6 +225,9 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
                       dotStyle={{
                         backgroundColor: 'transparent',
                       }}
+                      onChange={(val) =>
+                        onSelectChange(val, `split.recipients[${index}].amount`)
+                      }
                     />
                     <span className={styles.percent}>
                       {recipients[index].percent}%
@@ -225,7 +243,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
                         />
                         <Numeral
                           unit={getTokenDecimalsWithFallback(0)}
-                          value={calculated.usersAmount[index] || 0}
+                          value={recipients?.[index].amount || 0}
                         />{' '}
                         {token.symbol}
                       </div>

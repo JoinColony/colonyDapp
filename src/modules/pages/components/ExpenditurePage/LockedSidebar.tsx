@@ -55,7 +55,9 @@ const LockedSidebar = ({
         );
       }
       case ExpenditureTypes.Split: {
-        return <LockedSplit colony={colony} split={split} />;
+        return (
+          <LockedSplit colony={colony} split={split} editForm={editForm} />
+        );
       }
       case ExpenditureTypes.Staged: {
         return (
@@ -64,6 +66,7 @@ const LockedSidebar = ({
             staged={staged}
             activeStateId={activeState?.id}
             handleReleaseMilestone={handleReleaseMilestone}
+            editForm={editForm}
           />
         );
       }

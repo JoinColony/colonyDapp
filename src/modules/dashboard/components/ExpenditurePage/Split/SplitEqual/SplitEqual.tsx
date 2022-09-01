@@ -1,5 +1,5 @@
 import { FieldArray, useField, useFormikContext } from 'formik';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { nanoid } from 'nanoid';
 import { isNaN } from 'lodash';
@@ -52,7 +52,7 @@ interface Props {
 
 const SplitEqual = ({ colony, sidebarRef }: Props) => {
   const { setFieldValue } = useFormikContext<ValuesType>();
-  const [, { value: recipients }] = useField<
+  const [, { value: recipients }, { setValue }] = useField<
     { user?: AnyUser; amount?: number; key: string }[]
   >('split.recipients');
   const { tokens: colonyTokens } = colony || {};
@@ -90,6 +90,16 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
       : Number(amount?.value) / (recipientsCount || 1);
     return isNaN(result) ? 0 : result;
   }, [amount, recipientsCount]);
+
+  useEffect(() => {
+    setValue(
+      recipients.map((recipient) => ({
+        ...recipient,
+        amount: calculatedAmount,
+      })),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [calculatedAmount]);
 
   return (
     <>
@@ -204,7 +214,7 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
                 </div>
               )}
               <Button
-                onClick={() => push({ ...initalRecipient, key: nanoid() })}
+                onClick={() => push({ ...initalRecipient, id: nanoid() })}
                 appearance={{ theme: 'blue' }}
               >
                 <div className={styles.addRecipientLabel}>
