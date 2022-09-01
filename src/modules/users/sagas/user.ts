@@ -27,7 +27,6 @@ import {
 } from '~data/index';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { clearLastWallet } from '~utils/autoLogin';
-import { IPFSAvatarImage } from '~types/index';
 
 import { uploadIfsWithFallback } from '../../dashboard/sagas/utils';
 import { clearToken } from '../../../api/auth';
@@ -73,10 +72,7 @@ function* userAvatarUpload({
     let ipfsHash = null;
     if (payload.data) {
       try {
-        ipfsHash = yield call(
-          uploadIfsWithFallback,
-          JSON.stringify({ image: payload.data } as IPFSAvatarImage),
-        );
+        ipfsHash = yield call(uploadIfsWithFallback, { image: payload.data });
       } catch (error) {
         // silent error
       }
