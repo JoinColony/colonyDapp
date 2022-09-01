@@ -115,7 +115,7 @@ const StakingWidget = ({
       CharacterCount.configure({ limit: LIMIT }),
       Placeholder.configure({
         emptyEditorClass: 'is-editor-empty',
-        placeholder: 'Enter the description...',
+        placeholder: 'What would you like to say?',
       }),
     ],
   });
