@@ -3,22 +3,33 @@ import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { bigNumberify } from 'ethers/utils';
 import { Decimal } from 'decimal.js';
+import { useEditor } from '@tiptap/react';
+import CharacterCount from '@tiptap/extension-character-count';
+import Color from '@tiptap/extension-color';
+import Placeholder from '@tiptap/extension-placeholder';
+import TextStyle from '@tiptap/extension-text-style';
+import Underline from '@tiptap/extension-underline';
+import StarterKit from '@tiptap/starter-kit';
 
 import Dialog from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
+import { StakingAmounts } from '~dashboard/ActionsPage/StakingWidget';
 
-import { useLoggedInUser } from '~data/index';
+import { useLoggedInUser, Colony } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { pipe, mapPayload } from '~utils/actions';
 
-import DialogForm, { Props as FormProps } from './RaiseObjectionDialogForm';
+import DialogForm from './RaiseObjectionDialogForm';
 
 export interface FormValues {
   amount: number;
   annotation: string;
 }
 
-interface Props extends FormProps {
+interface Props extends StakingAmounts {
+  colony: Colony;
+  canUserStake: boolean;
+  userActivatedTokens: Decimal;
   cancel: () => void;
   close: () => void;
   motionId: number;
@@ -26,6 +37,8 @@ interface Props extends FormProps {
 }
 
 const displayName = 'dashboard.RaiseObjectionDialog';
+
+const LIMIT = 4000;
 
 const RaiseObjectionDialog = ({
   cancel,
@@ -38,6 +51,20 @@ const RaiseObjectionDialog = ({
   ...props
 }: Props) => {
   const { walletAddress } = useLoggedInUser();
+
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Underline,
+      TextStyle,
+      Color,
+      CharacterCount.configure({ limit: LIMIT }),
+      Placeholder.configure({
+        emptyEditorClass: 'is-editor-empty',
+        placeholder: 'What would you like to say?',
+      }),
+    ],
+  });
 
   const validationSchema = yup.object().shape({
     amount: yup.number().required(),
@@ -99,6 +126,8 @@ const RaiseObjectionDialog = ({
             colony={colony}
             minUserStake={minUserStake}
             cancel={cancel}
+            editor={editor}
+            limit={LIMIT}
             {...props}
           />
         </Dialog>
