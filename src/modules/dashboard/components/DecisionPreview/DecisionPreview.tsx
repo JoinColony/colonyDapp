@@ -24,7 +24,7 @@ import { pipe, withMeta, mapPayload } from '~utils/actions';
 
 import DetailsWidget from '../ActionsPage/DetailsWidget';
 
-import styles from './DecisionPreviewForm.css';
+import styles from './DecisionPreview.css';
 
 const MSG = defineMessages({
   preview: {
@@ -54,7 +54,7 @@ const decisionData: DecisionDetails = {
 
 const displayName = 'dashboard.DecisionPreview';
 
-const DecisionPreviewForm = () => {
+const DecisionPreview = () => {
   const { colonyName } = useParams<{
     colonyName: string;
   }>();
@@ -166,8 +166,8 @@ const DecisionPreviewForm = () => {
                 openDecisionDialog({
                   colony,
                   ethDomainId: decisionData.domainId,
-                  decisionTitle: decisionData.title,
-                  content: decisionData.htmlDescription,
+                  title: decisionData.title,
+                  description: decisionData.htmlDescription,
                 })
               }
               text={{ id: 'button.edit' }}
@@ -206,6 +206,6 @@ const DecisionPreviewForm = () => {
   );
 };
 
-DecisionPreviewForm.displayName = displayName;
+DecisionPreview.displayName = displayName;
 
-export default DecisionPreviewForm;
+export default DecisionPreview;
