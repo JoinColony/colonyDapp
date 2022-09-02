@@ -21,7 +21,7 @@ import LoadingTemplate from '~pages/LoadingTemplate';
 import LadingPage from '~pages/LandingPage';
 import ActionsPage from '~dashboard/ActionsPage';
 import { ClaimTokensPage, UnwrapTokensPage } from '~dashboard/Vesting';
-import DecisionPreviewForm from '~dashboard/DecisionPreview/DecisionPreviewForm';
+import DecisionPreview from '~dashboard/DecisionPreview/DecisionPreview';
 
 import appLoadingContext from '~context/appLoadingState';
 import ColonyFunding from '~dashboard/ColonyFunding';
@@ -160,7 +160,7 @@ const Routes = () => {
           isConnected={isConnected}
           didClaimProfile={didClaimProfile}
           path={COLONY_DECISIONS_PREVIEW_ROUTE}
-          component={DecisionPreviewForm}
+          component={DecisionPreview}
           layout={NavBar}
           routeProps={{ hasBackLink: true }}
         />
