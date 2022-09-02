@@ -1,1 +1,1 @@
-export { default } from './DecisionPreviewForm';
+export { default } from './DecisionPreview';
