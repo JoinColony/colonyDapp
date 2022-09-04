@@ -35,6 +35,7 @@ interface Props extends StakingAmounts {
   close: () => void;
   motionId: number;
   scrollToRef?: RefObject<HTMLInputElement>;
+  isDecision?: boolean;
 }
 
 const displayName = 'dashboard.RaiseObjectionDialog';

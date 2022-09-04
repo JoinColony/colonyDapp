@@ -7,7 +7,7 @@ import Decimal from 'decimal.js';
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import ExternalLink from '~core/ExternalLink';
-import { InputLabel } from '~core/Fields';
+import { InputLabel, Annotations } from '~core/Fields';
 import RichTextEditor from '~core/RichTextEditor/RichTextEditor';
 import Heading from '~core/Heading';
 import {
@@ -35,7 +35,7 @@ const MSG = defineMessages({
   },
   annotation: {
     id: 'dashboard.RaiseObjectionDialog.RaiseObjectionDialogForm.annotation',
-    defaultMessage: 'Explain why you’re making this objection (optional)',
+    defaultMessage: `Explain why you’re making this objection (optional)`,
   },
   stakeButton: {
     id: 'dashboard.RaiseObjectionDialog.RaiseObjectionDialogForm.stakeButton',
@@ -50,6 +50,7 @@ export interface Props extends StakingAmounts {
   editor: Editor | null;
   limit: number;
   cancel: () => void;
+  isDecision?: boolean;
 }
 
 const RaiseObjectionDialogForm = ({
@@ -64,6 +65,7 @@ const RaiseObjectionDialogForm = ({
   userActivatedTokens,
   remainingToFullyNayStaked,
   minUserStake,
+  isDecision = false,
   ...props
 }: Props & FormikProps<FormValues>) => {
   const decimalAmount = new Decimal(values.amount)
@@ -108,16 +110,25 @@ const RaiseObjectionDialogForm = ({
       </DialogSection>
       <DialogSection appearance={{ border: 'top' }}>
         <DialogSection>
-          <InputLabel
-            label={MSG.annotation}
-            appearance={{ colorSchema: 'grey' }}
-          />
-          {editor && (
-            <RichTextEditor
-              editor={editor}
+          {isDecision && editor ? (
+            <>
+              <InputLabel
+                label={MSG.annotation}
+                appearance={{ colorSchema: 'grey' }}
+              />
+              <RichTextEditor
+                editor={editor}
+                name="annotation"
+                isSubmitting={isSubmitting}
+                limit={limit}
+                disabled={!canUserStake || isSubmitting}
+              />
+            </>
+          ) : (
+            <Annotations
+              label={MSG.annotation}
               name="annotation"
-              isSubmitting={isSubmitting}
-              limit={limit}
+              maxLength={4000}
               disabled={!canUserStake || isSubmitting}
             />
           )}
