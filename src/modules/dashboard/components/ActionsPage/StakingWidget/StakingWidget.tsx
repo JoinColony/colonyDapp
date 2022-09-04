@@ -109,6 +109,8 @@ const StakingWidget = ({
         colony,
         canUserStake: userHasPermission,
         scrollToRef,
+        /* temporary; to replace with a check if a motion is a decision */
+        isDecision: false,
         ...stakingAmounts,
       }),
     [colony, openRaiseObjectionDialog, scrollToRef, motionId],
