@@ -51,7 +51,6 @@
   margin-top: 17px;
   padding-bottom: 10px;
   border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
-  line-height: 18px;
   word-break: break-word;
 }
 
@@ -98,7 +97,7 @@
   justify-content: flex-end;
 }
 
-<<<<<<< head .buttonContainer > button:last-child {
+.buttonContainer > button:last-child {
   min-width: 160px;
 }
 
