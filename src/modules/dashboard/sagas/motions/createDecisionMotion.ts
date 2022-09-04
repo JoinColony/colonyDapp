@@ -5,7 +5,10 @@ import { AddressZero } from 'ethers/constants';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
-import { ACTION_DECISION_MOTION_CODE } from '~constants';
+import {
+  ACTION_DECISION_MOTION_CODE,
+  LOCAL_STORAGE_DECISION_KEY,
+} from '~constants';
 import { DecisionDetails } from '~types/index';
 
 import {
@@ -26,7 +29,7 @@ function* createDecisionMotion({
     colonyAddress,
     decisionTitle,
     decisionDescription,
-    domainId,
+    motionDomainId,
   },
   meta: { id: metaId, history },
   meta,
@@ -45,8 +48,8 @@ function* createDecisionMotion({
       throw new Error('Decision title is required when creating a Decision.');
     }
 
-    if (!domainId) {
-      throw new Error('Domain id is required when creating a Decision.');
+    if (!motionDomainId) {
+      throw new Error('Motion Domain id is required when creating a Decision.');
     }
 
     const context = TEMP_getContext(ContextModule.ColonyManager);
@@ -140,7 +143,7 @@ function* createDecisionMotion({
     const details: DecisionDetails = {
       title: decisionTitle,
       description: decisionDescription,
-      domainId,
+      motionDomainId,
     };
     /*
      * Upload Decision details to IPFS
@@ -166,6 +169,9 @@ function* createDecisionMotion({
     putError(ActionTypes.MOTION_CREATE_DECISION_ERROR, caughtError, meta);
   } finally {
     txChannel.close();
+
+    // remove the local storage decision
+    localStorage.removeItem(LOCAL_STORAGE_DECISION_KEY);
   }
 }
 
