@@ -287,8 +287,4 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.Domain,
     ActionPageDetails.Author,
   ],
-  [ColonyActions.Decision]: [
-    ActionPageDetails.Domain,
-    ActionPageDetails.Author,
-  ],
 };
