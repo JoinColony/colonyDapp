@@ -260,7 +260,7 @@ export type MotionActionTypes =
         colonyName: string;
         decisionTitle: string;
         decisionDescription: string;
-        domainId: number;
+        motionDomainId: number;
       },
       MetaWithHistory<object>
     >

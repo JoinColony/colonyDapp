@@ -1,5 +1,1 @@
-export {
-  default,
-  FormValues,
-  LOCAL_STORAGE_DECISION_KEY,
-} from './DecisionDialog';
+export { default, FormValues } from './DecisionDialog';

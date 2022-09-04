@@ -13,7 +13,10 @@ import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import Dialog, { DialogProps } from '~core/Dialog';
 import { Form } from '~core/Fields';
 import { Colony } from '~data/index';
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import {
+  COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  LOCAL_STORAGE_DECISION_KEY,
+} from '~constants';
 
 import DialogForm from './DecisionDialogForm';
 
@@ -33,8 +36,6 @@ interface Props extends DialogProps {
 }
 
 const characterLimit = 4000;
-
-export const LOCAL_STORAGE_DECISION_KEY = 'decision';
 
 const DecisionDialog = ({
   cancel,
