@@ -1,20 +1,14 @@
-import React, { useState } from 'react';
-import { useParams, Redirect } from 'react-router-dom';
+import React, { useCallback, useState } from 'react';
+import { useParams, useHistory, Redirect } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import parse from 'html-react-parser';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
-
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Tag from '~core/Tag';
 import { useDialog } from '~core/Dialog';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import DecisionDialog, {
-  LOCAL_STORAGE_DECISION_KEY,
-  FormValues,
-} from '~dashboard/Dialogs/DecisionDialog';
-import DetailsWidget from '~dashboard/ActionsPage/DetailsWidget';
-
+import DecisionDialog from '~dashboard/Dialogs/DecisionDialog';
 import {
   useUser,
   useLoggedInUser,
@@ -22,16 +16,22 @@ import {
   AnyUser,
   OneDomain,
 } from '~data/index';
-import { ColonyActions } from '~types/index';
+import { ColonyMotions, DecisionDetails } from '~types/index';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import LoadingTemplate from '~pages/LoadingTemplate';
+import { ActionForm } from '~core/Fields';
+import { ActionTypes } from '~redux/index';
+import { pipe, withMeta, mapPayload } from '~utils/actions';
+import { LOCAL_STORAGE_DECISION_KEY } from '~constants';
+
+import DetailsWidget from '../ActionsPage/DetailsWidget';
 
 import styles from './DecisionPreview.css';
 
 const MSG = defineMessages({
   preview: {
     id: 'dashboard.DecisionPreview.preview',
-    defaultMessage: 'Preview',
+    defaultMessage: `Preview`,
   },
   loadingText: {
     id: 'dashboard.DecisionPreview.loadingText',
@@ -50,20 +50,17 @@ const MSG = defineMessages({
 const displayName = 'dashboard.DecisionPreview';
 
 const DecisionPreview = () => {
-  const UserAvatar = HookedUserAvatar({ fetchUser: false });
-
   const { colonyName } = useParams<{
     colonyName: string;
   }>();
+  const history = useHistory();
   const { walletAddress, username } = useLoggedInUser();
   const userProfile = useUser(walletAddress) as AnyUser;
-
-  const [decisionData, setDecisionData] = useState<FormValues | undefined>(
+  const [decisionData] = useState<DecisionDetails | undefined>(
     localStorage.getItem(LOCAL_STORAGE_DECISION_KEY) === null
       ? undefined
       : JSON.parse(localStorage.getItem(LOCAL_STORAGE_DECISION_KEY) || ''),
   );
-
   const { data: colonyData, error, loading } = useColonyFromNameQuery({
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
@@ -71,12 +68,19 @@ const DecisionPreview = () => {
 
   const openDecisionDialog = useDialog(DecisionDialog);
 
-  const handleSubmit = () => {
-    // Temporary place - need to move to `onSuccess` method when ActionForm is added
-    localStorage.removeItem(LOCAL_STORAGE_DECISION_KEY);
-    setDecisionData(undefined);
-    /* Add rerouting to the decision motion page */
-  };
+  const transform = useCallback(
+    pipe(
+      mapPayload(() => ({
+        colonyAddress: colonyData?.processedColony?.colonyAddress || '',
+        colonyName,
+        decisionTitle: decisionData?.title,
+        decisionDescription: decisionData?.description,
+        motionDomainId: decisionData?.motionDomainId,
+      })),
+      withMeta({ history }),
+    ),
+    [colonyData],
+  );
 
   if (
     loading ||
@@ -98,12 +102,12 @@ const DecisionPreview = () => {
 
   const { processedColony: colony } = colonyData;
 
+  const UserAvatar = HookedUserAvatar({ fetchUser: false });
+
   const actionAndEventValues = {
-    actionType: ColonyActions.Decision,
+    actionType: ColonyMotions.CreateDecisionMotion,
     fromDomain: colonyData.processedColony.domains.find(
-      ({ ethDomainId }) =>
-        ethDomainId ===
-        (decisionData ? decisionData.motionDomainId : ROOT_DOMAIN_ID),
+      ({ ethDomainId }) => ethDomainId === decisionData?.motionDomainId,
     ) as OneDomain,
   };
 
@@ -181,24 +185,35 @@ const DecisionPreview = () => {
                 onClick={() =>
                   openDecisionDialog({
                     colony,
-                    ethDomainId: Number(decisionData?.motionDomainId),
-                    title: decisionData?.title,
-                    description: decisionData?.description,
+                    ethDomainId: decisionData.motionDomainId,
+                    title: decisionData.title,
+                    description: decisionData.description,
                   })
                 }
                 text={{ id: 'button.edit' }}
               />
             )}
-            <Button
-              appearance={{ theme: 'primary', size: 'large' }}
-              onClick={handleSubmit}
-              text={{ id: 'button.publish' }}
-              disabled={decisionData === undefined}
-            />
+            <ActionForm
+              initialValues={{}}
+              submit={ActionTypes.MOTION_CREATE_DECISION}
+              error={ActionTypes.MOTION_CREATE_DECISION_ERROR}
+              success={ActionTypes.MOTION_CREATE_DECISION_SUCCESS}
+              transform={transform}
+            >
+              {({ handleSubmit, isSubmitting }) => (
+                <Button
+                  appearance={{ theme: 'primary', size: 'large' }}
+                  onClick={() => handleSubmit()}
+                  text={{ id: 'button.publish' }}
+                  loading={isSubmitting}
+                  disabled={isSubmitting || decisionData === undefined}
+                />
+              )}
+            </ActionForm>
           </div>
           <div className={styles.details}>
             <DetailsWidget
-              actionType={ColonyActions.Decision}
+              actionType={ColonyMotions.CreateDecisionMotion}
               recipient={userProfile}
               colony={colony}
               values={{
