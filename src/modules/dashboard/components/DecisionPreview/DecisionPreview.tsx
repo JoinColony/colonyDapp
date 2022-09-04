@@ -82,13 +82,6 @@ const DecisionPreview = () => {
     [colonyData],
   );
 
-  // console.log(`🚀 ~ mapPayload ~ decisionData`, decisionData);
-  // const handleSubmitDecision = useCallback(() => {
-  //   localStorage.removeItem(LOCAL_STORAGE_DECISION_KEY);
-  //   setDecisionData(undefined);
-  //   /* Add rerouting to the decision motion page */
-  // }, []);
-
   if (
     loading ||
     (colonyData?.colonyAddress &&
