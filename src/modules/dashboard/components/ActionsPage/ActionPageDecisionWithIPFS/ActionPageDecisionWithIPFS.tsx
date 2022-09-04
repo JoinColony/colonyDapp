@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
+import parse from 'html-react-parser';
 
 import Heading from '~core/Heading';
 import CalloutCard from '~core/CalloutCard';
@@ -132,9 +133,8 @@ const ActionPageDecisionWithIPFS = ({
             }}
             text={decisionDetails.title}
           />
-          <p>{decisionDetails.title}</p>
         </div>
-        {decisionDetails.description}
+        {parse(decisionDetails.description)}
       </div>
     </div>
   );
