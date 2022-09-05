@@ -161,6 +161,8 @@ const ControlSafeForm = ({
   values,
   isVotingExtensionEnabled,
   setFieldValue,
+  setStatus,
+  status,
   showPreview,
   handleShowPreview,
   validateForm,
@@ -397,6 +399,8 @@ const ControlSafeForm = ({
                           values={values}
                           safes={safes}
                           setFieldValue={setFieldValue}
+                          setStatus={setStatus}
+                          status={status}
                           selectedContractMethods={selectedContractMethods}
                           handleSelectedContractMethods={
                             handleSelectedContractMethods
