@@ -20,7 +20,7 @@ import {
 } from '~data/index';
 import { ColonyAndExtensionsEvents, ColonyActions } from '~types/index';
 import {
-  getSpecificActionValuesCheck,
+  getDomainValuesCheck,
   sortMetadataHistory,
   parseDomainMetadata,
   getColonyMetadataMessageDescriptorsIds,
@@ -204,7 +204,7 @@ const ActionsPageEvent = ({
           if (metadataJSON) {
             const previousParsedMetadata = parseDomainMetadata(metadataJSON);
             setPreviousDomainMetadata(previousParsedMetadata);
-            return getSpecificActionValuesCheck(
+            return getDomainValuesCheck(
               eventName as ColonyAndExtensionsEvents,
               actionData,
               previousParsedMetadata,

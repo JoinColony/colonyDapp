@@ -208,7 +208,7 @@ export const getAssignmentEventDescriptorsIds = (
     : `${eventMessageType}.${eventName}.remove`;
 };
 
-interface ColonyMetadata {
+export interface ColonyMetadata {
   colonyDisplayName: string | null;
   colonyAvatarHash: string | null;
   colonyTokens: string[] | null;
@@ -326,15 +326,13 @@ export const sortMetadataHistory = (colonyMetadata) =>
  *
  * Currently only used for the colony metadata changed action
  */
-export const getSpecificActionValuesCheck = (
+
+export const getColonyValuesCheck = (
   actionType: ColonyAndExtensionsEvents,
   {
     colonyDisplayName: currentColonyDisplayName,
     colonyAvatarHash: currentColonyAvatarHash,
     colonyTokens: currentColonyTokens,
-    domainName: currentDomainName,
-    domainPurpose: currentDomainPurpose,
-    domainColor: currentDomainColor,
     verifiedAddresses: currentVerifiedAddresses,
     isWhitelistActivated: currentIsWhitelistActivated,
   }: Partial<ColonyAction> | ColonyMetadata,
@@ -342,63 +340,75 @@ export const getSpecificActionValuesCheck = (
     colonyDisplayName: prevColonyDisplayName,
     colonyAvatarHash: prevColonyAvatarHash,
     colonyTokens: prevColonyTokens,
-    domainName: prevDomainName,
-    domainPurpose: prevDomainPurpose,
-    domainColor: prevDomainColor,
     verifiedAddresses: prevVerifiedAddresses,
     isWhitelistActivated: prevIsWhitelistActivated,
   }: {
     colonyDisplayName?: string | null;
     colonyAvatarHash?: string | null;
     colonyTokens?: string[] | null;
-    domainName?: string | null;
-    domainPurpose?: string | null;
-    domainColor?: string | null;
     verifiedAddresses?: string[] | null;
     isWhitelistActivated?: boolean | null;
   },
 ): { [key: string]: boolean } => {
-  switch (actionType) {
-    case ColonyAndExtensionsEvents.ColonyMetadata: {
-      const nameChanged = prevColonyDisplayName !== currentColonyDisplayName;
-      const logoChanged = prevColonyAvatarHash !== currentColonyAvatarHash;
-      const verifiedAddressesChanged =
-        !isEqual(prevVerifiedAddresses, currentVerifiedAddresses) ||
-        // @NOTE casting to Boolean as IsWhitelistActivated could have a value, null, undefined.
-        Boolean(prevIsWhitelistActivated) !==
-          Boolean(currentIsWhitelistActivated);
+  if (actionType === ColonyAndExtensionsEvents.ColonyMetadata) {
+    const nameChanged = prevColonyDisplayName !== currentColonyDisplayName;
+    const logoChanged = prevColonyAvatarHash !== currentColonyAvatarHash;
+    const verifiedAddressesChanged =
+      !isEqual(prevVerifiedAddresses || [], currentVerifiedAddresses || []) ||
+      // @NOTE casting to Boolean as IsWhitelistActivated could have a value, null, undefined.
+      Boolean(prevIsWhitelistActivated) !==
+        Boolean(currentIsWhitelistActivated);
 
-      /*
-       * Tokens arrays might come from a subgraph query, in which case
-       * they're not really "arrays", so we have to create a new instace of
-       * them in order to sort and compare
-       */
-      const tokensChanged = !isEqual(
-        prevColonyTokens ? prevColonyTokens.slice(0).sort() : [],
-        currentColonyTokens?.slice(0).sort() || [],
-      );
-      return {
-        nameChanged,
-        logoChanged,
-        tokensChanged,
-        verifiedAddressesChanged,
-      };
-    }
-    case ColonyAndExtensionsEvents.DomainMetadata: {
-      const nameChanged = prevDomainName !== currentDomainName;
-      const colorChanged =
-        Number(prevDomainColor) !== Number(currentDomainColor);
-      const descriptionChanged = prevDomainPurpose !== currentDomainPurpose;
-      return {
-        nameChanged,
-        colorChanged,
-        descriptionChanged,
-      };
-    }
-    default: {
-      return {
-        hasValues: false,
-      };
-    }
+    /*
+     * Tokens arrays might come from a subgraph query, in which case
+     * they're not really "arrays", so we have to create a new instace of
+     * them in order to sort and compare
+     */
+    const tokensChanged = !isEqual(
+      prevColonyTokens ? prevColonyTokens.slice(0).sort() : [],
+      currentColonyTokens?.slice(0).sort() || [],
+    );
+    return {
+      nameChanged,
+      logoChanged,
+      tokensChanged,
+      verifiedAddressesChanged,
+    };
   }
+
+  return {
+    hasValues: false,
+  };
+};
+
+export const getDomainValuesCheck = (
+  actionType: ColonyAndExtensionsEvents,
+  {
+    domainName: currentDomainName,
+    domainPurpose: currentDomainPurpose,
+    domainColor: currentDomainColor,
+  }: DomainMetadata,
+  {
+    domainName: prevDomainName,
+    domainPurpose: prevDomainPurpose,
+    domainColor: prevDomainColor,
+  }: {
+    domainName?: string | null;
+    domainPurpose?: string | null;
+    domainColor?: string | null;
+  },
+): { [key: string]: boolean } => {
+  if (actionType === ColonyAndExtensionsEvents.DomainMetadata) {
+    const nameChanged = prevDomainName !== currentDomainName;
+    const colorChanged = Number(prevDomainColor) !== Number(currentDomainColor);
+    const descriptionChanged = prevDomainPurpose !== currentDomainPurpose;
+    return {
+      nameChanged,
+      colorChanged,
+      descriptionChanged,
+    };
+  }
+  return {
+    hasValues: false,
+  };
 };
