@@ -3,8 +3,8 @@ import { defineMessages } from 'react-intl';
 import isEmpty from 'lodash/isEmpty';
 import omit from 'lodash/omit';
 import isEqual from 'lodash/isEqual';
+import isNil from 'lodash/isNil';
 
-import { GNOSIS_NETWORK } from '~constants';
 import { AnyUser, ColonySafe } from '~data/index';
 import { Address } from '~types/index';
 import { Input, Select, SelectOption, Textarea } from '~core/Fields';
@@ -14,6 +14,7 @@ import { DialogSection } from '~core/Dialog';
 import {
   getContractUsefulMethods,
   AbiItemExtended,
+  fetchContractABI,
 } from '~utils/getContractUsefulMethods';
 
 import { FormValues } from '../GnosisControlSafeDialog';
@@ -50,6 +51,8 @@ interface Props {
   transactionFormIndex: number;
   values: FormValues;
   setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
+  setStatus: (status?: any) => void;
+  status: any;
   selectedContractMethods:
     | {
         [key: number]: AbiItemExtended | undefined;
@@ -75,6 +78,8 @@ const ContractInteractionSection = ({
   transactionFormIndex,
   values,
   setFieldValue,
+  setStatus,
+  status,
   selectedContractMethods = {},
   handleSelectedContractMethods,
   safes,
@@ -82,27 +87,46 @@ const ContractInteractionSection = ({
   const [formattedMethodOptions, setFormattedMethodOptions] = useState<
     SelectOption[]
   >([]);
+  const [currentSafeChainId, setCurrentSafeChainId] = useState<number>();
+
   const transactionValues = values.transactions[transactionFormIndex];
-  const contractAddress = transactionValues.contract?.profile?.walletAddress;
+
   const onContractABIChange = useCallback(
-    (abi: string) => {
-      if (abi !== transactionValues.abi) {
+    (abiResponse: any) => {
+      if (abiResponse.status === '0' && status !== abiResponse.message) {
+        setStatus(abiResponse.message);
+      } else if (
+        !isNil(abiResponse.result) &&
+        abiResponse.result !== transactionValues.abi
+      ) {
+        setFieldValue(
+          `transactions.${transactionFormIndex}.abi`,
+          abiResponse.result,
+        );
+
         const updatedSelectedContractMethods = omit(
           selectedContractMethods,
           transactionFormIndex,
         );
 
-        setFieldValue(`transactions.${transactionFormIndex}.abi`, abi);
-        setFieldValue(
-          `transactions.${transactionFormIndex}.contractFunction`,
-          '',
-        );
-        handleSelectedContractMethods(updatedSelectedContractMethods);
+        if (!isEqual(updatedSelectedContractMethods, selectedContractMethods)) {
+          handleSelectedContractMethods(updatedSelectedContractMethods);
+          setFieldValue(
+            `transactions.${transactionFormIndex}.contractFunction`,
+            '',
+          );
+        }
+      }
+
+      if (abiResponse.status !== '0') {
+        setStatus(undefined);
       }
     },
     [
       transactionFormIndex,
       setFieldValue,
+      setStatus,
+      status,
       transactionValues.abi,
       selectedContractMethods,
       handleSelectedContractMethods,
@@ -112,22 +136,43 @@ const ContractInteractionSection = ({
     (safe) => safe.contractAddress === values.safe?.profile?.walletAddress,
   );
 
+  const onContractChange = useCallback(
+    (contract: AnyUser) => {
+      if (selectedSafe?.chainId) {
+        const contractPromise = fetchContractABI(
+          contract.profile.walletAddress,
+          Number(selectedSafe.chainId),
+        );
+        contractPromise.then((data) => {
+          onContractABIChange(data);
+
+          if (Number(selectedSafe.chainId) !== currentSafeChainId) {
+            setCurrentSafeChainId(Number(selectedSafe.chainId));
+          }
+        });
+      }
+    },
+    [selectedSafe, currentSafeChainId, onContractABIChange],
+  );
+
   const usefulMethods: AbiItemExtended[] = useMemo(
-    () =>
-      getContractUsefulMethods(
-        contractAddress,
-        transactionValues.abi,
-        Number(selectedSafe?.chainId) || GNOSIS_NETWORK.chainId,
-        onContractABIChange,
-      ),
-    [transactionValues.abi, selectedSafe, onContractABIChange, contractAddress],
+    () => getContractUsefulMethods(transactionValues.abi),
+    [transactionValues.abi],
   );
 
   useEffect(() => {
-    if (isEmpty(contractAddress) && !isEmpty(transactionValues.abi)) {
-      onContractABIChange('');
+    if (
+      transactionValues.contract &&
+      currentSafeChainId !== Number(selectedSafe?.chainId)
+    ) {
+      onContractChange(transactionValues.contract);
     }
-  }, [contractAddress, onContractABIChange, transactionValues.abi]);
+  }, [
+    currentSafeChainId,
+    selectedSafe,
+    transactionValues.contract,
+    onContractChange,
+  ]);
 
   useEffect(() => {
     const updatedFormattedMethodOptions =
@@ -189,6 +234,7 @@ const ContractInteractionSection = ({
             renderAvatar={renderAvatar}
             disabled={disabledInput}
             placeholder={MSG.userPickerPlaceholder}
+            onSelected={onContractChange}
           />
         </div>
       </DialogSection>
@@ -198,6 +244,7 @@ const ContractInteractionSection = ({
           name={`transactions.${transactionFormIndex}.abi`}
           appearance={{ colorSchema: 'grey', resizable: 'vertical' }}
           disabled={disabledInput}
+          status={status}
         />
       </DialogSection>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
@@ -234,7 +281,7 @@ const ContractInteractionSection = ({
               disabled={disabledInput}
               placeholder={`${input.name} (${input.type})`}
               formattingOptions={
-                input.type === 'uint256' || input.type === 'int256'
+                input.type.includes('int') && input.type.slice(0, -2) !== '[]'
                   ? {
                       numeral: true,
                       numeralPositiveOnly: input.type === 'uint256',
