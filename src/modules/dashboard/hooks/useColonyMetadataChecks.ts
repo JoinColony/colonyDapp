@@ -98,14 +98,6 @@ const useColonyMetadataChecks = (
               actionData,
               prevColonyMetadata,
             );
-            // console.log(
-            //   '🚀 ~ file: useColonyMetadataChecks.ts ~ line 101 ~ useEffect ~ newMetadataChecks',
-            //   newMetadataChecks,
-            // );
-            // console.log(
-            //   '🚀 ~ file: useColonyMetadataChecks.ts ~ line 104 ~ useEffect ~ metadataChecks',
-            //   metadataChecks,
-            // );
 
             if (!isEqual(newMetadataChecks, metadataChecks)) {
               setMetadataChecks(newMetadataChecks);
