@@ -2650,6 +2650,7 @@ export type SubgraphMotionsSubscriptionVariables = Exact<{
   colonyAddress: Scalars['String'];
   extensionAddress: Scalars['String'];
   motionAction?: Maybe<Scalars['String']>;
+  motionActionNot?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -7237,8 +7238,8 @@ export function useSubgraphEventsThatAreActionsSubscription(baseOptions?: Apollo
 export type SubgraphEventsThatAreActionsSubscriptionHookResult = ReturnType<typeof useSubgraphEventsThatAreActionsSubscription>;
 export type SubgraphEventsThatAreActionsSubscriptionResult = Apollo.SubscriptionResult<SubgraphEventsThatAreActionsSubscription>;
 export const SubgraphMotionsDocument = gql`
-    subscription SubgraphMotions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $extensionAddress: String!, $motionAction: String) {
-  motions(skip: $skip, first: $first, where: {associatedColony: $colonyAddress, extensionAddress: $extensionAddress, action: $motionAction}) {
+    subscription SubgraphMotions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $extensionAddress: String!, $motionAction: String, $motionActionNot: String) {
+  motions(skip: $skip, first: $first, where: {associatedColony: $colonyAddress, extensionAddress: $extensionAddress, action: $motionAction, action_not: $motionActionNot}) {
     id
     fundamentalChainId
     associatedColony {
@@ -7304,6 +7305,7 @@ export const SubgraphMotionsDocument = gql`
  *      colonyAddress: // value for 'colonyAddress'
  *      extensionAddress: // value for 'extensionAddress'
  *      motionAction: // value for 'motionAction'
+ *      motionActionNot: // value for 'motionActionNot'
  *   },
  * });
  */
