@@ -155,6 +155,7 @@ subscription SubgraphMotions(
   $colonyAddress: String!
   $extensionAddress: String!
   $motionAction: String
+  $motionActionNot: String
 ) {
   motions(
     skip: $skip
@@ -163,6 +164,7 @@ subscription SubgraphMotions(
       associatedColony: $colonyAddress
       extensionAddress: $extensionAddress
       action: $motionAction
+      action_not: $motionActionNot
     }
   ) {
     id
