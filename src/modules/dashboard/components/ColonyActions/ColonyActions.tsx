@@ -31,6 +31,7 @@ import {
   FormattedAction,
   Address,
 } from '~types/index';
+import { ACTION_DECISION_MOTION_CODE } from '~constants';
 
 import styles from './ColonyActions.css';
 
@@ -155,6 +156,7 @@ const ColonyActions = ({
        */
       colonyAddress: colonyAddress?.toLowerCase(),
       extensionAddress: votingReputationExtension?.address?.toLowerCase() || '',
+      motionActionNot: ACTION_DECISION_MOTION_CODE,
     },
   });
 
