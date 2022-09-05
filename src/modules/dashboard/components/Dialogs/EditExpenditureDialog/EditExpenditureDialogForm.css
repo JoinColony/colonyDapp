@@ -16,6 +16,8 @@
 }
 
 .forceRow {
+  display: flex;
+  justify-content: space-between;
   align-items: baseline;
   padding-top: 16px;
   white-space: nowrap;
@@ -53,15 +55,4 @@
 
 .toggleContainer label {
   margin-bottom: 4px;
-}
-
-.row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 11px 0 12px;
-  font-size: var(--size-smallish);
-  font-weight: var(--weight-bold);
-  line-height: 18px;
-  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
 }

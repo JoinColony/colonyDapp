@@ -1,13 +1,6 @@
 .row {
   composes: row from '../EditExpenditureDialogForm.css';
-}
-
-.label {
-  composes: label from '../NewDelay/NewDelay.css';
-}
-
-.smallerPadding {
-  padding: 4px 0 8px;
+  padding: 7px 0 8px;
 }
 
 .valueContainer {

@@ -58,12 +58,12 @@ const Payments = ({ sidebarRef, colony }: Props) => {
       value: [
         {
           amount: undefined,
-          tokenAddress: colony.nativeTokenAddress,
+          tokenAddress: colony?.nativeTokenAddress,
           id: nanoid(),
         },
       ],
     };
-  }, [colony.nativeTokenAddress]);
+  }, [colony]);
 
   const onToggleButtonClick = useCallback(
     (index) => {

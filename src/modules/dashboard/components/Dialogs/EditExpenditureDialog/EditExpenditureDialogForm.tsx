@@ -19,8 +19,8 @@ import { ValuesType } from '~pages/ExpenditurePage/types';
 import { Recipient as RecipientType } from '~dashboard/ExpenditurePage/Payments/types';
 
 import { FormValuesType } from './EditExpenditureDialog';
-import ChangedRecipients from './ChnagedRecipients';
 import ChangedValues from './ChangedValues';
+import ChangedMultiple from './ChangedMultiple';
 import styles from './EditExpenditureDialogForm.css';
 
 export const MSG = defineMessages({
@@ -124,28 +124,23 @@ const EditExpenditureDialogForm = ({
   }, [confirmedValues]);
 
   const newData = useMemo(() => {
-    const newRecipients = confirmedValuesWithIds.find(
-      (newValue) => newValue.key === 'recipients',
-    );
     const newValues = confirmedValuesWithIds.filter(
-      (newValue) => newValue.key !== 'recipients',
+      (newValue) => !Array.isArray(newValue.value),
     );
+    const newMultiple = confirmedValuesWithIds.filter((newValue) =>
+      Array.isArray(newValue.value),
+    );
+
     return {
-      newRecipients,
       newValues,
+      newMultiple,
     };
   }, [confirmedValuesWithIds]);
 
   return (
     <>
       <DialogSection>
-        <div
-          className={classNames(
-            styles.row,
-            styles.withoutPadding,
-            styles.forceRow,
-          )}
-        >
+        <div className={classNames(styles.withoutPadding, styles.forceRow)}>
           <MotionDomainSelect colony={colony} disabled={noChanges} />
           {canCancelExpenditure && isVotingExtensionEnabled && (
             <div className={styles.toggleContainer}>
@@ -188,13 +183,14 @@ const EditExpenditureDialogForm = ({
           </div>
         ) : (
           <>
-            <ChangedRecipients
-              colony={colony}
-              newRecipients={newData.newRecipients?.value as any}
+            <ChangedMultiple
+              newValues={newData.newMultiple}
               oldValues={oldValues}
+              colony={colony}
             />
             <ChangedValues
-              newValues={newData.newValues as any}
+              newValues={newData.newValues}
+              oldValues={oldValues}
               colony={colony}
               discardChange={discardChange}
             />

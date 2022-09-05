@@ -1,4 +1,4 @@
-import { isEqual, uniq, isEmpty, assign, isNil } from 'lodash';
+import { isEqual, uniq, isEmpty, assign, isNil, merge } from 'lodash';
 import { nanoid } from 'nanoid';
 
 interface Delay {
@@ -48,6 +48,78 @@ export const setClaimDate = ({
   return currentDate.setSeconds(currentDate.getSeconds() + differenceInSeconds);
 };
 
+const skip = [
+  'id',
+  'claimed',
+  'isExpanded',
+  'removed',
+  'created',
+  'isChanged',
+  'claimDate',
+  'expenditure',
+];
+
+const checkArray = (newArray, oldArray) => {
+  const allIds = uniq([
+    ...newArray?.map((val) => val.id),
+    ...oldArray?.map((val) => val.id),
+  ]);
+
+  const changes = allIds
+    .map((id) => {
+      const newValueById = newArray?.find((val) => val.id === id);
+      const oldValueById = oldArray?.find((val) => val.id === id);
+
+      if (!newValueById && oldValueById) {
+        // value has been removed, so we set removed field to true
+        return { id, removed: true };
+      }
+
+      if (newValueById && !oldValueById) {
+        // value has been added, so we set created field to true
+        return { ...newValueById, created: true };
+      }
+
+      if (typeof newValueById === 'object') {
+        const change = Object.entries(newValueById).reduce(
+          (acc, [currKey, currVal]) => {
+            // we don't want to check if 'isExpanded', 'id', etc. have been changed
+            if (skip.includes(currKey)) {
+              return acc;
+            }
+
+            // if delay amount hasn't been set
+            if (currKey === 'delay' && isDelayType(currVal)) {
+              if (
+                isEmpty(currVal.amount) &&
+                isEmpty(oldValueById[currKey].amount)
+              ) {
+                return acc;
+              }
+            }
+            if (!isEqual(currVal, oldValueById[currKey])) {
+              return { ...acc, ...{ [currKey]: currVal } };
+            }
+
+            return acc;
+          },
+          {},
+        );
+
+        return isEmpty(change) ? undefined : { id, ...change };
+      }
+
+      if (!isEqual(newValueById, oldValueById)) {
+        return newValueById;
+      }
+
+      return undefined;
+    })
+    .filter((change) => !!change);
+
+  return changes;
+};
+
 export const findDifferences = (
   newValues: Record<string, any>,
   oldValues?: Record<string, any>,
@@ -58,7 +130,7 @@ export const findDifferences = (
 
   const allKeys = uniq([...Object.keys(newValues), ...Object.keys(oldValues)]);
 
-  const differentValues = allKeys.reduce((result, key) => {
+  const differentValues = allKeys?.reduce((result, key) => {
     if (key === 'id') {
       return result;
     }
@@ -67,66 +139,28 @@ export const findDifferences = (
     const newValue = newValues[key];
 
     if (Array.isArray(newValue)) {
-      const allIds = uniq([
-        ...newValue.map((val) => val.id),
-        ...oldValue.map((val) => val.id),
-      ]);
-      const changes = allIds
-        .map((id, index) => {
-          const newValueById = newValue.find((val) => val.id === id);
-          const oldValueById = oldValue.find((val) => val.id === id);
-
-          if (!newValueById && oldValueById) {
-            // value has been removed, so we set removed field to true
-            return { id, removed: true };
-          }
-
-          if (newValueById && !oldValueById) {
-            // value has been added, so we set created field to true
-            return { ...newValueById, created: true };
-          }
-
-          // check each value in an object
-          if (typeof newValueById === 'object') {
-            const change = Object.entries(newValueById).reduce(
-              (acc, [currKey, currVal]) => {
-                const initialVal = oldValue[index][currKey];
-
-                // we don't want to check if 'isExpanded' and 'id' have been changed
-                if (currKey === 'isExpanded' || currKey === 'id') {
-                  return acc;
-                }
-
-                // if delay amount hasn't been set
-                if (currKey === 'delay' && isDelayType(currVal)) {
-                  if (isEmpty(currVal.amount) && isEmpty(initialVal.amount)) {
-                    return acc;
-                  }
-                }
-
-                if (!isEqual(currVal, initialVal)) {
-                  return { ...acc, ...{ [currKey]: currVal } };
-                }
-
-                return acc;
-              },
-              {},
-            );
-
-            return Object.keys(change).length > 0
-              ? { id, ...change }
-              : undefined;
-          }
-
-          if (!isEqual(newValueById, oldValueById)) {
-            return newValueById;
-          }
-
-          return undefined;
-        })
-        .filter((change) => !!change);
+      const changes = checkArray(newValue, oldValue);
 
       return changes.length > 0 ? { ...result, ...{ [key]: changes } } : result;
+    }
+
+    if (typeof newValue === 'object' && typeof oldValue === 'object') {
+      const change = Object.entries(newValue).reduce(
+        (acc, [currKey, currVal]) => {
+          if (Array.isArray(currVal)) {
+            const changes = checkArray(currVal, oldValue[currKey]);
+
+            return { ...acc, ...(!isEmpty(changes) && { [currKey]: changes }) };
+          }
+          if (!isEqual(currVal, oldValue[currKey])) {
+            return { ...acc, ...{ [currKey]: currVal } };
+          }
+
+          return acc;
+        },
+        {},
+      );
+      return { ...result, ...(!isEmpty(change) && { [key]: change }) };
     }
 
     if (!isEqual(oldValue, newValue)) {
@@ -204,11 +238,11 @@ export const updateValues = (values, confirmedValues) => {
       },
       {},
     );
-    const here = assign({}, newValues, newConfirmed);
 
-    return here;
+    return assign({}, newValues, newConfirmed);
   }
-  return assign({}, values, confirmedValues);
+
+  return merge({}, values, confirmedValues);
 };
 
 type GetTimeDifferenceParameters = {
