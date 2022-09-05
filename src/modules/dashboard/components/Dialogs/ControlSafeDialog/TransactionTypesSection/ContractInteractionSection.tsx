@@ -138,19 +138,17 @@ const ContractInteractionSection = ({
 
   const onContractChange = useCallback(
     (contract: AnyUser) => {
-      if (selectedSafe?.chainId) {
-        const contractPromise = fetchContractABI(
-          contract.profile.walletAddress,
-          Number(selectedSafe.chainId),
-        );
-        contractPromise.then((data) => {
-          onContractABIChange(data);
+      const contractPromise = fetchContractABI(
+        contract.profile.walletAddress,
+        Number(selectedSafe?.chainId),
+      );
+      contractPromise.then((data) => {
+        onContractABIChange(data);
 
-          if (Number(selectedSafe.chainId) !== currentSafeChainId) {
-            setCurrentSafeChainId(Number(selectedSafe.chainId));
-          }
-        });
-      }
+        if (Number(selectedSafe?.chainId) !== currentSafeChainId) {
+          setCurrentSafeChainId(Number(selectedSafe?.chainId));
+        }
+      });
     },
     [selectedSafe, currentSafeChainId, onContractABIChange],
   );
@@ -163,7 +161,8 @@ const ContractInteractionSection = ({
   useEffect(() => {
     if (
       transactionValues.contract &&
-      currentSafeChainId !== Number(selectedSafe?.chainId)
+      !isNil(selectedSafe) &&
+      currentSafeChainId !== Number(selectedSafe.chainId)
     ) {
       onContractChange(transactionValues.contract);
     }
