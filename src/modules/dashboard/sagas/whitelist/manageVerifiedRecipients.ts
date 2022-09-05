@@ -15,14 +15,13 @@ import {
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
 
-import { updateColonyDisplayCache, uploadIfpsAnnotation } from '../utils';
+import { updateColonyDisplayCache, uploadIfsWithFallback } from '../utils';
 
 function* manageVerifiedRecipients({
   payload: {
@@ -104,18 +103,13 @@ function* manageVerifiedRecipients({
     /*
      * Upload colony metadata to IPFS
      */
-    let colonyMetadataIpfsHash = null;
-
-    colonyMetadataIpfsHash = yield call(
-      ipfsUpload,
-      JSON.stringify({
-        colonyDisplayName,
-        colonyAvatarHash,
-        verifiedAddresses,
-        colonyTokens,
-        isWhitelistActivated,
-      }),
-    );
+    const colonyMetadataIpfsHash = yield call(uploadIfsWithFallback, {
+      colonyDisplayName,
+      colonyAvatarHash,
+      verifiedAddresses,
+      colonyTokens,
+      isWhitelistActivated,
+    });
 
     yield put(
       transactionAddParams(editColony.id, [
@@ -139,10 +133,9 @@ function* manageVerifiedRecipients({
       /*
        * Upload annotation metadata to IPFS
        */
-      const annotationMessageIpfsHash = yield call(
-        uploadIfpsAnnotation,
+      const annotationMessageIpfsHash = yield call(uploadIfsWithFallback, {
         annotationMessage,
-      );
+      });
 
       yield put(
         transactionAddParams(annotateEditColony.id, [

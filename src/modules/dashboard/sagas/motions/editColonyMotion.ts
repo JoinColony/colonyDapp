@@ -6,13 +6,12 @@ import { ContextModule, TEMP_getContext } from '~context/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 
-import { uploadIfpsAnnotation } from '../utils';
+import { uploadIfsWithFallback } from '../utils';
 import {
   createTransaction,
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
@@ -89,28 +88,21 @@ function* editColonyMotion({
      */
     let colonyAvatarIpfsHash = null;
     if (colonyAvatarImage && hasAvatarChanged) {
-      colonyAvatarIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          image: colonyAvatarImage,
-        }),
-      );
+      colonyAvatarIpfsHash = yield call(uploadIfsWithFallback, {
+        image: colonyAvatarImage,
+      });
     }
 
     /*
      * Upload colony metadata to IPFS
      */
-    let colonyMetadataIpfsHash = null;
-    colonyMetadataIpfsHash = yield call(
-      ipfsUpload,
-      JSON.stringify({
-        colonyDisplayName,
-        colonyAvatarHash: hasAvatarChanged
-          ? colonyAvatarIpfsHash
-          : colonyAvatarHash,
-        colonyTokens,
-      }),
-    );
+    const colonyMetadataIpfsHash = yield call(uploadIfsWithFallback, {
+      colonyDisplayName,
+      colonyAvatarHash: hasAvatarChanged
+        ? colonyAvatarIpfsHash
+        : colonyAvatarHash,
+      colonyTokens,
+    });
 
     const encodedAction = colonyClient.interface.functions.editColony.encode([
       colonyMetadataIpfsHash,
@@ -173,7 +165,7 @@ function* editColonyMotion({
     yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
-      const ipfsHash = yield call(uploadIfpsAnnotation, annotationMessage);
+      const ipfsHash = yield call(uploadIfsWithFallback, { annotationMessage });
       yield put(transactionPending(annotateEditColonyMotion.id));
 
       yield put(

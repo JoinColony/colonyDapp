@@ -9,13 +9,12 @@ import {
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
-import { updateDomainReputation } from '../utils';
+import { updateDomainReputation, uploadIfsWithFallback } from '../utils';
 
 function* manageReputationAction({
   payload: {
@@ -110,13 +109,12 @@ function* manageReputationAction({
     if (annotationMessage) {
       yield put(transactionPending(annotateManageReputation.id));
 
-      let annotationMessageIpfsHash = null;
-      annotationMessageIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
-      );
+      /*
+       * Upload annotaiton to IPFS
+       */
+      const annotationMessageIpfsHash = yield call(uploadIfsWithFallback, {
+        annotationMessage,
+      });
 
       yield put(
         transactionAddParams(annotateManageReputation.id, [

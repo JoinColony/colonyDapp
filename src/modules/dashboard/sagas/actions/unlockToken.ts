@@ -14,12 +14,12 @@ import {
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
+import { uploadIfsWithFallback } from '../utils';
 
 function* tokenUnlockAction({
   meta,
@@ -114,13 +114,9 @@ function* tokenUnlockAction({
       /*
        * Upload annotation metadata to IPFS
        */
-      let annotationMessageIpfsHash = null;
-      annotationMessageIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
-      );
+      const annotationMessageIpfsHash = yield call(uploadIfsWithFallback, {
+        annotationMessage,
+      });
 
       yield put(
         transactionAddParams(annotateTokenUnlock.id, [

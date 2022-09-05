@@ -12,13 +12,12 @@ import { ContextModule, TEMP_getContext } from '~context/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 
-import { uploadIfpsAnnotation } from '../utils';
+import { uploadIfsWithFallback } from '../utils';
 import {
   createTransaction,
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
@@ -108,15 +107,11 @@ function* createEditDomainMotion({
     /*
      * Upload domain metadata to IPFS
      */
-    let domainMetadataIpfsHash = null;
-    domainMetadataIpfsHash = yield call(
-      ipfsUpload,
-      JSON.stringify({
-        domainName,
-        domainColor,
-        domainPurpose,
-      }),
-    );
+    const domainMetadataIpfsHash = yield call(uploadIfsWithFallback, {
+      domainName,
+      domainColor,
+      domainPurpose,
+    });
 
     const encodedAction = colonyClient.interface.functions[
       isCreateDomain
@@ -183,7 +178,7 @@ function* createEditDomainMotion({
     yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
-      const ipfsHash = yield call(uploadIfpsAnnotation, annotationMessage);
+      const ipfsHash = yield call(uploadIfsWithFallback, { annotationMessage });
       yield put(transactionPending(annotateMotion.id));
 
       yield put(transactionAddParams(annotateMotion.id, [txHash, ipfsHash]));

@@ -15,13 +15,12 @@ import {
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
-import { updateColonyDisplayCache, uploadIfpsAnnotation } from '../utils';
+import { updateColonyDisplayCache, uploadIfsWithFallback } from '../utils';
 
 function* editColonyAction({
   payload: {
@@ -110,30 +109,23 @@ function* editColonyAction({
      */
     let colonyAvatarIpfsHash = null;
     if (colonyAvatarImage && hasAvatarChanged) {
-      colonyAvatarIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          image: colonyAvatarImage,
-        }),
-      );
+      colonyAvatarIpfsHash = yield call(uploadIfsWithFallback, {
+        image: colonyAvatarImage,
+      });
     }
 
     /*
      * Upload colony metadata to IPFS
      */
-    let colonyMetadataIpfsHash = null;
-    colonyMetadataIpfsHash = yield call(
-      ipfsUpload,
-      JSON.stringify({
-        colonyDisplayName,
-        colonyAvatarHash: hasAvatarChanged
-          ? colonyAvatarIpfsHash
-          : colonyAvatarHash,
-        colonyTokens,
-        verifiedAddresses,
-        isWhitelistActivated,
-      }),
-    );
+    const colonyMetadataIpfsHash = yield call(uploadIfsWithFallback, {
+      colonyDisplayName,
+      colonyAvatarHash: hasAvatarChanged
+        ? colonyAvatarIpfsHash
+        : colonyAvatarHash,
+      colonyTokens,
+      verifiedAddresses,
+      isWhitelistActivated,
+    });
 
     yield put(
       transactionAddParams(editColony.id, [
@@ -157,10 +149,9 @@ function* editColonyAction({
       /*
        * Upload annotation metadata to IPFS
        */
-      const annotationMessageIpfsHash = yield call(
-        uploadIfpsAnnotation,
+      const annotationMessageIpfsHash = yield call(uploadIfsWithFallback, {
         annotationMessage,
-      );
+      });
 
       yield put(
         transactionAddParams(annotateEditColony.id, [

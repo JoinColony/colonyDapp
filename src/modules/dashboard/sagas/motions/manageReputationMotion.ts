@@ -16,13 +16,12 @@ import {
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
-import { updateDomainReputation } from '../utils';
+import { updateDomainReputation, uploadIfsWithFallback } from '../utils';
 
 function* manageReputationMotion({
   payload: {
@@ -162,20 +161,6 @@ function* manageReputationMotion({
     }
 
     yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_CREATED);
-    if (annotationMessage) {
-      yield takeFrom(
-        annotateManageReputationMotion.channel,
-        ActionTypes.TRANSACTION_CREATED,
-      );
-    }
-
-    let ipfsHash = null;
-    ipfsHash = yield call(
-      ipfsUpload,
-      JSON.stringify({
-        annotationMessage,
-      }),
-    );
 
     yield put(transactionReady(createMotion.id));
 
@@ -188,6 +173,16 @@ function* manageReputationMotion({
     yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
+      yield takeFrom(
+        annotateManageReputationMotion.channel,
+        ActionTypes.TRANSACTION_CREATED,
+      );
+
+      /*
+       * Upload annotaiton to IPFS
+       */
+      const ipfsHash = yield call(uploadIfsWithFallback, { annotationMessage });
+
       yield put(transactionPending(annotateManageReputationMotion.id));
 
       yield put(

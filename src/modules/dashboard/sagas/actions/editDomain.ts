@@ -10,13 +10,12 @@ import {
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 
-import { uploadIfpsAnnotation } from '../utils';
+import { uploadIfsWithFallback } from '../utils';
 import {
   createTransaction,
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
@@ -96,15 +95,11 @@ function* editDomainAction({
     /*
      * Upload domain metadata to IPFS
      */
-    let domainMetadataIpfsHash = null;
-    domainMetadataIpfsHash = yield call(
-      ipfsUpload,
-      JSON.stringify({
-        domainName,
-        domainColor,
-        domainPurpose,
-      }),
-    );
+    const domainMetadataIpfsHash = yield call(uploadIfsWithFallback, {
+      domainName,
+      domainColor,
+      domainPurpose,
+    });
 
     yield put(
       transactionAddParams(editDomain.id, [
@@ -129,10 +124,9 @@ function* editDomainAction({
       /*
        * Upload annotationMessage to IPFS
        */
-      const annotationMessageIpfsHash = yield call(
-        uploadIfpsAnnotation,
+      const annotationMessageIpfsHash = yield call(uploadIfsWithFallback, {
         annotationMessage,
-      );
+      });
 
       yield put(
         transactionAddParams(annotateEditDomain.id, [
