@@ -1,4 +1,4 @@
-import { AbiItem, isAddress, keccak256 } from 'web3-utils';
+import { AbiItem, keccak256 } from 'web3-utils';
 
 import {
   BINANCE_NETWORK,
@@ -15,7 +15,7 @@ export interface AbiItemExtended extends AbiItem {
   signatureHash: string;
 }
 
-const fetchContractABI = async (
+export const fetchContractABI = async (
   contractAddress: string,
   safeChainId: number,
 ) => {
@@ -51,7 +51,7 @@ const fetchContractABI = async (
 
     const responseJSON = await response.json();
 
-    return responseJSON.result || responseJSON.message;
+    return responseJSON;
   } catch (error) {
     console.error('Failed to retrieve ABI', error);
     return '';
@@ -88,21 +88,9 @@ const extractUsefulMethods = (abi: AbiItem[]): AbiItemExtended[] => {
     });
 };
 
-export const getContractUsefulMethods = (
-  contractAddress: string | undefined,
-  contractABI: string | undefined,
-  safeChainId: number,
-  handleContractABIChange: (abi: string) => void,
-) => {
+export const getContractUsefulMethods = (contractABI: string | undefined) => {
   let parsedContractABI: AbiItem[] = [];
   let usefulMethods: AbiItemExtended[] = [];
-
-  if (!contractABI && contractAddress && isAddress(contractAddress)) {
-    const contractPromise = fetchContractABI(contractAddress, safeChainId);
-    contractPromise.then((data) => {
-      handleContractABIChange(data);
-    });
-  }
 
   try {
     parsedContractABI = JSON.parse(contractABI || '[]');
