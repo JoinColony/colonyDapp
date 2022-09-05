@@ -1,7 +1,6 @@
 import { MessageDescriptor, useIntl } from 'react-intl';
 import React from 'react';
 import isArray from 'lodash/isArray';
-import isNil from 'lodash/isNil';
 
 import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
@@ -52,13 +51,22 @@ const InputStatus = ({
   };
   const statusText =
     typeof status === 'object' ? formatMessage(status, statusValues) : status;
-  const text = getErrorText() || statusText;
+  const getText = () => {
+    if (!!error && touched) {
+      return getErrorText();
+    }
+    if (status) {
+      return statusText;
+    }
+    return null;
+  };
+  const text = getText();
   const Element = appearance.direction === 'horizontal' ? 'span' : 'p';
   return (
     <Element
       className={getMainClasses(appearance, styles, {
-        error: !!error,
-        hidden: !text || (!!error && !isNil(touched) && !touched),
+        error: !!error && !!touched,
+        hidden: !text,
       })}
     >
       {text}
