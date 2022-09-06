@@ -1,5 +1,15 @@
-import { useMemo } from 'react';
-import { Colony, useMembersSubscription } from '~data/index';
+import { uniqBy } from 'lodash';
+import { useEffect, useMemo, useState } from 'react';
+import apolloClient from '~context/apolloClient';
+import {
+  Colony,
+  Token,
+  TokenDocument,
+  TokenQuery,
+  TokenQueryVariables,
+  useMembersSubscription,
+} from '~data/index';
+
 import { BatchDataItem } from './types';
 
 export const useCalculateBatchPayment = (
@@ -9,19 +19,53 @@ export const useCalculateBatchPayment = (
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress: colony.colonyAddress || '' },
   });
+  const [uniqTokens, setUniqTokens] = useState<
+    (
+      | Pick<
+          Token,
+          'symbol' | 'id' | 'address' | 'iconHash' | 'decimals' | 'name'
+        >
+      | undefined
+    )[]
+  >();
+
+  useEffect(() => {
+    const fetchTokens = async () => {
+      const uniq = uniqBy(data, 'token');
+      const tokensData = await Promise.all(
+        uniq
+          .map(async ({ token }) => {
+            try {
+              const { data: tokenData } = await apolloClient.query<
+                TokenQuery,
+                TokenQueryVariables
+              >({
+                query: TokenDocument,
+                variables: { address: token },
+              });
+              return tokenData && tokenData.token;
+            } catch (error) {
+              return undefined;
+            }
+          })
+          .filter((token) => !!token),
+      );
+      setUniqTokens(tokensData);
+    };
+    fetchTokens();
+  }, [data]);
 
   return useMemo(() => {
     if (!data) {
       return null;
     }
-    const { tokens: colonyTokens } = colony || {};
 
     const validatedData = data.map(({ recipient, amount, token }) => {
       const correctRecipient = colonyMembers?.subscribedUsers.find(
         (user) => user.id === recipient,
       );
-      const correctToken = colonyTokens?.find(
-        (tokenItem) => tokenItem.id === token,
+      const correctToken = uniqTokens?.find(
+        (tokenItem) => tokenItem?.id === token,
       );
       return {
         recipient: correctRecipient ? recipient : undefined,
@@ -34,8 +78,8 @@ export const useCalculateBatchPayment = (
       const correctRecipient = colonyMembers?.subscribedUsers.find(
         (user) => user.id === item.recipient,
       );
-      const correctToken = colonyTokens?.find(
-        (tokenItem) => tokenItem.id === item.token,
+      const correctToken = uniqTokens?.find(
+        (tokenItem) => tokenItem?.id === item.token,
       );
       return !!item.amount && correctRecipient && correctToken;
     });
@@ -52,8 +96,8 @@ export const useCalculateBatchPayment = (
 
     const tokens = Object.entries(amount || {})?.map(
       ([tokenId, tokenValue]) => {
-        const token = colonyTokens?.find(
-          (tokenItem) => tokenItem.id === tokenId,
+        const token = uniqTokens?.find(
+          (tokenItem) => tokenItem?.id === tokenId,
         );
 
         return {
@@ -69,5 +113,5 @@ export const useCalculateBatchPayment = (
       invalidRows: data.length !== filteredData.length,
       validatedData,
     };
-  }, [data, colony, colonyMembers]);
+  }, [data, colonyMembers, uniqTokens]);
 };
