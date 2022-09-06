@@ -29,7 +29,7 @@ const eventsMessageDescriptors = {
   [`event.${ColonyAndExtensionsEvents.ColonyMetadata}.logo`]: `{initiator} changed this colony's logo`,
   [`event.${ColonyAndExtensionsEvents.ColonyMetadata}.tokens`]: `{initiator} changed this colony's tokens`,
   [`event.${ColonyAndExtensionsEvents.ColonyMetadata}.verifiedAddresses`]: `{initiator} updated this colony's address book`,
-  [`event.${ColonyAndExtensionsEvents.ColonyMetadata}.safeRemoved`]: `{initiator} removed {removedSafesString} using the Administration and Funding permissions.`,
+  [`event.${ColonyAndExtensionsEvents.ColonyMetadata}.safeRemoved`]: `{initiator} removed {removedSafesString} using the Administration and Funding permissions`,
   [`event.${ColonyAndExtensionsEvents.ColonyMetadata}.safeAdded`]: `{initiator} added the Safe {addedSafeAddress} from {chainName} using the Administration and Funding permissions`,
   [`event.${ColonyAndExtensionsEvents.ColonyMetadata}.fallback`]: `{initiator} changed this colony's metadata, but the values are the same`,
   [`event.${ColonyAndExtensionsEvents.DomainMetadata}.all`]: `{initiator} changed teams's name, description, color from {oldName}, {oldDescription}, {oldColor} to {domainName}, {domainPurpose}, {domainColor}`,
