@@ -11,7 +11,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 27px 0 8px;
+  padding-top: 20px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   line-height: 18px;
@@ -69,5 +69,5 @@
   composes: headerStyles from '../ChangedMultiple/ChangedMultiple.css';
   display: flex;
   justify-content: space-between;
-  padding: 7px 0;
+  padding: 6px 0;
 }
