@@ -57,6 +57,7 @@
 .tableHeader {
   display: flex;
   align-items: center;
+  margin-right: 16px;
   padding: 0px 0 15px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
@@ -66,4 +67,29 @@
 
 .error {
   color: var(--danger);
+}
+
+.items {
+  margin-right: 16px;
+  max-height: calc(100vh - 320px);
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 9px;
+    border-radius: var(--radius-normal);
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: var(--radius-normal);
+    background-color: var(--colony-light-blue);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    width: 5px;
+    border-radius: var(--radius-normal);
+    border-right: 2px solid var(--colony-light-blue);
+    border-left: 2px solid var(--colony-light-blue);
+    background-color: color-mod(var(--temp-grey-blue-7) alpha(65%));
+  }
 }
