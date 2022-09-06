@@ -34,6 +34,7 @@ export default gql`
     type: String!
     args: SubscriptionMotionArguments!
     timeoutPeriods: MotionTimeoutPeriods!
+    annotationHash: String!
   }
 
   type MotionTimeoutPeriods {
