@@ -213,3 +213,67 @@ subscription SubgraphMotions(
     }
   }
 }
+
+subscription SubgraphDecisions(
+  $skip: Int = 0
+  $first: Int = 1000
+  $colonyAddress: String!
+  $extensionAddress: String!
+  $motionAction: String
+) {
+  motions(
+    skip: $skip
+    first: $first
+    where: {
+      associatedColony: $colonyAddress
+      extensionAddress: $extensionAddress
+      action: $motionAction
+    }
+  ) {
+    id
+    fundamentalChainId
+    associatedColony {
+      colonyAddress: id
+      id: colonyChainId
+      token {
+        address: id
+        decimals
+        symbol
+      }
+    }
+    transaction {
+      hash: id
+      block {
+        id
+        timestamp
+      }
+    }
+    extensionAddress
+    agent
+    domain {
+      ethDomainId: domainChainId
+      name
+    }
+    stakes
+    requiredStake
+    escalated
+    action
+    state @client
+    type @client
+    args @client {
+      amount
+      token {
+        address: id
+        symbol
+        decimals
+      }
+    }
+    timeoutPeriods @client {
+      timeLeftToStake
+      timeLeftToSubmit
+      timeLeftToReveal
+      timeLeftToEscalate
+    }
+    annotationHash @client
+  }
+}

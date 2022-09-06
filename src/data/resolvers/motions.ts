@@ -13,6 +13,7 @@ import { Resolvers } from '@apollo/client';
 import { Context } from '~context/index';
 import { createAddress } from '~utils/web3';
 import {
+  getAnnotationFromSubgraph,
   getMotionActionType,
   getMotionState,
   parseSubgraphEvent,
@@ -1291,6 +1292,16 @@ export const motionsResolvers = ({
           decimals,
         },
       };
+    },
+    async annotationHash({ transaction, agent }) {
+      const {
+        values: { metadata: annotationHash },
+      } = await getAnnotationFromSubgraph(
+        agent,
+        transaction.hash,
+        apolloClient,
+      );
+      return annotationHash;
     },
   },
 });
