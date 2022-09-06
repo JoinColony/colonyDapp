@@ -7,7 +7,6 @@ import { Input } from '~core/Fields';
 import UserAvatar from '~core/UserAvatar';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import { DialogSection } from '~core/Dialog';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import styles from './TransactionTypesSection.css';
 
@@ -43,16 +42,13 @@ const renderAvatar = (address: Address, item: AnyUser) => (
 );
 
 const RawTransactionSection = ({
-  colony: { colonyAddress, nativeTokenAddress, tokens },
+  colony: { colonyAddress },
   disabledInput,
   transactionFormIndex,
 }: Props) => {
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress },
   });
-  const nativeToken = tokens.find(
-    ({ address }) => address === nativeTokenAddress,
-  );
 
   return (
     <>
@@ -83,9 +79,7 @@ const RawTransactionSection = ({
           formattingOptions={{
             numeral: true,
             numeralPositiveOnly: true,
-            numeralDecimalScale: getTokenDecimalsWithFallback(
-              nativeToken?.decimals,
-            ),
+            numeralDecimalScale: 0,
           }}
         />
       </DialogSection>
