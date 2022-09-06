@@ -34,6 +34,7 @@ const actionsMessageDescriptors = {
       ${ColonyExtendedActions.TokensUpdated} {Colony tokens were updated}
       ${ColonyExtendedActions.SafeRemoved} {Remove Safe}
       ${ColonyExtendedActions.SafeAdded} {Add Safe from {chainName}}
+      ${ColonyExtendedActions.SafeTransactionInitiated} {{safeTransactionTitle}}
       other {Generic action we don't have information about}
     }`,
   [`action.${ColonyActions.SetUserRoles}.assign`]: `Assign the {roles} in {fromDomain} to {recipient}`,
@@ -60,6 +61,11 @@ const actionsMessageDescriptors = {
       ${ColonyExtendedActions.SafeRemoved} {Remove Safe}
       ${ColonyExtendedActions.TokensUpdated} {Update Tokens}
       ${ColonyExtendedActions.AddressBookUpdated} {Update Address Book}
+      ${ColonyExtendedActions.RawTransaction} {Raw Transaction}
+      ${ColonyExtendedActions.TransferFunds} {Transfer Funds}
+      ${ColonyExtendedActions.TransferNFT} {Transfer NFT}
+      ${ColonyExtendedActions.ContractInteraction} {Contract Interaction}
+      ${ColonyExtendedActions.MultipleTransactions} {Multiple Transactions}
       other {Generic}
     }`,
 };

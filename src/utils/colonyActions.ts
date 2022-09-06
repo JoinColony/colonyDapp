@@ -9,10 +9,12 @@ import {
   FormattedAction,
   Address,
   AddedActions,
+  ColonyExtendedActions,
 } from '~types/index';
 import {
   ColonyAction,
   ColonySafe,
+  SafeTransaction,
   SugraphEventProcessedValues,
 } from '~data/index';
 
@@ -34,11 +36,12 @@ type ValuesForActionTypesMap = Partial<
   }
 >;
 
+export type ExtendedActions = ColonyActions | ColonyMotions | AddedActions;
 /*
  * Get colony action details for DetailsWidget based on action type and ActionPageDetails map
  */
 export const getDetailsForAction = (
-  actionType: ColonyActions | ColonyMotions | AddedActions,
+  actionType: ExtendedActions,
 ): DetailsValuesMap => {
   const detailsForActionType = DETAILS_FOR_ACTION[actionType];
   return Object.keys(ActionPageDetails).reduce((detailsMap, detailsKey) => {
@@ -204,6 +207,52 @@ export const getDomainMetadataMessageDescriptorsIds = (
   return `event.${ColonyAndExtensionsEvents.DomainMetadata}.fallback`;
 };
 
+export const getSafeTransactionActionType = (
+  actionType: ExtendedActions,
+  safeTransactions: SafeTransaction[],
+) => {
+  if (
+    actionType === ColonyExtendedActions.SafeTransactionInitiated &&
+    safeTransactions
+  ) {
+    if ((safeTransactions || []).length >= 2) {
+      return AddedActions.MultipleTransactions;
+    }
+    const type = safeTransactions[0].transactionType;
+    return type[0].toUpperCase() + type.substring(1);
+  }
+  return actionType;
+};
+
+export const getSafeTransactionMessageDescriptorIds = (
+  actionType: ExtendedActions,
+  safeTransactions?: SafeTransaction[] | null,
+) => {
+  if (
+    actionType === ColonyExtendedActions.SafeTransactionInitiated &&
+    safeTransactions
+  ) {
+    const safeTransactionActionType = getSafeTransactionActionType(
+      actionType,
+      safeTransactions,
+    );
+    switch (safeTransactionActionType) {
+      case ColonyExtendedActions.TransferFunds:
+        return `event.${ColonyExtendedActions.SafeTransactionInitiated}.transferFunds`;
+      case ColonyExtendedActions.RawTransaction:
+        return `event.${ColonyExtendedActions.SafeTransactionInitiated}.rawTransaction`;
+      case ColonyExtendedActions.TransferNFT:
+        return `event.${ColonyExtendedActions.SafeTransactionInitiated}.transferNFT`;
+      case ColonyExtendedActions.ContractInteraction:
+        return `event.${ColonyExtendedActions.SafeTransactionInitiated}.contractInteraction`;
+      case ColonyExtendedActions.MultipleTransactions:
+        return `event.${ColonyExtendedActions.SafeTransactionInitiated}.multipleTransactions`;
+      default:
+        return `event.${ColonyExtendedActions.SafeTransactionInitiated}.fallback`;
+    }
+  }
+  return `event.${ColonyExtendedActions.SafeTransactionInitiated}.fallback`;
+};
 export const getAssignmentEventDescriptorsIds = (
   roleSetTo: boolean | undefined,
   /*

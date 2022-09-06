@@ -108,3 +108,7 @@
   margin-top: 30px;
   padding-bottom: 40px;
 }
+
+.user {
+  composes: username from '~core/DetailsWidgetUser/DetailsWidgetUser.css';
+}

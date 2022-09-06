@@ -5,10 +5,10 @@ import { FormikProps, useField } from 'formik';
 import Avatar from '~core/Avatar';
 import { DialogSection } from '~core/Dialog';
 import SingleUserPicker, {
-  SingleNFTPicker,
   filterUserSelection,
+  SingleNFTPicker,
 } from '~core/SingleUserPicker';
-import { useMembersSubscription } from '~data/index';
+import { NftData, SafeTransaction, useMembersSubscription } from '~data/index';
 import {
   getChainNameFromSafe,
   getTxServiceBaseUrl,
@@ -19,7 +19,7 @@ import { getSelectedNFTData } from '~utils/safes';
 import { Address, Message } from '~types/index';
 import { log } from '~utils/debug';
 
-import { FormValues, TransactionSectionProps, SafeTransaction } from '..';
+import { FormValues, TransactionSectionProps } from '..';
 import { AvatarXS, ErrorMessage as Error, Loading } from './shared';
 
 import styles from './TransferNFTSection.css';
@@ -74,21 +74,8 @@ interface Props
   colonyAddress: Address;
   savedNFTState: [
     {},
-    React.Dispatch<React.SetStateAction<{ [x: string]: NFT[] }>>,
+    React.Dispatch<React.SetStateAction<{ [x: string]: NftData[] }>>,
   ];
-}
-
-export interface NFT {
-  address: string;
-  description: string | null;
-  id: string;
-  imageUri: string | null;
-  logoUri: string;
-  metadata: object;
-  name: string | null;
-  tokenName: string;
-  tokenSymbol: string;
-  uri: string;
 }
 
 const TransferNFTSection = ({
@@ -103,7 +90,7 @@ const TransferNFTSection = ({
     variables: { colonyAddress },
   });
   const [savedNFTs, setSavedNFTs] = savedNFTState;
-  const [availableNFTs, setAvailableNFTs] = useState<NFT[]>();
+  const [availableNFTs, setAvailableNFTs] = useState<NftData[]>();
   const [nftError, setNFTError] = useState<Message>('');
   const [isLoadingNFTData, setIsLoadingNFTData] = useState<boolean>(false);
   const [

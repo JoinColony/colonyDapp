@@ -222,6 +222,7 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
     amount
     tokenAddress
     annotationHash
+    annotationMessage
     newVersion
     oldVersion
     colonyDisplayName
@@ -247,6 +248,9 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
       chainId
       moduleContractAddress
     }
+    safeData
+    safeTransactions
+    transactionsTitle
   }
 }
 

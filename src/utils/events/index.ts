@@ -8,6 +8,7 @@ import {
 import { bigNumberify, BigNumberish, hexStripZeros } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
 
+import { ApolloClient } from '@apollo/client';
 import ColonyManagerClass from '~lib/ColonyManager';
 import {
   ColonyActions,
@@ -19,7 +20,14 @@ import {
   ActionUserRoles,
   AddedActions,
 } from '~types/index';
-import { ColonySafe, ParsedEvent } from '~data/index';
+import {
+  ColonyAction,
+  ColonySafe,
+  ParsedEvent,
+  SubgraphColonyDocument,
+  SubgraphColonyQuery,
+  SubgraphColonyQueryVariables,
+} from '~data/index';
 import { ProcessedEvent } from '~data/resolvers/colonyActions';
 
 import {
@@ -28,7 +36,6 @@ import {
 } from '~dashboard/ActionsPage';
 import ipfs from '~context/ipfsWithFallbackContext';
 import { log } from '~utils/debug';
-import { SafeTransaction } from '~dashboard/Dialogs/ControlSafeDialog/ControlSafeDialog';
 import { availableRoles } from '~dialogs/PermissionManagementDialog';
 
 import { getMotionRequiredStake, MotionState } from '../colonyMotions';
@@ -519,11 +526,11 @@ const getColonyEditActionValues = async (
         colonySafes = [],
       } = JSON.parse(ipfsMetadata);
 
-      colonyEditValues.colonyDisplayName = colonyDisplayName;
-      colonyEditValues.colonyAvatarHash = colonyAvatarHash;
-      colonyEditValues.colonyTokens = colonyTokens;
-      colonyEditValues.isWhitelistActivated = isWhitelistActivated;
-      colonyEditValues.verifiedAddresses = verifiedAddresses;
+      colonyEditValues.colonyDisplayName = colonyDisplayName || null;
+      colonyEditValues.colonyAvatarHash = colonyAvatarHash || null;
+      colonyEditValues.colonyTokens = colonyTokens || [];
+      colonyEditValues.isWhitelistActivated = isWhitelistActivated || false;
+      colonyEditValues.verifiedAddresses = verifiedAddresses || [];
       colonyEditValues.colonySafes = colonySafes || [];
     }
   } catch (error) {
@@ -687,6 +694,7 @@ const getEmitDomainReputationPenaltyAndRewardValues = async (
 
 const getSafeTransactionInitiatedValues = async (
   processedEvents: ProcessedEvent[],
+  apolloClient: ApolloClient<object>,
 ): Promise<Partial<ActionValues>> => {
   const colonyMetadataEvent = processedEvents.find(
     ({ name }) => name === ColonyAndExtensionsEvents.Annotation,
@@ -695,31 +703,62 @@ const getSafeTransactionInitiatedValues = async (
     address,
     values: { agent, metadata },
   } = colonyMetadataEvent;
-  const ipfsMetadata = await getColonyMetadataIPFS(metadata);
+
+  const safeTxData = await getColonyMetadataIPFS(metadata);
+  const { data } = await apolloClient.query<
+    SubgraphColonyQuery,
+    SubgraphColonyQueryVariables
+  >({
+    query: SubgraphColonyDocument,
+    variables: {
+      address: address.toLowerCase(),
+    },
+    fetchPolicy: 'network-only',
+  });
 
   const initiateSafeTransactionValues: {
     address: Address;
-    actionInitiator?: string;
-    safe: ColonySafe | null;
-    transactions: SafeTransaction[] | null;
-    transactionsTitle: string | null;
+    actionInitiator?: ColonyAction['actionInitiator'];
+    safeData: ColonyAction['safeData'];
+    safeTransactions: ColonyAction['safeTransactions'];
+    transactionsTitle: ColonyAction['transactionsTitle'];
+    colonySafes: ColonyAction['colonySafes'];
+    annotationMessage: ColonyAction['annotationMessage'];
   } = {
     address,
-    safe: null,
-    transactions: null,
-    transactionsTitle: null,
+    safeData: null,
+    safeTransactions: [],
+    transactionsTitle: '',
+    colonySafes: [],
+    annotationMessage: null,
   };
 
-  if (ipfsMetadata) {
-    const { annotationMessage } = JSON.parse(ipfsMetadata);
-    if (annotationMessage) {
-      initiateSafeTransactionValues.safe = annotationMessage.safe;
-      initiateSafeTransactionValues.transactions =
-        annotationMessage.transactions;
-      initiateSafeTransactionValues.transactionsTitle =
-        annotationMessage.transactionsTitle;
+  const currentMetadataIPFSHash = data?.colony?.metadata;
+  let colonyMetadata;
+  if (currentMetadataIPFSHash) {
+    colonyMetadata = JSON.parse(
+      await getColonyMetadataIPFS(currentMetadataIPFSHash),
+    );
+
+    if (colonyMetadata) {
+      initiateSafeTransactionValues.colonySafes = colonyMetadata.colonySafes;
     }
   }
+
+  if (safeTxData) {
+    // We storing the safeTransactionData in the annotation message to avoid storing in colony metadata
+    const { annotationMessage: safeTransactionData } = JSON.parse(safeTxData);
+    if (safeTransactionData) {
+      initiateSafeTransactionValues.safeData = safeTransactionData.safeData;
+      initiateSafeTransactionValues.safeTransactions =
+        safeTransactionData.transactions || [];
+      initiateSafeTransactionValues.transactionsTitle =
+        safeTransactionData.title || '';
+      initiateSafeTransactionValues.annotationMessage =
+        safeTransactionData.annotationMessage;
+    }
+  }
+
   if (agent) {
     initiateSafeTransactionValues.actionInitiator = agent;
   }
@@ -1176,6 +1215,7 @@ export const getActionValues = async (
   colonyClient: ColonyClient,
   votingClient: ExtensionClient,
   oneTxPaymentClient: ExtensionClient,
+  apolloClient: ApolloClient<object>,
   actionType: ColonyActions | ColonyMotions | AddedActions,
 ): Promise<ActionValues> => {
   const fallbackValues = {
@@ -1302,6 +1342,7 @@ export const getActionValues = async (
       // eslint-disable-next-line max-len
       const safeTransactionInitiatedActionValues = await getSafeTransactionInitiatedValues(
         processedEvents,
+        apolloClient,
       );
       return {
         ...fallbackValues,

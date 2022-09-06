@@ -30,6 +30,11 @@ export enum AddedActions {
   SafeRemoved = 'SafeRemoved',
   SafeAdded = 'SafeAdded',
   SafeTransactionInitiated = 'SafeTransactionInitiated',
+  TransferFunds = 'TransferFunds',
+  RawTransaction = 'RawTransaction',
+  TransferNFT = 'TransferNft',
+  ContractInteraction = 'ContractInteraction',
+  MultipleTransactions = 'MultipleTransactions',
 }
 
 export const ColonyExtendedActions = { ...ColonyActions, ...AddedActions };

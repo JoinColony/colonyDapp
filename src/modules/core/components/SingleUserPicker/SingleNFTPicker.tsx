@@ -1,12 +1,11 @@
 import React, { ComponentProps, useMemo } from 'react';
-
-import { NFT } from '~dashboard/Dialogs/ControlSafeDialog/TransactionTypesSection/TransferNFTSection';
+import { NftData } from '~data/index';
 
 import SingleUserPicker from './SingleUserPicker';
 
 /* SingleNFTPicker is a wrapper around SingleUserPicker component */
 interface Props extends ComponentProps<typeof SingleUserPicker> {
-  data: NFT[];
+  data: NftData[];
 }
 
 const displayName = 'SingleUserPicker.SingleNFTPicker';
