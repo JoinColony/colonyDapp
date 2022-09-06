@@ -3,6 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import ExternalLink from '~core/ExternalLink';
 
+import { CSV } from './constants';
 import styles from './DownloadTemplate.css';
 
 export const MSG = defineMessages({
@@ -14,15 +15,14 @@ export const MSG = defineMessages({
 
 const DownloadTemplate = () => {
   const fileDownloadUrl = useMemo(() => {
-    const CSV = ['"Recipient","Token","Value"', '"","",""'].join('\n');
-    const blob = new Blob([CSV]);
+    const blob = new Blob([CSV], { type: 'text/csv' });
     return URL.createObjectURL(blob);
   }, []);
 
   return (
     <ExternalLink
       href={fileDownloadUrl}
-      download="template.csv"
+      download="expenditures_batch.csv"
       className={styles.link}
     >
       <FormattedMessage {...MSG.downloadTemplate} />
