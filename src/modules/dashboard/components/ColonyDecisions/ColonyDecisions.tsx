@@ -1,17 +1,23 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory } from 'react-router-dom';
+import { Extension, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import ActionsList, {
   ClickHandlerProps as RedirectHandlerProps,
 } from '~core/ActionsList';
 import { Select, Form } from '~core/Fields';
 import LoadMoreButton from '~core/LoadMoreButton';
 import { SpinnerLoader } from '~core/Preloaders';
-
-import { Colony } from '~data/index';
+import {
+  Colony,
+  useSubgraphDecisionsSubscription,
+  useColonyExtensionsQuery,
+} from '~data/index';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
+import { useTransformer } from '~utils/hooks';
+import { getActionsListData } from '~modules/dashboard/transformers';
+import { ACTION_DECISION_MOTION_CODE } from '~constants';
 
 import { SortOptions, SortSelectOptions } from './constants';
 import styles from './ColonyDecisions.css';
@@ -138,17 +144,13 @@ const ITEMS_PER_PAGE = 10;
 
 const ColonyDecisions = ({
   colony,
-  colony: { colonyName },
+  colony: { colonyName, colonyAddress },
   ethDomainId,
 }: Props) => {
   const [sortOption, setSortOption] = useState<string>(
     SortOptions.ENDING_SOONEST,
   );
   const [dataPage, setDataPage] = useState<number>(1);
-
-  const { isVotingExtensionEnabled } = useEnabledExtensions({
-    colonyAddress: colony.colonyAddress,
-  });
 
   // temp values, to be removed when queries are wired in
   const isLoading = false;
@@ -161,11 +163,40 @@ const ColonyDecisions = ({
     [colonyName, history],
   );
 
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress,
+  });
+
+  const { data: extensions } = useColonyExtensionsQuery({
+    variables: { address: colonyAddress },
+  });
+  const { installedExtensions } = extensions?.processedColony || {};
+  const votingReputationExtension = installedExtensions?.find(
+    ({ extensionId }) => extensionId === Extension.VotingReputation,
+  );
+
+  const { data: motions } = useSubgraphDecisionsSubscription({
+    variables: {
+      /*
+       * @NOTE We always need to fetch one more item so that we know that more
+       * items exist and we show the "load more" button
+       */
+      colonyAddress: colonyAddress?.toLowerCase() || '',
+      extensionAddress: votingReputationExtension?.address?.toLowerCase() || '',
+      motionAction: ACTION_DECISION_MOTION_CODE,
+    },
+  });
+
+  const decisions = useTransformer(getActionsListData, [
+    installedExtensions?.map(({ address }) => address) as string[],
+    { ...motions },
+  ]);
+
   const filteredDecisions = useMemo(
     () =>
       !ethDomainId || ethDomainId === ROOT_DOMAIN_ID
-        ? data
-        : data.filter(
+        ? decisions
+        : decisions?.filter(
             (decision) =>
               decision.toDomain === ethDomainId.toString() ||
               decision.fromDomain === ethDomainId.toString() ||
@@ -173,15 +204,15 @@ const ColonyDecisions = ({
               (ethDomainId === ROOT_DOMAIN_ID &&
                 decision.fromDomain === undefined),
           ),
-    [ethDomainId],
+    [ethDomainId, decisions],
   );
 
   const sortedDecisions = useMemo(
     () =>
       filteredDecisions.sort((first, second) =>
         sortOption === SortOptions.ENDING_SOONEST
-          ? first.ending.getTime() - second.ending.getTime()
-          : second.ending.getTime() - first.ending.getTime(),
+          ? first.createdAt.getTime() - second.createdAt.getTime()
+          : second.createdAt.getTime() - first.createdAt.getTime(),
       ),
     [sortOption, filteredDecisions],
   );
@@ -212,7 +243,7 @@ const ColonyDecisions = ({
 
   return (
     <div>
-      {data.length > 0 ? (
+      {sortedDecisions.length > 0 ? (
         <>
           <div className={styles.bar}>
             <div className={styles.title}>
@@ -240,7 +271,7 @@ const ColonyDecisions = ({
             handleItemClick={handleActionRedirect}
             colony={colony}
           />
-          {ITEMS_PER_PAGE * dataPage < data.length && (
+          {ITEMS_PER_PAGE * dataPage < data?.length && (
             <LoadMoreButton
               onClick={() => setDataPage(dataPage + 1)}
               isLoadingData={isLoading}
