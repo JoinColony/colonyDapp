@@ -19,21 +19,25 @@ export const isDelayTimeType = (time?: string): time is DelayTime => {
   if (!time) {
     return false;
   }
-  if (time === 'hours' || time === 'days' || time === 'months') {
+  if (
+    time === DelayTime.Hours ||
+    time === DelayTime.Days ||
+    time === DelayTime.Months
+  ) {
     return true;
   }
   return false;
 };
 
-const timeMultiplier = (time: 'hours' | 'days' | 'months') => {
+const timeMultiplier = (time: DelayTime) => {
   switch (time) {
-    case 'hours': {
+    case DelayTime.Hours: {
       return 3600;
     }
-    case 'days': {
+    case DelayTime.Days: {
       return 86400;
     }
-    case 'months': {
+    case DelayTime.Months: {
       return 2629743.83;
     }
     default: {
