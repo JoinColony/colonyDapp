@@ -47,4 +47,8 @@ export interface Motion {
   status: MotionStatus;
 }
 
-export type DelayTime = 'hours' | 'days' | 'months';
+export enum DelayTime {
+  Hours = 'hours',
+  Days = 'days',
+  Months = 'months',
+}
