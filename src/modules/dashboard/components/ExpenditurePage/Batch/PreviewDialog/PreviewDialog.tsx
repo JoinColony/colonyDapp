@@ -4,11 +4,11 @@ import classNames from 'classnames';
 
 import Dialog, { DialogSection } from '~core/Dialog';
 import MaskedAddress from '~core/MaskedAddress';
+import { AnyToken } from '~data/index';
 
 import { BatchDataItem } from '../types';
 
 import styles from './PreviewDialog.css';
-import { AnyToken } from '~data/index';
 
 const displayName = 'dashboard.ExpenditurePage.Batch.PreviewDialog';
 
