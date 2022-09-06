@@ -43,7 +43,7 @@ function* initiateSafeTransactionAction({
     transactionsTitle: title,
     colonyAddress,
     colonyName,
-    annotationMessage,
+    annotationMessage = null,
   },
   meta: { id: metaId, history },
   meta,

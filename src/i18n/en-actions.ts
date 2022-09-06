@@ -34,6 +34,7 @@ const actionsMessageDescriptors = {
       ${ColonyExtendedActions.TokensUpdated} {Colony tokens were updated}
       ${ColonyExtendedActions.SafeRemoved} {Remove Safe}
       ${ColonyExtendedActions.SafeAdded} {Add Safe from {chainName}}
+      ${ColonyExtendedActions.SafeTransactionInitiated} {{safeTransactionTitle}}
       other {Generic action we don't have information about}
     }`,
   [`action.${ColonyActions.SetUserRoles}.assign`]: `Assign the {roles} in {fromDomain} to {recipient}`,
@@ -62,6 +63,11 @@ const actionsMessageDescriptors = {
       ${ColonyExtendedActions.AddressBookUpdated} {Update Address Book}
       other {Generic}
     }`,
+  [`action.type.${ColonyExtendedActions.SafeTransactionInitiated}.rawTransaction`]: `Raw transaction`,
+  [`action.type.${ColonyExtendedActions.SafeTransactionInitiated}.transferFunds`]: `Transfer funds`,
+  [`action.type.${ColonyExtendedActions.SafeTransactionInitiated}.transferNFT`]: `Transfer NFT`,
+  [`action.type.${ColonyExtendedActions.SafeTransactionInitiated}.contractInteraction`]: `Contract interaction`,
+  [`action.type.${ColonyExtendedActions.SafeTransactionInitiated}.multipleTransactions`]: `Multiple transactions`,
 };
 
 export default actionsMessageDescriptors;
