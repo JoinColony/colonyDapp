@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid';
 import { useMemo } from 'react';
 import { Colony, useMembersSubscription } from '~data/index';
 import { BatchDataItem } from './types';
@@ -24,9 +25,11 @@ export const useCalculateBatchPayment = (
         (tokenItem) => tokenItem.id === token,
       );
       return {
-        recipient: correctRecipient ? recipient : undefined,
+        id: nanoid(),
+        recipient,
         amount,
         token: correctToken || undefined,
+        error: !correctRecipient || !correctToken,
       };
     });
 
