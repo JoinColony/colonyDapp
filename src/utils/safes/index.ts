@@ -1,8 +1,7 @@
 import { AddressZero } from 'ethers/constants';
 
 import { SafeBalance } from '~dashboard/Dialogs/ControlSafeDialog/ControlSafeDialog';
-import { NFT } from '~dashboard/Dialogs/ControlSafeDialog/TransactionTypesSection/TransferNFTSection';
-import { ColonySafe } from '~data/generated';
+import { ColonySafe, NftData } from '~data/index';
 import {
   getTokenIdFromNFTId,
   SelectedNFT,
@@ -31,7 +30,7 @@ export const getSelectedSafeBalance = (
 
 export const getSelectedNFTData = (
   selectedNFT: SelectedNFT,
-  availableNFTs: NFT[],
+  availableNFTs: NftData[],
 ) =>
   availableNFTs.find((nft) => {
     const id = getTokenIdFromNFTId(selectedNFT.id);

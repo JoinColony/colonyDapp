@@ -190,6 +190,7 @@ export const colonyActionsResolvers = ({
           colonyClient as ColonyClient,
           votingClient as ExtensionClient,
           oneTxPaymentClient as ExtensionClient,
+          apolloClient,
           actionType,
         );
 
@@ -258,6 +259,10 @@ export const colonyActionsResolvers = ({
           isWhitelistActivated: false,
           verifiedAddresses: [],
           colonySafes: [],
+          safeData: null,
+          safeTransactions: [],
+          transactionsTitle: '',
+          annotationMessage: '',
           ...actionValues,
         };
       }
@@ -282,6 +287,7 @@ export const colonyActionsResolvers = ({
         colonyClient as ColonyClient,
         votingClient as ExtensionClient,
         oneTxPaymentClient as ExtensionClient,
+        apolloClient,
         ColonyActions.Generic,
       );
 
@@ -307,6 +313,9 @@ export const colonyActionsResolvers = ({
         motionState: null,
         motionDomain: null,
         rootHash: null,
+        safe: null,
+        safeTransactions: [],
+        transactionsTitle: '',
         ...pendingActionValues,
       };
     },

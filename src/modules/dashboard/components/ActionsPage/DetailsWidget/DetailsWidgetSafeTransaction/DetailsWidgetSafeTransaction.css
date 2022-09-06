@@ -1,0 +1,161 @@
+.main {
+  display: flex;
+  flex-direction: column;
+}
+
+.main span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.main section:last-of-type {
+  margin-bottom: 55px;
+}
+
+.sectionOpen {
+  margin-bottom: 55px;
+}
+
+.title div {
+  color: var(--dark);
+}
+
+.title i {
+  cursor: pointer;
+}
+
+.title svg {
+  height: 8px;
+  width: 12px;
+}
+
+.contractItem figure {
+  margin-right: 10px;
+  height: 28px;
+  width: 28px;
+  min-width: 28px;
+}
+
+.contractAddress {
+  display: flex;
+  column-gap: 8px;
+}
+
+.contractAddress > span:first-child {
+  color: var(--pink);
+}
+
+.recipient div + span {
+  display: flex;
+}
+
+.recipient figure {
+  height: 32px;
+  width: 32px;
+  min-width: 32px;
+}
+
+.recipient figure div {
+  height: 28px;
+  width: 28px;
+}
+
+.recipient > div:nth-of-type(2) {
+  max-width: 250px;
+}
+
+.recipient div[class*='DetailsWidgetUser_textContainer'] {
+  flex-direction: row;
+  margin-left: 10px;
+  column-gap: 10px;
+}
+
+.recipient figure ~ span:nth-of-type(2) {
+  margin-top: 4px;
+  font-family: var(--family-techie);
+  font-size: var(--size-smallish);
+  line-height: var(--size-smallish);
+}
+
+.value span {
+  padding: 15px 0px;
+}
+
+.data span {
+  padding: 15px 0px;
+  text-align: right;
+  white-space: break-spaces;
+  overflow-wrap: break-word;
+}
+
+.nft {
+  display: flex;
+  column-gap: 10px;
+}
+
+.nft span {
+  color: var(--pink);
+  column-gap: 10px;
+}
+
+.nft figure {
+  height: 28px;
+  width: 28px;
+  min-width: 28px;
+}
+
+.nft figure > div {
+  border-radius: 4px;
+}
+
+.tokenValue figure {
+  margin-right: 10px;
+}
+
+.tokenValue figure + div {
+  column-gap: 2px;
+}
+
+.tokenValue figure > div {
+  height: 28px;
+  width: 28px;
+  min-width: 28px;
+}
+
+.tokenValue figure + div > span:last-of-type {
+  min-width: fit-content;
+}
+
+.tokenContainer {
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
+}
+
+.tokenContainer > div {
+  column-gap: 4px;
+}
+
+.ether {
+  height: 28px;
+  width: 28px;
+}
+
+.functionArg {
+  composes: inlineEllipsis from "~styles/text.css";
+}
+
+.arrayContainer {
+  flex-direction: column;
+}
+
+.arrayItem {
+  composes: item from '../DetailsWidget.css';
+  width: 150px;
+  border-bottom: 0px;
+  column-gap: 29px;
+}
+
+.address {
+  color: var(--temp-grey-blue-7);
+}

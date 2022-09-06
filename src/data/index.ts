@@ -21,6 +21,7 @@ import {
   ParsedEvent,
   TransactionMessagesCountQuery,
   ProcessedColonyQuery,
+  SafeBalanceToken,
 } from './generated';
 import {
   loggedInUserResolvers,
@@ -45,7 +46,7 @@ import { vestingResolvers } from './resolvers/vesting';
  */
 import { stakesResolvers } from './resolvers/stakes';
 
-import { FixedToken, SafeBalanceToken } from '../types';
+import { FixedToken } from '../types';
 
 type ResolverFactory = (context?: any) => Resolvers;
 

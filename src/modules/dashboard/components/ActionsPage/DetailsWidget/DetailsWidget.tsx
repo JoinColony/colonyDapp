@@ -7,18 +7,28 @@ import DetailsWidgetUser from '~core/DetailsWidgetUser';
 import TransactionLink from '~core/TransactionLink';
 import Numeral from '~core/Numeral';
 import TokenIcon from '~dashboard/HookedTokenIcon';
-import { AnyUser, Colony } from '~data/index';
-import { AddedActions, ColonyActions, ColonyMotions } from '~types/index';
+import { AnyUser, Colony, ColonySafe, SafeTransaction } from '~data/index';
+import {
+  ColonyActions,
+  ColonyExtendedActions,
+  ColonyMotions,
+} from '~types/index';
 import { splitTransactionHash } from '~utils/strings';
-import { getDetailsForAction } from '~utils/colonyActions';
+import {
+  ExtendedActions,
+  getDetailsForAction,
+  getSafeTransactionActionType,
+} from '~utils/colonyActions';
 import { EventValues } from '../../ActionsPageFeed/ActionsPageFeed';
 import { ACTION_TYPES_ICONS_MAP } from '../../ActionsPage/staticMaps';
 
-import DetailsWidgetTeam from './DetailsWidgetTeam';
-import DetailsWidgetRoles from './DetailsWidgetRoles';
-import DetailsWidgetSafe from './DetailsWidgetSafe';
-import DetailsWidgetAddSafe from './DetailsWidgetSafe/DetailsWidgetAddSafe';
-
+import {
+  DetailsWidgetTeam,
+  DetailsWidgetAddSafe,
+  DetailsWidgetRoles,
+  DetailsWidgetSafe,
+  DetailsWidgetSafeTransaction,
+} from './index';
 import styles from './DetailsWidget.css';
 
 const displayName = 'dashboard.ActionsPage.DetailsWidget';
@@ -79,14 +89,37 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.DetailsWidget.safe',
     defaultMessage: 'Safe',
   },
+  chain: {
+    id: 'dashboard.ActionsPage.DetailsWidget.chain',
+    defaultMessage: 'Chain',
+  },
+  safeAddress: {
+    id: 'dashboard.ActionsPage.DetailsWidget.safeAddress',
+    defaultMessage: 'Safe Address',
+  },
+  safeName: {
+    id: 'dashboard.ActionsPage.DetailsWidget.safeName',
+    defaultMessage: 'Safe Name',
+  },
+  contract: {
+    id: 'dashboard.ActionsPage.DetailsWidget.contract',
+    defaultMessage: 'Contract',
+  },
 });
 
+export const { toRecipient: toRecipientMSG, value: valueMSG } = MSG;
+export interface SafeInfo {
+  safeTransactions: SafeTransaction[];
+  safe: ColonySafe;
+}
+
 interface Props {
-  actionType: ColonyActions | ColonyMotions | AddedActions;
+  actionType: ExtendedActions;
   recipient?: AnyUser;
   values?: EventValues;
   transactionHash?: string;
   colony: Colony;
+  safeInfo?: SafeInfo;
 }
 
 const DetailsWidget = ({
@@ -95,9 +128,9 @@ const DetailsWidget = ({
   values,
   transactionHash,
   colony,
+  safeInfo,
 }: Props) => {
   const { formatMessage } = useIntl();
-
   const messageId = ColonyMotions[actionType] ? 'motion.type' : 'action.type';
   const showFullDetails = actionType !== ColonyActions.Generic;
 
@@ -121,6 +154,19 @@ const DetailsWidget = ({
     detailsForAction.Chain &&
     detailsForAction.SafeAddress &&
     detailsForAction.SafeName;
+
+  const getActionType = () => {
+    if (
+      actionType === ColonyExtendedActions.SafeTransactionInitiated &&
+      safeInfo
+    ) {
+      return getSafeTransactionActionType(
+        actionType,
+        safeInfo.safeTransactions,
+      );
+    }
+    return actionType;
+  };
 
   return (
     <div>
@@ -148,7 +194,9 @@ const DetailsWidget = ({
                * of two separate strings (apparently you can't pass it just a plain
                * string with spaces...)
                */
-              values={{ actionType }}
+              values={{
+                actionType: getActionType(),
+              }}
             />
           </div>
         </div>
@@ -168,7 +216,7 @@ const DetailsWidget = ({
           addedSafe={{
             address: values?.addedSafeAddress,
             chainName: values?.chainName,
-            safeName: values?.safeName,
+            safeName: values?.safeName as string,
             moduleAddress: values?.moduleAddress,
           }}
         />
@@ -291,6 +339,9 @@ const DetailsWidget = ({
             </div>
           </div>
         ))}
+      {detailsForAction.SafeTransaction && safeInfo && (
+        <DetailsWidgetSafeTransaction safeInfo={safeInfo} colony={colony} />
+      )}
       {!!shortenedHash && (
         <div className={styles.item}>
           <div className={styles.label}>
