@@ -10,3 +10,4 @@ export const middle: string;
 export const right: string;
 export const tableHeader: string;
 export const error: string;
+export const items: string;
