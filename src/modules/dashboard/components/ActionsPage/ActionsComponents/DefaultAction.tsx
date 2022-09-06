@@ -23,6 +23,7 @@ import {
   ColonyActionQuery,
   TokenInfoQuery,
   AnyUser,
+  SafeTransaction,
 } from '~data/index';
 import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
@@ -42,6 +43,7 @@ import { SAFE_NAMES_MAP } from '~constants';
 import { ipfsDataFetcher } from '../../../../core/fetchers';
 
 import DetailsWidget from '../DetailsWidget';
+import { unknownContractMSG } from '../DetailsWidget/DetailsWidgetSafeTransaction';
 
 import styles from './DefaultAction.css';
 
@@ -58,7 +60,7 @@ interface Props {
 
 const DefaultAction = ({
   colony,
-  colony: { colonyAddress, domains },
+  colony: { colonyAddress, domains, safes },
   token,
   token: { decimals, symbol },
   colonyAction: {
@@ -69,17 +71,22 @@ const DefaultAction = ({
     fromDomain,
     toDomain,
     annotationHash,
+    annotationMessage,
     newVersion,
     oldVersion,
     colonyDisplayName,
     roles,
     reputationChange,
+    transactionsTitle,
+    safeTransactions,
+    safeData,
   },
   colonyAction,
   transactionHash,
   recipient,
   initiator,
 }: Props) => {
+  const { formatMessage } = useIntl();
   const { username: currentUserName, ethereal } = useLoggedInUser();
 
   const { isVotingExtensionEnabled } = useEnabledExtensions({ colonyAddress });
@@ -182,6 +189,14 @@ const DefaultAction = ({
     <></>,
   );
 
+  const firstSafeTransaction: SafeTransaction | undefined = safeTransactions[0];
+
+  const safeTransactionSafe = safes.find(
+    (safe) =>
+      safe.contractAddress === safeData?.contractAddress &&
+      safe.chainId === safeData.chainId,
+  );
+
   /*
    * @NOTE We need to convert the action type name into a forced camel-case string
    *
@@ -235,9 +250,48 @@ const DefaultAction = ({
       <MaskedAddress address={addedSafe.contractAddress} />
     ),
     chainName: addedSafe && SAFE_NAMES_MAP[addedSafe.chainId],
-    safeName: addedSafe?.safeName,
+    safeName: addedSafe?.safeName || (
+      <span className={styles.user}>@{safeTransactionSafe?.safeName}</span>
+    ),
     moduleAddress: addedSafe && (
       <MaskedAddress address={addedSafe.moduleContractAddress} />
+    ),
+    safeTransactionTitle: transactionsTitle,
+    safeTransactions,
+    /*
+     * The following references to firstSafeTransaction are only used in the event that there's only one safe transaction.
+     * Multiple transactions has its own message.
+     */
+    safeTransactionAmount: (
+      <>
+        <Numeral value={firstSafeTransaction?.amount || ''} />
+        <span> {firstSafeTransaction?.tokenData?.symbol}</span>
+      </>
+    ),
+    safeTransactionRecipient: (
+      <span className={styles.user}>
+        @{firstSafeTransaction?.recipient?.profile.username}
+      </span>
+    ),
+    safeTransactionNftToken: (
+      <span className={styles.user}>
+        {firstSafeTransaction?.nftData?.name ||
+          firstSafeTransaction?.nftData?.tokenName}
+      </span>
+    ),
+    safeTransactionFunctionName: firstSafeTransaction?.contractFunction,
+    safeTransactionContractName:
+      firstSafeTransaction?.contract?.profile.displayName ||
+      formatMessage(unknownContractMSG),
+    safeTransactionAddress: (
+      <MaskedAddress
+        address={firstSafeTransaction?.recipient?.profile.walletAddress || ''}
+      />
+    ),
+    safeTransactionSafe,
+    // id will be filterValue if an address was manually entered into the picker
+    isSafeTransactionRecipientUser: !(
+      firstSafeTransaction?.recipient?.id === 'filterValue'
     ),
   };
 
@@ -261,11 +315,11 @@ const DefaultAction = ({
     reputationChange: actionAndEventValues.reputationChange,
     reputationChangeNumeral: actionAndEventValues.reputationChangeNumeral,
     chainName: addedSafe && SAFE_NAMES_MAP[addedSafe.chainId],
+    safeTransactionTitle: transactionsTitle,
   };
 
   const motionStyles = MOTION_TAG_MAP[MotionState.Forced];
 
-  const { formatMessage } = useIntl();
   useTitle(
     `${formatMessage(
       { id: roleMessageDescriptorId || 'action.title' },
@@ -307,15 +361,17 @@ const DefaultAction = ({
               }}
             />
           </h1>
-          {actionType !== ColonyActions.Generic && annotationHash && (
-            <ActionsPageFeedItemWithIPFS
-              colony={colony}
-              createdAt={createdAt}
-              user={initiator}
-              annotation
-              hash={annotationHash}
-            />
-          )}
+          {actionType !== ColonyActions.Generic &&
+            (annotationHash || annotationMessage) && (
+              <ActionsPageFeedItemWithIPFS
+                colony={colony}
+                createdAt={createdAt}
+                user={initiator}
+                annotation
+                comment={annotationMessage || undefined}
+                hash={annotationHash || undefined}
+              />
+            )}
           <ActionsPageFeed
             actionType={actionType}
             transactionHash={transactionHash as string}
@@ -339,7 +395,7 @@ const DefaultAction = ({
         </div>
         <div className={styles.details}>
           <DetailsWidget
-            actionType={extendedActionType as ColonyActions}
+            actionType={actionType as ColonyActions}
             recipient={recipient}
             transactionHash={transactionHash}
             values={actionAndEventValues}

@@ -40,6 +40,18 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
             "name": "TransactionMessageEvent"
           }
         ]
+      },
+      {
+        "kind": "UNION",
+        "name": "SafeBalanceToken",
+        "possibleTypes": [
+          {
+            "name": "ERC20Token"
+          },
+          {
+            "name": "SafeNativeToken"
+          }
+        ]
       }
     ]
   }
@@ -889,6 +901,79 @@ export type ColonyActionRoles = {
   setTo: Scalars['Boolean'];
 };
 
+export type SimpleUserProfile = {
+  avatarHash?: Maybe<Scalars['String']>;
+  displayName?: Maybe<Scalars['String']>;
+  username?: Maybe<Scalars['String']>;
+  walletAddress: Scalars['String'];
+};
+
+export type SimpleUser = {
+  id: Scalars['String'];
+  profile: SimpleUserProfile;
+};
+
+export type Nft = {
+  id: Scalars['String'];
+  profile: NftProfile;
+};
+
+export type NftProfile = {
+  displayName: Scalars['String'];
+  walletAddress: Scalars['String'];
+};
+
+export type NftData = {
+  address: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  imageUri?: Maybe<Scalars['String']>;
+  logoUri: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
+  tokenName: Scalars['String'];
+  tokenSymbol: Scalars['String'];
+  uri: Scalars['String'];
+};
+
+export type SafeBalanceToken = Erc20Token | SafeNativeToken;
+
+export type Erc20Token = {
+  name: Scalars['String'];
+  decimals: Scalars['Int'];
+  symbol: Scalars['String'];
+  logoUri: Scalars['String'];
+  address: Scalars['String'];
+};
+
+export type SafeNativeToken = {
+  name: Scalars['String'];
+  decimals: Scalars['Int'];
+  symbol: Scalars['String'];
+  address: Scalars['String'];
+  networkName: Scalars['String'];
+};
+
+export type FunctionParamType = {
+  name: Scalars['String'];
+  type: Scalars['String'];
+};
+
+export type SafeTransaction = {
+  transactionType: Scalars['String'];
+  tokenAddress?: Maybe<Scalars['String']>;
+  tokenData?: Maybe<SafeBalanceToken>;
+  amount?: Maybe<Scalars['String']>;
+  rawAmount?: Maybe<Scalars['String']>;
+  recipient?: Maybe<SimpleUser>;
+  data: Scalars['String'];
+  contract?: Maybe<SimpleUser>;
+  abi: Scalars['String'];
+  contractFunction: Scalars['String'];
+  nft?: Maybe<Nft>;
+  nftData?: Maybe<NftData>;
+  functionParamTypes?: Maybe<Array<FunctionParamType>>;
+};
+
 export type ColonyAction = {
   hash: Scalars['String'];
   actionInitiator: Scalars['String'];
@@ -903,6 +988,7 @@ export type ColonyAction = {
   tokenAddress: Scalars['String'];
   roles: Array<ColonyActionRoles>;
   annotationHash?: Maybe<Scalars['String']>;
+  annotationMessage?: Maybe<Scalars['String']>;
   oldVersion: Scalars['String'];
   newVersion: Scalars['String'];
   colonyDisplayName: Scalars['String'];
@@ -919,6 +1005,9 @@ export type ColonyAction = {
   isWhitelistActivated: Scalars['Boolean'];
   verifiedAddresses: Array<Scalars['String']>;
   colonySafes: Array<ColonySafe>;
+  safeData?: Maybe<SafeData>;
+  safeTransactions: Array<SafeTransaction>;
+  transactionsTitle: Scalars['String'];
 };
 
 export type NetworkContractsInput = {
@@ -1158,6 +1247,11 @@ export type ColonySafe = {
   contractAddress: Scalars['String'];
   chainId: Scalars['String'];
   moduleContractAddress: Scalars['String'];
+};
+
+export type SafeData = {
+  chainId: Scalars['String'];
+  contractAddress: Scalars['String'];
 };
 
 export type ProcessedColony = {
@@ -1719,7 +1813,7 @@ export type ColonyActionQueryVariables = Exact<{
 
 
 export type ColonyActionQuery = { colonyAction: (
-    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionState' | 'motionDomain' | 'blockNumber' | 'rootHash' | 'reputationChange' | 'isWhitelistActivated' | 'verifiedAddresses'>
+    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'annotationMessage' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionState' | 'motionDomain' | 'blockNumber' | 'rootHash' | 'reputationChange' | 'isWhitelistActivated' | 'verifiedAddresses' | 'safeData' | 'safeTransactions' | 'transactionsTitle'>
     & { events: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'transactionHash'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>>, colonySafes: Array<Pick<ColonySafe, 'safeName' | 'contractAddress' | 'chainId' | 'moduleContractAddress'>> }
   ) };
 
@@ -4069,6 +4163,7 @@ export const ColonyActionDocument = gql`
     amount
     tokenAddress
     annotationHash
+    annotationMessage
     newVersion
     oldVersion
     colonyDisplayName
@@ -4094,6 +4189,9 @@ export const ColonyActionDocument = gql`
       chainId
       moduleContractAddress
     }
+    safeData
+    safeTransactions
+    transactionsTitle
   }
 }
     `;

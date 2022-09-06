@@ -24,6 +24,7 @@ import {
   FormProps,
   TransactionSectionProps,
   invalidSafeError,
+  UpdatedMethods,
 } from '..';
 import { ErrorMessage as Error, Loading, AvatarXS } from './shared';
 
@@ -79,13 +80,14 @@ const MSG = defineMessages({
 const displayName = `dashboard.ControlSafeDialog.ContractInteractionSection`;
 
 interface Props
-  extends Pick<
-      FormProps,
-      'safes' | 'selectedContractMethods' | 'handleSelectedContractMethods'
-    >,
+  extends Pick<FormProps, 'safes' | 'selectedContractMethods'>,
     Pick<FormikProps<FormValues>, 'setFieldValue' | 'values' | 'isValid'>,
     Omit<TransactionSectionProps, 'colony'> {
   removeSelectedContractMethod: (index: number) => void;
+  handleSelectedContractMethods: (
+    selectedContractMethods: UpdatedMethods,
+    index: number,
+  ) => void;
 }
 
 interface ABIResponse {
@@ -359,6 +361,7 @@ const ContractInteractionSection = ({
                     };
                     handleSelectedContractMethods(
                       updatedSelectedContractMethods,
+                      transactionFormIndex,
                     );
                     handleValidation();
                   }}

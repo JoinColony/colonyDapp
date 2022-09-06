@@ -19,7 +19,7 @@ import {
   ActionUserRoles,
   AddedActions,
 } from '~types/index';
-import { ColonySafe, ParsedEvent } from '~data/index';
+import { ColonyAction, ColonySafe, ParsedEvent } from '~data/index';
 import { ProcessedEvent } from '~data/resolvers/colonyActions';
 
 import {
@@ -28,7 +28,6 @@ import {
 } from '~dashboard/ActionsPage';
 import ipfs from '~context/ipfsWithFallbackContext';
 import { log } from '~utils/debug';
-import { SafeTransaction } from '~dashboard/Dialogs/ControlSafeDialog/ControlSafeDialog';
 import { availableRoles } from '~dialogs/PermissionManagementDialog';
 
 import { getMotionRequiredStake, MotionState } from '../colonyMotions';
@@ -519,11 +518,11 @@ const getColonyEditActionValues = async (
         colonySafes = [],
       } = JSON.parse(ipfsMetadata);
 
-      colonyEditValues.colonyDisplayName = colonyDisplayName;
-      colonyEditValues.colonyAvatarHash = colonyAvatarHash;
-      colonyEditValues.colonyTokens = colonyTokens;
-      colonyEditValues.isWhitelistActivated = isWhitelistActivated;
-      colonyEditValues.verifiedAddresses = verifiedAddresses;
+      colonyEditValues.colonyDisplayName = colonyDisplayName || null;
+      colonyEditValues.colonyAvatarHash = colonyAvatarHash || null;
+      colonyEditValues.colonyTokens = colonyTokens || [];
+      colonyEditValues.isWhitelistActivated = isWhitelistActivated || false;
+      colonyEditValues.verifiedAddresses = verifiedAddresses || [];
       colonyEditValues.colonySafes = colonySafes || [];
     }
   } catch (error) {
@@ -695,31 +694,38 @@ const getSafeTransactionInitiatedValues = async (
     address,
     values: { agent, metadata },
   } = colonyMetadataEvent;
-  const ipfsMetadata = await getColonyMetadataIPFS(metadata);
+
+  const safeTxData = await getColonyMetadataIPFS(metadata);
 
   const initiateSafeTransactionValues: {
     address: Address;
-    actionInitiator?: string;
-    safe: ColonySafe | null;
-    transactions: SafeTransaction[] | null;
-    transactionsTitle: string | null;
+    actionInitiator?: ColonyAction['actionInitiator'];
+    safeData: ColonyAction['safeData'];
+    safeTransactions: ColonyAction['safeTransactions'];
+    transactionsTitle: ColonyAction['transactionsTitle'];
+    annotationMessage: ColonyAction['annotationMessage'];
   } = {
     address,
-    safe: null,
-    transactions: null,
-    transactionsTitle: null,
+    safeData: null,
+    safeTransactions: [],
+    transactionsTitle: '',
+    annotationMessage: null,
   };
 
-  if (ipfsMetadata) {
-    const { annotationMessage } = JSON.parse(ipfsMetadata);
-    if (annotationMessage) {
-      initiateSafeTransactionValues.safe = annotationMessage.safe;
-      initiateSafeTransactionValues.transactions =
-        annotationMessage.transactions;
+  if (safeTxData) {
+    // We storing the safeTransactionData in the annotation message to avoid storing in colony metadata
+    const { annotationMessage: safeTransactionData } = JSON.parse(safeTxData);
+    if (safeTransactionData) {
+      initiateSafeTransactionValues.safeData = safeTransactionData.safeData;
+      initiateSafeTransactionValues.safeTransactions =
+        safeTransactionData.transactions || [];
       initiateSafeTransactionValues.transactionsTitle =
-        annotationMessage.transactionsTitle;
+        safeTransactionData.title || '';
+      initiateSafeTransactionValues.annotationMessage =
+        safeTransactionData.annotationMessage;
     }
   }
+
   if (agent) {
     initiateSafeTransactionValues.actionInitiator = agent;
   }

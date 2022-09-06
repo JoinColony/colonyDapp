@@ -4,7 +4,7 @@ import { pipe } from 'lodash/fp';
 import { useHistory } from 'react-router';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { AnyUser, ColonySafe } from '~data/index';
+import { ColonySafe, SafeBalanceToken, SafeTransaction } from '~data/index';
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 import { ActionTypes } from '~redux/index';
@@ -12,35 +12,18 @@ import { WizardDialogType } from '~utils/hooks';
 import { AbiItemExtended } from '~utils/safes';
 import {
   SelectedSafe,
-  SelectedNFT,
   getChainNameFromSafe,
 } from '~modules/dashboard/sagas/utils/safeHelpers';
 import { mapPayload, withMeta } from '~utils/actions';
-import { SafeBalanceToken } from '~types/index';
 import { SAFE_NETWORKS } from '~constants';
 
 import ControlSafeForm from './ControlSafeForm';
-import { NFT } from './TransactionTypesSection/TransferNFTSection';
 import { getMethodInputValidation, getValidationSchema } from './validation';
 
 export interface SafeBalance {
   balance: number;
   tokenAddress: string | null;
   token: SafeBalanceToken | null;
-}
-
-export interface SafeTransaction {
-  transactionType: string;
-  recipient: AnyUser | null;
-  nft: SelectedNFT | null;
-  nftData: NFT | null;
-  tokenData: SafeBalanceToken | null;
-  amount: string | null;
-  rawAmount: string | null;
-  data: string;
-  contract: AnyUser | null;
-  abi: string;
-  contractFunction: string;
 }
 
 export interface FormValues {
@@ -72,6 +55,7 @@ export const defaultTransaction: SafeTransaction = {
   contractFunction: '',
   nft: null,
   nftData: null,
+  functionParamTypes: null,
 };
 
 const displayName = 'dashboard.ControlSafeDialog';
@@ -189,7 +173,7 @@ const ControlSafeDialog = ({
             showPreview={showPreview}
             setShowPreview={setShowPreview}
             selectedContractMethods={selectedContractMethods}
-            handleSelectedContractMethods={setSelectedContractMethods}
+            setSelectedContractMethods={setSelectedContractMethods}
           />
         </Dialog>
       )}

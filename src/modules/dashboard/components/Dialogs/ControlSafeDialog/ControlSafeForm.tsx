@@ -15,9 +15,9 @@ import Icon from '~core/Icon';
 import { SingleSafePicker, filterUserSelection } from '~core/SingleUserPicker';
 import IconTooltip from '~core/IconTooltip';
 
-import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import { SAFE_INTEGRATION_LEARN_MORE } from '~externalUrls';
-import { Colony, ColonySafe } from '~data/index';
+import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
+import { Colony, ColonySafe, SafeTransaction } from '~data/index';
 import { PrimitiveType } from '~types/index';
 import { SelectedSafe } from '~modules/dashboard/sagas/utils/safeHelpers';
 import { debounce, isEqual, omit } from '~utils/lodash';
@@ -29,7 +29,6 @@ import {
   defaultTransaction,
   FormValues,
   UpdatedMethods,
-  SafeTransaction,
 } from './ControlSafeDialog';
 import {
   TransferNFTSection,
@@ -110,7 +109,7 @@ export interface FormProps {
   showPreview: boolean;
   setShowPreview: (showPreview: boolean) => void;
   selectedContractMethods?: UpdatedMethods;
-  handleSelectedContractMethods: React.Dispatch<
+  setSelectedContractMethods: React.Dispatch<
     React.SetStateAction<UpdatedMethods>
   >;
 }
@@ -120,6 +119,11 @@ export interface TransactionSectionProps extends Pick<FormProps, 'colony'> {
   transactionFormIndex: number;
   handleInputChange: () => void;
   handleValidation: () => void;
+}
+
+enum ContractFunctions {
+  TRANSFER_FUNDS = 'transfer',
+  TRANSFER_NFT = 'safeTransferFrom',
 }
 
 const renderAvatar = (address: string, item) => (
@@ -149,7 +153,7 @@ const ControlSafeForm = ({
   dirty,
   selectedContractMethods,
   setFieldTouched,
-  handleSelectedContractMethods,
+  setSelectedContractMethods,
 }: FormProps & FormikProps<FormValues>) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState([true]);
   const [prevSafeAddress, setPrevSafeAddress] = useState<string>('');
@@ -173,6 +177,25 @@ const ControlSafeForm = ({
     // setTimeout ensures form state is latest. Related: https://github.com/jaredpalmer/formik/issues/529
     setTimeout(validateForm, 0);
   }, [validateForm]);
+
+  const handleSelectedContractMethods = useCallback(
+    (contractMethods: UpdatedMethods, index: number) => {
+      // eslint-disable-next-line max-len
+      const functionParamTypes: SafeTransaction['functionParamTypes'] = contractMethods[
+        index
+      ]?.inputs?.map((input) => ({
+        name: input.name,
+        type: input.type,
+      }));
+
+      setSelectedContractMethods(contractMethods);
+      setFieldValue(
+        `transactions.${index}.functionParamTypes`,
+        functionParamTypes,
+      );
+    },
+    [setFieldValue, setSelectedContractMethods],
+  );
 
   const handleTabRemoval = useCallback(
     (
@@ -198,7 +221,7 @@ const ControlSafeForm = ({
             };
           }, {})
         : {};
-      handleSelectedContractMethods(shiftedContractMethods);
+      handleSelectedContractMethods(shiftedContractMethods, index);
 
       const newTransactionTabStatus = [...transactionTabStatus];
       newTransactionTabStatus.splice(index, 1);
@@ -232,6 +255,7 @@ const ControlSafeForm = ({
     },
     [transactionTabStatus, setTransactionTabStatus],
   );
+
   const getTransactionTypeLabel = useCallback(
     (transactionTypeValue: string) => {
       const transactionType = transactionOptions.find(
@@ -292,7 +316,10 @@ const ControlSafeForm = ({
       );
 
       if (!isEqual(updatedSelectedContractMethods, selectedContractMethods)) {
-        handleSelectedContractMethods(updatedSelectedContractMethods);
+        handleSelectedContractMethods(
+          updatedSelectedContractMethods,
+          transactionFormIndex,
+        );
         setFieldValue(
           `transactions.${transactionFormIndex}.contractFunction`,
           '',
@@ -302,6 +329,26 @@ const ControlSafeForm = ({
     },
     [selectedContractMethods, handleSelectedContractMethods, setFieldValue],
   );
+
+  const handleTransactionTypeChange = (type: string, index: number) => {
+    const setContractFunction = (contractFunction: string) =>
+      setFieldValue(
+        `transactions.${index}.contractFunction`,
+        contractFunction,
+        true,
+      );
+    switch (type) {
+      case TransactionTypes.TRANSFER_FUNDS:
+        setContractFunction(ContractFunctions.TRANSFER_FUNDS);
+        break;
+      case TransactionTypes.TRANSFER_NFT:
+        setContractFunction(ContractFunctions.TRANSFER_NFT);
+        break;
+      default:
+        setContractFunction('');
+        break;
+    }
+  };
 
   const submitButtonText = (() => {
     if (!showPreview) {
@@ -490,11 +537,12 @@ const ControlSafeForm = ({
                             options={transactionOptions}
                             label={MSG.transactionLabel}
                             name={`transactions.${index}.transactionType`}
-                            onChange={() => {
+                            onChange={(type) => {
                               if (!values.safe) {
                                 setSelectedColonySafe(null);
                               }
                               removeSelectedContractMethod(index);
+                              handleTransactionTypeChange(type, index);
                             }}
                             appearance={{ theme: 'grey', width: 'fluid' }}
                             placeholder={MSG.transactionPlaceholder}
@@ -534,6 +582,7 @@ const ControlSafeForm = ({
           userHasPermission={userHasPermission}
           onlyForceAction={onlyForceAction}
           handleValidation={handleValidation}
+          setFieldValue={setFieldValue}
         />
       )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>

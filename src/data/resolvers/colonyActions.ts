@@ -258,6 +258,10 @@ export const colonyActionsResolvers = ({
           isWhitelistActivated: false,
           verifiedAddresses: [],
           colonySafes: [],
+          safeData: null,
+          safeTransactions: [],
+          transactionsTitle: '',
+          annotationMessage: '',
           ...actionValues,
         };
       }
@@ -307,6 +311,12 @@ export const colonyActionsResolvers = ({
         motionState: null,
         motionDomain: null,
         rootHash: null,
+        isWhitelistActivated: false,
+        verifiedAddresses: [],
+        safeData: null,
+        safeTransactions: [],
+        transactionsTitle: '',
+        annotationMessage: '',
         ...pendingActionValues,
       };
     },

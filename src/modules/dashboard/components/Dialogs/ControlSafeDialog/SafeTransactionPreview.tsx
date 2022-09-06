@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import classnames from 'classnames';
 import { nanoid } from 'nanoid';
@@ -15,14 +15,15 @@ import Button from '~core/Button';
 import Icon from '~core/Icon';
 import Avatar from '~core/Avatar';
 import MaskedAddress from '~core/MaskedAddress';
-import { AnyUser } from '~data/index';
+import { AnyUser, NftData } from '~data/index';
 import { getArrayFromString } from '~utils/safes';
 import { extractTokenName } from '~modules/dashboard/sagas/utils/safeHelpers';
+import { omit } from '~utils/lodash';
 
 import AddressDetailsView from './TransactionPreview/AddressDetailsView';
-import { FormValues } from './ControlSafeDialog';
-import { NFT } from './TransactionTypesSection/TransferNFTSection';
 import { FormProps, TransactionSectionProps } from './ControlSafeForm';
+
+import { defaultTransaction, FormValues } from './ControlSafeDialog';
 import {
   TransactionTypes,
   transactionOptions,
@@ -138,7 +139,7 @@ const transactionTypeFieldsMap = {
     {
       key: 'nftData',
       label: MSG.nftHeldByTheSafe,
-      value: (nftData: NFT) => (
+      value: (nftData: NftData) => (
         <div className={styles.nftContainer}>
           <Avatar
             avatarURL={nftData.imageUri || undefined}
@@ -226,7 +227,12 @@ const SafeTransactionPreview = ({
   isSubmitting,
   onlyForceAction,
   handleValidation,
-}: Props & Pick<FormikProps<FormValues>, 'isSubmitting' | 'values'>) => {
+  setFieldValue,
+}: Props &
+  Pick<
+    FormikProps<FormValues>,
+    'setFieldValue' | 'isSubmitting' | 'values'
+  >) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState(
     Array(values.transactions.length).fill(false),
   );
@@ -270,7 +276,7 @@ const SafeTransactionPreview = ({
 
         const maskedArray = formattedArray.map((address, index, arr) => {
           return (
-            <div>
+            <div key={nanoid()}>
               <MaskedAddress address={address.trim()} />
               {index < arr.length - 1 && <span>, </span>}
             </div>
@@ -295,6 +301,31 @@ const SafeTransactionPreview = ({
         );
     }
   };
+
+  /*
+   * Remove unused contract functions from form state.
+   * Doing it here instead of in the Contract Interaction section so that the user doesn't lose state in the
+   * event they switch between contract functions. We need this so the correct functions appear on the actions page.
+   */
+  useEffect(() => {
+    values.transactions.forEach((transaction, index) => {
+      const actualSelectedFunction = transaction.contractFunction;
+      const allSelectedMethodKeys = Object.keys(
+        omit(transaction, Object.keys(defaultTransaction)),
+      );
+      const keysToExclude = allSelectedMethodKeys.filter(
+        // the keys end with "-[functionName]", so we exclude the ones that don't end in the
+        // function name that the user ended up choosing
+        (key) => !new RegExp(`-${actualSelectedFunction}$`).test(key),
+      );
+      const updatedTransaction = {
+        ...omit(transaction, keysToExclude),
+      };
+      setFieldValue(`transactions.${index}`, updatedTransaction);
+    });
+    // initialisation only
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
