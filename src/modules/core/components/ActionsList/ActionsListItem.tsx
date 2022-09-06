@@ -105,8 +105,8 @@ const ActionsListItem = ({
     requiredStake,
     transactionTokenAddress,
     reputationChange,
-    title,
     isDecision,
+    annotationHash,
   },
   colony,
   handleOnClick,
@@ -118,6 +118,17 @@ const ActionsListItem = ({
     [metadata],
   );
 
+  const { data } = useDataFetcher(
+    ipfsDataFetcher,
+    [annotationHash as string],
+    [annotationHash],
+  );
+
+  let title = '';
+  if (data) {
+    const decision = JSON.parse(data);
+    title = decision?.title;
+  }
   const { isVotingExtensionEnabled } = useEnabledExtensions({
     colonyAddress: colony.colonyAddress,
   });
