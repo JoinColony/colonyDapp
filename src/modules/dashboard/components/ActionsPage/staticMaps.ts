@@ -82,6 +82,7 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
 /*
  * Which icons correspond to which action types in the details widget
  */
+
 export const ACTION_TYPES_ICONS_MAP: {
   [key in ColonyActions | ColonyMotions | AddedActions]: string;
 } = {

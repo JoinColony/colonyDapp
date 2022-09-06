@@ -265,6 +265,7 @@ const ControlSafeForm = ({
     },
     [transactionTabStatus, setTransactionTabStatus],
   );
+
   const getTransactionTypeLabel = useCallback(
     (transactionTypeValue: string) => {
       const transactionType = transactionOptions.find(
