@@ -2,12 +2,11 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { SpinnerLoader } from '~core/Preloaders';
-import Heading from '~core/Heading';
 import InfoPopover from '~core/InfoPopover';
-import NavLink from '~core/NavLink';
 import { Colony, useTokenBalancesForDomainsQuery } from '~data/index';
 
 import TokenItem from './TokenItem';
+import SidebarClickableHeading from '../SidebarClickableHeading';
 
 import styles from './ColonyFunding.css';
 
@@ -48,11 +47,9 @@ const ColonyFunding = ({ colony, currentDomainId }: Props) => {
 
   return (
     <div className={styles.main}>
-      <Heading appearance={{ size: 'normal', weight: 'bold' }}>
-        <NavLink to={`/colony/${colonyName}/funds`}>
-          <FormattedMessage {...MSG.title} />
-        </NavLink>
-      </Heading>
+      <SidebarClickableHeading linkTo={`/colony/${colonyName}/funds`}>
+        <FormattedMessage {...MSG.title} />
+      </SidebarClickableHeading>
       {data && !isLoadingTokenBalances ? (
         <ul data-test="availableFunds">
           {data.tokens.map((token) => (

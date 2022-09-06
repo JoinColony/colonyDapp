@@ -78,6 +78,10 @@
   font-size: var(--size-small);
 }
 
+.sizeSmallish {
+  font-size: var(--size-smallish);
+}
+
 .sizeNormal {
   font-size: var(--size-normal);
 }

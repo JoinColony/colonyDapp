@@ -2,10 +2,8 @@ import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import NavLink from '~core/NavLink';
-import Heading from '~core/Heading';
 import { Tooltip } from '~core/Popover';
 import Icon from '~core/Icon';
-import InviteLinkButton from '~dashboard/InviteLinkButton';
 
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import useAvatarDisplayCounter from '~utils/hooks/useAvatarDisplayCounter';
@@ -19,6 +17,8 @@ import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot, canAdminister } from '~modules/users/checks';
+
+import SidebarClickableHeading from '../SidebarClickableHeading';
 
 import styles from './ColonyMembers.css';
 
@@ -120,27 +120,20 @@ const MembersSubsection = ({
             </div>
           }
         >
-          <NavLink to={membersPageRoute}>
-            <Heading
-              appearance={{ size: 'normal', weight: 'bold' }}
-              text={MSG.title}
-              textValues={{
+          <SidebarClickableHeading linkTo={membersPageRoute}>
+            <FormattedMessage
+              {...MSG.title}
+              values={{
                 count: members?.length,
                 hasCounter,
                 isContributorsSubsection,
               }}
             />
-          </NavLink>
+          </SidebarClickableHeading>
         </Tooltip>
-        {!isContributorsSubsection && (
-          <InviteLinkButton
-            colonyName={colonyName}
-            buttonAppearance={{ theme: 'blueWithBackground' }}
-          />
-        )}
       </div>
     ),
-    [members, membersPageRoute, isContributorsSubsection, colonyName],
+    [members, membersPageRoute, isContributorsSubsection],
   );
 
   if (!members) {
