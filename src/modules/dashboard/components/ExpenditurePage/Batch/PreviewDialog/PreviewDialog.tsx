@@ -71,30 +71,32 @@ const PreviewDialog = ({ cancel, values }: Props) => {
               </div>
             </div>
           </DialogSection>
-          {values?.map(({ recipient, token, amount, id, error }, index) => {
-            return (
-              <DialogSection appearance={{ theme: 'sidePadding' }} key={id}>
-                <div
-                  className={classNames(styles.row, {
-                    [styles.borderTop]: index === 0,
-                    [styles.error]: error,
-                  })}
-                >
+          <div className={styles.items}>
+            {values?.map(({ recipient, token, amount, id, error }, index) => {
+              return (
+                <DialogSection appearance={{ theme: 'sidePadding' }} key={id}>
                   <div
-                    className={classNames(styles.left, {
-                      [styles.validUser]: !error,
+                    className={classNames(styles.row, {
+                      [styles.borderTop]: index === 0,
+                      [styles.error]: error,
                     })}
                   >
-                    <MaskedAddress address={recipient || ''} />
+                    <div
+                      className={classNames(styles.left, {
+                        [styles.validUser]: !error,
+                      })}
+                    >
+                      <MaskedAddress address={recipient || ''} />
+                    </div>
+                    <div className={styles.middle}>
+                      {token?.symbol || formatMessage(MSG.tokenNotFound)}
+                    </div>
+                    <div className={styles.right}>{amount}</div>
                   </div>
-                  <div className={styles.middle}>
-                    {token?.symbol || formatMessage(MSG.tokenNotFound)}
-                  </div>
-                  <div className={styles.right}>{amount}</div>
-                </div>
-              </DialogSection>
-            );
-          })}
+                </DialogSection>
+              );
+            })}
+          </div>
         </div>
       </div>
     </Dialog>
