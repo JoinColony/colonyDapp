@@ -1,5 +1,4 @@
 .main {
-  min-height: 325px;
   position: relative;
 }
 
@@ -31,8 +30,8 @@
 
 .characterCount {
   position: absolute;
+  top: 285px;
   right: 20px;
-  bottom: 23px;
   font-size: var(--size-tiny);
   line-height: 18px;
   color: color-mod(var(--temp-grey-blue-7) alpha(65%));
