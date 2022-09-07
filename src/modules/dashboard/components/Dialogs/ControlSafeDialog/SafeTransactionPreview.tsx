@@ -14,7 +14,7 @@ import Icon from '~core/Icon';
 import { Colony, AnyUser } from '~data/index';
 
 import AddressDetailsView from './TransactionPreview/AddressDetailsView';
-import { FormValues } from './GnosisControlSafeDialog';
+import { FormValues } from './ControlSafeDialog';
 import {
   TransactionTypes,
   transactionOptions,
@@ -26,63 +26,63 @@ import styles from './SafeTransactionPreview.css';
 
 const MSG = defineMessages({
   previewTitle: {
-    id: 'dashboard.GnosisControlSafeDialog.SafeTransactionPreview.previewTitle',
+    id: 'dashboard.ControlSafeDialog.SafeTransactionPreview.previewTitle',
     defaultMessage: 'Confirm transaction details',
   },
   transactionsTitle: {
-    id: `dashboard.GnosisControlSafeDialog.SafeTransactionPreview.transactionsTitle`,
+    id: `dashboard.ControlSafeDialog.SafeTransactionPreview.transactionsTitle`,
     defaultMessage: 'Title',
   },
   description: {
-    id: 'dashboard.GnosisControlSafeDialog.SafeTransactionPreview.description',
+    id: 'dashboard.ControlSafeDialog.SafeTransactionPreview.description',
     defaultMessage: 'Description (optional)',
   },
   safe: {
-    id: `dashboard.GnosisControlSafeDialog.SafeTransactionPreview.safe`,
+    id: `dashboard.ControlSafeDialog.SafeTransactionPreview.safe`,
     defaultMessage: 'Safe',
   },
   function: {
-    id: 'dashboard.GnosisControlSafeDialog.SafeTransactionPreview.function',
+    id: 'dashboard.ControlSafeDialog.SafeTransactionPreview.function',
     defaultMessage: 'Function',
   },
   to: {
-    id: 'dashboard.GnosisControlSafeDialog.SafeTransactionPreview.to',
+    id: 'dashboard.ControlSafeDialog.SafeTransactionPreview.to',
     defaultMessage: 'To',
   },
   amount: {
-    id: 'dashboard.GnosisControlSafeDialog.SafeTransactionPreview.amount',
+    id: 'dashboard.ControlSafeDialog.SafeTransactionPreview.amount',
     defaultMessage: 'Amount',
   },
   contract: {
-    id: 'dashboard.GnosisControlSafeDialog.SafeTransactionPreview.contract',
+    id: 'dashboard.ControlSafeDialog.SafeTransactionPreview.contract',
     defaultMessage: 'Contract',
   },
   abi: {
-    id: 'dashboard.GnosisControlSafeDialog.SafeTransactionPreview.abi',
+    id: 'dashboard.ControlSafeDialog.SafeTransactionPreview.abi',
     defaultMessage: 'ABI',
   },
   nft: {
-    id: 'dashboard.GnosisControlSafeDialog.SafeTransactionPreview.nft',
+    id: 'dashboard.ControlSafeDialog.SafeTransactionPreview.nft',
     defaultMessage: 'NFT',
   },
   data: {
-    id: 'dashboard.GnosisControlSafeDialog.SafeTransactionPreview.data',
+    id: 'dashboard.ControlSafeDialog.SafeTransactionPreview.data',
     defaultMessage: 'Data',
   },
   contractFunction: {
-    id: `dashboard.GnosisControlSafeDialog.SafeTransactionPreview.contractFunction`,
+    id: `dashboard.ControlSafeDialog.SafeTransactionPreview.contractFunction`,
     defaultMessage: 'Contract function',
   },
   value: {
-    id: 'dashboard.GnosisControlSafeDialog.SafeTransactionPreview.value',
+    id: 'dashboard.ControlSafeDialog.SafeTransactionPreview.value',
     defaultMessage: 'Value (wei)',
   },
   transactionTitle: {
-    id: `dashboard.GnosisControlSafeDialog.SafeTransactionPreview.transactionTitle`,
+    id: `dashboard.ControlSafeDialog.SafeTransactionPreview.transactionTitle`,
     defaultMessage: `{transactionNumber}. {transactionType, select, undefined {} other {{transactionType}}}`,
   },
   toggleTransaction: {
-    id: `dashboard.GnosisControlSafeDialog.SafeTransactionPreview.toggleTransaction`,
+    id: `dashboard.ControlSafeDialog.SafeTransactionPreview.toggleTransaction`,
     defaultMessage:
       '{tabToggleStatus, select, true {Expand} false {Close}} transaction',
   },
@@ -130,7 +130,7 @@ const transactionTypeFieldsMap = {
   ],
 };
 
-const displayName = 'dashboard.GnosisControlSafeDialog.SafeTransactionPreview';
+const displayName = 'dashboard.ControlSafeDialog.SafeTransactionPreview';
 
 interface Props {
   colony: Colony;

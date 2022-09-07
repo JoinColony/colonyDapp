@@ -39,7 +39,7 @@ import {
 } from '~utils/tokens';
 import { useDataFetcher } from '~utils/hooks';
 import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
-import { GNOSIS_SAFE_NAMES_MAP } from '~constants';
+import { SAFE_NAMES_MAP } from '~constants';
 
 import { ipfsDataFetcher } from '../../../../core/fetchers';
 
@@ -162,7 +162,7 @@ const DefaultAction = ({
     (acc, { chainId, contractAddress, safeName }, index) => {
       const removedSafe = (
         <>
-          <span>{`${safeName} (${GNOSIS_SAFE_NAMES_MAP[chainId]}) `}</span>
+          <span>{`${safeName} (${SAFE_NAMES_MAP[chainId]}) `}</span>
           <MaskedAddress address={contractAddress} />
         </>
       );
@@ -237,7 +237,7 @@ const DefaultAction = ({
     addedSafeAddress: addedSafe && (
       <MaskedAddress address={addedSafe.contractAddress} />
     ),
-    chainName: addedSafe && GNOSIS_SAFE_NAMES_MAP[addedSafe.chainId],
+    chainName: addedSafe && SAFE_NAMES_MAP[addedSafe.chainId],
     safeName: addedSafe?.safeName,
   };
 
@@ -260,7 +260,7 @@ const DefaultAction = ({
     roles: roleTitle,
     reputationChange: actionAndEventValues.reputationChange,
     reputationChangeNumeral: actionAndEventValues.reputationChangeNumeral,
-    chainName: addedSafe && GNOSIS_SAFE_NAMES_MAP[addedSafe.chainId],
+    chainName: addedSafe && SAFE_NAMES_MAP[addedSafe.chainId],
   };
 
   const motionStyles = MOTION_TAG_MAP[MotionState.Forced];

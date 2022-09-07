@@ -19,12 +19,12 @@ import { getUserRolesForDomain } from '~modules/transformers';
 import { userHasRole } from '~modules/users/checks';
 import { useTransformer } from '~utils/hooks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
-import { GNOSIS_SAFE_INTEGRATION_LEARN_MORE } from '~externalUrls';
+import { SAFE_INTEGRATION_LEARN_MORE } from '~externalUrls';
 import { Colony, ColonySafe, useLoggedInUser } from '~data/index';
 import { Address, PrimitiveType } from '~types/index';
 
 import SafeTransactionPreview from './SafeTransactionPreview';
-import { FormValues } from './GnosisControlSafeDialog';
+import { FormValues } from './ControlSafeDialog';
 import {
   GnosisNFTTransfer,
   TransferFundsSection,
@@ -33,65 +33,65 @@ import {
 } from './TransactionTypesSection';
 import { TransactionTypes, transactionOptions } from './constants';
 
-import styles from './GnosisControlSafeForm.css';
+import styles from './ControlSafeForm.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.title',
+    id: 'dashboard.ControlSafeDialog.ControlSafeForm.title',
     defaultMessage: 'Control Safe',
   },
   description: {
-    id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.description',
+    id: 'dashboard.ControlSafeDialog.ControlSafeForm.description',
     defaultMessage: `You can use Control Safe to interact with other third party smart contracts. Be careful. <a>Learn more</a>`,
   },
   selectSafe: {
-    id: 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.selectSafe',
+    id: 'dashboard.ControlSafeDialog.ControlSafeForm.selectSafe',
     defaultMessage: 'Select Safe',
   },
   safePickerPlaceholder: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.safePickerPlaceholder`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.safePickerPlaceholder`,
     defaultMessage: 'Select Safe to control',
   },
   transactionLabel: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.transactionLabel`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.transactionLabel`,
     defaultMessage: 'Select transaction type',
   },
   transactionPlaceholder: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.transactionPlaceholder`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.transactionPlaceholder`,
     defaultMessage: 'Select transaction',
   },
   buttonTransaction: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.buttonTransaction`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.buttonTransaction`,
     defaultMessage: 'Add another transaction',
   },
   buttonCreateTransaction: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.buttonCreateTransaction`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.buttonCreateTransaction`,
     defaultMessage: 'Create transaction',
   },
   buttonConfirm: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.buttonConfirm`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.buttonConfirm`,
     defaultMessage: 'Confirm',
   },
   transactionTitle: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.transactionTitle`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.transactionTitle`,
     defaultMessage: `Transaction #{transactionNumber} {transactionType, select, undefined {} other {({transactionType})}}`,
   },
   toggleTransaction: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.toggleTransaction`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.toggleTransaction`,
     defaultMessage:
       '{tabToggleStatus, select, true {Expand} false {Close}} transaction',
   },
   deleteTransaction: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.deleteTransaction`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.deleteTransaction`,
     defaultMessage: 'Delete transaction',
   },
   deleteTransactionTooltipText: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.deleteTransactionTooltipText`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.deleteTransactionTooltipText`,
     defaultMessage: `Delete transaction.\nBe careful, data can be lost.`,
   },
 });
 
-const displayName = 'dashboard.GnosisControlSafeDialog.GnosisControlSafeForm';
+const displayName = 'dashboard.ControlSafeDialog.ControlSafeForm';
 
 // @TODO - figure out the mapping of the nftCatalogue to the safe
 export interface NFT {
@@ -139,7 +139,7 @@ const renderAvatar = (address: string, item) => (
   />
 );
 
-const GnosisControlSafeForm = ({
+const ControlSafeForm = ({
   colony,
   colony: { colonyAddress },
   back,
@@ -262,7 +262,7 @@ const GnosisControlSafeForm = ({
               {...MSG.description}
               values={{
                 a: (chunks) => (
-                  <ExternalLink href={GNOSIS_SAFE_INTEGRATION_LEARN_MORE}>
+                  <ExternalLink href={SAFE_INTEGRATION_LEARN_MORE}>
                     {chunks}
                   </ExternalLink>
                 ),
@@ -433,6 +433,6 @@ const GnosisControlSafeForm = ({
   );
 };
 
-GnosisControlSafeForm.displayName = displayName;
+ControlSafeForm.displayName = displayName;
 
-export default GnosisControlSafeForm;
+export default ControlSafeForm;
