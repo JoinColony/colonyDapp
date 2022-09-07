@@ -14,7 +14,7 @@ export const getSafeCoreSDK = async (
   safeAddress: string,
 ) => {
   const onLocalDevEnvironment = process.env.NETWORK === Network.Local;
-  // @NOTE: RINKEBY can be replaced by any other network you would like to use for testing so long as they are supported by Gnosis Safe
+  // @NOTE: RINKEBY can be replaced by any other network you would like to use for testing so long as they are supported by Safe
   const currentNetworkData = onLocalDevEnvironment
     ? RINKEBY_TEST_NETWORK
     : NETWORK_DATA[process.env.NETWORK || DEFAULT_NETWORK];
