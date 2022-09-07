@@ -5,6 +5,7 @@ import NavLink from '~core/NavLink';
 import { Tooltip } from '~core/Popover';
 import Icon from '~core/Icon';
 import ClickableHeading from '~core/ClickableHeading';
+import InviteLinkButton from '~dashboard/InviteLinkButton';
 
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import useAvatarDisplayCounter from '~utils/hooks/useAvatarDisplayCounter';
@@ -130,6 +131,14 @@ const MembersSubsection = ({
             />
           </ClickableHeading>
         </Tooltip>
+        {!isContributorsSubsection && (
+          <div className={styles.inviteButton}>
+            <InviteLinkButton
+              colonyName={colonyName}
+              buttonAppearance={{ theme: 'blueWithBackground' }}
+            />
+          </div>
+        )}
       </div>
     ),
     [isContributorsSubsection, membersPageRoute, members],
