@@ -49,6 +49,10 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.ExpenditureSettings.split',
     defaultMessage: 'Split',
   },
+  streaming: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.streaming',
+    defaultMessage: 'Streaming',
+  },
 });
 
 const expeditureTypes = [
@@ -63,6 +67,10 @@ const expeditureTypes = [
   {
     label: MSG.staged,
     value: ExpenditureTypes.Staged,
+  },
+  {
+    label: MSG.streaming,
+    value: ExpenditureTypes.Streaming,
   },
 ];
 

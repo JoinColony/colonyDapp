@@ -5,17 +5,12 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import * as yup from 'yup';
-import {
-  defineMessages,
-  FormattedMessage,
-  MessageDescriptor,
-} from 'react-intl';
+
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { nanoid } from 'nanoid';
 import { RouteChildrenProps, useParams } from 'react-router';
 import { Formik, FormikErrors } from 'formik';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
-import { toFinite } from 'lodash';
 
 import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
 import { useColonyFromNameQuery } from '~data/generated';
@@ -40,13 +35,12 @@ import EditExpenditureDialog from '~dashboard/Dialogs/EditExpenditureDialog';
 import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
 import Tag from '~core/Tag';
 import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
-import { initalMilestone } from '~dashboard/ExpenditurePage/Staged/constants';
 
 import { findDifferences, updateValues, setClaimDate } from './utils';
 import ExpenditureForm from './ExpenditureForm';
 import { ExpenditureTypes, ValuesType } from './types';
 import LockedSidebar from './LockedSidebar';
-import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
+import { initialValues, validationSchema } from './constants';
 import styles from './ExpenditurePage.css';
 
 const displayName = 'pages.ExpenditurePage';
@@ -96,26 +90,6 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.completed',
     defaultMessage: 'Completed',
   },
-  userRequiredError: {
-    id: 'dashboard.ExpenditurePage.userRequiredError',
-    defaultMessage: 'User is required',
-  },
-  teamRequiredError: {
-    id: 'dashboard.ExpenditurePage.teamRequiredError',
-    defaultMessage: 'Team is required',
-  },
-  valueError: {
-    id: 'dashboard.ExpenditurePage.completed',
-    defaultMessage: 'Value is required',
-  },
-  amountZeroError: {
-    id: 'dashboard.ExpenditurePage.amountZeroError',
-    defaultMessage: 'Value must be greater than zero',
-  },
-  milestoneNameError: {
-    id: 'dashboard.ExpenditurePage.milestoneNameError',
-    defaultMessage: 'Name is required',
-  },
   suggestions: {
     id: 'dashboard.ExpenditurePage.suggestions',
     defaultMessage: 'You are making suggestions ',
@@ -124,118 +98,7 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.activeMotion',
     defaultMessage: 'There is an active motion for this expenditure',
   },
-  milestoneAmountError: {
-    id: 'dashboard.ExpenditurePage.milestoneAmountError',
-    defaultMessage: 'Amount is required',
-  },
 });
-
-const validationSchema = yup.object().shape({
-  expenditure: yup.string().required(),
-  filteredDomainId: yup
-    .string()
-    .required(() => <FormattedMessage {...MSG.teamRequiredError} />),
-  recipients: yup.array().when('expenditure', {
-    is: (expenditure) => expenditure === ExpenditureTypes.Advanced,
-    then: yup.array().of(
-      yup.object().shape({
-        recipient: yup.object().required(),
-        value: yup
-          .array(
-            yup.object().shape({
-              amount: yup
-                .number()
-                .transform((value) => toFinite(value))
-                .required(() => MSG.valueError)
-                .moreThan(0, () => MSG.amountZeroError),
-              tokenAddress: yup.string().required(),
-            }),
-          )
-          .min(1),
-      }),
-    ),
-  }),
-  staged: yup.object().when('expenditure', {
-    is: (expenditure) => expenditure === ExpenditureTypes.Staged,
-    then: yup.object().shape({
-      user: yup.object().required(),
-      amount: yup.object().shape({
-        value: yup
-          .number()
-          .transform((value) => toFinite(value))
-          .required(() => MSG.milestoneAmountError)
-          .moreThan(0, () => MSG.amountZeroError),
-        tokenAddress: yup.string().required(),
-      }),
-      milestones: yup
-        .array(
-          yup.object().shape({
-            name: yup.string().required(() => MSG.milestoneNameError),
-            percent: yup
-              .number()
-              .moreThan(0, () => MSG.amountZeroError)
-              .required(),
-            amount: yup.number(),
-          }),
-        )
-        .min(1)
-        .required(),
-    }),
-  }),
-  title: yup.string().min(3).required(),
-  description: yup.string().max(4000),
-  split: yup.object().when('expenditure', {
-    is: (expenditure) => expenditure === ExpenditureTypes.Split,
-    then: yup.object().shape({
-      unequal: yup.boolean().required(),
-      amount: yup.object().shape({
-        value: yup
-          .number()
-          .transform((value) => toFinite(value))
-          .required(() => MSG.valueError)
-          .moreThan(0, () => MSG.amountZeroError),
-        tokenAddress: yup.string().required(),
-      }),
-      recipients: yup
-        .array()
-        .of(
-          yup.object().shape({
-            user: yup.object().required(),
-            amount: yup.number().required(),
-          }),
-        )
-        .min(2)
-        .required(),
-    }),
-  }),
-});
-
-export interface State {
-  id: string;
-  label: string | MessageDescriptor;
-  buttonText: string | MessageDescriptor;
-  buttonAction: () => void;
-  buttonTooltip?: string | MessageDescriptor;
-}
-
-const initialValues = {
-  expenditure: ExpenditureTypes.Advanced,
-  recipients: [newRecipient],
-  filteredDomainId: String(ROOT_DOMAIN_ID),
-  owner: undefined,
-  title: undefined,
-  description: undefined,
-  staged: {
-    milestones: [{ ...initalMilestone, id: nanoid() }],
-  },
-  split: {
-    unequal: false,
-    recipients: [
-      { ...initalRecipient, key: nanoid() },
-      { ...initalRecipient, key: nanoid() },
-    ],
-  },
-};
 
 export type InitialValuesType = typeof initialValues;
 

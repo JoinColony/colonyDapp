@@ -8,11 +8,13 @@ import {
 import { AnyUser } from '~data/index';
 import { LoggedInUser } from '~data/generated';
 import { Staged as StagedType } from '~dashboard/ExpenditurePage/Staged/types';
+import { Streaming as StreamingType } from '~dashboard/ExpenditurePage/ExpenditureSettings/Streaming/types';
 
 export enum ExpenditureTypes {
   Advanced = 'advanced',
   Split = 'split',
   Staged = 'staged',
+  Streaming = 'streaming',
 }
 
 export interface ValuesType {
@@ -33,6 +35,7 @@ export interface ValuesType {
     recipients?: { user?: AnyUser; amount?: number; percent?: number }[];
   };
   staged?: StagedType;
+  streaming?: StreamingType;
 }
 
 export interface State {
