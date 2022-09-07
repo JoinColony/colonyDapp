@@ -4,14 +4,14 @@ import Heading from '~core/Heading';
 import NavLink from '~core/NavLink';
 import Icon from '~core/Icon';
 
-import styles from './SidebarClickableHeading.css';
+import styles from './ClickableHeading.css';
 
 interface Props {
   children?: ReactChild;
   linkTo: string;
 }
 
-const SidebarClickableHeading = ({ children, linkTo }: Props) => {
+const ClickableHeading = ({ children, linkTo }: Props) => {
   return (
     <div className={styles.heading}>
       <Heading appearance={{ size: 'smallish', weight: 'bold' }}>
@@ -27,4 +27,4 @@ const SidebarClickableHeading = ({ children, linkTo }: Props) => {
   );
 };
 
-export default SidebarClickableHeading;
+export default ClickableHeading;

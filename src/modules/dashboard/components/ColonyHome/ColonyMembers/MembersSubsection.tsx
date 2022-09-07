@@ -4,6 +4,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import NavLink from '~core/NavLink';
 import { Tooltip } from '~core/Popover';
 import Icon from '~core/Icon';
+import ClickableHeading from '~core/ClickableHeading';
 
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import useAvatarDisplayCounter from '~utils/hooks/useAvatarDisplayCounter';
@@ -17,8 +18,6 @@ import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot, canAdminister } from '~modules/users/checks';
-
-import SidebarClickableHeading from '../SidebarClickableHeading';
 
 import styles from './ColonyMembers.css';
 
@@ -120,7 +119,7 @@ const MembersSubsection = ({
             </div>
           }
         >
-          <SidebarClickableHeading linkTo={membersPageRoute}>
+          <ClickableHeading linkTo={membersPageRoute}>
             <FormattedMessage
               {...MSG.title}
               values={{
@@ -129,11 +128,11 @@ const MembersSubsection = ({
                 isContributorsSubsection,
               }}
             />
-          </SidebarClickableHeading>
+          </ClickableHeading>
         </Tooltip>
       </div>
     ),
-    [members, membersPageRoute, isContributorsSubsection],
+    [isContributorsSubsection, membersPageRoute, members],
   );
 
   if (!members) {

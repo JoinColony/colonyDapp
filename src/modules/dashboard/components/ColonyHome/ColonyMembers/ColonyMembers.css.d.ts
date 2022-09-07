@@ -6,3 +6,4 @@ export const loadingText: string;
 export const userBanned: string;
 export const tooltip: string;
 export const heading: string;
+export const inviteButton: string;
