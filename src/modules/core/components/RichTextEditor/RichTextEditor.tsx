@@ -15,6 +15,7 @@ interface Props {
   isSubmitting: boolean;
   limit: number;
   name: string;
+  className?: string;
   disabled?: boolean;
 }
 
@@ -23,6 +24,7 @@ const RichTextEditor = ({
   isSubmitting,
   limit,
   name,
+  className,
   disabled = false,
 }: Props) => {
   const [
@@ -45,7 +47,7 @@ const RichTextEditor = ({
 
   return (
     <div
-      className={classnames(styles.main, {
+      className={classnames(styles.main, className, {
         [styles.disabled]: isSubmitting || disabled,
       })}
     >
