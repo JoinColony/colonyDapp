@@ -198,6 +198,18 @@ const ExpenditurePage = ({ match }: Props) => {
             },
           ],
         },
+        streaming: {
+          ...initialValues.streaming,
+          fundingSources: [
+            {
+              ...newFundingSource,
+              rate: {
+                ...newFundingSource.rate,
+                token: colonyData?.processedColony.nativeTokenAddress,
+              },
+            },
+          ],
+        },
       }
     );
   }, [colonyData, formValues, loggedInUser]);
@@ -212,6 +224,36 @@ const ExpenditurePage = ({ match }: Props) => {
       setShouldValidate(true);
       if (!activeStageId) {
         setActiveStageId(Stage.Draft);
+      }
+
+      if (values.expenditure === ExpenditureTypes.Split) {
+        const recipientsCount =
+          values.split.recipients?.filter(
+            (recipient) => recipient?.user?.id !== undefined,
+          ).length || 0;
+
+        const splitValues = {
+          ...values,
+          recipients: undefined,
+          split: {
+            ...values.split,
+            recipients: values.split.recipients?.map((recipient) => {
+              const amount = values.split.amount.value;
+              if (values.split.unequal) {
+                const userAmount =
+                  amount &&
+                  recipient?.percent &&
+                  (recipient.percent / 100) * Number(values.split.amount.value);
+                return { ...recipient, amount: userAmount };
+              }
+              return {
+                ...recipient,
+                amount: !amount ? 0 : Number(amount) / (recipientsCount || 1),
+              };
+            }),
+          },
+        };
+        setFormValues(splitValues);
       }
 
       if (values.expenditure === ExpenditureTypes.Streaming) {
