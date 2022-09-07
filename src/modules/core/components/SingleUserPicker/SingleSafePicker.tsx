@@ -1,6 +1,6 @@
 import React, { ComponentProps, useMemo } from 'react';
 
-import { GNOSIS_SAFE_NETWORKS } from '~constants';
+import { SAFE_NETWORKS } from '~constants';
 import { ColonySafe } from '~data/index';
 
 import SingleUserPicker from './SingleUserPicker';
@@ -16,7 +16,7 @@ const SingleSafePicker = ({ data, ...props }: Props) => {
   const formattedData = useMemo(
     () =>
       data.map((item) => {
-        const safeNetwork = GNOSIS_SAFE_NETWORKS.find(
+        const safeNetwork = SAFE_NETWORKS.find(
           (network) => network.chainId === Number(item.chainId),
         );
         return {
@@ -34,7 +34,7 @@ const SingleSafePicker = ({ data, ...props }: Props) => {
     <SingleUserPicker
       {...props}
       data={formattedData}
-      placeholderIconName="gnosis-logo"
+      placeholderIconName="safe-logo"
     />
   );
 };

@@ -12,24 +12,24 @@ import styles from './TransactionTypesSection.css';
 
 const MSG = defineMessages({
   valueLabel: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.RawTransactionSection.valueLabel`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.RawTransactionSection.valueLabel`,
     defaultMessage: 'Value <span>wei</span>',
   },
   dataLabel: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.RawTransactionSection.dataLabel`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.RawTransactionSection.dataLabel`,
     defaultMessage: 'Data <span>bytes</span>',
   },
   recipient: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.RawTransactionSection.recipient`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.RawTransactionSection.recipient`,
     defaultMessage: 'Select Recipient',
   },
   userPickerPlaceholder: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.RawTransactionSection.userPickerPlaceholder`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.RawTransactionSection.userPickerPlaceholder`,
     defaultMessage: 'Select or paste a wallet address',
   },
 });
 
-const displayName = `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.RawTransactionSection`;
+const displayName = `dashboard.ControlSafeDialog.ControlSafeForm.RawTransactionSection`;
 
 interface Props {
   colony: Colony;

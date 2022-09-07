@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 
-import { GNOSIS_SAFE_NETWORKS } from '~constants';
+import { SAFE_NETWORKS } from '~constants';
 import Avatar from '~core/Avatar';
 import { Checkbox } from '~core/Fields';
 import MaskedAddress from '~core/MaskedAddress';
@@ -13,7 +13,7 @@ import styles from './SafeListItem.css';
 const MSG = defineMessages({
   copyMessage: {
     id: 'dashboard.Dialogs.RemoveSafeDialog.SafeListItem.copyMessage',
-    defaultMessage: 'Click to copy Gnosis Safe address',
+    defaultMessage: 'Click to copy Safe address',
   },
   safeNamePlaceholder: {
     id: 'dashboard.Dialogs.RemoveSafeDialog.SafeListItem.safeNamePlaceholder',
@@ -28,7 +28,7 @@ interface Props {
 
 const SafeListItem = ({ safe, isChecked }: Props) => {
   const { formatMessage } = useIntl();
-  const safeNetwork = GNOSIS_SAFE_NETWORKS.find(
+  const safeNetwork = SAFE_NETWORKS.find(
     (network) => network.chainId === Number(safe.chainId),
   );
   return (

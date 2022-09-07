@@ -11,42 +11,42 @@ import SingleUserPicker, {
 import { useMembersSubscription } from '~data/index';
 
 import { Address } from '~types/index';
-import { NFT } from '~dashboard/Dialogs/GnosisControlSafeDialog';
+import { NFT } from '~dashboard/Dialogs/ControlSafeDialog';
 
 import styles from './GnosisNFTTransfer.css';
 
 const MSG = defineMessages({
   selectNFT: {
-    id: 'dashboard.GnosisControlSafeDialog.GnosisNFTTransfer.selectNFT',
+    id: 'dashboard.ControlSafeDialog.GnosisNFTTransfer.selectNFT',
     defaultMessage: 'Select the NFT held by the Safe',
   },
   NFTPickerPlaceholder: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisNFTTransfer.NFTPickerPlaceholder`,
+    id: `dashboard.ControlSafeDialog.GnosisNFTTransfer.NFTPickerPlaceholder`,
     defaultMessage: 'Select NFT to transfer',
   },
   selectRecipient: {
-    id: 'dashboard.GnosisControlSafeDialog.GnosisNFTTransfer.selectRecipient',
+    id: 'dashboard.ControlSafeDialog.GnosisNFTTransfer.selectRecipient',
     defaultMessage: 'Select Recipient',
   },
   userPickerPlaceholder: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisNFTTransfer.userPickerPlaceholder`,
+    id: `dashboard.ControlSafeDialog.GnosisNFTTransfer.userPickerPlaceholder`,
     defaultMessage: 'Search for a user or paste wallet address',
   },
   contract: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisNFTTransfer.contract`,
+    id: `dashboard.ControlSafeDialog.GnosisNFTTransfer.contract`,
     defaultMessage: 'Contract',
   },
   idLabel: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisNFTTransfer.idLabel`,
+    id: `dashboard.ControlSafeDialog.GnosisNFTTransfer.idLabel`,
     defaultMessage: 'Id',
   },
   nftDetails: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisNFTTransfer.nftDetails`,
+    id: `dashboard.ControlSafeDialog.GnosisNFTTransfer.nftDetails`,
     defaultMessage: 'NFT details',
   },
 });
 
-const displayName = 'dashboard.GnosisControlSafeDialog.GnosisNFTTransfer';
+const displayName = 'dashboard.ControlSafeDialog.GnosisNFTTransfer';
 
 interface Props {
   colonyAddress: Address;

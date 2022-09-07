@@ -7,7 +7,7 @@ import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Select, Input, Annotations, SelectOption } from '~core/Fields';
 import Heading from '~core/Heading';
-import { GNOSIS_SAFE_NETWORKS, SAFE_ALREADY_EXISTS } from '~constants';
+import { SAFE_NETWORKS, SAFE_ALREADY_EXISTS } from '~constants';
 import { SimpleMessageValues } from '~types/index';
 import { ColonySafe } from '~data/index';
 
@@ -18,7 +18,7 @@ import styles from './AddExistingSafeDialogForm.css';
 const MSG = defineMessages({
   title: {
     id: 'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.title',
-    defaultMessage: 'Add Gnosis Safe',
+    defaultMessage: 'Add Safe',
   },
   chain: {
     id: 'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.chain',
@@ -30,7 +30,7 @@ const MSG = defineMessages({
   },
   annotation: {
     id: 'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.annotation',
-    defaultMessage: `Explain why you're adding this Gnosis Safe (optional)`,
+    defaultMessage: `Explain why you're adding this Safe (optional)`,
   },
   contract: {
     id: 'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.contract',
@@ -101,9 +101,9 @@ const AddExistingSafeDialogForm = ({
   const [isLoadingSafe, setIsLoadingSafe] = useState<boolean>(false);
 
   // Get base API url for the selected chain
-  const baseURL = GNOSIS_SAFE_NETWORKS.filter(
+  const baseURL = SAFE_NETWORKS.filter(
     (network) => network.name === selectedChain.label,
-  )[0].gnosisTxService;
+  )[0].safeTxService;
 
   // Get Safe Address field status
   const [
@@ -281,7 +281,7 @@ const AddExistingSafeDialogForm = ({
           name="safeName"
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
           disabled={isSubmitting}
-          // @There is no limit on Gnosis Safe names, so, we can impose our own
+          // @There is no limit on Safe names, so, we can impose our own
           maxLength={20}
         />
       </DialogSection>

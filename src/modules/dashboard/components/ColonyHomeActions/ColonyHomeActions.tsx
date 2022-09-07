@@ -24,8 +24,8 @@ import EditColonyDetailsDialog from '~dialogs/EditColonyDetailsDialog';
 import ManageReputationDialog from '~dialogs/ManageReputationDialog';
 import ColonyTokenManagementDialog from '~dialogs/ColonyTokenManagementDialog';
 import { SmiteDialog, AwardDialog } from '~dialogs/AwardAndSmiteDialogs';
-import ManageGnosisSafeDialog from '~dialogs/ManageGnosisSafeDialog';
-import GnosisControlSafeDialog from '~dialogs/GnosisControlSafeDialog';
+import ManageSafeDialog from '~dialogs/ManageSafeDialog';
+import ControlSafeDialog from '~dialogs/ControlSafeDialog';
 import RemoveSafeDialog from '~dialogs/RemoveSafeDialog';
 import AddExistingSafeDialog from '~dialogs/AddExistingSafeDialog';
 
@@ -214,18 +214,18 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         nextStepRecovery: 'dashboard.RecoveryModeDialog',
         nextStepEditDetails: 'dashboard.EditColonyDetailsDialog',
         nextStepVersionUpgrade: 'dashboard.NetworkContractUpgradeDialog',
-        nextStepManageGnosisSafe: 'dashboard.ManageGnosisSafeDialog',
+        nextStepManageSafe: 'dashboard.ManageSafeDialog',
         colony,
         isVotingExtensionEnabled,
       },
     },
 
     {
-      component: ManageGnosisSafeDialog,
+      component: ManageSafeDialog,
       props: {
         nextStepAddExistingSafe: 'dashboard.AddExistingSafeDialog',
         nextStepRemoveSafe: 'dashboard.RemoveSafeDialog',
-        nextStepControlSafe: 'dashboard.GnosisControlSafeDialog',
+        nextStepControlSafe: 'dashboard.ControlSafeDialog',
         prevStep: 'dashboard.AdvancedDialog',
         colony,
       },
@@ -233,14 +233,14 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
     {
       component: AddExistingSafeDialog,
       props: {
-        prevStep: 'dashboard.ManageGnosisSafeDialog',
+        prevStep: 'dashboard.ManageSafeDialog',
         colony,
       },
     },
     {
-      component: GnosisControlSafeDialog,
+      component: ControlSafeDialog,
       props: {
-        prevStep: 'dashboard.ManageGnosisSafeDialog',
+        prevStep: 'dashboard.ManageSafeDialog',
         colony,
         isVotingExtensionEnabled,
       },
@@ -248,7 +248,7 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
     {
       component: RemoveSafeDialog,
       props: {
-        prevStep: 'dashboard.ManageGnosisSafeDialog',
+        prevStep: 'dashboard.ManageSafeDialog',
         colony,
       },
     },

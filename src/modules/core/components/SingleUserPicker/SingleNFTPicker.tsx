@@ -1,6 +1,6 @@
 import React, { ComponentProps, useMemo } from 'react';
 
-import { NFT } from '~dashboard/Dialogs/GnosisControlSafeDialog';
+import { NFT } from '~dashboard/Dialogs/ControlSafeDialog';
 
 import SingleUserPicker from './SingleUserPicker';
 

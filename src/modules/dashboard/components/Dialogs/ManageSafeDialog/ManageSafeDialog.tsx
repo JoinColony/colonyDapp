@@ -11,45 +11,45 @@ import { useTransformer, WizardDialogType } from '~utils/hooks';
 
 const MSG = defineMessages({
   dialogHeader: {
-    id: 'dashboard.ManageGnosisSafeDialog.dialogHeader',
-    defaultMessage: 'Gnosis Safe Control',
+    id: 'dashboard.ManageSafeDialog.dialogHeader',
+    defaultMessage: 'Safe Control',
   },
   addExistingSafeTitle: {
-    id: 'dashboard.ManageGnosisSafeDialog.addExistingSafeTitle',
+    id: 'dashboard.ManageSafeDialog.addExistingSafeTitle',
     defaultMessage: 'Add Existing Safe',
   },
   addExistingSafeDescription: {
-    id: 'dashboard.ManageGnosisSafeDialog.addExistingSafeDescription',
+    id: 'dashboard.ManageSafeDialog.addExistingSafeDescription',
     defaultMessage:
-      'Add an existing Gnosis Safe that you would like your Colony to control.',
+      'Add an existing Safe that you would like your Colony to control.',
   },
   removeSafeTitle: {
-    id: 'dashboard.ManageGnosisSafeDialog.removeSafeTitle',
+    id: 'dashboard.ManageSafeDialog.removeSafeTitle',
     defaultMessage: 'Remove Safe',
   },
   removeSafeDescription: {
-    id: 'dashboard.ManageGnosisSafeDialog.removeSafeDescription',
-    defaultMessage: 'Remove a Gnosis Safe you previously added to your Colony.',
+    id: 'dashboard.ManageSafeDialog.removeSafeDescription',
+    defaultMessage: 'Remove a Safe you previously added to your Colony.',
   },
   controlSafeTitle: {
-    id: 'dashboard.ManageGnosisSafeDialog.controlSafeTitle',
+    id: 'dashboard.ManageSafeDialog.controlSafeTitle',
     defaultMessage: 'Control Safe',
   },
   controlSafeDescription: {
-    id: 'dashboard.ManageGnosisSafeDialog.controlSafeDescription',
-    defaultMessage: 'Get your colony’s Gnosis Safe to do stuff.',
+    id: 'dashboard.ManageSafeDialog.controlSafeDescription',
+    defaultMessage: 'Get your colony’s Safe to do stuff.',
   },
   permissionText: {
-    id: 'dashboard.ManageGnosisSafeDialog.permissionsText',
+    id: 'dashboard.ManageSafeDialog.permissionsText',
     defaultMessage: `You must have the {permissionsList} permissions in the
       relevant teams, in order to take this action`,
   },
   adminFundingPermissions: {
-    id: 'dashboard.ManageGnosisSafeDialog.adminFundingPermissions',
+    id: 'dashboard.ManageSafeDialog.adminFundingPermissions',
     defaultMessage: 'administration and funding ',
   },
   rootFundingPermissions: {
-    id: 'dashboard.ManageGnosisSafeDialog.rootFundingPermissions',
+    id: 'dashboard.ManageSafeDialog.rootFundingPermissions',
     defaultMessage: 'root and funding ',
   },
 });
@@ -63,9 +63,9 @@ interface CustomWizardDialogProps extends ActionDialogProps {
 
 type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
 
-const displayName = 'dashboard.ManageGnosisSafeDialog';
+const displayName = 'dashboard.ManageSafeDialog';
 
-const ManageGnosisSafeDialog = ({
+const ManageSafeDialog = ({
   colony,
   cancel,
   close,
@@ -94,7 +94,7 @@ const ManageGnosisSafeDialog = ({
       title: MSG.addExistingSafeTitle,
       description: MSG.addExistingSafeDescription,
       icon: 'plus-heavy',
-      dataTest: 'gnosisAddExistingItem',
+      dataTest: 'addExistingSafeItem',
       onClick: () => callStep(nextStepAddExistingSafe),
       permissionRequired: !canAddRemoveSafes,
       permissionInfoText: MSG.permissionText,
@@ -106,7 +106,7 @@ const ManageGnosisSafeDialog = ({
       title: MSG.removeSafeTitle,
       description: MSG.removeSafeDescription,
       icon: 'trash-can',
-      dataTest: 'gnosisRemoveSafeItem',
+      dataTest: 'removeSafeItem',
       onClick: () => callStep(nextStepRemoveSafe),
       permissionRequired: !canAddRemoveSafes,
       permissionInfoText: MSG.permissionText,
@@ -118,7 +118,7 @@ const ManageGnosisSafeDialog = ({
       title: MSG.controlSafeTitle,
       description: MSG.controlSafeDescription,
       icon: 'joystick',
-      dataTest: 'gnosisControlSafeItem',
+      dataTest: 'controlSafeItem',
       onClick: () => callStep(nextStepControlSafe),
       permissionRequired: !canControlSafes,
       permissionInfoText: MSG.permissionText,
@@ -138,6 +138,6 @@ const ManageGnosisSafeDialog = ({
   );
 };
 
-ManageGnosisSafeDialog.displayName = displayName;
+ManageSafeDialog.displayName = displayName;
 
-export default ManageGnosisSafeDialog;
+export default ManageSafeDialog;

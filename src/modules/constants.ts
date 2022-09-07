@@ -32,9 +32,9 @@ export type NetworkInfo = {
    */
   rpcUrl?: string;
   /*
-   * Used when interacting with Gnosis Safe Transaction Service
+   * Used when interacting with Safe Transaction Service
    */
-  gnosisTxService?: string;
+  safeTxService?: string;
 };
 
 export const DEFAULT_NETWORK = process.env.NETWORK || Network.Goerli;
@@ -84,7 +84,7 @@ export const GNOSIS_NETWORK: NetworkInfo = {
   tokenExplorerLink: 'https://blockscout.com/poa/xdai/tokens',
   contractAddressLink: 'https://blockscout.com/poa/xdai/address',
   rpcUrl: 'https://rpc.gnosischain.com',
-  gnosisTxService: 'https://safe-transaction.xdai.gnosis.io/',
+  safeTxService: 'https://safe-transaction.xdai.gnosis.io/',
 };
 
 export const ETHEREUM_NETWORK: NetworkInfo = {
@@ -97,7 +97,7 @@ export const ETHEREUM_NETWORK: NetworkInfo = {
   tokenExplorerLink: 'https://etherscan.io/tokens',
   contractAddressLink: 'https://etherscan.io/address',
   rpcUrl: 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-  gnosisTxService: 'https://safe-transaction.mainnet.gnosis.io/',
+  safeTxService: 'https://safe-transaction.mainnet.gnosis.io/',
 };
 
 export const GOERLI_NETWORK: NetworkInfo = {
@@ -110,7 +110,7 @@ export const GOERLI_NETWORK: NetworkInfo = {
   tokenExplorerLink: 'https://goerli.etherscan.io/tokens',
   contractAddressLink: 'https://goerli.etherscan.io/address',
   rpcUrl: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-  gnosisTxService: 'https://safe-transaction.goerli.gnosis.io/',
+  safeTxService: 'https://safe-transaction.goerli.gnosis.io/',
 };
 
 const ARBITRUM_NETWORK: NetworkInfo = {
@@ -118,7 +118,7 @@ const ARBITRUM_NETWORK: NetworkInfo = {
   chainId: 42161,
   shortName: 'ETH',
   contractAddressLink: '',
-  gnosisTxService: 'https://safe-transaction.arbitrum.gnosis.io/',
+  safeTxService: 'https://safe-transaction.arbitrum.gnosis.io/',
   rpcUrl: 'https://rpc.ankr.com/arbitrum',
 };
 
@@ -127,7 +127,7 @@ const AURORA_NETWORK: NetworkInfo = {
   chainId: 1313161554,
   shortName: 'ETH',
   contractAddressLink: '',
-  gnosisTxService: 'https://safe-transaction.aurora.gnosis.io/',
+  safeTxService: 'https://safe-transaction.aurora.gnosis.io/',
   rpcUrl: 'https://testnet.aurora.dev/',
 };
 
@@ -136,7 +136,7 @@ const AVALANCHE_NETWORK: NetworkInfo = {
   chainId: 43114,
   shortName: 'AVAX',
   contractAddressLink: '',
-  gnosisTxService: 'https://safe-transaction.avalanche.gnosis.io/',
+  safeTxService: 'https://safe-transaction.avalanche.gnosis.io/',
   rpcUrl: 'https://api.avax.network/ext/bc/C/rpc',
 };
 
@@ -145,7 +145,7 @@ const BINANCE_NETWORK: NetworkInfo = {
   chainId: 56,
   shortName: 'BNB',
   contractAddressLink: '',
-  gnosisTxService: 'https://safe-transaction.bsc.gnosis.io/',
+  safeTxService: 'https://safe-transaction.bsc.gnosis.io/',
   rpcUrl: 'https://bsc-dataseed.binance.org/',
 };
 
@@ -154,7 +154,7 @@ const OPTIMISM_NETWORK: NetworkInfo = {
   chainId: 10,
   shortName: 'ETH',
   contractAddressLink: '',
-  gnosisTxService: 'https://safe-transaction.optimism.gnosis.io/',
+  safeTxService: 'https://safe-transaction.optimism.gnosis.io/',
   rpcUrl: 'https://mainnet.optimism.io',
 };
 
@@ -163,7 +163,7 @@ const POLYGON_NETWORK: NetworkInfo = {
   chainId: 137,
   shortName: 'MATIC',
   contractAddressLink: '',
-  gnosisTxService: 'https://safe-transaction.polygon.gnosis.io/',
+  safeTxService: 'https://safe-transaction.polygon.gnosis.io/',
   rpcUrl: 'https://polygon-rpc.com',
 };
 
@@ -172,7 +172,7 @@ export const RINKEBY_TEST_NETWORK: NetworkInfo = {
   chainId: 4,
   shortName: 'RIN',
   contractAddressLink: '',
-  gnosisTxService: 'https://safe-transaction.rinkeby.gnosis.io/',
+  safeTxService: 'https://safe-transaction.rinkeby.gnosis.io/',
   rpcUrl: 'https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
 };
 
@@ -215,7 +215,7 @@ export const SUPPORTED_NETWORKS = {
   [GANACHE_NETWORK.chainId]: GANACHE_NETWORK,
 };
 
-export const GNOSIS_SAFE_NETWORKS: NetworkInfo[] = [
+export const SAFE_NETWORKS: NetworkInfo[] = [
   GNOSIS_NETWORK,
   ETHEREUM_NETWORK,
   ARBITRUM_NETWORK,
@@ -228,7 +228,7 @@ export const GNOSIS_SAFE_NETWORKS: NetworkInfo[] = [
   RINKEBY_TEST_NETWORK,
 ];
 
-export const GNOSIS_SAFE_NAMES_MAP = GNOSIS_SAFE_NETWORKS.reduce(
+export const SAFE_NAMES_MAP = SAFE_NETWORKS.reduce(
   (acc, safe) => ({
     ...acc,
     [safe.chainId]: safe.name,

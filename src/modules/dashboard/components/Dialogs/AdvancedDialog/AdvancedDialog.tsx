@@ -85,12 +85,12 @@ const MSG = defineMessages({
     defaultMessage:
       'Want to interact with DeFi, or govern an external smart contract?',
   },
-  manageGnosisSafeTitle: {
-    id: 'dashboard.AdvancedDialog.manageGnosisSafeTitle',
-    defaultMessage: 'Gnosis Safe Control',
+  manageSafeTitle: {
+    id: 'dashboard.AdvancedDialog.manageSafeTitle',
+    defaultMessage: 'Safe Control',
   },
-  manageGnosisSafeDescription: {
-    id: 'dashboard.AdvancedDialog.manageGnosisSafeDescription',
+  manageSafeDescription: {
+    id: 'dashboard.AdvancedDialog.manageSafeDescription',
     defaultMessage: 'Control a safe to interact with external contracts.',
   },
   adminFundingPermissions: {
@@ -104,7 +104,7 @@ interface CustomWizardDialogProps extends ActionDialogProps {
   nextStepRecovery: string;
   nextStepEditDetails: string;
   nextStepVersionUpgrade: string;
-  nextStepManageGnosisSafe: string;
+  nextStepManageSafe: string;
   prevStep: string;
   colony: Colony;
 }
@@ -122,7 +122,7 @@ const AdvancedDialog = ({
   nextStepRecovery,
   nextStepEditDetails,
   nextStepVersionUpgrade,
-  nextStepManageGnosisSafe,
+  nextStepManageSafe,
   colony,
   colony: { version: colonyVersion },
   isVotingExtensionEnabled,
@@ -142,7 +142,7 @@ const AdvancedDialog = ({
   const canEnterPermissionManagement =
     (hasRegisteredProfile && canArchitect(allUserRoles)) || hasRootPermission;
 
-  const canManageGnosisSafes =
+  const canManageSafes =
     hasRegisteredProfile &&
     canFund(allUserRoles) &&
     (canAdminister(allUserRoles) || hasRoot(allUserRoles));
@@ -203,12 +203,12 @@ const AdvancedDialog = ({
       dataTest: 'updateColonyDialogIndexItem',
     },
     {
-      title: MSG.manageGnosisSafeTitle,
-      description: MSG.manageGnosisSafeDescription,
-      icon: 'gnosis-logo',
-      dataTest: 'manageGnosisSafeItem',
-      onClick: () => callStep(nextStepManageGnosisSafe),
-      permissionRequired: !canManageGnosisSafes,
+      title: MSG.manageSafeTitle,
+      description: MSG.manageSafeDescription,
+      icon: 'safe-logo',
+      dataTest: 'manageSafeItem',
+      onClick: () => callStep(nextStepManageSafe),
+      permissionRequired: !canManageSafes,
       permissionInfoText: MSG.permissionsText,
       permissionInfoTextValues: {
         permissionsList: <FormattedMessage {...MSG.adminFundingPermissions} />,
