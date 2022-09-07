@@ -198,6 +198,20 @@ const ExpenditurePage = ({ match }: Props) => {
             },
           ],
         },
+        streaming: {
+          ...initialValues.streaming,
+          fundingSources: [
+            {
+              ...newFundingSource,
+              rate: [
+                {
+                  ...newFundingSource.rate[0],
+                  token: colonyData?.processedColony.nativeTokenAddress,
+                },
+              ],
+            },
+          ],
+        },
       }
     );
   }, [colonyData, formValues, loggedInUser]);
@@ -549,7 +563,7 @@ const ExpenditurePage = ({ match }: Props) => {
                   <FormStages
                     stages={stages}
                     activeStageId={activeStageId}
-                    setActiveStateId={setActiveStageId}
+                    setActiveStageId={setActiveStageId}
                     setFormValues={setFormValues}
                     handleCancelExpenditure={handleCancelExpenditure}
                     colony={colonyData.processedColony}
