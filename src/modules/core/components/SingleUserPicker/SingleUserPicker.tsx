@@ -111,7 +111,7 @@ interface Props extends WithOmnipickerInProps {
   showMaskedAddress?: boolean;
 
   /* icon name for the avatar placeholder */
-  placholderIconName?: string;
+  placeholderIconName?: string;
 }
 
 interface EnhancedProps extends Props, WrappedComponentProps {}
@@ -144,7 +144,7 @@ const SingleUserPicker = ({
   itemDataTest,
   valueDataTest,
   showMaskedAddress = false,
-  placholderIconName = 'filled-circle-person',
+  placeholderIconName = 'filled-circle-person',
 }: EnhancedProps) => {
   const [
     ,
@@ -215,7 +215,7 @@ const SingleUserPicker = ({
           ) : (
             <Icon
               className={omniPickerIsOpen ? styles.focusIcon : styles.icon}
-              name={placholderIconName}
+              name={placeholderIconName}
               title={MSG.selectMember}
             />
           )}
