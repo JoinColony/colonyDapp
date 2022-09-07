@@ -52,11 +52,11 @@ const InputStatus = ({
   const statusText =
     typeof status === 'object' ? formatMessage(status, statusValues) : status;
   const getText = () => {
-    if (!!error && touched) {
-      return getErrorText();
-    }
     if (status) {
       return statusText;
+    }
+    if (!!error && touched) {
+      return getErrorText();
     }
     return null;
   };
@@ -65,7 +65,7 @@ const InputStatus = ({
   return (
     <Element
       className={getMainClasses(appearance, styles, {
-        error: !!error && !!touched,
+        error: !!error && !!touched && !status,
         hidden: !text,
       })}
     >

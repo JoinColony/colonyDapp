@@ -20,6 +20,7 @@ import {
 import { FormValues } from '../GnosisControlSafeDialog';
 
 import styles from './TransactionTypesSection.css';
+import { GNOSIS_NETWORK } from '~constants';
 
 const MSG = defineMessages({
   abiLabel: {
@@ -91,10 +92,24 @@ const ContractInteractionSection = ({
 
   const transactionValues = values.transactions[transactionFormIndex];
 
+  const selectedSafe = safes.find(
+    (safe) => safe.contractAddress === values.safe?.profile?.walletAddress,
+  );
+
   const onContractABIChange = useCallback(
     (abiResponse: any) => {
-      if (abiResponse.status === '0' && status !== abiResponse.message) {
-        setStatus(abiResponse.message);
+      if (abiResponse.status === '0') {
+        if (
+          Number(selectedSafe?.chainId) === GNOSIS_NETWORK.chainId &&
+          status !== abiResponse.message
+        ) {
+          setStatus(abiResponse.message);
+        } else if (
+          Number(selectedSafe?.chainId) !== GNOSIS_NETWORK.chainId &&
+          status !== abiResponse.result
+        ) {
+          setStatus(abiResponse.result);
+        }
       } else if (
         !isNil(abiResponse.result) &&
         abiResponse.result !== transactionValues.abi
@@ -129,11 +144,9 @@ const ContractInteractionSection = ({
       status,
       transactionValues.abi,
       selectedContractMethods,
+      selectedSafe,
       handleSelectedContractMethods,
     ],
-  );
-  const selectedSafe = safes.find(
-    (safe) => safe.contractAddress === values.safe?.profile?.walletAddress,
   );
 
   const onContractChange = useCallback(
@@ -162,6 +175,7 @@ const ContractInteractionSection = ({
     if (
       transactionValues.contract &&
       !isNil(selectedSafe) &&
+      !isNil(currentSafeChainId) &&
       currentSafeChainId !== Number(selectedSafe.chainId)
     ) {
       onContractChange(transactionValues.contract);
