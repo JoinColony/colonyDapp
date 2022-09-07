@@ -84,16 +84,18 @@ const RaiseObjectionDialogForm = ({
         />
       </DialogSection>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
-        <FormattedMessage
-          {...MSG.objectionDescription}
-          values={{
-            a: (chunks) => (
-              <ExternalLink href={MD_OBJECTIONS_HELP}>{chunks}</ExternalLink>
-            ),
-          }}
-        />
+        <div className={styles.descriptionText}>
+          <FormattedMessage
+            {...MSG.objectionDescription}
+            values={{
+              a: (chunks) => (
+                <ExternalLink href={MD_OBJECTIONS_HELP}>{chunks}</ExternalLink>
+              ),
+            }}
+          />
+        </div>
       </DialogSection>
-      <DialogSection appearance={{ theme: 'sidePadding' }}>
+      <DialogSection appearance={{ theme: 'sidePadding', border: 'top' }}>
         <div className={styles.slider}>
           <StakingSlider
             colony={colony}
@@ -109,30 +111,29 @@ const RaiseObjectionDialogForm = ({
         </div>
       </DialogSection>
       <DialogSection appearance={{ border: 'top' }}>
-        <DialogSection>
-          {isDecision && editor ? (
-            <>
-              <InputLabel
-                label={MSG.annotation}
-                appearance={{ colorSchema: 'grey' }}
-              />
-              <RichTextEditor
-                editor={editor}
-                name="annotation"
-                isSubmitting={isSubmitting}
-                limit={limit}
-                disabled={!canUserStake || isSubmitting}
-              />
-            </>
-          ) : (
-            <Annotations
+        {isDecision && editor ? (
+          <>
+            <InputLabel
               label={MSG.annotation}
-              name="annotation"
-              maxLength={4000}
-              disabled={!canUserStake || isSubmitting}
+              appearance={{ colorSchema: 'grey' }}
             />
-          )}
-        </DialogSection>
+            <RichTextEditor
+              editor={editor}
+              name="annotation"
+              isSubmitting={isSubmitting}
+              limit={limit}
+              disabled={!canUserStake || isSubmitting}
+              className={styles.richTextEditor}
+            />
+          </>
+        ) : (
+          <Annotations
+            label={MSG.annotation}
+            name="annotation"
+            maxLength={4000}
+            disabled={!canUserStake || isSubmitting}
+          />
+        )}
       </DialogSection>
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
