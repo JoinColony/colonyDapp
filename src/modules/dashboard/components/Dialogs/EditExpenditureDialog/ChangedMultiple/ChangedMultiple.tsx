@@ -7,6 +7,7 @@ import Button from '~core/Button';
 import { FormSection } from '~core/Fields';
 import { Colony, LoggedInUser } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/types';
+import { Staged } from '~dashboard/ExpenditurePage/Staged/types';
 
 import ChangeItem from './ChangeItem';
 import styles from './ChangedMultiple.css';
@@ -43,6 +44,7 @@ type NewValuesType = {
   value?:
     | ValuesType['recipients']
     | string
+    | Staged
     | Pick<
         LoggedInUser,
         'walletAddress' | 'balance' | 'username' | 'ethereal' | 'networkId'

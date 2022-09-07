@@ -3,8 +3,6 @@ import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { FormSection } from '~core/Fields';
-import { Recipient as RecipientType } from '~dashboard/ExpenditurePage/Payments/types';
-import { LoggedInUser } from '~data/generated';
 import Button from '~core/Button';
 import { Colony } from '~data/index';
 import ColorTag, { Color } from '~core/ColorTag';
@@ -42,16 +40,11 @@ export const MSG = defineMessages({
 
 const displayName = 'dashboard.EditExpenditureDialog.ChangedValues';
 
+export type ValueOf<T> = T[keyof T];
 interface Props {
   newValues?: {
     key: string;
-    value?:
-      | string
-      | Pick<
-          LoggedInUser,
-          'walletAddress' | 'balance' | 'username' | 'ethereal' | 'networkId'
-        >
-      | RecipientType[];
+    value?: ValueOf<ValuesType>;
     id: string;
   }[];
   oldValues: ValuesType;
