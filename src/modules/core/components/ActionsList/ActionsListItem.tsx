@@ -50,7 +50,7 @@ import {
   useColonyMetadataChecks,
   useExtendedColonyActionType,
 } from '~modules/dashboard/hooks';
-import { GNOSIS_SAFE_NAMES_MAP } from '~constants';
+import { SAFE_NAMES_MAP } from '~constants';
 
 import { ipfsDataFetcher } from '../../../core/fetchers';
 
@@ -413,8 +413,7 @@ const ActionsListItem = ({
                     reputationChangeNumeral: (
                       <Numeral value={formattedReputationChange} />
                     ),
-                    chainName:
-                      addedSafe && GNOSIS_SAFE_NAMES_MAP[addedSafe.chainId],
+                    chainName: addedSafe && SAFE_NAMES_MAP[addedSafe.chainId],
                   }}
                 />
               )}

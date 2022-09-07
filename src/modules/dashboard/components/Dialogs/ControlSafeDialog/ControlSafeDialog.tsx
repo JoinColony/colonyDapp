@@ -14,23 +14,23 @@ import { WizardDialogType } from '~utils/hooks';
 import { Address } from '~types/index';
 
 import { TransactionTypes } from './constants';
-import GnosisControlSafeForm, { NFT } from './GnosisControlSafeForm';
+import ControlSafeForm, { NFT } from './ControlSafeForm';
 
 const MSG = defineMessages({
   requiredFieldError: {
-    id: 'dashboard.GnosisControlSafeDialog.requiredFieldError',
+    id: 'dashboard.ControlSafeDialog.requiredFieldError',
     defaultMessage: 'Please enter a value',
   },
   gtZeroError: {
-    id: 'dashboard.GnosisControlSafeDialog.amountZero',
+    id: 'dashboard.ControlSafeDialog.amountZero',
     defaultMessage: 'Amount must be greater than zero',
   },
   notIntegerError: {
-    id: 'dashboard.GnosisControlSafeDialog.integer',
+    id: 'dashboard.ControlSafeDialog.integer',
     defaultMessage: 'Amount must be an integer',
   },
   notHexError: {
-    id: 'dashboard.GnosisControlSafeDialog.notHexError',
+    id: 'dashboard.ControlSafeDialog.notHexError',
     defaultMessage: 'Value must be a valid hex string',
   },
 });
@@ -52,7 +52,7 @@ export interface FormValues {
   transactionsTitle: string;
 }
 
-const displayName = 'dashboard.GnosisControlSafeDialog';
+const displayName = 'dashboard.ControlSafeDialog';
 
 type Props = DialogProps &
   Partial<WizardDialogType<object>> &
@@ -160,7 +160,7 @@ const validationSchema = (isPreview) =>
     ),
   });
 
-const GnosisControlSafeDialog = ({
+const ControlSafeDialog = ({
   colony,
   cancel,
   callStep,
@@ -197,7 +197,7 @@ const GnosisControlSafeDialog = ({
     >
       {(formValues: FormikProps<FormValues>) => (
         <Dialog cancel={cancel}>
-          <GnosisControlSafeForm
+          <ControlSafeForm
             {...formValues}
             back={callStep && prevStep ? () => callStep(prevStep) : undefined}
             colony={colony}
@@ -212,6 +212,6 @@ const GnosisControlSafeDialog = ({
   );
 };
 
-GnosisControlSafeDialog.displayName = displayName;
+ControlSafeDialog.displayName = displayName;
 
-export default GnosisControlSafeDialog;
+export default ControlSafeDialog;

@@ -16,7 +16,7 @@ import { AnyToken, AnyTokens } from '~data/index';
 import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
 import { FormValues as CreatePaymentFormValues } from '~dashboard/Dialogs/CreatePaymentDialog/CreatePaymentDialog';
-import { FormValues as GnosisControlSafeFormValues } from '~dashboard/Dialogs/GnosisControlSafeDialog/GnosisControlSafeDialog';
+import { FormValues as ControlSafeFormValues } from '~dashboard/Dialogs/ControlSafeDialog/ControlSafeDialog';
 
 import Input, { MaxButtonParams } from '../Input';
 import TokenSymbolSelector from '../TokenSymbolSelector';
@@ -27,7 +27,7 @@ interface Props {
   networkFeeInverse: Maybe<string | undefined>;
   tokens: AnyTokens;
   disabledInput: boolean;
-  values: CreatePaymentFormValues | GnosisControlSafeFormValues;
+  values: CreatePaymentFormValues | ControlSafeFormValues;
   selectedToken?: AnyToken;
   customAmountError?: MessageDescriptor | string;
   inputName?: string;
