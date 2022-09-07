@@ -12,6 +12,7 @@ import StakeExpenditureDialog from '~dashboard/Dialogs/StakeExpenditureDialog';
 import { useDialog } from '~core/Dialog';
 import Streaming from '~dashboard/ExpenditurePage/Streaming';
 import { LOCAL_STORAGE_EXPENDITURE_TYPE_KEY } from '~constants';
+import Streaming from '~dashboard/ExpenditurePage/ExpenditureSettings/Streaming';
 
 import { ValuesType, ExpenditureTypes } from './types';
 import styles from './ExpenditurePage.css';
