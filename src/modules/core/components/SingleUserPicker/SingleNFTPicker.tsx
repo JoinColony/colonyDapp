@@ -28,7 +28,7 @@ const SingleNFTPicker = ({ data, ...props }: Props) => {
     <SingleUserPicker
       {...props}
       data={formattedData}
-      placholderIconName="nft-icon"
+      placeholderIconName="nft-icon"
     />
   );
 };

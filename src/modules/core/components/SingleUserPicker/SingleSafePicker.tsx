@@ -34,7 +34,7 @@ const SingleSafePicker = ({ data, ...props }: Props) => {
     <SingleUserPicker
       {...props}
       data={formattedData}
-      placholderIconName="gnosis-logo"
+      placeholderIconName="gnosis-logo"
     />
   );
 };
