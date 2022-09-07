@@ -4,7 +4,7 @@ import Avatar from '~core/Avatar';
 import MaskedAddress from '~core/MaskedAddress';
 import InvisibleCopyableAddress from '~core/InvisibleCopyableAddress';
 import { ColonySafe } from '~data/index';
-import { GNOSIS_SAFE_NAMES_MAP } from '~constants';
+import { SAFE_NAMES_MAP } from '~constants';
 
 import styles from './DetailsWidgetSafe.css';
 
@@ -23,12 +23,12 @@ const DetailsWidgetSafe = ({
         seed={contractAddress.toLowerCase()}
         size="xs"
         title="avatar"
-        placeholderIcon="gnosis-logo"
+        placeholderIcon="safe-logo"
       />
       <div className={styles.textContainer}>
         <div
           className={styles.displayName}
-        >{`${safeName} (${GNOSIS_SAFE_NAMES_MAP[chainId]})`}</div>
+        >{`${safeName} (${SAFE_NAMES_MAP[chainId]})`}</div>
         <InvisibleCopyableAddress address={contractAddress}>
           <div className={styles.address}>
             <MaskedAddress address={contractAddress} />

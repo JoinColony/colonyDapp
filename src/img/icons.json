@@ -79,7 +79,7 @@
     "filled-circle-person",
     "forbidden-signal",
     "four-square",
-    "gnosis-logo",
+    "safe-logo",
     "graph-line",
     "heading",
     "trash",
@@ -112,11 +112,7 @@
     "user-plus",
     "wallet"
   ],
-  "multiColorIcons": [
-    "circle-check-primary",
-    "metamask",
-    "shield-pink"
-  ],
+  "multiColorIcons": ["circle-check-primary", "metamask", "shield-pink"],
   "badges": [
     "Alessandra Aphid",
     "Terry Termite",
