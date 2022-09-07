@@ -10,6 +10,7 @@ import Staged from '~dashboard/ExpenditurePage/Staged';
 import { Colony } from '~data/index';
 import StakeExpenditureDialog from '~dashboard/Dialogs/StakeExpenditureDialog';
 import { useDialog } from '~core/Dialog';
+import Streaming from '~dashboard/ExpenditurePage/ExpenditureSettings/Streaming';
 
 import { ValuesType, ExpenditureTypes } from './types';
 import styles from './ExpenditurePage.css';
@@ -81,6 +82,9 @@ const ExpenditureForm = ({
       }
       case ExpenditureTypes.Batch: {
         return <Batch />;
+      }
+      case ExpenditureTypes.Streaming: {
+        return <Streaming sidebarRef={sidebarRef} colony={colony} />;
       }
       default:
         return null;
