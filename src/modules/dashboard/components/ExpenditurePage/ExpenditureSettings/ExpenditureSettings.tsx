@@ -55,6 +55,10 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.ExpenditureSettings.batch',
     defaultMessage: 'Batch',
   },
+  streaming: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.streaming',
+    defaultMessage: 'Streaming',
+  },
 });
 
 const displayName = 'dashboard.ExpenditurePage.ExpenditureSettings';
@@ -81,6 +85,10 @@ const expeditureTypes = [
   {
     label: MSG.batch,
     value: ExpenditureTypes.Batch,
+  },
+  {
+    label: MSG.streaming,
+    value: ExpenditureTypes.Streaming,
   },
 ];
 
