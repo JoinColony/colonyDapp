@@ -620,6 +620,7 @@ const DefaultMotion = ({
               motionId={motionId}
               colony={colony}
               scrollToRef={bottomElementRef}
+              isDecision={isDecision}
             />
           )}
           {motionState === MotionState.Voting && (
