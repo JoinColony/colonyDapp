@@ -86,10 +86,8 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    width: 5px;
-    border-radius: var(--radius-normal);
-    border-right: 2px solid var(--colony-light-blue);
-    border-left: 2px solid var(--colony-light-blue);
+    border-radius: 6px;
+    border: 2px solid var(--colony-light-blue);
     background-color: color-mod(var(--temp-grey-blue-7) alpha(65%));
   }
 }
