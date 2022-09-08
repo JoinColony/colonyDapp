@@ -28,6 +28,7 @@ Decimal.set({ toExpPos: 78 });
 export interface Props extends StakingFlowProps {
   isObjection: boolean;
   handleWidgetState: (isObjection: boolean) => void;
+  isDecision: boolean;
 }
 
 const displayName = 'StakingWidget';
@@ -66,6 +67,7 @@ const StakingWidget = ({
   scrollToRef,
   isObjection,
   handleWidgetState,
+  isDecision,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const { setIsOpen: openTokenActivationPopover } = useContext(
@@ -104,11 +106,10 @@ const StakingWidget = ({
         colony,
         canUserStake: userHasPermission,
         scrollToRef,
-        /* temporary; to replace with a check if a motion is a decision */
-        isDecision: false,
+        isDecision,
         ...stakingAmounts,
       }),
-    [colony, openRaiseObjectionDialog, scrollToRef, motionId],
+    [colony, openRaiseObjectionDialog, scrollToRef, motionId, isDecision],
   );
 
   const getDecimalStake = useCallback(
