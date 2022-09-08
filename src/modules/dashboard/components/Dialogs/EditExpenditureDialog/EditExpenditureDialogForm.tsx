@@ -32,6 +32,10 @@ export const MSG = defineMessages({
     id: `dashboard.EditExpenditureDialog.EditExpenditureDialogForm.descriptionText`,
     defaultMessage: `This Payment is currently Locked. Either a Motion, or a member with the Arbitration permission are required to make changes.`,
   },
+  note: {
+    id: `dashboard.EditExpenditureDialog.EditExpenditureDialogForm.note`,
+    defaultMessage: `Note: if this variable has previously been voted on, subsequent votes will require more Reputation to be in favour in order for changes to be valid.`,
+  },
   descriptionLabel: {
     id: `dashboard.EditExpenditureDialog.EditExpenditureDialogFormdescriptionLabel`,
     defaultMessage: `Explain why you're changing the payment (optional)`,
@@ -174,6 +178,9 @@ const EditExpenditureDialogForm = ({
         </Heading>
         <div className={styles.descriptionWrapper}>
           <FormattedMessage {...MSG.descriptionText} />
+        </div>
+        <div className={styles.noteWrapper}>
+          <FormattedMessage {...MSG.note} />
         </div>
       </DialogSection>
       <div className={styles.contentWrapper}>

@@ -31,6 +31,13 @@
   padding-top: 10px;
 }
 
+.noteWrapper {
+  padding-top: 10px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
 .noChanges {
   font-weight: var(--weight-bold);
   color: var(--pink);
@@ -41,10 +48,10 @@
 }
 
 .toggleContainer i {
-  margin: 0 -20px 4px 21px;
+  margin: 0 -20px 0 21px;
 
   /* next lines are used for the correct tooltip arrow placement */
-  transform: translateX(-25px);
+  transform: translate(-25px, 0);
 }
 
 /* this selector is for tooltip wrapper */
@@ -53,6 +60,10 @@
   white-space: normal;
 }
 
+.toggleContainer > div > div {
+  height: 16px;
+}
+
 .toggleContainer label {
-  margin-bottom: 4px;
+  margin-bottom: 0;
 }

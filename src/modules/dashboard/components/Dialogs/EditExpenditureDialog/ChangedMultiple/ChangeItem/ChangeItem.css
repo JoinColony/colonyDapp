@@ -10,7 +10,8 @@
 }
 
 .arrowIcon {
-  width: 20px;
+  height: 16px;
+  width: 16px;
   color: color-mod(var(--dark) alpha(65%));
   justify-self: center;
 }
