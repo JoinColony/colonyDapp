@@ -1,3 +1,3 @@
 export { default, ClickHandlerProps } from './ActionsList';
 
-export { ItemStatus } from './ActionsListItem';
+export { ItemStatus, default as ActionsListItem } from './ActionsListItem';
