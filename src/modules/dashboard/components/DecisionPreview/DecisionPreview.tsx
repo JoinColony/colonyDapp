@@ -3,12 +3,19 @@ import { useParams, useHistory, Redirect } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import parse from 'html-react-parser';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Tag from '~core/Tag';
 import { useDialog } from '~core/Dialog';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import DecisionDialog from '~dashboard/Dialogs/DecisionDialog';
+import ConfirmDeleteDialog from '~dashboard/Dialogs/ConfirmDeleteDialog';
+import { ActionForm } from '~core/Fields';
+
+import { ActionTypes } from '~redux/index';
+import { pipe, withMeta, mapPayload } from '~utils/actions';
+import { LOCAL_STORAGE_DECISION_KEY } from '~constants';
 import {
   useUser,
   useLoggedInUser,
@@ -19,10 +26,6 @@ import {
 import { ColonyMotions, DecisionDetails } from '~types/index';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import LoadingTemplate from '~pages/LoadingTemplate';
-import { ActionForm } from '~core/Fields';
-import { ActionTypes } from '~redux/index';
-import { pipe, withMeta, mapPayload } from '~utils/actions';
-import { LOCAL_STORAGE_DECISION_KEY } from '~constants';
 
 import DetailsWidget from '../ActionsPage/DetailsWidget';
 
@@ -44,6 +47,10 @@ const MSG = defineMessages({
   createDecision: {
     id: 'dashboard.DecisionPreview.createDecision',
     defaultMessage: 'Create a new Decision',
+  },
+  decision: {
+    id: 'dashboard.DecisionPreview.decision',
+    defaultMessage: 'Decision',
   },
 });
 
@@ -67,6 +74,12 @@ const DecisionPreview = () => {
   });
 
   const openDecisionDialog = useDialog(DecisionDialog);
+  const openConfirmDeleteDialog = useDialog(ConfirmDeleteDialog);
+
+  const deleteDecision = () => {
+    localStorage.removeItem(LOCAL_STORAGE_DECISION_KEY);
+    history.push(`/colony/${colonyName}/decisions`);
+  };
 
   const transform = useCallback(
     pipe(
@@ -179,6 +192,18 @@ const DecisionPreview = () => {
         </div>
         <div className={styles.rightContent}>
           <div className={styles.buttonContainer}>
+            {decisionData && (
+              <Button
+                appearance={{ theme: 'secondary', size: 'large' }}
+                onClick={() =>
+                  openConfirmDeleteDialog({
+                    itemName: <FormattedMessage {...MSG.decision} />,
+                    deleteCallback: deleteDecision,
+                  })
+                }
+                text={{ id: 'button.delete' }}
+              />
+            )}
             {decisionData && (
               <Button
                 appearance={{ theme: 'secondary', size: 'large' }}

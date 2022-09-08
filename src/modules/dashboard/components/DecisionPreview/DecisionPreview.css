@@ -97,8 +97,17 @@
   justify-content: flex-end;
 }
 
-.buttonContainer > button:last-child {
+.buttonContainer button:last-child {
   min-width: 160px;
+}
+
+.buttonContainer > button {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.buttonContainer button:nth-child(2) {
+  margin-right: 35px;
 }
 
 .titleDecoration {
