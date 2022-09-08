@@ -19,7 +19,7 @@ import ActionsPageFeed, {
   ActionsPageFeedItemWithIPFS,
   SystemMessage,
 } from '~dashboard/ActionsPageFeed';
-// import ActionPageDecisionWithIPFS from '~dashboard/ActionsPage/ActionPageDecisionWithIPFS';
+import ActionPageDecisionWithIPFS from '~dashboard/ActionsPage/ActionPageDecisionWithIPFS';
 import { getFormattedTokenValue } from '~utils/tokens';
 import {
   getUpdatedDecodedMotionRoles,
@@ -295,9 +295,12 @@ const DefaultMotion = ({
     toDomain: domains.find(
       ({ ethDomainId }) => ethDomainId === toDomain,
     ) as OneDomain,
-    motionDomain: domains.find(
-      ({ ethDomainId }) => ethDomainId === motionDomain,
-    ) as OneDomain,
+    motionDomain:
+      actionType === ColonyMotions.CreateDecisionMotion
+        ? undefined
+        : (domains.find(
+            ({ ethDomainId }) => ethDomainId === motionDomain,
+          ) as OneDomain),
     roles: updatedRoles,
     recipient: (
       <span className={styles.titleDecoration}>
@@ -382,13 +385,11 @@ const DefaultMotion = ({
   const isMotionFinished =
     motionState === MotionState.Passed ||
     motionState === MotionState.Failed ||
-    motionState === MotionState.FailedNoFinalizable;
+    motionState === MotionState.FailedNotFinalizable;
 
   const objectionAnnotationUser = useUser(
     objectionAnnotation?.motionObjectionAnnotation?.address || '',
   );
-
-  const hasBanner = !shouldDisplayMotion(currentStake, requiredStake);
 
   const { formatMessage } = useIntl();
   useTitle(
@@ -398,8 +399,116 @@ const DefaultMotion = ({
     )} | Motion | Colony - ${colony.displayName ?? colony.colonyName ?? ``}`,
   );
 
-  // @TODO will be used in the following PR
-  // const isDecision = actionType === ColonyMotions.CreateDecisionMotion;
+  const isDecision = actionType === ColonyMotions.CreateDecisionMotion;
+  const hasBanner = useMemo(
+    () =>
+      isDecision ? false : !shouldDisplayMotion(currentStake, requiredStake),
+    [currentStake, isDecision, requiredStake],
+  );
+
+  // Decision specific
+  const pageFeedContent = useMemo(() => {
+    const comment = userHasProfile ? (
+      <div ref={bottomElementRef} className={styles.commentBox}>
+        <CommentInput
+          transactionHash={transactionHash}
+          colonyAddress={colony.colonyAddress}
+        />
+      </div>
+    ) : null;
+
+    if (isDecision) {
+      return (
+        <div>
+          <ActionPageDecisionWithIPFS
+            colony={colony}
+            user={initiator}
+            username={currentUserName || ''}
+            walletAddress={walletAddress}
+            hash={annotationHash || ''}
+          />
+          {comment}
+        </div>
+      );
+    }
+
+    // NON-DECISION i.e. standard motion
+    const heading = (
+      <h1 className={styles.heading} data-test="actionHeading">
+        <FormattedMessage
+          id={roleMessageDescriptorId || 'motion.title'}
+          values={{
+            ...actionAndEventValues,
+            fromDomainName: actionAndEventValues.fromDomain?.name,
+            toDomainName: actionAndEventValues.toDomain?.name,
+            roles: roleTitle,
+          }}
+        />
+      </h1>
+    );
+
+    const objectionAnnotationContent = objectionAnnotation
+      ?.motionObjectionAnnotation?.metadata && (
+      <div className={motionSpecificStyles.annotation}>
+        <ActionsPageFeedItemWithIPFS
+          colony={colony}
+          user={objectionAnnotationUser}
+          annotation
+          hash={objectionAnnotation.motionObjectionAnnotation.metadata}
+          appearance={{ theme: 'danger' }}
+        />
+      </div>
+    );
+
+    const actionFeed = (
+      <>
+        <ActionsPageFeed
+          actionType={actionType}
+          transactionHash={transactionHash as string}
+          networkEvents={[
+            ...events,
+            ...(motionEventsData?.eventsForMotion || []),
+          ]}
+          systemMessages={
+            // eslint-disable-next-line max-len
+            motionsSystemMessagesData?.motionsSystemMessages as SystemMessage[]
+          }
+          values={actionAndEventValues}
+          actionData={colonyAction}
+          colony={colony}
+          rootHash={rootHash || undefined}
+        />
+        {comment}
+      </>
+    );
+    return (
+      <>
+        {heading}
+        {objectionAnnotationContent}
+        {actionFeed}
+      </>
+    );
+  }, [
+    isDecision,
+    roleMessageDescriptorId,
+    actionAndEventValues,
+    roleTitle,
+    objectionAnnotation,
+    colony,
+    objectionAnnotationUser,
+    actionType,
+    transactionHash,
+    events,
+    motionEventsData,
+    motionsSystemMessagesData,
+    colonyAction,
+    rootHash,
+    userHasProfile,
+    initiator,
+    currentUserName,
+    walletAddress,
+    annotationHash,
+  ]);
 
   return (
     <div className={styles.main}>
@@ -504,76 +613,7 @@ const DefaultMotion = ({
       </div>
       <hr className={styles.dividerTop} />
       <div className={styles.container}>
-        <div className={styles.content}>
-          {/* @TODO will be used in the following PR
-          {isDecision ? (
-            <ActionPageDecisionWithIPFS
-              colony={colony}
-              user={initiator}
-              username={currentUserName || ''}
-              walletAddress={walletAddress}
-              hash={annotationHash || ''}
-            />
-          ) : ( */}
-          <h1 className={styles.heading} data-test="actionHeading">
-            <FormattedMessage
-              id={roleMessageDescriptorId || 'motion.title'}
-              values={{
-                ...actionAndEventValues,
-                fromDomainName: actionAndEventValues.fromDomain?.name,
-                toDomainName: actionAndEventValues.toDomain?.name,
-                roles: roleTitle,
-              }}
-            />
-          </h1>
-          {/* )} */}
-          {annotationHash && (
-            <div className={motionSpecificStyles.annotation}>
-              <ActionsPageFeedItemWithIPFS
-                colony={colony}
-                user={initiator}
-                annotation
-                hash={annotationHash}
-              />
-            </div>
-          )}
-          {objectionAnnotation?.motionObjectionAnnotation?.metadata && (
-            <div className={motionSpecificStyles.annotation}>
-              <ActionsPageFeedItemWithIPFS
-                colony={colony}
-                user={objectionAnnotationUser}
-                annotation
-                hash={objectionAnnotation.motionObjectionAnnotation.metadata}
-                appearance={{ theme: 'danger' }}
-              />
-            </div>
-          )}
-          <ActionsPageFeed
-            actionType={actionType}
-            transactionHash={transactionHash as string}
-            networkEvents={[
-              ...events,
-              ...(motionEventsData?.eventsForMotion || []),
-            ]}
-            systemMessages={
-              // eslint-disable-next-line max-len
-              motionsSystemMessagesData?.motionsSystemMessages as SystemMessage[]
-            }
-            values={actionAndEventValues}
-            actionData={colonyAction}
-            colony={colony}
-            rootHash={rootHash || undefined}
-          />
-
-          {userHasProfile && (
-            <div ref={bottomElementRef} className={styles.commentBox}>
-              <CommentInput
-                transactionHash={transactionHash}
-                colonyAddress={colony.colonyAddress}
-              />
-            </div>
-          )}
-        </div>
+        <div className={styles.content}>{pageFeedContent}</div>
         <div className={styles.details}>
           {isStakingPhase && (
             <StakingWidgetFlow
@@ -610,11 +650,12 @@ const DefaultMotion = ({
               fromDomain={fromDomain}
               motionAmount={amount}
               tokenAddress={tokenAddress}
+              isDecision={isDecision}
             />
           )}
           <DetailsWidget
             actionType={actionType as ColonyMotions}
-            recipient={recipient}
+            recipient={isDecision ? initiator : recipient}
             transactionHash={transactionHash}
             values={{
               ...actionAndEventValues,

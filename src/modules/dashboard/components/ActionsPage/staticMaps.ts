@@ -10,9 +10,9 @@ import { STATUS } from './types';
 export enum ActionPageDetails {
   FromDomain = 'FromDomain',
   ToDomain = 'ToDomain',
+  Domain = 'Domain',
   ToRecipient = 'ToRecipient',
   Amount = 'Amount',
-  Domain = 'Domain',
   Description = 'Description',
   Name = 'Name',
   Permissions = 'Permissions',
