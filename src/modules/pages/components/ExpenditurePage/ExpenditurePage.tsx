@@ -47,6 +47,7 @@ import { ExpenditureTypes, ValuesType } from './types';
 import { ExpenditureForm, LockedSidebar } from '.';
 import { initialValues, validationSchema } from './constants';
 import styles from './ExpenditurePage.css';
+import { newFundingSource } from '~dashboard/ExpenditurePage/ExpenditureSettings/Streaming/constants';
 
 const displayName = 'pages.ExpenditurePage';
 

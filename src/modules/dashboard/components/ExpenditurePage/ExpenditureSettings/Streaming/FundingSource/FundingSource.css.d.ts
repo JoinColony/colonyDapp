@@ -9,3 +9,8 @@ export const rateContainer: string;
 export const rate: string;
 export const selectWrapper: string;
 export const slash: string;
+export const inputWrapper: string;
+export const limitContainer: string;
+export const inputContainer: string;
+export const tokenIcon: string;
+export const tokeIconWrapper: string;
