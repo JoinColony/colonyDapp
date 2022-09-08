@@ -16,6 +16,7 @@ import {
 import DomainDropdown from '~core/DomainDropdown';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import ColorTag, { Color } from '~core/ColorTag';
+import TokenIcon from '~dashboard/HookedTokenIcon';
 
 import { FundingSource as FundingSourceType } from '../types';
 
@@ -41,6 +42,10 @@ const MSG = defineMessages({
   month: {
     id: 'dashboard.ExpenditurePage.Streaming.FundingSource.month',
     defaultMessage: 'month',
+  },
+  limit: {
+    id: 'dashboard.ExpenditurePage.Streaming.FundingSource.month',
+    defaultMessage: 'Limit',
   },
 });
 
@@ -110,6 +115,12 @@ const FundingSource = ({
     }
     return true;
   }, []);
+
+  const token = colony.tokens?.find(
+    (tokenItem) =>
+      fundingSource.rate.token &&
+      tokenItem.address === fundingSource.rate.token,
+  );
 
   return (
     <>
@@ -192,6 +203,44 @@ const FundingSource = ({
                     optionSizeLarge
                   />
                 </div>
+              </div>
+            </div>
+          </FormSection>
+          <FormSection appearance={{ border: 'bottom' }}>
+            <div className={styles.inputWrapper}>
+              <InputLabel
+                label={MSG.limit}
+                appearance={{
+                  direction: 'horizontal',
+                }}
+              />
+              <div className={styles.limitContainer}>
+                <div className={styles.inputContainer}>
+                  <Input
+                    name={`streaming.fundingSources[${index}].limit`}
+                    appearance={{
+                      theme: 'underlined',
+                      size: 'small',
+                    }}
+                    label={MSG.rate}
+                    placeholder={MSG.notSet}
+                    formattingOptions={{
+                      numeral: true,
+                      numeralDecimalScale: 10,
+                    }}
+                    elementOnly
+                  />
+                </div>
+                {token && (
+                  <div className={styles.tokeIconWrapper}>
+                    <TokenIcon
+                      className={styles.tokenIcon}
+                      token={token}
+                      name={token.name || token.address}
+                    />
+                    {token.symbol}
+                  </div>
+                )}
               </div>
             </div>
           </FormSection>
