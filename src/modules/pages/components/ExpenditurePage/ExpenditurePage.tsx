@@ -48,6 +48,7 @@ import LockedSidebar from './LockedSidebar';
 import { ExpenditureTypes, ValuesType } from './types';
 import { initialValues, validationSchema } from './constants';
 import styles from './ExpenditurePage.css';
+import { newFundingSource } from '~dashboard/ExpenditurePage/ExpenditureSettings/Streaming/constants';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -192,20 +193,6 @@ const ExpenditurePage = ({ match }: Props) => {
               rates: [
                 {
                   ...newFundingSource.rates[0],
-                  token: colonyData?.processedColony.nativeTokenAddress,
-                },
-              ],
-            },
-          ],
-        },
-        streaming: {
-          ...initialValues.streaming,
-          fundingSources: [
-            {
-              ...newFundingSource,
-              rate: [
-                {
-                  ...newFundingSource.rate[0],
                   token: colonyData?.processedColony.nativeTokenAddress,
                 },
               ],
