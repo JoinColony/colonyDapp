@@ -26,9 +26,20 @@ interface Props {
   itemName: ReactElement;
   deleteCallback: () => void;
   cancel: () => void;
+  close: () => void;
 }
 
-const ConfirmDeleteDialog = ({ cancel, itemName, deleteCallback }: Props) => {
+const ConfirmDeleteDialog = ({
+  cancel,
+  close,
+  itemName,
+  deleteCallback,
+}: Props) => {
+  const deleteItem = () => {
+    close();
+    deleteCallback();
+  };
+
   return (
     <Dialog cancel={cancel}>
       <DialogSection>
@@ -48,7 +59,7 @@ const ConfirmDeleteDialog = ({ cancel, itemName, deleteCallback }: Props) => {
           <Button
             text={{ id: 'button.delete' }}
             appearance={{ theme: 'pink', size: 'large' }}
-            onClick={deleteCallback}
+            onClick={deleteItem}
           />
         </div>
       </DialogSection>
