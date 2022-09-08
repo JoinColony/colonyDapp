@@ -18,6 +18,7 @@ import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { useTransformer } from '~utils/hooks';
 import { getActionsListData } from '~modules/dashboard/transformers';
 
+import DraftDecisionItem from './DraftDecisionItem';
 import { SortOptions, SortSelectOptions } from './constants';
 import styles from './ColonyDecisions.css';
 
@@ -130,6 +131,7 @@ const ColonyDecisions = ({
 
   const sortedDecisions = useMemo(
     () =>
+      // [],
       filteredDecisions.sort((first, second) =>
         sortOption === SortOptions.ENDING_SOONEST
           ? first.createdAt.getTime() - second.createdAt.getTime()
@@ -187,6 +189,7 @@ const ColonyDecisions = ({
               </div>
             </Form>
           </div>
+          <DraftDecisionItem colony={colony} />
           <ActionsList
             items={paginatedDecisions}
             handleItemClick={handleActionRedirect}
