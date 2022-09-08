@@ -110,10 +110,7 @@ const FundingSource = ({
 
   const filterDomains = useCallback((optionDomain) => {
     const optionDomainId = parseInt(optionDomain.value, 10);
-    if (optionDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) {
-      return false;
-    }
-    return true;
+    return optionDomainId !== COLONY_TOTAL_BALANCE_DOMAIN_ID;
   }, []);
 
   const token = colony.tokens?.find(
