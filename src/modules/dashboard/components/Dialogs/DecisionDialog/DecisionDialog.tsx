@@ -12,7 +12,7 @@ import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import Dialog, { DialogProps } from '~core/Dialog';
 import { Form } from '~core/Fields';
-import { Colony } from '~data/index';
+import { Colony, useLoggedInUser } from '~data/index';
 import {
   COLONY_TOTAL_BALANCE_DOMAIN_ID,
   LOCAL_STORAGE_DECISION_KEY,
@@ -47,6 +47,7 @@ const DecisionDialog = ({
   close,
 }: Props) => {
   const history = useHistory();
+  const { walletAddress } = useLoggedInUser();
 
   const editor = useEditor({
     extensions: [
@@ -73,7 +74,10 @@ const DecisionDialog = ({
       editor.setEditable(false);
     }
 
-    localStorage.setItem(LOCAL_STORAGE_DECISION_KEY, JSON.stringify(values));
+    localStorage.setItem(
+      LOCAL_STORAGE_DECISION_KEY,
+      JSON.stringify({ ...values, userAddress: walletAddress }),
+    );
     close();
 
     const previewUrl = `/colony/${colonyName}/decisions/preview`;

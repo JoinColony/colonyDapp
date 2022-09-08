@@ -136,7 +136,7 @@ const DecisionPreview = () => {
         <div
           className={decisionData ? styles.decisionContent : styles.noContent}
         >
-          {decisionData ? (
+          {decisionData && decisionData.userAddress === walletAddress ? (
             <>
               <span className={styles.userinfo}>
                 <UserAvatar
@@ -192,7 +192,7 @@ const DecisionPreview = () => {
         </div>
         <div className={styles.rightContent}>
           <div className={styles.buttonContainer}>
-            {decisionData && (
+            {decisionData && decisionData.userAddress === walletAddress && (
               <Button
                 appearance={{ theme: 'secondary', size: 'large' }}
                 onClick={() =>
@@ -204,7 +204,7 @@ const DecisionPreview = () => {
                 text={{ id: 'button.delete' }}
               />
             )}
-            {decisionData && (
+            {decisionData && decisionData.userAddress === walletAddress && (
               <Button
                 appearance={{ theme: 'secondary', size: 'large' }}
                 onClick={() =>
