@@ -1,0 +1,13 @@
+.heading {
+  margin: 15px 0 20px 0;
+  font-size: var(--size-normal);
+  color: var(--temp-grey-blue-7);
+}
+
+.heading > h3 {
+  opacity: 1;
+}
+
+.button > button {
+  min-width: 160px;
+}
