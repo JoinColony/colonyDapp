@@ -6,9 +6,10 @@ export interface FundingSource {
     time?: string;
   };
   isExpanded: boolean;
+  limit?: number;
   id: string;
 }
 
 export interface Streaming {
-  fundingSources: FundingSource[];
+  fundingSource: FundingSource[];
 }

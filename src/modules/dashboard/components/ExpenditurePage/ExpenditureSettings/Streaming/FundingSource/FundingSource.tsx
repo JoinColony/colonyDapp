@@ -44,7 +44,7 @@ const MSG = defineMessages({
     defaultMessage: 'month',
   },
   limit: {
-    id: 'dashboard.ExpenditurePage.Streaming.FundingSource.month',
+    id: 'dashboard.ExpenditurePage.Streaming.FundingSource.limit',
     defaultMessage: 'Limit',
   },
 });
@@ -163,7 +163,7 @@ const FundingSource = ({
               <div className={styles.rate}>
                 <div className={styles.inputRateAmount}>
                   <Input
-                    name={`streaming.fundingSources[${index}].rate.amount`}
+                    name={`streaming.fundingSource[${index}].rate.amount`}
                     appearance={{
                       theme: 'underlined',
                       size: 'small',
@@ -181,7 +181,7 @@ const FundingSource = ({
                   <TokenSymbolSelector
                     label=""
                     tokens={colony.tokens}
-                    name={`streaming.fundingSources[${index}].rate.token`}
+                    name={`streaming.fundingSource[${index}].rate.token`}
                     appearance={{ alignOptions: 'right', theme: 'grey' }}
                     elementOnly
                   />
@@ -189,7 +189,7 @@ const FundingSource = ({
                 <span className={styles.slash}>/</span>
                 <div className={styles.selectWrapper}>
                   <SelectHorizontal
-                    name={`streaming.fundingSources[${index}].rate.time`}
+                    name={`streaming.fundingSource[${index}].rate.time`}
                     label={MSG.time}
                     appearance={{
                       theme: 'alt',
@@ -217,7 +217,7 @@ const FundingSource = ({
               <div className={styles.limitContainer}>
                 <div className={styles.inputContainer}>
                   <Input
-                    name={`streaming.fundingSources[${index}].limit`}
+                    name={`streaming.fundingSource[${index}].limit`}
                     appearance={{
                       theme: 'underlined',
                       size: 'small',

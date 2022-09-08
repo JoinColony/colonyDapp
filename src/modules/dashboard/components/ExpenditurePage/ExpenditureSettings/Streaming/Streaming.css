@@ -46,6 +46,10 @@
   fill: var(--temp-grey-blue-7);
 }
 
+.deleteIcon:hover {
+  cursor: pointer;
+}
+
 .singleFundingSource {
   position: relative;
 }
