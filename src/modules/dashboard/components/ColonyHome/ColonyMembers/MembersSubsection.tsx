@@ -141,7 +141,7 @@ const MembersSubsection = ({
         )}
       </div>
     ),
-    [isContributorsSubsection, membersPageRoute, members],
+    [isContributorsSubsection, membersPageRoute, members, colonyName],
   );
 
   if (!members) {
