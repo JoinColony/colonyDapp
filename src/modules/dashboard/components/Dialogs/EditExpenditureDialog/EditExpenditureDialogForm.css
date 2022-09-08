@@ -60,7 +60,7 @@
   white-space: normal;
 }
 
-.toggleContainer > div > div {
+.toggleContainer > div > div:first-of-type {
   height: 16px;
 }
 
