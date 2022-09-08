@@ -402,9 +402,8 @@ const DefaultMotion = ({
   const isDecision = actionType === ColonyMotions.CreateDecisionMotion;
   const hasBanner = useMemo(
     () =>
-      isDecision ? false : shouldDisplayMotion(currentStake, requiredStake),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+      isDecision ? false : !shouldDisplayMotion(currentStake, requiredStake),
+    [currentStake, isDecision, requiredStake],
   );
 
   // Decision specific
