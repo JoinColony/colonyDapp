@@ -38,7 +38,7 @@
 }
 
 .rateContainer {
-  padding: 16px 0 12px;
+  padding: 13px 0 12px;
 }
 
 .rate {
@@ -79,4 +79,41 @@
   margin: 0 7px;
   font-weight: var(--weight-bold);
   color: var(--dark);
+}
+
+.inputWrapper {
+  padding: 13px 0 12px;
+}
+
+.limitContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+}
+
+.inputContainer {
+  width: calc(100% - 30px);
+}
+
+.inputContainer input {
+  height: 28px;
+  line-height: 18px;
+  color: var(--dark);
+}
+
+.inputContainer input::placeholder {
+  color: var(--dark);
+}
+
+.tokenIcon {
+  margin-right: 6px;
+  height: 16px;
+  width: 16px;
+}
+
+.tokeIconWrapper {
+  display: flex;
+  align-items: center;
+  margin-left: 30px;
 }
