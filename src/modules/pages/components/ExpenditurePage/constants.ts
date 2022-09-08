@@ -69,7 +69,7 @@ export const initialValues = {
     ],
   },
   streaming: {
-    fundingSources: [newFundingSource],
+    fundingSource: [newFundingSource],
   },
 };
 

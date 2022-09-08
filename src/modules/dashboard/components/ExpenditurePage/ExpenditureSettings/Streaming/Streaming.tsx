@@ -50,8 +50,8 @@ interface Props {
 
 const Streaming = ({ colony, sidebarRef }: Props) => {
   const [, { value: fundingSources }, { setValue }] = useField<
-    StreamingType['fundingSources']
-  >('streaming.fundingSources');
+    StreamingType['fundingSource']
+  >('streaming.fundingSource');
 
   const newFundingSourceData = useMemo(() => {
     return {
@@ -84,7 +84,7 @@ const Streaming = ({ colony, sidebarRef }: Props) => {
         <FormattedMessage {...MSG.fundingSource} />
       </div>
       <FieldArray
-        name="streaming.fundingSources"
+        name="streaming.fundingSource"
         render={({ push, remove }) => (
           <>
             {fundingSources?.map((fundingSource, index) => {
