@@ -175,7 +175,7 @@ const ExpenditurePage = ({ match }: Props) => {
           },
         },
         streaming: {
-          fundingSources: [
+          fundingSource: [
             {
               ...newFundingSource,
               rate: {
