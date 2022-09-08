@@ -26,7 +26,7 @@ import { Address, PrimitiveType } from '~types/index';
 import SafeTransactionPreview from './SafeTransactionPreview';
 import { FormValues } from './ControlSafeDialog';
 import {
-  GnosisNFTTransfer,
+  TransferNFTSection,
   TransferFundsSection,
   RawTransactionSection,
   ContractInteractionSection,
@@ -385,7 +385,7 @@ const ControlSafeForm = ({
                       )}
                       {values.transactions[index]?.transactionType ===
                         TransactionTypes.TRANSFER_NFT && (
-                        <GnosisNFTTransfer
+                        <TransferNFTSection
                           colonyAddress={colonyAddress}
                           nftCatalogue={testNFTData}
                           transactionFormIndex={index}
