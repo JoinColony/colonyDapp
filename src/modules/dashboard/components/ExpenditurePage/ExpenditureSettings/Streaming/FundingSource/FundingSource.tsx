@@ -43,6 +43,18 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Streaming.FundingSource.month',
     defaultMessage: 'month',
   },
+  week: {
+    id: 'dashboard.ExpenditurePage.Streaming.FundingSource.week',
+    defaultMessage: 'week',
+  },
+  day: {
+    id: 'dashboard.ExpenditurePage.Streaming.FundingSource.day',
+    defaultMessage: 'day',
+  },
+  hour: {
+    id: 'dashboard.ExpenditurePage.Streaming.FundingSource.hour',
+    defaultMessage: 'hour',
+  },
   limit: {
     id: 'dashboard.ExpenditurePage.Streaming.FundingSource.limit',
     defaultMessage: 'Limit',
@@ -51,10 +63,29 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.ExpenditurePage.Streaming.FundingSource';
 
+enum timePeriod {
+  Month = 'month',
+  Week = 'week',
+  Day = 'day',
+  Hour = 'hour',
+}
+
 const timeOptions = [
   {
     label: MSG.month,
-    value: 'month',
+    value: timePeriod.Month,
+  },
+  {
+    label: MSG.week,
+    value: timePeriod.Week,
+  },
+  {
+    label: MSG.day,
+    value: timePeriod.Day,
+  },
+  {
+    label: MSG.hour,
+    value: timePeriod.Hour,
   },
 ];
 

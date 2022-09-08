@@ -66,6 +66,7 @@
 
 .selectWrapper button {
   padding: 0;
+  min-width: 65px;
   font-size: var(--size-smallish);
   color: var(--action-secondary);
 }
