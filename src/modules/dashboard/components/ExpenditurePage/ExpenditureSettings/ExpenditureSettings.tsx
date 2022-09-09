@@ -20,6 +20,18 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.ExpenditureSettings.team',
     defaultMessage: 'Team',
   },
+  to: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.to',
+    defaultMessage: 'To',
+  },
+  starts: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.starts',
+    defaultMessage: 'Starts',
+  },
+  ends: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.ends',
+    defaultMessage: 'Ends',
+  },
   balance: {
     id: 'dashboard.ExpenditurePage.ExpenditureSettings.balance',
     defaultMessage: 'Balance',
@@ -50,7 +62,7 @@ export const MSG = defineMessages({
   },
 });
 
-const expeditureTypes = [
+const expenditureTypes = [
   {
     label: MSG.advancedPayment,
     value: ExpenditureTypes.Advanced,
@@ -98,7 +110,7 @@ const ExpenditureSettings = ({ colony, sidebarRef, inEditMode }: Props) => {
             options={
               inEditMode
                 ? [{ label: capitalize(expenditure), value: expenditure }]
-                : expeditureTypes
+                : expenditureTypes
             }
             scrollContainer={sidebarRef}
             placement="bottom"
