@@ -2,6 +2,7 @@ import React, { ReactNode, useCallback } from 'react';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { defineMessages } from 'react-intl';
 
+import { useLoggedInUser } from '~data/index';
 import { InputLabel, SelectOption, FormSection } from '~core/Fields';
 import { Colony, useLoggedInUser } from '~data/index';
 import UserAvatar from '~core/UserAvatar';
