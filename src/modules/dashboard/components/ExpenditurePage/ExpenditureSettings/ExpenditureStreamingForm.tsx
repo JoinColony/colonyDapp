@@ -10,6 +10,7 @@ import { ExpenditureEndDateTypes } from '~pages/ExpenditurePage/types';
 
 import { supRenderAvatar } from '../Recipient/Recipient';
 
+import { Props } from './ExpenditureSettings';
 import styles from './ExpenditureSettings.css';
 
 export const MSG = defineMessages({
