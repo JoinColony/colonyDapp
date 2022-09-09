@@ -14,27 +14,27 @@ import styles from './ExpenditureSettings.css';
 
 export const MSG = defineMessages({
   to: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.to',
+    id: 'dashboard.ExpenditurePage.ExpenditureStreamingForm.to',
     defaultMessage: 'To',
   },
   starts: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.starts',
+    id: 'dashboard.ExpenditurePage.ExpenditureStreamingForm.starts',
     defaultMessage: 'Starts',
   },
   ends: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.ends',
+    id: 'dashboard.ExpenditurePage.ExpenditureStreamingForm.ends',
     defaultMessage: 'Ends',
   },
   whenCancelled: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.whenCancelled',
+    id: 'dashboard.ExpenditurePage.ExpenditureStreamingForm.whenCancelled',
     defaultMessage: 'When cancelled',
   },
   limitIsReached: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.limitIsReached',
+    id: 'dashboard.ExpenditurePage.ExpenditureStreamingForm.limitIsReached',
     defaultMessage: 'Limit is reached',
   },
   fixedTime: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.fixedTime',
+    id: 'dashboard.ExpenditurePage.ExpenditureStreamingForm.fixedTime',
     defaultMessage: 'Fixed time',
   },
 });

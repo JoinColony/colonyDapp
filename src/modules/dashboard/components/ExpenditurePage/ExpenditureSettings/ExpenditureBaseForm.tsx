@@ -16,20 +16,20 @@ import styles from './ExpenditureSettings.css';
 
 export const MSG = defineMessages({
   team: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.team',
+    id: 'dashboard.ExpenditurePage.ExpenditureBaseForm.team',
     defaultMessage: 'Team',
   },
   balance: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.balance',
+    id: 'dashboard.ExpenditurePage.ExpenditureBaseForm.balance',
     defaultMessage: 'Balance',
   },
   owner: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.owner',
+    id: 'dashboard.ExpenditurePage.ExpenditureBaseForm.owner',
     defaultMessage: 'Owner',
   },
 });
 
-const displayName = 'dashboard.ExpenditurePage.ExpenditureSettings.baseForm';
+const displayName = 'dashboard.ExpenditurePage.ExpenditureBaseForm';
 
 export interface Props {
   sidebarRef: HTMLElement | null;
