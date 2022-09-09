@@ -16,9 +16,14 @@ import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
 import { Address } from '~types/index';
 import { AbiItemExtended } from '~utils/getContractUsefulMethods';
+import {
+  SelectedSafe,
+  SelectedNFT,
+} from '~modules/dashboard/sagas/utils/safeHelpers';
 
 import { TransactionTypes } from './constants';
-import ControlSafeForm, { NFT } from './ControlSafeForm';
+import ControlSafeForm from './ControlSafeForm';
+import { NFT } from './TransactionTypesSection/TransferNFTSection';
 
 const MSG = defineMessages({
   requiredFieldError: {
@@ -60,14 +65,15 @@ export interface FormValues {
     transactionType: string;
     tokenAddress?: Address;
     amount?: number;
-    recipient?: AnyUser;
+    recipient: AnyUser | null;
     data?: string;
     contract?: AnyUser;
     abi?: string;
     contractFunction?: string;
-    nft: NFT;
+    nft: SelectedNFT | null;
+    nftData: NFT | null;
   }[];
-  safe: AnyUser;
+  safe: SelectedSafe | null;
   forceAction: boolean;
   transactionsTitle: string;
 }
@@ -201,7 +207,16 @@ const ControlSafeDialog = ({
   }, [selectedContractMethods, getMethodInputValidation]);
 
   const validationSchema = yup.object().shape({
-    safe: yup.string().required(() => MSG.requiredFieldError),
+    safe: yup.object().shape({
+      id: yup.string().address().required(),
+      profile: yup
+        .object()
+        .shape({
+          displayName: yup.string().required(),
+          walletAddress: yup.string().address().required(),
+        })
+        .required(() => MSG.requiredFieldError),
+    }),
     ...(showPreview ? { transactionsTitle: yup.string().required() } : {}),
     transactions: yup.array(
       yup.object().shape({
@@ -293,6 +308,23 @@ const ControlSafeDialog = ({
           }),
           otherwise: yup.object().nullable(),
         }),
+        nftData: yup.object().when('transactionType', {
+          is: (transactionType) =>
+            transactionType === TransactionTypes.TRANSFER_NFT,
+          then: yup.object().shape({
+            address: yup.string(),
+            description: yup.string().nullable(),
+            id: yup.string(),
+            imageUri: yup.string().nullable(),
+            logoUri: yup.string(),
+            metadata: yup.object(),
+            name: yup.string().nullable(),
+            tokenName: yup.string(),
+            tokenSymbol: yup.string(),
+            uri: yup.string(),
+          }),
+          otherwise: yup.object().nullable(),
+        }),
         ...expandedValidationSchema,
       }),
     ),
@@ -301,7 +333,7 @@ const ControlSafeDialog = ({
   return (
     <ActionForm
       initialValues={{
-        safe: '',
+        safe: null,
         transactionsTitle: undefined,
         transactions: [
           {
@@ -314,6 +346,7 @@ const ControlSafeDialog = ({
             abi: '',
             contractFunction: '',
             nft: null,
+            nftData: null,
           },
         ],
       }}
