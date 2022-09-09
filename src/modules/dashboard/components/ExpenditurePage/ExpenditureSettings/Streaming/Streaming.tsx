@@ -1,6 +1,6 @@
 import { FieldArray, useField } from 'formik';
 import { nanoid } from 'nanoid';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
@@ -52,18 +52,6 @@ const Streaming = ({ colony, sidebarRef }: Props) => {
   const [, { value: fundingSources }, { setValue }] = useField<
     StreamingType['fundingSource']
   >('streaming.fundingSource');
-
-  const newFundingSourceData = useMemo(() => {
-    return {
-      ...{
-        ...newFundingSource,
-        rate: {
-          ...newFundingSource,
-          token: colony?.nativeTokenAddress,
-        },
-      },
-    };
-  }, [colony]);
 
   const onToggleButtonClick = useCallback(
     (index) => {
@@ -129,7 +117,17 @@ const Streaming = ({ colony, sidebarRef }: Props) => {
             })}
             <Button
               onClick={() => {
-                push({ ...newFundingSourceData, id: nanoid() });
+                push({
+                  ...newFundingSource,
+                  id: nanoid(),
+                  rate: [
+                    {
+                      ...newFundingSource.rate,
+                      id: nanoid(),
+                      token: colony?.nativeTokenAddress,
+                    },
+                  ],
+                });
               }}
               appearance={{ theme: 'blue' }}
             >
