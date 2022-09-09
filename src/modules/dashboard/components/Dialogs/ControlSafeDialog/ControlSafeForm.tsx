@@ -21,8 +21,9 @@ import { useTransformer } from '~utils/hooks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import { SAFE_INTEGRATION_LEARN_MORE } from '~externalUrls';
 import { Colony, ColonySafe, useLoggedInUser } from '~data/index';
-import { Address, PrimitiveType } from '~types/index';
+import { PrimitiveType } from '~types/index';
 import { AbiItemExtended } from '~utils/getContractUsefulMethods';
+import { SelectedSafe } from '~modules/dashboard/sagas/utils/safeHelpers';
 
 import SafeTransactionPreview from './SafeTransactionPreview';
 import { FormValues } from './ControlSafeDialog';
@@ -93,33 +94,6 @@ const MSG = defineMessages({
 });
 
 const displayName = 'dashboard.ControlSafeDialog.ControlSafeForm';
-
-// @TODO - figure out the mapping of the nftCatalogue to the safe
-export interface NFT {
-  name: string;
-  avatar: string;
-  address: Address;
-  tokenID: string;
-  safeID: string; // @TODO check this property - perhaps should be moved
-}
-
-// Test data for dev - should be obtained from the safe
-export const testNFTData: NFT[] = [
-  {
-    name: 'BoredApeYachtClub',
-    avatar: 'bla',
-    address: '0xb97D57F4959eAfA0339424b83FcFaf9c15407461',
-    tokenID: '45161',
-    safeID: '9995',
-  },
-  {
-    name: 'NFT 2',
-    avatar: 'doh',
-    address: '0xb17D57F4959eAfA0339424b83FcFaf9c15407462',
-    tokenID: '45161',
-    safeID: '9996',
-  },
-];
 
 interface Props {
   colony: Colony;
@@ -260,6 +234,23 @@ const ControlSafeForm = ({
     }
   }, [showPreview, validateForm]);
 
+  /*
+   * When the selected safe changes, reset the state of
+   * the "Transfer NFT" fields.
+   */
+  const [prevSafeAddress, setPrevSafeAddress] = useState<string>('');
+  const handleSafeChange = (selectedSafe: SelectedSafe) => {
+    const safeAddress = selectedSafe.profile.walletAddress;
+    if (safeAddress !== prevSafeAddress) {
+      setPrevSafeAddress(safeAddress);
+      values.transactions.forEach((tx, i) => {
+        if (tx.transactionType === TransactionTypes.TRANSFER_NFT) {
+          setFieldValue(`transactions.${i}.nft`, null);
+        }
+      });
+    }
+  };
+
   return (
     <>
       {!showPreview ? (
@@ -295,6 +286,7 @@ const ControlSafeForm = ({
                 showMaskedAddress
                 disabled={!userHasPermission || isSubmitting}
                 placeholder={MSG.safePickerPlaceholder}
+                onSelected={handleSafeChange}
               />
             </div>
           </DialogSection>
@@ -411,7 +403,6 @@ const ControlSafeForm = ({
                         TransactionTypes.TRANSFER_NFT && (
                         <TransferNFTSection
                           colonyAddress={colonyAddress}
-                          nftCatalogue={testNFTData}
                           transactionFormIndex={index}
                           values={values}
                           disabledInput={!userHasPermission || isSubmitting}

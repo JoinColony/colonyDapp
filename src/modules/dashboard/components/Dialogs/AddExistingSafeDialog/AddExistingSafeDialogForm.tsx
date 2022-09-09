@@ -7,9 +7,10 @@ import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Select, Input, Annotations, SelectOption } from '~core/Fields';
 import Heading from '~core/Heading';
-import { SAFE_NETWORKS, SAFE_ALREADY_EXISTS } from '~constants';
+import { SAFE_ALREADY_EXISTS } from '~constants';
 import { SimpleMessageValues } from '~types/index';
 import { ColonySafe } from '~data/index';
+import { getTxServiceBaseUrl } from '~modules/dashboard/sagas/utils/safeHelpers';
 
 import { FormValues } from './AddExistingSafeDialog';
 
@@ -101,9 +102,7 @@ const AddExistingSafeDialogForm = ({
   const [isLoadingSafe, setIsLoadingSafe] = useState<boolean>(false);
 
   // Get base API url for the selected chain
-  const baseURL = SAFE_NETWORKS.filter(
-    (network) => network.name === selectedChain.label,
-  )[0].safeTxService;
+  const baseURL = getTxServiceBaseUrl(selectedChain.label as string);
 
   // Get Safe Address field status
   const [

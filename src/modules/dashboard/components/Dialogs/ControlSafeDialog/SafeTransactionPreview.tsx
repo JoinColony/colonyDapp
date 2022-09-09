@@ -23,8 +23,6 @@ import {
 import DetailsItem from './DetailsItem';
 
 import styles from './SafeTransactionPreview.css';
-import { testNFTData } from './ControlSafeForm';
-import { getFilteredNFTData } from './utils';
 
 const MSG = defineMessages({
   previewTitle: {
@@ -133,7 +131,7 @@ const transactionTypeFieldsMap = {
           <Avatar
             avatarURL={undefined}
             placeholderIcon="circle-close"
-            seed={nft.id.toLocaleLowerCase()}
+            seed={nft.profile.walletAddress.toLocaleLowerCase()}
             title=""
             size="xs"
           />
@@ -142,27 +140,25 @@ const transactionTypeFieldsMap = {
       ),
     },
     {
-      key: 'nft',
+      key: 'nftData',
       label: MSG.targetContract,
-      value: (nft) => (
+      value: (nftData) => (
         <div className={styles.nftContainer}>
           <Avatar
             avatarURL={undefined}
             placeholderIcon="circle-close"
-            seed={nft.id.toLocaleLowerCase()}
+            seed={nftData.address.toLocaleLowerCase()}
             title=""
             size="xs"
           />
-          <div>{getFilteredNFTData(testNFTData, nft.id)?.name}</div>
+          <div>{nftData.name || nftData.tokenName}</div>
         </div>
       ),
     },
     {
-      key: 'nft',
+      key: 'nftData',
       label: MSG.nftId,
-      value: (nft) => (
-        <div>{getFilteredNFTData(testNFTData, nft.id)?.tokenID}</div>
-      ),
+      value: (nftData) => <div>{nftData.id}</div>,
     },
     {
       key: 'recipient',
