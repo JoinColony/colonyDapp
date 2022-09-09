@@ -31,3 +31,9 @@ export const motionNameMapping = {
   emitDomainReputationReward: ColonyMotions.EmitDomainReputationRewardMotion,
   createDecision: ColonyMotions.CreateDecisionMotion,
 };
+
+export enum ColonyMotionActionName {
+  AddDomain = 'addDomain',
+  EditColony = 'editColony',
+  CreateDecision = 'createDecision',
+}

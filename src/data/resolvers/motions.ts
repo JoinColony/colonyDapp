@@ -24,7 +24,10 @@ import {
   getMotionRequiredStake,
   getEarlierEventTimestamp,
 } from '~utils/colonyMotions';
-import { ColonyAndExtensionsEvents } from '~types/index';
+import {
+  ColonyAndExtensionsEvents,
+  ColonyMotionActionName,
+} from '~types/index';
 import {
   SubgraphMotionEventsQuery,
   SubgraphMotionEventsQueryVariables,
@@ -1210,7 +1213,7 @@ export const motionsResolvers = ({
         };
       }
 
-      if (actionValues.name === 'addDomain') {
+      if (actionValues.name === ColonyMotionActionName.AddDomain) {
         return {
           ...defaultValues,
           metadata: actionValues.args[3],
@@ -1226,14 +1229,14 @@ export const motionsResolvers = ({
         };
       }
 
-      if (actionValues.name === 'editColony') {
+      if (actionValues.name === ColonyMotionActionName.EditColony) {
         return {
           ...defaultValues,
           metadata: actionValues.args[0],
         };
       }
 
-      if (actionValues.name === 'createDecision') {
+      if (actionValues.name === ColonyMotionActionName.CreateDecision) {
         return actionValues.args[0];
       }
 
