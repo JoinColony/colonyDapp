@@ -154,7 +154,6 @@ subscription SubgraphMotions(
   $first: Int = 1000
   $colonyAddress: String!
   $extensionAddress: String!
-  $motionAction: String
   $motionActionNot: String
 ) {
   motions(
@@ -163,7 +162,6 @@ subscription SubgraphMotions(
     where: {
       associatedColony: $colonyAddress
       extensionAddress: $extensionAddress
-      action: $motionAction
       action_not: $motionActionNot
     }
   ) {
