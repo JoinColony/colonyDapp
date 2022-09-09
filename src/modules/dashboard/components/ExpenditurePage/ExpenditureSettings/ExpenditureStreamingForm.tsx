@@ -56,13 +56,12 @@ const endDateOptions: DatePickerOption[] = [
   },
 ];
 
+const displayName = 'dashboard.ExpenditurePage.ExpenditureStreamingForm';
+
 export interface Props {
   sidebarRef: HTMLElement | null;
   colony: Colony;
 }
-
-const displayName =
-  'dashboard.ExpenditurePage.ExpenditureSettings.streamingForm';
 
 const ExpenditureStreamingForm = ({ sidebarRef, colony }: Props) => {
   const { data: colonyMembers } = useMembersSubscription({
