@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import parse from 'html-react-parser';
 
 import { getMainClasses } from '~utils/css';
 import { useTransformer } from '~utils/hooks';
@@ -136,7 +137,7 @@ const Comment = ({
             )}
         </div>
         <div className={styles.text} data-test="comment">
-          <Decorate>{comment}</Decorate>
+          {comment && <Decorate> {parse(comment)}</Decorate>}
         </div>
       </div>
       <div className={styles.actions}>

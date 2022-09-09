@@ -7,6 +7,7 @@ import Heading from '~core/Heading';
 import Slider, { Appearance } from '~core/Slider';
 import Numeral from '~core/Numeral';
 import StakingValidationError from '~dashboard/ActionsPage/StakingValidationError';
+import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
 import { Colony, useLoggedInUser } from '~data/index';
 import { getFormattedTokenValue } from '~utils/tokens';
@@ -32,32 +33,36 @@ interface Props extends StakingAmounts {
   isObjection: boolean;
 }
 
-const displayName = 'StakingSlider';
+const displayName = 'dashboard.ActionsPage.StakingWidget.StakingSlider';
 
 const MSG = defineMessages({
   titleStake: {
-    id: 'dashboard.ActionsPage.StakingSlider.title',
+    id: 'dashboard.ActionsPage.StakingWidget.StakingSlider.title',
     defaultMessage: `Select the amount to back the motion`,
   },
   titleObject: {
-    id: 'dashboard.ActionsPage.StakingSlider.title',
+    id: 'dashboard.ActionsPage.StakingWidget.StakingSlider.title',
     defaultMessage: `Select the amount to stake the objection`,
   },
   descriptionStake: {
-    id: 'dashboard.ActionsPage.StakingSlider.description',
+    id: 'dashboard.ActionsPage.StakingWidget.StakingSlider.description',
     defaultMessage: `Stake is returned if the motion passes. If there is a dispute, and the motion loses, part or all of your stake will be lost.`,
   },
   descriptionObject: {
-    id: 'dashboard.ActionsPage.StakingSlider.description',
+    id: 'dashboard.ActionsPage.StakingWidget.StakingSlider.description',
     defaultMessage: `Stake will be returned if the objection succeeds. If the objection fails, part or all of your stake will be lost.`,
   },
   loading: {
-    id: 'dashboard.ActionsPage.StakingSlider.loading',
+    id: 'dashboard.ActionsPage.StakingWidget.StakingSlider.loading',
     defaultMessage: 'Loading staking values ...',
   },
   minimumAmount: {
-    id: 'dashboard.ActionsPage.StakingSlider.minimumAmount',
+    id: 'dashboard.ActionsPage.StakingWidget.StakingSlider.minimumAmount',
     defaultMessage: 'at least {minStake}',
+  },
+  stakingToolTip: {
+    id: 'dashboard.ActionsPage.StakingWidget.StakingSlider.stakingToolTip',
+    defaultMessage: `Staking involves committing an amount of tokens as collateral to support your decision.`,
   },
 });
 
@@ -152,6 +157,14 @@ const StakingSlider = ({
           text={isObjection ? MSG.titleObject : MSG.titleStake}
           className={styles.title}
           appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
+        />
+        <QuestionMarkTooltip
+          tooltipText={MSG.stakingToolTip}
+          className={styles.questionMarkIcon}
+          tooltipClassName={styles.tooltip}
+          tooltipPopperOptions={{
+            placement: 'top-end',
+          }}
         />
       </div>
       <p className={styles.description}>

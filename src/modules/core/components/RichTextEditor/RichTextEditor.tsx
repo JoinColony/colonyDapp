@@ -15,9 +15,18 @@ interface Props {
   isSubmitting: boolean;
   limit: number;
   name: string;
+  className?: string;
+  disabled?: boolean;
 }
 
-const RichTextEditor = ({ editor, isSubmitting, limit, name }: Props) => {
+const RichTextEditor = ({
+  editor,
+  isSubmitting,
+  limit,
+  name,
+  className,
+  disabled = false,
+}: Props) => {
   const [
     ,
     { error: contentError, touched: contentTouched },
@@ -38,8 +47,8 @@ const RichTextEditor = ({ editor, isSubmitting, limit, name }: Props) => {
 
   return (
     <div
-      className={classnames(styles.main, {
-        [styles.disabled]: isSubmitting,
+      className={classnames(styles.main, className, {
+        [styles.disabled]: isSubmitting || disabled,
       })}
     >
       <Toolbar editor={editor} />
