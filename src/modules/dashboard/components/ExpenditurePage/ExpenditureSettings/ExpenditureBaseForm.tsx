@@ -5,10 +5,10 @@ import { defineMessages } from 'react-intl';
 import { InputLabel, SelectOption, FormSection } from '~core/Fields';
 import { Colony, useLoggedInUser } from '~data/index';
 import UserAvatar from '~core/UserAvatar';
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import UserMention from '~core/UserMention';
 import ColorTag, { Color } from '~core/ColorTag';
 import DomainDropdown from '~core/DomainDropdown';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 
 import BalanceSelect from './BalanceSelect';
 import { tokens as tokensData } from './constants';
