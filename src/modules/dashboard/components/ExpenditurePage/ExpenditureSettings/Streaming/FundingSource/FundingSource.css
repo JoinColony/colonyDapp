@@ -25,63 +25,6 @@
   min-height: 41px;
 }
 
-.inputRateAmount {
-  margin-right: 16px;
-}
-
-.inputRateAmount button {
-  padding-left: 0;
-}
-
-.tokenWrapper {
-  max-width: 104px;
-}
-
-.rateContainer {
-  padding: 13px 0 12px;
-}
-
-.rate {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  letter-spacing: 0.1px;
-}
-
-.rate button {
-  left: 0;
-  font-size: var(--size-small);
-}
-
-.rate input::placeholder {
-  color: var(--dark);
-}
-
-.rate input {
-  height: 28px;
-  line-height: 18px;
-  color: var(--dark);
-}
-
-.selectWrapper button {
-  padding: 0;
-  min-width: 65px;
-  font-size: var(--size-smallish);
-  color: var(--action-secondary);
-}
-
-.selectWrapper svg {
-  fill: var(--action-secondary);
-  stroke: var(--action-secondary);
-}
-
-.slash {
-  margin: 0 7px;
-  font-weight: var(--weight-bold);
-  color: var(--dark);
-}
-
 .inputWrapper {
   padding: 13px 0 12px;
 }
@@ -90,7 +33,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 14px;
+  padding-top: 16px;
+}
+
+.limitItem {
+  padding-top: 30px;
 }
 
 .inputContainer {
@@ -117,4 +64,9 @@
   display: flex;
   align-items: center;
   margin-left: 30px;
+}
+
+.addTokenLabel {
+  display: flex;
+  align-items: center;
 }

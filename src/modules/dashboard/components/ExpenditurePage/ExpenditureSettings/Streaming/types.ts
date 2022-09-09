@@ -4,12 +4,20 @@ export interface FundingSource {
     amount?: number;
     token?: string;
     time?: string;
-  };
+    limit?: number;
+    id: string;
+  }[];
   isExpanded: boolean;
-  limit?: number;
   id: string;
 }
 
 export interface Streaming {
   fundingSource: FundingSource[];
+}
+
+export enum TimePeriod {
+  Month = 'month',
+  Week = 'week',
+  Day = 'day',
+  Hour = 'hour',
 }
