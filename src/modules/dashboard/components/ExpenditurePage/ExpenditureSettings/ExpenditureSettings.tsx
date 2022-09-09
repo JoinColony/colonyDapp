@@ -16,18 +16,6 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.ExpenditureSettings.type',
     defaultMessage: 'Expenditure type',
   },
-  team: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.team',
-    defaultMessage: 'Team',
-  },
-  balance: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.balance',
-    defaultMessage: 'Balance',
-  },
-  owner: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.owner',
-    defaultMessage: 'Owner',
-  },
   advancedPayment: {
     id: 'dashboard.ExpenditurePage.ExpenditureSettings.advancedPayment',
     defaultMessage: 'Advanced payment',
