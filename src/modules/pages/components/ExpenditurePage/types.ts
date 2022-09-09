@@ -13,6 +13,13 @@ export enum ExpenditureTypes {
   Advanced = 'advanced',
   Split = 'split',
   Staged = 'staged',
+  Streaming = 'streaming',
+}
+
+export enum ExpenditureEndDateTypes {
+  WhenCancelled = 'when-cancelled',
+  LimitIsReached = 'limit-is-reached',
+  FixedTime = 'fixed-time',
 }
 
 export interface ValuesType {
