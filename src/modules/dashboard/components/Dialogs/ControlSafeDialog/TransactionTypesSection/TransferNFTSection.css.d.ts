@@ -9,3 +9,6 @@ export const nftContentValue: string;
 export const nftContractAvatar: string;
 export const nftImageContainer: string;
 export const nftImage: string;
+export const notFound: string;
+export const loading: string;
+export const error: string;

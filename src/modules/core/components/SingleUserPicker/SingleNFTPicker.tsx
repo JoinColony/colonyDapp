@@ -1,6 +1,6 @@
 import React, { ComponentProps, useMemo } from 'react';
 
-import { NFT } from '~dashboard/Dialogs/ControlSafeDialog';
+import { NFT } from '~dashboard/Dialogs/ControlSafeDialog/TransactionTypesSection/TransferNFTSection';
 
 import SingleUserPicker from './SingleUserPicker';
 
@@ -15,9 +15,9 @@ const SingleNFTPicker = ({ data, ...props }: Props) => {
   const formattedData = useMemo(
     () =>
       data.map((item) => ({
-        id: item.address,
+        id: `${item.address} ${item.id}`,
         profile: {
-          displayName: `${item.name} #${item.safeID}`,
+          displayName: `${item.name || item.tokenName} #${item.id}`,
           walletAddress: item.address,
         },
       })),
