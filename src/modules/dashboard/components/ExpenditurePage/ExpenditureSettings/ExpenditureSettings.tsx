@@ -20,6 +20,18 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.ExpenditureSettings.team',
     defaultMessage: 'Team',
   },
+  to: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.to',
+    defaultMessage: 'To',
+  },
+  starts: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.starts',
+    defaultMessage: 'Starts',
+  },
+  ends: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.ends',
+    defaultMessage: 'Ends',
+  },
   balance: {
     id: 'dashboard.ExpenditurePage.ExpenditureSettings.balance',
     defaultMessage: 'Balance',
@@ -84,6 +96,10 @@ export interface Props {
 const ExpenditureSettings = ({ colony, sidebarRef, inEditMode }: Props) => {
   const { values } = useFormikContext<ValuesType>() || {};
   const expenditureType = values.expenditure;
+
+  const { data: colonyMembers } = useMembersSubscription({
+    variables: { colonyAddress: colony.colonyAddress || '' },
+  });
 
   return (
     <div className={styles.container}>
