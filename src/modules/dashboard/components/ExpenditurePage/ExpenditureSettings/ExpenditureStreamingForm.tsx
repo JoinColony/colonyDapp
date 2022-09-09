@@ -6,9 +6,10 @@ import { filterUserSelection } from '~core/SingleUserPicker';
 import UserPickerWithSearch from '~core/UserPickerWithSearch';
 import { useMembersSubscription } from '~data/generated';
 import { ExpenditureEndDateTypes } from '~pages/ExpenditurePage/types';
-import { supRenderAvatar } from '../Recipient/Recipient';
-import { Props } from './ExpenditureSettings';
 
+import { supRenderAvatar } from '../Recipient/Recipient';
+
+import { Props } from './ExpenditureSettings';
 import styles from './ExpenditureSettings.css';
 
 export const MSG = defineMessages({
