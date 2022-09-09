@@ -1,6 +1,6 @@
 import React, { ComponentProps, useMemo } from 'react';
 
-import { NFT } from '~dashboard/Dialogs/GnosisControlSafeDialog';
+import { NFT } from '~dashboard/Dialogs/ControlSafeDialog';
 
 import SingleUserPicker from './SingleUserPicker';
 
@@ -28,7 +28,7 @@ const SingleNFTPicker = ({ data, ...props }: Props) => {
     <SingleUserPicker
       {...props}
       data={formattedData}
-      placholderIconName="nft-icon"
+      placeholderIconName="nft-icon"
     />
   );
 };

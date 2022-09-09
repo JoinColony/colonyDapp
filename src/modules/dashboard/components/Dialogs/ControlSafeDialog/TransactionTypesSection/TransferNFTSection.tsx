@@ -11,42 +11,42 @@ import SingleUserPicker, {
 import { useMembersSubscription } from '~data/index';
 
 import { Address } from '~types/index';
-import { NFT } from '~dashboard/Dialogs/GnosisControlSafeDialog';
+import { NFT } from '~dashboard/Dialogs/ControlSafeDialog';
 
-import styles from './GnosisNFTTransfer.css';
+import styles from './TransferNFTSection.css';
 
 const MSG = defineMessages({
   selectNFT: {
-    id: 'dashboard.GnosisControlSafeDialog.GnosisNFTTransfer.selectNFT',
+    id: 'dashboard.ControlSafeDialog.TransferNFTSection.selectNFT',
     defaultMessage: 'Select the NFT held by the Safe',
   },
   NFTPickerPlaceholder: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisNFTTransfer.NFTPickerPlaceholder`,
+    id: `dashboard.ControlSafeDialog.TransferNFTSection.NFTPickerPlaceholder`,
     defaultMessage: 'Select NFT to transfer',
   },
   selectRecipient: {
-    id: 'dashboard.GnosisControlSafeDialog.GnosisNFTTransfer.selectRecipient',
+    id: 'dashboard.ControlSafeDialog.TransferNFTSection.selectRecipient',
     defaultMessage: 'Select Recipient',
   },
   userPickerPlaceholder: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisNFTTransfer.userPickerPlaceholder`,
+    id: `dashboard.ControlSafeDialog.TransferNFTSection.userPickerPlaceholder`,
     defaultMessage: 'Search for a user or paste wallet address',
   },
   contract: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisNFTTransfer.contract`,
+    id: `dashboard.ControlSafeDialog.TransferNFTSection.contract`,
     defaultMessage: 'Contract',
   },
   idLabel: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisNFTTransfer.idLabel`,
+    id: `dashboard.ControlSafeDialog.TransferNFTSection.idLabel`,
     defaultMessage: 'Id',
   },
   nftDetails: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisNFTTransfer.nftDetails`,
+    id: `dashboard.ControlSafeDialog.TransferNFTSection.nftDetails`,
     defaultMessage: 'NFT details',
   },
 });
 
-const displayName = 'dashboard.GnosisControlSafeDialog.GnosisNFTTransfer';
+const displayName = 'dashboard.ControlSafeDialog.TransferNFTSection';
 
 interface Props {
   colonyAddress: Address;
@@ -66,7 +66,7 @@ const renderAvatar = (address: string, item) => (
   />
 );
 
-const GnosisNFTTransfer = ({
+const TransferNFTSection = ({
   colonyAddress,
   disabledInput,
   nftCatalogue,
@@ -174,6 +174,6 @@ const GnosisNFTTransfer = ({
   );
 };
 
-GnosisNFTTransfer.displayName = displayName;
+TransferNFTSection.displayName = displayName;
 
-export default GnosisNFTTransfer;
+export default TransferNFTSection;

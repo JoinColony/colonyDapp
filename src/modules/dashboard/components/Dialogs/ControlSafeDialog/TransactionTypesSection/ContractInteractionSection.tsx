@@ -12,28 +12,28 @@ import styles from './TransactionTypesSection.css';
 
 const MSG = defineMessages({
   abiLabel: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.ContractInteractionSection.abiLabel`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.ContractInteractionSection.abiLabel`,
     defaultMessage: 'ABI/JSON',
   },
   functionLabel: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.ContractInteractionSection.functionLabel`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.ContractInteractionSection.functionLabel`,
     defaultMessage: 'Select function to interact with',
   },
   functionPlaceholder: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.ContractInteractionSection.functionPlaceholder`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.ContractInteractionSection.functionPlaceholder`,
     defaultMessage: 'Select function',
   },
   contractLabel: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.ContractInteractionSection.contractLabel`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.ContractInteractionSection.contractLabel`,
     defaultMessage: 'Target contract address',
   },
   userPickerPlaceholder: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.ContractInteractionSection.userPickerPlaceholder`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.ContractInteractionSection.userPickerPlaceholder`,
     defaultMessage: 'Select or paste a contract address',
   },
 });
 
-const displayName = `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.ContractInteractionSection`;
+const displayName = `dashboard.ControlSafeDialog.ControlSafeForm.ContractInteractionSection`;
 
 interface Props {
   disabledInput: boolean;

@@ -22,7 +22,7 @@ const AddressDetailsView = ({ item, isSafeItem }: Props) => {
         size="xs"
         avatarURL={item?.profile?.avatarHash || ''}
         title="avatar"
-        placeholderIcon={isSafeItem ? 'gnosis-logo' : 'circle-person'}
+        placeholderIcon={isSafeItem ? 'safe-logo' : 'circle-person'}
       />
       <span className={styles.name}>{userDisplayName || `@${username}`}</span>
       <MaskedAddress address={item?.id} />

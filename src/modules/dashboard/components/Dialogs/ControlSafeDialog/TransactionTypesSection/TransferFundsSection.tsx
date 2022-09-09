@@ -13,26 +13,26 @@ import UserAvatar from '~core/UserAvatar';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import { DialogSection } from '~core/Dialog';
 
-import { FormValues } from '../GnosisControlSafeDialog';
+import { FormValues } from '../ControlSafeDialog';
 
 import styles from './TransactionTypesSection.css';
 
 const MSG = defineMessages({
   amount: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.TransferFundsSection.amount`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection.amount`,
     defaultMessage: 'Amount',
   },
   recipient: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.TransferFundsSection.recipient`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection.recipient`,
     defaultMessage: 'Select Recipient',
   },
   userPickerPlaceholder: {
-    id: `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.TransferFundsSection.userPickerPlaceholder`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection.userPickerPlaceholder`,
     defaultMessage: 'Select or paste a wallet address',
   },
 });
 
-const displayName = `dashboard.GnosisControlSafeDialog.GnosisControlSafeForm.TransferFundsSection`;
+const displayName = `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection`;
 
 interface Props {
   colony: Colony;

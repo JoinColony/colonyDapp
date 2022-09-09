@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm, SelectOption } from '~core/Fields';
-import { GNOSIS_SAFE_NETWORKS } from '~modules/constants';
+import { SAFE_NETWORKS } from '~modules/constants';
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
@@ -42,7 +42,7 @@ const AddExistingSafeDialog = ({
   });
 
   // Create array for Network options
-  const networkOptions: SelectOption[] = GNOSIS_SAFE_NETWORKS.map((option) => {
+  const networkOptions: SelectOption[] = SAFE_NETWORKS.map((option) => {
     return {
       label: option.name,
       value: option.chainId.toString(),
