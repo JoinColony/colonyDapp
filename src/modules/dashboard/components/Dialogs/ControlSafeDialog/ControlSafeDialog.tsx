@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import toFinite from 'lodash/toFinite';
 import { defineMessages } from 'react-intl';
 import { ethers } from 'ethers';
+import Decimal from 'decimal.js';
+import { isHexString } from 'ethers/utils';
+import { MaxUint256 } from 'ethers/constants';
 
 import { AnyUser } from '~data/index';
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
@@ -12,6 +15,7 @@ import { ActionForm } from '~core/Fields';
 import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
 import { Address } from '~types/index';
+import { AbiItemExtended } from '~utils/getContractUsefulMethods';
 
 import { TransactionTypes } from './constants';
 import ControlSafeForm, { NFT } from './ControlSafeForm';
@@ -29,9 +33,25 @@ const MSG = defineMessages({
     id: 'dashboard.ControlSafeDialog.integer',
     defaultMessage: 'Amount must be an integer',
   },
+  notAddressArrayError: {
+    id: 'dashboard.ControlSafeDialog.notAddressArray',
+    defaultMessage: 'Addresses must be formatted correctly',
+  },
   notHexError: {
     id: 'dashboard.ControlSafeDialog.notHexError',
     defaultMessage: 'Value must be a valid hex string',
+  },
+  notAddressError: {
+    id: 'dashboard.ControlSafeDialog.notAddress',
+    defaultMessage: 'Address must be formatted correctly',
+  },
+  notBooleanError: {
+    id: 'dashboard.ControlSafeDialog.notBooleanError',
+    defaultMessage: 'Value must be a valid boolean',
+  },
+  notSafeIntegerError: {
+    id: 'dashboard.ControlSafeDialog.notSafeIntegerError',
+    defaultMessage: 'Amount must be a safe integer',
   },
 });
 
@@ -42,12 +62,12 @@ export interface FormValues {
     amount?: number;
     recipient?: AnyUser;
     data?: string;
-    contract?: string;
+    contract?: AnyUser;
     abi?: string;
     contractFunction?: string;
     nft: NFT;
   }[];
-  safe: string;
+  safe: AnyUser;
   forceAction: boolean;
   transactionsTitle: string;
 }
@@ -58,26 +78,148 @@ type Props = DialogProps &
   Partial<WizardDialogType<object>> &
   ActionDialogProps;
 
-const validationSchema = (isPreview) =>
-  yup.object().shape({
+const ControlSafeDialog = ({
+  colony,
+  cancel,
+  callStep,
+  prevStep,
+  isVotingExtensionEnabled,
+}: Props) => {
+  const [showPreview, setShowPreview] = useState(false);
+  const [selectedContractMethods, setSelectedContractMethods] = useState<{
+    [key: number]: AbiItemExtended | undefined;
+  }>();
+  const [expandedValidationSchema, setExpandedValidationSchema] = useState<
+    Record<string, any>
+  >({});
+  const { safes } = colony;
+
+  const getMethodInputValidation = useCallback(
+    (inputType: string, contractName: string, isArraySchema?: boolean) => {
+      if (inputType.slice(-2) === '[]') {
+        return yup.array().when('contractFunction', {
+          is: (contractFunction) => contractFunction === contractName,
+          then: yup
+            .array()
+            .ensure()
+            .of(
+              getMethodInputValidation(
+                inputType.slice(0, -2),
+                contractName,
+                true,
+              ),
+            ),
+          otherwise: false,
+        });
+      }
+      if (inputType === 'uint256' || inputType === 'int256') {
+        return yup.number().when('contractFunction', {
+          is: (contractFunction) =>
+            contractFunction === contractName || isArraySchema,
+          then: yup
+            .number()
+            .test(
+              'is-integer',
+              () => MSG.notIntegerError,
+              (value) => new Decimal(value || 0).isInteger(),
+            )
+            .test(
+              'is-integer-safe',
+              () => MSG.notSafeIntegerError,
+              (value) =>
+                new Decimal(value || 0).lte(new Decimal(MaxUint256.toString())),
+            )
+            .required(() => MSG.requiredFieldError),
+          otherwise: false,
+        });
+      }
+      if (inputType === 'address') {
+        return yup.string().when('contractFunction', {
+          is: (contractFunction) => {
+            return contractFunction === contractName || isArraySchema;
+          },
+          then: yup
+            .string()
+            .address(() =>
+              isArraySchema ? MSG.notAddressArrayError : MSG.notAddressError,
+            )
+            .required(() => MSG.requiredFieldError),
+          otherwise: false,
+        });
+      }
+      if (inputType === 'bytes') {
+        return yup.string().when('contractFunction', {
+          is: (contractFunction) => {
+            return contractFunction === contractName || isArraySchema;
+          },
+          then: yup
+            .string()
+            .required(() => MSG.requiredFieldError)
+            .test(
+              'is-hex',
+              () => MSG.notHexError,
+              (value) => isHexString(value),
+            ),
+          otherwise: false,
+        });
+      }
+      if (inputType === 'bool') {
+        return yup.bool().when('contractFunction', {
+          is: (contractFunction) =>
+            contractFunction === contractName || isArraySchema,
+          then: yup
+            .bool()
+            .typeError(() => MSG.notBooleanError)
+            .required(() => MSG.requiredFieldError),
+          otherwise: false,
+        });
+      }
+      return yup.string().when('contractFunction', {
+        is: (contractFunction) =>
+          contractFunction === contractName || isArraySchema,
+        then: yup.string().required(() => MSG.requiredFieldError),
+        otherwise: false,
+      });
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (selectedContractMethods) {
+      const updatedExpandedValidationSchema = {};
+
+      Object.values(selectedContractMethods).forEach((method) => {
+        method?.inputs?.forEach((input) => {
+          updatedExpandedValidationSchema[
+            input.name
+          ] = getMethodInputValidation(input.type, method.name);
+        });
+      });
+
+      setExpandedValidationSchema(updatedExpandedValidationSchema);
+    }
+  }, [selectedContractMethods, getMethodInputValidation]);
+
+  const validationSchema = yup.object().shape({
     safe: yup.string().required(() => MSG.requiredFieldError),
-    ...(isPreview ? { transactionsTitle: yup.string().required() } : {}),
+    ...(showPreview ? { transactionsTitle: yup.string().required() } : {}),
     transactions: yup.array(
       yup.object().shape({
         transactionType: yup.string().required(() => MSG.requiredFieldError),
-        recipient: yup.object().shape({
-          id: yup.string().address().required(),
-          profile: yup.object().shape({
-            walletAddress: yup.string().when('transactionType', {
-              is: (transactionType) =>
-                transactionType === TransactionTypes.TRANSFER_FUNDS,
-              then: yup
+        recipient: yup.object().when('transactionType', {
+          is: (transactionType) =>
+            transactionType === TransactionTypes.TRANSFER_FUNDS ||
+            transactionType === TransactionTypes.TRANSFER_NFT,
+          then: yup.object().shape({
+            id: yup.string().address().required(),
+            profile: yup.object().shape({
+              walletAddress: yup
                 .string()
                 .address()
                 .required(() => MSG.requiredFieldError),
-              otherwise: false,
             }),
           }),
+          otherwise: yup.object().nullable(),
         }),
         amount: yup.number().when('transactionType', {
           is: (transactionType) =>
@@ -113,14 +255,18 @@ const validationSchema = (isPreview) =>
             ),
           otherwise: false,
         }),
-        contract: yup.string().when('transactionType', {
+        contract: yup.object().when('transactionType', {
           is: (transactionType) =>
             transactionType === TransactionTypes.CONTRACT_INTERACTION,
-          then: yup
-            .string()
-            .address()
-            .required(() => MSG.requiredFieldError),
-          otherwise: false,
+          then: yup.object().shape({
+            profile: yup.object().shape({
+              walletAddress: yup
+                .string()
+                .address()
+                .required(() => MSG.requiredFieldError),
+            }),
+          }),
+          otherwise: yup.object().nullable(),
         }),
         abi: yup.string().when('transactionType', {
           is: (transactionType) =>
@@ -134,41 +280,24 @@ const validationSchema = (isPreview) =>
           then: yup.string().required(() => MSG.requiredFieldError),
           otherwise: false,
         }),
-        nft: yup
-          .object()
-          .shape({
+        nft: yup.object().when('transactionType', {
+          is: (transactionType) =>
+            transactionType === TransactionTypes.TRANSFER_NFT,
+          then: yup.object().shape({
             profile: yup.object().shape({
-              displayName: yup.string().when('transactionType', {
-                is: (transactionType) =>
-                  transactionType === TransactionTypes.TRANSFER_NFT,
-                then: yup.string().required(() => MSG.requiredFieldError),
-                otherwise: false,
-              }),
-              walletAddress: yup.string().when('transactionType', {
-                is: (transactionType) =>
-                  transactionType === TransactionTypes.TRANSFER_NFT,
-                then: yup
-                  .string()
-                  .address()
-                  .required(() => MSG.requiredFieldError),
-                otherwise: false,
-              }),
+              displayName: yup.string().required(() => MSG.requiredFieldError),
+              walletAddress: yup
+                .string()
+                .address()
+                .required(() => MSG.requiredFieldError),
             }),
-          })
-          .nullable(),
+          }),
+          otherwise: yup.object().nullable(),
+        }),
+        ...expandedValidationSchema,
       }),
     ),
   });
-
-const ControlSafeDialog = ({
-  colony,
-  cancel,
-  callStep,
-  prevStep,
-  isVotingExtensionEnabled,
-}: Props) => {
-  const [showPreview, setShowPreview] = useState(false);
-  const { safes } = colony;
 
   return (
     <ActionForm
@@ -180,16 +309,16 @@ const ControlSafeDialog = ({
             transactionType: '',
             tokenAddress: colony.nativeTokenAddress,
             amount: undefined,
-            recipient: null,
+            recipient: undefined,
             data: '',
-            contract: '',
+            contract: undefined,
             abi: '',
             contractFunction: '',
             nft: null,
           },
         ],
       }}
-      validationSchema={validationSchema(showPreview)}
+      validationSchema={validationSchema}
       submit={ActionTypes.ACTION_GENERIC}
       success={ActionTypes.ACTION_GENERIC_SUCCESS}
       error={ActionTypes.ACTION_GENERIC_ERROR}
@@ -205,6 +334,8 @@ const ControlSafeDialog = ({
             isVotingExtensionEnabled={isVotingExtensionEnabled}
             showPreview={showPreview}
             handleShowPreview={setShowPreview}
+            selectedContractMethods={selectedContractMethods}
+            handleSelectedContractMethods={setSelectedContractMethods}
           />
         </Dialog>
       )}

@@ -22,6 +22,7 @@ import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissi
 import { SAFE_INTEGRATION_LEARN_MORE } from '~externalUrls';
 import { Colony, ColonySafe, useLoggedInUser } from '~data/index';
 import { Address, PrimitiveType } from '~types/index';
+import { AbiItemExtended } from '~utils/getContractUsefulMethods';
 
 import SafeTransactionPreview from './SafeTransactionPreview';
 import { FormValues } from './ControlSafeDialog';
@@ -127,6 +128,16 @@ interface Props {
   back?: () => void;
   showPreview: boolean;
   handleShowPreview: (showPreview: boolean) => void;
+  selectedContractMethods:
+    | {
+        [key: number]: AbiItemExtended | undefined;
+      }
+    | undefined;
+  handleSelectedContractMethods: React.Dispatch<
+    React.SetStateAction<{
+      [key: number]: AbiItemExtended | undefined;
+    }>
+  >;
 }
 
 const renderAvatar = (address: string, item) => (
@@ -150,9 +161,13 @@ const ControlSafeForm = ({
   values,
   isVotingExtensionEnabled,
   setFieldValue,
+  setStatus,
+  status,
   showPreview,
   handleShowPreview,
   validateForm,
+  selectedContractMethods,
+  handleSelectedContractMethods,
 }: Props & FormikProps<FormValues>) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState([true]);
   const [hasTitle, setHasTitle] = useState(true);
@@ -192,7 +207,7 @@ const ControlSafeForm = ({
         amount: undefined,
         recipient: null,
         data: '',
-        contract: '',
+        contract: null,
         abi: '',
         contractFunction: '',
         nft: null,
@@ -381,6 +396,15 @@ const ControlSafeForm = ({
                         <ContractInteractionSection
                           disabledInput={!userHasPermission || isSubmitting}
                           transactionFormIndex={index}
+                          values={values}
+                          safes={safes}
+                          setFieldValue={setFieldValue}
+                          setStatus={setStatus}
+                          status={status}
+                          selectedContractMethods={selectedContractMethods}
+                          handleSelectedContractMethods={
+                            handleSelectedContractMethods
+                          }
                         />
                       )}
                       {values.transactions[index]?.transactionType ===

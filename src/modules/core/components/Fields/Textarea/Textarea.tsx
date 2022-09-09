@@ -108,7 +108,7 @@ const Textarea = ({
       <div className={styles.textareaWrapper}>
         <textarea
           {...fieldInputProps}
-          aria-invalid={touched && error ? true : undefined}
+          aria-invalid={touched && error && !status ? true : undefined}
           className={getMainClasses(appearance, styles)}
           id={id}
           maxLength={maxLength}
