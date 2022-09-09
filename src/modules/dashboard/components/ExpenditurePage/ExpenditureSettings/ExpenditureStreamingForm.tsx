@@ -54,7 +54,8 @@ const endDateTypes = [
   },
 ];
 
-const displayName = 'dashboard.ExpenditurePage.ExpenditureStreamingForm';
+const displayName =
+  'dashboard.ExpenditurePage.ExpenditureSettings.ExpenditureStreamingForm';
 
 const ExpenditureStreamingForm = ({ sidebarRef, colony }: Props) => {
   const { data: colonyMembers } = useMembersSubscription({

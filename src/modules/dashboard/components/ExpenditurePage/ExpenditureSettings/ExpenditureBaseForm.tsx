@@ -30,7 +30,8 @@ export const MSG = defineMessages({
   },
 });
 
-const displayName = 'dashboard.ExpenditurePage.ExpenditureBaseForm';
+const displayName =
+  'dashboard.ExpenditurePage.ExpenditureSettings.ExpenditureBaseForm';
 
 const ExpenditureBaseForm = ({ colony, sidebarRef }: Props) => {
   const { walletAddress, username } = useLoggedInUser();
