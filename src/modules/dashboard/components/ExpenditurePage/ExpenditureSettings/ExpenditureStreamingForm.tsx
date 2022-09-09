@@ -57,7 +57,8 @@ const endDateOptions: DatePickerOption[] = [
   },
 ];
 
-const displayName = 'dashboard.ExpenditurePage.ExpenditureStreamingForm';
+const displayName =
+  'dashboard.ExpenditurePage.ExpenditureSettings.ExpenditureStreamingForm';
 
 export interface Props {
   sidebarRef: HTMLElement | null;
