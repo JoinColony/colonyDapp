@@ -3,7 +3,7 @@ import { AbiItem, keccak256 } from 'web3-utils';
 import {
   BINANCE_NETWORK,
   GNOSIS_NETWORK,
-  GNOSIS_SAFE_NETWORKS,
+  SAFE_NETWORKS,
   POLYGON_NETWORK,
 } from '~constants';
 
@@ -25,7 +25,7 @@ export const fetchContractABI = async (
 
   try {
     const currentNetworkData =
-      GNOSIS_SAFE_NETWORKS.find((network) => network.chainId === safeChainId) ||
+      SAFE_NETWORKS.find((network) => network.chainId === safeChainId) ||
       GNOSIS_NETWORK;
     const getApiKey = () => {
       if (currentNetworkData.chainId === POLYGON_NETWORK.chainId) {

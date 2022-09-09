@@ -17,7 +17,7 @@ import {
   fetchContractABI,
 } from '~utils/getContractUsefulMethods';
 
-import { FormValues } from '../GnosisControlSafeDialog';
+import { FormValues } from '../ControlSafeDialog';
 
 import styles from './TransactionTypesSection.css';
 import { GNOSIS_NETWORK } from '~constants';
