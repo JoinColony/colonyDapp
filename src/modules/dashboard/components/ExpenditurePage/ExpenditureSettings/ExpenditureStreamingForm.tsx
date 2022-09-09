@@ -11,8 +11,8 @@ import { Colony } from '~data/index';
 import { ExpenditureEndDateTypes } from '~pages/ExpenditurePage/types';
 
 import { supRenderAvatar } from '../Recipient/Recipient';
-import { Streaming } from '../Streaming/types';
 
+import { Props } from './ExpenditureSettings';
 import styles from './ExpenditureSettings.css';
 
 export const MSG = defineMessages({
