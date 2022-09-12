@@ -1,5 +1,6 @@
 import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
+import classnames from 'classnames';
 
 import { getMainClasses } from '~utils/css';
 
@@ -24,6 +25,7 @@ interface Props {
   value?: number;
   max?: number;
   threshold?: number;
+  hidePercentage?: boolean;
 }
 
 const displayName = 'ProgressBar';
@@ -39,9 +41,11 @@ const ProgressBar = ({
   value = 0,
   max = 100,
   threshold,
+  hidePercentage = false,
 }: Props) => {
   const { formatMessage } = useIntl();
   const titleText = formatMessage(MSG.titleProgress, { value, max });
+  const visible = styles.thresholdVisibility;
 
   return (
     <div className={`${styles.wrapper} ${getMainClasses(appearance, styles)}`}>
@@ -52,7 +56,14 @@ const ProgressBar = ({
           }}
           className={styles.threshold}
         >
-          <span className={styles.thresholdPercentage}>{threshold}%</span>
+          <span
+            className={classnames(styles.thresholdPercentage, {
+              [visible]: hidePercentage,
+            })}
+          >
+            {threshold}%
+          </span>
+
           <div className={styles.thresholdSeparator} />
         </div>
       )}

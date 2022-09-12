@@ -55,6 +55,8 @@
 
 .barThemePrimary .main::-webkit-progress-value {
   background-color: var(--primary);
+
+  /* background-color: var(--golden); */
 }
 
 .barThemeDanger .main::-webkit-progress-value {
@@ -85,6 +87,10 @@
   width: 2px;
   border-radius: 1px;
   background-color: var(--pink);
+}
+
+.thresholdVisibility {
+  visibility: hidden;
 }
 
 .sizeNormal .thresholdSeparator {

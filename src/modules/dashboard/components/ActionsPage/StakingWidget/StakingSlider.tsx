@@ -5,6 +5,7 @@ import { bigNumberify } from 'ethers/utils';
 
 import Heading from '~core/Heading';
 import Slider, { Appearance } from '~core/Slider';
+import { Tooltip } from '~core/Popover';
 import Numeral from '~core/Numeral';
 import StakingValidationError from '~dashboard/ActionsPage/StakingValidationError';
 
@@ -58,6 +59,10 @@ const MSG = defineMessages({
   minimumAmount: {
     id: 'dashboard.ActionsPage.StakingSlider.minimumAmount',
     defaultMessage: 'at least {minStake}',
+  },
+  tooltip: {
+    id: 'dashboard.ActionsPage.StakingSlider.tooltip',
+    defaultMessage: `Stake above the minimum 10% threshold to make it visible to others within the Actions list.`,
   },
 });
 
@@ -159,31 +164,53 @@ const StakingSlider = ({
           {...(isObjection ? MSG.descriptionObject : MSG.descriptionStake)}
         />
       </p>
-      {errorStakeType === 'tokens' ? (
-        <span className={styles.minStakeAmount}>
-          <FormattedMessage
-            {...MSG.minimumAmount}
-            values={{
-              minStake: (
-                <Numeral
-                  className={styles.minStakeAmount}
-                  value={getFormattedTokenValue(
-                    minUserStake,
-                    nativeToken?.decimals,
-                  )}
-                  suffix={nativeToken?.symbol}
-                />
-              ),
-            }}
-          />
-        </span>
-      ) : (
-        <Numeral
-          className={styles.amount}
-          value={displayStake}
-          suffix={nativeToken?.symbol}
-        />
-      )}
+      <span>
+        <Tooltip
+          trigger="hover"
+          content={
+            <div className={styles.tooltip}>
+              <FormattedMessage {...MSG.tooltip} />
+            </div>
+          }
+          placement="top"
+          popperOptions={{
+            modifiers: [
+              {
+                name: 'offset',
+                options: {
+                  offset: [0, 5],
+                },
+              },
+            ],
+          }}
+        >
+          {errorStakeType === 'tokens' ? (
+            <span className={styles.minStakeAmount}>
+              <FormattedMessage
+                {...MSG.minimumAmount}
+                values={{
+                  minStake: (
+                    <Numeral
+                      className={styles.minStakeAmount}
+                      value={getFormattedTokenValue(
+                        minUserStake,
+                        nativeToken?.decimals,
+                      )}
+                      suffix={nativeToken?.symbol}
+                    />
+                  ),
+                }}
+              />
+            </span>
+          ) : (
+            <Numeral
+              className={styles.amount}
+              value={displayStake}
+              suffix={nativeToken?.symbol}
+            />
+          )}
+        </Tooltip>
+      </span>
       <div className={styles.sliderContainer}>
         <Slider
           name="amount"

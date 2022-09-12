@@ -6,6 +6,7 @@ import { bigNumberify } from 'ethers/utils';
 import Heading from '~core/Heading';
 import ProgressBar from '~core/ProgressBar';
 import Numeral from '~core/Numeral';
+import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import { getFormattedTokenValue } from '~utils/tokens';
 
 import styles from './TotalStakeWidget.css';
@@ -38,6 +39,10 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.TotalStakeWidget.SingleTotalStake.userStake',
     defaultMessage: `You staked {userPercentage}% of this motion ({userStake}).`,
   },
+  stakeToolTip: {
+    id: 'dashboard.ActionsPage.TotalStakeWidget.SingleTotalStake.stakeToolTip',
+    defaultMessage: `Percentage this Motion has been staked. For it to show up in the Actions list a min 10% is required.`,
+  },
 });
 
 const SingleTotalStake = ({
@@ -69,16 +74,35 @@ const SingleTotalStake = ({
   return (
     <>
       <div className={styles.widgetHeading}>
-        <Heading
-          appearance={{
-            theme: 'dark',
-            size: 'small',
-            weight: 'bold',
-            margin: 'none',
-          }}
-          text={isObjection ? MSG.objectionTitle : MSG.motionTitle}
-          className={styles.title}
-        />
+        <span className={styles.subHeading}>
+          <Heading
+            appearance={{
+              theme: 'dark',
+              size: 'small',
+              weight: 'bold',
+              margin: 'none',
+            }}
+            text={isObjection ? MSG.objectionTitle : MSG.motionTitle}
+            className={styles.title}
+          />
+          <QuestionMarkTooltip
+            tooltipText={MSG.stakeToolTip}
+            className={styles.helpTooltip}
+            tooltipClassName={styles.tooltip}
+            showArrow={false}
+            tooltipPopperOptions={{
+              placement: 'top-end',
+              modifiers: [
+                {
+                  name: 'offset',
+                  options: {
+                    offset: [0, 10],
+                  },
+                },
+              ],
+            }}
+          />
+        </span>
         <span className={styles.stakeProgress}>
           <FormattedMessage
             {...MSG.stakeProgress}
@@ -93,11 +117,14 @@ const SingleTotalStake = ({
       </div>
       <ProgressBar
         value={totalPercentage}
+        threshold={10}
         max={100}
         appearance={{
           barTheme: isObjection ? 'danger' : 'primary',
           backgroundTheme: 'default',
+          size: 'normal',
         }}
+        hidePercentage
       />
       {userStake && userStake !== '0' && (
         <p className={styles.userStake}>

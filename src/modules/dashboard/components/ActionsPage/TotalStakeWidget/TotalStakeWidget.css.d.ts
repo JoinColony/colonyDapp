@@ -7,3 +7,6 @@ export const totalStakeRadio: string;
 export const help: string;
 export const tooltip: string;
 export const submitButtonContainer: string;
+export const thresholdSeparator: string;
+export const helpTooltip: string;
+export const subHeading: string;
