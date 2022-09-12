@@ -10,7 +10,7 @@ import { Colony } from '~data/index';
 import Numeral from '~core/Numeral';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
-import { FundingSourceLocked } from '../types';
+import { FundingSource } from '../types';
 
 import styles from './LockedFundingSource.css';
 
@@ -25,29 +25,21 @@ const MSG = defineMessages({
   },
   limit: {
     id: 'dashboard.ExpenditurePage.Streaming.LockedFundingSource.limit',
-    defaultMessage: 'Limit',
+    defaultMessage: 'Limit {count}',
   },
 });
 
 const displayName = 'dashboard.ExpenditurePage.Streaming.LockedFundingSource';
 
 interface Props {
-  fundingSource?: FundingSourceLocked;
+  fundingSource?: FundingSource;
   colony: Colony;
-  index: number;
-  multipleFundingSources?: boolean;
   isOpen?: boolean;
 }
 
-const LockedFundingSource = ({
-  fundingSource,
-  colony,
-  index,
-  multipleFundingSources,
-  isOpen,
-}: Props) => {
+const LockedFundingSource = ({ fundingSource, colony, isOpen }: Props) => {
   const { formatMessage } = useIntl();
-  const { rate, team, limit } = fundingSource || {};
+  const { rate, team } = fundingSource || {};
 
   const domain = useMemo(
     () =>
@@ -95,64 +87,81 @@ const LockedFundingSource = ({
               </div>
             </div>
           </FormSection>
-          {rate?.token && rate?.amount && (
-            <FormSection appearance={{ border: 'bottom' }}>
-              <div className={styles.row}>
-                <InputLabel
-                  label={formatMessage(MSG.rate, {
-                    count: multipleFundingSources && `# ${index + 1}`,
-                  })}
-                  appearance={{
-                    direction: 'horizontal',
-                  }}
-                />
-                <div className={styles.valueAmount}>
-                  <span className={styles.icon}>
-                    <TokenIcon
-                      className={styles.tokenIcon}
-                      token={rate.token}
-                      name={rate.token.name || rate.token.address}
+          {rate?.map(({ amount, token, time }, rateIndex) => {
+            const tokenData = colony.tokens?.find(
+              (tokenItem) => token && tokenItem.address === token,
+            );
+            return (
+              tokenData &&
+              amount && (
+                <FormSection appearance={{ border: 'bottom' }}>
+                  <div className={styles.row}>
+                    <InputLabel
+                      label={formatMessage(MSG.rate, {
+                        count: rate.length > 1 && `#${rateIndex + 1}`,
+                      })}
+                      appearance={{
+                        direction: 'horizontal',
+                      }}
                     />
-                  </span>
-                  <Numeral
-                    unit={getTokenDecimalsWithFallback(0)}
-                    value={rate.amount}
-                  />
-                  <span className={styles.symbol}>
-                    {rate.token.symbol}/{rate.time}
-                  </span>
-                </div>
-              </div>
-            </FormSection>
-          )}
-          {limit && rate?.token && (
-            <FormSection appearance={{ border: 'bottom' }}>
-              <div className={styles.row}>
-                <InputLabel
-                  label={formatMessage(MSG.limit, {
-                    count: multipleFundingSources && `# ${index + 1}`,
-                  })}
-                  appearance={{
-                    direction: 'horizontal',
-                  }}
-                />
-                <div className={styles.valueAmount}>
-                  <span className={styles.icon}>
-                    <TokenIcon
-                      className={styles.tokenIcon}
-                      token={rate.token}
-                      name={rate.token.name || rate.token.address}
+                    <div className={styles.valueAmount}>
+                      <span className={styles.icon}>
+                        <TokenIcon
+                          className={styles.tokenIcon}
+                          token={tokenData}
+                          name={tokenData.name || tokenData.address}
+                        />
+                      </span>
+                      <Numeral
+                        unit={getTokenDecimalsWithFallback(0)}
+                        value={amount}
+                      />
+                      <span className={styles.symbol}>
+                        {tokenData.symbol}/{time}
+                      </span>
+                    </div>
+                  </div>
+                </FormSection>
+              )
+            );
+          })}
+          {rate?.map(({ token, limit }, rateIndex) => {
+            const tokenData = colony.tokens?.find(
+              (tokenItem) => token && tokenItem.address === token,
+            );
+
+            return (
+              tokenData &&
+              limit && (
+                <FormSection appearance={{ border: 'bottom' }}>
+                  <div className={styles.row}>
+                    <InputLabel
+                      label={formatMessage(MSG.limit, {
+                        count: rate.length > 1 && `#${rateIndex + 1}`,
+                      })}
+                      appearance={{
+                        direction: 'horizontal',
+                      }}
                     />
-                  </span>
-                  <Numeral
-                    unit={getTokenDecimalsWithFallback(0)}
-                    value={limit}
-                  />
-                  <span className={styles.symbol}>{rate.token.symbol}</span>
-                </div>
-              </div>
-            </FormSection>
-          )}
+                    <div className={styles.valueAmount}>
+                      <span className={styles.icon}>
+                        <TokenIcon
+                          className={styles.tokenIcon}
+                          token={tokenData}
+                          name={tokenData.name || tokenData.address}
+                        />
+                      </span>
+                      <Numeral
+                        unit={getTokenDecimalsWithFallback(0)}
+                        value={limit}
+                      />
+                      <span className={styles.symbol}>{tokenData.symbol}</span>
+                    </div>
+                  </div>
+                </FormSection>
+              )
+            );
+          })}
         </div>
       )}
     </>
