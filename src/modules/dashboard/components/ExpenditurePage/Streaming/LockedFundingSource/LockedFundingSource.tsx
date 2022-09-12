@@ -10,7 +10,7 @@ import { Colony } from '~data/index';
 import Numeral from '~core/Numeral';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
-import { FundingSource } from '../types';
+import { FundingSourceLocked } from '../types';
 
 import styles from './LockedFundingSource.css';
 
@@ -25,21 +25,29 @@ const MSG = defineMessages({
   },
   limit: {
     id: 'dashboard.ExpenditurePage.Streaming.LockedFundingSource.limit',
-    defaultMessage: 'Limit {count}',
+    defaultMessage: 'Limit',
   },
 });
 
 const displayName = 'dashboard.ExpenditurePage.Streaming.LockedFundingSource';
 
 interface Props {
-  fundingSource?: FundingSource;
+  fundingSource?: FundingSourceLocked;
   colony: Colony;
+  index: number;
+  multipleFundingSources?: boolean;
   isOpen?: boolean;
 }
 
-const LockedFundingSource = ({ fundingSource, colony, isOpen }: Props) => {
+const LockedFundingSource = ({
+  fundingSource,
+  colony,
+  index,
+  multipleFundingSources,
+  isOpen,
+}: Props) => {
   const { formatMessage } = useIntl();
-  const { rates, team } = fundingSource || {};
+  const { rate, team, limit } = fundingSource || {};
 
   const domain = useMemo(
     () =>
@@ -62,45 +70,37 @@ const LockedFundingSource = ({ fundingSource, colony, isOpen }: Props) => {
     [colony, domain],
   );
 
-  if (!isOpen) {
-    return null;
-  }
-
   return (
-    <div className={styles.formContainer}>
-      <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.row}>
-          <InputLabel
-            label={MSG.team}
-            appearance={{
-              direction: 'horizontal',
-            }}
-          />
-          <div className={styles.activeItem}>
-            <ColorTag color={getDomainColor(team)} />
-            <div
-              className={classNames(
-                styles.activeItemLabel,
-                styles.lockedActiveItemLabel,
-              )}
-            >
-              {domain?.name}
+    <>
+      {isOpen && (
+        <div className={styles.formContainer}>
+          <FormSection appearance={{ border: 'bottom' }}>
+            <div className={styles.row}>
+              <InputLabel
+                label={MSG.team}
+                appearance={{
+                  direction: 'horizontal',
+                }}
+              />
+              <div className={styles.activeItem}>
+                <ColorTag color={getDomainColor(team)} />
+                <div
+                  className={classNames(
+                    styles.activeItemLabel,
+                    styles.lockedActiveItemLabel,
+                  )}
+                >
+                  {domain?.name}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </FormSection>
-      {rates?.map(({ amount, token, time, id }, rateIndex) => {
-        const tokenData = colony.tokens?.find(
-          (tokenItem) => token && tokenItem.address === token,
-        );
-        return (
-          tokenData &&
-          amount && (
-            <FormSection appearance={{ border: 'bottom' }} key={id}>
+          </FormSection>
+          {rate?.token && rate?.amount && (
+            <FormSection appearance={{ border: 'bottom' }}>
               <div className={styles.row}>
                 <InputLabel
                   label={formatMessage(MSG.rate, {
-                    count: rates.length > 1 && `#${rateIndex + 1}`,
+                    count: multipleFundingSources && `# ${index + 1}`,
                   })}
                   appearance={{
                     direction: 'horizontal',
@@ -110,36 +110,27 @@ const LockedFundingSource = ({ fundingSource, colony, isOpen }: Props) => {
                   <span className={styles.icon}>
                     <TokenIcon
                       className={styles.tokenIcon}
-                      token={tokenData}
-                      name={tokenData.name || tokenData.address}
+                      token={rate.token}
+                      name={rate.token.name || rate.token.address}
                     />
                   </span>
                   <Numeral
                     unit={getTokenDecimalsWithFallback(0)}
-                    value={amount}
+                    value={rate.amount}
                   />
                   <span className={styles.symbol}>
-                    {tokenData.symbol}/{time}
+                    {rate.token.symbol}/{rate.time}
                   </span>
                 </div>
               </div>
             </FormSection>
-          )
-        );
-      })}
-      {rates?.map(({ token, limit, id }, rateIndex) => {
-        const tokenData = colony.tokens?.find(
-          (tokenItem) => token && tokenItem.address === token,
-        );
-
-        return (
-          tokenData &&
-          limit && (
-            <FormSection appearance={{ border: 'bottom' }} key={id}>
+          )}
+          {limit && rate?.token && (
+            <FormSection appearance={{ border: 'bottom' }}>
               <div className={styles.row}>
                 <InputLabel
                   label={formatMessage(MSG.limit, {
-                    count: rates.length > 1 && `#${rateIndex + 1}`,
+                    count: multipleFundingSources && `# ${index + 1}`,
                   })}
                   appearance={{
                     direction: 'horizontal',
@@ -149,22 +140,22 @@ const LockedFundingSource = ({ fundingSource, colony, isOpen }: Props) => {
                   <span className={styles.icon}>
                     <TokenIcon
                       className={styles.tokenIcon}
-                      token={tokenData}
-                      name={tokenData.name || tokenData.address}
+                      token={rate.token}
+                      name={rate.token.name || rate.token.address}
                     />
                   </span>
                   <Numeral
                     unit={getTokenDecimalsWithFallback(0)}
                     value={limit}
                   />
-                  <span className={styles.symbol}>{tokenData.symbol}</span>
+                  <span className={styles.symbol}>{rate.token.symbol}</span>
                 </div>
               </div>
             </FormSection>
-          )
-        );
-      })}
-    </div>
+          )}
+        </div>
+      )}
+    </>
   );
 };
 
