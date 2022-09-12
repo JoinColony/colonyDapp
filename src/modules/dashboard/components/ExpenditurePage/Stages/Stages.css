@@ -19,7 +19,7 @@
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   line-height: 18px;
-  color: var(--temp-grey-blue-7);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
   letter-spacing: 0.5px;
 }
 

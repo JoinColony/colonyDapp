@@ -6,10 +6,15 @@ import { useDialog } from '~core/Dialog';
 import DeleteDraftDialog from '~dashboard/Dialogs/DeleteDraftDialog/DeleteDraftDialog';
 import StakeExpenditureDialog from '~dashboard/Dialogs/StakeExpenditureDialog';
 import { Colony } from '~data/index';
-import { StageObject, ValuesType } from '~pages/ExpenditurePage/types';
+import {
+  ExpenditureTypes,
+  StageObject,
+  ValuesType,
+} from '~pages/ExpenditurePage/types';
 
 import { Stage } from './constants';
 import Stages from './Stages';
+import StreamingStages from './StreamingStages';
 
 const displayName = 'dashboard.ExpenditurePage.Stages.FormStages';
 
@@ -89,6 +94,10 @@ const FormStages = ({
       activeStage?.buttonAction();
     }
   }, [activeStage, handleSubmit, setTouched, validateForm, values]);
+
+  if (values.expenditure === ExpenditureTypes.Streaming) {
+    return <StreamingStages handleSaveDraft={handleSaveDraft} />;
+  }
 
   return (
     <Stages
