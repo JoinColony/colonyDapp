@@ -12,6 +12,7 @@ import { Colony } from '~data/index';
 import { newFundingSource } from './constants';
 import { Streaming as StreamingType } from './types';
 import FundingSource from './FundingSource';
+import { newRate } from './FundingSource/constants';
 import styles from './Streaming.css';
 
 const MSG = defineMessages({
@@ -122,7 +123,7 @@ const Streaming = ({ colony, sidebarRef }: Props) => {
                   id: nanoid(),
                   rate: [
                     {
-                      ...newFundingSource.rate,
+                      ...newRate,
                       id: nanoid(),
                       token: colony?.nativeTokenAddress,
                     },

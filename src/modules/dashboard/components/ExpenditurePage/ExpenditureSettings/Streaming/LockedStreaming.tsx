@@ -1,10 +1,12 @@
 import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import classNames from 'classnames';
+
 import { FormSection } from '~core/Fields';
 import { CollapseExpandButtons } from '~dashboard/ExpenditurePage/Payments';
 import { Colony } from '~data/index';
-import LockedFundingSource from './LockedFundingSource';
 
+import LockedFundingSource from './LockedFundingSource';
 import { FundingSource } from './types';
 import styles from './Streaming.css';
 
@@ -54,17 +56,22 @@ const LockedStreaming = ({ fundingSources, colony }: Props) => {
         const isOpen =
           expandedFundingSources?.find((idx) => idx === index) !== undefined;
 
-        const { amount, token, time } = fundingSource.rate || {};
+        const { amount, token, time } = fundingSource.rate?.[0] || {};
         const tokenData = colony.tokens?.find(
           (tokenItem) => token && tokenItem.address === token,
         );
 
         return (
-          <div className={styles.singleFundingSource} key={fundingSource.id}>
+          <div
+            className={classNames(styles.singleFundingSource, {
+              [styles.marginBottomLarge]: isOpen,
+            })}
+            key={fundingSource.id}
+          >
             <FormSection>
               <div className={styles.fundingSourceLabel}>
                 <CollapseExpandButtons
-                  isExpanded={fundingSource.isExpanded}
+                  isExpanded={isOpen}
                   onToogleButtonClick={() => onToggleButtonClick(index)}
                   isLastitem={index === fundingSources?.length - 1}
                 />
@@ -82,17 +89,8 @@ const LockedStreaming = ({ fundingSources, colony }: Props) => {
             </FormSection>
             <LockedFundingSource
               colony={colony}
-              index={index}
-              fundingSource={{
-                ...fundingSource,
-                rate: {
-                  amount,
-                  token: tokenData,
-                  time,
-                },
-              }}
-              multipleFundingSources={fundingSources.length > 1}
-              isOpen={!!isOpen}
+              fundingSource={fundingSource}
+              isOpen={isOpen}
             />
           </div>
         );
