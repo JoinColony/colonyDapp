@@ -169,10 +169,12 @@ const ExpenditurePage = ({ match }: Props) => {
           fundingSource: [
             {
               ...newFundingSource,
-              rate: {
-                ...newFundingSource.rate,
-                token: colonyData?.processedColony.nativeTokenAddress,
-              },
+              rate: [
+                {
+                  ...newFundingSource.rate[0],
+                  token: colonyData?.processedColony.nativeTokenAddress,
+                },
+              ],
             },
           ],
         },
