@@ -1,0 +1,44 @@
+@value buttonHeight: 29px;
+@value buttonWidth: 100px;
+@value iconColor: var(--temp-grey-blue-7);
+
+.stagesWrapper {
+  min-width: 340px;
+}
+
+.stagesRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0 13px;
+}
+
+.label {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+  letter-spacing: var(--spacing-medium);
+}
+
+.value {
+  font-size: var(--size-normal);
+  color: var(--dark);
+  letter-spacing: 0.1px;
+}
+
+.notSaved {
+  margin-left: 5px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+  letter-spacing: 0.5px;
+}
+
+.paddingTopZero {
+  padding-top: 0;
+}
+
+.dark {
+  color: color-mod(var(--dark) alpha(85%));
+}
