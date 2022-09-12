@@ -45,13 +45,9 @@ import {
 } from './utils';
 import { ExpenditureTypes, ValuesType } from './types';
 import LockedSidebar from './LockedSidebar';
-import {
-  EXPENDITURE_TYPE_KEY,
-  initialValues,
-  validationSchema,
-} from './constants';
+import { initialValues, validationSchema } from './constants';
 import styles from './ExpenditurePage.css';
-import { newFundingSource } from '~dashboard/ExpenditurePage/ExpenditureSettings/Streaming/constants';
+import ExpenditureForm from './ExpenditureForm';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -216,23 +212,6 @@ const ExpenditurePage = ({ match }: Props) => {
         setActiveStageId(Stage.Draft);
       }
 
-      if (values.expenditure === ExpenditureTypes.Split) {
-        const recipientsCount =
-          values.split.recipients?.filter(
-            (recipient) => recipient?.user?.id !== undefined,
-          ).length || 0;
-
-        // it's temporary timeout
-        setTimeout(() => {
-          setMotion({
-            type: MotionType.StartStream,
-            status: MotionStatus.Failed,
-          });
-        }, 5000);
-
-        return;
-      }
-
       if (values) {
         setFormValues({
           ...values,
@@ -251,13 +230,8 @@ const ExpenditurePage = ({ match }: Props) => {
       }
       // add sending form values to backend
     },
-    [activeStageId, lockValues],
+    [activeStageId],
   );
-
-  const lockValues = useCallback(() => {
-    setFormEditable(false);
-    localStorage.removeItem(EXPENDITURE_TYPE_KEY);
-  }, []);
 
   const handleLockExpenditure = useCallback(() => {
     // Call to backend will be added here, to lock the expenditure
