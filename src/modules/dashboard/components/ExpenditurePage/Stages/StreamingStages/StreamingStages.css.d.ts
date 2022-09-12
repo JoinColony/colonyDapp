@@ -8,5 +8,3 @@ export const value: string;
 export const notSaved: string;
 export const paddingTopZero: string;
 export const dark: string;
-export const iconButton: string;
-export const iconWrapper: string;
