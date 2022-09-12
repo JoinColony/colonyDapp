@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import LockedBatch from '~dashboard/ExpenditurePage/Batch/LockedBatch';
 
 import { LockedExpenditureSettings } from '~dashboard/ExpenditurePage/ExpenditureSettings';
+import LockedStreaming from '~dashboard/ExpenditurePage/ExpenditureSettings/Streaming/LockedStreaming';
 import { LockedPayments } from '~dashboard/ExpenditurePage/Payments';
 import LockedSplit from '~dashboard/ExpenditurePage/Split/LockedSplit';
 import LockedStaged from '~dashboard/ExpenditurePage/Staged/LockedStaged/LockedStaged';
@@ -40,8 +41,15 @@ const LockedSidebar = ({
   activeStage,
   handleReleaseMilestone,
 }: Props) => {
-  const { expenditure, recipients, filteredDomainId, staged, split, batch } =
-    formValues || {};
+  const {
+    expenditure,
+    recipients,
+    filteredDomainId,
+    staged,
+    split,
+    batch,
+    streaming,
+  } = formValues || {};
 
   const secondFormSection = useMemo(() => {
     switch (expenditure) {
@@ -89,6 +97,14 @@ const LockedSidebar = ({
           />
         );
       }
+      case ExpenditureTypes.Streaming: {
+        return (
+          <LockedStreaming
+            colony={colony}
+            fundingSources={streaming?.fundingSource}
+          />
+        );
+      }
       default:
         return null;
     }
@@ -106,6 +122,7 @@ const LockedSidebar = ({
     split,
     staged,
     status,
+    streaming,
   ]);
 
   return (
