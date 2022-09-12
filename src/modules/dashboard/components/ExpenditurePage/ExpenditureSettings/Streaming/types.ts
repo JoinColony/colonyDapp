@@ -1,5 +1,3 @@
-import { AnyToken } from '~data/index';
-
 export interface FundingSource {
   team: string;
   rate: {
@@ -22,12 +20,4 @@ export enum TimePeriod {
   Week = 'week',
   Day = 'day',
   Hour = 'hour',
-}
-
-export interface FundingSourceLocked extends Omit<FundingSource, 'rate'> {
-  rate: {
-    amount?: number;
-    token?: AnyToken;
-    time?: string;
-  };
 }
