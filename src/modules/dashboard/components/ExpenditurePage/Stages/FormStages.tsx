@@ -159,6 +159,10 @@ const FormStages = ({
     }
   }, [setTouched, formikErr, formikErrors]);
 
+  if (values.expenditure === ExpenditureTypes.Streaming) {
+    return <StreamingStages handleSaveDraft={handleSaveDraft} />;
+  }
+
   return (
     <div className={styles.formStages}>
       {!!formikErrors.length && (
