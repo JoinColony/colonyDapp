@@ -1,8 +1,7 @@
 import React, { useMemo } from 'react';
-import LockedBatch from '~dashboard/ExpenditurePage/Batch/LockedBatch';
 
+import LockedBatch from '~dashboard/ExpenditurePage/Batch/LockedBatch';
 import { LockedExpenditureSettings } from '~dashboard/ExpenditurePage/ExpenditureSettings';
-import LockedStreaming from '~dashboard/ExpenditurePage/ExpenditureSettings/Streaming/LockedStreaming';
 import { LockedPayments } from '~dashboard/ExpenditurePage/Payments';
 import LockedSplit from '~dashboard/ExpenditurePage/Split/LockedSplit';
 import LockedStaged from '~dashboard/ExpenditurePage/Staged/LockedStaged/LockedStaged';
@@ -27,9 +26,9 @@ interface Props {
   status?: Status;
   isCancelled?: boolean;
   pendingMotion?: boolean;
-  activeStage?: StageObject;
+  activeStageId?: string;
   handleReleaseMilestone: (id: string) => void;
-  states: State[];
+  stages: StageObject[];
 }
 
 const LockedSidebar = ({
@@ -40,9 +39,9 @@ const LockedSidebar = ({
   isCancelled,
   pendingMotion,
   status,
-  activeStage,
+  activeStageId,
   handleReleaseMilestone,
-  states,
+  stages,
 }: Props) => {
   const {
     expenditure,
@@ -53,6 +52,7 @@ const LockedSidebar = ({
     batch,
     streaming,
   } = formValues || {};
+  const activeStage = stages.find((state) => state.id === activeStageId);
 
   const secondFormSection = useMemo(() => {
     switch (expenditure) {
@@ -106,7 +106,8 @@ const LockedSidebar = ({
             colony={colony}
             fundingSources={streaming?.fundingSources}
             editForm={editForm}
-            activeStateId={activeStateId}
+            activeStageId={activeStageId}
+            handleReleaseMilestone={handleReleaseMilestone}
           />
         );
       }
@@ -115,6 +116,7 @@ const LockedSidebar = ({
     }
   }, [
     activeStage,
+    activeStageId,
     batch,
     colony,
     editForm,
