@@ -1,3 +1,5 @@
+import { AnyToken } from '~data/index';
+
 export interface FundingSource {
   team: string;
   rate: {
@@ -12,4 +14,12 @@ export interface FundingSource {
 
 export interface Streaming {
   fundingSource: FundingSource[];
+}
+
+export interface FundingSourceLocked extends Omit<FundingSource, 'rate'> {
+  rate: {
+    amount?: number;
+    token?: AnyToken;
+    time?: string;
+  };
 }
