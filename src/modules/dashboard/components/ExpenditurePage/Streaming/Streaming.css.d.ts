@@ -7,3 +7,4 @@ export const fundingSourceLabel: string;
 export const deleteIcon: string;
 export const singleFundingSource: string;
 export const addFundingSourceLabel: string;
+export const marginBottomLarge: string;
