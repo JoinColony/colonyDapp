@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import LockedBatch from '~dashboard/ExpenditurePage/Batch/LockedBatch';
 
 import { LockedExpenditureSettings } from '~dashboard/ExpenditurePage/ExpenditureSettings';
+import LockedStreaming from '~dashboard/ExpenditurePage/ExpenditureSettings/Streaming/LockedStreaming';
 import { LockedPayments } from '~dashboard/ExpenditurePage/Payments';
 import LockedSplit from '~dashboard/ExpenditurePage/Split/LockedSplit';
 import LockedStaged from '~dashboard/ExpenditurePage/Staged/LockedStaged/LockedStaged';
@@ -101,7 +102,7 @@ const LockedSidebar = ({
         return (
           <LockedStreaming
             colony={colony}
-            fundingSources={streaming?.fundingSources}
+            fundingSources={streaming?.fundingSource}
           />
         );
       }
