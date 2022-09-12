@@ -1,99 +1,102 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { FormSection } from '~core/Fields';
+import { CollapseExpandButtons } from '~dashboard/ExpenditurePage/Payments';
+import { Colony } from '~data/index';
+import LockedFundingSource from './LockedFundingSource';
 
-import { FormSection, InputLabel } from '~core/Fields';
-import UserAvatar from '~core/UserAvatar';
-import UserMention from '~core/UserMention';
-import { useLoggedInUser } from '~data/index';
+import { FundingSource } from './types';
+import styles from './Streaming.css';
 
-import styles from './LockedStreaming.css';
-
-export const MSG = defineMessages({
-  type: {
-    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.type',
-    defaultMessage: 'Expenditure type',
+const MSG = defineMessages({
+  fundingSource: {
+    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.fundingSource',
+    defaultMessage: 'Funding source',
   },
-  streaming: {
-    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.streaming',
-    defaultMessage: 'Streaming',
-  },
-  to: {
-    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.to',
-    defaultMessage: 'To',
-  },
-  starts: {
-    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.starts',
-    defaultMessage: 'Starts',
-  },
-  ends: {
-    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.ends',
-    defaultMessage: 'Ends',
+  title: {
+    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.title',
+    defaultMessage: '{nr}: {team}, {rateAmount} {rateToken} / {rateTime}',
   },
 });
 
-interface Props {
-  startDate: string;
-  endDate: string;
-}
-
 const displayName = 'dashboard.ExpenditurePage.Streaming.LockedStreaming';
 
-const LockedStreaming = ({ startDate, endDate }: Props) => {
-  const { username, walletAddress } = useLoggedInUser();
+interface Props {
+  fundingSources?: FundingSource[];
+  colony: Colony;
+}
+
+const LockedStreaming = ({ fundingSources, colony }: Props) => {
+  const [expandedFundingSources, setExpandedFundingSources] = useState<
+    number[] | undefined
+  >(fundingSources?.map((_, idx) => idx));
+
+  const onToggleButtonClick = useCallback((index) => {
+    setExpandedFundingSources((expandedIndexes) => {
+      const isOpen = expandedIndexes?.find((expanded) => expanded === index);
+
+      if (isOpen !== undefined) {
+        return expandedIndexes?.filter((idx) => idx !== index);
+      }
+      return [...(expandedIndexes || []), index];
+    });
+  }, []);
 
   return (
     <div className={styles.container}>
-      <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.settingsRow}>
-          <InputLabel
-            label={MSG.type}
-            appearance={{
-              direction: 'horizontal',
-            }}
-          />
-          <span className={styles.expenditure}>
-            <FormattedMessage {...MSG.streaming} />
-          </span>
-        </div>
-      </FormSection>
-      <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.userContainer}>
-          <InputLabel
-            label={MSG.to}
-            appearance={{
-              direction: 'horizontal',
-            }}
-          />
-          <div className={styles.userAvatarContainer}>
-            <UserAvatar address={walletAddress} size="xs" notSet={false} />
-            <div className={styles.userName}>
-              <UserMention username={username || ''} />
-            </div>
+      <div className={styles.header}>
+        <FormattedMessage {...MSG.fundingSource} />
+      </div>
+      {fundingSources?.map((fundingSource, index) => {
+        const domain = colony?.domains.find(
+          ({ ethDomainId }) => Number(fundingSource.team) === ethDomainId,
+        );
+        const isOpen =
+          expandedFundingSources?.find((idx) => idx === index) !== undefined;
+
+        const { amount, token, time } = fundingSource.rate || {};
+        const tokenData = colony.tokens?.find(
+          (tokenItem) => token && tokenItem.address === token,
+        );
+
+        return (
+          <div className={styles.singleFundingSource} key={fundingSource.id}>
+            <FormSection>
+              <div className={styles.fundingSourceLabel}>
+                <CollapseExpandButtons
+                  isExpanded={fundingSource.isExpanded}
+                  onToogleButtonClick={() => onToggleButtonClick(index)}
+                  isLastitem={index === fundingSources?.length - 1}
+                />
+                <FormattedMessage
+                  {...MSG.title}
+                  values={{
+                    nr: index + 1,
+                    team: domain?.name,
+                    rateAmount: amount,
+                    rateToken: tokenData?.symbol,
+                    rateTime: time,
+                  }}
+                />
+              </div>
+            </FormSection>
+            <LockedFundingSource
+              colony={colony}
+              index={index}
+              fundingSource={{
+                ...fundingSource,
+                rate: {
+                  amount,
+                  token: tokenData,
+                  time,
+                },
+              }}
+              multipleFundingSources={fundingSources.length > 1}
+              isOpen={!!isOpen}
+            />
           </div>
-        </div>
-      </FormSection>
-      <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.settingsRow}>
-          <InputLabel
-            label={MSG.starts}
-            appearance={{
-              direction: 'horizontal',
-            }}
-          />
-          <span className={styles.value}>{startDate}</span>
-        </div>
-      </FormSection>
-      <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.settingsRow}>
-          <InputLabel
-            label={MSG.ends}
-            appearance={{
-              direction: 'horizontal',
-            }}
-          />
-          <span className={styles.value}>{endDate}</span>
-        </div>
-      </FormSection>
+        );
+      })}
     </div>
   );
 };
