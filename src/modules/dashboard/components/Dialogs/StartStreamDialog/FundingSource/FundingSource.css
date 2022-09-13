@@ -1,0 +1,59 @@
+.wrapper {
+  padding: 0;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 11px 0 12px;
+}
+
+.label {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+  letter-spacing: var(--spacing-medium);
+}
+
+.value {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.activeItemLabel {
+  margin-left: 8px;
+  padding-bottom: 2px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.lockedActiveItemLabel {
+  font-weight: var(--weight-bold);
+}
+
+.icon {
+  margin-right: 4px;
+}
+
+.tokenIcon {
+  height: 18px;
+  width: 18px;
+}
+
+.centered {
+  display: flex;
+  align-items: center;
+  line-height: 18px;
+}
+
+.centered figure {
+  display: block;
+}
+
+.centered span {
+  font-size: var(--size-smallish);
+}

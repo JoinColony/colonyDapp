@@ -1,0 +1,37 @@
+.wrapper {
+  padding: 0;
+}
+
+.valueContainer {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.userAvatarContainer {
+  display: flex;
+  align-items: center;
+}
+
+.userAvatarContainer div {
+  margin-right: 4px;
+}
+
+.label {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+  letter-spacing: var(--spacing-medium);
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 11px 0;
+}
+
+.paddingSmall {
+  padding: 7px 0 8px;
+}

@@ -4,6 +4,7 @@ import React, { useCallback } from 'react';
 import { useDialog } from '~core/Dialog';
 import DeleteDraftDialog from '~dashboard/Dialogs/DeleteDraftDialog/DeleteDraftDialog';
 import StakeExpenditureDialog from '~dashboard/Dialogs/StakeExpenditureDialog';
+import StartStreamDialog from '~dashboard/Dialogs/StartStreamDialog';
 import { Colony } from '~data/index';
 import {
   ExpenditureTypes,
@@ -38,11 +39,28 @@ const FormStages = ({
     useFormikContext<ValuesType>() || {};
   const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
+  const openStartStreamDialog = useDialog(StartStreamDialog);
 
   const handleSaveDraft = useCallback(async () => {
     const errors = await validateForm(values);
     const hasErrors = Object.keys(errors)?.length;
     setTouched(setNestedObjectValues<FormikTouched<ValuesType>>(errors, true));
+
+    if (values.expenditure === ExpenditureTypes.Streaming) {
+      return (
+        !hasErrors &&
+        colony &&
+        openStartStreamDialog({
+          onClick: () => {
+            handleSubmit(values as any);
+            setActiveStateId?.(Stage.Released);
+          },
+          isVotingExtensionEnabled: true,
+          values,
+          colony,
+        })
+      );
+    }
 
     return (
       !hasErrors &&
@@ -60,6 +78,7 @@ const FormStages = ({
     colony,
     handleSubmit,
     openDraftConfirmDialog,
+    openStartStreamDialog,
     setActiveStateId,
     setTouched,
     validateForm,
