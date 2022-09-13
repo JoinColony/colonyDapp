@@ -46,9 +46,15 @@ const ProgressBar = ({
   const { formatMessage } = useIntl();
   const titleText = formatMessage(MSG.titleProgress, { value, max });
   const visible = styles.thresholdVisibility;
+  const belowThreshold = styles.barColorBelowThreshold;
 
   return (
-    <div className={`${styles.wrapper} ${getMainClasses(appearance, styles)}`}>
+    <div
+      className={`${styles.wrapper} ${getMainClasses(
+        appearance,
+        styles,
+      )} ${classnames({ [belowThreshold]: threshold && value < threshold })}`}
+    >
       {!!threshold && (
         <div
           style={{

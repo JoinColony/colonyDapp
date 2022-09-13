@@ -55,8 +55,10 @@
 
 .barThemePrimary .main::-webkit-progress-value {
   background-color: var(--primary);
+}
 
-  /* background-color: var(--golden); */
+.barColorBelowThreshold .main::-webkit-progress-value {
+  background-color: var(--golden);
 }
 
 .barThemeDanger .main::-webkit-progress-value {

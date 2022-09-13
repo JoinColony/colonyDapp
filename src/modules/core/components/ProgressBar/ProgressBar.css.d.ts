@@ -6,6 +6,7 @@ export const backgroundThemeTransparent: string;
 export const backgroundThemeDefault: string;
 export const backgroundThemeDark: string;
 export const barThemePrimary: string;
+export const barColorBelowThreshold: string;
 export const barThemeDanger: string;
 export const threshold: string;
 export const thresholdPercentage: string;
