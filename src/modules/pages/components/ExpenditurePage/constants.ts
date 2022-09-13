@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid';
 import { isEmpty, toFinite } from 'lodash';
 import { defineMessages } from 'react-intl';
 
+import { newFundingSource } from '~dashboard/ExpenditurePage/Streaming/constants';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
 import { initalMilestone } from '~dashboard/ExpenditurePage/Staged/constants';
