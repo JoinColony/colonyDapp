@@ -118,6 +118,7 @@ const initialValues = {
   title: undefined,
   description: undefined,
   recipients: [newRecipient],
+  date: new Date(),
 };
 
 const validationSchema = yup.object().shape({

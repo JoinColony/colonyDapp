@@ -18,6 +18,7 @@ import DomainDropdown from '~core/DomainDropdown';
 import BalanceSelect from './BalanceSelect';
 import { tokens as tokensData } from './constants';
 import styles from './ExpenditureSettings.css';
+import DatePicker from '~core/Fields/DatePicker';
 
 export const MSG = defineMessages({
   typeLabel: {
@@ -163,6 +164,15 @@ const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
               <UserMention username={username || ''} />
             </div>
           </div>
+        </div>
+      </FormSection>
+      <FormSection appearance={{ border: 'bottom' }}>
+        <div className={styles.userContainer}>
+          <InputLabel
+            label="Start date"
+            appearance={{ direction: 'horizontal' }}
+          />
+          <DatePicker name="date" showTimeSelect={false} />
         </div>
       </FormSection>
     </div>
