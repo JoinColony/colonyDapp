@@ -5,6 +5,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { useDialog } from '~core/Dialog';
 import DeleteDraftDialog from '~dashboard/Dialogs/DeleteDraftDialog/DeleteDraftDialog';
 import StakeExpenditureDialog from '~dashboard/Dialogs/StakeExpenditureDialog';
+import StartStreamDialog from '~dashboard/Dialogs/StartStreamDialog';
 import { Colony } from '~data/index';
 import {
   ExpenditureTypes,
@@ -63,6 +64,7 @@ const FormStages = ({
   } = useFormikContext<ValuesType>() || {};
   const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
+  const openStartStreamDialog = useDialog(StartStreamDialog);
 
   const formikErrors = useMemo(() => {
     const errorsFlat = flattenObject(formikErr);
@@ -74,20 +76,39 @@ const FormStages = ({
     const errorsLength = Object.keys(errors)?.length;
     setTouched(setNestedObjectValues<FormikTouched<ValuesType>>(errors, true));
 
-    return !errorsLength && colony
-      ? openDraftConfirmDialog({
+    if (values.expenditure === ExpenditureTypes.Streaming) {
+      return (
+        !errorsLength &&
+        colony &&
+        openStartStreamDialog({
           onClick: () => {
             handleSubmit(values as any);
-            setActiveStageId?.(Stage.Draft);
+            setActiveStageId?.(Stage.Released);
           },
-          isVotingExtensionEnabled: true, // 'true' is temporary value
+          isVotingExtensionEnabled: true,
+          values,
           colony,
         })
-      : errorsLength;
+      );
+    }
+
+    return (
+      !errorsLength &&
+      colony &&
+      openDraftConfirmDialog({
+        onClick: () => {
+          handleSubmit(values as any);
+          setActiveStageId?.(Stage.Draft);
+        },
+        isVotingExtensionEnabled: true,
+        colony,
+      })
+    );
   }, [
     colony,
     handleSubmit,
     openDraftConfirmDialog,
+    openStartStreamDialog,
     setActiveStageId,
     setTouched,
     validateForm,
