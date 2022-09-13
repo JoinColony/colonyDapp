@@ -29,9 +29,9 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Batch.upload',
     defaultMessage: 'Upload .CSV',
   },
-  recipients: {
-    id: 'dashboard.ExpenditurePage.Batch.recipients',
-    defaultMessage: 'Recipients',
+  importedPayments: {
+    id: 'dashboard.ExpenditurePage.Batch.importedPayments',
+    defaultMessage: 'Imported payments',
   },
   value: {
     id: 'dashboard.ExpenditurePage.Batch.value',
@@ -45,9 +45,9 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Batch.noTokens',
     defaultMessage: 'No tokens',
   },
-  noRecipients: {
-    id: 'dashboard.ExpenditurePage.Batch.noRecipients',
-    defaultMessage: 'No recipients',
+  noPayments: {
+    id: 'dashboard.ExpenditurePage.Batch.noPayments',
+    defaultMessage: 'No payments',
   },
   invalidRows: {
     id: 'dashboard.ExpenditurePage.Batch.invalidRows',
@@ -108,12 +108,12 @@ const Batch = ({ colony }: Props) => {
         <>
           <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.dataRow}>
-              <FormattedMessage {...MSG.recipients} />
+              <FormattedMessage {...MSG.importedPayments} />
               {recipientsCount ? (
                 <div className={styles.value}>{recipientsCount}</div>
               ) : (
                 <div className={styles.empty}>
-                  <FormattedMessage {...MSG.noRecipients} />
+                  <FormattedMessage {...MSG.noPayments} />
                 </div>
               )}
             </div>
