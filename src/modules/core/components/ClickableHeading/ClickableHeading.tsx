@@ -19,7 +19,9 @@ const ClickableHeading = ({ children, linkTo }: Props) => {
           <span className={styles.contents}>
             {children}
 
-            <Icon name="caret-right" className={styles.icon} />
+            <span className={styles.icon}>
+              <Icon name="caret-right" />
+            </span>
           </span>
         </NavLink>
       </Heading>

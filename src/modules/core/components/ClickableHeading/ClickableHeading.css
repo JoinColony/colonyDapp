@@ -36,11 +36,11 @@
 
 .icon {
   margin-right: -6px;
+  height: 18px;
+  width: 18px;
 }
 
 .icon svg {
-  display: block;
-  height: 18px;
-  width: 18px;
   fill: var(--action-secondary);
+  stroke: var(--action-secondary);
 }
