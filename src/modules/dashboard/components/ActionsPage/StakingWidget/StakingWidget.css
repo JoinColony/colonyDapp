@@ -84,3 +84,8 @@
 .loading {
   padding-top: 35px;
 }
+
+.minStakeAmountContainer {
+  display: flex;
+  align-self: flex-end;
+}

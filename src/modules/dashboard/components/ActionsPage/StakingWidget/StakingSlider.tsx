@@ -164,7 +164,7 @@ const StakingSlider = ({
           {...(isObjection ? MSG.descriptionObject : MSG.descriptionStake)}
         />
       </p>
-      <span>
+      <span className={styles.minStakeAmountContainer}>
         <Tooltip
           trigger="hover"
           content={
@@ -178,7 +178,7 @@ const StakingSlider = ({
               {
                 name: 'offset',
                 options: {
-                  offset: [0, 5],
+                  offset: [0, 0],
                 },
               },
             ],
