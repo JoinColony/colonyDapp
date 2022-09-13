@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useEffect } from 'react';
+import React, { useMemo, useCallback, useEffect, ReactElement } from 'react';
 import { bigNumberify, BigNumberish } from 'ethers/utils';
 import {
   FormattedDateParts,
@@ -31,7 +31,12 @@ import {
   useNetworkContracts,
 } from '~data/index';
 import { createAddress } from '~utils/web3';
-import { FormattedAction, ColonyActions, ColonyMotions } from '~types/index';
+import {
+  FormattedAction,
+  ColonyActions,
+  ColonyMotions,
+  DecisionDetails,
+} from '~types/index';
 import { useDataFetcher } from '~utils/hooks';
 import { parseColonyMetadata, parseDomainMetadata } from '~utils/colonyActions';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
@@ -41,6 +46,7 @@ import {
   MotionState,
   MOTION_TAG_MAP,
 } from '~utils/colonyMotions';
+
 import { ipfsDataFetcher } from '../../../core/fetchers';
 
 import { ClickHandlerProps } from './ActionsList';
@@ -68,6 +74,7 @@ const MSG = defineMessages({
 export enum ItemStatus {
   NeedAction = 'NeedAction',
   NeedAttention = 'NeedAttention',
+  Yellow = 'Yellow',
   /*
    * Default status, does not do anything
    */
@@ -78,6 +85,8 @@ interface Props {
   item: FormattedAction;
   colony: Colony;
   handleOnClick?: (handlerProps: ClickHandlerProps) => void;
+  draftData?: DecisionDetails;
+  actions?: ReactElement;
 }
 
 const ActionsListItem = ({
@@ -110,6 +119,8 @@ const ActionsListItem = ({
   },
   colony,
   handleOnClick,
+  draftData,
+  actions,
 }: Props) => {
   const { formatMessage, formatNumber } = useIntl();
   const { data: metadataJSON } = useDataFetcher(
@@ -129,6 +140,11 @@ const ActionsListItem = ({
     const decision = JSON.parse(data);
     title = decision?.title;
   }
+
+  if (draftData !== undefined) {
+    title = draftData.title;
+  }
+
   const { isVotingExtensionEnabled } = useEnabledExtensions({
     colonyAddress: colony.colonyAddress,
   });
@@ -205,16 +221,26 @@ const ActionsListItem = ({
     const domainObject = parseDomainMetadata(metadataJSON);
     domainName = domainObject.domainName;
   }
-  const motionStyles =
-    MOTION_TAG_MAP[
-      isDecision && motionState === MotionState.Staked
-        ? MotionState.Notice
-        : motionState ||
-          (isVotingExtensionEnabled &&
-            !actionType?.endsWith('Motion') &&
-            MotionState.Forced) ||
-          MotionState.Invalid
-    ];
+
+  const getUpdatedMotionState = () => {
+    if (isDecision && draftData) {
+      return MotionState.Draft;
+    }
+
+    if (isDecision && motionState === MotionState.Staked) {
+      return MotionState.Notice;
+    }
+
+    return (
+      motionState ||
+      (isVotingExtensionEnabled &&
+        !actionType?.endsWith('Motion') &&
+        MotionState.Forced) ||
+      MotionState.Invalid
+    );
+  };
+
+  const motionStyles = MOTION_TAG_MAP[getUpdatedMotionState()];
 
   const decimals =
     tokenData?.tokenInfo?.decimals || Number(colonyTokenDecimals);
@@ -440,6 +466,7 @@ const ActionsListItem = ({
             />
           </div>
         )}
+        {actions && actions}
       </div>
     </li>
   );
