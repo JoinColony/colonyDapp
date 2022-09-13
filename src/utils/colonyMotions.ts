@@ -22,6 +22,7 @@ export enum MotionState {
   Escalation = 'Escalation',
   Forced = 'Forced',
   Notice = 'Notice',
+  Draft = 'Draft',
 }
 
 export enum MotionVote {
@@ -77,6 +78,10 @@ const MSG = defineMessage({
   noticeTag: {
     id: 'dashboard.ActionsPage.noticeTag',
     defaultMessage: 'Notice',
+  },
+  draftTag: {
+    id: 'dashboard.ActionsPage.draftTag',
+    defaultMessage: 'Draft',
   },
 });
 
@@ -158,6 +163,12 @@ export const MOTION_TAG_MAP = {
     colorSchema: 'inverted',
     name: MSG.forcedTag,
     tagName: 'forcedTag',
+  },
+  [MotionState.Draft]: {
+    theme: 'golden',
+    colorSchema: 'fullColor',
+    name: MSG.draftTag,
+    tagName: 'draftTag',
   },
 };
 
