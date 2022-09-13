@@ -184,6 +184,7 @@ const DecisionPreview = () => {
                   openDecisionDialog({
                     colony,
                     ethDomainId: ROOT_DOMAIN_ID,
+                    isNewDecision: true,
                   })
                 }
               />
@@ -211,8 +212,7 @@ const DecisionPreview = () => {
                   openDecisionDialog({
                     colony,
                     ethDomainId: decisionData.motionDomainId,
-                    title: decisionData.title,
-                    description: decisionData.description,
+                    isNewDecision: false,
                   })
                 }
                 text={{ id: 'button.edit' }}

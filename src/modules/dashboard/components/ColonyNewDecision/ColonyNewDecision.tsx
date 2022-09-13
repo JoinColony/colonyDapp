@@ -70,7 +70,9 @@ const ColonyNewDecision = ({ colony, ethDomainId }: Props) => {
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           text={MSG.newDecision}
-          onClick={() => openDecisionDialog({ colony, ethDomainId })}
+          onClick={() =>
+            openDecisionDialog({ colony, ethDomainId, isNewDecision: true })
+          }
           disabled={
             mustUpgrade ||
             !isNetworkAllowed ||

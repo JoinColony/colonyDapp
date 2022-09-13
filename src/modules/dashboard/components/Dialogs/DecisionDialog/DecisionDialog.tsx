@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useEditor } from '@tiptap/react';
 import CharacterCount from '@tiptap/extension-character-count';
@@ -17,6 +17,7 @@ import {
   COLONY_TOTAL_BALANCE_DOMAIN_ID,
   LOCAL_STORAGE_DECISION_KEY,
 } from '~constants';
+import { DecisionDetails } from '~types/index';
 
 import DialogForm from './DecisionDialogForm';
 
@@ -30,9 +31,8 @@ export interface FormValues {
 
 interface Props extends DialogProps {
   colony: Colony;
-  ethDomainId: number;
-  title?: string;
-  description?: string;
+  ethDomainId?: number;
+  isNewDecision: boolean;
 }
 
 const characterLimit = 4000;
@@ -42,12 +42,17 @@ const DecisionDialog = ({
   colony,
   colony: { colonyName },
   ethDomainId,
-  title,
-  description,
   close,
+  isNewDecision,
 }: Props) => {
   const history = useHistory();
   const { walletAddress } = useLoggedInUser();
+
+  const [decisionData] = useState<DecisionDetails | undefined>(
+    isNewDecision || localStorage.getItem(LOCAL_STORAGE_DECISION_KEY) === null
+      ? undefined
+      : JSON.parse(localStorage.getItem(LOCAL_STORAGE_DECISION_KEY) || ''),
+  );
 
   const editor = useEditor({
     extensions: [
@@ -61,7 +66,7 @@ const DecisionDialog = ({
         placeholder: 'Enter the description...',
       }),
     ],
-    content: description,
+    content: decisionData?.description,
   });
 
   const domainId =
@@ -97,9 +102,9 @@ const DecisionDialog = ({
   return (
     <Form
       initialValues={{
-        motionDomainId: domainId,
-        title,
-        description,
+        motionDomainId: domainId || decisionData?.motionDomainId,
+        title: decisionData?.title,
+        description: decisionData?.description,
       }}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
@@ -109,7 +114,9 @@ const DecisionDialog = ({
           <DialogForm
             colony={colony}
             {...formProps}
-            ethDomainId={ethDomainId}
+            ethDomainId={
+              ethDomainId || decisionData?.motionDomainId || ROOT_DOMAIN_ID
+            }
             cancel={cancel}
             editor={editor}
             limit={characterLimit}
