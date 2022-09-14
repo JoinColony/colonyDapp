@@ -87,14 +87,14 @@ const LockedFundingSource = ({ fundingSource, colony, isOpen }: Props) => {
               </div>
             </div>
           </FormSection>
-          {rate?.map(({ amount, token, time }, rateIndex) => {
+          {rate?.map(({ amount, token, time, id }, rateIndex) => {
             const tokenData = colony.tokens?.find(
               (tokenItem) => token && tokenItem.address === token,
             );
             return (
               tokenData &&
               amount && (
-                <FormSection appearance={{ border: 'bottom' }}>
+                <FormSection appearance={{ border: 'bottom' }} key={id}>
                   <div className={styles.row}>
                     <InputLabel
                       label={formatMessage(MSG.rate, {
@@ -125,7 +125,7 @@ const LockedFundingSource = ({ fundingSource, colony, isOpen }: Props) => {
               )
             );
           })}
-          {rate?.map(({ token, limit }, rateIndex) => {
+          {rate?.map(({ token, limit, id }, rateIndex) => {
             const tokenData = colony.tokens?.find(
               (tokenItem) => token && tokenItem.address === token,
             );
@@ -133,7 +133,7 @@ const LockedFundingSource = ({ fundingSource, colony, isOpen }: Props) => {
             return (
               tokenData &&
               limit && (
-                <FormSection appearance={{ border: 'bottom' }}>
+                <FormSection appearance={{ border: 'bottom' }} key={id}>
                   <div className={styles.row}>
                     <InputLabel
                       label={formatMessage(MSG.limit, {
