@@ -5,6 +5,7 @@ import { bigNumberify } from 'ethers/utils';
 
 import Heading from '~core/Heading';
 import ProgressBar from '~core/ProgressBar';
+import { Tooltip } from '~core/Popover';
 import Numeral from '~core/Numeral';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import { getFormattedTokenValue } from '~utils/tokens';
@@ -42,6 +43,10 @@ const MSG = defineMessages({
   stakeToolTip: {
     id: 'dashboard.ActionsPage.TotalStakeWidget.SingleTotalStake.stakeToolTip',
     defaultMessage: `Percentage this Motion has been staked. For it to show up in the Actions list a min 10% is required.`,
+  },
+  progressTooltip: {
+    id: 'dashboard.ActionsPage.TotalStakeWidget.SingleTotalStake.tooltip',
+    defaultMessage: `Stake above the minimum 10% threshold to make it visible to others within the Actions list.`,
   },
 });
 
@@ -115,17 +120,42 @@ const SingleTotalStake = ({
           />
         </span>
       </div>
-      <ProgressBar
-        value={totalPercentage}
-        threshold={10}
-        max={100}
-        appearance={{
-          barTheme: isObjection ? 'danger' : 'primary',
-          backgroundTheme: 'default',
-          size: 'normal',
-        }}
-        hidePercentage
-      />
+      {totalPercentage < 10 && (
+        <Tooltip
+          placement="left"
+          trigger="hover"
+          content={
+            <div className={styles.tooltip}>
+              <FormattedMessage {...MSG.progressTooltip} />
+            </div>
+          }
+        >
+          <ProgressBar
+            value={totalPercentage}
+            threshold={10}
+            max={100}
+            appearance={{
+              barTheme: isObjection ? 'danger' : 'primary',
+              backgroundTheme: 'default',
+              size: 'normal',
+            }}
+            hidePercentage
+          />
+        </Tooltip>
+      )}
+      {totalPercentage >= 10 && (
+        <ProgressBar
+          value={totalPercentage}
+          threshold={10}
+          max={100}
+          appearance={{
+            barTheme: isObjection ? 'danger' : 'primary',
+            backgroundTheme: 'default',
+            size: 'normal',
+          }}
+          hidePercentage
+        />
+      )}
       {userStake && userStake !== '0' && (
         <p className={styles.userStake}>
           <FormattedMessage
