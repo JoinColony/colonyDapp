@@ -86,7 +86,7 @@
 
 .thresholdSeparator {
   height: 14px;
-  width: 2px;
+  width: 3px;
   border-radius: 1px;
   background-color: var(--pink);
 }
