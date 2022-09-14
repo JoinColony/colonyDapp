@@ -2,6 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Decimal } from 'decimal.js';
 import { bigNumberify } from 'ethers/utils';
+import formatNumber from 'format-number';
+import classnames from 'classnames';
 
 import Heading from '~core/Heading';
 import Slider, { Appearance } from '~core/Slider';
@@ -64,6 +66,10 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.StakingSlider.tooltip',
     defaultMessage: `Stake above the minimum 10% threshold to make it visible to others within the Actions list.`,
   },
+  requiredStake: {
+    id: 'dashboard.ActionsPage.StakingSlider.requiredStake',
+    defaultMessage: ` ({stakePercentage}% of required)`,
+  },
 });
 
 const StakingSlider = ({
@@ -111,6 +117,11 @@ const StakingSlider = ({
     stakeWithMin.round().toString(),
     nativeToken?.decimals,
   );
+  const userStakePercentage = stakeWithMin
+    .round()
+    .div(remainingToStake)
+    .times(100)
+    .toNumber();
 
   const errorStakeType = useMemo(() => {
     if (!ethereal) {
@@ -203,11 +214,30 @@ const StakingSlider = ({
               />
             </span>
           ) : (
-            <Numeral
-              className={styles.amount}
-              value={displayStake}
-              suffix={nativeToken?.symbol}
-            />
+            <>
+              <Numeral
+                className={styles.amount}
+                value={displayStake}
+                suffix={nativeToken?.symbol}
+              />
+              <span
+                className={classnames(styles.requiredStakeText, {
+                  [styles.requiredStakeUnderThreshold]:
+                    userStakePercentage < 10,
+                  [styles.requiredStakeAboveThreshold]:
+                    userStakePercentage >= 10,
+                })}
+              >
+                <FormattedMessage
+                  {...MSG.requiredStake}
+                  values={{
+                    stakePercentage: formatNumber({
+                      truncate: 2,
+                    })(userStakePercentage),
+                  }}
+                />
+              </span>
+            </>
           )}
         </Tooltip>
       </span>

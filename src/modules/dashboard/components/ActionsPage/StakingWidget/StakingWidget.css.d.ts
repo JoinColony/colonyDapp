@@ -13,3 +13,6 @@ export const help: string;
 export const tooltip: string;
 export const loading: string;
 export const minStakeAmountContainer: string;
+export const requiredStakeText: string;
+export const requiredStakeUnderThreshold: string;
+export const requiredStakeAboveThreshold: string;

@@ -89,3 +89,16 @@
   display: flex;
   align-self: flex-end;
 }
+
+.requiredStakeText {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+}
+
+.requiredStakeUnderThreshold {
+  color: var(--golden);
+}
+
+.requiredStakeAboveThreshold {
+  color: var(--primary);
+}
