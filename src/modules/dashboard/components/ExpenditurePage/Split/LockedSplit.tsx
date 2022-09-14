@@ -94,20 +94,18 @@ const LockedSplit = ({ colony, split }: Props) => {
                   />
                 </div>
                 {token && (
-                  <>
-                    <div className={styles.recipientAmountWrapper}>
-                      <TokenIcon
-                        className={styles.tokenIcon}
-                        token={token}
-                        name={token.name || token.address}
-                      />
-                      <Numeral
-                        unit={getTokenDecimalsWithFallback(0)}
-                        value={recipient.amount || 0}
-                      />
-                      {token.symbol}
-                    </div>
-                  </>
+                  <div className={styles.recipientAmountWrapper}>
+                    <TokenIcon
+                      className={styles.tokenIcon}
+                      token={token}
+                      name={token.name || token.address}
+                    />
+                    <Numeral
+                      unit={getTokenDecimalsWithFallback(0)}
+                      value={recipient.amount || 0}
+                    />
+                    {token.symbol}
+                  </div>
                 )}
               </div>
             </FormSection>
