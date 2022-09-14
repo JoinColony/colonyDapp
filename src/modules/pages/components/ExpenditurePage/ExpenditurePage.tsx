@@ -204,8 +204,7 @@ const validationSchema = yup.object().shape({
             amount: yup.number().required(),
           }),
         )
-        .min(2)
-        .required(),
+        .min(2),
     }),
   }),
 });
@@ -264,6 +263,12 @@ const ExpenditurePage = ({ match }: Props) => {
   >();
   const sidebarRef = useRef<HTMLElement>(null);
 
+  const handleValidate = useCallback(() => {
+    if (!shouldValidate) {
+      setShouldValidate(true);
+    }
+  }, [shouldValidate]);
+
   const openEditExpenditureDialog = useDialog(EditExpenditureDialog);
 
   const { data: colonyData, loading } = useColonyFromNameQuery({
@@ -307,7 +312,6 @@ const ExpenditurePage = ({ match }: Props) => {
 
   const handleSubmit = useCallback(
     (values) => {
-      setShouldValidate(true);
       if (!activeStateId) {
         setActiveStateId(Stage.Draft);
       }
@@ -329,7 +333,8 @@ const ExpenditurePage = ({ match }: Props) => {
                 const userAmount =
                   amount &&
                   recipient?.percent &&
-                  (recipient.percent / 100) * Number(values.split.amount.value);
+                  Number(recipient.percent / 100) *
+                    Number(values.split.amount.value);
                 return { ...recipient, amount: userAmount };
               }
               return {
@@ -340,6 +345,7 @@ const ExpenditurePage = ({ match }: Props) => {
           },
         };
         setFormValues(splitValues);
+        return;
       }
 
       if (values.expenditure === ExpenditureTypes.Staged) {
@@ -484,6 +490,16 @@ const ExpenditurePage = ({ match }: Props) => {
     });
   }, []);
 
+  useEffect(() => {
+    const allReleased = formValues?.staged?.milestones?.every(
+      (milestone) => milestone.released,
+    );
+
+    if (allReleased) {
+      setActiveStateId(Stage.Released);
+    }
+  }, [formValues]);
+
   const states = [
     {
       id: Stage.Draft,
@@ -517,12 +533,6 @@ const ExpenditurePage = ({ match }: Props) => {
       buttonAction: () => {},
     },
   ];
-
-  const handleValidate = useCallback(() => {
-    if (!shouldValidate) {
-      setShouldValidate(true);
-    }
-  }, [shouldValidate]);
 
   const handleCancelExpenditure = () =>
     colonyData &&
@@ -618,17 +628,6 @@ const ExpenditurePage = ({ match }: Props) => {
       validateOnBlur={shouldValidate}
       validateOnChange={shouldValidate}
       validate={handleValidate}
-      initialTouched={{
-        recipients: [
-          {
-            value: [
-              {
-                amount: true,
-              },
-            ],
-          },
-        ],
-      }}
       enableReinitialize
     >
       {({ values, validateForm }) => (
@@ -685,6 +684,7 @@ const ExpenditurePage = ({ match }: Props) => {
                     states={states}
                     activeStateId={activeStateId}
                     setActiveStateId={setActiveStateId}
+                    setFormValues={setFormValues}
                     handleCancelExpenditure={handleCancelExpenditure}
                     colony={colonyData.processedColony}
                   />

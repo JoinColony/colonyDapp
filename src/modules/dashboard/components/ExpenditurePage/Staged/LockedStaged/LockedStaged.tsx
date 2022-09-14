@@ -122,7 +122,7 @@ const LockedStaged = ({
       </FormSection>
       {staged?.milestones?.map((milestone) => {
         return (
-          <FormSection appearance={{ border: 'bottom' }}>
+          <FormSection appearance={{ border: 'bottom' }} key={milestone.id}>
             <div className={styles.milestoneWrapper}>
               <div className={styles.milestoneName}>{milestone.name}</div>
               <div className={styles.reserveWrapper}>
@@ -150,7 +150,8 @@ const LockedStaged = ({
                     </>
                   )}
                 </div>
-                {activeStateId === Stage.Funded && (
+                {(activeStateId === Stage.Funded ||
+                  activeStateId === Stage.Released) && (
                   <>
                     {milestone.released ? (
                       <Tag text={MSG.completed} className={styles.claimed} />

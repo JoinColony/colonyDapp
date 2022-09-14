@@ -1,4 +1,5 @@
 import { useFormikContext, setNestedObjectValues, FormikTouched } from 'formik';
+import { isEmpty } from 'lodash';
 import React, { useCallback } from 'react';
 
 import { useDialog } from '~core/Dialog';
@@ -15,8 +16,8 @@ const displayName = 'dashboard.ExpenditurePage.Stages.FormStages';
 interface Props {
   states: State[];
   activeStateId?: string;
-  setActiveStateId?: React.Dispatch<React.SetStateAction<string | undefined>>;
-  setFormValues?: React.Dispatch<React.SetStateAction<ValuesType | undefined>>;
+  setActiveStateId: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setFormValues: React.Dispatch<React.SetStateAction<ValuesType | undefined>>;
   colony: Colony;
   handleCancelExpenditure: () => void;
 }
@@ -29,8 +30,14 @@ const FormStages = ({
   colony,
   handleCancelExpenditure,
 }: Props) => {
-  const { values, handleSubmit, validateForm, resetForm, setTouched } =
-    useFormikContext<ValuesType>() || {};
+  const {
+    values,
+    handleSubmit,
+    validateForm,
+    resetForm,
+    setTouched,
+    errors: formikErrors,
+  } = useFormikContext<ValuesType>() || {};
   const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
 
@@ -64,10 +71,10 @@ const FormStages = ({
   const handleDeleteDraft = () =>
     openDeleteDraftDialog({
       onClick: () => {
-        resetForm?.();
+        resetForm();
         // add logic to delete the draft from database
-        setActiveStateId?.(undefined);
-        setFormValues?.(undefined);
+        setActiveStateId(undefined);
+        setFormValues(undefined);
       },
     });
   const activeState = states.find((state) => state.id === activeStateId);
@@ -94,6 +101,7 @@ const FormStages = ({
         handleSaveDraft,
         handleCancelExpenditure,
         colony,
+        buttonDisabled: !isEmpty(formikErrors),
       }}
     />
   );

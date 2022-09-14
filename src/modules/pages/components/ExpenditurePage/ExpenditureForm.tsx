@@ -2,20 +2,20 @@ import { Form, useFormikContext } from 'formik';
 import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { useDialog } from '~core/Dialog';
-import StakeExpenditureDialog from '~dashboard/Dialogs/StakeExpenditureDialog';
 import { ExpenditureSettings } from '~dashboard/ExpenditurePage';
 import Payments from '~dashboard/ExpenditurePage/Payments';
 import Split from '~dashboard/ExpenditurePage/Split';
 import Staged from '~dashboard/ExpenditurePage/Staged';
 import { Colony } from '~data/index';
+import StakeExpenditureDialog from '~dashboard/Dialogs/StakeExpenditureDialog';
+import { useDialog } from '~core/Dialog';
 
 import { ValuesType, ExpenditureTypes } from './types';
 import styles from './ExpenditurePage.css';
 
 const MSG = defineMessages({
   submit: {
-    id: 'dashboard.ExpenditureForm.submit',
+    id: 'dashboard.ExpenditurePage.ExpenditureForm.submit',
     defaultMessage: 'Submit',
   },
 });
