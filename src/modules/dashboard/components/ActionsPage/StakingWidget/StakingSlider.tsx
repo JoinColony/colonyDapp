@@ -33,6 +33,7 @@ interface Props extends StakingAmounts {
   };
   canUserStake: boolean;
   isObjection: boolean;
+  totalPercentage: number;
 }
 
 const displayName = 'StakingSlider';
@@ -83,6 +84,7 @@ const StakingSlider = ({
   appearance,
   userActivatedTokens,
   isObjection,
+  totalPercentage,
 }: Props) => {
   const [limitExceeded, setLimitExceeded] = useState(false);
   const { ethereal } = useLoggedInUser();
@@ -117,6 +119,9 @@ const StakingSlider = ({
     stakeWithMin.round().toString(),
     nativeToken?.decimals,
   );
+
+  const isThresholdAchieved = totalPercentage >= 10;
+
   const userStakePercentage = stakeWithMin
     .round()
     .div(remainingToStake)
@@ -223,9 +228,9 @@ const StakingSlider = ({
               <span
                 className={classnames(styles.requiredStakeText, {
                   [styles.requiredStakeUnderThreshold]:
-                    userStakePercentage < 10,
+                    !isThresholdAchieved && userStakePercentage < 10,
                   [styles.requiredStakeAboveThreshold]:
-                    userStakePercentage >= 10,
+                    isThresholdAchieved || userStakePercentage >= 10,
                 })}
               >
                 <FormattedMessage

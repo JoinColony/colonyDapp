@@ -29,6 +29,7 @@ Decimal.set({ toExpPos: 78 });
 export interface Props extends StakingFlowProps {
   isObjection: boolean;
   handleWidgetState: (isObjection: boolean) => void;
+  totalPercentage: number;
 }
 
 const displayName = 'StakingWidget';
@@ -67,6 +68,7 @@ const StakingWidget = ({
   scrollToRef,
   isObjection,
   handleWidgetState,
+  totalPercentage,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const [sliderAmount, setSliderAmount] = useState(0);
@@ -295,6 +297,7 @@ const StakingWidget = ({
                 maxUserStake={maxUserStake}
                 minUserStake={minUserStake}
                 userActivatedTokens={userActivatedTokens}
+                totalPercentage={totalPercentage}
               />
               <div
                 className={`${styles.buttonGroup} ${
