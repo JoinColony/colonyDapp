@@ -7,11 +7,11 @@ import Icon from '~core/Icon';
 import styles from './ClickableHeading.css';
 
 interface Props {
-  children?: ReactChild;
   linkTo: string;
+  children?: ReactChild;
 }
 
-const ClickableHeading = ({ children, linkTo }: Props) => {
+const ClickableHeading = ({ linkTo, children }: Props) => {
   return (
     <div className={styles.heading}>
       <Heading appearance={{ size: 'smallish', weight: 'bold' }}>
