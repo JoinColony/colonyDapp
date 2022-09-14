@@ -2,9 +2,9 @@ import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import NavLink from '~core/NavLink';
-import Heading from '~core/Heading';
 import { Tooltip } from '~core/Popover';
 import Icon from '~core/Icon';
+import ClickableHeading from '~core/ClickableHeading';
 import InviteLinkButton from '~dashboard/InviteLinkButton';
 
 import HookedUserAvatar from '~users/HookedUserAvatar';
@@ -120,27 +120,28 @@ const MembersSubsection = ({
             </div>
           }
         >
-          <NavLink to={membersPageRoute}>
-            <Heading
-              appearance={{ size: 'normal', weight: 'bold' }}
-              text={MSG.title}
-              textValues={{
+          <ClickableHeading linkTo={membersPageRoute}>
+            <FormattedMessage
+              {...MSG.title}
+              values={{
                 count: members?.length,
                 hasCounter,
                 isContributorsSubsection,
               }}
             />
-          </NavLink>
+          </ClickableHeading>
         </Tooltip>
         {!isContributorsSubsection && (
-          <InviteLinkButton
-            colonyName={colonyName}
-            buttonAppearance={{ theme: 'blueWithBackground' }}
-          />
+          <div className={styles.inviteButton}>
+            <InviteLinkButton
+              colonyName={colonyName}
+              buttonAppearance={{ theme: 'blueWithBackground' }}
+            />
+          </div>
         )}
       </div>
     ),
-    [members, membersPageRoute, isContributorsSubsection, colonyName],
+    [isContributorsSubsection, membersPageRoute, members, colonyName],
   );
 
   if (!members) {
