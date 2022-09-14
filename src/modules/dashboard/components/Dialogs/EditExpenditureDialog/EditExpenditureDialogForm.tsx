@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import classNames from 'classnames';
 import { FormikProps, useField } from 'formik';
 import { nanoid } from 'nanoid';
@@ -38,7 +38,7 @@ export const MSG = defineMessages({
   },
   descriptionLabel: {
     id: `dashboard.EditExpenditureDialog.EditExpenditureDialogFormdescriptionLabel`,
-    defaultMessage: `Explain why you're changing the payment (optional)`,
+    defaultMessage: `Explain why you're changing the payment {optional}`,
   },
   cancelText: {
     id: 'dashboard.EditExpenditureDialog.EditExpenditureDialogForm.cancelText',
@@ -94,6 +94,7 @@ const EditExpenditureDialogForm = ({
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
   const [, { value: recipients }] = useField('recipients');
+  const { formatMessage } = useIntl();
 
   useEffect(() => {
     // discarding changes is done with FieldArray helper functions,
@@ -207,9 +208,9 @@ const EditExpenditureDialogForm = ({
       <DialogSection appearance={{ theme: 'sidePadding' }}>
         <div className={styles.annotationsWrapper}>
           <Annotations
-            label={
-              values.forceAction ? MSG.forceTextareaLabel : MSG.descriptionLabel
-            }
+            label={formatMessage(MSG.descriptionLabel, {
+              optional: !values.forceAction && '(optional)',
+            })}
             name="annotationMessage"
             maxLength={90}
             disabled={noChanges}

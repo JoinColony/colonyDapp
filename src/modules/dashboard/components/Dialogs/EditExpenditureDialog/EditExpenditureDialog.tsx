@@ -39,7 +39,7 @@ export const validationSchema = (annotationErrorMessage) =>
 
 export interface FormValuesType {
   forceAction: boolean;
-  annotation?: string;
+  annotationMessage?: string;
 }
 
 type Props = {
