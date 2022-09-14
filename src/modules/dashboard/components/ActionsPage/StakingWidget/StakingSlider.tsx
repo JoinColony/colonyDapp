@@ -33,7 +33,7 @@ interface Props extends StakingAmounts {
   };
   canUserStake: boolean;
   isObjection: boolean;
-  totalPercentage: number;
+  totalPercentage?: number;
 }
 
 const displayName = 'StakingSlider';
@@ -84,7 +84,7 @@ const StakingSlider = ({
   appearance,
   userActivatedTokens,
   isObjection,
-  totalPercentage,
+  totalPercentage = 0,
 }: Props) => {
   const [limitExceeded, setLimitExceeded] = useState(false);
   const { ethereal } = useLoggedInUser();
