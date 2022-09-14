@@ -6,11 +6,14 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import DecisionDialog from '~dashboard/Dialogs/DecisionDialog';
 import { SpinnerLoader } from '~core/Preloaders';
+import RemoveDraftCreateNewDecision from '~dashboard/Dialogs/RemoveDraftDecisionDialog';
 
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { Colony, useLoggedInUser, useNetworkContracts } from '~data/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
 import { colonyMustBeUpgraded } from '~modules/dashboard/checks';
+import { LOCAL_STORAGE_DECISION_KEY } from '~constants';
+import { DecisionDetails } from '~types/index';
 
 const displayName = 'dashboard.ColonyHomeCreateActionsButton';
 
@@ -35,6 +38,12 @@ interface RootState {
 }
 
 const ColonyNewDecision = ({ colony, ethDomainId }: Props) => {
+  const [draftDecisionData] = useState<DecisionDetails | undefined>(
+    localStorage.getItem(LOCAL_STORAGE_DECISION_KEY) === null
+      ? undefined
+      : JSON.parse(localStorage.getItem(LOCAL_STORAGE_DECISION_KEY) || ''),
+  );
+
   const { networkId, username, ethereal } = useLoggedInUser();
   const { version: networkVersion } = useNetworkContracts();
 
@@ -57,6 +66,7 @@ const ColonyNewDecision = ({ colony, ethDomainId }: Props) => {
   });
 
   const openDecisionDialog = useDialog(DecisionDialog);
+  const openDeleteDraftDialog = useDialog(RemoveDraftCreateNewDecision);
 
   const hasRegisteredProfile = !!username && !ethereal;
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
@@ -71,7 +81,13 @@ const ColonyNewDecision = ({ colony, ethDomainId }: Props) => {
           appearance={{ theme: 'primary', size: 'large' }}
           text={MSG.newDecision}
           onClick={() =>
-            openDecisionDialog({ colony, ethDomainId, isNewDecision: true })
+            draftDecisionData === undefined
+              ? openDecisionDialog({ colony, ethDomainId, isNewDecision: true })
+              : openDeleteDraftDialog({
+                  colony,
+                  ethDomainId,
+                  isNewDecision: true,
+                })
           }
           disabled={
             mustUpgrade ||
