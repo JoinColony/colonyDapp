@@ -140,7 +140,7 @@ function* createDecisionMotion({
 
     yield put(transactionPending(annotateMotion.id));
 
-    const details: DecisionDetails = {
+    const details: Omit<DecisionDetails, 'userAddress'> = {
       title: decisionTitle,
       description: decisionDescription,
       motionDomainId,
