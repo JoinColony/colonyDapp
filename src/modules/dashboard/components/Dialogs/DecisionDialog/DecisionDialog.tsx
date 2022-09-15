@@ -32,7 +32,6 @@ export interface FormValues {
 interface Props extends DialogProps {
   colony: Colony;
   ethDomainId?: number;
-  isNewDecision: boolean;
 }
 
 const characterLimit = 4000;
@@ -43,13 +42,12 @@ const DecisionDialog = ({
   colony: { colonyName },
   ethDomainId,
   close,
-  isNewDecision,
 }: Props) => {
   const history = useHistory();
   const { walletAddress } = useLoggedInUser();
 
   const [decisionData] = useState<DecisionDetails | undefined>(
-    isNewDecision || localStorage.getItem(LOCAL_STORAGE_DECISION_KEY) === null
+    localStorage.getItem(LOCAL_STORAGE_DECISION_KEY) === null
       ? undefined
       : JSON.parse(localStorage.getItem(LOCAL_STORAGE_DECISION_KEY) || ''),
   );

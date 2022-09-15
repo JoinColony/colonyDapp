@@ -70,7 +70,7 @@ const DraftDecisionItem = ({ colony, colony: { colonyName } }: Props) => {
               text={{ id: 'button.edit' }}
               onClick={(event) => {
                 event.stopPropagation();
-                openDecisionDialog({ colony, isNewDecision: false });
+                openDecisionDialog({ colony });
               }}
             />
             <Button
