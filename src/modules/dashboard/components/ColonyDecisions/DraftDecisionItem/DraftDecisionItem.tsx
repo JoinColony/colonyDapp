@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { nanoid } from 'nanoid';
 
 import { ActionsListItem, ItemStatus } from '~core/ActionsList';
 import Button from '~core/Button';
@@ -77,7 +78,9 @@ const DraftDecisionItem = ({ colony, colony: { colonyName } }: Props) => {
               onClick={(event) => {
                 event.stopPropagation();
                 openConfirmDeleteDialog({
-                  itemName: <FormattedMessage {...MSG.decision} />,
+                  itemName: (
+                    <FormattedMessage {...MSG.decision} key={nanoid()} />
+                  ),
                   deleteCallback: deleteDecision,
                 });
               }}

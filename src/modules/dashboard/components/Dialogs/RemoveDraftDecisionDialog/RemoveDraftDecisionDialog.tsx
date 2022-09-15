@@ -1,6 +1,7 @@
 import React from 'react';
 import { defineMessage, FormattedMessage } from 'react-intl';
 import { useHistory } from 'react-router';
+import { nanoid } from 'nanoid';
 
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
@@ -63,7 +64,7 @@ const RemoveDraftDecisionDialog = ({
           textValues={{
             // @ts-ignore
             removeDraft: (
-              <span className={styles.redTitle} key={1}>
+              <span className={styles.redTitle} key={nanoid()}>
                 <FormattedMessage {...MSG.removeDraft} />
               </span>
             ),
