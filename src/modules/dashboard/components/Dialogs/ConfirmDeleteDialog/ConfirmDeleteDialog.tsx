@@ -5,8 +5,6 @@ import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
 import Heading from '~core/Heading';
 
-import { PrimitiveType } from '~types/index';
-
 import styles from './ConfirmDeleteDialog.css';
 
 const MSG = defineMessage({
@@ -48,7 +46,8 @@ const ConfirmDeleteDialog = ({
             text={MSG.title}
             /* react-intl has wrong types for the formatMessage funtion that is used in the button.
           There will be a type error if there is no type casting although it's all working correctly */
-            textValues={{ itemName: (itemName as unknown) as PrimitiveType }}
+            // @ts-ignore
+            textValues={{ itemName }}
             appearance={{ size: 'medium' }}
           />
           <FormattedMessage {...MSG.description} values={{ itemName }} />
