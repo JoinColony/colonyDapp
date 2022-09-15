@@ -7,7 +7,7 @@
   margin-left: 9px;
 
   /* next lines corrects tooltip arrow placement */
-  transform: translate(-9px, 4px);
+  transform: translate(-9px, 0);
 }
 
 /* this selector is for tooltip wrapper */
@@ -22,7 +22,7 @@
   margin-bottom: 4px;
 }
 
-.toggleContainer > div > span {
+.toggleContainer > div {
   height: 18px;
 }
 
