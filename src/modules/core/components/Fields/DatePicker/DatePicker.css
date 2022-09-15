@@ -1,4 +1,4 @@
-.selectedDate {
+.dateButton {
   display: flex;
   align-items: center;
   padding: 0;
@@ -10,19 +10,20 @@
   cursor: pointer;
 }
 
-.icon {
+.expandDateIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 21px;
   width: 21px;
 }
 
-.icon svg {
-  vertical-align: middle;
+.expandDateIcon svg {
   fill: var(--action-secondary);
   stroke: var(--action-secondary);
 }
 
 .container {
-  padding: 24px;
   border: 1px solid var(--text-disabled);
   border-radius: 8px;
   background-color: white;
@@ -32,7 +33,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  padding: 24px;
 }
 
 .currentMonth {
@@ -51,32 +52,42 @@
   cursor: pointer;
 }
 
-:global(.react-datepicker) {
+.container :global(.react-datepicker) {
   border: none;
   border-radius: 0;
+  border-top-right-radius: 8px;
+  border-top-left-radius: 8px;
   background-color: white;
   font-family: var(--family-primary);
 }
 
 /** Hide the popover triangle */
-:global(.react-datepicker__triangle) {
+.container :global(.react-datepicker__triangle) {
   display: none;
 }
 
-:global(.react-datepicker__header) {
+.container :global(.react-datepicker__month-container) {
+  float: revert;
+}
+
+.container :global(.react-datepicker__header) {
   margin-bottom: 16px;
   padding: 0;
   border: none;
+  border-top-right-radius: 8px !important;
+  border-top-left-radius: 8px !important;
   background-color: white;
 }
 
-:global(.react-datepicker__day-names) {
+/** Weekday names container */
+.container :global(.react-datepicker__day-names) {
   display: flex;
+  padding: 0 24px;
   gap: 10px;
 }
 
 /** Weekday name in the header */
-:global(.react-datepicker__day-name) {
+.container :global(.react-datepicker__day-name) {
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -88,16 +99,17 @@
   color: var(--text-disabled);
 }
 
-:global(.react-datepicker__month) {
+.container :global(.react-datepicker__month) {
   margin: 0;
+  padding: 0 24px;
 }
 
-:global(.react-datepicker__week) {
+.container :global(.react-datepicker__week) {
   display: flex;
   gap: 10px;
 }
 
-:global(.react-datepicker__day) {
+.container :global(.react-datepicker__day) {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -116,19 +128,120 @@
   }
 }
 
-:global(.react-datepicker__day--today) {
+.container :global(.react-datepicker__day--today) {
   color: var(--primary);
 }
 
-:global(.react-datepicker__day--selected) {
+.container :global(.react-datepicker__day--selected) {
   background-color: var(--primary);
   color: white;
+
+  &:hover {
+    background-color: var(--primary);
+    color: white;
+  }
 }
 
-:global(.react-datepicker__day--outside-month) {
+.container :global(.react-datepicker__day--outside-month) {
   color: var(--text-disabled);
 }
 
-:global(.react-datepicker__day--keyboard-selected) {
+.container :global(.react-datepicker__day--keyboard-selected) {
   background-color: white;
+}
+
+.timePicker {
+  margin-top: 24px;
+  padding: 16px 24px;
+  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 8px;
+  background-color: var(--grey-blue-2);
+}
+
+.timeButton {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  width: 100%;
+  border: none;
+  border-radius: 4px;
+  background-color: white;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.selectedTime {
+  display: flex;
+  align-items: center;
+  font-size: var(--size-normal);
+  line-height: 18px;
+  gap: 8px;
+}
+
+.clockIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 16px;
+  width: 16px;
+}
+
+.clockIcon svg {
+  fill: var(--primary);
+  stroke: var(--primary);
+}
+
+.expandTimeIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.expandTimeIcon svg {
+  fill: var(--dark);
+  stroke: var(--dark);
+}
+
+.timeDropdown {
+  height: 170px;
+  width: 270px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow-y: auto;
+  border: 1px solid var(--text-disabled);
+  border-radius: var(--radius-normal);
+  background: white;
+}
+
+.timeOption {
+  display: block;
+  padding: 8px 16px;
+  width: 100%;
+  border: none;
+  background: none;
+  font-size: var(--size-normal);
+  text-align: left;
+  line-height: 18px;
+  color: var(--dark);
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--grey-blue-2);
+  }
+
+  &:first-of-type {
+    border-top-right-radius: var(--radius-normal);
+    border-top-left-radius: var(--radius-normal);
+  }
+
+  &:last-of-type {
+    border-bottom-right-radius: var(--radius-normal);
+    border-bottom-left-radius: var(--radius-normal);
+  }
+
+  &.selected {
+    color: var(--primary);
+  }
 }
