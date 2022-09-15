@@ -55,6 +55,7 @@ export const getActionsListData = (
     extensionAddresses,
     actionsThatNeedAttention,
   }: ActionsTransformerMetadata = {},
+  isDecision = false,
 ): FormattedAction[] => {
   let formattedActions = [];
   /*
@@ -131,7 +132,9 @@ export const getActionsListData = (
         const totalNayStake = bigNumberify(stakes[0] || 0);
         const totalYayStake = bigNumberify(stakes[1] || 0);
         const currentStake = totalNayStake.add(totalYayStake).toString();
-        const enoughStake = shouldDisplayMotion(currentStake, requiredStake);
+        const enoughStake = isDecision
+          ? true
+          : shouldDisplayMotion(currentStake, requiredStake);
         if (escalated || enoughStake) {
           return [...acc, motion];
         }

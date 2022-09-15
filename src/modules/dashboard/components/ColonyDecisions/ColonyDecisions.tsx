@@ -108,6 +108,9 @@ const ColonyDecisions = ({
   const decisions = useTransformer(getActionsListData, [
     installedExtensions?.map(({ address }) => address) as string[],
     { ...motions },
+    undefined,
+    {},
+    true,
   ]);
 
   const filteredDecisions = useMemo(
