@@ -1,15 +1,12 @@
-subscription SubgraphEvents(
-  $skip: Int = 0
-  $first: Int = 1000
-  $colonyAddress: String!
-  $sortDirection: String = asc
-) {
+subscription SubgraphEvents($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $sortDirection: String = asc) {
   events(
-    skip: $skip
-    first: $first
-    orderBy: "timestamp"
-    orderDirection: $sortDirection
-    where: { associatedColony: $colonyAddress }
+    skip: $skip,
+    first: $first,
+    orderBy: "timestamp",
+    orderDirection: $sortDirection,
+    where: {
+      associatedColony: $colonyAddress
+    }
   ) {
     id
     address
@@ -35,17 +32,12 @@ subscription SubgraphEvents(
   }
 }
 
-subscription SubgraphOneTx(
-  $skip: Int = 0
-  $first: Int = 1000
-  $colonyAddress: String!
-  $sortDirection: String = asc
-) {
+subscription SubgraphOneTx($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $sortDirection: String = asc) {
   oneTxPayments(
-    skip: $skip
-    first: $first
-    orderBy: "timestamp"
-    orderDirection: $sortDirection
+    skip: $skip,
+    first: $first,
+    orderBy: "timestamp",
+    orderDirection: $sortDirection,
     where: { payment_contains: $colonyAddress }
   ) {
     id
@@ -79,35 +71,29 @@ subscription SubgraphOneTx(
   }
 }
 
-subscription SubgraphEventsThatAreActions(
-  $skip: Int = 0
-  $first: Int = 1000
-  $colonyAddress: String!
-  $sortDirection: String = asc
-) {
+subscription SubgraphEventsThatAreActions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $sortDirection: String = asc) {
   events(
-    skip: $skip
-    first: $first
-    orderBy: "timestamp"
-    orderDirection: $sortDirection
+    skip: $skip,
+    first: $first,
+    orderBy: "timestamp",
+    orderDirection: $sortDirection,
     where: {
-      associatedColony_contains: $colonyAddress
+      associatedColony_contains: $colonyAddress,
       name_in: [
-        "TokensMinted(address,address,uint256)"
-        "DomainAdded(address,uint256)"
-        "ColonyMetadata(address,string)"
-        "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)"
-        "DomainMetadata(address,uint256,string)"
-        "ColonyRoleSet(address,address,uint256,uint8,bool)"
-        "ColonyUpgraded(address,uint256,uint256)"
-        "ColonyUpgraded(uint256,uint256)"
-        "RecoveryModeEntered(address)"
-        "ArbitraryReputationUpdate(address,address,uint256,int256)"
-        "TokenUnlocked(address)"
-        "TokenUnlocked()"
+        "TokensMinted(address,address,uint256)",
+        "DomainAdded(address,uint256)",
+        "ColonyMetadata(address,string)",
+        "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)",
+        "DomainMetadata(address,uint256,string)",
+        "ColonyRoleSet(address,address,uint256,uint8,bool)",
+        "ColonyUpgraded(address,uint256,uint256)",
+        "ColonyUpgraded(uint256,uint256)",
+        "RecoveryModeEntered(address)",
+        "ArbitraryReputationUpdate(address,address,uint256,int256)",
+        "TokenUnlocked(address)",
+        "TokenUnlocked()",
       ]
-    }
-  ) {
+    }) {
     id
     address
     associatedColony {
@@ -149,22 +135,15 @@ subscription SubgraphEventsThatAreActions(
   }
 }
 
-subscription SubgraphMotions(
-  $skip: Int = 0
-  $first: Int = 1000
-  $colonyAddress: String!
-  $extensionAddress: String!
-  $motionActionNot: String
-) {
+subscription SubgraphMotions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $extensionAddress: String!, $motionActionNot: String) {
   motions(
-    skip: $skip
-    first: $first
+    skip: $skip,
+    first: $first,
     where: {
-      associatedColony: $colonyAddress
-      extensionAddress: $extensionAddress
-      action_not: $motionActionNot
-    }
-  ) {
+      associatedColony: $colonyAddress,
+      extensionAddress: $extensionAddress,
+      action_not: $motionActionNot,
+  }) {
     id
     fundamentalChainId
     associatedColony {
@@ -212,22 +191,15 @@ subscription SubgraphMotions(
   }
 }
 
-subscription SubgraphDecisions(
-  $skip: Int = 0
-  $first: Int = 1000
-  $colonyAddress: String!
-  $extensionAddress: String!
-  $motionAction: String
-) {
+subscription SubgraphDecisions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $extensionAddress: String!) {
   motions(
-    skip: $skip
-    first: $first
+    skip: $skip,
+    first: $first,
     where: {
-      associatedColony: $colonyAddress
-      extensionAddress: $extensionAddress
-      action: $motionAction
-    }
-  ) {
+      associatedColony: $colonyAddress,
+      extensionAddress: $extensionAddress,
+      action: "0x12345678",
+  }) {
     id
     fundamentalChainId
     associatedColony {
