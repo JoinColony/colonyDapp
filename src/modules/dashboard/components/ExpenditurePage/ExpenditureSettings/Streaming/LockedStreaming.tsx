@@ -17,7 +17,7 @@ const MSG = defineMessages({
   },
   title: {
     id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.title',
-    defaultMessage: '{nr}: {team}, {rateAmount} {rateToken} / {rateTime}',
+    defaultMessage: '{counter}: {team}, {rateAmount} {rateToken} / {rateTime}',
   },
 });
 
@@ -29,18 +29,17 @@ interface Props {
 }
 
 const LockedStreaming = ({ fundingSources, colony }: Props) => {
-  const [expandedFundingSources, setExpandedFundingSources] = useState<
-    number[] | undefined
-  >(fundingSources?.map((_, idx) => idx));
+  const [openItemsIds, setOpenItemsIds] = useState<string[]>(
+    fundingSources?.map(({ id }) => id) || [],
+  );
 
-  const onToggleButtonClick = useCallback((index) => {
-    setExpandedFundingSources((expandedIndexes) => {
-      const isOpen = expandedIndexes?.find((expanded) => expanded === index);
+  const onToggleButtonClick = useCallback((id) => {
+    setOpenItemsIds((expandedIds) => {
+      const isOpen = expandedIds?.find((expanded) => expanded === id);
 
-      if (isOpen !== undefined) {
-        return expandedIndexes?.filter((idx) => idx !== index);
-      }
-      return [...(expandedIndexes || []), index];
+      return isOpen
+        ? expandedIds?.filter((expandedId) => expandedId !== id)
+        : [...(expandedIds || []), id];
     });
   }, []);
 
@@ -53,8 +52,7 @@ const LockedStreaming = ({ fundingSources, colony }: Props) => {
         const domain = colony?.domains.find(
           ({ ethDomainId }) => Number(fundingSource.team) === ethDomainId,
         );
-        const isOpen =
-          expandedFundingSources?.find((idx) => idx === index) !== undefined;
+        const isOpen = !!openItemsIds?.find((id) => id === fundingSource.id);
 
         const { amount, token, time } = fundingSource.rate?.[0] || {};
         const tokenData = colony.tokens?.find(
@@ -72,13 +70,15 @@ const LockedStreaming = ({ fundingSources, colony }: Props) => {
               <div className={styles.fundingSourceLabel}>
                 <CollapseExpandButtons
                   isExpanded={isOpen}
-                  onToogleButtonClick={() => onToggleButtonClick(index)}
+                  onToogleButtonClick={() =>
+                    onToggleButtonClick(fundingSource.id)
+                  }
                   isLastitem={index === fundingSources?.length - 1}
                 />
                 <FormattedMessage
                   {...MSG.title}
                   values={{
-                    nr: index + 1,
+                    counter: index + 1,
                     team: domain?.name,
                     rateAmount: amount,
                     rateToken: tokenData?.symbol,
