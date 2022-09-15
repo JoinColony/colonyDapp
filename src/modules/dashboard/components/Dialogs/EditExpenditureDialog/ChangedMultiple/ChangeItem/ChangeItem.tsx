@@ -4,6 +4,8 @@ import React, { useCallback } from 'react';
 import { FormSection } from '~core/Fields';
 import Icon from '~core/Icon';
 import { Colony } from '~data/index';
+import { ValuesType } from '~pages/ExpenditurePage/types';
+import { ValueOf } from '../../ChangedValues/ChangedValues';
 
 import NewDelay from '../../NewDelay';
 import NewRecipient from '../../NewRecipient';
@@ -15,8 +17,8 @@ const displayName =
   'dashboard.EditExpenditureDialog.ChangedMultiple.ChangeItem';
 
 interface Props {
-  newValue: any;
-  oldValue?: any;
+  newValue: ValueOf<ValuesType>;
+  oldValue?: ValueOf<ValuesType>;
   name: string;
   colony: Colony;
 }

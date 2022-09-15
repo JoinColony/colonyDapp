@@ -37,7 +37,7 @@ export const MSG = defineMessages({
     defaultMessage: `Note: if this variable has previously been voted on, subsequent votes will require more Reputation to be in favour in order for changes to be valid.`,
   },
   descriptionLabel: {
-    id: `dashboard.EditExpenditureDialog.EditExpenditureDialogFormdescriptionLabel`,
+    id: `dashboard.EditExpenditureDialog.EditExpenditureDialogForm.descriptionLabel`,
     defaultMessage: `Explain why you're changing the payment {optional}`,
   },
   cancelText: {

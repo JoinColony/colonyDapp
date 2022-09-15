@@ -1,44 +1,28 @@
 import { FieldArray } from 'formik';
 import { isNil } from 'lodash';
 import React, { Fragment } from 'react';
-import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
+import { defineMessages } from 'react-intl';
 
 import Button from '~core/Button';
-import { FormSection } from '~core/Fields';
 import { Colony, LoggedInUser } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/types';
 import { Staged } from '~dashboard/ExpenditurePage/Staged/types';
 
 import ChangeItem from './ChangeItem';
 import styles from './ChangedMultiple.css';
+import ChangeHeader from './ChangeHeader';
 
 export const MSG = defineMessages({
-  newChange: {
-    id: 'dashboard.EditExpenditureDialog.ChangedMultiple.newChange',
-    defaultMessage: '{count}: {changeType}',
-  },
   discard: {
     id: 'dashboard.EditExpenditureDialog.ChangedMultiple.discard',
     defaultMessage: 'Discard',
-  },
-  from: {
-    id: 'dashboard.EditExpenditureDialog.ChangedMultiple.from',
-    defaultMessage: 'From',
-  },
-  changeTo: {
-    id: 'dashboard.EditExpenditureDialog.ChangedMultiple.changeTo',
-    defaultMessage: 'Change to',
-  },
-  recipient: {
-    id: 'dashboard.EditExpenditureDialog.ChangedMultiple.recipient',
-    defaultMessage: 'Recipient',
   },
 });
 
 const displayName = 'dashboard.EditExpenditureDialog.ChangedMultiple';
 const skip = ['id', 'claimDate', 'isExpanded', 'created', 'removed'];
 
-type NewValuesType = {
+export type NewValueType = {
   id: string;
   key: string;
   value?:
@@ -49,16 +33,18 @@ type NewValuesType = {
         LoggedInUser,
         'walletAddress' | 'balance' | 'username' | 'ethereal' | 'networkId'
       >;
-}[];
+};
 
 interface Props {
-  newValues?: NewValuesType;
+  newValues?: NewValueType[];
   colony: Colony;
   oldValues: ValuesType;
 }
 
 const ChangedMultiple = ({ newValues, oldValues, colony }: Props) => {
-  const { formatMessage } = useIntl();
+  if (!Array.isArray(newValues) || !Array.isArray) {
+    return null;
+  }
 
   return (
     <>
@@ -74,28 +60,7 @@ const ChangedMultiple = ({ newValues, oldValues, colony }: Props) => {
                   name={newValue?.key || 'change'}
                   render={({ remove }) => (
                     <>
-                      <div className={styles.header}>
-                        <FormattedMessage
-                          {...MSG.newChange}
-                          values={{
-                            count: index + 1,
-                            changeType:
-                              newValue.key === 'recipients'
-                                ? formatMessage(MSG.recipient)
-                                : newValue.key,
-                          }}
-                        />
-                        <FormSection appearance={{ border: 'bottom' }}>
-                          <div className={styles.subheader}>
-                            <span>
-                              <FormattedMessage {...MSG.from} />
-                            </span>
-                            <span>
-                              <FormattedMessage {...MSG.changeTo} />
-                            </span>
-                          </div>
-                        </FormSection>
-                      </div>
+                      <ChangeHeader name={changeItem?.key} index={index} />
                       {Object.entries(changeItem)?.map(([key, value]) => {
                         if (skip.includes(key)) {
                           return null;
