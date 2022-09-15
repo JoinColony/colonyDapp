@@ -1,4 +1,4 @@
-export const emptyState: string;
+export const statusMessage: string;
 export const filter: string;
 export const loadingSpinner: string;
 export const bar: string;
