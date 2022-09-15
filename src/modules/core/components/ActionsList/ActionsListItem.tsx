@@ -82,7 +82,7 @@ export enum ItemStatus {
 }
 
 interface Props {
-  item: FormattedAction;
+  item: Partial<FormattedAction>;
   colony: Colony;
   handleOnClick?: (handlerProps: ClickHandlerProps) => void;
   draftData?: DecisionDetails;
@@ -91,8 +91,8 @@ interface Props {
 
 const ActionsListItem = ({
   item: {
-    id,
-    actionType,
+    id = '',
+    actionType = ColonyActions.Generic,
     initiator,
     recipient,
     amount,
@@ -100,16 +100,16 @@ const ActionsListItem = ({
     decimals: colonyTokenDecimals,
     fromDomain: fromDomainId,
     toDomain: toDomainId,
-    transactionHash,
+    transactionHash = '',
     createdAt,
     commentCount = 0,
     metadata,
-    roles,
+    roles = [],
     newVersion,
     status = ItemStatus.Defused,
     motionState,
     motionId,
-    blockNumber,
+    blockNumber = 0,
     totalNayStake,
     requiredStake,
     transactionTokenAddress,
@@ -178,19 +178,25 @@ const ActionsListItem = ({
     isColonyAddress ? '' : recipientAddress,
   );
 
-  const fromDomain = colony.domains.find(
-    ({ ethDomainId }) => ethDomainId === parseInt(fromDomainId, 10),
-  );
-  const toDomain = colony.domains.find(
-    ({ ethDomainId }) => ethDomainId === parseInt(toDomainId, 10),
-  );
+  const fromDomain =
+    fromDomainId &&
+    colony.domains.find(
+      ({ ethDomainId }) => ethDomainId === parseInt(fromDomainId, 10),
+    );
+  const toDomain =
+    toDomainId &&
+    colony.domains.find(
+      ({ ethDomainId }) => ethDomainId === parseInt(toDomainId, 10),
+    );
 
-  const updatedRoles = getUpdatedDecodedMotionRoles(
-    fallbackRecipientProfile,
-    parseInt(fromDomainId, 10),
-    (historicColonyRoles?.historicColonyRoles as unknown) as ColonyRoles,
-    roles || [],
-  );
+  const updatedRoles = fromDomainId
+    ? getUpdatedDecodedMotionRoles(
+        fallbackRecipientProfile,
+        parseInt(fromDomainId, 10),
+        (historicColonyRoles?.historicColonyRoles as unknown) as ColonyRoles,
+        roles || [],
+      )
+    : [];
   const { roleMessageDescriptorId, roleTitle } = useFormatRolesTitle(
     actionType === ColonyMotions.SetUserRolesMotion ? updatedRoles : roles,
     actionType,
@@ -380,8 +386,9 @@ const ActionsListItem = ({
                     ),
                     tokenSymbol: symbol,
                     decimals: getTokenDecimalsWithFallback(decimals),
-                    fromDomain: domainName || fromDomain?.name || '',
-                    toDomain: toDomain?.name || '',
+                    fromDomain:
+                      domainName || (fromDomain ? fromDomain?.name : ''),
+                    toDomain: toDomain ? toDomain?.name : '',
                     roles: roleTitle,
                     newVersion: newVersion || '0',
                     reputationChange: formattedReputationChange,
