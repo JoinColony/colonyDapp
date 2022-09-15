@@ -12,7 +12,6 @@ import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { Colony, useLoggedInUser, useNetworkContracts } from '~data/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
 import { colonyMustBeUpgraded } from '~modules/dashboard/checks';
-import { LOCAL_STORAGE_DECISION_KEY } from '~constants';
 import { DecisionDetails } from '~types/index';
 
 const displayName = 'dashboard.ColonyHomeCreateActionsButton';
@@ -27,6 +26,8 @@ const MSG = defineMessages({
 interface Props {
   colony: Colony;
   ethDomainId: number;
+  draftDecision?: DecisionDetails;
+  removeDraftDecision: () => void;
 }
 
 interface RootState {
@@ -37,13 +38,12 @@ interface RootState {
   };
 }
 
-const ColonyNewDecision = ({ colony, ethDomainId }: Props) => {
-  const [draftDecisionData] = useState<DecisionDetails | undefined>(
-    localStorage.getItem(LOCAL_STORAGE_DECISION_KEY) === null
-      ? undefined
-      : JSON.parse(localStorage.getItem(LOCAL_STORAGE_DECISION_KEY) || ''),
-  );
-
+const ColonyNewDecision = ({
+  colony,
+  ethDomainId,
+  draftDecision,
+  removeDraftDecision,
+}: Props) => {
   const { networkId, username, ethereal } = useLoggedInUser();
   const { version: networkVersion } = useNetworkContracts();
 
@@ -68,8 +68,10 @@ const ColonyNewDecision = ({ colony, ethDomainId }: Props) => {
   const openDecisionDialog = useDialog(DecisionDialog);
   const openDeleteDraftDialog = useDialog(RemoveDraftCreateNewDecision);
 
-  const openNewDecisionDialog = () =>
+  const openNewDecisionDialog = () => {
     openDecisionDialog({ colony, ethDomainId });
+    removeDraftDecision();
+  };
 
   const hasRegisteredProfile = !!username && !ethereal;
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
@@ -84,7 +86,7 @@ const ColonyNewDecision = ({ colony, ethDomainId }: Props) => {
           appearance={{ theme: 'primary', size: 'large' }}
           text={MSG.newDecision}
           onClick={() =>
-            draftDecisionData === undefined
+            draftDecision === undefined
               ? openNewDecisionDialog()
               : openDeleteDraftDialog({ colony, openNewDecisionDialog })
           }
