@@ -17,7 +17,6 @@ import {
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { useTransformer } from '~utils/hooks';
 import { getActionsListData } from '~modules/dashboard/transformers';
-import { ACTION_DECISION_MOTION_CODE } from '~constants';
 
 import { SortOptions, SortSelectOptions } from './constants';
 import styles from './ColonyDecisions.css';
@@ -77,7 +76,10 @@ const ColonyDecisions = ({
     [colonyName, history],
   );
 
-  const { isVotingExtensionEnabled } = useEnabledExtensions({
+  const {
+    isVotingExtensionEnabled,
+    isLoadingExtensions,
+  } = useEnabledExtensions({
     colonyAddress,
   });
 
@@ -100,7 +102,6 @@ const ColonyDecisions = ({
        */
       colonyAddress: colonyAddress?.toLowerCase() || '',
       extensionAddress: votingReputationExtension?.address?.toLowerCase() || '',
-      motionAction: ACTION_DECISION_MOTION_CODE,
     },
   });
 
@@ -139,14 +140,6 @@ const ColonyDecisions = ({
     ITEMS_PER_PAGE * dataPage,
   );
 
-  if (!isVotingExtensionEnabled) {
-    return (
-      <div className={styles.installExtension}>
-        <FormattedMessage {...MSG.installExtension} />
-      </div>
-    );
-  }
-
   if (decisionsLoading) {
     return (
       <div className={styles.loadingSpinner}>
@@ -154,6 +147,14 @@ const ColonyDecisions = ({
           loadingText={MSG.loading}
           appearance={{ theme: 'primary', size: 'massive' }}
         />
+      </div>
+    );
+  }
+
+  if (!isVotingExtensionEnabled && !isLoadingExtensions) {
+    return (
+      <div className={styles.statusMessage}>
+        <FormattedMessage {...MSG.installExtension} />
       </div>
     );
   }
