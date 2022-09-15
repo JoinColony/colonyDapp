@@ -321,7 +321,6 @@ const EscrowFundsDialogForm = ({
                                   .amount ?? 0
                               }
                             />
-                            )
                           </span>
                         </>
                       ) : (
