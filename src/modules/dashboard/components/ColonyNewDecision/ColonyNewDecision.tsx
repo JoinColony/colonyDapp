@@ -69,7 +69,7 @@ const ColonyNewDecision = ({ colony, ethDomainId }: Props) => {
   const openDeleteDraftDialog = useDialog(RemoveDraftCreateNewDecision);
 
   const openNewDecisionDialog = () =>
-    openDecisionDialog({ colony, ethDomainId, isNewDecision: true });
+    openDecisionDialog({ colony, ethDomainId });
 
   const hasRegisteredProfile = !!username && !ethereal;
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);

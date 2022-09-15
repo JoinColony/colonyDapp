@@ -3,6 +3,7 @@ import { useParams, useHistory, Redirect } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import parse from 'html-react-parser';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { nanoid } from 'nanoid';
 
 import Heading from '~core/Heading';
 import Button from '~core/Button';
@@ -184,7 +185,6 @@ const DecisionPreview = () => {
                   openDecisionDialog({
                     colony,
                     ethDomainId: ROOT_DOMAIN_ID,
-                    isNewDecision: true,
                   })
                 }
               />
@@ -198,7 +198,9 @@ const DecisionPreview = () => {
                 appearance={{ theme: 'secondary', size: 'large' }}
                 onClick={() =>
                   openConfirmDeleteDialog({
-                    itemName: <FormattedMessage {...MSG.decision} />,
+                    itemName: (
+                      <FormattedMessage {...MSG.decision} key={nanoid()} />
+                    ),
                     deleteCallback: deleteDecision,
                   })
                 }
@@ -212,7 +214,6 @@ const DecisionPreview = () => {
                   openDecisionDialog({
                     colony,
                     ethDomainId: decisionData.motionDomainId,
-                    isNewDecision: false,
                   })
                 }
                 text={{ id: 'button.edit' }}
