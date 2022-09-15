@@ -172,7 +172,7 @@ const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
             label="Start date"
             appearance={{ direction: 'horizontal' }}
           />
-          <DatePicker name="date" showTimeSelect={false} />
+          <DatePicker name="date" showTimeSelect />
         </div>
       </FormSection>
     </div>

@@ -1,30 +1,15 @@
 import { useField } from 'formik';
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import ReactDatePicker, {
-  CalendarContainer,
-  ReactDatePickerProps,
-} from 'react-datepicker';
+import ReactDatePicker, { CalendarContainer } from 'react-datepicker';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
-import styles from './DatePicker.css';
 import Icon from '~core/Icon';
+import TimePicker from './TimePicker';
 
-const MONTH_NAMES = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
+import styles from './DatePicker.css';
+import { MONTH_NAMES } from './constants';
 
 const MSG = defineMessages({
   expandIconHTMLTitle: {
@@ -33,25 +18,27 @@ const MSG = defineMessages({
   },
 });
 
-interface Props
-  extends Pick<ReactDatePickerProps, 'showTimeSelect' | 'dateFormat'> {
+interface Props {
   /** Html name attribute */
   name: string;
+  showTimeSelect?: boolean;
+  /** react-datepicker compatible format */
+  dateFormat?: string;
 }
 
-const SeletedDate = (
+const DateInput = (
   { onClick, value }: React.HTMLProps<HTMLButtonElement>,
   ref: React.Ref<HTMLButtonElement>,
 ) => (
   <button
     type="button"
-    className={styles.selectedDate}
+    className={styles.dateButton}
     onClick={onClick}
     ref={ref}
   >
     {value}
 
-    <span className={styles.icon}>
+    <span className={styles.expandDateIcon}>
       <Icon name="caret-down-small" title={MSG.expandIconHTMLTitle} />
     </span>
   </button>
@@ -59,7 +46,11 @@ const SeletedDate = (
 
 const displayName = 'DatePicker';
 
-const DatePicker = ({ name, dateFormat, ...rest }: Props) => {
+const DatePicker = ({
+  name,
+  showTimeSelect,
+  dateFormat = 'd MMM y, h:mm aaa',
+}: Props) => {
   const [field, , helpers] = useField(name);
 
   const handleChange = (date: Date | null) => {
@@ -69,21 +60,16 @@ const DatePicker = ({ name, dateFormat, ...rest }: Props) => {
   return (
     <div>
       <ReactDatePicker
-        {...field}
-        {...rest}
         selected={(field.value && new Date(field.value)) || null}
         onChange={handleChange}
         onBlur={() => helpers.setTouched(true)}
         onCalendarClose={() => helpers.setTouched(true)}
-        customInput={React.createElement(React.forwardRef(SeletedDate))}
-        dateFormat={dateFormat || 'd MMM y, h:mmaaa'}
-        calendarContainer={(props) => (
-          <div className={styles.container}>
-            <CalendarContainer {...props} />
-          </div>
-        )}
+        dateFormat={dateFormat}
         calendarStartDay={1}
         formatWeekDay={(day) => day.substring(0, 1)}
+        shouldCloseOnSelect={false}
+        popperPlacement="right-start"
+        customInput={React.createElement(React.forwardRef(DateInput))}
         renderCustomHeader={(props) => (
           <div className={styles.header}>
             <button
@@ -103,6 +89,18 @@ const DatePicker = ({ name, dateFormat, ...rest }: Props) => {
             >
               <Icon name="caret-right" />
             </button>
+          </div>
+        )}
+        calendarContainer={(props) => (
+          <div className={styles.container}>
+            <CalendarContainer {...props} />
+
+            {showTimeSelect && (
+              <TimePicker
+                selectedDate={new Date(field.value)}
+                onChange={(date) => helpers.setValue(date)}
+              />
+            )}
           </div>
         )}
       />
