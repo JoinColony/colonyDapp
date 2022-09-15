@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { nanoid } from 'nanoid';
@@ -26,16 +26,18 @@ const displayName = 'dashboard.ColonyDecisions.DraftDecisionItem';
 
 interface Props {
   colony: Colony;
+  draftDecision?: DecisionDetails;
+  removeDraftDecision: () => void;
 }
 
-const DraftDecisionItem = ({ colony, colony: { colonyName } }: Props) => {
+const DraftDecisionItem = ({
+  colony,
+  colony: { colonyName },
+  draftDecision,
+  removeDraftDecision,
+}: Props) => {
   const history = useHistory();
 
-  const [draftDecisionData] = useState<DecisionDetails | undefined>(
-    localStorage.getItem(LOCAL_STORAGE_DECISION_KEY) === null
-      ? undefined
-      : JSON.parse(localStorage.getItem(LOCAL_STORAGE_DECISION_KEY) || ''),
-  );
   const { username, ethereal, walletAddress } = useLoggedInUser();
   const hasRegisteredProfile = !!username && !ethereal;
 
@@ -46,12 +48,12 @@ const DraftDecisionItem = ({ colony, colony: { colonyName } }: Props) => {
   const openDecisionDialog = useDialog(DecisionDialog);
   const deleteDecision = () => {
     localStorage.removeItem(LOCAL_STORAGE_DECISION_KEY);
-    history.push(`/colony/${colonyName}/decisions`);
+    removeDraftDecision();
   };
 
   return hasRegisteredProfile &&
-    draftDecisionData &&
-    draftDecisionData.userAddress === walletAddress ? (
+    draftDecision &&
+    draftDecision.userAddress === walletAddress ? (
     <ul className={styles.draftDecision}>
       <ActionsListItem
         item={{
@@ -61,7 +63,7 @@ const DraftDecisionItem = ({ colony, colony: { colonyName } }: Props) => {
           actionType: ColonyMotions.CreateDecisionMotion,
         }}
         handleOnClick={redirectToPreview}
-        draftData={draftDecisionData}
+        draftData={draftDecision}
         colony={colony}
         actions={
           <>

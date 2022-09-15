@@ -16,8 +16,7 @@ import { allAllowedExtensions } from '~data/staticData/';
 
 import ColonyActions from '~dashboard/ColonyActions';
 import ColonyEvents from '~dashboard/ColonyEvents';
-import ColonyDecisions from '~dashboard/ColonyDecisions';
-import ColonyNewDecision from '~dashboard/ColonyNewDecision';
+import { ColonyDecisionsWrapper } from '~dashboard/ColonyDecisions';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { useColonyFromNameQuery } from '~data/index';
@@ -101,22 +100,11 @@ const ColonyHome = ({ match, location }: Props) => {
           <Route
             path={COLONY_DECISIONS_ROUTE}
             component={() => (
-              <ColonyHomeLayout
+              <ColonyDecisionsWrapper
                 colony={colony}
                 filteredDomainId={filteredDomainId}
                 onDomainChange={setDomainIdFilter}
-                newItemButton={
-                  <ColonyNewDecision
-                    colony={colony}
-                    ethDomainId={filteredDomainId}
-                  />
-                }
-              >
-                <ColonyDecisions
-                  colony={colony}
-                  ethDomainId={filteredDomainId}
-                />
-              </ColonyHomeLayout>
+              />
             )}
           />
           <Route
