@@ -180,72 +180,74 @@ const StakingSlider = ({
           {...(isObjection ? MSG.descriptionObject : MSG.descriptionStake)}
         />
       </p>
-      <span className={styles.minStakeAmountContainer}>
-        <Tooltip
-          trigger="hover"
-          content={
-            <div className={styles.tooltip}>
-              <FormattedMessage {...MSG.tooltip} />
-            </div>
-          }
-          placement="top"
-          popperOptions={{
-            modifiers: [
-              {
-                name: 'offset',
-                options: {
-                  offset: [0, 0],
+      {!remainingToStake.isZero() && (
+        <span className={styles.minStakeAmountContainer}>
+          <Tooltip
+            trigger="hover"
+            content={
+              <div className={styles.tooltip}>
+                <FormattedMessage {...MSG.tooltip} />
+              </div>
+            }
+            placement="top"
+            popperOptions={{
+              modifiers: [
+                {
+                  name: 'offset',
+                  options: {
+                    offset: [0, 0],
+                  },
                 },
-              },
-            ],
-          }}
-        >
-          {errorStakeType === 'tokens' ? (
-            <span className={styles.minStakeAmount}>
-              <FormattedMessage
-                {...MSG.minimumAmount}
-                values={{
-                  minStake: (
-                    <Numeral
-                      className={styles.minStakeAmount}
-                      value={getFormattedTokenValue(
-                        minUserStake,
-                        nativeToken?.decimals,
-                      )}
-                      suffix={nativeToken?.symbol}
-                    />
-                  ),
-                }}
-              />
-            </span>
-          ) : (
-            <>
-              <Numeral
-                className={styles.amount}
-                value={displayStake}
-                suffix={nativeToken?.symbol}
-              />
-              <span
-                className={classnames(styles.requiredStakeText, {
-                  [styles.requiredStakeUnderThreshold]:
-                    !isThresholdAchieved && userStakePercentage < 10,
-                  [styles.requiredStakeAboveThreshold]:
-                    isThresholdAchieved || userStakePercentage >= 10,
-                })}
-              >
+              ],
+            }}
+          >
+            {errorStakeType === 'tokens' ? (
+              <span className={styles.minStakeAmount}>
                 <FormattedMessage
-                  {...MSG.requiredStake}
+                  {...MSG.minimumAmount}
                   values={{
-                    stakePercentage: formatNumber({
-                      truncate: 2,
-                    })(userStakePercentage),
+                    minStake: (
+                      <Numeral
+                        className={styles.minStakeAmount}
+                        value={getFormattedTokenValue(
+                          minUserStake,
+                          nativeToken?.decimals,
+                        )}
+                        suffix={nativeToken?.symbol}
+                      />
+                    ),
                   }}
                 />
               </span>
-            </>
-          )}
-        </Tooltip>
-      </span>
+            ) : (
+              <>
+                <Numeral
+                  className={styles.amount}
+                  value={displayStake}
+                  suffix={nativeToken?.symbol}
+                />
+                <span
+                  className={classnames(styles.requiredStakeText, {
+                    [styles.requiredStakeUnderThreshold]:
+                      !isThresholdAchieved && userStakePercentage < 10,
+                    [styles.requiredStakeAboveThreshold]:
+                      isThresholdAchieved || userStakePercentage >= 10,
+                  })}
+                >
+                  <FormattedMessage
+                    {...MSG.requiredStake}
+                    values={{
+                      stakePercentage: formatNumber({
+                        truncate: 2,
+                      })(userStakePercentage),
+                    }}
+                  />
+                </span>
+              </>
+            )}
+          </Tooltip>
+        </span>
+      )}
       <div className={styles.sliderContainer}>
         <Slider
           name="amount"
