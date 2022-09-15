@@ -8,6 +8,7 @@
     "at-sign-circle",
     "attachment",
     "bell",
+    "caret-down",
     "caret-down-small",
     "caret-left",
     "caret-right-small",
@@ -33,6 +34,7 @@
     "circle-thumbs-up-grey",
     "circle-thumbs-up-outlined",
     "clny-token",
+    "clock",
     "close",
     "colony-logo",
     "comment",
@@ -101,11 +103,7 @@
     "user-plus",
     "wallet"
   ],
-  "multiColorIcons": [
-    "circle-check-primary",
-    "metamask",
-    "shield-pink"
-  ],
+  "multiColorIcons": ["circle-check-primary", "metamask", "shield-pink"],
   "badges": [
     "Alessandra Aphid",
     "Terry Termite",
