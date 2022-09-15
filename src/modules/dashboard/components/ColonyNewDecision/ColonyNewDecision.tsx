@@ -68,6 +68,9 @@ const ColonyNewDecision = ({ colony, ethDomainId }: Props) => {
   const openDecisionDialog = useDialog(DecisionDialog);
   const openDeleteDraftDialog = useDialog(RemoveDraftCreateNewDecision);
 
+  const openNewDecisionDialog = () =>
+    openDecisionDialog({ colony, ethDomainId, isNewDecision: true });
+
   const hasRegisteredProfile = !!username && !ethereal;
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
   const mustUpgrade = colonyMustBeUpgraded(colony, networkVersion as string);
@@ -82,12 +85,8 @@ const ColonyNewDecision = ({ colony, ethDomainId }: Props) => {
           text={MSG.newDecision}
           onClick={() =>
             draftDecisionData === undefined
-              ? openDecisionDialog({ colony, ethDomainId, isNewDecision: true })
-              : openDeleteDraftDialog({
-                  colony,
-                  ethDomainId,
-                  isNewDecision: true,
-                })
+              ? openNewDecisionDialog()
+              : openDeleteDraftDialog({ colony, openNewDecisionDialog })
           }
           disabled={
             mustUpgrade ||

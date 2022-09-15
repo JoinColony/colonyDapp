@@ -3,9 +3,8 @@ import { defineMessage, FormattedMessage } from 'react-intl';
 import { useHistory } from 'react-router';
 
 import Button from '~core/Button';
-import Dialog, { DialogSection, useDialog } from '~core/Dialog';
+import Dialog, { DialogSection } from '~core/Dialog';
 import Heading from '~core/Heading';
-import DecisionDialog from '~dashboard/Dialogs/DecisionDialog';
 
 import { Colony } from '~data/index';
 import { LOCAL_STORAGE_DECISION_KEY } from '~constants';
@@ -41,24 +40,20 @@ interface Props {
   cancel: () => void;
   close: () => void;
   colony: Colony;
-  ethDomainId: number;
-  isNewDecision: boolean;
+  openNewDecisionDialog: () => void;
 }
 
 const RemoveDraftDecisionDialog = ({
   cancel,
   close,
-  colony,
   colony: { colonyName },
-  ...props
+  openNewDecisionDialog,
 }: Props) => {
   const history = useHistory();
   const redirectToPreview = () => {
     close();
     history.push(`/colony/${colonyName}/decisions/preview`);
   };
-
-  const openDecisionDialog = useDialog(DecisionDialog);
 
   return (
     <Dialog cancel={cancel}>
@@ -68,7 +63,7 @@ const RemoveDraftDecisionDialog = ({
           textValues={{
             // @ts-ignore
             removeDraft: (
-              <span className={styles.redTitle}>
+              <span className={styles.redTitle} key={1}>
                 <FormattedMessage {...MSG.removeDraft} />
               </span>
             ),
@@ -97,7 +92,7 @@ const RemoveDraftDecisionDialog = ({
           onClick={() => {
             localStorage.removeItem(LOCAL_STORAGE_DECISION_KEY);
             close();
-            openDecisionDialog({ ...props, colony });
+            openNewDecisionDialog();
           }}
         />
       </DialogSection>
