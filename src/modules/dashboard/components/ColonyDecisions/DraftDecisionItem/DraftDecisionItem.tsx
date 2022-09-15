@@ -10,7 +10,7 @@ import ConfirmDeleteDialog from '~dashboard/Dialogs/ConfirmDeleteDialog';
 import DecisionDialog from '~dashboard/Dialogs/DecisionDialog';
 
 import { LOCAL_STORAGE_DECISION_KEY } from '~constants';
-import { DecisionDetails } from '~types/index';
+import { ColonyMotions, DecisionDetails } from '~types/index';
 import { Colony, useLoggedInUser } from '~data/index';
 
 import styles from './DraftDecisionItem.css';
@@ -58,6 +58,7 @@ const DraftDecisionItem = ({ colony, colony: { colonyName } }: Props) => {
           isDecision: true,
           initiator: walletAddress,
           status: ItemStatus.Yellow,
+          actionType: ColonyMotions.CreateDecisionMotion,
         }}
         handleOnClick={redirectToPreview}
         draftData={draftDecisionData}
