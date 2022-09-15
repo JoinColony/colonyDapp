@@ -131,7 +131,6 @@ const ColonyDecisions = ({
 
   const sortedDecisions = useMemo(
     () =>
-      // [],
       filteredDecisions.sort((first, second) =>
         sortOption === SortOptions.ENDING_SOONEST
           ? first.createdAt.getTime() - second.createdAt.getTime()
