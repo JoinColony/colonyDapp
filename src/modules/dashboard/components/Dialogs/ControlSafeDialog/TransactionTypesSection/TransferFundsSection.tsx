@@ -1,18 +1,17 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { defineMessages } from 'react-intl';
 
-import {
-  AnyUser,
-  Colony,
-  useMembersSubscription,
-  useNetworkContracts,
-} from '~data/index';
+import { AnyUser, Colony, useMembersSubscription } from '~data/index';
 import { Address } from '~types/index';
-import { AmountTokens } from '~core/Fields';
 import UserAvatar from '~core/UserAvatar';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import { DialogSection } from '~core/Dialog';
+import {
+  getChainNameFromSafe,
+  getTxServiceBaseUrl,
+} from '~modules/dashboard/sagas/utils/safeHelpers';
 
+import AmountBalances, { SafeBalance } from '../AmountBalances';
 import { FormValues } from '../ControlSafeDialog';
 
 import styles from './TransactionTypesSection.css';
@@ -47,38 +46,72 @@ const renderAvatar = (address: Address, item: AnyUser) => (
 );
 
 const TransferFundsSection = ({
-  colony: { tokens, colonyAddress },
+  colony: { colonyAddress, safes },
   disabledInput,
   values,
   transactionFormIndex,
   setFieldValue,
 }: Props) => {
+  const [safeBalances, setSafeBalances] = useState<SafeBalance[]>([]);
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress },
   });
-  const { feeInverse: networkFeeInverse } = useNetworkContracts();
+
+  const safeAddress = values.safe?.profile?.walletAddress;
+
+  const getSafeBalance = useCallback(async () => {
+    if (values.safe?.profile?.displayName) {
+      const chainName = getChainNameFromSafe(values.safe.profile.displayName);
+      const baseUrl = getTxServiceBaseUrl(chainName);
+      try {
+        const response = await fetch(
+          `${baseUrl}api/v1/safes/${safeAddress}/balances/`,
+        );
+        if (response.status === 200) {
+          const data = await response.json();
+          setSafeBalances(data);
+        }
+      } catch (e) {
+        setSafeBalances([]);
+        console.error(e);
+      }
+    }
+  }, [values.safe, safeAddress]);
+
   const selectedTokenAddress =
     values.transactions[transactionFormIndex].tokenAddress;
-  const selectedToken = useMemo(
-    () => tokens.find((token) => token.address === selectedTokenAddress),
-    [tokens, selectedTokenAddress],
+  const selectedBalance = useMemo(
+    () =>
+      safeBalances?.find(
+        (balance) => balance.tokenAddress === selectedTokenAddress,
+      ),
+    [safeBalances, selectedTokenAddress],
   );
+  const selectedSafe = safes.find(
+    (safe) => safe.contractAddress === values.safe?.profile?.walletAddress,
+  );
+
+  useEffect(() => {
+    if (safeAddress) {
+      getSafeBalance();
+    }
+  }, [safeAddress, getSafeBalance]);
 
   return (
     <>
       <DialogSection>
-        <AmountTokens
+        <AmountBalances
           values={values}
-          networkFeeInverse={networkFeeInverse}
-          selectedToken={selectedToken}
-          tokens={tokens}
+          selectedBalance={selectedBalance}
+          selectedSafe={selectedSafe}
+          safeBalances={safeBalances}
           disabledInput={disabledInput}
           inputName={`transactions.${transactionFormIndex}.amount`}
           selectorName={`transactions.${transactionFormIndex}.tokenAddress`}
           // @TODO: Connect max amount to max amount in safe
           maxButtonParams={{
             fieldName: `transactions.${transactionFormIndex}.amount`,
-            maxAmount: '0',
+            maxAmount: `${selectedBalance?.balance || 0}`,
             setFieldValue,
           }}
         />
