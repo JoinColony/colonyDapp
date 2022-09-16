@@ -29,6 +29,7 @@ import {
   COLONY_EXTENSION_DETAILS_ROUTE,
   COLONY_EXTENSIONS_ROUTE,
   COLONY_FUNDING_ROUTE,
+  DECISIONS_PAGE_ROUTE,
 } from '~routes/routeConstants';
 import { SimpleMessageValues } from '~types/index';
 import { useColonyFromNameQuery } from '~data/index';
@@ -170,6 +171,7 @@ const routeMessages: Record<string, MessageDescriptor> = {
   [MEMBERS_ROUTE]: MSG.colonyMembers,
   [USER_ROUTE]: MSG.userProfile,
   [ACTIONS_PAGE_ROUTE]: MSG.transactionDetails,
+  [DECISIONS_PAGE_ROUTE]: MSG.transactionDetails,
   '/': MSG.fallbackTitle,
 };
 
