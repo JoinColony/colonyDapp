@@ -72,7 +72,7 @@ const ColonyDecisions = ({
 
   const handleActionRedirect = useCallback(
     ({ transactionHash }: RedirectHandlerProps) =>
-      history.push(`/colony/${colonyName}/tx/${transactionHash}`),
+      history.push(`/colony/${colonyName}/decisions/tx/${transactionHash}`),
     [colonyName, history],
   );
 

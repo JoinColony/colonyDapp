@@ -50,6 +50,7 @@ import {
   ACTIONS_PAGE_ROUTE,
   UNWRAP_TOKEN_ROUTE,
   CLAIM_TOKEN_ROUTE,
+  DECISIONS_PAGE_ROUTE,
 } from './routeConstants';
 
 import AlwaysAccesibleRoute from './AlwaysAccesibleRoute';
@@ -241,6 +242,16 @@ const Routes = () => {
             backText: '',
             backRoute: `/colony/${colonyName}`,
             hasSubscribedColonies: isMobile,
+          })}
+        />
+        <AlwaysAccesibleRoute
+          exact
+          path={DECISIONS_PAGE_ROUTE}
+          component={ActionsPage}
+          layout={NavBar}
+          routeProps={({ colonyName }) => ({
+            backText: '',
+            backRoute: `/colony/${colonyName}/decisions`,
           })}
         />
         <AlwaysAccesibleRoute
