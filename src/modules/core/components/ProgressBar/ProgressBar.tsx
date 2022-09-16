@@ -69,7 +69,6 @@ const ProgressBar = ({
           >
             {threshold}%
           </span>
-
           <div className={styles.thresholdSeparator} />
         </div>
       )}

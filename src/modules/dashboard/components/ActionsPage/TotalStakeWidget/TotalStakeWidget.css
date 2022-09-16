@@ -62,11 +62,6 @@
   font-weight: var(--weight-bold);
 }
 
-.thresholdSeparator {
-  height: 22px;
-  width: 3px;
-}
-
 .helpTooltip {
   align-self: flex-end;
   margin-left: 7px;

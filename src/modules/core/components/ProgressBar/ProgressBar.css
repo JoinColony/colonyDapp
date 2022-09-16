@@ -74,7 +74,7 @@
   flex-direction: column;
   align-items: center;
   position: absolute;
-  top: -21px;
+  top: -19px;
 }
 
 .thresholdPercentage {
@@ -96,7 +96,8 @@
 }
 
 .sizeNormal .thresholdSeparator {
-  height: 22px;
+  height: 18px;
+  border-radius: 3px;
 }
 
 .borderRadiusSmall .main::-webkit-progress-bar {
