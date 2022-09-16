@@ -133,30 +133,32 @@ const Batch = ({ colony }: Props) => {
                 ) : (
                   tokens?.map((singleToken, index) => {
                     const { token, value } = singleToken || {};
+                    if (!token) {
+                      return null;
+                    }
+
                     return (
-                      token && (
-                        <div
-                          className={classNames(styles.value, {
-                            [styles.marginBottom]:
-                              tokens.length > 1 && index + 1 !== tokens.length,
-                          })}
-                          key={`${token.id}_${index}`}
-                        >
-                          {formatMessage(MSG.valueWithToken, {
-                            token: token.symbol,
-                            amount: value,
-                            icon: (
-                              <span className={styles.icon}>
-                                <TokenIcon
-                                  className={styles.tokenIcon}
-                                  token={token}
-                                  name={token?.name || token?.address}
-                                />
-                              </span>
-                            ),
-                          })}
-                        </div>
-                      )
+                      <div
+                        className={classNames(styles.value, {
+                          [styles.marginBottom]:
+                            tokens.length > 1 && index + 1 !== tokens.length,
+                        })}
+                        key={`${token.id}_${index}`}
+                      >
+                        {formatMessage(MSG.valueWithToken, {
+                          token: token.symbol,
+                          amount: value,
+                          icon: (
+                            <span className={styles.icon}>
+                              <TokenIcon
+                                className={styles.tokenIcon}
+                                token={token}
+                                name={token?.name || token?.address}
+                              />
+                            </span>
+                          ),
+                        })}
+                      </div>
                     );
                   })
                 )}
