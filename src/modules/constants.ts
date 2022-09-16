@@ -5,7 +5,7 @@ import { Color } from '~core/ColorTag';
 export type TokenInfo = {
   name: string;
   symbol: string;
-  decimals?: number;
+  decimals: number;
 };
 
 export type NetworkInfo = {
@@ -13,6 +13,7 @@ export type NetworkInfo = {
   chainId: number;
   shortName: string;
   apiUri: string;
+  nativeToken: TokenInfo;
   description?: string;
   displayENSDomain?: string;
   /**
@@ -72,6 +73,30 @@ export const GOERLI_TOKEN: TokenInfo = {
   decimals: 18,
 };
 
+const AVALANCHE_TOKEN: TokenInfo = {
+  name: 'Avalanche',
+  symbol: 'AVAX',
+  decimals: 18,
+};
+
+const BINANCE_TOKEN: TokenInfo = {
+  name: 'Binance',
+  symbol: 'BNB',
+  decimals: 18,
+};
+
+const POLYGON_TOKEN: TokenInfo = {
+  name: 'Polygon',
+  symbol: 'MATIC',
+  decimals: 18,
+};
+
+const OPTIMISM_TOKEN: TokenInfo = {
+  name: 'Optimism',
+  symbol: 'OP',
+  decimals: 18,
+};
+
 export const GNOSIS_NETWORK: NetworkInfo = {
   /*
    * Needs to be this exact name, otherwise Metamask marks it as "not valid" when adding it
@@ -87,6 +112,7 @@ export const GNOSIS_NETWORK: NetworkInfo = {
   rpcUrl: 'https://rpc.gnosischain.com',
   safeTxService: 'https://safe-transaction.xdai.gnosis.io/api',
   apiUri: 'https://blockscout.com/xdai/mainnet/api',
+  nativeToken: XDAI_TOKEN,
 };
 
 export const ETHEREUM_NETWORK: NetworkInfo = {
@@ -101,6 +127,7 @@ export const ETHEREUM_NETWORK: NetworkInfo = {
   rpcUrl: 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
   safeTxService: 'https://safe-transaction.mainnet.gnosis.io/api',
   apiUri: 'https://api.etherscan.io/api',
+  nativeToken: ETHER_TOKEN,
 };
 
 export const GOERLI_NETWORK: NetworkInfo = {
@@ -115,6 +142,7 @@ export const GOERLI_NETWORK: NetworkInfo = {
   rpcUrl: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
   safeTxService: 'https://safe-transaction.goerli.gnosis.io/api',
   apiUri: 'https://api-goerli.etherscan.io/api',
+  nativeToken: GOERLI_TOKEN,
 };
 
 const ARBITRUM_NETWORK: NetworkInfo = {
@@ -125,6 +153,7 @@ const ARBITRUM_NETWORK: NetworkInfo = {
   safeTxService: 'https://safe-transaction.arbitrum.gnosis.io/api',
   rpcUrl: 'https://rpc.ankr.com/arbitrum',
   apiUri: 'https://api.arbiscan.io/api',
+  nativeToken: ETHER_TOKEN,
 };
 
 const AURORA_NETWORK: NetworkInfo = {
@@ -135,6 +164,7 @@ const AURORA_NETWORK: NetworkInfo = {
   safeTxService: 'https://safe-transaction.aurora.gnosis.io/api',
   rpcUrl: 'https://testnet.aurora.dev/',
   apiUri: 'https://api.aurorascan.dev/api',
+  nativeToken: ETHER_TOKEN,
 };
 
 const AVALANCHE_NETWORK: NetworkInfo = {
@@ -145,6 +175,7 @@ const AVALANCHE_NETWORK: NetworkInfo = {
   safeTxService: 'https://safe-transaction.avalanche.gnosis.io/api',
   rpcUrl: 'https://api.avax.network/ext/bc/C/rpc',
   apiUri: 'https://api.snowtrace.io/api',
+  nativeToken: AVALANCHE_TOKEN,
 };
 
 export const BINANCE_NETWORK: NetworkInfo = {
@@ -155,6 +186,7 @@ export const BINANCE_NETWORK: NetworkInfo = {
   safeTxService: 'https://safe-transaction.bsc.gnosis.io/api',
   rpcUrl: 'https://bsc-dataseed.binance.org/',
   apiUri: 'https://api.bscscan.com/api',
+  nativeToken: BINANCE_TOKEN,
 };
 
 const OPTIMISM_NETWORK: NetworkInfo = {
@@ -165,6 +197,7 @@ const OPTIMISM_NETWORK: NetworkInfo = {
   safeTxService: 'https://safe-transaction.optimism.gnosis.io/api',
   rpcUrl: 'https://mainnet.optimism.io',
   apiUri: 'https://api-optimistic.etherscan.io/api',
+  nativeToken: OPTIMISM_TOKEN,
 };
 
 export const POLYGON_NETWORK: NetworkInfo = {
@@ -175,6 +208,7 @@ export const POLYGON_NETWORK: NetworkInfo = {
   safeTxService: 'https://safe-transaction.polygon.gnosis.io/api',
   rpcUrl: 'https://polygon-rpc.com',
   apiUri: 'https://api.polygonscan.com/api',
+  nativeToken: POLYGON_TOKEN,
 };
 
 export const RINKEBY_NETWORK: NetworkInfo = {
@@ -185,6 +219,7 @@ export const RINKEBY_NETWORK: NetworkInfo = {
   safeTxService: 'https://safe-transaction.rinkeby.gnosis.io/api',
   rpcUrl: 'https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
   apiUri: 'https://api-rinkeby.etherscan.io/api',
+  nativeToken: ETHER_TOKEN,
 };
 
 /*
@@ -202,6 +237,7 @@ export const GANACHE_NETWORK: NetworkInfo = {
   contractAddressLink: 'http://localhost',
   rpcUrl: 'http://localhost:8545',
   apiUri: '',
+  nativeToken: ETHER_TOKEN,
 };
 
 export const NETWORK_DATA: { [key: string]: NetworkInfo } = {
