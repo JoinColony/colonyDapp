@@ -163,7 +163,10 @@ function* createDecisionMotion({
     });
 
     if (colonyName) {
-      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
+      yield routeRedirect(
+        `/colony/${colonyName}/decisions/tx/${txHash}`,
+        history,
+      );
     }
   } catch (caughtError) {
     putError(ActionTypes.MOTION_CREATE_DECISION_ERROR, caughtError, meta);

@@ -20,5 +20,6 @@ export const WALLET_ROUTE = '/wallet';
 export const NOT_FOUND_ROUTE = '/404';
 export const LANDING_PAGE_ROUTE = '/landing';
 export const ACTIONS_PAGE_ROUTE = `${COLONY_HOME_ROUTE}/tx/:transactionHash`;
+export const DECISIONS_PAGE_ROUTE = `${COLONY_HOME_ROUTE}/decisions/tx/:transactionHash`;
 export const UNWRAP_TOKEN_ROUTE = `${COLONY_HOME_ROUTE}/unwrap-tokens`;
 export const CLAIM_TOKEN_ROUTE = `${COLONY_HOME_ROUTE}/claim-tokens`;
