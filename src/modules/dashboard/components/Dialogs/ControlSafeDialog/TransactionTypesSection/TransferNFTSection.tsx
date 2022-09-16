@@ -74,6 +74,7 @@ interface Props {
   disabledInput: boolean;
   transactionFormIndex: number;
   values: FormValues;
+  savedNFTs: [{}, React.Dispatch<React.SetStateAction<{ [x: string]: NFT[] }>>];
 }
 
 const renderAvatar = (address: string, item) => (
@@ -106,12 +107,14 @@ const TransferNFTSection = ({
   disabledInput,
   transactionFormIndex,
   values: { safe },
+  savedNFTs: { '0': savedNFTs, '1': setSavedNFTs },
 }: Props) => {
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress },
   });
 
   const [availableNFTs, setAvailableNFTs] = useState<NFTData>(undefined);
+  const [isLoadingNFTData, setIsLoadingNFTData] = useState<boolean>(false);
 
   const [{ value: selectedNFT }] = useField<SelectedNFT | null>(
     `transactions.${transactionFormIndex}.nft`,
@@ -124,26 +127,45 @@ const TransferNFTSection = ({
   ] = useField<NFT | null>(`transactions.${transactionFormIndex}.nftData`);
 
   useEffect(() => {
-    const getNFTs = async (chosenSafe: SelectedSafe) => {
-      const chainName = getChainNameFromSafe(chosenSafe);
-      const baseUrl = getTxServiceBaseUrl(chainName);
-      try {
-        const response = await fetch(
-          `${baseUrl}api/v1/safes/${chosenSafe.id}/collectibles/`,
-        );
-        if (response.status === 200) {
-          const data = await response.json();
-          setAvailableNFTs(data);
+    const getNFTData = async () => {
+      const getNFTs = async (
+        chosenSafe: SelectedSafe,
+      ): Promise<NFT[] | null> => {
+        const chainName = getChainNameFromSafe(chosenSafe);
+        const baseUrl = getTxServiceBaseUrl(chainName);
+        try {
+          const response = await fetch(
+            `${baseUrl}api/v1/safes/${chosenSafe.id}/collectibles/`,
+          );
+          if (response.status === 200) {
+            const data = await response.json();
+            return data;
+          }
+        } catch (e) {
+          log.error(e);
         }
-      } catch (e) {
-        setAvailableNFTs(null);
-        log.error(e);
+        return null;
+      };
+      if (safe) {
+        const cachedNFTs = savedNFTs[safe.id];
+        if (!cachedNFTs) {
+          setIsLoadingNFTData(true);
+          const nftData = await getNFTs(safe);
+          setAvailableNFTs(nftData);
+          if (nftData) {
+            setSavedNFTs({
+              ...savedNFTs,
+              [safe.id]: nftData,
+            });
+          }
+          setIsLoadingNFTData(false);
+        } else {
+          setAvailableNFTs(cachedNFTs);
+        }
       }
     };
-    if (safe) {
-      getNFTs(safe);
-    }
-  }, [safe]);
+    getNFTData();
+  }, [safe, savedNFTs, setSavedNFTs]);
 
   /*
    * This effect really belongs in the 'onSelected' prop of the SingleNFTPicker.
@@ -172,7 +194,7 @@ const TransferNFTSection = ({
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
   }, [selectedNFT, availableNFTs]);
 
-  if (availableNFTs === undefined && !selectedNFTData) {
+  if (isLoadingNFTData) {
     return (
       <DialogSection>
         <div className={styles.loading}>
@@ -192,7 +214,7 @@ const TransferNFTSection = ({
     );
   }
 
-  return availableNFTs?.length || selectedNFTData ? (
+  return availableNFTs?.length ? (
     <>
       {/* select NFT */}
       <DialogSection appearance={{ theme: 'sidePadding' }}>
