@@ -251,6 +251,7 @@ const ControlSafeForm = ({
     }
   };
 
+  const savedNfts = useState({});
   return (
     <>
       {!showPreview ? (
@@ -406,6 +407,7 @@ const ControlSafeForm = ({
                           transactionFormIndex={index}
                           values={values}
                           disabledInput={!userHasPermission || isSubmitting}
+                          savedNFTs={savedNfts}
                         />
                       )}
                     </div>
