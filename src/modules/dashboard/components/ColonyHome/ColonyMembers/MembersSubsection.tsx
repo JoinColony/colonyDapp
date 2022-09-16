@@ -120,7 +120,10 @@ const MembersSubsection = ({
             </div>
           }
         >
-          <ClickableHeading linkTo={membersPageRoute}>
+          <ClickableHeading
+            linkTo={membersPageRoute}
+            appearance={{ margin: 'none' }}
+          >
             <FormattedMessage
               {...MSG.title}
               values={{
@@ -132,12 +135,10 @@ const MembersSubsection = ({
           </ClickableHeading>
         </Tooltip>
         {!isContributorsSubsection && (
-          <div className={styles.inviteButton}>
-            <InviteLinkButton
-              colonyName={colonyName}
-              buttonAppearance={{ theme: 'blueWithBackground' }}
-            />
-          </div>
+          <InviteLinkButton
+            colonyName={colonyName}
+            buttonAppearance={{ theme: 'blueWithBackground' }}
+          />
         )}
       </div>
     ),
