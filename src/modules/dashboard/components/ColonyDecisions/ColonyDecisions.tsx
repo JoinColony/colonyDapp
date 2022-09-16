@@ -200,9 +200,12 @@ const ColonyDecisions = ({
           )}
         </>
       ) : (
-        <div className={styles.emptyState}>
-          <FormattedMessage {...MSG.noDecisionsFound} />
-        </div>
+        !decisionsLoading &&
+        isVotingExtensionEnabled && (
+          <div className={styles.statusMessage}>
+            <FormattedMessage {...MSG.noDecisionsFound} />
+          </div>
+        )
       )}
     </div>
   );
