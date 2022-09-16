@@ -38,8 +38,8 @@ const MSG = defineMessages({
     defaultMessage: 'Loading decisions',
   },
   installExtension: {
-    id: 'dashboard.ColonyDecisions.loading',
-    defaultMessage: `You need to install Governance extension to use Decisions feature`,
+    id: 'dashboard.ColonyDecisions.installExtension',
+    defaultMessage: `You need to install the Governance extension to use the Decisions feature.`,
   },
 });
 
@@ -193,7 +193,7 @@ const ColonyDecisions = ({
 
   if (!isVotingExtensionEnabled) {
     return (
-      <div>
+      <div className={styles.installExtension}>
         <FormattedMessage {...MSG.installExtension} />
       </div>
     );
