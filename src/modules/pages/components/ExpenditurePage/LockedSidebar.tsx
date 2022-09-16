@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import { LockedExpenditureSettings } from '~dashboard/ExpenditurePage/ExpenditureSettings';
 import { LockedPayments } from '~dashboard/ExpenditurePage/Payments';
-import { LockedSplit } from '~dashboard/ExpenditurePage/Split';
+import LockedSplit from '~dashboard/ExpenditurePage/Split/LockedSplit';
 import LockedStaged from '~dashboard/ExpenditurePage/Staged/LockedStaged/LockedStaged';
 import { Status } from '~dashboard/ExpenditurePage/Stages/constants';
 import { Colony } from '~data/index';
