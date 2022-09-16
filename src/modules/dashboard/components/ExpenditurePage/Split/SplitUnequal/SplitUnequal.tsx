@@ -6,7 +6,6 @@ import { nanoid } from 'nanoid';
 
 import { FormSection, Input, TokenSymbolSelector } from '~core/Fields';
 import { AnyUser, Colony, useMembersSubscription } from '~data/index';
-import { ValuesType } from '~pages/ExpenditurePage/ExpenditurePage';
 import UserPickerWithSearch from '~core/UserPickerWithSearch';
 import { filterUserSelection } from '~core/SingleUserPicker';
 import { supRenderAvatar } from '~dashboard/ExpenditurePage/Recipient/Recipient';
@@ -16,6 +15,7 @@ import Button from '~core/Button';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import Numeral from '~core/Numeral';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { ValuesType } from '~pages/ExpenditurePage/types';
 
 import { initalRecipient } from '../constants';
 

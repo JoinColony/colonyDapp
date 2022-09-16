@@ -140,7 +140,7 @@ const Batch = ({ colony }: Props) => {
                             [styles.marginBottom]:
                               tokens.length > 1 && index + 1 !== tokens.length,
                           })}
-                          key={token.id}
+                          key={`${token.id}_${index}`}
                         >
                           {formatMessage(MSG.valueWithToken, {
                             token: token.symbol,
