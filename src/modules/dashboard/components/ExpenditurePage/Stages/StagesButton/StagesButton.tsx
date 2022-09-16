@@ -4,7 +4,7 @@ import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import Button from '~core/Button';
 import { Tooltip } from '~core/Popover';
 import Tag from '~core/Tag';
-import { ExpenditureTypes, State } from '~pages/ExpenditurePage/types';
+import { State } from '~pages/ExpenditurePage/types';
 
 import { Motion, MotionStatus, Stage, Status } from '../constants';
 import { buttonStyles } from '../Stages';
@@ -48,13 +48,6 @@ const StagesButton = ({
       : activeState?.buttonText && formatMessage(activeState.buttonText);
 
   if (!activeState) {
-    return null;
-  }
-
-  if (
-    activeState.id === Stage.Funded &&
-    expenditureType === ExpenditureTypes.Staged
-  ) {
     return null;
   }
 
