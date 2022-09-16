@@ -36,3 +36,7 @@
   font-weight: var(--weight-bold);
   color: var(--dark);
 }
+
+.installExtension {
+  margin-top: 20px;
+}
