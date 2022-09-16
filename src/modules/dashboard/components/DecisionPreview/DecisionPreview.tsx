@@ -195,7 +195,7 @@ const DecisionPreview = () => {
           <div className={styles.buttonContainer}>
             {decisionData && decisionData.userAddress === walletAddress && (
               <Button
-                appearance={{ theme: 'secondary', size: 'large' }}
+                appearance={{ theme: 'blue', size: 'large' }}
                 onClick={() =>
                   openConfirmDeleteDialog({
                     itemName: (
@@ -209,7 +209,8 @@ const DecisionPreview = () => {
             )}
             {decisionData && decisionData.userAddress === walletAddress && (
               <Button
-                appearance={{ theme: 'secondary', size: 'large' }}
+                appearance={{ theme: 'blue', size: 'large' }}
+                // appearance={{ theme: 'secondary', size: 'large' }}
                 onClick={() =>
                   openDecisionDialog({
                     colony,

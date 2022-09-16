@@ -95,6 +95,7 @@
 .buttonContainer {
   display: flex;
   justify-content: flex-end;
+  align-items: baseline;
 }
 
 .buttonContainer button:last-child {
