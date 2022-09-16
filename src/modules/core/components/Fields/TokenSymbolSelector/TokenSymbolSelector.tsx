@@ -4,13 +4,14 @@ import { AnyToken } from '~data/index';
 
 import Select from '~core/Fields/Select';
 import TokenIcon from '~dashboard/HookedTokenIcon';
+import { SafeToken } from '~dashboard/Dialogs/ControlSafeDialog/AmountBalances';
 
 import { Props as SelectProps } from '../Select/types';
 
 import styles from './TokenSymbolSelector.css';
 
 interface Props extends Omit<SelectProps, 'options'> {
-  tokens: AnyToken[];
+  tokens: AnyToken[] | SafeToken[];
 }
 
 const displayName = 'TokenSymbolSelector';
@@ -18,7 +19,7 @@ const displayName = 'TokenSymbolSelector';
 const TokenSymbolSelector = ({ tokens, ...props }: Props) => {
   const tokenOptions = useMemo(
     () =>
-      tokens.map((token) => {
+      tokens.map((token: AnyToken | SafeToken) => {
         const labelElement = (
           elementType: 'labelElement' | 'optionElement',
         ) => (
