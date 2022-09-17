@@ -156,7 +156,7 @@ const ColonyDecisions = ({
 
   if (!isVotingExtensionEnabled && !isLoadingExtensions) {
     return (
-      <div className={styles.statusMessage}>
+      <div className={styles.installExtension}>
         <FormattedMessage {...MSG.installExtension} />
       </div>
     );
@@ -202,7 +202,7 @@ const ColonyDecisions = ({
       ) : (
         !decisionsLoading &&
         isVotingExtensionEnabled && (
-          <div className={styles.statusMessage}>
+          <div className={styles.emptyState}>
             <FormattedMessage {...MSG.noDecisionsFound} />
           </div>
         )
