@@ -15,3 +15,4 @@ export const dropzone: string;
 export const empty: string;
 export const error: string;
 export const fontSmall: string;
+export const textIconWrapper: string;
