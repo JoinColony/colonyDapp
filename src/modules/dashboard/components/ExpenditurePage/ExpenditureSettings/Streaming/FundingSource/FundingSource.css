@@ -25,6 +25,10 @@
   min-height: 41px;
 }
 
+.settingsRow label {
+  color: var(--temp-grey-blue-7);
+}
+
 .inputRateAmount {
   margin-right: 16px;
 }
@@ -37,8 +41,16 @@
   max-width: 104px;
 }
 
+.tokenWrapper i {
+  transform: translate(0, 2px);
+}
+
 .rateContainer {
   padding: 13px 0 12px;
+}
+
+.rateContainer label {
+  color: var(--temp-grey-blue-7);
 }
 
 .rate {
@@ -73,6 +85,7 @@
 .selectWrapper svg {
   fill: var(--action-secondary);
   stroke: var(--action-secondary);
+  transform: translate(0, 2px);
 }
 
 .slash {
@@ -83,6 +96,10 @@
 
 .inputWrapper {
   padding: 13px 0 12px;
+}
+
+.inputWrapper label {
+  color: var(--temp-grey-blue-7);
 }
 
 .limitContainer {
