@@ -9,6 +9,7 @@ import { Colony } from '~data/index';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
+import IconTooltip from '~core/IconTooltip';
 
 import CSVUploader from './CSVUploader';
 import PreviewDialog from './PreviewDialog';
@@ -54,8 +55,12 @@ export const MSG = defineMessages({
     defaultMessage: 'Not all rows were imported, please review. {button}',
   },
   viewAll: {
-    id: `dashboard.ExpenditurePage.Batch.CSVUploader.CSVUploaderItem.viewAll`,
+    id: `dashboard.ExpenditurePage.Batch.viewAll`,
     defaultMessage: 'View all',
+  },
+  tooltipText: {
+    id: `dashboard.ExpenditurePage.Batch.tooltipText`,
+    defaultMessage: `Download and use the .csv import template. Be sure to remove the sample data and view the details are correct once they have been imported.`,
   },
 });
 
@@ -80,7 +85,25 @@ const Batch = ({ colony }: Props) => {
     <div className={styles.batchContainer}>
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.wrapper}>
-          <FormattedMessage {...MSG.batch} />
+          <div className={styles.textIconWrapper}>
+            <FormattedMessage {...MSG.batch} />
+            <IconTooltip
+              icon="question-mark"
+              tooltipText={MSG.tooltipText}
+              appearance={{ size: 'huge' }}
+              tooltipPopperOptions={{
+                placement: 'top-end',
+                modifiers: [
+                  {
+                    name: 'offset',
+                    options: {
+                      offset: [-16, 4],
+                    },
+                  },
+                ],
+              }}
+            />
+          </div>
           {isNil(validatedData) && <DownloadTemplate />}
         </div>
       </FormSection>

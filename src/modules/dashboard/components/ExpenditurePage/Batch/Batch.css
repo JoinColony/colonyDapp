@@ -90,7 +90,7 @@
 }
 
 .empty {
-  font-weight: var(--weight-normal);
+  font-weight: var(--weight-bold);
   color: color-mod(var(--danger) alpha(85%));
 }
 
@@ -105,4 +105,13 @@
 
 .fontSmall button {
   font-size: var(--size-small);
+}
+
+.textIconWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.textIconWrapper > div {
+  margin-left: 7px;
 }
