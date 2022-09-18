@@ -12,10 +12,12 @@ import {
 import {
   Address,
   ColonyActions,
+  ColonyMotions,
   FormattedAction,
   FormattedEvent,
   ColonyAndExtensionsEvents,
 } from '~types/index';
+
 import { ACTIONS_EVENTS } from '~dashboard/ActionsPage/staticMaps';
 import { getValuesForActionType } from '~utils/colonyActions';
 import { TEMP_getContext, ContextModule } from '~context/index';
@@ -53,6 +55,7 @@ export const getActionsListData = (
     extensionAddresses,
     actionsThatNeedAttention,
   }: ActionsTransformerMetadata = {},
+  isDecision = false,
 ): FormattedAction[] => {
   let formattedActions = [];
   /*
@@ -129,7 +132,9 @@ export const getActionsListData = (
         const totalNayStake = bigNumberify(stakes[0] || 0);
         const totalYayStake = bigNumberify(stakes[1] || 0);
         const currentStake = totalNayStake.add(totalYayStake).toString();
-        const enoughStake = shouldDisplayMotion(currentStake, requiredStake);
+        const enoughStake = isDecision
+          ? true
+          : shouldDisplayMotion(currentStake, requiredStake);
         if (escalated || enoughStake) {
           return [...acc, motion];
         }
@@ -164,6 +169,9 @@ export const getActionsListData = (
             totalNayStake: '0',
             requiredStake: '0',
             reputationChange: '0',
+            isDecision:
+              unformattedAction.type === ColonyMotions.CreateDecisionMotion,
+            annotationHash: '',
           };
           let hash;
           let timestamp;
@@ -311,6 +319,7 @@ export const getActionsListData = (
                 timeoutPeriods,
                 stakes,
                 requiredStake,
+                annotationHash,
               } = unformattedAction;
 
               if (args?.token) {
@@ -330,6 +339,7 @@ export const getActionsListData = (
               formatedAction.fromDomain = ethDomainId;
               formatedAction.motionId = fundamentalChainId;
               formatedAction.timeoutPeriods = timeoutPeriods;
+              formatedAction.annotationHash = annotationHash;
               formatedAction.totalNayStake = bigNumberify(
                 stakes[0] || 0,
               ).toString();

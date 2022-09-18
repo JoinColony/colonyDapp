@@ -1,17 +1,22 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory } from 'react-router-dom';
+import { Extension, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import ActionsList, {
   ClickHandlerProps as RedirectHandlerProps,
 } from '~core/ActionsList';
 import { Select, Form } from '~core/Fields';
 import LoadMoreButton from '~core/LoadMoreButton';
 import { SpinnerLoader } from '~core/Preloaders';
-
-import { Colony } from '~data/index';
+import {
+  Colony,
+  useSubgraphDecisionsSubscription,
+  useColonyExtensionsQuery,
+} from '~data/index';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
+import { useTransformer } from '~utils/hooks';
+import { getActionsListData } from '~modules/dashboard/transformers';
 
 import { SortOptions, SortSelectOptions } from './constants';
 import styles from './ColonyDecisions.css';
@@ -35,7 +40,7 @@ const MSG = defineMessages({
   },
   loading: {
     id: 'dashboard.ColonyDecisions.loading',
-    defaultMessage: 'Loading decisions',
+    defaultMessage: 'Loading Decisions',
   },
   installExtension: {
     id: 'dashboard.ColonyDecisions.installExtension',
@@ -51,107 +56,17 @@ type Props = {
   ethDomainId?: number;
 };
 
-/* temp data */
-const data = [
-  {
-    id: `0xeabe562c979679dc4023dd23e8c6aa782448c2e7_motion_0xa1e73506f3ef6dc19dc27b750adf585fd0f30c63_2`,
-    initiator: '0xb77d57f4959eafa0339424b83fcfaf9c15407461',
-    recipient: '0x0000000000000000000000000000000000000000',
-    title: 'I want to add dark mode to the Dapp',
-    motionState: 'Passed',
-    isDecision: true,
-    motionId: '2',
-    createdAt: new Date(
-      'Sun Aug 17 2022 12:48:59 GMT+0300 (Eastern European Summer Time)',
-    ),
-    ending: new Date(
-      'Sun Aug 27 2022 12:48:59 GMT+0300 (Eastern European Summer Time)',
-    ),
-  },
-  {
-    title: 'Update the logo design',
-    isDecision: true,
-    actionType: undefined,
-    amount: '0',
-    blockNumber: 853,
-    commentCount: 0,
-    createdAt: new Date(
-      'Sun Aug 14 2022 12:48:59 GMT+0300 (Eastern European Summer Time)',
-    ),
-    ending: new Date(
-      'Sun Aug 24 2022 12:48:59 GMT+0300 (Eastern European Summer Time)',
-    ),
-    decimals: '18',
-    fromDomain: '1',
-    id: `0xeabe562c979679dc4023dd23e8c6aa782448c2e7_motion_0xa1e73506f3ef6dc19dc27b750adf585fd0f30c63_1`,
-    initiator: '0xb77d57f4959eafa0339424b83fcfaf9c15407461',
-    motionId: '1',
-    motionState: 'Staking',
-    recipient: '0x0000000000000000000000000000000000000000',
-    reputationChange: '0',
-    requiredStake: '1010101010101010101',
-    status: undefined,
-    symbol: '???',
-    timeoutPeriods: undefined,
-    toDomain: '1',
-    tokenAddress: '0x0000000000000000000000000000000000000000',
-    totalNayStake: '0',
-    transactionHash:
-      '0x9c742b1392fadb48c0bc0d2cebdd518e7b11c0c1ab426c084a06c68ea77f8f70',
-    transactionTokenAddress: undefined,
-  },
-  {
-    title: 'Update the actions design',
-    isDecision: true,
-    actionType: undefined,
-    amount: '0',
-    blockNumber: 853,
-    commentCount: 0,
-    createdAt: new Date(
-      'Sun Aug 18 2022 12:48:59 GMT+0300 (Eastern European Summer Time)',
-    ),
-    ending: new Date(
-      'Sun Aug 28 2022 12:48:59 GMT+0300 (Eastern European Summer Time)',
-    ),
-    decimals: '18',
-    fromDomain: '2',
-    id: `0xeabe562c979679dc4023dd23e8c6aa782448c2e7_motion_0xa1e73506f3ef6dc19dc27b750adf585fd0f30c63_3`,
-    initiator: '0xb77d57f4959eafa0339424b83fcfaf9c15407461',
-    motionId: '1',
-    motionState: 'Staked',
-    recipient: '0x0000000000000000000000000000000000000000',
-    reputationChange: '0',
-    requiredStake: '1010101010101010101',
-    status: undefined,
-    symbol: '???',
-    timeoutPeriods: undefined,
-    toDomain: '2',
-    tokenAddress: '0x0000000000000000000000000000000000000000',
-    totalNayStake: '0',
-    transactionHash:
-      '0x9c742b1392fadb48c0bc0d2cebdd518e7b11c0c1ab426c084a06c68ea77f8f70',
-    transactionTokenAddress: undefined,
-  },
-];
-
 const ITEMS_PER_PAGE = 10;
 
 const ColonyDecisions = ({
   colony,
-  colony: { colonyName },
+  colony: { colonyName, colonyAddress },
   ethDomainId,
 }: Props) => {
   const [sortOption, setSortOption] = useState<string>(
     SortOptions.ENDING_SOONEST,
   );
   const [dataPage, setDataPage] = useState<number>(1);
-
-  const { isVotingExtensionEnabled } = useEnabledExtensions({
-    colonyAddress: colony.colonyAddress,
-  });
-
-  // temp values, to be removed when queries are wired in
-  const isLoading = false;
 
   const history = useHistory();
 
@@ -161,11 +76,48 @@ const ColonyDecisions = ({
     [colonyName, history],
   );
 
+  const {
+    isVotingExtensionEnabled,
+    isLoadingExtensions,
+  } = useEnabledExtensions({
+    colonyAddress,
+  });
+
+  const { data: extensions } = useColonyExtensionsQuery({
+    variables: { address: colonyAddress },
+  });
+  const { installedExtensions } = extensions?.processedColony || {};
+  const votingReputationExtension = installedExtensions?.find(
+    ({ extensionId }) => extensionId === Extension.VotingReputation,
+  );
+
+  const {
+    data: motions,
+    loading: decisionsLoading,
+  } = useSubgraphDecisionsSubscription({
+    variables: {
+      /*
+       * @NOTE We always need to fetch one more item so that we know that more
+       * items exist and we show the "load more" button
+       */
+      colonyAddress: colonyAddress?.toLowerCase() || '',
+      extensionAddress: votingReputationExtension?.address?.toLowerCase() || '',
+    },
+  });
+
+  const decisions = useTransformer(getActionsListData, [
+    installedExtensions?.map(({ address }) => address) as string[],
+    { ...motions },
+    undefined,
+    {},
+    true,
+  ]);
+
   const filteredDecisions = useMemo(
     () =>
       !ethDomainId || ethDomainId === ROOT_DOMAIN_ID
-        ? data
-        : data.filter(
+        ? decisions
+        : decisions?.filter(
             (decision) =>
               decision.toDomain === ethDomainId.toString() ||
               decision.fromDomain === ethDomainId.toString() ||
@@ -173,15 +125,15 @@ const ColonyDecisions = ({
               (ethDomainId === ROOT_DOMAIN_ID &&
                 decision.fromDomain === undefined),
           ),
-    [ethDomainId],
+    [ethDomainId, decisions],
   );
 
   const sortedDecisions = useMemo(
     () =>
       filteredDecisions.sort((first, second) =>
         sortOption === SortOptions.ENDING_SOONEST
-          ? first.ending.getTime() - second.ending.getTime()
-          : second.ending.getTime() - first.ending.getTime(),
+          ? first.createdAt.getTime() - second.createdAt.getTime()
+          : second.createdAt.getTime() - first.createdAt.getTime(),
       ),
     [sortOption, filteredDecisions],
   );
@@ -191,15 +143,7 @@ const ColonyDecisions = ({
     ITEMS_PER_PAGE * dataPage,
   );
 
-  if (!isVotingExtensionEnabled) {
-    return (
-      <div className={styles.installExtension}>
-        <FormattedMessage {...MSG.installExtension} />
-      </div>
-    );
-  }
-
-  if (isLoading) {
+  if (decisionsLoading) {
     return (
       <div className={styles.loadingSpinner}>
         <SpinnerLoader
@@ -210,9 +154,17 @@ const ColonyDecisions = ({
     );
   }
 
+  if (!isVotingExtensionEnabled && !isLoadingExtensions) {
+    return (
+      <div className={styles.installExtension}>
+        <FormattedMessage {...MSG.installExtension} />
+      </div>
+    );
+  }
+
   return (
     <div>
-      {data.length > 0 ? (
+      {sortedDecisions.length > 0 ? (
         <>
           <div className={styles.bar}>
             <div className={styles.title}>
@@ -240,17 +192,20 @@ const ColonyDecisions = ({
             handleItemClick={handleActionRedirect}
             colony={colony}
           />
-          {ITEMS_PER_PAGE * dataPage < data.length && (
+          {ITEMS_PER_PAGE * dataPage < decisions?.length && (
             <LoadMoreButton
               onClick={() => setDataPage(dataPage + 1)}
-              isLoadingData={isLoading}
+              isLoadingData={decisionsLoading}
             />
           )}
         </>
       ) : (
-        <div className={styles.emptyState}>
-          <FormattedMessage {...MSG.noDecisionsFound} />
-        </div>
+        !decisionsLoading &&
+        isVotingExtensionEnabled && (
+          <div className={styles.emptyState}>
+            <FormattedMessage {...MSG.noDecisionsFound} />
+          </div>
+        )
       )}
     </div>
   );

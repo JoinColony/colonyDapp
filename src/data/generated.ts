@@ -1380,6 +1380,7 @@ export type SubscriptionMotion = {
   type: Scalars['String'];
   args: SubscriptionMotionArguments;
   timeoutPeriods: MotionTimeoutPeriods;
+  annotationHash: Scalars['String'];
 };
 
 export type SubscriptionMotionArguments = {
@@ -2649,11 +2650,43 @@ export type SubgraphMotionsSubscriptionVariables = Exact<{
   first?: Maybe<Scalars['Int']>;
   colonyAddress: Scalars['String'];
   extensionAddress: Scalars['String'];
+  motionActionNot?: Maybe<Scalars['String']>;
 }>;
 
 
 export type SubgraphMotionsSubscription = { motions: Array<(
     Pick<SubscriptionMotion, 'id' | 'fundamentalChainId' | 'extensionAddress' | 'agent' | 'stakes' | 'requiredStake' | 'escalated' | 'action' | 'state' | 'type'>
+    & { associatedColony: (
+      { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }
+      & { token: (
+        Pick<SubgraphToken, 'decimals' | 'symbol'>
+        & { address: SubgraphToken['id'] }
+      ) }
+    ), transaction: (
+      { hash: SubgraphTransaction['id'] }
+      & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
+    ), domain: (
+      Pick<SubgraphDomain, 'name'>
+      & { ethDomainId: SubgraphDomain['domainChainId'] }
+    ), args: (
+      Pick<SubscriptionMotionArguments, 'amount'>
+      & { token: (
+        Pick<SubgraphToken, 'symbol' | 'decimals'>
+        & { address: SubgraphToken['id'] }
+      ) }
+    ), timeoutPeriods: Pick<MotionTimeoutPeriods, 'timeLeftToStake' | 'timeLeftToSubmit' | 'timeLeftToReveal' | 'timeLeftToEscalate'> }
+  )> };
+
+export type SubgraphDecisionsSubscriptionVariables = Exact<{
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  colonyAddress: Scalars['String'];
+  extensionAddress: Scalars['String'];
+}>;
+
+
+export type SubgraphDecisionsSubscription = { motions: Array<(
+    Pick<SubscriptionMotion, 'id' | 'fundamentalChainId' | 'extensionAddress' | 'agent' | 'stakes' | 'requiredStake' | 'escalated' | 'action' | 'state' | 'type' | 'annotationHash'>
     & { associatedColony: (
       { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }
       & { token: (
@@ -7236,8 +7269,8 @@ export function useSubgraphEventsThatAreActionsSubscription(baseOptions?: Apollo
 export type SubgraphEventsThatAreActionsSubscriptionHookResult = ReturnType<typeof useSubgraphEventsThatAreActionsSubscription>;
 export type SubgraphEventsThatAreActionsSubscriptionResult = Apollo.SubscriptionResult<SubgraphEventsThatAreActionsSubscription>;
 export const SubgraphMotionsDocument = gql`
-    subscription SubgraphMotions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $extensionAddress: String!) {
-  motions(skip: $skip, first: $first, where: {associatedColony: $colonyAddress, extensionAddress: $extensionAddress}) {
+    subscription SubgraphMotions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $extensionAddress: String!, $motionActionNot: String) {
+  motions(skip: $skip, first: $first, where: {associatedColony: $colonyAddress, extensionAddress: $extensionAddress, action_not: $motionActionNot}) {
     id
     fundamentalChainId
     associatedColony {
@@ -7302,6 +7335,7 @@ export const SubgraphMotionsDocument = gql`
  *      first: // value for 'first'
  *      colonyAddress: // value for 'colonyAddress'
  *      extensionAddress: // value for 'extensionAddress'
+ *      motionActionNot: // value for 'motionActionNot'
  *   },
  * });
  */
@@ -7310,6 +7344,82 @@ export function useSubgraphMotionsSubscription(baseOptions?: Apollo.Subscription
       }
 export type SubgraphMotionsSubscriptionHookResult = ReturnType<typeof useSubgraphMotionsSubscription>;
 export type SubgraphMotionsSubscriptionResult = Apollo.SubscriptionResult<SubgraphMotionsSubscription>;
+export const SubgraphDecisionsDocument = gql`
+    subscription SubgraphDecisions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $extensionAddress: String!) {
+  motions(skip: $skip, first: $first, where: {associatedColony: $colonyAddress, extensionAddress: $extensionAddress, action: "0x12345678"}) {
+    id
+    fundamentalChainId
+    associatedColony {
+      colonyAddress: id
+      id: colonyChainId
+      token {
+        address: id
+        decimals
+        symbol
+      }
+    }
+    transaction {
+      hash: id
+      block {
+        id
+        timestamp
+      }
+    }
+    extensionAddress
+    agent
+    domain {
+      ethDomainId: domainChainId
+      name
+    }
+    stakes
+    requiredStake
+    escalated
+    action
+    state @client
+    type @client
+    args @client {
+      amount
+      token {
+        address: id
+        symbol
+        decimals
+      }
+    }
+    timeoutPeriods @client {
+      timeLeftToStake
+      timeLeftToSubmit
+      timeLeftToReveal
+      timeLeftToEscalate
+    }
+    annotationHash @client
+  }
+}
+    `;
+
+/**
+ * __useSubgraphDecisionsSubscription__
+ *
+ * To run a query within a React component, call `useSubgraphDecisionsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphDecisionsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubgraphDecisionsSubscription({
+ *   variables: {
+ *      skip: // value for 'skip'
+ *      first: // value for 'first'
+ *      colonyAddress: // value for 'colonyAddress'
+ *      extensionAddress: // value for 'extensionAddress'
+ *   },
+ * });
+ */
+export function useSubgraphDecisionsSubscription(baseOptions?: Apollo.SubscriptionHookOptions<SubgraphDecisionsSubscription, SubgraphDecisionsSubscriptionVariables>) {
+        return Apollo.useSubscription<SubgraphDecisionsSubscription, SubgraphDecisionsSubscriptionVariables>(SubgraphDecisionsDocument, baseOptions);
+      }
+export type SubgraphDecisionsSubscriptionHookResult = ReturnType<typeof useSubgraphDecisionsSubscription>;
+export type SubgraphDecisionsSubscriptionResult = Apollo.SubscriptionResult<SubgraphDecisionsSubscription>;
 export const CommentCountDocument = gql`
     subscription CommentCount($colonyAddress: String!) {
   transactionMessagesCount(colonyAddress: $colonyAddress) {

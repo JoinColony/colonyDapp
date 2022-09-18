@@ -135,13 +135,14 @@ subscription SubgraphEventsThatAreActions($skip: Int = 0, $first: Int = 1000, $c
   }
 }
 
-subscription SubgraphMotions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $extensionAddress: String!) {
+subscription SubgraphMotions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $extensionAddress: String!, $motionActionNot: String) {
   motions(
     skip: $skip,
     first: $first,
     where: {
       associatedColony: $colonyAddress,
       extensionAddress: $extensionAddress,
+      action_not: $motionActionNot,
   }) {
     id
     fundamentalChainId
@@ -187,5 +188,62 @@ subscription SubgraphMotions($skip: Int = 0, $first: Int = 1000, $colonyAddress:
       timeLeftToReveal
       timeLeftToEscalate
     }
+  }
+}
+
+subscription SubgraphDecisions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $extensionAddress: String!) {
+  motions(
+    skip: $skip,
+    first: $first,
+    where: {
+      associatedColony: $colonyAddress,
+      extensionAddress: $extensionAddress,
+      action: "0x12345678",
+  }) {
+    id
+    fundamentalChainId
+    associatedColony {
+      colonyAddress: id
+      id: colonyChainId
+      token {
+        address: id
+        decimals
+        symbol
+      }
+    }
+    transaction {
+      hash: id
+      block {
+        id
+        timestamp
+      }
+    }
+    extensionAddress
+    agent
+    domain {
+      ethDomainId: domainChainId
+      name
+    }
+    stakes
+    requiredStake
+    escalated
+    action
+    state @client
+    type @client
+    args @client {
+      amount
+      token {
+        address: id
+        symbol
+        decimals
+      }
+    }
+    timeoutPeriods @client {
+      timeLeftToStake
+      timeLeftToSubmit
+      timeLeftToReveal
+      timeLeftToEscalate
+    }
+    annotationHash @client
   }
 }

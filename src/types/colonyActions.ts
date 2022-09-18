@@ -146,9 +146,8 @@ export interface FormattedAction {
   totalNayStake?: string;
   requiredStake?: string;
   reputationChange?: string;
-  /* This is potentially temporary. Will depend on what data we get from a query */
   isDecision?: boolean;
-  title?: string;
+  annotationHash?: string;
 }
 
 export interface FormattedEvent {
