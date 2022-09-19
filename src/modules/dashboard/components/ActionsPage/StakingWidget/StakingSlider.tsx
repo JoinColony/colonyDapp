@@ -229,9 +229,11 @@ const StakingSlider = ({
                 <span
                   className={classnames(styles.requiredStakeText, {
                     [styles.requiredStakeUnderThreshold]:
-                      !isThresholdAchieved && userStakePercentage < 10,
+                      !isThresholdAchieved &&
+                      userStakePercentage < 10 - totalPercentage,
                     [styles.requiredStakeAboveThreshold]:
-                      isThresholdAchieved || userStakePercentage >= 10,
+                      isThresholdAchieved ||
+                      userStakePercentage >= 10 - totalPercentage,
                   })}
                 >
                   <FormattedMessage
