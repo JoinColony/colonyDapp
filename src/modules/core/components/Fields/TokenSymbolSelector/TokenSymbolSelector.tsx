@@ -17,9 +17,11 @@ interface Props extends Omit<SelectProps, 'options'> {
 const displayName = 'TokenSymbolSelector';
 
 const TokenSymbolSelector = ({ tokens, ...props }: Props) => {
+  // @NOTE: We are doing this so that Typescript stops complaining about the union of these types
+  const tokenArray: Array<AnyToken | SafeToken> = tokens;
   const tokenOptions = useMemo(
     () =>
-      tokens.map((token: AnyToken | SafeToken) => {
+      tokenArray.map((token) => {
         const labelElement = (
           elementType: 'labelElement' | 'optionElement',
         ) => (
@@ -44,7 +46,7 @@ const TokenSymbolSelector = ({ tokens, ...props }: Props) => {
           children: labelElement('optionElement'),
         };
       }),
-    [tokens],
+    [tokenArray],
   );
 
   return <Select options={tokenOptions} {...props} />;

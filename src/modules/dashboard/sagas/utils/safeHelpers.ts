@@ -7,6 +7,7 @@ import { SafeTransaction } from '~redux/types/actions/colonyActions';
 import { ColonySafe } from '~data/index';
 import { Address } from '~types/index';
 import { GNOSIS_AMB_BRIDGES, SAFE_NETWORKS } from '~constants';
+import { TransactionTypes } from '~dashboard/Dialogs/ControlSafeDialog/constants';
 
 export interface SelectedSafe {
   id: Address;
