@@ -137,3 +137,5 @@ export const validationSchema = yup.object().shape({
     }),
   }),
 });
+
+export const EXPENDITURE_TYPE_KEY = 'expediture-type';
