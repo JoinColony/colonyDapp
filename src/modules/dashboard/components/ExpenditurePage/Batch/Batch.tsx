@@ -52,7 +52,7 @@ export const MSG = defineMessages({
   },
   invalidRows: {
     id: 'dashboard.ExpenditurePage.Batch.invalidRows',
-    defaultMessage: 'Not all rows were imported, please review. {button}',
+    defaultMessage: `Not all rows were imported correctly, please review. {button}`,
   },
   viewAll: {
     id: `dashboard.ExpenditurePage.Batch.viewAll`,

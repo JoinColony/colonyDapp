@@ -13,6 +13,7 @@
   display: flex;
   align-items: center;
   border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+  color: color-mod(var(--dark) alpha(85%));
 }
 
 .borderTop {
@@ -28,7 +29,6 @@
   width: 33%;
   font-size: var(--size-normal);
   text-align: right;
-  color: color-mod(var(--dark) alpha(85%));
   letter-spacing: 0.1px;
 }
 
