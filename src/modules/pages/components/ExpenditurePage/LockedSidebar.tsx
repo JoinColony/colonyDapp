@@ -54,6 +54,25 @@ const LockedSidebar = ({
   } = formValues || {};
   const activeStage = stages.find((state) => state.id === activeStageId);
 
+  const firstFormSection = useMemo(() => {
+    switch (expenditure) {
+      case ExpenditureTypes.Advanced: {
+        return null;
+      }
+      case ExpenditureTypes.Split: {
+        return null;
+      }
+      case ExpenditureTypes.Staged: {
+        return null;
+      }
+      case ExpenditureTypes.Streaming: {
+        return <LockedStreaming />;
+      }
+      default:
+        return null;
+    }
+  }, [expenditure]);
+
   const secondFormSection = useMemo(() => {
     switch (expenditure) {
       case ExpenditureTypes.Advanced: {
