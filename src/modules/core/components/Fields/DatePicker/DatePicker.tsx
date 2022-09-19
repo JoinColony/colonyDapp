@@ -24,6 +24,8 @@ interface Props {
   showTimeSelect?: boolean;
   /** react-datepicker compatible format */
   dateFormat?: string;
+  /** Defines the interval (in minutes) between time options */
+  timeInterval?: number;
 }
 
 const DateInput = (
@@ -50,17 +52,34 @@ const DatePicker = ({
   name,
   showTimeSelect,
   dateFormat = 'd MMM y, h:mm aaa',
+  timeInterval = 30,
 }: Props) => {
   const [field, , helpers] = useField(name);
 
-  const handleChange = (date: Date | null) => {
-    helpers.setValue(date);
+  const handleChange = (UTCDate: Date) => {
+    const updatedDate = new Date(UTCDate);
+    updatedDate.setUTCFullYear(UTCDate.getFullYear());
+    updatedDate.setUTCMonth(UTCDate.getMonth());
+    updatedDate.setUTCDate(UTCDate.getDate());
+    updatedDate.setUTCHours(UTCDate.getHours());
+    updatedDate.setUTCMinutes(UTCDate.getMinutes());
+
+    helpers.setValue(updatedDate);
   };
+
+  const localDate = new Date(field.value);
+  const UTCDate = new Date(
+    localDate.getUTCFullYear(),
+    localDate.getUTCMonth(),
+    localDate.getUTCDate(),
+    localDate.getUTCHours(),
+    localDate.getUTCMinutes(),
+  );
 
   return (
     <div>
       <ReactDatePicker
-        selected={(field.value && new Date(field.value)) || null}
+        selected={UTCDate}
         onChange={handleChange}
         onBlur={() => helpers.setTouched(true)}
         onCalendarClose={() => helpers.setTouched(true)}
@@ -97,8 +116,9 @@ const DatePicker = ({
 
             {showTimeSelect && (
               <TimePicker
-                selectedDate={new Date(field.value)}
-                onChange={(date) => helpers.setValue(date)}
+                selectedDate={UTCDate}
+                onChange={handleChange}
+                timeInterval={timeInterval}
               />
             )}
           </div>
