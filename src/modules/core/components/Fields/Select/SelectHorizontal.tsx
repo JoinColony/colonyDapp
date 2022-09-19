@@ -13,6 +13,7 @@ interface Props extends SelectProps {
   withDropdownElelment?: boolean;
   scrollContainer?: HTMLElement | null;
   placement?: 'bottom' | 'right';
+  hasBlueActiveState?: boolean;
 }
 
 const SelectHorizontal = ({
@@ -33,6 +34,7 @@ const SelectHorizontal = ({
     labelValues,
     help,
     helpValues,
+    hasBlueActiveState,
   } = selectProps;
   const [, { error }] = useField(name);
 
@@ -58,6 +60,7 @@ const SelectHorizontal = ({
             withDropdownElelment,
             scrollContainer,
             placement,
+            hasBlueActiveState,
             ...selectProps,
           }}
           elementOnly

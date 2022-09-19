@@ -92,6 +92,7 @@ export interface Props {
   scrollContainer?: HTMLElement | null;
   placement?: 'right' | 'bottom' | 'exact';
   optionSizeLarge?: boolean;
+  hasBlueActiveState?: boolean;
 }
 
 const displayName = 'Select';
@@ -119,6 +120,7 @@ const Select = ({
   scrollContainer,
   placement,
   optionSizeLarge,
+  hasBlueActiveState,
 }: Props) => {
   const [id] = useState<string>(idProp || nanoid());
   const [, { error, value }, { setValue }] = useField(name);
@@ -348,6 +350,7 @@ const Select = ({
                 placement={placement}
                 ref={dropdownRef}
                 optionSizeLarge={optionSizeLarge}
+                hasBlueActiveState={hasBlueActiveState}
               >
                 <SelectListBox
                   checkedOption={checkedOption}

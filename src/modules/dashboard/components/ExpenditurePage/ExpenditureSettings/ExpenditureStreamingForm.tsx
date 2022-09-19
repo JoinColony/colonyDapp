@@ -102,6 +102,7 @@ const ExpenditureStreamingForm = ({ sidebarRef, colony }: Props) => {
             scrollContainer={sidebarRef}
             placement="right"
             withDropdownElelment
+            hasBlueActiveState
           />
         </div>
       </FormSection>
