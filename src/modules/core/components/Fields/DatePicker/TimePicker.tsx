@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { format } from 'date-fns/esm';
 import { defineMessages } from 'react-intl';
-import { useFloating } from '@floating-ui/react-dom';
+import { flip, useFloating } from '@floating-ui/react-dom';
 import classnames from 'classnames';
 
 import Icon from '~core/Icon';
@@ -22,13 +22,15 @@ const isSameTimeOption = (dateA: Date, dateB: Date) =>
 interface Props {
   selectedDate: Date;
   onChange: (date: Date) => void;
+  timeInterval: number;
 }
 
-const TimePicker = ({ selectedDate, onChange }: Props) => {
+const TimePicker = ({ selectedDate, onChange, timeInterval }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const { x, y, reference, floating, strategy, update } = useFloating({
     placement: 'bottom',
+    middleware: [flip()],
   });
 
   /** Recalculate time dropdown positioning when selectedDate changes */
@@ -36,25 +38,33 @@ const TimePicker = ({ selectedDate, onChange }: Props) => {
     update();
   }, [selectedDate, update]);
 
+  /** Scroll the selected option into view upon opening the dropdown */
+  const selectedOptionRef = useRef<HTMLButtonElement | null>(null);
+  useEffect(() => {
+    if (!isOpen || !selectedOptionRef.current) {
+      return;
+    }
+
+    selectedOptionRef.current.scrollIntoView();
+  }, [isOpen]);
+
   const formattedTime = useMemo(() => format(selectedDate, TIME_FORMAT), [
     selectedDate,
   ]);
 
   const timeOptions = useMemo(() => {
-    const interval = 30;
-
     return [...new Array((24 * 60) / 30)].map((_, idx) => {
-      const time = idx * interval;
+      const time = idx * timeInterval;
       const hours = Math.floor(time / 60);
       const minutes = time % 60;
 
       const date = new Date(selectedDate);
-      date.setUTCHours(hours);
-      date.setUTCMinutes(minutes);
+      date.setHours(hours);
+      date.setMinutes(minutes);
 
       return date;
     });
-  }, [selectedDate]);
+  }, [selectedDate, timeInterval]);
 
   return (
     <div className={styles.timePicker}>
@@ -82,18 +92,23 @@ const TimePicker = ({ selectedDate, onChange }: Props) => {
           ref={floating}
           style={{ position: strategy, top: y ?? 0, left: x ?? 0 }}
         >
-          {timeOptions.map((option) => (
-            <button
-              type="button"
-              key={option.toString()}
-              className={classnames(styles.timeOption, {
-                [styles.selected]: isSameTimeOption(option, selectedDate),
-              })}
-              onClick={() => onChange(option)}
-            >
-              {format(option, TIME_FORMAT)}
-            </button>
-          ))}
+          {timeOptions.map((option) => {
+            const isSelected = isSameTimeOption(option, selectedDate);
+
+            return (
+              <button
+                type="button"
+                key={option.toString()}
+                className={classnames(styles.timeOption, {
+                  [styles.selected]: isSelected,
+                })}
+                onClick={() => onChange(option)}
+                ref={isSelected ? selectedOptionRef : null}
+              >
+                {format(option, TIME_FORMAT)}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>
