@@ -24,6 +24,7 @@ import { getColonyManager } from '~modules/core/sagas/utils';
 import { ActionTypes } from '~redux/actionTypes';
 import { Action, AllActions } from '~redux/types';
 import { putError, routeRedirect, takeFrom } from '~utils/saga/effects';
+import { TransactionTypes } from '~dashboard/Dialogs/ControlSafeDialog/constants';
 import { uploadIfpsAnnotation } from '../utils';
 import {
   getForeignBridgeMock,
