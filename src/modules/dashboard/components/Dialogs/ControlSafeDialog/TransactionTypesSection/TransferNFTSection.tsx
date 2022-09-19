@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { useField } from 'formik';
 
 import Avatar from '~core/Avatar';
 import { DialogSection } from '~core/Dialog';
@@ -7,12 +8,19 @@ import SingleUserPicker, {
   SingleNFTPicker,
   filterUserSelection,
 } from '~core/SingleUserPicker';
-
 import { useMembersSubscription } from '~data/index';
-
+import {
+  getChainNameFromSafe,
+  getIdFromNFTDisplayName,
+  getTxServiceBaseUrl,
+  SelectedNFT,
+  SelectedSafe,
+} from '~modules/dashboard/sagas/utils/safeHelpers';
 import { Address } from '~types/index';
-import { NFT } from '~dashboard/Dialogs/ControlSafeDialog';
-import { getFilteredNFTData } from '../utils';
+import { log } from '~utils/debug';
+import { SpinnerLoader } from '~core/Preloaders';
+
+import { FormValues } from '../ControlSafeDialog';
 
 import styles from './TransferNFTSection.css';
 
@@ -45,6 +53,18 @@ const MSG = defineMessages({
     id: `dashboard.ControlSafeDialog.TransferNFTSection.nftDetails`,
     defaultMessage: 'NFT details',
   },
+  noNftsFound: {
+    id: `dashboard.ControlSafeDialog.TransferNFTSection.noNftsFound`,
+    defaultMessage: 'No NFTs found.',
+  },
+  nftLoading: {
+    id: `dashboard.ControlSafeDialog.TransferNFTSection.nftLoading`,
+    defaultMessage: 'Loading NFTs.',
+  },
+  nftError: {
+    id: `dashboard.ControlSafeDialog.TransferNFTSection.nftError`,
+    defaultMessage: 'Unable to fetch NFTs. Please check your connection.',
+  },
 });
 
 const displayName = 'dashboard.ControlSafeDialog.TransferNFTSection';
@@ -52,9 +72,9 @@ const displayName = 'dashboard.ControlSafeDialog.TransferNFTSection';
 interface Props {
   colonyAddress: Address;
   disabledInput: boolean;
-  nftCatalogue: NFT[];
   transactionFormIndex: number;
-  values;
+  values: FormValues;
+  savedNFTs: [{}, React.Dispatch<React.SetStateAction<{ [x: string]: NFT[] }>>];
 }
 
 const renderAvatar = (address: string, item) => (
@@ -67,27 +87,134 @@ const renderAvatar = (address: string, item) => (
   />
 );
 
+export interface NFT {
+  address: string;
+  description: string | null;
+  id: string;
+  imageUri: string | null;
+  logoUri: string;
+  metadata: object;
+  name: string | null;
+  tokenName: string;
+  tokenSymbol: string;
+  uri: string;
+}
+
+type NFTData = NFT[] | undefined | null;
+
 const TransferNFTSection = ({
   colonyAddress,
   disabledInput,
-  nftCatalogue,
   transactionFormIndex,
-  values,
+  values: { safe },
+  savedNFTs: { '0': savedNFTs, '1': setSavedNFTs },
 }: Props) => {
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress },
   });
 
-  const filteredNFTData = useMemo(
-    () =>
-      getFilteredNFTData(
-        nftCatalogue,
-        values?.transactions[transactionFormIndex]?.nft?.id,
-      ),
-    [nftCatalogue, values, transactionFormIndex],
+  const [availableNFTs, setAvailableNFTs] = useState<NFTData>(undefined);
+  const [isLoadingNFTData, setIsLoadingNFTData] = useState<boolean>(false);
+
+  const [{ value: selectedNFT }] = useField<SelectedNFT | null>(
+    `transactions.${transactionFormIndex}.nft`,
   );
 
-  return (
+  const [
+    { value: selectedNFTData },
+    ,
+    { setValue: setSelectedNFTData },
+  ] = useField<NFT | null>(`transactions.${transactionFormIndex}.nftData`);
+
+  useEffect(() => {
+    const getNFTData = async () => {
+      const getNFTs = async (
+        chosenSafe: SelectedSafe,
+      ): Promise<NFT[] | null> => {
+        const chainName = getChainNameFromSafe(chosenSafe);
+        const baseUrl = getTxServiceBaseUrl(chainName);
+        try {
+          const response = await fetch(
+            `${baseUrl}api/v1/safes/${chosenSafe.id}/collectibles/`,
+          );
+          if (response.status === 200) {
+            const data = await response.json();
+            return data;
+          }
+        } catch (e) {
+          log.error(e);
+        }
+        return null;
+      };
+      if (safe) {
+        const cachedNFTs = savedNFTs[safe.id];
+        if (!cachedNFTs) {
+          setIsLoadingNFTData(true);
+          const nftData = await getNFTs(safe);
+          setAvailableNFTs(nftData);
+          if (nftData) {
+            setSavedNFTs({
+              ...savedNFTs,
+              [safe.id]: nftData,
+            });
+          }
+          setIsLoadingNFTData(false);
+        } else {
+          setAvailableNFTs(cachedNFTs);
+        }
+      }
+    };
+    getNFTData();
+  }, [safe, savedNFTs, setSavedNFTs]);
+
+  /*
+   * This effect really belongs in the 'onSelected' prop of the SingleNFTPicker.
+   * However, this causes a bug where Formik thinks the NFT is null, even though it isn't.
+   */
+  useEffect(() => {
+    const filteredNFTData = availableNFTs?.find((nft) => {
+      const id = getIdFromNFTDisplayName(
+        selectedNFT?.profile.displayName || '',
+      );
+      return (
+        nft.address === selectedNFT?.profile.walletAddress && nft.id === id
+      );
+    });
+    if (filteredNFTData) {
+      setSelectedNFTData(filteredNFTData);
+    }
+
+    if (!selectedNFT) {
+      setSelectedNFTData(null);
+    }
+    /*
+     * Including setSelectedNFTData creates an infinite loop,
+     * presumably because it gets recreated on every re-render.
+     */
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+  }, [selectedNFT, availableNFTs]);
+
+  if (isLoadingNFTData) {
+    return (
+      <DialogSection>
+        <div className={styles.loading}>
+          <SpinnerLoader loadingText={MSG.nftLoading} />
+        </div>
+      </DialogSection>
+    );
+  }
+
+  if (availableNFTs === null) {
+    return (
+      <DialogSection>
+        <div className={styles.error}>
+          <FormattedMessage {...MSG.nftError} />
+        </div>
+      </DialogSection>
+    );
+  }
+
+  return availableNFTs?.length ? (
     <>
       {/* select NFT */}
       <DialogSection appearance={{ theme: 'sidePadding' }}>
@@ -98,7 +225,7 @@ const TransferNFTSection = ({
             name={`transactions.${transactionFormIndex}.nft`}
             filter={filterUserSelection}
             renderAvatar={renderAvatar}
-            data={nftCatalogue}
+            data={availableNFTs || []}
             disabled={disabledInput}
             placeholder={MSG.NFTPickerPlaceholder}
           />
@@ -113,9 +240,9 @@ const TransferNFTSection = ({
             </div>
             <div className={styles.nftImage}>
               <Avatar
-                avatarURL={undefined}
-                notSet={!filteredNFTData?.avatar}
-                seed={filteredNFTData?.address?.toLocaleLowerCase()}
+                avatarURL={selectedNFTData?.imageUri || undefined}
+                notSet={!selectedNFTData?.imageUri}
+                seed={selectedNFTData?.address?.toLocaleLowerCase()}
                 placeholderIcon="nft-icon"
                 title="nftImage"
                 size="l"
@@ -127,17 +254,17 @@ const TransferNFTSection = ({
               <div className={styles.nftContentLabel}>
                 <FormattedMessage {...MSG.contract} />
               </div>
-              {filteredNFTData && (
+              {selectedNFTData && (
                 <div className={styles.nftContractContent}>
                   <Avatar
-                    avatarURL={undefined}
+                    avatarURL={selectedNFTData.imageUri || undefined}
                     placeholderIcon="circle-close"
-                    seed={filteredNFTData?.address?.toLocaleLowerCase()}
+                    seed={selectedNFTData.address.toLocaleLowerCase()}
                     title=""
                     size="xs"
                     className={styles.nftContractAvatar}
                   />
-                  {filteredNFTData.name}
+                  {selectedNFTData.name || selectedNFTData.tokenName}
                 </div>
               )}
             </div>
@@ -145,9 +272,11 @@ const TransferNFTSection = ({
               <div className={styles.nftContentLabel}>
                 <FormattedMessage {...MSG.idLabel} />
               </div>
-              <div className={styles.nftContentValue}>
-                {filteredNFTData?.tokenID}
-              </div>
+              {selectedNFTData && (
+                <div className={styles.nftContentValue}>
+                  {selectedNFTData.id}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -172,6 +301,12 @@ const TransferNFTSection = ({
         </div>
       </DialogSection>
     </>
+  ) : (
+    <DialogSection>
+      <div className={styles.notFound}>
+        <FormattedMessage {...MSG.noNftsFound} />
+      </div>
+    </DialogSection>
   );
 };
 
