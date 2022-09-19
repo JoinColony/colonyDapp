@@ -1,6 +1,7 @@
 import { uniqBy } from 'lodash';
 import { nanoid } from 'nanoid';
 import { useEffect, useMemo, useState } from 'react';
+
 import apolloClient from '~context/apolloClient';
 import {
   Colony,
@@ -8,8 +9,8 @@ import {
   TokenDocument,
   TokenQuery,
   TokenQueryVariables,
-  useMembersSubscription,
 } from '~data/index';
+import { AddressElements, splitAddress } from '~utils/strings';
 
 import { BatchDataItem } from './types';
 
@@ -17,9 +18,6 @@ export const useCalculateBatchPayment = (
   colony: Colony,
   data?: BatchDataItem[],
 ) => {
-  const { data: colonyMembers } = useMembersSubscription({
-    variables: { colonyAddress: colony.colonyAddress || '' },
-  });
   const [uniqTokens, setUniqTokens] = useState<
     (
       | Pick<
@@ -62,9 +60,7 @@ export const useCalculateBatchPayment = (
     }
 
     const validatedData = data.map(({ recipient, amount, token }) => {
-      const correctRecipient = colonyMembers?.subscribedUsers.find(
-        (user) => user.id === recipient,
-      );
+      const correctRecipient: AddressElements | Error = splitAddress(recipient);
       const correctToken = uniqTokens?.find(
         (tokenItem) => tokenItem?.id === token,
       );
@@ -73,18 +69,20 @@ export const useCalculateBatchPayment = (
         recipient,
         amount,
         token: correctToken || undefined,
-        error: !correctRecipient || !correctToken,
+        error: correctRecipient instanceof Error || !correctToken,
       };
     });
 
     const filteredData = data.filter((item) => {
-      const correctRecipient = colonyMembers?.subscribedUsers.find(
-        (user) => user.id === item.recipient,
+      const correctRecipient: AddressElements | Error = splitAddress(
+        item.recipient,
       );
       const correctToken = uniqTokens?.find(
         (tokenItem) => tokenItem?.id === item.token,
       );
-      return !!item.amount && correctRecipient && correctToken;
+      return (
+        !!item.amount && !(correctRecipient instanceof Error) && correctToken
+      );
     });
 
     const amount = filteredData.reduce((acc, item) => {
@@ -116,5 +114,5 @@ export const useCalculateBatchPayment = (
       invalidRows: data.length !== filteredData.length,
       validatedData,
     };
-  }, [data, colonyMembers, uniqTokens]);
+  }, [data, uniqTokens]);
 };
