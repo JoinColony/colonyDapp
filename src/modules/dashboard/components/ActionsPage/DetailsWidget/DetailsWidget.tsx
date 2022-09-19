@@ -17,6 +17,7 @@ import { ACTION_TYPES_ICONS_MAP } from '../../ActionsPage/staticMaps';
 import DetailsWidgetTeam from './DetailsWidgetTeam';
 import DetailsWidgetRoles from './DetailsWidgetRoles';
 import DetailsWidgetSafe from './DetailsWidgetSafe';
+import DetailsWidgetAddSafe from './DetailsWidgetSafe/DetailsWidgetAddSafe';
 
 import styles from './DetailsWidget.css';
 
@@ -82,18 +83,6 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.DetailsWidget.safe',
     defaultMessage: 'Safe',
   },
-  chain: {
-    id: 'dashboard.ActionsPage.DetailsWidget.chain',
-    defaultMessage: 'Chain',
-  },
-  safeAddress: {
-    id: 'dashboard.ActionsPage.DetailsWidget.safeAddress',
-    defaultMessage: 'Safe Address',
-  },
-  safeName: {
-    id: 'dashboard.ActionsPage.DetailsWidget.safeName',
-    defaultMessage: 'Safe Name',
-  },
 });
 
 interface Props {
@@ -132,6 +121,10 @@ const DetailsWidget = ({
   const Symbol = () => values?.tokenSymbol as ReactElement;
 
   const detailsForAction = getDetailsForAction(actionType);
+  const safeAdded =
+    detailsForAction.Chain &&
+    detailsForAction.SafeAddress &&
+    detailsForAction.SafeName;
 
   return (
     <div>
@@ -174,35 +167,15 @@ const DetailsWidget = ({
           </div>
         </div>
       )}
-      {detailsForAction.Chain && values?.chainName && (
-        <div className={styles.item}>
-          <div className={styles.label}>
-            <FormattedMessage {...MSG.chain} />
-          </div>
-          <div className={styles.value}>
-            <span>{values.chainName}</span>
-          </div>
-        </div>
-      )}
-      {detailsForAction.SafeAddress && values?.addedSafeAddress && (
-        <div className={styles.item}>
-          <div className={styles.label}>
-            <FormattedMessage {...MSG.safeAddress} />
-          </div>
-          <div className={styles.value}>
-            <span>{values.addedSafeAddress}</span>
-          </div>
-        </div>
-      )}
-      {detailsForAction.SafeName && values?.safeName && (
-        <div className={styles.item}>
-          <div className={styles.label}>
-            <FormattedMessage {...MSG.safeName} />
-          </div>
-          <div className={styles.value}>
-            <span>{values.safeName}</span>
-          </div>
-        </div>
+      {safeAdded && (
+        <DetailsWidgetAddSafe
+          addedSafe={{
+            address: values?.addedSafeAddress,
+            chainName: values?.chainName,
+            safeName: values?.safeName,
+            moduleAddress: values?.moduleAddress,
+          }}
+        />
       )}
       {detailsForAction.FromDomain && values?.fromDomain && (
         <div className={styles.item}>
