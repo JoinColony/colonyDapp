@@ -9,7 +9,6 @@ import Payments from '~dashboard/ExpenditurePage/Payments';
 import Split from '~dashboard/ExpenditurePage/Split';
 import Staged from '~dashboard/ExpenditurePage/Staged';
 import { Colony } from '~data/index';
-import Streaming from '~dashboard/ExpenditurePage/ExpenditureSettings/Streaming';
 
 import { ValuesType, ExpenditureTypes } from './types';
 import styles from './ExpenditurePage.css';
@@ -65,9 +64,6 @@ const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
       }
       case ExpenditureTypes.Split: {
         return <Split sidebarRef={sidebarRef} colony={colony} />;
-      }
-      case ExpenditureTypes.Streaming: {
-        return <Streaming sidebarRef={sidebarRef} colony={colony} />;
       }
       default:
         return null;
