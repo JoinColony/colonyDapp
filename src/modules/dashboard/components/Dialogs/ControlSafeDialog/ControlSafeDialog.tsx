@@ -347,7 +347,7 @@ const ControlSafeDialog = ({
           transactions,
           annotation: annotationMessage,
         }) => {
-          const chainName = getChainNameFromSafe(safe);
+          const chainName = getChainNameFromSafe(safe.profile.displayName);
           const transformedSafe: ColonySafe = {
             // Find will return because input comes from Safe Networks
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
