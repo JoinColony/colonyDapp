@@ -406,34 +406,16 @@ const DefaultMotion = ({
     [currentStake, isDecision, requiredStake],
   );
 
-  // Decision specific
   const pageFeedContent = useMemo(() => {
-    const comment = userHasProfile ? (
-      <div ref={bottomElementRef} className={styles.commentBox}>
-        <CommentInput
-          transactionHash={transactionHash}
-          colonyAddress={colony.colonyAddress}
-        />
-      </div>
-    ) : null;
-
-    if (isDecision) {
-      return (
-        <div>
-          <ActionPageDecisionWithIPFS
-            colony={colony}
-            user={initiator}
-            username={currentUserName || ''}
-            walletAddress={walletAddress}
-            hash={annotationHash || ''}
-          />
-          {comment}
-        </div>
-      );
-    }
-
-    // NON-DECISION i.e. standard motion
-    const heading = (
+    const heading = isDecision ? (
+      <ActionPageDecisionWithIPFS
+        colony={colony}
+        user={initiator}
+        username={currentUserName || ''}
+        walletAddress={walletAddress}
+        hash={annotationHash || ''}
+      />
+    ) : (
       <h1 className={styles.heading} data-test="actionHeading">
         <FormattedMessage
           id={roleMessageDescriptorId || 'motion.title'}
@@ -447,18 +429,30 @@ const DefaultMotion = ({
       </h1>
     );
 
-    const objectionAnnotationContent = objectionAnnotation
-      ?.motionObjectionAnnotation?.metadata && (
-      <div className={motionSpecificStyles.annotation}>
-        <ActionsPageFeedItemWithIPFS
-          colony={colony}
-          user={objectionAnnotationUser}
-          annotation
-          hash={objectionAnnotation.motionObjectionAnnotation.metadata}
-          appearance={{ theme: 'danger' }}
-        />
-      </div>
-    );
+    const objectionAnnotationContent = isDecision
+      ? objectionAnnotation?.motionObjectionAnnotation?.metadata && (
+          <div className={motionSpecificStyles.annotation}>
+            <ActionPageDecisionWithIPFS
+              colony={colony}
+              user={objectionAnnotationUser}
+              username={currentUserName || ''}
+              walletAddress={walletAddress}
+              hash={objectionAnnotation?.motionObjectionAnnotation?.metadata}
+              isObjection
+            />
+          </div>
+        )
+      : objectionAnnotation?.motionObjectionAnnotation?.metadata && (
+          <div className={motionSpecificStyles.annotation}>
+            <ActionsPageFeedItemWithIPFS
+              colony={colony}
+              user={objectionAnnotationUser}
+              annotation
+              hash={objectionAnnotation.motionObjectionAnnotation.metadata}
+              appearance={{ theme: 'danger' }}
+            />
+          </div>
+        );
 
     const actionFeed = (
       <>
@@ -478,7 +472,14 @@ const DefaultMotion = ({
           colony={colony}
           rootHash={rootHash || undefined}
         />
-        {comment}
+        {userHasProfile && (
+          <div ref={bottomElementRef} className={styles.commentBox}>
+            <CommentInput
+              transactionHash={transactionHash}
+              colonyAddress={colony.colonyAddress}
+            />
+          </div>
+        )}
       </>
     );
     return (
@@ -489,25 +490,25 @@ const DefaultMotion = ({
       </>
     );
   }, [
-    isDecision,
-    roleMessageDescriptorId,
     actionAndEventValues,
-    roleTitle,
-    objectionAnnotation,
-    colony,
-    objectionAnnotationUser,
     actionType,
-    transactionHash,
+    annotationHash,
+    colony,
+    colonyAction,
+    currentUserName,
     events,
+    initiator,
+    isDecision,
     motionEventsData,
     motionsSystemMessagesData,
-    colonyAction,
+    objectionAnnotation,
+    objectionAnnotationUser,
+    roleMessageDescriptorId,
+    roleTitle,
     rootHash,
+    transactionHash,
     userHasProfile,
-    initiator,
-    currentUserName,
     walletAddress,
-    annotationHash,
   ]);
 
   return (
