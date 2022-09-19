@@ -239,6 +239,9 @@ const DefaultAction = ({
     ),
     chainName: addedSafe && SAFE_NAMES_MAP[addedSafe.chainId],
     safeName: addedSafe?.safeName,
+    moduleAddress: addedSafe && (
+      <MaskedAddress address={addedSafe.moduleContractAddress} />
+    ),
   };
 
   const actionAndEventValuesForDocumentTitle = {

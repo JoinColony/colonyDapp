@@ -116,6 +116,7 @@ const Input = ({
   maxButtonParams,
   dataTest,
   onChange,
+  onBlur,
 }: Props) => {
   const [id] = useState(idProp || nanoid());
   const { formatMessage } = useIntl();
@@ -143,6 +144,12 @@ const Input = ({
       inputFieldProps.onChange(event);
       if (onChange) {
         onChange(event);
+      }
+    },
+    onBlur: (event) => {
+      inputFieldProps.onBlur(event);
+      if (onBlur) {
+        onBlur(event);
       }
     },
   };
