@@ -44,8 +44,12 @@ import {
   isExpenditureType,
 } from './utils';
 import { ExpenditureTypes, ValuesType } from './types';
-import { ExpenditureForm, LockedSidebar } from '.';
-import { initialValues, validationSchema } from './constants';
+import LockedSidebar from './LockedSidebar';
+import {
+  EXPENDITURE_TYPE_KEY,
+  initialValues,
+  validationSchema,
+} from './constants';
 import styles from './ExpenditurePage.css';
 import { newFundingSource } from '~dashboard/ExpenditurePage/ExpenditureSettings/Streaming/constants';
 
@@ -212,13 +216,11 @@ const ExpenditurePage = ({ match }: Props) => {
         setActiveStageId(Stage.Draft);
       }
 
-      if (values.expenditure === ExpenditureTypes.Streaming) {
-        lockValues();
-        setMotion({
-          type: MotionType.StartStream,
-          status: MotionStatus.Pending,
-        });
-        setFormValues(values);
+      if (values.expenditure === ExpenditureTypes.Split) {
+        const recipientsCount =
+          values.split.recipients?.filter(
+            (recipient) => recipient?.user?.id !== undefined,
+          ).length || 0;
 
         // it's temporary timeout
         setTimeout(() => {
@@ -251,6 +253,11 @@ const ExpenditurePage = ({ match }: Props) => {
     },
     [activeStageId, lockValues],
   );
+
+  const lockValues = useCallback(() => {
+    setFormEditable(false);
+    localStorage.removeItem(EXPENDITURE_TYPE_KEY);
+  }, []);
 
   const handleLockExpenditure = useCallback(() => {
     // Call to backend will be added here, to lock the expenditure
