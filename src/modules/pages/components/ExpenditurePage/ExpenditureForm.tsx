@@ -13,6 +13,7 @@ import { useDialog } from '~core/Dialog';
 import Streaming from '~dashboard/ExpenditurePage/ExpenditureSettings/Streaming';
 
 import { ValuesType, ExpenditureTypes } from './types';
+import { EXPENDITURE_TYPE_KEY } from './constants';
 import styles from './ExpenditurePage.css';
 
 const MSG = defineMessages({
@@ -44,6 +45,12 @@ const ExpenditureForm = ({
     }
   }, [setShouldValidate, values]);
 
+  const expenditureType = values.expenditure;
+
+  useEffect(() => {
+    localStorage.setItem(EXPENDITURE_TYPE_KEY, expenditureType);
+  }, [expenditureType]);
+
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
 
   const onSubmit = useCallback(
@@ -69,7 +76,6 @@ const ExpenditureForm = ({
   );
 
   const secondFormSection = useMemo(() => {
-    const expenditureType = values.expenditure;
     switch (expenditureType) {
       case ExpenditureTypes.Advanced: {
         return <Payments sidebarRef={sidebarRef} colony={colony} />;
@@ -89,7 +95,7 @@ const ExpenditureForm = ({
       default:
         return null;
     }
-  }, [colony, sidebarRef, values]);
+  }, [colony, expenditureType, sidebarRef]);
 
   return (
     <Form onSubmit={onSubmit}>

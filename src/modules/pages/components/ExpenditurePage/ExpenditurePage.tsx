@@ -35,10 +35,19 @@ import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
 import Tag from '~core/Tag';
 import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
 
-import { findDifferences, updateValues, setClaimDate } from './utils';
+import {
+  findDifferences,
+  updateValues,
+  setClaimDate,
+  isExpenditureType,
+} from './utils';
 import { ExpenditureTypes, ValuesType } from './types';
 import { ExpenditureForm, LockedSidebar } from '.';
-import { initialValues, validationSchema } from './constants';
+import {
+  EXPENDITURE_TYPE_KEY,
+  initialValues,
+  validationSchema,
+} from './constants';
 import styles from './ExpenditurePage.css';
 
 const displayName = 'pages.ExpenditurePage';
@@ -139,9 +148,15 @@ const ExpenditurePage = ({ match }: Props) => {
   const loggedInUser = useLoggedInUser();
 
   const initialValuesData = useMemo((): ValuesType => {
+    const savedExpenditureType = localStorage.getItem(EXPENDITURE_TYPE_KEY);
+    const initialExpenditureType = isExpenditureType(savedExpenditureType)
+      ? savedExpenditureType
+      : ExpenditureTypes.Advanced;
+
     return (
       formValues || {
         ...initialValues,
+        expenditure: initialExpenditureType,
         owner: loggedInUser,
         recipients: [
           {
