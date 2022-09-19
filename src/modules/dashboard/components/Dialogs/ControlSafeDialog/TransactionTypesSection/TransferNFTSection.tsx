@@ -135,7 +135,7 @@ const TransferNFTSection = ({
         const baseUrl = getTxServiceBaseUrl(chainName);
         try {
           const response = await fetch(
-            `${baseUrl}api/v1/safes/${chosenSafe.id}/collectibles/`,
+            `${baseUrl}/v1/safes/${chosenSafe.id}/collectibles/`,
           );
           if (response.status === 200) {
             const data = await response.json();

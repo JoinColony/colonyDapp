@@ -1,8 +1,7 @@
-import React, { useState, useRef, useEffect, ReactNode, useMemo } from 'react';
+import React, { ReactNode, useMemo } from 'react';
 import { defineMessages, MessageDescriptor } from 'react-intl';
-import copyToClipboard from 'copy-to-clipboard';
-
 import { Appearance } from '~core/Button';
+import { useClipboardCopy } from '~modules/dashboard/hooks';
 
 import Button from '../Button';
 
@@ -33,21 +32,9 @@ const ClipboardCopy = ({
   children,
   appearance = { size: 'small', theme: 'blue' },
 }: Props) => {
-  const [valueIsCopied, setValueIsCopied] = useState(false);
-  const userFeedbackTimer = useRef<any>(null);
-  const handleClipboardCopy = () => {
-    setValueIsCopied(true);
-    copyToClipboard(value);
-    userFeedbackTimer.current = setTimeout(() => setValueIsCopied(false), 2000);
-  };
-  /*
-   * We need to wrap the call in a second function, since only the returned
-   * function gets called on unmount.
-   * The first one is only called on render.
-   */
-  useEffect(() => () => clearTimeout(userFeedbackTimer.current), [
-    userFeedbackTimer,
-  ]);
+  const { isCopied: valueIsCopied, handleClipboardCopy } = useClipboardCopy(
+    value,
+  );
 
   const buttonText = useMemo(
     () => (children === undefined && text === undefined ? MSG.copyLabel : text),
