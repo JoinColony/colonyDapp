@@ -48,7 +48,6 @@ import LockedSidebar from './LockedSidebar';
 import { initialValues, validationSchema } from './constants';
 import ExpenditureForm from './ExpenditureForm';
 import styles from './ExpenditurePage.css';
-import { newFundingSource } from '~dashboard/ExpenditurePage/ExpenditureSettings/Streaming/constants';
 
 const displayName = 'pages.ExpenditurePage';
 
