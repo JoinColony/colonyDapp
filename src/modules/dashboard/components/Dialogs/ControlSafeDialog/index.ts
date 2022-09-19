@@ -1,1 +1,1 @@
-export { default } from './ControlSafeDialog';
+export { default, FormValues } from './ControlSafeDialog';
