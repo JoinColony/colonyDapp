@@ -45,7 +45,6 @@ import { ExpenditureTypes, ValuesType } from './types';
 import { ExpenditureForm, LockedSidebar } from '.';
 import { initialValues, validationSchema } from './constants';
 import styles from './ExpenditurePage.css';
-import { newFundingSource } from '~dashboard/ExpenditurePage/ExpenditureSettings/Streaming/constants';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -173,19 +172,6 @@ const ExpenditurePage = ({ match }: Props) => {
           amount: {
             tokenAddress: colonyData?.processedColony?.nativeTokenAddress,
           },
-        },
-        streaming: {
-          fundingSource: [
-            {
-              ...newFundingSource,
-              rate: [
-                {
-                  ...newFundingSource.rate[0],
-                  token: colonyData?.processedColony.nativeTokenAddress,
-                },
-              ],
-            },
-          ],
         },
       }
     );
