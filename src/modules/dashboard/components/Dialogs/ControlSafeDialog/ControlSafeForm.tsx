@@ -428,7 +428,11 @@ const ControlSafeForm = ({
           />
         </>
       ) : (
-        <SafeTransactionPreview values={values} colony={colony} />
+        <SafeTransactionPreview
+          values={values}
+          colony={colony}
+          selectedContractMethods={selectedContractMethods}
+        />
       )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button

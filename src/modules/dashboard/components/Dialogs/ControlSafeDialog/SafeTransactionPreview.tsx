@@ -21,6 +21,7 @@ import {
   MSG as ConstantsMSG,
 } from './constants';
 import DetailsItem from './DetailsItem';
+import { AbiItemExtended } from '~utils/getContractUsefulMethods';
 
 import styles from './SafeTransactionPreview.css';
 
@@ -102,6 +103,10 @@ const MSG = defineMessages({
     defaultMessage:
       '{tabToggleStatus, select, true {Expand} false {Close}} transaction',
   },
+  contractMethodInputLabel: {
+    id: `dashboard.ControlSafeDialog.SafeTransactionPreview.contractMethodInputLabel`,
+    defaultMessage: `{name} ({type})`,
+  },
 });
 
 const transactionTypeFieldsMap = {
@@ -169,7 +174,22 @@ const transactionTypeFieldsMap = {
     },
   ],
   [TransactionTypes.CONTRACT_INTERACTION]: [
-    // To be finished once NFT part of the form is merged
+    {
+      key: 'contract',
+      label: MSG.contract,
+      value: (contract) => (
+        <div className={styles.rawTransactionValues}>
+          {contract.profile.displayName}
+        </div>
+      ),
+    },
+    {
+      key: 'contractFunction',
+      label: MSG.contractFunction,
+      value: (contractFunction) => (
+        <div className={styles.rawTransactionValues}>{contractFunction}</div>
+      ),
+    },
   ],
   [TransactionTypes.RAW_TRANSACTION]: [
     {
@@ -194,9 +214,18 @@ const displayName = 'dashboard.ControlSafeDialog.SafeTransactionPreview';
 interface Props {
   colony: Colony;
   values: FormValues;
+  selectedContractMethods?:
+    | {
+        [key: number]: AbiItemExtended | undefined;
+      }
+    | undefined;
 }
 
-const SafeTransactionPreview = ({ colony, values }: Props) => {
+const SafeTransactionPreview = ({
+  colony,
+  values,
+  selectedContractMethods,
+}: Props) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState(
     Array(values.transactions.length).fill(false),
   );
@@ -343,6 +372,17 @@ const SafeTransactionPreview = ({ colony, values }: Props) => {
                         values.transactions[index][key],
                         tokens[index],
                       )}
+                    />
+                  ))}
+                {values.transactions[index].transactionType ===
+                  TransactionTypes.CONTRACT_INTERACTION &&
+                  selectedContractMethods &&
+                  selectedContractMethods[index]?.inputs?.map((input) => (
+                    <DetailsItem
+                      key={nanoid()}
+                      label={MSG.contractMethodInputLabel}
+                      textValues={{ name: input.name, type: input.type }}
+                      value={<div>placeholder</div>}
                     />
                   ))}
               </div>
