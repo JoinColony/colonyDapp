@@ -78,6 +78,10 @@ export const useCalculateBatchPayment = (
     });
 
     const filteredData = data.filter((item) => {
+      if (!item.recipient || !item.amount || !item.token) {
+        return false;
+      }
+
       const correctRecipient: AddressElements | Error = splitAddress(
         item.recipient,
       );
