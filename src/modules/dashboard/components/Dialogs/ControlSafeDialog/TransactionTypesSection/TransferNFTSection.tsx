@@ -131,7 +131,7 @@ const TransferNFTSection = ({
       const getNFTs = async (
         chosenSafe: SelectedSafe,
       ): Promise<NFT[] | null> => {
-        const chainName = getChainNameFromSafe(chosenSafe);
+        const chainName = getChainNameFromSafe(chosenSafe.profile.displayName);
         const baseUrl = getTxServiceBaseUrl(chainName);
         try {
           const response = await fetch(
