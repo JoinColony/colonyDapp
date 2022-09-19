@@ -1,0 +1,64 @@
+@value paddingTop: 56px;
+@value lockedPaddingTop: 75px;
+@value paddingRightLeftBottom: 54px;
+
+.container {
+  padding: paddingTop paddingRightLeftBottom paddingRightLeftBottom;
+}
+
+.container i {
+  /* The negative margin is used here to adjust the position of the caret icon */
+  margin-bottom: -3px;
+}
+
+.settingsRow {
+  composes: flexContainerRow flexAlignCenter flexJustifyBetween from '~styles/layout.css';
+  min-height: 41px;
+}
+
+.settingsRow h4 {
+  font-size: var(--size-smallish);
+}
+
+.settingsRow button[aria-expanded="true"] {
+  padding: 2px 0 2px 6px;
+  border-radius: 4px;
+  background-color: var(--grey-blue-1);
+}
+
+.userContainer {
+  composes: settingsRow;
+  padding: 8px 0;
+}
+
+.userAvatarContainer {
+  display: flex;
+}
+
+.userName {
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
+
+.expenditure {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  text-transform: capitalize;
+  color: var(--dark);
+}
+
+.value {
+  font-size: var(--size-normal);
+  text-transform: capitalize;
+  color: var(--dark);
+}
+
+.expenditureContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 14px;
+}

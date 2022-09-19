@@ -4,6 +4,7 @@ import { LockedExpenditureSettings } from '~dashboard/ExpenditurePage/Expenditur
 import { LockedPayments } from '~dashboard/ExpenditurePage/Payments';
 import LockedStaged from '~dashboard/ExpenditurePage/Staged/LockedStaged/LockedStaged';
 import { Status } from '~dashboard/ExpenditurePage/Stages/constants';
+import LockedStreaming from '~dashboard/ExpenditurePage/Streaming/LockedStreaming';
 import { Colony } from '~data/index';
 
 import { ExpenditureTypes, ValuesType } from './types';
@@ -35,6 +36,25 @@ const LockedSidebar = ({
 }: Props) => {
   const { expenditure, recipients, filteredDomainId, staged } =
     formValues || {};
+
+  const firstFormSection = useMemo(() => {
+    switch (expenditure) {
+      case ExpenditureTypes.Advanced: {
+        return null;
+      }
+      case ExpenditureTypes.Split: {
+        return null;
+      }
+      case ExpenditureTypes.Staged: {
+        return null;
+      }
+      case ExpenditureTypes.Streaming: {
+        return <LockedStreaming />;
+      }
+      default:
+        return null;
+    }
+  }, [expenditure]);
 
   const secondFormSection = useMemo(() => {
     switch (expenditure) {
@@ -83,9 +103,11 @@ const LockedSidebar = ({
 
   return (
     <>
-      <LockedExpenditureSettings
-        {...{ expenditure, filteredDomainId, colony }}
-      />
+      {firstFormSection || (
+        <LockedExpenditureSettings
+          {...{ expenditure, filteredDomainId, colony }}
+        />
+      )}
       {secondFormSection}
     </>
   );
