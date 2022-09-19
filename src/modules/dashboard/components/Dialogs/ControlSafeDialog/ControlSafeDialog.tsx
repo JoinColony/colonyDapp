@@ -288,7 +288,6 @@ const ControlSafeDialog = ({
               displayName: yup.string().required(() => MSG.requiredFieldError),
               walletAddress: yup
                 .string()
-                .address()
                 .required(() => MSG.requiredFieldError),
             }),
           }),
