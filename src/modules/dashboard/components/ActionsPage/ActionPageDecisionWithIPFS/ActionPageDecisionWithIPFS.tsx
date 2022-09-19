@@ -38,6 +38,7 @@ interface Props {
   username: string;
   walletAddress: string;
   hash: string;
+  isObjection?: boolean;
 }
 // @NOTE For a Decision motions, the annotation stores the decision details.
 const ActionPageDecisionWithIPFS = ({
@@ -46,6 +47,7 @@ const ActionPageDecisionWithIPFS = ({
   username,
   walletAddress,
   hash,
+  isObjection = false,
 }: Props) => {
   const { data: ipfsDataJSON } = useDataFetcher(
     ipfsDataFetcher,
@@ -53,14 +55,22 @@ const ActionPageDecisionWithIPFS = ({
     [hash],
   );
 
-  const decisionDetails = useMemo(() => {
+  const decisionDetails: DecisionDetails | undefined = useMemo(() => {
     if (!ipfsDataJSON) {
       return undefined;
     }
+    // @NOTE: Decision objection message is stored in the `annotationMessage` field
+    if (isObjection) {
+      const objectionMessage = JSON.parse(ipfsDataJSON);
+      return {
+        description: objectionMessage?.annotationMessage,
+      } as DecisionDetails;
+    }
+
     // @TODO - add V2 IPFS support inc validation
     const details: DecisionDetails = JSON.parse(ipfsDataJSON);
     return details;
-  }, [ipfsDataJSON]);
+  }, [ipfsDataJSON, isObjection]);
 
   const location = useLocation();
   // trouble connecting to IPFS
@@ -98,45 +108,56 @@ const ActionPageDecisionWithIPFS = ({
   const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
   return (
-    <div className={styles.contentContainer}>
-      <div className={styles.leftContent}>
-        <span className={styles.userinfo}>
-          <UserAvatar
-            colony={colony}
-            size="s"
-            notSet={false}
-            user={user}
-            address={walletAddress || ''}
-            showInfo
-            popperOptions={{
-              showArrow: false,
-              placement: 'left',
-              modifiers: [
-                {
-                  name: 'offset',
-                  options: {
-                    offset: [0, 10],
+    <>
+      <div
+        className={
+          isObjection
+            ? styles.objectionContentContainer
+            : styles.contentContainer
+        }
+      >
+        <div className={styles.leftContent}>
+          <span className={styles.userinfo}>
+            <UserAvatar
+              colony={colony}
+              size="s"
+              notSet={false}
+              user={user}
+              address={walletAddress || ''}
+              showInfo
+              popperOptions={{
+                showArrow: false,
+                placement: 'left',
+                modifiers: [
+                  {
+                    name: 'offset',
+                    options: {
+                      offset: [0, 10],
+                    },
                   },
-                },
-              ],
-            }}
-          />
-          <span className={styles.userName}>{`@${username}`}</span>
-        </span>
-        <div className={styles.title}>
-          <Heading
-            tagName="h3"
-            appearance={{
-              size: 'medium',
-              margin: 'small',
-              theme: 'dark',
-            }}
-            text={decisionDetails.title}
-          />
+                ],
+              }}
+            />
+            <span className={styles.userName}>{`@${username}`}</span>
+          </span>
+          {!isObjection && (
+            <div className={styles.title}>
+              <Heading
+                tagName="h3"
+                appearance={{
+                  size: 'medium',
+                  margin: 'small',
+                  theme: 'dark',
+                }}
+                text={decisionDetails.title}
+              />
+            </div>
+          )}
+          {parse(decisionDetails?.description)}
         </div>
-        {parse(decisionDetails.description)}
       </div>
-    </div>
+      {isObjection && <hr className={styles.divider} />}
+    </>
   );
 };
 
