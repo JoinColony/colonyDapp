@@ -219,8 +219,8 @@ export const getTransferNFTData = (
   ]);
 };
 
-export const getChainNameFromSafe = (safe: SelectedSafe) => {
-  const splitDisplayName = safe.profile.displayName.split(' ');
+export const getChainNameFromSafe = (safeDisplayName: string) => {
+  const splitDisplayName = safeDisplayName.split(' ');
   const chainNameInBrackets = splitDisplayName[splitDisplayName.length - 1];
   return chainNameInBrackets.substring(1, chainNameInBrackets.length - 1);
 };
