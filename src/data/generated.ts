@@ -1157,6 +1157,7 @@ export type ColonySafe = {
   safeName: Scalars['String'];
   contractAddress: Scalars['String'];
   chainId: Scalars['String'];
+  moduleContractAddress: Scalars['String'];
 };
 
 export type ProcessedColony = {
@@ -1719,7 +1720,7 @@ export type ColonyActionQueryVariables = Exact<{
 
 export type ColonyActionQuery = { colonyAction: (
     Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionState' | 'motionDomain' | 'blockNumber' | 'rootHash' | 'reputationChange' | 'isWhitelistActivated' | 'verifiedAddresses'>
-    & { events: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'transactionHash'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>>, colonySafes: Array<Pick<ColonySafe, 'safeName' | 'contractAddress' | 'chainId'>> }
+    & { events: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'transactionHash'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>>, colonySafes: Array<Pick<ColonySafe, 'safeName' | 'contractAddress' | 'chainId' | 'moduleContractAddress'>> }
   ) };
 
 export type MetaColonyQueryVariables = Exact<{ [key: string]: never; }>;
@@ -4091,6 +4092,7 @@ export const ColonyActionDocument = gql`
       safeName
       contractAddress
       chainId
+      moduleContractAddress
     }
   }
 }
