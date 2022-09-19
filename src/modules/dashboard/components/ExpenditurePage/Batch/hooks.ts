@@ -64,7 +64,7 @@ export const useCalculateBatchPayment = (
     }
 
     const validatedData = data.map(({ recipient, amount, token }) => {
-      const correctRecipient: AddressElements | Error = splitAddress(recipient);
+      const correctRecipient = recipient && splitAddress(recipient);
       const correctToken = uniqTokens?.find(
         (tokenItem) => tokenItem?.id === token,
       );
