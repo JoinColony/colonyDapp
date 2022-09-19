@@ -17,6 +17,7 @@ interface Props {
   scrollContainer?: Window | HTMLElement | null;
   placement?: 'right' | 'bottom' | 'exact'; // 'exact' - portal will appear in the same place element would. Allowing dropdowns with full width to appear in dialogs
   optionSizeLarge?: boolean;
+  hasBlueActiveState?: boolean;
   dropdownHeight?: number;
   children: React.ReactNode;
 }
@@ -29,6 +30,7 @@ const Dropdown = React.forwardRef(
       placement = 'right',
       optionSizeLarge,
       dropdownHeight,
+      hasBlueActiveState,
       children,
     }: Props,
     ref: RefObject<HTMLDivElement>,
@@ -110,6 +112,7 @@ const Dropdown = React.forwardRef(
           <div
             className={classNames(styles.dropdown, {
               [styles.optionSizeLarge]: optionSizeLarge,
+              [styles.hasBlueActiveState]: hasBlueActiveState,
             })}
             style={{
               top: posTop,
