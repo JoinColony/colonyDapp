@@ -1,6 +1,10 @@
 export const dateButton: string;
 export const expandDateIcon: string;
 export const container: string;
+export const options: string;
+export const withDatePicker: string;
+export const option: string;
+export const selected: string;
 export const header: string;
 export const currentMonth: string;
 export const prevButton: string;
@@ -12,4 +16,3 @@ export const clockIcon: string;
 export const expandTimeIcon: string;
 export const timeDropdown: string;
 export const timeOption: string;
-export const selected: string;
