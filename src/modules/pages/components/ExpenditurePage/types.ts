@@ -13,6 +13,7 @@ export enum ExpenditureTypes {
   Advanced = 'advanced',
   Split = 'split',
   Staged = 'staged',
+  Streaming = 'streaming',
 }
 
 export interface ValuesType {
