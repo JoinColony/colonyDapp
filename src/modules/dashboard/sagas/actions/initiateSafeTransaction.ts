@@ -3,6 +3,7 @@ import { ClientType, ColonyClient } from '@colony/colony-js';
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
+import { TransactionTypes } from '~dashboard/Dialogs/ControlSafeDialog/constants';
 import {
   ColonyFromNameDocument,
   ColonyFromNameQuery,
@@ -28,6 +29,7 @@ import {
   getForeignBridgeMock,
   getHomeBridge,
   getRawTransactionData,
+  getTransferNFTData,
   getZodiacModule,
   onLocalDevEnvironment,
 } from '../utils/safeHelpers';
@@ -72,61 +74,69 @@ function* initiateSafeTransactionAction({
     );
 
     /*
-     * Currently only implements "Raw Transaction" type.
      * Calls HomeBridge for each Tx, with the Colony as the sender.
+     * Loop necessary as yield cannot be called inside of an array iterator (like forEach).
      */
-    const rawTransactions = getRawTransactionData(transactions);
-
-    if (rawTransactions.length) {
-      /* Loop necessary as yield cannot be called inside of an array iterator (like forEach). */
-      /* eslint-disable-next-line no-restricted-syntax */
-      for (const transaction of rawTransactions) {
-        /* eslint-disable-next-line max-len */
-        const txDataToBeSentToZodiacModule = zodiacBridgeModule.interface.functions.executeTransaction.encode(
-          [
-            transaction.recipient.profile.walletAddress,
-            transaction.amount,
-            transaction.data,
-            0,
-          ],
-        );
-
-        /*
-         * Set up promise that will see it bridged across.
-         * Dev mode only.
-         */
-        let bridgeListener;
-        if (foreignBridgeMock) {
-          bridgeListener = new Promise<void>((resolve) => {
-            foreignBridgeMock.on(
-              'RelayedMessage',
-              async (_sender, msgSender, _messageId, success) => {
-                /* eslint-disable-next-line no-console */
-                console.log(
-                  'bridged with ',
-                  _sender,
-                  msgSender,
-                  _messageId,
-                  success,
-                );
-                resolve();
-              },
-            );
-          });
-        }
-
-        /* eslint-disable-next-line max-len */
-        const txDataToBeSentToAMB = yield homeBridge.interface.functions.requireToPassMessage.encode(
-          [zodiacBridgeModule.address, txDataToBeSentToZodiacModule, 1000000],
-        );
-
-        yield colony.makeArbitraryTransaction(
-          homeBridge.address,
-          txDataToBeSentToAMB,
-        );
-
-        yield bridgeListener;
+    /* eslint-disable-next-line no-restricted-syntax */
+    for (const transaction of transactions) {
+      let txDataToBeSentToZodiacModule = '';
+      switch (transaction.transactionType) {
+        case TransactionTypes.RAW_TRANSACTION:
+          txDataToBeSentToZodiacModule = getRawTransactionData(
+            zodiacBridgeModule,
+            transaction,
+          );
+          break;
+        case TransactionTypes.TRANSFER_NFT:
+          txDataToBeSentToZodiacModule = getTransferNFTData(
+            zodiacBridgeModule,
+            safe,
+            transaction,
+          );
+          break;
+        case TransactionTypes.TRANSFER_FUNDS: // @TODO
+        case TransactionTypes.CONTRACT_INTERACTION: // @TODO
+        default:
+          throw new Error(
+            `Unknown transaction type: ${transaction.transactionType}`,
+          );
       }
+
+      /*
+       * Set up promise that will see it bridged across.
+       * Dev mode only.
+       */
+      let bridgeListener;
+      if (foreignBridgeMock) {
+        bridgeListener = new Promise<void>((resolve) => {
+          foreignBridgeMock.on(
+            'RelayedMessage',
+            async (_sender, msgSender, _messageId, success) => {
+              /* eslint-disable-next-line no-console */
+              console.log(
+                'bridged with ',
+                _sender,
+                msgSender,
+                _messageId,
+                success,
+              );
+              resolve();
+            },
+          );
+        });
+      }
+
+      /* eslint-disable-next-line max-len */
+      const txDataToBeSentToAMB = yield homeBridge.interface.functions.requireToPassMessage.encode(
+        [zodiacBridgeModule.address, txDataToBeSentToZodiacModule, 1000000],
+      );
+
+      yield colony.makeArbitraryTransaction(
+        homeBridge.address,
+        txDataToBeSentToAMB,
+      );
+
+      yield bridgeListener;
     }
 
     /*

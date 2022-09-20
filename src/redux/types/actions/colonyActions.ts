@@ -14,6 +14,7 @@ import {
   ActionType,
 } from './index';
 import { ColonySafe, AnyUser } from '~data/index';
+import { NFT } from '~dashboard/Dialogs/ControlSafeDialog/TransactionTypesSection/TransferNFTSection';
 
 export interface SafeTransaction {
   transactionType: string;
@@ -25,6 +26,7 @@ export interface SafeTransaction {
   abi: string;
   contractFunction: string;
   nft: string;
+  nftData: NFT;
 }
 
 /*
