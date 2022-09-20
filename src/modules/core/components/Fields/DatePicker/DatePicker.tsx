@@ -10,7 +10,11 @@ import Icon from '~core/Icon';
 
 import TimePicker from './TimePicker';
 import styles from './DatePicker.css';
-import { MONTH_NAMES } from './constants';
+import {
+  DEFAULT_DATE_FORMAT,
+  DEFAULT_TIME_FORMAT,
+  MONTH_NAMES,
+} from './constants';
 
 const MSG = defineMessages({
   expandIconHTMLTitle: {
@@ -73,8 +77,8 @@ const displayName = 'DatePicker';
 const DatePicker = ({
   name,
   showTimeSelect,
-  dateFormat = 'd MMM y, h:mm aaa',
   timeInterval = 30,
+  dateFormat,
   options,
 }: Props) => {
   const [field, , helpers] = useField<DatePickerFieldValue>(name);
@@ -200,6 +204,11 @@ const DatePicker = ({
     ],
   );
 
+  const dateFormatOrDefault =
+    dateFormat ?? showTimeSelect
+      ? `${DEFAULT_DATE_FORMAT}, ${DEFAULT_TIME_FORMAT}`
+      : DEFAULT_DATE_FORMAT;
+
   return (
     <div>
       <ReactDatePicker
@@ -207,7 +216,7 @@ const DatePicker = ({
         onChange={handleDateChange}
         onBlur={() => helpers.setTouched(true)}
         onCalendarClose={() => helpers.setTouched(true)}
-        dateFormat={dateFormat}
+        dateFormat={dateFormatOrDefault}
         calendarStartDay={1}
         formatWeekDay={(day) => day.substring(0, 1)}
         shouldCloseOnSelect={false}
