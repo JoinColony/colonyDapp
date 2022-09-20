@@ -1,6 +1,5 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType } from '@colony/colony-js';
-import { getStringForMetadataAnnotation } from '@colony/colony-event-metadata-parser';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
@@ -20,7 +19,7 @@ import {
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
-import { uploadIfsWithFallback } from '../utils';
+import { ipfsUploadAnnotation } from '../utils';
 
 function* tokenUnlockAction({
   meta,
@@ -117,8 +116,8 @@ function* tokenUnlockAction({
        */
       let annotationMessageIpfsHash = null;
       annotationMessageIpfsHash = yield call(
-        ipfsUpload,
-        getStringForMetadataAnnotation({ annotationMsg: annotationMessage }),
+        ipfsUploadAnnotation,
+        annotationMessage,
       );
 
       yield put(

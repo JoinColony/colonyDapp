@@ -22,7 +22,11 @@ import {
   transactionAddParams,
 } from '../../../core/actionCreators';
 
-import { updateColonyDisplayCache, uploadIfsWithFallback } from '../utils';
+import {
+  updateColonyDisplayCache,
+  ipfsUploadWithFallback,
+  ipfsUploadAnnotation,
+} from '../utils';
 
 function* manageVerifiedRecipients({
   payload: {
@@ -107,7 +111,7 @@ function* manageVerifiedRecipients({
     let colonyMetadataIpfsHash = null;
 
     colonyMetadataIpfsHash = yield call(
-      ipfsUpload,
+      ipfsUploadWithFallback,
       getStringForMetadataColony({
         colonyDisplayName,
         colonyAvatarHash,
@@ -139,9 +143,10 @@ function* manageVerifiedRecipients({
       /*
        * Upload annotation metadata to IPFS
        */
-      const annotationMessageIpfsHash = yield call(uploadIfsWithFallback, {
+      const annotationMessageIpfsHash = yield call(
+        ipfsUploadAnnotation,
         annotationMessage,
-      });
+      );
 
       yield put(
         transactionAddParams(annotateEditColony.id, [

@@ -4,7 +4,7 @@ import { log } from '~utils/debug';
 
 import { ipfsUpload } from '../../../core/sagas/ipfs';
 
-export function* uploadIfsWithFallback(payload: string) {
+export function* ipfsUploadWithFallback(payload: string) {
   let ipfsHash: string | null = null;
   try {
     ipfsHash = yield call(ipfsUpload, payload);

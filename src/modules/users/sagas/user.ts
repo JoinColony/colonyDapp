@@ -28,8 +28,8 @@ import {
 } from '~data/index';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { clearLastWallet } from '~utils/autoLogin';
+import { ipfsUploadWithFallback } from '../../dashboard/sagas/utils';
 
-import { uploadIfsWithFallback } from '../../dashboard/sagas/utils';
 import { clearToken } from '../../../api/auth';
 import {
   transactionLoadRelated,
@@ -74,7 +74,7 @@ function* userAvatarUpload({
     if (payload.data) {
       try {
         ipfsHash = yield call(
-          ipfsUpload,
+          ipfsUploadWithFallback,
           getStringForColonyAvatarImage(payload.data),
         );
       } catch (error) {

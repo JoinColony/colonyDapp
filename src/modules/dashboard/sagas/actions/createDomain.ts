@@ -11,7 +11,8 @@ import {
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 
-import { uploadIfsWithFallback } from '../utils';
+import { ipfsUploadWithFallback, ipfsUploadAnnotation } from '../utils';
+
 import {
   createTransaction,
   createTransactionChannels,
@@ -100,7 +101,7 @@ function* createDomainAction({
      */
     let domainMetadataIpfsHash = null;
     domainMetadataIpfsHash = yield call(
-      ipfsUpload,
+      ipfsUploadWithFallback,
       getStringForMetadataDomain({
         domainName,
         domainColor,
@@ -131,9 +132,10 @@ function* createDomainAction({
       /*
        * Upload annotaiton to IPFS
        */
-      const annotationMessageIpfsHash = yield call(uploadIfsWithFallback, {
+      const annotationMessageIpfsHash = yield call(
+        ipfsUploadAnnotation,
         annotationMessage,
-      });
+      );
 
       yield put(
         transactionAddParams(annotateCreateDomain.id, [

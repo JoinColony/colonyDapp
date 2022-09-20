@@ -13,7 +13,7 @@ import { ContextModule, TEMP_getContext } from '~context/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 
-import { uploadIfsWithFallback } from '../utils';
+import { ipfsUploadWithFallback, ipfsUploadAnnotation } from '../utils';
 import {
   createTransaction,
   createTransactionChannels,
@@ -110,7 +110,7 @@ function* createEditDomainMotion({
      */
     let domainMetadataIpfsHash = null;
     domainMetadataIpfsHash = yield call(
-      ipfsUpload,
+      ipfsUploadWithFallback,
       getStringForMetadataDomain({
         domainName,
         domainColor,
@@ -183,7 +183,8 @@ function* createEditDomainMotion({
     yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
-      const ipfsHash = yield call(uploadIfsWithFallback, { annotationMessage });
+      const ipfsHash = yield call(ipfsUploadAnnotation, annotationMessage);
+
       yield put(transactionPending(annotateMotion.id));
 
       yield put(transactionAddParams(annotateMotion.id, [txHash, ipfsHash]));

@@ -11,7 +11,7 @@ import { ContextModule, TEMP_getContext } from '~context/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 
-import { uploadIfsWithFallback } from '../utils';
+import { ipfsUploadWithFallback, ipfsUploadAnnotation } from '../utils';
 import {
   createTransaction,
   createTransactionChannels,
@@ -94,7 +94,7 @@ function* editColonyMotion({
     let colonyAvatarIpfsHash = null;
     if (colonyAvatarImage && hasAvatarChanged) {
       colonyAvatarIpfsHash = yield call(
-        ipfsUpload,
+        ipfsUploadWithFallback,
         getStringForColonyAvatarImage(colonyAvatarImage),
       );
     }
@@ -104,7 +104,7 @@ function* editColonyMotion({
      */
     let colonyMetadataIpfsHash = null;
     colonyMetadataIpfsHash = yield call(
-      ipfsUpload,
+      ipfsUploadWithFallback,
       getStringForMetadataColony({
         colonyDisplayName,
         colonyAvatarHash: hasAvatarChanged
@@ -175,7 +175,7 @@ function* editColonyMotion({
     yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
-      const ipfsHash = yield call(uploadIfsWithFallback, { annotationMessage });
+      const ipfsHash = yield call(ipfsUploadAnnotation, annotationMessage);
       yield put(transactionPending(annotateEditColonyMotion.id));
 
       yield put(
