@@ -1,3 +1,12 @@
 .draftDecision {
   list-style-type: none;
 }
+
+.buttonContainer {
+  display: flex;
+  margin-right: 10px;
+}
+
+.buttonContainer > button:first-child {
+  margin-right: 5px;
+}
