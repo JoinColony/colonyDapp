@@ -202,7 +202,7 @@ const ColonyDecisions = ({
       ) : (
         !decisionsLoading &&
         isVotingExtensionEnabled && (
-          <div className={styles.statusMessage}>
+          <div className={styles.emptyState}>
             <FormattedMessage {...MSG.noDecisionsFound} />
           </div>
         )
