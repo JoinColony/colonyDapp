@@ -132,7 +132,7 @@
 
 .container :global(.react-datepicker__month) {
   margin: 0;
-  padding: 0 24px;
+  padding: 0 24px 24px 24px;
 }
 
 .container :global(.react-datepicker__week) {
@@ -182,7 +182,6 @@
 }
 
 .timePicker {
-  margin-top: 24px;
   padding: 16px 24px;
   border-bottom-right-radius: 8px;
   border-bottom-left-radius: 8px;
