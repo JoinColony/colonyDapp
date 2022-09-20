@@ -1,6 +1,5 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType } from '@colony/colony-js';
-import { getStringForMetadataAnnotation } from '@colony/colony-event-metadata-parser';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
@@ -15,7 +14,7 @@ import {
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
-import { updateDomainReputation, uploadIfsWithFallback } from '../utils';
+import { updateDomainReputation, ipfsUploadAnnotation } from '../utils';
 
 function* manageReputationAction({
   payload: {
@@ -112,8 +111,8 @@ function* manageReputationAction({
 
       let annotationMessageIpfsHash = null;
       annotationMessageIpfsHash = yield call(
-        ipfsUpload,
-        getStringForMetadataAnnotation({ annotationMsg: annotationMessage }),
+        ipfsUploadAnnotation,
+        annotationMessage,
       );
 
       yield put(

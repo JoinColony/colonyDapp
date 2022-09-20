@@ -5,7 +5,6 @@ import {
   getPermissionProofs,
   ColonyRole,
 } from '@colony/colony-js';
-import { getStringForMetadataAnnotation } from '@colony/colony-event-metadata-parser';
 
 import { AddressZero } from 'ethers/constants';
 
@@ -23,7 +22,7 @@ import {
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
-import { updateDomainReputation, uploadIfsWithFallback } from '../utils';
+import { updateDomainReputation, ipfsUploadAnnotation } from '../utils';
 
 function* manageReputationMotion({
   payload: {
@@ -163,20 +162,6 @@ function* manageReputationMotion({
     }
 
     yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_CREATED);
-    if (annotationMessage) {
-      yield takeFrom(
-        annotateManageReputationMotion.channel,
-        ActionTypes.TRANSACTION_CREATED,
-      );
-    }
-
-    let ipfsHash = null;
-    ipfsHash = yield call(
-      ipfsUpload,
-      getStringForMetadataAnnotation({
-        annotationMsg: annotationMessage || '',
-      }),
-    );
 
     yield put(transactionReady(createMotion.id));
 
@@ -195,9 +180,9 @@ function* manageReputationMotion({
       );
 
       /*
-       * Upload annotaiton to IPFS
+       * Upload annotation to IPFS
        */
-      const ipfsHash = yield call(uploadIfsWithFallback, { annotationMessage });
+      const ipfsHash = yield call(ipfsUploadAnnotation, annotationMessage);
 
       yield put(transactionPending(annotateManageReputationMotion.id));
 

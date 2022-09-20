@@ -41,10 +41,8 @@ import {
   transactionPending,
 } from '../../core/actionCreators';
 import { createTransaction, createTransactionChannels } from '../../core/sagas';
-import { ipfsUpload } from '../../core/sagas/ipfs';
-
 import { createUserWithSecondAttempt } from '../../users/sagas/utils';
-import { uploadIfsWithFallback } from '../sagas/utils';
+import { ipfsUploadWithFallback } from '../sagas/utils';
 
 interface ChannelDefinition {
   channel: Channel<any>;
@@ -295,27 +293,10 @@ function* colonyCreate({
         colonyName,
         colonyDisplayName: displayName,
       });
-      /*
-       * First IPFS upload try
-       */
-      let colonyMetadataIpfsHash;
-      try {
-        colonyMetadataIpfsHash = yield call(
-          uploadIfsWithFallback,
-          colonyMetadata,
-        );
-      } catch (error) {
-        log.verbose('Could not upload the colony metadata IPFS. Retrying...');
-        log.verbose(error);
-        /*
-         * If the first try fails, then attempt to upload again
-         * We assume the first error was due to a connection issue
-         */
-        colonyMetadataIpfsHash = yield call(
-          uploadIfsWithFallback,
-          colonyMetadata,
-        );
-      }
+      const colonyMetadataIpfsHash = yield call(
+        ipfsUploadWithFallback,
+        colonyMetadata,
+      );
 
       const { version: latestVersion } = yield getNetworkContracts();
 

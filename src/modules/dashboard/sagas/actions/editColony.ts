@@ -13,23 +13,22 @@ import {
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
-import {
-  getMetadataStringForColony,
-  getMetadataStringForColony,
-} from '~utils/eventMetadataHandler';
 
 import {
   createTransaction,
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
-import { updateColonyDisplayCache, uploadIfsWithFallback } from '../utils';
+import {
+  updateColonyDisplayCache,
+  ipfsUploadWithFallback,
+  ipfsUploadAnnotation,
+} from '../utils';
 
 function* editColonyAction({
   payload: {
@@ -119,7 +118,7 @@ function* editColonyAction({
     let colonyAvatarIpfsHash = null;
     if (colonyAvatarImage && hasAvatarChanged) {
       colonyAvatarIpfsHash = yield call(
-        ipfsUpload,
+        ipfsUploadWithFallback,
         getStringForColonyAvatarImage(colonyAvatarImage),
       );
     }
@@ -138,7 +137,7 @@ function* editColonyAction({
     /*
      * Upload colony metadata to IPFS
      */
-    colonyMetadataIpfsHash = yield call(ipfsUpload, colonyMetadata);
+    colonyMetadataIpfsHash = yield call(ipfsUploadWithFallback, colonyMetadata);
 
     yield put(
       transactionAddParams(editColony.id, [
@@ -163,7 +162,7 @@ function* editColonyAction({
        * Upload annotation metadata to IPFS
        */
       const annotationMessageIpfsHash = yield call(
-        uploadIfpsAnnotation,
+        ipfsUploadAnnotation,
         annotationMessage,
       );
 
