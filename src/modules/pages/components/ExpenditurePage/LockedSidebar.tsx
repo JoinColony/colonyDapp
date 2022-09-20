@@ -13,6 +13,10 @@ import { ExpenditureTypes, StageObject, ValuesType } from './types';
 
 const displayName = 'pages.ExpenditurePage.LockedSidebar';
 
+// Mock variables
+const startDate = new Date().toLocaleDateString();
+const endDate = 'When cancelled';
+
 interface Props {
   colony: Colony;
   formValues?: ValuesType;
@@ -51,7 +55,7 @@ const LockedSidebar = ({
         return null;
       }
       case ExpenditureTypes.Streaming: {
-        return <LockedStreaming />;
+        return <LockedStreaming startDate={startDate} endDate={endDate} />;
       }
       default:
         return null;
