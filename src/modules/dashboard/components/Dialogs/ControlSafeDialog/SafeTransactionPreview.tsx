@@ -11,6 +11,7 @@ import TokenIcon from '~dashboard/HookedTokenIcon';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
 import Avatar from '~core/Avatar';
+import MaskedAddress from '~core/MaskedAddress';
 import { Colony, AnyUser } from '~data/index';
 
 import AddressDetailsView from './TransactionPreview/AddressDetailsView';
@@ -179,7 +180,7 @@ const transactionTypeFieldsMap = {
       label: MSG.contract,
       value: (contract) => (
         <div className={styles.rawTransactionValues}>
-          {contract.profile.displayName}
+          <MaskedAddress address={contract.profile.displayName} />
         </div>
       ),
     },
@@ -382,7 +383,15 @@ const SafeTransactionPreview = ({
                       key={nanoid()}
                       label={MSG.contractMethodInputLabel}
                       textValues={{ name: input.name, type: input.type }}
-                      value={<div>placeholder</div>}
+                      value={
+                        input.type === 'address' ? (
+                          <MaskedAddress
+                            address={values.transactions[index][input.name]}
+                          />
+                        ) : (
+                          <div>{values.transactions[index][input.name]}</div>
+                        )
+                      }
                     />
                   ))}
               </div>
