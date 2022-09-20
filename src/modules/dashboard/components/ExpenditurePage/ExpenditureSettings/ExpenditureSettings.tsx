@@ -172,7 +172,35 @@ const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
             label="Start date"
             appearance={{ direction: 'horizontal' }}
           />
-          <DatePicker name="date" showTimeSelect />
+          <DatePicker name="startDate" showTimeSelect />
+        </div>
+      </FormSection>
+      <FormSection appearance={{ border: 'bottom' }}>
+        <div className={styles.userContainer}>
+          <InputLabel
+            label="End date"
+            appearance={{ direction: 'horizontal' }}
+          />
+          <DatePicker
+            name="endDate"
+            showTimeSelect
+            options={[
+              {
+                label: 'When cancelled',
+                value: 'WHEN_CANCELLED',
+                hideDatePicker: true,
+              },
+              {
+                label: 'Limit is reached',
+                value: 'LIMIT_REACHED',
+                hideDatePicker: true,
+              },
+              {
+                label: 'Fixed Time',
+                value: 'FIXED_TIME',
+              },
+            ]}
+          />
         </div>
       </FormSection>
     </div>

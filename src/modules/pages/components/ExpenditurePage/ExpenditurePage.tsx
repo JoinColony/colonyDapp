@@ -118,7 +118,13 @@ const initialValues = {
   title: undefined,
   description: undefined,
   recipients: [newRecipient],
-  date: new Date(),
+  startDate: {
+    date: new Date(),
+  },
+  endDate: {
+    date: new Date(),
+    option: 'WHEN_CANCELLED',
+  },
 };
 
 const validationSchema = yup.object().shape({

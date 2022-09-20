@@ -24,9 +24,40 @@
 }
 
 .container {
+  width: 320px;
+  overflow: hidden;
   border: 1px solid var(--text-disabled);
   border-radius: 8px;
   background-color: white;
+}
+
+.options {
+  &.withDatePicker {
+    border-bottom: 1px solid var(--text-disabled);
+  }
+}
+
+.option {
+  display: block;
+  padding: 14px 20px;
+  width: 100%;
+  border: none;
+  background: none;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-normal);
+  text-align: left;
+  line-height: 18px;
+  color: var(--dark);
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgb(238, 239, 255);
+    color: var(--action-secondary);
+  }
+
+  &.selected {
+    color: var(--action-secondary);
+  }
 }
 
 .header {
