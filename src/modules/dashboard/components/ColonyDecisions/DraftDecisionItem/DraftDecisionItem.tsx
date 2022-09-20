@@ -66,15 +66,7 @@ const DraftDecisionItem = ({
         draftData={draftDecision}
         colony={colony}
         actions={
-          <>
-            <Button
-              appearance={{ theme: 'blue' }}
-              text={{ id: 'button.edit' }}
-              onClick={(event) => {
-                event.stopPropagation();
-                openDecisionDialog({ colony });
-              }}
-            />
+          <div className={styles.buttonContainer}>
             <Button
               appearance={{ theme: 'blue' }}
               text={{ id: 'button.delete' }}
@@ -88,7 +80,15 @@ const DraftDecisionItem = ({
                 });
               }}
             />
-          </>
+            <Button
+              appearance={{ theme: 'blue' }}
+              text={{ id: 'button.edit' }}
+              onClick={(event) => {
+                event.stopPropagation();
+                openDecisionDialog({ colony });
+              }}
+            />
+          </div>
         }
       />
     </ul>
