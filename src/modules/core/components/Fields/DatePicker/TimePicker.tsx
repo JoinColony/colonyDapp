@@ -6,7 +6,7 @@ import classnames from 'classnames';
 
 import Icon from '~core/Icon';
 import styles from './DatePicker.css';
-import { TIME_FORMAT } from './constants';
+import { DEFAULT_TIME_FORMAT } from './constants';
 
 const MSG = defineMessages({
   expandIconHTMLTitle: {
@@ -48,9 +48,10 @@ const TimePicker = ({ selectedDate, onChange, timeInterval }: Props) => {
     selectedOptionRef.current.scrollIntoView();
   }, [isOpen]);
 
-  const formattedTime = useMemo(() => format(selectedDate, TIME_FORMAT), [
-    selectedDate,
-  ]);
+  const formattedTime = useMemo(
+    () => format(selectedDate, DEFAULT_TIME_FORMAT),
+    [selectedDate],
+  );
 
   const timeOptions = useMemo(() => {
     return [...new Array((24 * 60) / 30)].map((_, idx) => {
@@ -105,7 +106,7 @@ const TimePicker = ({ selectedDate, onChange, timeInterval }: Props) => {
                 onClick={() => onChange(option)}
                 ref={isSelected ? selectedOptionRef : null}
               >
-                {format(option, TIME_FORMAT)}
+                {format(option, DEFAULT_TIME_FORMAT)}
               </button>
             );
           })}

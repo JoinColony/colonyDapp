@@ -13,4 +13,6 @@ export const MONTH_NAMES = [
   'December',
 ];
 
-export const TIME_FORMAT = 'h:mm aaa';
+export const DEFAULT_DATE_FORMAT = 'd MMM y';
+
+export const DEFAULT_TIME_FORMAT = 'h:mm aaa';
