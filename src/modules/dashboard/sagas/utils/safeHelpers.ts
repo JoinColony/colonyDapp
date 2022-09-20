@@ -1,8 +1,8 @@
 import Web3 from 'web3';
 import { Network } from '@colony/colony-js';
-import { ethers } from 'ethers';
+import { Contract, ethers } from 'ethers';
 import abis from '@colony/colony-js/lib-esm/abis';
-
+import { erc721 } from './abis'; // Temporary
 import { SafeTransaction } from '~redux/types/actions/colonyActions';
 import { ColonySafe } from '~data/index';
 import { Address, ModuleAddress } from '~types/index';
@@ -22,12 +22,16 @@ export interface SelectedNFT extends SelectedSafe {
 
 const { ZodiacBridgeModule, AMB } = abis;
 
-// eslint-disable-next-line prefer-destructuring
+/* eslint-disable prefer-destructuring */
 const LOCAL_HOME_BRIDGE_ADDRESS = process.env.LOCAL_HOME_BRIDGE_ADDRESS;
-// eslint-disable-next-line prefer-destructuring
 const LOCAL_FOREIGN_BRIDGE_ADDRESS = process.env.LOCAL_FOREIGN_BRIDGE_ADDRESS;
+const LOCAL_ERC721_ADDRESS = process.env.LOCAL_ERC721_ADDRESS;
+const LOCAL_SAFE_ADDRESS = process.env.LOCAL_SAFE_ADDRESS;
+/* eslint-enable prefer-destructuring */
+
 const LOCAL_HOME_CHAIN = 'http://127.0.0.1:8545';
 const LOCAL_FOREIGN_CHAIN = 'http://127.0.0.1:8546';
+const LOCAL_TOKEN_ID = 1; // set in start-bridging-environment.js
 
 export const onLocalDevEnvironment =
   process.env.NETWORK === Network.Local &&
@@ -36,7 +40,7 @@ export const onLocalDevEnvironment =
 const getHomeProvider = () => {
   return onLocalDevEnvironment
     ? new ethers.providers.JsonRpcProvider(LOCAL_HOME_CHAIN)
-    : new ethers.providers.Web3Provider(Web3.givenProvider);
+    : new ethers.providers.Web3Provider(Web3.givenProvider); // Metamask
 };
 
 const getForeignProvider = (safe: Omit<ColonySafe, 'safeName'>) => {
@@ -69,6 +73,12 @@ export const getHomeBridge = (safe: Omit<ColonySafe, 'safeName'>) => {
   return new ethers.Contract(homeBridgeAddress, AMB.default.abi, homeSigner);
 };
 
+/* Currently only used to get the ForeignBridgeMock contract from Colony Network, for testing locally. */
+const getBuildFromColonyNetwork = (contractName: string) =>
+  // eslint-disable-next-line @typescript-eslint/no-var-requires, max-len, global-require, import/no-dynamic-require
+  require(`~lib/colonyNetwork/build/contracts/${contractName}.json`);
+
+/* Only used locally in order to confirm foreign bridge received message from home bridge. */
 export const getForeignBridgeMock = () => {
   if (!onLocalDevEnvironment) {
     return undefined;
@@ -82,11 +92,13 @@ export const getForeignBridgeMock = () => {
 
   let ForeignBridgeMock;
 
-  // process.env.DEV is set by the QA server in case we want to have a debug build. We don't have access to the compiled contracts then.
+  /*
+   * process.env.DEV is set by the QA server in case we want to have a debug build.
+   * We don't have access to the compiled contracts then.
+   */
   if (!process.env.DEV) {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires, max-len, global-require, import/no-dynamic-require
-      ForeignBridgeMock = require(`~lib/colonyNetwork/build/contracts/ForeignBridgeMock.json`);
+      ForeignBridgeMock = getBuildFromColonyNetwork('ForeignBridgeMock');
     } catch {
       throw new Error(
         `Ensure you're on the correct colonyNetwork branch and that the ForeignBridgeMock is in the build folder.`,
@@ -103,6 +115,16 @@ export const getForeignBridgeMock = () => {
   }
 
   return undefined;
+};
+
+const getErc721 = (safe: ColonySafe, erc721Address: Address) => {
+  const foreignProvider = getForeignProvider(safe);
+
+  return new ethers.Contract(
+    erc721Address,
+    erc721.default.abi,
+    foreignProvider,
+  );
 };
 
 export const getZodiacModule = (
@@ -135,8 +157,54 @@ export const getIdFromNFTDisplayName = (displayName: string) => {
   return chunks[chunks.length - 1].substring(1);
 };
 
-export const getRawTransactionData = (txs: SafeTransaction[]) =>
-  txs.filter((t) => t.transactionType === 'rawTransaction');
+export const getRawTransactionData = (
+  zodiacBridgeModule: Contract,
+  transaction: SafeTransaction,
+) =>
+  zodiacBridgeModule.interface.functions.executeTransaction.encode([
+    transaction.recipient.profile.walletAddress,
+    Number(transaction.amount),
+    transaction.data,
+    0,
+  ]);
+
+export const getTransferNFTData = (
+  zodiacBridgeModule: Contract,
+  safe: ColonySafe,
+  transaction: SafeTransaction,
+) => {
+  const safeAddress = onLocalDevEnvironment
+    ? LOCAL_SAFE_ADDRESS
+    : safe.contractAddress;
+  const tokenId = onLocalDevEnvironment
+    ? LOCAL_TOKEN_ID
+    : Number(transaction.nftData.id);
+  const erc721Address = onLocalDevEnvironment
+    ? LOCAL_ERC721_ADDRESS
+    : transaction.nftData.address;
+
+  if (!safeAddress) {
+    throw new Error('LOCAL_SAFE_ADDRESS not set in .env.');
+  }
+
+  if (!erc721Address) {
+    throw new Error('LOCAL_ERC721_ADDRESS not set in .env.');
+  }
+
+  const erc721Contract = getErc721(safe, erc721Address);
+
+  // eslint-disable-next-line max-len
+  const safeTransferFromFn = erc721Contract.interface.functions.safeTransferFrom.encode(
+    [safeAddress, transaction.recipient.profile.walletAddress, tokenId],
+  );
+
+  return zodiacBridgeModule.interface.functions.executeTransaction.encode([
+    erc721Address,
+    0,
+    safeTransferFromFn,
+    0,
+  ]);
+};
 
 export const getChainNameFromSafe = (safe: SelectedSafe) => {
   const splitDisplayName = safe.profile.displayName.split(' ');
