@@ -13,6 +13,10 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.LockedStreaming.type',
     defaultMessage: 'Expenditure type',
   },
+  streaming: {
+    id: 'dashboard.ExpenditurePage.LockedStreaming.streaming',
+    defaultMessage: 'Streaming',
+  },
   owner: {
     id: 'dashboard.ExpenditurePage.LockedStreaming.owner',
     defaultMessage: 'Owner',
@@ -27,9 +31,14 @@ export const MSG = defineMessages({
   },
 });
 
+interface Props {
+  startDate: string;
+  endDate: string;
+}
+
 const displayName = 'dashboard.ExpenditurePage.LockedStreaming';
 
-const LockedStreaming = () => {
+const LockedStreaming = ({ startDate, endDate }: Props) => {
   const { username, walletAddress } = useLoggedInUser();
 
   return (
@@ -42,7 +51,9 @@ const LockedStreaming = () => {
               direction: 'horizontal',
             }}
           />
-          <span className={styles.expenditure}>Streaming</span>
+          <span className={styles.expenditure}>
+            {MSG.streaming.defaultMessage}
+          </span>
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
@@ -69,10 +80,7 @@ const LockedStreaming = () => {
               direction: 'horizontal',
             }}
           />
-          {/* Mock - insert proper value */}
-          <span className={styles.value}>
-            {new Date().toLocaleDateString()}
-          </span>
+          <span className={styles.value}>{startDate}</span>
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
@@ -83,8 +91,7 @@ const LockedStreaming = () => {
               direction: 'horizontal',
             }}
           />
-          {/* Mock - insert proper value */}
-          <span className={styles.value}>When cancelled</span>
+          <span className={styles.value}>{endDate}</span>
         </div>
       </FormSection>
     </div>
