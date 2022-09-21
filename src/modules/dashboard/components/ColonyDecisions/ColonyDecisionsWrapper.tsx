@@ -5,13 +5,20 @@ import ColonyNewDecision from '~dashboard/ColonyNewDecision';
 
 import { LOCAL_STORAGE_DECISION_KEY } from '~constants';
 import { DecisionDetails } from '~types/index';
+import { Colony } from '~data/index';
 
 import ColonyDecisions from './ColonyDecisions';
+
+interface Props {
+  colony: Colony;
+  filteredDomainId: number;
+  onDomainChange?: (domainId: number) => void;
+}
 
 const ColonyDecisionsWrapper = ({
   colony,
   filteredDomainId,
-  setDomainIdFilter,
+  onDomainChange,
 }: any) => {
   const [draftDecision, setDraftDecision] = useState<
     DecisionDetails | undefined
@@ -25,7 +32,7 @@ const ColonyDecisionsWrapper = ({
     <ColonyHomeLayout
       colony={colony}
       filteredDomainId={filteredDomainId}
-      onDomainChange={setDomainIdFilter}
+      onDomainChange={onDomainChange}
       newItemButton={
         <ColonyNewDecision
           colony={colony}
