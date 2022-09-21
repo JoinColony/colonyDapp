@@ -214,19 +214,15 @@ const ExpenditurePage = ({ match }: Props) => {
         setActiveStageId(Stage.Draft);
       }
 
-      if (values.expenditure === ExpenditureTypes.Split) {
-        const recipientsCount =
-          values.split.recipients?.filter(
-            (recipient) => recipient?.user?.id !== undefined,
-          ).length || 0;
+      if (values.expenditure === ExpenditureTypes.Streaming) {
+        lockValues();
+        setMotion({
+          type: MotionType.StartStream,
+          status: MotionStatus.Pending,
+        });
+        setFormValues(values);
 
-        setTimeout(() => {
-          setMotion({
-            type: MotionType.StartStream,
-            status: MotionStatus.Failed,
-          });
-        }, 5000);
-
+        // it's temporary timeout
         setTimeout(() => {
           setMotion({
             type: MotionType.StartStream,
