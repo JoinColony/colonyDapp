@@ -88,7 +88,7 @@ export interface Props {
   /** Provides value for data-test prop in select items used on cypress testing */
   itemDataTest?: string;
 
-  withDropdownElelment?: boolean;
+  withDropdownElement?: boolean;
   scrollContainer?: HTMLElement | null;
   placement?: 'right' | 'bottom' | 'exact';
   optionSizeLarge?: boolean;
@@ -116,7 +116,7 @@ const Select = ({
   statusValues,
   dataTest,
   itemDataTest,
-  withDropdownElelment = false,
+  withDropdownElement = false,
   scrollContainer,
   placement,
   optionSizeLarge,
@@ -157,14 +157,14 @@ const Select = ({
         const withinDropdown =
           dropdownRef.current && dropdownRef?.current.contains(evt.target);
 
-        if (withDropdownElelment && withinDropdown) {
+        if (withDropdownElement && withinDropdown) {
           return;
         }
 
         close();
       }
     },
-    [close, withDropdownElelment],
+    [close, withDropdownElement],
   );
 
   const goUp = () => {
@@ -343,7 +343,7 @@ const Select = ({
         </button>
         {isOpen && !!options.length && (
           <>
-            {withDropdownElelment ? (
+            {withDropdownElement ? (
               <Dropdown
                 element={dropdownContainerRef.current}
                 scrollContainer={scrollContainer}

@@ -57,7 +57,7 @@ interface Props {
   /** Provides value for data-test prop in select items used on cypress testing */
   itemDataTest?: string;
 
-  withDropdownElelment?: boolean;
+  withDropdownElement?: boolean;
   scrollContainer?: HTMLElement | null;
   placement?: 'right' | 'bottom' | 'exact';
 }
@@ -78,7 +78,7 @@ const DomainDropdown = ({
   disabled = false,
   dataTest,
   itemDataTest,
-  withDropdownElelment = false,
+  withDropdownElement = false,
   scrollContainer,
   placement,
 }: Props) => {
@@ -173,7 +173,7 @@ const DomainDropdown = ({
       itemDataTest={itemDataTest}
       scrollContainer={scrollContainer}
       placement={placement}
-      withDropdownElelment={withDropdownElelment}
+      withDropdownElement={withDropdownElement}
     />
   );
 };
