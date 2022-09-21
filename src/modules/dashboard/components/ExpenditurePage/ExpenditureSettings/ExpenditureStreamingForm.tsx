@@ -1,7 +1,8 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import { InputLabel, SelectHorizontal, FormSection } from '~core/Fields';
+import { InputLabel, FormSection } from '~core/Fields';
+import DatePicker, { DatePickerOption } from '~core/Fields/DatePicker';
 import { filterUserSelection } from '~core/SingleUserPicker';
 import UserPickerWithSearch from '~core/UserPickerWithSearch';
 import { useMembersSubscription } from '~data/generated';
@@ -40,14 +41,16 @@ export const MSG = defineMessages({
   },
 });
 
-const endDateTypes = [
+const endDateOptions: DatePickerOption[] = [
   {
     label: MSG.whenCancelled,
     value: ExpenditureEndDateTypes.WhenCancelled,
+    hideDatePicker: true,
   },
   {
     label: MSG.limitIsReached,
     value: ExpenditureEndDateTypes.LimitIsReached,
+    hideDatePicker: true,
   },
   {
     label: MSG.fixedTime,
@@ -91,24 +94,23 @@ const ExpenditureStreamingForm = ({ sidebarRef, colony }: Props) => {
               direction: 'horizontal',
             }}
           />
-          {/* Mock element - awaits for datepicker */}
-          <>{new Date().toLocaleDateString()}</>
+
+          <DatePicker name="streaming.startDate" showTimeSelect />
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.blue}>
-          <SelectHorizontal
-            name="streaming.endDate"
+        <div className={(styles.blue, styles.settingsRow)}>
+          <InputLabel
             label={MSG.ends}
             appearance={{
-              theme: 'alt',
-              width: 'content',
+              direction: 'horizontal',
             }}
-            options={endDateTypes}
-            scrollContainer={sidebarRef}
-            placement="right"
-            withDropdownElement
-            hasBlueActiveState
+          />
+
+          <DatePicker
+            name="streaming.endDate"
+            showTimeSelect
+            options={endDateOptions}
           />
         </div>
       </FormSection>
