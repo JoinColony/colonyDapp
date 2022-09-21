@@ -10,23 +10,23 @@ import styles from './LockedStreaming.css';
 
 export const MSG = defineMessages({
   type: {
-    id: 'dashboard.ExpenditurePage.LockedStreaming.type',
+    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.type',
     defaultMessage: 'Expenditure type',
   },
   streaming: {
-    id: 'dashboard.ExpenditurePage.LockedStreaming.streaming',
+    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.streaming',
     defaultMessage: 'Streaming',
   },
   owner: {
-    id: 'dashboard.ExpenditurePage.LockedStreaming.owner',
+    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.owner',
     defaultMessage: 'Owner',
   },
   starts: {
-    id: 'dashboard.ExpenditurePage.LockedStreaming.starts',
+    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.starts',
     defaultMessage: 'Starts',
   },
   ends: {
-    id: 'dashboard.ExpenditurePage.LockedStreaming.ends',
+    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.ends',
     defaultMessage: 'Ends',
   },
 });
