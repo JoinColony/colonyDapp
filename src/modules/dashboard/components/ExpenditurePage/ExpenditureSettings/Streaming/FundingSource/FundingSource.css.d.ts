@@ -14,3 +14,4 @@ export const limitContainer: string;
 export const inputContainer: string;
 export const tokenIcon: string;
 export const tokeIconWrapper: string;
+export const addTokenLabel: string;
