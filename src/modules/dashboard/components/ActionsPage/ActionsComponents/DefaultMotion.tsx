@@ -117,6 +117,7 @@ const DefaultMotion = ({
     newVersion,
     tokenAddress,
     reputationChange,
+    createdAt,
   },
   colonyAction,
   token,
@@ -413,6 +414,7 @@ const DefaultMotion = ({
         user={initiator}
         username={currentUserName || ''}
         walletAddress={walletAddress}
+        createdAt={createdAt}
         hash={annotationHash || ''}
       />
     ) : (
@@ -437,6 +439,7 @@ const DefaultMotion = ({
               user={objectionAnnotationUser}
               username={currentUserName || ''}
               walletAddress={walletAddress}
+              createdAt={createdAt}
               hash={objectionAnnotation?.motionObjectionAnnotation?.metadata}
               isObjection
             />
@@ -495,6 +498,7 @@ const DefaultMotion = ({
     annotationHash,
     colony,
     colonyAction,
+    createdAt,
     currentUserName,
     events,
     initiator,
