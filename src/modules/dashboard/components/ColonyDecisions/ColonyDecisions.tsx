@@ -17,7 +17,9 @@ import {
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { useTransformer } from '~utils/hooks';
 import { getActionsListData } from '~modules/dashboard/transformers';
+import { DecisionDetails } from '~types/index';
 
+import DraftDecisionItem from './DraftDecisionItem';
 import { SortOptions, SortSelectOptions } from './constants';
 import styles from './ColonyDecisions.css';
 
@@ -54,6 +56,8 @@ type Props = {
    * @NOTE Needed for filtering based on domain
    */
   ethDomainId?: number;
+  draftDecision?: DecisionDetails;
+  removeDraftDecision: () => void;
 };
 
 const ITEMS_PER_PAGE = 10;
@@ -62,6 +66,7 @@ const ColonyDecisions = ({
   colony,
   colony: { colonyName, colonyAddress },
   ethDomainId,
+  ...props
 }: Props) => {
   const [sortOption, setSortOption] = useState<string>(
     SortOptions.ENDING_SOONEST,
@@ -187,6 +192,7 @@ const ColonyDecisions = ({
               </div>
             </Form>
           </div>
+          <DraftDecisionItem colony={colony} {...props} />
           <ActionsList
             items={paginatedDecisions}
             handleItemClick={handleActionRedirect}
@@ -202,8 +208,11 @@ const ColonyDecisions = ({
       ) : (
         !decisionsLoading &&
         isVotingExtensionEnabled && (
-          <div className={styles.emptyState}>
-            <FormattedMessage {...MSG.noDecisionsFound} />
+          <div className={styles.draftDecisionContainer}>
+            <DraftDecisionItem colony={colony} {...props} />
+            <div className={styles.emptyState}>
+              <FormattedMessage {...MSG.noDecisionsFound} />
+            </div>
           </div>
         )
       )}

@@ -4,6 +4,10 @@
   text-align: center;
 }
 
+.draftDecisionContainer {
+  margin-top: 20px;
+}
+
 .filter {
   display: inline-block;
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useEditor } from '@tiptap/react';
 import CharacterCount from '@tiptap/extension-character-count';
@@ -12,11 +12,12 @@ import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import Dialog, { DialogProps } from '~core/Dialog';
 import { Form } from '~core/Fields';
-import { Colony } from '~data/index';
+import { Colony, useLoggedInUser } from '~data/index';
 import {
   COLONY_TOTAL_BALANCE_DOMAIN_ID,
   LOCAL_STORAGE_DECISION_KEY,
 } from '~constants';
+import { DecisionDetails } from '~types/index';
 
 import DialogForm from './DecisionDialogForm';
 
@@ -30,9 +31,7 @@ export interface FormValues {
 
 interface Props extends DialogProps {
   colony: Colony;
-  ethDomainId: number;
-  title?: string;
-  description?: string;
+  ethDomainId?: number;
 }
 
 const characterLimit = 4000;
@@ -42,11 +41,16 @@ const DecisionDialog = ({
   colony,
   colony: { colonyName },
   ethDomainId,
-  title,
-  description,
   close,
 }: Props) => {
   const history = useHistory();
+  const { walletAddress } = useLoggedInUser();
+
+  const [decisionData] = useState<DecisionDetails | undefined>(
+    localStorage.getItem(LOCAL_STORAGE_DECISION_KEY) === null
+      ? undefined
+      : JSON.parse(localStorage.getItem(LOCAL_STORAGE_DECISION_KEY) || ''),
+  );
 
   const editor = useEditor({
     extensions: [
@@ -60,7 +64,7 @@ const DecisionDialog = ({
         placeholder: 'Enter the description...',
       }),
     ],
-    content: description,
+    content: decisionData?.description,
   });
 
   const domainId =
@@ -73,7 +77,10 @@ const DecisionDialog = ({
       editor.setEditable(false);
     }
 
-    localStorage.setItem(LOCAL_STORAGE_DECISION_KEY, JSON.stringify(values));
+    localStorage.setItem(
+      LOCAL_STORAGE_DECISION_KEY,
+      JSON.stringify({ ...values, userAddress: walletAddress }),
+    );
     close();
 
     const previewUrl = `/colony/${colonyName}/decisions/preview`;
@@ -93,9 +100,9 @@ const DecisionDialog = ({
   return (
     <Form
       initialValues={{
-        motionDomainId: domainId,
-        title,
-        description,
+        motionDomainId: domainId || decisionData?.motionDomainId,
+        title: decisionData?.title,
+        description: decisionData?.description,
       }}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
@@ -105,7 +112,9 @@ const DecisionDialog = ({
           <DialogForm
             colony={colony}
             {...formProps}
-            ethDomainId={ethDomainId}
+            ethDomainId={
+              ethDomainId || decisionData?.motionDomainId || ROOT_DOMAIN_ID
+            }
             cancel={cancel}
             editor={editor}
             limit={characterLimit}

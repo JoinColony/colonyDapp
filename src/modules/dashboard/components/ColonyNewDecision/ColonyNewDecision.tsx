@@ -6,11 +6,13 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import DecisionDialog from '~dashboard/Dialogs/DecisionDialog';
 import { SpinnerLoader } from '~core/Preloaders';
+import RemoveDraftCreateNewDecision from '~dashboard/Dialogs/RemoveDraftDecisionDialog';
 
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { Colony, useLoggedInUser, useNetworkContracts } from '~data/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
 import { colonyMustBeUpgraded } from '~modules/dashboard/checks';
+import { DecisionDetails } from '~types/index';
 
 const displayName = 'dashboard.ColonyHomeCreateActionsButton';
 
@@ -24,6 +26,8 @@ const MSG = defineMessages({
 interface Props {
   colony: Colony;
   ethDomainId: number;
+  draftDecision?: DecisionDetails;
+  removeDraftDecision: () => void;
 }
 
 interface RootState {
@@ -34,7 +38,12 @@ interface RootState {
   };
 }
 
-const ColonyNewDecision = ({ colony, ethDomainId }: Props) => {
+const ColonyNewDecision = ({
+  colony,
+  ethDomainId,
+  draftDecision,
+  removeDraftDecision,
+}: Props) => {
   const { networkId, username, ethereal } = useLoggedInUser();
   const { version: networkVersion } = useNetworkContracts();
 
@@ -57,6 +66,12 @@ const ColonyNewDecision = ({ colony, ethDomainId }: Props) => {
   });
 
   const openDecisionDialog = useDialog(DecisionDialog);
+  const openDeleteDraftDialog = useDialog(RemoveDraftCreateNewDecision);
+
+  const openNewDecisionDialog = () => {
+    openDecisionDialog({ colony, ethDomainId });
+    removeDraftDecision();
+  };
 
   const hasRegisteredProfile = !!username && !ethereal;
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
@@ -70,7 +85,11 @@ const ColonyNewDecision = ({ colony, ethDomainId }: Props) => {
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           text={MSG.newDecision}
-          onClick={() => openDecisionDialog({ colony, ethDomainId })}
+          onClick={() =>
+            draftDecision === undefined
+              ? openNewDecisionDialog()
+              : openDeleteDraftDialog({ colony, openNewDecisionDialog })
+          }
           disabled={
             mustUpgrade ||
             !isNetworkAllowed ||
