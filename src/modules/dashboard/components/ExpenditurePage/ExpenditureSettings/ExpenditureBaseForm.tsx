@@ -16,15 +16,19 @@ import styles from './ExpenditureSettings.css';
 
 export const MSG = defineMessages({
   team: {
-    id: 'dashboard.ExpenditurePage.ExpenditureBaseForm.team',
+    id:
+      'dashboard.ExpenditurePage.ExpenditureSettings.ExpenditureBaseForm.team',
     defaultMessage: 'Team',
   },
   balance: {
-    id: 'dashboard.ExpenditurePage.ExpenditureBaseForm.balance',
+    id:
+      // eslint-disable-next-line max-len
+      'dashboard.ExpenditurePage.ExpenditureSettings.ExpenditureBaseForm.balance',
     defaultMessage: 'Balance',
   },
   owner: {
-    id: 'dashboard.ExpenditurePage.ExpenditureBaseForm.owner',
+    id:
+      'dashboard.ExpenditurePage.ExpenditureSettings.ExpenditureBaseForm.owner',
     defaultMessage: 'Owner',
   },
 });
