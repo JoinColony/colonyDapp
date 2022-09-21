@@ -63,7 +63,7 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.ExpenditurePage.Streaming.FundingSource';
 
-enum timePeriod {
+enum TimePeriod {
   Month = 'month',
   Week = 'week',
   Day = 'day',
@@ -73,19 +73,19 @@ enum timePeriod {
 const timeOptions = [
   {
     label: MSG.month,
-    value: timePeriod.Month,
+    value: TimePeriod.Month,
   },
   {
     label: MSG.week,
-    value: timePeriod.Week,
+    value: TimePeriod.Week,
   },
   {
     label: MSG.day,
-    value: timePeriod.Day,
+    value: TimePeriod.Day,
   },
   {
     label: MSG.hour,
-    value: timePeriod.Hour,
+    value: TimePeriod.Hour,
   },
 ];
 
