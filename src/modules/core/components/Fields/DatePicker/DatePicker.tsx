@@ -22,7 +22,7 @@ const MSG = defineMessages({
   },
 });
 
-interface DatePickerFieldValue {
+export interface DatePickerFieldValue {
   date: Date;
   option?: string;
 }
@@ -51,6 +51,7 @@ interface DateInputProps extends React.HTMLProps<HTMLButtonElement> {
   dateFormat: string;
   shouldShowDatePicker: boolean;
   selectedOption?: DatePickerOption | null;
+  error?: string;
 }
 
 /** The component displaying the currently selected date / option */
@@ -61,6 +62,7 @@ const DateInput = (
     dateFormat,
     shouldShowDatePicker,
     selectedOption,
+    error,
   }: DateInputProps,
   ref: React.Ref<HTMLButtonElement>,
 ) => {
@@ -95,13 +97,19 @@ const DateInput = (
     >
       <button
         type="button"
-        className={styles.dateButton}
+        className={classnames(styles.dateButton, {
+          [styles.error]: error,
+        })}
         onClick={onClick}
         ref={ref}
       >
         {shouldShowDatePicker ? formattedDate : labelText}
 
-        <span className={styles.expandDateIcon}>
+        <span
+          className={classnames(styles.expandDateIcon, {
+            [styles.iconError]: error,
+          })}
+        >
           <Icon name="caret-down-small" title={MSG.expandIconHTMLTitle} />
         </span>
       </button>
@@ -120,7 +128,7 @@ const DatePicker = ({
   maxDate,
   timeInterval = 30,
 }: Props) => {
-  const [{ value }, , { setValue, setTouched }] = useField<
+  const [{ value }, { error }, { setValue, setTouched }] = useField<
     DatePickerFieldValue
   >(name);
   const { formatMessage, formatDate } = useIntl();
@@ -280,6 +288,7 @@ const DatePicker = ({
           selectedDate,
           shouldShowDatePicker,
           dateFormat: dateFormatOrDefault,
+          error,
         })}
         renderCustomHeader={renderHeader}
         calendarContainer={renderContainer}
