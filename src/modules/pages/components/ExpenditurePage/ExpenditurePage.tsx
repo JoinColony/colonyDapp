@@ -35,6 +35,7 @@ import EditExpenditureDialog from '~dashboard/Dialogs/EditExpenditureDialog';
 import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
 import Tag from '~core/Tag';
 import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
+import { newFundingSource } from '~dashboard/ExpenditurePage/Streaming/constants';
 import { LOCAL_STORAGE_EXPENDITURE_TYPE_KEY } from '~constants';
 
 import {
@@ -48,7 +49,6 @@ import { ExpenditureTypes, ValuesType } from './types';
 import LockedSidebar from './LockedSidebar';
 import { initialValues, validationSchema } from './constants';
 import styles from './ExpenditurePage.css';
-import { newFundingSource } from '~dashboard/ExpenditurePage/Streaming/constants';
 
 const displayName = 'pages.ExpenditurePage';
 

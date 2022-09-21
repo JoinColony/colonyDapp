@@ -160,4 +160,4 @@ export const ALLDOMAINS_DOMAIN_SELECTION = {
 
 export const SMALL_TOKEN_AMOUNT_FORMAT = '0.00000...';
 
-export const LOCAL_STORAGE_EXPENDITURE_TYPE_KEY = 'expenditure-type';
+export const LOCAL_STORAGE_EXPENDITURE_TYPE_KEY = 'expediture-type';
