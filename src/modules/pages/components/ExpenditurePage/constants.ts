@@ -4,7 +4,6 @@ import { nanoid } from 'nanoid';
 import { isEmpty, toFinite } from 'lodash';
 import { defineMessages } from 'react-intl';
 
-import { newFundingSource } from '~dashboard/ExpenditurePage/Streaming/constants';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
 import { initalMilestone } from '~dashboard/ExpenditurePage/Staged/constants';
@@ -261,5 +260,3 @@ export const validationSchema = yup.object().shape({
   title: yup.string().min(3).required(),
   description: yup.string().max(4000),
 });
-
-export const EXPENDITURE_TYPE_KEY = 'expediture-type';
