@@ -1,6 +1,6 @@
 import { useField } from 'formik';
 import React, { useCallback } from 'react';
-import { defineMessages, MessageDescriptor } from 'react-intl';
+import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 import ReactDatePicker, { CalendarContainer } from 'react-datepicker';
 import classnames from 'classnames';
 
@@ -9,12 +9,12 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Icon from '~core/Icon';
 
 import TimePicker from './TimePicker';
-import styles from './DatePicker.css';
 import {
   DEFAULT_DATE_FORMAT,
   DEFAULT_TIME_FORMAT,
   MONTH_NAMES,
 } from './constants';
+import styles from './DatePicker.css';
 
 const MSG = defineMessages({
   expandIconHTMLTitle: {
@@ -28,7 +28,7 @@ interface DatePickerFieldValue {
   option?: any;
 }
 
-interface DatePickerOption {
+export interface DatePickerOption {
   label: string | MessageDescriptor;
   value: any;
   hideDatePicker?: boolean;
@@ -54,6 +54,13 @@ const DateInput = (
   { onClick, value, currentOption }: DateInputProps,
   ref: React.Ref<HTMLButtonElement>,
 ) => {
+  const { formatMessage } = useIntl();
+
+  const labelText =
+    typeof currentOption?.label === 'object'
+      ? formatMessage(currentOption.label)
+      : currentOption?.label;
+
   return (
     <button
       type="button"
@@ -61,9 +68,7 @@ const DateInput = (
       onClick={onClick}
       ref={ref}
     >
-      {currentOption && currentOption.hideDatePicker
-        ? currentOption.label
-        : value}
+      {currentOption && currentOption.hideDatePicker ? labelText : value}
 
       <span className={styles.expandDateIcon}>
         <Icon name="caret-down-small" title={MSG.expandIconHTMLTitle} />
@@ -82,6 +87,8 @@ const DatePicker = ({
   options,
 }: Props) => {
   const [field, , helpers] = useField<DatePickerFieldValue>(name);
+
+  const { formatMessage } = useIntl();
 
   const handleDateChange = useCallback(
     (UTCDate: Date) => {
@@ -111,7 +118,7 @@ const DatePicker = ({
     [field.value, helpers],
   );
 
-  const localDate = field.value.date ? new Date(field.value.date) : null;
+  const localDate = field.value?.date ? new Date(field.value.date) : null;
   /** Convert localDate to "fake UTC date" so that it can be correctly formatted and displayed */
   const UTCDate = localDate
     ? new Date(
@@ -123,7 +130,7 @@ const DatePicker = ({
       )
     : null;
 
-  const currentOption = options?.find((o) => o.value === field.value.option);
+  const currentOption = options?.find((o) => o.value === field.value?.option);
 
   const renderHeader = useCallback(
     (props) => (
@@ -160,19 +167,27 @@ const DatePicker = ({
                 [styles.withDatePicker]: !currentOption?.hideDatePicker,
               })}
             >
-              {options.map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  className={classnames(styles.option, {
-                    [styles.selected]:
-                      field.value.option && option.value === field.value.option,
-                  })}
-                  onClick={() => handleOptionChange(option.value)}
-                >
-                  {option.label}
-                </button>
-              ))}
+              {options.map((option) => {
+                const labelText =
+                  typeof option.label === 'object'
+                    ? formatMessage(option.label)
+                    : option.label;
+
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className={classnames(styles.option, {
+                      [styles.selected]:
+                        field.value?.option &&
+                        option.value === field.value.option,
+                    })}
+                    onClick={() => handleOptionChange(option.value)}
+                  >
+                    {labelText}
+                  </button>
+                );
+              })}
             </div>
           )}
 
@@ -195,7 +210,8 @@ const DatePicker = ({
     [
       UTCDate,
       currentOption,
-      field.value.option,
+      field.value,
+      formatMessage,
       handleDateChange,
       handleOptionChange,
       options,

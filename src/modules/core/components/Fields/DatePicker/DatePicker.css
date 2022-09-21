@@ -26,14 +26,13 @@
 .container {
   width: 320px;
   overflow: hidden;
-  border: 1px solid var(--text-disabled);
-  border-radius: 8px;
+  border: 1px solid var(--grey-blue-2);
   background-color: white;
 }
 
 .options {
   &.withDatePicker {
-    border-bottom: 1px solid var(--text-disabled);
+    border-bottom: 1px solid var(--grey-blue-2);
   }
 }
 
@@ -44,7 +43,7 @@
   border: none;
   background: none;
   font-size: var(--size-smallish);
-  font-weight: var(--weight-normal);
+  font-weight: var(--weight-bold);
   text-align: left;
   line-height: 18px;
   color: var(--dark);
@@ -183,8 +182,6 @@
 
 .timePicker {
   padding: 16px 24px;
-  border-bottom-right-radius: 8px;
-  border-bottom-left-radius: 8px;
   background-color: var(--grey-blue-2);
 }
 
@@ -240,7 +237,7 @@
   top: 0;
   left: 0;
   overflow-y: auto;
-  border: 1px solid var(--text-disabled);
+  border: 1px solid var(--temp-grey-blue-8);
   border-radius: var(--radius-normal);
   background: white;
 }

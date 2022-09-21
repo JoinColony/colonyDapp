@@ -10,7 +10,7 @@ import { initalMilestone } from '~dashboard/ExpenditurePage/Staged/constants';
 import { isBatchPaymentType } from '~dashboard/ExpenditurePage/Batch/utils';
 import { newFundingSource } from '~dashboard/ExpenditurePage/Streaming/constants';
 
-import { ExpenditureTypes } from './types';
+import { ExpenditureEndDateTypes, ExpenditureTypes } from './types';
 
 const MSG = defineMessages({
   userRequiredError: {
@@ -70,6 +70,11 @@ export const initialValues = {
   },
   streaming: {
     fundingSources: [newFundingSource],
+    startDate: { date: new Date() },
+    endDate: {
+      date: new Date(),
+      option: ExpenditureEndDateTypes.WhenCancelled,
+    },
   },
 };
 
