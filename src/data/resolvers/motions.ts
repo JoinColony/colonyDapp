@@ -58,6 +58,7 @@ import {
   UserReputationQueryVariables,
   UserReputationDocument,
 } from '~data/index';
+import { log } from '~utils/debug';
 
 import {
   ActionsPageFeedType,
@@ -1295,13 +1296,21 @@ export const motionsResolvers = ({
       };
     },
     async annotationHash({ transaction, agent }) {
-      const {
-        values: { metadata: annotationHash },
-      } = await getAnnotationFromSubgraph(
-        agent,
-        transaction.hash,
-        apolloClient,
-      );
+      let annotationHash;
+      try {
+        const {
+          values: { metadata },
+        } = await getAnnotationFromSubgraph(
+          agent,
+          transaction.hash,
+          apolloClient,
+        );
+
+        annotationHash = metadata;
+      } catch (error) {
+        log.verbose('Could not fetch IPFS metadata for decision');
+      }
+
       return annotationHash;
     },
   },
