@@ -168,11 +168,26 @@ const ExpenditurePage = ({ match }: Props) => {
     );
   }, [colonyData, formValues, loggedInUser]);
 
+  const lockValues = useCallback(() => {
+    setFormEditable(false);
+  }, []);
+
   const handleSubmit = useCallback(
     (values) => {
       setShouldValidate(true);
       if (!activeStateId) {
         setActiveStateId(Stage.Draft);
+      }
+
+      if (values.expenditure === ExpenditureTypes.Streaming) {
+        lockValues();
+        setMotion({
+          type: MotionType.StartStream,
+          status: MotionStatus.Pending,
+        });
+        setFormValues(values);
+
+        return;
       }
 
       if (values.expenditure === ExpenditureTypes.Split) {
@@ -245,12 +260,8 @@ const ExpenditurePage = ({ match }: Props) => {
       }
       // add sending form values to backend
     },
-    [activeStateId],
+    [activeStateId, lockValues],
   );
-
-  const lockValues = useCallback(() => {
-    setFormEditable(false);
-  }, []);
 
   const handleLockExpenditure = useCallback(() => {
     // Call to backend will be added here, to lock the expenditure
@@ -600,6 +611,7 @@ const ExpenditurePage = ({ match }: Props) => {
               setActiveStateId={setActiveStateId}
               handleCancelExpenditure={handleCancelExpenditure}
               colony={colonyData.processedColony}
+              formValues={formValues}
             />
           )}
         </main>
