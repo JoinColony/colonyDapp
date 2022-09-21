@@ -15,7 +15,6 @@ import { LOCAL_STORAGE_EXPENDITURE_TYPE_KEY } from '~constants';
 import Streaming from '~dashboard/ExpenditurePage/ExpenditureSettings/Streaming';
 
 import { ValuesType, ExpenditureTypes } from './types';
-import { EXPENDITURE_TYPE_KEY } from './constants';
 import styles from './ExpenditurePage.css';
 
 const MSG = defineMessages({
