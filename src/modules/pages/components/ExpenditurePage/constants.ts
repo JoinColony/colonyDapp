@@ -191,5 +191,3 @@ export const validationSchema = yup.object().shape({
   title: yup.string().min(3).required(),
   description: yup.string().max(4000),
 });
-
-export const EXPENDITURE_TYPE_KEY = 'expediture-type';

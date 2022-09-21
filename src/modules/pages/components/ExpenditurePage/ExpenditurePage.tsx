@@ -47,7 +47,6 @@ import { ExpenditureTypes, ValuesType } from './types';
 import LockedSidebar from './LockedSidebar';
 import { initialValues, validationSchema } from './constants';
 import styles from './ExpenditurePage.css';
-import ExpenditureForm from './ExpenditureForm';
 
 const displayName = 'pages.ExpenditurePage';
 
