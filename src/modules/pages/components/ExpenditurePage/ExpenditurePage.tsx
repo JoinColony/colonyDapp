@@ -214,13 +214,11 @@ const ExpenditurePage = ({ match }: Props) => {
         setActiveStageId(Stage.Draft);
       }
 
-      if (values.expenditure === ExpenditureTypes.Streaming) {
-        lockValues();
-        setMotion({
-          type: MotionType.StartStream,
-          status: MotionStatus.Pending,
-        });
-        setFormValues(values);
+      if (values.expenditure === ExpenditureTypes.Split) {
+        const recipientsCount =
+          values.split.recipients?.filter(
+            (recipient) => recipient?.user?.id !== undefined,
+          ).length || 0;
 
         // it's temporary timeout
         setTimeout(() => {
