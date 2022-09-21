@@ -54,6 +54,18 @@ const Streaming = ({ colony, sidebarRef }: Props) => {
     StreamingType['fundingSources']
   >('streaming.fundingSources');
 
+  const newFundingSourceData = useMemo(() => {
+    return {
+      ...{
+        ...newFundingSource,
+        rate: {
+          ...newFundingSource,
+          token: colony?.nativeTokenAddress,
+        },
+      },
+    };
+  }, [colony]);
+
   const onToggleButtonClick = useCallback(
     (index) => {
       setValue(
