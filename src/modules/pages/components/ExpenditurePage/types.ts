@@ -8,7 +8,7 @@ import {
 import { AnyUser } from '~data/index';
 import { LoggedInUser } from '~data/generated';
 import { Staged as StagedType } from '~dashboard/ExpenditurePage/Staged/types';
-import { Streaming as StreamingType } from '~dashboard/ExpenditurePage/ExpenditureSettings/Streaming/types';
+import { Streaming as StreamingType } from '~dashboard/ExpenditurePage/Streaming/types';
 
 export enum ExpenditureTypes {
   Advanced = 'advanced',

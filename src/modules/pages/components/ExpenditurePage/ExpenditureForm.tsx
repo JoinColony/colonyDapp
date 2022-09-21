@@ -9,10 +9,10 @@ import Payments from '~dashboard/ExpenditurePage/Payments';
 import Split from '~dashboard/ExpenditurePage/Split';
 import Staged from '~dashboard/ExpenditurePage/Staged';
 import { Colony } from '~data/index';
-import Streaming from '~dashboard/ExpenditurePage/ExpenditureSettings/Streaming';
+import Streaming from '~dashboard/ExpenditurePage/Streaming';
+import { LOCAL_STORAGE_EXPENDITURE_TYPE_KEY } from '~constants';
 
 import { ValuesType, ExpenditureTypes } from './types';
-import { EXPENDITURE_TYPE_KEY } from './constants';
 import styles from './ExpenditurePage.css';
 
 const MSG = defineMessages({
@@ -34,7 +34,7 @@ const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
   const expenditureType = values.expenditure;
 
   useEffect(() => {
-    localStorage.setItem(EXPENDITURE_TYPE_KEY, expenditureType);
+    localStorage.setItem(LOCAL_STORAGE_EXPENDITURE_TYPE_KEY, expenditureType);
   }, [expenditureType]);
 
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);

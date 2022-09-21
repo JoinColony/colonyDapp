@@ -35,6 +35,8 @@ import EditExpenditureDialog from '~dashboard/Dialogs/EditExpenditureDialog';
 import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
 import Tag from '~core/Tag';
 import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
+import { newFundingSource } from '~dashboard/ExpenditurePage/Streaming/constants';
+import { LOCAL_STORAGE_EXPENDITURE_TYPE_KEY } from '~constants';
 
 import {
   findDifferences,
@@ -45,13 +47,8 @@ import {
 import ExpenditureForm from './ExpenditureForm';
 import { ExpenditureTypes, ValuesType } from './types';
 import LockedSidebar from './LockedSidebar';
-import {
-  EXPENDITURE_TYPE_KEY,
-  initialValues,
-  validationSchema,
-} from './constants';
+import { initialValues, validationSchema } from './constants';
 import styles from './ExpenditurePage.css';
-import { newFundingSource } from '~dashboard/ExpenditurePage/ExpenditureSettings/Streaming/constants';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -145,7 +142,9 @@ const ExpenditurePage = ({ match }: Props) => {
   const loggedInUser = useLoggedInUser();
 
   const initialValuesData = useMemo((): ValuesType => {
-    const savedExpenditureType = localStorage.getItem(EXPENDITURE_TYPE_KEY);
+    const savedExpenditureType = localStorage.getItem(
+      LOCAL_STORAGE_EXPENDITURE_TYPE_KEY,
+    );
     const initialExpenditureType = isExpenditureType(savedExpenditureType)
       ? savedExpenditureType
       : ExpenditureTypes.Advanced;
@@ -181,7 +180,7 @@ const ExpenditurePage = ({ match }: Props) => {
           },
         },
         streaming: {
-          fundingSource: [
+          fundingSources: [
             {
               ...newFundingSource,
               rate: {
@@ -277,7 +276,7 @@ const ExpenditurePage = ({ match }: Props) => {
 
   const lockValues = useCallback(() => {
     setFormEditable(false);
-    localStorage.removeItem(EXPENDITURE_TYPE_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_EXPENDITURE_TYPE_KEY);
   }, []);
 
   const handleLockExpenditure = useCallback(() => {

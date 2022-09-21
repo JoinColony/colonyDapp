@@ -11,5 +11,5 @@ export interface FundingSource {
 }
 
 export interface Streaming {
-  fundingSource: FundingSource[];
+  fundingSources: FundingSource[];
 }

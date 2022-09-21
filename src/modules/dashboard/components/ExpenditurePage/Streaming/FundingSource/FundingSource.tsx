@@ -170,7 +170,7 @@ const FundingSource = ({
               {colony && (
                 <DomainDropdown
                   colony={colony}
-                  name={`streaming.fundingSource[${index}].team`}
+                  name={`streaming.fundingSources[${index}].team`}
                   renderActiveOptionFn={renderActiveOption}
                   filterOptionsFn={filterDomains}
                   scrollContainer={sidebarRef}
@@ -191,7 +191,7 @@ const FundingSource = ({
               <div className={styles.rate}>
                 <div className={styles.inputRateAmount}>
                   <Input
-                    name={`streaming.fundingSource[${index}].rate.amount`}
+                    name={`streaming.fundingSources[${index}].rate.amount`}
                     appearance={{
                       theme: 'underlined',
                       size: 'small',
@@ -209,7 +209,7 @@ const FundingSource = ({
                   <TokenSymbolSelector
                     label=""
                     tokens={colony.tokens}
-                    name={`streaming.fundingSource[${index}].rate.token`}
+                    name={`streaming.fundingSources[${index}].rate.token`}
                     appearance={{ alignOptions: 'right', theme: 'grey' }}
                     elementOnly
                   />
@@ -217,7 +217,7 @@ const FundingSource = ({
                 <span className={styles.slash}>/</span>
                 <div className={styles.selectWrapper}>
                   <SelectHorizontal
-                    name={`streaming.fundingSource[${index}].rate.time`}
+                    name={`streaming.fundingSources[${index}].rate.time`}
                     label={MSG.time}
                     appearance={{
                       theme: 'alt',
@@ -245,7 +245,7 @@ const FundingSource = ({
               <div className={styles.limitContainer}>
                 <div className={styles.inputContainer}>
                   <Input
-                    name={`streaming.fundingSource[${index}].limit`}
+                    name={`streaming.fundingSources[${index}].limit`}
                     appearance={{
                       theme: 'underlined',
                       size: 'small',
