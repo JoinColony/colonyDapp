@@ -1,4 +1,5 @@
 export const paddingRightLeft: string;
+export const paddingBottom: string;
 export const circlePlusIcon: string;
 export const container: string;
 export const header: string;
