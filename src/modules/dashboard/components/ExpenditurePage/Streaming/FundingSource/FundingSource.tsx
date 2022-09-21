@@ -143,7 +143,7 @@ const FundingSource = ({
                     <div className={styles.inputContainer}>
                       <Input
                         // eslint-disable-next-line max-len
-                        name={`streaming.fundingSource[${index}].rate[${rateIndex}].limit`}
+                        name={`streaming.fundingSources[${index}].rate[${rateIndex}].limit`}
                         appearance={{
                           theme: 'underlined',
                           size: 'small',
