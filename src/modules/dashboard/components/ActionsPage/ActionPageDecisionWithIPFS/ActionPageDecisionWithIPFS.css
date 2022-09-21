@@ -38,6 +38,7 @@
 }
 
 .leftContent {
+  flex-grow: 1;
   margin-top: 17px;
   margin-bottom: 15px;
   padding-bottom: 15px;
@@ -50,21 +51,36 @@
   background-color: color-mod(var(--temp-grey-blue-7) alpha(15%));
 }
 
-.userinfo {
+.header {
   composes: inlineEllipsis from '~styles/text.css';
   display: flex;
   align-items: center;
-  font-size: var(--size-normal);
+  margin-bottom: 16px;
+  gap: 5px;
+}
+
+.nameAndTime {
+  display: flex;
+  flex-direction: column;
+  font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
-  color: var(--pink);
+  line-height: 18px;
 }
 
 .userName {
-  margin-left: 5px;
+  color: var(--pink);
+}
+
+.time {
+  color: color-mod(var(--dark) alpha(65%));
+}
+
+.tag {
+  align-self: flex-start;
+  margin-left: auto;
 }
 
 .title {
-  margin-top: 16px;
   margin-bottom: 15px;
 }
 

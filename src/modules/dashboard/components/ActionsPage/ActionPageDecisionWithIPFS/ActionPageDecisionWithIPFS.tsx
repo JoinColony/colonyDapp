@@ -10,6 +10,9 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import { useDataFetcher } from '~utils/hooks';
 import { Colony, AnyUser } from '~data/index';
 import { DecisionDetails } from '~types/index';
+import TimeRelative from '~core/TimeRelative';
+import Tag, { Appearance as TagAppearance } from '~core/Tag';
+import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
 
 import { ipfsDataFetcher } from '../../../../core/fetchers';
 
@@ -38,6 +41,7 @@ interface Props {
   username: string;
   walletAddress: string;
   hash: string;
+  createdAt: number;
   isObjection?: boolean;
 }
 // @NOTE For a Decision motions, the annotation stores the decision details.
@@ -47,6 +51,7 @@ const ActionPageDecisionWithIPFS = ({
   username,
   walletAddress,
   hash,
+  createdAt,
   isObjection = false,
 }: Props) => {
   const { data: ipfsDataJSON } = useDataFetcher(
@@ -117,7 +122,7 @@ const ActionPageDecisionWithIPFS = ({
         }
       >
         <div className={styles.leftContent}>
-          <span className={styles.userinfo}>
+          <div className={styles.header}>
             <UserAvatar
               colony={colony}
               size="s"
@@ -138,8 +143,28 @@ const ActionPageDecisionWithIPFS = ({
                 ],
               }}
             />
-            <span className={styles.userName}>{`@${username}`}</span>
-          </span>
+
+            <div className={styles.nameAndTime}>
+              <span className={styles.userName}>{`@${username}`}</span>
+              <span className={styles.time}>
+                <TimeRelative value={new Date(createdAt)} />
+              </span>
+            </div>
+
+            {isObjection && (
+              <div className={styles.tag}>
+                <Tag
+                  text={MOTION_TAG_MAP[MotionState.Objection].name}
+                  appearance={{
+                    theme: MOTION_TAG_MAP[MotionState.Objection]
+                      .theme as TagAppearance['theme'],
+                    colorSchema: MOTION_TAG_MAP[MotionState.Objection]
+                      .colorSchema as TagAppearance['colorSchema'],
+                  }}
+                />
+              </div>
+            )}
+          </div>
           {!isObjection && (
             <div className={styles.title}>
               <Heading
