@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { FormSection, InputLabel } from '~core/Fields';
 import UserAvatar from '~core/UserAvatar';
@@ -52,7 +52,7 @@ const LockedStreaming = ({ startDate, endDate }: Props) => {
             }}
           />
           <span className={styles.expenditure}>
-            {MSG.streaming.defaultMessage}
+            <FormattedMessage {...MSG.streaming} />
           </span>
         </div>
       </FormSection>
