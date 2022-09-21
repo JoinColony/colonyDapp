@@ -135,6 +135,7 @@ const StakingWidgetFlow = ({ colony, motionId, scrollToRef }: Props) => {
           motionId={motionId}
           colony={colony}
           handleWidgetState={setIsSummary}
+          totalPercentage={!isObjection ? yayPercentage : nayPercentage}
         />
       )}
     </div>
