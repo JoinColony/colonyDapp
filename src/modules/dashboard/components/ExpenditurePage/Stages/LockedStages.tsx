@@ -17,6 +17,7 @@ import StreamingStagesLocked from './StreamingStages/StreamingStagesLocked';
 import { useClaimStreamingPayment } from './StreamingStages/StreamingStagesLocked/hooks';
 import { calcAvailableToClaim } from './utils';
 import styles from './Stages.css';
+import StreamingStagesLocked from './StreamingStages/StreamingStagesLocked';
 
 const MSG = defineMessages({
   motion: {
