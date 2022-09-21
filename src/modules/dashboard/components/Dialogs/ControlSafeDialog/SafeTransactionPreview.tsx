@@ -389,7 +389,9 @@ const SafeTransactionPreview = ({
                             address={values.transactions[index][input.name]}
                           />
                         ) : (
-                          <div>{values.transactions[index][input.name]}</div>
+                          <div className={styles.rawTransactionValues}>
+                            {values.transactions[index][input.name]}
+                          </div>
                         )
                       }
                     />
