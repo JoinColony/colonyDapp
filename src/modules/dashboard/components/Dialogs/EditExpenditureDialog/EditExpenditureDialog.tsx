@@ -26,7 +26,9 @@ export const validationSchema = (annotationErrorMessage) =>
     // eslint-disable-next-line func-names
     annotationMessage: yup
       .string()
-      .test('isRequired', annotationErrorMessage, function (value) {
+      .test('isRequired', annotationErrorMessage, function checkRequired(
+        value,
+      ) {
         const isRequired = this?.parent?.forceAction;
         if (isRequired) {
           return !!value;
