@@ -113,7 +113,7 @@ const DecisionDialog = ({
             colony={colony}
             {...formProps}
             ethDomainId={
-              ethDomainId || decisionData?.motionDomainId || ROOT_DOMAIN_ID
+              domainId || decisionData?.motionDomainId || ROOT_DOMAIN_ID
             }
             cancel={cancel}
             editor={editor}
