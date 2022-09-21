@@ -107,7 +107,7 @@ const ExpenditureBaseForm = ({ colony, sidebarRef }: Props) => {
               filterOptionsFn={filterDomains}
               scrollContainer={sidebarRef}
               placement="bottom"
-              withDropdownElelment
+              withDropdownElement
             />
           )}
         </div>
