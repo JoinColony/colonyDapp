@@ -1,0 +1,99 @@
+@value buttonHeight: 29px;
+@value buttonWidth: 100px;
+@value iconColor: var(--temp-grey-blue-7);
+
+.stagesWrapper {
+  margin-bottom: 180px;
+  min-width: 340px;
+}
+
+.stagesRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0 13px;
+}
+
+.paddingTopZero {
+  padding-top: 0;
+}
+
+.iconButton {
+  margin-left: 0;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+}
+
+.iconButton i {
+  display: flex;
+}
+
+.iconButton:hover {
+  cursor: pointer;
+}
+
+.iconButtonDisabled {
+  opacity: 0.5;
+}
+
+.icon svg {
+  height: 18px;
+  width: 18px;
+  fill: var(--temp-grey-blue-7);
+}
+
+.iconWrapper {
+  position: relative;
+}
+
+.iconWrapper:hover {
+  &::after {
+    height: 30px;
+    width: 30px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 50%;
+    background-color: var(--action-secondary);
+    transform: translate(-6px, -6px);
+    content: '';
+    opacity: 0.1;
+  }
+}
+
+.cancelIcon:hover svg {
+  fill: var(--pink);
+  transition: fill 200ms ease-in-out;
+}
+
+.label {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+  letter-spacing: var(--spacing-medium);
+}
+
+.paddingTopZero > div {
+  margin-left: 30px;
+}
+
+.paddingTopZero > div > button:not(:last-of-type) {
+  margin-right: 30px;
+}
+
+.buttonsWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.motionText {
+  white-space: nowrap;
+}
+
+.valueWrapper {
+  display: flex;
+  flex-direction: column;
+}

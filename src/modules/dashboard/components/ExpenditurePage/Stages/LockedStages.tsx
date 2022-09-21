@@ -15,6 +15,7 @@ import { Motion, MotionStatus, MotionType, Status } from './constants';
 import LinkedMotions from './LinkedMotions';
 import Stages from './Stages';
 import styles from './Stages.css';
+import StreamingStagesLocked from './StreamingStages/StreamingStagesLocked';
 
 const MSG = defineMessages({
   motion: {
@@ -54,6 +55,8 @@ const LockedStages = ({
 }: Props) => {
   const activeStage = stages.find((stage) => stage.id === activeStageId);
   const { formatMessage } = useIntl();
+  const isStreamingPaymentType =
+    formValues?.expenditure === ExpenditureTypes.Streaming;
 
   const handleButtonClick = useCallback(async () => {
     activeStage?.buttonAction();
@@ -77,7 +80,7 @@ const LockedStages = ({
 
   return (
     <div className={styles.tagStagesWrapper}>
-      {motion?.status === MotionStatus.Pending && (
+      {motion?.status === MotionStatus.Pending && !isStreamingPaymentType && (
         <Tag
           appearance={{
             theme: 'golden',
@@ -92,20 +95,24 @@ const LockedStages = ({
               })}
         </Tag>
       )}
-      <Stages
-        {...{
-          stages,
-          activeStageId,
-          setActiveStageId,
-          handleButtonClick,
-          motion,
-          status,
-          handleCancelExpenditure,
-          formValues,
-          colony,
-          expenditureType,
-        }}
-      />
+      {isStreamingPaymentType ? (
+        <StreamingStagesLocked motion={motion} />
+      ) : (
+        <Stages
+          {...{
+            stages,
+            activeStageId,
+            setActiveStageId,
+            handleButtonClick,
+            motion,
+            status,
+            handleCancelExpenditure,
+            formValues,
+            colony,
+            expenditureType,
+          }}
+        />
+      )}
       {motion && (
         // motion link needs to be changed and redirects to actual motions page
         <LinkedMotions
