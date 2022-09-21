@@ -1,6 +1,6 @@
 import React, { ReactChild } from 'react';
 
-import Heading from '~core/Heading';
+import Heading, { Appearance } from '~core/Heading';
 import NavLink from '~core/NavLink';
 import Icon from '~core/Icon';
 
@@ -9,12 +9,13 @@ import styles from './ClickableHeading.css';
 interface Props {
   linkTo: string;
   children?: ReactChild;
+  appearance?: Pick<Appearance, 'margin'>;
 }
 
-const ClickableHeading = ({ linkTo, children }: Props) => {
+const ClickableHeading = ({ linkTo, children, appearance }: Props) => {
   return (
     <div className={styles.heading}>
-      <Heading appearance={{ size: 'smallish', weight: 'bold' }}>
+      <Heading appearance={{ size: 'smallish', weight: 'bold', ...appearance }}>
         <NavLink to={linkTo}>
           <span className={styles.contents}>
             {children}

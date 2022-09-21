@@ -76,7 +76,8 @@
 
 .heading {
   display: flex;
-  align-items: center;
+  align-items: baseline;
+  margin-bottom: 20px;
   gap: 8px;
 }
 
@@ -87,8 +88,4 @@
 
 .heading > span:first-child {
   margin-left: 0;
-}
-
-.inviteButton {
-  margin-bottom: 20px;
 }
