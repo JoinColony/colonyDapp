@@ -95,7 +95,7 @@ const FundingSource = ({ fundingSource, index, colony, sidebarRef }: Props) => {
               {colony && (
                 <DomainDropdown
                   colony={colony}
-                  name={`streaming.fundingSource[${index}].team`}
+                  name={`streaming.fundingSources[${index}].team`}
                   renderActiveOptionFn={renderActiveOption}
                   filterOptionsFn={filterDomains}
                   scrollContainer={sidebarRef}
