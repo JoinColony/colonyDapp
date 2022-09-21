@@ -5,14 +5,7 @@ import { parseInt } from 'lodash';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { Colony } from '~data/index';
-import {
-  FormSection,
-  Input,
-  InputLabel,
-  SelectHorizontal,
-  SelectOption,
-  TokenSymbolSelector,
-} from '~core/Fields';
+import { FormSection, Input, InputLabel, SelectOption } from '~core/Fields';
 import DomainDropdown from '~core/DomainDropdown';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import ColorTag, { Color } from '~core/ColorTag';
@@ -20,6 +13,7 @@ import TokenIcon from '~dashboard/HookedTokenIcon';
 
 import { FundingSource as FundingSourceType } from '../types';
 
+import Rate from '../Rate';
 import styles from './FundingSource.css';
 
 const MSG = defineMessages({
@@ -27,33 +21,9 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Streaming.FundingSource.team',
     defaultMessage: 'Team',
   },
-  rate: {
-    id: 'dashboard.ExpenditurePage.Streaming.FundingSource.rate',
-    defaultMessage: 'Rate',
-  },
   notSet: {
     id: 'dashboard.ExpenditurePage.Streaming.FundingSource.notSet',
     defaultMessage: 'Not set',
-  },
-  time: {
-    id: 'dashboard.ExpenditurePage.Streaming.FundingSource.time',
-    defaultMessage: 'Rate time',
-  },
-  month: {
-    id: 'dashboard.ExpenditurePage.Streaming.FundingSource.month',
-    defaultMessage: 'month',
-  },
-  week: {
-    id: 'dashboard.ExpenditurePage.Streaming.FundingSource.week',
-    defaultMessage: 'week',
-  },
-  day: {
-    id: 'dashboard.ExpenditurePage.Streaming.FundingSource.day',
-    defaultMessage: 'day',
-  },
-  hour: {
-    id: 'dashboard.ExpenditurePage.Streaming.FundingSource.hour',
-    defaultMessage: 'hour',
   },
   limit: {
     id: 'dashboard.ExpenditurePage.Streaming.FundingSource.limit',
@@ -144,12 +114,6 @@ const FundingSource = ({
     return optionDomainId !== COLONY_TOTAL_BALANCE_DOMAIN_ID;
   }, []);
 
-  const token = colony.tokens?.find(
-    (tokenItem) =>
-      fundingSource.rate.token &&
-      tokenItem.address === fundingSource.rate.token,
-  );
-
   return (
     <>
       {fundingSource.isExpanded && (
@@ -180,60 +144,12 @@ const FundingSource = ({
               )}
             </div>
           </FormSection>
-          <FormSection appearance={{ border: 'bottom' }}>
-            <div className={styles.rateContainer}>
-              <InputLabel
-                label={MSG.rate}
-                appearance={{
-                  direction: 'horizontal',
-                }}
-              />
-              <div className={styles.rate}>
-                <div className={styles.inputRateAmount}>
-                  <Input
-                    name={`streaming.fundingSources[${index}].rate.amount`}
-                    appearance={{
-                      theme: 'underlined',
-                      size: 'small',
-                    }}
-                    label={MSG.rate}
-                    placeholder={MSG.notSet}
-                    formattingOptions={{
-                      numeral: true,
-                      numeralDecimalScale: 10,
-                    }}
-                    elementOnly
-                  />
-                </div>
-                <div className={styles.tokenWrapper}>
-                  <TokenSymbolSelector
-                    label=""
-                    tokens={colony.tokens}
-                    name={`streaming.fundingSources[${index}].rate.token`}
-                    appearance={{ alignOptions: 'right', theme: 'grey' }}
-                    elementOnly
-                  />
-                </div>
-                <span className={styles.slash}>/</span>
-                <div className={styles.selectWrapper}>
-                  <SelectHorizontal
-                    name={`streaming.fundingSources[${index}].rate.time`}
-                    label={MSG.time}
-                    appearance={{
-                      theme: 'alt',
-                      width: 'content',
-                    }}
-                    options={timeOptions}
-                    scrollContainer={sidebarRef}
-                    placement="bottom"
-                    elementOnly
-                    withDropdownElement
-                    optionSizeLarge
-                  />
-                </div>
-              </div>
-            </div>
-          </FormSection>
+          <Rate
+            fundingSource={fundingSource}
+            index={index}
+            sidebarRef={sidebarRef}
+            colony={colony}
+          />
           <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.inputWrapper}>
               <InputLabel
@@ -242,34 +158,44 @@ const FundingSource = ({
                   direction: 'horizontal',
                 }}
               />
-              <div className={styles.limitContainer}>
-                <div className={styles.inputContainer}>
-                  <Input
-                    name={`streaming.fundingSources[${index}].limit`}
-                    appearance={{
-                      theme: 'underlined',
-                      size: 'small',
-                    }}
-                    label={MSG.rate}
-                    placeholder={MSG.notSet}
-                    formattingOptions={{
-                      numeral: true,
-                      numeralDecimalScale: 10,
-                    }}
-                    elementOnly
-                  />
-                </div>
-                {token && (
-                  <div className={styles.tokeIconWrapper}>
-                    <TokenIcon
-                      className={styles.tokenIcon}
-                      token={token}
-                      name={token.name || token.address}
-                    />
-                    {token.symbol}
+              {fundingSource.rate.map((rateItem, rateIndex) => {
+                const token = colony.tokens?.find(
+                  (tokenItem) =>
+                    rateItem.token && tokenItem.address === rateItem.token,
+                );
+
+                return (
+                  <div className={styles.limitContainer} key={rateItem.id}>
+                    <div className={styles.inputContainer}>
+                      <Input
+                        // eslint-disable-next-line max-len
+                        name={`streaming.fundingSource[${index}].rate[${rateIndex}].limit`}
+                        appearance={{
+                          theme: 'underlined',
+                          size: 'small',
+                        }}
+                        label={MSG.limit}
+                        placeholder={MSG.notSet}
+                        formattingOptions={{
+                          numeral: true,
+                          numeralDecimalScale: 10,
+                        }}
+                        elementOnly
+                      />
+                    </div>
+                    {token && (
+                      <div className={styles.tokeIconWrapper}>
+                        <TokenIcon
+                          className={styles.tokenIcon}
+                          token={token}
+                          name={token.name || token.address}
+                        />
+                        {token.symbol}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
+                );
+              })}
             </div>
           </FormSection>
         </div>
