@@ -34,6 +34,8 @@ import EditExpenditureDialog from '~dashboard/Dialogs/EditExpenditureDialog';
 import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
 import Tag from '~core/Tag';
 import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
+import { newFundingSource } from '~dashboard/ExpenditurePage/Streaming/constants';
+import { LOCAL_STORAGE_EXPENDITURE_TYPE_KEY } from '~constants';
 
 import {
   findDifferences,
@@ -148,7 +150,9 @@ const ExpenditurePage = ({ match }: Props) => {
   const loggedInUser = useLoggedInUser();
 
   const initialValuesData = useMemo((): ValuesType => {
-    const savedExpenditureType = localStorage.getItem(EXPENDITURE_TYPE_KEY);
+    const savedExpenditureType = localStorage.getItem(
+      LOCAL_STORAGE_EXPENDITURE_TYPE_KEY,
+    );
     const initialExpenditureType = isExpenditureType(savedExpenditureType)
       ? savedExpenditureType
       : ExpenditureTypes.Advanced;
@@ -183,6 +187,17 @@ const ExpenditurePage = ({ match }: Props) => {
             tokenAddress: colonyData?.processedColony?.nativeTokenAddress,
           },
         },
+        streaming: {
+          fundingSources: [
+            {
+              ...newFundingSource,
+              rate: {
+                ...newFundingSource.rate,
+                token: colonyData?.processedColony.nativeTokenAddress,
+              },
+            },
+          ],
+        },
       }
     );
   }, [colonyData, formValues, loggedInUser]);
@@ -193,8 +208,9 @@ const ExpenditurePage = ({ match }: Props) => {
 
   const handleSubmit = useCallback(
     (values) => {
-      if (!activeStageId) {
-        setActiveStageId(Stage.Draft);
+      setShouldValidate(true);
+      if (!activeStateId) {
+        setActiveStateId(Stage.Draft);
       }
 
       if (values.expenditure === ExpenditureTypes.Streaming) {
@@ -228,6 +244,11 @@ const ExpenditurePage = ({ match }: Props) => {
     },
     [activeStageId, lockValues],
   );
+
+  const lockValues = useCallback(() => {
+    setFormEditable(false);
+    localStorage.removeItem(LOCAL_STORAGE_EXPENDITURE_TYPE_KEY);
+  }, []);
 
   const handleLockExpenditure = useCallback(() => {
     // Call to backend will be added here, to lock the expenditure
