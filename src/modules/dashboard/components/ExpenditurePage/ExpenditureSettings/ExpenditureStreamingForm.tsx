@@ -47,10 +47,12 @@ const endDateOptions: DatePickerOption[] = [
   {
     label: MSG.whenCancelled,
     value: ExpenditureEndDateTypes.WhenCancelled,
+    hideDatePicker: true,
   },
   {
     label: MSG.limitIsReached,
     value: ExpenditureEndDateTypes.LimitIsReached,
+    hideDatePicker: true,
   },
   {
     label: MSG.fixedTime,
