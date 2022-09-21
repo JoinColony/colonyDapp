@@ -38,7 +38,7 @@
 }
 
 .fundingSourceLabel div {
-  height: calc(100% - 80px);
+  height: 68%;
 }
 
 .deleteIcon {

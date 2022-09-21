@@ -109,7 +109,7 @@ const FundingSource = ({
               {colony && (
                 <DomainDropdown
                   colony={colony}
-                  name={`streaming.fundingSource[${index}].team`}
+                  name={`streaming.fundingSources[${index}].team`}
                   renderActiveOptionFn={renderActiveOption}
                   filterOptionsFn={filterDomains}
                   scrollContainer={sidebarRef}
@@ -133,7 +133,7 @@ const FundingSource = ({
                   direction: 'horizontal',
                 }}
               />
-              {fundingSource.rate.map((rateItem, rateIndex) => {
+              {fundingSource.rate?.map((rateItem, rateIndex) => {
                 const token = colony.tokens?.find(
                   (tokenItem) =>
                     rateItem.token && tokenItem.address === rateItem.token,
@@ -143,7 +143,7 @@ const FundingSource = ({
                   <div className={styles.limitContainer} key={rateItem.id}>
                     <div className={styles.inputContainer}>
                       <Input
-                        name={`streaming.fundingSource[${index}].rate[${rateIndex}].limit`}
+                        name={`streaming.fundingSources[${index}].rate[${rateIndex}].limit`}
                         appearance={{
                           theme: 'underlined',
                           size: 'small',

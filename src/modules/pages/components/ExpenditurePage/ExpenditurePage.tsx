@@ -35,14 +35,20 @@ import EditExpenditureDialog from '~dashboard/Dialogs/EditExpenditureDialog';
 import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
 import Tag from '~core/Tag';
 import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
+import { LOCAL_STORAGE_EXPENDITURE_TYPE_KEY } from '~constants';
 
-import { findDifferences, updateValues, setClaimDate } from './utils';
+import {
+  findDifferences,
+  updateValues,
+  setClaimDate,
+  isExpenditureType,
+} from './utils';
 import ExpenditureForm from './ExpenditureForm';
 import { ExpenditureTypes, ValuesType } from './types';
 import LockedSidebar from './LockedSidebar';
 import { initialValues, validationSchema } from './constants';
 import styles from './ExpenditurePage.css';
-import { newFundingSource } from '~dashboard/ExpenditurePage/ExpenditureSettings/Streaming/constants';
+import { newFundingSource } from '~dashboard/ExpenditurePage/Streaming/constants';
 
 const displayName = 'pages.ExpenditurePage';
 
@@ -136,9 +142,17 @@ const ExpenditurePage = ({ match }: Props) => {
   const loggedInUser = useLoggedInUser();
 
   const initialValuesData = useMemo((): ValuesType => {
+    const savedExpenditureType = localStorage.getItem(
+      LOCAL_STORAGE_EXPENDITURE_TYPE_KEY,
+    );
+    const initialExpenditureType = isExpenditureType(savedExpenditureType)
+      ? savedExpenditureType
+      : ExpenditureTypes.Advanced;
+
     return (
       formValues || {
         ...initialValues,
+        expenditure: initialExpenditureType,
         owner: loggedInUser,
         recipients: [
           {
@@ -166,7 +180,7 @@ const ExpenditurePage = ({ match }: Props) => {
           },
         },
         streaming: {
-          fundingSource: [
+          fundingSources: [
             {
               ...newFundingSource,
               rate: [
@@ -187,6 +201,12 @@ const ExpenditurePage = ({ match }: Props) => {
       setShouldValidate(true);
       if (!activeStateId) {
         setActiveStateId(Stage.Draft);
+      }
+
+      // tepmorary action, will be removed after adding StartStreamDialog
+      if (values.expenditure === ExpenditureTypes.Streaming) {
+        setActiveStateId?.(Stage.Claimed);
+        setFormEditable(false);
       }
 
       if (values.expenditure === ExpenditureTypes.Split) {
@@ -264,6 +284,7 @@ const ExpenditurePage = ({ match }: Props) => {
 
   const lockValues = useCallback(() => {
     setFormEditable(false);
+    localStorage.removeItem(LOCAL_STORAGE_EXPENDITURE_TYPE_KEY);
   }, []);
 
   const handleLockExpenditure = useCallback(() => {

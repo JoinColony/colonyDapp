@@ -56,10 +56,10 @@ interface Props {
 const Rate = ({ index, fundingSource, colony, sidebarRef }: Props) => {
   return (
     <FieldArray
-      name={`streaming.fundingSource[${index}].rate`}
+      name={`streaming.fundingSources[${index}].rate`}
       render={({ push, remove }) => (
         <FormSection appearance={{ border: 'bottom' }}>
-          {fundingSource.rate.map((rateItem, rateIndex) => {
+          {fundingSource.rate?.map((rateItem, rateIndex) => {
             return (
               <div className={styles.rateContainer} key={rateItem.id}>
                 {rateIndex === 0 && (
@@ -99,7 +99,7 @@ const Rate = ({ index, fundingSource, colony, sidebarRef }: Props) => {
                   <div className={styles.rate}>
                     <div className={styles.inputRateAmount}>
                       <Input
-                        name={`streaming.fundingSource[${index}].rate[${rateIndex}].amount`}
+                        name={`streaming.fundingSources[${index}].rate[${rateIndex}].amount`}
                         appearance={{
                           theme: 'underlined',
                           size: 'small',
@@ -117,7 +117,7 @@ const Rate = ({ index, fundingSource, colony, sidebarRef }: Props) => {
                       <TokenSymbolSelector
                         label=""
                         tokens={colony.tokens}
-                        name={`streaming.fundingSource[${index}].rate[${rateIndex}].token`}
+                        name={`streaming.fundingSources[${index}].rate[${rateIndex}].token`}
                         appearance={{
                           alignOptions: 'right',
                           theme: 'grey',
@@ -128,7 +128,7 @@ const Rate = ({ index, fundingSource, colony, sidebarRef }: Props) => {
                     <span className={styles.slash}>/</span>
                     <div className={styles.selectWrapper}>
                       <SelectHorizontal
-                        name={`streaming.fundingSource[${index}].rate[${rateIndex}].time`}
+                        name={`streaming.fundingSources[${index}].rate[${rateIndex}].time`}
                         label={MSG.time}
                         appearance={{
                           theme: 'alt',

@@ -1,6 +1,7 @@
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { nanoid } from 'nanoid';
 import { defineMessages } from 'react-intl';
+
 import { newRate } from './FundingSource/constants';
 import { TimePeriod } from './types';
 
