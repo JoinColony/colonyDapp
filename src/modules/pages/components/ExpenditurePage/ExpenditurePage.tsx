@@ -5,13 +5,11 @@ import React, {
   useRef,
   useState,
 } from 'react';
-
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { nanoid } from 'nanoid';
 import { RouteChildrenProps, useParams } from 'react-router';
 import { Formik, FormikErrors } from 'formik';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
-import { isEmpty, toFinite } from 'lodash';
 
 import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
 import { useColonyFromNameQuery } from '~data/generated';
@@ -36,9 +34,6 @@ import EditExpenditureDialog from '~dashboard/Dialogs/EditExpenditureDialog';
 import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
 import Tag from '~core/Tag';
 import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
-import { initalMilestone } from '~dashboard/ExpenditurePage/Staged/constants';
-import { isBatchPaymentType } from '~dashboard/ExpenditurePage/Batch/utils';
-import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
 
 import { findDifferences, updateValues, setClaimDate } from './utils';
 import { ExpenditureTypes, ValuesType } from './types';
@@ -177,10 +172,25 @@ const ExpenditurePage = ({ match }: Props) => {
     );
   }, [colonyData, formValues, loggedInUser]);
 
+  const lockValues = useCallback(() => {
+    setFormEditable(false);
+  }, []);
+
   const handleSubmit = useCallback(
     (values) => {
       if (!activeStageId) {
         setActiveStageId(Stage.Draft);
+      }
+
+      if (values.expenditure === ExpenditureTypes.Streaming) {
+        lockValues();
+        setMotion({
+          type: MotionType.StartStream,
+          status: MotionStatus.Pending,
+        });
+        setFormValues(values);
+
+        return;
       }
 
       if (values) {
@@ -201,12 +211,8 @@ const ExpenditurePage = ({ match }: Props) => {
       }
       // add sending form values to backend
     },
-    [activeStageId],
+    [activeStageId, lockValues],
   );
-
-  const lockValues = useCallback(() => {
-    setFormEditable(false);
-  }, []);
 
   const handleLockExpenditure = useCallback(() => {
     // Call to backend will be added here, to lock the expenditure

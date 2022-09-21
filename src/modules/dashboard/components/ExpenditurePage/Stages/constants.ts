@@ -15,6 +15,7 @@ export enum MotionStatus {
 export enum MotionType {
   Cancel = 'Cancel',
   Edit = 'Edit',
+  StartStream = 'Start stream',
 }
 
 export enum Status {
@@ -22,6 +23,7 @@ export enum Status {
   ForceCancelled = 'forceCancelled',
   Edited = 'edited',
   ForceEdited = 'forceEdited',
+  StartedStream = 'startedStream',
 }
 
 export interface Motion {
