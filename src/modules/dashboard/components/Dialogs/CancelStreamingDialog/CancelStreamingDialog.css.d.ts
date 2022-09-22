@@ -27,3 +27,4 @@ export const userAvatarContainer: string;
 export const userName: string;
 export const activeItem: string;
 export const activeItemLabel: string;
+export const lockedActiveItemLabel: string;

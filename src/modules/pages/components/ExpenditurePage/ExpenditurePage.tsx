@@ -114,7 +114,7 @@ const ExpenditurePage = ({ match }: Props) => {
   const { colonyName } = useParams<{
     colonyName: string;
   }>();
-  const [isFormEditable, setFormEditable] = useState(false);
+  const [isFormEditable, setFormEditable] = useState(true);
   const [formValues, setFormValues] = useState<ValuesType>();
   const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStateId, setActiveStateId] = useState<string>();
@@ -550,6 +550,7 @@ const ExpenditurePage = ({ match }: Props) => {
                     setActiveStateId={setActiveStateId}
                     handleCancelExpenditure={handleCancelExpenditure}
                     colony={colonyData.processedColony}
+                    formValues={formValues}
                   />
                 )
               )}

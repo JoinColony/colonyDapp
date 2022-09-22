@@ -1,23 +1,26 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import classNames from 'classnames';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FormikProps } from 'formik';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import Dialog, { DialogSection } from '~core/Dialog';
 import { Annotations, InputLabel, Toggle } from '~core/Fields';
 import { Colony, useLoggedInUser } from '~data/index';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
+import UserAvatar from '~core/UserAvatar';
+import UserMention from '~core/UserMention';
+import ColorTag, { Color } from '~core/ColorTag';
 import { useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot } from '~modules/users/checks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
+import { ValuesType } from '~pages/ExpenditurePage/types';
 
 import { FormValues } from './CancelStreamingDialog';
 import styles from './CancelStreamingDialog.css';
-import UserAvatar from '~core/UserAvatar';
-import UserMention from '~core/UserMention';
 
 const MSG = defineMessages({
   header: {
@@ -87,6 +90,7 @@ interface Props {
   colony: Colony;
   onCancelStreaming: (isForce: boolean) => void;
   isVotingExtensionEnabled: boolean;
+  form: ValuesType;
 }
 
 const CancelStreamingForm = ({
@@ -97,8 +101,9 @@ const CancelStreamingForm = ({
   values,
   isSubmitting,
   handleSubmit,
+  form,
 }: Props & FormikProps<FormValues>) => {
-  // temporary value
+  const { filteredDomainId } = form || {};
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
@@ -110,6 +115,29 @@ const CancelStreamingForm = ({
     canCancelStreaming,
     isVotingExtensionEnabled,
     values.forceAction,
+  );
+
+  const domain = useMemo(
+    () =>
+      colony?.domains.find(
+        ({ ethDomainId }) => Number(filteredDomainId) === ethDomainId,
+      ),
+    [colony, filteredDomainId],
+  );
+
+  const getDomainColor = useCallback<(domainId: string | undefined) => Color>(
+    (domainId) => {
+      const rootDomainColor: Color = Color.LightPink;
+      const defaultColor: Color = Color.Yellow;
+      if (domainId === String(ROOT_DOMAIN_ID)) {
+        return rootDomainColor;
+      }
+      if (!colony || !domainId) {
+        return defaultColor;
+      }
+      return domain ? domain.color : defaultColor;
+    },
+    [colony, domain],
   );
 
   return (
@@ -235,10 +263,17 @@ const CancelStreamingForm = ({
               direction: 'horizontal',
             }}
           />
-          {/* <div className={styles.activeItem}>
-						<ColorTag color={color} />
-						<div className={styles.activeItemLabel}>{label}</div>
-					</div> */}
+          <div className={styles.activeItem}>
+            <ColorTag color={getDomainColor(filteredDomainId)} />
+            <div
+              className={classNames(
+                styles.activeItemLabel,
+                styles.lockedActiveItemLabel,
+              )}
+            >
+              {domain?.name}
+            </div>
+          </div>
         </div>
         <div
           className={classNames(
