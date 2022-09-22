@@ -239,8 +239,8 @@ const StreamingStagesLocked = ({
           <FormattedMessage {...MSG.paidToDate} />
         </span>
         <div className={styles.valueWrapper}>
-          {status === Status.StartedStream ? (
-            paidToDate?.map((paidToDateItem, index) => {
+          {status === Status.StartedStream && paidToDate ? (
+            paidToDate.map((paidToDateItem, index) => {
               const token = colony?.tokens?.find(
                 (tokenItem) => tokenItem.address === paidToDateItem.token,
               );
