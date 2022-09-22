@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FormikProps } from 'formik';
@@ -11,16 +11,15 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
-import ColorTag, { Color } from '~core/ColorTag';
 import { useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot } from '~modules/users/checks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
-import { ValuesType } from '~pages/ExpenditurePage/types';
 
 import { FormValues } from './CancelStreamingDialog';
 import styles from './CancelStreamingDialog.css';
+import FundingSourceItem from './FundingSourceItem';
 
 const MSG = defineMessages({
   header: {
@@ -57,22 +56,6 @@ const MSG = defineMessages({
     id: `dashboard.CancelStreamingDialog.CancelStreamingForm.endsValue`,
     defaultMessage: 'When cancelled',
   },
-  fundingSource: {
-    id: `dashboard.CancelStreamingDialog.CancelStreamingForm.fundingSource`,
-    defaultMessage: 'Funding Source',
-  },
-  team: {
-    id: `dashboard.CancelStreamingDialog.CancelStreamingForm.team`,
-    defaultMessage: 'Team',
-  },
-  rate: {
-    id: `dashboard.CancelStreamingDialog.CancelStreamingForm.rate`,
-    defaultMessage: 'Rate',
-  },
-  limit: {
-    id: `dashboard.CancelStreamingDialog.CancelStreamingForm.limit`,
-    defaultMessage: 'Limit',
-  },
   submit: {
     id: 'dashboard.CancelStreamingDialog.CancelStreamingForm.submit',
     defaultMessage: 'Submit',
@@ -90,8 +73,20 @@ interface Props {
   colony: Colony;
   onCancelStreaming: (isForce: boolean) => void;
   isVotingExtensionEnabled: boolean;
-  form: ValuesType;
 }
+
+const fundingSourcesMock = [
+  {
+    rate: 'rate mock',
+    limit: 'limit mock',
+    filteredDomainId: undefined,
+  },
+  {
+    rate: 'rate mock',
+    limit: 'limit mock',
+    filteredDomainId: ROOT_DOMAIN_ID,
+  },
+];
 
 const CancelStreamingForm = ({
   close,
@@ -101,9 +96,7 @@ const CancelStreamingForm = ({
   values,
   isSubmitting,
   handleSubmit,
-  form,
 }: Props & FormikProps<FormValues>) => {
-  const { filteredDomainId } = form || {};
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
@@ -115,29 +108,6 @@ const CancelStreamingForm = ({
     canCancelStreaming,
     isVotingExtensionEnabled,
     values.forceAction,
-  );
-
-  const domain = useMemo(
-    () =>
-      colony?.domains.find(
-        ({ ethDomainId }) => Number(filteredDomainId) === ethDomainId,
-      ),
-    [colony, filteredDomainId],
-  );
-
-  const getDomainColor = useCallback<(domainId: string | undefined) => Color>(
-    (domainId) => {
-      const rootDomainColor: Color = Color.LightPink;
-      const defaultColor: Color = Color.Yellow;
-      if (domainId === String(ROOT_DOMAIN_ID)) {
-        return rootDomainColor;
-      }
-      if (!colony || !domainId) {
-        return defaultColor;
-      }
-      return domain ? domain.color : defaultColor;
-    },
-    [colony, domain],
   );
 
   return (
@@ -246,70 +216,14 @@ const CancelStreamingForm = ({
           </span>
         </div>
       </DialogSection>
-      <DialogSection appearance={{ theme: 'sidePadding' }}>
-        <h4 className={styles.dialogSectionTitle}>
-          <FormattedMessage {...MSG.fundingSource} />
-        </h4>
-        <div
-          className={classNames(
-            styles.row,
-            styles.rowAlt,
-            styles.userContainer,
-          )}
-        >
-          <InputLabel
-            label={MSG.team}
-            appearance={{
-              direction: 'horizontal',
-            }}
-          />
-          <div className={styles.activeItem}>
-            <ColorTag color={getDomainColor(filteredDomainId)} />
-            <div
-              className={classNames(
-                styles.activeItemLabel,
-                styles.lockedActiveItemLabel,
-              )}
-            >
-              {domain?.name}
-            </div>
-          </div>
-        </div>
-        <div
-          className={classNames(
-            styles.row,
-            styles.rowAlt,
-            styles.userContainer,
-          )}
-        >
-          <InputLabel
-            label={MSG.rate}
-            appearance={{
-              direction: 'horizontal',
-            }}
-          />
-          <span className={styles.value}>
-            <FormattedMessage {...MSG.startsValue} />
-          </span>
-        </div>
-        <div
-          className={classNames(
-            styles.row,
-            styles.rowAlt,
-            styles.userContainer,
-          )}
-        >
-          <InputLabel
-            label={MSG.limit}
-            appearance={{
-              direction: 'horizontal',
-            }}
-          />
-          <span className={styles.value}>
-            <FormattedMessage {...MSG.endsValue} />
-          </span>
-        </div>
-      </DialogSection>
+      {fundingSourcesMock &&
+        fundingSourcesMock.map(({ limit, rate, filteredDomainId }, index) => (
+          <DialogSection appearance={{ theme: 'sidePadding' }}>
+            <FundingSourceItem
+              {...{ colony, limit, rate, filteredDomainId, index }}
+            />
+          </DialogSection>
+        ))}
       <DialogSection appearance={{ theme: 'sidePadding' }}>
         <div className={styles.annotations}>
           <Annotations

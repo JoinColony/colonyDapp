@@ -25,7 +25,6 @@ interface Props {
   setFormValues: React.Dispatch<React.SetStateAction<ValuesType | undefined>>;
   colony: Colony;
   handleCancelExpenditure: () => void;
-  formValues: ValuesType;
 }
 
 const FormStages = ({
@@ -35,7 +34,6 @@ const FormStages = ({
   setFormValues,
   colony,
   handleCancelExpenditure,
-  formValues,
 }: Props) => {
   const {
     values,
@@ -98,12 +96,7 @@ const FormStages = ({
   }, [activeStage, handleSubmit, setTouched, validateForm, values]);
 
   if (values.expenditure === ExpenditureTypes.Streaming) {
-    return (
-      <StreamingStages
-        handleSaveDraft={handleSaveDraft}
-        formValues={formValues}
-      />
-    );
+    return <StreamingStages handleSaveDraft={handleSaveDraft} />;
   }
 
   return (
