@@ -5,7 +5,11 @@ import classNames from 'classnames';
 // import { useParams } from 'react-router';
 import Button from '~core/Button';
 import { FormSection } from '~core/Fields';
-import { ValuesType } from '~pages/ExpenditurePage/types';
+import { Tooltip } from '~core/Popover';
+import Icon from '~core/Icon';
+import { useDialog } from '~core/Dialog';
+import { useColonyFromNameQuery } from '~data/generated';
+import CancelStreamingDialog from '~dashboard/Dialogs/CancelStreamingDialog';
 
 import styles from './StreamingStages.css';
 import { useParams } from 'react-router';
@@ -55,10 +59,9 @@ export const buttonStyles = {
 
 export interface Props {
   handleSaveDraft?: () => void;
-  formValues: ValuesType;
 }
 
-const StreamingStages = ({ formValues, handleSaveDraft }: Props) => {
+const StreamingStages = ({ handleSaveDraft }: Props) => {
   const { colonyName } = useParams<{
     colonyName: string;
   }>();
