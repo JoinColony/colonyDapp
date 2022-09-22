@@ -201,11 +201,12 @@ const ExpenditurePage = ({ match }: Props) => {
   const handleSubmit = useCallback(
     (values) => {
       setShouldValidate(true);
-      if (!activeStateId) {
+      if (!activeStateId && values.expenditure !== ExpenditureTypes.Streaming) {
         setActiveStateId(Stage.Draft);
       }
 
       if (values.expenditure === ExpenditureTypes.Streaming) {
+        setActiveStateId(Stage.Released);
         lockValues();
         setMotion({
           type: MotionType.StartStream,
@@ -217,8 +218,9 @@ const ExpenditurePage = ({ match }: Props) => {
         setTimeout(() => {
           setMotion({
             type: MotionType.StartStream,
-            status: MotionStatus.Failed,
+            status: MotionStatus.Passed,
           });
+          setStatus(Status.StartedStream);
         }, 5000);
 
         return;

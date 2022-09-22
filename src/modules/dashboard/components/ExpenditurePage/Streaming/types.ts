@@ -4,6 +4,7 @@ export interface FundingSource {
     amount?: number;
     token?: string;
     time?: string;
+    id: string;
   };
   isExpanded: boolean;
   limit?: number;

@@ -93,7 +93,40 @@
   white-space: nowrap;
 }
 
+.value {
+  display: flex;
+  align-items: center;
+  font-size: var(--size-normal);
+  color: var(--dark);
+  letter-spacing: 0.1px;
+}
+
+.tokenIcon {
+  margin-right: 8px;
+  height: 18px;
+  width: 18px;
+}
+
+.borderBottom {
+  border-bottom: 1px solid var(--grey-blue-0);
+}
+
+.tagWrapper > span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60px;
+}
+
 .valueWrapper {
   display: flex;
   flex-direction: column;
+}
+
+.alignStart {
+  align-items: flex-start;
+}
+
+.marginBottom {
+  margin-bottom: 24px;
 }

@@ -7,6 +7,7 @@ export const newFundingSource = {
     amount: undefined,
     token: undefined,
     time: 'month',
+    id: nanoid(),
   },
   isExpanded: true,
   id: nanoid(),
