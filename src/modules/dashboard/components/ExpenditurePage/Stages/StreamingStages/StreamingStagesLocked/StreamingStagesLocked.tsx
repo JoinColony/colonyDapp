@@ -9,7 +9,7 @@ import Tag from '~core/Tag';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
 
-import { Motion, MotionStatus } from '../../constants';
+import { Motion, MotionStatus, Status } from '../../constants';
 
 import styles from './StreamingStagesLocked.css';
 
@@ -38,6 +38,10 @@ const MSG = defineMessages({
     id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.claimFunds`,
     defaultMessage: 'Claim funds',
   },
+  startStream: {
+    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.startStream`,
+    defaultMessage: 'Start Stream',
+  },
 });
 
 const displayName =
@@ -51,9 +55,15 @@ export const buttonStyles = {
 
 export interface Props {
   motion?: Motion;
+  status?: Status;
+  handleButtonClick?: () => void;
 }
 
-const StreamingStagesLocked = ({ motion }: Props) => {
+const StreamingStagesLocked = ({
+  motion,
+  status,
+  handleButtonClick,
+}: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
   const { formatMessage } = useIntl();
@@ -159,6 +169,15 @@ const StreamingStagesLocked = ({ motion }: Props) => {
                 </Tooltip>
               )}
             </Button>
+            {motion?.status !== MotionStatus.Pending &&
+              status !== Status.StartedStream &&
+              status !== Status.Cancelled && (
+                <Button
+                  text={MSG.startStream}
+                  onClick={handleButtonClick}
+                  style={buttonStyles}
+                />
+              )}
           </div>
         </div>
       </FormSection>
