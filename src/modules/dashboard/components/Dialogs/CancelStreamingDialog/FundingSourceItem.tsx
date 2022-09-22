@@ -32,7 +32,7 @@ interface Props {
   colony: Colony;
   limit: string;
   rate: string;
-  filteredDomainId: number;
+  filteredDomainId?: string;
   index: number;
 }
 

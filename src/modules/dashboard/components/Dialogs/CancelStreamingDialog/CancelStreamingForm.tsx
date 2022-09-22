@@ -220,7 +220,8 @@ const CancelStreamingForm = ({
         fundingSourcesMock.map(({ limit, rate, filteredDomainId }, index) => (
           <DialogSection appearance={{ theme: 'sidePadding' }}>
             <FundingSourceItem
-              {...{ colony, limit, rate, filteredDomainId, index }}
+              {...{ colony, limit, rate, index }}
+              filteredDomainId={filteredDomainId?.toString()}
             />
           </DialogSection>
         ))}
