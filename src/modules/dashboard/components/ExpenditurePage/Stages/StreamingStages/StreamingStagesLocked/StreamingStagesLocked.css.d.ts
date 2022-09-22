@@ -16,6 +16,7 @@ export const value: string;
 export const tokenIcon: string;
 export const borderBottom: string;
 export const tagWrapper: string;
+export const tagClaimed: string;
 export const valueWrapper: string;
 export const alignStart: string;
 export const marginBottom: string;
