@@ -8,7 +8,6 @@ import { Colony } from '~data/index';
 
 import { CancelStreamingForm } from '.';
 import { PenalizeType } from './types';
-import { ValuesType } from '~pages/ExpenditurePage/types';
 
 const displayName = 'dashboard.CancelStreamingDialog';
 
@@ -29,7 +28,6 @@ interface Props {
   colony: Colony;
   onCancelStreaming: (isForce: boolean) => void;
   isVotingExtensionEnabled: boolean;
-  formValues: ValuesType;
 }
 
 const CancelStreamingDialog = ({
@@ -37,7 +35,6 @@ const CancelStreamingDialog = ({
   colony,
   onCancelStreaming,
   isVotingExtensionEnabled,
-  formValues: form,
 }: Props) => {
   const [isForce, setIsForce] = useState(false);
 
@@ -72,7 +69,6 @@ const CancelStreamingDialog = ({
               onCancelStreaming,
               colony,
               isVotingExtensionEnabled,
-              form,
               ...formValues,
             }}
           />

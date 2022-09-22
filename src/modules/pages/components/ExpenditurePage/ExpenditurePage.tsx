@@ -550,7 +550,6 @@ const ExpenditurePage = ({ match }: Props) => {
                     setActiveStateId={setActiveStateId}
                     handleCancelExpenditure={handleCancelExpenditure}
                     colony={colonyData.processedColony}
-                    formValues={formValues}
                   />
                 )
               )}
