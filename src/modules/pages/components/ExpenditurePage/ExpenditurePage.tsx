@@ -226,12 +226,22 @@ const ExpenditurePage = ({ match }: Props) => {
       }
 
       if (values.expenditure === ExpenditureTypes.Streaming) {
+        setActiveStageId(Stage.Released);
         lockValues();
         setMotion({
           type: MotionType.StartStream,
           status: MotionStatus.Pending,
         });
         setFormValues(values);
+
+        // it's temporary timeout
+        setTimeout(() => {
+          setMotion({
+            type: MotionType.StartStream,
+            status: MotionStatus.Passed,
+          });
+          setStatus(Status.StartedStream);
+        }, 5000);
 
         return;
       }
