@@ -22,6 +22,7 @@ interface Props {
   children: React.ReactNode;
 }
 
+// createPortal is used because of dropdown being cut off - issue: https://github.com/JoinColony/colonyDapp/issues/3488
 const Dropdown = React.forwardRef(
   (
     {
