@@ -22,7 +22,7 @@ import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissi
 import { SAFE_INTEGRATION_LEARN_MORE } from '~externalUrls';
 import { Colony, ColonySafe, useLoggedInUser } from '~data/index';
 import { PrimitiveType } from '~types/index';
-import { AbiItemExtended } from '~utils/getContractUsefulMethods';
+import { AbiItemExtended } from '~utils/safes';
 import { SelectedSafe } from '~modules/dashboard/sagas/utils/safeHelpers';
 
 import SafeTransactionPreview from './SafeTransactionPreview';

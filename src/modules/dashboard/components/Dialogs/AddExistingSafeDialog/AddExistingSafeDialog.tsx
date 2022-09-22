@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { FormikProps } from 'formik';
 import { useHistory } from 'react-router-dom';
-import { useIntl } from 'react-intl';
 
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm, SelectOption } from '~core/Fields';
@@ -35,7 +34,6 @@ const AddExistingSafeDialog = ({
   cancel,
   close,
 }: Props) => {
-  const { formatMessage } = useIntl();
   const history = useHistory();
   const loadingSafeState = useState<boolean>(false);
   const loadingModuleState = useState<boolean>(false);
@@ -46,7 +44,6 @@ const AddExistingSafeDialog = ({
     stepIndex,
     abortControllerState,
     safes,
-    formatMessage,
     loadingSafeState,
     loadingModuleState,
   );

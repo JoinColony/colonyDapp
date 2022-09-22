@@ -15,12 +15,12 @@ import {
   getContractUsefulMethods,
   AbiItemExtended,
   fetchContractABI,
-} from '~utils/getContractUsefulMethods';
+} from '~utils/safes';
+import { GNOSIS_NETWORK } from '~constants';
 
 import { FormValues } from '../ControlSafeDialog';
 
 import styles from './TransactionTypesSection.css';
-import { GNOSIS_NETWORK } from '~constants';
 
 const MSG = defineMessages({
   abiLabel: {
@@ -294,10 +294,12 @@ const ContractInteractionSection = ({
               disabled={disabledInput}
               placeholder={`${input.name} (${input.type})`}
               formattingOptions={
-                input.type.includes('int') && input.type.slice(0, -2) !== '[]'
+                input.type.includes('int') &&
+                input.type.substring(input.type.length - 2) !== '[]'
                   ? {
                       numeral: true,
-                      numeralPositiveOnly: input.type === 'uint256',
+                      numeralPositiveOnly:
+                        input.type.substring(0, 4) === 'uint',
                       numeralDecimalScale: 0,
                     }
                   : undefined
