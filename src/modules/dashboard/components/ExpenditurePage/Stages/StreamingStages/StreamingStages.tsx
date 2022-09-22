@@ -11,6 +11,7 @@ import Icon from '~core/Icon';
 import { useDialog } from '~core/Dialog';
 import { useColonyFromNameQuery } from '~data/generated';
 import CancelStreamingDialog from '~dashboard/Dialogs/CancelStreamingDialog';
+import { ValuesType } from '~pages/ExpenditurePage/types';
 
 import styles from './StreamingStages.css';
 
@@ -55,9 +56,10 @@ export const buttonStyles = {
 
 export interface Props {
   handleSaveDraft?: () => void;
+  formValues: ValuesType;
 }
 
-const StreamingStages = ({ handleSaveDraft }: Props) => {
+const StreamingStages = ({ formValues, handleSaveDraft }: Props) => {
   const { colonyName } = useParams<{
     colonyName: string;
   }>();
@@ -65,11 +67,15 @@ const StreamingStages = ({ handleSaveDraft }: Props) => {
     variables: { name: colonyName, address: '' },
   });
 
-  console.log(colonyData); // temporary
-
   const openCancelStreamingDialog = useDialog(CancelStreamingDialog);
 
-  const handleCancelStreaming = () => openCancelStreamingDialog();
+  const handleCancelStreaming = () =>
+    openCancelStreamingDialog({
+      onCancelStreaming: () => console.log('cancel expenditure'),
+      colony: colonyData.processedColony,
+      isVotingExtensionEnabled: true, // temporary value
+      formValues,
+    });
 
   return (
     <div className={styles.stagesWrapper}>
