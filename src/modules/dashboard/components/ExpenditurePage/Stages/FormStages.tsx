@@ -44,7 +44,6 @@ interface Props {
   setFormValues: React.Dispatch<React.SetStateAction<ValuesType | undefined>>;
   colony: Colony;
   handleCancelExpenditure: () => void;
-  formValues: ValuesType;
 }
 
 const FormStages = ({
@@ -54,7 +53,6 @@ const FormStages = ({
   setFormValues,
   colony,
   handleCancelExpenditure,
-  formValues,
 }: Props) => {
   const {
     values,
