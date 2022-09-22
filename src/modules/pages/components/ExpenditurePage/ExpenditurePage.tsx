@@ -214,6 +214,25 @@ const ExpenditurePage = ({ match }: Props) => {
         setActiveStageId(Stage.Draft);
       }
 
+      if (values.expenditure === ExpenditureTypes.Streaming) {
+        lockValues();
+        setMotion({
+          type: MotionType.StartStream,
+          status: MotionStatus.Pending,
+        });
+        setFormValues(values);
+
+        // it's temporary timeout
+        setTimeout(() => {
+          setMotion({
+            type: MotionType.StartStream,
+            status: MotionStatus.Failed,
+          });
+        }, 5000);
+
+        return;
+      }
+
       if (values) {
         setFormValues({
           ...values,
@@ -232,7 +251,7 @@ const ExpenditurePage = ({ match }: Props) => {
       }
       // add sending form values to backend
     },
-    [activeStageId],
+    [activeStageId, lockValues],
   );
 
   const handleLockExpenditure = useCallback(() => {
