@@ -2,10 +2,12 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
 
+// import { useParams } from 'react-router';
 import Button from '~core/Button';
 import { FormSection } from '~core/Fields';
 
 import styles from './StreamingStages.css';
+// import { useColonyFromNameQuery } from '~data/generated';
 
 const MSG = defineMessages({
   draft: {
