@@ -25,13 +25,13 @@ const MSG = defineMessages({
 
 interface DatePickerFieldValue {
   date: Date;
-  option?: any;
+  option?: string;
 }
 
 export interface DatePickerOption {
   label: string | MessageDescriptor;
-  value: any;
-  hideDatePicker?: boolean;
+  value: string;
+  hideDatePicker: boolean;
 }
 
 interface Props {
@@ -68,7 +68,7 @@ const DateInput = (
       onClick={onClick}
       ref={ref}
     >
-      {currentOption && currentOption.hideDatePicker ? labelText : value}
+      {currentOption?.hideDatePicker ? labelText : `${value} UTC`}
 
       <span className={styles.expandDateIcon}>
         <Icon name="caret-down-small" title={MSG.expandIconHTMLTitle} />
@@ -86,8 +86,9 @@ const DatePicker = ({
   dateFormat,
   options,
 }: Props) => {
-  const [field, , helpers] = useField<DatePickerFieldValue>(name);
-
+  const [{ value }, , { setValue, setTouched }] = useField<
+    DatePickerFieldValue
+  >(name);
   const { formatMessage } = useIntl();
 
   const handleDateChange = useCallback(
@@ -100,25 +101,25 @@ const DatePicker = ({
       updatedDate.setUTCHours(UTCDate.getHours());
       updatedDate.setUTCMinutes(UTCDate.getMinutes());
 
-      helpers.setValue({
-        ...field.value,
+      setValue({
+        ...value,
         date: updatedDate,
       });
     },
-    [field.value, helpers],
+    [setValue, value],
   );
 
   const handleOptionChange = useCallback(
     (option: any) => {
-      helpers.setValue({
-        ...field.value,
+      setValue({
+        ...value,
         option,
       });
     },
-    [field.value, helpers],
+    [setValue, value],
   );
 
-  const localDate = field.value?.date ? new Date(field.value.date) : null;
+  const localDate = value?.date ? new Date(value.date) : null;
   /** Convert localDate to "fake UTC date" so that it can be correctly formatted and displayed */
   const UTCDate = localDate
     ? new Date(
@@ -130,7 +131,7 @@ const DatePicker = ({
       )
     : null;
 
-  const currentOption = options?.find((o) => o.value === field.value?.option);
+  const currentOption = options?.find((o) => o.value === value?.option);
 
   const renderHeader = useCallback(
     (props) => (
@@ -179,8 +180,7 @@ const DatePicker = ({
                     type="button"
                     className={classnames(styles.option, {
                       [styles.selected]:
-                        field.value?.option &&
-                        option.value === field.value.option,
+                        value?.option && option.value === value.option,
                     })}
                     onClick={() => handleOptionChange(option.value)}
                   >
@@ -210,13 +210,13 @@ const DatePicker = ({
     [
       UTCDate,
       currentOption,
-      field.value,
       formatMessage,
       handleDateChange,
       handleOptionChange,
       options,
       showTimeSelect,
       timeInterval,
+      value,
     ],
   );
 
@@ -230,13 +230,22 @@ const DatePicker = ({
       <ReactDatePicker
         selected={UTCDate}
         onChange={handleDateChange}
-        onBlur={() => helpers.setTouched(true)}
-        onCalendarClose={() => helpers.setTouched(true)}
+        onBlur={() => setTouched(true)}
+        onCalendarClose={() => setTouched(true)}
         dateFormat={dateFormatOrDefault}
         calendarStartDay={1}
         formatWeekDay={(day) => day.substring(0, 1)}
         shouldCloseOnSelect={false}
         popperPlacement="right-start"
+        popperModifiers={[
+          {
+            name: 'preventOverflow',
+            options: {
+              altAxis: true,
+              padding: 8,
+            },
+          },
+        ]}
         customInput={React.createElement(React.forwardRef(DateInput), {
           currentOption,
         })}

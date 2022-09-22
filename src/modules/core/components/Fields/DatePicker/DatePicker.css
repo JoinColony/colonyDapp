@@ -50,7 +50,7 @@
   cursor: pointer;
 
   &:hover {
-    background-color: rgb(238, 239, 255);
+    background-color: var(--light-blue);
     color: var(--action-secondary);
   }
 
