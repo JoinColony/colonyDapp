@@ -114,7 +114,7 @@ const ExpenditurePage = ({ match }: Props) => {
   const { colonyName } = useParams<{
     colonyName: string;
   }>();
-  const [isFormEditable, setFormEditable] = useState(true);
+  const [isFormEditable, setFormEditable] = useState(false);
   const [formValues, setFormValues] = useState<ValuesType>();
   const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStateId, setActiveStateId] = useState<string>();

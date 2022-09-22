@@ -1,0 +1,263 @@
+@value radioButtonWidth: 340px;
+@value buttonWidth: 160px;
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0 13px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--temp-grey-blue-7);
+  letter-spacing: 0.5px;
+}
+
+.rowAlt {
+  padding: 11px 0 15px;
+  min-height: 3rem;
+  border-bottom: 1px solid var(--grey-blue-0);
+}
+
+.withoutPadding {
+  padding: 0;
+}
+
+.forceRow {
+  align-items: center;
+  padding-top: 17px;
+  white-space: nowrap;
+}
+
+.forceRow form {
+  max-width: 200px;
+}
+
+.title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 0 12px;
+  width: 100%;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  line-height: 24px;
+  color: var(--dark);
+  letter-spacing: 0.5px;
+}
+
+.description {
+  font-size: var(--size-normal);
+  line-height: 1.3;
+  color: var(--temp-grey-blue-7);
+  letter-spacing: 0.1px;
+}
+
+.dialogSectionTitle {
+  padding-top: 25px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--grey-blue-0);
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 1.4;
+  color: var(--dark);
+  letter-spacing: 0.5px;
+}
+
+.radioGroup {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: 0.5px;
+}
+
+.radioWrapper > label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 9px;
+  padding: 0 7px;
+  height: 40px;
+  width: radioButtonWidth;
+  border: 1px solid color-mod(var(--action-secondary) alpha(25%));
+  border-radius: 2px;
+  background-color: color-mod(var(--action-secondary) alpha(5%));
+}
+
+.radioWrapper > label > span {
+  height: 27px;
+  width: 27px;
+  top: 0;
+  border: 1px solid color-mod(var(--action-secondary) alpha(25%));
+  background-color: var(--colony-white);
+
+  &::after {
+    height: 7px;
+    width: 7px;
+  }
+}
+
+.selected > label {
+  border: 1px solid var(--primary);
+  background-color: color-mod(var(--primary) alpha(12%));
+}
+
+.textWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 11px;
+  margin-bottom: 8px;
+  width: radioButtonWidth;
+  color: var(--text);
+}
+
+.textWrapper > span {
+  height: 16px;
+}
+
+/* this selector is for tooltip wrapper */
+.textWrapper > span ~ div {
+  max-width: 250px;
+  white-space: normal;
+}
+
+.message {
+  display: flex;
+  align-items: center;
+  margin-top: 21px;
+  padding: 0 15px;
+  height: 46px;
+  border-radius: 5px;
+  background-color: color-mod(var(--primary) alpha(15%));
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--text);
+  letter-spacing: 0.5px;
+}
+
+.messageWarning {
+  background-color: color-mod(var(--pink) alpha(15%));
+}
+
+.annotations {
+  margin: 24px 0 5px;
+  letter-spacing: 0.5px;
+}
+
+.tokens {
+  padding: 11px 0 15px;
+  border-top: 1px solid var(--grey-blue-0);
+  border-bottom: 1px solid var(--grey-blue-0);
+}
+
+.value {
+  display: flex;
+  align-items: center;
+  font-size: var(--size-smallish);
+  color: color-mod(var(--dark) alpha(85%));
+}
+
+.value span {
+  padding-right: 2px;
+  font-size: var(--size-smallish);
+}
+
+.paddingBottom {
+  padding-bottom: 6px;
+}
+
+.tokenIcon {
+  margin-right: 4px;
+  height: 16px;
+  width: 16px;
+}
+
+.tokensWrapper {
+  text-align: right;
+}
+
+.top {
+  align-items: flex-start;
+}
+
+.motionActiveItem {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
+
+.forceRow button > div > div {
+  margin-bottom: 4px;
+}
+
+.toggleContainer i {
+  margin: 0 -20px 4px 21px;
+
+  /* next lines are used for the correct tooltip arrow placement */
+  transform: translateX(-25px);
+}
+
+/* this selector is for tooltip wrapper */
+.toggleContainer > div > div:last-child {
+  max-width: 250px;
+  white-space: normal;
+}
+
+/* the following lines center the toggle force row */
+
+.toggleContainer label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.toggleContainer > div {
+  align-items: center;
+}
+
+.toggleContainer > div > div:first-of-type {
+  height: 16px;
+}
+
+.toggleContainer > div > span {
+  height: 16px;
+}
+
+.toggleContainer > div > span > div {
+  height: 16px;
+}
+
+.userContainer {
+  /* composes: settingsRow; */
+  padding: 8px 0;
+}
+
+.userAvatarContainer {
+  display: flex;
+}
+
+.userName {
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
+
+.activeItem {
+  display: flex;
+  align-items: center;
+  margin-right: 2px;
+}
+
+.activeItemLabel {
+  margin-left: 8px;
+  padding-bottom: 2px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
