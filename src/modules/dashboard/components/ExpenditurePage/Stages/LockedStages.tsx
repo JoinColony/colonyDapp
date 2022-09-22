@@ -65,6 +65,7 @@ const LockedStages = ({
     availableToClaim,
     paidToDate,
     claimFunds,
+    claimed,
   } = useClaimStreamingPayment();
 
   const handleButtonClick = useCallback(async () => {

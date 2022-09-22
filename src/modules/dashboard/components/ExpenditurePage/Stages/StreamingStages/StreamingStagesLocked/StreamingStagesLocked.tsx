@@ -63,6 +63,14 @@ const MSG = defineMessages({
     id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.claimFunds`,
     defaultMessage: 'Claim funds',
   },
+  ended: {
+    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.ended`,
+    defaultMessage: 'Ended',
+  },
+  claimed: {
+    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.claimed`,
+    defaultMessage: 'Claimed',
+  },
   cancelled: {
     id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.cancelled`,
     defaultMessage: 'Cancelled',
@@ -87,6 +95,7 @@ export interface Props {
   paidToDate?: FundingSource['rate'][];
   availableToClaim?: FundingSource['rate'][];
   handleCancelExpenditure?: () => void;
+  claimed?: boolean;
 }
 
 const StreamingStagesLocked = ({
@@ -98,6 +107,7 @@ const StreamingStagesLocked = ({
   paidToDate,
   availableToClaim,
   handleCancelExpenditure,
+  claimed,
 }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
@@ -145,14 +155,18 @@ const StreamingStagesLocked = ({
             </div>
           )}
           {status === Status.StartedStream && (
-            <span className={styles.tagWrapper}>
+            <span
+              className={classNames(styles.tagWrapper, {
+                [styles.tagClaimed]: claimed,
+              })}
+            >
               <Tag
                 appearance={{
                   theme: 'blue',
                   colorSchema: 'fullColor',
                   fontSize: 'tiny',
                 }}
-                text={MSG.active}
+                text={claimed ? MSG.ended : MSG.active}
               />
             </span>
           )}
