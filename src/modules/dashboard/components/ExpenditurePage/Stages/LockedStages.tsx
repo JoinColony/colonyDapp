@@ -16,6 +16,9 @@ import Stages from './Stages';
 import StreamingStagesLocked from './StreamingStages/StreamingStagesLocked';
 import styles from './Stages.css';
 
+import { useClaimStreamingPayment } from './StreamingStages/StreamingStagesLocked/hooks';
+import styles from './Stages.css';
+
 const MSG = defineMessages({
   motion: {
     id: 'dashboard.ExpenditurePage.Stages.LockedStages.motion',
@@ -57,6 +60,13 @@ const LockedStages = ({
   const isStreamingPaymentType =
     formValues?.expenditure === ExpenditureTypes.Streaming;
 
+  /* This is a mocked claiming function and mocked variables - should to be replaced with call to the backend */
+  const {
+    availableToClaim,
+    paidToDate,
+    claimFunds,
+  } = useClaimStreamingPayment();
+
   const handleButtonClick = useCallback(async () => {
     activeStage?.buttonAction();
   }, [activeStage]);
@@ -96,9 +106,13 @@ const LockedStages = ({
       )}
       {isStreamingPaymentType ? (
         <StreamingStagesLocked
-          motion={motion}
+          handleButtonClick={claimFunds}
           status={status}
-          handleButtonClick={() => {}}
+          motion={motion}
+          colony={colony}
+          activeStateId={activeStateId}
+          availableToClaim={availableToClaim}
+          paidToDate={paidToDate}
         />
       ) : (
         <Stages

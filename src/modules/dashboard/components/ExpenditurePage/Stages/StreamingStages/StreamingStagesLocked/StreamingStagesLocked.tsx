@@ -8,15 +8,26 @@ import { FormSection } from '~core/Fields';
 import Tag from '~core/Tag';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
+import TokenIcon from '~dashboard/HookedTokenIcon';
+import { Colony } from '~data/index';
+import { FundingSource } from '~dashboard/ExpenditurePage/Streaming/types';
 
-import { Motion, MotionStatus, Status } from '../../constants';
+import { Motion, MotionStatus, Stage, Status } from '../../constants';
 
 import styles from './StreamingStagesLocked.css';
 
 const MSG = defineMessages({
+  startStream: {
+    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.startStream`,
+    defaultMessage: 'Start Stream',
+  },
   paidToDate: {
     id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.paidToDate`,
     defaultMessage: 'Paid to date',
+  },
+  paidValue: {
+    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.paidValue`,
+    defaultMessage: '{icon} {amount} {token}',
   },
   activeMotion: {
     id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.activeMotion`,
@@ -33,6 +44,14 @@ const MSG = defineMessages({
   notStarted: {
     id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.notStarted`,
     defaultMessage: 'Not started',
+  },
+  availableToClaim: {
+    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.availableToClaim`,
+    defaultMessage: 'Available to claim',
+  },
+  active: {
+    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.active`,
+    defaultMessage: 'Active',
   },
   claimFunds: {
     id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.claimFunds`,
@@ -54,15 +73,23 @@ export const buttonStyles = {
 };
 
 export interface Props {
-  motion?: Motion;
-  status?: Status;
   handleButtonClick?: () => void;
+  status?: Status;
+  motion?: Motion;
+  colony?: Colony;
+  activeStateId?: string;
+  paidToDate?: FundingSource['rate'][];
+  availableToClaim?: FundingSource['rate'][];
 }
 
 const StreamingStagesLocked = ({
-  motion,
-  status,
   handleButtonClick,
+  status,
+  motion,
+  colony,
+  activeStateId,
+  paidToDate,
+  availableToClaim,
 }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
@@ -77,6 +104,9 @@ const StreamingStagesLocked = ({
   useEffect(() => () => clearTimeout(userFeedbackTimer.current), [
     userFeedbackTimer,
   ]);
+
+  const isCancelled =
+    status === Status.Cancelled || status === Status.ForceCancelled;
 
   const handleCancelExpenditure = () => {
     // add cancel modal in next PR
@@ -97,6 +127,18 @@ const StreamingStagesLocked = ({
                 {formatMessage(MSG.activeMotion)}
               </span>
             </Tag>
+          )}
+          {status === Status.StartedStream && (
+            <span className={styles.tagWrapper}>
+              <Tag
+                appearance={{
+                  theme: 'blue',
+                  colorSchema: 'fullColor',
+                  fontSize: 'tiny',
+                }}
+                text={MSG.active}
+              />
+            </span>
           )}
           <div className={styles.buttonsWrapper}>
             <Button
@@ -136,7 +178,7 @@ const StreamingStagesLocked = ({
                   motion?.status === MotionStatus.Pending,
               })}
               onClick={handleCancelExpenditure}
-              disabled={motion?.status === MotionStatus.Pending}
+              disabled={isCancelled || motion?.status === MotionStatus.Pending}
             >
               {motion?.status === MotionStatus.Pending ? (
                 <Icon
@@ -178,17 +220,109 @@ const StreamingStagesLocked = ({
                   style={buttonStyles}
                 />
               )}
+            {status === Status.StartedStream && availableToClaim && (
+              <Button
+                text={MSG.claimFunds}
+                onClick={handleButtonClick}
+                style={buttonStyles}
+              />
+            )}
           </div>
         </div>
       </FormSection>
-      <div className={styles.stagesRow}>
+      <div
+        className={classNames(styles.stagesRow, {
+          [styles.alignStart]: paidToDate && paidToDate?.length > 1,
+        })}
+      >
         <span className={styles.label}>
           <FormattedMessage {...MSG.paidToDate} />
         </span>
         <div className={styles.valueWrapper}>
-          <FormattedMessage {...MSG.notStarted} />
+          {status === Status.StartedStream ? (
+            paidToDate?.map((paidToDateItem, index) => {
+              const token = colony?.tokens?.find(
+                (tokenItem) => tokenItem.address === paidToDateItem.token,
+              );
+
+              return (
+                <div
+                  className={classNames(styles.value, {
+                    [styles.marginBottom]:
+                      paidToDate.length > 1 && index !== paidToDate.length - 1,
+                  })}
+                  key={paidToDateItem.id}
+                >
+                  <FormattedMessage
+                    {...MSG.paidValue}
+                    values={{
+                      icon: token && (
+                        <TokenIcon
+                          className={styles.tokenIcon}
+                          token={token}
+                          name={token?.name || token?.address}
+                        />
+                      ),
+                      amount: paidToDateItem?.amount,
+                      token: token?.symbol,
+                    }}
+                  />
+                </div>
+              );
+            })
+          ) : (
+            <FormattedMessage {...MSG.notStarted} />
+          )}
         </div>
       </div>
+      {activeStateId === Stage.Released &&
+        availableToClaim &&
+        status === Status.StartedStream && (
+          <FormSection appearance={{ border: 'top' }}>
+            <div
+              className={classNames(styles.stagesRow, styles.borderBottom, {
+                [styles.alignStart]: availableToClaim?.length > 1,
+              })}
+            >
+              <span className={styles.label}>
+                <FormattedMessage {...MSG.availableToClaim} />
+              </span>
+              <div className={styles.valueWrapper}>
+                {availableToClaim.map((availableItem, index) => {
+                  const token = colony?.tokens?.find(
+                    (tokenItem) => tokenItem.address === availableItem.token,
+                  );
+
+                  return (
+                    <span
+                      className={classNames(styles.value, {
+                        [styles.marginBottom]:
+                          availableToClaim.length > 1 &&
+                          index !== availableToClaim.length - 1,
+                      })}
+                      key={availableItem.id}
+                    >
+                      <FormattedMessage
+                        {...MSG.paidValue}
+                        values={{
+                          icon: token && (
+                            <TokenIcon
+                              className={styles.tokenIcon}
+                              token={token}
+                              name={token?.name || token?.address}
+                            />
+                          ),
+                          amount: availableItem.amount,
+                          token: token?.symbol,
+                        }}
+                      />
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          </FormSection>
+        )}
     </div>
   );
 };
