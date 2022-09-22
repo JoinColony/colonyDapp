@@ -1,17 +1,18 @@
+/* eslint-disable no-console */
 import React from 'react';
+import { useParams } from 'react-router';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
 
-// import { useParams } from 'react-router';
 import Button from '~core/Button';
 import { FormSection } from '~core/Fields';
 import { Tooltip } from '~core/Popover';
 import Icon from '~core/Icon';
 import { useDialog } from '~core/Dialog';
+import { useColonyFromNameQuery } from '~data/generated';
 import CancelStreamingDialog from '~dashboard/Dialogs/CancelStreamingDialog';
 
 import styles from './StreamingStages.css';
-// import { useColonyFromNameQuery } from '~data/generated';
 
 const MSG = defineMessages({
   draft: {
@@ -57,20 +58,18 @@ export interface Props {
 }
 
 const StreamingStages = ({ handleSaveDraft }: Props) => {
-  // const { colonyName } = useParams<{
-  //   colonyName: string;
-  // }>();
-  // const { data: colonyData } = useColonyFromNameQuery({
-  //   variables: { name: colonyName, address: '' },
-  // });
+  const { colonyName } = useParams<{
+    colonyName: string;
+  }>();
+  const { data: colonyData } = useColonyFromNameQuery({
+    variables: { name: colonyName, address: '' },
+  });
+
+  console.log(colonyData); // temporary
+
   const openCancelStreamingDialog = useDialog(CancelStreamingDialog);
 
-  const handleCancelStreaming = () =>
-    openCancelStreamingDialog({
-      // onCancelStreaming: () => console.log('cancel expenditure'),
-      // colony: colonyData.processedColony,
-      // isVotingExtensionEnabled: true, // temporary value
-    });
+  const handleCancelStreaming = () => openCancelStreamingDialog();
 
   return (
     <div className={styles.stagesWrapper}>
