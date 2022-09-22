@@ -13,6 +13,7 @@ export const useClaimStreamingPayment = () => {
   const [paidToDate, setPaidToDate] = useState<
     FundingSource['rate'][] | undefined
   >(initialPaidToDate);
+  const [claimed, setClaimed] = useState(false);
 
   const claimFunds = () => {
     if (!availableToClaim) {
@@ -42,7 +43,8 @@ export const useClaimStreamingPayment = () => {
     setAvailableToClaim((available) =>
       available?.map((availableItem) => ({ ...availableItem, amount: 0 })),
     );
+    setClaimed(true);
   };
 
-  return { availableToClaim, paidToDate, claimFunds };
+  return { availableToClaim, paidToDate, claimFunds, claimed };
 };
