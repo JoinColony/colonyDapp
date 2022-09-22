@@ -184,6 +184,30 @@ const StreamingStagesLocked = ({
               />
             </span>
           )}
+          {status === Status.StartedStream && (
+            <span className={styles.tagWrapper}>
+              <Tag
+                appearance={{
+                  theme: 'blue',
+                  colorSchema: 'fullColor',
+                  fontSize: 'tiny',
+                }}
+                text={MSG.active}
+              />
+            </span>
+          )}
+          {status === Status.StartedStream && (
+            <span className={styles.tagWrapper}>
+              <Tag
+                appearance={{
+                  theme: 'blue',
+                  colorSchema: 'fullColor',
+                  fontSize: 'tiny',
+                }}
+                text={MSG.active}
+              />
+            </span>
+          )}
           <div className={styles.buttonsWrapper}>
             <Button
               className={classNames(styles.iconButton, {
@@ -367,6 +391,54 @@ const StreamingStagesLocked = ({
           </>
         )}
       </div>
+      {activeStateId === Stage.Released &&
+        availableToClaim &&
+        status === Status.StartedStream && (
+          <FormSection appearance={{ border: 'top' }}>
+            <div
+              className={classNames(styles.stagesRow, styles.borderBottom, {
+                [styles.alignStart]: availableToClaim?.length > 1,
+              })}
+            >
+              <span className={styles.label}>
+                <FormattedMessage {...MSG.availableToClaim} />
+              </span>
+              <div className={styles.valueWrapper}>
+                {availableToClaim.map((availableItem, index) => {
+                  const token = colony?.tokens?.find(
+                    (tokenItem) => tokenItem.address === availableItem.token,
+                  );
+
+                  return (
+                    <span
+                      className={classNames(styles.value, {
+                        [styles.marginBottom]:
+                          availableToClaim.length > 1 &&
+                          index !== availableToClaim.length - 1,
+                      })}
+                      key={availableItem.id}
+                    >
+                      <FormattedMessage
+                        {...MSG.paidValue}
+                        values={{
+                          icon: token && (
+                            <TokenIcon
+                              className={styles.tokenIcon}
+                              token={token}
+                              name={token?.name || token?.address}
+                            />
+                          ),
+                          amount: availableItem.amount,
+                          token: token?.symbol,
+                        }}
+                      />
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          </FormSection>
+        )}
     </div>
   );
 };
