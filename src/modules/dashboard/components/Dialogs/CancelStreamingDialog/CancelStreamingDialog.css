@@ -261,3 +261,7 @@
   font-weight: var(--weight-bold);
   color: var(--dark);
 }
+
+.lockedActiveItemLabel {
+  font-weight: var(--weight-bold);
+}
