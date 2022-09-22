@@ -68,6 +68,7 @@ const StreamingStages = ({ handleSaveDraft }: Props) => {
   const openCancelStreamingDialog = useDialog(CancelStreamingDialog);
 
   const handleCancelStreaming = () =>
+    colonyData &&
     openCancelStreamingDialog({
       onCancelStreaming: () => console.log('cancel expenditure'),
       colony: colonyData.processedColony,
