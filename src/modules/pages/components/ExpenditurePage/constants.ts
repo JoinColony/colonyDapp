@@ -7,6 +7,7 @@ import { defineMessages } from 'react-intl';
 import { newRecipient } from '~dashboard/ExpenditurePage/Payments/constants';
 import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
 import { initalMilestone } from '~dashboard/ExpenditurePage/Staged/constants';
+import { newFundingSource } from '~dashboard/ExpenditurePage/Streaming/constants';
 
 import { ExpenditureTypes } from './types';
 
@@ -53,6 +54,9 @@ export const initialValues = {
       { ...initalRecipient, key: nanoid() },
       { ...initalRecipient, key: nanoid() },
     ],
+  },
+  streaming: {
+    fundingSources: [newFundingSource],
   },
 };
 
