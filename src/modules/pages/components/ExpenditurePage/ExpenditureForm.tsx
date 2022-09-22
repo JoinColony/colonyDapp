@@ -1,5 +1,5 @@
 import { Form, useFormikContext } from 'formik';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { useDialog } from '~core/Dialog';
@@ -9,6 +9,8 @@ import Payments from '~dashboard/ExpenditurePage/Payments';
 import Split from '~dashboard/ExpenditurePage/Split';
 import Staged from '~dashboard/ExpenditurePage/Staged';
 import { Colony } from '~data/index';
+import Streaming from '~dashboard/ExpenditurePage/Streaming';
+import { LOCAL_STORAGE_EXPENDITURE_TYPE_KEY } from '~constants';
 
 import { ValuesType, ExpenditureTypes } from './types';
 import styles from './ExpenditurePage.css';
@@ -28,6 +30,12 @@ interface Props {
 const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
   const { values, handleSubmit, validateForm } =
     useFormikContext<ValuesType>() || {};
+
+  const expenditureType = values.expenditure;
+
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_EXPENDITURE_TYPE_KEY, expenditureType);
+  }, [expenditureType]);
 
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
 
@@ -54,7 +62,6 @@ const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
   );
 
   const secondFormSection = useMemo(() => {
-    const expenditureType = values.expenditure;
     switch (expenditureType) {
       case ExpenditureTypes.Advanced: {
         return <Payments sidebarRef={sidebarRef} colony={colony} />;
@@ -65,10 +72,13 @@ const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
       case ExpenditureTypes.Split: {
         return <Split sidebarRef={sidebarRef} colony={colony} />;
       }
+      case ExpenditureTypes.Streaming: {
+        return <Streaming sidebarRef={sidebarRef} colony={colony} />;
+      }
       default:
         return null;
     }
-  }, [colony, sidebarRef, values]);
+  }, [colony, expenditureType, sidebarRef]);
 
   return (
     <Form onSubmit={onSubmit}>
