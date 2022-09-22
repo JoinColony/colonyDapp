@@ -96,7 +96,11 @@ const LockedStages = ({
         </Tag>
       )}
       {isStreamingPaymentType ? (
-        <StreamingStagesLocked motion={motion} />
+        <StreamingStagesLocked
+          motion={motion}
+          status={status}
+          handleButtonClick={() => {}}
+        />
       ) : (
         <Stages
           {...{
