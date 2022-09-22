@@ -54,6 +54,7 @@ const endDateOptions: DatePickerOption[] = [
   {
     label: MSG.fixedTime,
     value: ExpenditureEndDateTypes.FixedTime,
+    hideDatePicker: false,
   },
 ];
 
