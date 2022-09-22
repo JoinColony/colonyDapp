@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FormikProps } from 'formik';
@@ -16,11 +16,11 @@ import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot } from '~modules/users/checks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
-import { ValuesType } from '~pages/ExpenditurePage/types';
 
 import { FormValues } from './CancelStreamingDialog';
 import FundingSourceItem from './FundingSourceItem';
 import styles from './CancelStreamingDialog.css';
+import FundingSourceItem from './FundingSourceItem';
 
 const MSG = defineMessages({
   header: {
@@ -72,7 +72,6 @@ interface Props {
   colony: Colony;
   onCancelStreaming: (isForce: boolean) => void;
   isVotingExtensionEnabled: boolean;
-  form: ValuesType;
 }
 
 const fundingSourcesMock = [
@@ -116,7 +115,6 @@ const CancelStreamingForm = ({
   values,
   isSubmitting,
   handleSubmit,
-  form,
 }: Props & FormikProps<FormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
@@ -129,29 +127,6 @@ const CancelStreamingForm = ({
     canCancelStreaming,
     isVotingExtensionEnabled,
     values.forceAction,
-  );
-
-  const domain = useMemo(
-    () =>
-      colony?.domains.find(
-        ({ ethDomainId }) => Number(filteredDomainId) === ethDomainId,
-      ),
-    [colony, filteredDomainId],
-  );
-
-  const getDomainColor = useCallback<(domainId: string | undefined) => Color>(
-    (domainId) => {
-      const rootDomainColor: Color = Color.LightPink;
-      const defaultColor: Color = Color.Yellow;
-      if (domainId === String(ROOT_DOMAIN_ID)) {
-        return rootDomainColor;
-      }
-      if (!colony || !domainId) {
-        return defaultColor;
-      }
-      return domain ? domain.color : defaultColor;
-    },
-    [colony, domain],
   );
 
   return (

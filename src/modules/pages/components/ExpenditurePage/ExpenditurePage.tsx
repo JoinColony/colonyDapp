@@ -616,7 +616,6 @@ const ExpenditurePage = ({ match }: Props) => {
                     setFormValues={setFormValues}
                     handleCancelExpenditure={handleCancelExpenditure}
                     colony={colonyData.processedColony}
-                    formValues={formValues}
                   />
                 )
               )}
