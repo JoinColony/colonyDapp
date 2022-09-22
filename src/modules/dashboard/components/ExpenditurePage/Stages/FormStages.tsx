@@ -44,6 +44,7 @@ interface Props {
   setFormValues: React.Dispatch<React.SetStateAction<ValuesType | undefined>>;
   colony: Colony;
   handleCancelExpenditure: () => void;
+  formValues: ValuesType;
 }
 
 const FormStages = ({
@@ -53,6 +54,7 @@ const FormStages = ({
   setFormValues,
   colony,
   handleCancelExpenditure,
+  formValues,
 }: Props) => {
   const {
     values,
@@ -181,7 +183,10 @@ const FormStages = ({
         </div>
       )}
       {values.expenditure === ExpenditureTypes.Streaming ? (
-        <StreamingStages handleSaveDraft={handleSaveDraft} />
+        <StreamingStages
+          handleSaveDraft={handleSaveDraft}
+          formValues={formValues}
+        />
       ) : (
         <Stages
           {...{
