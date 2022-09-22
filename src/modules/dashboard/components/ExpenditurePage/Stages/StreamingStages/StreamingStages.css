@@ -42,3 +42,37 @@
 .dark {
   color: color-mod(var(--dark) alpha(85%));
 }
+
+.iconButton {
+  margin-left: 0;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+}
+
+.iconButton i {
+  display: flex;
+}
+
+.iconButton:hover {
+  cursor: pointer;
+}
+
+.iconWrapper {
+  position: relative;
+}
+
+.iconWrapper:hover {
+  &::after {
+    height: 30px;
+    width: 30px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 50%;
+    background-color: var(--action-secondary);
+    transform: translate(-6px, -6px);
+    content: '';
+    opacity: 0.1;
+  }
+}
