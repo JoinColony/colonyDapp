@@ -19,7 +19,7 @@ const ColonyDecisionsWrapper = ({
   colony,
   filteredDomainId,
   onDomainChange,
-}: any) => {
+}: Props) => {
   const [draftDecision, setDraftDecision] = useState<
     DecisionDetails | undefined
   >(
