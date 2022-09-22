@@ -1,42 +1,44 @@
-import { defineMessages, MessageDescriptor } from 'react-intl';
+import { defineMessages } from 'react-intl';
 import { isAddress } from 'web3-utils';
 import * as yup from 'yup';
+
 import { FETCH_ABORTED, SAFE_NAMES_MAP } from '~constants';
 import { ColonySafe } from '~data/generated';
 import { getTxServiceBaseUrl } from '~modules/dashboard/sagas/utils/safeHelpers';
-import { Address, PrimitiveType } from '~types/index';
+import { Address } from '~types/index';
+import { intl } from '~utils/intl';
 
 const MSG = defineMessages({
   contractAddressError: {
-    id: 'dashboard.AddExistingSafeDialog.contractAddressError',
+    id: 'dashboard.AddExistingSafeDialog.validation.contractAddressError',
     defaultMessage: 'Please enter a contract address',
   },
   safeAlreadyExistsError: {
-    id: 'dashboard.AddExistingSafeDialog.safeAlreadyExistsError',
+    id: 'dashboard.AddExistingSafeDialog.validation.safeAlreadyExistsError',
     defaultMessage: 'Safe already exists in this colony.',
   },
   safeNotFoundError: {
-    id: 'dashboard.AddExistingSafeDialog.safeNotFoundError',
+    id: 'dashboard.AddExistingSafeDialog.validation.safeNotFoundError',
     defaultMessage: `Safe not found on {selectedChain}`,
   },
   fetchFailedError: {
-    id: 'dashboard.AddExistingSafeDialog.fetchFailedError',
+    id: 'dashboard.AddExistingSafeDialog.validation.fetchFailedError',
     defaultMessage: `Could not fetch {type} details. Please check your connection and try again.`,
   },
   safeNameError: {
-    id: 'dashboard.AddExistingSafeDialog.safeNameError',
+    id: 'dashboard.AddExistingSafeDialog.validation.safeNameError',
     defaultMessage: 'Please enter a safe name',
   },
   moduleAddressError: {
-    id: 'dashboard.AddExistingSafeDialog.moduleAddressError',
+    id: 'dashboard.AddExistingSafeDialog.validation.moduleAddressError',
     defaultMessage: 'Please enter a module address',
   },
   moduleNotConnectedError: {
-    id: 'dashboard.AddExistingSafeDialog.moduleNotConnectedError',
+    id: 'dashboard.AddExistingSafeDialog.validation.moduleNotConnectedError',
     defaultMessage: `Module not connected to safe on {selectedChain}`,
   },
   moduleNotFoundError: {
-    id: 'dashboard.AddExistingSafeDialog.moduleNotFoundError',
+    id: 'dashboard.AddExistingSafeDialog.validation.moduleNotFoundError',
     defaultMessage: `Module not found on {selectedChain}`,
   },
 });
@@ -46,10 +48,6 @@ type AbortControllerState = [
   AbortController | undefined,
   React.Dispatch<React.SetStateAction<AbortController | undefined>>,
 ];
-type FormatMessage = (
-  descriptor: MessageDescriptor,
-  values?: Record<string, PrimitiveType>,
-) => string;
 
 const handleTestCompletion = (
   result: true | yup.ValidationError,
@@ -70,10 +68,10 @@ export const getValidationSchema = (
   stepIndex: number,
   abortControllerState: AbortControllerState,
   safes: ColonySafe[],
-  formatMessage: FormatMessage,
   loadingSafeState: LoadingState,
   loadingModuleState: LoadingState,
 ) => {
+  const { formatMessage } = intl;
   const [abortController, setAbortController] = abortControllerState;
   function getFetchErrorMsg(
     e: Error,
