@@ -188,6 +188,7 @@ const ExpenditurePage = ({ match }: Props) => {
           },
         },
         streaming: {
+          ...initialValues.streaming,
           fundingSources: [
             {
               ...newFundingSource,
