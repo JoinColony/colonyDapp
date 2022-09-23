@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Link from '~core/Link';
 import Tag from '~core/Tag';
@@ -41,29 +41,16 @@ interface Props {
 }
 
 const LinkedMotions = ({ status, motionLink, motion, id }: Props) => {
-  const { formatMessage } = useIntl();
-
-  const tagText = useMemo(() => {
+  const tagOptions = useMemo(() => {
     switch (status) {
       case MotionStatus.Pending:
-        return MSG.motion;
+        return { text: MSG.motion, color: undefined };
       case MotionStatus.Passed:
-        return MSG.passed;
+        return { text: MSG.passed, color: styles.passedColor };
       case MotionStatus.Failed:
-        return MSG.failed;
+        return { text: MSG.failed, color: styles.failedColor };
       default:
-        return '';
-    }
-  }, [status]);
-
-  const tagColor = useMemo(() => {
-    switch (status) {
-      case MotionStatus.Passed:
-        return styles.passedColor;
-      case MotionStatus.Failed:
-        return styles.failedColor;
-      default:
-        return undefined;
+        return { text: '', color: undefined };
     }
   }, [status]);
 
@@ -80,15 +67,15 @@ const LinkedMotions = ({ status, motionLink, motion, id }: Props) => {
       <div className={styles.statusWrapper}>
         {motionLink ? (
           <Link to={motionLink} className={styles.link}>
-            {formatMessage(MSG.foundExp, { motion, id })}
+            <FormattedMessage {...MSG.foundExp} values={{ motion, id }} />
           </Link>
         ) : (
-          formatMessage(MSG.foundExp, { motion, id })
+          <FormattedMessage {...MSG.foundExp} values={{ motion, id }} />
         )}
         <Tag
-          text={tagText}
+          text={tagOptions.text}
           style={{
-            color: tagColor,
+            color: tagOptions.color,
           }}
           appearance={{
             theme: status === MotionStatus.Pending ? 'primary' : 'light',
