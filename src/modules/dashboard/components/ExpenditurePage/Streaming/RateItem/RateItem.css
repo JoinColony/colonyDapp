@@ -51,8 +51,9 @@
   padding-left: 0;
 }
 
-.inputRateAmount input {
-  border-bottom: 1px solid var(--temp-grey-blue-7);
+.inputRateAmount p {
+  position: absolute;
+  transform: translate(0, 2px);
 }
 
 .tokenWrapper {
