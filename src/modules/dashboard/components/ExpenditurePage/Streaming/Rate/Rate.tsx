@@ -104,13 +104,11 @@ const Rate = ({ index, fundingSource, colony, sidebarRef }: Props) => {
                           theme: 'underlined',
                           size: 'small',
                         }}
-                        label={MSG.rate}
+                        label=""
                         placeholder={MSG.notSet}
                         formattingOptions={{
                           numeral: true,
-                          numeralDecimalScale: 10,
                         }}
-                        elementOnly
                       />
                     </div>
                     <div className={styles.tokenWrapper}>
