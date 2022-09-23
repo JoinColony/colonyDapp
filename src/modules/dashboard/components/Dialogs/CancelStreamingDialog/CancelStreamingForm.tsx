@@ -222,6 +222,7 @@ const CancelStreamingForm = ({
             <FundingSourceItem
               {...{ colony, limit, rate, index }}
               filteredDomainId={filteredDomainId?.toString()}
+              isMultiple={fundingSourcesMock.length > 1}
             />
           </DialogSection>
         ))}

@@ -34,6 +34,7 @@ interface Props {
   rate: string;
   filteredDomainId?: string;
   index: number;
+  isMultiple?: boolean;
 }
 
 const displayName = 'dashboard.CancelStreamingDialog.FundingSourceItem';
@@ -44,6 +45,7 @@ const FundingSourceItem = ({
   rate,
   filteredDomainId,
   index,
+  isMultiple,
 }: Props) => {
   const domain = useMemo(
     () =>
@@ -68,12 +70,15 @@ const FundingSourceItem = ({
     [colony, domain],
   );
 
+  const fundingSourceTitle = isMultiple ? `${index + 1}: ` : '';
+
   return (
     <>
       <h4 className={styles.dialogSectionTitle}>
         <FormattedMessage
           {...MSG.fundingSource}
-          defaultMessage={`${index + 1}: ${MSG.fundingSource.defaultMessage}`}
+          // eslint-disable-next-line max-len
+          defaultMessage={`${fundingSourceTitle}${MSG.fundingSource.defaultMessage}`}
         />
       </h4>
       <div
@@ -106,6 +111,7 @@ const FundingSourceItem = ({
             direction: 'horizontal',
           }}
         />
+        {/* mock element - waiting for the component that is already prepared */}
         <span className={styles.value}>{rate}</span>
       </div>
       <div
@@ -117,6 +123,7 @@ const FundingSourceItem = ({
             direction: 'horizontal',
           }}
         />
+        {/* mock element - waiting for the component that is already prepared */}
         <span className={styles.value}>{limit}</span>
       </div>
     </>
