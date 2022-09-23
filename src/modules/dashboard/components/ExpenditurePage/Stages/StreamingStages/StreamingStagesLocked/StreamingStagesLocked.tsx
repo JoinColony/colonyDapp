@@ -22,7 +22,7 @@ const MSG = defineMessages({
     defaultMessage: 'Start Stream',
   },
   paidToDate: {
-    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.paidToDate`,
+    id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.paidToDate`,
     defaultMessage: 'Paid to date',
   },
   paidValue: {
@@ -30,19 +30,19 @@ const MSG = defineMessages({
     defaultMessage: '{icon} {amount} {token}',
   },
   activeMotion: {
-    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.activeMotion`,
+    id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.activeMotion`,
     defaultMessage: 'There is an active motion for this stream',
   },
   tooltipCancelText: {
-    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.tooltipCancelText`,
+    id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.tooltipCancelText`,
     defaultMessage: 'Click to cancel expenditure',
   },
   tooltipShareText: {
-    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.tooltipShareText`,
+    id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.tooltipShareText`,
     defaultMessage: 'Share expenditure URL',
   },
   notStarted: {
-    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.notStarted`,
+    id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.notStarted`,
     defaultMessage: 'Not started',
   },
   availableToClaim: {
@@ -54,13 +54,13 @@ const MSG = defineMessages({
     defaultMessage: 'Active',
   },
   claimFunds: {
-    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.claimFunds`,
+    id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.claimFunds`,
     defaultMessage: 'Claim funds',
   },
 });
 
 const displayName =
-  'dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked';
+  'dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked';
 
 export const buttonStyles = {
   height: styles.buttonHeight,
