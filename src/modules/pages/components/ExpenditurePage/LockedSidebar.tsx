@@ -102,7 +102,9 @@ const LockedSidebar = ({
         return (
           <LockedStreaming
             colony={colony}
-            fundingSources={streaming?.fundingSource}
+            fundingSources={streaming?.fundingSources}
+            editForm={editForm}
+            activeStateId={activeStateId}
           />
         );
       }

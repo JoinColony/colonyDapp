@@ -14,6 +14,7 @@ import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
 import { Motion, MotionStatus, MotionType, Status } from './constants';
 import LinkedMotions from './LinkedMotions';
 import Stages from './Stages';
+import StreamingStages from './StreamingStages';
 import styles from './Stages.css';
 import StreamingStagesLocked from './StreamingStages/StreamingStagesLocked';
 
