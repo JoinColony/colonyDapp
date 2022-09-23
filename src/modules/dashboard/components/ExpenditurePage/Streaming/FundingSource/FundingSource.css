@@ -1,0 +1,137 @@
+.activeItem {
+  display: flex;
+  align-items: center;
+  margin-right: 2px;
+}
+
+.activeItemLabel {
+  margin-left: 8px;
+  padding-bottom: 2px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.formContainer {
+  border-top: 1px solid var(--grey-blue-0);
+}
+
+.marginBottom {
+  margin-bottom: 36px;
+}
+
+.settingsRow {
+  composes: flexContainerRow flexAlignCenter flexJustifyBetween from '~styles/layout.css';
+  min-height: 41px;
+}
+
+.settingsRow label {
+  color: var(--temp-grey-blue-7);
+}
+
+.inputRateAmount {
+  margin-right: 16px;
+}
+
+.inputRateAmount button {
+  padding-left: 0;
+}
+
+.tokenWrapper {
+  max-width: 104px;
+}
+
+.tokenWrapper i {
+  transform: translate(0, 2px);
+}
+
+.rateContainer {
+  padding: 13px 0 12px;
+}
+
+.rateContainer label {
+  color: var(--temp-grey-blue-7);
+}
+
+.rate {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  letter-spacing: 0.1px;
+}
+
+.rate button {
+  left: 0;
+  font-size: var(--size-small);
+}
+
+.rate input::placeholder {
+  color: var(--dark);
+}
+
+.rate input {
+  height: 28px;
+  line-height: 18px;
+  color: var(--dark);
+}
+
+.selectWrapper button {
+  padding: 0;
+  min-width: 65px;
+  font-size: var(--size-small);
+  color: var(--action-secondary);
+}
+
+.selectWrapper svg {
+  fill: var(--action-secondary);
+  stroke: var(--action-secondary);
+  transform: translate(0, 2px);
+}
+
+.slash {
+  margin: 0 7px;
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.inputWrapper {
+  padding: 13px 0 12px;
+}
+
+.inputWrapper label {
+  color: var(--temp-grey-blue-7);
+}
+
+.limitContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+}
+
+.inputContainer {
+  width: calc(100% - 30px);
+}
+
+.inputContainer input {
+  height: 28px;
+  line-height: 18px;
+  color: var(--dark);
+}
+
+.inputContainer input::placeholder {
+  color: var(--dark);
+}
+
+.tokenIcon {
+  margin-right: 6px;
+  height: 16px;
+  width: 16px;
+}
+
+.tokeIconWrapper {
+  display: flex;
+  align-items: center;
+  margin-left: 30px;
+}
