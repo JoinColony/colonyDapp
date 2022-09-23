@@ -1,11 +1,14 @@
 import React, { useCallback, useMemo } from 'react';
 import classNames from 'classnames';
 import { defineMessages, FormattedMessage } from 'react-intl';
-
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+
 import ColorTag, { Color } from '~core/ColorTag';
 import { InputLabel } from '~core/Fields';
-import { Colony } from '~data/index';
+import Numeral from '~core/Numeral';
+import { AnyToken, Colony } from '~data/index';
+import TokenIcon from '~dashboard/HookedTokenIcon';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import styles from './CancelStreamingDialog.css';
 
@@ -30,19 +33,21 @@ const MSG = defineMessages({
 
 interface Props {
   colony: Colony;
-  limit: string;
-  rate: string;
-  filteredDomainId?: string;
+  filteredDomainId: string;
   index: number;
   isMultiple?: boolean;
+  rateTime: string;
+  rateAmount: number;
+  rateToken: AnyToken;
 }
 
 const displayName = 'dashboard.CancelStreamingDialog.FundingSourceItem';
 
 const FundingSourceItem = ({
   colony,
-  limit,
-  rate,
+  rateToken,
+  rateAmount,
+  rateTime,
   filteredDomainId,
   index,
   isMultiple,
@@ -111,8 +116,19 @@ const FundingSourceItem = ({
             direction: 'horizontal',
           }}
         />
-        {/* mock element - waiting for the component that is already prepared */}
-        <span className={styles.value}>{rate}</span>
+        <div className={styles.valueAmount}>
+          <span className={styles.icon}>
+            <TokenIcon
+              className={styles.tokenIcon}
+              token={rateToken}
+              name={rateToken.name || rateToken.address}
+            />
+          </span>
+          <Numeral unit={getTokenDecimalsWithFallback(0)} value={rateAmount} />
+          <span className={styles.symbol}>
+            {rateToken.symbol}/{rateTime}
+          </span>
+        </div>
       </div>
       <div
         className={classNames(styles.row, styles.rowAlt, styles.userContainer)}
@@ -123,8 +139,17 @@ const FundingSourceItem = ({
             direction: 'horizontal',
           }}
         />
-        {/* mock element - waiting for the component that is already prepared */}
-        <span className={styles.value}>{limit}</span>
+        <div className={styles.valueAmount}>
+          <span className={styles.icon}>
+            <TokenIcon
+              className={styles.tokenIcon}
+              token={rateToken}
+              name={rateToken.name || rateToken.address}
+            />
+          </span>
+          <Numeral unit={getTokenDecimalsWithFallback(0)} value={rateAmount} />
+          <span className={styles.symbol}>{rateToken.symbol}</span>
+        </div>
       </div>
     </>
   );
