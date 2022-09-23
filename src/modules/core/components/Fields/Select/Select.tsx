@@ -88,10 +88,11 @@ export interface Props {
   /** Provides value for data-test prop in select items used on cypress testing */
   itemDataTest?: string;
 
-  withDropdownElelment?: boolean;
+  withDropdownElement?: boolean;
   scrollContainer?: HTMLElement | null;
   placement?: 'right' | 'bottom' | 'exact';
   optionSizeLarge?: boolean;
+  hasBlueActiveState?: boolean;
 }
 
 const displayName = 'Select';
@@ -115,10 +116,11 @@ const Select = ({
   statusValues,
   dataTest,
   itemDataTest,
-  withDropdownElelment = false,
+  withDropdownElement = false,
   scrollContainer,
   placement,
   optionSizeLarge,
+  hasBlueActiveState,
 }: Props) => {
   const [id] = useState<string>(idProp || nanoid());
   const [, { error, value }, { setValue }] = useField(name);
@@ -155,14 +157,14 @@ const Select = ({
         const withinDropdown =
           dropdownRef.current && dropdownRef?.current.contains(evt.target);
 
-        if (withDropdownElelment && withinDropdown) {
+        if (withDropdownElement && withinDropdown) {
           return;
         }
 
         close();
       }
     },
-    [close, withDropdownElelment],
+    [close, withDropdownElement],
   );
 
   const goUp = () => {
@@ -341,13 +343,14 @@ const Select = ({
         </button>
         {isOpen && !!options.length && (
           <>
-            {withDropdownElelment ? (
+            {withDropdownElement ? (
               <Dropdown
                 element={dropdownContainerRef.current}
                 scrollContainer={scrollContainer}
                 placement={placement}
                 ref={dropdownRef}
                 optionSizeLarge={optionSizeLarge}
+                hasBlueActiveState={hasBlueActiveState}
               >
                 <SelectListBox
                   checkedOption={checkedOption}
