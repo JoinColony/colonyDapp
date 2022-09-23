@@ -20,6 +20,8 @@
 }
 
 .header {
+  display: flex;
+  align-items: center;
   margin-bottom: 18px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
@@ -85,4 +87,12 @@
 
 .wrapper {
   margin-bottom: 36px;
+}
+
+.editIcon {
+  margin-left: 10px;
+}
+
+.editIcon:hover {
+  cursor: pointer;
 }
