@@ -39,7 +39,7 @@ const MSG = defineMessages({
     defaultMessage: 'Claim funds',
   },
   startStream: {
-    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.startStream`,
+    id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.startStream`,
     defaultMessage: 'Start Stream',
   },
 });
