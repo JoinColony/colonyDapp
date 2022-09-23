@@ -36,6 +36,10 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.milestoneAmountError',
     defaultMessage: 'Amount is required',
   },
+  amountLimitError: {
+    id: 'dashboard.ExpenditurePage.amountLimitError',
+    defaultMessage: `Value cannot be greater than limit`,
+  },
 });
 
 export const initialValues = {
@@ -134,6 +138,36 @@ export const validationSchema = yup.object().shape({
         )
         .min(2)
         .required(),
+    }),
+  }),
+  streaming: yup.object().when('expenditure', {
+    is: (expenditure) => expenditure === ExpenditureTypes.Streaming,
+    then: yup.object().shape({
+      fundingSources: yup
+        .array()
+        .of(
+          yup.object().shape({
+            team: yup.string().required(),
+            rate: yup.array().of(
+              yup.object().shape({
+                amount: yup
+                  .number()
+                  .transform((value) => toFinite(value))
+                  .required(() => MSG.valueError)
+                  .moreThan(0, () => MSG.amountZeroError)
+                  .when('limit', (limit, schema) => {
+                    return limit
+                      ? schema.max(limit, () => MSG.amountLimitError)
+                      : schema;
+                  }),
+                token: yup.string().required(),
+                time: yup.string().required(),
+                limit: yup.string(),
+              }),
+            ),
+          }),
+        )
+        .min(1),
     }),
   }),
 });

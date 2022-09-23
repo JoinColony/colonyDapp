@@ -68,14 +68,6 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
     variables: { colonyAddress: colonyAddress || '' },
   });
 
-  const selectedToken = useMemo(
-    () =>
-      colonyTokens.find(
-        (colonyToken) => colonyToken.address === amount.tokenAddress,
-      ),
-    [colonyTokens, amount.tokenAddress],
-  );
-
   const recipientsCount = useMemo(() => {
     const recip = recipients?.filter(
       (recipient) => recipient?.user?.id !== undefined,
@@ -104,13 +96,6 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
               }}
               label={MSG.amountLabel}
               placeholder="Not set"
-              formattingOptions={{
-                delimiter: ',',
-                numeral: true,
-                numeralDecimalScale: getTokenDecimalsWithFallback(
-                  selectedToken && selectedToken.decimals,
-                ),
-              }}
               maxButtonParams={{
                 setFieldValue,
                 // mock, needs to be changed to the actual value

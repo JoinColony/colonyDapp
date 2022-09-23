@@ -148,13 +148,11 @@ const FundingSource = ({
                           theme: 'underlined',
                           size: 'small',
                         }}
-                        label={MSG.limit}
+                        label=""
                         placeholder={MSG.notSet}
                         formattingOptions={{
                           numeral: true,
-                          numeralDecimalScale: 10,
                         }}
-                        elementOnly
                       />
                     </div>
                     {token && (

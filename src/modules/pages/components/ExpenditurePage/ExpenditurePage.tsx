@@ -205,7 +205,7 @@ const ExpenditurePage = ({ match }: Props) => {
 
       // tepmorary action, will be removed after adding StartStreamDialog
       if (values.expenditure === ExpenditureTypes.Streaming) {
-        setActiveStateId?.(Stage.Claimed);
+        setActiveStateId?.(Stage.Released);
         setFormEditable(false);
       }
 
