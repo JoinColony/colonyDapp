@@ -88,7 +88,6 @@ const ExpenditureSettings = ({ colony, sidebarRef, inEditMode }: Props) => {
     <div className={styles.container}>
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.blue}>
-          {/* withDropdownElement - dropdown component created because there is a need to render element outside DOM hierarchy */}
           <SelectHorizontal
             name="expenditure"
             label={MSG.type}
