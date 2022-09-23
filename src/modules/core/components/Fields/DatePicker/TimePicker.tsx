@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { format } from 'date-fns/esm';
+import { format } from 'date-fns';
 import { defineMessages } from 'react-intl';
 import { flip, useFloating } from '@floating-ui/react-dom';
 import classnames from 'classnames';

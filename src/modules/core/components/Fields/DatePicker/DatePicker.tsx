@@ -3,6 +3,7 @@ import React, { useCallback } from 'react';
 import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 import ReactDatePicker, { CalendarContainer } from 'react-datepicker';
 import classnames from 'classnames';
+import { format } from 'date-fns';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -15,6 +16,7 @@ import {
   MONTH_NAMES,
 } from './constants';
 import styles from './DatePicker.css';
+import { Tooltip } from '~core/Popover';
 
 const MSG = defineMessages({
   expandIconHTMLTitle: {
@@ -37,7 +39,7 @@ export interface DatePickerOption {
 interface Props {
   name: string;
   showTimeSelect?: boolean;
-  /** react-datepicker compatible format */
+  /** date-fns compatible format */
   dateFormat?: string;
   /** Defines the interval (in minutes) between time options */
   timeInterval?: number;
@@ -46,34 +48,58 @@ interface Props {
 }
 
 interface DateInputProps extends React.HTMLProps<HTMLButtonElement> {
-  currentOption?: DatePickerOption | null;
+  selectedDate: Date | null;
+  selectedOption?: DatePickerOption | null;
+  dateFormat: string;
 }
 
 /** The component displaying the currently selected date / option */
 const DateInput = (
-  { onClick, value, currentOption }: DateInputProps,
+  { onClick, selectedOption, selectedDate, dateFormat }: DateInputProps,
   ref: React.Ref<HTMLButtonElement>,
 ) => {
   const { formatMessage } = useIntl();
 
   const labelText =
-    typeof currentOption?.label === 'object'
-      ? formatMessage(currentOption.label)
-      : currentOption?.label;
+    typeof selectedOption?.label === 'object'
+      ? formatMessage(selectedOption.label)
+      : selectedOption?.label;
+
+  const formattedDate = selectedDate
+    ? format(selectedDate, `${dateFormat} z`)
+    : '';
+
+  /** Create a local timezone date equivalent to the selectedDate UTC value for formatting */
+  const utcDate = selectedDate
+    ? new Date(
+        selectedDate.getUTCFullYear(),
+        selectedDate.getUTCMonth(),
+        selectedDate.getUTCDate(),
+        selectedDate.getUTCHours(),
+        selectedDate.getUTCMinutes(),
+      )
+    : null;
+  const utcFormattedDate = utcDate
+    ? `${format(utcDate, `${dateFormat}`)} UTC`
+    : '';
 
   return (
-    <button
-      type="button"
-      className={styles.dateButton}
-      onClick={onClick}
-      ref={ref}
+    <Tooltip
+      content={!selectedOption?.hideDatePicker ? utcFormattedDate : null}
     >
-      {currentOption?.hideDatePicker ? labelText : `${value} UTC`}
+      <button
+        type="button"
+        className={styles.dateButton}
+        onClick={onClick}
+        ref={ref}
+      >
+        {selectedOption?.hideDatePicker ? labelText : formattedDate}
 
-      <span className={styles.expandDateIcon}>
-        <Icon name="caret-down-small" title={MSG.expandIconHTMLTitle} />
-      </span>
-    </button>
+        <span className={styles.expandDateIcon}>
+          <Icon name="caret-down-small" title={MSG.expandIconHTMLTitle} />
+        </span>
+      </button>
+    </Tooltip>
   );
 };
 
@@ -92,27 +118,19 @@ const DatePicker = ({
   const { formatMessage } = useIntl();
 
   const handleDateChange = useCallback(
-    (UTCDate: Date) => {
-      /** Convert the "fake UTC date" to a correct date */
-      const updatedDate = new Date(UTCDate);
-      updatedDate.setUTCFullYear(UTCDate.getFullYear());
-      updatedDate.setUTCMonth(UTCDate.getMonth());
-      updatedDate.setUTCDate(UTCDate.getDate());
-      updatedDate.setUTCHours(UTCDate.getHours());
-      updatedDate.setUTCMinutes(UTCDate.getMinutes());
-
+    (date: Date) => {
       setTouched(true);
 
       setValue({
         ...value,
-        date: updatedDate,
+        date,
       });
     },
     [setTouched, setValue, value],
   );
 
   const handleOptionChange = useCallback(
-    (option: any) => {
+    (option: string) => {
       setTouched(true);
 
       setValue({
@@ -123,19 +141,9 @@ const DatePicker = ({
     [setTouched, setValue, value],
   );
 
-  const localDate = value?.date ? new Date(value.date) : null;
-  /** Convert localDate to "fake UTC date" so that it can be correctly formatted and displayed */
-  const UTCDate = localDate
-    ? new Date(
-        localDate.getUTCFullYear(),
-        localDate.getUTCMonth(),
-        localDate.getUTCDate(),
-        localDate.getUTCHours(),
-        localDate.getUTCMinutes(),
-      )
-    : null;
+  const selectedDate = value?.date ? new Date(value.date) : null;
 
-  const currentOption = options?.find((o) => o.value === value?.option);
+  const selectedOption = options?.find((o) => o.value === value?.option);
 
   const renderHeader = useCallback(
     (props) => (
@@ -169,7 +177,7 @@ const DatePicker = ({
           {options && (
             <div
               className={classnames(styles.options, {
-                [styles.withDatePicker]: !currentOption?.hideDatePicker,
+                [styles.withDatePicker]: !selectedOption?.hideDatePicker,
               })}
             >
               {options.map((option) => {
@@ -195,13 +203,13 @@ const DatePicker = ({
             </div>
           )}
 
-          {!currentOption?.hideDatePicker && (
+          {!selectedOption?.hideDatePicker && (
             <>
               <CalendarContainer {...props} />
 
-              {showTimeSelect && UTCDate && (
+              {showTimeSelect && selectedDate && (
                 <TimePicker
-                  selectedDate={UTCDate}
+                  selectedDate={selectedDate}
                   onChange={handleDateChange}
                   timeInterval={timeInterval}
                 />
@@ -212,15 +220,15 @@ const DatePicker = ({
       );
     },
     [
-      UTCDate,
-      currentOption,
-      formatMessage,
-      handleDateChange,
-      handleOptionChange,
       options,
+      selectedOption,
       showTimeSelect,
+      selectedDate,
+      handleDateChange,
       timeInterval,
+      formatMessage,
       value,
+      handleOptionChange,
     ],
   );
 
@@ -232,7 +240,7 @@ const DatePicker = ({
   return (
     <div>
       <ReactDatePicker
-        selected={UTCDate}
+        selected={selectedDate}
         onChange={handleDateChange}
         onBlur={() => setTouched(true)}
         onCalendarClose={() => setTouched(true)}
@@ -251,7 +259,9 @@ const DatePicker = ({
           },
         ]}
         customInput={React.createElement(React.forwardRef(DateInput), {
-          currentOption,
+          selectedOption,
+          selectedDate,
+          dateFormat: dateFormatOrDefault,
         })}
         renderCustomHeader={renderHeader}
         calendarContainer={renderContainer}
