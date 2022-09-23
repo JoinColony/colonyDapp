@@ -17,6 +17,7 @@ import {
   fetchContractABI,
 } from '~utils/safes';
 import { GNOSIS_NETWORK } from '~constants';
+import { SpinnerLoader } from '~core/Preloaders';
 
 import { FormValues } from '../ControlSafeDialog';
 
@@ -89,6 +90,7 @@ const ContractInteractionSection = ({
     SelectOption[]
   >([]);
   const [currentSafeChainId, setCurrentSafeChainId] = useState<number>();
+  const [loadingABI, setLoadingABI] = useState<boolean>(false);
 
   const transactionValues = values.transactions[transactionFormIndex];
 
@@ -151,11 +153,14 @@ const ContractInteractionSection = ({
 
   const onContractChange = useCallback(
     (contract: AnyUser) => {
+      setLoadingABI(true);
       const contractPromise = fetchContractABI(
         contract.profile.walletAddress,
         Number(selectedSafe?.chainId),
       );
       contractPromise.then((data) => {
+        setLoadingABI(false);
+
         onContractABIChange(data);
 
         if (Number(selectedSafe?.chainId) !== currentSafeChainId) {
@@ -234,6 +239,8 @@ const ContractInteractionSection = ({
     transactionFormIndex,
   ]);
 
+  // console.log('loadingABI', loadingABI);
+
   return (
     <>
       <DialogSection>
@@ -252,6 +259,11 @@ const ContractInteractionSection = ({
         </div>
       </DialogSection>
       <DialogSection>
+        {loadingABI && (
+          <div>
+            <SpinnerLoader appearance={{ size: 'medium' }} />
+          </div>
+        )}
         <Textarea
           label={MSG.abiLabel}
           name={`transactions.${transactionFormIndex}.abi`}
