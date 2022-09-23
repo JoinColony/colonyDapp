@@ -5,6 +5,9 @@ import classNames from 'classnames';
 import { FormSection } from '~core/Fields';
 import { CollapseExpandButtons } from '~dashboard/ExpenditurePage/Payments';
 import { Colony } from '~data/index';
+import Icon from '~core/Icon';
+
+import { Stage } from '../Stages/constants';
 
 import LockedFundingSource from './LockedFundingSource';
 import { FundingSource } from './types';
@@ -34,9 +37,16 @@ const displayName = 'dashboard.ExpenditurePage.Streaming.LockedStreaming';
 interface Props {
   fundingSources?: FundingSource[];
   colony: Colony;
+  activeStateId?: string;
+  editForm: () => void;
 }
 
-const LockedStreaming = ({ fundingSources, colony }: Props) => {
+const LockedStreaming = ({
+  fundingSources,
+  colony,
+  activeStateId,
+  editForm,
+}: Props) => {
   const [openItemsIds, setOpenItemsIds] = useState<string[]>(
     fundingSources?.map(({ id }) => id) || [],
   );
@@ -57,6 +67,16 @@ const LockedStreaming = ({ fundingSources, colony }: Props) => {
     <div className={styles.container}>
       <div className={styles.header}>
         <FormattedMessage {...MSG.fundingSource} />
+        {activeStateId !== Stage.Claimed && (
+          <span className={styles.editIcon}>
+            <Icon
+              name="edit"
+              appearance={{ size: 'medium' }}
+              title="Edit expenditure"
+              onClick={editForm}
+            />
+          </span>
+        )}
       </div>
       {fundingSources?.map((fundingSource, index) => {
         const domain = colony?.domains.find(
