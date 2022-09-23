@@ -101,22 +101,26 @@ const DatePicker = ({
       updatedDate.setUTCHours(UTCDate.getHours());
       updatedDate.setUTCMinutes(UTCDate.getMinutes());
 
+      setTouched(true);
+
       setValue({
         ...value,
         date: updatedDate,
       });
     },
-    [setValue, value],
+    [setTouched, setValue, value],
   );
 
   const handleOptionChange = useCallback(
     (option: any) => {
+      setTouched(true);
+
       setValue({
         ...value,
         option,
       });
     },
-    [setValue, value],
+    [setTouched, setValue, value],
   );
 
   const localDate = value?.date ? new Date(value.date) : null;
@@ -242,7 +246,7 @@ const DatePicker = ({
             name: 'preventOverflow',
             options: {
               altAxis: true,
-              padding: 8,
+              padding: 20,
             },
           },
         ]}
