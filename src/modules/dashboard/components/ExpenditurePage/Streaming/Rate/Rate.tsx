@@ -136,7 +136,7 @@ const Rate = ({ index, fundingSource, colony, sidebarRef }: Props) => {
                         scrollContainer={sidebarRef}
                         placement="bottom"
                         elementOnly
-                        withDropdownElelment
+                        withDropdownElement
                         optionSizeLarge
                       />
                     </div>
