@@ -118,10 +118,11 @@ const LockedStages = ({
         />
       )}
       {motion && (
-        // motion link needs to be changed and redirects to actual motions page
         <LinkedMotions
           status={motion.status}
           motion={motion.type}
+          // The id and the link are hardcoded, they should be replaced with actual values.
+          // Link should redirect to the motion page
           motionLink={LANDING_PAGE_ROUTE}
           id="25"
         />
