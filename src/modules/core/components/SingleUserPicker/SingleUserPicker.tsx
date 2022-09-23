@@ -10,6 +10,7 @@ import { getMainClasses } from '~utils/css';
 
 import MaskedAddress from '../MaskedAddress';
 import {
+  EmptyRenderFnType,
   ItemDataType,
   withOmniPicker,
   WrappedComponentProps,
@@ -112,6 +113,12 @@ interface Props extends WithOmnipickerInProps {
 
   /* icon name for the avatar placeholder */
   placeholderIconName?: string;
+
+  /** Override the empty results component */
+  renderEmpty?: EmptyRenderFnType;
+
+  /** Determines whether the field's value should be set on blur, apart from when an item is clicked */
+  setValueOnBlur?: boolean;
 }
 
 interface EnhancedProps extends Props, WrappedComponentProps {}
@@ -143,8 +150,10 @@ const SingleUserPicker = ({
   dataTest,
   itemDataTest,
   valueDataTest,
+  renderEmpty,
   showMaskedAddress = false,
   placeholderIconName = 'filled-circle-person',
+  setValueOnBlur = false,
 }: EnhancedProps) => {
   const [, { error, touched, value }, { setValue }] = useField<AnyUser | null>(
     name,
@@ -169,6 +178,31 @@ const SingleUserPicker = ({
       setValue(null);
     }
   }, [disabled, setValue]);
+
+  const handleBlur = useCallback(
+    (event: React.FocusEvent<HTMLInputElement>) => {
+      if (!setValueOnBlur || !event.currentTarget.value) {
+        return;
+      }
+
+      const user: AnyUser = {
+        id: 'filterValue',
+        profile: {
+          walletAddress: event.currentTarget.value,
+        },
+      };
+
+      if (setValue) {
+        setValue(user);
+      }
+
+      if (onSelected) {
+        onSelected(user);
+      }
+    },
+    [onSelected, setValue, setValueOnBlur],
+  );
+
   // Use custom render prop for item or the default one with the given renderAvatar function
   const renderItem =
     renderItemProp || // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -255,7 +289,12 @@ const SingleUserPicker = ({
               <span className={styles.errorHorizontal}>{error}</span>
             )}
             <div className={styles.omniPickerContainer}>
-              <OmniPicker renderItem={renderItem} onPick={handlePick} />
+              <OmniPicker
+                renderItem={renderItem}
+                renderEmpty={renderEmpty}
+                onPick={handlePick}
+                onBlur={handleBlur}
+              />
             </div>
             {(!value || (value && !isResettable)) && (
               <Icon
