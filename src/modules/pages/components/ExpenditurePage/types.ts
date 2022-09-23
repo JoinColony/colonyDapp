@@ -17,6 +17,12 @@ export enum ExpenditureTypes {
   Streaming = 'streaming',
 }
 
+export enum ExpenditureEndDateTypes {
+  WhenCancelled = 'when-cancelled',
+  LimitIsReached = 'limit-is-reached',
+  FixedTime = 'fixed-time',
+}
+
 export interface ValuesType {
   expenditure: ExpenditureTypes;
   filteredDomainId: string;

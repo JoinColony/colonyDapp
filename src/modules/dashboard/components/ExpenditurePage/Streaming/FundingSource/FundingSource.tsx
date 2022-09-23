@@ -113,7 +113,7 @@ const FundingSource = ({
                   filterOptionsFn={filterDomains}
                   scrollContainer={sidebarRef}
                   placement="bottom"
-                  withDropdownElelment
+                  withDropdownElement
                 />
               )}
             </div>
