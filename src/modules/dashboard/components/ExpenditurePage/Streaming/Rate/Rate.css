@@ -51,6 +51,11 @@
   padding-left: 0;
 }
 
+.inputRateAmount p {
+  position: absolute;
+  transform: translate(0, 2px);
+}
+
 .tokenWrapper {
   max-width: 104px;
 }
