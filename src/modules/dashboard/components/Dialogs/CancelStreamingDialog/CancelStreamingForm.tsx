@@ -77,13 +77,31 @@ interface Props {
 
 const fundingSourcesMock = [
   {
-    rate: 'rate mock',
-    limit: 'limit mock',
-    filteredDomainId: undefined,
+    rateToken: {
+      address: '0x0000000000000000000000000000000000000000',
+      balances: [{ amount: '0', domainId: 0 }],
+      decimals: 18,
+      iconHash: '',
+      id: '0x0000000000000000000000000000000000000000',
+      name: 'Ether',
+      symbol: 'ETH',
+    },
+    rateAmount: 10,
+    rateTime: 'day',
+    filteredDomainId: ROOT_DOMAIN_ID,
   },
   {
-    rate: 'rate mock',
-    limit: 'limit mock',
+    rateToken: {
+      address: '0x0000000000000000000000000000000000000000',
+      balances: [{ amount: '0', domainId: 0 }],
+      decimals: 18,
+      iconHash: '',
+      id: '0x0000000000000000000000000000000000000000',
+      name: 'Ether',
+      symbol: 'ETH',
+    },
+    rateAmount: 1000,
+    rateTime: 'month',
     filteredDomainId: ROOT_DOMAIN_ID,
   },
 ];
@@ -217,10 +235,11 @@ const CancelStreamingForm = ({
         </div>
       </DialogSection>
       {fundingSourcesMock &&
-        fundingSourcesMock.map(({ limit, rate, filteredDomainId }, index) => (
+        fundingSourcesMock.map(({ filteredDomainId, ...props }, index) => (
           <DialogSection appearance={{ theme: 'sidePadding' }}>
             <FundingSourceItem
-              {...{ colony, limit, rate, index }}
+              {...props}
+              {...{ colony, index }}
               filteredDomainId={filteredDomainId?.toString()}
               isMultiple={fundingSourcesMock.length > 1}
             />
