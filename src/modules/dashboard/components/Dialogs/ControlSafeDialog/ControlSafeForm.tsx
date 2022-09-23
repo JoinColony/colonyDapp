@@ -208,7 +208,7 @@ const ControlSafeForm = ({
         (transaction) => transaction.value === transactionTypeValue,
       );
       return transactionType ? (
-        <FormattedMessage {...transactionType.label} />
+        <FormattedMessage {...transactionType.label} key={nanoid()} />
       ) : null;
     },
     [],
