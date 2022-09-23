@@ -13,6 +13,7 @@ import Icon from '~core/Icon';
 import Avatar from '~core/Avatar';
 import MaskedAddress from '~core/MaskedAddress';
 import { Colony, AnyUser } from '~data/index';
+import { AbiItemExtended } from '~utils/getContractUsefulMethods';
 
 import AddressDetailsView from './TransactionPreview/AddressDetailsView';
 import { FormValues } from './ControlSafeDialog';
@@ -22,7 +23,6 @@ import {
   MSG as ConstantsMSG,
 } from './constants';
 import DetailsItem from './DetailsItem';
-import { AbiItemExtended } from '~utils/getContractUsefulMethods';
 
 import styles from './SafeTransactionPreview.css';
 
