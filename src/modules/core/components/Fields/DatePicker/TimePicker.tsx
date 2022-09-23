@@ -54,7 +54,8 @@ const TimePicker = ({ selectedDate, onChange, timeInterval }: Props) => {
   );
 
   const timeOptions = useMemo(() => {
-    return [...new Array((24 * 60) / 30)].map((_, idx) => {
+    const optionsCount = (24 * 60) / timeInterval;
+    return [...new Array(optionsCount)].map((_, idx) => {
       const time = idx * timeInterval;
       const hours = Math.floor(time / 60);
       const minutes = time % 60;
