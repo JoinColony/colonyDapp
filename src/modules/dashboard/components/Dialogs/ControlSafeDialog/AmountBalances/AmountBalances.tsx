@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { defineMessages, MessageDescriptor } from 'react-intl';
 import { AddressZero } from 'ethers/constants';
 import classnames from 'classnames';
+import { useField } from 'formik';
 
 import EthUsd from '~core/EthUsd';
 import Input, { MaxButtonParams } from '~core/Fields/Input';
@@ -9,7 +10,11 @@ import TokenSymbolSelector from '~core/Fields/TokenSymbolSelector';
 import { FormValues as ControlSafeFormValues } from '~dashboard/Dialogs/ControlSafeDialog';
 
 import { ColonySafe } from '~data/generated';
-import { SAFE_NETWORKS } from '~constants';
+import {
+  DEFAULT_TOKEN_DECIMALS,
+  ETHEREUM_NETWORK,
+  SAFE_NETWORKS,
+} from '~constants';
 
 import styles from '~core/Fields/AmountTokens/AmountTokens.css';
 
@@ -32,7 +37,6 @@ interface Props {
   safeBalances: SafeBalance[];
   disabledInput: boolean;
   values: ControlSafeFormValues;
-  selectedBalance: SafeBalance | undefined;
   selectedSafe: ColonySafe | undefined;
   customAmountError?: MessageDescriptor | string;
   inputName?: string;
@@ -56,7 +60,6 @@ const displayName = 'AmountBalances';
 const AmountBalances = ({
   values,
   customAmountError,
-  selectedBalance,
   selectedSafe,
   safeBalances,
   disabledInput,
@@ -64,6 +67,9 @@ const AmountBalances = ({
   selectorName,
   maxButtonParams,
 }: Props) => {
+  const [, { value: selectorValue }, { setValue }] = useField(
+    selectorName || 'token',
+  );
   const tokens: SafeToken[] = safeBalances.map((balance) => {
     if (balance.token && balance.tokenAddress) {
       return {
@@ -83,18 +89,28 @@ const AmountBalances = ({
         case 56:
           return 'binance';
         default:
-          return currentNetworkData?.name.toLowerCase();
+          return (
+            currentNetworkData?.name.toLowerCase() ||
+            ETHEREUM_NETWORK.name.toLowerCase()
+          );
       }
     };
 
     return {
-      // currentNetworkData should always be defined
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      ...currentNetworkData!.nativeToken,
+      ...(currentNetworkData?.nativeToken || ETHEREUM_NETWORK.nativeToken),
       address: AddressZero,
       networkName: getNetworkName(),
     };
   });
+  const selectedTokenInfo = tokens.find(
+    (token) => token.address === selectorValue,
+  );
+
+  useEffect(() => {
+    if (!selectorValue && tokens[0]) {
+      setValue(tokens[0]);
+    }
+  }, [selectorName, selectorValue, tokens, setValue]);
 
   return (
     <div className={styles.tokenAmount}>
@@ -113,7 +129,8 @@ const AmountBalances = ({
           formattingOptions={{
             delimiter: ',',
             numeral: true,
-            numeralDecimalScale: selectedBalance?.balance,
+            numeralDecimalScale:
+              selectedTokenInfo?.decimals || DEFAULT_TOKEN_DECIMALS,
           }}
           disabled={disabledInput}
           /*
@@ -130,10 +147,11 @@ const AmountBalances = ({
           <TokenSymbolSelector
             label={MSG.token}
             tokens={tokens}
-            name={selectorName || 'tokenAddress'}
+            name={selectorName || 'token'}
             elementOnly
             appearance={{ alignOptions: 'right', theme: 'grey' }}
             disabled={disabledInput}
+            isSafeToken
           />
         </div>
         {values[inputName || 'amount'] === AddressZero && (

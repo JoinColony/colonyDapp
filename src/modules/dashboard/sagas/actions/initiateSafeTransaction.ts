@@ -1,5 +1,4 @@
 import { ClientType, ColonyClient } from '@colony/colony-js';
-
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
@@ -24,13 +23,14 @@ import { getColonyManager } from '~modules/core/sagas/utils';
 import { ActionTypes } from '~redux/actionTypes';
 import { Action, AllActions } from '~redux/types';
 import { putError, routeRedirect, takeFrom } from '~utils/saga/effects';
-import { TransactionTypes } from '~dashboard/Dialogs/ControlSafeDialog/constants';
+
 import { uploadIfpsAnnotation } from '../utils';
 import {
   getForeignBridgeMock,
   getHomeBridge,
   getRawTransactionData,
   getTransferNFTData,
+  getTransferFundsData,
   getZodiacModule,
   onLocalDevEnvironment,
 } from '../utils/safeHelpers';
@@ -95,7 +95,13 @@ function* initiateSafeTransactionAction({
             transaction,
           );
           break;
-        case TransactionTypes.TRANSFER_FUNDS: // @TODO
+        case TransactionTypes.TRANSFER_FUNDS:
+          txDataToBeSentToZodiacModule = yield getTransferFundsData(
+            zodiacBridgeModule,
+            safe,
+            transaction,
+          );
+          break;
         case TransactionTypes.CONTRACT_INTERACTION: // @TODO
         default:
           throw new Error(
