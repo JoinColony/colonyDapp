@@ -68,7 +68,7 @@ const RawTransactionSection = ({
       <DialogSection>
         <Input
           label={MSG.valueLabel}
-          name={`transactions.${transactionFormIndex}.amount`}
+          name={`transactions.${transactionFormIndex}.rawAmount`}
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
           disabled={disabledInput}
           labelValues={{
