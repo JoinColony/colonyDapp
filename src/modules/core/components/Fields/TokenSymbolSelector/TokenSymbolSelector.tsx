@@ -12,11 +12,12 @@ import styles from './TokenSymbolSelector.css';
 
 interface Props extends Omit<SelectProps, 'options'> {
   tokens: AnyToken[] | SafeToken[];
+  isSafeToken?: boolean;
 }
 
 const displayName = 'TokenSymbolSelector';
 
-const TokenSymbolSelector = ({ tokens, ...props }: Props) => {
+const TokenSymbolSelector = ({ tokens, isSafeToken, ...props }: Props) => {
   // @NOTE: We are doing this so that Typescript stops complaining about the union of these types
   const tokenArray: Array<AnyToken | SafeToken> = tokens;
   const tokenOptions = useMemo(
@@ -40,13 +41,13 @@ const TokenSymbolSelector = ({ tokens, ...props }: Props) => {
         );
 
         return {
-          value: token.address,
+          value: isSafeToken ? (token as SafeToken) : token.address,
           label: token.symbol,
           labelElement: labelElement('labelElement'),
           children: labelElement('optionElement'),
         };
       }),
-    [tokenArray],
+    [tokenArray, isSafeToken],
   );
 
   return <Select options={tokenOptions} {...props} />;

@@ -10,6 +10,7 @@ import React, {
 import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 import { useField } from 'formik';
 import { nanoid } from 'nanoid';
+import isEqual from 'lodash/isEqual';
 
 import { getMainClasses } from '~utils/css';
 import { DOWN, ENTER, ESC, SimpleMessageValues, SPACE, UP } from '~types/index';
@@ -119,7 +120,7 @@ const Select = ({
   const [selectedOption, setSelectedOption] = useState<number>(-1);
 
   const checkedOption = useMemo(
-    () => options.findIndex((option) => option.value === value),
+    () => options.findIndex((option) => isEqual(option.value, value)),
     [value, options],
   );
 

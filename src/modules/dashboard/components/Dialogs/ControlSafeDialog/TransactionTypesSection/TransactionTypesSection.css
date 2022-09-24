@@ -36,6 +36,8 @@
   margin-bottom: 10px;
 }
 
-.spinner {
-  text-align: center;
+.balanceLoading,
+.balanceError {
+  display: flex;
+  justify-content: center;
 }

@@ -8,7 +8,6 @@ import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
-import { Address } from '~types/index';
 import { AbiItemExtended } from '~utils/safes';
 import {
   SelectedSafe,
@@ -25,15 +24,15 @@ import { getMethodInputValidation, getValidationSchema } from './validation';
 export interface FormValues {
   transactions: {
     transactionType: string;
-    tokenAddress?: Address;
-    amount?: number;
     recipient: AnyUser | null;
+    nft: SelectedNFT | null;
+    nftData: NFT | null;
+    token?: SafeToken;
+    amount?: number;
     data?: string;
     contract?: AnyUser;
     abi?: string;
     contractFunction?: string;
-    nft: SelectedNFT | null;
-    nftData: NFT | null;
   }[];
   safe: SelectedSafe | null;
   forceAction: boolean;
@@ -128,7 +127,7 @@ const ControlSafeDialog = ({
         transactions: [
           {
             transactionType: '',
-            tokenAddress: colony.nativeTokenAddress,
+            token: undefined,
             amount: undefined,
             recipient: undefined,
             data: '',

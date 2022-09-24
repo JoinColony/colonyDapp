@@ -15,11 +15,13 @@ import {
 } from './index';
 import { ColonySafe, AnyUser } from '~data/index';
 import { NFT } from '~dashboard/Dialogs/ControlSafeDialog/TransactionTypesSection/TransferNFTSection';
+import { SafeToken } from '~dashboard/Dialogs/ControlSafeDialog/AmountBalances';
 
 export interface SafeTransaction {
   transactionType: string;
-  tokenAddress: Address;
+  token: SafeToken;
   amount: string;
+  rawAmount: string;
   recipient: AnyUser;
   data: string;
   contract: string;

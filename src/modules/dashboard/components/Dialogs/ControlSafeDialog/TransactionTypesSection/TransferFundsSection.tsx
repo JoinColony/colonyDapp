@@ -1,9 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
+import moveDecimal from 'move-decimal-point';
+import { AddressZero } from 'ethers/constants';
 
+import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import { AnyUser, Colony, useMembersSubscription } from '~data/index';
 import { Address } from '~types/index';
 import UserAvatar from '~core/UserAvatar';
+import { SpinnerLoader } from '~core/Preloaders';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import { DialogSection } from '~core/Dialog';
 import {
@@ -29,6 +33,15 @@ const MSG = defineMessages({
     id: `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection.userPickerPlaceholder`,
     defaultMessage: 'Select or paste a wallet address',
   },
+  balancesLoading: {
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection.balancesLoading`,
+    defaultMessage: 'Loading Safe balances',
+  },
+  balancesError: {
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection.balancesError`,
+    defaultMessage:
+      'Unable to fetch the Safe balances. Please check your connection.',
+  },
 });
 
 const displayName = `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection`;
@@ -52,7 +65,8 @@ const TransferFundsSection = ({
   transactionFormIndex,
   setFieldValue,
 }: Props) => {
-  const [safeBalances, setSafeBalances] = useState<SafeBalance[]>([]);
+  const [safeBalances, setSafeBalances] = useState<SafeBalance[] | null>([]);
+  const [isLoadingBalances, setIsLoadingBalances] = useState<boolean>(true);
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress },
   });
@@ -61,6 +75,7 @@ const TransferFundsSection = ({
 
   const getSafeBalance = useCallback(async () => {
     if (values.safe?.profile?.displayName) {
+      setIsLoadingBalances(true);
       const chainName = getChainNameFromSafe(values.safe.profile.displayName);
       const baseUrl = getTxServiceBaseUrl(chainName);
       try {
@@ -72,20 +87,23 @@ const TransferFundsSection = ({
           setSafeBalances(data);
         }
       } catch (e) {
-        setSafeBalances([]);
+        setSafeBalances(null);
         console.error(e);
+      } finally {
+        setIsLoadingBalances(false);
       }
     }
   }, [values.safe, safeAddress]);
 
-  const selectedTokenAddress =
-    values.transactions[transactionFormIndex].tokenAddress;
+  const selectedToken = values.transactions[transactionFormIndex].token;
   const selectedBalance = useMemo(
     () =>
       safeBalances?.find(
-        (balance) => balance.tokenAddress === selectedTokenAddress,
+        (balance) =>
+          balance.tokenAddress === selectedToken?.address ||
+          (!balance.tokenAddress && selectedToken?.address === AddressZero),
       ),
-    [safeBalances, selectedTokenAddress],
+    [safeBalances, selectedToken],
   );
   const selectedSafe = safes.find(
     (safe) => safe.contractAddress === values.safe?.profile?.walletAddress,
@@ -97,21 +115,44 @@ const TransferFundsSection = ({
     }
   }, [safeAddress, getSafeBalance]);
 
+  const formattedSafeBalance = moveDecimal(
+    selectedBalance?.balance || 0,
+    -(selectedBalance?.token?.decimals || DEFAULT_TOKEN_DECIMALS),
+  );
+
+  if (isLoadingBalances) {
+    return (
+      <DialogSection>
+        <div className={styles.balanceLoading}>
+          <SpinnerLoader loadingText={MSG.balancesLoading} />
+        </div>
+      </DialogSection>
+    );
+  }
+
+  if (safeBalances === null) {
+    return (
+      <DialogSection>
+        <div className={styles.balanceError}>
+          <FormattedMessage {...MSG.balancesError} />
+        </div>
+      </DialogSection>
+    );
+  }
+
   return (
     <>
       <DialogSection>
         <AmountBalances
           values={values}
-          selectedBalance={selectedBalance}
           selectedSafe={selectedSafe}
           safeBalances={safeBalances}
           disabledInput={disabledInput}
           inputName={`transactions.${transactionFormIndex}.amount`}
-          selectorName={`transactions.${transactionFormIndex}.tokenAddress`}
-          // @TODO: Connect max amount to max amount in safe
+          selectorName={`transactions.${transactionFormIndex}.token`}
           maxButtonParams={{
             fieldName: `transactions.${transactionFormIndex}.amount`,
-            maxAmount: `${selectedBalance?.balance || 0}`,
+            maxAmount: `${formattedSafeBalance}`,
             setFieldValue,
           }}
         />

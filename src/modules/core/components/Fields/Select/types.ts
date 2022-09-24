@@ -20,7 +20,7 @@ export interface SelectOption {
   children?: ReactNode;
   disabled?: boolean;
   label: MessageDescriptor | string;
-  value: string;
+  value: any;
   labelValues?: SimpleMessageValues;
   labelElement?: ReactNode;
 }
