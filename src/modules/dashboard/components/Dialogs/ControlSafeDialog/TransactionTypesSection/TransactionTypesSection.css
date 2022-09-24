@@ -35,3 +35,9 @@
 .inputParamContainer p {
   margin-bottom: 10px;
 }
+
+.balanceLoading,
+.balanceError {
+  display: flex;
+  justify-content: center;
+}

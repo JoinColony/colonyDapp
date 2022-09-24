@@ -15,7 +15,6 @@ import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
-import { Address } from '~types/index';
 import { AbiItemExtended } from '~utils/getContractUsefulMethods';
 import {
   SelectedSafe,
@@ -29,6 +28,7 @@ import { SAFE_NETWORKS } from '~constants';
 import { TransactionTypes } from './constants';
 import ControlSafeForm from './ControlSafeForm';
 import { NFT } from './TransactionTypesSection/TransferNFTSection';
+import { SafeToken } from './AmountBalances';
 
 const MSG = defineMessages({
   requiredFieldError: {
@@ -68,15 +68,15 @@ const MSG = defineMessages({
 export interface FormValues {
   transactions: {
     transactionType: string;
-    tokenAddress?: Address;
-    amount?: number;
     recipient: AnyUser | null;
+    nft: SelectedNFT | null;
+    nftData: NFT | null;
+    token?: SafeToken;
+    amount?: number;
     data?: string;
     contract?: AnyUser;
     abi?: string;
     contractFunction?: string;
-    nft: SelectedNFT | null;
-    nftData: NFT | null;
   }[];
   safe: SelectedSafe | null;
   forceAction: boolean;
@@ -210,9 +210,16 @@ const ControlSafeDialog = ({
         });
       });
 
-      setExpandedValidationSchema(updatedExpandedValidationSchema);
+      setExpandedValidationSchema({
+        ...expandedValidationSchema,
+        updatedExpandedValidationSchema,
+      });
     }
-  }, [selectedContractMethods, getMethodInputValidation]);
+  }, [
+    selectedContractMethods,
+    getMethodInputValidation,
+    expandedValidationSchema,
+  ]);
 
   const validationSchema = yup.object().shape({
     safe: yup.object().shape({
@@ -246,7 +253,16 @@ const ControlSafeDialog = ({
         }),
         amount: yup.number().when('transactionType', {
           is: (transactionType) =>
-            transactionType === TransactionTypes.TRANSFER_FUNDS ||
+            transactionType === TransactionTypes.TRANSFER_FUNDS,
+          then: yup
+            .number()
+            .transform((value) => toFinite(value))
+            .required(() => MSG.requiredFieldError)
+            .moreThan(0, () => MSG.gtZeroError),
+          otherwise: false,
+        }),
+        rawAmount: yup.number().when('transactionType', {
+          is: (transactionType) =>
             transactionType === TransactionTypes.RAW_TRANSACTION,
           then: yup
             .number()
@@ -256,14 +272,11 @@ const ControlSafeDialog = ({
             .integer(() => MSG.notIntegerError),
           otherwise: false,
         }),
-        tokenAddress: yup.string().when('transactionType', {
+        token: yup.object().when('transactionType', {
           is: (transactionType) =>
             transactionType === TransactionTypes.TRANSFER_FUNDS,
-          then: yup
-            .string()
-            .address()
-            .required(() => MSG.requiredFieldError),
-          otherwise: false,
+          then: yup.object().required(() => MSG.requiredFieldError),
+          otherwise: yup.object().nullable(),
         }),
         data: yup.string().when('transactionType', {
           is: (transactionType) =>
@@ -383,7 +396,7 @@ const ControlSafeDialog = ({
         transactions: [
           {
             transactionType: '',
-            tokenAddress: colony.nativeTokenAddress,
+            token: undefined,
             amount: undefined,
             recipient: undefined,
             data: '',
