@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import classNames from 'classnames';
-
 import { useField } from 'formik';
-import Select, { Props as SelectProps } from './Select';
-import styles from './SelectHorizontal.css';
+
 import InputStatus from '../InputStatus';
 import InputLabel from '../InputLabel';
+
+import Select, { Props as SelectProps } from './Select';
+import styles from './SelectHorizontal.css';
+
+const DROPDOWN_HEIGHT = 160;
+const DROPDOWN_ITEM_HEIGHT = 32;
 
 interface Props extends SelectProps {
   unselectable?: boolean;
@@ -35,8 +39,14 @@ const SelectHorizontal = ({
     help,
     helpValues,
     hasBlueActiveState,
+    options,
   } = selectProps;
   const [, { error }] = useField(name);
+
+  const dropdownHeight = useMemo(() => {
+    const height = options.length * DROPDOWN_ITEM_HEIGHT;
+    return height > DROPDOWN_HEIGHT ? DROPDOWN_HEIGHT : height;
+  }, [options]);
 
   return (
     <>
@@ -61,6 +71,7 @@ const SelectHorizontal = ({
             scrollContainer,
             placement,
             hasBlueActiveState,
+            dropdownHeight,
             ...selectProps,
           }}
           elementOnly

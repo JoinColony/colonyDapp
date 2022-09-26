@@ -17,7 +17,11 @@ const MSG = defineMessages({
   },
   title: {
     id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.title',
-    defaultMessage: `{counter}: {team}, {rateAmount} {rateToken} / {rateTime} {dots}`,
+    defaultMessage: `{counter}: {team}, {rate} {tokens}`,
+  },
+  rate: {
+    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.rate',
+    defaultMessage: `{amount} {token} / {time}{comma}`,
   },
 });
 
@@ -80,10 +84,49 @@ const LockedStreaming = ({ fundingSources, colony }: Props) => {
                   values={{
                     counter: index + 1,
                     team: domain?.name,
-                    rateAmount: amount,
-                    rateToken: tokenData?.symbol,
-                    rateTime: time,
-                    dots: fundingSource.rate.length > 1 && '...',
+                    rate: (
+                      <div
+                        className={classNames(styles.rate, styles.marginLeft)}
+                      >
+                        <FormattedMessage
+                          {...MSG.rate}
+                          values={{
+                            amount,
+                            token: tokenData?.symbol,
+                            time,
+                            comma:
+                              fundingSource.rate.length > 1 && isOpen && ', ',
+                          }}
+                        />
+                      </div>
+                    ),
+                    tokens:
+                      fundingSource.rate.length > 1 && isOpen
+                        ? fundingSource.rate.map((rateItem, idx) => {
+                            if (idx === 0) {
+                              return null;
+                            }
+                            const tokenItemData = colony.tokens?.find(
+                              (tokenItem) =>
+                                token && tokenItem.address === rateItem.token,
+                            );
+                            return (
+                              <div className={styles.rate}>
+                                <FormattedMessage
+                                  {...MSG.rate}
+                                  values={{
+                                    amount: rateItem.amount,
+                                    token: tokenItemData?.symbol,
+                                    time: rateItem.time,
+                                    comma:
+                                      fundingSource.rate.length > idx + 1 &&
+                                      ',',
+                                  }}
+                                />
+                              </div>
+                            );
+                          })
+                        : '...',
                   }}
                 />
               </div>
