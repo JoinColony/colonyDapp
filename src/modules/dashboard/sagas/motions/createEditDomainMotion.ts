@@ -6,13 +6,14 @@ import {
   getChildIndex,
   ColonyRole,
 } from '@colony/colony-js';
-import { AddressZero } from 'ethers/constants';
+import { getStringForMetadataDomain } from '@colony/colony-event-metadata-parser';
 
+import { AddressZero } from 'ethers/constants';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 
-import { uploadIfsWithFallback } from '../utils';
+import { ipfsUploadWithFallback, ipfsUploadAnnotation } from '../utils';
 import {
   createTransaction,
   createTransactionChannels,
@@ -107,11 +108,15 @@ function* createEditDomainMotion({
     /*
      * Upload domain metadata to IPFS
      */
-    const domainMetadataIpfsHash = yield call(uploadIfsWithFallback, {
-      domainName,
-      domainColor,
-      domainPurpose,
-    });
+    let domainMetadataIpfsHash = null;
+    domainMetadataIpfsHash = yield call(
+      ipfsUploadWithFallback,
+      getStringForMetadataDomain({
+        domainName,
+        domainColor,
+        domainPurpose,
+      }),
+    );
 
     const encodedAction = colonyClient.interface.functions[
       isCreateDomain
@@ -178,7 +183,8 @@ function* createEditDomainMotion({
     yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
-      const ipfsHash = yield call(uploadIfsWithFallback, { annotationMessage });
+      const ipfsHash = yield call(ipfsUploadAnnotation, annotationMessage);
+
       yield put(transactionPending(annotateMotion.id));
 
       yield put(transactionAddParams(annotateMotion.id, [txHash, ipfsHash]));

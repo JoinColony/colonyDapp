@@ -5,6 +5,7 @@ import {
   getPermissionProofs,
   ColonyRole,
 } from '@colony/colony-js';
+
 import { AddressZero } from 'ethers/constants';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
@@ -21,7 +22,7 @@ import {
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
-import { updateDomainReputation, uploadIfsWithFallback } from '../utils';
+import { updateDomainReputation, ipfsUploadAnnotation } from '../utils';
 
 function* manageReputationMotion({
   payload: {
@@ -179,9 +180,9 @@ function* manageReputationMotion({
       );
 
       /*
-       * Upload annotaiton to IPFS
+       * Upload annotation to IPFS
        */
-      const ipfsHash = yield call(uploadIfsWithFallback, { annotationMessage });
+      const ipfsHash = yield call(ipfsUploadAnnotation, annotationMessage);
 
       yield put(transactionPending(annotateManageReputationMotion.id));
 

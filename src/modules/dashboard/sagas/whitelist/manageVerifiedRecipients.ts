@@ -1,5 +1,6 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType } from '@colony/colony-js';
+import { getStringForMetadataColony } from '@colony/colony-event-metadata-parser';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
@@ -21,7 +22,11 @@ import {
   transactionAddParams,
 } from '../../../core/actionCreators';
 
-import { updateColonyDisplayCache, uploadIfsWithFallback } from '../utils';
+import {
+  updateColonyDisplayCache,
+  ipfsUploadWithFallback,
+  ipfsUploadAnnotation,
+} from '../utils';
 
 function* manageVerifiedRecipients({
   payload: {
@@ -103,13 +108,18 @@ function* manageVerifiedRecipients({
     /*
      * Upload colony metadata to IPFS
      */
-    const colonyMetadataIpfsHash = yield call(uploadIfsWithFallback, {
-      colonyDisplayName,
-      colonyAvatarHash,
-      verifiedAddresses,
-      colonyTokens,
-      isWhitelistActivated,
-    });
+    let colonyMetadataIpfsHash = null;
+
+    colonyMetadataIpfsHash = yield call(
+      ipfsUploadWithFallback,
+      getStringForMetadataColony({
+        colonyDisplayName,
+        colonyAvatarHash,
+        verifiedAddresses,
+        colonyTokens,
+        isWhitelistActivated,
+      }),
+    );
 
     yield put(
       transactionAddParams(editColony.id, [
@@ -133,9 +143,10 @@ function* manageVerifiedRecipients({
       /*
        * Upload annotation metadata to IPFS
        */
-      const annotationMessageIpfsHash = yield call(uploadIfsWithFallback, {
+      const annotationMessageIpfsHash = yield call(
+        ipfsUploadAnnotation,
         annotationMessage,
-      });
+      );
 
       yield put(
         transactionAddParams(annotateEditColony.id, [

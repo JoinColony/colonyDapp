@@ -1,5 +1,9 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType } from '@colony/colony-js';
+import {
+  getStringForColonyAvatarImage,
+  getStringForMetadataColony,
+} from '@colony/colony-event-metadata-parser';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
@@ -20,7 +24,11 @@ import {
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
-import { updateColonyDisplayCache, uploadIfsWithFallback } from '../utils';
+import {
+  updateColonyDisplayCache,
+  ipfsUploadWithFallback,
+  ipfsUploadAnnotation,
+} from '../utils';
 
 function* editColonyAction({
   payload: {
@@ -109,15 +117,14 @@ function* editColonyAction({
      */
     let colonyAvatarIpfsHash = null;
     if (colonyAvatarImage && hasAvatarChanged) {
-      colonyAvatarIpfsHash = yield call(uploadIfsWithFallback, {
-        image: colonyAvatarImage,
-      });
+      colonyAvatarIpfsHash = yield call(
+        ipfsUploadWithFallback,
+        getStringForColonyAvatarImage(colonyAvatarImage),
+      );
     }
 
-    /*
-     * Upload colony metadata to IPFS
-     */
-    const colonyMetadataIpfsHash = yield call(uploadIfsWithFallback, {
+    let colonyMetadataIpfsHash = null;
+    const colonyMetadata = getStringForMetadataColony({
       colonyDisplayName,
       colonyAvatarHash: hasAvatarChanged
         ? colonyAvatarIpfsHash
@@ -126,6 +133,11 @@ function* editColonyAction({
       verifiedAddresses,
       isWhitelistActivated,
     });
+
+    /*
+     * Upload colony metadata to IPFS
+     */
+    colonyMetadataIpfsHash = yield call(ipfsUploadWithFallback, colonyMetadata);
 
     yield put(
       transactionAddParams(editColony.id, [
@@ -149,9 +161,10 @@ function* editColonyAction({
       /*
        * Upload annotation metadata to IPFS
        */
-      const annotationMessageIpfsHash = yield call(uploadIfsWithFallback, {
+      const annotationMessageIpfsHash = yield call(
+        ipfsUploadAnnotation,
         annotationMessage,
-      });
+      );
 
       yield put(
         transactionAddParams(annotateEditColony.id, [

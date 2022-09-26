@@ -16,7 +16,7 @@ import {
   transactionAddParams,
 } from '../../../core/actionCreators';
 
-import { updateMotionValues, uploadIfsWithFallback } from '../utils';
+import { updateMotionValues, ipfsUploadAnnotation } from '../utils';
 
 function* stakeMotion({
   meta,
@@ -142,9 +142,11 @@ function* stakeMotion({
       /*
        * Upload annotation metadata to IPFS
        */
-      const annotationMessageIpfsHash = yield call(uploadIfsWithFallback, {
-        annotationMessage,
-      });
+      let annotationMessageIpfsHash = null;
+      annotationMessageIpfsHash = yield call(
+        ipfsUploadAnnotation,
+        annotationMessage || '',
+      );
 
       yield put(
         transactionAddParams(annotateStaking.id, [

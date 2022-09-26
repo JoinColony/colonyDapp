@@ -14,7 +14,7 @@ import {
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
-import { updateDomainReputation, uploadIfsWithFallback } from '../utils';
+import { updateDomainReputation, ipfsUploadAnnotation } from '../utils';
 
 function* manageReputationAction({
   payload: {
@@ -109,12 +109,11 @@ function* manageReputationAction({
     if (annotationMessage) {
       yield put(transactionPending(annotateManageReputation.id));
 
-      /*
-       * Upload annotaiton to IPFS
-       */
-      const annotationMessageIpfsHash = yield call(uploadIfsWithFallback, {
+      let annotationMessageIpfsHash = null;
+      annotationMessageIpfsHash = yield call(
+        ipfsUploadAnnotation,
         annotationMessage,
-      });
+      );
 
       yield put(
         transactionAddParams(annotateManageReputation.id, [

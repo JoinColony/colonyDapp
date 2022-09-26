@@ -1,3 +1,8 @@
+import {
+  getColonyAvatarImage,
+  getEventMetadataVersion,
+} from '@colony/colony-event-metadata-parser';
+
 import { useDataFetcher } from '~utils/hooks';
 import { IPFSAvatarImage } from '~types/index';
 
@@ -10,8 +15,14 @@ const useUserAvatarImageFromIPFS = (ipfsHash: string): IPFSAvatarImage => {
     [ipfsHash],
     [ipfsHash],
   );
+
+  if (!avatar) return avatarObject;
   try {
-    avatarObject = JSON.parse(avatar);
+    const metadataVersion = getEventMetadataVersion(avatar);
+    avatarObject =
+      metadataVersion === 1
+        ? JSON.parse(avatar) // original metadata format
+        : { image: getColonyAvatarImage(avatar) }; // new metadata format
   } catch (error) {
     /*
      * @NOTE Silent error

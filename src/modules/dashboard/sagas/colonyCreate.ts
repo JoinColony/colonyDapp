@@ -7,8 +7,9 @@ import {
   ClientType,
   ROOT_DOMAIN_ID,
 } from '@colony/colony-js';
-import { poll } from 'ethers/utils';
+import { getStringForMetadataColony } from '@colony/colony-event-metadata-parser';
 
+import { poll } from 'ethers/utils';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import {
@@ -41,8 +42,7 @@ import {
 } from '../../core/actionCreators';
 import { createTransaction, createTransactionChannels } from '../../core/sagas';
 import { createUserWithSecondAttempt } from '../../users/sagas/utils';
-
-import { uploadIfsWithFallback } from '../sagas/utils';
+import { ipfsUploadWithFallback } from '../sagas/utils';
 
 interface ChannelDefinition {
   channel: Channel<any>;
@@ -289,12 +289,14 @@ function* colonyCreate({
      */
     let colonyAddress;
     if (createColony) {
-      const colonyMetadataIpfsHash = yield call(uploadIfsWithFallback, {
+      const colonyMetadata = getStringForMetadataColony({
         colonyName,
         colonyDisplayName: displayName,
-        colonyAvatarHash: null,
-        colonyTokens: [],
       });
+      const colonyMetadataIpfsHash = yield call(
+        ipfsUploadWithFallback,
+        colonyMetadata,
+      );
 
       const { version: latestVersion } = yield getNetworkContracts();
 

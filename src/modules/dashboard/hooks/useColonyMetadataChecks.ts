@@ -10,7 +10,7 @@ import {
 import { ipfsDataFetcher } from '~modules/core/fetchers';
 import { ColonyAndExtensionsEvents, ColonyActions } from '~types/colonyActions';
 import {
-  getSpecificActionValuesCheck,
+  getColonyValuesCheck,
   sortMetadataHistory,
   parseColonyMetadata,
   ColonyMetadata,
@@ -93,7 +93,7 @@ const useColonyMetadataChecks = (
              *
              * This should be the default case for a colony with metadata history
              */
-            const newMetadataChecks = getSpecificActionValuesCheck(
+            const newMetadataChecks = getColonyValuesCheck(
               ColonyAndExtensionsEvents.ColonyMetadata,
               actionData,
               prevColonyMetadata,
