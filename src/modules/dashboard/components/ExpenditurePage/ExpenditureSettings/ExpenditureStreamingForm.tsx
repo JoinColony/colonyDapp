@@ -12,6 +12,7 @@ import { ExpenditureEndDateTypes } from '~pages/ExpenditurePage/types';
 
 import { supRenderAvatar } from '../Recipient/Recipient';
 import { Streaming } from '../Streaming/types';
+import { FundingSource } from '../Streaming/types';
 
 import styles from './ExpenditureSettings.css';
 
