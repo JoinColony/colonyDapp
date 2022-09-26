@@ -74,7 +74,6 @@ const Tooltip = ({
               className: showArrow ? styles.tooltipArrow : '',
             })}
           />
-
           {content}
         </div>
       )}
