@@ -1,23 +1,25 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { FormikProps } from 'formik';
-import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
+import { useIntl } from 'react-intl';
 
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm, SelectOption } from '~core/Fields';
-import { SAFE_NETWORKS } from '~modules/constants';
+import { GNOSIS_AMB_BRIDGES, SAFE_NAMES_MAP } from '~modules/constants';
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 import { WizardDialogType } from '~utils/hooks';
 
 import DialogForm from './AddExistingSafeDialogForm';
+import { getValidationSchema } from './validation';
 
 export interface FormValues {
   chainId: string;
   contractAddress: Address;
-  safeName: string;
-  annotation: string;
+  moduleContractAddress?: Address;
+  safeName?: string;
+  annotation?: string;
 }
 
 type Props = Required<DialogProps> &
@@ -33,21 +35,31 @@ const AddExistingSafeDialog = ({
   cancel,
   close,
 }: Props) => {
+  const { formatMessage } = useIntl();
   const history = useHistory();
-  const validationSchema = yup.object().shape({
-    chainId: yup.string().required(),
-    contractAddress: yup.string().address().required(),
-    safeName: yup.string().required().max(20),
-    annotation: yup.string().max(4000),
-  });
+  const loadingSafeState = useState<boolean>(false);
+  const loadingModuleState = useState<boolean>(false);
+  const [stepIndex, setStepIndex] = useState<number>(1);
+  const abortControllerState = useState<AbortController | undefined>(undefined);
+
+  const validationSchema = getValidationSchema(
+    stepIndex,
+    abortControllerState,
+    safes,
+    formatMessage,
+    loadingSafeState,
+    loadingModuleState,
+  );
 
   // Create array for Network options
-  const networkOptions: SelectOption[] = SAFE_NETWORKS.map((option) => {
-    return {
-      label: option.name,
-      value: option.chainId.toString(),
-    };
-  });
+  const networkOptions: SelectOption[] = Object.keys(GNOSIS_AMB_BRIDGES).map(
+    (chainId) => {
+      return {
+        label: SAFE_NAMES_MAP[chainId],
+        value: chainId,
+      };
+    },
+  );
 
   const transform = useCallback(
     pipe(
@@ -57,6 +69,7 @@ const AddExistingSafeDialog = ({
           contractAddress,
           safeName,
           annotation: annotationMessage,
+          moduleContractAddress,
         }) => {
           return {
             colonyName,
@@ -66,6 +79,7 @@ const AddExistingSafeDialog = ({
                 chainId,
                 safeName,
                 contractAddress,
+                moduleContractAddress,
               },
             ],
             annotationMessage,
@@ -83,7 +97,8 @@ const AddExistingSafeDialog = ({
         chainId: networkOptions[0].value,
         annotation: undefined,
         safeName: undefined,
-        contractAddress: undefined,
+        contractAddress: '',
+        moduleContractAddress: undefined,
       }}
       validationSchema={validationSchema}
       submit={ActionTypes.ACTION_MANAGE_EXISTING_SAFES}
@@ -100,6 +115,10 @@ const AddExistingSafeDialog = ({
               networkOptions={networkOptions}
               colonySafes={safes}
               back={() => callStep(prevStep)}
+              colonyAddress={colonyAddress}
+              loadingState={[loadingSafeState, loadingModuleState]}
+              stepIndex={stepIndex}
+              setStepIndex={setStepIndex}
             />
           </Dialog>
         );

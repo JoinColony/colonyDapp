@@ -453,6 +453,7 @@ export default gql`
     safeName: String!
     contractAddress: String!
     chainId: String!
+    moduleContractAddress: String!
   }
 
   type ProcessedColony {

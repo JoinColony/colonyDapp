@@ -74,6 +74,7 @@ export interface EventValues {
   addedSafeAddress?: JSX.Element | null;
   chainName?: string | null;
   safeName?: string;
+  moduleAddress?: JSX.Element | null;
 }
 
 export type FeedItemWithId<T> = T & { uniqueId: string };

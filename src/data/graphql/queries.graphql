@@ -245,6 +245,7 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
       safeName
       contractAddress
       chainId
+      moduleContractAddress
     }
   }
 }
