@@ -5,8 +5,10 @@ import { flip, useFloating } from '@floating-ui/react-dom';
 import classnames from 'classnames';
 
 import Icon from '~core/Icon';
-import styles from './DatePicker.css';
+
 import { DEFAULT_TIME_FORMAT } from './constants';
+
+import styles from './DatePicker.css';
 
 const MSG = defineMessages({
   expandIconHTMLTitle: {
