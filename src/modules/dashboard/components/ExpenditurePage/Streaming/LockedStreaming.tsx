@@ -17,7 +17,7 @@ const MSG = defineMessages({
   },
   title: {
     id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.title',
-    defaultMessage: '{counter}: {team}, {rateAmount} {rateToken} / {rateTime}',
+    defaultMessage: `{counter}: {team}, {rateAmount} {rateToken} / {rateTime} {dots}`,
   },
 });
 
@@ -83,6 +83,7 @@ const LockedStreaming = ({ fundingSources, colony }: Props) => {
                     rateAmount: amount,
                     rateToken: tokenData?.symbol,
                     rateTime: time,
+                    dots: fundingSource.rate.length > 1 && '...',
                   }}
                 />
               </div>
