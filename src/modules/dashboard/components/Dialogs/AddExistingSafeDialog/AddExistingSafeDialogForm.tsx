@@ -23,7 +23,7 @@ export type SafeData = SafeContract | undefined | null | {} | 'alreadyExists';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.AddExistingSafeDialog.CheckSafe.title',
+    id: 'dashboard.AddExistingSafeDialog.AddExistingSafeDialogForm.title',
     defaultMessage: 'Adding a Safe',
   },
 });
