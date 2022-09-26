@@ -151,6 +151,10 @@ const ContractInteractionSection = ({
 
   const onContractChange = useCallback(
     (contract: AnyUser) => {
+      if (!selectedSafe) {
+        return;
+      }
+
       const contractPromise = fetchContractABI(
         contract.profile.walletAddress,
         Number(selectedSafe?.chainId),
