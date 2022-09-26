@@ -3,7 +3,6 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import styles from '../DetailsWidget.css';
 
-const displayName = 'DetailsWidget.DetailsWidgetAddSafe';
 const MSG = defineMessages({
   chain: {
     id: 'dashboard.ActionsPage.DetailsWidget.DetailsWidgetAddSafe.chain',
@@ -23,6 +22,8 @@ const MSG = defineMessages({
     defaultMessage: 'Module Address',
   },
 });
+
+const displayName = 'DetailsWidget.DetailsWidgetAddSafe';
 
 export interface AddedSafe {
   address?: JSX.Element | null;
