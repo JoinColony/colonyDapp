@@ -112,7 +112,7 @@ const DecisionDialogForm = ({
         <Input
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
           name="title"
-          disabled={isSubmitting}
+          disabled={isSubmitting || !hasReputation}
           maxLength={50}
           placeholder={MSG.titlePlaceholder}
         />
@@ -128,6 +128,7 @@ const DecisionDialogForm = ({
             isSubmitting={isSubmitting}
             limit={limit}
             name="description"
+            disabled={!hasReputation}
           />
         )}
       </DialogSection>
@@ -151,7 +152,7 @@ const DecisionDialogForm = ({
             id: titleOnOpen.current ? 'button.update' : 'button.preview',
           }}
           loading={isSubmitting}
-          disabled={!isValid || isSubmitting || !dirty}
+          disabled={!isValid || isSubmitting || !dirty || !hasReputation}
         />
       </DialogSection>
     </div>
