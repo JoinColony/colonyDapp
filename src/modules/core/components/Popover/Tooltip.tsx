@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import {
   usePopperTooltip,
   TriggerType,
@@ -46,6 +46,7 @@ const Tooltip = ({
     setTooltipRef,
     setTriggerRef,
     visible,
+    update,
   } = usePopperTooltip(
     {
       delayShow: 200,
@@ -55,6 +56,10 @@ const Tooltip = ({
     },
     popperOptions,
   );
+
+  useEffect(() => {
+    update?.();
+  }, [content, update]);
 
   return (
     <>
@@ -69,6 +74,7 @@ const Tooltip = ({
               className: showArrow ? styles.tooltipArrow : '',
             })}
           />
+
           {content}
         </div>
       )}
