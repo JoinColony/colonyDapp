@@ -194,7 +194,7 @@ const transactionTypeFieldsMap = {
   ],
   [TransactionTypes.RAW_TRANSACTION]: [
     {
-      key: 'amount',
+      key: 'rawAmount',
       label: MSG.value,
       value: (value) => (
         <div className={styles.rawTransactionValues}>{value}</div>
