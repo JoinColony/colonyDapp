@@ -29,6 +29,7 @@ interface Props {
   pendingMotion?: boolean;
   activeStage?: StageObject;
   handleReleaseMilestone: (id: string) => void;
+  states: State[];
 }
 
 const LockedSidebar = ({
@@ -41,6 +42,7 @@ const LockedSidebar = ({
   status,
   activeStage,
   handleReleaseMilestone,
+  states,
 }: Props) => {
   const {
     expenditure,
