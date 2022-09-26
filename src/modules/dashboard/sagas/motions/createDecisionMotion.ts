@@ -1,5 +1,5 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
-import { ClientType, ROOT_DOMAIN_ID, getChildIndex } from '@colony/colony-js';
+import { ClientType, getChildIndex } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 import { getStringForMetadataDecision } from '@colony/colony-event-metadata-parser';
 
@@ -62,13 +62,13 @@ function* createDecisionMotion({
     const childSkillIndex = yield call(
       getChildIndex,
       colonyClient,
-      ROOT_DOMAIN_ID,
-      ROOT_DOMAIN_ID,
+      motionDomainId,
+      motionDomainId,
     );
 
     const { skillId } = yield call(
       [colonyClient, colonyClient.getDomain],
-      ROOT_DOMAIN_ID,
+      motionDomainId,
     );
 
     const { key, value, branchMask, siblings } = yield call(
@@ -96,7 +96,7 @@ function* createDecisionMotion({
       methodName: 'createMotion',
       identifier: colonyAddress,
       params: [
-        ROOT_DOMAIN_ID,
+        motionDomainId,
         childSkillIndex,
         AddressZero,
         ACTION_DECISION_MOTION_CODE,
