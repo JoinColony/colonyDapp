@@ -239,8 +239,6 @@ const ContractInteractionSection = ({
     transactionFormIndex,
   ]);
 
-  // console.log('loadingABI', loadingABI);
-
   return (
     <>
       <DialogSection>
