@@ -1,5 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  MessageDescriptor,
+} from 'react-intl';
 import { FieldArray, FieldArrayRenderProps, FormikProps } from 'formik';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import classnames from 'classnames';
@@ -146,6 +150,9 @@ const ControlSafeForm = ({
 }: Props & FormikProps<FormValues>) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState([true]);
   const [hasTitle, setHasTitle] = useState(true);
+  const [customAmountError, setCustomAmountError] = useState<
+    MessageDescriptor | string | undefined
+  >(undefined);
 
   const { walletAddress } = useLoggedInUser();
   const fromDomainRoles = useTransformer(getUserRolesForDomain, [
@@ -375,6 +382,8 @@ const ControlSafeForm = ({
                           values={values}
                           transactionFormIndex={index}
                           setFieldValue={setFieldValue}
+                          customAmountError={customAmountError}
+                          handleCustomAmountError={setCustomAmountError}
                         />
                       )}
                       {values.transactions[index]?.transactionType ===
@@ -447,7 +456,9 @@ const ControlSafeForm = ({
           }
           text={showPreview ? MSG.buttonConfirm : MSG.buttonCreateTransaction}
           loading={isSubmitting}
-          disabled={!isValid || isSubmitting || !hasTitle || !dirty}
+          disabled={
+            !isValid || isSubmitting || !hasTitle || !!customAmountError || !dirty
+          }
           style={{ width: styles.wideButton }}
         />
       </DialogSection>
