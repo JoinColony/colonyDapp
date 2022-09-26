@@ -1,4 +1,5 @@
-import React from 'react';
+import { useField } from 'formik';
+import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { InputLabel, SelectHorizontal, FormSection } from '~core/Fields';
@@ -8,6 +9,7 @@ import { useMembersSubscription } from '~data/generated';
 import { ExpenditureEndDateTypes } from '~pages/ExpenditurePage/types';
 
 import { supRenderAvatar } from '../Recipient/Recipient';
+import { FundingSource } from '../Streaming/types';
 
 import { Props } from './ExpenditureSettings';
 import styles from './ExpenditureSettings.css';
@@ -61,6 +63,26 @@ const ExpenditureStreamingForm = ({ sidebarRef, colony }: Props) => {
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress: colony.colonyAddress || '' },
   });
+  const [, { value: fundingSourcesValue }, { setValue }] = useField<
+    FundingSource[]
+  >('streaming.fundingSources');
+
+  const onSelectChange = useCallback(
+    (value: string) => {
+      if (value !== ExpenditureEndDateTypes.LimitIsReached) {
+        setValue(
+          fundingSourcesValue.map((fundingSource) => ({
+            ...fundingSource,
+            rate: fundingSource.rate.map((rateItem) => ({
+              ...rateItem,
+              limit: undefined,
+            })),
+          })),
+        );
+      }
+    },
+    [fundingSourcesValue, setValue],
+  );
 
   return (
     <>
@@ -98,6 +120,7 @@ const ExpenditureStreamingForm = ({ sidebarRef, colony }: Props) => {
               theme: 'alt',
               width: 'content',
             }}
+            onChange={onSelectChange}
             options={endDateTypes}
             scrollContainer={sidebarRef}
             placement="right"

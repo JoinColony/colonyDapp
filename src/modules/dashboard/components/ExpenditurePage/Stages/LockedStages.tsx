@@ -3,7 +3,11 @@ import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 
 import Tag from '~core/Tag';
 import { Colony } from '~data/index';
-import { State } from '~pages/ExpenditurePage/types';
+import {
+  ExpenditureTypes,
+  State,
+  ValuesType,
+} from '~pages/ExpenditurePage/types';
 
 import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
 import { Recipient } from '../Payments/types';
@@ -12,6 +16,7 @@ import { Motion, MotionStatus, MotionType, Status } from './constants';
 import LinkedMotions from './LinkedMotions';
 import Stages from './Stages';
 import styles from './Stages.css';
+import StreamingStages from './StreamingStages';
 
 const MSG = defineMessages({
   motion: {
@@ -35,6 +40,7 @@ interface Props {
   handleCancelExpenditure?: () => void;
   recipients?: Recipient[];
   colony: Colony;
+  formValues?: ValuesType;
 }
 
 const LockedStages = ({
@@ -46,6 +52,7 @@ const LockedStages = ({
   handleCancelExpenditure,
   recipients,
   colony,
+  formValues,
 }: Props) => {
   const activeState = states.find((state) => state.id === activeStateId);
   const { formatMessage } = useIntl();
@@ -87,19 +94,23 @@ const LockedStages = ({
               })}
         </Tag>
       )}
-      <Stages
-        {...{
-          states,
-          activeStateId,
-          setActiveStateId,
-          handleButtonClick,
-          motion,
-          status,
-          handleCancelExpenditure,
-          recipients,
-          colony,
-        }}
-      />
+      {formValues?.expenditure === ExpenditureTypes.Streaming ? (
+        <StreamingStages />
+      ) : (
+        <Stages
+          {...{
+            states,
+            activeStateId,
+            setActiveStateId,
+            handleButtonClick,
+            motion,
+            status,
+            handleCancelExpenditure,
+            recipients,
+            colony,
+          }}
+        />
+      )}
       {motion && (
         // motion link needs to be changed and redirects to actual motions page
         <LinkedMotions
