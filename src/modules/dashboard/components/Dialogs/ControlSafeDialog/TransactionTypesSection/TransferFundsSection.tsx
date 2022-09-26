@@ -1,7 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  MessageDescriptor,
+} from 'react-intl';
 import moveDecimal from 'move-decimal-point';
 import { AddressZero } from 'ethers/constants';
+import { bigNumberify } from 'ethers/utils';
 
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import { AnyUser, Colony, useMembersSubscription } from '~data/index';
@@ -14,6 +19,7 @@ import {
   getChainNameFromSafe,
   getTxServiceBaseUrl,
 } from '~modules/dashboard/sagas/utils/safeHelpers';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import AmountBalances, { SafeBalance } from '../AmountBalances';
 import { FormValues } from '../ControlSafeDialog';
@@ -42,6 +48,10 @@ const MSG = defineMessages({
     defaultMessage:
       'Unable to fetch the Safe balances. Please check your connection.',
   },
+  noBalance: {
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection.noBalance`,
+    defaultMessage: 'Insufficient safe balance.',
+  },
 });
 
 const displayName = `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection`;
@@ -52,6 +62,10 @@ interface Props {
   values: FormValues;
   transactionFormIndex: number;
   setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
+  customAmountError: MessageDescriptor | string | undefined;
+  handleCustomAmountError: React.Dispatch<
+    React.SetStateAction<MessageDescriptor | string | undefined>
+  >;
 }
 
 const renderAvatar = (address: Address, item: AnyUser) => (
@@ -64,6 +78,8 @@ const TransferFundsSection = ({
   values,
   transactionFormIndex,
   setFieldValue,
+  customAmountError,
+  handleCustomAmountError,
 }: Props) => {
   const [safeBalances, setSafeBalances] = useState<SafeBalance[] | null>([]);
   const [isLoadingBalances, setIsLoadingBalances] = useState<boolean>(true);
@@ -72,13 +88,14 @@ const TransferFundsSection = ({
   });
 
   const safeAddress = values.safe?.profile?.walletAddress;
+  const { amount } = values.transactions[transactionFormIndex];
 
   const getSafeBalance = useCallback(async () => {
     if (values.safe?.profile?.displayName) {
       setIsLoadingBalances(true);
-      const chainName = getChainNameFromSafe(values.safe.profile.displayName);
-      const baseUrl = getTxServiceBaseUrl(chainName);
       try {
+        const chainName = getChainNameFromSafe(values.safe.profile.displayName);
+        const baseUrl = getTxServiceBaseUrl(chainName);
         const response = await fetch(
           `${baseUrl}api/v1/safes/${safeAddress}/balances/`,
         );
@@ -120,6 +137,31 @@ const TransferFundsSection = ({
     -(selectedBalance?.token?.decimals || DEFAULT_TOKEN_DECIMALS),
   );
 
+  useEffect(() => {
+    if (selectedToken && amount) {
+      const decimals = getTokenDecimalsWithFallback(
+        selectedToken && selectedToken.decimals,
+      );
+      const convertedAmount = bigNumberify(moveDecimal(amount, decimals));
+      const safeBalance = bigNumberify(selectedBalance?.balance || 0);
+
+      if (
+        safeBalance &&
+        (safeBalance.lt(convertedAmount) || safeBalance.isZero())
+      ) {
+        handleCustomAmountError(MSG.noBalance);
+      } else {
+        handleCustomAmountError(undefined);
+      }
+    }
+  }, [
+    amount,
+    selectedToken,
+    selectedBalance,
+    transactionFormIndex,
+    handleCustomAmountError,
+  ]);
+
   if (isLoadingBalances) {
     return (
       <DialogSection>
@@ -155,6 +197,7 @@ const TransferFundsSection = ({
             maxAmount: `${formattedSafeBalance}`,
             setFieldValue,
           }}
+          customAmountError={customAmountError}
         />
       </DialogSection>
       <DialogSection>
