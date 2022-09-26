@@ -1,3 +1,22 @@
+@value query700 from '~styles/queries.css';
+
 .main li + li {
   margin: 18px 0 0;
+}
+
+@media screen and query700 {
+  .main {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .main button {
+    font-size: var(--size-normal);
+  }
+
+  .main li + li {
+    margin: 0;
+  }
 }

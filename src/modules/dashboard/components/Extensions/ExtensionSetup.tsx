@@ -5,6 +5,7 @@ import { useHistory, useParams, Redirect } from 'react-router';
 import { endsWith } from 'lodash';
 import { Extension } from '@colony/colony-js';
 import Decimal from 'decimal.js';
+import { useMediaQuery } from 'react-responsive';
 
 import { IconButton, ActionButton } from '~core/Button';
 import { Input, ActionForm, Textarea } from '~core/Fields';
@@ -24,6 +25,7 @@ import {
   getButtonAction,
 } from './utils';
 
+import { query700 as query } from '~styles/queries.css';
 import styles from './ExtensionSetup.css';
 
 const MSG = defineMessages({
@@ -88,6 +90,7 @@ const ExtensionSetup = ({
     extensionId: string;
   }>();
   const history = useHistory();
+  const isMobile = useMediaQuery({ query });
 
   const handleFormSuccess = useCallback(() => {
     history.replace(`/colony/${colonyName}/extensions/${extensionId}`);
@@ -163,66 +166,73 @@ const ExtensionSetup = ({
 
   const displayParams = (params, formikBag, isExtraParams) =>
     params.map(
-      ({ paramName, title, description, type, complementaryLabel }) => (
-        <div
-          key={paramName}
-          className={isExtraParams ? styles.extraParams : ''}
-        >
-          {type === ExtensionParamType.Input && (
-            <div
-              className={`${styles.input} ${
-                paramName.endsWith('Address') ? styles.addressInput : ''
-              }`}
-            >
-              <Input
-                appearance={{ size: 'medium', theme: 'minimal' }}
-                label={title}
-                name={paramName}
-                forcedFieldError={
-                  formikBag?.status?.[paramName]
-                    ? MSG[`${paramName}Error`]
-                    : undefined
-                }
-                disabled={formikBag.isSubmitting}
-              />
-              <p className={styles.inputsDescription}>
-                <FormattedMessage
-                  {...description}
-                  values={{
-                    span: (chunks) => (
-                      <span className={styles.descriptionExample}>
-                        {chunks}
-                      </span>
-                    ),
-                  }}
+      ({ paramName, title, description, type, complementaryLabel }) => {
+        const Label = () =>
+          complementaryLabel && (
+            <span className={styles.complementaryLabel}>
+              <FormattedMessage {...MSG[complementaryLabel]} />
+            </span>
+          );
+        return (
+          <div
+            key={paramName}
+            className={isExtraParams ? styles.extraParams : ''}
+          >
+            {type === ExtensionParamType.Input && (
+              <div
+                className={`${styles.input} ${
+                  paramName.endsWith('Address') ? styles.addressInput : ''
+                }`}
+              >
+                <div className={styles.inputWrapper}>
+                  <Input
+                    appearance={{ size: 'medium', theme: 'minimal' }}
+                    label={title}
+                    name={paramName}
+                    forcedFieldError={
+                      formikBag?.status?.[paramName]
+                        ? MSG[`${paramName}Error`]
+                        : undefined
+                    }
+                    disabled={formikBag.isSubmitting}
+                  />
+                  {isMobile && <Label />}
+                </div>
+                <p className={styles.inputsDescription}>
+                  <FormattedMessage
+                    {...description}
+                    values={{
+                      span: (chunks) => (
+                        <span className={styles.descriptionExample}>
+                          {chunks}
+                        </span>
+                      ),
+                    }}
+                  />
+                </p>
+                {!isMobile && <Label />}
+              </div>
+            )}
+            {type === ExtensionParamType.Textarea && (
+              <div className={styles.textArea}>
+                <Textarea
+                  appearance={{ colorSchema: 'grey' }}
+                  label={title}
+                  name={paramName}
+                  disabled={formikBag.isSubmitting}
+                  extra={
+                    description && (
+                      <p className={styles.textAreaDescription}>
+                        <FormattedMessage {...description} />
+                      </p>
+                    )
+                  }
                 />
-              </p>
-              {complementaryLabel && (
-                <span className={styles.complementaryLabel}>
-                  <FormattedMessage {...MSG[complementaryLabel]} />
-                </span>
-              )}
-            </div>
-          )}
-          {type === ExtensionParamType.Textarea && (
-            <div className={styles.textArea}>
-              <Textarea
-                appearance={{ colorSchema: 'grey' }}
-                label={title}
-                name={paramName}
-                disabled={formikBag.isSubmitting}
-                extra={
-                  description && (
-                    <p className={styles.textAreaDescription}>
-                      <FormattedMessage {...description} />
-                    </p>
-                  )
-                }
-              />
-            </div>
-          )}
-        </div>
-      ),
+              </div>
+            )}
+          </div>
+        );
+      },
     );
 
   return (
@@ -245,6 +255,7 @@ const ExtensionSetup = ({
           <Heading
             appearance={{ size: 'medium', margin: 'none' }}
             text={MSG.title}
+            id="enableExtnTitle"
           />
           <FormattedMessage {...MSG.description} />
           <div className={styles.inputContainer}>

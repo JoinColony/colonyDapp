@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   display: flex;
   align-items: center;
@@ -72,4 +74,69 @@
 
 .whitelistedIconTooltip {
   width: 130px;
+}
+
+@media screen and query700 {
+  .main {
+    min-width: 0px;
+    position: relative;
+    overflow: visible;
+    background: white;
+  }
+
+  .section {
+    order: -1;
+  }
+
+  .main button {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+  }
+
+  .main button svg {
+    transform: scale(0.8);
+    fill: var(--temp-grey-blue-7);
+    stroke: none;
+  }
+
+  .main div[role='tooltip'] {
+    display: flex;
+    align-items: center;
+    padding: 7px 14px;
+    transform: translate(-17px, 64px) !important;
+  }
+
+  .main div[role='tooltip'] > div {
+    min-width: 0px;
+  }
+
+  .main div[role='tooltip'] button {
+    padding: 4px 0px;
+  }
+
+  .main div[role='tooltip'] button > * {
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  .main div[role='tooltip'] > span {
+    transform: translateX(10px) !important;
+  }
+
+  .reputationSection {
+    margin-top: 5px;
+    width: auto;
+  }
+
+  .reputationSection i {
+    display: flex;
+    align-items: center;
+  }
+
+  .usernameSection {
+    width: auto;
+  }
 }

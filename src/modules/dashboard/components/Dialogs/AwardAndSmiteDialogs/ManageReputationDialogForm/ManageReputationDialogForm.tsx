@@ -371,34 +371,36 @@ const ManageReputationDialogForm = ({
       </DialogSection>
       <DialogSection>
         <div className={styles.inputContainer}>
-          <Input
-            name="amount"
-            label={MSG.amount}
-            labelValues={{ isSmiteAction }}
-            appearance={{
-              theme: 'minimal',
-              align: 'right',
-            }}
-            formattingOptions={{
-              numeral: true,
-              // @ts-ignore
-              tailPrefix: true,
-              numeralDecimalScale: 10,
-            }}
-            elementOnly
-            maxButtonParams={
-              isSmiteAction
-                ? {
-                    fieldName: 'amount',
-                    maxAmount: String(unformattedUserReputationAmount),
-                    setFieldValue,
-                  }
-                : undefined
-            }
-            disabled={inputDisabled}
-            dataTest="reputationAmountInput"
-          />
-          <div className={styles.percentageSign}>pts</div>
+          <div>
+            <Input
+              name="amount"
+              label={MSG.amount}
+              labelValues={{ isSmiteAction }}
+              appearance={{
+                theme: 'minimal',
+                align: 'right',
+              }}
+              formattingOptions={{
+                numeral: true,
+                // @ts-ignore
+                tailPrefix: true,
+                numeralDecimalScale: 10,
+              }}
+              elementOnly
+              maxButtonParams={
+                isSmiteAction
+                  ? {
+                      fieldName: 'amount',
+                      maxAmount: String(unformattedUserReputationAmount),
+                      setFieldValue,
+                    }
+                  : undefined
+              }
+              disabled={inputDisabled}
+              dataTest="reputationAmountInput"
+            />
+            <div className={styles.percentageSign}>pts</div>
+          </div>
           <p className={styles.inputText}>
             <FormattedMessage
               {...MSG.maxReputation}

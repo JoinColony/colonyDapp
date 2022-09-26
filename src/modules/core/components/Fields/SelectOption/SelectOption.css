@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   padding: 0 30px 0 15px;
   overflow: hidden;
@@ -51,4 +53,10 @@
 .value {
   composes: inlineEllipsis from '~styles/text.css';
   display: block;
+}
+
+@media screen and query700 {
+  .main {
+    padding: 0px 6px;
+  }
 }

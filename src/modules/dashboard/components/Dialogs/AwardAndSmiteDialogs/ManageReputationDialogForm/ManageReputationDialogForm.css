@@ -1,4 +1,5 @@
 @value wideButton: 160px;
+@value query700 from '~styles/queries.css';
 
 .inputContainer {
   margin-bottom: 20px;
@@ -107,4 +108,56 @@
   height: 1px;
   width: 100%;
   background-color: color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+@media screen and query700 {
+  .percentageSign {
+    /*
+     * Negative margin maintains the container above the input
+     * instead of to the side, same as on desktop.
+     */
+    margin-left: -28px;
+    padding-top: 38px;
+    position: static;
+  }
+
+  .inputText {
+    margin-top: 0;
+    padding-top: 5px;
+    float: none;
+    text-align: right;
+  }
+
+  .inputContainer {
+    width: auto;
+    column-gap: 6px;
+  }
+
+  .inputContainer > div {
+    display: flex;
+    column-gap: 5px;
+  }
+
+  .inputContainer div > p {
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  .inputContainer > div > div:first-child {
+    flex: 1;
+  }
+
+  .inputContainer label {
+    margin-top: 0px;
+    position: static;
+  }
+
+  .inputContainer label span {
+    display: inline-block;
+    min-height: 34px;
+  }
+
+  .inputContainer input {
+    padding-right: 28px;
+  }
 }

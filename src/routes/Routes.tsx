@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { Route, Redirect, Switch } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
+import { useMediaQuery } from 'react-responsive';
 
 import { WalletMethod } from '~immutable/index';
 import CreateColonyWizard from '~dashboard/CreateColonyWizard';
@@ -51,6 +52,8 @@ import {
 import AlwaysAccesibleRoute from './AlwaysAccesibleRoute';
 import WalletRequiredRoute from './WalletRequiredRoute';
 import { useTitle } from '~utils/hooks/useTitle';
+import { query700 as query } from '~styles/queries.css';
+import UserLayout from '~pages/RouteLayouts/UserLayout/UserLayout';
 
 const MSG = defineMessages({
   userProfileEditBack: {
@@ -81,7 +84,7 @@ const Routes = () => {
   const didClaimProfile = !!username;
 
   useTitle();
-
+  const isMobile = useMediaQuery({ query });
   /**
    * @NOTE Memoized Switch
    *
@@ -135,7 +138,7 @@ const Routes = () => {
           didClaimProfile={didClaimProfile}
           path={WALLET_ROUTE}
           component={Wallet}
-          layout={SimpleNav}
+          layout={isMobile ? Default : SimpleNav}
           routeProps={{
             hasBackLink: false,
           }}
@@ -145,7 +148,7 @@ const Routes = () => {
           didClaimProfile={didClaimProfile}
           path={INBOX_ROUTE}
           component={Inbox}
-          layout={SimpleNav}
+          layout={isMobile ? Default : SimpleNav}
           routeProps={{
             hasBackLink: false,
           }}
@@ -180,15 +183,16 @@ const Routes = () => {
           routeProps={({ colonyName }) => ({
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,
-            hasSubscribedColonies: false,
+            hasSubscribedColonies: isMobile,
           })}
         />
         <AlwaysAccesibleRoute
           path={USER_ROUTE}
           component={UserProfile}
-          layout={SimpleNav}
+          layout={UserLayout}
           routeProps={{
             hasBackLink: false,
+            hasSubscribedColonies: isMobile,
           }}
         />
         <AlwaysAccesibleRoute
@@ -196,7 +200,7 @@ const Routes = () => {
           component={UserProfileEdit}
           layout={Default}
           routeProps={{
-            hasSubscribedColonies: false,
+            hasSubscribedColonies: isMobile,
             backText: MSG.userProfileEditBack,
             backRoute: `/user/${username}`,
           }}
@@ -209,35 +213,38 @@ const Routes = () => {
           routeProps={({ colonyName }) => ({
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,
-            hasSubscribedColonies: false,
+            hasSubscribedColonies: isMobile,
           })}
         />
         <AlwaysAccesibleRoute
           exact
           path={ACTIONS_PAGE_ROUTE}
           component={ActionsPage}
-          layout={NavBar}
+          layout={isMobile ? Default : NavBar}
           routeProps={({ colonyName }) => ({
             backText: '',
             backRoute: `/colony/${colonyName}`,
+            hasSubscribedColonies: isMobile,
           })}
         />
         <AlwaysAccesibleRoute
           path={UNWRAP_TOKEN_ROUTE}
           component={UnwrapTokensPage}
-          layout={NavBar}
+          layout={isMobile ? Default : NavBar}
           routeProps={({ colonyName }) => ({
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,
+            hasSubscribedColonies: isMobile,
           })}
         />
         <AlwaysAccesibleRoute
           path={CLAIM_TOKEN_ROUTE}
           component={ClaimTokensPage}
-          layout={NavBar}
+          layout={isMobile ? Default : NavBar}
           routeProps={({ colonyName }) => ({
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,
+            hasSubscribedColonies: isMobile,
           })}
         />
 
@@ -247,7 +254,7 @@ const Routes = () => {
         <Redirect to={NOT_FOUND_ROUTE} />
       </Switch>
     ),
-    [didClaimProfile, isConnected, username],
+    [didClaimProfile, isConnected, username, isMobile],
   );
 
   if (isAppLoading) {

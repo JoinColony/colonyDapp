@@ -4,6 +4,7 @@ import { defineMessages } from 'react-intl';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import Decimal from 'decimal.js';
 import { AddressZero } from 'ethers/constants';
+import { useMediaQuery } from 'react-responsive';
 
 import { useDialog } from '~core/Dialog';
 import Heading from '~core/Heading';
@@ -26,6 +27,7 @@ import {
 import { getFormattedTokenValue } from '~utils/tokens';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
+import ColonyHomeInfo from '~dashboard/ColonyHome/ColonyHomeInfo';
 
 import MembersFilter, {
   BannedStatus,
@@ -34,6 +36,8 @@ import MembersFilter, {
   VerificationType,
 } from './MembersFilter';
 import MemberControls from './MemberControls';
+
+import { query700 as query } from '~styles/queries.css';
 import styles from './ColonyMembers.css';
 
 const displayName = 'dashboard.ColonyMembers';
@@ -122,6 +126,8 @@ const ColonyMembers = () => {
     nativeToken?.decimals || DEFAULT_TOKEN_DECIMALS,
   );
 
+  const isMobile = useMediaQuery({ query });
+
   if (
     loading ||
     (colonyData?.colonyAddress &&
@@ -143,6 +149,13 @@ const ColonyMembers = () => {
   return (
     <div className={styles.main}>
       <div className={styles.mainContentGrid}>
+        {isMobile && (
+          <ColonyHomeInfo
+            colony={colonyData.processedColony}
+            showNavigation
+            isMobile
+          />
+        )}
         <div className={styles.mainContent}>
           {colonyData && colonyData.processedColony && (
             <Members

@@ -1,3 +1,4 @@
+export const query700: string;
 export const main: string;
 export const elementWrapper: string;
 export const notificationsButton: string;
@@ -14,3 +15,4 @@ export const walletWrapper: string;
 export const readyTransactionsCount: string;
 export const reputation: string;
 export const walletAutoLogin: string;
+export const gasStationReference: string;

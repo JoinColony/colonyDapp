@@ -1,4 +1,5 @@
 @value paddingHorizontal: 90px;
+@value query700 from '~styles/queries.css';
 
 .main {
   display: flex;
@@ -32,4 +33,10 @@
 
 .themeAlt .mainContent {
   padding: 80px paddingHorizontal;
+}
+
+@media screen and query700 {
+  .mainContainer {
+    background-color: white;
+  }
 }

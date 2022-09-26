@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import * as yup from 'yup';
 import { useApolloClient } from '@apollo/client';
+import { useMediaQuery } from 'react-responsive';
 
 import { WizardProps } from '~core/Wizard';
 import { Form, Input } from '~core/Fields';
@@ -20,6 +21,7 @@ import {
 import { DEFAULT_NETWORK_INFO } from '~constants';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
 
+import { query700 as query } from '~styles/queries.css';
 import styles from './StepColonyName.css';
 
 interface FormValues {
@@ -176,7 +178,7 @@ const StepColonyName = ({
   );
 
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
-
+  const isMobile = useMediaQuery({ query });
   return (
     <Form
       onSubmit={nextStep}
@@ -246,6 +248,13 @@ const StepColonyName = ({
                     }}
                     className={styles.iconContainer}
                     tooltipClassName={styles.tooltipContent}
+                    tooltipPopperOptions={
+                      isMobile
+                        ? {
+                            placement: 'left',
+                          }
+                        : undefined
+                    }
                   />
                 }
               />

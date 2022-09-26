@@ -6,6 +6,7 @@ import {
   useIntl,
 } from 'react-intl';
 import Decimal from 'decimal.js';
+import { useMediaQuery } from 'react-responsive';
 
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
@@ -24,6 +25,8 @@ import { useUser, Colony, useTokenInfoLazyQuery } from '~data/index';
 import { createAddress } from '~utils/web3';
 import { FormattedEvent, ColonyAndExtensionsEvents } from '~types/index';
 import { getAssignmentEventDescriptorsIds } from '~utils/colonyActions';
+
+import { query700 as query } from '~styles/queries.css';
 
 import styles, {
   popoverWidth,
@@ -206,6 +209,8 @@ const ColonyEventsListItem = ({
     isSmiteAction: new Decimal(amount).isNegative(),
   };
 
+  const isMobile = useMediaQuery({ query });
+
   return (
     <li className={styles.listItem}>
       <div
@@ -269,7 +274,7 @@ const ColonyEventsListItem = ({
                 {
                   name: 'offset',
                   options: {
-                    offset: [0, 5],
+                    offset: isMobile ? [-45, 5] : [0, 5],
                   },
                 },
               ],

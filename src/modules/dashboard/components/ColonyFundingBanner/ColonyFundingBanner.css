@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   padding: 30px 0 0;
   border-top: 1px solid var(--temp-grey-5);
@@ -13,4 +15,16 @@
 
 .address > span + span {
   margin-left: 10px;
+}
+
+@media screen and query700 {
+  .main {
+    padding-left: 14px;
+    padding-right: 14px;
+    font-size: var(--size-smallish);
+  }
+
+  .address {
+    word-break: break-word;
+  }
 }

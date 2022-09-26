@@ -1,0 +1,18 @@
+.menu {
+  border-radius: var(--radius-normal);
+  border-top-right-radius: 0px;
+  background-color: var(--temp-grey-blue-7);
+}
+
+.menu li > *, .menu li:only-child > * {
+  padding: 5px 15px;
+}
+
+.menu li {
+  color: white;
+}
+
+.menu ul:nth-child(4),
+.menu ul:nth-child(5) {
+  border-top: none;
+}

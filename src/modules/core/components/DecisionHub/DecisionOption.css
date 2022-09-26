@@ -1,3 +1,4 @@
+@value query700 from '~styles/queries.css';
 
 .main {
   display: flex;
@@ -10,14 +11,14 @@
   background: none;
   text-align: left;
   cursor: pointer;
+}
 
-  &:only-of-type {
-    border-bottom-color: transparent;
-  }
+.wrapper:only-of-type {
+  border-bottom-color: transparent;
+}
 
-  &:last-of-type:not(.themeAlt) {
-    border-bottom: 1px solid var(--grey-blue-0);
-  }
+.wrapper:last-of-type:not(.themeAlt) {
+  border-bottom: 1px solid var(--grey-blue-0);
 }
 
 .stateDisabled {
@@ -42,4 +43,30 @@
 
 .tooltip {
   max-width: 270px;
+}
+
+@media screen and query700 {
+  .main {
+    height: auto;
+    border: none;
+
+    &:last-of-type:not(.themeAlt) {
+      border-bottom: 0px;
+    }
+  }
+
+  .wrapper {
+    display: flex;
+    align-items: center;
+    border: none;
+    border-top: 1px solid var(--grey-blue-0);
+
+    &:only-of-type {
+      border-bottom-color: transparent;
+    }
+
+    &:last-of-type:not(.themeAlt) {
+      border-bottom: 1px solid var(--grey-blue-0);
+    }
+  }
 }

@@ -1,3 +1,4 @@
+@value query700 from '~styles/queries.css';
 
 .mainDivider {
   border-bottom: 1px solid var(--temp-grey-13);
@@ -239,4 +240,14 @@
 .noClaims {
   padding: 18px 16px 19px 16px;
   text-align: center;
+}
+
+@media screen and query700 {
+  .lockedTokens {
+    margin-left: 0px;
+  }
+
+  .tokenNumbersLocked {
+    margin-left: 25px;
+  }
 }

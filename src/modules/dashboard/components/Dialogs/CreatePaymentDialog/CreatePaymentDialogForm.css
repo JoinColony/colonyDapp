@@ -1,4 +1,5 @@
 @value wideButton: 160px;
+@value query700 from '~styles/queries.css';
 
 .tokenAmount {
   display: flex;
@@ -99,4 +100,24 @@
 
 .warningLabel {
   color: var(--danger);
+}
+
+@media screen and query700 {
+  .domainPotBalance {
+    position: static;
+  }
+
+  .tokenAmountContainer {
+    margin-top: 0px;
+    padding-top: 10px;
+  }
+
+  .tokenAmount {
+    display: flex;
+    min-height: 91px;
+  }
+
+  .networkFee {
+    position: static;
+  }
 }

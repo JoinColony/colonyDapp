@@ -1,11 +1,10 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { useMediaQuery } from 'react-responsive';
 
 import { SpinnerLoader } from '~core/Preloaders';
 import Button, { ThreeDotsButton } from '~core/Button';
 import Link from '~core/Link';
-import MaskedAddress from '~core/MaskedAddress';
-import InvisibleCopyableAddress from '~core/InvisibleCopyableAddress';
 
 import {
   useLoggedInUser,
@@ -19,8 +18,10 @@ import { checkIfNetworkIsAllowed } from '~utils/networks';
 import { CREATE_USER_ROUTE } from '~routes/index';
 
 import ColonySubscriptionInfoPopover from './ColonySubscriptionInfoPopover';
+import ColonyAddress from '../ColonyTitle/ColonyAddress';
 
 import styles from './ColonySubscription.css';
+import { query700 as query } from '~styles/queries.css';
 
 const MSG = defineMessages({
   copyMessage: {
@@ -72,6 +73,8 @@ const ColonySubscription = ({
 
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
+  const isMobile = useMediaQuery({ query });
+
   return (
     <div className={styles.main}>
       {loadingSubscribe ||
@@ -81,15 +84,8 @@ const ColonySubscription = ({
           </div>
         ))}
       <div className={isSubscribed ? styles.colonySubscribed : ''}>
-        {colonyAddress && (
-          <InvisibleCopyableAddress
-            address={colonyAddress}
-            copyMessage={MSG.copyMessage}
-          >
-            <div className={styles.colonyAddress}>
-              <MaskedAddress address={colonyAddress} />
-            </div>
-          </InvisibleCopyableAddress>
+        {colonyAddress && !isMobile && (
+          <ColonyAddress colonyAddress={colonyAddress} />
         )}
         {isSubscribed && (
           <ColonySubscriptionInfoPopover

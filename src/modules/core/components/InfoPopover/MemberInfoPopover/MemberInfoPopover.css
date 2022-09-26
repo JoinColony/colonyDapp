@@ -1,4 +1,5 @@
 @value reputationColor: rgb(255, 176, 0);
+@value query700 from '~styles/queries.css';
 
 .main {
   padding: 20px 25px 25px 25px;
@@ -117,4 +118,20 @@
   position: absolute;
   top: 3px;
   right: 5px;
+}
+
+@media screen and query700 {
+  .main {
+    padding-left: 15px;
+    max-width: calc(100vw - 28px);
+  }
+
+  .section p + div > div {
+    gap: 10px;
+  }
+
+  .section p + div > div span {
+    padding-right: 10px;
+    overflow-wrap: anywhere;
+  }
 }

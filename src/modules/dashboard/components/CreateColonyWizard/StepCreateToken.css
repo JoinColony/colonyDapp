@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   width: 460px;
 }
@@ -31,4 +33,31 @@
   font-weight: var(--weight-bold);
   color: var(--sky-blue);
   cursor: pointer;
+}
+
+@media screen and query700 {
+  .main {
+    padding-bottom: 40px;
+    width: 100%;
+  }
+
+  .titleSection {
+    margin-top: 155px;
+  }
+
+  .inputFields > div {
+    min-height: 87px;
+  }
+
+  .inputFields > div:first-child {
+    min-height: 109px;
+  }
+
+  .inputFieldWrapper {
+    margin-bottom: 25px;
+  }
+
+  .actionsContainer {
+    margin-top: 25px;
+  }
 }

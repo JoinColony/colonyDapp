@@ -1,3 +1,4 @@
+export const query700: string;
 export const mainDivider: string;
 export const totalTokensContainer: string;
 export const tokenSymbol: string;

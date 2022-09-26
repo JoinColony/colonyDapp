@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   width: 460px;
   text-align: left;
@@ -15,4 +17,17 @@
 .stateIsEmpty .transactionsContainer {
   display: flex;
   align-items: center;
+}
+
+@media screen and query700 {
+  .main {
+    width: calc(100% - 28px);
+    border-radius: 5px;
+    background-color: var(--grey-blue-2);
+    box-shadow: 0px 2px 11px var(--drop-shadow);
+  }
+
+  .transactionsContainer div > div:first-child {
+    width: 100%;
+  }
 }

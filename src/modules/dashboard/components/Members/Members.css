@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .membersContainer {
   display: flex;
 }
@@ -88,4 +90,20 @@
   justify-content: center;
   align-items: center;
   margin-bottom: 50px;
+}
+
+@media screen and query700 {
+  .main {
+    margin: 0;
+    min-width: 0;
+  }
+
+  .titleContainer {
+    margin-bottom: 10px;
+    padding: 0 14px;
+  }
+
+  .titleContainer h3 {
+    margin: 0;
+  }
 }

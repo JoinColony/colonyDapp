@@ -1,3 +1,4 @@
+export const query700: string;
 export const main: string;
 export const directionHorizontal: string;
 export const widthWide: string;

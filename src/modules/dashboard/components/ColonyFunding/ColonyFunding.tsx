@@ -2,6 +2,7 @@ import React, { ComponentProps, useMemo, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { Redirect, RouteChildrenProps } from 'react-router-dom';
 import sortBy from 'lodash/sortBy';
+import { useMediaQuery } from 'react-responsive';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { Form, Select } from '~core/Fields';
@@ -11,10 +12,13 @@ import ColonyFundingBanner from '~dashboard/ColonyFundingBanner';
 import ColonyFundingMenu from '~dashboard/ColonyFundingMenu';
 import TokenCardList from '~dashboard/TokenCardList';
 import UnclaimedTransfers from '~dashboard/UnclaimedTransfers';
+import ColonyHomeInfo from '~dashboard/ColonyHome/ColonyHomeInfo';
+import ColonyDomainSelector from '~dashboard/ColonyHome/ColonyDomainSelector';
 import { useColonyFromNameQuery } from '~data/index';
 
 import { NOT_FOUND_ROUTE } from '~routes/index';
 
+import { query700 as query } from '~styles/queries.css';
 import styles from './ColonyFunding.css';
 
 const MSG = defineMessages({
@@ -86,6 +90,8 @@ const ColonyFunding = ({ match }: Props) => {
     return typeof label === 'string' ? label : formatMessage(label);
   }, [domainChoices, formatMessage, selectedDomainId]);
 
+  const isMobile = useMediaQuery({ query });
+
   if (
     loading ||
     (data?.colonyAddress &&
@@ -106,35 +112,52 @@ const ColonyFunding = ({ match }: Props) => {
 
   const { processedColony: colony } = data;
 
+  const Aside = () => (
+    <aside className={styles.aside}>
+      <ColonyFundingMenu selectedDomainId={selectedDomainId} colony={colony} />
+    </aside>
+  );
+
   return (
     <div className={styles.main}>
       <div className={styles.content}>
         <div>
+          {isMobile && (
+            <ColonyHomeInfo colony={colony} showNavigation isMobile />
+          )}
           <div className={styles.titleContainer}>
             <Heading
               text={MSG.title}
               textValues={{ selectedDomainLabel }}
               appearance={{ size: 'medium', theme: 'dark' }}
             />
-            <Form
-              initialValues={{
-                selectDomain: COLONY_TOTAL_BALANCE_DOMAIN_ID.toString(),
-              }}
-              onSubmit={() => {}}
-            >
-              <Select
-                appearance={{
-                  alignOptions: 'right',
-                  width: 'content',
-                  theme: 'alt',
-                }}
-                elementOnly
-                label={MSG.labelSelectDomain}
-                name="selectDomain"
-                onChange={(value) => setSelectedDomainId(Number(value))}
-                options={domainChoices}
+            {isMobile ? (
+              <ColonyDomainSelector
+                colony={colony}
+                filteredDomainId={selectedDomainId}
+                onDomainChange={setSelectedDomainId}
               />
-            </Form>
+            ) : (
+              <Form
+                initialValues={{
+                  selectDomain: COLONY_TOTAL_BALANCE_DOMAIN_ID.toString(),
+                }}
+                onSubmit={() => {}}
+              >
+                <Select
+                  appearance={{
+                    alignOptions: 'right',
+                    width: 'content',
+                    theme: 'alt',
+                  }}
+                  elementOnly
+                  label={MSG.labelSelectDomain}
+                  name="selectDomain"
+                  onChange={(value) => setSelectedDomainId(Number(value))}
+                  options={domainChoices}
+                />
+              </Form>
+            )}
           </div>
           <UnclaimedTransfers colony={colony} />
           <TokenCardList
@@ -145,16 +168,12 @@ const ColonyFunding = ({ match }: Props) => {
             domainId={selectedDomainId}
           />
         </div>
+        {isMobile && <Aside />}
         <div className={styles.banner}>
           <ColonyFundingBanner colonyAddress={colony.colonyAddress} />
         </div>
       </div>
-      <aside className={styles.aside}>
-        <ColonyFundingMenu
-          selectedDomainId={selectedDomainId}
-          colony={colony}
-        />
-      </aside>
+      {!isMobile && <Aside />}
     </div>
   );
 };

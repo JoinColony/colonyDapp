@@ -1,3 +1,5 @@
+@value query700 from "~styles/queries.css";
+
 .main {
   composes: flexContainerRow flexAlignCenter from '~styles/layout.css';
 }
@@ -13,23 +15,6 @@
 
 .colonyJoin {
   margin-top: 4px;
-}
-
-.colonyAddress {
-  padding: 4px 6px;
-  height: 24px;
-  border-radius: var(--radius-normal);
-  text-align: center;
-  line-height: var(--size-smallish);
-  color: var(--temp-grey-blue-7);
-  cursor: pointer;
-  user-select: none;
-  outline: 0;
-}
-
-.colonyAddress:hover {
-  background-color: color-mod(var(--colony-blue) alpha(10%));
-  color: var(--colony-blue);
 }
 
 .menuIconContainer {
@@ -63,4 +48,32 @@
 .colonyJoinBtn:hover {
   background-color: color-mod(var(--action-secondary) alpha(25%));
   color: var(--action-secondary);
+}
+
+@media screen and query700 {
+  .joinButton, .main > button {
+    padding: 6px 12px 6px 12px;
+    height: 30px;
+    width: 118px;
+    border: 0;
+    border-radius: 4px;
+    background-color: rgba(76, 93, 255, 0.12);
+    font-size: var(--size-small);
+    font-weight: var(--weight-bold);
+    text-align: center;
+    color: var(--colony-blue);
+  }
+
+  .createUserRedirect {
+    width: 100%;
+    font-size: var(--size-small);
+  }
+
+  .menuIcon svg {
+    transform: scale(1.75);
+  }
+
+  .colonyJoinBtn {
+    min-width: 100px;
+  }
 }

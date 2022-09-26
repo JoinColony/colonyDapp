@@ -1,4 +1,5 @@
 export const wideButton: string;
+export const query700: string;
 export const tokenAmount: string;
 export const amountContainer: string;
 export const tokenAmountSelect: string;

@@ -1,3 +1,5 @@
+@value query700 from "~styles/queries.css";
+
 .address {
   font-family: var(--family-techie);
   font-size: var(--size-smallish);
@@ -7,4 +9,14 @@
 
 .middleSection {
   margin: 0 5px;
+}
+
+@media screen and query700 {
+  .middleSection {
+    overflow-wrap: anywhere;
+  }
+
+  .address {
+    overflow-wrap: anywhere;
+  }
 }

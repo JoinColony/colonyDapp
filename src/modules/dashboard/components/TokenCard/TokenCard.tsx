@@ -47,12 +47,21 @@ const TokenCard = ({
   nativeTokenLocked = true,
 }: Props) => {
   const balance = getBalanceFromToken(token, parseInt(domainId as string, 10));
-
   return (
     <Card key={token.address} className={styles.main}>
       <InfoPopover
         token={token}
         isTokenNative={token.address === nativeTokenAddress}
+        popperOptions={{
+          modifiers: [
+            {
+              name: 'offset',
+              options: {
+                offset: [[0, 0]],
+              },
+            },
+          ],
+        }}
       >
         <div className={styles.cardHeading}>
           <TokenIcon token={token} name={token.name || undefined} size="xs" />

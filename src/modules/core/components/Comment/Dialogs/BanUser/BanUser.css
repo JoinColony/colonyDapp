@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .userPickerContainer {
   margin-top: 20px;
   margin-left: 30px;
@@ -17,4 +19,19 @@
 .footer button:first-of-type {
   margin-right: 20px;
   padding: 9px 0px;
+}
+
+@media screen and query700 {
+  .userPickerContainer {
+    margin: 0;
+  }
+
+  .divider {
+    margin-top: 20px;
+  }
+
+  .footer > button:first-child {
+    margin-right: 0px;
+    height: auto;
+  }
 }

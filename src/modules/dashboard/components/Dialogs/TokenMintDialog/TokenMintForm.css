@@ -1,4 +1,5 @@
 @value wideButton: 160px;
+@value query700 from '~styles/queries.css';
 
 .modalHeading {
   padding: 32px 0 20px;
@@ -51,4 +52,14 @@
 
 .motionVoteDomain {
   margin: 6px 0;
+}
+
+@media screen and query700 {
+  .inputContainer > div {
+    min-height: 75px;
+  }
+
+  .nativeToken {
+    padding: 15px 10px 10px;
+  }
 }

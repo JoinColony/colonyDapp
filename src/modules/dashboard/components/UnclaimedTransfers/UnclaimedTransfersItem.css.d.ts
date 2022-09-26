@@ -1,4 +1,5 @@
 export const spaceBetween: string;
+export const query700: string;
 export const content: string;
 export const tokenWrapper: string;
 export const tokenName: string;
