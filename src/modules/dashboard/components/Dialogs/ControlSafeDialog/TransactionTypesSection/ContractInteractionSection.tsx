@@ -90,7 +90,7 @@ const ContractInteractionSection = ({
     SelectOption[]
   >([]);
   const [currentSafeChainId, setCurrentSafeChainId] = useState<number>();
-  const [loadingABI, setLoadingABI] = useState<boolean>(false);
+  const [isLoadingABI, setIsLoadingABI] = useState<boolean>(false);
 
   const transactionValues = values.transactions[transactionFormIndex];
 
@@ -153,13 +153,13 @@ const ContractInteractionSection = ({
 
   const onContractChange = useCallback(
     (contract: AnyUser) => {
-      setLoadingABI(true);
+      setIsLoadingABI(true);
       const contractPromise = fetchContractABI(
         contract.profile.walletAddress,
         Number(selectedSafe?.chainId),
       );
       contractPromise.then((data) => {
-        setLoadingABI(false);
+        setIsLoadingABI(false);
 
         onContractABIChange(data);
 
@@ -258,68 +258,73 @@ const ContractInteractionSection = ({
           />
         </div>
       </DialogSection>
-      <DialogSection>
-        {loadingABI && (
-          <div>
-            <SpinnerLoader appearance={{ size: 'medium' }} />
-          </div>
-        )}
-        <Textarea
-          label={MSG.abiLabel}
-          name={`transactions.${transactionFormIndex}.abi`}
-          appearance={{ colorSchema: 'grey', resizable: 'vertical' }}
-          disabled={disabledInput}
-          status={status}
-        />
-      </DialogSection>
-      <DialogSection appearance={{ theme: 'sidePadding' }}>
-        <div className={styles.contractFunctionSelectorContainer}>
-          <Select
-            label={MSG.functionLabel}
-            name={`transactions.${transactionFormIndex}.contractFunction`}
-            appearance={{ theme: 'grey', width: 'fluid' }}
-            placeholder={MSG.functionPlaceholder}
-            disabled={disabledInput}
-            options={formattedMethodOptions}
-            onChange={(value) => {
-              const updatedSelectedContractMethods = {
-                ...selectedContractMethods,
-                [transactionFormIndex]: usefulMethods.find(
-                  (method) => method.name === value,
-                ),
-              };
-              handleSelectedContractMethods(updatedSelectedContractMethods);
-            }}
-          />
+      {isLoadingABI ? (
+        <div className={styles.spinner}>
+          <SpinnerLoader appearance={{ size: 'medium' }} />
         </div>
-      </DialogSection>
-      {selectedContractMethods[transactionFormIndex]?.inputs?.map((input) => (
-        <DialogSection
-          key={`${input.name}-${input.type}`}
-          appearance={{ theme: 'sidePadding' }}
-        >
-          <div className={styles.inputParamContainer}>
-            <Input
-              label={`${input.name} (${input.type})`}
-              name={`transactions.${transactionFormIndex}.${input.name}`}
-              appearance={{ colorSchema: 'grey', theme: 'fat' }}
+      ) : (
+        <>
+          <DialogSection>
+            <Textarea
+              label={MSG.abiLabel}
+              name={`transactions.${transactionFormIndex}.abi`}
+              appearance={{ colorSchema: 'grey', resizable: 'vertical' }}
               disabled={disabledInput}
-              placeholder={`${input.name} (${input.type})`}
-              formattingOptions={
-                input.type.includes('int') &&
-                input.type.substring(input.type.length - 2) !== '[]'
-                  ? {
-                      numeral: true,
-                      numeralPositiveOnly:
-                        input.type.substring(0, 4) === 'uint',
-                      numeralDecimalScale: 0,
-                    }
-                  : undefined
-              }
+              status={status}
             />
-          </div>
-        </DialogSection>
-      ))}
+          </DialogSection>
+          <DialogSection appearance={{ theme: 'sidePadding' }}>
+            <div className={styles.contractFunctionSelectorContainer}>
+              <Select
+                label={MSG.functionLabel}
+                name={`transactions.${transactionFormIndex}.contractFunction`}
+                appearance={{ theme: 'grey', width: 'fluid' }}
+                placeholder={MSG.functionPlaceholder}
+                disabled={disabledInput}
+                options={formattedMethodOptions}
+                onChange={(value) => {
+                  const updatedSelectedContractMethods = {
+                    ...selectedContractMethods,
+                    [transactionFormIndex]: usefulMethods.find(
+                      (method) => method.name === value,
+                    ),
+                  };
+                  handleSelectedContractMethods(updatedSelectedContractMethods);
+                }}
+              />
+            </div>
+          </DialogSection>
+          {selectedContractMethods[transactionFormIndex]?.inputs?.map(
+            (input) => (
+              <DialogSection
+                key={`${input.name}-${input.type}`}
+                appearance={{ theme: 'sidePadding' }}
+              >
+                <div className={styles.inputParamContainer}>
+                  <Input
+                    label={`${input.name} (${input.type})`}
+                    name={`transactions.${transactionFormIndex}.${input.name}`}
+                    appearance={{ colorSchema: 'grey', theme: 'fat' }}
+                    disabled={disabledInput}
+                    placeholder={`${input.name} (${input.type})`}
+                    formattingOptions={
+                      input.type.includes('int') &&
+                      input.type.substring(input.type.length - 2) !== '[]'
+                        ? {
+                            numeral: true,
+                            numeralPositiveOnly:
+                              input.type.substring(0, 4) === 'uint',
+                            numeralDecimalScale: 0,
+                          }
+                        : undefined
+                    }
+                  />
+                </div>
+              </DialogSection>
+            ),
+          )}
+        </>
+      )}
     </>
   );
 };
