@@ -8,6 +8,7 @@ import { format } from 'date-fns';
 import 'react-datepicker/dist/react-datepicker.css';
 
 import Icon from '~core/Icon';
+import { Tooltip } from '~core/Popover';
 
 import TimePicker from './TimePicker';
 import {
@@ -15,8 +16,8 @@ import {
   DEFAULT_TIME_FORMAT,
   MONTH_NAMES,
 } from './constants';
+
 import styles from './DatePicker.css';
-import { Tooltip } from '~core/Popover';
 
 const MSG = defineMessages({
   expandIconHTMLTitle: {
