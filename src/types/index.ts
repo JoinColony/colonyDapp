@@ -40,6 +40,8 @@ export interface KeyedDataObject<T> extends DataObject<T> {
 
 export type Address = string;
 
+export type ModuleAddress = Address;
+
 export type ENSName = string;
 
 export type AddressOrENSName = Address | ENSName;
