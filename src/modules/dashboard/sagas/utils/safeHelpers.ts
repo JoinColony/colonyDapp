@@ -5,18 +5,20 @@ import abis from '@colony/colony-js/lib-esm/abis';
 
 import { SafeTransaction } from '~redux/types/actions/colonyActions';
 import { ColonySafe } from '~data/index';
-import { Address } from '~types/index';
+import { Address, ModuleAddress } from '~types/index';
 import { GNOSIS_AMB_BRIDGES, SAFE_NETWORKS } from '~constants';
 
 export interface SelectedSafe {
-  id: Address;
+  id: ModuleAddress; // Making explicit that this is the module address
   profile: {
     displayName: string;
-    walletAddress: Address;
+    walletAddress: Address; // And this is the safe address
   };
 }
 
-export type SelectedNFT = SelectedSafe;
+export interface SelectedNFT extends SelectedSafe {
+  id: string; // id is address + id,
+}
 
 const { ZodiacBridgeModule, AMB } = abis;
 

@@ -20,7 +20,7 @@ const SingleSafePicker = ({ data, ...props }: Props) => {
           (network) => network.chainId === Number(item.chainId),
         );
         return {
-          id: item.contractAddress,
+          id: item.moduleContractAddress,
           profile: {
             displayName: `${item.safeName} (${safeNetwork?.name})`,
             walletAddress: item.contractAddress,

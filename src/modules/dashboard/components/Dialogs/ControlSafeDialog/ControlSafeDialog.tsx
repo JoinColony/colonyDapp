@@ -23,7 +23,6 @@ import {
   getChainNameFromSafe,
 } from '~modules/dashboard/sagas/utils/safeHelpers';
 import { mapPayload, withMeta } from '~utils/actions';
-
 import { SAFE_NETWORKS } from '~constants';
 
 import { TransactionTypes } from './constants';
@@ -354,11 +353,12 @@ const ControlSafeDialog = ({
             chainId: SAFE_NETWORKS.find(
               (network) => network.name === chainName,
             )!.chainId.toString(),
-            contractAddress: safe.id,
+            contractAddress: safe.profile.walletAddress,
             safeName: safe.profile.displayName.substring(
               0,
               safe.profile.displayName.length - (chainName.length + 3),
             ),
+            moduleContractAddress: safe.id,
           };
           return {
             safe: transformedSafe,

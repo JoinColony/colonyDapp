@@ -29,6 +29,7 @@ import {
   getHomeBridge,
   getRawTransactionData,
   getZodiacModule,
+  onLocalDevEnvironment,
 } from '../utils/safeHelpers';
 
 function* initiateSafeTransactionAction({
@@ -48,10 +49,9 @@ function* initiateSafeTransactionAction({
     txChannel = yield call(getTxChannel, metaId);
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
-    /* Data to come from  user. To be added in future issue. */
-    // eslint-disable-next-line prefer-destructuring
-    const ZODIAC_BRIDGE_MODULE_ADDRESS =
-      process.env.ZODIAC_BRIDGE_MODULE_ADDRESS;
+    const ZODIAC_BRIDGE_MODULE_ADDRESS = onLocalDevEnvironment
+      ? process.env.ZODIAC_BRIDGE_MODULE_ADDRESS
+      : safe.moduleContractAddress;
 
     if (!ZODIAC_BRIDGE_MODULE_ADDRESS) {
       throw new Error(
