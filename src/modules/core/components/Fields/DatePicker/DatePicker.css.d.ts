@@ -16,3 +16,4 @@ export const clockIcon: string;
 export const expandTimeIcon: string;
 export const timeDropdown: string;
 export const timeOption: string;
+export const tooltipContent: string;

@@ -86,7 +86,7 @@ const TimePicker = ({ selectedDate, onChange, timeInterval }: Props) => {
         </span>
 
         <span className={styles.expandTimeIcon}>
-          <Icon name="caret-down" title={MSG.expandIconHTMLTitle} />
+          <Icon name="caret-down-small" title={MSG.expandIconHTMLTitle} />
         </span>
       </button>
 
