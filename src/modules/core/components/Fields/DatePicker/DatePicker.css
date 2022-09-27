@@ -258,10 +258,10 @@
   text-align: left;
   line-height: 18px;
   color: var(--dark);
-  cursor: pointer;
 
-  &:hover {
+  &:enabled:hover {
     background-color: var(--grey-blue-2);
+    cursor: pointer;
   }
 
   &:first-of-type {

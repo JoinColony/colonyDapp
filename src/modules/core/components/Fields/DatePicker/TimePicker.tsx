@@ -25,9 +25,15 @@ interface Props {
   selectedDate: Date;
   onChange: (date: Date) => void;
   timeInterval: number;
+  minDate?: Date | null;
 }
 
-const TimePicker = ({ selectedDate, onChange, timeInterval }: Props) => {
+const TimePicker = ({
+  selectedDate,
+  onChange,
+  timeInterval,
+  minDate,
+}: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const { x, y, reference, floating, strategy, update } = useFloating({
@@ -108,6 +114,7 @@ const TimePicker = ({ selectedDate, onChange, timeInterval }: Props) => {
                 })}
                 onClick={() => onChange(option)}
                 ref={isSelected ? selectedOptionRef : null}
+                disabled={!!minDate && option < minDate}
               >
                 {format(option, DEFAULT_TIME_FORMAT)}
               </button>
