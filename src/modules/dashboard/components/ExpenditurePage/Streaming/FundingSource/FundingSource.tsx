@@ -31,7 +31,7 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.ExpenditurePage.Streaming.FundingSource';
 
-interface Props {
+export interface Props {
   sidebarRef: HTMLElement | null;
   colony: Colony;
   isLast?: boolean;
