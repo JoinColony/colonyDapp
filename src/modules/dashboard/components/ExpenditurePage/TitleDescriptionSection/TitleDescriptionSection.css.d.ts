@@ -7,3 +7,4 @@ export const titleContainer: string;
 export const description: string;
 export const descriptionContainer: string;
 export const error: string;
+export const errorDotContainer: string;
