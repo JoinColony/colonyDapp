@@ -7,11 +7,30 @@
   min-width: 340px;
 }
 
+.headerRow {
+  flex-wrap: wrap;
+}
+
 .stagesRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 12px 0 13px;
+}
+
+.fullWidth {
+  margin-left: 0;
+  width: 100%;
+}
+
+.tag > span {
+  height: 20px;
+}
+
+.fullWidth > span {
+  margin-bottom: 12px;
+  width: 100%;
+  text-align: center;
 }
 
 .paddingTopZero {
@@ -74,10 +93,6 @@
   letter-spacing: var(--spacing-medium);
 }
 
-.paddingTopZero > div {
-  margin-left: 30px;
-}
-
 .paddingTopZero > div > button:not(:last-of-type) {
   margin-right: 30px;
 }
@@ -86,7 +101,6 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  width: 100%;
 }
 
 .motionText {
@@ -129,4 +143,16 @@
 
 .marginBottom {
   margin-bottom: 24px;
+}
+
+.cancelled > span {
+  width: 81px;
+}
+
+.buttonsRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  border: 1px solid pink;
 }
