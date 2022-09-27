@@ -12,7 +12,13 @@ import TokenIcon from '~dashboard/HookedTokenIcon';
 import { Colony } from '~data/index';
 import { FundingSource } from '~dashboard/ExpenditurePage/Streaming/types';
 
-import { Motion, MotionStatus, Stage, Status } from '../../constants';
+import {
+  Motion,
+  MotionStatus,
+  MotionType,
+  Stage,
+  Status,
+} from '../../constants';
 
 import styles from './StreamingStagesLocked.css';
 
@@ -57,9 +63,9 @@ const MSG = defineMessages({
     id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.claimFunds`,
     defaultMessage: 'Claim funds',
   },
-  startStream: {
-    id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.startStream`,
-    defaultMessage: 'Start Stream',
+  cancelled: {
+    id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.cancelled`,
+    defaultMessage: 'Cancelled',
   },
 });
 
@@ -80,6 +86,7 @@ export interface Props {
   activeStateId?: string;
   paidToDate?: FundingSource['rate'][];
   availableToClaim?: FundingSource['rate'][];
+  handleCancelExpenditure?: () => void;
 }
 
 const StreamingStagesLocked = ({
@@ -90,6 +97,7 @@ const StreamingStagesLocked = ({
   activeStateId,
   paidToDate,
   availableToClaim,
+  handleCancelExpenditure,
 }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
@@ -108,25 +116,33 @@ const StreamingStagesLocked = ({
   const isCancelled =
     status === Status.Cancelled || status === Status.ForceCancelled;
 
-  const handleCancelExpenditure = () => {
-    // add cancel modal in next PR
-  };
-
   return (
     <div className={styles.stagesWrapper}>
       <FormSection appearance={{ border: 'bottom' }}>
-        <div className={classNames(styles.stagesRow, styles.paddingTopZero)}>
+        <div
+          className={classNames(
+            styles.stagesRow,
+            styles.paddingTopZero,
+            styles.headerRow,
+          )}
+        >
           {motion?.status === MotionStatus.Pending && (
-            <Tag
-              appearance={{
-                theme: 'golden',
-                colorSchema: 'fullColor',
-              }}
+            <div
+              className={classNames(styles.tag, {
+                [styles.fullWidth]: motion?.type !== MotionType.StartStream,
+              })}
             >
-              <span className={styles.motionText}>
-                {formatMessage(MSG.activeMotion)}
-              </span>
-            </Tag>
+              <Tag
+                appearance={{
+                  theme: 'golden',
+                  colorSchema: 'fullColor',
+                }}
+              >
+                <span className={styles.motionText}>
+                  {formatMessage(MSG.activeMotion)}
+                </span>
+              </Tag>
+            </div>
           )}
           {status === Status.StartedStream && (
             <span className={styles.tagWrapper}>
@@ -137,6 +153,18 @@ const StreamingStagesLocked = ({
                   fontSize: 'tiny',
                 }}
                 text={MSG.active}
+              />
+            </span>
+          )}
+          {status === Status.Cancelled && (
+            <span className={classNames(styles.tagWrapper, styles.cancelled)}>
+              <Tag
+                appearance={{
+                  theme: 'pink',
+                  colorSchema: 'fullColor',
+                  fontSize: 'tiny',
+                }}
+                text={MSG.cancelled}
               />
             </span>
           )}
@@ -220,13 +248,14 @@ const StreamingStagesLocked = ({
                   style={buttonStyles}
                 />
               )}
-            {status === Status.StartedStream && availableToClaim && (
-              <Button
-                text={MSG.claimFunds}
-                onClick={handleButtonClick}
-                style={buttonStyles}
-              />
-            )}
+            {(status === Status.StartedStream || status === Status.Cancelled) &&
+              availableToClaim && (
+                <Button
+                  text={MSG.claimFunds}
+                  onClick={handleButtonClick}
+                  style={buttonStyles}
+                />
+              )}
           </div>
         </div>
       </FormSection>
