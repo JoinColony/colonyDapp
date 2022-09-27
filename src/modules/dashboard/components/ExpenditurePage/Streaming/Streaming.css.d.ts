@@ -9,5 +9,4 @@ export const deleteIcon: string;
 export const singleFundingSource: string;
 export const addFundingSourceLabel: string;
 export const marginBottomLarge: string;
-export const rate: string;
-export const marginLeft: string;
+export const fundingTitle: string;

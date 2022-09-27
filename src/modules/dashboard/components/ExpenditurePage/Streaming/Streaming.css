@@ -47,6 +47,7 @@
 }
 
 .deleteIcon {
+  margin-right: 7px;
   height: 20px;
   width: 20px;
   fill: var(--temp-grey-blue-7);
@@ -69,11 +70,6 @@
   margin-bottom: 48px;
 }
 
-.rate {
-  margin-right: 6px;
-  white-space: nowrap;
-}
-
-.marginLeft {
-  margin-left: 4px;
+.fundingTitle {
+  margin-right: auto;
 }
