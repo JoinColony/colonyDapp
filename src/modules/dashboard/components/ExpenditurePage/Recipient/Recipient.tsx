@@ -104,7 +104,6 @@ const Recipient = ({
 
   return (
     <div className={styles.container}>
-      recipient
       {isExpanded && (
         <div
           className={classNames(
