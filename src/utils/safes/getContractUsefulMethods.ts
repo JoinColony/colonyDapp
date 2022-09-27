@@ -88,12 +88,22 @@ const extractUsefulMethods = (abi: AbiItem[]): AbiItemExtended[] => {
     });
 };
 
+const isAbiItem = (value: unknown): value is AbiItem[] => {
+  return (
+    Array.isArray(value) &&
+    value.every((element) => typeof element === 'object')
+  );
+};
+
 export const getContractUsefulMethods = (contractABI: string | undefined) => {
   let parsedContractABI: AbiItem[] = [];
   let usefulMethods: AbiItemExtended[] = [];
 
   try {
     parsedContractABI = JSON.parse(contractABI || '[]');
+    if (!isAbiItem(parsedContractABI)) {
+      throw new Error('Contract ABI is not valid');
+    }
   } catch (error) {
     console.error(error);
     parsedContractABI = [];
