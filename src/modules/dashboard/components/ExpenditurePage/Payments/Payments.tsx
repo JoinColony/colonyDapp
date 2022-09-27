@@ -12,6 +12,7 @@ import { Colony } from '~data/index';
 import SingleRecipient from './SingleRecipient';
 import { newRecipient } from './constants';
 import styles from './Payments.css';
+import SingleRecipient from './SingleRecipient';
 
 export const MSG = defineMessages({
   payments: {
