@@ -8,3 +8,4 @@ export const menuActive: string;
 export const colonyJoinBtn: string;
 export const joinButton: string;
 export const createUserRedirect: string;
+export const menuIcon: string;
