@@ -66,7 +66,8 @@ const NewValue = ({ colony, newValue }: Props) => {
             token && (
               <div
                 className={classNames(styles.value, {
-                  [styles.paddingBottom]: multipleValues,
+                  [styles.paddingBottom]:
+                    multipleValues && index < recipientValues.length - 1,
                 })}
                 key={index}
               >

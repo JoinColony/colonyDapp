@@ -47,11 +47,8 @@
   margin-bottom: 11px;
 }
 
-.toggleContainer i {
-  margin: 0 -20px 0 21px;
-
-  /* next lines are used for the correct tooltip arrow placement */
-  transform: translate(-25px, 0);
+.toggleContainer span div {
+  margin-left: 0;
 }
 
 /* this selector is for tooltip wrapper */
@@ -61,9 +58,14 @@
 }
 
 .toggleContainer > div > div:first-of-type {
+  margin-right: 11px;
   height: 16px;
 }
 
 .toggleContainer label {
   margin-bottom: 0;
+}
+
+.toggleContainer i {
+  transform: translate(0, -1px);
 }
