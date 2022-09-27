@@ -42,6 +42,7 @@ interface Props {
   timeInterval?: number;
   /** List of options to be displayed in DatePicker dropdown */
   options?: DatePickerOption[];
+  minDate?: Date | null;
 }
 
 interface DateInputProps extends React.HTMLProps<HTMLButtonElement> {
@@ -107,6 +108,7 @@ const DatePicker = ({
   showTimeSelect,
   dateFormat,
   options,
+  minDate,
   timeInterval = 30,
 }: Props) => {
   const [{ value }, , { setValue, setTouched }] = useField<
@@ -209,6 +211,7 @@ const DatePicker = ({
                   selectedDate={selectedDate}
                   onChange={handleDateChange}
                   timeInterval={timeInterval}
+                  minDate={minDate}
                 />
               )}
             </>
@@ -223,6 +226,7 @@ const DatePicker = ({
       selectedDate,
       handleDateChange,
       timeInterval,
+      minDate,
       formatMessage,
       value,
       handleOptionChange,
@@ -244,6 +248,7 @@ const DatePicker = ({
         dateFormat={dateFormatOrDefault}
         calendarStartDay={1}
         formatWeekDay={(day) => day.substring(0, 1)}
+        minDate={minDate}
         shouldCloseOnSelect={false}
         popperPlacement="right-start"
         popperModifiers={[
