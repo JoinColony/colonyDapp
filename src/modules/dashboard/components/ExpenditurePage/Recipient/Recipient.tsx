@@ -67,7 +67,8 @@ export const supRenderAvatar = (
   address: Address,
   item: ItemDataType<AnyUser>,
 ) => <UserAvatar address={address} user={item} size="xs" notSet={false} />;
-interface Props {
+
+export interface Props {
   recipient: RecipientType;
   index: number;
   subscribedUsers: AnyUser[];
@@ -103,6 +104,7 @@ const Recipient = ({
 
   return (
     <div className={styles.container}>
+      recipient
       {isExpanded && (
         <div
           className={classNames(
