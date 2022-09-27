@@ -16,3 +16,4 @@ export const recipientNameWrapper: string;
 export const recipientName: string;
 export const editIcon: string;
 export const dot: string;
+export const recipentTitle: string;

@@ -58,7 +58,9 @@ const SingleRecipient = ({
             onToogleButtonClick={() => onToggleButtonClick(index)}
             isLastitem={index === recipients?.length - 1}
           />
-          {index + 1}: <FormattedMessage {...MSG.recipient} />
+          <p className={styles.recipentTitle}>
+            {index + 1}: <FormattedMessage {...MSG.recipient} />
+          </p>
           {recipients?.length > 1 && (
             <Icon
               name="trash"

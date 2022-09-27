@@ -29,7 +29,8 @@
 
 .fundingSourceLabel {
   display: flex;
-  justify-content: space-between;
+
+  /* justify-content: space-between; */
   align-items: center;
   margin-bottom: 10px;
   font-size: var(--size-smallish);
@@ -43,6 +44,7 @@
 }
 
 .deleteIcon {
+  margin-right: 7px;
   height: 20px;
   width: 20px;
   fill: var(--temp-grey-blue-7);
@@ -63,4 +65,8 @@
 
 .marginBottomLarge {
   margin-bottom: 48px;
+}
+
+.fundingTitle {
+  margin-right: auto;
 }
