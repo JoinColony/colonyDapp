@@ -5,13 +5,13 @@ import { FormSection } from '~core/Fields';
 import Icon from '~core/Icon';
 
 import { CollapseExpandButtons } from '../Payments';
-import FundingSource from './FundingSource';
+import { ErrorDot } from '../ErrorDot';
+import useErrorFundingSourceField from './FundingSource/useErrorFundingSourceField';
 
 import { Props as StreamingProps } from './Streaming';
 import { FundingSource as FundingSourceType } from './types';
 import styles from './Streaming.css';
-import useErrorFundingSourceField from './FundingSource/useErrorFundingSourceField';
-import { ErrorDot } from '../ErrorDot';
+import FundingSource from './FundingSource';
 
 const displayName = 'dashboard.ExpenditurePage.SingleFundingSource';
 
@@ -53,10 +53,12 @@ const SingleFundingSource = ({
             onToogleButtonClick={() => onToggleButtonClick(index)}
             isLastitem={index === fundingSources?.length - 1}
           />
-          <FormattedMessage
-            {...MSG.title}
-            values={{ nr: index + 1, team: domain?.name }}
-          />
+          <p className={styles.fundingTitle}>
+            <FormattedMessage
+              {...MSG.title}
+              values={{ nr: index + 1, team: domain?.name }}
+            />
+          </p>
           {fundingSources?.length > 1 && (
             <Icon
               name="trash"
