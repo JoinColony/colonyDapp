@@ -135,7 +135,7 @@ const TransferNFTSection = ({
         const baseUrl = getTxServiceBaseUrl(chainName);
         try {
           const response = await fetch(
-            `${baseUrl}/v1/safes/${chosenSafe.id}/collectibles/`,
+            `${baseUrl}/v1/safes/${chosenSafe.profile.walletAddress}/collectibles/`,
           );
           if (response.status === 200) {
             const data = await response.json();
@@ -147,7 +147,7 @@ const TransferNFTSection = ({
         return null;
       };
       if (safe) {
-        const cachedNFTs = savedNFTs[safe.id];
+        const cachedNFTs = savedNFTs[safe.profile.walletAddress];
         if (!cachedNFTs) {
           setIsLoadingNFTData(true);
           const nftData = await getNFTs(safe);
@@ -155,7 +155,7 @@ const TransferNFTSection = ({
           if (nftData) {
             setSavedNFTs({
               ...savedNFTs,
-              [safe.id]: nftData,
+              [safe.profile.walletAddress]: nftData,
             });
           }
           setIsLoadingNFTData(false);
