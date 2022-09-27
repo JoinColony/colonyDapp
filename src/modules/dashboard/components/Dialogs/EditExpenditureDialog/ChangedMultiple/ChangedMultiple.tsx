@@ -9,8 +9,8 @@ import { ValuesType } from '~pages/ExpenditurePage/types';
 import { Staged } from '~dashboard/ExpenditurePage/Staged/types';
 
 import ChangeItem from './ChangeItem';
-import styles from './ChangedMultiple.css';
 import ChangeHeader from './ChangeHeader';
+import styles from './ChangedMultiple.css';
 
 export const MSG = defineMessages({
   discard: {
@@ -56,47 +56,49 @@ const ChangedMultiple = ({ newValues, oldValues, colony }: Props) => {
                 (item) => item?.id === changeItem?.id,
               );
               return (
-                <FieldArray
-                  name={newValue?.key || 'change'}
-                  render={({ remove }) => (
-                    <>
-                      <ChangeHeader name={changeItem?.key} index={index} />
-                      {Object.entries(changeItem)?.map(([key, value]) => {
-                        if (skip.includes(key)) {
-                          return null;
-                        }
-                        if (
-                          key === 'delay' &&
-                          changeItem.created &&
-                          isNil(value.amount)
-                        ) {
-                          return null;
-                        }
+                <Fragment key={changeItem.id || index}>
+                  <FieldArray
+                    name={newValue?.key || 'change'}
+                    render={({ remove }) => (
+                      <>
+                        <ChangeHeader name={changeItem?.key} index={index} />
+                        {Object.entries(changeItem)?.map(([key, value]) => {
+                          if (skip.includes(key)) {
+                            return null;
+                          }
+                          if (
+                            key === 'delay' &&
+                            changeItem.created &&
+                            isNil(value.amount)
+                          ) {
+                            return null;
+                          }
 
-                        const oldValue = oldItem?.[key];
+                          const oldValue = oldItem?.[key];
 
-                        return (
-                          <ChangeItem
-                            newValue={value}
-                            oldValue={oldValue}
-                            key={key}
-                            colony={colony}
-                            name={key}
+                          return (
+                            <ChangeItem
+                              newValue={value}
+                              oldValue={oldValue}
+                              key={key}
+                              colony={colony}
+                              name={key}
+                            />
+                          );
+                        })}
+                        <div className={styles.buttonWrappper}>
+                          <Button
+                            className={styles.discard}
+                            onClick={() => {
+                              remove(index);
+                            }}
+                            text={MSG.discard}
                           />
-                        );
-                      })}
-                      <div className={styles.buttonWrappper}>
-                        <Button
-                          className={styles.discard}
-                          onClick={() => {
-                            remove(index);
-                          }}
-                          text={MSG.discard}
-                        />
-                      </div>
-                    </>
-                  )}
-                />
+                        </div>
+                      </>
+                    )}
+                  />
+                </Fragment>
               );
             })}
         </Fragment>
