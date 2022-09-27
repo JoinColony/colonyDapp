@@ -160,7 +160,7 @@ const EditExpenditureDialogForm = ({
                     {
                       name: 'offset',
                       options: {
-                        offset: [11, 6],
+                        offset: [4, 6],
                       },
                     },
                   ],

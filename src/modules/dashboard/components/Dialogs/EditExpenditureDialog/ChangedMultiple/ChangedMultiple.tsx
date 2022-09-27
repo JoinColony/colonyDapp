@@ -61,7 +61,7 @@ const ChangedMultiple = ({ newValues, oldValues, colony }: Props) => {
                     name={newValue?.key || 'change'}
                     render={({ remove }) => (
                       <>
-                        <ChangeHeader name={changeItem?.key} index={index} />
+                        <ChangeHeader name={newValue?.key} index={index} />
                         {Object.entries(changeItem)?.map(([key, value]) => {
                           if (skip.includes(key)) {
                             return null;
