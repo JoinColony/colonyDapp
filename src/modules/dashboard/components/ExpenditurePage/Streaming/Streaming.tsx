@@ -14,6 +14,7 @@ import SingleFundingSource from './SingleFundingSource';
 import { newFundingSource } from './constants';
 import { Streaming as StreamingType } from './types';
 import styles from './Streaming.css';
+import SingleFundingSource from './SingleFundingSource';
 
 const MSG = defineMessages({
   fundingSource: {
