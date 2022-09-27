@@ -10,7 +10,6 @@ import Slider, { Appearance } from '~core/Slider';
 import { Tooltip } from '~core/Popover';
 import Numeral from '~core/Numeral';
 import StakingValidationError from '~dashboard/ActionsPage/StakingValidationError';
-import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
 import { Colony, useLoggedInUser } from '~data/index';
 import { getFormattedTokenValue } from '~utils/tokens';
@@ -37,31 +36,31 @@ interface Props extends StakingAmounts {
   totalPercentage?: number;
 }
 
-const displayName = 'dashboard.ActionsPage.StakingWidget.StakingSlider';
+const displayName = 'StakingSlider';
 
 const MSG = defineMessages({
   titleStake: {
-    id: 'dashboard.ActionsPage.StakingWidget.StakingSlider.title',
+    id: 'dashboard.ActionsPage.StakingSlider.title',
     defaultMessage: `Select the amount to back the motion`,
   },
   titleObject: {
-    id: 'dashboard.ActionsPage.StakingWidget.StakingSlider.title',
+    id: 'dashboard.ActionsPage.StakingSlider.title',
     defaultMessage: `Select the amount to stake the objection`,
   },
   descriptionStake: {
-    id: 'dashboard.ActionsPage.StakingWidget.StakingSlider.description',
+    id: 'dashboard.ActionsPage.StakingSlider.description',
     defaultMessage: `Stake is returned if the motion passes. If there is a dispute, and the motion loses, part or all of your stake will be lost.`,
   },
   descriptionObject: {
-    id: 'dashboard.ActionsPage.StakingWidget.StakingSlider.description',
+    id: 'dashboard.ActionsPage.StakingSlider.description',
     defaultMessage: `Stake will be returned if the objection succeeds. If the objection fails, part or all of your stake will be lost.`,
   },
   loading: {
-    id: 'dashboard.ActionsPage.StakingWidget.StakingSlider.loading',
+    id: 'dashboard.ActionsPage.StakingSlider.loading',
     defaultMessage: 'Loading staking values ...',
   },
   minimumAmount: {
-    id: 'dashboard.ActionsPage.StakingWidget.StakingSlider.minimumAmount',
+    id: 'dashboard.ActionsPage.StakingSlider.minimumAmount',
     defaultMessage: 'at least {minStake}',
   },
   tooltip: {
@@ -174,14 +173,6 @@ const StakingSlider = ({
           text={isObjection ? MSG.titleObject : MSG.titleStake}
           className={styles.title}
           appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
-        />
-        <QuestionMarkTooltip
-          tooltipText={MSG.stakingToolTip}
-          className={styles.questionMarkIcon}
-          tooltipClassName={styles.tooltip}
-          tooltipPopperOptions={{
-            placement: 'top-end',
-          }}
         />
       </div>
       <p className={styles.description}>
