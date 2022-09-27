@@ -101,7 +101,8 @@ const LockedStreaming = ({ fundingSources, colony }: Props) => {
                       </div>
                     ),
                     tokens:
-                      fundingSource.rate.length > 1 && isOpen
+                      fundingSource.rate.length > 1 &&
+                      (isOpen
                         ? fundingSource.rate.map((rateItem, idx) => {
                             if (idx === 0) {
                               return null;
@@ -126,7 +127,7 @@ const LockedStreaming = ({ fundingSources, colony }: Props) => {
                               </div>
                             );
                           })
-                        : '...',
+                        : '...'),
                   }}
                 />
               </div>
