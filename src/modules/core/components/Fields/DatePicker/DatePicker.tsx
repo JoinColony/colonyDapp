@@ -11,11 +11,7 @@ import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
 
 import TimePicker from './TimePicker';
-import {
-  DEFAULT_DATE_FORMAT,
-  DEFAULT_TIME_FORMAT,
-  MONTH_NAMES,
-} from './constants';
+import { DEFAULT_DATE_FORMAT, DEFAULT_TIME_FORMAT } from './constants';
 
 import styles from './DatePicker.css';
 
@@ -66,9 +62,7 @@ const DateInput = (
       ? formatMessage(selectedOption.label)
       : selectedOption?.label;
 
-  const formattedDate = selectedDate
-    ? format(selectedDate, `${dateFormat} z`)
-    : '';
+  const formattedDate = selectedDate ? format(selectedDate, dateFormat) : '';
 
   /** Create a local timezone date equivalent to the selectedDate UTC value for formatting */
   const utcDate = selectedDate
@@ -80,13 +74,15 @@ const DateInput = (
         selectedDate.getUTCMinutes(),
       )
     : null;
-  const utcFormattedDate = utcDate
-    ? `${format(utcDate, `${dateFormat}`)} UTC`
-    : '';
+  const utcFormattedDate = utcDate ? `${format(utcDate, dateFormat)} UTC` : '';
 
   return (
     <Tooltip
-      content={!selectedOption?.hideDatePicker ? utcFormattedDate : null}
+      content={
+        !selectedOption?.hideDatePicker ? (
+          <div className={styles.tooltipContent}>{utcFormattedDate}</div>
+        ) : null
+      }
     >
       <button
         type="button"
@@ -109,14 +105,14 @@ const displayName = 'DatePicker';
 const DatePicker = ({
   name,
   showTimeSelect,
-  timeInterval = 30,
   dateFormat,
   options,
+  timeInterval = 30,
 }: Props) => {
   const [{ value }, , { setValue, setTouched }] = useField<
     DatePickerFieldValue
   >(name);
-  const { formatMessage } = useIntl();
+  const { formatMessage, formatDate } = useIntl();
 
   const handleDateChange = useCallback(
     (date: Date) => {
@@ -157,7 +153,7 @@ const DatePicker = ({
           <Icon name="caret-left" />
         </button>
         <div className={styles.currentMonth}>
-          {MONTH_NAMES[props.monthDate.getMonth()]}
+          {formatDate(props.monthDate, { month: 'long', year: 'numeric' })}
         </div>
         <button
           type="button"
@@ -168,7 +164,7 @@ const DatePicker = ({
         </button>
       </div>
     ),
-    [],
+    [formatDate],
   );
 
   const renderContainer = useCallback(

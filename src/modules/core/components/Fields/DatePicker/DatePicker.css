@@ -80,6 +80,10 @@
   border: none;
   background: none;
   cursor: pointer;
+
+  & svg {
+    display: block;
+  }
 }
 
 .container :global(.react-datepicker) {
@@ -223,6 +227,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 21px;
+  width: 21px;
 }
 
 .expandTimeIcon svg {
@@ -271,4 +277,8 @@
   &.selected {
     color: var(--primary);
   }
+}
+
+.tooltipContent {
+  white-space: nowrap;
 }
