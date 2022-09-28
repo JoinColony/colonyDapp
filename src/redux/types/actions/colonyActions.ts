@@ -281,7 +281,7 @@ export type ColonyActionsActionTypes =
   | UniqueActionType<
       ActionTypes.ACTION_INITIATE_SAFE_TRANSACTION,
       {
-        safe: ColonySafe;
+        safe: Omit<ColonySafe, 'safeName'>;
         transactionsTitle: string;
         transactions: SafeTransaction[];
         colonyAddress: Address;

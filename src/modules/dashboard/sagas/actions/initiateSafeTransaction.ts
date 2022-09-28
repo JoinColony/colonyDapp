@@ -173,7 +173,10 @@ function* initiateSafeTransactionAction({
     const annotationMessageIpfsHash = yield call(uploadIfpsAnnotation, {
       title,
       transactions,
-      safe,
+      safeData: {
+        contractAddress: safe.contractAddress,
+        chainId: safe.chainId,
+      },
       annotationMessage,
     });
 
