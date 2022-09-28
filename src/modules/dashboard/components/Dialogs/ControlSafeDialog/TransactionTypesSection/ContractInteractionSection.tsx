@@ -43,6 +43,10 @@ const MSG = defineMessages({
     id: `dashboard.ControlSafeDialog.ControlSafeForm.ContractInteractionSection.userPickerPlaceholder`,
     defaultMessage: 'Select or paste a contract address',
   },
+  noSafeSelected: {
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.ContractInteractionSection.noSafeSelected`,
+    defaultMessage: 'You must select a safe first',
+  },
 });
 
 const displayName = `dashboard.ControlSafeDialog.ControlSafeForm.ContractInteractionSection`;
@@ -152,6 +156,7 @@ const ContractInteractionSection = ({
   const onContractChange = useCallback(
     (contract: AnyUser) => {
       if (!selectedSafe) {
+        setStatus(MSG.noSafeSelected);
         return;
       }
 
@@ -167,7 +172,7 @@ const ContractInteractionSection = ({
         }
       });
     },
-    [selectedSafe, currentSafeChainId, onContractABIChange],
+    [selectedSafe, setStatus, onContractABIChange, currentSafeChainId],
   );
 
   const usefulMethods: AbiItemExtended[] = useMemo(
