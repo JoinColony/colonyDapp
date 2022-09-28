@@ -7,3 +7,4 @@ export const lockedActiveItemLabel: string;
 export const icon: string;
 export const tokenIcon: string;
 export const centered: string;
+export const amountWrapper: string;
