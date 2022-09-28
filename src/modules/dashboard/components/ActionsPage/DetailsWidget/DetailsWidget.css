@@ -15,7 +15,8 @@
   margin-right: 7px;
 }
 
-.value, .label {
+.value,
+.label {
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   letter-spacing: var(--spacing-medium);
@@ -36,6 +37,13 @@
   max-width: 200px;
   line-height: 18px;
   color: color-mod(var(--dark) alpha(85%));
+}
+
+.amount {
+  composes: value;
+
+  /** Imitate space between amount and symbol */
+  gap: 4px;
 }
 
 .descriptionValue {

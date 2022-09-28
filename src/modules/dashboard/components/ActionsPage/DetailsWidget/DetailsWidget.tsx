@@ -194,7 +194,7 @@ const DetailsWidget = ({
                 size="xxs"
               />
             )}
-            <div className={styles.value}>
+            <div className={styles.amount}>
               <Amount /> <Symbol />
             </div>
           </div>
