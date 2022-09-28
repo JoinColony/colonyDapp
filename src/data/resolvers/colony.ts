@@ -13,7 +13,6 @@ import {
   formatColonyRoles,
   ColonyRole,
 } from '@colony/colony-js';
-
 import {
   getColonyAvatarImage,
   getColonyMetadataFromResponse,
