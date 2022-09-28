@@ -145,7 +145,12 @@ const FundingSource = ({
                   );
 
                   return (
-                    <div className={styles.limitContainer} key={rateItem.id}>
+                    <div
+                      className={classNames(styles.limitContainer, {
+                        [styles.paddingTopZero]: rateIndex === 0,
+                      })}
+                      key={rateItem.id}
+                    >
                       <div className={styles.inputContainer}>
                         <Input
                           name={`streaming.fundingSources[${index}].rate[${rateIndex}].limit`}
