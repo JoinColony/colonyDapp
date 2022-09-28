@@ -60,7 +60,7 @@ export const MSG = defineMessages({
   },
   tooltipText: {
     id: `dashboard.ExpenditurePage.Batch.tooltipText`,
-    defaultMessage: `Download and use the .csv import template. Be sure to remove the sample data and view the details are correct once they have been imported.`,
+    defaultMessage: `Download and use the .csv import template. Be sure to remove the sample data and confirm the details are correct once imported.`,
   },
 });
 
