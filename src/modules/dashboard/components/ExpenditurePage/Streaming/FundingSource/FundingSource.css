@@ -25,11 +25,45 @@
   padding: 13px 0 12px;
 }
 
-.inputWrapper label {
-  color: var(--temp-grey-blue-7);
+.limitContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 8px;
+}
+
+.inputContainer {
+  width: calc(100% - 30px);
+  transform: translate(0, 8px);
+}
+
+.inputContainer input {
+  height: 28px;
+  line-height: 18px;
+  color: var(--dark);
+}
+
+.inputContainer input::placeholder {
+  color: var(--dark);
+}
+
+.tokenIcon {
+  margin-right: 6px;
+  height: 16px;
+  width: 16px;
+}
+
+.tokeIconWrapper {
+  display: flex;
+  align-items: center;
+  margin-left: 30px;
 }
 
 .addTokenLabel {
   display: flex;
   align-items: center;
+}
+
+.paddingTopZero {
+  padding-top: 0;
 }
