@@ -1,5 +1,5 @@
 .rateContainer {
-  padding: 13px 0 12px;
+  padding: 5px 0;
 }
 
 .labelButtonWrapper {
@@ -22,8 +22,9 @@
 
 .rate {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
   width: 100%;
   letter-spacing: 0.1px;
 }
@@ -49,11 +50,6 @@
 
 .inputRateAmount button {
   padding-left: 0;
-}
-
-.inputRateAmount p {
-  position: absolute;
-  transform: translate(0, 2px);
 }
 
 .tokenWrapper {
