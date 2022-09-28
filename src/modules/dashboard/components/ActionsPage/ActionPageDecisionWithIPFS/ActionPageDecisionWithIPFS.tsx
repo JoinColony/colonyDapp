@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
 import parse from 'html-react-parser';
+import { getDecisionDetailsFromResponse } from '@colony/colony-event-metadata-parser';
 
 import Heading from '~core/Heading';
 import CalloutCard from '~core/CalloutCard';
@@ -72,8 +73,9 @@ const ActionPageDecisionWithIPFS = ({
       } as DecisionDetails;
     }
 
-    // @TODO - add V2 IPFS support inc validation
-    const details: DecisionDetails = JSON.parse(ipfsDataJSON);
+    const details: DecisionDetails = getDecisionDetailsFromResponse(
+      ipfsDataJSON,
+    ) as DecisionDetails;
     return details;
   }, [ipfsDataJSON, isObjection]);
 
