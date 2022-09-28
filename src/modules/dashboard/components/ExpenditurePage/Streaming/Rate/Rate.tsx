@@ -15,6 +15,7 @@ import {
 import { Colony } from '~data/index';
 
 import { timeOptions } from '../constants';
+import FieldError from '../FieldError';
 import { newRate } from '../FundingSource/constants';
 import { FundingSource } from '../types';
 
@@ -104,11 +105,12 @@ const Rate = ({ index, fundingSource, colony, sidebarRef }: Props) => {
                           theme: 'underlined',
                           size: 'small',
                         }}
-                        label=""
+                        label={MSG.rate}
                         placeholder={MSG.notSet}
                         formattingOptions={{
                           numeral: true,
                         }}
+                        elementOnly
                       />
                     </div>
                     <div className={styles.tokenWrapper}>
@@ -141,6 +143,9 @@ const Rate = ({ index, fundingSource, colony, sidebarRef }: Props) => {
                       />
                     </div>
                   </div>
+                  <FieldError
+                    name={`streaming.fundingSources[${index}].rate[${rateIndex}].amount`}
+                  />
                 </div>
               </div>
             );
