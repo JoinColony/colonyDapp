@@ -1,6 +1,7 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType, ROOT_DOMAIN_ID, getChildIndex } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
+import { getStringForMetadataDecision } from '@colony/colony-event-metadata-parser';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
@@ -16,12 +17,12 @@ import {
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
+import { ipfsUploadWithFallback } from '../utils';
 
 function* createDecisionMotion({
   payload: {
@@ -148,7 +149,10 @@ function* createDecisionMotion({
     /*
      * Upload Decision details to IPFS
      */
-    const decisionIpfsHash = yield call(ipfsUpload, JSON.stringify(details));
+    const decisionIpfsHash = yield call(
+      ipfsUploadWithFallback,
+      getStringForMetadataDecision(details),
+    );
     yield put(
       transactionAddParams(annotateMotion.id, [txHash, decisionIpfsHash]),
     );
