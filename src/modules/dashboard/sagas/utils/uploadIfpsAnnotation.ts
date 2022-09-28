@@ -1,7 +1,16 @@
 import { call } from 'redux-saga/effects';
+import { ColonySafe } from '~data/generated';
+import { SafeTransaction } from '~redux/types/actions/colonyActions';
 import { ipfsUpload } from '../../../core/sagas/ipfs';
 
-export function* uploadIfpsAnnotation(annotationMessage: string) {
+interface SafeTxData {
+  title: string;
+  transactions: SafeTransaction[];
+  safeData: Omit<ColonySafe, 'safeName' | 'moduleContractAddress'>;
+  annotationMessage?: string;
+}
+
+export function* uploadIfpsAnnotation(annotationMessage: string | SafeTxData) {
   let ipfsHash: string | null = null;
   ipfsHash = yield call(
     ipfsUpload,

@@ -7,11 +7,12 @@ import { ethers } from 'ethers';
 import Decimal from 'decimal.js';
 import { isHexString } from 'ethers/utils';
 import { MaxUint256 } from 'ethers/constants';
+import { pipe } from 'lodash/fp';
+import { useHistory } from 'react-router';
 
-import { AnyUser } from '~data/index';
+import { AnyUser, ColonySafe } from '~data/index';
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
-
 import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
 import { Address } from '~types/index';
@@ -19,7 +20,10 @@ import { AbiItemExtended } from '~utils/getContractUsefulMethods';
 import {
   SelectedSafe,
   SelectedNFT,
+  getChainNameFromSafe,
 } from '~modules/dashboard/sagas/utils/safeHelpers';
+import { mapPayload, withMeta } from '~utils/actions';
+import { SAFE_NETWORKS } from '~constants';
 
 import { TransactionTypes } from './constants';
 import ControlSafeForm from './ControlSafeForm';
@@ -85,8 +89,10 @@ type Props = DialogProps &
   ActionDialogProps;
 
 const ControlSafeDialog = ({
+  colony: { colonyAddress, colonyName },
   colony,
   cancel,
+  close,
   callStep,
   prevStep,
   isVotingExtensionEnabled,
@@ -99,6 +105,7 @@ const ControlSafeDialog = ({
     Record<string, any>
   >({});
   const { safes } = colony;
+  const history = useHistory();
 
   const getMethodInputValidation = useCallback(
     (inputType: string, contractName: string, isArraySchema?: boolean) => {
@@ -330,6 +337,40 @@ const ControlSafeDialog = ({
     ),
   });
 
+  const transform = useCallback(
+    pipe(
+      mapPayload(
+        ({
+          safe,
+          transactionsTitle,
+          transactions,
+          annotation: annotationMessage,
+        }) => {
+          const chainName = getChainNameFromSafe(safe);
+          const transformedSafe: Omit<ColonySafe, 'safeName'> = {
+            // Find will return because input comes from Safe Networks
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            chainId: SAFE_NETWORKS.find(
+              (network) => network.name === chainName,
+            )!.chainId.toString(),
+            contractAddress: safe.profile.walletAddress,
+            moduleContractAddress: safe.id,
+          };
+          return {
+            safe: transformedSafe,
+            transactionsTitle,
+            transactions,
+            annotationMessage,
+            colonyAddress,
+            colonyName,
+          };
+        },
+      ),
+      withMeta({ history }),
+    ),
+    [],
+  );
+
   return (
     <ActionForm
       initialValues={{
@@ -351,9 +392,11 @@ const ControlSafeDialog = ({
         ],
       }}
       validationSchema={validationSchema}
-      submit={ActionTypes.ACTION_GENERIC}
-      success={ActionTypes.ACTION_GENERIC_SUCCESS}
-      error={ActionTypes.ACTION_GENERIC_ERROR}
+      submit={ActionTypes.ACTION_INITIATE_SAFE_TRANSACTION}
+      success={ActionTypes.ACTION_INITIATE_SAFE_TRANSACTION_SUCCESS}
+      error={ActionTypes.ACTION_INITIATE_SAFE_TRANSACTION_ERROR}
+      transform={transform}
+      onSuccess={close}
       validateOnMount
     >
       {(formValues: FormikProps<FormValues>) => (
