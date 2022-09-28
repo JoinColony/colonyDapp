@@ -25,24 +25,28 @@ import styles from './TransactionTypesSection.css';
 
 const MSG = defineMessages({
   abiLabel: {
-    id: `dashboard.ControlSafeDialog.ControlSafeForm.ContractInteractionSection.abiLabel`,
+    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.abiLabel`,
     defaultMessage: 'ABI/JSON',
   },
   functionLabel: {
-    id: `dashboard.ControlSafeDialog.ControlSafeForm.ContractInteractionSection.functionLabel`,
+    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.functionLabel`,
     defaultMessage: 'Select function to interact with',
   },
   functionPlaceholder: {
-    id: `dashboard.ControlSafeDialog.ControlSafeForm.ContractInteractionSection.functionPlaceholder`,
+    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.functionPlaceholder`,
     defaultMessage: 'Select function',
   },
   contractLabel: {
-    id: `dashboard.ControlSafeDialog.ControlSafeForm.ContractInteractionSection.contractLabel`,
+    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.contractLabel`,
     defaultMessage: 'Target contract address',
   },
   userPickerPlaceholder: {
-    id: `dashboard.ControlSafeDialog.ControlSafeForm.ContractInteractionSection.userPickerPlaceholder`,
+    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.userPickerPlaceholder`,
     defaultMessage: 'Select or paste a contract address',
+  },
+  loadingContract: {
+    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.loadingContract`,
+    defaultMessage: 'Loading Contract',
   },
 });
 
@@ -258,7 +262,10 @@ const ContractInteractionSection = ({
       </DialogSection>
       {isLoadingABI ? (
         <div className={styles.spinner}>
-          <SpinnerLoader appearance={{ size: 'medium' }} />
+          <SpinnerLoader
+            appearance={{ size: 'medium' }}
+            loadingText={MSG.loadingContract}
+          />
         </div>
       ) : (
         <>
