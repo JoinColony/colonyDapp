@@ -17,6 +17,7 @@ import { useTransformer } from '~utils/hooks';
 import { Colony, useLoggedInUser } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/types';
 import { Recipient as RecipientType } from '~dashboard/ExpenditurePage/Payments/types';
+import { EDITING_LOCKED_PAYMENTS } from '~externalUrls';
 
 import { FormValuesType } from './EditExpenditureDialog';
 import ChangedValues from './ChangedValues';
@@ -30,11 +31,7 @@ export const MSG = defineMessages({
   },
   descriptionText: {
     id: `dashboard.EditExpenditureDialog.EditExpenditureDialogForm.descriptionText`,
-    defaultMessage: `This Payment is currently Locked. Either a Motion, or a member with the Arbitration permission are required to make changes.`,
-  },
-  note: {
-    id: `dashboard.EditExpenditureDialog.EditExpenditureDialogForm.note`,
-    defaultMessage: `Note: if this variable has previously been voted on, subsequent votes will require more Reputation to be in favour in order for changes to be valid.`,
+    defaultMessage: `This Payment is currently Locked. Either a Motion, or a member with the Arbitration permission are required to make changes. <a>Learn more.</a>`,
   },
   descriptionLabel: {
     id: `dashboard.EditExpenditureDialog.EditExpenditureDialogForm.descriptionLabel`,
@@ -177,10 +174,21 @@ const EditExpenditureDialogForm = ({
           <FormattedMessage {...MSG.header} />
         </Heading>
         <div className={styles.descriptionWrapper}>
-          <FormattedMessage {...MSG.descriptionText} />
-        </div>
-        <div className={styles.noteWrapper}>
-          <FormattedMessage {...MSG.note} />
+          <FormattedMessage
+            {...MSG.descriptionText}
+            values={{
+              a: (chunks) => (
+                <a
+                  href={EDITING_LOCKED_PAYMENTS}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.link}
+                >
+                  {chunks}
+                </a>
+              ),
+            }}
+          />
         </div>
       </DialogSection>
       <div className={styles.contentWrapper}>

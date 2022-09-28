@@ -58,11 +58,11 @@
 }
 
 .discard {
-  composes: themeDangerLink from '~core/Button/Button.css';
+  composes: main from '~core/Button/Button.css';
   padding: 0;
   height: auto;
   font-size: var(--size-smallish);
-  font-weight: var(--weight-normal);
+  font-weight: 600;
   color: var(--action-secondary);
 }
 

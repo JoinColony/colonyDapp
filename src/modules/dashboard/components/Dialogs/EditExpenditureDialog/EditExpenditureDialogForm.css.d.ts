@@ -4,7 +4,7 @@ export const withoutPadding: string;
 export const forceRow: string;
 export const contentWrapper: string;
 export const descriptionWrapper: string;
-export const noteWrapper: string;
 export const noChanges: string;
 export const annotationsWrapper: string;
 export const toggleContainer: string;
+export const link: string;

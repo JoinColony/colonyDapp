@@ -29,13 +29,8 @@
 
 .descriptionWrapper {
   padding-top: 10px;
-}
-
-.noteWrapper {
-  padding-top: 10px;
-  font-size: var(--size-smallish);
-  font-weight: var(--weight-bold);
-  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+  font-size: var(--size-normal);
+  letter-spacing: 0.1px;
 }
 
 .noChanges {
@@ -68,4 +63,13 @@
 
 .toggleContainer i {
   transform: translate(0, -1px);
+}
+
+.link {
+  font-weight: 600;
+  color: var(--action-secondary);
+}
+
+.link:hover {
+  color: var(--action-secondary);
 }
