@@ -140,6 +140,7 @@ const ControlSafeForm = ({
   showPreview,
   handleShowPreview,
   validateForm,
+  dirty,
   selectedContractMethods,
   handleSelectedContractMethods,
 }: Props & FormikProps<FormValues>) => {
@@ -442,7 +443,7 @@ const ControlSafeForm = ({
           }
           text={showPreview ? MSG.buttonConfirm : MSG.buttonCreateTransaction}
           loading={isSubmitting}
-          disabled={!isValid || isSubmitting || !hasTitle}
+          disabled={!isValid || isSubmitting || !hasTitle || !dirty}
           style={{ width: styles.wideButton }}
         />
       </DialogSection>
