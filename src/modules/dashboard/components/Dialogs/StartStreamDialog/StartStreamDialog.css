@@ -1,13 +1,6 @@
-.toggleContainer {
-  /* megative margin here corrects tooltip arrow placement */
-  margin-right: -7px;
-}
 
-.toggleContainer i {
-  margin-left: 9px;
-
-  /* next lines corrects tooltip arrow placement */
-  transform: translate(-9px, 0);
+.toggleContainer span div {
+  margin-left: 0;
 }
 
 /* this selector is for tooltip wrapper */
@@ -16,18 +9,13 @@
   white-space: normal;
 }
 
+.toggleContainer > div > div:first-of-type {
+  margin-right: 11px;
+  height: 16px;
+}
+
 .toggleContainer label {
-  display: flex;
-  align-items: center;
-  margin-bottom: 4px;
-}
-
-.toggleContainer > div {
-  height: 18px;
-}
-
-.toggleContainer > div > span > div {
-  height: 18px;
+  margin-bottom: 0;
 }
 
 .title {

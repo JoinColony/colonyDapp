@@ -8,12 +8,8 @@ import { DialogSection } from '~core/Dialog';
 import { Annotations, FormSection, Toggle } from '~core/Fields';
 import Heading from '~core/Heading';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
-import { Colony, useLoggedInUser } from '~data/index';
-import { getAllUserRoles } from '~modules/transformers';
-import { hasRoot } from '~modules/users/checks';
+import { Colony } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/types';
-import { useTransformer } from '~utils/hooks';
-import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 
 import FundingSource from './FundingSource';
 import { FormValues } from './StartStreamDialog';
@@ -66,27 +62,12 @@ interface Props {
 const StartStreamDialogForm = ({
   colony,
   onClick,
-  isVotingExtensionEnabled,
-  values,
   handleSubmit,
-  isSubmitting,
   close,
   formValues,
 }: Props & FormikProps<FormValues>) => {
   const { streaming } = formValues;
   const [domainID, setDomainID] = useState<number>();
-  const { walletAddress, username, ethereal } = useLoggedInUser();
-  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
-
-  const hasRegisteredProfile = !!username && !ethereal;
-  const canCancelExpenditure = hasRegisteredProfile && hasRoot(allUserRoles);
-
-  const [userHasPermission] = useDialogActionPermissions(
-    colony.colonyAddress,
-    canCancelExpenditure,
-    isVotingExtensionEnabled,
-    values.forceAction,
-  );
 
   const handleMotionDomainChange = useCallback(
     (motionDomainId) => setDomainID(motionDomainId),
@@ -108,29 +89,28 @@ const StartStreamDialogForm = ({
           onDomainChange={handleMotionDomainChange}
           initialSelectedDomain={domainID}
         />
-        {canCancelExpenditure && isVotingExtensionEnabled && (
-          <div className={styles.toggleContainer}>
-            <Toggle
-              label={{ id: 'label.force' }}
-              name="forceAction"
-              appearance={{ theme: 'danger' }}
-              disabled={!userHasPermission || isSubmitting}
-              tooltipText={{ id: 'tooltip.forceAction' }}
-              tooltipPopperOptions={{
-                placement: 'top-end',
-                modifiers: [
-                  {
-                    name: 'offset',
-                    options: {
-                      offset: [-5, 6],
-                    },
+
+        <div className={styles.toggleContainer}>
+          <Toggle
+            label={{ id: 'label.force' }}
+            name="forceAction"
+            appearance={{ theme: 'danger' }}
+            disabled={false} // temporary value
+            tooltipText={{ id: 'tooltip.forceAction' }}
+            tooltipPopperOptions={{
+              placement: 'top-end',
+              modifiers: [
+                {
+                  name: 'offset',
+                  options: {
+                    offset: [4, 6],
                   },
-                ],
-                strategy: 'fixed',
-              }}
-            />
-          </div>
-        )}
+                },
+              ],
+              strategy: 'fixed',
+            }}
+          />
+        </div>
       </DialogSection>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
         <Heading

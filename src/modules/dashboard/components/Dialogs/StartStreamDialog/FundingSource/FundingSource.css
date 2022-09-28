@@ -23,6 +23,10 @@
   letter-spacing: var(--spacing-medium);
 }
 
+.value > span {
+  margin-right: 4px;
+}
+
 .activeItemLabel {
   margin-left: 8px;
   padding-bottom: 2px;
@@ -56,4 +60,8 @@
 
 .centered span {
   font-size: var(--size-smallish);
+}
+
+.amountWrapper {
+  padding: 0 4px;
 }

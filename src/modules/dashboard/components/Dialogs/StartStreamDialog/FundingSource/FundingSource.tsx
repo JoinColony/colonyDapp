@@ -93,7 +93,7 @@ const FundingSource = ({ fundingSource, colony }: Props) => {
         );
 
         return (
-          <FormSection appearance={{ border: 'bottom' }}>
+          <FormSection appearance={{ border: 'bottom' }} key={rateItem.id}>
             <div className={styles.row}>
               <div className={styles.label}>
                 <FormattedMessage
@@ -115,10 +115,12 @@ const FundingSource = ({ fundingSource, colony }: Props) => {
                       </span>
                     ),
                     tokenAmount: (
-                      <Numeral
-                        unit={getTokenDecimalsWithFallback(0)}
-                        value={rateItem.amount || 0}
-                      />
+                      <span>
+                        <Numeral
+                          unit={getTokenDecimalsWithFallback(0)}
+                          value={rateItem.amount || 0}
+                        />
+                      </span>
                     ),
                     token: tokenData?.symbol,
                     time: rateItem.time,
@@ -135,7 +137,7 @@ const FundingSource = ({ fundingSource, colony }: Props) => {
         );
 
         return (
-          <FormSection appearance={{ border: 'bottom' }}>
+          <FormSection appearance={{ border: 'bottom' }} key={rateItem.id}>
             <div className={styles.row}>
               <div className={styles.label}>
                 <FormattedMessage
