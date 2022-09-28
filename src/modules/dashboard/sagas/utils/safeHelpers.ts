@@ -39,7 +39,7 @@ const getHomeProvider = () => {
     : new ethers.providers.Web3Provider(Web3.givenProvider);
 };
 
-const getForeignProvider = (safe: ColonySafe) => {
+const getForeignProvider = (safe: Omit<ColonySafe, 'safeName'>) => {
   const network = SAFE_NETWORKS.find((n) => n.chainId === Number(safe.chainId));
 
   if (!network) {
@@ -53,7 +53,7 @@ const getForeignProvider = (safe: ColonySafe) => {
   );
 };
 
-export const getHomeBridge = (safe: ColonySafe) => {
+export const getHomeBridge = (safe: Omit<ColonySafe, 'safeName'>) => {
   const homeProvider = getHomeProvider();
   const homeSigner = homeProvider.getSigner();
   const homeBridgeAddress: string | undefined = onLocalDevEnvironment
@@ -107,7 +107,7 @@ export const getForeignBridgeMock = () => {
 
 export const getZodiacModule = (
   zodiacModuleAddress: Address,
-  safe: ColonySafe,
+  safe: Omit<ColonySafe, 'safeName'>,
 ) => {
   const foreignProvider = getForeignProvider(safe);
   return new ethers.Contract(

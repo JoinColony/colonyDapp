@@ -347,17 +347,13 @@ const ControlSafeDialog = ({
           annotation: annotationMessage,
         }) => {
           const chainName = getChainNameFromSafe(safe);
-          const transformedSafe: ColonySafe = {
+          const transformedSafe: Omit<ColonySafe, 'safeName'> = {
             // Find will return because input comes from Safe Networks
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             chainId: SAFE_NETWORKS.find(
               (network) => network.name === chainName,
             )!.chainId.toString(),
             contractAddress: safe.profile.walletAddress,
-            safeName: safe.profile.displayName.substring(
-              0,
-              safe.profile.displayName.length - (chainName.length + 3),
-            ),
             moduleContractAddress: safe.id,
           };
           return {

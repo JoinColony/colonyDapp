@@ -6,7 +6,7 @@ import { ipfsUpload } from '../../../core/sagas/ipfs';
 interface SafeTxData {
   title: string;
   transactions: SafeTransaction[];
-  safe: ColonySafe;
+  safeData: Omit<ColonySafe, 'safeName' | 'moduleContractAddress'>;
   annotationMessage?: string;
 }
 
