@@ -166,7 +166,10 @@ const TransferFundsSection = ({
     return (
       <DialogSection>
         <div className={styles.balanceLoading}>
-          <SpinnerLoader loadingText={MSG.balancesLoading} />
+          <SpinnerLoader
+            appearance={{ size: 'medium' }}
+            loadingText={MSG.balancesLoading}
+          />
         </div>
       </DialogSection>
     );
