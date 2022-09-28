@@ -27,7 +27,7 @@ const MIME_TYPES = ['text/csv'];
 const CSVUploader = ({ name, processingData, setProcessingData }: Props) => {
   const [CSVFile, setCSVFile] = useState<File | null>(null);
   const [parsedCSV, setParsedCSV] = useState<ParseResult<unknown> | null>(null);
-  const [, { value }, { setValue }] = useField(name);
+  const [, { value, error }, { setValue }] = useField(name);
 
   useEffect(() => {
     if (CSVFile && !parsedCSV) {
@@ -59,13 +59,13 @@ const CSVUploader = ({ name, processingData, setProcessingData }: Props) => {
     }
 
     if (parsedCSV && value[0] && isNil(value[0].parsedData)) {
-      setValue([{ ...value[0], parsedData: parsedCSV.data }]);
+      setValue([{ ...value[0], parsedData: parsedCSV.data }], true);
     }
 
     if (processingData) {
       setProcessingData(false);
     }
-  }, [parsedCSV, value, setValue, processingData, setProcessingData]);
+  }, [parsedCSV, value, setValue, processingData, setProcessingData, error]);
 
   return (
     <FileUpload

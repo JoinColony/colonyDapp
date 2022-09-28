@@ -34,6 +34,10 @@ export const useCalculateBatchPayment = (
       const tokensData = await Promise.all(
         uniq
           .map(async ({ token }) => {
+            if (!token) {
+              return undefined;
+            }
+
             try {
               const { data: tokenData } = await apolloClient.query<
                 TokenQuery,
@@ -60,7 +64,7 @@ export const useCalculateBatchPayment = (
     }
 
     const validatedData = data.map(({ recipient, amount, token }) => {
-      const correctRecipient: AddressElements | Error = splitAddress(recipient);
+      const correctRecipient = recipient && splitAddress(recipient);
       const correctToken = uniqTokens?.find(
         (tokenItem) => tokenItem?.id === token,
       );
@@ -74,6 +78,10 @@ export const useCalculateBatchPayment = (
     });
 
     const filteredData = data.filter((item) => {
+      if (!item.recipient || !item.amount || !item.token) {
+        return false;
+      }
+
       const correctRecipient: AddressElements | Error = splitAddress(
         item.recipient,
       );
@@ -86,6 +94,10 @@ export const useCalculateBatchPayment = (
     });
 
     const amount = filteredData.reduce((acc, item) => {
+      if (!item || !item.token) {
+        return acc;
+      }
+
       if (item.token in acc) {
         return {
           ...acc,

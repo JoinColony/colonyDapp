@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import LockedBatch from '~dashboard/ExpenditurePage/Batch/LockedBatch';
 
 import { LockedExpenditureSettings } from '~dashboard/ExpenditurePage/ExpenditureSettings';
 import { LockedPayments } from '~dashboard/ExpenditurePage/Payments';
@@ -34,7 +35,7 @@ const LockedSidebar = ({
   activeState,
   handleReleaseMilestone,
 }: Props) => {
-  const { expenditure, recipients, filteredDomainId, staged, split } =
+  const { expenditure, recipients, filteredDomainId, staged, split, batch } =
     formValues || {};
 
   const secondFormSection = useMemo(() => {
@@ -67,13 +68,14 @@ const LockedSidebar = ({
         );
       }
       case ExpenditureTypes.Batch: {
-        return null;
+        return batch ? <LockedBatch batch={batch} /> : null;
       }
       default:
         return null;
     }
   }, [
     activeState,
+    batch,
     colony,
     editForm,
     expenditure,

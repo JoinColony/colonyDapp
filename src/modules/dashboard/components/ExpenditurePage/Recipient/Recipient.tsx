@@ -97,7 +97,7 @@ const Recipient = ({
   const newTokenData = useMemo(() => {
     return {
       ...newToken,
-      tokenAddress: colony.nativeTokenAddress,
+      tokenAddress: colony?.nativeTokenAddress,
     };
   }, [colony]);
 
@@ -167,7 +167,7 @@ const Recipient = ({
                       <div>
                         <TokenSymbolSelector
                           label=""
-                          tokens={colonyTokens}
+                          tokens={colonyTokens || []}
                           // eslint-disable-next-line max-len
                           name={`recipients[${index}].value[${idx}].tokenAddress`}
                           appearance={{ alignOptions: 'right', theme: 'grey' }}

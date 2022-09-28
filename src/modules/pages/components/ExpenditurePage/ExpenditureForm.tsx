@@ -1,5 +1,5 @@
 import { Form, useFormikContext } from 'formik';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { ExpenditureSettings } from '~dashboard/ExpenditurePage';
@@ -24,11 +24,18 @@ const MSG = defineMessages({
 interface Props {
   colony: Colony;
   sidebarRef: HTMLElement | null;
+  setShouldValidate: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
+const ExpenditureForm = ({ sidebarRef, colony, setShouldValidate }: Props) => {
   const { values, handleSubmit, validateForm } =
     useFormikContext<ValuesType>() || {};
+
+  useEffect(() => {
+    if (values.expenditure === ExpenditureTypes.Batch) {
+      setShouldValidate(true);
+    }
+  }, [setShouldValidate, values]);
 
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
 
