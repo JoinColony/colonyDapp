@@ -5,16 +5,16 @@ import { FormSection } from '~core/Fields';
 import UserMention from '~core/UserMention';
 
 import { Colony } from '~data/index';
+import { State, ValuesType } from '~pages/ExpenditurePage/types';
+import Icon from '~core/Icon';
 
 import { Stage, Status } from '../Stages/constants';
 import LockedRecipient from '../Recipient/LockedRecipient/LockedRecipient';
 
 import { Recipient as RecipientType } from './types';
 import ClaimTag from './ClaimTag';
-import styles from './Payments.css';
-import Icon from '~core/Icon';
 import RecipientHeader from './RecipientHeader';
-import { State, ValuesType } from '~pages/ExpenditurePage/types';
+import styles from './Payments.css';
 
 const MSG = defineMessages({
   payments: {

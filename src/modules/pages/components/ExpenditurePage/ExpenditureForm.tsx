@@ -1,21 +1,22 @@
 import { Form, useFormikContext } from 'formik';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { useDialog } from '~core/Dialog';
-import StakeExpenditureDialog from '~dashboard/Dialogs/StakeExpenditureDialog';
 import { ExpenditureSettings } from '~dashboard/ExpenditurePage';
+import Batch from '~dashboard/ExpenditurePage/Batch';
 import Payments from '~dashboard/ExpenditurePage/Payments';
 import Split from '~dashboard/ExpenditurePage/Split';
 import Staged from '~dashboard/ExpenditurePage/Staged';
 import { Colony } from '~data/index';
+import StakeExpenditureDialog from '~dashboard/Dialogs/StakeExpenditureDialog';
+import { useDialog } from '~core/Dialog';
 
 import { ValuesType, ExpenditureTypes } from './types';
 import styles from './ExpenditurePage.css';
 
 const MSG = defineMessages({
   submit: {
-    id: 'dashboard.ExpenditureForm.submit',
+    id: 'dashboard.ExpenditurePage.ExpenditureForm.submit',
     defaultMessage: 'Submit',
   },
 });
@@ -23,11 +24,18 @@ const MSG = defineMessages({
 interface Props {
   colony: Colony;
   sidebarRef: HTMLElement | null;
+  setShouldValidate: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
+const ExpenditureForm = ({ sidebarRef, colony, setShouldValidate }: Props) => {
   const { values, handleSubmit, validateForm } =
     useFormikContext<ValuesType>() || {};
+
+  useEffect(() => {
+    if (values.expenditure === ExpenditureTypes.Batch) {
+      setShouldValidate(true);
+    }
+  }, [setShouldValidate, values]);
 
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
 
@@ -64,6 +72,9 @@ const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
       }
       case ExpenditureTypes.Split: {
         return <Split sidebarRef={sidebarRef} colony={colony} />;
+      }
+      case ExpenditureTypes.Batch: {
+        return <Batch colony={colony} />;
       }
       default:
         return null;

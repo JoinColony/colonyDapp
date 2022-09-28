@@ -1,12 +1,14 @@
 import React, { useMemo } from 'react';
+import LockedBatch from '~dashboard/ExpenditurePage/Batch/LockedBatch';
 
 import { LockedExpenditureSettings } from '~dashboard/ExpenditurePage/ExpenditureSettings';
 import { LockedPayments } from '~dashboard/ExpenditurePage/Payments';
+import LockedSplit from '~dashboard/ExpenditurePage/Split/LockedSplit';
 import LockedStaged from '~dashboard/ExpenditurePage/Staged/LockedStaged/LockedStaged';
 import { Status } from '~dashboard/ExpenditurePage/Stages/constants';
 import { Colony } from '~data/index';
 
-import { ExpenditureTypes, ValuesType } from './types';
+import { ExpenditureTypes, State, ValuesType } from './types';
 
 const displayName = 'pages.ExpenditurePage.LockedSidebar';
 
@@ -18,7 +20,7 @@ interface Props {
   status?: Status;
   isCancelled?: boolean;
   pendingMotion?: boolean;
-  activeStateId?: string;
+  activeState?: State;
   handleReleaseMilestone: (id: string) => void;
 }
 
@@ -30,10 +32,10 @@ const LockedSidebar = ({
   isCancelled,
   pendingMotion,
   status,
-  activeStateId,
+  activeState,
   handleReleaseMilestone,
 }: Props) => {
-  const { expenditure, recipients, filteredDomainId, staged } =
+  const { expenditure, recipients, filteredDomainId, staged, split, batch } =
     formValues || {};
 
   const secondFormSection = useMemo(() => {
@@ -48,27 +50,32 @@ const LockedSidebar = ({
             status={status}
             isCancelled={isCancelled}
             pendingMotion={pendingMotion}
+            activeState={activeState}
           />
         );
       }
       case ExpenditureTypes.Split: {
-        return null;
+        return <LockedSplit colony={colony} split={split} />;
       }
       case ExpenditureTypes.Staged: {
         return (
           <LockedStaged
             colony={colony}
             staged={staged}
-            activeStateId={activeStateId}
+            activeStateId={activeState?.id}
             handleReleaseMilestone={handleReleaseMilestone}
           />
         );
+      }
+      case ExpenditureTypes.Batch: {
+        return batch ? <LockedBatch batch={batch} /> : null;
       }
       default:
         return null;
     }
   }, [
-    activeStateId,
+    activeState,
+    batch,
     colony,
     editForm,
     expenditure,
@@ -77,6 +84,7 @@ const LockedSidebar = ({
     pendingChanges,
     pendingMotion,
     recipients,
+    split,
     staged,
     status,
   ]);
