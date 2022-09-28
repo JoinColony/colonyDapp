@@ -11,6 +11,7 @@ import { Staged } from '~dashboard/ExpenditurePage/Staged/types';
 import ChangeItem from './ChangeItem';
 import ChangeHeader from './ChangeHeader';
 import styles from './ChangedMultiple.css';
+import { Batch } from '~dashboard/ExpenditurePage/Batch/types';
 
 export const MSG = defineMessages({
   discard: {
@@ -32,7 +33,8 @@ export type NewValueType = {
     | Pick<
         LoggedInUser,
         'walletAddress' | 'balance' | 'username' | 'ethereal' | 'networkId'
-      >;
+      >
+    | Batch;
 };
 
 interface Props {
