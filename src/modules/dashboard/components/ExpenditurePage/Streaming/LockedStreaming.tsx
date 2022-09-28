@@ -112,7 +112,7 @@ const LockedStreaming = ({ fundingSources, colony }: Props) => {
                                 token && tokenItem.address === rateItem.token,
                             );
                             return (
-                              <div className={styles.rate}>
+                              <div className={styles.rate} key={rateItem.id}>
                                 <FormattedMessage
                                   {...MSG.rate}
                                   values={{
