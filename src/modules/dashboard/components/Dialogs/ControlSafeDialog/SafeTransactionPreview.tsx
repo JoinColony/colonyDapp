@@ -235,7 +235,7 @@ const SafeTransactionPreview = ({
   const tokens = useMemo(() => {
     return values.transactions.map((transaction) => {
       const token = colony.tokens.find(
-        (item) => item.address === transaction.token?.address,
+        (item) => item.address === transaction.tokenAddress,
       );
       return token;
     });

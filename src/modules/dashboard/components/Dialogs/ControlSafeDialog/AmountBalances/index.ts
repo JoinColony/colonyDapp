@@ -1,1 +1,1 @@
-export { default, SafeBalance, SafeToken } from './AmountBalances';
+export { default, SafeBalance } from './AmountBalances';
