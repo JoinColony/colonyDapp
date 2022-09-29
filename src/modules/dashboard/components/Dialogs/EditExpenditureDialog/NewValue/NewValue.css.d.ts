@@ -1,5 +1,4 @@
 export const row: string;
-export const label: string;
 export const value: string;
 export const smallerPadding: string;
 export const valueContainer: string;
