@@ -15,7 +15,7 @@ import {
   getChainNameFromSafe,
 } from '~modules/dashboard/sagas/utils/safeHelpers';
 import { mapPayload, withMeta } from '~utils/actions';
-import { SAFE_NETWORKS } from '~constants';
+import { DEFAULT_TOKEN_DECIMALS, SAFE_NETWORKS } from '~constants';
 
 import ControlSafeForm from './ControlSafeForm';
 import { NFT } from './TransactionTypesSection/TransferNFTSection';
@@ -27,7 +27,8 @@ export interface FormValues {
     recipient: AnyUser | null;
     nft: SelectedNFT | null;
     nftData: NFT | null;
-    token?: SafeToken;
+    tokenAddress?: string;
+    tokenDecimals?: number;
     amount?: number;
     data?: string;
     contract?: AnyUser;
@@ -127,7 +128,8 @@ const ControlSafeDialog = ({
         transactions: [
           {
             transactionType: '',
-            token: undefined,
+            tokenAddress: undefined,
+            tokenDecimals: DEFAULT_TOKEN_DECIMALS,
             amount: undefined,
             recipient: undefined,
             data: '',

@@ -4,25 +4,21 @@ import { AnyToken } from '~data/index';
 
 import Select from '~core/Fields/Select';
 import TokenIcon from '~dashboard/HookedTokenIcon';
-import { SafeToken } from '~dashboard/Dialogs/ControlSafeDialog/AmountBalances';
 
 import { Props as SelectProps } from '../Select/types';
 
 import styles from './TokenSymbolSelector.css';
 
 interface Props extends Omit<SelectProps, 'options'> {
-  tokens: AnyToken[] | SafeToken[];
-  isSafeToken?: boolean;
+  tokens: AnyToken[];
 }
 
 const displayName = 'TokenSymbolSelector';
 
-const TokenSymbolSelector = ({ tokens, isSafeToken, ...props }: Props) => {
-  // @NOTE: We are doing this so that Typescript stops complaining about the union of these types
-  const tokenArray: Array<AnyToken | SafeToken> = tokens;
+const TokenSymbolSelector = ({ tokens, ...props }: Props) => {
   const tokenOptions = useMemo(
     () =>
-      tokenArray.map((token) => {
+      tokens.map((token) => {
         const labelElement = (
           elementType: 'labelElement' | 'optionElement',
         ) => (
@@ -41,13 +37,13 @@ const TokenSymbolSelector = ({ tokens, isSafeToken, ...props }: Props) => {
         );
 
         return {
-          value: isSafeToken ? (token as SafeToken) : token.address,
+          value: token.address,
           label: token.symbol,
           labelElement: labelElement('labelElement'),
           children: labelElement('optionElement'),
         };
       }),
-    [tokenArray, isSafeToken],
+    [tokens],
   );
 
   return <Select options={tokenOptions} {...props} />;

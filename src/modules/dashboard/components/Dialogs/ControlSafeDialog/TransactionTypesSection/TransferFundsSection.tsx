@@ -97,7 +97,7 @@ const TransferFundsSection = ({
         const chainName = getChainNameFromSafe(values.safe.profile.displayName);
         const baseUrl = getTxServiceBaseUrl(chainName);
         const response = await fetch(
-          `${baseUrl}api/v1/safes/${safeAddress}/balances/`,
+          `${baseUrl}/v1/safes/${safeAddress}/balances/`,
         );
         if (response.status === 200) {
           const data = await response.json();
@@ -112,15 +112,19 @@ const TransferFundsSection = ({
     }
   }, [values.safe, safeAddress]);
 
-  const selectedToken = values.transactions[transactionFormIndex].token;
+  const selectedTokenAddress =
+    values.transactions[transactionFormIndex].tokenAddress;
+  const selectedTokenDecimals =
+    values.transactions[transactionFormIndex].tokenDecimals;
+
   const selectedBalance = useMemo(
     () =>
       safeBalances?.find(
         (balance) =>
-          balance.tokenAddress === selectedToken?.address ||
-          (!balance.tokenAddress && selectedToken?.address === AddressZero),
+          balance.tokenAddress === selectedTokenAddress ||
+          (!balance.tokenAddress && selectedTokenAddress === AddressZero),
       ),
-    [safeBalances, selectedToken],
+    [safeBalances, selectedTokenAddress],
   );
   const selectedSafe = safes.find(
     (safe) => safe.contractAddress === values.safe?.profile?.walletAddress,
@@ -138,10 +142,8 @@ const TransferFundsSection = ({
   );
 
   useEffect(() => {
-    if (selectedToken && amount) {
-      const decimals = getTokenDecimalsWithFallback(
-        selectedToken && selectedToken.decimals,
-      );
+    if (selectedTokenDecimals && amount) {
+      const decimals = getTokenDecimalsWithFallback(selectedTokenDecimals);
       const convertedAmount = bigNumberify(moveDecimal(amount, decimals));
       const safeBalance = bigNumberify(selectedBalance?.balance || 0);
 
@@ -156,7 +158,7 @@ const TransferFundsSection = ({
     }
   }, [
     amount,
-    selectedToken,
+    selectedTokenDecimals,
     selectedBalance,
     transactionFormIndex,
     handleCustomAmountError,
@@ -189,18 +191,16 @@ const TransferFundsSection = ({
     <>
       <DialogSection>
         <AmountBalances
-          values={values}
           selectedSafe={selectedSafe}
           safeBalances={safeBalances}
           disabledInput={disabledInput}
-          inputName={`transactions.${transactionFormIndex}.amount`}
-          selectorName={`transactions.${transactionFormIndex}.token`}
           maxButtonParams={{
             fieldName: `transactions.${transactionFormIndex}.amount`,
             maxAmount: `${formattedSafeBalance}`,
             setFieldValue,
           }}
           customAmountError={customAmountError}
+          transactionFormIndex={transactionFormIndex}
         />
       </DialogSection>
       <DialogSection>

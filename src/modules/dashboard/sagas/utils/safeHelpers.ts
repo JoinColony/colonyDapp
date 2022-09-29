@@ -121,7 +121,10 @@ export const getForeignBridgeMock = () => {
   return undefined;
 };
 
-const getErc721 = (safe: ColonySafe, erc721Address: Address) => {
+const getErc721 = (
+  safe: Omit<ColonySafe, 'safeName'>,
+  erc721Address: Address,
+) => {
   const foreignProvider = getForeignProvider(safe);
 
   return new ethers.Contract(
@@ -131,7 +134,10 @@ const getErc721 = (safe: ColonySafe, erc721Address: Address) => {
   );
 };
 
-const getTokenInterface = async (safe: ColonySafe, tokenAddress: Address) => {
+const getTokenInterface = async (
+  safe: Omit<ColonySafe, 'safeName'>,
+  tokenAddress: Address,
+) => {
   const foreignProvider = getForeignProvider(safe);
   const tokenClient = await getTokenClient(tokenAddress, foreignProvider);
   return tokenClient.interface;
@@ -180,7 +186,7 @@ export const getRawTransactionData = (
 
 export const getTransferNFTData = (
   zodiacBridgeModule: Contract,
-  safe: ColonySafe,
+  safe: Omit<ColonySafe, 'safeName'>,
   transaction: SafeTransaction,
 ) => {
   const safeAddress = onLocalDevEnvironment
@@ -218,7 +224,7 @@ export const getTransferNFTData = (
 
 export const getTransferFundsData = async (
   zodiacBridgeModule: Contract,
-  safe: ColonySafe,
+  safe: Omit<ColonySafe, 'safeName'>,
   transaction: SafeTransaction,
 ) => {
   const safeAddress = onLocalDevEnvironment
@@ -226,7 +232,7 @@ export const getTransferFundsData = async (
     : safe.contractAddress;
   const tokenAddress = onLocalDevEnvironment
     ? LOCAL_SAFE_TOKEN_ADDRESS
-    : transaction.token.address;
+    : transaction.tokenAddress;
 
   if (!safeAddress) {
     throw new Error('LOCAL_SAFE_ADDRESS not set in .env.');
@@ -240,7 +246,7 @@ export const getTransferFundsData = async (
 
   const getAmount = (): number => {
     if (isSafeNativeToken) {
-      return moveDecimal(transaction.amount, transaction.token.decimals);
+      return moveDecimal(transaction.amount, transaction.tokenDecimals);
     }
     return 0;
   };
@@ -252,10 +258,9 @@ export const getTransferFundsData = async (
 
     const tansferAmount = moveDecimal(
       transaction.amount,
-      transaction.token.decimals,
+      transaction.tokenDecimals,
     );
-    return TokenInterface.functions.transferFrom.encode([
-      safeAddress,
+    return TokenInterface.functions.transfer.encode([
       transaction.recipient.profile.walletAddress,
       tansferAmount,
     ]);

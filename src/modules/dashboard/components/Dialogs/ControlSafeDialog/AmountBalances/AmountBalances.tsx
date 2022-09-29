@@ -4,43 +4,32 @@ import { AddressZero } from 'ethers/constants';
 import classnames from 'classnames';
 import { useField } from 'formik';
 
-import EthUsd from '~core/EthUsd';
 import Input, { MaxButtonParams } from '~core/Fields/Input';
 import TokenSymbolSelector from '~core/Fields/TokenSymbolSelector';
-import { FormValues as ControlSafeFormValues } from '~dashboard/Dialogs/ControlSafeDialog';
 
 import { ColonySafe } from '~data/generated';
 import {
+  BINANCE_NETWORK,
   DEFAULT_TOKEN_DECIMALS,
   ETHEREUM_NETWORK,
   SAFE_NETWORKS,
 } from '~constants';
+import { AnyToken } from '~data/index';
 
 import styles from '~core/Fields/AmountTokens/AmountTokens.css';
 
-export interface SafeToken {
-  name: string;
-  decimals: number;
-  symbol: string;
-  address: string;
-  networkName?: string;
-  logoUri?: string;
-}
-
 export interface SafeBalance {
   balance: number;
-  tokenAddress?: string;
-  token?: SafeToken;
+  tokenAddress: string | null;
+  token: AnyToken | null;
 }
 
 interface Props {
   safeBalances: SafeBalance[];
   disabledInput: boolean;
-  values: ControlSafeFormValues;
   selectedSafe: ColonySafe | undefined;
+  transactionFormIndex: number;
   customAmountError?: MessageDescriptor | string;
-  inputName?: string;
-  selectorName?: string;
   maxButtonParams?: MaxButtonParams;
 }
 
@@ -58,59 +47,57 @@ const MSG = defineMessages({
 const displayName = 'AmountBalances';
 
 const AmountBalances = ({
-  values,
   customAmountError,
   selectedSafe,
   safeBalances,
   disabledInput,
-  inputName,
-  selectorName,
+  transactionFormIndex,
   maxButtonParams,
 }: Props) => {
-  const [, { value: selectorValue }, { setValue }] = useField(
-    selectorName || 'token',
+  const [, { value: tokenAddress }, { setValue: setTokenAddress }] = useField(
+    `transactions.${transactionFormIndex}.tokenAddress`,
   );
-  const tokens: SafeToken[] = safeBalances.map((balance) => {
+  const [, , { setValue: setTokenDecimals }] = useField(
+    `transactions.${transactionFormIndex}.tokenDecimals`,
+  );
+
+  const tokens: AnyToken[] = safeBalances.map((balance) => {
+    // If selected safe balance uses an ERC20 token
     if (balance.token && balance.tokenAddress) {
       return {
         ...balance.token,
         address: balance.tokenAddress,
       };
     }
-    const currentNetworkData = SAFE_NETWORKS.find(
+    // Otherwise retrieve the safe chain's native token
+    const safeNetworkData = SAFE_NETWORKS.find(
       (network) => Number(selectedSafe?.chainId) === network.chainId,
     );
     const getNetworkName = () => {
-      switch (currentNetworkData?.chainId) {
-        case 100:
-          return 'xdai';
-        case 43114:
-          return 'avalanchec';
-        case 56:
-          return 'binance';
-        default:
-          return (
-            currentNetworkData?.name.toLowerCase() ||
-            ETHEREUM_NETWORK.name.toLowerCase()
-          );
+      if (safeNetworkData?.chainId === BINANCE_NETWORK.chainId) {
+        return 'binance';
       }
+      return (
+        safeNetworkData?.name.toLowerCase() ||
+        ETHEREUM_NETWORK.name.toLowerCase()
+      );
     };
 
     return {
-      ...(currentNetworkData?.nativeToken || ETHEREUM_NETWORK.nativeToken),
+      ...(safeNetworkData?.nativeToken || ETHEREUM_NETWORK.nativeToken),
       address: AddressZero,
       networkName: getNetworkName(),
     };
   });
   const selectedTokenInfo = tokens.find(
-    (token) => token.address === selectorValue,
+    (token) => token.address === tokenAddress,
   );
 
   useEffect(() => {
-    if (!selectorValue && tokens[0]) {
-      setValue(tokens[0]);
+    if (!tokenAddress && tokens[0]) {
+      setTokenAddress(tokens[0].address);
     }
-  }, [selectorName, selectorValue, tokens, setValue]);
+  }, [tokenAddress, tokens, setTokenAddress]);
 
   return (
     <div className={styles.tokenAmount}>
@@ -121,7 +108,7 @@ const AmountBalances = ({
       >
         <Input
           label={MSG.amount}
-          name={inputName || 'amount'}
+          name={`transactions.${transactionFormIndex}.amount`}
           appearance={{
             theme: 'minimal',
             align: 'right',
@@ -147,31 +134,18 @@ const AmountBalances = ({
           <TokenSymbolSelector
             label={MSG.token}
             tokens={tokens}
-            name={selectorName || 'token'}
+            name={`transactions.${transactionFormIndex}.tokenAddress`}
             elementOnly
             appearance={{ alignOptions: 'right', theme: 'grey' }}
             disabled={disabledInput}
-            isSafeToken
+            onChange={(value) => {
+              const selectedToken = tokens.find(
+                (token) => token.address === value,
+              );
+              setTokenDecimals(selectedToken?.decimals);
+            }}
           />
         </div>
-        {values[inputName || 'amount'] === AddressZero && (
-          <div className={styles.tokenAmountUsd}>
-            <EthUsd
-              appearance={{ theme: 'grey' }}
-              value={
-                /*
-                 * @NOTE Set value to 0 if amount is only the decimal point
-                 * Just entering the decimal point will pass it through to EthUsd
-                 * and that will try to fetch the balance for, which, obviously, will fail
-                 */
-                values[inputName || 'amount'] &&
-                values[inputName || 'amount'] !== '.'
-                  ? values[inputName || 'amount']
-                  : '0'
-              }
-            />
-          </div>
-        )}
       </div>
     </div>
   );
