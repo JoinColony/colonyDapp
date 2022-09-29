@@ -45,7 +45,7 @@ import { vestingResolvers } from './resolvers/vesting';
  */
 import { stakesResolvers } from './resolvers/stakes';
 
-import { FixedToken } from '../types';
+import { FixedToken, SafeBalanceToken } from '../types';
 
 type ResolverFactory = (context?: any) => Resolvers;
 
@@ -112,13 +112,13 @@ export type AnyTokens = (
   | UserToken
 )[];
 
-// Almost all tokens with 'address' and 'iconHash'
 export type AnyToken =
   | ColonyTokens[0]
   | UserTokens[0]
   | OneToken
   | FixedToken
-  | UserToken;
+  | UserToken
+  | SafeBalanceToken;
 
 export type TransactionMessage = TransactionMessageFragment;
 export type TransactionsMessagesCount = TransactionMessagesCountQuery['transactionMessagesCount'];
