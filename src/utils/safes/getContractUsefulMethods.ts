@@ -88,11 +88,11 @@ const extractUsefulMethods = (abi: AbiItem[]): AbiItemExtended[] => {
     });
 };
 
-const isAbiItem = (value: unknown): value is AbiItem[] => {
-  return (
+export const isAbiItem = (value: unknown): value is AbiItem[] => {
+  const test =
     Array.isArray(value) &&
-    value.every((element) => typeof element === 'object')
-  );
+    value.every((element) => typeof element === 'object');
+  return test;
 };
 
 export const getContractUsefulMethods = (contractABI: string | undefined) => {
