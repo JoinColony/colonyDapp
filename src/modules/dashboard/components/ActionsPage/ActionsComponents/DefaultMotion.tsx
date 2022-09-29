@@ -7,7 +7,6 @@ import Decimal from 'decimal.js';
 import { ROOT_DOMAIN_ID, ColonyRoles } from '@colony/colony-js';
 
 import Numeral from '~core/Numeral';
-import { CommentInput } from '~core/Comment';
 import Heading from '~core/Heading';
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
@@ -15,11 +14,6 @@ import MemberReputation from '~core/MemberReputation';
 import ProgressBar from '~core/ProgressBar';
 import { ActionButton } from '~core/Button';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
-import ActionsPageFeed, {
-  ActionsPageFeedItemWithIPFS,
-  SystemMessage,
-} from '~dashboard/ActionsPageFeed';
-import ActionPageDecisionWithIPFS from '~dashboard/ActionsPage/ActionPageDecisionWithIPFS';
 import { getFormattedTokenValue } from '~utils/tokens';
 import {
   getUpdatedDecodedMotionRoles,
@@ -38,11 +32,7 @@ import {
   ColonyActionQuery,
   TokenInfoQuery,
   AnyUser,
-  useMotionsSystemMessagesQuery,
-  useEventsForMotionQuery,
-  useMotionObjectionAnnotationQuery,
   useStakeAmountsForMotionQuery,
-  useUser,
   useVotingStateQuery,
   useMotionStatusQuery,
   OneDomain,
@@ -60,6 +50,7 @@ import FinalizeMotionAndClaimWidget, {
 } from '../FinalizeMotionAndClaimWidget';
 import VoteResults from '../FinalizeMotionAndClaimWidget/VoteResults';
 import CountDownTimer from '../CountDownTimer';
+import ActionPageMotionContent from '../ActionPageMotionContent';
 
 import styles from './DefaultAction.css';
 import motionSpecificStyles from './DefaultMotion.css';
@@ -99,9 +90,7 @@ const DefaultMotion = ({
   colony: { domains, colonyAddress },
   colony,
   colonyAction: {
-    events = [],
     actionType,
-    annotationHash,
     colonyDisplayName,
     amount,
     motionDomain,
@@ -155,20 +144,7 @@ const DefaultMotion = ({
     walletAddress,
     ethereal,
   } = useLoggedInUser();
-  const userHasProfile = currentUserName && !ethereal;
-
-  const { data: motionsSystemMessagesData } = useMotionsSystemMessagesQuery({
-    variables: {
-      motionId,
-      colonyAddress: colony.colonyAddress,
-    },
-    fetchPolicy: 'network-only',
-  });
-
-  const { data: motionEventsData } = useEventsForMotionQuery({
-    variables: { colonyAddress: colony.colonyAddress, motionId },
-    fetchPolicy: 'network-only',
-  });
+  const userHasProfile = !!(currentUserName && !ethereal);
 
   const { data: motionStakeData } = useStakeAmountsForMotionQuery({
     variables: {
@@ -229,14 +205,6 @@ const DefaultMotion = ({
   );
   const currentStake = totalNayStake.add(totalYayStake).toString();
   const isFullyNayStaked = totalNayStake.gte(requiredStake);
-
-  const { data: objectionAnnotation } = useMotionObjectionAnnotationQuery({
-    variables: {
-      motionId,
-      colonyAddress: colony.colonyAddress,
-    },
-    fetchPolicy: 'network-only',
-  });
 
   const { data: votingStateData } = useVotingStateQuery({
     variables: { colonyAddress: colony.colonyAddress, motionId },
@@ -388,10 +356,6 @@ const DefaultMotion = ({
     motionState === MotionState.Failed ||
     motionState === MotionState.FailedNotFinalizable;
 
-  const objectionAnnotationUser = useUser(
-    objectionAnnotation?.motionObjectionAnnotation?.address || '',
-  );
-
   const { formatMessage } = useIntl();
   useTitle(
     `${formatMessage(
@@ -406,114 +370,6 @@ const DefaultMotion = ({
       isDecision ? false : !shouldDisplayMotion(currentStake, requiredStake),
     [currentStake, isDecision, requiredStake],
   );
-
-  const pageFeedContent = useMemo(() => {
-    const heading = isDecision ? (
-      <ActionPageDecisionWithIPFS
-        colony={colony}
-        user={initiator}
-        username={currentUserName || ''}
-        walletAddress={walletAddress}
-        createdAt={createdAt}
-        hash={annotationHash || ''}
-      />
-    ) : (
-      <h1 className={styles.heading} data-test="actionHeading">
-        <FormattedMessage
-          id={roleMessageDescriptorId || 'motion.title'}
-          values={{
-            ...actionAndEventValues,
-            fromDomainName: actionAndEventValues.fromDomain?.name,
-            toDomainName: actionAndEventValues.toDomain?.name,
-            roles: roleTitle,
-          }}
-        />
-      </h1>
-    );
-
-    const objectionAnnotationContent = isDecision
-      ? objectionAnnotation?.motionObjectionAnnotation?.metadata && (
-          <div className={motionSpecificStyles.annotation}>
-            <ActionPageDecisionWithIPFS
-              colony={colony}
-              user={objectionAnnotationUser}
-              username={currentUserName || ''}
-              walletAddress={walletAddress}
-              createdAt={createdAt}
-              hash={objectionAnnotation?.motionObjectionAnnotation?.metadata}
-              isObjection
-            />
-          </div>
-        )
-      : objectionAnnotation?.motionObjectionAnnotation?.metadata && (
-          <div className={motionSpecificStyles.annotation}>
-            <ActionsPageFeedItemWithIPFS
-              colony={colony}
-              user={objectionAnnotationUser}
-              annotation
-              hash={objectionAnnotation.motionObjectionAnnotation.metadata}
-              appearance={{ theme: 'danger' }}
-            />
-          </div>
-        );
-
-    const actionFeed = (
-      <>
-        <ActionsPageFeed
-          actionType={actionType}
-          transactionHash={transactionHash as string}
-          networkEvents={[
-            ...events,
-            ...(motionEventsData?.eventsForMotion || []),
-          ]}
-          systemMessages={
-            // eslint-disable-next-line max-len
-            motionsSystemMessagesData?.motionsSystemMessages as SystemMessage[]
-          }
-          values={actionAndEventValues}
-          actionData={colonyAction}
-          colony={colony}
-          rootHash={rootHash || undefined}
-        />
-        {userHasProfile && (
-          <div ref={bottomElementRef} className={styles.commentBox}>
-            <CommentInput
-              transactionHash={transactionHash}
-              colonyAddress={colony.colonyAddress}
-            />
-          </div>
-        )}
-      </>
-    );
-    return (
-      <>
-        {heading}
-        {objectionAnnotationContent}
-        {actionFeed}
-      </>
-    );
-  }, [
-    actionAndEventValues,
-    actionType,
-    annotationHash,
-    colony,
-    colonyAction,
-    createdAt,
-    currentUserName,
-    events,
-    initiator,
-    isDecision,
-    motionEventsData,
-    motionsSystemMessagesData,
-    objectionAnnotation,
-    objectionAnnotationUser,
-    roleMessageDescriptorId,
-    roleTitle,
-    rootHash,
-    transactionHash,
-    userHasProfile,
-    walletAddress,
-  ]);
 
   return (
     <div className={styles.main}>
@@ -566,6 +422,7 @@ const DefaultMotion = ({
                   }}
                 />
               </div>
+
               <QuestionMarkTooltip
                 tooltipText={MSG.votingProgressBarTooltip}
                 className={motionSpecificStyles.helpProgressBar}
@@ -618,7 +475,24 @@ const DefaultMotion = ({
       </div>
       <hr className={styles.dividerTop} />
       <div className={styles.container}>
-        <div className={styles.content}>{pageFeedContent}</div>
+        <div className={styles.content}>
+          <ActionPageMotionContent
+            colony={colony}
+            colonyAction={colonyAction}
+            initiator={initiator}
+            isDecision={isDecision}
+            walletAddress={walletAddress}
+            actionAndEventValues={actionAndEventValues}
+            transactionHash={transactionHash}
+            roleTitle={roleTitle}
+            userHasProfile={userHasProfile}
+            bottomElementRef={bottomElementRef}
+            motionId={motionId}
+            createdAt={createdAt}
+            currentUserName={currentUserName}
+            roleMessageDescriptorId={roleMessageDescriptorId}
+          />
+        </div>
         <div className={styles.details}>
           {isStakingPhase && (
             <StakingWidgetFlow
