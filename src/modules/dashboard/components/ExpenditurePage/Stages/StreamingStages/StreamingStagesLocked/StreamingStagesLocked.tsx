@@ -203,7 +203,7 @@ const StreamingStagesLocked = ({
               className={classNames(styles.iconButton, {
                 [styles.cancelIcon]: motion?.status !== MotionStatus.Pending,
                 [styles.iconButtonDisabled]:
-                  motion?.status === MotionStatus.Pending,
+                  motion?.status === MotionStatus.Pending || isCancelled,
               })}
               onClick={handleCancelExpenditure}
               disabled={isCancelled || motion?.status === MotionStatus.Pending}
@@ -268,7 +268,7 @@ const StreamingStagesLocked = ({
           <FormattedMessage {...MSG.paidToDate} />
         </span>
         <div className={styles.valueWrapper}>
-          {status === Status.StartedStream && paidToDate ? (
+          {(status === Status.StartedStream || isCancelled) && paidToDate ? (
             paidToDate.map((paidToDateItem, index) => {
               const token = colony?.tokens?.find(
                 (tokenItem) => tokenItem.address === paidToDateItem.token,
@@ -306,7 +306,7 @@ const StreamingStagesLocked = ({
       </div>
       {activeStateId === Stage.Released &&
         availableToClaim &&
-        status === Status.StartedStream && (
+        (status === Status.StartedStream || isCancelled) && (
           <FormSection appearance={{ border: 'top' }}>
             <div
               className={classNames(styles.stagesRow, styles.borderBottom, {
