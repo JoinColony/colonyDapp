@@ -36,7 +36,7 @@
   margin-bottom: 10px;
 }
 
-.balanceLoading,
+.spinner,
 .balanceError {
   display: flex;
   justify-content: center;

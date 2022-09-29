@@ -167,7 +167,7 @@ const TransferFundsSection = ({
   if (isLoadingBalances) {
     return (
       <DialogSection>
-        <div className={styles.balanceLoading}>
+        <div className={styles.spinner}>
           <SpinnerLoader
             appearance={{ size: 'medium' }}
             loadingText={MSG.balancesLoading}
