@@ -334,6 +334,9 @@ const StreamingStagesLocked = ({
                   const token = colony?.tokens?.find(
                     (tokenItem) => tokenItem.address === availableItem.token,
                   );
+                  if (!token) {
+                    return null;
+                  }
 
                   if (!token) {
                     return null;
