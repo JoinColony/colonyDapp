@@ -45,7 +45,7 @@ const MSG = defineMessages({
   },
   noSafeSelected: {
     id: `dashboard.ControlSafeDialog.ControlSafeForm.ContractInteractionSection.noSafeSelected`,
-    defaultMessage: 'You must select a safe first',
+    defaultMessage: `You must select a safe before fetching the contract's ABI`,
   },
 });
 
