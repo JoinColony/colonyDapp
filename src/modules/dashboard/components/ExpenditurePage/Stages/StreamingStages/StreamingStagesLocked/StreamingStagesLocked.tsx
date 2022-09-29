@@ -201,14 +201,15 @@ const StreamingStagesLocked = ({
             </Button>
             <Button
               className={classNames(styles.iconButton, {
-                [styles.cancelIcon]: motion?.status !== MotionStatus.Pending,
+                [styles.cancelIcon]:
+                  motion?.status !== MotionStatus.Pending || isCancelled,
                 [styles.iconButtonDisabled]:
                   motion?.status === MotionStatus.Pending || isCancelled,
               })}
               onClick={handleCancelExpenditure}
               disabled={isCancelled || motion?.status === MotionStatus.Pending}
             >
-              {motion?.status === MotionStatus.Pending ? (
+              {motion?.status === MotionStatus.Pending || isCancelled ? (
                 <Icon
                   name="circle-minus"
                   appearance={{ size: 'normal' }}
