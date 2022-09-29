@@ -5,18 +5,8 @@ import classNames from 'classnames';
 // import { useParams } from 'react-router';
 import Button from '~core/Button';
 import { FormSection } from '~core/Fields';
-import { Tooltip } from '~core/Popover';
-import Icon from '~core/Icon';
-import { useDialog } from '~core/Dialog';
-import { useColonyFromNameQuery } from '~data/generated';
-import CancelStreamingDialog from '~dashboard/Dialogs/CancelStreamingDialog';
 
 import styles from './StreamingStages.css';
-import { useParams } from 'react-router';
-import { useColonyFromNameQuery } from '~data/generated';
-import { useDialog } from '~core/Dialog';
-import CancelStreamingDialog from '~dashboard/Dialogs/CancelStreamingDialog';
-// import { useColonyFromNameQuery } from '~data/generated';
 
 const MSG = defineMessages({
   draft: {
@@ -39,14 +29,6 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Stages.StreamingStages.notStarted',
     defaultMessage: 'Not started',
   },
-  openModal: {
-    id: 'dashboard.ExpenditurePage.Stages.StreamingStages.openModal',
-    defaultMessage: 'Open modal',
-  },
-  tooltipOpenModalText: {
-    id: 'dashboard.ExpenditurePage.Stages.StreamingStages.tooltipOpenModalText',
-    defaultMessage: 'Cancel Streaming Payment',
-  },
 });
 
 const displayName = 'dashboard.ExpenditurePage.Stages.StreamingStages';
@@ -62,22 +44,6 @@ export interface Props {
 }
 
 const StreamingStages = ({ handleSaveDraft }: Props) => {
-  const { colonyName } = useParams<{
-    colonyName: string;
-  }>();
-  const { data: colonyData } = useColonyFromNameQuery({
-    variables: { name: colonyName, address: '' },
-  });
-
-  const openCancelStreamingDialog = useDialog(CancelStreamingDialog);
-
-  const handleCancelStreaming = () =>
-    colonyData &&
-    openCancelStreamingDialog({
-      onCancelStreaming: () => console.log('cancel expenditure'),
-      colony: colonyData.processedColony,
-      isVotingExtensionEnabled: true, // temporary value
-    });
   return (
     <div className={styles.stagesWrapper}>
       <FormSection appearance={{ border: 'bottom' }}>
@@ -94,31 +60,6 @@ const StreamingStages = ({ handleSaveDraft }: Props) => {
               }}
             />
           </span>
-          <Button className={styles.iconButton} onClick={handleCancelStreaming}>
-            <Tooltip
-              placement="top-start"
-              content={<FormattedMessage {...MSG.tooltipOpenModalText} />}
-              popperOptions={{
-                modifiers: [
-                  {
-                    name: 'offset',
-                    options: {
-                      offset: [0, 14],
-                    },
-                  },
-                ],
-              }}
-            >
-              <div className={styles.iconWrapper}>
-                <Icon
-                  name="circle-minus"
-                  title={MSG.openModal}
-                  appearance={{ size: 'normal' }}
-                  style={{ fill: styles.iconColor }}
-                />
-              </div>
-            </Tooltip>
-          </Button>
           <Button
             text={MSG.startStream}
             onClick={handleSaveDraft}
