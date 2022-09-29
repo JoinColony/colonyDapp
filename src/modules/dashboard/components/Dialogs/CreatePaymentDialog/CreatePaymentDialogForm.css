@@ -26,6 +26,7 @@
 }
 
 .domainPotBalance, .networkFee {
+  height: 0px;
   position: relative;
   bottom: 14px;
   font-size: var(--size-tiny);
