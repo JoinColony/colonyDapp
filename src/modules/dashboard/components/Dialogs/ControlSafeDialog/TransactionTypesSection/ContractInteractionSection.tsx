@@ -50,7 +50,7 @@ const MSG = defineMessages({
   },
 });
 
-const displayName = `dashboard.ControlSafeDialog.ControlSafeForm.ContractInteractionSection`;
+const displayName = `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection`;
 
 interface Props {
   disabledInput: boolean;
