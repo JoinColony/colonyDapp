@@ -55,11 +55,11 @@ const MSG = defineMessages({
   },
   noNftsFound: {
     id: `dashboard.ControlSafeDialog.TransferNFTSection.noNftsFound`,
-    defaultMessage: 'No NFTs found.',
+    defaultMessage: 'No NFTs found',
   },
   nftLoading: {
     id: `dashboard.ControlSafeDialog.TransferNFTSection.nftLoading`,
-    defaultMessage: 'Loading NFTs.',
+    defaultMessage: 'Loading NFTs',
   },
   nftError: {
     id: `dashboard.ControlSafeDialog.TransferNFTSection.nftError`,
@@ -198,7 +198,10 @@ const TransferNFTSection = ({
     return (
       <DialogSection>
         <div className={styles.loading}>
-          <SpinnerLoader loadingText={MSG.nftLoading} />
+          <SpinnerLoader
+            appearance={{ size: 'medium' }}
+            loadingText={MSG.nftLoading}
+          />
         </div>
       </DialogSection>
     );
