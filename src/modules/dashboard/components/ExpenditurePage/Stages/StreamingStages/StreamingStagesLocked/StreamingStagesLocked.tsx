@@ -256,11 +256,14 @@ const StreamingStagesLocked = ({
                 (tokenItem) => tokenItem.address === paidToDateItem.token,
               );
 
+              if (!token) {
+                return null;
+              }
+
               return (
                 <div
                   className={classNames(styles.value, {
-                    [styles.marginBottom]:
-                      paidToDate.length > 1 && index !== paidToDate.length - 1,
+                    [styles.marginTop]: index > 0,
                   })}
                   key={paidToDateItem.id}
                 >
@@ -303,13 +306,14 @@ const StreamingStagesLocked = ({
                   const token = colony?.tokens?.find(
                     (tokenItem) => tokenItem.address === availableItem.token,
                   );
+                  if (!token) {
+                    return null;
+                  }
 
                   return (
                     <span
                       className={classNames(styles.value, {
-                        [styles.marginBottom]:
-                          availableToClaim.length > 1 &&
-                          index !== availableToClaim.length - 1,
+                        [styles.marginTop]: index > 0,
                       })}
                       key={availableItem.id}
                     >
