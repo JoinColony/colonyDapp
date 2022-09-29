@@ -166,6 +166,14 @@
   color: var(--primary);
 }
 
+.container :global(.react-datepicker__day--outside-month) {
+  color: var(--text-disabled);
+}
+
+.container :global(.react-datepicker__day--keyboard-selected) {
+  background-color: white;
+}
+
 .container :global(.react-datepicker__day--selected) {
   background-color: var(--primary);
   color: white;
@@ -176,12 +184,13 @@
   }
 }
 
-.container :global(.react-datepicker__day--outside-month) {
-  color: var(--text-disabled);
+/** Days before minDate */
+.container :global(.react-datepicker__day)[aria-disabled='true'] {
+  color: var(--temp-grey-6);
 }
 
-.container :global(.react-datepicker__day--keyboard-selected) {
-  background-color: white;
+.beforeMinDateDay {
+  height: 20px;
 }
 
 .timePicker {
