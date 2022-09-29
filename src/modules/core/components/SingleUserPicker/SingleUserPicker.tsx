@@ -4,6 +4,7 @@ import compose from 'recompose/compose';
 import classnames from 'classnames';
 
 import { useField } from 'formik';
+import { isAddress } from '@colony/colony-js/lib/utils';
 import { AnyUser } from '~data/index';
 import { Address, SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
@@ -235,7 +236,8 @@ const SingleUserPicker = ({
                   {value.profile.displayName ||
                     value.profile.username ||
                     value.profile.walletAddress}
-                  {showMaskedAddress && (
+                  {/* eslint-disable-next-line max-len */}
+                  {showMaskedAddress && isAddress(value.profile.walletAddress) && (
                     <span className={styles.maskedAddress}>
                       <MaskedAddress address={value.profile.walletAddress} />
                     </span>
