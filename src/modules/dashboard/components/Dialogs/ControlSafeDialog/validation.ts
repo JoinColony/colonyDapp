@@ -166,7 +166,16 @@ export const getValidationSchema = (
         }),
         amount: yup.number().when('transactionType', {
           is: (transactionType) =>
-            transactionType === TransactionTypes.TRANSFER_FUNDS ||
+            transactionType === TransactionTypes.TRANSFER_FUNDS,
+          then: yup
+            .number()
+            .transform((value) => toFinite(value))
+            .required(() => MSG.requiredFieldError)
+            .moreThan(0, () => MSG.gtZeroError),
+          otherwise: false,
+        }),
+        rawAmount: yup.number().when('transactionType', {
+          is: (transactionType) =>
             transactionType === TransactionTypes.RAW_TRANSACTION,
           then: yup
             .number()

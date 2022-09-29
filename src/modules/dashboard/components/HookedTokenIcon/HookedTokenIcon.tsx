@@ -8,7 +8,6 @@ import { AnyToken, TokenInfoQuery } from '~data/index';
 import { Address } from '~types/index';
 import Icon from '~core/Icon';
 import { getBase64image } from '~utils/dataReader';
-import { SafeToken } from '~dashboard/Dialogs/ControlSafeDialog/AmountBalances';
 
 import { DEFAULT_NETWORK } from '~constants';
 import { TOKEN_LOGOS_REPO } from '~externalUrls';
@@ -23,7 +22,7 @@ interface Response {
 
 interface Props {
   /** Token reference to display */
-  token: AnyToken | TokenInfoQuery['tokenInfo'] | SafeToken;
+  token: AnyToken | TokenInfoQuery['tokenInfo'];
 
   /** Is passed through to Avatar */
   className?: string;

@@ -457,7 +457,11 @@ const ControlSafeForm = ({
           text={showPreview ? MSG.buttonConfirm : MSG.buttonCreateTransaction}
           loading={isSubmitting}
           disabled={
-            !isValid || isSubmitting || !hasTitle || !!customAmountError || !dirty
+            !isValid ||
+            isSubmitting ||
+            !hasTitle ||
+            !!customAmountError ||
+            !dirty
           }
           style={{ width: styles.wideButton }}
         />
