@@ -9,6 +9,7 @@ import {
 import { ColonyRoles } from '@colony/colony-js';
 import Decimal from 'decimal.js';
 import { AddressZero } from 'ethers/constants';
+import { getDecisionDetailsFromResponse } from '@colony/colony-event-metadata-parser';
 
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import Numeral, { AbbreviatedNumeral } from '~core/Numeral';
@@ -137,7 +138,7 @@ const ActionsListItem = ({
 
   let title = '';
   if (data) {
-    const decision = JSON.parse(data);
+    const decision = getDecisionDetailsFromResponse(data) as DecisionDetails;
     title = decision?.title;
   }
 

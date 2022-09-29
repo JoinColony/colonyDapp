@@ -2,6 +2,10 @@ import React, { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
 import parse from 'html-react-parser';
+import {
+  getDecisionDetailsFromResponse,
+  getAnnotationMsgFromResponse,
+} from '@colony/colony-event-metadata-parser';
 
 import Heading from '~core/Heading';
 import CalloutCard from '~core/CalloutCard';
@@ -66,14 +70,15 @@ const ActionPageDecisionWithIPFS = ({
     }
     // @NOTE: Decision objection message is stored in the `annotationMessage` field
     if (isObjection) {
-      const objectionMessage = JSON.parse(ipfsDataJSON);
+      const objectionMessage = getAnnotationMsgFromResponse(ipfsDataJSON);
       return {
-        description: objectionMessage?.annotationMessage,
+        description: objectionMessage,
       } as DecisionDetails;
     }
 
-    // @TODO - add V2 IPFS support inc validation
-    const details: DecisionDetails = JSON.parse(ipfsDataJSON);
+    const details: DecisionDetails = getDecisionDetailsFromResponse(
+      ipfsDataJSON,
+    ) as DecisionDetails;
     return details;
   }, [ipfsDataJSON, isObjection]);
 
