@@ -39,7 +39,7 @@ const MSG = defineMessages({
 interface Props {
   stages: StageObject[];
   activeStageId?: string;
-  setActiveStateId: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setActiveStageId: React.Dispatch<React.SetStateAction<string | undefined>>;
   setFormValues: React.Dispatch<React.SetStateAction<ValuesType | undefined>>;
   colony: Colony;
   handleCancelExpenditure: () => void;
@@ -48,7 +48,7 @@ interface Props {
 const FormStages = ({
   stages,
   activeStageId,
-  setActiveStateId,
+  setActiveStageId,
   setFormValues,
   colony,
   handleCancelExpenditure,
@@ -88,7 +88,7 @@ const FormStages = ({
     colony,
     handleSubmit,
     openDraftConfirmDialog,
-    setActiveStateId,
+    setActiveStageId,
     setTouched,
     validateForm,
     values,
