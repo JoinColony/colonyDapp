@@ -1,4 +1,4 @@
-export { validateType } from './contractParserValidation';
+export { validateType, getArrayFromString } from './contractParserValidation';
 export {
   getContractUsefulMethods,
   AbiItemExtended,
