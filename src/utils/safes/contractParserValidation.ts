@@ -58,7 +58,7 @@ const isIntSafe = (value: string, inputType: string) => {
   return isSafe;
 };
 
-const getArrayFromString = (array: string) => {
+export const getArrayFromString = (array: string) => {
   if (array === '[]') {
     return [];
   }
