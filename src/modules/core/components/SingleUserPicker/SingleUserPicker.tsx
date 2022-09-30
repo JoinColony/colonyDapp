@@ -194,6 +194,10 @@ const SingleUserPicker = ({
       ? placeholder
       : formatMessage(placeholder);
 
+  const isValidWalletAddress = value
+    ? isAddress(value?.profile.walletAddress)
+    : false;
+
   return (
     <div className={styles.omniContainer}>
       <OmniPickerWrapper className={getMainClasses(appearance, styles)}>
@@ -234,8 +238,7 @@ const SingleUserPicker = ({
                   {value.profile.displayName ||
                     value.profile.username ||
                     value.profile.walletAddress}
-                  {/* eslint-disable-next-line max-len */}
-                  {showMaskedAddress && isAddress(value.profile.walletAddress) && (
+                  {showMaskedAddress && isValidWalletAddress && (
                     <span className={styles.maskedAddress}>
                       <MaskedAddress address={value.profile.walletAddress} />
                     </span>
