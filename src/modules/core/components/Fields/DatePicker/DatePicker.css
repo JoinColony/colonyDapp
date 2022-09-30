@@ -160,6 +160,10 @@
     background-color: white;
     color: var(--dark);
   }
+
+  &:focus-visible {
+    outline-color: var(--primary);
+  }
 }
 
 .container :global(.react-datepicker__day--today) {

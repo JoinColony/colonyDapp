@@ -9,6 +9,7 @@ export const header: string;
 export const currentMonth: string;
 export const prevButton: string;
 export const nextButton: string;
+export const focusVisible: string;
 export const beforeMinDateDay: string;
 export const timePicker: string;
 export const timeButton: string;
