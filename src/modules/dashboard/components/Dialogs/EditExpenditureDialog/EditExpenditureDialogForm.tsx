@@ -17,10 +17,11 @@ import { useTransformer } from '~utils/hooks';
 import { Colony, useLoggedInUser } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/types';
 import { Recipient as RecipientType } from '~dashboard/ExpenditurePage/Payments/types';
+import { EDITING_LOCKED_PAYMENTS } from '~externalUrls';
 
 import { FormValuesType } from './EditExpenditureDialog';
-import ChangedRecipients from './ChnagedRecipients';
 import ChangedValues from './ChangedValues';
+import ChangedMultiple from './ChangedMultiple';
 import styles from './EditExpenditureDialogForm.css';
 
 export const MSG = defineMessages({
@@ -30,10 +31,10 @@ export const MSG = defineMessages({
   },
   descriptionText: {
     id: `dashboard.EditExpenditureDialog.EditExpenditureDialogForm.descriptionText`,
-    defaultMessage: `This Payment is currently Locked. Either a Motion, or a member with the Arbitration permission are required to make changes.`,
+    defaultMessage: `This Payment is currently Locked. Either a Motion, or a member with the Arbitration permission are required to make changes. <a>Learn more.</a>`,
   },
   descriptionLabel: {
-    id: `dashboard.EditExpenditureDialog.EditExpenditureDialogFormdescriptionLabel`,
+    id: `dashboard.EditExpenditureDialog.EditExpenditureDialogForm.descriptionLabel`,
     defaultMessage: `Explain why you're changing the payment (optional)`,
   },
   cancelText: {
@@ -124,28 +125,23 @@ const EditExpenditureDialogForm = ({
   }, [confirmedValues]);
 
   const newData = useMemo(() => {
-    const newRecipients = confirmedValuesWithIds.find(
-      (newValue) => newValue.key === 'recipients',
-    );
     const newValues = confirmedValuesWithIds.filter(
-      (newValue) => newValue.key !== 'recipients',
+      (newValue) => !Array.isArray(newValue.value),
     );
+    const newMultiple = confirmedValuesWithIds.filter((newValue) =>
+      Array.isArray(newValue.value),
+    );
+
     return {
-      newRecipients,
       newValues,
+      newMultiple,
     };
   }, [confirmedValuesWithIds]);
 
   return (
     <>
       <DialogSection>
-        <div
-          className={classNames(
-            styles.row,
-            styles.withoutPadding,
-            styles.forceRow,
-          )}
-        >
+        <div className={classNames(styles.withoutPadding, styles.forceRow)}>
           <MotionDomainSelect colony={colony} disabled={noChanges} />
           {canCancelExpenditure && isVotingExtensionEnabled && (
             <div className={styles.toggleContainer}>
@@ -161,7 +157,7 @@ const EditExpenditureDialogForm = ({
                     {
                       name: 'offset',
                       options: {
-                        offset: [-5, 6],
+                        offset: [4, 6],
                       },
                     },
                   ],
@@ -178,7 +174,21 @@ const EditExpenditureDialogForm = ({
           <FormattedMessage {...MSG.header} />
         </Heading>
         <div className={styles.descriptionWrapper}>
-          <FormattedMessage {...MSG.descriptionText} />
+          <FormattedMessage
+            {...MSG.descriptionText}
+            values={{
+              a: (chunks) => (
+                <a
+                  href={EDITING_LOCKED_PAYMENTS}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.link}
+                >
+                  {chunks}
+                </a>
+              ),
+            }}
+          />
         </div>
       </DialogSection>
       <div className={styles.contentWrapper}>
@@ -188,13 +198,14 @@ const EditExpenditureDialogForm = ({
           </div>
         ) : (
           <>
-            <ChangedRecipients
-              colony={colony}
-              newRecipients={newData.newRecipients?.value as any}
+            <ChangedMultiple
+              newValues={newData.newMultiple}
               oldValues={oldValues}
+              colony={colony}
             />
             <ChangedValues
-              newValues={newData.newValues as any}
+              newValues={newData.newValues}
+              oldValues={oldValues}
               colony={colony}
               discardChange={discardChange}
             />
@@ -204,9 +215,7 @@ const EditExpenditureDialogForm = ({
       <DialogSection appearance={{ theme: 'sidePadding' }}>
         <div className={styles.annotationsWrapper}>
           <Annotations
-            label={
-              values.forceAction ? MSG.forceTextareaLabel : MSG.descriptionLabel
-            }
+            label={MSG.descriptionLabel}
             name="annotationMessage"
             maxLength={90}
             disabled={noChanges}

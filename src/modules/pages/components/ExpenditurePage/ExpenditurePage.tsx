@@ -15,7 +15,7 @@ import { nanoid } from 'nanoid';
 import { RouteChildrenProps, useParams } from 'react-router';
 import { Formik, FormikErrors } from 'formik';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
-import { toFinite } from 'lodash';
+import { isEmpty, toFinite } from 'lodash';
 
 import LogsSection from '~dashboard/ExpenditurePage/LogsSection';
 import { useColonyFromNameQuery } from '~data/generated';
@@ -41,12 +41,12 @@ import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
 import Tag from '~core/Tag';
 import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
 import { initalMilestone } from '~dashboard/ExpenditurePage/Staged/constants';
+import { isBatchPaymentType } from '~dashboard/ExpenditurePage/Batch/utils';
+import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
 
 import { findDifferences, updateValues, setClaimDate } from './utils';
-import ExpenditureForm from './ExpenditureForm';
 import { ExpenditureTypes, ValuesType } from './types';
-import LockedSidebar from './LockedSidebar';
-import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
+import { ExpenditureForm, LockedSidebar } from '.';
 import styles from './ExpenditurePage.css';
 
 const displayName = 'pages.ExpenditurePage';
@@ -128,6 +128,14 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.milestoneAmountError',
     defaultMessage: 'Amount is required',
   },
+  amountError: {
+    id: 'dashboard.ExpenditurePage.amountError',
+    defaultMessage: 'Your file exceeds the max. of 400 entries.',
+  },
+  fileError: {
+    id: 'dashboard.ExpenditurePage.fileError',
+    defaultMessage: `File structure is incorrect, try again using the template.`,
+  },
 });
 
 const validationSchema = yup.object().shape({
@@ -207,6 +215,32 @@ const validationSchema = yup.object().shape({
         .min(2),
     }),
   }),
+  batch: yup.object().when('expenditure', {
+    is: (expenditure) => expenditure === ExpenditureTypes.Batch,
+    then: yup
+      .object()
+      .shape({
+        dataCSVUploader: yup.array().of(
+          yup.object().shape({
+            parsedData: yup
+              .array()
+              .min(1, () => MSG.fileError)
+              .max(400, () => MSG.amountError)
+              .test(
+                'valid-payment',
+                () => MSG.fileError,
+                (value) =>
+                  isEmpty(
+                    value?.filter(
+                      (payment: string) => !isBatchPaymentType(payment),
+                    ),
+                  ),
+              ),
+          }),
+        ),
+      })
+      .required(() => MSG.fileError),
+  }),
 });
 
 export interface State {
@@ -252,11 +286,11 @@ const ExpenditurePage = ({ match }: Props) => {
   }>();
   const [isFormEditable, setFormEditable] = useState(true);
   const [formValues, setFormValues] = useState<ValuesType>();
-  const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStateId, setActiveStateId] = useState<string>();
   const [status, setStatus] = useState<Status>();
   const [motion, setMotion] = useState<Motion>();
   const [inEditMode, setInEditMode] = useState(false);
+  const [shouldValidate, setShouldValidate] = useState(false);
   const oldValues = useRef<ValuesType>();
   const [pendingChanges, setPendingChanges] = useState<
     Partial<ValuesType> | undefined
@@ -297,13 +331,13 @@ const ExpenditurePage = ({ match }: Props) => {
         split: {
           ...initialValues.split,
           amount: {
-            tokenAddress: colonyData?.processedColony.nativeTokenAddress,
+            tokenAddress: colonyData?.processedColony?.nativeTokenAddress,
           },
         },
         staged: {
           ...initialValues.staged,
           amount: {
-            tokenAddress: colonyData?.processedColony.nativeTokenAddress,
+            tokenAddress: colonyData?.processedColony?.nativeTokenAddress,
           },
         },
       }
@@ -322,13 +356,14 @@ const ExpenditurePage = ({ match }: Props) => {
           recipients: undefined,
           staged: {
             ...values.staged,
-            milestones: values.staged.milestones?.map((milestone) => {
-              const amount = values.staged.amount.value;
+            milestones: values.staged?.milestones?.map((milestone) => {
+              const amount = values.staged?.amount?.value;
 
               const milestoneAmount =
                 amount &&
                 milestone?.percent &&
-                (milestone.percent / 100) * Number(values.staged.amount.value);
+                (milestone.percent / 100) *
+                  Number(values.staged?.amount?.value);
               return { ...milestone, amount: milestoneAmount };
             }),
           },
@@ -341,15 +376,15 @@ const ExpenditurePage = ({ match }: Props) => {
       if (values) {
         setFormValues({
           ...values,
-          recipients: values.recipients.map((reicpient) => {
+          recipients: values.recipients?.map((reicpient) => {
             return {
               ...reicpient,
-              claimDate: reicpient.delay.amount
+              claimDate: reicpient.delay?.amount
                 ? setClaimDate({
-                    amount: reicpient.delay.amount,
-                    time: reicpient.delay.time,
+                    amount: reicpient.delay?.amount,
+                    time: reicpient.delay?.time,
                   })
-                : new Date(),
+                : new Date().getTime(),
             };
           }),
         });
@@ -622,6 +657,7 @@ const ExpenditurePage = ({ match }: Props) => {
                   <ExpenditureForm
                     sidebarRef={sidebarRef.current}
                     colony={colonyData.processedColony}
+                    setShouldValidate={setShouldValidate}
                   />
                 </>
               )
@@ -675,7 +711,7 @@ const ExpenditurePage = ({ match }: Props) => {
             status={status}
             isCancelled={status === Status.Cancelled}
             pendingMotion={motion?.status === MotionStatus.Pending}
-            activeStateId={activeStateId}
+            activeState={states.find((state) => state.id === activeStateId)}
             handleReleaseMilestone={handleReleaseMilestone}
           />
         )}
@@ -705,6 +741,7 @@ const ExpenditurePage = ({ match }: Props) => {
               setActiveStateId={setActiveStateId}
               handleCancelExpenditure={handleCancelExpenditure}
               colony={colonyData.processedColony}
+              expenditureType={formValues?.expenditure}
             />
           )}
         </main>

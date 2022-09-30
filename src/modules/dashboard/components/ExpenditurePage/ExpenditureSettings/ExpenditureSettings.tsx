@@ -23,7 +23,7 @@ import styles from './ExpenditureSettings.css';
 export const MSG = defineMessages({
   type: {
     id: 'dashboard.ExpenditurePage.ExpenditureSettings.type',
-    defaultMessage: 'Expenditure type',
+    defaultMessage: 'Payment type',
   },
   team: {
     id: 'dashboard.ExpenditurePage.ExpenditureSettings.team',
@@ -49,7 +49,18 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.ExpenditureSettings.split',
     defaultMessage: 'Split',
   },
+  batch: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.batch',
+    defaultMessage: 'Batch',
+  },
 });
+
+const displayName = 'dashboard.ExpenditurePage.ExpenditureSettings';
+
+interface Props {
+  sidebarRef: HTMLElement | null;
+  colony: Colony;
+}
 
 const expeditureTypes = [
   {
@@ -64,14 +75,11 @@ const expeditureTypes = [
     label: MSG.staged,
     value: ExpenditureTypes.Staged,
   },
+  {
+    label: MSG.batch,
+    value: ExpenditureTypes.Batch,
+  },
 ];
-
-const displayName = 'dashboard.ExpenditurePage.ExpenditureSettings';
-
-interface Props {
-  sidebarRef: HTMLElement | null;
-  colony: Colony;
-}
 
 const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
   const { walletAddress, username } = useLoggedInUser();
