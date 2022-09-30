@@ -14,6 +14,7 @@ import Avatar from '~core/Avatar';
 import MaskedAddress from '~core/MaskedAddress';
 import { Colony, AnyUser } from '~data/index';
 import { AbiItemExtended } from '~utils/getContractUsefulMethods';
+import { getArrayFromString } from '~utils/safes';
 
 import AddressDetailsView from './TransactionPreview/AddressDetailsView';
 import { FormValues } from './ControlSafeDialog';
@@ -264,6 +265,28 @@ const SafeTransactionPreview = ({
     values.transactions[index].transactionType ===
     TransactionTypes.TRANSFER_NFT;
 
+  const getDetailsItemValue = (input, transaction) => {
+    switch (input.type) {
+      case 'address': {
+        return <MaskedAddress address={transaction[input.name]} />;
+      }
+      case 'address[]': {
+        const formattedArray = `[${getArrayFromString(
+          transaction[input.name],
+        ).join(', ')}]`;
+        return (
+          <div className={styles.rawTransactionValues}>{formattedArray}</div>
+        );
+      }
+      default:
+        return (
+          <div className={styles.rawTransactionValues}>
+            {transaction[input.name]}
+          </div>
+        );
+    }
+  };
+
   return (
     <>
       <DialogSection>
@@ -383,17 +406,10 @@ const SafeTransactionPreview = ({
                       key={nanoid()}
                       label={MSG.contractMethodInputLabel}
                       textValues={{ name: input.name, type: input.type }}
-                      value={
-                        input.type === 'address' ? (
-                          <MaskedAddress
-                            address={values.transactions[index][input.name]}
-                          />
-                        ) : (
-                          <div className={styles.rawTransactionValues}>
-                            {values.transactions[index][input.name]}
-                          </div>
-                        )
-                      }
+                      value={getDetailsItemValue(
+                        input,
+                        values.transactions[index],
+                      )}
                     />
                   ))}
               </div>
