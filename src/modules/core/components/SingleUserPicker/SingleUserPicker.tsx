@@ -194,9 +194,7 @@ const SingleUserPicker = ({
       ? placeholder
       : formatMessage(placeholder);
 
-  const isValidWalletAddress = value
-    ? isAddress(value?.profile.walletAddress)
-    : false;
+  const isValidWalletAddress = isAddress(value?.profile.walletAddress || '');
 
   return (
     <div className={styles.omniContainer}>
