@@ -117,7 +117,10 @@ export const getForeignBridgeMock = () => {
   return undefined;
 };
 
-const getErc721 = (safe: ColonySafe, erc721Address: Address) => {
+const getErc721 = (
+  safe: Omit<ColonySafe, 'safeName'>,
+  erc721Address: Address,
+) => {
   const foreignProvider = getForeignProvider(safe);
 
   return new ethers.Contract(
@@ -170,7 +173,7 @@ export const getRawTransactionData = (
 
 export const getTransferNFTData = (
   zodiacBridgeModule: Contract,
-  safe: ColonySafe,
+  safe: Omit<ColonySafe, 'safeName'>,
   transaction: SafeTransaction,
 ) => {
   const safeAddress = onLocalDevEnvironment
