@@ -1,6 +1,9 @@
+import { nanoid } from 'nanoid';
+
 export const initalMilestone = {
   name: undefined,
-  amount: 0,
+  amount: { value: 0 },
   percent: 0,
   released: false,
+  id: nanoid(),
 };

@@ -11,6 +11,8 @@ import Slider from '~core/Slider';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import { AnyToken } from '~data/index';
 
+import { Milestone as MilestoneType } from '../types';
+
 import styles from './Milestone.css';
 
 const MSG = defineMessages({
@@ -27,12 +29,7 @@ const MSG = defineMessages({
 const displayName = 'dashboard.ExpenditurePage.Staged.Milestone';
 
 interface Props {
-  milestone: {
-    id: string;
-    name: string;
-    percent: number;
-    amount: number;
-  };
+  milestone: MilestoneType;
   index: number;
   remove: FieldArrayRenderProps['remove'];
   token?: AnyToken;
@@ -40,8 +37,7 @@ interface Props {
   calculated: {
     sum: number;
     reserve: number;
-    remainingStake: Decimal[];
-    milestoneAmount: (number | '' | undefined)[];
+    remainingStake?: Decimal[];
   };
   name: string;
 }
@@ -54,10 +50,22 @@ const Milestone = ({
   calculated,
   name,
 }: Props) => {
-  const [, { value: milestones }] = useField<
-    { name: string; amount: number; percent: number; id: string }[]
-  >('staged.milestones');
+  const [, { value: milestone }] = useField<MilestoneType>(name);
+  const [, { value: milestoneAmount }, { setValue: setAmount }] = useField<
+    MilestoneType['amount']
+  >(`${name}.amount`);
   const [, { error }] = useField(name);
+
+  const handleChange = (val: number) => {
+    if (!amount || !val) {
+      return null;
+    }
+
+    return setAmount({
+      value: (Number(val) / 100) * Number(amount),
+      tokenAddress: token?.address,
+    });
+  };
 
   return (
     <FormSection appearance={{ border: 'bottom' }}>
@@ -68,7 +76,7 @@ const Milestone = ({
       >
         <div>
           <Input
-            name={name}
+            name={`${name}.name`}
             placeholder={MSG.placeholder}
             appearance={{ theme: 'underlined' }}
           />
@@ -82,12 +90,13 @@ const Milestone = ({
       </div>
       <div className={styles.sliderWrapper}>
         <Slider
-          value={milestones?.[index].percent || 0}
-          name={`staged.milestones[${index}].percent`}
-          limit={calculated.remainingStake[index]}
+          value={milestone?.percent || 0}
+          name={`${name}.percent`}
+          limit={calculated.remainingStake?.[index]}
           step={1}
           min={0}
           max={100}
+          onChange={handleChange}
           handleStyle={{
             height: 18,
             width: 18,
@@ -111,7 +120,7 @@ const Milestone = ({
             backgroundColor: 'transparent',
           }}
         />
-        <span className={styles.percent}>{milestones[index].percent}%</span>
+        <span className={styles.percent}>{milestone?.percent}%</span>
       </div>
       {token && amount && (
         <div className={styles.amountWrapper}>
@@ -121,7 +130,7 @@ const Milestone = ({
               token={token}
               name={token.name || token.address}
             />
-            <Numeral value={calculated.milestoneAmount[index] || 0} />
+            <Numeral value={milestoneAmount?.value || 0} />
             {token.symbol}
           </div>
         </div>

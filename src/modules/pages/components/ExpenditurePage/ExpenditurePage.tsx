@@ -183,7 +183,10 @@ const validationSchema = yup.object().shape({
               .number()
               .moreThan(0, () => MSG.amountZeroError)
               .required(),
-            amount: yup.number(),
+            amount: yup.object().shape({
+              value: yup.number(),
+              tokenAddress: yup.string().required(),
+            }),
           }),
         )
         .min(1)
@@ -353,28 +356,28 @@ const ExpenditurePage = ({ match }: Props) => {
         setActiveStateId(Stage.Draft);
       }
 
-      if (values.expenditure === ExpenditureTypes.Staged) {
-        const stagedValues = {
-          ...values,
-          recipients: undefined,
-          staged: {
-            ...values.staged,
-            milestones: values.staged?.milestones?.map((milestone) => {
-              const amount = values.staged?.amount?.value;
+      // if (values.expenditure === ExpenditureTypes.Staged) {
+      //   const stagedValues = {
+      //     ...values,
+      //     recipients: undefined,
+      //     staged: {
+      //       ...values.staged,
+      //       milestones: values.staged?.milestones?.map((milestone) => {
+      //         const amount = values.staged?.amount?.value;
 
-              const milestoneAmount =
-                amount &&
-                milestone?.percent &&
-                (milestone.percent / 100) *
-                  Number(values.staged?.amount?.value);
-              return { ...milestone, amount: milestoneAmount };
-            }),
-          },
-        };
+      //         const milestoneAmount =
+      //           amount &&
+      //           milestone?.percent &&
+      //           (milestone.percent / 100) *
+      //             Number(values.staged?.amount?.value);
+      //         return { ...milestone, amount: milestoneAmount };
+      //       }),
+      //     },
+      //   };
 
-        setFormValues(stagedValues as ValuesType);
-        return;
-      }
+      //   setFormValues(stagedValues as ValuesType);
+      //   return;
+      // }
 
       if (values) {
         setFormValues({

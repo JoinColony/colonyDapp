@@ -147,7 +147,7 @@ const LockedStaged = ({
                         token={token}
                         name={token.name || token.address}
                       />
-                      <Numeral value={milestone.amount || 0} />
+                      <Numeral value={milestone.amount?.value || 0} />
                       {token.symbol}
                     </>
                   )}
