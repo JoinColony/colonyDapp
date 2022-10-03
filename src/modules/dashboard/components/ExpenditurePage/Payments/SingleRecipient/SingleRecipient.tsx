@@ -1,5 +1,6 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { useField } from 'formik';
 
 import { FormSection } from '~core/Fields';
 import Icon from '~core/Icon';
@@ -8,9 +9,8 @@ import { Props as RecipientProps } from '~dashboard/ExpenditurePage/Recipient/Re
 import { ErrorDot } from '~dashboard/ExpenditurePage/ErrorDot';
 
 import CollapseExpandButtons from '../CollapseExpandButtons';
-import styles from '../Payments.css';
 import { Recipient as RecipientType } from '../types';
-import useErrorRecipientField from './useErrorRecipientField';
+import styles from '../Payments.css';
 
 const displayName = 'dashboard.ExpenditurePage.Payments.SingleRecipient';
 
@@ -23,9 +23,9 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Payments.SingleRecipient.deleteIconTitle',
     defaultMessage: 'Delete recipient',
   },
-  tooltipError: {
-    id: 'dashboard.ExpenditurePage.Payments.SingleRecipient.tooltipError',
-    defaultMessage: 'Delete recipient',
+  titleTooltipError: {
+    id: 'dashboard.ExpenditurePage.Payments.SingleRecipient.titleTooltipError',
+    defaultMessage: 'Required field error',
   },
 });
 
@@ -46,8 +46,7 @@ const SingleRecipient = ({
   onToggleButtonClick,
   remove,
 }: Props) => {
-  const { value: tokens } = recipient;
-  const hasErrorFields = useErrorRecipientField(index, tokens);
+  const [, { error: recipientError }] = useField(`recipients[${index}]`);
 
   return (
     <div className={styles.singleRecipient} key={recipient.id}>
@@ -69,8 +68,12 @@ const SingleRecipient = ({
               title={MSG.deleteIconTitle}
             />
           )}
-          {hasErrorFields && (
-            <ErrorDot tooltipContent="Required fields error" />
+          {recipientError && (
+            <div className={styles.errorDotContainer}>
+              <ErrorDot
+                tooltipContent={<FormattedMessage {...MSG.titleTooltipError} />}
+              />
+            </div>
           )}
         </div>
       </FormSection>
