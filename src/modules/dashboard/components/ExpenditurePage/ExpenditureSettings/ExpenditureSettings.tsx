@@ -89,7 +89,7 @@ const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
             options={expenditureTypes}
             scrollContainer={sidebarRef}
             placement="bottom"
-            withDropdownElelment
+            withDropdownElement
             optionSizeLarge
           />
         </div>

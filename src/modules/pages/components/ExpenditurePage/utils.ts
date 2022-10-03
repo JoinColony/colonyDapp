@@ -1,10 +1,26 @@
 import { isEqual, uniq, isEmpty, assign, isNil } from 'lodash';
 import { nanoid } from 'nanoid';
+import { ExpenditureTypes } from './types';
 
 interface Delay {
   amount?: string;
   time: string;
 }
+
+export const isExpenditureType = (
+  name: string | null,
+): name is ExpenditureTypes => {
+  if (!name) {
+    return false;
+  }
+
+  return (
+    name === ExpenditureTypes.Advanced ||
+    name === ExpenditureTypes.Split ||
+    name === ExpenditureTypes.Staged ||
+    name === ExpenditureTypes.Streaming
+  );
+};
 
 const isDelayType = (obj: any): obj is Delay => {
   return (
