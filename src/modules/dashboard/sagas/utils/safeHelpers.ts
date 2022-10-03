@@ -4,6 +4,7 @@ import { Contract, ethers } from 'ethers';
 import abis from '@colony/colony-js/lib-esm/abis';
 import moveDecimal from 'move-decimal-point';
 import { AddressZero } from 'ethers/constants';
+import { BigNumber } from 'ethers/utils';
 
 import { erc721 } from './abis'; // Temporary
 import { SafeTransaction } from '~dashboard/Dialogs/ControlSafeDialog/ControlSafeDialog';
@@ -304,6 +305,88 @@ export const getTransferFundsData = async (
     getRecipient(),
     getAmount(),
     await getData(),
+    0,
+  ]);
+};
+
+const getParsedJSONOrArrayFromString = (
+  parameter: string,
+): (string | number)[] | null => {
+  try {
+    const arrayResult = JSON.parse(parameter);
+    return arrayResult.map((value) => {
+      if (Number.isInteger(value)) {
+        return new BigNumber(value).toString();
+      }
+      return value;
+    });
+  } catch (err) {
+    return null;
+  }
+};
+
+const isArrayParameter = (parameter: string): boolean =>
+  /(\[\d*])+$/.test(parameter);
+
+const extractMethodArgs = (
+  signature: string,
+  transaction: Record<string, any>,
+) => ({ name = '' }) => {
+  if (isArrayParameter(transaction[name || signature])) {
+    return getParsedJSONOrArrayFromString(transaction[name || signature]);
+  }
+  return transaction[name || signature];
+};
+
+export const getContractInteractionData = async (
+  zodiacBridgeModule: Contract,
+  safe: ColonySafe,
+  transaction: SafeTransaction,
+) => {
+  const safeAddress = onLocalDevEnvironment
+    ? LOCAL_SAFE_ADDRESS
+    : safe.contractAddress;
+  const contractAddress = onLocalDevEnvironment
+    ? LOCAL_SAFE_TOKEN_ADDRESS
+    : transaction.contract.profile.walletAddress;
+  let abi: string;
+  let contractFunction: string;
+
+  if (!contractAddress) {
+    throw new Error('LOCAL_SAFE_TOKEN_ADDRESS not set in .env.');
+  }
+
+  if (onLocalDevEnvironment) {
+    const TokenInterface = await getTokenInterface(safe, contractAddress);
+    abi = JSON.stringify(TokenInterface.abi);
+    contractFunction = 'transferFrom';
+  } else {
+    abi = transaction.abi;
+    contractFunction = transaction.contractFunction;
+  }
+
+  const getData = () => {
+    const foreignProvider = getForeignProvider(safe);
+    const contract = new ethers.Contract(contractAddress, abi, foreignProvider);
+    const { inputs, name = '', signature } = contract.interface.functions[
+      contractFunction
+    ];
+
+    const transactionValues = onLocalDevEnvironment
+      ? { ...transaction, src: safeAddress, dst: AddressZero, wad: 1 }
+      : transaction;
+    const args =
+      inputs?.map(extractMethodArgs(signature, transactionValues)) || [];
+
+    return contract.interface.functions[name].encode(args);
+  };
+
+  const encodedData = getData();
+
+  return zodiacBridgeModule.interface.functions.executeTransaction.encode([
+    contractAddress,
+    0,
+    encodedData,
     0,
   ]);
 };
