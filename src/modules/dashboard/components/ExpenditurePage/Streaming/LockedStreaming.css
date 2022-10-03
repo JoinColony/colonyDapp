@@ -6,24 +6,9 @@
   padding: paddingTop paddingRightLeftBottom paddingRightLeftBottom;
 }
 
-.container i {
-  /* The negative margin is used here to adjust the position of the caret icon */
-  margin-bottom: -3px;
-}
-
 .settingsRow {
   composes: flexContainerRow flexAlignCenter flexJustifyBetween from '~styles/layout.css';
   min-height: 41px;
-}
-
-.settingsRow h4 {
-  font-size: var(--size-smallish);
-}
-
-.settingsRow button[aria-expanded="true"] {
-  padding: 2px 0 2px 6px;
-  border-radius: 4px;
-  background-color: var(--grey-blue-1);
 }
 
 .userContainer {
@@ -54,11 +39,4 @@
   font-size: var(--size-normal);
   text-transform: capitalize;
   color: var(--dark);
-}
-
-.expenditureContainer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: 14px;
 }

@@ -8,4 +8,3 @@ export const userAvatarContainer: string;
 export const userName: string;
 export const expenditure: string;
 export const value: string;
-export const expenditureContainer: string;

@@ -43,25 +43,6 @@ const LockedSidebar = ({
   const { expenditure, recipients, filteredDomainId, staged, split, batch } =
     formValues || {};
 
-  const firstFormSection = useMemo(() => {
-    switch (expenditure) {
-      case ExpenditureTypes.Advanced: {
-        return null;
-      }
-      case ExpenditureTypes.Split: {
-        return null;
-      }
-      case ExpenditureTypes.Staged: {
-        return null;
-      }
-      case ExpenditureTypes.Streaming: {
-        return <LockedStreaming startDate={startDate} endDate={endDate} />;
-      }
-      default:
-        return null;
-    }
-  }, [expenditure]);
-
   const secondFormSection = useMemo(() => {
     switch (expenditure) {
       case ExpenditureTypes.Advanced: {
@@ -129,7 +110,9 @@ const LockedSidebar = ({
 
   return (
     <>
-      {firstFormSection || (
+      {expenditure === ExpenditureTypes.Streaming ? (
+        <LockedStreaming startDate={startDate} endDate={endDate} />
+      ) : (
         <LockedExpenditureSettings
           {...{ expenditure, filteredDomainId, colony }}
         />
