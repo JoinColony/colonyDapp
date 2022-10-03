@@ -74,9 +74,19 @@ export const getHomeBridge = (safe: Omit<ColonySafe, 'safeName'>) => {
 };
 
 /* Currently only used to get the ForeignBridgeMock contract from Colony Network, for testing locally. */
-const getBuildFromColonyNetwork = (contractName: string) =>
-  // eslint-disable-next-line @typescript-eslint/no-var-requires, max-len, global-require, import/no-dynamic-require
-  require(`~lib/colonyNetwork/build/contracts/${contractName}.json`);
+const getBuildFromColonyNetwork = (contractName: string) => {
+  /*
+   * "isProduction" is injected by webpack in the relevant config.
+   * This is to avoid a github actions build error. https://github.com/JoinColony/colonyDapp/actions/runs/3175487585/jobs/5176947845
+   */
+  // @ts-ignore
+  // eslint-disable-next-line no-undef
+  if (!isProduction) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require, import/no-dynamic-require
+    return require(`~lib/colonyNetwork/build/contracts/${contractName}.json`);
+  }
+  return undefined;
+};
 
 /* Only used locally in order to confirm foreign bridge received message from home bridge. */
 export const getForeignBridgeMock = () => {

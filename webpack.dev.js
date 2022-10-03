@@ -54,5 +54,8 @@ module.exports = () => ({
       analyzerMode: 'static',
       openAnalyzer: false,
     }),
+    new webpack.DefinePlugin({
+      "isProduction": JSON.stringify(false),
+    }),
   ],
 });
