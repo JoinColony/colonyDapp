@@ -26,7 +26,7 @@ interface Props {
   status?: Status;
   isCancelled?: boolean;
   pendingMotion?: boolean;
-  activeStageId?: string;
+  activeStage?: StageObject;
   handleReleaseMilestone: (id: string) => void;
   stages: StageObject[];
 }
@@ -39,9 +39,8 @@ const LockedSidebar = ({
   isCancelled,
   pendingMotion,
   status,
-  activeStageId,
+  activeStage,
   handleReleaseMilestone,
-  stages,
 }: Props) => {
   const {
     expenditure,
@@ -52,26 +51,6 @@ const LockedSidebar = ({
     batch,
     streaming,
   } = formValues || {};
-  const activeStage = stages.find((state) => state.id === activeStageId);
-
-  const firstFormSection = useMemo(() => {
-    switch (expenditure) {
-      case ExpenditureTypes.Advanced: {
-        return null;
-      }
-      case ExpenditureTypes.Split: {
-        return null;
-      }
-      case ExpenditureTypes.Staged: {
-        return null;
-      }
-      case ExpenditureTypes.Streaming: {
-        return <LockedStreaming />;
-      }
-      default:
-        return null;
-    }
-  }, [expenditure]);
 
   const secondFormSection = useMemo(() => {
     switch (expenditure) {
@@ -85,7 +64,6 @@ const LockedSidebar = ({
             status={status}
             isCancelled={isCancelled}
             pendingMotion={pendingMotion}
-            activeStage={activeStage}
           />
         );
       }
@@ -125,7 +103,7 @@ const LockedSidebar = ({
             colony={colony}
             fundingSources={streaming?.fundingSources}
             editForm={editForm}
-            activeStageId={activeStageId}
+            activeStageId={activeStage?.id}
           />
         );
       }
@@ -134,7 +112,6 @@ const LockedSidebar = ({
     }
   }, [
     activeStage,
-    activeStageId,
     batch,
     colony,
     editForm,
@@ -144,10 +121,10 @@ const LockedSidebar = ({
     pendingChanges,
     pendingMotion,
     recipients,
-    split,
     staged,
     status,
     streaming,
+    split,
   ]);
 
   return (
