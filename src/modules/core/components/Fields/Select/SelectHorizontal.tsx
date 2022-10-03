@@ -10,15 +10,16 @@ import InputLabel from '../InputLabel';
 interface Props extends SelectProps {
   unselectable?: boolean;
   optionSizeLarge?: boolean;
-  withDropdownElelment?: boolean;
+  withDropdownElement?: boolean;
   scrollContainer?: HTMLElement | null;
   placement?: 'bottom' | 'right';
+  hasBlueActiveState?: boolean;
 }
 
 const SelectHorizontal = ({
   unselectable,
   optionSizeLarge,
-  withDropdownElelment,
+  withDropdownElement,
   scrollContainer,
   placement,
   ...selectProps
@@ -33,6 +34,7 @@ const SelectHorizontal = ({
     labelValues,
     help,
     helpValues,
+    hasBlueActiveState,
   } = selectProps;
   const [, { error }] = useField(name);
 
@@ -55,9 +57,10 @@ const SelectHorizontal = ({
         <Select
           {...{
             id,
-            withDropdownElelment,
+            withDropdownElement,
             scrollContainer,
             placement,
+            hasBlueActiveState,
             ...selectProps,
           }}
           elementOnly
