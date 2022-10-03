@@ -103,7 +103,7 @@ const LockedSplit = ({ colony, split, editForm }: Props) => {
                     />
                     <Numeral
                       unit={getTokenDecimalsWithFallback(0)}
-                      value={recipient.amount || 0}
+                      value={recipient.amount?.value || 0}
                     />
                     {token.symbol}
                   </div>

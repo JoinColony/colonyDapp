@@ -209,7 +209,10 @@ const validationSchema = yup.object().shape({
         .of(
           yup.object().shape({
             user: yup.object().required(),
-            amount: yup.number().required(),
+            amount: yup.object().shape({
+              value: yup.number(),
+              tokenAddress: yup.string().required(),
+            }),
           }),
         )
         .min(2),
@@ -641,6 +644,7 @@ const ExpenditurePage = ({ match }: Props) => {
                     sidebarRef={sidebarRef.current}
                     colony={colonyData.processedColony}
                     setShouldValidate={setShouldValidate}
+                    inEditMode={inEditMode}
                   />
                 </>
               )

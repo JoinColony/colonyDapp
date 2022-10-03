@@ -30,7 +30,13 @@ const ChangeItem = ({ newValue, oldValue, name, colony }: Props) => {
         case 'recipient': {
           return <NewRecipient newValue={change} key={nanoid()} />;
         }
+        case 'user': {
+          return <NewRecipient newValue={change} key={nanoid()} />;
+        }
         case 'value': {
+          return <NewValue colony={colony} newValue={change} key={nanoid()} />;
+        }
+        case 'amount': {
           return <NewValue colony={colony} newValue={change} key={nanoid()} />;
         }
         case 'delay': {

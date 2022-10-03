@@ -5,7 +5,7 @@ import Decimal from 'decimal.js';
 import { nanoid } from 'nanoid';
 
 import { FormSection, Input, TokenSymbolSelector } from '~core/Fields';
-import { AnyUser, Colony, useMembersSubscription } from '~data/index';
+import { Colony, useMembersSubscription } from '~data/index';
 import UserPickerWithSearch from '~core/UserPickerWithSearch';
 import { filterUserSelection } from '~core/SingleUserPicker';
 import { supRenderAvatar } from '~dashboard/ExpenditurePage/Recipient/Recipient';
@@ -18,6 +18,7 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { ValuesType } from '~pages/ExpenditurePage/types';
 
 import { initalRecipient } from '../constants';
+import { Recipient } from '../types';
 
 import styles from './SplitUnequal.css';
 
@@ -56,9 +57,9 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
 
   const { tokens: colonyTokens } = colony || {};
 
-  const [, { value: recipients }, { setValue }] = useField<
-    { user: AnyUser; amount: number; percent: number; id: string }[]
-  >('split.recipients');
+  const [, { value: recipients }, { setValue }] = useField<Recipient[]>(
+    'split.recipients',
+  );
   const [, { value: amount }] = useField<{
     value?: string;
     tokenAddress?: string;
@@ -84,7 +85,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
     const remainingAmount = 100 - sum;
 
     const remainingStake = recipients?.map((recipient) =>
-      new Decimal(100 - (sum - recipient.percent)).div(100),
+      new Decimal(100 - (sum - (recipient?.percent || 0))).div(100),
     );
 
     return {
@@ -96,9 +97,12 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
 
   const onSelectChange = useCallback(
     (val: number, name: string) => {
-      setFieldValue(name, (Number(val) / 100) * Number(amount.value));
+      setFieldValue(name, {
+        value: (Number(val) / 100) * Number(amount.value),
+        tokenAddress: amount.tokenAddress,
+      });
     },
-    [amount.value, setFieldValue],
+    [amount.value, setFieldValue, amount.tokenAddress],
   );
 
   const onInputChange = useCallback(
@@ -107,11 +111,14 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
       setValue(
         recipients.map((rec) => ({
           ...rec,
-          amount: (Number(rec.percent) / 100) * Number(value),
+          amount: {
+            value: (Number(rec.percent) / 100) * Number(value),
+            tokenAddress: amount.tokenAddress,
+          },
         })),
       );
     },
-    [recipients, setValue],
+    [recipients, setValue, amount.tokenAddress],
   );
 
   return (
@@ -243,7 +250,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
                         />
                         <Numeral
                           unit={getTokenDecimalsWithFallback(0)}
-                          value={recipients?.[index].amount || 0}
+                          value={recipients?.[index].amount?.value || 0}
                         />{' '}
                         {token.symbol}
                       </div>
@@ -253,7 +260,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
               );
             })}
             <Button
-              onClick={() => push({ ...initalRecipient, key: nanoid() })}
+              onClick={() => push({ ...initalRecipient, id: nanoid() })}
               appearance={{ theme: 'blue' }}
             >
               <div className={styles.addRecipientLabel}>

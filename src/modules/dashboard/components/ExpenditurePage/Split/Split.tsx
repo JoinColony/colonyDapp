@@ -55,14 +55,14 @@ const Split = ({ colony, sidebarRef }: Props) => {
         setValue(
           recipients?.map((recipient) => ({
             ...recipient,
-            amount: userAmount,
+            amount: { value: userAmount, tokenAddress: amount.tokenAddress },
           })),
         );
       }
       setValue(
         recipients?.map((recipient) => ({
           ...recipient,
-          amount: 0,
+          amount: { value: 0, tokenAddress: amount.tokenAddress },
           percent: 0,
         })),
       );
