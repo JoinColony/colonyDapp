@@ -5,13 +5,13 @@ import { nanoid } from 'nanoid';
 
 import Button from '~core/Button';
 import Icon from '~core/Icon';
-import { useMembersSubscription } from '~data/generated';
 import { SpinnerLoader } from '~core/Preloaders';
+import { useMembersSubscription } from '~data/generated';
 import { Colony } from '~data/index';
 
+import SingleRecipient from './SingleRecipient';
 import { newRecipient } from './constants';
 import styles from './Payments.css';
-import SingleRecipient from './SingleRecipient';
 
 export const MSG = defineMessages({
   payments: {

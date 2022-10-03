@@ -1,24 +1,28 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { useField } from 'formik';
 
 import { FormSection } from '~core/Fields';
 import Icon from '~core/Icon';
 
 import { CollapseExpandButtons } from '../Payments';
 import { ErrorDot } from '../ErrorDot';
-import useErrorFundingSourceField from './FundingSource/useErrorFundingSourceField';
 
 import { Props as StreamingProps } from './Streaming';
+import FundingSource from './FundingSource';
 import { FundingSource as FundingSourceType } from './types';
 import styles from './Streaming.css';
-import FundingSource from './FundingSource';
 
-const displayName = 'dashboard.ExpenditurePage.SingleFundingSource';
+const displayName = 'dashboard.ExpenditurePage.Streaming.SingleFundingSource';
 
 const MSG = defineMessages({
   title: {
     id: 'dashboard.ExpenditurePage.Streaming.title',
     defaultMessage: '{nr}: {team}',
+  },
+  titleTooltipError: {
+    id: 'dashboard.ExpenditurePage.Streaming.titleTooltipError',
+    defaultMessage: 'Required field error',
   },
 });
 
@@ -42,7 +46,9 @@ const SingleFundingSource = ({
   const domain = colony?.domains.find(
     ({ ethDomainId }) => Number(fundingSource.team) === ethDomainId,
   );
-  const hasErrorFields = useErrorFundingSourceField(fundingSource, index);
+  const [, { error: fundingError }] = useField(
+    `streaming.fundingSources[${index}]`,
+  );
 
   return (
     <div className={styles.singleFundingSource} key={fundingSource.id}>
@@ -66,8 +72,10 @@ const SingleFundingSource = ({
               onClick={() => remove(index)}
             />
           )}
-          {hasErrorFields && (
-            <ErrorDot tooltipContent="Required fields error" />
+          {fundingError && (
+            <ErrorDot
+              tooltipContent={<FormattedMessage {...MSG.titleTooltipError} />}
+            />
           )}
         </div>
       </FormSection>
