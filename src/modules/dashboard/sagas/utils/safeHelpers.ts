@@ -340,7 +340,7 @@ const extractMethodArgs = (
 
 export const getContractInteractionData = async (
   zodiacBridgeModule: Contract,
-  safe: ColonySafe,
+  safe: Omit<ColonySafe, 'safeName'>,
   transaction: SafeTransaction,
 ) => {
   const safeAddress = onLocalDevEnvironment
