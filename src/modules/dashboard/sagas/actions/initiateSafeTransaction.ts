@@ -31,6 +31,7 @@ import {
   getRawTransactionData,
   getTransferNFTData,
   getTransferFundsData,
+  getContractInteractionData,
   getZodiacModule,
   onLocalDevEnvironment,
 } from '../utils/safeHelpers';
@@ -102,7 +103,13 @@ function* initiateSafeTransactionAction({
             transaction,
           );
           break;
-        case TransactionTypes.CONTRACT_INTERACTION: // @TODO
+        case TransactionTypes.CONTRACT_INTERACTION:
+          txDataToBeSentToZodiacModule = yield getContractInteractionData(
+            zodiacBridgeModule,
+            safe,
+            transaction,
+          );
+          break;
         default:
           throw new Error(
             `Unknown transaction type: ${transaction.transactionType}`,
