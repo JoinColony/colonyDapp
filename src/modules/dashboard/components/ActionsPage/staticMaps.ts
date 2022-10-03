@@ -283,8 +283,5 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.ReputationChange,
   ],
   [ColonyMotions.UnlockTokenMotion]: [],
-  [ColonyMotions.CreateDecisionMotion]: [
-    ActionPageDetails.Domain,
-    ActionPageDetails.Author,
-  ],
+  [ColonyMotions.CreateDecisionMotion]: [ActionPageDetails.Author],
 };
