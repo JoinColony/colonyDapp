@@ -144,7 +144,7 @@
   "dependencies": {
     "@apollo/client": "^3.0.2",
     "@colony/colony-event-metadata-parser": "^1.1.0",
-    "@colony/colony-js": "^4.2.1-beta.1",
+    "@colony/colony-js": "^4.2.1-beta.4",
     "@colony/redux-promise-listener": "^1.2.0",
     "@colony/unicode-confusables-noascii": "^0.1.2",
     "@formatjs/intl-pluralrules": "^1.5.7",
