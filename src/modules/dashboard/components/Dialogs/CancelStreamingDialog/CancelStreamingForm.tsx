@@ -4,9 +4,9 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { FormikProps } from 'formik';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
+import { Colony, useLoggedInUser } from '~data/index';
 import Dialog, { DialogSection } from '~core/Dialog';
 import { Annotations, InputLabel, Toggle } from '~core/Fields';
-import { Colony, useLoggedInUser } from '~data/index';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import UserAvatar from '~core/UserAvatar';
@@ -18,8 +18,8 @@ import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissi
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
 import { FormValues } from './CancelStreamingDialog';
-import styles from './CancelStreamingDialog.css';
 import FundingSourceItem from './FundingSourceItem';
+import styles from './CancelStreamingDialog.css';
 
 const MSG = defineMessages({
   header: {
@@ -28,9 +28,7 @@ const MSG = defineMessages({
   },
   description: {
     id: 'dashboard.CancelStreamingDialog.CancelStreamingForm.description',
-    defaultMessage:
-      // eslint-disable-next-line max-len
-      'You are cancelling the Streaming Payment. You will need to get collective approval first. To do so create a Motion. Any unclaimed funds can still be claimed by the recipient.',
+    defaultMessage: `You are cancelling the Streaming Payment. You will need to get collective approval first. To do so create a Motion. Any unclaimed funds can still be claimed by the recipient.`,
   },
   detailsTitle: {
     id: 'dashboard.CancelStreamingDialog.CancelStreamingForm.detailsTitle',
@@ -89,6 +87,7 @@ const fundingSourcesMock = [
     rateAmount: 10,
     rateTime: 'day',
     filteredDomainId: ROOT_DOMAIN_ID,
+    id: '1',
   },
   {
     rateToken: {
@@ -103,6 +102,7 @@ const fundingSourcesMock = [
     rateAmount: 1000,
     rateTime: 'month',
     filteredDomainId: ROOT_DOMAIN_ID,
+    id: '2',
   },
 ];
 
@@ -234,17 +234,22 @@ const CancelStreamingForm = ({
           </span>
         </div>
       </DialogSection>
-      {fundingSourcesMock &&
-        fundingSourcesMock.map(({ filteredDomainId, ...props }, index) => (
-          <DialogSection appearance={{ theme: 'sidePadding' }}>
-            <FundingSourceItem
-              {...props}
-              {...{ colony, index }}
-              filteredDomainId={filteredDomainId?.toString()}
-              isMultiple={fundingSourcesMock.length > 1}
-            />
-          </DialogSection>
-        ))}
+      {fundingSourcesMock && (
+        <ul>
+          {fundingSourcesMock.map(({ filteredDomainId, ...props }, index) => (
+            <li key={props.id}>
+              <DialogSection appearance={{ theme: 'sidePadding' }}>
+                <FundingSourceItem
+                  {...props}
+                  {...{ colony, index }}
+                  filteredDomainId={filteredDomainId?.toString()}
+                  isMultiple={fundingSourcesMock.length > 1}
+                />
+              </DialogSection>
+            </li>
+          ))}
+        </ul>
+      )}
       <DialogSection appearance={{ theme: 'sidePadding' }}>
         <div className={styles.annotations}>
           <Annotations
