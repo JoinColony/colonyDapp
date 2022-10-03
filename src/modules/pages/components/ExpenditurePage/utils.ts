@@ -312,6 +312,53 @@ export const updateValues = (values, confirmedValues) => {
     };
   }
 
+  if ('staged' in confirmedValues) {
+    const changedMilestones = values.staged.milestones.filter((milestone) =>
+      confirmedValues.staged.milestones.find(
+        (confMilestone) => confMilestone.id === milestone.id,
+      ),
+    );
+
+    const sameMilestones = values.staged.milestones.filter((recipient) =>
+      confirmedValues.staged.milestones.every(
+        (confRec) => confRec.id !== recipient.id,
+      ),
+    );
+
+    const newMilestones = confirmedValues.staged.milestones.filter(
+      (value) => value.created,
+    );
+
+    const confirmedMilestones = [
+      ...sameMilestones,
+      ...changedMilestones.map((milestone) => {
+        const newValue = confirmedValues.staged.milestones.find(
+          (mile) => mile.id === milestone.id,
+        );
+
+        return {
+          ...milestone,
+          ...newValue,
+          key: nanoid(),
+          isChanged: true,
+        };
+      }),
+      ...newMilestones.map((newMilestone) => ({
+        ...newMilestone,
+        created: undefined,
+        isChanged: true,
+        key: nanoid(),
+      })),
+    ].filter((milestone) => !milestone.removed);
+
+    const newValues = merge({}, values, confirmedValues);
+
+    return {
+      ...newValues,
+      staged: { ...newValues.staged, milestones: confirmedMilestones },
+    };
+  }
+
   return merge({}, values, confirmedValues);
 };
 

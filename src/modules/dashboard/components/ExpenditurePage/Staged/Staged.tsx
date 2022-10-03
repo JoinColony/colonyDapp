@@ -17,6 +17,7 @@ import Button from '~core/Button';
 import { initalMilestone } from './constants';
 import Milestone from './Milestone';
 import styles from './Staged.css';
+import { Milestone as MilestoneType } from './types';
 
 const MSG = defineMessages({
   staged: {
@@ -58,9 +59,9 @@ const Staged = ({ colony, sidebarRef }: Props) => {
     value?: string;
     tokenAddress?: string;
   }>('staged.amount');
-  const [, { value: milestones }] = useField<
-    { name: string; amount: number; percent: number; id: string }[]
-  >('staged.milestones');
+  const [, { value: milestones }, { setValue }] = useField<MilestoneType[]>(
+    'staged.milestones',
+  );
   const { tokens: colonyTokens } = colony || {};
 
   const token = useMemo(() => {
@@ -83,21 +84,31 @@ const Staged = ({ colony, sidebarRef }: Props) => {
     const reserve = 100 - (sum || 0);
 
     const remainingStake = milestones?.map((milestone) =>
-      new Decimal(100 - (sum - milestone.percent)).div(100),
-    );
-
-    const milestoneAmount = milestones?.map(
-      (milestone) =>
-        amount?.value && (milestone.percent / 100) * Number(amount?.value),
+      new Decimal(100 - ((sum || 0) - (milestone?.percent || 0))).div(100),
     );
 
     return {
-      sum,
+      sum: sum || 0,
       reserve,
       remainingStake,
-      milestoneAmount,
     };
-  }, [amount, milestones]);
+  }, [milestones]);
+
+  const handleAmountChange = (e: React.ChangeEvent<any>) => {
+    const { value } = e.target;
+
+    setValue(
+      milestones.map((milestone) => {
+        return {
+          ...milestone,
+          amount: {
+            value: (Number(milestone.percent) / 100) * Number(value),
+            tokenAddress: amount.tokenAddress,
+          },
+        };
+      }),
+    );
+  };
 
   return (
     <div className={styles.stagedContainer}>
@@ -140,6 +151,7 @@ const Staged = ({ colony, sidebarRef }: Props) => {
                 maxAmount: '100',
                 fieldName: 'staged.amount.value',
               }}
+              onChange={handleAmountChange}
             />
           </div>
           <div className={styles.tokenWrapper}>
@@ -181,7 +193,7 @@ const Staged = ({ colony, sidebarRef }: Props) => {
                   token={token}
                   amount={amount?.value}
                   calculated={calculated}
-                  name={`staged.milestones[${index}].name`}
+                  name={`staged.milestones[${index}]`}
                 />
               );
             })}

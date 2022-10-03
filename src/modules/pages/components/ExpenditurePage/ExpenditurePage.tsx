@@ -183,7 +183,10 @@ const validationSchema = yup.object().shape({
               .number()
               .moreThan(0, () => MSG.amountZeroError)
               .required(),
-            amount: yup.number(),
+            amount: yup.object().shape({
+              value: yup.number(),
+              tokenAddress: yup.string().required(),
+            }),
           }),
         )
         .min(1)
