@@ -1,6 +1,7 @@
 import React, { ReactNode, useCallback } from 'react';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { defineMessages } from 'react-intl';
+import { useField } from 'formik';
 
 import {
   InputLabel,
@@ -15,6 +16,7 @@ import UserMention from '~core/UserMention';
 import ColorTag, { Color } from '~core/ColorTag';
 import DomainDropdown from '~core/DomainDropdown';
 import { ExpenditureTypes } from '~pages/ExpenditurePage/types';
+import { capitalize } from '~utils/strings';
 
 import BalanceSelect from './BalanceSelect';
 import { tokens as tokensData } from './constants';
@@ -60,6 +62,7 @@ const displayName = 'dashboard.ExpenditurePage.ExpenditureSettings';
 interface Props {
   sidebarRef: HTMLElement | null;
   colony: Colony;
+  inEditMode: boolean;
 }
 
 const expeditureTypes = [
@@ -81,7 +84,8 @@ const expeditureTypes = [
   },
 ];
 
-const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
+const ExpenditureSettings = ({ colony, sidebarRef, inEditMode }: Props) => {
+  const [, { value: expenditure }] = useField('expenditure');
   const { walletAddress, username } = useLoggedInUser();
 
   const getDomainColor = useCallback<(domainId: string | undefined) => Color>(
@@ -140,7 +144,11 @@ const ExpenditureSettings = ({ colony, sidebarRef }: Props) => {
               theme: 'alt',
               width: 'content',
             }}
-            options={expeditureTypes}
+            options={
+              inEditMode
+                ? [{ label: capitalize(expenditure), value: expenditure }]
+                : expeditureTypes
+            }
             scrollContainer={sidebarRef}
             placement="bottom"
             withDropdownElelment

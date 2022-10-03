@@ -9,6 +9,8 @@ import ColorTag, { Color } from '~core/ColorTag';
 import Icon from '~core/Icon';
 import { ValuesType } from '~pages/ExpenditurePage/types';
 
+import NewValue from '../NewValue';
+
 import styles from './ChangedValues.css';
 
 export const MSG = defineMessages({
@@ -83,6 +85,9 @@ const ChangedValues = ({
               {domain?.name}
             </div>
           );
+        }
+        case 'amount': {
+          return <NewValue colony={colony} newValue={change} />;
         }
         default:
           return null;

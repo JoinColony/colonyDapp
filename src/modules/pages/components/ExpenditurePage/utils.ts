@@ -265,6 +265,53 @@ export const updateValues = (values, confirmedValues) => {
     return assign({}, newValues, newConfirmed);
   }
 
+  if ('split' in confirmedValues) {
+    const changedRecipients = values.split.recipients.filter((recipient) =>
+      confirmedValues.split.recipients.find(
+        (confRec) => confRec.id === recipient.id,
+      ),
+    );
+
+    const sameRecipients = values.split.recipients.filter((recipient) =>
+      confirmedValues.split.recipients.every(
+        (confRec) => confRec.id !== recipient.id,
+      ),
+    );
+
+    const newRecipients = confirmedValues.split.recipients.filter(
+      (value) => value.created,
+    );
+
+    const confirmedRecipients = [
+      ...sameRecipients,
+      ...changedRecipients.map((recipient) => {
+        const newValue = confirmedValues.split.recipients.find(
+          (recip) => recip.id === recipient.id,
+        );
+
+        return {
+          ...recipient,
+          ...newValue,
+          key: nanoid(),
+          isChanged: true,
+        };
+      }),
+      ...newRecipients.map((newRecip) => ({
+        ...newRecip,
+        created: undefined,
+        isChanged: true,
+        key: nanoid(),
+      })),
+    ].filter((rec) => !rec.removed);
+
+    const newValues = merge({}, values, confirmedValues);
+
+    return {
+      ...newValues,
+      split: { ...newValues.split, recipients: confirmedRecipients },
+    };
+  }
+
   return merge({}, values, confirmedValues);
 };
 

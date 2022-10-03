@@ -8,6 +8,7 @@ import Numeral from '~core/Numeral';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { Colony } from '~data/index';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
+import { Split } from '~dashboard/ExpenditurePage/Split/types';
 
 import styles from './NewValue.css';
 
@@ -26,7 +27,7 @@ const displayName = 'dashboard.EditExpenditureDialog.NewValue';
 
 interface Props {
   colony: Colony;
-  newValue: Recipient['value'];
+  newValue: Recipient['value'] | Split['amount'];
 }
 
 const NewValue = ({ colony, newValue }: Props) => {
@@ -36,6 +37,34 @@ const NewValue = ({ colony, newValue }: Props) => {
     return (
       <div className={styles.row}>
         <FormattedMessage {...MSG.none} />
+      </div>
+    );
+  }
+
+  if (!Array.isArray(newValue)) {
+    const token = colonyTokens?.find(
+      (tokenItem) =>
+        newValue.tokenAddress && tokenItem.address === newValue.tokenAddress,
+    );
+
+    return (
+      <div className={styles.row}>
+        <div className={styles.valueContainer}>
+          {newValue.value && token && (
+            <div className={styles.value}>
+              <TokenIcon
+                className={styles.tokenIcon}
+                token={token}
+                name={token.name || token.address}
+              />
+              <Numeral
+                unit={getTokenDecimalsWithFallback(0)}
+                value={newValue.value}
+              />{' '}
+              {token.symbol}
+            </div>
+          )}
+        </div>
       </div>
     );
   }

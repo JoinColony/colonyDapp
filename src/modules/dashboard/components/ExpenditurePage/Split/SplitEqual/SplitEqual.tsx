@@ -5,7 +5,7 @@ import { nanoid } from 'nanoid';
 import { isNaN } from 'lodash';
 
 import { FormSection, Input, TokenSymbolSelector } from '~core/Fields';
-import { AnyUser, Colony, useMembersSubscription } from '~data/index';
+import { Colony, useMembersSubscription } from '~data/index';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import { ValuesType } from '~pages/ExpenditurePage/types';
 import Numeral from '~core/Numeral';
@@ -17,6 +17,7 @@ import Icon from '~core/Icon';
 import Button from '~core/Button';
 
 import { initalRecipient } from '../constants';
+import { Recipient } from '../types';
 
 import styles from './SplitEqual.css';
 
@@ -52,9 +53,9 @@ interface Props {
 
 const SplitEqual = ({ colony, sidebarRef }: Props) => {
   const { setFieldValue } = useFormikContext<ValuesType>();
-  const [, { value: recipients }, { setValue }] = useField<
-    { user?: AnyUser; amount?: number; key: string }[]
-  >('split.recipients');
+  const [, { value: recipients }, { setValue }] = useField<Recipient[]>(
+    'split.recipients',
+  );
   const { tokens: colonyTokens } = colony || {};
   const [, { value: amount }] = useField<{
     value: string;
@@ -95,7 +96,7 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
     setValue(
       recipients.map((recipient) => ({
         ...recipient,
-        amount: calculatedAmount,
+        amount: { value: calculatedAmount, tokenAddress: amount.tokenAddress },
       })),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -188,7 +189,7 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
                   {recipients?.map((recipient, index) => (
                     <div
                       className={styles.recipientWrapper}
-                      key={recipient?.key}
+                      key={recipient?.id}
                     >
                       <div>
                         <UserPickerWithSearch
