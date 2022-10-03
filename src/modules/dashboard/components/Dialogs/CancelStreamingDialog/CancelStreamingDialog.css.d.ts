@@ -11,6 +11,7 @@ export const annotations: string;
 export const tokens: string;
 export const value: string;
 export const toggleContainer: string;
+export const settingsRow: string;
 export const userContainer: string;
 export const userAvatarContainer: string;
 export const userName: string;
