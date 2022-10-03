@@ -265,11 +265,25 @@ const SafeTransactionPreview = ({
     TransactionTypes.TRANSFER_NFT;
 
   const getDetailsItemValue = (input, transaction) => {
-    switch (input.type) {
-      case 'address': {
+    switch (true) {
+      case input.type === 'address': {
         return <MaskedAddress address={transaction[input.name]} />;
       }
-      case 'address[]': {
+      case input.type === 'address[]': {
+        const formattedArray = getArrayFromString(transaction[input.name]);
+
+        const maskedArray = formattedArray.map((address) => {
+          return (
+            <div>
+              <MaskedAddress address={address} />
+              <span>, </span>
+            </div>
+          );
+        });
+        return <div className={styles.rawTransactionValues}>{maskedArray}</div>;
+      }
+      case input.type.substr(input.type.length - 2, input.type.length) ===
+        '[]': {
         const formattedArray = `[${getArrayFromString(
           transaction[input.name],
         ).join(', ')}]`;
