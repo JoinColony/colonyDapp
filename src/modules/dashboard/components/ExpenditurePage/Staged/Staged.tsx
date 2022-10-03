@@ -13,6 +13,8 @@ import { Colony, useMembersSubscription } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/types';
 import Button from '~core/Button';
 
+import { ErrorDot } from '../ErrorDot';
+
 import { initalMilestone } from './constants';
 import Milestone from './Milestone';
 import { Milestone as MilestoneType } from './types';
@@ -42,6 +44,10 @@ const MSG = defineMessages({
   selectedToken: {
     id: 'dashboard.ExpenditurePage.Staged.selectedToken',
     defaultMessage: 'Selected token',
+  },
+  titleTooltipError: {
+    id: 'dashboard.ExpenditurePage.Staged.titleTooltipError',
+    defaultMessage: 'Required field error',
   },
 });
 
@@ -135,12 +141,19 @@ const Staged = ({ colony, sidebarRef }: Props) => {
     [milestones],
   );
 
+  const [, { error: stagedError }] = useField(`staged`);
+
   return (
     <div className={styles.stagedContainer}>
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.label}>
           <FormattedMessage {...MSG.staged} />
         </div>
+        {stagedError && (
+          <ErrorDot
+            tooltipContent={<FormattedMessage {...MSG.titleTooltipError} />}
+          />
+        )}
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.user}>
