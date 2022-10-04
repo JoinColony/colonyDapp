@@ -108,11 +108,14 @@ interface Props extends WithOmnipickerInProps {
   /** Provides value for data-test prop in the value of the input used on cypress testing */
   valueDataTest?: string;
 
-  /* An option to show masked address next to display name for the selected item */
+  /** An option to show masked address next to display name for the selected item */
   showMaskedAddress?: boolean;
 
-  /* icon name for the avatar placeholder */
+  /** icon name for the avatar placeholder */
   placeholderIconName?: string;
+
+  /** In the event form-level onChange validation is disabled, this prop can be passed to activate at the component level */
+  validateOnChange?: boolean;
 }
 
 interface EnhancedProps extends Props, WrappedComponentProps {}
@@ -146,6 +149,7 @@ const SingleUserPicker = ({
   valueDataTest,
   showMaskedAddress = false,
   placeholderIconName = 'filled-circle-person',
+  validateOnChange,
 }: EnhancedProps) => {
   const [
     ,
@@ -156,22 +160,22 @@ const SingleUserPicker = ({
 
   const handleActiveUserClick = useCallback(() => {
     if (!disabled) {
-      setValue(null);
+      setValue(null, validateOnChange);
       openOmniPicker();
     }
-  }, [disabled, openOmniPicker, setValue]);
+  }, [disabled, openOmniPicker, setValue, validateOnChange]);
   const handlePick = useCallback(
     (user: AnyUser) => {
-      if (setValue) setValue(user);
+      if (setValue) setValue(user, validateOnChange);
       if (onSelected) onSelected(user);
     },
-    [onSelected, setValue],
+    [onSelected, setValue, validateOnChange],
   );
   const resetSelection = useCallback(() => {
     if (!disabled && setValue) {
-      setValue(null);
+      setValue(null, validateOnChange);
     }
-  }, [disabled, setValue]);
+  }, [disabled, setValue, validateOnChange]);
   // Use custom render prop for item or the default one with the given renderAvatar function
   const renderItem =
     renderItemProp || // eslint-disable-next-line react-hooks/rules-of-hooks

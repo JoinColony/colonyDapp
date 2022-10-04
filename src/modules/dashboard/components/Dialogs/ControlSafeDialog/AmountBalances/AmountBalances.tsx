@@ -31,6 +31,7 @@ interface Props {
   transactionFormIndex: number;
   customAmountError?: MessageDescriptor | string;
   maxButtonParams?: MaxButtonParams;
+  handleChange?: () => void;
 }
 
 const MSG = defineMessages({
@@ -53,6 +54,7 @@ const AmountBalances = ({
   disabledInput,
   transactionFormIndex,
   maxButtonParams,
+  handleChange,
 }: Props) => {
   const [, { value: tokenAddress }, { setValue: setTokenAddress }] = useField(
     `transactions.${transactionFormIndex}.tokenAddress`,
@@ -113,6 +115,7 @@ const AmountBalances = ({
             theme: 'minimal',
             align: 'right',
           }}
+          onChange={handleChange}
           formattingOptions={{
             delimiter: ',',
             numeral: true,
