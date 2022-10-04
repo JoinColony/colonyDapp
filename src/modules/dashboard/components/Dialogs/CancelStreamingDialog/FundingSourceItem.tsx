@@ -15,18 +15,18 @@ import styles from './CancelStreamingDialog.css';
 const MSG = defineMessages({
   fundingSource: {
     id: `dashboard.CancelStreamingDialog.CancelStreamingForm.fundingSource`,
-    defaultMessage: 'Funding Source',
+    defaultMessage: '{number}Funding Source',
   },
   team: {
-    id: `dashboard.CancelStreamingDialog.CancelStreamingForm.team`,
+    id: `dashboard.CancelStreamingDialog.FundingSourceItem.team`,
     defaultMessage: 'Team',
   },
   rate: {
-    id: `dashboard.CancelStreamingDialog.CancelStreamingForm.rate`,
+    id: `dashboard.CancelStreamingDialog.FundingSourceItem.rate`,
     defaultMessage: 'Rate',
   },
   limit: {
-    id: `dashboard.CancelStreamingDialog.CancelStreamingForm.limit`,
+    id: `dashboard.CancelStreamingDialog.FundingSourceItem.limit`,
     defaultMessage: 'Limit',
   },
 });
@@ -75,15 +75,14 @@ const FundingSourceItem = ({
     [colony, domain],
   );
 
-  const fundingSourceTitle = isMultiple ? `${index + 1}: ` : '';
+  const fundingSourceTitle = isMultiple ? `${index + 1}. ` : '';
 
   return (
     <>
       <h4 className={styles.dialogSectionTitle}>
         <FormattedMessage
           {...MSG.fundingSource}
-          // eslint-disable-next-line max-len
-          defaultMessage={`${fundingSourceTitle}${MSG.fundingSource.defaultMessage}`}
+          values={{ number: fundingSourceTitle }}
         />
       </h4>
       <div

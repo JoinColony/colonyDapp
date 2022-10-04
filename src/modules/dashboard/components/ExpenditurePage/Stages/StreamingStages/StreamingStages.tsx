@@ -41,7 +41,7 @@ const MSG = defineMessages({
   },
   tooltipOpenModalText: {
     id: 'dashboard.ExpenditurePage.Stages.StreamingStages.tooltipOpenModalText',
-    defaultMessage: 'Cancel streaming payment',
+    defaultMessage: 'Cancel Streaming Payment',
   },
 });
 
