@@ -99,7 +99,8 @@ const Payments = ({ sidebarRef, colony }: Props) => {
                       onToggleButtonClick,
                       remove,
                     }}
-                    allRecipient={recipients}
+                    isLastItem={index === recipients?.length - 1}
+                    multipleRecipients={recipients?.length > 1}
                   />
                 ))}
                 <Button
