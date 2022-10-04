@@ -9,7 +9,6 @@ import { Props as RecipientProps } from '~dashboard/ExpenditurePage/Recipient/Re
 import { ErrorDot } from '~dashboard/ExpenditurePage/ErrorDot';
 
 import CollapseExpandButtons from '../CollapseExpandButtons';
-import { Recipient as RecipientType } from '../types';
 import styles from '../Payments.css';
 import { MembersSubscription } from '~data/generated';
 
@@ -31,14 +30,14 @@ export const MSG = defineMessages({
 });
 
 interface Props extends Omit<RecipientProps, 'subscribedUsers'> {
-  allRecipient: RecipientType[];
   colonyMembers: MembersSubscription | undefined;
   onToggleButtonClick: (index: number) => void;
   remove: (index: number) => void;
+  isLastItem?: boolean;
+  multipleRecipients?: boolean;
 }
 
 const SingleRecipient = ({
-  allRecipient: recipients,
   recipient,
   index,
   colony,
@@ -46,6 +45,8 @@ const SingleRecipient = ({
   sidebarRef,
   onToggleButtonClick,
   remove,
+  isLastItem,
+  multipleRecipients,
 }: Props) => {
   const [, { error: recipientError }] = useField(`recipients[${index}]`);
 
@@ -56,12 +57,12 @@ const SingleRecipient = ({
           <CollapseExpandButtons
             isExpanded={!!recipient.isExpanded}
             onToogleButtonClick={() => onToggleButtonClick(index)}
-            isLastitem={index === recipients?.length - 1}
+            isLastitem={isLastItem}
           />
           <p className={styles.recipentTitle}>
             {index + 1}: <FormattedMessage {...MSG.recipient} />
           </p>
-          {recipients?.length > 1 && (
+          {multipleRecipients && (
             <Icon
               name="trash"
               className={styles.deleteIcon}
@@ -85,7 +86,7 @@ const SingleRecipient = ({
           sidebarRef,
         }}
         subscribedUsers={colonyMembers?.subscribedUsers || []}
-        isLast={index === recipients?.length - 1}
+        isLast={isLastItem}
         colony={colony}
       />
     </div>

@@ -85,7 +85,8 @@ const Streaming = ({ colony, sidebarRef }: Props) => {
                   sidebarRef,
                   colony,
                 }}
-                allFundingSources={fundingSources}
+                isLastItem={index === fundingSources?.length - 1}
+                multipleFundingSources={fundingSources?.length > 1}
               />
             ))}
             <Button

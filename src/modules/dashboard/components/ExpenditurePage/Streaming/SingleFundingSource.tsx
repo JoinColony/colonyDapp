@@ -27,21 +27,23 @@ const MSG = defineMessages({
 });
 
 interface Props extends StreamingProps {
-  allFundingSources: FundingSourceType[];
   fundingSource: FundingSourceType;
   index: number;
   onToggleButtonClick: (index: number) => void;
   remove: (index: number) => void;
+  isLastItem?: boolean;
+  multipleFundingSources?: boolean;
 }
 
 const SingleFundingSource = ({
-  allFundingSources: fundingSources,
   fundingSource,
   index,
   onToggleButtonClick,
   remove,
   sidebarRef,
   colony,
+  isLastItem,
+  multipleFundingSources,
 }: Props) => {
   const domain = colony?.domains.find(
     ({ ethDomainId }) => Number(fundingSource.team) === ethDomainId,
@@ -57,7 +59,7 @@ const SingleFundingSource = ({
           <CollapseExpandButtons
             isExpanded={fundingSource.isExpanded}
             onToogleButtonClick={() => onToggleButtonClick(index)}
-            isLastitem={index === fundingSources?.length - 1}
+            isLastitem={isLastItem}
           />
           <p className={styles.fundingTitle}>
             <FormattedMessage
@@ -65,7 +67,7 @@ const SingleFundingSource = ({
               values={{ nr: index + 1, team: domain?.name }}
             />
           </p>
-          {fundingSources?.length > 1 && (
+          {multipleFundingSources && (
             <Icon
               name="trash"
               className={styles.deleteIcon}
@@ -84,7 +86,7 @@ const SingleFundingSource = ({
         colony={colony}
         index={index}
         fundingSource={fundingSource}
-        isLast={index === fundingSources?.length - 1}
+        isLast={isLastItem}
       />
     </div>
   );
