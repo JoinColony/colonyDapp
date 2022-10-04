@@ -152,6 +152,7 @@ export const getValidationSchema = (
         recipient: yup.object().when('transactionType', {
           is: (transactionType) =>
             transactionType === TransactionTypes.TRANSFER_FUNDS ||
+            transactionType === TransactionTypes.RAW_TRANSACTION ||
             transactionType === TransactionTypes.TRANSFER_NFT,
           then: yup.object().shape({
             id: yup.string().address().required(),
