@@ -34,6 +34,10 @@
   margin-bottom: 21px;
 }
 
+.titleContainer div[class*="Input_container"] {
+  width: 100%;
+}
+
 .titleContainer input {
   padding: 0;
   border-bottom: none;
@@ -102,4 +106,5 @@
 
 .errorDotContainer {
   margin-left: 7px;
+  max-width: 12px;
 }

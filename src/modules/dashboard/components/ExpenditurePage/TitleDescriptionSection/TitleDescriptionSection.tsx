@@ -18,9 +18,7 @@ const MSG = defineMessages({
     defaultMessage: 'Required field error',
   },
   descriptionPlaceholder: {
-    id:
-      // eslint-disable-next-line max-len
-      'dashboard.ExpenditurePage.TitleDescriptionSection.descriptionPlaceholder',
+    id: `dashboard.ExpenditurePage.TitleDescriptionSection.descriptionPlaceholder`,
     defaultMessage: 'Enter description',
   },
 });
