@@ -71,7 +71,7 @@ const LockedSidebar = ({
         );
       }
       case ExpenditureTypes.Batch: {
-        return batch ? <LockedBatch batch={batch} /> : null;
+        return batch ? <LockedBatch batch={batch} editForm={editForm} /> : null;
       }
       default:
         return null;

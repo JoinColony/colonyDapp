@@ -25,5 +25,5 @@ export interface BatchDataItem {
 export interface ValidatedBatchDataItem extends Omit<BatchDataItem, 'token'> {
   error?: boolean;
   token?: AnyToken;
-  id: string;
+  id?: string;
 }

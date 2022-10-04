@@ -1,5 +1,4 @@
 import { uniqBy } from 'lodash';
-import { nanoid } from 'nanoid';
 import { useEffect, useMemo, useState } from 'react';
 
 import apolloClient from '~context/apolloClient';
@@ -59,7 +58,7 @@ export const useCalculateBatchPayment = (
   }, [data]);
 
   return useMemo(() => {
-    if (!data) {
+    if (!data || !uniqTokens || !uniqTokens.length) {
       return null;
     }
 
@@ -69,7 +68,6 @@ export const useCalculateBatchPayment = (
         (tokenItem) => tokenItem?.id === token,
       );
       return {
-        id: nanoid(),
         recipient,
         amount,
         token: correctToken || undefined,

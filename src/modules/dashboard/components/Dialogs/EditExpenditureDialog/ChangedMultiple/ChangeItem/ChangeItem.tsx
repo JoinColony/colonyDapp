@@ -1,13 +1,14 @@
 import { nanoid } from 'nanoid';
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import classNames from 'classnames';
 
 import { FormSection } from '~core/Fields';
 import Icon from '~core/Icon';
 import { Colony } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/types';
-import { ValueOf } from '../../ChangedValues/ChangedValues';
 
+import { ValueOf } from '../../ChangedValues/ChangedValues';
 import NewDelay from '../../NewDelay';
 import NewRecipient from '../../NewRecipient';
 import NewValue from '../../NewValue';
@@ -15,9 +16,17 @@ import NewValue from '../../NewValue';
 import styles from './ChangeItem.css';
 
 export const MSG = defineMessages({
-  none: {
-    id: 'dashboard.EditExpenditureDialog.ChangedMultiple.ChangeItem.none',
-    defaultMessage: 'None',
+  importedPayments: {
+    id: `dashboard.EditExpenditureDialog.ChangedMultiple.ChangeItem.importedPayments`,
+    defaultMessage: '{count} imported payments',
+  },
+  data: {
+    id: 'dashboard.ExpenditurePage.Batch.LockedBatch.data.',
+    defaultMessage: 'Data',
+  },
+  viewAll: {
+    id: `dashboard.ExpenditurePage.Batch.LockedBatch.viewAll`,
+    defaultMessage: 'View all',
   },
 });
 
@@ -50,6 +59,17 @@ const ChangeItem = ({ newValue, oldValue, name, colony }: Props) => {
           return (
             <span className={styles.changeItem}>
               {change || <FormattedMessage {...MSG.none} />}
+            </span>
+          );
+        }
+        // in batch payment type, it displays imported payments counter
+        case 'recipients': {
+          return (
+            <span className={classNames(styles.batch)}>
+              <FormattedMessage
+                {...MSG.importedPayments}
+                values={{ count: change }}
+              />
             </span>
           );
         }

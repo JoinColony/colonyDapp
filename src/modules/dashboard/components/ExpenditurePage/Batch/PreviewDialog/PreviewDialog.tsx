@@ -38,7 +38,7 @@ export const MSG = defineMessages({
 interface ValidatedBatchDataItem extends Omit<BatchDataItem, 'token'> {
   error?: boolean;
   token?: AnyToken;
-  id: string;
+  id?: string;
 }
 
 interface Props {
