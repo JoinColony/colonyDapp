@@ -30,7 +30,7 @@ interface DatePickerFieldValue {
 export interface DatePickerOption {
   label: string | MessageDescriptor;
   value: string;
-  hideDatePicker: boolean;
+  showDatePicker?: boolean;
 }
 
 interface Props {
@@ -43,17 +43,25 @@ interface Props {
   /** List of options to be displayed in DatePicker dropdown */
   options?: DatePickerOption[];
   minDate?: Date | null;
+  maxDate?: Date | null;
 }
 
 interface DateInputProps extends React.HTMLProps<HTMLButtonElement> {
   selectedDate: Date | null;
-  selectedOption?: DatePickerOption | null;
   dateFormat: string;
+  shouldShowDatePicker: boolean;
+  selectedOption?: DatePickerOption | null;
 }
 
 /** The component displaying the currently selected date / option */
 const DateInput = (
-  { onClick, selectedOption, selectedDate, dateFormat }: DateInputProps,
+  {
+    onClick,
+    selectedDate,
+    dateFormat,
+    shouldShowDatePicker,
+    selectedOption,
+  }: DateInputProps,
   ref: React.Ref<HTMLButtonElement>,
 ) => {
   const { formatMessage } = useIntl();
@@ -80,7 +88,7 @@ const DateInput = (
   return (
     <Tooltip
       content={
-        !selectedOption?.hideDatePicker ? (
+        shouldShowDatePicker ? (
           <div className={styles.tooltipContent}>{utcFormattedDate}</div>
         ) : null
       }
@@ -91,7 +99,7 @@ const DateInput = (
         onClick={onClick}
         ref={ref}
       >
-        {selectedOption?.hideDatePicker ? labelText : formattedDate}
+        {shouldShowDatePicker ? formattedDate : labelText}
 
         <span className={styles.expandDateIcon}>
           <Icon name="caret-down-small" title={MSG.expandIconHTMLTitle} />
@@ -109,6 +117,7 @@ const DatePicker = ({
   dateFormat,
   options,
   minDate,
+  maxDate,
   timeInterval = 30,
 }: Props) => {
   const [{ value }, , { setValue, setTouched }] = useField<
@@ -144,6 +153,9 @@ const DatePicker = ({
 
   const selectedOption = options?.find((o) => o.value === value?.option);
 
+  const shouldShowDatePicker =
+    !selectedOption || !!selectedOption.showDatePicker;
+
   const renderHeader = useCallback(
     (props) => (
       <div className={styles.header}>
@@ -176,7 +188,7 @@ const DatePicker = ({
           {options && (
             <div
               className={classnames(styles.options, {
-                [styles.withDatePicker]: !selectedOption?.hideDatePicker,
+                [styles.withDatePicker]: shouldShowDatePicker,
               })}
             >
               {options.map((option) => {
@@ -202,7 +214,7 @@ const DatePicker = ({
             </div>
           )}
 
-          {!selectedOption?.hideDatePicker && (
+          {shouldShowDatePicker && (
             <>
               <CalendarContainer {...props} />
 
@@ -212,6 +224,7 @@ const DatePicker = ({
                   onChange={handleDateChange}
                   timeInterval={timeInterval}
                   minDate={minDate}
+                  maxDate={maxDate}
                 />
               )}
             </>
@@ -221,12 +234,13 @@ const DatePicker = ({
     },
     [
       options,
-      selectedOption,
+      shouldShowDatePicker,
       showTimeSelect,
       selectedDate,
       handleDateChange,
       timeInterval,
       minDate,
+      maxDate,
       formatMessage,
       value,
       handleOptionChange,
@@ -249,6 +263,7 @@ const DatePicker = ({
         calendarStartDay={1}
         formatWeekDay={(day) => day.substring(0, 1)}
         minDate={minDate}
+        maxDate={maxDate}
         shouldCloseOnSelect={false}
         popperPlacement="right-start"
         popperModifiers={[
@@ -263,6 +278,7 @@ const DatePicker = ({
         customInput={React.createElement(React.forwardRef(DateInput), {
           selectedOption,
           selectedDate,
+          shouldShowDatePicker,
           dateFormat: dateFormatOrDefault,
         })}
         renderCustomHeader={renderHeader}
