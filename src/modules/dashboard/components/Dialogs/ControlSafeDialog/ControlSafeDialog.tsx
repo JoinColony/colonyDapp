@@ -46,6 +46,9 @@ type Props = DialogProps &
   Partial<WizardDialogType<object>> &
   ActionDialogProps;
 
+export type UpdatedMethods = {
+  [key: number]: AbiItemExtended | undefined;
+};
 const ControlSafeDialog = ({
   colony: { colonyAddress, colonyName },
   colony,
@@ -56,9 +59,9 @@ const ControlSafeDialog = ({
   isVotingExtensionEnabled,
 }: Props) => {
   const [showPreview, setShowPreview] = useState(false);
-  const [selectedContractMethods, setSelectedContractMethods] = useState<{
-    [key: number]: AbiItemExtended | undefined;
-  }>();
+  const [selectedContractMethods, setSelectedContractMethods] = useState<
+    UpdatedMethods
+  >();
   const [expandedValidationSchema, setExpandedValidationSchema] = useState<
     Record<string, any>
   >({});
@@ -151,6 +154,11 @@ const ControlSafeDialog = ({
       transform={transform}
       onSuccess={close}
       validateOnMount
+      /*
+       * Needed to improve performance of, and avoid bugs in, the contract interaction section
+       * (https://github.com/JoinColony/colonyDapp/issues/3803, https://github.com/JoinColony/colonyDapp/issues/3917)
+       */
+      validateOnChange={false}
     >
       {(formValues: FormikProps<FormValues>) => (
         <Dialog cancel={cancel}>
