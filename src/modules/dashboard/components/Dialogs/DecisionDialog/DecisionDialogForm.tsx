@@ -10,7 +10,9 @@ import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import RichTextEditor from '~core/RichTextEditor/RichTextEditor';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
+import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import { Colony } from '~data/index';
+import { useColonyReputation } from '~utils/hooks/useColonyReputation';
 
 import { FormValues } from './DecisionDialog';
 
@@ -54,6 +56,7 @@ interface Props extends Omit<DialogProps, 'close'> {
 
 const DecisionDialogForm = ({
   colony,
+  colony: { colonyAddress },
   setFieldValue,
   values,
   isSubmitting,
@@ -65,6 +68,11 @@ const DecisionDialogForm = ({
   dirty,
   ethDomainId: preselectedDomainId,
 }: Props & FormikProps<FormValues>) => {
+  const hasReputation = useColonyReputation(
+    colonyAddress,
+    values.motionDomainId,
+  );
+
   const handleMotionDomainChange = useCallback(
     (motionDomainId) => setFieldValue('motionDomainId', motionDomainId),
     [setFieldValue],
@@ -104,7 +112,7 @@ const DecisionDialogForm = ({
         <Input
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
           name="title"
-          disabled={isSubmitting}
+          disabled={isSubmitting || !hasReputation}
           maxLength={50}
           placeholder={MSG.titlePlaceholder}
         />
@@ -120,9 +128,16 @@ const DecisionDialogForm = ({
             isSubmitting={isSubmitting}
             limit={limit}
             name="description"
+            disabled={!hasReputation}
           />
         )}
       </DialogSection>
+      {!hasReputation && (
+        <NotEnoughReputation
+          domainId={values.motionDomainId}
+          includeForceCopy={false}
+        />
+      )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
@@ -137,7 +152,7 @@ const DecisionDialogForm = ({
             id: titleOnOpen.current ? 'button.update' : 'button.preview',
           }}
           loading={isSubmitting}
-          disabled={!isValid || isSubmitting || !dirty}
+          disabled={!isValid || isSubmitting || !dirty || !hasReputation}
         />
       </DialogSection>
     </div>
