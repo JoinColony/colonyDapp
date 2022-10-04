@@ -24,7 +24,7 @@ import styles from './CancelStreamingDialog.css';
 const MSG = defineMessages({
   header: {
     id: 'dashboard.CancelStreamingDialog.CancelStreamingForm.header',
-    defaultMessage: 'Cancel streaming payment',
+    defaultMessage: 'Cancel treaming Payment',
   },
   description: {
     id: 'dashboard.CancelStreamingDialog.CancelStreamingForm.description',
