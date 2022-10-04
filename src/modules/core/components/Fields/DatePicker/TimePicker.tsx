@@ -26,6 +26,7 @@ interface Props {
   onChange: (date: Date) => void;
   timeInterval: number;
   minDate?: Date | null;
+  maxDate?: Date | null;
 }
 
 const TimePicker = ({
@@ -33,6 +34,7 @@ const TimePicker = ({
   onChange,
   timeInterval,
   minDate,
+  maxDate,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -114,7 +116,10 @@ const TimePicker = ({
                 })}
                 onClick={() => onChange(option)}
                 ref={isSelected ? selectedOptionRef : null}
-                disabled={!!minDate && option < minDate}
+                disabled={
+                  (!!minDate && option < minDate) ||
+                  (!!maxDate && option > maxDate)
+                }
               >
                 {format(option, DEFAULT_TIME_FORMAT)}
               </button>
