@@ -39,11 +39,12 @@ const RichTextEditor = ({
       setContentValue(editorContent.getHTML());
 
     editor.on('update', handleUpdate);
+    editor.setEditable(!disabled);
 
     return () => {
       editor.off('update', handleUpdate);
     };
-  }, [editor, setContentValue]);
+  }, [disabled, editor, setContentValue]);
 
   return (
     <div
@@ -59,7 +60,7 @@ const RichTextEditor = ({
         })}
         name={name}
         onBlur={() => {
-          setContentTouched(true);
+          if (!disabled) setContentTouched(true);
         }}
       />
       <span className={styles.characterCount}>
