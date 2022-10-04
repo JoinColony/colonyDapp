@@ -1,11 +1,9 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
-import isEmpty from 'lodash/isEmpty';
-import omit from 'lodash/omit';
-import isEqual from 'lodash/isEqual';
-import isNil from 'lodash/isNil';
+import { isEmpty, isEqual, isNil } from 'lodash';
+import { FormikProps } from 'formik';
 
-import { AnyUser, ColonySafe } from '~data/index';
+import { AnyUser } from '~data/index';
 import { Address } from '~types/index';
 import { Input, Select, SelectOption, Textarea } from '~core/Fields';
 import UserAvatar from '~core/UserAvatar';
@@ -19,7 +17,7 @@ import {
 import { GNOSIS_NETWORK } from '~constants';
 import { SpinnerLoader } from '~core/Preloaders';
 
-import { FormValues } from '../ControlSafeDialog';
+import { FormValues, FormProps, TransactionSectionProps } from '..';
 
 import styles from './TransactionTypesSection.css';
 
@@ -52,27 +50,18 @@ const MSG = defineMessages({
 
 const displayName = `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection`;
 
-interface Props {
-  disabledInput: boolean;
-  transactionFormIndex: number;
-  values: FormValues;
-  setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
-  setStatus: (status?: any) => void;
-  status: any;
-  selectedContractMethods:
-    | {
-        [key: number]: AbiItemExtended | undefined;
-      }
-    | undefined;
-  handleSelectedContractMethods: React.Dispatch<
-    React.SetStateAction<
-      | {
-          [key: number]: AbiItemExtended | undefined;
-        }
-      | undefined
-    >
-  >;
-  safes: ColonySafe[];
+interface Props
+  extends Pick<
+      FormProps,
+      'safes' | 'selectedContractMethods' | 'handleSelectedContractMethods'
+    >,
+    Pick<
+      FormikProps<FormValues>,
+      'setStatus' | 'setFieldValue' | 'values' | 'status'
+    >,
+    Omit<TransactionSectionProps, 'colony'> {
+  handleValidation: () => void;
+  removeSelectedContractMethods: (index: number) => void;
 }
 
 const renderAvatar = (address: Address, item: AnyUser) => (
@@ -89,6 +78,9 @@ const ContractInteractionSection = ({
   selectedContractMethods = {},
   handleSelectedContractMethods,
   safes,
+  handleValidation,
+  handleInputChange,
+  removeSelectedContractMethods,
 }: Props) => {
   const [formattedMethodOptions, setFormattedMethodOptions] = useState<
     SelectOption[]
@@ -101,6 +93,16 @@ const ContractInteractionSection = ({
   const selectedSafe = safes.find(
     (safe) => safe.contractAddress === values.safe?.profile?.walletAddress,
   );
+
+  const { contract: selectedContract } = values.transactions[
+    transactionFormIndex
+  ];
+
+  useEffect(() => {
+    if (!selectedContract) {
+      handleValidation();
+    }
+  }, [selectedContract, handleValidation]);
 
   const onContractABIChange = useCallback(
     (abiResponse: any) => {
@@ -123,25 +125,16 @@ const ContractInteractionSection = ({
         setFieldValue(
           `transactions.${transactionFormIndex}.abi`,
           abiResponse.result,
+          true,
         );
-
-        const updatedSelectedContractMethods = omit(
-          selectedContractMethods,
-          transactionFormIndex,
-        );
-
-        if (!isEqual(updatedSelectedContractMethods, selectedContractMethods)) {
-          handleSelectedContractMethods(updatedSelectedContractMethods);
-          setFieldValue(
-            `transactions.${transactionFormIndex}.contractFunction`,
-            '',
-          );
-        }
+        removeSelectedContractMethods(transactionFormIndex);
       }
 
       if (abiResponse.status !== '0') {
         setStatus(undefined);
       }
+
+      handleValidation();
     },
     [
       transactionFormIndex,
@@ -149,9 +142,9 @@ const ContractInteractionSection = ({
       setStatus,
       status,
       transactionValues.abi,
-      selectedContractMethods,
       selectedSafe,
-      handleSelectedContractMethods,
+      removeSelectedContractMethods,
+      handleValidation,
     ],
   );
 
@@ -208,12 +201,7 @@ const ContractInteractionSection = ({
     if (!isEqual(updatedFormattedMethodOptions, formattedMethodOptions)) {
       setFormattedMethodOptions(updatedFormattedMethodOptions);
     }
-  }, [
-    usefulMethods,
-    transactionFormIndex,
-    setFieldValue,
-    formattedMethodOptions,
-  ]);
+  }, [usefulMethods, transactionFormIndex, formattedMethodOptions]);
 
   useEffect(() => {
     if (
@@ -224,23 +212,13 @@ const ContractInteractionSection = ({
         )) &&
       !isEmpty(selectedContractMethods[transactionFormIndex])
     ) {
-      const updatedSelectedContractMethods = omit(
-        selectedContractMethods,
-        transactionFormIndex,
-      );
-
-      handleSelectedContractMethods(updatedSelectedContractMethods);
-      setFieldValue(
-        `transactions.${transactionFormIndex}.contractFunction`,
-        '',
-      );
+      removeSelectedContractMethods(transactionFormIndex);
     }
   }, [
-    handleSelectedContractMethods,
     selectedContractMethods,
     usefulMethods,
-    setFieldValue,
     transactionFormIndex,
+    removeSelectedContractMethods,
   ]);
 
   return (
@@ -257,6 +235,8 @@ const ContractInteractionSection = ({
             disabled={disabledInput}
             placeholder={MSG.userPickerPlaceholder}
             onSelected={onContractChange}
+            // handled instead in effect
+            validateOnChange={false}
           />
         </div>
       </DialogSection>
@@ -280,6 +260,11 @@ const ContractInteractionSection = ({
           </DialogSection>
           <DialogSection appearance={{ theme: 'sidePadding' }}>
             <div className={styles.contractFunctionSelectorContainer}>
+              {/*
+               * This is the component we don't want to let Formik validate immediately on change.
+               * Validation happens before the form state updates, which causes the form to be valid when
+               * it shouldn't be.
+               */}
               <Select
                 label={MSG.functionLabel}
                 name={`transactions.${transactionFormIndex}.contractFunction`}
@@ -295,6 +280,7 @@ const ContractInteractionSection = ({
                     ),
                   };
                   handleSelectedContractMethods(updatedSelectedContractMethods);
+                  handleValidation();
                 }}
               />
             </div>
@@ -312,6 +298,7 @@ const ContractInteractionSection = ({
                     name={`transactions.${transactionFormIndex}.${input.name}(${input.type})-${selectedContractMethods[transactionFormIndex]?.name}`}
                     appearance={{ colorSchema: 'grey', theme: 'fat' }}
                     disabled={disabledInput}
+                    onChange={handleInputChange}
                     placeholder={`${input.name} (${input.type})`}
                     formattingOptions={
                       input.type.includes('int') &&

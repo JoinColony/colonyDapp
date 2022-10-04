@@ -33,6 +33,7 @@ interface Props {
   inputName?: string;
   selectorName?: string;
   maxButtonParams?: MaxButtonParams;
+  handleChange?: () => void;
 }
 
 const MSG = defineMessages({
@@ -85,6 +86,7 @@ const AmountTokens = ({
   inputName,
   selectorName,
   maxButtonParams,
+  handleChange,
 }: Props) => (
   <div className={styles.tokenAmount}>
     <div
@@ -95,6 +97,7 @@ const AmountTokens = ({
       <Input
         label={MSG.amount}
         name={inputName || 'amount'}
+        onChange={handleChange}
         appearance={{
           theme: 'minimal',
           align: 'right',

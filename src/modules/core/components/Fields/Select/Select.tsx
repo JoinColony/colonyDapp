@@ -87,6 +87,9 @@ export interface Props {
 
   /** Provides value for data-test prop in select items used on cypress testing */
   itemDataTest?: string;
+
+  /** In the event form-level onChange validation is disabled, this prop can be passed to activate at the component level */
+  validateOnChange?: boolean;
 }
 
 const displayName = 'Select';
@@ -110,6 +113,7 @@ const Select = ({
   statusValues,
   dataTest,
   itemDataTest,
+  validateOnChange,
 }: Props) => {
   const [id] = useState<string>(idProp || nanoid());
   const [, { error, value, touched }, { setValue }] = useField(name);
@@ -166,7 +170,7 @@ const Select = ({
       return;
     }
     const { value: optionValue } = options[selectedOption];
-    setValue(optionValue);
+    setValue(optionValue, validateOnChange);
     if (onChangeCallback) {
       onChangeCallback(optionValue);
     }
