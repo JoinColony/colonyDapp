@@ -568,9 +568,10 @@ export const motionsResolvers = ({
           fetchPolicy: 'network-only',
         });
 
-        const hasCurrentUserVoted = !!data?.motionVoteSubmittedEvents.filter(
-          (event) => event.args.includes(userAddress),
-        );
+        const hasCurrentUserVoted =
+          data?.motionVoteSubmittedEvents.filter((event) =>
+            event.args.includes(userAddress.toLowerCase()),
+          ).length !== 0;
 
         return hasCurrentUserVoted;
       } catch (error) {
