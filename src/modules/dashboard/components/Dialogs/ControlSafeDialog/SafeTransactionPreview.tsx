@@ -272,11 +272,11 @@ const SafeTransactionPreview = ({
       case input.type === 'address[]': {
         const formattedArray = getArrayFromString(transaction[input.name]);
 
-        const maskedArray = formattedArray.map((address) => {
+        const maskedArray = formattedArray.map((address, index, arr) => {
           return (
             <div>
               <MaskedAddress address={address} />
-              <span>, </span>
+              {index < arr.length - 1 && <span>, </span>}
             </div>
           );
         });
