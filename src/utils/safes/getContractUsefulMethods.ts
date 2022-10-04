@@ -89,10 +89,10 @@ const extractUsefulMethods = (abi: AbiItem[]): AbiItemExtended[] => {
 };
 
 export const isAbiItem = (value: unknown): value is AbiItem[] => {
-  const test =
+  return (
     Array.isArray(value) &&
-    value.every((element) => typeof element === 'object');
-  return test;
+    value.every((element) => typeof element === 'object')
+  );
 };
 
 export const getContractUsefulMethods = (contractABI: string | undefined) => {
