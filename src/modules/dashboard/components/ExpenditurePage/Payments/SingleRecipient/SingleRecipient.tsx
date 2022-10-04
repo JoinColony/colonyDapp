@@ -11,6 +11,7 @@ import { ErrorDot } from '~dashboard/ExpenditurePage/ErrorDot';
 import CollapseExpandButtons from '../CollapseExpandButtons';
 import { Recipient as RecipientType } from '../types';
 import styles from '../Payments.css';
+import { MembersSubscription } from '~data/generated';
 
 const displayName = 'dashboard.ExpenditurePage.Payments.SingleRecipient';
 
@@ -31,7 +32,7 @@ export const MSG = defineMessages({
 
 interface Props extends Omit<RecipientProps, 'subscribedUsers'> {
   allRecipient: RecipientType[];
-  colonyMembers: any;
+  colonyMembers: MembersSubscription | undefined;
   onToggleButtonClick: (index: number) => void;
   remove: (index: number) => void;
 }
