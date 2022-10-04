@@ -6,21 +6,8 @@
   color: var(--dark);
 }
 
-.value {
-  composes: value from '../NewDelay/NewDelay.css';
-}
-
-.value figure {
-  height: 24px;
-  width: 24px;
-}
-
 .smallerPadding {
   padding: 4px 0;
-}
-
-.valueContainer {
-  text-align: right;
 }
 
 .userAvatarContainer {

@@ -1,7 +1,7 @@
 import { isEqual, uniq, isEmpty, assign, isNil, merge } from 'lodash';
 import { nanoid } from 'nanoid';
 
-import { DelayTime } from './types';
+import { DelayTime, ExpenditureTypes } from './types';
 
 interface Delay {
   amount?: string;
@@ -161,6 +161,13 @@ export const findDifferences = (
     const oldValue = oldValues[key];
     const newValue = newValues[key];
 
+    if (key === ExpenditureTypes.Batch) {
+      if (!isEqual(oldValue?.data, newValue?.data)) {
+        return { ...result, batch: newValue };
+      }
+      return result;
+    }
+
     if (Array.isArray(newValue)) {
       const changes = checkArray(newValue, oldValue);
 
@@ -172,7 +179,6 @@ export const findDifferences = (
         (acc, [currKey, currVal]) => {
           if (Array.isArray(currVal)) {
             const changes = checkArray(currVal, oldValue[currKey]);
-
             return { ...acc, ...(!isEmpty(changes) && { [currKey]: changes }) };
           }
           if (!isEqual(currVal, oldValue[currKey])) {
@@ -369,6 +375,15 @@ export const updateValues = (values, confirmedValues) => {
     return {
       ...newValues,
       staged: { ...newValues.staged, milestones: confirmedMilestones },
+    };
+  }
+
+  if ('batch' in confirmedValues) {
+    const newValues = merge({}, values, confirmedValues);
+
+    return {
+      ...newValues,
+      batch: confirmedValues.batch,
     };
   }
 

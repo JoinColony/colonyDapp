@@ -9,6 +9,9 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { Colony } from '~data/index';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
 import { Split } from '~dashboard/ExpenditurePage/Split/types';
+import { Batch } from '~dashboard/ExpenditurePage/Batch/types';
+
+import { isBatchValueType } from '../ChangedBatch/utils';
 
 import styles from './NewValue.css';
 
@@ -27,7 +30,7 @@ const displayName = 'dashboard.EditExpenditureDialog.NewValue';
 
 interface Props {
   colony: Colony;
-  newValue: Recipient['value'] | Split['amount'];
+  newValue: Recipient['value'] | Split['amount'] | Batch['value'];
 }
 
 const NewValue = ({ colony, newValue }: Props) => {
@@ -49,9 +52,9 @@ const NewValue = ({ colony, newValue }: Props) => {
 
     return (
       <div className={styles.row}>
-        <div className={styles.valueContainer}>
+        <div>
           {newValue.value && token && (
-            <div className={styles.value}>
+            <div>
               <TokenIcon
                 className={styles.tokenIcon}
                 token={token}
@@ -64,6 +67,51 @@ const NewValue = ({ colony, newValue }: Props) => {
               {token.symbol}
             </div>
           )}
+        </div>
+      </div>
+    );
+  }
+
+  if (isBatchValueType(newValue)) {
+    const multipleValues = newValue?.length > 1;
+
+    return (
+      <div
+        className={classNames(styles.row, {
+          [styles.valueLabel]: multipleValues,
+          [styles.smallerPadding]: multipleValues,
+        })}
+      >
+        <div>
+          {newValue &&
+            newValue.map((newValueItem, index) => {
+              const { value, token } = newValueItem || {};
+              if (!value || !token) {
+                return null;
+              }
+
+              return (
+                <div
+                  className={classNames({
+                    [styles.paddingBottom]:
+                      multipleValues && index < newValue.length - 1,
+                  })}
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={index}
+                >
+                  <TokenIcon
+                    className={styles.tokenIcon}
+                    token={token}
+                    name={token.name || token.address}
+                  />
+                  <Numeral
+                    unit={getTokenDecimalsWithFallback(0)} // it's a mock value, must be replaced with a valid value
+                    value={value}
+                  />{' '}
+                  {token.symbol}
+                </div>
+              );
+            })}
         </div>
       </div>
     );
@@ -88,13 +136,13 @@ const NewValue = ({ colony, newValue }: Props) => {
         [styles.smallerPadding]: multipleValues,
       })}
     >
-      <div className={styles.valueContainer}>
+      <div>
         {recipientValues?.map(
           ({ amount, token }, index) =>
             amount &&
             token && (
               <div
-                className={classNames(styles.value, {
+                className={classNames({
                   [styles.paddingBottom]:
                     multipleValues && index < recipientValues.length - 1,
                 })}

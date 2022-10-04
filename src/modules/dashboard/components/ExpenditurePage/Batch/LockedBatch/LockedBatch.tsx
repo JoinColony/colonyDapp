@@ -11,6 +11,7 @@ import PreviewDialog from '../PreviewDialog';
 import { Batch } from '../types';
 
 import styles from './LockedBatch.css';
+import Icon from '~core/Icon';
 
 export const MSG = defineMessages({
   batch: {
@@ -21,9 +22,9 @@ export const MSG = defineMessages({
     id: `dashboard.ExpenditurePage.Batch.LockedBatch.viewAll`,
     defaultMessage: 'View all',
   },
-  recipients: {
-    id: 'dashboard.ExpenditurePage.Batch.LockedBatch.recipients',
-    defaultMessage: 'Recipients',
+  importedPayments: {
+    id: 'dashboard.ExpenditurePage.Batch.LockedBatch.importedPayments',
+    defaultMessage: 'Imported payments',
   },
   value: {
     id: 'dashboard.ExpenditurePage.Batch.LockedBatch.value',
@@ -43,9 +44,10 @@ const displayName = 'dashboard.ExpenditurePage.Batch.LockedBatch';
 
 interface Props {
   batch: Batch;
+  editForm: () => void;
 }
 
-const LockedBatch = ({ batch }: Props) => {
+const LockedBatch = ({ batch, editForm }: Props) => {
   const { formatMessage } = useIntl();
   const openPreviewDialog = useDialog(PreviewDialog);
 
@@ -54,6 +56,14 @@ const LockedBatch = ({ batch }: Props) => {
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.wrapper}>
           <FormattedMessage {...MSG.batch} />
+          <span className={styles.editIcon}>
+            <Icon
+              name="edit"
+              appearance={{ size: 'medium' }}
+              title="Edit expenditure"
+              onClick={editForm}
+            />
+          </span>
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
@@ -71,7 +81,7 @@ const LockedBatch = ({ batch }: Props) => {
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.dataRow}>
-          <FormattedMessage {...MSG.recipients} />
+          <FormattedMessage {...MSG.importedPayments} />
           <div className={styles.value}>{batch.recipients}</div>
         </div>
       </FormSection>

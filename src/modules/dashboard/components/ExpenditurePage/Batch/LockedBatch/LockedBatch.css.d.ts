@@ -11,3 +11,4 @@ export const tokenIcon: string;
 export const marginBottom: string;
 export const wrapper: string;
 export const tokenWrapper: string;
+export const editIcon: string;
