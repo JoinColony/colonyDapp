@@ -44,17 +44,15 @@ const endDateOptions: DatePickerOption[] = [
   {
     label: MSG.whenCancelled,
     value: ExpenditureEndDateTypes.WhenCancelled,
-    hideDatePicker: true,
   },
   {
     label: MSG.limitIsReached,
     value: ExpenditureEndDateTypes.LimitIsReached,
-    hideDatePicker: true,
   },
   {
     label: MSG.fixedTime,
     value: ExpenditureEndDateTypes.FixedTime,
-    hideDatePicker: false,
+    showDatePicker: true,
   },
 ];
 
@@ -106,6 +104,7 @@ const ExpenditureStreamingForm = ({ sidebarRef, colony }: Props) => {
             name="streaming.endDate"
             showTimeSelect
             options={endDateOptions}
+            minDate={new Date()}
           />
         </div>
       </FormSection>
