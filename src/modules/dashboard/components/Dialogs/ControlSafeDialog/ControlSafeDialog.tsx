@@ -72,7 +72,7 @@ const ControlSafeDialog = ({
       Object.values(selectedContractMethods).forEach((method) => {
         method?.inputs?.forEach((input) => {
           updatedExpandedValidationSchema[
-            input.name
+            `${input.name}(${input.type})`
           ] = getMethodInputValidation(input.type, method.name);
         });
       });
