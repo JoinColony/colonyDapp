@@ -4,7 +4,7 @@ import { defineMessages, MessageDescriptor } from 'react-intl';
 import * as yup from 'yup';
 
 import { intl } from '~utils/intl';
-import { validateType } from '~utils/safes';
+import { isAbiItem, validateType } from '~utils/safes';
 import { TransactionTypes } from './constants';
 
 const MSG = defineMessages({
@@ -27,6 +27,10 @@ const MSG = defineMessages({
   notHexError: {
     id: 'dashboard.ControlSafeDialog.validation.notHexError',
     defaultMessage: 'Value must be a valid hex string',
+  },
+  notAbiError: {
+    id: 'dashboard.ControlSafeDialog.validation.notAbiError',
+    defaultMessage: 'Value must be a valid contract ABI',
   },
   notAddressError: {
     id: 'dashboard.ControlSafeDialog.validation.notAddressError',
@@ -210,7 +214,23 @@ export const getValidationSchema = (
         abi: yup.string().when('transactionType', {
           is: (transactionType) =>
             transactionType === TransactionTypes.CONTRACT_INTERACTION,
-          then: yup.string().required(() => MSG.requiredFieldError),
+          then: yup
+            .string()
+            .required(() => MSG.requiredFieldError)
+            .test(
+              'is-abi-item',
+              () => MSG.notAbiError,
+              (value) => {
+                if (value) {
+                  try {
+                    return isAbiItem(JSON.parse(value));
+                  } catch (error) {
+                    return false;
+                  }
+                }
+                return false;
+              },
+            ),
           otherwise: false,
         }),
         contractFunction: yup.string().when('transactionType', {
