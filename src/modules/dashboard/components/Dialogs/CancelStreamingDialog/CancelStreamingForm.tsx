@@ -24,7 +24,7 @@ import styles from './CancelStreamingDialog.css';
 const MSG = defineMessages({
   header: {
     id: 'dashboard.CancelStreamingDialog.CancelStreamingForm.header',
-    defaultMessage: 'Cancel treaming Payment',
+    defaultMessage: 'Cancel Streaming Payment',
   },
   description: {
     id: 'dashboard.CancelStreamingDialog.CancelStreamingForm.description',
@@ -269,7 +269,7 @@ const CancelStreamingForm = ({
             width: styles.buttonWidth,
           }}
           autoFocus
-          text={{ id: 'button.submit' }}
+          text={{ id: 'button.createMotion' }}
           type="submit"
           onClick={() => {
             onCancelStreaming(values.forceAction);
