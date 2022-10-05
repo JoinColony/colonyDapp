@@ -180,7 +180,11 @@ const UserPickerWithSearch = ({
           appearance={{ direction: 'horizontal' }}
           screenReaderOnly={elementOnly}
         />
-        <div className={styles.inputWithIcon} ref={registerTriggerNode}>
+        <div
+          className={styles.inputWithIcon}
+          ref={registerTriggerNode}
+          aria-invalid={!!error}
+        >
           {value ? (
             <Button
               type="button"

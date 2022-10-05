@@ -83,10 +83,12 @@ const ExpenditureForm = ({ sidebarRef, colony }: Props) => {
   return (
     <Form onSubmit={onSubmit}>
       <ExpenditureSettings {...{ sidebarRef, colony }} />
-      {secondFormSection}
-      <button type="submit" tabIndex={-1} className={styles.hiddenSubmit}>
-        <FormattedMessage {...MSG.submit} />
-      </button>
+      <div id="expenditureForm">
+        {secondFormSection}
+        <button type="submit" tabIndex={-1} className={styles.hiddenSubmit}>
+          <FormattedMessage {...MSG.submit} />
+        </button>
+      </div>
     </Form>
   );
 };
