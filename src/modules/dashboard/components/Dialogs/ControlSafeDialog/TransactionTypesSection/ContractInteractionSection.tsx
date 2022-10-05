@@ -308,7 +308,8 @@ const ContractInteractionSection = ({
                 <div className={styles.inputParamContainer}>
                   <Input
                     label={`${input.name} (${input.type})`}
-                    name={`transactions.${transactionFormIndex}.${input.name}`}
+                    // eslint-disable-next-line max-len
+                    name={`transactions.${transactionFormIndex}.${input.name}(${input.type})`}
                     appearance={{ colorSchema: 'grey', theme: 'fat' }}
                     disabled={disabledInput}
                     placeholder={`${input.name} (${input.type})`}
