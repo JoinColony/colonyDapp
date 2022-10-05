@@ -1,5 +1,5 @@
 import { FieldArray, useField, useFormikContext } from 'formik';
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { nanoid } from 'nanoid';
 import { isNaN } from 'lodash';
@@ -102,6 +102,21 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [calculatedAmount]);
 
+  const onTokenChange = useCallback(
+    (value: string) => {
+      setValue(
+        recipients.map((rec) => ({
+          ...rec,
+          amount: {
+            value: rec.amount?.value,
+            tokenAddress: value,
+          },
+        })),
+      );
+    },
+    [recipients, setValue],
+  );
+
   return (
     <>
       <FormSection appearance={{ border: 'bottom' }}>
@@ -137,6 +152,7 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
                 tokens={colonyTokens}
                 name="split.amount.tokenAddress"
                 appearance={{ alignOptions: 'right', theme: 'grey' }}
+                onChange={onTokenChange}
                 elementOnly
               />
             </div>

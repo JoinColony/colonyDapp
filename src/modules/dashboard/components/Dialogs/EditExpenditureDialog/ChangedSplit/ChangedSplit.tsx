@@ -14,32 +14,32 @@ import ChangeHeader from '../ChangedMultiple/ChangeHeader';
 import NewRecipient from '../NewRecipient';
 
 import { isRecipientType } from './utils';
-import styles from './ChangePayment.css';
+import styles from './ChangedSplit.css';
 
 export const MSG = defineMessages({
   discard: {
-    id: 'dashboard.EditExpenditureDialog.ChangedPayment.discard',
+    id: 'dashboard.EditExpenditureDialog.ChangedSplit.discard',
     defaultMessage: 'Discard',
   },
   change: {
-    id: 'dashboard.EditExpenditureDialog.ChangedPayment.change',
-    defaultMessage: 'Change {name}',
+    id: 'dashboard.EditExpenditureDialog.ChangedSplit.change',
+    defaultMessage: 'Change Split',
   },
   from: {
-    id: 'dashboard.EditExpenditureDialog.ChangedPayment.from',
+    id: 'dashboard.EditExpenditureDialog.ChangedSplit.from',
     defaultMessage: 'From',
   },
   changeTo: {
-    id: 'dashboard.EditExpenditureDialog.ChangedPayment.changeTo',
+    id: 'dashboard.EditExpenditureDialog.ChangedSplit.changeTo',
     defaultMessage: 'Change to',
   },
   removed: {
-    id: 'dashboard.EditExpenditureDialog.ChangedPayment.removed',
+    id: 'dashboard.EditExpenditureDialog.ChangedSplit.removed',
     defaultMessage: 'Recipient has been deleted',
   },
 });
 
-const displayName = 'dashboard.EditExpenditureDialog.ChangedPayment';
+const displayName = 'dashboard.EditExpenditureDialog.ChangedSplit';
 const skip = ['id', 'claimDate', 'isExpanded', 'created', 'percent', 'unequal'];
 
 export type NewValueType = {
@@ -63,7 +63,7 @@ interface Props {
   discardChange: (name: string) => void;
 }
 
-const ChangedPayment = ({
+const ChangedSplit = ({
   newValues,
   oldValues,
   colony,
@@ -71,6 +71,50 @@ const ChangedPayment = ({
 }: Props) => {
   return (
     <>
+      {typeof newValues?.value === 'object' &&
+        Object.entries(newValues.value).map(([key, value]) => {
+          const oldValue = oldValues[newValues.key]?.[key]; // oldValue is a split.amount or split.recipients
+          // value - new split.amount or split.recipients
+          // key - 'amount' or 'recipients'
+
+          if (skip.includes(key)) {
+            return null;
+          }
+
+          if (!Array.isArray(value)) {
+            // it's split amount
+            return (
+              <>
+                <FormSection appearance={{ border: 'bottom' }}>
+                  <div className={styles.changeContainer}>
+                    <FormattedMessage
+                      {...MSG.change}
+                      values={{
+                        name: key,
+                      }}
+                    />
+                  </div>
+                  <div className={styles.subheader}>
+                    <span>
+                      <FormattedMessage {...MSG.from} />
+                    </span>
+                    <span>
+                      <FormattedMessage {...MSG.changeTo} />
+                    </span>
+                  </div>
+                </FormSection>
+                <ChangeItem
+                  newValue={value}
+                  oldValue={oldValue}
+                  key={value.id}
+                  colony={colony}
+                  name={key}
+                />
+              </>
+            );
+          }
+          return null;
+        })}
       {typeof newValues?.value === 'object' &&
         Object.entries(newValues.value).map(([key, value]) => {
           const oldValue = oldValues[newValues.key]?.[key]; // oldValue is a split.amount or split.recipients
@@ -135,36 +179,7 @@ const ChangedPayment = ({
               </>
             );
           }
-          // it's split.amount
-          return (
-            <>
-              <FormSection appearance={{ border: 'bottom' }}>
-                <div className={styles.changeContainer}>
-                  <FormattedMessage
-                    {...MSG.change}
-                    values={{
-                      name: key,
-                    }}
-                  />
-                </div>
-                <div className={styles.subheader}>
-                  <span>
-                    <FormattedMessage {...MSG.from} />
-                  </span>
-                  <span>
-                    <FormattedMessage {...MSG.changeTo} />
-                  </span>
-                </div>
-              </FormSection>
-              <ChangeItem
-                newValue={value}
-                oldValue={oldValue}
-                key={value.id}
-                colony={colony}
-                name={key}
-              />
-            </>
-          );
+          return null;
         })}
       <div className={styles.buttonWrappper}>
         <Button
@@ -177,6 +192,6 @@ const ChangedPayment = ({
   );
 };
 
-ChangedPayment.displayName = displayName;
+ChangedSplit.displayName = displayName;
 
-export default ChangedPayment;
+export default ChangedSplit;
