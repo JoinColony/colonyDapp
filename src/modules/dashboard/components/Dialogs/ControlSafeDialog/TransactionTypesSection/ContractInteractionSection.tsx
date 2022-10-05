@@ -13,6 +13,7 @@ import {
   getContractUsefulMethods,
   AbiItemExtended,
   fetchContractABI,
+  fetchContractName,
 } from '~utils/safes';
 import { SpinnerLoader } from '~core/Preloaders';
 import { isEmpty, isEqual, isNil } from '~utils/lodash';
@@ -164,18 +165,34 @@ const ContractInteractionSection = ({
     (contract: AnyUser) => {
       setIsLoadingABI(true);
       setFetchABIError('');
+
       if (selectedSafe && isAddress(contract.profile.walletAddress)) {
-        const contractPromise = fetchContractABI(
+        const contractABIPromise = fetchContractABI(
           contract.profile.walletAddress,
           Number(selectedSafe.chainId),
         );
-        contractPromise.then((data) => {
+        contractABIPromise.then((data) => {
           setIsLoadingABI(false);
           if (data) {
             onContractABIChange(data);
           } else {
             setFetchABIError(formatMessage(MSG.fetchFailedError));
           }
+        });
+
+        const contractNamePromise = fetchContractName(
+          contract.profile.walletAddress,
+          Number(selectedSafe?.chainId),
+        );
+
+        contractNamePromise.then((name) => {
+          setFieldValue(`transactions.${transactionFormIndex}.contract`, {
+            ...contract,
+            profile: {
+              ...contract.profile,
+              displayName: name,
+            },
+          });
         });
       } else {
         if (!isAddress(contract.profile.walletAddress)) {
@@ -186,7 +203,13 @@ const ContractInteractionSection = ({
         setIsLoadingABI(false);
       }
     },
-    [selectedSafe, onContractABIChange, formatMessage],
+    [
+      selectedSafe,
+      onContractABIChange,
+      formatMessage,
+      setFieldValue,
+      transactionFormIndex,
+    ],
   );
 
   const usefulMethods: AbiItemExtended[] = useMemo(
@@ -274,6 +297,7 @@ const ContractInteractionSection = ({
             onSelected={onContractChange}
             // handled instead in effect
             validateOnChange={false}
+            showMaskedAddress
           />
         </div>
       </DialogSection>

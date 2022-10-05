@@ -4,4 +4,5 @@ export {
   AbiItemExtended,
   fetchContractABI,
   isAbiItem,
+  fetchContractName,
 } from './getContractUsefulMethods';
