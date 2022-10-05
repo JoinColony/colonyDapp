@@ -72,17 +72,13 @@ const ChangedSplit = ({
   return (
     <>
       {typeof newValues?.value === 'object' &&
-        Object.entries(newValues.value).map(([key, value]) => {
-          const oldValue = oldValues[newValues.key]?.[key]; // oldValue is a split.amount or split.recipients
-          // value - new split.amount or split.recipients
-          // key - 'amount' or 'recipients'
+        Object.entries(newValues.value)
+          .filter(([key, value]) => {
+            return !(skip.includes(key) || Array.isArray(value));
+          })
+          .map(([key, value]) => {
+            const oldValue = oldValues[newValues.key]?.[key]; // oldValue is a split.amount or split.recipients
 
-          if (skip.includes(key)) {
-            return null;
-          }
-
-          if (!Array.isArray(value)) {
-            // it's split amount
             return (
               <>
                 <FormSection appearance={{ border: 'bottom' }}>
@@ -112,20 +108,15 @@ const ChangedSplit = ({
                 />
               </>
             );
-          }
-          return null;
-        })}
+          })}
       {typeof newValues?.value === 'object' &&
-        Object.entries(newValues.value).map(([key, value]) => {
-          const oldValue = oldValues[newValues.key]?.[key]; // oldValue is a split.amount or split.recipients
-          // value - new split.amount or split.recipients
-          // key - 'amount' or 'recipients'
+        Object.entries(newValues.value)
+          .filter(([key, value]) => {
+            return !skip.includes(key) && Array.isArray(value);
+          })
+          .map(([key, value]) => {
+            const oldValue = oldValues[newValues.key]?.[key]; // oldValue is a split.amount or split.recipients
 
-          if (skip.includes(key)) {
-            return null;
-          }
-
-          if (Array.isArray(value)) {
             return (
               <>
                 {value.map((changeItem, idx) => {
@@ -178,9 +169,7 @@ const ChangedSplit = ({
                 })}
               </>
             );
-          }
-          return null;
-        })}
+          })}
       <div className={styles.buttonWrappper}>
         <Button
           className={styles.discard}
