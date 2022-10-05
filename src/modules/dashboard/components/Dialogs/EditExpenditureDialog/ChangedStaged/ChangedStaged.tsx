@@ -78,7 +78,7 @@ const ChangedStaged = ({
     return null;
   }
 
-  const objectProperties =
+  const stagedChanges =
     typeof newValues?.value === 'object'
       ? Object.entries(newValues.value).filter(([key, value]) => {
           return !(skip.includes(key) || Array.isArray(value));
@@ -87,7 +87,7 @@ const ChangedStaged = ({
 
   return (
     <>
-      {!isEmpty(objectProperties) && (
+      {!isEmpty(stagedChanges) && (
         <FormSection appearance={{ border: 'bottom' }}>
           <div className={styles.changeContainer}>
             <FormattedMessage {...MSG.change} />
@@ -102,7 +102,7 @@ const ChangedStaged = ({
           </div>
         </FormSection>
       )}
-      {objectProperties.map(([key, value]) => {
+      {stagedChanges.map(([key, value]) => {
         const oldValue = oldValues[newValues?.key || 'staged']?.[key];
 
         return (
