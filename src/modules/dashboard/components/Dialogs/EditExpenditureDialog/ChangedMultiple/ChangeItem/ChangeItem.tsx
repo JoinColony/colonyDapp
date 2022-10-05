@@ -27,15 +27,11 @@ const ChangeItem = ({ newValue, oldValue, name, colony }: Props) => {
   const renderChange = useCallback(
     (change) => {
       switch (name) {
-        case 'recipient': {
-          return <NewRecipient newValue={change} key={nanoid()} />;
-        }
+        case 'recipient':
         case 'user': {
           return <NewRecipient newValue={change} key={nanoid()} />;
         }
-        case 'value': {
-          return <NewValue colony={colony} newValue={change} key={nanoid()} />;
-        }
+        case 'value':
         case 'amount': {
           return <NewValue colony={colony} newValue={change} key={nanoid()} />;
         }
