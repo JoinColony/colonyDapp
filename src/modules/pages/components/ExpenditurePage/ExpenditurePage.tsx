@@ -214,6 +214,14 @@ const ExpenditurePage = ({ match }: Props) => {
         });
         setFormValues(values);
 
+        // it's temporary timeout
+        setTimeout(() => {
+          setMotion({
+            type: MotionType.StartStream,
+            status: MotionStatus.Failed,
+          });
+        }, 5000);
+
         return;
       }
 
