@@ -6,12 +6,12 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import { FormSection } from '~core/Fields';
 import TokenIcon from '~dashboard/HookedTokenIcon';
+import Icon from '~core/Icon';
 
 import PreviewDialog from '../PreviewDialog';
 import { Batch } from '../types';
 
 import styles from './LockedBatch.css';
-import Icon from '~core/Icon';
 
 export const MSG = defineMessages({
   batch: {
@@ -107,7 +107,7 @@ const LockedBatch = ({ batch, editForm }: Props) => {
                         batch.value.length > 1 &&
                         index + 1 !== batch.value.length,
                     })}
-                    key={'id' in token ? token.id : index}
+                    key={index}
                   >
                     {formatMessage(MSG.valueWithToken, {
                       token: token.symbol,
