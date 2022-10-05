@@ -29,6 +29,7 @@
   display: flex;
   justify-content: space-between;
   padding: 6px 0;
+  font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--dark);
 }
