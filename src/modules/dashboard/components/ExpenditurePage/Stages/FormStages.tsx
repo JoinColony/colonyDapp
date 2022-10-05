@@ -78,7 +78,7 @@ const FormStages = ({
       ? openDraftConfirmDialog({
           onClick: () => {
             handleSubmit(values as any);
-            setActiveStateId?.(Stage.Draft);
+            setActiveStageId?.(Stage.Draft);
           },
           isVotingExtensionEnabled: true, // 'true' is temporary value
           colony,
@@ -99,7 +99,7 @@ const FormStages = ({
       onClick: () => {
         resetForm();
         // add logic to delete the draft from database
-        setActiveStateId(undefined);
+        setActiveStageId(undefined);
         setFormValues(undefined);
       },
     });
