@@ -26,6 +26,7 @@
     "button.remove": "Remove",
     "button.retry": "Retry",
     "button.submit": "Submit",
+    "button.createMotion": "createMotion",
     "button.ok": "Okay",
     "button.yes": "Yes",
     "button.no": "No",
