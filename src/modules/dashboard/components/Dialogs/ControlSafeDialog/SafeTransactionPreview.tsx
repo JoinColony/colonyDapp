@@ -11,7 +11,9 @@ import TokenIcon from '~dashboard/HookedTokenIcon';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
 import Avatar from '~core/Avatar';
+import MaskedAddress from '~core/MaskedAddress';
 import { Colony, AnyUser } from '~data/index';
+import { AbiItemExtended, getArrayFromString } from '~utils/safes';
 
 import AddressDetailsView from './TransactionPreview/AddressDetailsView';
 import { FormValues } from './ControlSafeDialog';
@@ -102,6 +104,10 @@ const MSG = defineMessages({
     defaultMessage:
       '{tabToggleStatus, select, true {Expand} false {Close}} transaction',
   },
+  contractMethodInputLabel: {
+    id: `dashboard.ControlSafeDialog.SafeTransactionPreview.contractMethodInputLabel`,
+    defaultMessage: `{name} ({type})`,
+  },
 });
 
 const transactionTypeFieldsMap = {
@@ -169,7 +175,22 @@ const transactionTypeFieldsMap = {
     },
   ],
   [TransactionTypes.CONTRACT_INTERACTION]: [
-    // To be finished once NFT part of the form is merged
+    {
+      key: 'contract',
+      label: MSG.contract,
+      value: (contract) => (
+        <div className={styles.rawTransactionValues}>
+          <MaskedAddress address={contract.profile.displayName} />
+        </div>
+      ),
+    },
+    {
+      key: 'contractFunction',
+      label: MSG.contractFunction,
+      value: (contractFunction) => (
+        <div className={styles.rawTransactionValues}>{contractFunction}</div>
+      ),
+    },
   ],
   [TransactionTypes.RAW_TRANSACTION]: [
     {
@@ -194,9 +215,18 @@ const displayName = 'dashboard.ControlSafeDialog.SafeTransactionPreview';
 interface Props {
   colony: Colony;
   values: FormValues;
+  selectedContractMethods?:
+    | {
+        [key: number]: AbiItemExtended | undefined;
+      }
+    | undefined;
 }
 
-const SafeTransactionPreview = ({ colony, values }: Props) => {
+const SafeTransactionPreview = ({
+  colony,
+  values,
+  selectedContractMethods,
+}: Props) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState(
     Array(values.transactions.length).fill(false),
   );
@@ -233,6 +263,42 @@ const SafeTransactionPreview = ({ colony, values }: Props) => {
   const isNFT = (index) =>
     values.transactions[index].transactionType ===
     TransactionTypes.TRANSFER_NFT;
+
+  const getDetailsItemValue = (input, transaction) => {
+    switch (true) {
+      case input.type === 'address': {
+        return <MaskedAddress address={transaction[input.name]} />;
+      }
+      case input.type === 'address[]': {
+        const formattedArray = getArrayFromString(transaction[input.name]);
+
+        const maskedArray = formattedArray.map((address, index, arr) => {
+          return (
+            <div>
+              <MaskedAddress address={address.trim()} />
+              {index < arr.length - 1 && <span>, </span>}
+            </div>
+          );
+        });
+        return <div className={styles.rawTransactionValues}>{maskedArray}</div>;
+      }
+      case input.type.substr(input.type.length - 2, input.type.length) ===
+        '[]': {
+        const formattedArray = `[${getArrayFromString(transaction[input.name])
+          .map((item) => item.trim())
+          .join(', ')}]`;
+        return (
+          <div className={styles.rawTransactionValues}>{formattedArray}</div>
+        );
+      }
+      default:
+        return (
+          <div className={styles.rawTransactionValues}>
+            {transaction[input.name]}
+          </div>
+        );
+    }
+  };
 
   return (
     <>
@@ -342,6 +408,20 @@ const SafeTransactionPreview = ({ colony, values }: Props) => {
                       value={value(
                         values.transactions[index][key],
                         tokens[index],
+                      )}
+                    />
+                  ))}
+                {values.transactions[index].transactionType ===
+                  TransactionTypes.CONTRACT_INTERACTION &&
+                  selectedContractMethods &&
+                  selectedContractMethods[index]?.inputs?.map((input) => (
+                    <DetailsItem
+                      key={nanoid()}
+                      label={MSG.contractMethodInputLabel}
+                      textValues={{ name: input.name, type: input.type }}
+                      value={getDetailsItemValue(
+                        input,
+                        values.transactions[index],
                       )}
                     />
                   ))}
