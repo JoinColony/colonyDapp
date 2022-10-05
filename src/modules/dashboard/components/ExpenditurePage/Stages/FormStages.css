@@ -1,0 +1,41 @@
+.formStages {
+  position: relative;
+}
+
+.formStagesMsg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 21px;
+  width: 100%;
+  position: absolute;
+  top: -14px;
+
+  /* border: 1px solid #fe5e7c; */
+  border-radius: 12px;
+
+  /* font-family: MuliWeb; */
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 18px;
+  transform: translateY(-100%);
+  letter-spacing: 0.5px;
+}
+
+.formStagesMsgText {
+  color: var(--danger);
+
+  /* color: #fe5e7c; */
+}
+
+.formStagesMsgAction {
+  margin: 0 0 0 8px;
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+  font-size: inherit;
+
+  /* color: #4c5dff; */
+  appearance: none;
+  cursor: pointer;
+}
