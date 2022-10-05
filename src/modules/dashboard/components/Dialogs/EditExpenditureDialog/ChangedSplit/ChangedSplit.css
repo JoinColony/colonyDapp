@@ -29,6 +29,8 @@
   display: flex;
   justify-content: space-between;
   padding: 6px 0;
+  font-weight: var(--weight-bold);
+  color: var(--dark);
 }
 
 .row {

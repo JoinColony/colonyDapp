@@ -95,7 +95,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
     };
   }, [recipients]);
 
-  const onSelectChange = useCallback(
+  const onSliderChange = useCallback(
     (val: number, name: string) => {
       setFieldValue(name, {
         value: (Number(val) / 100) * Number(amount.value),
@@ -103,6 +103,21 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
       });
     },
     [amount.value, setFieldValue, amount.tokenAddress],
+  );
+
+  const onTokenChange = useCallback(
+    (value: string) => {
+      setValue(
+        recipients.map((rec) => ({
+          ...rec,
+          amount: {
+            value: rec.amount?.value,
+            tokenAddress: value,
+          },
+        })),
+      );
+    },
+    [recipients, setValue],
   );
 
   const onInputChange = useCallback(
@@ -154,6 +169,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
                 tokens={colonyTokens}
                 name="split.amount.tokenAddress"
                 appearance={{ alignOptions: 'right', theme: 'grey' }}
+                onChange={onTokenChange}
                 elementOnly
               />
             </div>
@@ -233,7 +249,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
                         backgroundColor: 'transparent',
                       }}
                       onChange={(val) =>
-                        onSelectChange(val, `split.recipients[${index}].amount`)
+                        onSliderChange(val, `split.recipients[${index}].amount`)
                       }
                     />
                     <span className={styles.percent}>
