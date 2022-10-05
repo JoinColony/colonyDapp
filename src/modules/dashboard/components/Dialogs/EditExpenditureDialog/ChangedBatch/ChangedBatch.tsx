@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { isEmpty } from 'lodash';
+import { nanoid } from 'nanoid';
 
 import Button from '~core/Button';
 import { Colony, LoggedInUser } from '~data/index';
@@ -65,41 +67,54 @@ const ChangedBatch = ({
   colony,
   discardChange,
 }: Props) => {
+  const batchChanges = useMemo(
+    () =>
+      typeof newValues?.value === 'object'
+        ? Object.entries(newValues.value)
+            .filter(([key]) => {
+              return !skip.includes(key);
+            })
+            .map(([key, value]) => ({ key, value, id: nanoid() }))
+        : [],
+    [newValues],
+  );
+
+  if (!newValues) {
+    return null;
+  }
+
   return (
     <>
-      <div className={styles.changeContainer}>
-        <FormattedMessage {...MSG.change} />
-      </div>
-      <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.subheader}>
-          <span>
-            <FormattedMessage {...MSG.from} />
-          </span>
-          <span>
-            <FormattedMessage {...MSG.changeTo} />
-          </span>
-        </div>
-      </FormSection>
-      {typeof newValues?.value === 'object' &&
-        Object.entries(newValues.value).map(([key, value]) => {
-          const oldValue = oldValues[newValues.key]?.[key];
+      {!isEmpty(batchChanges) && (
+        <>
+          <div className={styles.changeContainer}>
+            <FormattedMessage {...MSG.change} />
+          </div>
+          <FormSection appearance={{ border: 'bottom' }}>
+            <div className={styles.subheader}>
+              <span>
+                <FormattedMessage {...MSG.from} />
+              </span>
+              <span>
+                <FormattedMessage {...MSG.changeTo} />
+              </span>
+            </div>
+          </FormSection>
+        </>
+      )}
+      {batchChanges.map(({ key, value, id }) => {
+        const oldValue = oldValues[newValues.key]?.[key];
 
-          if (skip.includes(key)) {
-            return null;
-          }
-
-          return (
-            <>
-              <ChangeItem
-                newValue={value}
-                oldValue={oldValue}
-                key={value.id}
-                colony={colony}
-                name={key}
-              />
-            </>
-          );
-        })}
+        return (
+          <ChangeItem
+            newValue={value}
+            oldValue={oldValue}
+            key={id}
+            colony={colony}
+            name={key}
+          />
+        );
+      })}
       <div className={styles.buttonWrappper}>
         <Button
           className={styles.discard}
