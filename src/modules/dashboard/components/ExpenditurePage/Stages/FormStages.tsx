@@ -104,12 +104,12 @@ const FormStages = ({
   }, [activeState, handleSubmit, setTouched, validateForm, values]);
 
   const handleSubmitButtonClick = () => {
-    const firstInvalidEl = document
-      .getElementById('expenditureForm')
-      ?.querySelectorAll('[aria-invalid="true"]')[0];
-
-    firstInvalidEl.style.border = '1px solid deeppink';
-    firstInvalidEl?.focus();
+    // const firstInvalidEl = document
+    //   .getElementById('expenditureForm')
+    //   ?.querySelectorAll('[aria-invalid="true"]')[0];
+    // test - to be changed
+    // firstInvalidEl.style.border = '1px solid deeppink';
+    // firstInvalidEl?.focus();
   };
 
   return (
