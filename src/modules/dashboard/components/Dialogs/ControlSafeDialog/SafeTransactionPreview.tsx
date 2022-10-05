@@ -275,7 +275,7 @@ const SafeTransactionPreview = ({
         const maskedArray = formattedArray.map((address, index, arr) => {
           return (
             <div>
-              <MaskedAddress address={address} />
+              <MaskedAddress address={address.trim()} />
               {index < arr.length - 1 && <span>, </span>}
             </div>
           );
@@ -284,9 +284,9 @@ const SafeTransactionPreview = ({
       }
       case input.type.substr(input.type.length - 2, input.type.length) ===
         '[]': {
-        const formattedArray = `[${getArrayFromString(
-          transaction[input.name],
-        ).join(', ')}]`;
+        const formattedArray = `[${getArrayFromString(transaction[input.name])
+          .map((item) => item.trim())
+          .join(', ')}]`;
         return (
           <div className={styles.rawTransactionValues}>{formattedArray}</div>
         );
