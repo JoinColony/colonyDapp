@@ -314,25 +314,30 @@ export const updateValues = (values, confirmedValues) => {
 
   if ('staged' in confirmedValues) {
     const changedMilestones = values.staged.milestones.filter((milestone) =>
-      confirmedValues.staged.milestones.find(
+      confirmedValues.staged.milestones?.find(
         (confMilestone) => confMilestone.id === milestone.id,
       ),
     );
 
-    const sameMilestones = values.staged.milestones.filter((recipient) =>
-      confirmedValues.staged.milestones.every(
+    const sameMilestones = values.staged.milestones.filter((recipient) => {
+      if (
+        !confirmedValues.staged.milestones ||
+        !confirmedValues.staged.milestones?.length
+      ) {
+        return true;
+      }
+      return confirmedValues.staged.milestones?.every(
         (confRec) => confRec.id !== recipient.id,
-      ),
-    );
+      );
+    });
 
-    const newMilestones = confirmedValues.staged.milestones.filter(
-      (value) => value.created,
-    );
+    const newMilestones =
+      confirmedValues.staged.milestones?.filter((value) => value.created) || [];
 
     const confirmedMilestones = [
       ...sameMilestones,
-      ...changedMilestones.map((milestone) => {
-        const newValue = confirmedValues.staged.milestones.find(
+      ...changedMilestones?.map((milestone) => {
+        const newValue = confirmedValues.staged.milestones?.find(
           (mile) => mile.id === milestone.id,
         );
 
@@ -343,7 +348,7 @@ export const updateValues = (values, confirmedValues) => {
           isChanged: true,
         };
       }),
-      ...newMilestones.map((newMilestone) => ({
+      ...newMilestones?.map((newMilestone) => ({
         ...newMilestone,
         created: undefined,
         isChanged: true,

@@ -1,5 +1,6 @@
 import React from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
+import { isEmpty } from 'lodash';
 
 import Button from '~core/Button';
 import { FormSection } from '~core/Fields';
@@ -22,7 +23,7 @@ export const MSG = defineMessages({
   },
   change: {
     id: 'dashboard.EditExpenditureDialog.ChangedStaged.change',
-    defaultMessage: 'Change {name}',
+    defaultMessage: 'Change Staged',
   },
   from: {
     id: 'dashboard.EditExpenditureDialog.ChangedStaged.from',
@@ -77,20 +78,53 @@ const ChangedStaged = ({
     return null;
   }
 
+  const objectProperties =
+    typeof newValues?.value === 'object'
+      ? Object.entries(newValues.value).filter(([key, value]) => {
+          return !(skip.includes(key) || Array.isArray(value));
+        })
+      : [];
+
   return (
     <>
+      {!isEmpty(objectProperties) && (
+        <FormSection appearance={{ border: 'bottom' }}>
+          <div className={styles.changeContainer}>
+            <FormattedMessage {...MSG.change} />
+          </div>
+          <div className={styles.subheader}>
+            <span>
+              <FormattedMessage {...MSG.from} />
+            </span>
+            <span>
+              <FormattedMessage {...MSG.changeTo} />
+            </span>
+          </div>
+        </FormSection>
+      )}
+      {objectProperties.map(([key, value]) => {
+        const oldValue = oldValues[newValues?.key || 'staged']?.[key];
+
+        return (
+          <>
+            <ChangeItem
+              newValue={value}
+              oldValue={oldValue}
+              key={value.id}
+              colony={colony}
+              name={key}
+            />
+          </>
+        );
+      })}
       {typeof newValues?.value === 'object' &&
-        Object.entries(newValues.value).map(([key, value]) => {
-          const oldValue = oldValues[newValues?.key || 'staged']?.[key];
-          // oldValue is a staged.user, staged.amount or staged.milestones
-          // value - new staged.user, staged.amount or staged.milestones
-          // key - 'user', 'amount' or 'milestones'
+        Object.entries(newValues.value)
+          .filter(([key, value]) => {
+            return !skip.includes(key) && Array.isArray(value);
+          })
+          .map(([key, value]) => {
+            const oldValue = oldValues[newValues?.key || 'staged']?.[key];
 
-          if (skip.includes(key)) {
-            return null;
-          }
-
-          if (Array.isArray(value)) {
             return (
               <>
                 {value.map((changeItem, idx) => {
@@ -148,38 +182,7 @@ const ChangedStaged = ({
                 })}
               </>
             );
-          }
-          // it's staged.user, staged.amount
-          return (
-            <>
-              <FormSection appearance={{ border: 'bottom' }}>
-                <div className={styles.changeContainer}>
-                  <FormattedMessage
-                    {...MSG.change}
-                    values={{
-                      name: key,
-                    }}
-                  />
-                </div>
-                <div className={styles.subheader}>
-                  <span>
-                    <FormattedMessage {...MSG.from} />
-                  </span>
-                  <span>
-                    <FormattedMessage {...MSG.changeTo} />
-                  </span>
-                </div>
-              </FormSection>
-              <ChangeItem
-                newValue={value}
-                oldValue={oldValue}
-                key={value.id}
-                colony={colony}
-                name={key}
-              />
-            </>
-          );
-        })}
+          })}
       <div className={styles.buttonWrappper}>
         <Button
           className={styles.discard}

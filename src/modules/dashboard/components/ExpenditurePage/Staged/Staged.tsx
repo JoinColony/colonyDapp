@@ -1,6 +1,6 @@
 import Decimal from 'decimal.js';
 import { FieldArray, useField, useFormikContext } from 'formik';
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { nanoid } from 'nanoid';
 
@@ -8,7 +8,6 @@ import { FormSection, Input, TokenSymbolSelector } from '~core/Fields';
 import Icon from '~core/Icon';
 import { filterUserSelection } from '~core/SingleUserPicker';
 import UserPickerWithSearch from '~core/UserPickerWithSearch';
-
 import { supRenderAvatar } from '~dashboard/ExpenditurePage/Recipient/Recipient';
 import { Colony, useMembersSubscription } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/types';
@@ -16,8 +15,8 @@ import Button from '~core/Button';
 
 import { initalMilestone } from './constants';
 import Milestone from './Milestone';
-import styles from './Staged.css';
 import { Milestone as MilestoneType } from './types';
+import styles from './Staged.css';
 
 const MSG = defineMessages({
   staged: {
@@ -94,21 +93,41 @@ const Staged = ({ colony, sidebarRef }: Props) => {
     };
   }, [milestones]);
 
-  const handleAmountChange = (e: React.ChangeEvent<any>) => {
-    const { value } = e.target;
+  const handleAmountChange = useCallback(
+    (e: React.ChangeEvent<any>) => {
+      const { value } = e.target;
 
-    setValue(
-      milestones.map((milestone) => {
-        return {
-          ...milestone,
-          amount: {
-            value: (Number(milestone.percent) / 100) * Number(value),
-            tokenAddress: amount.tokenAddress,
-          },
-        };
-      }),
-    );
-  };
+      setValue(
+        milestones.map((milestone) => {
+          return {
+            ...milestone,
+            amount: {
+              value: (Number(milestone.percent) / 100) * Number(value),
+              tokenAddress: amount.tokenAddress,
+            },
+          };
+        }),
+      );
+    },
+    [amount.tokenAddress, milestones, setValue],
+  );
+
+  const onTokenChange = useCallback(
+    (value: string) => {
+      setValue(
+        milestones.map((milestone) => {
+          return {
+            ...milestone,
+            amount: {
+              value: milestone.amount?.value || 0,
+              tokenAddress: value,
+            },
+          };
+        }),
+      );
+    },
+    [milestones, setValue],
+  );
 
   return (
     <div className={styles.stagedContainer}>
@@ -161,6 +180,7 @@ const Staged = ({ colony, sidebarRef }: Props) => {
                 tokens={colonyTokens}
                 name="staged.amount.tokenAddress"
                 appearance={{ alignOptions: 'right', theme: 'grey' }}
+                onChange={onTokenChange}
                 elementOnly
               />
             </div>
