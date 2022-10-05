@@ -352,6 +352,10 @@ export const getContractInteractionData = async (
   let abi: string;
   let contractFunction: string;
 
+  if (!safeAddress) {
+    throw new Error('LOCAL_SAFE_ADDRESS not set in .env.');
+  }
+
   if (!contractAddress) {
     throw new Error('LOCAL_SAFE_TOKEN_ADDRESS not set in .env.');
   }
