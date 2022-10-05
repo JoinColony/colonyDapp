@@ -27,7 +27,7 @@ const displayName = 'dashboard.StartStreamDialog.StartStreamDialogForm';
 const MSG = defineMessages({
   title: {
     id: 'dashboard.StartStreamDialog.StartStreamDialogForm.title',
-    defaultMessage: 'Create a Motion to start Stream',
+    defaultMessage: 'Create a Motion to Start Stream',
   },
   description: {
     id: 'dashboard.StartStreamDialog.StartStreamDialogForm.title',
@@ -39,11 +39,11 @@ const MSG = defineMessages({
   },
   streamingDetails: {
     id: 'dashboard.StartStreamDialog.StartStreamDialogForm.streamingDetails',
-    defaultMessage: 'Streaming details',
+    defaultMessage: 'Streaming Details',
   },
   fundingSource: {
     id: 'dashboard.StartStreamDialog.StartStreamDialogForm.fundingSource',
-    defaultMessage: 'Funding Source {count}',
+    defaultMessage: '{count}. Funding Source',
   },
   annotationLabel: {
     id: 'dashboard.StartStreamDialog.StartStreamDialogForm.annotationLabel',
