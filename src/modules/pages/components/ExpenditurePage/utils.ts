@@ -319,7 +319,7 @@ export const updateValues = (values, confirmedValues) => {
       ),
     );
 
-    const sameMilestones = values.staged.milestones.filter((recipient) => {
+    const sameMilestones = values.staged.milestones.filter((milestone) => {
       if (
         !confirmedValues.staged.milestones ||
         !confirmedValues.staged.milestones?.length
@@ -327,7 +327,7 @@ export const updateValues = (values, confirmedValues) => {
         return true;
       }
       return confirmedValues.staged.milestones?.every(
-        (confRec) => confRec.id !== recipient.id,
+        (confirmedMielstone) => confirmedMielstone.id !== milestone.id,
       );
     });
 
@@ -338,7 +338,7 @@ export const updateValues = (values, confirmedValues) => {
       ...sameMilestones,
       ...changedMilestones?.map((milestone) => {
         const newValue = confirmedValues.staged.milestones?.find(
-          (mile) => mile.id === milestone.id,
+          (confirmedMielstone) => confirmedMielstone.id === milestone.id,
         );
 
         return {
