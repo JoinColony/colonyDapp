@@ -78,3 +78,7 @@
 .editIcon {
   margin-left: 10px;
 }
+
+.editIcon:hover {
+  cursor: pointer;
+}
