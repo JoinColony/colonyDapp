@@ -125,13 +125,20 @@ const FormStages = ({
       ?.querySelectorAll('[aria-invalid="true"]');
     const firstInvalidEl = invalidFields && invalidFields[0];
     invalidElementRef.current = firstInvalidEl as HTMLElement;
-    invalidElementRef?.current?.focus();
+
+    if (firstInvalidEl?.tagName.toLowerCase() === 'input') {
+      invalidElementRef?.current?.focus();
+    } else {
+      const customEvent = new CustomEvent('fix-trigger');
+
+      window.dispatchEvent(customEvent);
+    }
 
     // check if the invalid fields number has changed (fieldErrors was prev set only during the submit)
-    const invalidFieldsLength: number | undefined = invalidFields?.length;
+    const invalidFieldsLength = invalidFields?.length;
 
     if (invalidFieldsLength !== fieldErrors) {
-      setFieldErrors(invalidFieldsLength ?? fieldErrors ?? 0);
+      setFieldErrors(invalidFieldsLength ?? 0);
     }
   }, [fieldErrors]);
 
