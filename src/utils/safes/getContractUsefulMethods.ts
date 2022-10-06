@@ -3,8 +3,8 @@ import { AbiItem, keccak256 } from 'web3-utils';
 import {
   BINANCE_NETWORK,
   GNOSIS_NETWORK,
-  SAFE_NETWORKS,
   POLYGON_NETWORK,
+  SUPPORTED_SAFE_NETWORKS,
 } from '~constants';
 
 export interface AbiItemExtended extends AbiItem {
@@ -24,9 +24,11 @@ export const fetchContractABI = async (
   }
 
   try {
-    const currentNetworkData =
-      SAFE_NETWORKS.find((network) => network.chainId === safeChainId) ||
-      GNOSIS_NETWORK;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const currentNetworkData = SUPPORTED_SAFE_NETWORKS.find(
+      (network) => network.chainId === safeChainId,
+    )!; // will be defined since fetchContractABI is only called if selectedSafe is defined
+
     const getApiKey = () => {
       if (currentNetworkData.chainId === POLYGON_NETWORK.chainId) {
         return process.env.POLYGONSCAN_API_KEY;
