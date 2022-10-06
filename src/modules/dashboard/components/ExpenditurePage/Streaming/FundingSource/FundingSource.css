@@ -25,6 +25,10 @@
   padding: 13px 4px 12px 0;
 }
 
+.inputWrapper label {
+  color: var(--temp-grey-blue-7);
+}
+
 .limitContainer {
   display: flex;
   align-items: center;
