@@ -9,7 +9,6 @@ export interface Rate {
   limit?: number;
   id: string;
 }
-
 export interface FundingSource {
   team: string;
   rates: Rate[];
