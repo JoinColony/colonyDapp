@@ -1,5 +1,5 @@
 import { useFormikContext, setNestedObjectValues, FormikTouched } from 'formik';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { useDialog } from '~core/Dialog';
@@ -21,9 +21,13 @@ import styles from './FormStages.css';
 const displayName = 'dashboard.ExpenditurePage.Stages.FormStages';
 
 const MSG = defineMessages({
-  errorMessage: {
-    id: 'dashboard.ExpenditurePage.Stages.FormStages.errorMessage',
+  singleErrorMessage: {
+    id: 'dashboard.ExpenditurePage.Stages.FormStages.singleErrorMessage',
     defaultMessage: '{number} required field has an error.',
+  },
+  mulitpleErrorMessage: {
+    id: 'dashboard.ExpenditurePage.Stages.FormStages.singleErrorMessage',
+    defaultMessage: '{number} required fields have an error.',
   },
   errorMessageAction: {
     id: 'dashboard.ExpenditurePage.Stages.FormStages.errorMessageAction',
@@ -59,12 +63,17 @@ const FormStages = ({
   const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
   const [fieldErrors, setFieldErrors] = useState<number>(0);
+  const invalidElementRef = useRef<HTMLElement | null>(null);
 
   const handleSaveDraft = useCallback(async () => {
+    setFieldErrors(0);
     const errors = await validateForm(values);
     const hasErrors = Object.keys(errors)?.length;
     setTouched(setNestedObjectValues<FormikTouched<ValuesType>>(errors, true));
-    setFieldErrors(errorsLength);
+    const invalidFieldsLength = document
+      .getElementById('expenditurePage')
+      ?.querySelectorAll('[aria-invalid="true"]').length;
+    setFieldErrors(invalidFieldsLength ?? 0);
 
     return !errorsLength && colony
       ? openDraftConfirmDialog({
@@ -109,12 +118,14 @@ const FormStages = ({
   }, [activeStage, handleSubmit, setTouched, validateForm, values]);
 
   const handleSubmitButtonClick = () => {
-    // const firstInvalidEl = document
-    //   .getElementById('expenditureForm')
-    //   ?.querySelectorAll('[aria-invalid="true"]')[0];
-    // test - to be changed
-    // firstInvalidEl.style.border = '1px solid deeppink';
-    // firstInvalidEl?.focus();
+    if (fieldErrors) {
+      // error fields should have aria invalid attr if the validation does not pass - for most elements it is auto-added
+      const firstInvalidEl = document
+        .getElementById('expenditurePage')
+        ?.querySelector('[aria-invalid="true"]');
+      invalidElementRef.current = firstInvalidEl as HTMLElement;
+      invalidElementRef?.current?.focus();
+    }
   };
 
   return (
@@ -123,7 +134,9 @@ const FormStages = ({
         <div className={styles.formStagesMsg}>
           <p className={styles.formStagesMsgText}>
             <FormattedMessage
-              {...MSG.errorMessage}
+              {...(fieldErrors > 1
+                ? { ...MSG.mulitpleErrorMessage }
+                : { ...MSG.singleErrorMessage })}
               values={{ number: fieldErrors }}
             />
           </p>

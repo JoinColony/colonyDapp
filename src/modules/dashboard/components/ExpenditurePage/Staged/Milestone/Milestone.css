@@ -60,6 +60,21 @@
   letter-spacing: 0.1px;
 }
 
+.deleteIconBox {
+  margin-bottom: 14px;
+  padding: 0;
+  height: 20px;
+  width: 20px;
+  border: 0;
+  background-color: transparent;
+  appearance: none;
+  transition: opacity 0.15s;
+}
+
+.deleteIconBox:focus {
+  opacity: 0.5;
+}
+
 .deleteIcon {
   margin-bottom: 14px;
   height: 20px;
