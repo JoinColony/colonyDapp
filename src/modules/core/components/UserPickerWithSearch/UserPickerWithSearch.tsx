@@ -136,7 +136,6 @@ const UserPickerWithSearch = ({
   const [, { error, value }, { setValue }] = useField<AnyUser | null>(name);
   const { formatMessage } = useIntl();
   const ref = useRef<HTMLDivElement>(null);
-  const actionRef = useRef<HTMLButtonElement>(null);
   const omniInputRef = useRef<HTMLInputElement | null>(null);
 
   const toggleDropdown = useCallback(() => {
@@ -176,14 +175,23 @@ const UserPickerWithSearch = ({
   }, [data]);
 
   useEffect(() => {
-    actionRef?.current?.addEventListener('focus', () => {
+    let timeout: ReturnType<typeof setTimeout>;
+
+    const fixAction = () => {
       if (!disabled) {
         toggleDropdown();
-        setTimeout(() => {
+        timeout = setTimeout(() => {
           omniInputRef?.current?.focus();
         }, 1);
       }
-    });
+    };
+
+    window.addEventListener('fix-trigger', fixAction);
+
+    return () => {
+      window.removeEventListener('fix-trigger', fixAction);
+      clearTimeout(timeout);
+    };
   }, [disabled, toggleDropdown]);
 
   return (
@@ -203,7 +211,6 @@ const UserPickerWithSearch = ({
             type="button"
             className={styles.inputWithIconBtn}
             aria-invalid={!!error}
-            ref={actionRef}
             {...(disabled ? {} : { onClick: toggleDropdown })}
             disabled={disabled}
           >
