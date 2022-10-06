@@ -52,20 +52,24 @@ const Split = ({ colony, sidebarRef }: Props) => {
           ? 0
           : Number(amount?.value) / recipientsCount;
 
-        setValue(
+        return setValue(
           recipients?.map((recipient) => ({
             ...recipient,
-            amount: { value: userAmount, tokenAddress: amount.tokenAddress },
+            amount: {
+              value: userAmount,
+              tokenAddress:
+                amount?.tokenAddress || recipient?.amount?.tokenAddress,
+            },
           })),
         );
       }
-      setValue(
-        recipients?.map((recipient) => ({
-          ...recipient,
-          amount: { value: 0, tokenAddress: amount.tokenAddress },
-          percent: 0,
-        })),
-      );
+
+      const rec = recipients?.map((recipient) => ({
+        ...recipient,
+        amount: { value: 0, tokenAddress: recipient.amount?.tokenAddress },
+        percent: 0,
+      }));
+      return setValue(rec);
     },
     [amount, recipients, setValue],
   );
