@@ -270,19 +270,17 @@ const StreamingStagesLocked = ({
         </span>
         <div className={styles.valueWrapper}>
           {(status === Status.StartedStream || isCancelled) && paidToDate ? (
-            paidToDate.map((paidToDateItem, index) => {
+            paidToDate.map((paidToDateItem) => {
               const token = colony?.tokens?.find(
                 (tokenItem) => tokenItem.address === paidToDateItem.token,
               );
 
+              if (!token) {
+                return null;
+              }
+
               return (
-                <div
-                  className={classNames(styles.value, {
-                    [styles.marginBottom]:
-                      paidToDate.length > 1 && index !== paidToDate.length - 1,
-                  })}
-                  key={paidToDateItem.id}
-                >
+                <div className={styles.value} key={paidToDateItem.id}>
                   <FormattedMessage
                     {...MSG.paidValue}
                     values={{
@@ -318,20 +316,17 @@ const StreamingStagesLocked = ({
                 <FormattedMessage {...MSG.availableToClaim} />
               </span>
               <div className={styles.valueWrapper}>
-                {availableToClaim.map((availableItem, index) => {
+                {availableToClaim.map((availableItem) => {
                   const token = colony?.tokens?.find(
                     (tokenItem) => tokenItem.address === availableItem.token,
                   );
 
+                  if (!token) {
+                    return null;
+                  }
+
                   return (
-                    <span
-                      className={classNames(styles.value, {
-                        [styles.marginBottom]:
-                          availableToClaim.length > 1 &&
-                          index !== availableToClaim.length - 1,
-                      })}
-                      key={availableItem.id}
-                    >
+                    <span className={styles.value} key={availableItem.id}>
                       <FormattedMessage
                         {...MSG.paidValue}
                         values={{
