@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, useIntl } from 'react-intl';
 import { FormikProps } from 'formik';
+import { isAddress } from 'web3-utils';
 
 import { AnyUser } from '~data/index';
 import { Address } from '~types/index';
@@ -13,9 +14,9 @@ import {
   AbiItemExtended,
   fetchContractABI,
 } from '~utils/safes';
-import { GNOSIS_NETWORK } from '~constants';
 import { SpinnerLoader } from '~core/Preloaders';
 import { isEmpty, isEqual, isNil } from '~utils/lodash';
+import { getChainNameFromSafe } from '~modules/dashboard/sagas/utils/safeHelpers';
 
 import { FormValues, FormProps, TransactionSectionProps } from '..';
 
@@ -46,6 +47,22 @@ const MSG = defineMessages({
     id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.loadingContract`,
     defaultMessage: 'Loading Contract',
   },
+  noSafeSelectedError: {
+    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.noSafeSelectedError`,
+    defaultMessage: `You must select a safe before fetching the contract's ABI`,
+  },
+  contractNotVerifiedError: {
+    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.contractNotVerifiedError`,
+    defaultMessage: `Contract could not be verified. Ensure it exists on {network}.`,
+  },
+  invalidAddressError: {
+    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.invalidAddressError`,
+    defaultMessage: `Contract address is not a valid address.`,
+  },
+  fetchFailedError: {
+    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.fetchFailedError`,
+    defaultMessage: `Unable to fetch contract. Please check your connection.`,
+  },
 });
 
 const displayName = `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection`;
@@ -55,13 +72,16 @@ interface Props
       FormProps,
       'safes' | 'selectedContractMethods' | 'handleSelectedContractMethods'
     >,
-    Pick<
-      FormikProps<FormValues>,
-      'setStatus' | 'setFieldValue' | 'values' | 'status'
-    >,
+    Pick<FormikProps<FormValues>, 'setFieldValue' | 'values'>,
     Omit<TransactionSectionProps, 'colony'> {
   handleValidation: () => void;
-  removeSelectedContractMethods: (index: number) => void;
+  removeSelectedContractMethod: (index: number) => void;
+}
+
+interface ABIResponse {
+  status: string;
+  message: string;
+  result: string;
 }
 
 const renderAvatar = (address: Address, item: AnyUser) => (
@@ -73,20 +93,21 @@ const ContractInteractionSection = ({
   transactionFormIndex,
   values,
   setFieldValue,
-  setStatus,
-  status,
   selectedContractMethods = {},
   handleSelectedContractMethods,
   safes,
   handleValidation,
   handleInputChange,
-  removeSelectedContractMethods,
+  removeSelectedContractMethod,
 }: Props) => {
+  const { formatMessage } = useIntl();
+
   const [formattedMethodOptions, setFormattedMethodOptions] = useState<
     SelectOption[]
   >([]);
-  const [currentSafeChainId, setCurrentSafeChainId] = useState<number>();
+  const [prevSafeChainId, setPrevSafeChainId] = useState<string>();
   const [isLoadingABI, setIsLoadingABI] = useState<boolean>(false);
+  const [fetchABIError, setFetchABIError] = useState<string>('');
 
   const transactionValues = values.transactions[transactionFormIndex];
 
@@ -105,19 +126,15 @@ const ContractInteractionSection = ({
   }, [selectedContract, handleValidation]);
 
   const onContractABIChange = useCallback(
-    (abiResponse: any) => {
+    (abiResponse: ABIResponse) => {
       if (abiResponse.status === '0') {
-        if (
-          Number(selectedSafe?.chainId) === GNOSIS_NETWORK.chainId &&
-          status !== abiResponse.message
-        ) {
-          setStatus(abiResponse.message);
-        } else if (
-          Number(selectedSafe?.chainId) !== GNOSIS_NETWORK.chainId &&
-          status !== abiResponse.result
-        ) {
-          setStatus(abiResponse.result);
-        }
+        setFetchABIError(
+          formatMessage(MSG.contractNotVerifiedError, {
+            // onContractABIChange is only called if a safe has been selected
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            network: getChainNameFromSafe(values.safe!.profile.displayName),
+          }),
+        );
       } else if (
         !isNil(abiResponse.result) &&
         abiResponse.result !== transactionValues.abi
@@ -127,45 +144,49 @@ const ContractInteractionSection = ({
           abiResponse.result,
           true,
         );
-        removeSelectedContractMethods(transactionFormIndex);
-      }
-
-      if (abiResponse.status !== '0') {
-        setStatus(undefined);
+        removeSelectedContractMethod(transactionFormIndex);
       }
 
       handleValidation();
     },
     [
       transactionFormIndex,
+      values.safe,
       setFieldValue,
-      setStatus,
-      status,
       transactionValues.abi,
-      selectedSafe,
-      removeSelectedContractMethods,
+      removeSelectedContractMethod,
       handleValidation,
+      formatMessage,
     ],
   );
 
   const onContractChange = useCallback(
     (contract: AnyUser) => {
       setIsLoadingABI(true);
-      const contractPromise = fetchContractABI(
-        contract.profile.walletAddress,
-        Number(selectedSafe?.chainId),
-      );
-      contractPromise.then((data) => {
-        setIsLoadingABI(false);
-
-        onContractABIChange(data);
-
-        if (Number(selectedSafe?.chainId) !== currentSafeChainId) {
-          setCurrentSafeChainId(Number(selectedSafe?.chainId));
+      setFetchABIError('');
+      if (selectedSafe && isAddress(contract.profile.walletAddress)) {
+        const contractPromise = fetchContractABI(
+          contract.profile.walletAddress,
+          Number(selectedSafe.chainId),
+        );
+        contractPromise.then((data) => {
+          setIsLoadingABI(false);
+          if (data) {
+            onContractABIChange(data);
+          } else {
+            setFetchABIError(formatMessage(MSG.fetchFailedError));
+          }
+        });
+      } else {
+        if (!isAddress(contract.profile.walletAddress)) {
+          setFetchABIError(formatMessage(MSG.invalidAddressError));
+        } else {
+          setFetchABIError(formatMessage(MSG.noSafeSelectedError));
         }
-      });
+        setIsLoadingABI(false);
+      }
     },
-    [selectedSafe, currentSafeChainId, onContractABIChange],
+    [selectedSafe, onContractABIChange, formatMessage],
   );
 
   const usefulMethods: AbiItemExtended[] = useMemo(
@@ -176,17 +197,18 @@ const ContractInteractionSection = ({
   useEffect(() => {
     if (
       transactionValues.contract &&
-      !isNil(selectedSafe) &&
-      !isNil(currentSafeChainId) &&
-      currentSafeChainId !== Number(selectedSafe.chainId)
+      selectedSafe &&
+      // only run effect if safe chain changes
+      prevSafeChainId !== selectedSafe.chainId
     ) {
+      setPrevSafeChainId(selectedSafe.chainId);
       onContractChange(transactionValues.contract);
     }
   }, [
-    currentSafeChainId,
     selectedSafe,
     transactionValues.contract,
     onContractChange,
+    prevSafeChainId,
   ]);
 
   useEffect(() => {
@@ -212,14 +234,29 @@ const ContractInteractionSection = ({
         )) &&
       !isEmpty(selectedContractMethods[transactionFormIndex])
     ) {
-      removeSelectedContractMethods(transactionFormIndex);
+      removeSelectedContractMethod(transactionFormIndex);
+      handleValidation();
     }
   }, [
     selectedContractMethods,
     usefulMethods,
     transactionFormIndex,
-    removeSelectedContractMethods,
+    removeSelectedContractMethod,
+    handleValidation,
   ]);
+
+  if (isLoadingABI) {
+    return (
+      <DialogSection>
+        <div className={styles.spinner}>
+          <SpinnerLoader
+            appearance={{ size: 'medium' }}
+            loadingText={MSG.loadingContract}
+          />
+        </div>
+      </DialogSection>
+    );
+  }
 
   return (
     <>
@@ -240,13 +277,10 @@ const ContractInteractionSection = ({
           />
         </div>
       </DialogSection>
-      {isLoadingABI ? (
-        <div className={styles.spinner}>
-          <SpinnerLoader
-            appearance={{ size: 'medium' }}
-            loadingText={MSG.loadingContract}
-          />
-        </div>
+      {fetchABIError ? (
+        <DialogSection>
+          <div className={styles.error}>{fetchABIError}</div>
+        </DialogSection>
       ) : (
         <>
           <DialogSection>
@@ -255,7 +289,6 @@ const ContractInteractionSection = ({
               name={`transactions.${transactionFormIndex}.abi`}
               appearance={{ colorSchema: 'grey', resizable: 'vertical' }}
               disabled={disabledInput}
-              status={status}
             />
           </DialogSection>
           <DialogSection appearance={{ theme: 'sidePadding' }}>

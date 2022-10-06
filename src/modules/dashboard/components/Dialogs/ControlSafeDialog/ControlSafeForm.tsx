@@ -139,8 +139,6 @@ const ControlSafeForm = ({
   values,
   isVotingExtensionEnabled,
   setFieldValue,
-  setStatus,
-  status,
   showPreview,
   handleShowPreview,
   validateForm,
@@ -153,6 +151,7 @@ const ControlSafeForm = ({
   const [customAmountError, setCustomAmountError] = useState<
     MessageDescriptor | string | undefined
   >(undefined);
+  const [prevSafeAddress, setPrevSafeAddress] = useState<string>('');
 
   const { walletAddress } = useLoggedInUser();
   const fromDomainRoles = useTransformer(getUserRolesForDomain, [
@@ -265,7 +264,6 @@ const ControlSafeForm = ({
    * When the selected safe changes, reset the state of
    * the "Transfer NFT" fields.
    */
-  const [prevSafeAddress, setPrevSafeAddress] = useState<string>('');
   const handleSafeChange = (selectedSafe: SelectedSafe) => {
     const safeAddress = selectedSafe.profile.walletAddress;
     if (safeAddress !== prevSafeAddress) {
@@ -278,21 +276,24 @@ const ControlSafeForm = ({
     }
   };
 
-  const removeSelectedContractMethods = (transactionFormIndex: number) => {
-    const updatedSelectedContractMethods = omit(
-      selectedContractMethods,
-      transactionFormIndex,
-    );
-
-    if (!isEqual(updatedSelectedContractMethods, selectedContractMethods)) {
-      handleSelectedContractMethods(updatedSelectedContractMethods);
-      setFieldValue(
-        `transactions.${transactionFormIndex}.contractFunction`,
-        '',
-        true,
+  const removeSelectedContractMethod = useCallback(
+    (transactionFormIndex: number) => {
+      const updatedSelectedContractMethods = omit(
+        selectedContractMethods,
+        transactionFormIndex,
       );
-    }
-  };
+
+      if (!isEqual(updatedSelectedContractMethods, selectedContractMethods)) {
+        handleSelectedContractMethods(updatedSelectedContractMethods);
+        setFieldValue(
+          `transactions.${transactionFormIndex}.contractFunction`,
+          '',
+          true,
+        );
+      }
+    },
+    [selectedContractMethods, handleSelectedContractMethods, setFieldValue],
+  );
 
   const savedNFTState = useState({});
   return (
@@ -404,9 +405,7 @@ const ControlSafeForm = ({
                             options={transactionOptions}
                             label={MSG.transactionLabel}
                             name={`transactions.${index}.transactionType`}
-                            onChange={() =>
-                              removeSelectedContractMethods(index)
-                            }
+                            onChange={() => removeSelectedContractMethod(index)}
                             appearance={{ theme: 'grey', width: 'fluid' }}
                             placeholder={MSG.transactionPlaceholder}
                             disabled={!userHasPermission || isSubmitting}
@@ -444,16 +443,14 @@ const ControlSafeForm = ({
                           values={values}
                           safes={safes}
                           setFieldValue={setFieldValue}
-                          setStatus={setStatus}
-                          status={status}
                           selectedContractMethods={selectedContractMethods}
                           handleSelectedContractMethods={
                             handleSelectedContractMethods
                           }
                           handleValidation={handleValidation}
                           handleInputChange={handleInputChange}
-                          removeSelectedContractMethods={
-                            removeSelectedContractMethods
+                          removeSelectedContractMethod={
+                            removeSelectedContractMethod
                           }
                         />
                       )}
