@@ -1,5 +1,6 @@
 export const main: string;
 export const inputWithIcon: string;
+export const inputWithIconBtn: string;
 export const icon: string;
 export const container: string;
 export const focusIcon: string;

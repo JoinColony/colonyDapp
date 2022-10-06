@@ -32,10 +32,6 @@
   transform: translateX(7px);
 }
 
-.user button {
-  padding: 1px 0 1px 6px;
-}
-
 .valueContainer {
   display: flex;
   align-items: flex-start;

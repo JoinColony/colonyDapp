@@ -495,7 +495,7 @@ const ExpenditurePage = ({ match }: Props) => {
       enableReinitialize
     >
       {({ values, validateForm }) => (
-        <div className={getMainClasses({}, styles)}>
+        <div className={getMainClasses({}, styles)} id="expenditurePage">
           <aside className={styles.sidebar} ref={sidebarRef}>
             {loading ? (
               <div className={styles.spinnerContainer}>
