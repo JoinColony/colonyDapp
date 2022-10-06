@@ -269,7 +269,7 @@ const CancelStreamingForm = ({
             width: styles.buttonWidth,
           }}
           autoFocus
-          text={{ id: 'button.createMotion' }}
+          text={{ id: 'button.continue' }}
           type="submit"
           onClick={() => {
             onCancelStreaming(values.forceAction);
