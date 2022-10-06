@@ -1,15 +1,14 @@
-import { useField } from 'formik';
-import React, { useCallback } from 'react';
+import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import { InputLabel, SelectHorizontal, FormSection } from '~core/Fields';
+import { InputLabel, FormSection } from '~core/Fields';
+import DatePicker, { DatePickerOption } from '~core/Fields/DatePicker';
 import { filterUserSelection } from '~core/SingleUserPicker';
 import UserPickerWithSearch from '~core/UserPickerWithSearch';
 import { useMembersSubscription } from '~data/generated';
 import { ExpenditureEndDateTypes } from '~pages/ExpenditurePage/types';
 
 import { supRenderAvatar } from '../Recipient/Recipient';
-import { FundingSource } from '../Streaming/types';
 
 import { Props } from './ExpenditureSettings';
 import styles from './ExpenditureSettings.css';
@@ -41,7 +40,7 @@ export const MSG = defineMessages({
   },
 });
 
-const endDateTypes = [
+const endDateOptions: DatePickerOption[] = [
   {
     label: MSG.whenCancelled,
     value: ExpenditureEndDateTypes.WhenCancelled,
@@ -53,6 +52,7 @@ const endDateTypes = [
   {
     label: MSG.fixedTime,
     value: ExpenditureEndDateTypes.FixedTime,
+    showDatePicker: true,
   },
 ];
 
@@ -63,26 +63,6 @@ const ExpenditureStreamingForm = ({ sidebarRef, colony }: Props) => {
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress: colony.colonyAddress || '' },
   });
-  const [, { value: fundingSourcesValue }, { setValue }] = useField<
-    FundingSource[]
-  >('streaming.fundingSources');
-
-  const onSelectChange = useCallback(
-    (value: string) => {
-      if (value !== ExpenditureEndDateTypes.LimitIsReached) {
-        setValue(
-          fundingSourcesValue.map((fundingSource) => ({
-            ...fundingSource,
-            rate: fundingSource.rate.map((rateItem) => ({
-              ...rateItem,
-              limit: undefined,
-            })),
-          })),
-        );
-      }
-    },
-    [fundingSourcesValue, setValue],
-  );
 
   return (
     <>
@@ -107,25 +87,24 @@ const ExpenditureStreamingForm = ({ sidebarRef, colony }: Props) => {
               direction: 'horizontal',
             }}
           />
-          {/* Mock element - awaits for datepicker */}
-          <>{new Date().toLocaleDateString()}</>
+
+          <DatePicker name="streaming.startDate" showTimeSelect />
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.blue}>
-          <SelectHorizontal
-            name="streaming.endDate"
+        <div className={(styles.blue, styles.settingsRow)}>
+          <InputLabel
             label={MSG.ends}
             appearance={{
-              theme: 'alt',
-              width: 'content',
+              direction: 'horizontal',
             }}
-            onChange={onSelectChange}
-            options={endDateTypes}
-            scrollContainer={sidebarRef}
-            placement="right"
-            withDropdownElement
-            hasBlueActiveState
+          />
+
+          <DatePicker
+            name="streaming.endDate"
+            showTimeSelect
+            options={endDateOptions}
+            minDate={new Date()}
           />
         </div>
       </FormSection>

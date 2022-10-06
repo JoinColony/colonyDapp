@@ -128,7 +128,7 @@ const FundingSource = ({
             sidebarRef={sidebarRef}
             colony={colony}
           />
-          {value.endDate === ExpenditureEndDateTypes.LimitIsReached && (
+          {value.endDate.option === ExpenditureEndDateTypes.LimitIsReached && (
             <FormSection appearance={{ border: 'bottom' }}>
               <div className={styles.inputWrapper}>
                 <InputLabel

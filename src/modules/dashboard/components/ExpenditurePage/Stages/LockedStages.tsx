@@ -3,7 +3,11 @@ import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 
 import Tag from '~core/Tag';
 import { Colony } from '~data/index';
-import { State } from '~pages/ExpenditurePage/types';
+import {
+  ExpenditureTypes,
+  State,
+  ValuesType,
+} from '~pages/ExpenditurePage/types';
 
 import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
 import { Recipient } from '../Payments/types';
@@ -12,6 +16,7 @@ import { Motion, MotionStatus, MotionType, Status } from './constants';
 import LinkedMotions from './LinkedMotions';
 import Stages from './Stages';
 import styles from './Stages.css';
+import StreamingStagesLocked from './StreamingStages/StreamingStagesLocked';
 
 const MSG = defineMessages({
   motion: {
@@ -35,6 +40,7 @@ interface Props {
   handleCancelExpenditure?: () => void;
   recipients?: Recipient[];
   colony: Colony;
+  formValues?: ValuesType;
 }
 
 const LockedStages = ({
@@ -44,11 +50,13 @@ const LockedStages = ({
   motion,
   status,
   handleCancelExpenditure,
-  recipients,
   colony,
+  formValues,
 }: Props) => {
   const activeState = states.find((state) => state.id === activeStateId);
   const { formatMessage } = useIntl();
+  const isStreamingPaymentType =
+    formValues?.expenditure === ExpenditureTypes.Streaming;
 
   const handleButtonClick = useCallback(async () => {
     activeState?.buttonAction();
@@ -72,7 +80,7 @@ const LockedStages = ({
 
   return (
     <div className={styles.tagStagesWrapper}>
-      {motion?.status === MotionStatus.Pending && (
+      {motion?.status === MotionStatus.Pending && !isStreamingPaymentType && (
         <Tag
           appearance={{
             theme: 'golden',
@@ -87,24 +95,33 @@ const LockedStages = ({
               })}
         </Tag>
       )}
-      <Stages
-        {...{
-          states,
-          activeStateId,
-          setActiveStateId,
-          handleButtonClick,
-          motion,
-          status,
-          handleCancelExpenditure,
-          recipients,
-          colony,
-        }}
-      />
+      {isStreamingPaymentType ? (
+        <StreamingStagesLocked
+          motion={motion}
+          status={status}
+          handleButtonClick={() => {}}
+        />
+      ) : (
+        <Stages
+          recipients={formValues?.recipients}
+          {...{
+            states,
+            activeStateId,
+            setActiveStateId,
+            handleButtonClick,
+            motion,
+            status,
+            handleCancelExpenditure,
+            colony,
+          }}
+        />
+      )}
       {motion && (
-        // motion link needs to be changed and redirects to actual motions page
         <LinkedMotions
           status={motion.status}
           motion={motion.type}
+          // The id and the link are hardcoded, they should be replaced with actual values.
+          // Link should redirect to the motion page
           motionLink={LANDING_PAGE_ROUTE}
           id="25"
         />

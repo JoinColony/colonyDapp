@@ -180,6 +180,7 @@ const ExpenditurePage = ({ match }: Props) => {
           },
         },
         streaming: {
+          ...initialValues.streaming,
           fundingSources: [
             {
               ...newFundingSource,
@@ -196,11 +197,34 @@ const ExpenditurePage = ({ match }: Props) => {
     );
   }, [colonyData, formValues, loggedInUser]);
 
+  const lockValues = useCallback(() => {
+    setFormEditable(false);
+  }, []);
+
   const handleSubmit = useCallback(
     (values) => {
       setShouldValidate(true);
       if (!activeStateId) {
         setActiveStateId(Stage.Draft);
+      }
+
+      if (values.expenditure === ExpenditureTypes.Streaming) {
+        lockValues();
+        setMotion({
+          type: MotionType.StartStream,
+          status: MotionStatus.Pending,
+        });
+        setFormValues(values);
+
+        // it's temporary timeout
+        setTimeout(() => {
+          setMotion({
+            type: MotionType.StartStream,
+            status: MotionStatus.Failed,
+          });
+        }, 5000);
+
+        return;
       }
 
       if (values.expenditure === ExpenditureTypes.Split) {
@@ -273,13 +297,8 @@ const ExpenditurePage = ({ match }: Props) => {
       }
       // add sending form values to backend
     },
-    [activeStateId],
+    [activeStateId, lockValues],
   );
-
-  const lockValues = useCallback(() => {
-    setFormEditable(false);
-    localStorage.removeItem(LOCAL_STORAGE_EXPENDITURE_TYPE_KEY);
-  }, []);
 
   const handleLockExpenditure = useCallback(() => {
     // Call to backend will be added here, to lock the expenditure
@@ -629,6 +648,7 @@ const ExpenditurePage = ({ match }: Props) => {
               setActiveStateId={setActiveStateId}
               handleCancelExpenditure={handleCancelExpenditure}
               colony={colonyData.processedColony}
+              formValues={formValues}
             />
           )}
         </main>
