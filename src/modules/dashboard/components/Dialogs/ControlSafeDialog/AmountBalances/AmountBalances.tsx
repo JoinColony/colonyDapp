@@ -35,16 +35,16 @@ interface Props {
 
 const MSG = defineMessages({
   amount: {
-    id: 'AmountBalances.amount',
+    id: 'dashboard.ControlSafeDialog.AmountBalances.amount',
     defaultMessage: 'Amount',
   },
   token: {
-    id: 'AmountBalances.address',
+    id: 'dashboard.ControlSafeDialog.AmountBalances.address',
     defaultMessage: 'Token',
   },
 });
 
-const displayName = 'AmountBalances';
+const displayName = 'dashboard.ControlSafeDialog.AmountBalances';
 
 const AmountBalances = ({
   customAmountError,
