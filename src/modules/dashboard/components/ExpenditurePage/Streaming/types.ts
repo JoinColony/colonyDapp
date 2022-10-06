@@ -1,12 +1,14 @@
+export interface Rate {
+  amount?: number;
+  token?: string;
+  time?: string;
+  limit?: number;
+  id: string;
+}
+
 export interface FundingSource {
   team: string;
-  rate: {
-    amount?: number;
-    token?: string;
-    time?: string;
-    limit?: number;
-    id: string;
-  }[];
+  rate: Rate[];
   isExpanded: boolean;
   id: string;
 }
