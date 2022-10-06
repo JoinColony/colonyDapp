@@ -42,28 +42,35 @@ interface Props {
 
 const ICON_STORAGE = 'tokenImages';
 
-const loadTokenImages = async (address: Address): Promise<Response> => {
+const loadTokenImages = async (
+  address: Address,
+  networkName: string | undefined,
+): Promise<Response> => {
   const network =
     DEFAULT_NETWORK === Network.Mainnet ? 'ethereum' : DEFAULT_NETWORK;
   let tokenImageUrl = `${TOKEN_LOGOS_REPO}/${network}/${address}/logo.png`;
   if (address === AddressZero) {
-    tokenImageUrl = `${TOKEN_LOGOS_REPO}/${network}/info/logo.png`;
+    tokenImageUrl = `${TOKEN_LOGOS_REPO}/${
+      networkName || network
+    }/info/logo.png`;
   }
   return fetch(tokenImageUrl);
 };
 
 const HookedTokenIcon = ({
   name,
-  token: { iconHash, address },
+  token: { address },
+  token,
   iconName,
   dontFetch = DEFAULT_NETWORK !== Network.Mainnet &&
     DEFAULT_NETWORK !== Network.Xdai,
   ...props
 }: Props) => {
   const [tokenImage, setTokenImage] = useState<string | undefined>();
+  const iconHash = 'iconHash' in token ? token.iconHash : '';
   const { data: ipfsIcon } = useDataFetcher(
     ipfsDataFetcher,
-    [iconHash as string], // Technically a bug, shouldn't need type override
+    [iconHash || ''],
     [iconHash],
   );
 
@@ -80,7 +87,8 @@ const HookedTokenIcon = ({
       }
 
       if (!dontFetch && address && !iconName) {
-        const response = await loadTokenImages(address);
+        const networkName = 'networkName' in token ? token.networkName : '';
+        const response = await loadTokenImages(address, networkName);
         if (response.ok) {
           const blob = await response.blob();
           const base64image = await getBase64image(blob);
@@ -103,7 +111,7 @@ const HookedTokenIcon = ({
       }
     };
     loadTokenLogo();
-  }, [address, iconName, dontFetch]);
+  }, [address, iconName, dontFetch, token]);
 
   return (
     <>

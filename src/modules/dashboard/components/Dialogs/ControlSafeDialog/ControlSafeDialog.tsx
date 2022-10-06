@@ -8,7 +8,6 @@ import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
-import { Address } from '~types/index';
 import { AbiItemExtended } from '~utils/safes';
 import {
   SelectedSafe,
@@ -16,7 +15,7 @@ import {
   getChainNameFromSafe,
 } from '~modules/dashboard/sagas/utils/safeHelpers';
 import { mapPayload, withMeta } from '~utils/actions';
-import { SAFE_NETWORKS } from '~constants';
+import { DEFAULT_TOKEN_DECIMALS, SAFE_NETWORKS } from '~constants';
 
 import ControlSafeForm from './ControlSafeForm';
 import { NFT } from './TransactionTypesSection/TransferNFTSection';
@@ -25,15 +24,16 @@ import { getMethodInputValidation, getValidationSchema } from './validation';
 export interface FormValues {
   transactions: {
     transactionType: string;
-    tokenAddress?: Address;
-    amount?: number;
     recipient: AnyUser | null;
+    nft: SelectedNFT | null;
+    nftData: NFT | null;
+    tokenAddress?: string;
+    tokenDecimals?: number;
+    amount?: number;
     data?: string;
     contract?: AnyUser;
     abi?: string;
     contractFunction?: string;
-    nft: SelectedNFT | null;
-    nftData: NFT | null;
   }[];
   safe: SelectedSafe | null;
   forceAction: boolean;
@@ -95,7 +95,7 @@ const ControlSafeDialog = ({
           transactions,
           annotation: annotationMessage,
         }) => {
-          const chainName = getChainNameFromSafe(safe);
+          const chainName = getChainNameFromSafe(safe.profile.displayName);
           const transformedSafe: Omit<ColonySafe, 'safeName'> = {
             // Find will return because input comes from Safe Networks
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -128,7 +128,8 @@ const ControlSafeDialog = ({
         transactions: [
           {
             transactionType: '',
-            tokenAddress: colony.nativeTokenAddress,
+            tokenAddress: undefined,
+            tokenDecimals: DEFAULT_TOKEN_DECIMALS,
             amount: undefined,
             recipient: undefined,
             data: '',

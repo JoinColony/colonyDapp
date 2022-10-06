@@ -1,7 +1,10 @@
 import Web3 from 'web3';
-import { Network } from '@colony/colony-js';
+import { getTokenClient, Network } from '@colony/colony-js';
 import { Contract, ethers } from 'ethers';
 import abis from '@colony/colony-js/lib-esm/abis';
+import moveDecimal from 'move-decimal-point';
+import { AddressZero } from 'ethers/constants';
+
 import { erc721 } from './abis'; // Temporary
 import { SafeTransaction } from '~redux/types/actions/colonyActions';
 import { ColonySafe } from '~data/index';
@@ -27,6 +30,7 @@ const LOCAL_HOME_BRIDGE_ADDRESS = process.env.LOCAL_HOME_BRIDGE_ADDRESS;
 const LOCAL_FOREIGN_BRIDGE_ADDRESS = process.env.LOCAL_FOREIGN_BRIDGE_ADDRESS;
 const LOCAL_ERC721_ADDRESS = process.env.LOCAL_ERC721_ADDRESS;
 const LOCAL_SAFE_ADDRESS = process.env.LOCAL_SAFE_ADDRESS;
+const LOCAL_SAFE_TOKEN_ADDRESS = process.env.LOCAL_SAFE_TOKEN_ADDRESS;
 /* eslint-enable prefer-destructuring */
 
 const LOCAL_HOME_CHAIN = 'http://127.0.0.1:8545';
@@ -140,6 +144,15 @@ const getErc721 = (
   );
 };
 
+const getTokenInterface = async (
+  safe: Omit<ColonySafe, 'safeName'>,
+  tokenAddress: Address,
+) => {
+  const foreignProvider = getForeignProvider(safe);
+  const tokenClient = await getTokenClient(tokenAddress, foreignProvider);
+  return tokenClient.interface;
+};
+
 export const getZodiacModule = (
   zodiacModuleAddress: Address,
   safe: Omit<ColonySafe, 'safeName'>,
@@ -176,7 +189,7 @@ export const getRawTransactionData = (
 ) =>
   zodiacBridgeModule.interface.functions.executeTransaction.encode([
     transaction.recipient.profile.walletAddress,
-    Number(transaction.amount),
+    Number(transaction.rawAmount),
     transaction.data,
     0,
   ]);
@@ -219,8 +232,66 @@ export const getTransferNFTData = (
   ]);
 };
 
-export const getChainNameFromSafe = (safe: SelectedSafe) => {
-  const splitDisplayName = safe.profile.displayName.split(' ');
+export const getTransferFundsData = async (
+  zodiacBridgeModule: Contract,
+  safe: Omit<ColonySafe, 'safeName'>,
+  transaction: SafeTransaction,
+) => {
+  const safeAddress = onLocalDevEnvironment
+    ? LOCAL_SAFE_ADDRESS
+    : safe.contractAddress;
+  const tokenAddress = onLocalDevEnvironment
+    ? LOCAL_SAFE_TOKEN_ADDRESS
+    : transaction.tokenAddress;
+
+  if (!safeAddress) {
+    throw new Error('LOCAL_SAFE_ADDRESS not set in .env.');
+  }
+
+  if (!tokenAddress) {
+    throw new Error('LOCAL_SAFE_TOKEN_ADDRESS not set in .env.');
+  }
+
+  const isSafeNativeToken = tokenAddress === AddressZero;
+
+  const getAmount = (): number => {
+    if (isSafeNativeToken) {
+      return moveDecimal(transaction.amount, transaction.tokenDecimals);
+    }
+    return 0;
+  };
+  const getData = async () => {
+    if (isSafeNativeToken) {
+      return '0x';
+    }
+    const TokenInterface = await getTokenInterface(safe, tokenAddress);
+
+    const tansferAmount = moveDecimal(
+      transaction.amount,
+      transaction.tokenDecimals,
+    );
+    return TokenInterface.functions.transfer.encode([
+      transaction.recipient.profile.walletAddress,
+      tansferAmount,
+    ]);
+  };
+  const getRecipient = (): string => {
+    if (isSafeNativeToken) {
+      return transaction.recipient.profile.walletAddress;
+    }
+    return tokenAddress;
+  };
+
+  return zodiacBridgeModule.interface.functions.executeTransaction.encode([
+    getRecipient(),
+    getAmount(),
+    await getData(),
+    0,
+  ]);
+};
+
+export const getChainNameFromSafe = (safeDisplayName: string) => {
+  const splitDisplayName = safeDisplayName.split(' ');
   const chainNameInBrackets = splitDisplayName[splitDisplayName.length - 1];
   return chainNameInBrackets.substring(1, chainNameInBrackets.length - 1);
 };

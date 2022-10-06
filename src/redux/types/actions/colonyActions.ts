@@ -18,8 +18,10 @@ import { NFT } from '~dashboard/Dialogs/ControlSafeDialog/TransactionTypesSectio
 
 export interface SafeTransaction {
   transactionType: string;
-  tokenAddress: Address;
+  tokenAddress: string;
+  tokenDecimals: number;
   amount: string;
+  rawAmount: string;
   recipient: AnyUser;
   data: string;
   contract: string;
