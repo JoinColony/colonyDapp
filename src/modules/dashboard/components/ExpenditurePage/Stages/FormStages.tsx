@@ -113,11 +113,19 @@ const FormStages = ({
   }, [activeState, handleSubmit, setTouched, validateForm, values]);
 
   const handleFixButtonClick = useCallback(() => {
-    if (!fieldErrors) return;
-    // error fields should have aria invalid attr if the validation does not pass - for most elements it is auto-added
+    // error fields should have aria invalid attr if the validation does not pass - for input it is auto-added
     const invalidFields = document
       .getElementById('expenditurePage')
       ?.querySelectorAll('[aria-invalid="true"]');
+    const invalidFieldsLength = invalidFields?.length;
+
+    if (invalidFieldsLength !== fieldErrors) {
+      // check if the invalid fields amount has changed (fieldErrors was prev set only during the submit)
+      setFieldErrors(invalidFieldsLength ?? 0);
+    }
+
+    if (!invalidFieldsLength) return;
+
     const firstInvalidEl = invalidFields && invalidFields[0];
     invalidElementRef.current = firstInvalidEl as HTMLElement;
 
@@ -127,13 +135,6 @@ const FormStages = ({
       const customEvent = new CustomEvent('fix-trigger');
 
       window.dispatchEvent(customEvent);
-    }
-
-    // check if the invalid fields number has changed (fieldErrors was prev set only during the submit)
-    const invalidFieldsLength = invalidFields?.length;
-
-    if (invalidFieldsLength !== fieldErrors) {
-      setFieldErrors(invalidFieldsLength ?? 0);
     }
   }, [fieldErrors]);
 
