@@ -33,6 +33,10 @@ const Limit = ({ colony, name, rate }: Props) => {
     (tokenItem) => rate.token && tokenItem.address === rate.token,
   );
 
+  if (!token) {
+    return null;
+  }
+
   return (
     <div className={styles.limitContainer}>
       <div className={styles.inputContainer}>
@@ -51,16 +55,14 @@ const Limit = ({ colony, name, rate }: Props) => {
           elementOnly
         />
       </div>
-      {token && (
-        <div className={styles.tokenIconWrapper}>
-          <TokenIcon
-            className={styles.tokenIcon}
-            token={token}
-            name={token.name || token.address}
-          />
-          {token.symbol}
-        </div>
-      )}
+      <div className={styles.tokenIconWrapper}>
+        <TokenIcon
+          className={styles.tokenIcon}
+          token={token}
+          name={token.name || token.address}
+        />
+        {token.symbol}
+      </div>
     </div>
   );
 };
