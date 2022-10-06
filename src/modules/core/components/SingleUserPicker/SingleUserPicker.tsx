@@ -4,6 +4,7 @@ import compose from 'recompose/compose';
 import classnames from 'classnames';
 
 import { useField } from 'formik';
+import { isAddress } from '@colony/colony-js/lib/utils';
 import { AnyUser } from '~data/index';
 import { Address, SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
@@ -193,6 +194,8 @@ const SingleUserPicker = ({
       ? placeholder
       : formatMessage(placeholder);
 
+  const isValidWalletAddress = isAddress(value?.profile.walletAddress || '');
+
   return (
     <div className={styles.omniContainer}>
       <OmniPickerWrapper className={getMainClasses(appearance, styles)}>
@@ -233,7 +236,7 @@ const SingleUserPicker = ({
                   {value.profile.displayName ||
                     value.profile.username ||
                     value.profile.walletAddress}
-                  {showMaskedAddress && (
+                  {showMaskedAddress && isValidWalletAddress && (
                     <span className={styles.maskedAddress}>
                       <MaskedAddress address={value.profile.walletAddress} />
                     </span>
