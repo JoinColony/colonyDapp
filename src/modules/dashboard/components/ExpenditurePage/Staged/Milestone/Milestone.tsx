@@ -4,7 +4,7 @@ import Decimal from 'decimal.js';
 import { defineMessages } from 'react-intl';
 import classNames from 'classnames';
 
-import { FormSection, Input } from '~core/Fields';
+import { FormSection, Input, InputStatus } from '~core/Fields';
 import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
 import Slider from '~core/Slider';
@@ -56,6 +56,10 @@ const Milestone = ({
   >(`${name}.amount`);
   const [, { error }] = useField(name);
 
+  const [, { error: milestonePercentError }] = useField(
+    `staged.milestones[${index}].percent`,
+  );
+
   const handleChange = (val: number) => {
     if (!amount || !val) {
       return null;
@@ -81,14 +85,22 @@ const Milestone = ({
             appearance={{ theme: 'underlined' }}
           />
         </div>
-        <Icon
-          name="trash"
-          className={styles.deleteIcon}
+        <button
+          type="button"
+          className={styles.deleteIconBox}
           onClick={() => remove(index)}
-          title={MSG.deleteIconTitle}
-        />
+        >
+          <Icon
+            name="trash"
+            title={MSG.deleteIconTitle}
+            className={styles.deleteIcon}
+          />
+        </button>
       </div>
-      <div className={styles.sliderWrapper}>
+      <div
+        className={styles.sliderWrapper}
+        aria-invalid={!!milestonePercentError}
+      >
         <Slider
           value={milestone?.percent || 0}
           name={`${name}.percent`}
@@ -121,6 +133,9 @@ const Milestone = ({
           }}
         />
         <span className={styles.percent}>{milestone?.percent}%</span>
+        {!!milestonePercentError && (
+          <InputStatus error={milestonePercentError} />
+        )}
       </div>
       {token && amount && (
         <div className={styles.amountWrapper}>
