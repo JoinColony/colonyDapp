@@ -340,7 +340,10 @@ const FinalizeMotionAndClaimWidget = ({
                     appearance={{ theme: 'primary', size: 'medium' }}
                     text={MSG.finalizeButton}
                     disabled={
-                      !hasRegisteredProfile || !isFinalizable || isSubmitting
+                      !hasRegisteredProfile ||
+                      !isFinalizable ||
+                      isSubmitting ||
+                      motionState === MotionState.Escalation
                     }
                     onClick={() => handleSubmit()}
                     loading={isSubmitting}
