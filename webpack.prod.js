@@ -65,5 +65,8 @@ module.exports = () => ({
       resourceRegExp: /^(.*)\.json$/,
       contextRegExp: /colonyNetwork\/build\/contracts$/
     }),
+    new webpack.DefinePlugin({
+      "isProduction": JSON.stringify(true),
+    }),
   ],
 });
