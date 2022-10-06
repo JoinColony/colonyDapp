@@ -7,8 +7,16 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  padding-right: 18px;
   position: relative;
+}
+
+.inputWithIconBtn {
+  display: flex;
+  padding: 0 18px 0 0;
+  border: 0;
+  background: transparent;
+  appearance: none;
+  cursor: pointer;
 }
 
 .inputWithIcon:hover {
@@ -85,6 +93,10 @@
 
 .inputWrapper input {
   border-bottom: 1px solid rgb(113, 213, 213);
+}
+
+span.recipientName {
+  padding: 2px 6px;
 }
 
 .recipientName {

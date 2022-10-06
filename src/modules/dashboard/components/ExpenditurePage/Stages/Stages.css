@@ -43,6 +43,10 @@
   border-bottom: 1px solid var(--temp-grey-6);
 }
 
+.statusContainer:first-child {
+  padding-top: 0;
+}
+
 .withTag {
   padding: 14px 0 10px;
 }

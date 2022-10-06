@@ -5,6 +5,7 @@ export const amountWrapper: string;
 export const value: string;
 export const percent: string;
 export const nameWrapper: string;
+export const deleteIconBox: string;
 export const deleteIcon: string;
 export const sliderWrapper: string;
 export const tokenIcon: string;
