@@ -64,10 +64,10 @@ const FormStages = ({
     const errors = await validateForm(values);
     const hasErrors = Object.keys(errors)?.length;
     setTouched(setNestedObjectValues<FormikTouched<ValuesType>>(errors, true));
-    const invalidFieldsLength = document
+    const invalidFieldsLength: number | undefined = document
       .getElementById('expenditurePage')
       ?.querySelectorAll('[aria-invalid="true"]').length;
-    setFieldErrors(invalidFieldsLength ?? 0);
+    setFieldErrors(errors && invalidFieldsLength ? invalidFieldsLength : 0);
 
     return !errorsLength && colony
       ? openDraftConfirmDialog({
@@ -112,16 +112,23 @@ const FormStages = ({
     }
   }, [activeState, handleSubmit, setTouched, validateForm, values]);
 
-  const handleSubmitButtonClick = () => {
-    if (fieldErrors) {
-      // error fields should have aria invalid attr if the validation does not pass - for most elements it is auto-added
-      const firstInvalidEl = document
-        .getElementById('expenditurePage')
-        ?.querySelector('[aria-invalid="true"]');
-      invalidElementRef.current = firstInvalidEl as HTMLElement;
-      invalidElementRef?.current?.focus();
+  const handleFixButtonClick = useCallback(() => {
+    if (!fieldErrors) return;
+    // error fields should have aria invalid attr if the validation does not pass - for most elements it is auto-added
+    const invalidFields = document
+      .getElementById('expenditurePage')
+      ?.querySelectorAll('[aria-invalid="true"]');
+    const firstInvalidEl = invalidFields && invalidFields[0];
+    invalidElementRef.current = firstInvalidEl as HTMLElement;
+    invalidElementRef?.current?.focus();
+
+    // check if the invalid fields number has changed (fieldErrors was prev set only during the submit)
+    const invalidFieldsLength: number | undefined = invalidFields?.length;
+
+    if (invalidFieldsLength !== fieldErrors) {
+      setFieldErrors(invalidFieldsLength ?? fieldErrors ?? 0);
     }
-  };
+  }, [fieldErrors]);
 
   return (
     <div className={styles.formStages}>
@@ -137,7 +144,7 @@ const FormStages = ({
           </p>
           <button
             type="button"
-            onClick={handleSubmitButtonClick}
+            onClick={handleFixButtonClick}
             className={styles.formStagesMsgAction}
           >
             <FormattedMessage {...MSG.errorMessageAction} />
