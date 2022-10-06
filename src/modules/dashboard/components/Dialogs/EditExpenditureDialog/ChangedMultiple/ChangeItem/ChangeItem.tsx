@@ -48,7 +48,7 @@ const ChangeItem = ({ newValue, oldValue, name, colony }: Props) => {
         }
         case 'name': {
           return (
-            <span className={styles.chagneItem}>
+            <span className={styles.changeItem}>
               {change || <FormattedMessage {...MSG.none} />}
             </span>
           );
