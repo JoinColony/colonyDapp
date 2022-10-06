@@ -101,12 +101,10 @@ const ExpenditureForm = ({
   return (
     <Form onSubmit={onSubmit}>
       <ExpenditureSettings {...{ sidebarRef, colony }} />
-      <div id="expenditureForm">
-        {secondFormSection}
-        <button type="submit" tabIndex={-1} className={styles.hiddenSubmit}>
-          <FormattedMessage {...MSG.submit} />
-        </button>
-      </div>
+      {secondFormSection}
+      <button type="submit" tabIndex={-1} className={styles.hiddenSubmit}>
+        <FormattedMessage {...MSG.submit} />
+      </button>
     </Form>
   );
 };
