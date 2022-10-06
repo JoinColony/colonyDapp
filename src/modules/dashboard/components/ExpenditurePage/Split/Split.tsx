@@ -2,15 +2,15 @@ import { useField } from 'formik';
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
-
 import { isNaN } from 'lodash';
+
 import { FormSection, Toggle } from '~core/Fields';
 import { Colony } from '~data/index';
 
 import SplitUnequal from './SplitUnequal';
 import SplitEqual from './SplitEqual';
-import styles from './Split.css';
 import { Split as SplitType } from './types';
+import styles from './Split.css';
 
 const MSG = defineMessages({
   split: {
@@ -36,7 +36,7 @@ interface Props {
 
 const Split = ({ colony, sidebarRef }: Props) => {
   const [, { value: splitUnequal }] = useField('split.unequal');
-  const [, { value: amount }] = useField('split.anount');
+  const [, { value: amount }] = useField('split.amount');
   const [, { value: recipients }, { setValue }] = useField<
     SplitType['recipients']
   >('split.recipients');
@@ -57,8 +57,7 @@ const Split = ({ colony, sidebarRef }: Props) => {
             ...recipient,
             amount: {
               value: userAmount,
-              tokenAddress:
-                amount?.tokenAddress || recipient?.amount?.tokenAddress,
+              tokenAddress: amount?.tokenAddress,
             },
           })),
         );
@@ -66,7 +65,7 @@ const Split = ({ colony, sidebarRef }: Props) => {
 
       const rec = recipients?.map((recipient) => ({
         ...recipient,
-        amount: { value: 0, tokenAddress: recipient.amount?.tokenAddress },
+        amount: { value: 0, tokenAddress: amount?.tokenAddress },
         percent: 0,
       }));
       return setValue(rec);
