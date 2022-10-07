@@ -75,14 +75,14 @@ const FundingSourceItem = ({
     [colony, domain],
   );
 
-  const fundingSourceTitle = isMultiple ? `${index + 1}. ` : '';
+  const fundingSourceOrder = isMultiple ? `${index + 1}. ` : '';
 
   return (
     <>
       <h4 className={styles.dialogSectionTitle}>
         <FormattedMessage
           {...MSG.fundingSource}
-          values={{ number: fundingSourceTitle }}
+          values={{ number: fundingSourceOrder }}
         />
       </h4>
       <div
