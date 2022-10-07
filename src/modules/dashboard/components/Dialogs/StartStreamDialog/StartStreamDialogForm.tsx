@@ -141,7 +141,11 @@ const StartStreamDialogForm = ({
                   />
                 </div>
               </FormSection>
-              <FundingSource fundingSource={fundingSource} colony={colony} />
+              <FundingSource
+                fundingSource={fundingSource}
+                colony={colony}
+                endDate={formValues.streaming?.endDate.option}
+              />
             </Fragment>
           );
         })}
