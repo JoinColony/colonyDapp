@@ -404,20 +404,17 @@ const StreamingStagesLocked = ({
                 <FormattedMessage {...MSG.availableToClaim} />
               </span>
               <div className={styles.valueWrapper}>
-                {availableToClaim.map((availableItem, index) => {
+                {availableToClaim.map((availableItem) => {
                   const token = colony?.tokens?.find(
                     (tokenItem) => tokenItem.address === availableItem.token,
                   );
 
+                  if (!token) {
+                    return null;
+                  }
+
                   return (
-                    <span
-                      className={classNames(styles.value, {
-                        [styles.marginBottom]:
-                          availableToClaim.length > 1 &&
-                          index !== availableToClaim.length - 1,
-                      })}
-                      key={availableItem.id}
-                    >
+                    <span className={styles.value} key={availableItem.id}>
                       <FormattedMessage
                         {...MSG.paidValue}
                         values={{
