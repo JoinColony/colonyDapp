@@ -4,13 +4,13 @@ import { useField } from 'formik';
 
 import { FormSection } from '~core/Fields';
 import Icon from '~core/Icon';
+import { MembersSubscription } from '~data/generated';
 import Recipient from '~dashboard/ExpenditurePage/Recipient';
 import { Props as RecipientProps } from '~dashboard/ExpenditurePage/Recipient/Recipient';
 import { ErrorDot } from '~dashboard/ExpenditurePage/ErrorDot';
 
 import CollapseExpandButtons from '../CollapseExpandButtons';
 import styles from '../Payments.css';
-import { MembersSubscription } from '~data/generated';
 
 const displayName = 'dashboard.ExpenditurePage.Payments.SingleRecipient';
 
@@ -57,9 +57,9 @@ const SingleRecipient = ({
           <CollapseExpandButtons
             isExpanded={!!recipient.isExpanded}
             onToogleButtonClick={() => onToggleButtonClick(index)}
-            isLastitem={isLastItem}
+            isLastItem={isLastItem}
           />
-          <p className={styles.recipentTitle}>
+          <p className={styles.recipientTitle}>
             {index + 1}: <FormattedMessage {...MSG.recipient} />
           </p>
           {multipleRecipients && (
