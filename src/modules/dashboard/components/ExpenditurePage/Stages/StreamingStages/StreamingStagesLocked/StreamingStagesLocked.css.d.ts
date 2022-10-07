@@ -18,4 +18,3 @@ export const borderBottom: string;
 export const tagWrapper: string;
 export const valueWrapper: string;
 export const alignStart: string;
-export const marginBottom: string;

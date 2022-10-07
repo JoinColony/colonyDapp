@@ -101,6 +101,10 @@
   letter-spacing: 0.1px;
 }
 
+.value:not(:last-of-type) {
+  margin-bottom: 24px;
+}
+
 .tokenIcon {
   margin-right: 8px;
   height: 18px;
@@ -128,8 +132,4 @@
 
 .alignStart {
   align-items: flex-start;
-}
-
-.marginBottom {
-  margin-bottom: 24px;
 }
