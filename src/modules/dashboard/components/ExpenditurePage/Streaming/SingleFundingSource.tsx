@@ -17,11 +17,11 @@ const displayName = 'dashboard.ExpenditurePage.Streaming.SingleFundingSource';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.ExpenditurePage.Streaming.title',
+    id: 'dashboard.ExpenditurePage.Streaming.SingleFundingSource.title',
     defaultMessage: '{nr}: {team}',
   },
   titleTooltipError: {
-    id: 'dashboard.ExpenditurePage.Streaming.titleTooltipError',
+    id: `dashboard.ExpenditurePage.Streaming.SingleFundingSource.titleTooltipError`,
     defaultMessage: 'Required field error',
   },
 });
@@ -59,7 +59,7 @@ const SingleFundingSource = ({
           <CollapseExpandButtons
             isExpanded={fundingSource.isExpanded}
             onToogleButtonClick={() => onToggleButtonClick(index)}
-            isLastitem={isLastItem}
+            isLastItem={isLastItem}
           />
           <p className={styles.fundingTitle}>
             <FormattedMessage

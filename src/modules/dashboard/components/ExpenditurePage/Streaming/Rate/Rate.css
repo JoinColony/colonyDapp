@@ -53,7 +53,6 @@
 
 .inputRateAmount p {
   position: absolute;
-  transform: translate(0, 2px);
 }
 
 .tokenWrapper {
