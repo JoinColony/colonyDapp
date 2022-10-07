@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
-import { isEmpty, isEqual, isNil } from 'lodash';
 import { FormikProps } from 'formik';
 
 import { AnyUser } from '~data/index';
@@ -16,6 +15,7 @@ import {
 } from '~utils/safes';
 import { GNOSIS_NETWORK } from '~constants';
 import { SpinnerLoader } from '~core/Preloaders';
+import { isEmpty, isEqual, isNil } from '~utils/lodash';
 
 import { FormValues, FormProps, TransactionSectionProps } from '..';
 
