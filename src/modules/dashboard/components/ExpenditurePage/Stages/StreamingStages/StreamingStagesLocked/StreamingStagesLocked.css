@@ -133,7 +133,15 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 20px;
   width: 60px;
+  font-size: var(--size-tiny);
+  letter-spacing: var(--spacing-medium);
+}
+
+.tagClaimed > span {
+  background-color: var(--text-disabled);
+  color: var(--colony-white);
 }
 
 .valueWrapper {
