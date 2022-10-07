@@ -313,12 +313,14 @@ export const updateValues = (values, confirmedValues) => {
   }
 
   if ('staged' in confirmedValues) {
+    // milestones that have been changed
     const changedMilestones = values.staged.milestones.filter((milestone) =>
       confirmedValues.staged.milestones?.find(
         (confMilestone) => confMilestone.id === milestone.id,
       ),
     );
 
+    // milestones without any changes
     const sameMilestones = values.staged.milestones.filter((milestone) => {
       if (
         !confirmedValues.staged.milestones ||
@@ -331,9 +333,15 @@ export const updateValues = (values, confirmedValues) => {
       );
     });
 
+    // newly created milestones
     const newMilestones =
       confirmedValues.staged.milestones?.filter((value) => value.created) || [];
 
+    // 'confirmedMilestones' is an array with updated milestones. It is composed of:
+    // - milestones that haven't changed
+    // - updated milestones
+    // - newly created milestones.
+    // And we need to filter out deleted items (with 'removed' property set to true)
     const confirmedMilestones = [
       ...sameMilestones,
       ...changedMilestones?.map((milestone) => {
