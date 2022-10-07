@@ -262,7 +262,7 @@ const StreamingStagesLocked = ({
       </FormSection>
       <div
         className={classNames(styles.stagesRow, {
-          [styles.alignStart]: paidToDate && paidToDate?.length > 1,
+          [styles.alignStart]: paidToDate && paidToDate.length > 1,
         })}
       >
         <span className={styles.label}>
