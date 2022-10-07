@@ -9,7 +9,6 @@ import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import classnames from 'classnames';
 import { nanoid } from 'nanoid';
 
-import { debounce, isEqual, omit } from 'lodash';
 import Avatar from '~core/Avatar';
 import { DialogSection } from '~core/Dialog';
 import { Select } from '~core/Fields';
@@ -28,6 +27,7 @@ import { SAFE_INTEGRATION_LEARN_MORE } from '~externalUrls';
 import { Colony, ColonySafe, useLoggedInUser } from '~data/index';
 import { PrimitiveType } from '~types/index';
 import { SelectedSafe } from '~modules/dashboard/sagas/utils/safeHelpers';
+import { debounce, isEqual, omit } from '~utils/lodash';
 
 import SafeTransactionPreview from './SafeTransactionPreview';
 import { FormValues, UpdatedMethods } from './ControlSafeDialog';
