@@ -478,7 +478,6 @@ const DefaultMotion = ({
             colonyAction={colonyAction}
             initiator={initiator}
             isDecision={isDecision}
-            walletAddress={walletAddress}
             actionAndEventValues={actionAndEventValues}
             transactionHash={transactionHash}
             roleTitle={roleTitle}
@@ -486,7 +485,6 @@ const DefaultMotion = ({
             bottomElementRef={bottomElementRef}
             motionId={motionId}
             createdAt={createdAt}
-            currentUserName={currentUserName}
             roleMessageDescriptorId={roleMessageDescriptorId}
           />
         </div>

@@ -42,8 +42,6 @@ const MSG = defineMessages({
 interface Props {
   colony: Colony;
   user: AnyUser;
-  username: string;
-  walletAddress: string;
   hash: string;
   createdAt: number;
   isObjection?: boolean;
@@ -52,12 +50,14 @@ interface Props {
 const ActionPageDecisionWithIPFS = ({
   colony,
   user,
-  username,
-  walletAddress,
   hash,
   createdAt,
   isObjection = false,
 }: Props) => {
+  const {
+    profile: { username, walletAddress },
+  } = user;
+
   const { data: ipfsDataJSON } = useDataFetcher(
     ipfsDataFetcher,
     [hash],
