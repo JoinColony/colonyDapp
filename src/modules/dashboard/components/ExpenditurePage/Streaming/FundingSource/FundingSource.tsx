@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import React, { ReactNode, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 import classNames from 'classnames';
@@ -7,15 +6,15 @@ import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { useField } from 'formik';
 
 import { Colony } from '~data/index';
-import { FormSection, Input, InputLabel, SelectOption } from '~core/Fields';
+import { FormSection, InputLabel, SelectOption } from '~core/Fields';
 import DomainDropdown from '~core/DomainDropdown';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import ColorTag, { Color } from '~core/ColorTag';
-import TokenIcon from '~dashboard/HookedTokenIcon';
 import { ExpenditureEndDateTypes } from '~pages/ExpenditurePage/types';
 
 import { FundingSource as FundingSourceType } from '../types';
 import Rate from '../Rate';
+import Limit from '../Limit';
 
 import styles from './FundingSource.css';
 
@@ -23,10 +22,6 @@ const MSG = defineMessages({
   team: {
     id: 'dashboard.ExpenditurePage.Streaming.FundingSource.team',
     defaultMessage: 'Team',
-  },
-  notSet: {
-    id: 'dashboard.ExpenditurePage.Streaming.FundingSource.notSet',
-    defaultMessage: 'Not set',
   },
   limit: {
     id: 'dashboard.ExpenditurePage.Streaming.FundingSource.limit',
@@ -129,7 +124,7 @@ const FundingSource = ({
             sidebarRef={sidebarRef}
             colony={colony}
           />
-          {value.endDate === ExpenditureEndDateTypes.LimitIsReached && (
+          {value.endDate.option === ExpenditureEndDateTypes.LimitIsReached && (
             <FormSection appearance={{ border: 'bottom' }}>
               <div className={styles.inputWrapper}>
                 <InputLabel
@@ -139,38 +134,14 @@ const FundingSource = ({
                   }}
                 />
                 {fundingSource.rate.map((rateItem, rateIndex) => {
-                  const token = colony.tokens?.find(
-                    (tokenItem) =>
-                      rateItem.token && tokenItem.address === rateItem.token,
-                  );
-
                   return (
-                    <div className={styles.limitContainer} key={rateItem.id}>
-                      <div className={styles.inputContainer}>
-                        <Input
-                          name={`streaming.fundingSources[${index}].rate[${rateIndex}].limit`}
-                          appearance={{
-                            theme: 'underlined',
-                            size: 'small',
-                          }}
-                          label=""
-                          placeholder={MSG.notSet}
-                          formattingOptions={{
-                            numeral: true,
-                          }}
-                        />
-                      </div>
-                      {token && (
-                        <div className={styles.tokeIconWrapper}>
-                          <TokenIcon
-                            className={styles.tokenIcon}
-                            token={token}
-                            name={token.name || token.address}
-                          />
-                          {token.symbol}
-                        </div>
-                      )}
-                    </div>
+                    <Limit
+                      // eslint-disable-next-line max-len
+                      name={`streaming.fundingSources[${index}].rate[${rateIndex}].limit`}
+                      colony={colony}
+                      rate={rateItem}
+                      key={rateItem.id}
+                    />
                   );
                 })}
               </div>

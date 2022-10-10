@@ -30,11 +30,16 @@
 .fundingSourceLabel {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   margin-bottom: 10px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: color-mod(var(--dark) alpha(85%));
   letter-spacing: var(--spacing-normal);
+}
+
+.labelWithIcon {
+  justify-content: space-between;
 }
 
 .fundingSourceLabel div {
@@ -67,4 +72,13 @@
 
 .fundingTitle {
   margin-right: auto;
+}
+
+.rate {
+  margin-right: 6px;
+  white-space: nowrap;
+}
+
+.marginLeft {
+  margin-left: 4px;
 }
