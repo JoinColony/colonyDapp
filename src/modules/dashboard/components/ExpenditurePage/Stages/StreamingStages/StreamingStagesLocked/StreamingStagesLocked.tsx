@@ -77,6 +77,14 @@ const MSG = defineMessages({
     id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.cancelled`,
     defaultMessage: 'Cancelled',
   },
+  singleErrorMessage: {
+    id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.singleErrorMessage`,
+    defaultMessage: 'Insufficient funds in team. Ensure team is funded.',
+  },
+  mulitpleErrorMessage: {
+    id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.mulitpleErrorMessage`,
+    defaultMessage: 'Insufficient funds in team. Ensure all teams are funded.',
+  },
 });
 
 const displayName =
@@ -112,6 +120,9 @@ const StreamingStagesLocked = ({
   claimed,
 }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
+  const [hasInsufficentFunds, setHasInsufficentFunds] = useState<boolean>(
+    false,
+  );
   const userFeedbackTimer = useRef<any>(null);
   const { formatMessage } = useIntl();
 
@@ -130,6 +141,17 @@ const StreamingStagesLocked = ({
 
   return (
     <div className={styles.stagesWrapper}>
+      {hasInsufficentFunds && (
+        <div className={styles.stagesMsg}>
+          <p className={styles.stagesMsgText}>
+            <FormattedMessage
+              {...(recipients && recipients?.length > 1
+                ? { ...MSG.mulitpleErrorMessage }
+                : { ...MSG.singleErrorMessage })}
+            />
+          </p>
+        </div>
+      )}
       <FormSection appearance={{ border: 'bottom' }}>
         <div
           className={classNames(

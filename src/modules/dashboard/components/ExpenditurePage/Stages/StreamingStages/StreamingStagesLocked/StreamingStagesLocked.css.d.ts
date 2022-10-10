@@ -24,3 +24,6 @@ export const tagClaimed: string;
 export const valueWrapper: string;
 export const cancelled: string;
 export const buttonsRow: string;
+export const stagesMsg: string;
+export const slideIn: string;
+export const stagesMsgText: string;
