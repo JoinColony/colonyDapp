@@ -16,6 +16,7 @@ import { getMainClasses } from '~utils/css';
 import UserAvatar from '~core/UserAvatar';
 import { ItemDefault } from '~core/SingleUserPicker';
 import withAdditionalOmniPicker from '~core/OmniPicker/withAdditionalOmniPicker';
+import { fixTriggerEventName } from '~pages/ExpenditurePage/constants';
 
 import { ItemDataType, WrappedComponentAdditionalProps } from '../OmniPicker';
 import { Props as WithOmnipickerInProps } from '../OmniPicker/withOmniPicker';
