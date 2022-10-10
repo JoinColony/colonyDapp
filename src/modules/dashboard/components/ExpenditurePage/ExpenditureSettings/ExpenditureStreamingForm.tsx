@@ -1,6 +1,7 @@
 import { useField } from 'formik';
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import classNames from 'classnames';
 
 import { InputLabel, FormSection } from '~core/Fields';
 import DatePicker, { DatePickerOption } from '~core/Fields/DatePicker';

@@ -59,6 +59,14 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.limitError',
     defaultMessage: 'Limit is required',
   },
+  zeroError: {
+    id: 'dashboard.ExpenditurePage.zeroError',
+    defaultMessage: 'Must be greater than zero',
+  },
+  amountLimitError: {
+    id: 'dashboard.ExpenditurePage.amountLimitError',
+    defaultMessage: `Value cannot be greater than limit`,
+  },
 });
 
 export const initialValues = {
