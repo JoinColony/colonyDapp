@@ -1,5 +1,6 @@
 .inputContainer {
-  flex: 3.3;
+  flex: 2.8;
+  width: calc(100% - 30px);
 }
 
 .inputContainer input {
@@ -24,14 +25,13 @@
   flex: 1;
   justify-content: flex-start;
   align-items: center;
+  margin-left: 24px;
 }
 
 .limitContainer {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  width: 100%;
-  gap: 26px;
+  justify-content: space-between;
 }
 
 .limitContainer:not(:first-of-type) {
