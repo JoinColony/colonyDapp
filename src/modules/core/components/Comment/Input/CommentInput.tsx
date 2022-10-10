@@ -64,7 +64,7 @@ interface Props {
   disabled?: boolean;
   callback?: (message: string) => void;
   disabledInputPlaceholder?: MessageDescriptor | string;
-  notRequired?: boolean;
+  isRequired?: boolean;
 }
 
 const handleKeyboardSubmit = (
@@ -90,7 +90,7 @@ const CommentInput = ({
   callback,
   disabled,
   disabledInputPlaceholder,
-  notRequired,
+  isRequired = true,
 }: Props) => {
   const commentBoxRef = useRef<HTMLInputElement>(null);
   const [
@@ -151,7 +151,7 @@ const CommentInput = ({
       <Form
         initialValues={{ message: '' }}
         validationSchema={
-          notRequired ? defaultValidationSchema : requiredValidationSchema
+          isRequired ? requiredValidationSchema : defaultValidationSchema
         }
         onSubmit={onSubmit}
         validateOnMount
