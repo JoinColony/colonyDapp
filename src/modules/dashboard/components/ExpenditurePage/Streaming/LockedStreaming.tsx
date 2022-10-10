@@ -36,7 +36,7 @@ interface Props {
   endDate: string;
 }
 
-const displayName = 'dashboard.ExpenditurePage.LockedStreaming';
+const displayName = 'dashboard.ExpenditurePage.Streaming.LockedStreaming';
 
 const LockedStreaming = ({ startDate, endDate }: Props) => {
   const { username, walletAddress } = useLoggedInUser();
