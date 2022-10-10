@@ -106,6 +106,14 @@ const LockedSidebar = ({
           />
         );
       }
+      case ExpenditureTypes.Streaming: {
+        return (
+          <LockedStreaming
+            colony={colony}
+            fundingSources={streaming?.fundingSources}
+          />
+        );
+      }
       default:
         return null;
     }
