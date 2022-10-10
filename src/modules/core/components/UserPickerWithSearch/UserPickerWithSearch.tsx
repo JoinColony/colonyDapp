@@ -16,6 +16,7 @@ import { getMainClasses } from '~utils/css';
 import UserAvatar from '~core/UserAvatar';
 import { ItemDefault } from '~core/SingleUserPicker';
 import withAdditionalOmniPicker from '~core/OmniPicker/withAdditionalOmniPicker';
+import { fixTriggerEventName } from '~pages/ExpenditurePage/constants';
 
 import { ItemDataType, WrappedComponentAdditionalProps } from '../OmniPicker';
 import { Props as WithOmnipickerInProps } from '../OmniPicker/withOmniPicker';
@@ -187,10 +188,10 @@ const UserPickerWithSearch = ({
     };
 
     // custom event is being used here - which was created specially for elements with additional onFocus logic
-    window.addEventListener('fix-trigger', fixAction);
+    window.addEventListener(fixTriggerEventName, fixAction);
 
     return () => {
-      window.removeEventListener('fix-trigger', fixAction);
+      window.removeEventListener(fixTriggerEventName, fixAction);
       clearTimeout(timeout);
     };
   }, [disabled, toggleDropdown]);
