@@ -16,7 +16,6 @@ import Limit from '../Limit';
 import RateItem from '../RateItem';
 
 import styles from './FundingSource.css';
-import Limit from '../Limit';
 
 const MSG = defineMessages({
   team: {
