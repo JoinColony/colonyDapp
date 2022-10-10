@@ -120,7 +120,7 @@ const DecisionPreview = () => {
 
   const actionAndEventValues = {
     actionType: ColonyMotions.CreateDecisionMotion,
-    fromDomain: colonyData.processedColony.domains.find(
+    motionDomain: colonyData.processedColony.domains.find(
       ({ ethDomainId }) => ethDomainId === decisionData?.motionDomainId,
     ) as OneDomain,
   };
