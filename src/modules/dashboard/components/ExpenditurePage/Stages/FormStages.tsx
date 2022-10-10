@@ -62,18 +62,20 @@ const FormStages = ({
   } = useFormikContext<ValuesType>() || {};
   const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
-  const [fieldErrors, setFieldErrors] = useState<number>(0);
+  const [fieldErrorsAmount, setFieldErrorsAmount] = useState<number>(0);
   const invalidElementRef = useRef<HTMLElement | null>(null);
 
   const handleSaveDraft = useCallback(async () => {
-    setFieldErrors(0);
+    setFieldErrorsAmount(0);
     const errors = await validateForm(values);
     const hasErrors = Object.keys(errors)?.length;
     setTouched(setNestedObjectValues<FormikTouched<ValuesType>>(errors, true));
     const invalidFieldsLength: number | undefined = document
       .getElementById('expenditurePage')
       ?.querySelectorAll('[aria-invalid="true"]').length;
-    setFieldErrors(errors && invalidFieldsLength ? invalidFieldsLength : 0);
+    setFieldErrorsAmount(
+      errors && invalidFieldsLength ? invalidFieldsLength : 0,
+    );
 
     return !errorsLength && colony
       ? openDraftConfirmDialog({
@@ -124,9 +126,9 @@ const FormStages = ({
       ?.querySelectorAll('[aria-invalid="true"]');
     const invalidFieldsLength = invalidFields?.length;
 
-    if (invalidFieldsLength !== fieldErrors) {
-      // check if the invalid fields amount has changed (fieldErrors was prev set only during the submit)
-      setFieldErrors(invalidFieldsLength ?? 0);
+    if (invalidFieldsLength !== fieldErrorsAmount) {
+      // check if the invalid fields amount has changed (fieldErrorsAmount was prev set only during the submit)
+      setFieldErrorsAmount(invalidFieldsLength ?? 0);
     }
 
     if (!invalidFieldsLength) return;
@@ -141,18 +143,18 @@ const FormStages = ({
 
       window.dispatchEvent(customEvent);
     }
-  }, [fieldErrors]);
+  }, [fieldErrorsAmount]);
 
   return (
     <div className={styles.formStages}>
-      {!!fieldErrors && (
+      {!!fieldErrorsAmount && (
         <div className={styles.formStagesMsg}>
           <p className={styles.formStagesMsgText}>
             <FormattedMessage
-              {...(fieldErrors > 1
+              {...(fieldErrorsAmount > 1
                 ? { ...MSG.mulitpleErrorMessage }
                 : { ...MSG.singleErrorMessage })}
-              values={{ number: fieldErrors }}
+              values={{ number: fieldErrorsAmount }}
             />
           </p>
           <button
