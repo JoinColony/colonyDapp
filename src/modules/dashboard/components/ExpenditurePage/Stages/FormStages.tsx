@@ -1,5 +1,5 @@
 import { useFormikContext, setNestedObjectValues, FormikTouched } from 'formik';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { useDialog } from '~core/Dialog';
@@ -11,6 +11,7 @@ import {
   State,
   ValuesType,
 } from '~pages/ExpenditurePage/types';
+import { fixTriggerEventName } from '~pages/ExpenditurePage/constants';
 
 import { Stage } from './constants';
 import Stages from './Stages';
@@ -57,7 +58,6 @@ const FormStages = ({
   const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
   const [fieldErrorsAmount, setFieldErrorsAmount] = useState<number>(0);
-  const invalidElementRef = useRef<HTMLElement | null>(null);
 
   const handleSaveDraft = useCallback(async () => {
     setFieldErrorsAmount(0);
@@ -129,12 +129,11 @@ const FormStages = ({
     if (!invalidFieldsLength) return;
 
     const firstInvalidEl = invalidFields && invalidFields[0];
-    invalidElementRef.current = firstInvalidEl as HTMLElement;
 
     if (firstInvalidEl?.tagName.toLowerCase() === 'input') {
-      invalidElementRef?.current?.focus();
+      (firstInvalidEl as HTMLElement)?.focus();
     } else {
-      const customEvent = new CustomEvent('fix-trigger');
+      const customEvent = new CustomEvent(fixTriggerEventName);
 
       window.dispatchEvent(customEvent);
     }
