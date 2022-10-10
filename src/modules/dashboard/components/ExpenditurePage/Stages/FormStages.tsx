@@ -100,7 +100,7 @@ const FormStages = ({
           handleSubmit(values as any);
           setActiveStageId?.(Stage.Draft);
         },
-        isVotingExtensionEnabled: true,
+        isVotingExtensionEnabled: true, // 'true' is temporary value
         colony,
       })
     );

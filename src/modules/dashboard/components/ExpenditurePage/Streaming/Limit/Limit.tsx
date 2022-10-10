@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import { defineMessages } from 'react-intl';
-import { useField } from 'formik';
 
-import { Input, InputStatus } from '~core/Fields';
+import { Input } from '~core/Fields';
 import { Colony } from '~data/index';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 
@@ -55,32 +54,30 @@ const Limit = ({ colony, name, rate, index }: Props) => {
   }
 
   return (
-    <>
-      <div className={styles.limitContainer}>
-        <div className={styles.inputContainer}>
-          <Input
-            name={name}
-            appearance={{
-              theme: 'underlined',
-              size: 'small',
-            }}
-            label={MSG.limit}
-            placeholder={MSG.notSet}
-            formattingOptions={{
-              numeral: true,
-              numeralDecimalScale: 10,
-            }}
-            elementOnly
-          />
-        </div>
-        <div className={styles.tokenIconWrapper}>
-          <TokenIcon
-            className={styles.tokenIcon}
-            token={token}
-            name={token.name || token.address}
-          />
-          {token.symbol}
-        </div>
+    <div className={styles.limitContainer}>
+      <div className={styles.inputContainer}>
+        <Input
+          name={name}
+          appearance={{
+            theme: 'underlined',
+            size: 'small',
+          }}
+          label={MSG.limit}
+          placeholder={MSG.notSet}
+          formattingOptions={{
+            numeral: true,
+            numeralDecimalScale: 10,
+          }}
+          elementOnly
+        />
+      </div>
+      <div className={styles.tokenIconWrapper}>
+        <TokenIcon
+          className={styles.tokenIcon}
+          token={token}
+          name={token.name || token.address}
+        />
+        {token.symbol}
       </div>
       <InputStatus error={error} touched={touched} />
     </>
