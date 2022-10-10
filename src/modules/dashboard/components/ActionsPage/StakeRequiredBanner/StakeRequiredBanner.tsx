@@ -11,7 +11,14 @@ import styles from './StakeRequiredBanner.css';
 const MSG = defineMessages({
   stakeRequired: {
     id: `dashboard.ActionsPage.StakeRequiredBanner.stakeRequired`,
-    defaultMessage: `Motion requires at least 10% stake to appear in the actions list.`,
+    defaultMessage: `{isDecision, select,
+      true {Decision}
+      false {Motion}
+      } requires at least 10% stake to appear in the
+      {isDecision, select,
+        true {Decisions}
+        false {actions}
+        } list.`,
   },
   shareUrl: {
     id: `dashboard.ActionsPage.StakeRequiredBanner.shareUrl`,
@@ -25,11 +32,12 @@ const MSG = defineMessages({
 
 type Props = {
   stakeRequired: boolean;
+  isDecision?: boolean;
 };
 
 const displayName = 'dashboard.ActionsPage.StakeRequiredBanner';
 
-const StakeRequiredBanner = ({ stakeRequired }: Props) => {
+const StakeRequiredBanner = ({ stakeRequired, isDecision = false }: Props) => {
   return stakeRequired ? (
     <div
       className={styles.stakeRequiredBannerContainer}
@@ -43,7 +51,7 @@ const StakeRequiredBanner = ({ stakeRequired }: Props) => {
         }}
       >
         <div className={styles.stakeRequiredBanner}>
-          <FormattedMessage {...MSG.stakeRequired} />
+          <FormattedMessage {...MSG.stakeRequired} values={{ isDecision }} />
           <span className={styles.share}>
             <Tooltip
               placement="left"
