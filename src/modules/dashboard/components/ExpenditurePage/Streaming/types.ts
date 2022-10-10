@@ -1,3 +1,7 @@
+import { DatePickerFieldValue } from '~core/Fields/DatePicker/DatePicker';
+import { AnyUser } from '~data/index';
+import { ExpenditureEndDateTypes } from '~pages/ExpenditurePage/types';
+
 export interface Rate {
   amount?: number;
   token?: string;
@@ -15,6 +19,11 @@ export interface FundingSource {
 
 export interface Streaming {
   fundingSources: FundingSource[];
+  user?: AnyUser;
+  startDate: DatePickerFieldValue;
+  endDate: Omit<DatePickerFieldValue, 'option'> & {
+    option: ExpenditureEndDateTypes;
+  };
 }
 
 export enum TimePeriod {
