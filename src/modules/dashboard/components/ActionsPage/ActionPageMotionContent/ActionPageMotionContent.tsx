@@ -25,7 +25,6 @@ interface Props {
   colonyAction: ColonyActionQuery['colonyAction'];
   isDecision: boolean;
   initiator: AnyUser;
-  walletAddress: string;
   actionAndEventValues: any;
   roleTitle: string;
   transactionHash: string;
@@ -33,7 +32,6 @@ interface Props {
   bottomElementRef: React.RefObject<HTMLInputElement>;
   motionId: number;
   createdAt: number;
-  currentUserName?: string | null;
   roleMessageDescriptorId?: string | null;
 }
 
@@ -43,7 +41,6 @@ const ActionPageMotionContent = ({
   colonyAction,
   isDecision,
   initiator,
-  walletAddress,
   actionAndEventValues,
   roleTitle,
   transactionHash,
@@ -51,7 +48,6 @@ const ActionPageMotionContent = ({
   motionId,
   bottomElementRef,
   createdAt,
-  currentUserName,
   roleMessageDescriptorId,
 }: Props) => {
   const { data: objectionAnnotation } = useMotionObjectionAnnotationQuery({
@@ -85,8 +81,6 @@ const ActionPageMotionContent = ({
         <ActionPageDecisionWithIPFS
           colony={colony}
           user={initiator}
-          username={currentUserName || ''}
-          walletAddress={walletAddress}
           hash={annotationHash || ''}
           createdAt={createdAt}
         />
@@ -110,8 +104,6 @@ const ActionPageMotionContent = ({
               <ActionPageDecisionWithIPFS
                 colony={colony}
                 user={objectionAnnotationUser}
-                username={currentUserName || ''}
-                walletAddress={walletAddress}
                 hash={objectionAnnotation?.motionObjectionAnnotation?.metadata}
                 isObjection
                 createdAt={createdAt}
