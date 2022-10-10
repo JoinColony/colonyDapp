@@ -483,7 +483,6 @@ const ControlSafeForm = ({
       ) : (
         <SafeTransactionPreview
           values={values}
-          colony={colony}
           selectedContractMethods={selectedContractMethods}
         />
       )}
