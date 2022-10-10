@@ -47,11 +47,11 @@ const MSG = defineMessages({
   balancesError: {
     id: `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection.balancesError`,
     defaultMessage:
-      'Unable to fetch the Safe balances. Please check your connection.',
+      'Unable to fetch the Safe balances. Please check your connection',
   },
   noBalance: {
     id: `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection.noBalance`,
-    defaultMessage: 'Insufficient safe balance.',
+    defaultMessage: 'Insufficient safe balance',
   },
 });
 
@@ -111,7 +111,7 @@ const TransferFundsSection = ({
   const selectedTokenAddress =
     values.transactions[transactionFormIndex].tokenAddress;
   const selectedTokenDecimals =
-    values.transactions[transactionFormIndex].tokenDecimals;
+    values.transactions[transactionFormIndex].tokenData?.decimals;
 
   const selectedBalance = useMemo(
     () =>

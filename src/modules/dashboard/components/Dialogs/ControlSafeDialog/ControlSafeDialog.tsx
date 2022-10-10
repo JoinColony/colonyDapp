@@ -15,26 +15,30 @@ import {
   getChainNameFromSafe,
 } from '~modules/dashboard/sagas/utils/safeHelpers';
 import { mapPayload, withMeta } from '~utils/actions';
-import { DEFAULT_TOKEN_DECIMALS, SAFE_NETWORKS } from '~constants';
+import { SafeBalanceToken } from '~types/index';
+import { SAFE_NETWORKS } from '~constants';
 
 import ControlSafeForm from './ControlSafeForm';
 import { NFT } from './TransactionTypesSection/TransferNFTSection';
 import { getMethodInputValidation, getValidationSchema } from './validation';
 
+export interface SafeTransaction {
+  transactionType: string;
+  recipient: AnyUser | null;
+  nft: SelectedNFT | null;
+  nftData: NFT | null;
+  tokenAddress?: string;
+  tokenData: SafeBalanceToken | null;
+  amount?: number;
+  rawAmount?: number;
+  data?: string;
+  contract?: AnyUser;
+  abi?: string;
+  contractFunction?: string;
+}
+
 export interface FormValues {
-  transactions: {
-    transactionType: string;
-    recipient: AnyUser | null;
-    nft: SelectedNFT | null;
-    nftData: NFT | null;
-    tokenAddress?: string;
-    tokenDecimals?: number;
-    amount?: number;
-    data?: string;
-    contract?: AnyUser;
-    abi?: string;
-    contractFunction?: string;
-  }[];
+  transactions: SafeTransaction[];
   safe: SelectedSafe | null;
   forceAction: boolean;
   transactionsTitle: string;
@@ -135,8 +139,9 @@ const ControlSafeDialog = ({
           {
             transactionType: '',
             tokenAddress: undefined,
-            tokenDecimals: DEFAULT_TOKEN_DECIMALS,
+            tokenData: null,
             amount: undefined,
+            rawAmount: undefined,
             recipient: undefined,
             data: '',
             contract: undefined,

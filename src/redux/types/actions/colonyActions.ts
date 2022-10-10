@@ -5,6 +5,8 @@ import { ColonyRole } from '@colony/colony-js';
 import { ActionTypes } from '~redux/index';
 import { Address, WithKey } from '~types/index';
 import { Color } from '~core/ColorTag';
+import { ColonySafe } from '~data/index';
+import { SafeTransaction } from '~dashboard/Dialogs/ControlSafeDialog/ControlSafeDialog';
 
 import {
   ErrorActionType,
@@ -13,23 +15,6 @@ import {
   MetaWithHistory,
   ActionType,
 } from './index';
-import { ColonySafe, AnyUser } from '~data/index';
-import { NFT } from '~dashboard/Dialogs/ControlSafeDialog/TransactionTypesSection/TransferNFTSection';
-
-export interface SafeTransaction {
-  transactionType: string;
-  tokenAddress: string;
-  tokenDecimals: number;
-  amount: string;
-  rawAmount: string;
-  recipient: AnyUser;
-  data: string;
-  contract: string;
-  abi: string;
-  contractFunction: string;
-  nft: string;
-  nftData: NFT;
-}
 
 /*
  * @NOTE About naming
