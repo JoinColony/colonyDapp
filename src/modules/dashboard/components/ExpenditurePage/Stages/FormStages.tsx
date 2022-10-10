@@ -70,7 +70,7 @@ const FormStages = ({
   }, [formikErr]);
 
   const handleSaveDraft = useCallback(async () => {
-    setFieldErrors(0);
+    setFieldErrorsAmount(0);
     const errors = await validateForm(values);
     const errorsLength = Object.keys(errors)?.length;
     setTouched(setNestedObjectValues<FormikTouched<ValuesType>>(errors, true));
