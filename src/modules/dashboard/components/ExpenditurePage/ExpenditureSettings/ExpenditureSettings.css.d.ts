@@ -23,3 +23,4 @@ export const balance: string;
 export const error: string;
 export const expenditure: string;
 export const expenditureContainer: string;
+export const dateError: string;

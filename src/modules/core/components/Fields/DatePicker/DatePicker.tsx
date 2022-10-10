@@ -22,7 +22,7 @@ const MSG = defineMessages({
   },
 });
 
-interface DatePickerFieldValue {
+export interface DatePickerFieldValue {
   date: Date;
   option?: string;
 }

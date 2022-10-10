@@ -1,5 +1,7 @@
+import { useField } from 'formik';
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import classNames from 'classnames';
 
 import { InputLabel, FormSection } from '~core/Fields';
 import DatePicker, { DatePickerOption } from '~core/Fields/DatePicker';
@@ -9,6 +11,7 @@ import { useMembersSubscription } from '~data/generated';
 import { ExpenditureEndDateTypes } from '~pages/ExpenditurePage/types';
 
 import { supRenderAvatar } from '../Recipient/Recipient';
+import { Streaming } from '../Streaming/types';
 
 import { Props } from './ExpenditureSettings';
 import styles from './ExpenditureSettings.css';
@@ -63,6 +66,12 @@ const ExpenditureStreamingForm = ({ sidebarRef, colony }: Props) => {
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress: colony.colonyAddress || '' },
   });
+  const [, { value: startDate }] = useField<Streaming['startDate']>(
+    'streaming.startDate',
+  );
+  const [, { error: endDateError }] = useField<Streaming['endDate']>(
+    'streaming.endDate',
+  );
 
   return (
     <>
@@ -87,25 +96,29 @@ const ExpenditureStreamingForm = ({ sidebarRef, colony }: Props) => {
               direction: 'horizontal',
             }}
           />
-
-          <DatePicker name="streaming.startDate" showTimeSelect />
+          <DatePicker
+            name="streaming.startDate"
+            showTimeSelect
+            minDate={new Date()}
+          />
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
-        <div className={(styles.blue, styles.settingsRow)}>
+        <div className={classNames(styles.blue, styles.settingsRow)}>
           <InputLabel
             label={MSG.ends}
             appearance={{
               direction: 'horizontal',
             }}
           />
-
-          <DatePicker
-            name="streaming.endDate"
-            showTimeSelect
-            options={endDateOptions}
-            minDate={new Date()}
-          />
+          <div className={classNames({ [styles.dateError]: endDateError })}>
+            <DatePicker
+              name="streaming.endDate"
+              showTimeSelect
+              options={endDateOptions}
+              minDate={startDate.date}
+            />
+          </div>
         </div>
       </FormSection>
     </>
