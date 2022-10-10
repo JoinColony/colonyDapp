@@ -26,7 +26,7 @@ const MSG = defineMessages({
     defaultMessage: '{number} required field has an error.',
   },
   mulitpleErrorMessage: {
-    id: 'dashboard.ExpenditurePage.Stages.FormStages.singleErrorMessage',
+    id: 'dashboard.ExpenditurePage.Stages.FormStages.mulitpleErrorMessage',
     defaultMessage: '{number} required fields have an error.',
   },
   errorMessageAction: {
