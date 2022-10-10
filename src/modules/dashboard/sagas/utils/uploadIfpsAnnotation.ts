@@ -1,6 +1,6 @@
 import { call } from 'redux-saga/effects';
 import { ColonySafe } from '~data/generated';
-import { SafeTransaction } from '~redux/types/actions/colonyActions';
+import { SafeTransaction } from '~dashboard/Dialogs/ControlSafeDialog/ControlSafeDialog';
 import { ipfsUpload } from '../../../core/sagas/ipfs';
 
 interface SafeTxData {

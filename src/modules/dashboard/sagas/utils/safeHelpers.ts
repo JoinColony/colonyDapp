@@ -6,7 +6,7 @@ import moveDecimal from 'move-decimal-point';
 import { AddressZero } from 'ethers/constants';
 
 import { erc721 } from './abis'; // Temporary
-import { SafeTransaction } from '~redux/types/actions/colonyActions';
+import { SafeTransaction } from '~dashboard/Dialogs/ControlSafeDialog/ControlSafeDialog';
 import { ColonySafe } from '~data/index';
 import { Address, ModuleAddress } from '~types/index';
 import { GNOSIS_AMB_BRIDGES, SAFE_NETWORKS } from '~constants';
@@ -186,19 +186,32 @@ export const getIdFromNFTDisplayName = (displayName: string) => {
 export const getRawTransactionData = (
   zodiacBridgeModule: Contract,
   transaction: SafeTransaction,
-) =>
-  zodiacBridgeModule.interface.functions.executeTransaction.encode([
+) => {
+  if (!transaction.recipient) {
+    throw new Error('Transaction does not contain a recipient.');
+  }
+
+  return zodiacBridgeModule.interface.functions.executeTransaction.encode([
     transaction.recipient.profile.walletAddress,
     Number(transaction.rawAmount),
     transaction.data,
     0,
   ]);
+};
 
 export const getTransferNFTData = (
   zodiacBridgeModule: Contract,
   safe: Omit<ColonySafe, 'safeName'>,
   transaction: SafeTransaction,
 ) => {
+  if (!transaction.nftData) {
+    throw new Error('Transaction does not contain NFT data.');
+  }
+
+  if (!transaction.recipient) {
+    throw new Error('Transaction does not contain a recipient.');
+  }
+
   const safeAddress = onLocalDevEnvironment
     ? LOCAL_SAFE_ADDRESS
     : safe.contractAddress;
@@ -237,6 +250,14 @@ export const getTransferFundsData = async (
   safe: Omit<ColonySafe, 'safeName'>,
   transaction: SafeTransaction,
 ) => {
+  if (!transaction.tokenData) {
+    throw new Error('Transaction does not contain token data.');
+  }
+
+  if (!transaction.recipient) {
+    throw new Error('Transaction does not contain a recipient.');
+  }
+
   const safeAddress = onLocalDevEnvironment
     ? LOCAL_SAFE_ADDRESS
     : safe.contractAddress;
@@ -253,10 +274,11 @@ export const getTransferFundsData = async (
   }
 
   const isSafeNativeToken = tokenAddress === AddressZero;
-
+  const tokenDecimals = transaction.tokenData.decimals;
+  const { recipient } = transaction;
   const getAmount = (): number => {
     if (isSafeNativeToken) {
-      return moveDecimal(transaction.amount, transaction.tokenDecimals);
+      return moveDecimal(transaction.amount, tokenDecimals);
     }
     return 0;
   };
@@ -265,19 +287,15 @@ export const getTransferFundsData = async (
       return '0x';
     }
     const TokenInterface = await getTokenInterface(safe, tokenAddress);
-
-    const tansferAmount = moveDecimal(
-      transaction.amount,
-      transaction.tokenDecimals,
-    );
+    const transferAmount = moveDecimal(transaction.amount, tokenDecimals);
     return TokenInterface.functions.transfer.encode([
-      transaction.recipient.profile.walletAddress,
-      tansferAmount,
+      recipient.profile.walletAddress,
+      transferAmount,
     ]);
   };
   const getRecipient = (): string => {
     if (isSafeNativeToken) {
-      return transaction.recipient.profile.walletAddress;
+      return recipient.profile.walletAddress;
     }
     return tokenAddress;
   };

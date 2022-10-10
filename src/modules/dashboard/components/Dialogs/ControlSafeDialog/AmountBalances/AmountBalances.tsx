@@ -59,8 +59,13 @@ const AmountBalances = ({
   const [, { value: tokenAddress }, { setValue: setTokenAddress }] = useField(
     `transactions.${transactionFormIndex}.tokenAddress`,
   );
-  const [, , { setValue: setTokenDecimals }] = useField(
-    `transactions.${transactionFormIndex}.tokenDecimals`,
+
+  const [
+    ,
+    { value: selectedTokenData },
+    { setValue: setTokenData },
+  ] = useField<AnyToken | null>(
+    `transactions.${transactionFormIndex}.tokenData`,
   );
 
   const tokens: AnyToken[] = safeBalances.map((balance) => {
@@ -91,15 +96,13 @@ const AmountBalances = ({
       networkName: getNetworkName(),
     };
   });
-  const selectedTokenInfo = tokens.find(
-    (token) => token.address === tokenAddress,
-  );
-
+  // Set token in select component on initialisation
   useEffect(() => {
     if (!tokenAddress && tokens[0]) {
       setTokenAddress(tokens[0].address);
+      setTokenData(tokens[0]);
     }
-  }, [tokenAddress, tokens, setTokenAddress]);
+  }, [tokenAddress, tokens, setTokenAddress, setTokenData]);
 
   return (
     <div className={styles.tokenAmount}>
@@ -120,7 +123,7 @@ const AmountBalances = ({
             delimiter: ',',
             numeral: true,
             numeralDecimalScale:
-              selectedTokenInfo?.decimals || DEFAULT_TOKEN_DECIMALS,
+              selectedTokenData?.decimals || DEFAULT_TOKEN_DECIMALS,
           }}
           disabled={disabledInput}
           /*
@@ -145,7 +148,9 @@ const AmountBalances = ({
               const selectedToken = tokens.find(
                 (token) => token.address === value,
               );
-              setTokenDecimals(selectedToken?.decimals);
+              // can only select a token from "tokens"
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              setTokenData(selectedToken!);
             }}
           />
         </div>

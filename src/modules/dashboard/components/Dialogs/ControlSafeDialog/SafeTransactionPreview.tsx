@@ -12,7 +12,7 @@ import Button from '~core/Button';
 import Icon from '~core/Icon';
 import Avatar from '~core/Avatar';
 import MaskedAddress from '~core/MaskedAddress';
-import { Colony, AnyUser } from '~data/index';
+import { AnyUser } from '~data/index';
 import { AbiItemExtended, getArrayFromString } from '~utils/safes';
 
 import AddressDetailsView from './TransactionPreview/AddressDetailsView';
@@ -213,7 +213,6 @@ const transactionTypeFieldsMap = {
 const displayName = 'dashboard.ControlSafeDialog.SafeTransactionPreview';
 
 interface Props {
-  colony: Colony;
   values: FormValues;
   selectedContractMethods?:
     | {
@@ -222,24 +221,15 @@ interface Props {
     | undefined;
 }
 
-const SafeTransactionPreview = ({
-  colony,
-  values,
-  selectedContractMethods,
-}: Props) => {
+const SafeTransactionPreview = ({ values, selectedContractMethods }: Props) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState(
     Array(values.transactions.length).fill(false),
   );
   const { formatMessage } = useIntl();
 
-  const tokens = useMemo(() => {
-    return values.transactions.map((transaction) => {
-      const token = colony.tokens.find(
-        (item) => item.address === transaction.tokenAddress,
-      );
-      return token;
-    });
-  }, [values, colony.tokens]);
+  const tokens = useMemo(() => values.transactions.map((t) => t.tokenData), [
+    values,
+  ]);
 
   const handleTabToggle = (newIndex: number) => {
     const newTransactionTabs = transactionTabStatus.map((tab, index) =>
