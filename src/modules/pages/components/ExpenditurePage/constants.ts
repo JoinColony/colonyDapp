@@ -12,6 +12,8 @@ import { newFundingSource } from '~dashboard/ExpenditurePage/Streaming/constants
 
 import { ExpenditureEndDateTypes, ExpenditureTypes } from './types';
 
+export const fixTriggerEventName = 'fix-trigger';
+
 const MSG = defineMessages({
   userRequiredError: {
     id: 'dashboard.ExpenditurePage.userRequiredError',
