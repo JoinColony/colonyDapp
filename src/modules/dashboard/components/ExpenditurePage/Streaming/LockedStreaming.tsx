@@ -17,9 +17,9 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.streaming',
     defaultMessage: 'Streaming',
   },
-  owner: {
-    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.owner',
-    defaultMessage: 'Owner',
+  to: {
+    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.to',
+    defaultMessage: 'To',
   },
   starts: {
     id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.starts',
@@ -59,7 +59,7 @@ const LockedStreaming = ({ startDate, endDate }: Props) => {
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.userContainer}>
           <InputLabel
-            label={MSG.owner}
+            label={MSG.to}
             appearance={{
               direction: 'horizontal',
             }}
