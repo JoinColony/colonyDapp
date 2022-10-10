@@ -157,3 +157,14 @@
   justify-content: space-between;
   padding-bottom: 14px;
 }
+
+/* this selector is for DatePicker button */
+.dateError > div > div > div > span > button {
+  color: var(--pink);
+}
+
+/* this selector is for the caret icon next to the button */
+.dateError > div > div > div > span > button svg {
+  fill: var(--pink);
+  stroke: var(--pink);
+}
