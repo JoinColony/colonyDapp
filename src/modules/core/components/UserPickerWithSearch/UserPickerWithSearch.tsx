@@ -186,6 +186,7 @@ const UserPickerWithSearch = ({
       }
     };
 
+    // custom event is being used here - which was created specially for elements with additional onFocus logic
     window.addEventListener('fix-trigger', fixAction);
 
     return () => {
