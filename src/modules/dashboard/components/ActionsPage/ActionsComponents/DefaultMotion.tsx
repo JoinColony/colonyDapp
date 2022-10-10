@@ -362,15 +362,11 @@ const DefaultMotion = ({
   );
 
   const isDecision = actionType === ColonyMotions.CreateDecisionMotion;
-  const hasBanner = useMemo(
-    () =>
-      isDecision ? false : !shouldDisplayMotion(currentStake, requiredStake),
-    [currentStake, isDecision, requiredStake],
-  );
+  const hasBanner = !shouldDisplayMotion(currentStake, requiredStake);
 
   return (
     <div className={styles.main}>
-      <StakeRequiredBanner stakeRequired={hasBanner} />
+      <StakeRequiredBanner stakeRequired={hasBanner} isDecision={isDecision} />
       <div
         className={`${styles.upperContainer} ${
           hasBanner && styles.bannerPadding

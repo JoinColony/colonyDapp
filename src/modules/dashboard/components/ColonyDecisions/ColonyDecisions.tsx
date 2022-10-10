@@ -115,7 +115,6 @@ const ColonyDecisions = ({
     { ...motions },
     undefined,
     {},
-    true,
   ]);
 
   const filteredDecisions = useMemo(
