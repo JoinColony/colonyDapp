@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import { isEmpty, isNil } from 'lodash';
 
 import { FormSection } from '~core/Fields';
-import { Colony } from '~data/index';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
@@ -16,6 +15,7 @@ import { useCalculateBatchPayment } from './hooks';
 import DownloadTemplate from './DownloadTemplate';
 import PreviewDialog from './PreviewDialog';
 import { Batch as BatchType } from './types';
+import { checkValidMessageObject } from './utils';
 import styles from './Batch.css';
 
 export const MSG = defineMessages({
@@ -67,15 +67,15 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Batch.fileError',
     defaultMessage: `File structure is incorrect, try again using the template.`,
   },
+  requiredError: {
+    id: 'dashboard.ExpenditurePage.Batch.requiredError',
+    defaultMessage: `Data is required.`,
+  },
 });
 
 const displayName = 'dashboard.ExpenditurePage.Batch';
 
-interface Props {
-  colony: Colony;
-}
-
-const Batch = ({ colony }: Props) => {
+const Batch = () => {
   const [processingCSVData, setProcessingCSVData] = useState<boolean>(false);
   const { formatMessage } = useIntl();
   const [, { value: dataCSVUploader, error }] = useField<
@@ -88,9 +88,10 @@ const Batch = ({ colony }: Props) => {
   const [, , { setValue: setBatchValue }] = useField<BatchType['value']>(
     'batch.value',
   );
+  const [processingData, setProcessingData] = useState(false);
 
   const data = useCalculateBatchPayment(
-    colony,
+    setProcessingData,
     dataCSVUploader?.[0]?.parsedData,
   );
   const { invalidRows, recipientsCount, tokens, validatedData } = data || {};
@@ -102,17 +103,20 @@ const Batch = ({ colony }: Props) => {
 
     // adding setRecipients, setData and setBatchValue to the dependency array causes 'Maximum update depth exceeded' error
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [error, recipientsCount, tokens, validatedData]);
+  }, [recipientsCount, tokens, validatedData]);
 
   const errorMessage = useMemo(() => {
+    if (!error) {
+      return undefined;
+    }
     if (typeof error === 'string') {
       return error;
     }
-    if (error) {
+    if (Array.isArray(error)) {
       const fileError = error?.[0]?.['parsedData'];
-      return fileError && 'id' in fileError && formatMessage(fileError);
+      return checkValidMessageObject(fileError) && formatMessage(fileError);
     }
-    return undefined;
+    return checkValidMessageObject(error) && formatMessage(error);
   }, [error, formatMessage]);
 
   const openPreviewDialog = useDialog(PreviewDialog);
@@ -149,7 +153,7 @@ const Batch = ({ colony }: Props) => {
           <div className={styles.dropzone}>
             <CSVUploader
               name="batch.dataCSVUploader"
-              processingData={processingCSVData}
+              processingData={processingCSVData || processingData}
               setProcessingData={setProcessingCSVData}
             />
           </div>

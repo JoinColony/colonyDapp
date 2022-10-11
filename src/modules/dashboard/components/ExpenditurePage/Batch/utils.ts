@@ -7,3 +7,9 @@ export const isBatchPaymentType = (object: any) => {
   }
   return false;
 };
+
+export const checkValidMessageObject = (errorMessage) => {
+  return (
+    errorMessage && typeof errorMessage === 'object' && 'id' in errorMessage
+  );
+};
