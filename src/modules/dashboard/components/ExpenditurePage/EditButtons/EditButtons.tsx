@@ -1,7 +1,10 @@
+import { useFormikContext } from 'formik';
+import { isEmpty } from 'lodash';
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
+import { ValuesType } from '~pages/ExpenditurePage/types';
 
 import styles from './EditButton.css';
 
@@ -24,12 +27,14 @@ interface Props {
 }
 
 const EditButtons = ({ handleEditCancel, handleEditSubmit }: Props) => {
+  const { errors } = useFormikContext<ValuesType>() || {};
+
   return (
     <div className={styles.wrapper}>
       <Button appearance={{ theme: 'secondary' }} onClick={handleEditCancel}>
         <FormattedMessage {...MSG.cancel} />
       </Button>
-      <Button onClick={handleEditSubmit}>
+      <Button onClick={handleEditSubmit} disabled={!isEmpty(errors)}>
         <FormattedMessage {...MSG.update} />
       </Button>
     </div>

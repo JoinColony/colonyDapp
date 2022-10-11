@@ -136,6 +136,10 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.fileError',
     defaultMessage: `File structure is incorrect, try again using the template.`,
   },
+  requiredError: {
+    id: 'dashboard.ExpenditurePage.requiredError',
+    defaultMessage: `Data is required.`,
+  },
 });
 
 const validationSchema = yup.object().shape({
@@ -226,24 +230,29 @@ const validationSchema = yup.object().shape({
     then: yup
       .object()
       .shape({
-        dataCSVUploader: yup.array().of(
-          yup.object().shape({
-            parsedData: yup
-              .array()
-              .min(1, () => MSG.fileError)
-              .max(400, () => MSG.amountError)
-              .test(
-                'valid-payment',
-                () => MSG.fileError,
-                (value) =>
-                  isEmpty(
-                    value?.filter(
-                      (payment: string) => !isBatchPaymentType(payment),
+        dataCSVUploader: yup
+          .array()
+          .of(
+            yup.object().shape({
+              parsedData: yup
+                .array()
+                .min(1, () => MSG.fileError)
+                .max(400, () => MSG.amountError)
+                .test(
+                  'valid-payment',
+                  () => MSG.fileError,
+                  (value) =>
+                    isEmpty(
+                      value?.filter(
+                        (payment: string) => !isBatchPaymentType(payment),
+                      ),
                     ),
-                  ),
-              ),
-          }),
-        ),
+                ),
+            }),
+          )
+          .required(() => MSG.requiredError),
+        recipients: yup.number().moreThan(0),
+        value: yup.array().min(1),
       })
       .required(() => MSG.fileError),
   }),
@@ -258,7 +267,7 @@ export interface State {
 }
 
 const initialValues = {
-  expenditure: ExpenditureTypes.Split,
+  expenditure: ExpenditureTypes.Batch,
   recipients: [newRecipient],
   filteredDomainId: String(ROOT_DOMAIN_ID),
   owner: undefined,

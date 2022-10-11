@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from 'react';
 
 import apolloClient from '~context/apolloClient';
 import {
-  Colony,
   Token,
   TokenDocument,
   TokenQuery,
@@ -14,7 +13,7 @@ import { AddressElements, splitAddress } from '~utils/strings';
 import { BatchDataItem } from './types';
 
 export const useCalculateBatchPayment = (
-  colony: Colony,
+  setProcessingData: React.Dispatch<React.SetStateAction<boolean>>,
   data?: BatchDataItem[],
 ) => {
   const [uniqTokens, setUniqTokens] = useState<
@@ -29,6 +28,7 @@ export const useCalculateBatchPayment = (
 
   useEffect(() => {
     const fetchTokens = async () => {
+      setProcessingData(true);
       const uniq = uniqBy(data, 'token');
       const tokensData = await Promise.all(
         uniq
@@ -53,9 +53,10 @@ export const useCalculateBatchPayment = (
           .filter((token) => !!token),
       );
       setUniqTokens(tokensData);
+      setProcessingData(false);
     };
     fetchTokens();
-  }, [data]);
+  }, [data, setProcessingData]);
 
   return useMemo(() => {
     if (!data || !uniqTokens || !uniqTokens.length) {
