@@ -8,6 +8,7 @@
 .singleUserPickerContainer input,
 .singleUserPickerContainer button {
   max-width: 424px;
+  color: var(--dark);
 }
 
 .singleUserPickerContainer > div {

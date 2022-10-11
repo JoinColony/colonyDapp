@@ -257,6 +257,9 @@ const ContractInteractionSection = ({
             disabled={disabledInput}
             placeholder={MSG.userPickerPlaceholder}
             onSelected={onContractChange}
+            setValueOnBlur
+            /** Hide the "It looks like I couldn't find what you are looking for" message */
+            renderEmpty={() => null}
           />
         </div>
       </DialogSection>
