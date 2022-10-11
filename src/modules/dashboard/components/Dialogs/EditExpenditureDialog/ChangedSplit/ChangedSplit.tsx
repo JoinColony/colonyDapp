@@ -69,6 +69,10 @@ const ChangedSplit = ({
   colony,
   discardChange,
 }: Props) => {
+  if (!newValues) {
+    return null;
+  }
+
   return (
     <>
       {typeof newValues?.value === 'object' &&
