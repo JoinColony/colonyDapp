@@ -4,13 +4,13 @@ import { Contract, ethers } from 'ethers';
 import abis from '@colony/colony-js/lib-esm/abis';
 import moveDecimal from 'move-decimal-point';
 import { AddressZero } from 'ethers/constants';
-import { BigNumber } from 'ethers/utils';
 
 import { erc721 } from './abis'; // Temporary
 import { SafeTransaction } from '~dashboard/Dialogs/ControlSafeDialog/ControlSafeDialog';
 import { ColonySafe } from '~data/index';
 import { Address, ModuleAddress } from '~types/index';
 import { GNOSIS_AMB_BRIDGES, SAFE_NETWORKS } from '~constants';
+import { getArrayFromString } from '~utils/safes';
 
 export interface SelectedSafe {
   id: ModuleAddress; // Making explicit that this is the module address
@@ -309,33 +309,13 @@ export const getTransferFundsData = async (
   ]);
 };
 
-const getParsedJSONOrArrayFromString = (
-  parameter: string,
-): (string | number)[] | null => {
-  try {
-    const arrayResult = JSON.parse(parameter);
-    return arrayResult.map((value) => {
-      if (Number.isInteger(value)) {
-        return new BigNumber(value).toString();
-      }
-      return value;
-    });
-  } catch (err) {
-    return null;
+const extractMethodArgs = (transaction: Record<string, any>) => ({
+  name = '',
+}) => {
+  if (Array.isArray(transaction[name])) {
+    return getArrayFromString(transaction[name]);
   }
-};
-
-const isArrayParameter = (parameter: string): boolean =>
-  /(\[\d*])+$/.test(parameter);
-
-const extractMethodArgs = (
-  signature: string,
-  transaction: Record<string, any>,
-) => ({ name = '' }) => {
-  if (isArrayParameter(transaction[name || signature])) {
-    return getParsedJSONOrArrayFromString(transaction[name || signature]);
-  }
-  return transaction[name || signature];
+  return transaction[name];
 };
 
 export const getContractInteractionData = async (
@@ -372,15 +352,14 @@ export const getContractInteractionData = async (
   const getData = () => {
     const foreignProvider = getForeignProvider(safe);
     const contract = new ethers.Contract(contractAddress, abi, foreignProvider);
-    const { inputs, name = '', signature } = contract.interface.functions[
+    const { inputs, name = '' } = contract.interface.functions[
       contractFunction
     ];
 
     const transactionValues = onLocalDevEnvironment
-      ? { ...transaction, src: safeAddress, dst: AddressZero, wad: 1 }
+      ? { ...transaction, src: safeAddress, dst: AddressZero, wad: 1 } // src, dst and wad are the param names of the transferFrom function
       : transaction;
-    const args =
-      inputs?.map(extractMethodArgs(signature, transactionValues)) || [];
+    const args = inputs?.map(extractMethodArgs(transactionValues)) || [];
 
     return contract.interface.functions[name].encode(args);
   };
