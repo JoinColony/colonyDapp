@@ -1,6 +1,7 @@
 import { isHexString } from 'ethers/utils';
 import { toFinite } from 'lodash';
 import { defineMessages, MessageDescriptor } from 'react-intl';
+import { isAddress } from 'web3-utils';
 import * as yup from 'yup';
 
 import { intl } from '~utils/intl';
@@ -54,12 +55,12 @@ const MSG = defineMessages({
   },
 });
 
+const { formatMessage } = intl;
+
 export const getMethodInputValidation = (
   type: string,
   functionName: string,
 ) => {
-  const { formatMessage } = intl;
-
   const getContractFunctionSchema = (
     testName: string,
     defaultMessage: MessageDescriptor | string,
@@ -155,7 +156,26 @@ export const getValidationSchema = (
             transactionType === TransactionTypes.RAW_TRANSACTION ||
             transactionType === TransactionTypes.TRANSFER_NFT,
           then: yup.object().shape({
-            id: yup.string().address().required(),
+            id: yup
+              .string()
+              .required()
+              .test(
+                'is-valid-id',
+                formatMessage(MSG.notAddressError),
+                function validateId(value) {
+                  if (value) {
+                    /*
+                     * id may be 'filterValue' if a contract address is manually entered.
+                     * May occur in raw transaction section.
+                     */
+                    if (value === 'filterValue') {
+                      return isAddress(this.parent.profile.walletAddress);
+                    }
+                    return isAddress(value);
+                  }
+                  return false;
+                },
+              ),
             profile: yup.object().shape({
               walletAddress: yup
                 .string()
@@ -182,7 +202,6 @@ export const getValidationSchema = (
             .number()
             .transform((value) => toFinite(value))
             .required(() => MSG.requiredFieldError)
-            .moreThan(0, () => MSG.gtZeroError)
             .integer(() => MSG.notIntegerError),
           otherwise: false,
         }),
