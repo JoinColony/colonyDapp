@@ -287,7 +287,6 @@ const TransferNFTSection = ({
       <DialogSection>
         <div className={styles.recipientPicker}>
           <SingleUserPicker
-            appearance={{ width: 'wide' }}
             data={colonyMembers?.subscribedUsers || []}
             label={MSG.selectRecipient}
             name={`transactions.${transactionFormIndex}.recipient`}
@@ -295,7 +294,6 @@ const TransferNFTSection = ({
             renderAvatar={renderAvatar}
             placeholder={MSG.userPickerPlaceholder}
             disabled={disabledInput}
-            showMaskedAddress
             dataTest="NFTRecipientSelector"
             itemDataTest="NFTRecipientSelectorItem"
             valueDataTest="NFTRecipientName"
