@@ -1,4 +1,5 @@
 import React from 'react';
+import { isAddress } from 'web3-utils';
 
 import MaskedAddress from '~core/MaskedAddress';
 import Avatar from '~core/Avatar';
@@ -12,20 +13,26 @@ interface Props {
 }
 
 const AddressDetailsView = ({ item, isSafeItem }: Props) => {
-  const userDisplayName = item?.profile?.displayName;
-  const username = item?.profile?.username;
+  const userDisplayName = isAddress(item.profile.displayName || '')
+    ? /*
+       * If address entered manually, e.g. in raw transaction
+       * or if you wish to transfer funds to someone outside the colony
+       */
+      'Address'
+    : item.profile.displayName;
+  const { username } = item.profile;
 
   return (
     <div className={styles.main}>
       <Avatar
-        seed={item?.id?.toLowerCase()}
+        seed={item.profile.walletAddress.toLowerCase()}
         size="xs"
-        avatarURL={item?.profile?.avatarHash || ''}
+        avatarURL={item.profile?.avatarHash || ''}
         title="avatar"
         placeholderIcon={isSafeItem ? 'safe-logo' : 'circle-person'}
       />
       <span className={styles.name}>{userDisplayName || `@${username}`}</span>
-      <MaskedAddress address={item?.id} />
+      <MaskedAddress address={item.profile.walletAddress} />
     </div>
   );
 };

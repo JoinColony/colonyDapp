@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { defineMessages } from 'react-intl';
+import { useField } from 'formik';
 
 import { AnyUser, useMembersSubscription } from '~data/index';
 import { Address } from '~types/index';
@@ -41,10 +42,22 @@ const RawTransactionSection = ({
   disabledInput,
   transactionFormIndex,
   handleInputChange,
-}: TransactionSectionProps) => {
+  handleValidation,
+}: TransactionSectionProps & { handleValidation: () => void }) => {
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress },
   });
+
+  const [{ value: recipient }] = useField(
+    `transactions.${transactionFormIndex}.recipient`,
+  );
+
+  // Effect needed to ensure form can't be submitted when recipient empty.
+  useEffect(() => {
+    if (recipient === null) {
+      handleValidation();
+    }
+  }, [recipient, handleValidation]);
 
   return (
     <>
