@@ -23,6 +23,7 @@ import {
 } from '../../constants';
 
 import styles from './StreamingStagesLocked.css';
+import { insufficientFundsEventTrigger } from './constants';
 
 const MSG = defineMessages({
   startStream: {
@@ -138,6 +139,16 @@ const StreamingStagesLocked = ({
 
   const isCancelled =
     status === Status.Cancelled || status === Status.ForceCancelled;
+
+
+  const handleClaimFunds = () => {
+    // mock - add logic/functionality when it should change to true
+    setHasInsufficentFunds(true);
+    // if hasInsufficentFunds is true then below func should be executed
+    const customEvent = new CustomEvent(insufficientFundsEventTrigger);
+
+    window.dispatchEvent(customEvent);
+  };
 
   return (
     <div className={styles.stagesWrapper}>
