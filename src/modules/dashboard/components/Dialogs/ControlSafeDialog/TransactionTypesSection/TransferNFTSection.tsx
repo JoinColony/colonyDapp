@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { useField } from 'formik';
+import { FormikProps, useField } from 'formik';
 
 import Avatar from '~core/Avatar';
 import { DialogSection } from '~core/Dialog';
@@ -13,15 +13,13 @@ import {
   getChainNameFromSafe,
   getIdFromNFTDisplayName,
   getTxServiceBaseUrl,
-  SelectedNFT,
   SelectedSafe,
 } from '~modules/dashboard/sagas/utils/safeHelpers';
 import { Address } from '~types/index';
 import { log } from '~utils/debug';
 import { SpinnerLoader } from '~core/Preloaders';
 
-import { FormValues } from '../ControlSafeDialog';
-
+import { FormValues, TransactionSectionProps } from '..';
 import styles from './TransferNFTSection.css';
 
 const MSG = defineMessages({
@@ -69,12 +67,13 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.ControlSafeDialog.TransferNFTSection';
 
-interface Props {
+interface Props
+  extends Omit<TransactionSectionProps, 'colony' | 'handleInputChange'> {
   colonyAddress: Address;
-  disabledInput: boolean;
-  transactionFormIndex: number;
-  values: FormValues;
-  savedNFTs: [{}, React.Dispatch<React.SetStateAction<{ [x: string]: NFT[] }>>];
+  savedNFTState: [
+    {},
+    React.Dispatch<React.SetStateAction<{ [x: string]: NFT[] }>>,
+  ];
 }
 
 const renderAvatar = (address: string, item) => (
@@ -107,18 +106,17 @@ const TransferNFTSection = ({
   disabledInput,
   transactionFormIndex,
   values: { safe },
-  savedNFTs: { '0': savedNFTs, '1': setSavedNFTs },
-}: Props) => {
+  values,
+  savedNFTState,
+}: Props & Pick<FormikProps<FormValues>, 'values'>) => {
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress },
   });
 
+  const [savedNFTs, setSavedNFTs] = savedNFTState;
   const [availableNFTs, setAvailableNFTs] = useState<NFTData>(undefined);
   const [isLoadingNFTData, setIsLoadingNFTData] = useState<boolean>(false);
-
-  const [{ value: selectedNFT }] = useField<SelectedNFT | null>(
-    `transactions.${transactionFormIndex}.nft`,
-  );
+  const { nft: selectedNFT } = values.transactions[transactionFormIndex];
 
   const [
     { value: selectedNFTData },
@@ -181,11 +179,11 @@ const TransferNFTSection = ({
       );
     });
     if (filteredNFTData) {
-      setSelectedNFTData(filteredNFTData);
+      setSelectedNFTData(filteredNFTData, true);
     }
 
     if (!selectedNFT) {
-      setSelectedNFTData(null);
+      setSelectedNFTData(null, true);
     }
     /*
      * Including setSelectedNFTData creates an infinite loop,
@@ -231,6 +229,7 @@ const TransferNFTSection = ({
             data={availableNFTs || []}
             disabled={disabledInput}
             placeholder={MSG.NFTPickerPlaceholder}
+            validateOnChange
           />
         </div>
       </DialogSection>
@@ -300,6 +299,7 @@ const TransferNFTSection = ({
             dataTest="NFTRecipientSelector"
             itemDataTest="NFTRecipientSelectorItem"
             valueDataTest="NFTRecipientName"
+            validateOnChange
           />
         </div>
       </DialogSection>

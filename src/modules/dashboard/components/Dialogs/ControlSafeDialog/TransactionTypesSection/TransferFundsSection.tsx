@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { FormikProps } from 'formik';
 import {
   defineMessages,
   FormattedMessage,
@@ -9,7 +10,7 @@ import { AddressZero } from 'ethers/constants';
 import { bigNumberify } from 'ethers/utils';
 
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
-import { AnyUser, Colony, useMembersSubscription } from '~data/index';
+import { AnyUser, useMembersSubscription } from '~data/index';
 import { Address } from '~types/index';
 import UserAvatar from '~core/UserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -22,7 +23,7 @@ import {
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import AmountBalances, { SafeBalance } from '../AmountBalances';
-import { FormValues } from '../ControlSafeDialog';
+import { FormValues, TransactionSectionProps } from '..';
 
 import styles from './TransactionTypesSection.css';
 
@@ -56,18 +57,12 @@ const MSG = defineMessages({
 
 const displayName = `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection`;
 
-interface Props {
-  colony: Colony;
-  disabledInput: boolean;
-  values: FormValues;
-  transactionFormIndex: number;
-  setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
+interface Props extends TransactionSectionProps {
   customAmountError: MessageDescriptor | string | undefined;
   handleCustomAmountError: React.Dispatch<
     React.SetStateAction<MessageDescriptor | string | undefined>
   >;
 }
-
 const renderAvatar = (address: Address, item: AnyUser) => (
   <UserAvatar address={address} user={item} size="xs" notSet={false} />
 );
@@ -80,7 +75,8 @@ const TransferFundsSection = ({
   setFieldValue,
   customAmountError,
   handleCustomAmountError,
-}: Props) => {
+  handleInputChange,
+}: Props & Pick<FormikProps<FormValues>, 'setFieldValue' | 'values'>) => {
   const [safeBalances, setSafeBalances] = useState<SafeBalance[] | null>([]);
   const [isLoadingBalances, setIsLoadingBalances] = useState<boolean>(true);
   const { data: colonyMembers } = useMembersSubscription({
@@ -194,6 +190,7 @@ const TransferFundsSection = ({
           selectedSafe={selectedSafe}
           safeBalances={safeBalances}
           disabledInput={disabledInput}
+          handleChange={handleInputChange}
           maxButtonParams={{
             fieldName: `transactions.${transactionFormIndex}.amount`,
             maxAmount: `${formattedSafeBalance}`,
@@ -216,6 +213,7 @@ const TransferFundsSection = ({
             dataTest="paymentRecipientPicker"
             itemDataTest="paymentRecipientItem"
             valueDataTest="paymentRecipientName"
+            validateOnChange
           />
         </div>
       </DialogSection>

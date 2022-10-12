@@ -1,13 +1,14 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import { AnyUser, Colony, useMembersSubscription } from '~data/index';
+import { AnyUser, useMembersSubscription } from '~data/index';
 import { Address } from '~types/index';
 import { Input } from '~core/Fields';
 import UserAvatar from '~core/UserAvatar';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import { DialogSection } from '~core/Dialog';
 
+import { TransactionSectionProps } from '..';
 import styles from './TransactionTypesSection.css';
 
 const MSG = defineMessages({
@@ -31,12 +32,6 @@ const MSG = defineMessages({
 
 const displayName = `dashboard.ControlSafeDialog.ControlSafeForm.RawTransactionSection`;
 
-interface Props {
-  colony: Colony;
-  disabledInput: boolean;
-  transactionFormIndex: number;
-}
-
 const renderAvatar = (address: Address, item: AnyUser) => (
   <UserAvatar address={address} user={item} size="xs" notSet={false} />
 );
@@ -45,7 +40,8 @@ const RawTransactionSection = ({
   colony: { colonyAddress },
   disabledInput,
   transactionFormIndex,
-}: Props) => {
+  handleInputChange,
+}: TransactionSectionProps) => {
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress },
   });
@@ -62,6 +58,7 @@ const RawTransactionSection = ({
             renderAvatar={renderAvatar}
             disabled={disabledInput}
             placeholder={MSG.userPickerPlaceholder}
+            validateOnChange
           />
         </div>
       </DialogSection>
@@ -69,6 +66,7 @@ const RawTransactionSection = ({
         <Input
           label={MSG.valueLabel}
           name={`transactions.${transactionFormIndex}.rawAmount`}
+          onChange={handleInputChange}
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
           disabled={disabledInput}
           labelValues={{
@@ -87,6 +85,7 @@ const RawTransactionSection = ({
         <Input
           label={MSG.dataLabel}
           name={`transactions.${transactionFormIndex}.data`}
+          onChange={handleInputChange}
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
           disabled={disabledInput}
           labelValues={{
