@@ -53,7 +53,7 @@ const SingleFundingSource = ({
   );
 
   return (
-    <div className={styles.singleFundingSource} key={fundingSource.id}>
+    <div className={styles.singleFundingSource}>
       <FormSection>
         <div className={styles.fundingSourceLabel}>
           <CollapseExpandButtons
