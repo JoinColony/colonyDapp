@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { FormikProps } from 'formik';
 import { pipe } from 'lodash/fp';
 import { useHistory } from 'react-router';
+import { AddressZero } from 'ethers/constants';
 
 import { AnyToken, AnyUser, ColonySafe } from '~data/index';
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
@@ -33,7 +34,7 @@ export interface SafeTransaction {
   recipient: AnyUser | null;
   nft: SelectedNFT | null;
   nftData: NFT | null;
-  tokenAddress?: string;
+  tokenAddress: string;
   tokenData: SafeBalanceToken | null;
   amount?: number;
   rawAmount?: number;
@@ -146,7 +147,7 @@ const ControlSafeDialog = ({
         transactions: [
           {
             transactionType: '',
-            tokenAddress: undefined,
+            tokenAddress: AddressZero,
             tokenData: null,
             amount: undefined,
             rawAmount: undefined,
