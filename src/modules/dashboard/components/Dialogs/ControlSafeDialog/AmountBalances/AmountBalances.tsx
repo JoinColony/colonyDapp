@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { defineMessages, MessageDescriptor } from 'react-intl';
+import { defineMessages } from 'react-intl';
 import { AddressZero } from 'ethers/constants';
 import classnames from 'classnames';
 import { useField } from 'formik';
@@ -15,6 +15,7 @@ import {
   SAFE_NETWORKS,
 } from '~constants';
 import { AnyToken } from '~data/index';
+import { TransferFundsProps } from '../TransactionTypesSection/TransferFundsSection';
 
 import styles from '~core/Fields/AmountTokens/AmountTokens.css';
 
@@ -24,14 +25,13 @@ export interface SafeBalance {
   token: AnyToken | null;
 }
 
-interface Props {
+interface Props extends Pick<TransferFundsProps, 'handleValidation'> {
   safeBalances: SafeBalance[];
   disabledInput: boolean;
   selectedSafe: ColonySafe | undefined;
   transactionFormIndex: number;
-  customAmountError?: MessageDescriptor | string;
-  maxButtonParams?: MaxButtonParams;
-  handleChange?: () => void;
+  maxButtonParams: MaxButtonParams;
+  handleChange: () => void;
 }
 
 const MSG = defineMessages({
@@ -48,13 +48,13 @@ const MSG = defineMessages({
 const displayName = 'dashboard.ControlSafeDialog.AmountBalances';
 
 const AmountBalances = ({
-  customAmountError,
   selectedSafe,
   safeBalances,
   disabledInput,
   transactionFormIndex,
   maxButtonParams,
   handleChange,
+  handleValidation,
 }: Props) => {
   const [, { value: tokenAddress }, { setValue: setTokenAddress }] = useField(
     `transactions.${transactionFormIndex}.tokenAddress`,
@@ -104,6 +104,12 @@ const AmountBalances = ({
     }
   }, [tokenAddress, tokens, setTokenAddress, setTokenData]);
 
+  useEffect(() => {
+    if (selectedSafe) {
+      handleValidation();
+    }
+  }, [selectedSafe, handleValidation]);
+
   return (
     <div className={styles.tokenAmount}>
       <div
@@ -122,16 +128,11 @@ const AmountBalances = ({
           formattingOptions={{
             delimiter: ',',
             numeral: true,
+            numeralPositiveOnly: true,
             numeralDecimalScale:
               selectedTokenData?.decimals || DEFAULT_TOKEN_DECIMALS,
           }}
           disabled={disabledInput}
-          /*
-           * Force the input component into an error state
-           * This is needed for our custom error state to work
-           */
-          forcedFieldError={customAmountError}
-          dataTest="paymentAmountInput"
           maxButtonParams={maxButtonParams}
         />
       </div>
@@ -151,6 +152,7 @@ const AmountBalances = ({
               // can only select a token from "tokens"
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               setTokenData(selectedToken!);
+              handleValidation();
             }}
           />
         </div>
