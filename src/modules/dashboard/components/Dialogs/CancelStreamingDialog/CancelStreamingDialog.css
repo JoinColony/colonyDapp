@@ -83,7 +83,7 @@
   display: flex;
   align-items: center;
   font-size: var(--size-smallish);
-  color: color-mod(var(--dark) alpha(85%));
+  color: var(--dark);
 }
 
 .value span {
