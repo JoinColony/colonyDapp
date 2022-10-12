@@ -213,7 +213,7 @@ const UserPickerWithSearch = ({
             type="button"
             className={styles.inputWithIconBtn}
             aria-invalid={!!error}
-            {...(disabled ? {} : { onClick: toggleDropdown })}
+            onClick={toggleDropdown}
             disabled={disabled}
           >
             {value ? (

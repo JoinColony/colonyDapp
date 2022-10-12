@@ -19,21 +19,22 @@
   cursor: pointer;
 }
 
-.inputWithIcon:hover {
-  cursor: pointer;
+.inputWithIconBtn[disabled] {
+  opacity: 0.5;
+  cursor: unset;
+}
 
-  & .icon::after {
-    height: 38px;
-    width: 38px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    border-radius: 50%;
-    background-color: var(--action-secondary);
-    transform: translate(-5px, -5px);
-    content: '';
-    opacity: 0.1;
-  }
+.inputWithIconBtn:not([disabled]):hover .icon::after {
+  height: 38px;
+  width: 38px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  background-color: var(--action-secondary);
+  transform: translate(-5px, -5px);
+  content: '';
+  opacity: 0.1;
 }
 
 .container input:disabled {
