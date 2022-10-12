@@ -56,7 +56,7 @@ const AmountBalances = ({
   handleChange,
   handleValidation,
 }: Props) => {
-  const [, { value: tokenAddress }, { setValue: setTokenAddress }] = useField(
+  const [, { value: tokenAddress }] = useField(
     `transactions.${transactionFormIndex}.tokenAddress`,
   );
 
@@ -96,13 +96,15 @@ const AmountBalances = ({
       networkName: getNetworkName(),
     };
   });
-  // Set token in select component on initialisation
+  // Set token data in form state on initialisation
   useEffect(() => {
-    if (!tokenAddress && tokens[0]) {
-      setTokenAddress(tokens[0].address);
-      setTokenData(tokens[0]);
+    const selectedToken = tokens.find((t) => t.address === tokenAddress);
+    if (selectedToken) {
+      setTokenData(selectedToken);
     }
-  }, [tokenAddress, tokens, setTokenAddress, setTokenData]);
+    // initialisation only
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (selectedSafe) {
