@@ -9,7 +9,7 @@ import { initalRecipient } from '~dashboard/ExpenditurePage/Split/constants';
 import { initalMilestone } from '~dashboard/ExpenditurePage/Staged/constants';
 import { newFundingSource } from '~dashboard/ExpenditurePage/Streaming/constants';
 
-import { ExpenditureTypes } from './types';
+import { ExpenditureEndDateTypes, ExpenditureTypes } from './types';
 
 export const fixTriggerEventName = 'fix-trigger';
 
@@ -63,6 +63,11 @@ export const initialValues = {
   },
   streaming: {
     fundingSources: [newFundingSource],
+    startDate: { date: new Date() },
+    endDate: {
+      date: new Date(),
+      option: ExpenditureEndDateTypes.WhenCancelled,
+    },
   },
 };
 
