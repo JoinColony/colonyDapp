@@ -9,6 +9,7 @@ import { Batch } from '~dashboard/ExpenditurePage/Batch/types';
 import { Staged } from '~dashboard/ExpenditurePage/Staged/types';
 import { Colony, LoggedInUser } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/types';
+import { capitalize } from '~utils/strings';
 
 import ChangeHeader from '../ChangedMultiple/ChangeHeader';
 import ChangeItem from '../ChangedMultiple/ChangeItem';
@@ -29,9 +30,9 @@ export const MSG = defineMessages({
     id: 'dashboard.EditExpenditureDialog.ChangedStaged.from',
     defaultMessage: 'From',
   },
-  changeTo: {
-    id: 'dashboard.EditExpenditureDialog.ChangedStaged.changeTo',
-    defaultMessage: 'Change to',
+  to: {
+    id: 'dashboard.EditExpenditureDialog.ChangedStaged.to',
+    defaultMessage: 'To',
   },
   removed: {
     id: 'dashboard.EditExpenditureDialog.ChangedStaged.removed',
@@ -39,7 +40,7 @@ export const MSG = defineMessages({
   },
   milestone: {
     id: 'dashboard.EditExpenditureDialog.ChangedStaged.milestone',
-    defaultMessage: 'Mielstone',
+    defaultMessage: 'Change Mielstone',
   },
 });
 
@@ -97,7 +98,7 @@ const ChangedStaged = ({
               <FormattedMessage {...MSG.from} />
             </span>
             <span>
-              <FormattedMessage {...MSG.changeTo} />
+              <FormattedMessage {...MSG.to} />
             </span>
           </div>
         </FormSection>
@@ -139,7 +140,7 @@ const ChangedStaged = ({
                   const name =
                     key === 'milestones'
                       ? formatMessage(MSG.milestone)
-                      : key.toUpperCase();
+                      : capitalize(key);
 
                   return (
                     <>

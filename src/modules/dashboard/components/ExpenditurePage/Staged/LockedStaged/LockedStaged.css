@@ -8,6 +8,10 @@
   margin-left: 10px;
 }
 
+.editIcon:hover {
+  cursor: pointer;
+}
+
 .recipientAmountWrapper {
   display: flex;
   align-items: center;
