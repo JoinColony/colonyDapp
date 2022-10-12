@@ -13,13 +13,13 @@ export const MSG = defineMessages({
     id: `dashboard.EditExpenditureDialog.ChangedMultiple.ChangeHeader.from`,
     defaultMessage: 'From',
   },
-  changeTo: {
-    id: `dashboard.EditExpenditureDialog.ChangedMultiple.ChangeHeader.changeTo`,
-    defaultMessage: 'Change to',
+  to: {
+    id: `dashboard.EditExpenditureDialog.ChangedMultiple.ChangeHeader.to`,
+    defaultMessage: 'To',
   },
   recipient: {
     id: `dashboard.EditExpenditureDialog.ChangedMultiple.ChangeHeader.recipient`,
-    defaultMessage: 'Recipient',
+    defaultMessage: 'Change Recipient',
   },
 });
 
@@ -49,7 +49,7 @@ const ChangeHeader = ({ name, index }: Props) => {
             <FormattedMessage {...MSG.from} />
           </span>
           <span>
-            <FormattedMessage {...MSG.changeTo} />
+            <FormattedMessage {...MSG.to} />
           </span>
         </div>
       </FormSection>
