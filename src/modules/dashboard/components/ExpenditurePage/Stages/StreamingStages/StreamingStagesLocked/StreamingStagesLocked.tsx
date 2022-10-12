@@ -18,7 +18,7 @@ import styles from './StreamingStagesLocked.css';
 
 const MSG = defineMessages({
   startStream: {
-    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.startStream`,
+    id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.startStream`,
     defaultMessage: 'Start Stream',
   },
   paidToDate: {
