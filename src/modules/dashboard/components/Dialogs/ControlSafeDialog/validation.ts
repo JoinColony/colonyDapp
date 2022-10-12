@@ -1,12 +1,17 @@
-import { isHexString } from 'ethers/utils';
+import { bigNumberify, isHexString } from 'ethers/utils';
 import { toFinite } from 'lodash';
 import { defineMessages, MessageDescriptor } from 'react-intl';
 import { isAddress } from 'web3-utils';
 import * as yup from 'yup';
+import moveDecimal from 'move-decimal-point';
+import Maybe from 'graphql/tsutils/Maybe';
 
 import { intl } from '~utils/intl';
 import { isAbiItem, validateType } from '~utils/safes';
 import { TransactionTypes } from './constants';
+import { getSelectedSafeBalance } from '~utils/safes/safeBalances';
+
+import { SafeBalance } from './AmountBalances';
 
 const MSG = defineMessages({
   requiredFieldError: {
@@ -52,6 +57,15 @@ const MSG = defineMessages({
   invalidAtIndexError: {
     id: 'dashboard.ControlSafeDialog.validation.invalidAtIndexError',
     defaultMessage: 'Item {idx} is not a valid {type}',
+  },
+  insuffienctFundsError: {
+    id: `dashboard.ControlSafeDialog.validation.insuffienctFundsError`,
+    defaultMessage: 'Insufficient safe balance',
+  },
+  balanceError: {
+    id: `dashboard.ControlSafeDialog.validation.balanceError`,
+    defaultMessage:
+      'Could not retreive balance information. Please try again later',
   },
 });
 
@@ -185,14 +199,58 @@ export const getValidationSchema = (
           }),
           otherwise: yup.object().nullable(),
         }),
-        amount: yup.number().when('transactionType', {
+        amount: yup.string().when('transactionType', {
           is: (transactionType) =>
             transactionType === TransactionTypes.TRANSFER_FUNDS,
           then: yup
-            .number()
-            .transform((value) => toFinite(value))
+            .string()
             .required(() => MSG.requiredFieldError)
-            .moreThan(0, () => MSG.gtZeroError),
+            .test(
+              'check-amount',
+              formatMessage(MSG.balanceError),
+              async function testSafeBalance(value) {
+                if (value) {
+                  if (Number(value) <= 0) {
+                    return this.createError({
+                      message: formatMessage(MSG.gtZeroError),
+                    });
+                  }
+                  const selectedToken = this.parent.tokenAddress;
+                  const selectedTokenDecimals = this.parent.tokenData?.decimals;
+
+                  const {
+                    safeBalances,
+                  }: {
+                    safeBalances: Maybe<SafeBalance[]>;
+                    // Type is incorrect. "from" does appear in yup.TextContext
+                    // @ts-ignore
+                  } = this.from[1].value;
+                  const safeBalance = getSelectedSafeBalance(
+                    safeBalances,
+                    selectedToken,
+                  );
+
+                  if (safeBalance) {
+                    const convertedAmount = bigNumberify(
+                      moveDecimal(value, selectedTokenDecimals),
+                    );
+                    const balance = bigNumberify(safeBalance.balance);
+                    if (balance.lt(convertedAmount) || balance.isZero()) {
+                      return this.createError({
+                        message: formatMessage(MSG.insuffienctFundsError),
+                      });
+                    }
+                    return true;
+                  }
+                  return this.createError({
+                    message: formatMessage(MSG.balanceError),
+                  });
+                }
+
+                // Will not get here. If value isn't defined or eqls 0, earlier validation will catch it.
+                return false;
+              },
+            ),
           otherwise: false,
         }),
         rawAmount: yup.number().when('transactionType', {
