@@ -16,10 +16,6 @@
   border-top: 1px solid var(--grey-blue-0);
 }
 
-.marginBottom {
-  margin-bottom: 36px;
-}
-
 .settingsRow {
   composes: flexContainerRow flexAlignCenter flexJustifyBetween from '~styles/layout.css';
   min-height: 41px;
