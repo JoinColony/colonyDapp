@@ -53,14 +53,15 @@
   background: linear-gradient(90deg, var(--pink) 4.65%, var(--primary) 101.16%);
 }
 
-.range::before, .range::after {
+.range::before,
+.range::after {
   display: block;
   height: 5px;
   width: 5px;
   position: absolute;
   top: -2px;
   border-radius: 50%;
-  content: "";
+  content: '';
 }
 
 .range::before {
@@ -75,4 +76,8 @@
 
 .tokenIcon {
   margin-right: 6px;
+}
+
+.reward {
+  color: var(--dark);
 }

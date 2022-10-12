@@ -2,14 +2,11 @@ import React from 'react';
 import { BigNumber, formatUnits } from 'ethers/utils';
 import numbro from 'numbro';
 import moveDecimal from 'move-decimal-point';
-import classnames from 'classnames';
 
 import { numbroCustomLanguage } from '~utils/numbers/numbroCustomLanguage';
 
 import TinyNumber from './TinyNumber';
 import EngineeringNotation from './EngineeringNotation';
-
-import styles from './Numeral.css';
 
 const smallNumberFormat: numbro.Format = {
   mantissa: 5,
@@ -55,7 +52,7 @@ export interface Props {
   className?: string;
 }
 
-const Numeral = ({
+const NewNumeral = ({
   value,
   unit,
   decimals,
@@ -77,11 +74,9 @@ const Numeral = ({
     convertedValue = moveDecimal(value.toString(10), -decimals);
   }
 
-  const classNames = classnames(styles.numeral, className);
-
   if (Number(convertedValue) === 0) {
     return (
-      <span className={classNames}>
+      <span className={className}>
         {getValueWithPrefixAndSuffix('0', { prefix, suffix })}
       </span>
     );
@@ -93,20 +88,13 @@ const Numeral = ({
         value={convertedValue}
         prefix={prefix}
         suffix={suffix}
-        className={classNames}
+        className={className}
       />
     );
   }
 
   if (Number(convertedValue) >= 1_000_000_000_000) {
-    return (
-      <EngineeringNotation
-        value={convertedValue}
-        prefix={prefix}
-        suffix={suffix}
-        className={classNames}
-      />
-    );
+    return <EngineeringNotation value={convertedValue} />;
   }
 
   let numberFormat: numbro.Format = {};
@@ -123,10 +111,10 @@ const Numeral = ({
     : value.toString();
 
   return (
-    <span className={classNames}>
+    <span className={className}>
       {getValueWithPrefixAndSuffix(formattedNumber, { prefix, suffix })}
     </span>
   );
 };
 
-export default Numeral;
+export default NewNumeral;

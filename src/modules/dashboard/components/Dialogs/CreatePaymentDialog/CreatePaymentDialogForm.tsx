@@ -412,12 +412,8 @@ const CreatePaymentDialogForm = ({
                   values={{
                     amount: (
                       <Numeral
-                        appearance={{
-                          size: 'small',
-                          theme: 'grey',
-                        }}
                         value={fromDomainTokenBalance || 0}
-                        unit={getTokenDecimalsWithFallback(
+                        decimals={getTokenDecimalsWithFallback(
                           selectedToken && selectedToken.decimals,
                         )}
                       />
@@ -506,10 +502,6 @@ const CreatePaymentDialogForm = ({
                     values={{
                       fee: (
                         <Numeral
-                          appearance={{
-                            size: 'small',
-                            theme: 'grey',
-                          }}
                           value={
                             calculateFee(
                               values.amount,
@@ -519,7 +511,7 @@ const CreatePaymentDialogForm = ({
                               ),
                             ).feesInWei
                           }
-                          unit={getTokenDecimalsWithFallback(
+                          decimals={getTokenDecimalsWithFallback(
                             selectedToken && selectedToken.decimals,
                           )}
                         />
@@ -544,7 +536,6 @@ const CreatePaymentDialogForm = ({
             {values.tokenAddress === AddressZero && (
               <div className={styles.tokenAmountUsd}>
                 <EthUsd
-                  appearance={{ theme: 'grey' }}
                   value={
                     /*
                      * @NOTE Set value to 0 if amount is only the decimal point

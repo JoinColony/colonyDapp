@@ -77,7 +77,7 @@ const UnclaimedTransfersItem = ({
           <div className={styles.amountWrapper}>
             <Numeral
               value={amount}
-              unit={getTokenDecimalsWithFallback(token.decimals)}
+              decimals={getTokenDecimalsWithFallback(token.decimals)}
               className={styles.amount}
             />
             <span className={styles.tokenSymbol}>{token.symbol}</span>

@@ -15,15 +15,7 @@ const MSG = defineMessages({
   },
 });
 
-interface Appearance {
-  theme: 'primary' | 'grey' | 'dark';
-  size?: 'medium' | 'large' | 'small';
-}
-
 interface Props extends NumeralProps {
-  /** Appearance object for numeral */
-  appearance?: Appearance;
-
   /** Should the prefix be visible? */
   showPrefix?: boolean;
 
@@ -40,7 +32,6 @@ interface Props extends NumeralProps {
 const displayName = 'EthUsd';
 
 const EthUsd = ({
-  appearance,
   showPrefix = true,
   showSuffix = true,
   unit = 'ether',
@@ -94,7 +85,6 @@ const EthUsd = ({
 
   return (
     <Numeral
-      appearance={appearance}
       prefix={showPrefix && valueUsd ? '~ ' : ''}
       suffix={showSuffix ? ` ${suffixText}` : ''}
       value={valueUsd || '-'}

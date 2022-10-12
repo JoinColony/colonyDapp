@@ -181,7 +181,6 @@ const VoteDetails = ({
                             voterReward.motionVoterReward.minReward,
                             nativeToken?.decimals,
                           )}
-                          appearance={{ theme: 'dark', size: 'small' }}
                           suffix={nativeToken?.symbol}
                         />
                       ) : (
@@ -191,7 +190,6 @@ const VoteDetails = ({
                               voterReward.motionVoterReward.minReward,
                               nativeToken?.decimals,
                             )}
-                            appearance={{ theme: 'dark', size: 'small' }}
                           />
                           <div className={styles.range} />
                           <Numeral
@@ -199,7 +197,6 @@ const VoteDetails = ({
                               voterReward.motionVoterReward.maxReward,
                               nativeToken?.decimals,
                             )}
-                            appearance={{ theme: 'dark', size: 'small' }}
                             suffix={nativeToken?.symbol}
                           />
                         </>
@@ -220,7 +217,7 @@ const VoteDetails = ({
                           nativeToken?.decimals,
                         )}
                         suffix={nativeToken?.symbol}
-                        appearance={{ theme: 'dark', size: 'small' }}
+                        className={styles.reward}
                       />
                     </>
                   )}

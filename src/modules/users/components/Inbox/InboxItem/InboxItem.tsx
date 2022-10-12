@@ -269,7 +269,6 @@ const InboxItem = ({
                   <Numeral
                     suffix={` ${token ? token.symbol : ''}`}
                     value={amount || '-'}
-                    appearance={{ size: 'small', theme: 'grey' }}
                   />
                 </span>
               )}

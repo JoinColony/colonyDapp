@@ -105,7 +105,6 @@ const UserReputation = ({
                       {reputationPercentage !== ZeroValue.NearZero && (
                         <Numeral
                           className={styles.reputation}
-                          appearance={{ theme: 'primary' }}
                           value={reputationPercentage}
                           suffix="%"
                         />

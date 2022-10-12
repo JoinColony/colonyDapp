@@ -98,7 +98,6 @@ const MemberReputation = ({
         userPercentageReputation !== ZeroValue.NearZero && (
           <Numeral
             className={styles.reputation}
-            appearance={{ theme: 'primary' }}
             value={userPercentageReputation}
             suffix="%"
           />
@@ -108,7 +107,6 @@ const MemberReputation = ({
           <span className={styles.reputationPoints}>(</span>
           <Numeral
             className={styles.reputationPoints}
-            appearance={{ theme: 'primary' }}
             value={formattedReputationPoints}
             suffix="pts)"
           />

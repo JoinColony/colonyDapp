@@ -83,7 +83,7 @@ const ColonyTotalFundsSelectedToken = ({
     <div className={styles.selectedToken}>
       <Numeral
         className={styles.selectedTokenAmount}
-        unit={getTokenDecimalsWithFallback(currentToken.decimals)}
+        decimals={getTokenDecimalsWithFallback(currentToken.decimals)}
         value={currentToken.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount}
         data-test="colonyTotalFunds"
       />

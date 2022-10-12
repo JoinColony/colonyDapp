@@ -7,3 +7,4 @@ export const help: string;
 export const tooltip: string;
 export const range: string;
 export const tokenIcon: string;
+export const reward: string;

@@ -300,12 +300,8 @@ const TransferFundsDialogForm = ({
                   values={{
                     amount: (
                       <Numeral
-                        appearance={{
-                          size: 'small',
-                          theme: 'grey',
-                        }}
                         value={fromDomainTokenBalance || 0}
-                        unit={getTokenDecimalsWithFallback(
+                        decimals={getTokenDecimalsWithFallback(
                           selectedToken && selectedToken.decimals,
                         )}
                       />
@@ -340,12 +336,8 @@ const TransferFundsDialogForm = ({
                   values={{
                     amount: (
                       <Numeral
-                        appearance={{
-                          size: 'small',
-                          theme: 'grey',
-                        }}
                         value={toDomainTokenBalance || 0}
-                        unit={getTokenDecimalsWithFallback(
+                        decimals={getTokenDecimalsWithFallback(
                           selectedToken && selectedToken.decimals,
                         )}
                       />
@@ -394,7 +386,6 @@ const TransferFundsDialogForm = ({
             {values.tokenAddress === AddressZero && (
               <div className={styles.tokenAmountUsd}>
                 <EthUsd
-                  appearance={{ theme: 'grey' }}
                   value={
                     /*
                      * @NOTE Set value to 0 if amount is only the decimal point

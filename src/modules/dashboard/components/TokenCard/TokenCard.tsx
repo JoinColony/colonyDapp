@@ -99,7 +99,7 @@ const TokenCard = ({
       >
         <Numeral
           className={styles.balanceNumeral}
-          unit={getTokenDecimalsWithFallback(token.decimals)}
+          decimals={getTokenDecimalsWithFallback(token.decimals)}
           value={balance || 0}
         />
       </div>

@@ -63,7 +63,7 @@ const ColonyTotalFundsPopover = ({
                     </span>
                     <span className={styles.tokenBalance}>
                       <Numeral
-                        unit={getTokenDecimalsWithFallback(token.decimals)}
+                        decimals={getTokenDecimalsWithFallback(token.decimals)}
                         value={
                           token.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount
                         }

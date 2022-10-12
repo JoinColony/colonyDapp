@@ -93,7 +93,7 @@ const ColonyUnclaimedTransfers = ({
           <div className={styles.tokenItem}>
             <span className={styles.tokenValue}>
               <Numeral
-                unit={getTokenDecimalsWithFallback(token?.decimals)}
+                decimals={getTokenDecimalsWithFallback(token?.decimals)}
                 value={firstItem?.amount || ''}
               />
             </span>

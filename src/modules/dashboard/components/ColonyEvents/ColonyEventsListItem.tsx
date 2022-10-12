@@ -181,7 +181,7 @@ const ColonyEventsListItem = ({
     amount: (
       <Numeral
         value={amount}
-        unit={getTokenDecimalsWithFallback(
+        decimals={getTokenDecimalsWithFallback(
           tokenDecimals || colonyNativeToken?.decimals,
         )}
       />
