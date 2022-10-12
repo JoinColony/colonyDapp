@@ -13,8 +13,8 @@ import ColorTag, { Color } from '~core/ColorTag';
 import { ExpenditureEndDateTypes } from '~pages/ExpenditurePage/types';
 
 import { FundingSource as FundingSourceType } from '../types';
-import Rate from '../Rate';
 import Limit from '../Limit';
+import Rate from '../Rate';
 
 import styles from './FundingSource.css';
 
