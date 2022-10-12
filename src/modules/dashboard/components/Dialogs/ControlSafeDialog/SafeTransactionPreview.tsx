@@ -255,12 +255,13 @@ const SafeTransactionPreview = ({ values, selectedContractMethods }: Props) => {
     TransactionTypes.TRANSFER_NFT;
 
   const getDetailsItemValue = (input, transaction) => {
+    const inputName = `${input.name}-${transaction.contractFunction}`;
     switch (true) {
       case input.type === 'address': {
-        return <MaskedAddress address={transaction[input.name]} />;
+        return <MaskedAddress address={transaction[inputName]} />;
       }
       case input.type === 'address[]': {
-        const formattedArray = getArrayFromString(transaction[input.name]);
+        const formattedArray = getArrayFromString(transaction[inputName]);
 
         const maskedArray = formattedArray.map((address, index, arr) => {
           return (
@@ -274,7 +275,7 @@ const SafeTransactionPreview = ({ values, selectedContractMethods }: Props) => {
       }
       case input.type.substr(input.type.length - 2, input.type.length) ===
         '[]': {
-        const formattedArray = `[${getArrayFromString(transaction[input.name])
+        const formattedArray = `[${getArrayFromString(transaction[inputName])
           .map((item) => item.trim())
           .join(', ')}]`;
         return (
@@ -284,7 +285,7 @@ const SafeTransactionPreview = ({ values, selectedContractMethods }: Props) => {
       default:
         return (
           <div className={styles.rawTransactionValues}>
-            {transaction[input.name]}
+            {transaction[inputName]}
           </div>
         );
     }
