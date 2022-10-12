@@ -309,13 +309,18 @@ export const getTransferFundsData = async (
   ]);
 };
 
-const extractMethodArgs = (transaction: Record<string, any>) => ({
-  name = '',
-}) => {
-  if (Array.isArray(transaction[name])) {
-    return getArrayFromString(transaction[name]);
+const isArrayParameter = (parameter: string): boolean =>
+  parameter[0] + parameter[parameter.length - 1] === '[]';
+
+const extractMethodArgs = (
+  functionName: string,
+  transaction: Record<string, any>,
+) => ({ name = '' }) => {
+  const paramName = `${name}-${functionName}`;
+  if (isArrayParameter(transaction[paramName])) {
+    return getArrayFromString(transaction[paramName]);
   }
-  return transaction[name];
+  return transaction[paramName];
 };
 
 export const getContractInteractionData = async (
@@ -359,7 +364,7 @@ export const getContractInteractionData = async (
     const transactionValues = onLocalDevEnvironment
       ? { ...transaction, src: safeAddress, dst: AddressZero, wad: 1 } // src, dst and wad are the param names of the transferFrom function
       : transaction;
-    const args = inputs?.map(extractMethodArgs(transactionValues)) || [];
+    const args = inputs?.map(extractMethodArgs(name, transactionValues)) || [];
 
     return contract.interface.functions[name].encode(args);
   };

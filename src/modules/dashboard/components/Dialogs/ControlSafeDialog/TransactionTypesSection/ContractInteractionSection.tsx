@@ -328,7 +328,7 @@ const ContractInteractionSection = ({
                   <Input
                     label={`${input.name} (${input.type})`}
                     // eslint-disable-next-line max-len
-                    name={`transactions.${transactionFormIndex}.${input.name}(${input.type})-${selectedContractMethods[transactionFormIndex]?.name}`}
+                    name={`transactions.${transactionFormIndex}.${input.name}-${selectedContractMethods[transactionFormIndex]?.name}`}
                     appearance={{ colorSchema: 'grey', theme: 'fat' }}
                     disabled={disabledInput}
                     onChange={handleInputChange}
