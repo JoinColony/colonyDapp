@@ -174,6 +174,7 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
                           renderAvatar={supRenderAvatar}
                           placeholder="Search"
                           sidebarRef={sidebarRef}
+                          index={index}
                         />
                       </div>
                       <Icon

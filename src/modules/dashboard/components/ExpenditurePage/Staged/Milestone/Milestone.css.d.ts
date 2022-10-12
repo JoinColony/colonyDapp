@@ -1,5 +1,6 @@
 export const white: string;
 export const boxShadow: string;
+export const boxShadowInvalid: string;
 export const border: string;
 export const amountWrapper: string;
 export const value: string;
