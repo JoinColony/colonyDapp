@@ -77,7 +77,7 @@ const LockedStreaming = ({ fundingSources, colony }: Props) => {
                   onToogleButtonClick={() =>
                     onToggleButtonClick(fundingSource.id)
                   }
-                  isLastitem={index === fundingSources?.length - 1}
+                  isLastItem={index === fundingSources?.length - 1}
                 />
                 <FormattedMessage
                   {...MSG.title}

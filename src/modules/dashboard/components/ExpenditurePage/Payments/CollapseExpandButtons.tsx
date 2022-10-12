@@ -20,7 +20,7 @@ const MSG = defineMessages({
 interface Props {
   isExpanded: boolean;
   onToogleButtonClick: () => void;
-  isLastitem?: boolean;
+  isLastItem?: boolean;
   isLocked?: boolean;
 }
 
@@ -29,7 +29,7 @@ const displayName = 'dashboard.ExpenditurePage.Payments.CollapseExpandButtons';
 const CollapseExpandButtons = ({
   isExpanded,
   onToogleButtonClick,
-  isLastitem,
+  isLastItem,
   isLocked,
 }: Props) => {
   return isExpanded ? (
@@ -42,7 +42,7 @@ const CollapseExpandButtons = ({
       />
       <div
         className={classNames(styles.verticalDivider, {
-          [styles.dividerInLastItem]: isLastitem,
+          [styles.dividerInLastItem]: isLastItem,
           [styles.dividerInLockedItem]: isLocked,
         })}
       />

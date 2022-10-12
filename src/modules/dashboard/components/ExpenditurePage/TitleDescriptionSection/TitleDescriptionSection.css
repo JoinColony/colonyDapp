@@ -29,7 +29,14 @@
 }
 
 .titleContainer {
+  display: flex;
+  align-items: center;
   margin-bottom: 21px;
+}
+
+/* need to get to element inside the child component */
+.titleContainer div[class*="Input_container"] {
+  width: 100%;
 }
 
 .titleContainer input {
@@ -46,6 +53,10 @@
   color: var(--temp-grey-blue-7);
   opacity: 0.65;
   letter-spacing: 0.5px;
+}
+
+.titleContainer input[aria-invalid="true"]::placeholder {
+  opacity: 1;
 }
 
 .titleContainer p {
@@ -92,4 +103,9 @@
 
 .error input::placeholder {
   color: var(--danger);
+}
+
+.errorDotContainer {
+  margin-left: 7px;
+  max-width: 12px;
 }
