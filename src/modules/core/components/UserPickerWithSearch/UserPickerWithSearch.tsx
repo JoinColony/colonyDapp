@@ -168,6 +168,8 @@ const UserPickerWithSearch = ({
     return height > DROPDOWN_HEIGHT ? DROPDOWN_HEIGHT : height;
   }, [data]);
 
+  const userName = value?.profile.displayName || value?.profile.username;
+
   return (
     <OmniPickerWrapper className={getMainClasses({}, styles)}>
       <div className={styles.container} ref={ref}>
@@ -210,9 +212,7 @@ const UserPickerWithSearch = ({
               disabled={disabled}
               data-test={valueDataTest}
             >
-              {value.profile.displayName ||
-                value.profile.username ||
-                value.profile.walletAddress}
+              {userName ? `@${userName}` : value.profile.walletAddress}
             </button>
           )}
           {omniPickerIsOpen && (

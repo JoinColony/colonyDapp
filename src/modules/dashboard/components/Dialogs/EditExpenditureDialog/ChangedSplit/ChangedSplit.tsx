@@ -29,9 +29,9 @@ export const MSG = defineMessages({
     id: 'dashboard.EditExpenditureDialog.ChangedSplit.from',
     defaultMessage: 'From',
   },
-  changeTo: {
-    id: 'dashboard.EditExpenditureDialog.ChangedSplit.changeTo',
-    defaultMessage: 'Change to',
+  to: {
+    id: 'dashboard.EditExpenditureDialog.ChangedSplit.to',
+    defaultMessage: 'To',
   },
   removed: {
     id: 'dashboard.EditExpenditureDialog.ChangedSplit.removed',
@@ -99,7 +99,7 @@ const ChangedSplit = ({
                       <FormattedMessage {...MSG.from} />
                     </span>
                     <span>
-                      <FormattedMessage {...MSG.changeTo} />
+                      <FormattedMessage {...MSG.to} />
                     </span>
                   </div>
                 </FormSection>
