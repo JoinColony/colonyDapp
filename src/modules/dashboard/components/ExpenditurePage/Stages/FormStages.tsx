@@ -131,9 +131,13 @@ const FormStages = ({
     const firstInvalidEl = invalidFields && invalidFields[0];
 
     if (firstInvalidEl?.tagName.toLowerCase() === 'input') {
-      (firstInvalidEl as HTMLElement)?.focus();
+      (firstInvalidEl as HTMLElement).focus();
     } else {
-      const customEvent = new CustomEvent(fixTriggerEventName);
+      const customEvent = new CustomEvent(fixTriggerEventName, {
+        detail: {
+          order: Number((firstInvalidEl as HTMLElement).dataset.index),
+        },
+      });
 
       window.dispatchEvent(customEvent);
     }
