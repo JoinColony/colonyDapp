@@ -86,7 +86,6 @@ const SingleFundingSource = ({
         colony={colony}
         index={index}
         fundingSource={fundingSource}
-        isLast={isLastItem}
       />
     </div>
   );
