@@ -3,7 +3,7 @@ import { FormikProps } from 'formik';
 import { pipe } from 'lodash/fp';
 import { useHistory } from 'react-router';
 
-import { AnyUser, ColonySafe } from '~data/index';
+import { AnyToken, AnyUser, ColonySafe } from '~data/index';
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 import { ActionTypes } from '~redux/index';
@@ -21,6 +21,12 @@ import { SAFE_NETWORKS } from '~constants';
 import ControlSafeForm from './ControlSafeForm';
 import { NFT } from './TransactionTypesSection/TransferNFTSection';
 import { getMethodInputValidation, getValidationSchema } from './validation';
+
+export interface SafeBalance {
+  balance: number;
+  tokenAddress: string | null;
+  token: AnyToken | null;
+}
 
 export interface SafeTransaction {
   transactionType: string;
@@ -40,6 +46,7 @@ export interface SafeTransaction {
 export interface FormValues {
   transactions: SafeTransaction[];
   safe: SelectedSafe | null;
+  safeBalances?: SafeBalance[] | null;
   forceAction: boolean;
   transactionsTitle: string;
 }
@@ -134,6 +141,7 @@ const ControlSafeDialog = ({
     <ActionForm
       initialValues={{
         safe: null,
+        safeBalances: undefined,
         transactionsTitle: undefined,
         transactions: [
           {
