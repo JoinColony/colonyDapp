@@ -1,10 +1,4 @@
-import React, {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-} from 'react';
+import React, { ReactNode, useCallback, useMemo, useRef } from 'react';
 import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 import compose from 'recompose/compose';
 import classNames from 'classnames';
@@ -16,7 +10,6 @@ import { getMainClasses } from '~utils/css';
 import UserAvatar from '~core/UserAvatar';
 import { ItemDefault } from '~core/SingleUserPicker';
 import withAdditionalOmniPicker from '~core/OmniPicker/withAdditionalOmniPicker';
-import { fixTriggerEventName } from '~pages/ExpenditurePage/constants';
 
 import { ItemDataType, WrappedComponentAdditionalProps } from '../OmniPicker';
 import { Props as WithOmnipickerInProps } from '../OmniPicker/withOmniPicker';
@@ -26,6 +19,7 @@ import Icon from '../Icon';
 import Dropdown from './Dropdown';
 import { DROPDOWN_HEIGHT, DROPDOWN_ITEM_HEIGHT } from './constants';
 import styles from './UserPickerWithSearch.css';
+import useUserTriggerFocus from './hooks';
 
 type AvatarRenderFn = (
   address: Address,
@@ -101,6 +95,8 @@ interface Props extends WithOmnipickerInProps {
   valueDataTest?: string;
 
   sidebarRef?: HTMLElement | null;
+
+  index?: number;
 }
 
 interface EnhancedProps extends Props, WrappedComponentAdditionalProps {}
@@ -133,17 +129,23 @@ const UserPickerWithSearch = ({
   registerTriggerNode,
   sidebarRef,
   data,
+  index = 0,
 }: EnhancedProps) => {
   const [, { error, value }, { setValue }] = useField<AnyUser | null>(name);
   const { formatMessage } = useIntl();
   const ref = useRef<HTMLDivElement>(null);
-  const omniInputRef = useRef<HTMLInputElement | null>(null);
 
   const toggleDropdown = useCallback(() => {
     if (!disabled) {
       toggleOmniPicker();
     }
   }, [disabled, toggleOmniPicker]);
+
+  const { inputRef: omniInputRef } = useUserTriggerFocus(
+    index,
+    disabled,
+    toggleDropdown,
+  );
 
   const handlePick = useCallback(
     (user: AnyUser) => {
@@ -175,27 +177,6 @@ const UserPickerWithSearch = ({
     return height > DROPDOWN_HEIGHT ? DROPDOWN_HEIGHT : height;
   }, [data]);
 
-  useEffect(() => {
-    let timeout: ReturnType<typeof setTimeout>;
-
-    const fixAction = () => {
-      if (!disabled) {
-        toggleDropdown();
-        timeout = setTimeout(() => {
-          omniInputRef?.current?.focus();
-        }, 1);
-      }
-    };
-
-    // custom event is being used here - which was created specially for elements with additional onFocus logic
-    window.addEventListener(fixTriggerEventName, fixAction);
-
-    return () => {
-      window.removeEventListener(fixTriggerEventName, fixAction);
-      clearTimeout(timeout);
-    };
-  }, [disabled, toggleDropdown]);
-
   return (
     <OmniPickerWrapper className={getMainClasses({}, styles)}>
       <div className={styles.container} ref={ref}>
@@ -215,6 +196,7 @@ const UserPickerWithSearch = ({
             aria-invalid={!!error}
             onClick={toggleDropdown}
             disabled={disabled}
+            data-index={index}
           >
             {value ? (
               renderAvatar(value.profile.walletAddress, value)
