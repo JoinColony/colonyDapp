@@ -4,6 +4,7 @@ import { FieldArray, FieldArrayRenderProps, FormikProps } from 'formik';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import classnames from 'classnames';
 import { nanoid } from 'nanoid';
+import { AddressZero } from 'ethers/constants';
 
 import Avatar from '~core/Avatar';
 import { DialogSection } from '~core/Dialog';
@@ -185,7 +186,7 @@ const ControlSafeForm = ({
     (arrayHelpers: FieldArrayRenderProps) => {
       arrayHelpers.push({
         transactionType: '',
-        tokenAddress: colony.nativeTokenAddress,
+        tokenAddress: AddressZero,
         amount: undefined,
         recipient: null,
         data: '',
@@ -200,12 +201,7 @@ const ControlSafeForm = ({
       ]);
       handleValidation();
     },
-    [
-      colony.nativeTokenAddress,
-      setTransactionTabStatus,
-      transactionTabStatus,
-      handleValidation,
-    ],
+    [setTransactionTabStatus, transactionTabStatus, handleValidation],
   );
   const handleTabToggle = useCallback(
     (newIndex: number) => {
