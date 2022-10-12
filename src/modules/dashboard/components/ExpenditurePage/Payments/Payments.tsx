@@ -5,15 +5,12 @@ import { nanoid } from 'nanoid';
 
 import Button from '~core/Button';
 import Icon from '~core/Icon';
-import { FormSection } from '~core/Fields';
-import { useMembersSubscription } from '~data/generated';
 import { SpinnerLoader } from '~core/Preloaders';
+import { useMembersSubscription } from '~data/generated';
 import { Colony } from '~data/index';
 
-import Recipient from '../Recipient';
-
+import SingleRecipient from './SingleRecipient';
 import { newRecipient } from './constants';
-import CollapseExpandButtons from './CollapseExpandButtons';
 import styles from './Payments.css';
 
 export const MSG = defineMessages({
@@ -92,36 +89,19 @@ const Payments = ({ sidebarRef, colony }: Props) => {
             render={({ push, remove }) => (
               <>
                 {recipients?.map((recipient, index) => (
-                  <div className={styles.singleRecipient} key={recipient.id}>
-                    <FormSection>
-                      <div className={styles.recipientLabel}>
-                        <CollapseExpandButtons
-                          isExpanded={recipient.isExpanded}
-                          onToogleButtonClick={() => onToggleButtonClick(index)}
-                          isLastitem={index === recipients?.length - 1}
-                        />
-                        {index + 1}: <FormattedMessage {...MSG.recipient} />
-                        {recipients?.length > 1 && (
-                          <Icon
-                            name="trash"
-                            className={styles.deleteIcon}
-                            onClick={() => remove(index)}
-                            title={MSG.deleteIconTitle}
-                          />
-                        )}
-                      </div>
-                    </FormSection>
-                    <Recipient
-                      {...{
-                        recipient,
-                        index,
-                        sidebarRef,
-                      }}
-                      subscribedUsers={colonyMembers?.subscribedUsers || []}
-                      isLast={index === recipients?.length - 1}
-                      colony={colony}
-                    />
-                  </div>
+                  <SingleRecipient
+                    {...{
+                      recipient,
+                      index,
+                      colony,
+                      colonyMembers,
+                      sidebarRef,
+                      onToggleButtonClick,
+                      remove,
+                    }}
+                    isLastItem={index === recipients?.length - 1}
+                    multipleRecipients={recipients?.length > 1}
+                  />
                 ))}
                 <Button
                   onClick={() => {

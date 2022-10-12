@@ -52,6 +52,10 @@
   padding-left: 0;
 }
 
+.inputRateAmount p {
+  position: absolute;
+}
+
 .inputRateAmount input {
   border-bottom: 1px solid var(--temp-grey-blue-7);
 }
