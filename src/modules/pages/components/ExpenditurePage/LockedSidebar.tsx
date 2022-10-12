@@ -4,11 +4,16 @@ import { LockedExpenditureSettings } from '~dashboard/ExpenditurePage/Expenditur
 import { LockedPayments } from '~dashboard/ExpenditurePage/Payments';
 import LockedStaged from '~dashboard/ExpenditurePage/Staged/LockedStaged/LockedStaged';
 import { Status } from '~dashboard/ExpenditurePage/Stages/constants';
+import LockedStreaming from '~dashboard/ExpenditurePage/Streaming/LockedStreaming';
 import { Colony } from '~data/index';
 
 import { ExpenditureTypes, ValuesType } from './types';
 
 const displayName = 'pages.ExpenditurePage.LockedSidebar';
+
+// Mock variables
+const startDate = new Date().toLocaleDateString();
+const endDate = 'When cancelled';
 
 interface Props {
   colony: Colony;
@@ -83,9 +88,13 @@ const LockedSidebar = ({
 
   return (
     <>
-      <LockedExpenditureSettings
-        {...{ expenditure, filteredDomainId, colony }}
-      />
+      {expenditure === ExpenditureTypes.Streaming ? (
+        <LockedStreaming startDate={startDate} endDate={endDate} />
+      ) : (
+        <LockedExpenditureSettings
+          {...{ expenditure, filteredDomainId, colony }}
+        />
+      )}
       {secondFormSection}
     </>
   );
