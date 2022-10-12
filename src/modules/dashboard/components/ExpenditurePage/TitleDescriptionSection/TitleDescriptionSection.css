@@ -34,6 +34,7 @@
   margin-bottom: 21px;
 }
 
+/* need to get to element inside the child component */
 .titleContainer div[class*="Input_container"] {
   width: 100%;
 }
