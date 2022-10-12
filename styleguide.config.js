@@ -1,7 +1,9 @@
 /* eslint-disable */
 
 const path = require('path');
-const { resolver: { findAllComponentDefinitions } } = require('react-docgen');
+const {
+  resolver: { findAllComponentDefinitions },
+} = require('react-docgen');
 const TerserPlugin = require('terser-webpack-plugin');
 
 const webpackConfig = require('./webpack.prod.js');
@@ -16,7 +18,7 @@ module.exports = {
   dangerouslyUpdateWebpackConfig(webpackConfig, env) {
     // Terser doesn't like our environment - match it with our webpack config
     webpackConfig.optimization.minimizer = [new TerserPlugin()];
-    return webpackConfig
+    return webpackConfig;
   },
   sections: [
     {
@@ -97,7 +99,6 @@ module.exports = {
         './src/modules/core/components/MaskedAddress/MaskedAddress.tsx',
         './src/modules/core/components/Numeral/Numeral.tsx',
         './src/modules/core/components/Panel/Panel.tsx',
-        './src/modules/core/components/PayoutsList/PayoutsList.tsx',
         './src/modules/core/components/StarRating/StarRating.tsx',
         './src/modules/core/components/Table/Table.tsx',
         './src/modules/core/components/Tabs/Tabs.tsx',
