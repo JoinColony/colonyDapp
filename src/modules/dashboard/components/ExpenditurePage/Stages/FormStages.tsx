@@ -64,7 +64,7 @@ const FormStages = ({
     const errors = await validateForm(values);
     const hasErrors = Object.keys(errors)?.length;
     setTouched(setNestedObjectValues<FormikTouched<ValuesType>>(errors, true));
-    const invalidFieldsLength: number | undefined = document
+    const invalidFieldsLength = document
       .getElementById('expenditurePage')
       ?.querySelectorAll('[aria-invalid="true"]').length;
     setFieldErrorsAmount(
