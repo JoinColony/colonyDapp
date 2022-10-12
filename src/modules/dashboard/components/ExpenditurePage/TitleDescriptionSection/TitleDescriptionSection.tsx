@@ -1,21 +1,24 @@
 import { useField } from 'formik';
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
 
 import { Input, TextareaAutoresize } from '~core/Fields';
 
 import styles from './TitleDescriptionSection.css';
+import { ErrorDot } from '../ErrorDot';
 
 const MSG = defineMessages({
   titlePlaceholder: {
     id: 'dashboard.ExpenditurePage.TitleDescriptionSection.titlePlaceholder',
     defaultMessage: 'Enter expenditure title',
   },
+  titleTooltipError: {
+    id: 'dashboard.ExpenditurePage.TitleDescriptionSection.titleTooltipError',
+    defaultMessage: 'Required field error',
+  },
   descriptionPlaceholder: {
-    id:
-      // eslint-disable-next-line max-len
-      'dashboard.ExpenditurePage.TitleDescriptionSection.descriptionPlaceholder',
+    id: `dashboard.ExpenditurePage.TitleDescriptionSection.descriptionPlaceholder`,
     defaultMessage: 'Enter description',
   },
 });
@@ -45,6 +48,13 @@ const TitleDescriptionSection = () => {
           defaultValue={title}
           elementOnly
         />
+        {inputError && (
+          <div className={styles.errorDotContainer}>
+            <ErrorDot
+              tooltipContent={<FormattedMessage {...MSG.titleTooltipError} />}
+            />
+          </div>
+        )}
       </div>
       <div
         className={classNames(
