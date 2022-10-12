@@ -113,7 +113,9 @@ const Milestone = ({
             position: 'absolute',
             top: 0,
             backgroundImage: 'none',
-            boxShadow: styles.boxShadow,
+            boxShadow: milestonePercentError
+              ? styles.boxShadowInvalid
+              : styles.boxShadow,
             border: styles.border,
           }}
           dotStyle={{
