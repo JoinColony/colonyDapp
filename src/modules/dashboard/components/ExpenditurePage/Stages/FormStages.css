@@ -2,7 +2,7 @@
   position: relative;
 }
 
-@keyframes slideIn {
+@keyframes fadeIn {
   from {
     opacity: 0;
   }
@@ -27,7 +27,7 @@
   line-height: 18px;
   transform: translateY(-100%);
   letter-spacing: 0.5px;
-  animation-name: slideIn;
+  animation-name: fadeIn;
   animation-duration: 500ms;
 }
 
