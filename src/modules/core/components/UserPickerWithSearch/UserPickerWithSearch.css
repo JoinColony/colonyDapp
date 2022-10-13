@@ -19,12 +19,12 @@
   cursor: pointer;
 }
 
-.inputWithIconBtn[disabled] {
+.inputWithIconBtn:disabled {
   opacity: 0.5;
   cursor: unset;
 }
 
-.inputWithIconBtn:not([disabled]):hover .icon::after {
+.inputWithIconBtn:enabled:hover .icon::after {
   height: 38px;
   width: 38px;
   position: absolute;
