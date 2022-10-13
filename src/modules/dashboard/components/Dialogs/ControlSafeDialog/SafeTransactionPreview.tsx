@@ -140,8 +140,9 @@ const transactionTypeFieldsMap = {
             seed={nft.profile.walletAddress.toLocaleLowerCase()}
             title=""
             size="xs"
+            className={styles.avatar}
           />
-          <div>{nft.profile.displayName}</div>
+          <div className={styles.itemValue}>{nft.profile.displayName}</div>
         </div>
       ),
     },
@@ -156,15 +157,18 @@ const transactionTypeFieldsMap = {
             seed={nftData.address.toLocaleLowerCase()}
             title=""
             size="xs"
+            className={styles.avatar}
           />
-          <div>{nftData.name || nftData.tokenName}</div>
+          <div className={styles.itemValue}>
+            {nftData.name || nftData.tokenName}
+          </div>
         </div>
       ),
     },
     {
       key: 'nftData',
       label: MSG.nftId,
-      value: (nftData) => <div>{nftData.id}</div>,
+      value: (nftData) => <div className={styles.itemValue}>{nftData.id}</div>,
     },
     {
       key: 'recipient',
