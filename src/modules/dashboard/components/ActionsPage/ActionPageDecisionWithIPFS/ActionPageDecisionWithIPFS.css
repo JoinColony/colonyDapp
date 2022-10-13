@@ -90,6 +90,10 @@
   width: 340px;
 }
 
+.descriptionContainer > h3 {
+  font-size: var(--size-medium);
+}
+
 .titleDecoration {
   font-weight: var(--weight-bold);
   color: var(--pink);

@@ -12,6 +12,7 @@ export const userinfo: string;
 export const userName: string;
 export const title: string;
 export const details: string;
+export const descriptionContainer: string;
 export const buttonContainer: string;
 export const titleDecoration: string;
 export const loadingWrapper: string;

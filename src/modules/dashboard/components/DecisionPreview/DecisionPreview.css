@@ -92,6 +92,10 @@
   width: 340px;
 }
 
+.descriptionContainer > h3 {
+  font-size: var(--size-medium);
+}
+
 .buttonContainer {
   display: flex;
   justify-content: flex-end;

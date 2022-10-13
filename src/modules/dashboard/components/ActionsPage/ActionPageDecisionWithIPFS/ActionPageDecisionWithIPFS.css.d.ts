@@ -14,5 +14,6 @@ export const time: string;
 export const tag: string;
 export const title: string;
 export const details: string;
+export const descriptionContainer: string;
 export const titleDecoration: string;
 export const loadingWrapper: string;
