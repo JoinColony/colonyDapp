@@ -14,11 +14,7 @@ import {
 import GasStationContent from './GasStationContent';
 
 import { query700 as query } from '~styles/queries.css';
-import {
-  refWidth,
-  horizontalOffset,
-  verticalOffset,
-} from './GasStationPopover.css';
+import { verticalOffset } from './GasStationPopover.css';
 
 interface Props {
   transactionAndMessageGroups: TransactionOrMessageGroups;
@@ -58,9 +54,7 @@ const GasStationPopover = ({
    * reference element.
    */
   const popoverOffset = useMemo(() => {
-    const skid =
-      removeValueUnits(refWidth) / 2 + removeValueUnits(horizontalOffset);
-    return isMobile ? [-86, 25] : [-1 * skid, removeValueUnits(verticalOffset)];
+    return isMobile ? [0, 25] : [0, removeValueUnits(verticalOffset)];
   }, [isMobile]);
 
   return (
@@ -74,7 +68,7 @@ const GasStationPopover = ({
           close={close}
         />
       )}
-      placement="bottom"
+      placement="bottom-end"
       showArrow={false}
       isOpen={isOpen}
       onClose={() => {
