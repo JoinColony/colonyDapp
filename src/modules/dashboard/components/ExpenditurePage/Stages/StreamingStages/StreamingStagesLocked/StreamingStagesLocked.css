@@ -125,6 +125,11 @@
   letter-spacing: var(--spacing-medium);
 }
 
+.tagClaimed > span {
+  background-color: var(--text-disabled);
+  color: var(--colony-white);
+}
+
 .valueWrapper {
   display: flex;
   flex-direction: column;

@@ -57,6 +57,14 @@ const MSG = defineMessages({
     id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.claimFunds`,
     defaultMessage: 'Claim funds',
   },
+  ended: {
+    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.ended`,
+    defaultMessage: 'Ended',
+  },
+  claimed: {
+    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.claimed`,
+    defaultMessage: 'Claimed',
+  },
 });
 
 const displayName =
@@ -76,6 +84,7 @@ export interface Props {
   activeStateId?: string;
   paidToDate?: FundingSource['rate'][];
   availableToClaim?: FundingSource['rate'][];
+  claimed?: boolean;
 }
 
 const StreamingStagesLocked = ({
@@ -86,6 +95,7 @@ const StreamingStagesLocked = ({
   activeStateId,
   paidToDate,
   availableToClaim,
+  claimed,
 }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
@@ -125,14 +135,18 @@ const StreamingStagesLocked = ({
             </Tag>
           )}
           {status === Status.StartedStream && (
-            <span className={styles.tagWrapper}>
+            <span
+              className={classNames(styles.tagWrapper, {
+                [styles.tagClaimed]: claimed,
+              })}
+            >
               <Tag
                 appearance={{
                   theme: 'blue',
                   colorSchema: 'fullColor',
                   fontSize: 'tiny',
                 }}
-                text={MSG.active}
+                text={claimed ? MSG.ended : MSG.active}
               />
             </span>
           )}
@@ -218,8 +232,9 @@ const StreamingStagesLocked = ({
               )}
             {status === Status.StartedStream && availableToClaim && (
               <Button
-                text={MSG.claimFunds}
+                text={claimed ? MSG.claimed : MSG.claimFunds}
                 onClick={handleButtonClick}
+                disabled={claimed}
                 style={buttonStyles}
               />
             )}
@@ -286,6 +301,9 @@ const StreamingStagesLocked = ({
                   const token = colony?.tokens?.find(
                     (tokenItem) => tokenItem.address === availableItem.token,
                   );
+                  if (!token) {
+                    return null;
+                  }
 
                   if (!token) {
                     return null;
