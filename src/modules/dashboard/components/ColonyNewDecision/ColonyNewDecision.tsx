@@ -44,7 +44,7 @@ const ColonyNewDecision = ({
   draftDecision,
   removeDraftDecision,
 }: Props) => {
-  const { networkId, username, ethereal } = useLoggedInUser();
+  const { networkId, username, ethereal, walletAddress } = useLoggedInUser();
   const { version: networkVersion } = useNetworkContracts();
 
   const [isLoadingUser, setIsLoadingUser] = useState<boolean>(!ethereal);
@@ -86,9 +86,10 @@ const ColonyNewDecision = ({
           appearance={{ theme: 'primary', size: 'large' }}
           text={MSG.newDecision}
           onClick={() =>
-            draftDecision === undefined
-              ? openNewDecisionDialog()
-              : openDeleteDraftDialog({ colony, openNewDecisionDialog })
+            draftDecision !== undefined &&
+            draftDecision.userAddress === walletAddress
+              ? openDeleteDraftDialog({ colony, openNewDecisionDialog })
+              : openNewDecisionDialog()
           }
           disabled={
             mustUpgrade ||

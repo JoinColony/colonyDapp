@@ -52,6 +52,9 @@ const DecisionDialog = ({
       : JSON.parse(localStorage.getItem(LOCAL_STORAGE_DECISION_KEY) || ''),
   );
 
+  const isTheSameUser =
+    decisionData !== undefined && decisionData.userAddress === walletAddress;
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -64,7 +67,7 @@ const DecisionDialog = ({
         placeholder: 'Enter the description...',
       }),
     ],
-    content: decisionData?.description,
+    content: isTheSameUser ? decisionData?.description : undefined,
   });
 
   const domainId =
@@ -100,9 +103,9 @@ const DecisionDialog = ({
   return (
     <Form
       initialValues={{
-        motionDomainId: domainId || decisionData?.motionDomainId,
-        title: decisionData?.title,
-        description: decisionData?.description,
+        motionDomainId: isTheSameUser ? decisionData?.motionDomainId : domainId,
+        title: isTheSameUser ? decisionData?.title : undefined,
+        description: isTheSameUser ? decisionData?.description : undefined,
       }}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
