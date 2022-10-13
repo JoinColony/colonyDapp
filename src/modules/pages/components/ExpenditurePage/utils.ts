@@ -346,7 +346,7 @@ export const updateValues = (values, confirmedValues) => {
       ...sameMilestones,
       ...changedMilestones?.map((milestone) => {
         const newValue = confirmedValues.staged.milestones?.find(
-          (confirmedMielstone) => confirmedMielstone.id === milestone.id,
+          (confirmedMilestone) => confirmedMilestone.id === milestone.id,
         );
 
         return {

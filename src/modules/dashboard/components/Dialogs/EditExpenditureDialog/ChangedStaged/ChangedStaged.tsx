@@ -22,7 +22,7 @@ export const MSG = defineMessages({
   },
   milestone: {
     id: 'dashboard.EditExpenditureDialog.ChangedStaged.milestone',
-    defaultMessage: 'Change Mielstone',
+    defaultMessage: 'Change Milestone',
   },
 });
 

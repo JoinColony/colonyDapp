@@ -16,7 +16,7 @@ import styles from './ChangedMilestone.css';
 export const MSG = defineMessages({
   removed: {
     id: `dashboard.EditExpenditureDialog.ChangedStaged.ChangedMilestone.removed`,
-    defaultMessage: 'Mielstone has been deleted',
+    defaultMessage: 'Milestone has been deleted',
   },
 });
 
