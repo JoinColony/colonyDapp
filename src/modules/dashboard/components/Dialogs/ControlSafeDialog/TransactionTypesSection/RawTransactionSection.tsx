@@ -43,7 +43,7 @@ const RawTransactionSection = ({
   transactionFormIndex,
   handleInputChange,
   handleValidation,
-}: TransactionSectionProps & { handleValidation: () => void }) => {
+}: TransactionSectionProps) => {
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress },
   });
