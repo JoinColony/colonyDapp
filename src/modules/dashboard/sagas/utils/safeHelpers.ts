@@ -362,7 +362,13 @@ export const getContractInteractionData = async (
     ];
 
     const transactionValues = onLocalDevEnvironment
-      ? { ...transaction, src: safeAddress, dst: AddressZero, wad: 1 } // src, dst and wad are the param names of the transferFrom function
+      ? {
+          ...transaction,
+          // src, dst and wad are the param names of the transferFrom function
+          [`src-transferFrom`]: safeAddress,
+          [`dst-transferFrom`]: AddressZero,
+          [`wad-transferFrom`]: 1,
+        }
       : transaction;
     const args = inputs?.map(extractMethodArgs(name, transactionValues)) || [];
 
