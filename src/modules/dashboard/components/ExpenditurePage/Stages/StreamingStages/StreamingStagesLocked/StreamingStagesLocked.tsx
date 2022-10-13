@@ -18,7 +18,7 @@ import styles from './StreamingStagesLocked.css';
 
 const MSG = defineMessages({
   startStream: {
-    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.startStream`,
+    id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.startStream`,
     defaultMessage: 'Start Stream',
   },
   paidToDate: {
@@ -243,7 +243,7 @@ const StreamingStagesLocked = ({
       </FormSection>
       <div
         className={classNames(styles.stagesRow, {
-          [styles.alignStart]: paidToDate && paidToDate?.length > 1,
+          [styles.alignStart]: paidToDate && paidToDate.length > 1,
         })}
       >
         <span className={styles.label}>
@@ -301,6 +301,10 @@ const StreamingStagesLocked = ({
                   const token = colony?.tokens?.find(
                     (tokenItem) => tokenItem.address === availableItem.token,
                   );
+                  if (!token) {
+                    return null;
+                  }
+
                   if (!token) {
                     return null;
                   }
