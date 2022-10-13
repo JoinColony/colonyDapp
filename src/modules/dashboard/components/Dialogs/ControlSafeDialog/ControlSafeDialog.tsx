@@ -180,7 +180,7 @@ const ControlSafeDialog = ({
             safes={safes}
             isVotingExtensionEnabled={isVotingExtensionEnabled}
             showPreview={showPreview}
-            handleShowPreview={setShowPreview}
+            setShowPreview={setShowPreview}
             selectedContractMethods={selectedContractMethods}
             handleSelectedContractMethods={setSelectedContractMethods}
           />

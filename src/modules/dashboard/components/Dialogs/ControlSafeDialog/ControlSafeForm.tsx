@@ -99,7 +99,7 @@ export interface FormProps {
   isVotingExtensionEnabled: boolean;
   back?: () => void;
   showPreview: boolean;
-  handleShowPreview: (showPreview: boolean) => void;
+  setShowPreview: (showPreview: boolean) => void;
   selectedContractMethods?: UpdatedMethods;
   handleSelectedContractMethods: React.Dispatch<
     React.SetStateAction<UpdatedMethods>
@@ -134,7 +134,7 @@ const ControlSafeForm = ({
   isVotingExtensionEnabled,
   setFieldValue,
   showPreview,
-  handleShowPreview,
+  setShowPreview,
   validateForm,
   dirty,
   selectedContractMethods,
@@ -142,7 +142,6 @@ const ControlSafeForm = ({
   handleSelectedContractMethods,
 }: FormProps & FormikProps<FormValues>) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState([true]);
-  const [hasTitle, setHasTitle] = useState(true);
   const [prevSafeAddress, setPrevSafeAddress] = useState<string>('');
 
   const hasRoles = [
@@ -224,16 +223,6 @@ const ControlSafeForm = ({
     [],
   );
 
-  /* This is necessary as the form validation doesn't work on the first render
-  when we switch to showing preview */
-  useEffect(() => {
-    if (showPreview && values.transactionsTitle === undefined) {
-      setHasTitle(false);
-    } else {
-      setHasTitle(true);
-    }
-  }, [values, showPreview]);
-
   useEffect(() => {
     if (!showPreview) {
       validateForm();
@@ -254,6 +243,11 @@ const ControlSafeForm = ({
         }
       });
     }
+  };
+
+  const handleShowPreview = (isPreview: boolean) => {
+    setShowPreview(!isPreview);
+    handleValidation();
   };
 
   const removeSelectedContractMethod = useCallback(
@@ -473,17 +467,17 @@ const ControlSafeForm = ({
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
-          onClick={showPreview ? () => handleShowPreview(!showPreview) : back}
+          onClick={showPreview ? () => handleShowPreview(showPreview) : back}
           text={{ id: 'button.back' }}
         />
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() =>
-            showPreview ? handleSubmit() : handleShowPreview(!showPreview)
+            showPreview ? handleSubmit() : handleShowPreview(showPreview)
           }
           text={showPreview ? MSG.buttonConfirm : MSG.buttonCreateTransaction}
           loading={isSubmitting}
-          disabled={!isValid || isSubmitting || !hasTitle || !dirty}
+          disabled={!isValid || isSubmitting || !dirty}
           style={{ width: styles.wideButton }}
         />
       </DialogSection>
