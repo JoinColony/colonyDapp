@@ -16,6 +16,7 @@ import {
 } from '~constants';
 import { AnyToken } from '~data/index';
 import { TransferFundsProps } from '../TransactionTypesSection/TransferFundsSection';
+import { FormValues } from '..';
 
 import styles from '~core/Fields/AmountTokens/AmountTokens.css';
 
@@ -26,7 +27,7 @@ export interface SafeBalance {
 }
 
 interface Props extends Pick<TransferFundsProps, 'handleValidation'> {
-  safeBalances: SafeBalance[];
+  safeBalances: FormValues['safeBalances'];
   disabledInput: boolean;
   selectedSafe: ColonySafe | undefined;
   transactionFormIndex: number;
@@ -68,7 +69,7 @@ const AmountBalances = ({
     `transactions.${transactionFormIndex}.tokenData`,
   );
 
-  const tokens: AnyToken[] = safeBalances.map((balance) => {
+  const tokens: AnyToken[] = (safeBalances || []).map((balance) => {
     // If selected safe balance uses an ERC20 token
     if (balance.token && balance.tokenAddress) {
       return {

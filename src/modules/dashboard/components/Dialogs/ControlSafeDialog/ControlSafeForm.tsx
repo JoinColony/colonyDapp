@@ -285,6 +285,8 @@ const ControlSafeForm = ({
   );
 
   const savedNFTState = useState({});
+  const savedTokenState = useState({});
+
   return (
     <>
       {!showPreview ? (
@@ -412,6 +414,7 @@ const ControlSafeForm = ({
                           setFieldValue={setFieldValue}
                           handleInputChange={handleInputChange}
                           handleValidation={handleValidation}
+                          savedTokenState={savedTokenState}
                         />
                       )}
                       {values.transactions[index]?.transactionType ===
