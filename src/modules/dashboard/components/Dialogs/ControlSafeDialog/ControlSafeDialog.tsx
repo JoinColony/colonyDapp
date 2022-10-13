@@ -46,7 +46,7 @@ export interface SafeTransaction {
 export interface FormValues {
   transactions: SafeTransaction[];
   safe: SelectedSafe | null;
-  safeBalances?: SafeBalance[] | null;
+  safeBalances: SafeBalance[] | null;
   forceAction: boolean;
   transactionsTitle: string;
 }
@@ -141,7 +141,7 @@ const ControlSafeDialog = ({
     <ActionForm
       initialValues={{
         safe: null,
-        safeBalances: undefined,
+        safeBalances: null,
         transactionsTitle: undefined,
         transactions: [
           {
