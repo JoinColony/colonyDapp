@@ -184,7 +184,9 @@ const transactionTypeFieldsMap = {
       label: MSG.contract,
       value: (contract) => (
         <div className={styles.rawTransactionValues}>
-          <MaskedAddress address={contract.profile.displayName} />
+          <span className={styles.contractName}>
+            {contract.profile.displayName}
+          </span>
         </div>
       ),
     },
