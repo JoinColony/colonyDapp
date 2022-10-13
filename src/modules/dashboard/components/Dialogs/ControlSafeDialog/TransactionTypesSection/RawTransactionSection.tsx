@@ -1,14 +1,14 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import { AnyUser, useMembersSubscription } from '~data/index';
-import { Address } from '~types/index';
+import { useMembersSubscription } from '~data/index';
 import { Input } from '~core/Fields';
-import UserAvatar from '~core/UserAvatar';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import { DialogSection } from '~core/Dialog';
 
 import { TransactionSectionProps } from '..';
+import { XsUserAvatar, displayName } from '.';
+
 import styles from './TransactionTypesSection.css';
 
 const MSG = defineMessages({
@@ -30,18 +30,12 @@ const MSG = defineMessages({
   },
 });
 
-const displayName = `dashboard.ControlSafeDialog.ControlSafeForm.RawTransactionSection`;
-
-const renderAvatar = (address: Address, item: AnyUser) => (
-  <UserAvatar address={address} user={item} size="xs" notSet={false} />
-);
-
 const RawTransactionSection = ({
   colony: { colonyAddress },
   disabledInput,
   transactionFormIndex,
   handleInputChange,
-}: TransactionSectionProps) => {
+}: Omit<TransactionSectionProps, 'handleValidation'>) => {
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress },
   });
@@ -55,7 +49,7 @@ const RawTransactionSection = ({
             label={MSG.recipient}
             name={`transactions.${transactionFormIndex}.recipient`}
             filter={filterUserSelection}
-            renderAvatar={renderAvatar}
+            renderAvatar={XsUserAvatar}
             disabled={disabledInput}
             placeholder={MSG.userPickerPlaceholder}
             validateOnChange
@@ -99,6 +93,6 @@ const RawTransactionSection = ({
   );
 };
 
-RawTransactionSection.displayName = displayName;
+RawTransactionSection.displayName = `${displayName}.RawTransactionSection`;
 
 export default RawTransactionSection;

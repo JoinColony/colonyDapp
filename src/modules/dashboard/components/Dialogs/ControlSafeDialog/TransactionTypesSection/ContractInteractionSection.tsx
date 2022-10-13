@@ -4,9 +4,7 @@ import { FormikProps } from 'formik';
 import { isAddress } from 'web3-utils';
 
 import { AnyUser } from '~data/index';
-import { Address } from '~types/index';
 import { Input, Select, SelectOption, Textarea } from '~core/Fields';
-import UserAvatar from '~core/UserAvatar';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import { DialogSection } from '~core/Dialog';
 import {
@@ -14,11 +12,11 @@ import {
   AbiItemExtended,
   fetchContractABI,
 } from '~utils/safes';
-import { SpinnerLoader } from '~core/Preloaders';
 import { isEmpty, isEqual, isNil } from '~utils/lodash';
 import { getChainNameFromSafe } from '~modules/dashboard/sagas/utils/safeHelpers';
 
 import { FormValues, FormProps, TransactionSectionProps } from '..';
+import { Error, MsgType, Loading, XsUserAvatar, displayName } from '.';
 
 import styles from './TransactionTypesSection.css';
 
@@ -53,19 +51,17 @@ const MSG = defineMessages({
   },
   contractNotVerifiedError: {
     id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.contractNotVerifiedError`,
-    defaultMessage: `Contract could not be verified. Ensure it exists on {network}.`,
+    defaultMessage: `Contract could not be verified. Ensure it exists on {network}`,
   },
   invalidAddressError: {
     id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.invalidAddressError`,
-    defaultMessage: `Contract address is not a valid address.`,
+    defaultMessage: `Contract address is not a valid address`,
   },
   fetchFailedError: {
     id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.fetchFailedError`,
-    defaultMessage: `Unable to fetch contract. Please check your connection.`,
+    defaultMessage: `Unable to fetch contract. Please check your connection`,
   },
 });
-
-const displayName = `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection`;
 
 interface Props
   extends Pick<
@@ -74,7 +70,6 @@ interface Props
     >,
     Pick<FormikProps<FormValues>, 'setFieldValue' | 'values'>,
     Omit<TransactionSectionProps, 'colony'> {
-  handleValidation: () => void;
   removeSelectedContractMethod: (index: number) => void;
 }
 
@@ -83,10 +78,6 @@ interface ABIResponse {
   message: string;
   result: string;
 }
-
-const renderAvatar = (address: Address, item: AnyUser) => (
-  <UserAvatar address={address} user={item} size="xs" notSet={false} />
-);
 
 const ContractInteractionSection = ({
   disabledInput,
@@ -107,7 +98,7 @@ const ContractInteractionSection = ({
   >([]);
   const [prevSafeChainId, setPrevSafeChainId] = useState<string>();
   const [isLoadingABI, setIsLoadingABI] = useState<boolean>(false);
-  const [fetchABIError, setFetchABIError] = useState<string>('');
+  const [fetchABIError, setFetchABIError] = useState<MsgType>('');
 
   const transactionValues = values.transactions[transactionFormIndex];
 
@@ -174,19 +165,19 @@ const ContractInteractionSection = ({
           if (data) {
             onContractABIChange(data);
           } else {
-            setFetchABIError(formatMessage(MSG.fetchFailedError));
+            setFetchABIError(MSG.fetchFailedError);
           }
         });
       } else {
         if (!isAddress(contract.profile.walletAddress)) {
-          setFetchABIError(formatMessage(MSG.invalidAddressError));
+          setFetchABIError(MSG.invalidAddressError);
         } else {
-          setFetchABIError(formatMessage(MSG.noSafeSelectedError));
+          setFetchABIError(MSG.noSafeSelectedError);
         }
         setIsLoadingABI(false);
       }
     },
-    [selectedSafe, onContractABIChange, formatMessage],
+    [selectedSafe, onContractABIChange],
   );
 
   const usefulMethods: AbiItemExtended[] = useMemo(
@@ -246,16 +237,7 @@ const ContractInteractionSection = ({
   ]);
 
   if (isLoadingABI) {
-    return (
-      <DialogSection>
-        <div className={styles.spinner}>
-          <SpinnerLoader
-            appearance={{ size: 'medium' }}
-            loadingText={MSG.loadingContract}
-          />
-        </div>
-      </DialogSection>
-    );
+    return <Loading message={MSG.loadingContract} />;
   }
 
   return (
@@ -268,7 +250,7 @@ const ContractInteractionSection = ({
             label={MSG.contractLabel}
             name={`transactions.${transactionFormIndex}.contract`}
             filter={filterUserSelection}
-            renderAvatar={renderAvatar}
+            renderAvatar={XsUserAvatar}
             disabled={disabledInput}
             placeholder={MSG.userPickerPlaceholder}
             onSelected={onContractChange}
@@ -278,9 +260,7 @@ const ContractInteractionSection = ({
         </div>
       </DialogSection>
       {fetchABIError ? (
-        <DialogSection>
-          <div className={styles.error}>{fetchABIError}</div>
-        </DialogSection>
+        <Error error={fetchABIError} />
       ) : (
         <>
           <DialogSection>
@@ -355,6 +335,6 @@ const ContractInteractionSection = ({
   );
 };
 
-ContractInteractionSection.displayName = displayName;
+ContractInteractionSection.displayName = `${displayName}.ContractInteractionSection`;
 
 export default ContractInteractionSection;

@@ -11,15 +11,18 @@ import SingleUserPicker, {
 import { useMembersSubscription } from '~data/index';
 import {
   getChainNameFromSafe,
-  getIdFromNFTDisplayName,
   getTxServiceBaseUrl,
+  SelectedNFT,
   SelectedSafe,
 } from '~modules/dashboard/sagas/utils/safeHelpers';
 import { Address } from '~types/index';
 import { log } from '~utils/debug';
-import { SpinnerLoader } from '~core/Preloaders';
+import { getSelectedNFTData } from '~utils/safes';
 
-import { FormValues, TransactionSectionProps } from '..';
+import { FormValues, TransactionSectionProps, SafeTransaction } from '..';
+import { MSG as FundsMSG } from './TransferFundsSection';
+import { displayName, XsUserAvatar, Error, MsgType, Loading } from '.';
+
 import styles from './TransferNFTSection.css';
 
 const MSG = defineMessages({
@@ -61,11 +64,9 @@ const MSG = defineMessages({
   },
   nftError: {
     id: `dashboard.ControlSafeDialog.TransferNFTSection.nftError`,
-    defaultMessage: 'Unable to fetch NFTs. Please check your connection.',
+    defaultMessage: 'Unable to fetch NFTs. Please check your connection',
   },
 });
-
-const displayName = 'dashboard.ControlSafeDialog.TransferNFTSection';
 
 interface Props
   extends Omit<TransactionSectionProps, 'colony' | 'handleInputChange'> {
@@ -99,123 +100,90 @@ export interface NFT {
   uri: string;
 }
 
-type NFTData = NFT[] | undefined | null;
-
 const TransferNFTSection = ({
   colonyAddress,
   disabledInput,
   transactionFormIndex,
   values: { safe },
-  values,
   savedNFTState,
+  handleValidation,
 }: Props & Pick<FormikProps<FormValues>, 'values'>) => {
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress },
   });
-
   const [savedNFTs, setSavedNFTs] = savedNFTState;
-  const [availableNFTs, setAvailableNFTs] = useState<NFTData>(undefined);
+  const [availableNFTs, setAvailableNFTs] = useState<NFT[]>();
+  const [nftError, setNFTError] = useState<MsgType>('');
   const [isLoadingNFTData, setIsLoadingNFTData] = useState<boolean>(false);
-  const { nft: selectedNFT } = values.transactions[transactionFormIndex];
-
   const [
     { value: selectedNFTData },
     ,
     { setValue: setSelectedNFTData },
-  ] = useField<NFT | null>(`transactions.${transactionFormIndex}.nftData`);
-
-  useEffect(() => {
-    const getNFTData = async () => {
-      const getNFTs = async (
-        chosenSafe: SelectedSafe,
-      ): Promise<NFT[] | null> => {
-        const chainName = getChainNameFromSafe(chosenSafe.profile.displayName);
-        const baseUrl = getTxServiceBaseUrl(chainName);
-        try {
-          const response = await fetch(
-            `${baseUrl}/v1/safes/${chosenSafe.profile.walletAddress}/collectibles/`,
-          );
-          if (response.status === 200) {
-            const data = await response.json();
-            return data;
-          }
-        } catch (e) {
-          log.error(e);
-        }
-        return null;
-      };
-      if (safe) {
-        const cachedNFTs = savedNFTs[safe.profile.walletAddress];
-        if (!cachedNFTs) {
-          setIsLoadingNFTData(true);
-          const nftData = await getNFTs(safe);
-          setAvailableNFTs(nftData);
-          if (nftData) {
-            setSavedNFTs({
-              ...savedNFTs,
-              [safe.profile.walletAddress]: nftData,
-            });
-          }
-          setIsLoadingNFTData(false);
-        } else {
-          setAvailableNFTs(cachedNFTs);
-        }
-      }
-    };
-    getNFTData();
-  }, [safe, savedNFTs, setSavedNFTs]);
+  ] = useField<SafeTransaction['nftData']>(
+    `transactions.${transactionFormIndex}.nftData`,
+  );
 
   /*
-   * This effect really belongs in the 'onSelected' prop of the SingleNFTPicker.
-   * However, this causes a bug where Formik thinks the NFT is null, even though it isn't.
+   * So the form shows loading spinner when entering from main menu
+   * but not when clicking "back" from preview
    */
+  const isFirstRender = safe && !availableNFTs && !nftError && !selectedNFTData;
+
   useEffect(() => {
-    const filteredNFTData = availableNFTs?.find((nft) => {
-      const id = getIdFromNFTDisplayName(
-        selectedNFT?.profile.displayName || '',
-      );
-      return (
-        nft.address === selectedNFT?.profile.walletAddress && nft.id === id
-      );
-    });
-    if (filteredNFTData) {
-      setSelectedNFTData(filteredNFTData, true);
-    }
+    const getNFTs = async (chosenSafe: SelectedSafe): Promise<void> => {
+      setNFTError('');
+      setIsLoadingNFTData(true);
+      const chainName = getChainNameFromSafe(chosenSafe.profile.displayName);
+      const baseUrl = getTxServiceBaseUrl(chainName);
+      const address = chosenSafe.profile.walletAddress;
+      try {
+        const response = await fetch(
+          `${baseUrl}/v1/safes/${address}/collectibles/`,
+        );
+        if (response.status === 200) {
+          const data = await response.json();
+          setSavedNFTs((nfts) => ({
+            ...nfts,
+            [address]: data,
+          }));
+          setAvailableNFTs(data);
+        }
+      } catch (e) {
+        log.error(e);
+        setNFTError(MSG.nftError);
+      } finally {
+        setIsLoadingNFTData(false);
+      }
+    };
 
-    if (!selectedNFT) {
-      setSelectedNFTData(null, true);
+    if (safe) {
+      const savedNFTData = savedNFTs[safe.profile.walletAddress];
+      if (savedNFTData) {
+        setNFTError('');
+        setAvailableNFTs(savedNFTData);
+      } else {
+        getNFTs(safe);
+      }
     }
-    /*
-     * Including setSelectedNFTData creates an infinite loop,
-     * presumably because it gets recreated on every re-render.
-     */
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
-  }, [selectedNFT, availableNFTs]);
+  }, [safe, savedNFTs, setSavedNFTs]);
 
-  if (isLoadingNFTData) {
-    return (
-      <DialogSection>
-        <div className={styles.loading}>
-          <SpinnerLoader
-            appearance={{ size: 'medium' }}
-            loadingText={MSG.nftLoading}
-          />
-        </div>
-      </DialogSection>
-    );
+  if (!safe && !availableNFTs && !nftError) {
+    return <Error error={FundsMSG.noSafeSelectedError} />;
   }
 
-  if (availableNFTs === null) {
-    return (
-      <DialogSection>
-        <div className={styles.error}>
-          <FormattedMessage {...MSG.nftError} />
-        </div>
-      </DialogSection>
-    );
+  if (isLoadingNFTData || isFirstRender) {
+    return <Loading message={MSG.nftLoading} />;
   }
 
-  return availableNFTs?.length ? (
+  if (nftError) {
+    return <Error error={nftError} />;
+  }
+
+  if (availableNFTs?.length === 0) {
+    return <Error error={MSG.noNftsFound} />;
+  }
+
+  return (
     <>
       {/* select NFT */}
       <DialogSection appearance={{ theme: 'sidePadding' }}>
@@ -230,6 +198,17 @@ const TransferNFTSection = ({
             disabled={disabledInput}
             placeholder={MSG.NFTPickerPlaceholder}
             validateOnChange
+            onSelected={(selectedNFT: SelectedNFT) => {
+              const nftData = getSelectedNFTData(
+                selectedNFT,
+                availableNFTs || [],
+              );
+
+              // selectedNFT comes from availableNFTs
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              setSelectedNFTData(nftData!, false); // setting true causes bug
+              handleValidation();
+            }}
           />
         </div>
       </DialogSection>
@@ -292,7 +271,7 @@ const TransferNFTSection = ({
             label={MSG.selectRecipient}
             name={`transactions.${transactionFormIndex}.recipient`}
             filter={filterUserSelection}
-            renderAvatar={renderAvatar}
+            renderAvatar={XsUserAvatar}
             placeholder={MSG.userPickerPlaceholder}
             disabled={disabledInput}
             showMaskedAddress
@@ -304,15 +283,9 @@ const TransferNFTSection = ({
         </div>
       </DialogSection>
     </>
-  ) : (
-    <DialogSection>
-      <div className={styles.notFound}>
-        <FormattedMessage {...MSG.noNftsFound} />
-      </div>
-    </DialogSection>
   );
 };
 
-TransferNFTSection.displayName = displayName;
+TransferNFTSection.displayName = `${displayName}.TransferNFTSection`;
 
 export default TransferNFTSection;

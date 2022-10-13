@@ -6,10 +6,9 @@ import moveDecimal from 'move-decimal-point';
 import Maybe from 'graphql/tsutils/Maybe';
 
 import { intl } from '~utils/intl';
-import { isAbiItem, validateType } from '~utils/safes';
-import { TransactionTypes } from './constants';
-import { getSelectedSafeBalance } from '~utils/safes/safeBalances';
+import { isAbiItem, validateType, getSelectedSafeBalance } from '~utils/safes';
 
+import { TransactionTypes } from './constants';
 import { SafeBalance } from './AmountBalances';
 
 const MSG = defineMessages({

@@ -1,18 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormikProps, useField } from 'formik';
-import {
-  defineMessages,
-  FormattedMessage,
-  MessageDescriptor,
-} from 'react-intl';
+import { defineMessages } from 'react-intl';
 import moveDecimal from 'move-decimal-point';
 import { AddressZero } from 'ethers/constants';
 
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
-import { AnyUser, useMembersSubscription } from '~data/index';
-import { Address } from '~types/index';
-import UserAvatar from '~core/UserAvatar';
-import { SpinnerLoader } from '~core/Preloaders';
+import { useMembersSubscription } from '~data/index';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import { DialogSection } from '~core/Dialog';
 import {
@@ -24,6 +17,7 @@ import { log } from '~utils/debug';
 
 import AmountBalances from '../AmountBalances';
 import { FormValues, TransactionSectionProps } from '..';
+import { displayName, Error, Loading, MsgType, XsUserAvatar } from '.';
 
 import styles from './TransactionTypesSection.css';
 
@@ -55,50 +49,9 @@ export const MSG = defineMessages({
   },
 });
 
-const displayName = `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection`;
-
 export interface TransferFundsProps extends TransactionSectionProps {
-  handleValidation: () => void;
   savedTokenState: [{}, React.Dispatch<React.SetStateAction<{}>>];
 }
-
-const renderAvatar = (address: Address, item: AnyUser) => (
-  <UserAvatar address={address} user={item} size="xs" notSet={false} />
-);
-
-const Loading = () => (
-  <DialogSection>
-    <div className={styles.spinner}>
-      <SpinnerLoader
-        appearance={{ size: 'medium' }}
-        loadingText={MSG.balancesLoading}
-      />
-    </div>
-  </DialogSection>
-);
-
-Loading.displayName = `${displayName}.Loading`;
-
-export type ErrorMsgType = MessageDescriptor | string;
-interface ErrorProps {
-  error: ErrorMsgType;
-}
-
-const Error = ({ error }: ErrorProps) => (
-  <DialogSection>
-    <div className={styles.error}>
-      {typeof error === 'string' ? (
-        <span>{error}</span>
-      ) : (
-        <FormattedMessage {...error} />
-      )}
-    </div>
-  </DialogSection>
-);
-
-Error.displayName = `${displayName}.Error`;
-
-export { Loading, Error };
 
 const TransferFundsSection = ({
   colony: { colonyAddress, safes },
@@ -113,7 +66,7 @@ const TransferFundsSection = ({
 }: TransferFundsProps &
   Pick<FormikProps<FormValues>, 'setFieldValue' | 'values'>) => {
   const [isLoadingBalances, setIsLoadingBalances] = useState<boolean>(false);
-  const [balanceError, setBalanceError] = useState<ErrorMsgType>('');
+  const [balanceError, setBalanceError] = useState<MsgType>('');
   const [prevSafeAddress, setPrevSafeAddress] = useState<string>('');
   const [savedTokens, setSavedTokens] = savedTokenState;
   const { data: colonyMembers } = useMembersSubscription({
@@ -213,7 +166,7 @@ const TransferFundsSection = ({
   );
 
   if (isLoadingBalances) {
-    return <Loading />;
+    return <Loading message={MSG.balancesLoading} />;
   }
 
   if (balanceError) {
@@ -244,7 +197,7 @@ const TransferFundsSection = ({
             label={MSG.recipient}
             name={`transactions.${transactionFormIndex}.recipient`}
             filter={filterUserSelection}
-            renderAvatar={renderAvatar}
+            renderAvatar={XsUserAvatar}
             disabled={disabledInput}
             placeholder={MSG.userPickerPlaceholder}
             dataTest="paymentRecipientPicker"
@@ -258,6 +211,6 @@ const TransferFundsSection = ({
   );
 };
 
-TransferFundsSection.displayName = displayName;
+TransferFundsSection.displayName = `${displayName}.TransferFundsSection`;
 
 export default TransferFundsSection;
