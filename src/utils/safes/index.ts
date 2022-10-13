@@ -5,3 +5,4 @@ export {
   fetchContractABI,
   isAbiItem,
 } from './getContractUsefulMethods';
+export { getSelectedSafeBalance } from './safeBalances';
