@@ -62,7 +62,7 @@ const MSG = defineMessages({
     defaultMessage: 'Ended',
   },
   claimed: {
-    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.ended`,
+    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.claimed`,
     defaultMessage: 'Claimed',
   },
 });
@@ -251,7 +251,7 @@ const StreamingStagesLocked = ({
         </span>
         <div className={styles.valueWrapper}>
           {status === Status.StartedStream && paidToDate ? (
-            paidToDate.map((paidToDateItem, index) => {
+            paidToDate.map((paidToDateItem) => {
               const token = colony?.tokens?.find(
                 (tokenItem) => tokenItem.address === paidToDateItem.token,
               );
@@ -261,12 +261,7 @@ const StreamingStagesLocked = ({
               }
 
               return (
-                <div
-                  className={classNames(styles.value, {
-                    [styles.marginTop]: index > 0,
-                  })}
-                  key={paidToDateItem.id}
-                >
+                <div className={styles.value} key={paidToDateItem.id}>
                   <FormattedMessage
                     {...MSG.paidValue}
                     values={{
@@ -302,7 +297,7 @@ const StreamingStagesLocked = ({
                 <FormattedMessage {...MSG.availableToClaim} />
               </span>
               <div className={styles.valueWrapper}>
-                {availableToClaim.map((availableItem, index) => {
+                {availableToClaim.map((availableItem) => {
                   const token = colony?.tokens?.find(
                     (tokenItem) => tokenItem.address === availableItem.token,
                   );
@@ -311,12 +306,7 @@ const StreamingStagesLocked = ({
                   }
 
                   return (
-                    <span
-                      className={classNames(styles.value, {
-                        [styles.marginTop]: index > 0,
-                      })}
-                      key={availableItem.id}
-                    >
+                    <span className={styles.value} key={availableItem.id}>
                       <FormattedMessage
                         {...MSG.paidValue}
                         values={{

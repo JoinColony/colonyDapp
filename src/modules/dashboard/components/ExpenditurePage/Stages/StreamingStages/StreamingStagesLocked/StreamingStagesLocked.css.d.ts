@@ -19,4 +19,3 @@ export const tagWrapper: string;
 export const tagClaimed: string;
 export const valueWrapper: string;
 export const alignStart: string;
-export const marginTop: string;
