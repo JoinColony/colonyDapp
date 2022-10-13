@@ -205,10 +205,10 @@ export const getValidationSchema = (
           otherwise: yup.object().nullable(),
         }),
         amount: yup.string().when('transactionType', {
-          is: (transactionType) =>
-            transactionType === TransactionTypes.TRANSFER_FUNDS,
+          is: TransactionTypes.TRANSFER_FUNDS,
           then: yup
             .string()
+            .nullable()
             .test(
               'check-amount',
               formatMessage(MSG.balanceError),
@@ -258,18 +258,16 @@ export const getValidationSchema = (
           otherwise: yup.string().nullable(),
         }),
         rawAmount: yup.number().when('transactionType', {
-          is: (transactionType) =>
-            transactionType === TransactionTypes.RAW_TRANSACTION,
+          is: TransactionTypes.RAW_TRANSACTION,
           then: yup
             .number()
             .transform((value) => toFinite(value))
             .required(() => MSG.requiredFieldError)
             .integer(() => MSG.notIntegerError),
-          otherwise: false,
+          otherwise: yup.number().nullable(),
         }),
         data: yup.string().when('transactionType', {
-          is: (transactionType) =>
-            transactionType === TransactionTypes.RAW_TRANSACTION,
+          is: TransactionTypes.RAW_TRANSACTION,
           then: yup
             .string()
             .required(() => MSG.requiredFieldError)
@@ -278,11 +276,10 @@ export const getValidationSchema = (
               () => MSG.notHexError,
               (value) => isHexString(value),
             ),
-          otherwise: false,
+          otherwise: yup.string(),
         }),
         contract: yup.object().when('transactionType', {
-          is: (transactionType) =>
-            transactionType === TransactionTypes.CONTRACT_INTERACTION,
+          is: TransactionTypes.CONTRACT_INTERACTION,
           then: yup.object().shape({
             profile: yup.object().shape({
               walletAddress: yup
@@ -294,8 +291,7 @@ export const getValidationSchema = (
           otherwise: yup.object().nullable(),
         }),
         abi: yup.string().when('transactionType', {
-          is: (transactionType) =>
-            transactionType === TransactionTypes.CONTRACT_INTERACTION,
+          is: TransactionTypes.CONTRACT_INTERACTION,
           then: yup
             .string()
             .required(() => MSG.requiredFieldError)
@@ -313,17 +309,15 @@ export const getValidationSchema = (
                 return false;
               },
             ),
-          otherwise: false,
+          otherwise: yup.string(),
         }),
         contractFunction: yup.string().when('transactionType', {
-          is: (transactionType) =>
-            transactionType === TransactionTypes.CONTRACT_INTERACTION,
+          is: TransactionTypes.CONTRACT_INTERACTION,
           then: yup.string().required(() => MSG.requiredFieldError),
-          otherwise: false,
+          otherwise: yup.string(),
         }),
         nft: yup.object().when('transactionType', {
-          is: (transactionType) =>
-            transactionType === TransactionTypes.TRANSFER_NFT,
+          is: TransactionTypes.TRANSFER_NFT,
           then: yup.object().shape({
             profile: yup.object().shape({
               displayName: yup.string().required(() => MSG.requiredFieldError),
@@ -335,8 +329,7 @@ export const getValidationSchema = (
           otherwise: yup.object().nullable(),
         }),
         nftData: yup.object().when('transactionType', {
-          is: (transactionType) =>
-            transactionType === TransactionTypes.TRANSFER_NFT,
+          is: TransactionTypes.TRANSFER_NFT,
           then: yup.object().shape({
             address: yup.string(),
             description: yup.string().nullable(),
