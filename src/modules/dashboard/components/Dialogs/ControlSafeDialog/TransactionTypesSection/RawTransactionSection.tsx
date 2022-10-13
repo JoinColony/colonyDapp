@@ -2,40 +2,36 @@ import React, { useEffect } from 'react';
 import { defineMessages } from 'react-intl';
 import { useField } from 'formik';
 
-import { AnyUser, useMembersSubscription } from '~data/index';
-import { Address } from '~types/index';
+import { useMembersSubscription } from '~data/index';
 import { Input } from '~core/Fields';
-import UserAvatar from '~core/UserAvatar';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import { DialogSection } from '~core/Dialog';
 
 import { TransactionSectionProps } from '..';
+import { UserAvatarXs } from './shared';
+
 import styles from './TransactionTypesSection.css';
 
 const MSG = defineMessages({
   valueLabel: {
-    id: `dashboard.ControlSafeDialog.ControlSafeForm.RawTransactionSection.valueLabel`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransactionTypesSection.RawTransactionSection.valueLabel`,
     defaultMessage: 'Value <span>wei</span>',
   },
   dataLabel: {
-    id: `dashboard.ControlSafeDialog.ControlSafeForm.RawTransactionSection.dataLabel`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransactionTypesSection.RawTransactionSection.dataLabel`,
     defaultMessage: 'Data <span>bytes</span>',
   },
   recipient: {
-    id: `dashboard.ControlSafeDialog.ControlSafeForm.RawTransactionSection.recipient`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransactionTypesSection.RawTransactionSection.recipient`,
     defaultMessage: 'Select Recipient',
   },
   userPickerPlaceholder: {
-    id: `dashboard.ControlSafeDialog.ControlSafeForm.RawTransactionSection.userPickerPlaceholder`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransactionTypesSection.RawTransactionSection.userPickerPlaceholder`,
     defaultMessage: 'Select or paste a wallet address',
   },
 });
 
-const displayName = `dashboard.ControlSafeDialog.ControlSafeForm.RawTransactionSection`;
-
-const renderAvatar = (address: Address, item: AnyUser) => (
-  <UserAvatar address={address} user={item} size="xs" notSet={false} />
-);
+const displayName = `dashboard.ControlSafeDialog.ControlSafeForm.TransactionTypesSection.RawTransactionSection`;
 
 const RawTransactionSection = ({
   colony: { colonyAddress },
@@ -68,7 +64,7 @@ const RawTransactionSection = ({
             label={MSG.recipient}
             name={`transactions.${transactionFormIndex}.recipient`}
             filter={filterUserSelection}
-            renderAvatar={renderAvatar}
+            renderAvatar={UserAvatarXs}
             disabled={disabledInput}
             placeholder={MSG.userPickerPlaceholder}
             validateOnChange

@@ -235,6 +235,7 @@ const ControlSafeForm = ({
       values.transactions.forEach((tx, i) => {
         if (tx.transactionType === TransactionTypes.TRANSFER_NFT) {
           setFieldValue(`transactions.${i}.nft`, null);
+          setFieldValue(`transactions.${i}.nftData`, null);
         }
       });
     }

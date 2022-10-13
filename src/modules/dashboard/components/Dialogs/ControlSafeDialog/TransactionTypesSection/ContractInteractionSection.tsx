@@ -4,9 +4,7 @@ import { FormikProps } from 'formik';
 import { isAddress } from 'web3-utils';
 
 import { AnyUser } from '~data/index';
-import { Address } from '~types/index';
 import { Input, Select, SelectOption, Textarea } from '~core/Fields';
-import UserAvatar from '~core/UserAvatar';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import { DialogSection } from '~core/Dialog';
 import {
@@ -14,58 +12,59 @@ import {
   AbiItemExtended,
   fetchContractABI,
 } from '~utils/safes';
-import { SpinnerLoader } from '~core/Preloaders';
 import { isEmpty, isEqual, isNil } from '~utils/lodash';
 import { getChainNameFromSafe } from '~modules/dashboard/sagas/utils/safeHelpers';
+import { Message } from '~types/index';
 
 import { FormValues, FormProps, TransactionSectionProps } from '..';
+import { ErrorMessage as Error, Loading, UserAvatarXs } from './shared';
 
 import styles from './TransactionTypesSection.css';
 
 const MSG = defineMessages({
   abiLabel: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.abiLabel`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransactionTypesSection.ContractInteractionSection.abiLabel`,
     defaultMessage: 'ABI/JSON',
   },
   functionLabel: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.functionLabel`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransactionTypesSection.ContractInteractionSection.functionLabel`,
     defaultMessage: 'Select function to interact with',
   },
   functionPlaceholder: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.functionPlaceholder`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransactionTypesSection.ContractInteractionSection.functionPlaceholder`,
     defaultMessage: 'Select function',
   },
   contractLabel: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.contractLabel`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransactionTypesSection.ContractInteractionSection.contractLabel`,
     defaultMessage: 'Target contract address',
   },
   userPickerPlaceholder: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.userPickerPlaceholder`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransactionTypesSection.ContractInteractionSection.userPickerPlaceholder`,
     defaultMessage: 'Select or paste a contract address',
   },
   loadingContract: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.loadingContract`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransactionTypesSection.ContractInteractionSection.loadingContract`,
     defaultMessage: 'Loading Contract',
   },
   noSafeSelectedError: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.noSafeSelectedError`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransactionTypesSection.ContractInteractionSection.noSafeSelectedError`,
     defaultMessage: `You must select a safe before fetching the contract's ABI`,
   },
   contractNotVerifiedError: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.contractNotVerifiedError`,
-    defaultMessage: `Contract could not be verified. Ensure it exists on {network}.`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransactionTypesSection.ContractInteractionSection.contractNotVerifiedError`,
+    defaultMessage: `Contract could not be verified. Ensure it exists on {network}`,
   },
   invalidAddressError: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.invalidAddressError`,
-    defaultMessage: `Contract address is not a valid address.`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransactionTypesSection.ContractInteractionSection.invalidAddressError`,
+    defaultMessage: `Contract address is not a valid address`,
   },
   fetchFailedError: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.fetchFailedError`,
-    defaultMessage: `Unable to fetch contract. Please check your connection.`,
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransactionTypesSection.ContractInteractionSection.fetchFailedError`,
+    defaultMessage: `Unable to fetch contract. Please check your connection`,
   },
 });
 
-const displayName = `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection`;
+const displayName = `dashboard.ControlSafeDialog.ControlSafeForm.TransactionTypesSection.ContractInteractionSection`;
 
 interface Props
   extends Pick<
@@ -82,10 +81,6 @@ interface ABIResponse {
   message: string;
   result: string;
 }
-
-const renderAvatar = (address: Address, item: AnyUser) => (
-  <UserAvatar address={address} user={item} size="xs" notSet={false} />
-);
 
 const ContractInteractionSection = ({
   disabledInput,
@@ -106,7 +101,7 @@ const ContractInteractionSection = ({
   >([]);
   const [prevSafeChainId, setPrevSafeChainId] = useState<string>();
   const [isLoadingABI, setIsLoadingABI] = useState<boolean>(false);
-  const [fetchABIError, setFetchABIError] = useState<string>('');
+  const [fetchABIError, setFetchABIError] = useState<Message>('');
 
   const transactionValues = values.transactions[transactionFormIndex];
 
@@ -173,19 +168,19 @@ const ContractInteractionSection = ({
           if (data) {
             onContractABIChange(data);
           } else {
-            setFetchABIError(formatMessage(MSG.fetchFailedError));
+            setFetchABIError(MSG.fetchFailedError);
           }
         });
       } else {
         if (!isAddress(contract.profile.walletAddress)) {
-          setFetchABIError(formatMessage(MSG.invalidAddressError));
+          setFetchABIError(MSG.invalidAddressError);
         } else {
-          setFetchABIError(formatMessage(MSG.noSafeSelectedError));
+          setFetchABIError(MSG.noSafeSelectedError);
         }
         setIsLoadingABI(false);
       }
     },
-    [selectedSafe, onContractABIChange, formatMessage],
+    [selectedSafe, onContractABIChange],
   );
 
   const usefulMethods: AbiItemExtended[] = useMemo(
@@ -245,16 +240,7 @@ const ContractInteractionSection = ({
   ]);
 
   if (isLoadingABI) {
-    return (
-      <DialogSection>
-        <div className={styles.spinner}>
-          <SpinnerLoader
-            appearance={{ size: 'medium' }}
-            loadingText={MSG.loadingContract}
-          />
-        </div>
-      </DialogSection>
-    );
+    return <Loading message={MSG.loadingContract} />;
   }
 
   return (
@@ -267,7 +253,7 @@ const ContractInteractionSection = ({
             label={MSG.contractLabel}
             name={`transactions.${transactionFormIndex}.contract`}
             filter={filterUserSelection}
-            renderAvatar={renderAvatar}
+            renderAvatar={UserAvatarXs}
             disabled={disabledInput}
             placeholder={MSG.userPickerPlaceholder}
             onSelected={onContractChange}
@@ -277,9 +263,7 @@ const ContractInteractionSection = ({
         </div>
       </DialogSection>
       {fetchABIError ? (
-        <DialogSection>
-          <div className={styles.error}>{fetchABIError}</div>
-        </DialogSection>
+        <Error error={fetchABIError} />
       ) : (
         <>
           <DialogSection>
