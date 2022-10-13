@@ -43,7 +43,7 @@ const MSG = defineMessages({
   },
   noDecisionText: {
     id: 'dashboard.DecisionPreview.noDecisionText',
-    defaultMessage: 'No draft Decision found.',
+    defaultMessage: 'No draft Decision found. ',
   },
   createDecision: {
     id: 'dashboard.DecisionPreview.createDecision',
