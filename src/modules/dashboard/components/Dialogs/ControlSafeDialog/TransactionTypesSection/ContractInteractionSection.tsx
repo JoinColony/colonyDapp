@@ -4,9 +4,7 @@ import { FormikProps } from 'formik';
 import { isAddress } from 'web3-utils';
 
 import { AnyUser } from '~data/index';
-import { Address } from '~types/index';
 import { Input, Select, SelectOption, Textarea } from '~core/Fields';
-import UserAvatar from '~core/UserAvatar';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import { DialogSection } from '~core/Dialog';
 import {
@@ -16,11 +14,12 @@ import {
   fetchContractName,
   getColonySafe,
 } from '~utils/safes';
-import { SpinnerLoader } from '~core/Preloaders';
 import { isEmpty, isEqual, isNil } from '~utils/lodash';
 import { getChainNameFromSafe } from '~modules/dashboard/sagas/utils/safeHelpers';
+import { Message } from '~types/index';
 
 import { FormValues, FormProps, TransactionSectionProps } from '..';
+import { ErrorMessage as Error, Loading, AvatarXs } from './shared';
 
 import styles from './TransactionTypesSection.css';
 
@@ -55,15 +54,15 @@ const MSG = defineMessages({
   },
   contractNotVerifiedError: {
     id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.contractNotVerifiedError`,
-    defaultMessage: `Contract could not be verified. Ensure it exists on {network}.`,
+    defaultMessage: `Contract could not be verified. Ensure it exists on {network}`,
   },
   invalidAddressError: {
     id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.invalidAddressError`,
-    defaultMessage: `Contract address is not a valid address.`,
+    defaultMessage: `Contract address is not a valid address`,
   },
   fetchFailedError: {
     id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.fetchFailedError`,
-    defaultMessage: `Unable to fetch contract. Please check your connection.`,
+    defaultMessage: `Unable to fetch contract. Please check your connection`,
   },
 });
 
@@ -85,10 +84,6 @@ interface ABIResponse {
   result: string;
 }
 
-const renderAvatar = (address: Address, item: AnyUser) => (
-  <UserAvatar address={address} user={item} size="xs" notSet={false} />
-);
-
 const ContractInteractionSection = ({
   disabledInput,
   transactionFormIndex,
@@ -108,7 +103,7 @@ const ContractInteractionSection = ({
   >([]);
   const [prevSafeChainId, setPrevSafeChainId] = useState<string>();
   const [isLoadingABI, setIsLoadingABI] = useState<boolean>(false);
-  const [fetchABIError, setFetchABIError] = useState<string>('');
+  const [fetchABIError, setFetchABIError] = useState<Message>('');
 
   const transactionValues = transactions[transactionFormIndex];
 
@@ -186,9 +181,9 @@ const ContractInteractionSection = ({
         setIsLoadingABI(false);
       } else {
         if (!isAddress(contract.profile.walletAddress)) {
-          setFetchABIError(formatMessage(MSG.invalidAddressError));
+          setFetchABIError(MSG.invalidAddressError);
         } else {
-          setFetchABIError(formatMessage(MSG.noSafeSelectedError));
+          setFetchABIError(MSG.noSafeSelectedError);
         }
         setFieldValue(
           `transactions.${transactionFormIndex}.contract.profile.displayName`,
@@ -264,16 +259,7 @@ const ContractInteractionSection = ({
   ]);
 
   if (isLoadingABI) {
-    return (
-      <DialogSection>
-        <div className={styles.spinner}>
-          <SpinnerLoader
-            appearance={{ size: 'medium' }}
-            loadingText={MSG.loadingContract}
-          />
-        </div>
-      </DialogSection>
-    );
+    return <Loading message={MSG.loadingContract} />;
   }
 
   return (
@@ -286,7 +272,7 @@ const ContractInteractionSection = ({
             label={MSG.contractLabel}
             name={`transactions.${transactionFormIndex}.contract`}
             filter={filterUserSelection}
-            renderAvatar={renderAvatar}
+            renderAvatar={AvatarXs}
             disabled={disabledInput}
             placeholder={MSG.userPickerPlaceholder}
             onSelected={onContractChange}
@@ -297,9 +283,7 @@ const ContractInteractionSection = ({
         </div>
       </DialogSection>
       {fetchABIError ? (
-        <DialogSection>
-          <div className={styles.error}>{fetchABIError}</div>
-        </DialogSection>
+        <Error error={fetchABIError} />
       ) : (
         <>
           <DialogSection>
