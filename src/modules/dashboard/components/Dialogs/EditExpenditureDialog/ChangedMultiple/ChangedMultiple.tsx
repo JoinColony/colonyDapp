@@ -1,22 +1,27 @@
 import { FieldArray } from 'formik';
 import { isNil } from 'lodash';
 import React, { Fragment } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, useIntl } from 'react-intl';
 
 import Button from '~core/Button';
 import { Colony, LoggedInUser } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/types';
 import { Staged } from '~dashboard/ExpenditurePage/Staged/types';
+import { Batch } from '~dashboard/ExpenditurePage/Batch/types';
+
+import ChangeHeader from '../ChangeHeader';
 
 import ChangeItem from './ChangeItem';
-import ChangeHeader from './ChangeHeader';
 import styles from './ChangedMultiple.css';
-import { Batch } from '~dashboard/ExpenditurePage/Batch/types';
 
 export const MSG = defineMessages({
   discard: {
     id: 'dashboard.EditExpenditureDialog.ChangedMultiple.discard',
     defaultMessage: 'Discard',
+  },
+  changeRecipient: {
+    id: 'dashboard.EditExpenditureDialog.ChangedMultiple.changeRecipient',
+    defaultMessage: 'Change Recipient',
   },
 });
 
@@ -44,6 +49,8 @@ interface Props {
 }
 
 const ChangedMultiple = ({ newValues, oldValues, colony }: Props) => {
+  const { formatMessage } = useIntl();
+
   if (!Array.isArray(newValues) || !Array.isArray) {
     return null;
   }
@@ -63,7 +70,11 @@ const ChangedMultiple = ({ newValues, oldValues, colony }: Props) => {
                     name={newValue?.key || 'change'}
                     render={({ remove }) => (
                       <>
-                        <ChangeHeader name={newValue?.key} index={index} />
+                        <ChangeHeader
+                          name={formatMessage(MSG.changeRecipient)}
+                          count={index + 1}
+                          withCounter
+                        />
                         {Object.entries(changeItem)?.map(([key, value]) => {
                           if (skip.includes(key)) {
                             return null;
