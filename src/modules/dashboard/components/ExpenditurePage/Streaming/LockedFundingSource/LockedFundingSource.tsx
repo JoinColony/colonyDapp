@@ -35,11 +35,19 @@ interface Props {
   fundingSource?: FundingSource;
   colony: Colony;
   isOpen?: boolean;
+  hasRateError?: boolean;
+  hasLimitError?: boolean;
 }
 
-const LockedFundingSource = ({ fundingSource, colony, isOpen }: Props) => {
+const LockedFundingSource = ({
+  fundingSource,
+  colony,
+  isOpen,
+  hasRateError,
+  hasLimitError,
+}: Props) => {
   const { formatMessage } = useIntl();
-  const { rate, team } = fundingSource || {};
+  const { rates, team } = fundingSource || {};
 
   const domain = useMemo(
     () =>
@@ -62,109 +70,117 @@ const LockedFundingSource = ({ fundingSource, colony, isOpen }: Props) => {
     [colony, domain],
   );
 
+  if (!isOpen) {
+    return null;
+  }
+
   return (
-    <>
-      {isOpen && (
-        <div className={styles.formContainer}>
-          <FormSection appearance={{ border: 'bottom' }}>
-            <div className={styles.row}>
-              <InputLabel
-                label={MSG.team}
-                appearance={{
-                  direction: 'horizontal',
-                }}
-              />
-              <div className={styles.activeItem}>
-                <ColorTag color={getDomainColor(team)} />
+    <div className={styles.formContainer}>
+      <FormSection appearance={{ border: 'bottom' }}>
+        <div className={styles.row}>
+          <InputLabel
+            label={MSG.team}
+            appearance={{
+              direction: 'horizontal',
+            }}
+          />
+          <div className={styles.activeItem}>
+            <ColorTag color={getDomainColor(team)} />
+            <div
+              className={classNames(
+                styles.activeItemLabel,
+                styles.lockedActiveItemLabel,
+              )}
+            >
+              {domain?.name}
+            </div>
+          </div>
+        </div>
+      </FormSection>
+      {rates?.map(({ amount, token, time, id }, rateIndex) => {
+        const tokenData = colony.tokens?.find(
+          (tokenItem) => token && tokenItem.address === token,
+        );
+        return (
+          tokenData &&
+          amount && (
+            <FormSection appearance={{ border: 'bottom' }} key={id}>
+              <div className={styles.row}>
+                <InputLabel
+                  label={formatMessage(MSG.rate, {
+                    count: rates.length > 1 && `#${rateIndex + 1}`,
+                  })}
+                  appearance={{
+                    direction: 'horizontal',
+                  }}
+                />
                 <div
-                  className={classNames(
-                    styles.activeItemLabel,
-                    styles.lockedActiveItemLabel,
-                  )}
+                  className={classNames(styles.valueAmount, {
+                    [styles.error]: hasRateError,
+                  })}
                 >
-                  {domain?.name}
+                  <span className={styles.icon}>
+                    <TokenIcon
+                      className={styles.tokenIcon}
+                      token={tokenData}
+                      name={tokenData.name || tokenData.address}
+                    />
+                  </span>
+                  <Numeral
+                    unit={getTokenDecimalsWithFallback(0)}
+                    value={amount}
+                  />
+                  <span className={styles.symbol}>
+                    {tokenData.symbol}/{time}
+                  </span>
                 </div>
               </div>
-            </div>
-          </FormSection>
-          {rate?.map(({ amount, token, time }, rateIndex) => {
-            const tokenData = colony.tokens?.find(
-              (tokenItem) => token && tokenItem.address === token,
-            );
-            return (
-              tokenData &&
-              amount && (
-                <FormSection appearance={{ border: 'bottom' }}>
-                  <div className={styles.row}>
-                    <InputLabel
-                      label={formatMessage(MSG.rate, {
-                        count: rate.length > 1 && `#${rateIndex + 1}`,
-                      })}
-                      appearance={{
-                        direction: 'horizontal',
-                      }}
-                    />
-                    <div className={styles.valueAmount}>
-                      <span className={styles.icon}>
-                        <TokenIcon
-                          className={styles.tokenIcon}
-                          token={tokenData}
-                          name={tokenData.name || tokenData.address}
-                        />
-                      </span>
-                      <Numeral
-                        unit={getTokenDecimalsWithFallback(0)}
-                        value={amount}
-                      />
-                      <span className={styles.symbol}>
-                        {tokenData.symbol}/{time}
-                      </span>
-                    </div>
-                  </div>
-                </FormSection>
-              )
-            );
-          })}
-          {rate?.map(({ token, limit }, rateIndex) => {
-            const tokenData = colony.tokens?.find(
-              (tokenItem) => token && tokenItem.address === token,
-            );
+            </FormSection>
+          )
+        );
+      })}
+      {rates?.map(({ token, limit, id }, rateIndex) => {
+        const tokenData = colony.tokens?.find(
+          (tokenItem) => token && tokenItem.address === token,
+        );
 
-            return (
-              tokenData &&
-              limit && (
-                <FormSection appearance={{ border: 'bottom' }}>
-                  <div className={styles.row}>
-                    <InputLabel
-                      label={formatMessage(MSG.limit, {
-                        count: rate.length > 1 && `#${rateIndex + 1}`,
-                      })}
-                      appearance={{
-                        direction: 'horizontal',
-                      }}
+        return (
+          tokenData &&
+          limit && (
+            <FormSection appearance={{ border: 'bottom' }} key={id}>
+              <div className={styles.row}>
+                <InputLabel
+                  label={formatMessage(MSG.limit, {
+                    count: rates.length > 1 && `#${rateIndex + 1}`,
+                  })}
+                  appearance={{
+                    direction: 'horizontal',
+                  }}
+                />
+                <div
+                  className={classNames(styles.valueAmount, {
+                    [styles.error]: hasLimitError,
+                  })}
+                >
+                  <span className={styles.icon}>
+                    <TokenIcon
+                      className={styles.tokenIcon}
+                      token={tokenData}
+                      name={tokenData.name || tokenData.address}
                     />
-                    <div className={styles.valueAmount}>
-                      <span className={styles.icon}>
-                        <TokenIcon
-                          className={styles.tokenIcon}
-                          token={tokenData}
-                          name={tokenData.name || tokenData.address}
-                        />
-                      </span>
-                      <Numeral
-                        unit={getTokenDecimalsWithFallback(0)}
-                        value={limit}
-                      />
-                      <span className={styles.symbol}>{tokenData.symbol}</span>
-                    </div>
-                  </div>
-                </FormSection>
-              )
-            );
-          })}
-        </div>
-      )}
-    </>
+                  </span>
+                  <Numeral
+                    unit={getTokenDecimalsWithFallback(0)}
+                    value={limit}
+                  />
+                  <span className={styles.symbol}>{tokenData.symbol}</span>
+                </div>
+              </div>
+            </FormSection>
+          )
+        );
+      })}
+    </div>
   );
 };
 

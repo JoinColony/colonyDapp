@@ -2,16 +2,14 @@ import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import classNames from 'classnames';
 
-import { FormSection } from '~core/Fields';
-import { CollapseExpandButtons } from '~dashboard/ExpenditurePage/Payments';
 import { Colony } from '~data/index';
 import Icon from '~core/Icon';
 
 import { Stage } from '../Stages/constants';
 
-import LockedFundingSource from './LockedFundingSource';
 import { FundingSource } from './types';
 import styles from './Streaming.css';
+import SingleLockedFunding from './SingleLockedFunding';
 
 const MSG = defineMessages({
   fundingSource: {
@@ -78,95 +76,18 @@ const LockedStreaming = ({
           </span>
         )}
       </div>
-      {fundingSources?.map((fundingSource, index) => {
-        const domain = colony?.domains.find(
-          ({ ethDomainId }) => Number(fundingSource.team) === ethDomainId,
-        );
-        const isOpen = !!openItemsIds?.find((id) => id === fundingSource.id);
-
-        const { amount, token, time } = fundingSource.rates?.[0] || {};
-        const tokenData = colony.tokens?.find(
-          (tokenItem) => token && tokenItem.address === token,
-        );
-
-        return (
-          <div
-            className={classNames(styles.singleFundingSource, {
-              [styles.marginBottomLarge]: isOpen,
-            })}
-            key={fundingSource.id}
-          >
-            <FormSection>
-              <div className={styles.fundingSourceLabel}>
-                <CollapseExpandButtons
-                  isExpanded={isOpen}
-                  onToogleButtonClick={() =>
-                    onToggleButtonClick(fundingSource.id)
-                  }
-                  isLastItem={index === fundingSources?.length - 1}
-                  itemName={formatMessage(MSG.itemName)}
-                />
-                <FormattedMessage
-                  {...MSG.title}
-                  values={{
-                    counter: index + 1,
-                    team: domain?.name,
-                    rate: (
-                      <div
-                        className={classNames(styles.rate, styles.marginLeft)}
-                      >
-                        <FormattedMessage
-                          {...MSG.rate}
-                          values={{
-                            amount,
-                            token: tokenData?.symbol,
-                            time,
-                            comma:
-                              fundingSource.rates.length > 1 && isOpen && ', ',
-                          }}
-                        />
-                      </div>
-                    ),
-                    tokens:
-                      fundingSource.rates.length > 1 &&
-                      (isOpen
-                        ? fundingSource.rates.map((rateItem, idx) => {
-                            if (idx === 0) {
-                              return null;
-                            }
-                            const tokenItemData = colony.tokens?.find(
-                              (tokenItem) =>
-                                token && tokenItem.address === rateItem.token,
-                            );
-                            return (
-                              <div className={styles.rate} key={rateItem.id}>
-                                <FormattedMessage
-                                  {...MSG.rate}
-                                  values={{
-                                    amount: rateItem.amount,
-                                    token: tokenItemData?.symbol,
-                                    time: rateItem.time,
-                                    comma:
-                                      fundingSource.rates.length > idx + 1 &&
-                                      ',',
-                                  }}
-                                />
-                              </div>
-                            );
-                          })
-                        : '...'),
-                  }}
-                />
-              </div>
-            </FormSection>
-            <LockedFundingSource
-              colony={colony}
-              fundingSource={fundingSource}
-              isOpen={isOpen}
-            />
-          </div>
-        );
-      })}
+      {fundingSources?.map((fundingSource, index) => (
+        <SingleLockedFunding
+          {...{
+            fundingSource,
+            colony,
+            openItemsIds,
+            index,
+            onToggleButtonClick,
+          }}
+          isLastItem={index === fundingSources?.length - 1}
+        />
+      ))}
     </div>
   );
 };

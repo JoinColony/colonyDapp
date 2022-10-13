@@ -143,12 +143,24 @@ const StreamingStagesLocked = ({
 
   const handleClaimFunds = () => {
     // mock - add logic/functionality when it should change to true
+    // if rate or limit is insufficient set to true
     setHasInsufficentFunds(true);
-    // if hasInsufficentFunds is true then below func should be executed
-    const customEvent = new CustomEvent(insufficientFundsEventTrigger);
+  };
+
+  useEffect(() => {
+    if (!hasInsufficentFunds) return;
+
+    const mockElementIndex = 0; // mock const with index to trigger proper funding source item from list
+    const customEvent = new CustomEvent(insufficientFundsEventTrigger, {
+      detail: {
+        index: mockElementIndex,
+        rateError: true, // mock - rate state - add logic when it's true
+        limitError: false, // mock - limit state - add logic when it's true
+      },
+    });
 
     window.dispatchEvent(customEvent);
-  };
+  }, [hasInsufficentFunds]);
 
   return (
     <div className={styles.stagesWrapper}>
