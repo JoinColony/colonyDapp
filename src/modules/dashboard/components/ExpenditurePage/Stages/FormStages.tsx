@@ -13,7 +13,7 @@ import {
 } from '~pages/ExpenditurePage/types';
 import { fixTriggerEventName } from '~pages/ExpenditurePage/constants';
 
-import { Stage } from './constants';
+import { Stage, useObserver } from './constants';
 import Stages from './Stages';
 import StreamingStages from './StreamingStages';
 
@@ -64,18 +64,29 @@ const FormStages = ({
   const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
   const [fieldErrorsAmount, setFieldErrorsAmount] = useState<number>(0);
+  const { observer } = useObserver(setFieldErrorsAmount);
 
   const handleSaveDraft = useCallback(async () => {
     setFieldErrorsAmount(0);
     const errors = await validateForm(values);
     const hasErrors = Object.keys(errors)?.length;
     setTouched(setNestedObjectValues<FormikTouched<ValuesType>>(errors, true));
-    const invalidFieldsLength = document
+
+    const invalidFields = document
       .getElementById('expenditurePage')
-      ?.querySelectorAll('[aria-invalid="true"]').length;
+      ?.querySelectorAll('[aria-invalid="true"]');
+    const invalidFieldsLength = invalidFields?.length;
     setFieldErrorsAmount(
       errors && invalidFieldsLength ? invalidFieldsLength : 0,
     );
+
+    if (invalidFields) {
+      Array.from(invalidFields).map((el) => {
+        return observer.observe(el, {
+          attributes: true,
+        });
+      });
+    }
 
     return !errorsLength && colony
       ? openDraftConfirmDialog({
@@ -95,6 +106,7 @@ const FormStages = ({
     setTouched,
     validateForm,
     values,
+    observer,
   ]);
 
   const handleDeleteDraft = () =>
