@@ -1,13 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormikProps, useField } from 'formik';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 import moveDecimal from 'move-decimal-point';
 
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
-import { AnyUser, useMembersSubscription } from '~data/index';
-import { Address, Message } from '~types/index';
-import UserAvatar from '~core/UserAvatar';
-import { SpinnerLoader } from '~core/Preloaders';
+import { useMembersSubscription } from '~data/index';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import { DialogSection } from '~core/Dialog';
 import {
@@ -16,76 +13,47 @@ import {
 } from '~modules/dashboard/sagas/utils/safeHelpers';
 import { getColonySafe, getSelectedSafeBalance } from '~utils/safes';
 import { log } from '~utils/debug';
+import { Message } from '~types/index';
 
 import AmountBalances from '../AmountBalances';
 import { FormValues, TransactionSectionProps } from '..';
+import { ErrorMessage as Error, Loading, UserAvatarXs } from './shared';
 
 import styles from './TransactionTypesSection.css';
 
-const MSG = defineMessages({
+export const MSG = defineMessages({
   amount: {
-    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection.amount`,
+    id: `dashboard.ControlSafeDialog.TransactionTypesSection.TransferFundsSection.amount`,
     defaultMessage: 'Amount',
   },
   recipient: {
-    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection.recipient`,
+    id: `dashboard.ControlSafeDialog.TransactionTypesSection.TransferFundsSection.recipient`,
     defaultMessage: 'Select Recipient',
   },
   userPickerPlaceholder: {
-    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection.userPickerPlaceholder`,
+    id: `dashboard.ControlSafeDialog.TransactionTypesSection.TransferFundsSection.userPickerPlaceholder`,
     defaultMessage: 'Select or paste a wallet address',
   },
   balancesLoading: {
-    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection.balancesLoading`,
+    id: `dashboard.ControlSafeDialog.TransactionTypesSection.TransferFundsSection.balancesLoading`,
     defaultMessage: 'Loading Safe balances',
   },
   balancesError: {
-    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection.balancesError`,
+    id: `dashboard.ControlSafeDialog.TransactionTypesSection.TransferFundsSection.balancesError`,
     defaultMessage:
       'Unable to fetch Safe balances. Please check your connection',
   },
   noSafeSelectedError: {
-    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection.noSafeSelectedError`,
+    id: `dashboard.ControlSafeDialog.TransactionTypesSection.TransferFundsSection.noSafeSelectedError`,
     defaultMessage: 'You must first select a safe',
   },
 });
 
-const displayName = `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection`;
+const displayName = `dashboard.ControlSafeDialog.TransactionTypesSection.TransferFundsSection`;
 
 export interface TransferFundsProps extends TransactionSectionProps {
   savedTokenState: [{}, React.Dispatch<React.SetStateAction<{}>>];
 }
-
-const renderAvatar = (address: Address, item: AnyUser) => (
-  <UserAvatar address={address} user={item} size="xs" notSet={false} />
-);
-
-const Loading = () => (
-  <DialogSection>
-    <div className={styles.spinner}>
-      <SpinnerLoader
-        appearance={{ size: 'medium' }}
-        loadingText={MSG.balancesLoading}
-      />
-    </div>
-  </DialogSection>
-);
-
-interface ErrorMessageProps {
-  error: Message;
-}
-
-const ErrorMessage = ({ error }: ErrorMessageProps) => (
-  <DialogSection>
-    <div className={styles.error}>
-      {typeof error === 'string' ? (
-        <span>{error}</span>
-      ) : (
-        <FormattedMessage {...error} />
-      )}
-    </div>
-  </DialogSection>
-);
 
 const TransferFundsSection = ({
   colony: { colonyAddress, safes },
@@ -181,11 +149,11 @@ const TransferFundsSection = ({
   );
 
   if (isLoadingBalances) {
-    return <Loading />;
+    return <Loading message={MSG.balancesLoading} />;
   }
 
   if (balanceError) {
-    return <ErrorMessage error={balanceError} />;
+    return <Error error={balanceError} />;
   }
 
   return (
@@ -224,7 +192,7 @@ const TransferFundsSection = ({
             label={MSG.recipient}
             name={`transactions.${transactionFormIndex}.recipient`}
             filter={filterUserSelection}
-            renderAvatar={renderAvatar}
+            renderAvatar={UserAvatarXs}
             disabled={disabledInput}
             placeholder={MSG.userPickerPlaceholder}
             dataTest="paymentRecipientPicker"
