@@ -102,6 +102,15 @@
 .nftContainer {
   display: flex;
   align-items: center;
+  min-width: 0;
   color: var(--pink);
   column-gap: 11px;
+}
+
+.avatar {
+  flex-shrink: 0;
+}
+
+.itemValue {
+  composes: inlineEllipsis from '~styles/text.css';
 }
