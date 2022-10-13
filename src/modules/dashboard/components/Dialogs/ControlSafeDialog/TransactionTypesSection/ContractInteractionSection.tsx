@@ -74,7 +74,6 @@ interface Props
     >,
     Pick<FormikProps<FormValues>, 'setFieldValue' | 'values'>,
     Omit<TransactionSectionProps, 'colony'> {
-  handleValidation: () => void;
   removeSelectedContractMethod: (index: number) => void;
 }
 
