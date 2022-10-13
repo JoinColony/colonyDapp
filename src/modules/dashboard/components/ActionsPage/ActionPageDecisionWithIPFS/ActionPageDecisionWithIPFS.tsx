@@ -183,7 +183,9 @@ const ActionPageDecisionWithIPFS = ({
               />
             </div>
           )}
-          {parse(decisionDetails?.description)}
+          <div className={styles.descriptionContainer}>
+            {parse(decisionDetails?.description)}
+          </div>
         </div>
       </div>
       {isObjection && <hr className={styles.divider} />}

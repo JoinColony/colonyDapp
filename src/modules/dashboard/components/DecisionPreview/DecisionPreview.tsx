@@ -173,7 +173,9 @@ const DecisionPreview = () => {
                   text={decisionData.title}
                 />
               </div>
-              {parse(decisionData.description)}
+              <div className={styles.descriptionContainer}>
+                {parse(decisionData.description)}
+              </div>
             </>
           ) : (
             <>
