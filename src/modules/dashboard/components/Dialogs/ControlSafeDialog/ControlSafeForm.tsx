@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FieldArray, FieldArrayRenderProps, FormikProps } from 'formik';
-import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { ColonyRole } from '@colony/colony-js';
 import classnames from 'classnames';
 import { nanoid } from 'nanoid';
 
@@ -15,15 +15,13 @@ import Icon from '~core/Icon';
 import { SingleSafePicker, filterUserSelection } from '~core/SingleUserPicker';
 import IconTooltip from '~core/IconTooltip';
 
-import { getUserRolesForDomain } from '~modules/transformers';
-import { userHasRole } from '~modules/users/checks';
-import { useTransformer } from '~utils/hooks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import { SAFE_INTEGRATION_LEARN_MORE } from '~externalUrls';
-import { Colony, ColonySafe, useLoggedInUser } from '~data/index';
+import { Colony, ColonySafe } from '~data/index';
 import { PrimitiveType } from '~types/index';
 import { SelectedSafe } from '~modules/dashboard/sagas/utils/safeHelpers';
 import { debounce, isEqual, omit } from '~utils/lodash';
+import { useHasPermission } from '~utils/hooks/useHasPermissions';
 
 import SafeTransactionPreview from './SafeTransactionPreview';
 import { FormValues, UpdatedMethods } from './ControlSafeDialog';
@@ -147,18 +145,11 @@ const ControlSafeForm = ({
   const [hasTitle, setHasTitle] = useState(true);
   const [prevSafeAddress, setPrevSafeAddress] = useState<string>('');
 
-  const { walletAddress } = useLoggedInUser();
-  const fromDomainRoles = useTransformer(getUserRolesForDomain, [
-    colony,
-    walletAddress,
-    ROOT_DOMAIN_ID,
-  ]);
-  const userHasFundingPermission = userHasRole(
-    fromDomainRoles,
-    ColonyRole.Funding,
-  );
-  const userHasRootPermission = userHasRole(fromDomainRoles, ColonyRole.Root);
-  const hasRoles = userHasFundingPermission && userHasRootPermission;
+  const hasRoles = [
+    useHasPermission(colony, ColonyRole.Funding),
+    useHasPermission(colony, ColonyRole.Root),
+  ].every((r) => r === true);
+
   const [userHasPermission] = useDialogActionPermissions(
     colony.colonyAddress,
     hasRoles,
