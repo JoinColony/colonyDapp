@@ -114,6 +114,7 @@ export interface TransactionSectionProps extends Pick<FormProps, 'colony'> {
   disabledInput: boolean;
   transactionFormIndex: number;
   handleInputChange: () => void;
+  handleValidation: () => void;
 }
 
 const renderAvatar = (address: string, item) => (
@@ -434,6 +435,7 @@ const ControlSafeForm = ({
                           values={values}
                           disabledInput={!userHasPermission || isSubmitting}
                           savedNFTState={savedNFTState}
+                          handleValidation={handleValidation}
                         />
                       )}
                     </div>

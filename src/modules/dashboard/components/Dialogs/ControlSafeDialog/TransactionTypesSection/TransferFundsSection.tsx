@@ -53,7 +53,6 @@ const MSG = defineMessages({
 const displayName = `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection`;
 
 export interface TransferFundsProps extends TransactionSectionProps {
-  handleValidation: () => void;
   savedTokenState: [{}, React.Dispatch<React.SetStateAction<{}>>];
 }
 
@@ -91,7 +90,7 @@ const ErrorMessage = ({ error }: ErrorMessageProps) => (
 const TransferFundsSection = ({
   colony: { colonyAddress, safes },
   disabledInput,
-  values: { safe },
+  values: { safe: inputtedSafe },
   values,
   transactionFormIndex,
   setFieldValue,
@@ -114,14 +113,16 @@ const TransferFundsSection = ({
     FormValues['safeBalances']
   >(`safeBalances`);
 
-  const safeAddress = safe?.profile.walletAddress;
+  const safeAddress = inputtedSafe?.profile.walletAddress;
 
   const getSafeBalance = useCallback(async () => {
     setBalanceError('');
-    if (safe) {
+    if (inputtedSafe) {
       setIsLoadingBalances(true);
       try {
-        const chainName = getChainNameFromSafe(safe.profile.displayName);
+        const chainName = getChainNameFromSafe(
+          inputtedSafe.profile.displayName,
+        );
         const baseUrl = getTxServiceBaseUrl(chainName);
         const response = await fetch(
           `${baseUrl}/v1/safes/${safeAddress}/balances/`,
@@ -143,7 +144,7 @@ const TransferFundsSection = ({
     }
     // setSafeBalances causes infinite loop
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [safe, safeAddress, setSavedTokens]);
+  }, [inputtedSafe, safeAddress, setSavedTokens]);
 
   const selectedTokenAddress =
     values.transactions[transactionFormIndex].tokenData?.address;
@@ -153,7 +154,7 @@ const TransferFundsSection = ({
     [safeBalances, selectedTokenAddress],
   );
   const selectedSafe = safes.find(
-    (s) => s.contractAddress === safe?.profile.walletAddress,
+    (safe) => safe.contractAddress === inputtedSafe?.profile.walletAddress,
   );
 
   useEffect(() => {
