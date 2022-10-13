@@ -339,6 +339,12 @@ export const GNOSIS_AMB_BRIDGES: { [x: number]: AmbBridge } = {
   },
 };
 
+export const SUPPORTED_SAFE_NETWORKS = SAFE_NETWORKS.filter((network) =>
+  Object.keys(GNOSIS_AMB_BRIDGES).some(
+    (chainId) => chainId === network.chainId.toString(),
+  ),
+);
+
 export const ALLDOMAINS_DOMAIN_SELECTION = {
   id: String(COLONY_TOTAL_BALANCE_DOMAIN_ID),
   color: Color.Yellow,
