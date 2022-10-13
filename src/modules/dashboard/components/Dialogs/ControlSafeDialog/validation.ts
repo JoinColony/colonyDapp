@@ -64,8 +64,7 @@ const MSG = defineMessages({
   },
   balanceError: {
     id: `dashboard.ControlSafeDialog.validation.balanceError`,
-    defaultMessage:
-      'Could not retreive balance information. Please try again later',
+    defaultMessage: 'Could not retreive balance information',
   },
 });
 

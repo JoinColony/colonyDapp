@@ -280,14 +280,15 @@ const ControlSafeForm = ({
     [selectedContractMethods, handleSelectedContractMethods, setFieldValue],
   );
 
-  const savedNFTState = useState({});
-
   const submitButtonText = (() => {
     if (!showPreview) {
       return MSG.buttonCreateTransaction;
     }
     return { id: 'button.confirm' };
   })();
+
+  const savedNFTState = useState({});
+  const savedTokenState = useState({});
 
   return (
     <>
@@ -417,6 +418,7 @@ const ControlSafeForm = ({
                           handleInputChange={handleInputChange}
                           handleValidation={handleValidation}
                           setFieldTouched={setFieldTouched}
+                          savedTokenState={savedTokenState}
                         />
                       )}
                       {values.transactions[index]?.transactionType ===

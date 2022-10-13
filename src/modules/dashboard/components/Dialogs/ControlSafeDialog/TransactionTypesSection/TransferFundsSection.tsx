@@ -5,7 +5,7 @@ import moveDecimal from 'move-decimal-point';
 
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import { AnyUser, useMembersSubscription } from '~data/index';
-import { Address } from '~types/index';
+import { Address, Message } from '~types/index';
 import UserAvatar from '~core/UserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
@@ -14,9 +14,10 @@ import {
   getChainNameFromSafe,
   getTxServiceBaseUrl,
 } from '~modules/dashboard/sagas/utils/safeHelpers';
-import { getSelectedSafeBalance } from '~utils/safes/safeBalances';
+import { getSelectedSafeBalance } from '~utils/safes';
+import { log } from '~utils/debug';
 
-import AmountBalances, { SafeBalance } from '../AmountBalances';
+import AmountBalances from '../AmountBalances';
 import { FormValues, TransactionSectionProps } from '..';
 
 import styles from './TransactionTypesSection.css';
@@ -41,7 +42,11 @@ const MSG = defineMessages({
   balancesError: {
     id: `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection.balancesError`,
     defaultMessage:
-      'Unable to fetch the Safe balances. Please check your connection',
+      'Unable to fetch Safe balances. Please check your connection',
+  },
+  noSafeSelectedError: {
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection.noSafeSelectedError`,
+    defaultMessage: 'You must first select a safe',
   },
 });
 
@@ -49,59 +54,96 @@ const displayName = `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSe
 
 export interface TransferFundsProps extends TransactionSectionProps {
   handleValidation: () => void;
+  savedTokenState: [{}, React.Dispatch<React.SetStateAction<{}>>];
 }
 
 const renderAvatar = (address: Address, item: AnyUser) => (
   <UserAvatar address={address} user={item} size="xs" notSet={false} />
 );
 
+const Loading = () => (
+  <DialogSection>
+    <div className={styles.spinner}>
+      <SpinnerLoader
+        appearance={{ size: 'medium' }}
+        loadingText={MSG.balancesLoading}
+      />
+    </div>
+  </DialogSection>
+);
+
+interface ErrorMessageProps {
+  error: Message;
+}
+
+const ErrorMessage = ({ error }: ErrorMessageProps) => (
+  <DialogSection>
+    <div className={styles.error}>
+      {typeof error === 'string' ? (
+        <span>{error}</span>
+      ) : (
+        <FormattedMessage {...error} />
+      )}
+    </div>
+  </DialogSection>
+);
+
 const TransferFundsSection = ({
   colony: { colonyAddress, safes },
   disabledInput,
+  values: { safe },
   values,
   transactionFormIndex,
   setFieldValue,
   handleInputChange,
   handleValidation,
+  savedTokenState,
   setFieldTouched,
 }: TransferFundsProps &
   Pick<
     FormikProps<FormValues>,
     'setFieldValue' | 'values' | 'setFieldTouched'
   >) => {
-  const [{ value: safeBalances }, , { setValue: setSafeBalances }] = useField<
-    SafeBalance[] | null
-  >(`safeBalances`);
-  const [isLoadingBalances, setIsLoadingBalances] = useState<boolean>(true);
+  const [isLoadingBalances, setIsLoadingBalances] = useState<boolean>(false);
+  const [balanceError, setBalanceError] = useState<Message>('');
+  const [savedTokens, setSavedTokens] = savedTokenState;
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress },
   });
+  const [{ value: safeBalances }, , { setValue: setSafeBalances }] = useField<
+    FormValues['safeBalances']
+  >(`safeBalances`);
 
-  const safeAddress = values.safe?.profile.walletAddress;
+  const safeAddress = safe?.profile.walletAddress;
 
   const getSafeBalance = useCallback(async () => {
-    if (values.safe?.profile.displayName) {
+    setBalanceError('');
+    if (safe) {
       setIsLoadingBalances(true);
       try {
-        const chainName = getChainNameFromSafe(values.safe.profile.displayName);
+        const chainName = getChainNameFromSafe(safe.profile.displayName);
         const baseUrl = getTxServiceBaseUrl(chainName);
         const response = await fetch(
           `${baseUrl}/v1/safes/${safeAddress}/balances/`,
         );
         if (response.status === 200) {
           const data = await response.json();
+          setSavedTokens((tokens) => ({
+            ...tokens,
+            [safeAddress as string]: data,
+          }));
           setSafeBalances(data);
         }
       } catch (e) {
-        setSafeBalances(null);
-        console.error(e);
+        setBalanceError(MSG.balancesError);
+        log.error(e);
       } finally {
         setIsLoadingBalances(false);
       }
     }
     // setSafeBalances causes infinite loop
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [values.safe, safeAddress]);
+  }, [safe, safeAddress, setSavedTokens]);
 
   const selectedTokenAddress =
     values.transactions[transactionFormIndex].tokenData?.address;
@@ -111,14 +153,30 @@ const TransferFundsSection = ({
     [safeBalances, selectedTokenAddress],
   );
   const selectedSafe = safes.find(
-    (safe) => safe.contractAddress === values.safe?.profile.walletAddress,
+    (s) => s.contractAddress === safe?.profile.walletAddress,
   );
 
   useEffect(() => {
     if (safeAddress) {
-      getSafeBalance();
+      const savedTokenData = savedTokens[safeAddress];
+      if (savedTokenData) {
+        setSafeBalances(savedTokenData);
+        setBalanceError('');
+      } else {
+        getSafeBalance();
+      }
     }
-  }, [safeAddress, getSafeBalance]);
+    // setSafeBalances causes infinite loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [safeAddress, getSafeBalance, savedTokens]);
+
+  useEffect(() => {
+    if (!safeAddress) {
+      setBalanceError(MSG.noSafeSelectedError);
+    }
+    // initialisation only
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const formattedSafeBalance = moveDecimal(
     selectedBalance?.balance || 0,
@@ -126,26 +184,11 @@ const TransferFundsSection = ({
   );
 
   if (isLoadingBalances) {
-    return (
-      <DialogSection>
-        <div className={styles.spinner}>
-          <SpinnerLoader
-            appearance={{ size: 'medium' }}
-            loadingText={MSG.balancesLoading}
-          />
-        </div>
-      </DialogSection>
-    );
+    return <Loading />;
   }
 
-  if (safeBalances === null) {
-    return (
-      <DialogSection>
-        <div className={styles.balanceError}>
-          <FormattedMessage {...MSG.balancesError} />
-        </div>
-      </DialogSection>
-    );
+  if (balanceError) {
+    return <ErrorMessage error={balanceError} />;
   }
 
   return (
