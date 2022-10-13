@@ -266,7 +266,9 @@ const TransferNFTSection = ({
                     size="xs"
                     className={styles.nftContractAvatar}
                   />
-                  {selectedNFTData.name || selectedNFTData.tokenName}
+                  <div className={styles.nftName}>
+                    {selectedNFTData.name || selectedNFTData.tokenName}
+                  </div>
                 </div>
               )}
             </div>

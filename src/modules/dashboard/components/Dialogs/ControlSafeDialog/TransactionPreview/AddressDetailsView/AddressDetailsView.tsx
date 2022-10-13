@@ -30,6 +30,7 @@ const AddressDetailsView = ({ item, isSafeItem }: Props) => {
         avatarURL={item.profile?.avatarHash || ''}
         title="avatar"
         placeholderIcon={isSafeItem ? 'safe-logo' : 'circle-person'}
+        className={styles.avatar}
       />
       <span className={styles.name}>{userDisplayName || `@${username}`}</span>
       <MaskedAddress address={item.profile.walletAddress} />

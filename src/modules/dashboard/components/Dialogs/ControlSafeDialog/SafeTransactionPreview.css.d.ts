@@ -12,3 +12,5 @@ export const tokenAmount: string;
 export const transactionDetailsSection: string;
 export const rawTransactionValues: string;
 export const nftContainer: string;
+export const avatar: string;
+export const itemValue: string;
