@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useRef,
+} from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FieldArray, FieldArrayRenderProps, FormikProps } from 'formik';
 import { ColonyRole } from '@colony/colony-js';
@@ -151,6 +157,7 @@ const ControlSafeForm = ({
   setFieldTouched,
   handleSelectedContractMethods,
 }: FormProps & FormikProps<FormValues>) => {
+  const ref = useRef<HTMLSpanElement>(null);
   const [transactionTabStatus, setTransactionTabStatus] = useState([true]);
   const [prevSafeAddress, setPrevSafeAddress] = useState<string>('');
   const [
@@ -259,6 +266,13 @@ const ControlSafeForm = ({
       validateForm();
     }
   }, [showPreview, validateForm]);
+
+  useEffect(() => {
+    if (!ref.current) {
+      return;
+    }
+    ref.current.scrollIntoView();
+  }, [showPreview]);
 
   /*
    * When the selected safe changes, reset the state of
@@ -537,26 +551,28 @@ const ControlSafeForm = ({
         />
       )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
-        <Button
-          appearance={{ theme: 'secondary', size: 'large' }}
-          onClick={showPreview ? () => handleShowPreview(showPreview) : back}
-          text={{ id: 'button.back' }}
-        />
-        <Button
-          appearance={{ theme: 'primary', size: 'large' }}
-          onClick={() =>
-            showPreview ? handleSubmit() : handleShowPreview(showPreview)
-          }
-          text={submitButtonText}
-          loading={isSubmitting}
-          disabled={
-            !isValid ||
-            isSubmitting ||
-            !dirty ||
-            (showPreview && onlyForceAction)
-          }
-          style={{ width: styles.wideButton }}
-        />
+        <span ref={ref}>
+          <Button
+            appearance={{ theme: 'secondary', size: 'large' }}
+            onClick={showPreview ? () => handleShowPreview(showPreview) : back}
+            text={{ id: 'button.back' }}
+          />
+          <Button
+            appearance={{ theme: 'primary', size: 'large' }}
+            onClick={() =>
+              showPreview ? handleSubmit() : handleShowPreview(showPreview)
+            }
+            text={submitButtonText}
+            loading={isSubmitting}
+            disabled={
+              !isValid ||
+              isSubmitting ||
+              !dirty ||
+              (showPreview && onlyForceAction)
+            }
+            style={{ width: styles.wideButton }}
+          />
+        </span>
       </DialogSection>
     </>
   );
