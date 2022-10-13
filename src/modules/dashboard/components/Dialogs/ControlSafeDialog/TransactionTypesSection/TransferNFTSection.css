@@ -49,11 +49,13 @@
   width: 315px;
   border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
   font-size: var(--size-smallish);
+  gap: 8px;
 }
 
 .nftContractContent {
   display: flex;
   align-items: center;
+  min-width: 0;
   font-weight: var(--weight-bold);
   color: var(--pink);
 }
@@ -65,12 +67,14 @@
 }
 
 .nftContentValue {
+  composes: inlineEllipsis from '~styles/text.css';
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--dark);
 }
 
 .nftContractAvatar {
+  flex-shrink: 0;
   margin-right: 7px;
 }
 
@@ -88,6 +92,10 @@
 
 .nftImage div {
   border-radius: 0;
+}
+
+.nftName {
+  composes: inlineEllipsis from '~styles/text.css';
 }
 
 .notFound {

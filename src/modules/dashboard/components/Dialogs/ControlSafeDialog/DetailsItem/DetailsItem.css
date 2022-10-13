@@ -7,6 +7,7 @@
   border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
+  gap: 8px;
 }
 
 .detailsItem:last-child {
@@ -14,9 +15,11 @@
 }
 
 .detailsItemLabel {
+  white-space: nowrap;
   color: var(--temp-grey-blue-7);
 }
 
 .detailsItemValue {
+  min-width: 0;
   color: var(--dark);
 }
