@@ -190,7 +190,7 @@ const ContractInteractionSection = ({
             ...contract,
             profile: {
               ...contract.profile,
-              displayName: name,
+              displayName: name || 'Unknown contract',
             },
           });
         });

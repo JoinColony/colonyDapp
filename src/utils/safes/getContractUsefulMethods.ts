@@ -24,7 +24,7 @@ const getApiKey = (chainId: number) => {
 export const fetchContractName = async (
   contractAddress: string,
   safeChainId: number,
-) => {
+): Promise<string> => {
   // will be defined since fetchContractName is only called if selectedSafe is defined
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const currentNetworkData = getCurrentNetworkData(safeChainId)!;

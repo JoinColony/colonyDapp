@@ -114,3 +114,8 @@
 .itemValue {
   composes: inlineEllipsis from '~styles/text.css';
 }
+
+.contractName {
+  font-size: var(--size-normal);
+  color: var(--pink);
+}
