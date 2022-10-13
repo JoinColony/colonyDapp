@@ -63,6 +63,8 @@ export type ComplexMessageValues = Record<string, ReactNode>;
  */
 export type UniversalMessageValues = Record<string, PrimitiveType | ReactNode>;
 
+export type Message = MessageDescriptor | string;
+
 export type MethodParam = string | BigNumberish | boolean;
 export type MethodParams = (MethodParam | MethodParam[])[];
 
