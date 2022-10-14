@@ -328,6 +328,18 @@ export const getContractInteractionData = async (
   safe: Omit<ColonySafe, 'safeName'>,
   transaction: SafeTransaction,
 ) => {
+  if (!transaction.abi) {
+    throw new Error('Transaction does not contain an ABI.');
+  }
+
+  if (!transaction.contract) {
+    throw new Error('Transaction does not contain a contract address.');
+  }
+
+  if (!transaction.contractFunction) {
+    throw new Error('Transaction does not contain a contract function.');
+  }
+
   const safeAddress = onLocalDevEnvironment
     ? LOCAL_SAFE_ADDRESS
     : safe.contractAddress;
