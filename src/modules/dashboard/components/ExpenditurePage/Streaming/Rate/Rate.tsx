@@ -60,7 +60,7 @@ const Rate = ({ index, fundingSource, colony, sidebarRef }: Props) => {
       name={`streaming.fundingSource[${index}].rate`}
       render={({ push, remove }) => (
         <FormSection appearance={{ border: 'bottom' }}>
-          {fundingSource.rate.map((rateItem, rateIndex) => {
+          {fundingSource.rate?.map((rateItem, rateIndex) => {
             return (
               <div className={styles.rateContainer} key={rateItem.id}>
                 {rateIndex === 0 && (
