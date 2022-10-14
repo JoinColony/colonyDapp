@@ -433,6 +433,7 @@ const ControlSafeForm = ({
                           disabledInput={!userHasPermission || isSubmitting}
                           transactionFormIndex={index}
                           handleInputChange={handleInputChange}
+                          handleValidation={handleValidation}
                         />
                       )}
                       {values.transactions[index]?.transactionType ===
@@ -471,7 +472,7 @@ const ControlSafeForm = ({
                   <div className={styles.addTransaction}>
                     <AddItemButton
                       text={MSG.buttonTransaction}
-                      disabled={isSubmitting || !isValid}
+                      disabled={isSubmitting || !isValid || !!customAmountError}
                       handleClick={() => handleNewTab(arrayHelpers)}
                     />
                   </div>
