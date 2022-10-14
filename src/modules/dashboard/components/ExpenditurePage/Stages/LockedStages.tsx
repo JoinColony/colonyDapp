@@ -3,10 +3,13 @@ import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 
 import Tag from '~core/Tag';
 import { Colony } from '~data/index';
-import { ExpenditureTypes, State } from '~pages/ExpenditurePage/types';
+import {
+  ExpenditureTypes,
+  State,
+  ValuesType,
+} from '~pages/ExpenditurePage/types';
 
 import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
-import { Recipient } from '../Payments/types';
 
 import { Motion, MotionStatus, MotionType, Status } from './constants';
 import LinkedMotions from './LinkedMotions';
@@ -33,9 +36,9 @@ interface Props {
   motion?: Motion;
   status?: Status;
   handleCancelExpenditure?: () => void;
-  recipients?: Recipient[];
   colony: Colony;
   expenditureType?: ExpenditureTypes;
+  formValues?: ValuesType;
 }
 
 const LockedStages = ({
@@ -45,7 +48,7 @@ const LockedStages = ({
   motion,
   status,
   handleCancelExpenditure,
-  recipients,
+  formValues,
   colony,
   expenditureType,
 }: Props) => {
@@ -98,7 +101,7 @@ const LockedStages = ({
           motion,
           status,
           handleCancelExpenditure,
-          recipients,
+          formValues,
           colony,
           expenditureType,
         }}
