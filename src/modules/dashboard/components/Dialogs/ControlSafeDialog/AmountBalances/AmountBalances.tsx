@@ -95,7 +95,12 @@ const AmountBalances = ({
 
   // Set token data in form state on initialisation
   useEffect(() => {
-    setTokenData(tokens[0]);
+    const isTokenInBalances = safeBalances.some(
+      (b) => b.tokenAddress === selectedTokenData?.address,
+    );
+    if (!isTokenInBalances) {
+      setTokenData(tokens[0]);
+    }
 
     // initialisation only
     // eslint-disable-next-line react-hooks/exhaustive-deps
