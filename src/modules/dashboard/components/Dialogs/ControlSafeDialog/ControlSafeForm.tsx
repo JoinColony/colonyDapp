@@ -140,6 +140,7 @@ const ControlSafeForm = ({
   validateForm,
   dirty,
   selectedContractMethods,
+  setFieldTouched,
   handleSelectedContractMethods,
 }: FormProps & FormikProps<FormValues>) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState([true]);
@@ -416,6 +417,7 @@ const ControlSafeForm = ({
                           setFieldValue={setFieldValue}
                           handleInputChange={handleInputChange}
                           handleValidation={handleValidation}
+                          setFieldTouched={setFieldTouched}
                         />
                       )}
                       {values.transactions[index]?.transactionType ===
