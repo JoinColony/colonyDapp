@@ -329,7 +329,7 @@ export const updateValues = (values, confirmedValues) => {
         return true;
       }
       return confirmedValues.staged.milestones?.every(
-        (confirmedMielstone) => confirmedMielstone.id !== milestone.id,
+        (confirmedMilestone) => confirmedMilestone.id !== milestone.id,
       );
     });
 

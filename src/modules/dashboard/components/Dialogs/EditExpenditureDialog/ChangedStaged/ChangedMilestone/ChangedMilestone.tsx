@@ -8,7 +8,6 @@ import { ValuesType } from '~pages/ExpenditurePage/types';
 
 import ChangeItem from '../../ChangedMultiple/ChangeItem';
 import { ValueOf } from '../../ChangedValues/ChangedValues';
-
 import { skip } from '../ChangedStaged';
 
 import styles from './ChangedMilestone.css';
