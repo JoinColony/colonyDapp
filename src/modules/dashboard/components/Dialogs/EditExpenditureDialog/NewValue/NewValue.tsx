@@ -92,10 +92,7 @@ const NewValue = ({ colony, newValue }: Props) => {
 
               return (
                 <div
-                  className={classNames({
-                    [styles.paddingBottom]:
-                      multipleValues && index < newValue.length - 1,
-                  })}
+                  className={styles.valueItem}
                   // eslint-disable-next-line react/no-array-index-key
                   key={index}
                 >
@@ -141,13 +138,7 @@ const NewValue = ({ colony, newValue }: Props) => {
           ({ amount, token }, index) =>
             amount &&
             token && (
-              <div
-                className={classNames({
-                  [styles.paddingBottom]:
-                    multipleValues && index < recipientValues.length - 1,
-                })}
-                key={index}
-              >
+              <div className={styles.valueItem} key={index}>
                 <TokenIcon
                   className={styles.tokenIcon}
                   token={token}

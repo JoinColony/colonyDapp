@@ -71,9 +71,7 @@ const ChangedBatch = ({
     () =>
       typeof newValues?.value === 'object'
         ? Object.entries(newValues.value)
-            .filter(([key]) => {
-              return !skip.includes(key);
-            })
+            .filter(([key]) => !skip.includes(key))
             .map(([key, value]) => ({ key, value, id: nanoid() }))
         : [],
     [newValues],

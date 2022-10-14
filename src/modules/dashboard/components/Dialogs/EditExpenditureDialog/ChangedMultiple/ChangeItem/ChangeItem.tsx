@@ -21,11 +21,11 @@ export const MSG = defineMessages({
     defaultMessage: '{count} imported payments',
   },
   data: {
-    id: 'dashboard.ExpenditurePage.Batch.LockedBatch.data.',
+    id: 'dashboard.EditExpenditureDialog.ChangedMultiple.ChangeItem.data.',
     defaultMessage: 'Data',
   },
   viewAll: {
-    id: `dashboard.ExpenditurePage.Batch.LockedBatch.viewAll`,
+    id: `dashboard.EditExpenditureDialog.ChangedMultiple.ChangeItem.viewAll`,
     defaultMessage: 'View all',
   },
 });
