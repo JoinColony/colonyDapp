@@ -295,3 +295,12 @@
 .tooltipContent {
   white-space: nowrap;
 }
+
+.error {
+  color: var(--pink);
+}
+
+.iconError svg {
+  fill: var(--pink);
+  stroke: var(--pink);
+}

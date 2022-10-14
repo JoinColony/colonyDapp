@@ -167,14 +167,14 @@ export const validationSchema = yup.object().shape({
                   .transform((value) => toFinite(value))
                   .required(() => MSG.valueError)
                   .moreThan(0, () => MSG.amountZeroError)
-                  .when('limit', (limit, schema) => {
-                    return limit
+                  .when('limit', (limit, schema) =>
+                    limit
                       ? schema.max(limit, () => MSG.amountLimitError)
-                      : schema;
-                  }),
+                      : schema,
+                  ),
                 token: yup.string().required(),
                 time: yup.string().required(),
-                limit: yup.string(),
+                limit: yup.number().moreThan(0, () => MSG.amountZeroError),
               }),
             ),
           }),
@@ -184,15 +184,15 @@ export const validationSchema = yup.object().shape({
       startDate: yup.object().shape({
         date: yup.date().required().min(today),
       }),
-      endDate: yup.object().when('startDate', (startDate, schema) => {
-        return schema.shape({
+      endDate: yup.object().when('startDate', (startDate, schema) =>
+        schema.shape({
           option: yup.string().required(),
           date: yup.date().when('option', {
             is: (option) => option === ExpenditureEndDateTypes.FixedTime,
             then: yup.date().min(startDate.date).required(),
           }),
-        });
-      }),
+        }),
+      ),
     }),
   }),
 });

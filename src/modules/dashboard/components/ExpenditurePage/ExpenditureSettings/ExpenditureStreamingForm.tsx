@@ -89,7 +89,7 @@ const ExpenditureStreamingForm = ({ sidebarRef, colony }: Props) => {
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
-        <div className={(styles.blue, styles.settingsRow)}>
+        <div className={styles.settingsRow}>
           <InputLabel
             label={MSG.starts}
             appearance={{
@@ -104,7 +104,7 @@ const ExpenditureStreamingForm = ({ sidebarRef, colony }: Props) => {
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
-        <div className={classNames(styles.blue, styles.settingsRow)}>
+        <div className={styles.settingsRow}>
           <InputLabel
             label={MSG.ends}
             appearance={{
