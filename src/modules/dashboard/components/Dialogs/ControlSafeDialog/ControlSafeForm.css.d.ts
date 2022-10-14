@@ -1,5 +1,4 @@
 export const wideButton: string;
-export const maxWidth: string;
 export const heading: string;
 export const footer: string;
 export const safePicker: string;

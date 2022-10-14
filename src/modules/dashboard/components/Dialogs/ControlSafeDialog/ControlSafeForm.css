@@ -1,5 +1,4 @@
 @value wideButton: 197px;
-@value max-width: 424px;
 
 .heading {
   margin-bottom: 0px;
@@ -13,33 +12,38 @@
   margin: 20px 0;
 }
 
+.safePicker div[class*="inputContainer"] {
+  column-gap: 10px;
+}
+
 .safePicker > div {
   padding-left: 0px;
 }
 
-.safePicker input {
-  max-width: max-width;
+.safePicker input,
+.safePicker button {
+  margin-left: 0px;
+  max-width: none;
 }
 
-.safePicker button {
-  max-width: max-width;
+.safePicker button,
+.safePicker label,
+.transactionTypeSelectContainer label {
   color: var(--dark);
 }
 
 .safePicker div + i {
-  left: 412px;
+  right: 3px;
+  left: initial;
 }
 
 .safePicker label + i svg {
   stroke: unset;
 }
 
-.safePicker label {
-  color: var(--dark);
-}
-
-.transactionTypeSelectContainer label {
-  color: var(--dark);
+/* Avatar container */
+.safePicker label + div {
+  display: flex;
 }
 
 .addTransaction {
