@@ -63,8 +63,12 @@ const TransferFundsSection = ({
   setFieldValue,
   handleInputChange,
   handleValidation,
+  setFieldTouched,
 }: TransferFundsProps &
-  Pick<FormikProps<FormValues>, 'setFieldValue' | 'values'>) => {
+  Pick<
+    FormikProps<FormValues>,
+    'setFieldValue' | 'values' | 'setFieldTouched'
+  >) => {
   const [{ value: safeBalances }, , { setValue: setSafeBalances }] = useField<
     SafeBalance[] | null
   >(`safeBalances`);
@@ -156,6 +160,18 @@ const TransferFundsSection = ({
             fieldName: `transactions.${transactionFormIndex}.amount`,
             maxAmount: `${formattedSafeBalance}`,
             setFieldValue,
+            customOnClickFn() {
+              handleValidation();
+              setTimeout(
+                () =>
+                  setFieldTouched(
+                    `transactions.${transactionFormIndex}.amount`,
+                    true,
+                    false,
+                  ),
+                0,
+              );
+            },
           }}
           transactionFormIndex={transactionFormIndex}
           handleValidation={handleValidation}
