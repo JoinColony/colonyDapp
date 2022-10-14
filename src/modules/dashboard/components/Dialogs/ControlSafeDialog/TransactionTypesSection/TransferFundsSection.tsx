@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormikProps, useField } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import moveDecimal from 'move-decimal-point';
-import { AddressZero } from 'ethers/constants';
 
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import { AnyUser, useMembersSubscription } from '~data/index';
@@ -105,7 +104,7 @@ const TransferFundsSection = ({
   }, [values.safe, safeAddress]);
 
   const selectedTokenAddress =
-    values.transactions[transactionFormIndex].tokenAddress;
+    values.transactions[transactionFormIndex].tokenData?.address;
 
   const selectedBalance = useMemo(
     () => getSelectedSafeBalance(safeBalances, selectedTokenAddress),
@@ -117,20 +116,9 @@ const TransferFundsSection = ({
 
   useEffect(() => {
     if (safeAddress) {
-      /*
-       * Reset state of token address. This ensures token is always preselected because native token will always be
-       * present in tokenData.
-       */
-      setFieldValue(
-        `transactions.${transactionFormIndex}.tokenAddress`,
-        AddressZero,
-      );
-      handleValidation();
       getSafeBalance();
     }
-    // including index will cause token to reset when a tab is removed.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [safeAddress, getSafeBalance, setFieldValue]);
+  }, [safeAddress, getSafeBalance]);
 
   const formattedSafeBalance = moveDecimal(
     selectedBalance?.balance || 0,
