@@ -28,7 +28,7 @@ import {
 } from '~dashboard/ActionsPage';
 import ipfs from '~context/ipfsWithFallbackContext';
 import { log } from '~utils/debug';
-import { SafeTransaction } from '~redux/types/actions/colonyActions';
+import { SafeTransaction } from '~dashboard/Dialogs/ControlSafeDialog/ControlSafeDialog';
 import { availableRoles } from '~dialogs/PermissionManagementDialog';
 
 import { getMotionRequiredStake, MotionState } from '../colonyMotions';
