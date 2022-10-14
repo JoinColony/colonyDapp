@@ -17,15 +17,15 @@ const displayName = 'dashboard.ExpenditurePage.Streaming.SingleLockedFunding';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.title',
+    id: 'dashboard.ExpenditurePage.Streaming.SingleLockedFunding.title',
     defaultMessage: `{counter}: {team}, {rate} {tokens}`,
   },
   rate: {
-    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.rate',
+    id: 'dashboard.ExpenditurePage.Streaming.SingleLockedFunding.rate',
     defaultMessage: `{amount} {token} / {time}{comma}`,
   },
   titleTooltipError: {
-    id: `dashboard.ExpenditurePage.Streaming.SingleFundingSource.titleTooltipError`,
+    id: `dashboard.ExpenditurePage.Streaming.SingleLockedFunding.titleTooltipError`,
     defaultMessage: 'Required field error',
   },
 });
