@@ -10,6 +10,7 @@ import { SafeTransaction } from '~dashboard/Dialogs/ControlSafeDialog/ControlSaf
 import { ColonySafe } from '~data/index';
 import { Address, ModuleAddress } from '~types/index';
 import { GNOSIS_AMB_BRIDGES, SAFE_NETWORKS } from '~constants';
+import { getArrayFromString } from '~utils/safes';
 
 export interface SelectedSafe {
   id: ModuleAddress; // Making explicit that this is the module address
@@ -304,6 +305,94 @@ export const getTransferFundsData = async (
     getRecipient(),
     getAmount(),
     await getData(),
+    0,
+  ]);
+};
+
+const isArrayParameter = (parameter: string): boolean =>
+  parameter[0] + parameter[parameter.length - 1] === '[]';
+
+const extractMethodArgs = (
+  functionName: string,
+  transaction: Record<string, any>,
+) => ({ name = '' }) => {
+  const paramName = `${name}-${functionName}`;
+  if (isArrayParameter(transaction[paramName])) {
+    return getArrayFromString(transaction[paramName]);
+  }
+  return transaction[paramName];
+};
+
+export const getContractInteractionData = async (
+  zodiacBridgeModule: Contract,
+  safe: Omit<ColonySafe, 'safeName'>,
+  transaction: SafeTransaction,
+) => {
+  if (!transaction.abi) {
+    throw new Error('Transaction does not contain an ABI.');
+  }
+
+  if (!transaction.contract) {
+    throw new Error('Transaction does not contain a contract address.');
+  }
+
+  if (!transaction.contractFunction) {
+    throw new Error('Transaction does not contain a contract function.');
+  }
+
+  const safeAddress = onLocalDevEnvironment
+    ? LOCAL_SAFE_ADDRESS
+    : safe.contractAddress;
+  const contractAddress = onLocalDevEnvironment
+    ? LOCAL_SAFE_TOKEN_ADDRESS
+    : transaction.contract.profile.walletAddress;
+  let abi: string;
+  let contractFunction: string;
+
+  if (!safeAddress) {
+    throw new Error('LOCAL_SAFE_ADDRESS not set in .env.');
+  }
+
+  if (!contractAddress) {
+    throw new Error('LOCAL_SAFE_TOKEN_ADDRESS not set in .env.');
+  }
+
+  if (onLocalDevEnvironment) {
+    const TokenInterface = await getTokenInterface(safe, contractAddress);
+    abi = JSON.stringify(TokenInterface.abi);
+    contractFunction = 'transferFrom';
+  } else {
+    abi = transaction.abi;
+    contractFunction = transaction.contractFunction;
+  }
+
+  const getData = () => {
+    const foreignProvider = getForeignProvider(safe);
+    const contract = new ethers.Contract(contractAddress, abi, foreignProvider);
+    const { inputs, name = '' } = contract.interface.functions[
+      contractFunction
+    ];
+
+    const transactionValues = onLocalDevEnvironment
+      ? {
+          ...transaction,
+          // src, dst and wad are the param names of the transferFrom function
+          [`src-transferFrom`]: safeAddress,
+          [`dst-transferFrom`]: AddressZero,
+          [`wad-transferFrom`]: 1,
+        }
+      : transaction;
+    const args = inputs?.map(extractMethodArgs(name, transactionValues)) || [];
+
+    return contract.interface.functions[name].encode(args);
+  };
+
+  const encodedData = getData();
+
+  return zodiacBridgeModule.interface.functions.executeTransaction.encode([
+    contractAddress,
+    0,
+    encodedData,
     0,
   ]);
 };
