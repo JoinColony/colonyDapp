@@ -59,7 +59,7 @@ const MSG = defineMessages({
     defaultMessage: 'Item {idx} is not a valid {type}',
   },
   insuffienctFundsError: {
-    id: `dashboard.ControlSafeDialog.validation.insuffienctFundsError`,
+    id: `dashboard.ControlSafeDialog.validation.insufficientFundsError`,
     defaultMessage: 'Insufficient safe balance',
   },
   balanceError: {
