@@ -7,7 +7,7 @@
 }
 
 .smallerPadding {
-  padding: 4px 0;
+  padding: 8px 0;
 }
 
 .userAvatarContainer {
@@ -23,12 +23,17 @@
   align-items: flex-start;
 }
 
-.paddingBottom {
+.valueItem {
+  display: flex;
+  align-items: center;
+}
+
+.valueItem:not(:last-of-type) {
   padding-bottom: 6px;
 }
 
 .tokenIcon {
-  margin-right: 6px;
+  margin-right: 10px;
   height: 16px;
   width: 16px;
 }
