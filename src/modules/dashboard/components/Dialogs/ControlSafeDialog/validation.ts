@@ -195,7 +195,7 @@ export const getValidationSchema = (
                       message: formatMessage(MSG.gtZeroError),
                     });
                   }
-                  const selectedToken = this.parent.tokenAddress;
+                  const selectedToken = this.parent.tokenData?.address;
                   const selectedTokenDecimals = this.parent.tokenData?.decimals;
 
                   const {
@@ -242,15 +242,6 @@ export const getValidationSchema = (
             .required(() => MSG.requiredFieldError)
             .moreThan(0, () => MSG.gtZeroError)
             .integer(() => MSG.notIntegerError),
-          otherwise: false,
-        }),
-        tokenAddress: yup.string().when('transactionType', {
-          is: (transactionType) =>
-            transactionType === TransactionTypes.TRANSFER_FUNDS,
-          then: yup
-            .string()
-            .address()
-            .required(() => MSG.requiredFieldError),
           otherwise: false,
         }),
         data: yup.string().when('transactionType', {
