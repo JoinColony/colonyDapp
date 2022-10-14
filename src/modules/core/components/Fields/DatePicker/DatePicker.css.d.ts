@@ -19,3 +19,5 @@ export const expandTimeIcon: string;
 export const timeDropdown: string;
 export const timeOption: string;
 export const tooltipContent: string;
+export const error: string;
+export const iconError: string;
