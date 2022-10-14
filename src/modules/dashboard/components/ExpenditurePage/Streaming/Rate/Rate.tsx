@@ -15,6 +15,7 @@ import {
 import { Colony } from '~data/index';
 
 import { timeOptions } from '../constants';
+import FieldError from '../FieldError';
 import { newRate } from '../FundingSource/constants';
 import { FundingSource } from '../types';
 
@@ -59,7 +60,7 @@ const Rate = ({ index, fundingSource, colony, sidebarRef }: Props) => {
       name={`streaming.fundingSources[${index}].rate`}
       render={({ push, remove }) => (
         <FormSection appearance={{ border: 'bottom' }}>
-          {fundingSource.rate.map((rateItem, rateIndex) => {
+          {fundingSource.rate?.map((rateItem, rateIndex) => {
             return (
               <div className={styles.rateContainer} key={rateItem.id}>
                 {rateIndex === 0 && (
@@ -108,7 +109,6 @@ const Rate = ({ index, fundingSource, colony, sidebarRef }: Props) => {
                         placeholder={MSG.notSet}
                         formattingOptions={{
                           numeral: true,
-                          numeralDecimalScale: 10,
                         }}
                         elementOnly
                       />
@@ -143,6 +143,9 @@ const Rate = ({ index, fundingSource, colony, sidebarRef }: Props) => {
                       />
                     </div>
                   </div>
+                  <FieldError
+                    name={`streaming.fundingSources[${index}].rate[${rateIndex}].amount`}
+                  />
                 </div>
               </div>
             );
