@@ -42,7 +42,8 @@ const ChangedRecipient = ({ recipient, oldRecipient, colony }: Props) => {
             return (
               // eslint-disable-next-line react/no-array-index-key
               <div className={styles.row} key={index}>
-                {oldRecipient.user?.profile.username}
+                {oldRecipient.user?.profile.username ||
+                  oldRecipient.user?.profile.displayName}
                 <Icon name="arrow-right" className={styles.arrowIcon} />
                 <span className={styles.right}>
                   <FormattedMessage {...MSG.removed} />
