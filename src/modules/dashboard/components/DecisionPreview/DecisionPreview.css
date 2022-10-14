@@ -60,10 +60,6 @@
   text-align: center;
 }
 
-.noContent > button {
-  margin-left: 5px;
-}
-
 .rightContent {
   margin-top: 17px;
 }
@@ -90,6 +86,10 @@
   margin: 0;
   margin-top: 20px;
   width: 340px;
+}
+
+.descriptionContainer > h3 {
+  font-size: var(--size-medium);
 }
 
 .buttonContainer {
