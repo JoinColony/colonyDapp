@@ -13,11 +13,11 @@ import {
 } from '~pages/ExpenditurePage/types';
 import { fixTriggerEventName } from '~pages/ExpenditurePage/constants';
 
-import { Stage, useObserver } from './constants';
 import Stages from './Stages';
 import StreamingStages from './StreamingStages';
-
 import styles from './FormStages.css';
+import { Stage } from './constants';
+import { useObserver } from './hooks';
 
 const displayName = 'dashboard.ExpenditurePage.Stages.FormStages';
 
