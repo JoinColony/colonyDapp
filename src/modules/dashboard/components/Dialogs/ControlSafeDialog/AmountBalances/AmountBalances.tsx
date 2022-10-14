@@ -56,10 +56,6 @@ const AmountBalances = ({
   handleChange,
   handleValidation,
 }: Props) => {
-  const [, { value: tokenAddress }] = useField(
-    `transactions.${transactionFormIndex}.tokenAddress`,
-  );
-
   const [
     ,
     { value: selectedTokenData },
@@ -96,12 +92,11 @@ const AmountBalances = ({
       networkName: getNetworkName(),
     };
   });
+
   // Set token data in form state on initialisation
   useEffect(() => {
-    const selectedToken = tokens.find((t) => t.address === tokenAddress);
-    if (selectedToken) {
-      setTokenData(selectedToken);
-    }
+    setTokenData(tokens[0]);
+
     // initialisation only
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -143,7 +138,7 @@ const AmountBalances = ({
           <TokenSymbolSelector
             label={MSG.token}
             tokens={tokens}
-            name={`transactions.${transactionFormIndex}.tokenAddress`}
+            name={`transactions.${transactionFormIndex}.tokenData.address`}
             elementOnly
             appearance={{ alignOptions: 'right', theme: 'grey' }}
             disabled={disabledInput}
@@ -153,7 +148,7 @@ const AmountBalances = ({
               );
               // can only select a token from "tokens"
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              setTokenData(selectedToken!);
+              setTokenData(selectedToken!, false);
               handleValidation();
             }}
           />

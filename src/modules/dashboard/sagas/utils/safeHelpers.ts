@@ -264,7 +264,7 @@ export const getTransferFundsData = async (
     : safe.contractAddress;
   const tokenAddress = onLocalDevEnvironment
     ? LOCAL_SAFE_TOKEN_ADDRESS
-    : transaction.tokenAddress;
+    : transaction.tokenData.address;
 
   if (!safeAddress) {
     throw new Error('LOCAL_SAFE_ADDRESS not set in .env.');
