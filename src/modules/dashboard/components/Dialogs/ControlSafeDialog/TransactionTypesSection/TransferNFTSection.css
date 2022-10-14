@@ -12,8 +12,14 @@
 .nftPicker button,
 .recipientPicker input,
 .recipientPicker button {
+  margin-left: 0px;
   width: 100%;
-  max-width: 419px;
+  max-width: none;
+}
+
+.nftPicker div[class*="inputContainer"],
+.recipientPicker div[class*="inputContainer"] {
+  column-gap: 10px;
 }
 
 .nftPicker label,
@@ -23,7 +29,8 @@
 
 .nftPicker i,
 .recipientPicker i {
-  left: 412px;
+  right: 3px;
+  left: initial;
 }
 
 .nftDetailsContainer {
@@ -34,9 +41,11 @@
 
 .nftDetails {
   display: flex;
+  flex-grow: 1;
   flex-direction: column;
   justify-content: flex-start;
   margin-top: 20px;
+  width: 100px;
 }
 
 .nftLineItem {
@@ -46,7 +55,6 @@
   padding-top: 8px;
   padding-bottom: 8px;
   min-height: 43px;
-  width: 315px;
   border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
   font-size: var(--size-smallish);
   gap: 70px;
