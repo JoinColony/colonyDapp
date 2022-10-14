@@ -37,6 +37,7 @@ type CleaveHTMLInputElement = HTMLInputElement & { rawValue: string };
 
 export interface MaxButtonParams {
   setFieldValue: (field, value) => void;
+  customOnClickFn?: (...args: any) => any;
   maxAmount: string;
   fieldName: string;
 }
@@ -146,6 +147,7 @@ const InputComponent = ({
               maxButtonParams?.fieldName,
               maxButtonParams.maxAmount,
             );
+            maxButtonParams?.customOnClickFn?.();
             const decimalValue = new Decimal(maxButtonParams.maxAmount);
             if (decimalValue.lt(0.00001) && decimalValue.gt(0)) {
               cleave?.setRawValue(
