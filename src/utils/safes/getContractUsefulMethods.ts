@@ -1,9 +1,6 @@
 import { AbiItem, keccak256 } from 'web3-utils';
 
-import {
-  BINANCE_NETWORK,
-  SUPPORTED_SAFE_NETWORKS,
-} from '~constants';
+import { BINANCE_NETWORK, SUPPORTED_SAFE_NETWORKS } from '~constants';
 
 export interface AbiItemExtended extends AbiItem {
   name: string;
