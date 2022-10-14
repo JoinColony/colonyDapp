@@ -102,6 +102,7 @@ const FormStages = ({
         handleCancelExpenditure,
         colony,
         buttonDisabled: !isEmpty(formikErrors),
+        formValues: values,
       }}
     />
   );
