@@ -1,7 +1,7 @@
 @value query700 from '~styles/queries.css';
 
 .main {
-  composes: field from "~styles/fields.css";
+  composes: field from '~styles/fields.css';
   width: 100%;
 }
 
@@ -77,7 +77,7 @@
   color: var(--colony-black);
   outline: none;
 
-  &[aria-invalid="true"] {
+  &[aria-invalid='true'] {
     border-color: var(--danger);
   }
 
@@ -111,9 +111,11 @@
 
 .recipientName {
   composes: baseInput;
+  padding-right: 15px;
   overflow: hidden;
   font-weight: var(--weight-bold);
   text-overflow: ellipsis;
+  white-space: nowrap;
   color: var(--danger);
 
   &:hover {
