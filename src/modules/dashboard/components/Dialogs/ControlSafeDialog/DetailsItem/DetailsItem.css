@@ -7,7 +7,7 @@
   border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
-  gap: 8px;
+  gap: 70px;
 }
 
 .detailsItem:last-child {
