@@ -201,6 +201,13 @@ const ContractInteractionSection = ({
           setFetchABIError(formatMessage(MSG.noSafeSelectedError));
         }
         setIsLoadingABI(false);
+        setFieldValue(`transactions.${transactionFormIndex}.contract`, {
+          ...contract,
+          profile: {
+            ...contract.profile,
+            displayName: 'Unknown contract',
+          },
+        });
       }
     },
     [
@@ -218,9 +225,10 @@ const ContractInteractionSection = ({
   );
 
   useEffect(() => {
-    if (
+    if (!selectedSafe) {
+      setPrevSafeChainId('');
+    } else if (
       transactionValues.contract &&
-      selectedSafe &&
       // only run effect if safe chain changes
       prevSafeChainId !== selectedSafe.chainId
     ) {
