@@ -7,6 +7,7 @@ import { Batch } from '~dashboard/ExpenditurePage/Batch/types';
 import { Staged } from '~dashboard/ExpenditurePage/Staged/types';
 import { Colony, LoggedInUser } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/types';
+import { capitalize } from '~utils/strings';
 
 import ChangeHeader from '../ChangeHeader';
 import ChangeItem from '../ChangedMultiple/ChangeItem';
@@ -23,6 +24,10 @@ export const MSG = defineMessages({
   milestone: {
     id: 'dashboard.EditExpenditureDialog.ChangedStaged.milestone',
     defaultMessage: 'Change Milestone',
+  },
+  changeHeader: {
+    id: 'dashboard.EditExpenditureDialog.ChangedStaged.changeHeader',
+    defaultMessage: 'Staged {name}',
   },
 });
 
@@ -57,6 +62,7 @@ const ChangedStaged = ({
   discardChange,
 }: Props) => {
   const { formatMessage } = useIntl();
+
   if (!newValues) {
     return null;
   }
@@ -70,6 +76,8 @@ const ChangedStaged = ({
       return !(skip.includes(key) || Array.isArray(value));
     },
   );
+
+  const changeNames = changedStaged.map(([key]) => capitalize(key));
 
   const changedMilestones = Object.entries(newValues.value).filter(
     ([key, value]) => {
