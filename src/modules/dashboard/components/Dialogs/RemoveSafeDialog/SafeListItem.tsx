@@ -44,7 +44,7 @@ const SafeListItem = ({ safe, isChecked }: Props) => {
       />
       <Avatar
         placeholderIcon="circle-close"
-        seed={safe.contractAddress}
+        seed={safe.contractAddress.toLowerCase()}
         title={safe.safeName || safe.contractAddress}
         size="xs"
         className={styles.avatar}
