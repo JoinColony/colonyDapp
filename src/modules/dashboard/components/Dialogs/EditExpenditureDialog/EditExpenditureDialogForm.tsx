@@ -18,8 +18,8 @@ import { EDITING_LOCKED_PAYMENTS } from '~externalUrls';
 import { FormValuesType } from './EditExpenditureDialog';
 import ChangedValues from './ChangedValues';
 import ChangedMultiple from './ChangedMultiple';
-import ChangedPayment from './ChangePayment';
 import ChangedStaged from './ChangedStaged';
+import ChangedSplit from './ChangedSplit';
 import styles from './EditExpenditureDialogForm.css';
 
 export const MSG = defineMessages({
