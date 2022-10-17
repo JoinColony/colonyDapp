@@ -1,7 +1,6 @@
 import { useField } from 'formik';
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import classNames from 'classnames';
 
 import { InputLabel, FormSection } from '~core/Fields';
 import DatePicker, { DatePickerOption } from '~core/Fields/DatePicker';
@@ -69,9 +68,6 @@ const ExpenditureStreamingForm = ({ sidebarRef, colony }: Props) => {
   const [, { value: startDate }] = useField<Streaming['startDate']>(
     'streaming.startDate',
   );
-  const [, { error: endDateError }] = useField<Streaming['endDate']>(
-    'streaming.endDate',
-  );
 
   return (
     <>
@@ -111,14 +107,12 @@ const ExpenditureStreamingForm = ({ sidebarRef, colony }: Props) => {
               direction: 'horizontal',
             }}
           />
-          <div className={classNames({ [styles.dateError]: endDateError })}>
-            <DatePicker
-              name="streaming.endDate"
-              showTimeSelect
-              options={endDateOptions}
-              minDate={startDate.date}
-            />
-          </div>
+          <DatePicker
+            name="streaming.endDate"
+            showTimeSelect
+            options={endDateOptions}
+            minDate={startDate.date}
+          />
         </div>
       </FormSection>
     </>
