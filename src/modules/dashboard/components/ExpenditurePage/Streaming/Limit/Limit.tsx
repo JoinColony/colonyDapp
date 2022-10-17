@@ -6,6 +6,7 @@ import { Colony } from '~data/index';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 
 import { Rate } from '../types';
+import FieldError from '../FieldError';
 
 import styles from './Limit.css';
 
@@ -38,32 +39,35 @@ const Limit = ({ colony, name, rate }: Props) => {
   }
 
   return (
-    <div className={styles.limitContainer}>
-      <div className={styles.inputContainer}>
-        <Input
-          name={name}
-          appearance={{
-            theme: 'underlined',
-            size: 'small',
-          }}
-          label={MSG.limit}
-          placeholder={MSG.notSet}
-          formattingOptions={{
-            numeral: true,
-            numeralDecimalScale: 10,
-          }}
-          elementOnly
-        />
+    <>
+      <div className={styles.limitContainer}>
+        <div className={styles.inputContainer}>
+          <Input
+            name={name}
+            appearance={{
+              theme: 'underlined',
+              size: 'small',
+            }}
+            label={MSG.limit}
+            placeholder={MSG.notSet}
+            formattingOptions={{
+              numeral: true,
+              numeralDecimalScale: 10,
+            }}
+            elementOnly
+          />
+        </div>
+        <div className={styles.tokenIconWrapper}>
+          <TokenIcon
+            className={styles.tokenIcon}
+            token={token}
+            name={token.name || token.address}
+          />
+          {token.symbol}
+        </div>
       </div>
-      <div className={styles.tokenIconWrapper}>
-        <TokenIcon
-          className={styles.tokenIcon}
-          token={token}
-          name={token.name || token.address}
-        />
-        {token.symbol}
-      </div>
-    </div>
+      <FieldError name={name} />
+    </>
   );
 };
 
