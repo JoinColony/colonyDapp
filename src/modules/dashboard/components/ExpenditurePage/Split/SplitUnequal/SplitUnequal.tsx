@@ -117,7 +117,10 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
         })),
       );
     },
-    [recipients, setValue],
+
+    // setValue was not included to the dependency array
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [recipients],
   );
 
   const onInputChange = useCallback(
@@ -133,7 +136,8 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
         })),
       );
     },
-    [recipients, setValue, amount.tokenAddress],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [recipients, amount.tokenAddress],
   );
 
   return (

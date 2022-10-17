@@ -1,6 +1,7 @@
 import React, { Fragment, useMemo } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 
+import { nanoid } from 'nanoid';
 import Button from '~core/Button';
 import { Colony, LoggedInUser } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/types';
@@ -21,7 +22,7 @@ export const MSG = defineMessages({
   },
   change: {
     id: 'dashboard.EditExpenditureDialog.ChangedSplit.change',
-    defaultMessage: 'Split',
+    defaultMessage: 'Split Amount',
   },
   removed: {
     id: 'dashboard.EditExpenditureDialog.ChangedSplit.removed',
@@ -75,9 +76,11 @@ const ChangedSplit = ({
   const changedSplit = useMemo(
     () =>
       typeof newValues?.value === 'object'
-        ? Object.entries(newValues.value).filter(([key, value]) => {
-            return !(skip.includes(key) || Array.isArray(value));
-          })
+        ? Object.entries(newValues.value)
+            .map(([key, value]) => ({ key, value, id: nanoid() }))
+            .filter(({ key, value }) => {
+              return !(skip.includes(key) || Array.isArray(value));
+            })
         : [],
     [newValues],
   );
@@ -98,17 +101,15 @@ const ChangedSplit = ({
 
   return (
     <>
-      {changedSplit.map(([key, value], index) => {
+      {changedSplit.map(({ key, value, id }) => {
         const oldValue = oldValues[newValues.key]?.[key];
 
         return (
-          // eslint-disable-next-line react/no-array-index-key
-          <Fragment key={index}>
+          <Fragment key={id}>
             <ChangeHeader name={formatMessage(MSG.change)} />
             <ChangeItem
               newValue={value}
               oldValue={oldValue}
-              key={value.id}
               colony={colony}
               name={key}
             />
