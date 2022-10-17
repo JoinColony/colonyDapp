@@ -63,7 +63,7 @@ export const getArrayFromString = (array: string) => {
     return [];
   }
   const vals = array.substring(1, array.length - 1);
-  return vals.split(',');
+  return vals.split(',').map((val) => val.trim());
 };
 
 const isAddressValid = (value: string) => {
@@ -123,11 +123,44 @@ const typeFunctionMap: {
 export const validateType = (
   inputType: string,
   value: string,
+  // when validating nested arrays, it indicates the current index in the top level array
+  topLevelIndex?: number,
 ): boolean | number => {
-  let type = inputType;
   const isArrayType = isInputTypeArray(inputType);
+
   if (isArrayType) {
-    type = inputType.substring(0, inputType.length - 2);
+    if (!isValueArray(value)) {
+      return topLevelIndex ?? -1;
+    }
+
+    const elementsType = inputType.substring(0, inputType.length - 2);
+    const elements = getArrayFromString(value);
+    let failIdx: number;
+
+    const allElementsValid = elements.every((element, index) => {
+      const currentIndex = topLevelIndex ?? index;
+
+      const validationResult = validateType(
+        elementsType,
+        element,
+        currentIndex,
+      );
+
+      // error is indicated by either 'false' or an index at which it occured
+      if (validationResult !== true) {
+        failIdx = currentIndex;
+        return false;
+      }
+
+      return true;
+    });
+
+    if (allElementsValid) {
+      return true;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return failIdx!; // If we get here, it means allElementsValid is false and failIdx was set.
   }
 
   const key = Object.keys(typeFunctionMap).find((t) => inputType.includes(t));
@@ -138,26 +171,5 @@ export const validateType = (
   }
 
   const validationFn = typeFunctionMap[key];
-  if (!isArrayType) {
-    return validationFn(value, type);
-  }
-
-  if (!isValueArray(value)) {
-    return -1;
-  }
-
-  const values = getArrayFromString(value);
-  let failIdx: number;
-  const allValuesSafe = values.every((val, idx) => {
-    if (validationFn(val.trim(), type)) {
-      return true;
-    }
-    failIdx = idx;
-    return false;
-  });
-  if (allValuesSafe) {
-    return true;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  return failIdx!; // If we get here, it means allSafe is false and failIdx was set.
+  return validationFn(value, inputType);
 };
