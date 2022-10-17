@@ -29,12 +29,12 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.amountZeroError',
     defaultMessage: 'Value must be greater than zero',
   },
-  milestoneNameError: {
-    id: 'dashboard.ExpenditurePage.milestoneNameError',
+  nameError: {
+    id: 'dashboard.ExpenditurePage.nameError',
     defaultMessage: 'Name is required',
   },
-  milestoneAmountError: {
-    id: 'dashboard.ExpenditurePage.milestoneAmountError',
+  amountError: {
+    id: 'dashboard.ExpenditurePage.amountError',
     defaultMessage: 'Amount is required',
   },
   amountError: {
@@ -124,14 +124,14 @@ export const validationSchema = yup.object().shape({
         value: yup
           .number()
           .transform((value) => toFinite(value))
-          .required(() => MSG.milestoneAmountError)
+          .required(() => MSG.amountError)
           .moreThan(0, () => MSG.amountZeroError),
         tokenAddress: yup.string().required(),
       }),
       milestones: yup
         .array(
           yup.object().shape({
-            name: yup.string().required(() => MSG.milestoneNameError),
+            name: yup.string().required(() => MSG.nameError),
             percent: yup
               .number()
               .moreThan(0, () => MSG.amountZeroError)
