@@ -1,16 +1,15 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useMemo } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { isEmpty } from 'lodash';
+import { nanoid } from 'nanoid';
 
 import Button from '~core/Button';
-import { Batch } from '~dashboard/ExpenditurePage/Batch/types';
-import { Staged } from '~dashboard/ExpenditurePage/Staged/types';
-import { Colony, LoggedInUser } from '~data/index';
+import { Colony } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/types';
 import { capitalize } from '~utils/strings';
 
 import ChangeHeader from '../ChangeHeader';
 import ChangeItem from '../ChangedMultiple/ChangeItem';
+import { NewValueType } from '../types';
 
 import { isMilestoneType } from './utils';
 import ChangedMilestone from './ChangedMilestone';
@@ -34,20 +33,6 @@ export const MSG = defineMessages({
 const displayName = 'dashboard.EditExpenditureDialog.ChangedStaged';
 export const skip = ['id', 'isExpanded', 'created', 'released', 'percent'];
 
-export type NewValueType = {
-  id: string;
-  key: string;
-  value?:
-    | ValuesType['recipients']
-    | string
-    | Staged
-    | Pick<
-        LoggedInUser,
-        'walletAddress' | 'balance' | 'username' | 'ethereal' | 'networkId'
-      >
-    | Batch;
-};
-
 interface Props {
   newValues?: NewValueType;
   colony: Colony;
@@ -63,51 +48,55 @@ const ChangedStaged = ({
 }: Props) => {
   const { formatMessage } = useIntl();
 
-  if (!newValues) {
+  const changed = useMemo(() => {
+    if (typeof newValues?.value !== 'object') {
+      return undefined;
+    }
+    const staged = Object.entries(newValues.value)
+      .map(([key, value]) => ({ key, value, id: nanoid() }))
+      .filter(({ key, value }) => {
+        return !(skip.includes(key) || Array.isArray(value));
+      });
+
+    const milestones = Object.entries(newValues.value).filter(
+      ([key, value]) => {
+        return !skip.includes(key) && Array.isArray(value);
+      },
+    );
+
+    return {
+      staged,
+      milestones,
+    };
+  }, [newValues]);
+
+  if (!newValues || !changed) {
     return null;
   }
-
-  if (typeof newValues.value !== 'object') {
-    return null;
-  }
-
-  const changedStaged = Object.entries(newValues.value).filter(
-    ([key, value]) => {
-      return !(skip.includes(key) || Array.isArray(value));
-    },
-  );
-
-  const changeNames = changedStaged.map(([key]) => capitalize(key));
-
-  const changedMilestones = Object.entries(newValues.value).filter(
-    ([key, value]) => {
-      return !skip.includes(key) && Array.isArray(value);
-    },
-  );
 
   return (
     <>
-      {!isEmpty(changedStaged) && (
-        <>
-          <ChangeHeader name={newValues.key} />
-          {changedStaged.map(([key, value]) => {
-            const oldValue = oldValues[newValues?.key || 'staged']?.[key];
+      {changed.staged.map(({ key, value, id }) => {
+        const oldValue = oldValues[newValues?.key || 'staged']?.[key];
 
-            return (
-              <>
-                <ChangeItem
-                  newValue={value}
-                  oldValue={oldValue}
-                  key={value.id}
-                  colony={colony}
-                  name={key}
-                />
-              </>
-            );
-          })}
-        </>
-      )}
-      {changedMilestones.map(([key, milestones]) => {
+        return (
+          <Fragment key={id}>
+            <ChangeHeader
+              name={formatMessage(MSG.changeHeader, {
+                name: capitalize(key),
+              })}
+            />
+            <ChangeItem
+              newValue={value}
+              oldValue={oldValue}
+              key={value.id}
+              colony={colony}
+              name={key}
+            />
+          </Fragment>
+        );
+      })}
+      {changed.milestones.map(([key, milestones]) => {
         const oldValue = oldValues[newValues?.key || 'staged']?.[key];
 
         return (
