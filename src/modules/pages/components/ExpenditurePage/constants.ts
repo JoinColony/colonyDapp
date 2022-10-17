@@ -59,14 +59,6 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.limitError',
     defaultMessage: 'Limit is required',
   },
-  zeroError: {
-    id: 'dashboard.ExpenditurePage.zeroError',
-    defaultMessage: 'Must be greater than zero',
-  },
-  amountLimitError: {
-    id: 'dashboard.ExpenditurePage.amountLimitError',
-    defaultMessage: `Value cannot be greater than limit`,
-  },
 });
 
 export const initialValues = {
@@ -213,6 +205,19 @@ export const validationSchema = yup.object().shape({
   streaming: yup.object().when('expenditure', {
     is: (expenditure) => expenditure === ExpenditureTypes.Streaming,
     then: yup.object().shape({
+      user: yup.object().required(),
+      startDate: yup.object().shape({
+        date: yup.date().required().min(today),
+      }),
+      endDate: yup.object().when('startDate', (startDate, schema) =>
+        schema.shape({
+          option: yup.string().required(),
+          date: yup.date().when('option', {
+            is: (option) => option === ExpenditureEndDateTypes.FixedTime,
+            then: yup.date().min(startDate.date).required(),
+          }),
+        }),
+      ),
       user: yup.object().required(),
       startDate: yup.object().shape({
         date: yup.date().required().min(today),
