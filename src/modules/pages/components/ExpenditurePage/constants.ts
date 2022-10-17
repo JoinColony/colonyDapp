@@ -186,7 +186,8 @@ export const validationSchema = yup.object().shape({
                     .required(() => MSG.valueError)
                     .moreThan(0, () => MSG.amountZeroError)
                     .when('limit', (limit, rateSchema) =>
-                      limit
+                      limit &&
+                      endDate.option === ExpenditureEndDateTypes.LimitIsReached
                         ? rateSchema.max(limit, () => MSG.amountLimitError)
                         : rateSchema,
                     ),
@@ -194,10 +195,12 @@ export const validationSchema = yup.object().shape({
                   time: yup.string().required(),
                   limit: yup
                     .number()
-                    .moreThan(0, () => MSG.amountZeroError)
+                    .transform((value) => toFinite(value))
                     .when('endDate', (_, limitSchema) =>
                       endDate.option === ExpenditureEndDateTypes.LimitIsReached
-                        ? limitSchema.required(() => MSG.limitError)
+                        ? limitSchema
+                            .required(() => MSG.limitError)
+                            .moreThan(0, () => MSG.amountZeroError)
                         : limitSchema,
                     ),
                 }),
