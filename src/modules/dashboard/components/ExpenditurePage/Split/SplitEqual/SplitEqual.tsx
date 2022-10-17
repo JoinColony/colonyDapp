@@ -99,6 +99,8 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
         amount: { value: calculatedAmount, tokenAddress: amount.tokenAddress },
       })),
     );
+
+    // adding setValue to the dependency array causes an infinite loop
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [calculatedAmount]);
 
@@ -114,7 +116,9 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
         })),
       );
     },
-    [recipients, setValue],
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [recipients],
   );
 
   return (

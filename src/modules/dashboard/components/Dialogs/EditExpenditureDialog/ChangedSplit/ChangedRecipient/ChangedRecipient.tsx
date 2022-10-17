@@ -1,4 +1,5 @@
-import React from 'react';
+import { nanoid } from 'nanoid';
+import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Icon from '~core/Icon';
@@ -8,19 +9,18 @@ import { ValuesType } from '~pages/ExpenditurePage/types';
 
 import ChangeItem from '../../ChangedMultiple/ChangeItem';
 import { ValueOf } from '../../ChangedValues/ChangedValues';
-
 import { skip } from '../ChangedSplit';
 
 import styles from './ChangedRecipient.css';
 
 export const MSG = defineMessages({
   removed: {
-    id: `dashboard.EditExpenditureDialog.ChangedStaged.ChangedRecipient.removed`,
-    defaultMessage: 'Mielstone has been deleted',
+    id: `dashboard.EditExpenditureDialog.ChangedSplit.ChangedRecipient.removed`,
+    defaultMessage: 'Recipient has been deleted',
   },
 });
 
-const displayName = `dashboard.EditExpenditureDialog.ChangedStaged.ChangedRecipient`;
+const displayName = `dashboard.EditExpenditureDialog.ChangedSplit.ChangedRecipient`;
 
 interface Props {
   recipient: Partial<AnyUser>;
@@ -29,41 +29,47 @@ interface Props {
 }
 
 const ChangedRecipient = ({ recipient, oldRecipient, colony }: Props) => {
+  const recipientArray = useMemo(
+    () =>
+      Object.entries(recipient).map(([key, value]) => ({
+        key,
+        value,
+        id: nanoid(),
+      })),
+    [recipient],
+  );
+
   return (
     <>
-      {Object.entries(recipient).map(
-        ([recipientKey, recipientValue], index) => {
-          // milestoneKey - 'user', 'amount', 'id', 'removed'
-          if (skip.includes(recipientKey)) {
-            return null;
-          }
+      {recipientArray.map(({ key, value, id }) => {
+        // key - 'user', 'amount', 'id', 'removed'
+        if (skip.includes(key)) {
+          return null;
+        }
 
-          if (recipientKey === 'removed') {
-            return (
-              // eslint-disable-next-line react/no-array-index-key
-              <div className={styles.row} key={index}>
-                {oldRecipient.user?.profile.username ||
-                  oldRecipient.user?.profile.displayName}
-                <Icon name="arrow-right" className={styles.arrowIcon} />
-                <span className={styles.right}>
-                  <FormattedMessage {...MSG.removed} />
-                </span>
-              </div>
-            );
-          }
-
+        if (key === 'removed') {
           return (
-            <ChangeItem
-              newValue={recipientValue as ValueOf<ValuesType>}
-              oldValue={oldRecipient?.[recipientKey]}
-              // eslint-disable-next-line react/no-array-index-key
-              key={index}
-              colony={colony}
-              name={recipientKey}
-            />
+            <div className={styles.row} key={id}>
+              {oldRecipient.user?.profile.username ||
+                oldRecipient.user?.profile.displayName}
+              <Icon name="arrow-right" className={styles.arrowIcon} />
+              <span className={styles.right}>
+                <FormattedMessage {...MSG.removed} />
+              </span>
+            </div>
           );
-        },
-      )}
+        }
+
+        return (
+          <ChangeItem
+            newValue={value as ValueOf<ValuesType>}
+            oldValue={oldRecipient?.[key]}
+            key={id}
+            colony={colony}
+            name={key}
+          />
+        );
+      })}
     </>
   );
 };
