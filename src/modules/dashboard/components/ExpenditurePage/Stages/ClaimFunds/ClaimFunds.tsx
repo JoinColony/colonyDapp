@@ -9,11 +9,11 @@ import classNames from 'classnames';
 import { FormSection } from '~core/Fields';
 import Tag from '~core/Tag';
 import Button from '~core/Button';
-import Numeral from '~core/Numeral';
 
 import { buttonStyles } from '../Stages';
 
 import { ClaimData } from './types';
+import ClaimTokens from './ClaimTokens';
 import styles from './ClaimFunds.css';
 
 const displayName = 'dashboard.ExpenditurePage.Stages.ClaimFunds';
@@ -80,16 +80,7 @@ const ClaimFunds = ({
           <span className={styles.label}>
             <FormattedMessage {...MSG.totalClaimable} />
           </span>
-          <div className={styles.valueContainer}>
-            {totalClaimable?.map(({ amount, token }, index) => {
-              const key = `${token && 'id' in token ? token?.id : index}-total`;
-              return (
-                <div className={styles.value} key={key}>
-                  <Numeral value={amount || 0} /> {token?.symbol}
-                </div>
-              );
-            })}
-          </div>
+          <ClaimTokens tokens={totalClaimable} />
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
@@ -97,17 +88,7 @@ const ClaimFunds = ({
           <span className={styles.label}>
             <FormattedMessage {...MSG.claimableNow} />
           </span>
-          <div className={styles.valueContainer}>
-            {claimableNow?.map(({ amount, token }, index) => {
-              const key = `${token && 'id' in token ? token?.id : index}-now`;
-
-              return (
-                <div className={styles.value} key={key}>
-                  <Numeral value={amount || 0} /> {token?.symbol}
-                </div>
-              );
-            })}
-          </div>
+          <ClaimTokens tokens={claimableNow} />
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
@@ -115,18 +96,7 @@ const ClaimFunds = ({
           <span className={styles.label}>
             <FormattedMessage {...MSG.claimed} />
           </span>
-          <div className={styles.valueContainer}>
-            {claimed?.map(({ amount, token }, index) => {
-              const key = `${
-                token && 'id' in token ? token?.id : index
-              }-claimed`;
-              return (
-                <div className={styles.value} key={key}>
-                  <Numeral value={amount || 0} /> {token?.symbol}
-                </div>
-              );
-            })}
-          </div>
+          <ClaimTokens tokens={claimed} />
         </div>
       </FormSection>
       <div className={styles.buttonWrapper}>
