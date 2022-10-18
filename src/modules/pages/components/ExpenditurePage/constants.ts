@@ -12,7 +12,7 @@ import { newFundingSource } from '~dashboard/ExpenditurePage/Streaming/constants
 
 import { ExpenditureEndDateTypes, ExpenditureTypes } from './types';
 
-export const fixTriggerEventName = 'fix-trigger';
+export const FIX_TRIGGER_EVENT_NAME = 'fix-trigger';
 
 const MSG = defineMessages({
   userRequiredError: {
