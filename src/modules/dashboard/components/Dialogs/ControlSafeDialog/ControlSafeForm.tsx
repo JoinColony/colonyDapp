@@ -159,7 +159,7 @@ const ControlSafeForm = ({
   );
   const userHasRootPermission = userHasRole(fromDomainRoles, ColonyRole.Root);
   const hasRoles = userHasFundingPermission && userHasRootPermission;
-  const [userHasPermission] = useDialogActionPermissions(
+  const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
     colony.colonyAddress,
     hasRoles,
     isVotingExtensionEnabled,
@@ -472,8 +472,13 @@ const ControlSafeForm = ({
         </>
       ) : (
         <SafeTransactionPreview
+          colony={colony}
+          isSubmitting={isSubmitting}
           values={values}
           selectedContractMethods={selectedContractMethods}
+          isVotingExtensionEnabled={isVotingExtensionEnabled}
+          userHasPermission={userHasPermission}
+          onlyForceAction={onlyForceAction}
         />
       )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
@@ -489,7 +494,9 @@ const ControlSafeForm = ({
           }
           text={showPreview ? MSG.buttonConfirm : MSG.buttonCreateTransaction}
           loading={isSubmitting}
-          disabled={!isValid || isSubmitting || !hasTitle || !dirty}
+          disabled={
+            !isValid || isSubmitting || !hasTitle || !dirty || !onlyForceAction
+          }
           style={{ width: styles.wideButton }}
         />
       </DialogSection>
