@@ -1,8 +1,8 @@
-import { AnyToken } from '~data/index';
+import { Token } from '~data/index';
 
 export interface TokenData {
   amount: number;
-  token?: AnyToken | undefined;
+  token?: Token | undefined;
 }
 
 export interface ClaimData {
