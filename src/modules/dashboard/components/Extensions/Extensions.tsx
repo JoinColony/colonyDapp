@@ -51,35 +51,24 @@ const Extensions = ({ colonyAddress }: Props) => {
 
   const { data: networkExtensionData } = useNetworkExtensionVersionQuery();
 
-  console.log('GOT HERE 1');
-  console.log(
-    '🚀 ~ file: Extensions.tsx ~ line 58 ~ installedExtensionsData ~ data?.processedColony?.installedExtensions',
-    data?.processedColony?.installedExtensions,
-  );
-
   const installedExtensionsData = useMemo(() => {
     if (data?.processedColony?.installedExtensions) {
       const { installedExtensions } = data.processedColony;
-      return installedExtensions.map(({ extensionId, address, details }) => ({
-        ...extensionData[extensionId],
-        address,
-        currentVersion: details?.version || 0,
-      }));
+
+      return installedExtensions
+        .filter(({ extensionId }) => allAllowedExtensions.includes(extensionId))
+        .map(({ extensionId, address, details }) => ({
+          ...extensionData[extensionId],
+          address,
+          currentVersion: details?.version || 0,
+        }));
     }
     return [];
   }, [data]);
-  console.log(
-    '🚀 ~ file: Extensions.tsx ~ line 67 ~ installedExtensionsData ~ installedExtensionsData',
-    installedExtensionsData,
-  );
 
   const availableExtensionsData = useMemo(() => {
     if (data?.processedColony?.installedExtensions) {
       const { installedExtensions } = data.processedColony;
-      console.log(
-        '🚀 ~ file: Extensions.tsx ~ line 73 ~ availableExtensionsData ~ installedExtensions',
-        installedExtensions,
-      );
 
       return allAllowedExtensions.reduce(
         (availableExtensions, extensionName) => {
@@ -94,10 +83,6 @@ const Extensions = ({ colonyAddress }: Props) => {
             const networkExtension = networkExtensionVersion?.find(
               (extension) =>
                 extension?.extensionHash === getExtensionHash(extensionName),
-            );
-            console.log(
-              '🚀 ~ file: Extensions.tsx ~ line 98 ~ availableExtensionsData ~ networkExtension',
-              networkExtension,
             );
             return [
               ...availableExtensions,
@@ -114,10 +99,6 @@ const Extensions = ({ colonyAddress }: Props) => {
     }
     return [];
   }, [data, networkExtensionData]);
-  console.log(
-    '🚀 ~ file: Extensions.tsx ~ line 103 ~ availableExtensionsData',
-    availableExtensionsData,
-  );
 
   if (loading) {
     return (
