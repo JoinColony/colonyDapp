@@ -24,10 +24,6 @@ export const MSG = defineMessages({
     id: 'dashboard.EditExpenditureDialog.ChangedStaged.milestone',
     defaultMessage: 'Change Milestone',
   },
-  changeHeader: {
-    id: 'dashboard.EditExpenditureDialog.ChangedStaged.changeHeader',
-    defaultMessage: 'Staged {name}',
-  },
 });
 
 const displayName = 'dashboard.EditExpenditureDialog.ChangedStaged';
@@ -81,11 +77,7 @@ const ChangedStaged = ({
 
         return (
           <Fragment key={id}>
-            <ChangeHeader
-              name={formatMessage(MSG.changeHeader, {
-                name: capitalize(key),
-              })}
-            />
+            <ChangeHeader name={capitalize(key)} />
             <ChangeItem
               newValue={value}
               oldValue={oldValue}
