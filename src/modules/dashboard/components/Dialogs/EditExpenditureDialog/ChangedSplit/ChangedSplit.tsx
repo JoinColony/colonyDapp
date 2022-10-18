@@ -22,7 +22,7 @@ export const MSG = defineMessages({
   },
   change: {
     id: 'dashboard.EditExpenditureDialog.ChangedSplit.change',
-    defaultMessage: 'Split Amount',
+    defaultMessage: 'Amount',
   },
   removed: {
     id: 'dashboard.EditExpenditureDialog.ChangedSplit.removed',

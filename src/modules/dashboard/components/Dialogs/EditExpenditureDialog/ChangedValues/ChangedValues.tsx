@@ -8,6 +8,7 @@ import { Colony } from '~data/index';
 import ColorTag, { Color } from '~core/ColorTag';
 import Icon from '~core/Icon';
 import { ValuesType } from '~pages/ExpenditurePage/types';
+import { capitalize } from '~utils/strings';
 
 import NewValue from '../NewValue';
 
@@ -115,7 +116,7 @@ const ChangedValues = ({
                       key === 'filteredDomainId' ? (
                         <FormattedMessage {...MSG.teamCaption} />
                       ) : (
-                        key
+                        capitalize(key)
                       ),
                   }}
                 />
