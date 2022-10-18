@@ -183,13 +183,10 @@ const ContractInteractionSection = ({
           Number(selectedSafe?.chainId),
         );
 
-        setFieldValue(`transactions.${transactionFormIndex}.contract`, {
-          ...contract,
-          profile: {
-            ...contract.profile,
-            displayName: contractName || 'Unknown contract',
-          },
-        });
+        setFieldValue(
+          `transactions.${transactionFormIndex}.contract.profile.displayName`,
+          contractName || 'Unknown contract',
+        );
         setIsLoadingABI(false);
       } else {
         if (!isAddress(contract.profile.walletAddress)) {
@@ -197,13 +194,10 @@ const ContractInteractionSection = ({
         } else {
           setFetchABIError(formatMessage(MSG.noSafeSelectedError));
         }
-        setFieldValue(`transactions.${transactionFormIndex}.contract`, {
-          ...contract,
-          profile: {
-            ...contract.profile,
-            displayName: 'Unknown contract',
-          },
-        });
+        setFieldValue(
+          `transactions.${transactionFormIndex}.contract.profile.displayName`,
+          'Unknown contract',
+        );
         setIsLoadingABI(false);
       }
     },
