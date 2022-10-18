@@ -10,3 +10,6 @@ export const singleFundingSource: string;
 export const addFundingSourceLabel: string;
 export const marginBottomLarge: string;
 export const fundingTitle: string;
+export const rate: string;
+export const marginLeft: string;
+export const wrapper: string;
