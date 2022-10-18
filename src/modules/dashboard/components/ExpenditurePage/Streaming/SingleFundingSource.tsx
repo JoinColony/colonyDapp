@@ -1,6 +1,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useField } from 'formik';
+import classNames from 'classnames';
 
 import { FormSection } from '~core/Fields';
 import Icon from '~core/Icon';
@@ -53,7 +54,11 @@ const SingleFundingSource = ({
   );
 
   return (
-    <div className={styles.singleFundingSource}>
+    <div
+      className={classNames(styles.singleFundingSource, {
+        [styles.wrapper]: !isLastItem && fundingSource.isExpanded,
+      })}
+    >
       <FormSection>
         <div className={styles.fundingSourceLabel}>
           <CollapseExpandButtons
