@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { FormikProps } from 'formik';
 import { pipe } from 'lodash/fp';
 import { useHistory } from 'react-router';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { AnyToken, AnyUser, ColonySafe } from '~data/index';
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
@@ -157,6 +158,8 @@ const ControlSafeDialog = ({
             nftData: null,
           },
         ],
+        forceAction: false,
+        motionDomainId: ROOT_DOMAIN_ID,
       }}
       validationSchema={validationSchema}
       submit={ActionTypes.ACTION_INITIATE_SAFE_TRANSACTION}

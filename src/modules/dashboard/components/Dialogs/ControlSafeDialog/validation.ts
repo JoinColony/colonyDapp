@@ -350,4 +350,6 @@ export const getValidationSchema = (
         ...expandedValidationSchema,
       }),
     ),
+    forceAction: yup.boolean(),
+    motionDomainId: yup.number(),
   });
