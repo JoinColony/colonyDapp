@@ -1,5 +1,5 @@
 .row {
-  padding: 11px 0 12px;
+  padding: 8px 0;
   font-size: var(--size-normal);
   font-weight: var(--weight-normal);
   line-height: 18px;
@@ -8,6 +8,11 @@
 
 .value {
   composes: value from '../NewDelay/NewDelay.css';
+}
+
+.value figure {
+  height: 24px;
+  width: 24px;
 }
 
 .smallerPadding {
