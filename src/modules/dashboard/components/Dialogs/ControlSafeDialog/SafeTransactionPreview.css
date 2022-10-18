@@ -119,3 +119,9 @@
   font-size: var(--size-normal);
   color: var(--pink);
 }
+
+.motionHeading {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 18px;
+}

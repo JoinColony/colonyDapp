@@ -4,15 +4,17 @@ import classnames from 'classnames';
 import { nanoid } from 'nanoid';
 
 import { DialogSection } from '~core/Dialog';
-import { Annotations, Input } from '~core/Fields';
+import { Annotations, Input, Toggle } from '~core/Fields';
 import Heading from '~core/Heading';
 import Numeral from '~core/Numeral';
 import TokenIcon from '~dashboard/HookedTokenIcon';
+import MotionDomainSelect from '~dashboard/MotionDomainSelect';
+import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
 import Avatar from '~core/Avatar';
 import MaskedAddress from '~core/MaskedAddress';
-import { AnyUser } from '~data/index';
+import { AnyUser, Colony } from '~data/index';
 import { AbiItemExtended, getArrayFromString } from '~utils/safes';
 
 import AddressDetailsView from './TransactionPreview/AddressDetailsView';
@@ -219,7 +221,12 @@ const transactionTypeFieldsMap = {
 const displayName = 'dashboard.ControlSafeDialog.SafeTransactionPreview';
 
 interface Props {
+  colony: Colony;
   values: FormValues;
+  isVotingExtensionEnabled: boolean;
+  userHasPermission: boolean;
+  isSubmitting: boolean;
+  onlyForceAction: boolean;
   selectedContractMethods?:
     | {
         [key: number]: AbiItemExtended | undefined;
@@ -227,7 +234,15 @@ interface Props {
     | undefined;
 }
 
-const SafeTransactionPreview = ({ values, selectedContractMethods }: Props) => {
+const SafeTransactionPreview = ({
+  colony,
+  values,
+  selectedContractMethods,
+  isVotingExtensionEnabled,
+  userHasPermission,
+  isSubmitting,
+  onlyForceAction,
+}: Props) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState(
     Array(values.transactions.length).fill(false),
   );
@@ -299,6 +314,26 @@ const SafeTransactionPreview = ({ values, selectedContractMethods }: Props) => {
 
   return (
     <>
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <div className={styles.motionHeading}>
+          {isVotingExtensionEnabled && (
+            <MotionDomainSelect
+              colony={colony}
+              /*
+               * @NOTE Always disabled since you can only create this motion in root
+               */
+              disabled
+            />
+          )}
+          {userHasPermission && isVotingExtensionEnabled && (
+            <Toggle
+              label={{ id: 'label.force' }}
+              name="forceAction"
+              disabled={isSubmitting}
+            />
+          )}
+        </div>
+      </DialogSection>
       <DialogSection>
         <div className={styles.heading}>
           <Heading
@@ -433,11 +468,19 @@ const SafeTransactionPreview = ({ values, selectedContractMethods }: Props) => {
             appearance={{ colorSchema: 'grey', theme: 'fat' }}
             label={MSG.transactionsTitle}
             name="transactionsTitle"
+            disabled={onlyForceAction}
           />
         </DialogSection>
         <DialogSection>
-          <Annotations label={MSG.description} name="annotation" />
+          <Annotations
+            label={MSG.description}
+            name="annotation"
+            disabled={onlyForceAction}
+          />
         </DialogSection>
+        {onlyForceAction && (
+          <NotEnoughReputation appearance={{ marginTop: 'negative' }} />
+        )}
       </div>
     </>
   );
