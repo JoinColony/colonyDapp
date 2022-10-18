@@ -162,45 +162,41 @@ const ContractInteractionSection = ({
   );
 
   const onContractChange = useCallback(
-    (contract: AnyUser) => {
+    async (contract: AnyUser) => {
       setIsLoadingABI(true);
       setFetchABIError('');
 
       if (selectedSafe && isAddress(contract.profile.walletAddress)) {
-        const contractABIPromise = fetchContractABI(
+        const contractABIData = await fetchContractABI(
           contract.profile.walletAddress,
           Number(selectedSafe.chainId),
         );
-        contractABIPromise.then((data) => {
-          setIsLoadingABI(false);
-          if (data) {
-            onContractABIChange(data);
-          } else {
-            setFetchABIError(formatMessage(MSG.fetchFailedError));
-          }
-        });
 
-        const contractNamePromise = fetchContractName(
+        if (contractABIData) {
+          onContractABIChange(contractABIData);
+        } else {
+          setFetchABIError(formatMessage(MSG.fetchFailedError));
+        }
+
+        const contractName = await fetchContractName(
           contract.profile.walletAddress,
           Number(selectedSafe?.chainId),
         );
 
-        contractNamePromise.then((name) => {
-          setFieldValue(`transactions.${transactionFormIndex}.contract`, {
-            ...contract,
-            profile: {
-              ...contract.profile,
-              displayName: name || 'Unknown contract',
-            },
-          });
+        setFieldValue(`transactions.${transactionFormIndex}.contract`, {
+          ...contract,
+          profile: {
+            ...contract.profile,
+            displayName: contractName || 'Unknown contract',
+          },
         });
+        setIsLoadingABI(false);
       } else {
         if (!isAddress(contract.profile.walletAddress)) {
           setFetchABIError(formatMessage(MSG.invalidAddressError));
         } else {
           setFetchABIError(formatMessage(MSG.noSafeSelectedError));
         }
-        setIsLoadingABI(false);
         setFieldValue(`transactions.${transactionFormIndex}.contract`, {
           ...contract,
           profile: {
@@ -208,6 +204,7 @@ const ContractInteractionSection = ({
             displayName: 'Unknown contract',
           },
         });
+        setIsLoadingABI(false);
       }
     },
     [
