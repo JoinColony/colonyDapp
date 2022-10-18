@@ -109,7 +109,10 @@ const Staged = ({ colony, sidebarRef }: Props) => {
         }),
       );
     },
-    [amount.tokenAddress, milestones, setValue],
+
+    // setValue is not included in the dependency array, because it's recreated on each render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [amount.tokenAddress, milestones],
   );
 
   const onTokenChange = useCallback(
@@ -126,7 +129,10 @@ const Staged = ({ colony, sidebarRef }: Props) => {
         }),
       );
     },
-    [milestones, setValue],
+
+    // same here, setValue is not included
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [milestones],
   );
 
   return (
