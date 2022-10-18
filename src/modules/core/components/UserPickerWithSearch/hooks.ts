@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-import { fixTriggerEventName } from '~pages/ExpenditurePage/constants';
+import { FIX_TRIGGER_EVENT_NAME } from '~pages/ExpenditurePage/constants';
 
 const useUserTriggerFocus = (
   index: number,
@@ -28,10 +28,10 @@ const useUserTriggerFocus = (
     };
 
     // custom event is being used here - which was created specially for elements with additional onFocus logic
-    window.addEventListener(fixTriggerEventName, fixAction);
+    window.addEventListener(FIX_TRIGGER_EVENT_NAME, fixAction);
 
     return () => {
-      window.removeEventListener(fixTriggerEventName, fixAction);
+      window.removeEventListener(FIX_TRIGGER_EVENT_NAME, fixAction);
       clearTimeout(timeout);
     };
   }, [index, disabled, toggleDropdown]);

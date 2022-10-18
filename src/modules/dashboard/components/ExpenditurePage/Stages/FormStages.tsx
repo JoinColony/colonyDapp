@@ -11,7 +11,7 @@ import {
   State,
   ValuesType,
 } from '~pages/ExpenditurePage/types';
-import { fixTriggerEventName } from '~pages/ExpenditurePage/constants';
+import { FIX_TRIGGER_EVENT_NAME } from '~pages/ExpenditurePage/constants';
 
 import Stages from './Stages';
 import StreamingStages from './StreamingStages';
@@ -145,7 +145,7 @@ const FormStages = ({
     if (firstInvalidEl?.tagName.toLowerCase() === 'input') {
       (firstInvalidEl as HTMLElement).focus();
     } else {
-      const customEvent = new CustomEvent(fixTriggerEventName, {
+      const customEvent = new CustomEvent(FIX_TRIGGER_EVENT_NAME, {
         detail: {
           order: Number((firstInvalidEl as HTMLElement).dataset.index),
         },
