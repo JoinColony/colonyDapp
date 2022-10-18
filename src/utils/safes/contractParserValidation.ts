@@ -58,12 +58,40 @@ const isIntSafe = (value: string, inputType: string) => {
   return isSafe;
 };
 
-export const getArrayFromString = (array: string) => {
+export const getArrayFromString = (array: string): Array<string> => {
   if (array === '[]') {
     return [];
   }
-  const vals = array.substring(1, array.length - 1);
-  return vals.split(',').map((val) => val.trim());
+
+  const contents = array.substring(1, array.length - 1);
+  const parsedElements: Array<string> = [];
+  let currentStartIndex = 0;
+  let currentNestingLevel = 0;
+
+  for (let i = 0; i < contents.length; i += 1) {
+    if (contents[i] === '[') {
+      currentNestingLevel += 1;
+    } else if (contents[i] === ']') {
+      currentNestingLevel -= 1;
+    }
+
+    const isLastChar = i === contents.length - 1;
+    const isEndOfElement = contents[i] === ',';
+
+    if (currentNestingLevel === 0 && (isLastChar || isEndOfElement)) {
+      const endIndex = isLastChar ? i : i - 1;
+      parsedElements.push(
+        contents.substring(currentStartIndex, endIndex + 1).trim(),
+      );
+      currentStartIndex = i + 1;
+    }
+
+    if (isLastChar && currentNestingLevel !== 0) {
+      throw new Error('Invalid array');
+    }
+  }
+
+  return parsedElements;
 };
 
 const isAddressValid = (value: string) => {
@@ -133,34 +161,38 @@ export const validateType = (
       return topLevelIndex ?? -1;
     }
 
-    const elementsType = inputType.substring(0, inputType.length - 2);
-    const elements = getArrayFromString(value);
-    let failIdx: number;
+    try {
+      const elements = getArrayFromString(value);
+      const elementsType = inputType.substring(0, inputType.length - 2);
+      let failIdx: number;
 
-    const allElementsValid = elements.every((element, index) => {
-      const currentIndex = topLevelIndex ?? index;
+      const allElementsValid = elements.every((element, index) => {
+        const currentIndex = topLevelIndex ?? index;
 
-      const validationResult = validateType(
-        elementsType,
-        element,
-        currentIndex,
-      );
+        const validationResult = validateType(
+          elementsType,
+          element,
+          currentIndex,
+        );
 
-      // error is indicated by either 'false' or an index at which it occured
-      if (validationResult !== true) {
-        failIdx = currentIndex;
-        return false;
+        // error is indicated by either 'false' or an index at which it occured
+        if (validationResult !== true) {
+          failIdx = currentIndex;
+          return false;
+        }
+
+        return true;
+      });
+
+      if (allElementsValid) {
+        return true;
       }
 
-      return true;
-    });
-
-    if (allElementsValid) {
-      return true;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      return failIdx!; // If we get here, it means allElementsValid is false and failIdx was set.
+    } catch {
+      return -1;
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return failIdx!; // If we get here, it means allElementsValid is false and failIdx was set.
   }
 
   const key = Object.keys(typeFunctionMap).find((t) => inputType.includes(t));
