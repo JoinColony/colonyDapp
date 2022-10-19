@@ -53,7 +53,7 @@ const StakingValidationError = ({ stakeType, errorValues }: Props) => {
         text={stakeValidationMSG.tokens}
         textValues={{
           /* react-intl has wrong types for the formatMessage funtion that is used in the button.
-          The will be a type error if there is no type casting although it's all working correctly */
+          There will be a type error if there is no type casting although it's all working correctly */
           leftToActivate: errorValues?.leftToActivate as PrimitiveType,
           tokenSymbol: (errorValues?.tokenSymbol as PrimitiveType) || '',
         }}

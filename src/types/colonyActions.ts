@@ -36,6 +36,7 @@ export enum ColonyAndExtensionsEvents {
   TokenUnlocked = 'TokenUnlocked',
   TokensMinted = 'TokensMinted',
   SkillAdded = 'SkillAdded',
+  DecisionCreated = 'DecisionCreated',
   DomainAdded = 'DomainAdded',
   DomainMetadata = 'DomainMetadata',
   PaymentPayoutSet = 'PaymentPayoutSet',
@@ -145,6 +146,8 @@ export interface FormattedAction {
   totalNayStake?: string;
   requiredStake?: string;
   reputationChange?: string;
+  isDecision?: boolean;
+  annotationHash?: string;
 }
 
 export interface FormattedEvent {

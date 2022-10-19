@@ -1,0 +1,11 @@
+.heading {
+  composes: heading from '../ActionsComponents/DefaultAction.css';
+}
+
+.annotation {
+  composes: annotation from '../ActionsComponents/DefaultMotion.css';
+}
+
+.commentBox {
+  composes: commentBox from '../ActionsComponents/DefaultAction.css';
+}

@@ -17,10 +17,12 @@ export enum MotionState {
   Motion = 'Motion',
   Failed = 'Failed',
   Passed = 'Passed',
-  FailedNoFinalizable = 'FailedNoFinalizable',
+  FailedNotFinalizable = 'FailedNotFinalizable',
   Invalid = 'Invalid',
   Escalation = 'Escalation',
   Forced = 'Forced',
+  Notice = 'Notice',
+  Draft = 'Draft',
 }
 
 export enum MotionVote {
@@ -73,6 +75,14 @@ const MSG = defineMessage({
     id: 'dashboard.ActionsPage.forcedTag',
     defaultMessage: 'Forced',
   },
+  noticeTag: {
+    id: 'dashboard.ActionsPage.noticeTag',
+    defaultMessage: 'Notice',
+  },
+  draftTag: {
+    id: 'dashboard.ActionsPage.draftTag',
+    defaultMessage: 'Draft',
+  },
 });
 
 export const MOTION_TAG_MAP = {
@@ -81,6 +91,12 @@ export const MOTION_TAG_MAP = {
     colorSchema: 'fullColor',
     name: MSG.stakedTag,
     tagName: 'motionTag',
+  },
+  [MotionState.Notice]: {
+    theme: 'blue',
+    colorSchema: 'fullColor',
+    name: MSG.noticeTag,
+    tagName: 'noticeTag',
   },
   [MotionState.Staking]: {
     theme: 'pink',
@@ -118,7 +134,7 @@ export const MOTION_TAG_MAP = {
     name: MSG.failedTag,
     tagName: 'failedTag',
   },
-  [MotionState.FailedNoFinalizable]: {
+  [MotionState.FailedNotFinalizable]: {
     theme: 'pink',
     colorSchema: 'plain',
     name: MSG.failedTag,
@@ -147,6 +163,12 @@ export const MOTION_TAG_MAP = {
     colorSchema: 'inverted',
     name: MSG.forcedTag,
     tagName: 'forcedTag',
+  },
+  [MotionState.Draft]: {
+    theme: 'golden',
+    colorSchema: 'fullColor',
+    name: MSG.draftTag,
+    tagName: 'draftTag',
   },
 };
 

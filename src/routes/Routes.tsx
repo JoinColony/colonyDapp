@@ -21,6 +21,7 @@ import LoadingTemplate from '~pages/LoadingTemplate';
 import LadingPage from '~pages/LandingPage';
 import ActionsPage from '~dashboard/ActionsPage';
 import { ClaimTokensPage, UnwrapTokensPage } from '~dashboard/Vesting';
+import DecisionPreview from '~dashboard/DecisionPreview/DecisionPreview';
 
 import appLoadingContext from '~context/appLoadingState';
 import ColonyFunding from '~dashboard/ColonyFunding';
@@ -29,6 +30,8 @@ import { ActionTypes } from '~redux/index';
 
 import {
   COLONY_EVENTS_ROUTE,
+  COLONY_DECISIONS_ROUTE,
+  COLONY_DECISIONS_PREVIEW_ROUTE,
   COLONY_EXTENSIONS_ROUTE,
   COLONY_EXTENSION_DETAILS_ROUTE,
   COLONY_EXTENSION_SETUP_ROUTE,
@@ -47,6 +50,7 @@ import {
   ACTIONS_PAGE_ROUTE,
   UNWRAP_TOKEN_ROUTE,
   CLAIM_TOKEN_ROUTE,
+  DECISIONS_PAGE_ROUTE,
 } from './routeConstants';
 
 import AlwaysAccesibleRoute from './AlwaysAccesibleRoute';
@@ -153,6 +157,14 @@ const Routes = () => {
             hasBackLink: false,
           }}
         />
+        <WalletRequiredRoute
+          isConnected={isConnected}
+          didClaimProfile={didClaimProfile}
+          path={COLONY_DECISIONS_PREVIEW_ROUTE}
+          component={DecisionPreview}
+          layout={NavBar}
+          routeProps={{ hasBackLink: true }}
+        />
 
         <AlwaysAccesibleRoute
           path={LANDING_PAGE_ROUTE}
@@ -165,6 +177,10 @@ const Routes = () => {
         <AlwaysAccesibleRoute
           exact
           path={[
+            COLONY_HOME_ROUTE,
+            COLONY_EVENTS_ROUTE,
+            COLONY_DECISIONS_ROUTE,
+            COLONY_EXTENSIONS_ROUTE,
             COLONY_EXTENSION_DETAILS_ROUTE,
             COLONY_EXTENSIONS_ROUTE,
             COLONY_EXTENSION_SETUP_ROUTE,
@@ -186,6 +202,7 @@ const Routes = () => {
             hasSubscribedColonies: isMobile,
           })}
         />
+
         <AlwaysAccesibleRoute
           path={USER_ROUTE}
           component={UserProfile}
@@ -225,6 +242,16 @@ const Routes = () => {
             backText: '',
             backRoute: `/colony/${colonyName}`,
             hasSubscribedColonies: isMobile,
+          })}
+        />
+        <AlwaysAccesibleRoute
+          exact
+          path={DECISIONS_PAGE_ROUTE}
+          component={ActionsPage}
+          layout={NavBar}
+          routeProps={({ colonyName }) => ({
+            backText: '',
+            backRoute: `/colony/${colonyName}/decisions`,
           })}
         />
         <AlwaysAccesibleRoute

@@ -59,6 +59,7 @@ const MSG = defineMessages({
       ${ColonyMotions.VersionUpgradeMotion} {Version Upgrade}
       ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite}
       ${ColonyMotions.EmitDomainReputationRewardMotion} {Award}
+      ${ColonyMotions.CreateDecisionMotion} {Decision}
       other {Generic Action}
     }" be approved?`,
   },

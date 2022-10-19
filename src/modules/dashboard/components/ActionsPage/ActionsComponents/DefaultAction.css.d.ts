@@ -1,7 +1,7 @@
 export const query700: string;
 export const main: string;
 export const recoveryTag: string;
-export const setMarginWidth: string;
+export const containerMargin: string;
 export const dividerTop: string;
 export const container: string;
 export const upperContainer: string;
@@ -15,3 +15,4 @@ export const addressInTitle: string;
 export const titleDecoration: string;
 export const tagWrapper: string;
 export const commentBox: string;
+export const setMarginWidth: string;

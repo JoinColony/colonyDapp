@@ -1,6 +1,6 @@
 import React, { ReactNode, useCallback } from 'react';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
-import { useIntl, defineMessages } from 'react-intl';
+import { useIntl, defineMessages, MessageDescriptor } from 'react-intl';
 
 import { Form, SelectOption } from '~core/Fields';
 import DomainDropdown from '~core/DomainDropdown';
@@ -23,6 +23,7 @@ interface Props {
   onDomainChange?: (domainId: number) => any;
   filterDomains?: (option: SelectOption) => boolean;
   disabled?: boolean;
+  dropdownLabel?: MessageDescriptor;
 }
 
 const displayName = 'dashboard.MotionDomainSelect';
@@ -34,6 +35,7 @@ const MotionDomainSelect = ({
   onDomainChange,
   filterDomains,
   disabled = false,
+  dropdownLabel,
 }: Props) => {
   const { formatMessage } = useIntl();
   const renderActiveOption = useCallback<
@@ -46,8 +48,10 @@ const MotionDomainSelect = ({
        */
       let displayLabel =
         parseInt(option?.value || `${ROOT_DOMAIN_ID}`, 10) === ROOT_DOMAIN_ID
-          ? `${formatMessage(MSG.createDomain)} ${label}`
-          : `${formatMessage(MSG.createDomain)} ${formatMessage({
+          ? `${formatMessage(dropdownLabel || MSG.createDomain)} ${label}`
+          : `${formatMessage(
+              dropdownLabel || MSG.createDomain,
+            )} ${formatMessage({
               id: 'domain.root',
             })}/${label}`;
       /*
@@ -59,7 +63,7 @@ const MotionDomainSelect = ({
       }
       return <div className={styles.activeItem}>{displayLabel}</div>;
     },
-    [formatMessage],
+    [formatMessage, dropdownLabel],
   );
 
   return (
