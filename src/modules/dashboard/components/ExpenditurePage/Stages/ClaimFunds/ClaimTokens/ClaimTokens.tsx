@@ -17,8 +17,8 @@ const ClaimTokens = ({ tokens }: Props) => {
 
   return (
     <div className={styles.valueContainer}>
-      {tokens?.map(({ amount, token }) => (
-        <div className={styles.value} key={token?.id}>
+      {tokens?.map(({ amount, token, key }) => (
+        <div className={styles.value} key={key}>
           <Numeral value={amount || 0} /> {token?.symbol}
         </div>
       ))}

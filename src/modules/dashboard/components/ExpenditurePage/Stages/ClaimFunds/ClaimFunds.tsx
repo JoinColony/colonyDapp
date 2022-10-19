@@ -42,7 +42,7 @@ export type TokensAmount = Record<string, number>;
 interface Props {
   buttonAction?: () => void;
   buttonText?: string | MessageDescriptor;
-  nextClaimLabel: string | JSX.Element | React.ReactNodeArray;
+  nextClaimLabel: JSX.Element;
   claimData: Omit<ClaimData, 'nextClaim'>;
   isDisabled?: boolean;
 }
