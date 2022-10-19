@@ -45,8 +45,8 @@ import {
   isExpenditureType,
 } from './utils';
 import ExpenditureForm from './ExpenditureForm';
-import { ExpenditureTypes, ValuesType } from './types';
 import LockedSidebar from './LockedSidebar';
+import { ExpenditureTypes, ValuesType } from './types';
 import { initialValues, validationSchema } from './constants';
 import styles from './ExpenditurePage.css';
 
