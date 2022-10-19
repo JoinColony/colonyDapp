@@ -70,6 +70,10 @@ const MSG = defineMessages({
     id: `dashboard.ControlSafeDialog.ControlSafeForm.buttonCreateTransaction`,
     defaultMessage: 'Create transaction',
   },
+  buttonCreateMotion: {
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.buttonCreateMotion`,
+    defaultMessage: 'Create motion',
+  },
   buttonConfirm: {
     id: `dashboard.ControlSafeDialog.ControlSafeForm.buttonConfirm`,
     defaultMessage: 'Confirm',
@@ -285,6 +289,17 @@ const ControlSafeForm = ({
   );
 
   const savedNFTState = useState({});
+
+  const submitButtonText = (() => {
+    if (!showPreview) {
+      if (isVotingExtensionEnabled && !values.forceAction) {
+        return MSG.buttonCreateMotion;
+      }
+      return MSG.buttonCreateTransaction;
+    }
+    return MSG.buttonConfirm;
+  })();
+
   return (
     <>
       {!showPreview ? (
@@ -492,7 +507,7 @@ const ControlSafeForm = ({
           onClick={() =>
             showPreview ? handleSubmit() : handleShowPreview(!showPreview)
           }
-          text={showPreview ? MSG.buttonConfirm : MSG.buttonCreateTransaction}
+          text={submitButtonText}
           loading={isSubmitting}
           disabled={
             !isValid ||
