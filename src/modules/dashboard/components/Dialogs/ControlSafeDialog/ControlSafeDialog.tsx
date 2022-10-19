@@ -4,7 +4,7 @@ import { pipe } from 'lodash/fp';
 import { useHistory } from 'react-router';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { AnyToken, AnyUser, ColonySafe } from '~data/index';
+import { AnyUser, ColonySafe } from '~data/index';
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 import { ActionTypes } from '~redux/index';
@@ -26,7 +26,7 @@ import { getMethodInputValidation, getValidationSchema } from './validation';
 export interface SafeBalance {
   balance: number;
   tokenAddress: string | null;
-  token: AnyToken | null;
+  token: SafeBalanceToken | null;
 }
 
 export interface SafeTransaction {
@@ -35,12 +35,12 @@ export interface SafeTransaction {
   nft: SelectedNFT | null;
   nftData: NFT | null;
   tokenData: SafeBalanceToken | null;
-  amount?: number;
-  rawAmount?: number;
-  data?: string;
-  contract?: AnyUser;
-  abi?: string;
-  contractFunction?: string;
+  amount: number | null;
+  rawAmount: number | null;
+  data: string;
+  contract: AnyUser | null;
+  abi: string;
+  contractFunction: string;
 }
 
 export interface FormValues {
@@ -49,9 +49,8 @@ export interface FormValues {
   safeBalances: SafeBalance[] | null;
   forceAction: boolean;
   transactionsTitle: string;
+  motionDomainId: number;
 }
-
-const displayName = 'dashboard.ControlSafeDialog';
 
 type Props = DialogProps &
   Partial<WizardDialogType<object>> &
@@ -60,6 +59,23 @@ type Props = DialogProps &
 export type UpdatedMethods = {
   [key: number]: AbiItemExtended | undefined;
 };
+
+export const defaultTransaction: SafeTransaction = {
+  transactionType: '',
+  tokenData: null,
+  amount: null,
+  rawAmount: null,
+  recipient: null,
+  data: '',
+  contract: null,
+  abi: '',
+  contractFunction: '',
+  nft: null,
+  nftData: null,
+};
+
+const displayName = 'dashboard.ControlSafeDialog';
+
 const ControlSafeDialog = ({
   colony: { colonyAddress, colonyName },
   colony,
@@ -139,28 +155,16 @@ const ControlSafeDialog = ({
 
   return (
     <ActionForm
-      initialValues={{
-        safe: null,
-        safeBalances: null,
-        transactionsTitle: undefined,
-        transactions: [
-          {
-            transactionType: '',
-            tokenData: null,
-            amount: undefined,
-            rawAmount: undefined,
-            recipient: undefined,
-            data: '',
-            contract: undefined,
-            abi: '',
-            contractFunction: '',
-            nft: null,
-            nftData: null,
-          },
-        ],
-        forceAction: false,
-        motionDomainId: ROOT_DOMAIN_ID,
-      }}
+      initialValues={
+        {
+          safe: null,
+          safeBalances: null,
+          transactionsTitle: '',
+          transactions: [defaultTransaction],
+          forceAction: false,
+          motionDomainId: ROOT_DOMAIN_ID,
+        } as FormValues
+      }
       validationSchema={validationSchema}
       submit={ActionTypes.ACTION_INITIATE_SAFE_TRANSACTION}
       success={ActionTypes.ACTION_INITIATE_SAFE_TRANSACTION_SUCCESS}
