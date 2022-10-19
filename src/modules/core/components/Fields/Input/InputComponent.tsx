@@ -150,9 +150,7 @@ const InputComponent = ({
             maxButtonParams?.customOnClickFn?.();
             const decimalValue = new Decimal(maxButtonParams.maxAmount);
             if (decimalValue.lt(0.00001) && decimalValue.gt(0)) {
-              cleave?.setRawValue(
-                decimalValue.toSD(5, Decimal.ROUND_DOWN).toNumber(),
-              );
+              cleave?.setRawValue(maxButtonParams.maxAmount);
             } else {
               cleave?.setRawValue(
                 new Decimal(maxButtonParams.maxAmount)
