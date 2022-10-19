@@ -20,12 +20,6 @@ import { FormValues } from '..';
 
 import styles from '~core/Fields/AmountTokens/AmountTokens.css';
 
-export interface SafeBalance {
-  balance: number;
-  tokenAddress: string | null;
-  token: AnyToken | null;
-}
-
 interface Props extends Pick<TransferFundsProps, 'handleValidation'> {
   safeBalances: FormValues['safeBalances'];
   disabledInput: boolean;
