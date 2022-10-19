@@ -3,7 +3,6 @@ import {
   defineMessages,
   FormattedMessage,
   MessageDescriptor,
-  useIntl,
 } from 'react-intl';
 
 import TimeRelativeShort from '~dashboard/ExpenditurePage/TimeRelativeShort';
@@ -48,8 +47,6 @@ const ClaimFundsRecipients = ({
   colony,
   isDisabled,
 }: Props) => {
-  const { formatMessage } = useIntl();
-
   const recipientsWithTokens = useMemo(() => {
     return recipients?.map((recipient) => {
       const token = getRecipientTokens(recipient, colony);
@@ -69,10 +66,17 @@ const ClaimFundsRecipients = ({
       // if the claim date has passed and the amount hasn't been claimed yet
       return <FormattedMessage {...MSG.now} />;
     }
-    return formatMessage(MSG.claim, {
-      claimDate: <TimeRelativeShort value={new Date(nextClaim.claimDate)} />,
-    });
-  }, [formatMessage, nextClaim]);
+    return (
+      <FormattedMessage
+        {...MSG.claim}
+        values={{
+          claimDate: (
+            <TimeRelativeShort value={new Date(nextClaim.claimDate)} />
+          ),
+        }}
+      />
+    );
+  }, [nextClaim]);
 
   return (
     <ClaimFunds

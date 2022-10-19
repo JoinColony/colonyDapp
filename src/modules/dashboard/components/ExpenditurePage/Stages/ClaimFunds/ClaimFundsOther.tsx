@@ -1,5 +1,9 @@
 import React, { useMemo } from 'react';
-import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  MessageDescriptor,
+} from 'react-intl';
 import { isEmpty } from 'lodash';
 import { nanoid } from 'nanoid';
 
@@ -36,8 +40,6 @@ const ClaimFundsOther = ({
   colony,
   isDisabled,
 }: Props) => {
-  const { formatMessage } = useIntl();
-
   const tokens = useMemo(() => {
     const expenditureType = formValues.expenditure;
     switch (expenditureType) {
@@ -77,7 +79,7 @@ const ClaimFundsOther = ({
               batchTokenItem?.token && {
                 token: batchTokenItem.token,
                 amount: Number(batchTokenItem?.value) || 0,
-                id: nanoid(),
+                key: nanoid(),
               },
           )
           .filter((item) => !!item);
@@ -102,7 +104,7 @@ const ClaimFundsOther = ({
       buttonAction={buttonAction}
       buttonText={buttonText}
       claimData={tokens as Omit<ClaimData, 'nextClaim'>}
-      nextClaimLabel={formatMessage(MSG.now)}
+      nextClaimLabel={<FormattedMessage {...MSG.now} />}
       isDisabled={isDisabled}
     />
   );
