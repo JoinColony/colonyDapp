@@ -24,7 +24,11 @@ import { debounce, isEqual, omit } from '~utils/lodash';
 import { useHasPermission } from '~utils/hooks/useHasPermissions';
 
 import SafeTransactionPreview from './SafeTransactionPreview';
-import { FormValues, UpdatedMethods } from './ControlSafeDialog';
+import {
+  defaultTransaction,
+  FormValues,
+  UpdatedMethods,
+} from './ControlSafeDialog';
 import {
   TransferNFTSection,
   TransferFundsSection,
@@ -173,17 +177,7 @@ const ControlSafeForm = ({
   );
   const handleNewTab = useCallback(
     (arrayHelpers: FieldArrayRenderProps) => {
-      arrayHelpers.push({
-        transactionType: '',
-        tokenData: null,
-        amount: undefined,
-        recipient: null,
-        data: '',
-        contract: null,
-        abi: '',
-        contractFunction: '',
-        nft: null,
-      });
+      arrayHelpers.push(defaultTransaction);
       setTransactionTabStatus([
         ...Array(transactionTabStatus.length).fill(false),
         true,
@@ -197,7 +191,7 @@ const ControlSafeForm = ({
       const newTransactionTabs = transactionTabStatus.map((tab, index) =>
         index === newIndex ? !tab : tab,
       );
-      setTransactionTabStatus([...newTransactionTabs]);
+      setTransactionTabStatus(newTransactionTabs);
     },
     [transactionTabStatus, setTransactionTabStatus],
   );
