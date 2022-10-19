@@ -22,6 +22,7 @@ import { PrimitiveType } from '~types/index';
 import { SelectedSafe } from '~modules/dashboard/sagas/utils/safeHelpers';
 import { debounce, isEqual, omit } from '~utils/lodash';
 import { useHasPermission } from '~utils/hooks/useHasPermissions';
+import { getColonySafe } from '~utils/safes';
 
 import SafeTransactionPreview from './SafeTransactionPreview';
 import {
@@ -102,6 +103,7 @@ const MSG = defineMessages({
   },
 });
 
+export const { invalidSafeError } = MSG;
 const displayName = 'dashboard.ControlSafeDialog.ControlSafeForm';
 
 export interface FormProps {
@@ -155,7 +157,10 @@ const ControlSafeForm = ({
 }: FormProps & FormikProps<FormValues>) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState([true]);
   const [prevSafeAddress, setPrevSafeAddress] = useState<string>('');
-  const [selectedSafe, setSelectedSafe] = useState<ColonySafe | null>(null);
+  const [
+    selectedColonySafe,
+    setSelectedColonySafe,
+  ] = useState<ColonySafe | null>(null);
   const hasRoles = [
     useHasPermission(colony, ColonyRole.Funding),
     useHasPermission(colony, ColonyRole.Root),
@@ -235,8 +240,8 @@ const ControlSafeForm = ({
    * When the selected safe changes, reset the state of
    * the "Transfer NFT" fields.
    */
-  const handleSafeChange = (safeSelected: SelectedSafe) => {
-    const safeAddress = safeSelected.profile.walletAddress;
+  const handleSafeChange = (selectedSafe: SelectedSafe) => {
+    const safeAddress = selectedSafe.profile.walletAddress;
     if (safeAddress !== prevSafeAddress) {
       setPrevSafeAddress(safeAddress);
       values.transactions.forEach((tx, i) => {
@@ -245,13 +250,9 @@ const ControlSafeForm = ({
           setFieldValue(`transactions.${i}.nftData`, null);
         }
       });
-      const verifiedSafe = colony.safes.find(
-        (safe) =>
-          safe.contractAddress === safeSelected.profile.walletAddress &&
-          safe.moduleContractAddress === safeSelected.id,
-      );
-      setSelectedSafe(verifiedSafe || null);
     }
+    const verifiedSafe = getColonySafe(safes, selectedSafe);
+    setSelectedColonySafe(verifiedSafe || null);
   };
 
   const handleShowPreview = (isPreview: boolean) => {
@@ -453,7 +454,7 @@ const ControlSafeForm = ({
                             name={`transactions.${index}.transactionType`}
                             onChange={() => {
                               if (!values.safe) {
-                                setSelectedSafe(null);
+                                setSelectedColonySafe(null);
                               }
                               removeSelectedContractMethod(index);
                             }}
@@ -464,7 +465,7 @@ const ControlSafeForm = ({
                           />
                         </div>
                       </DialogSection>
-                      {!selectedSafe && dirty ? (
+                      {!selectedColonySafe && dirty ? (
                         <ErrorMessage error={MSG.invalidSafeError} />
                       ) : (
                         renderTransactionSection(transaction, index)
