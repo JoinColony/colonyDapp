@@ -20,7 +20,6 @@ import { Address, Message } from '~types/index';
 import { log } from '~utils/debug';
 
 import { FormValues, TransactionSectionProps, SafeTransaction } from '..';
-import { MSG as FundsMSG } from './TransferFundsSection';
 import { AvatarXs, ErrorMessage as Error, Loading } from './shared';
 
 import styles from './TransferNFTSection.css';
@@ -159,10 +158,6 @@ const TransferNFTSection = ({
       handleValidation();
     }
   }, [safe, savedNFTs, setSavedNFTs, handleValidation]);
-
-  if (!safe && !availableNFTs && !nftError) {
-    return <Error error={FundsMSG.noSafeSelectedError} />;
-  }
 
   if (isLoadingNFTData || isFirstFetch) {
     return <Loading message={MSG.nftLoading} />;
