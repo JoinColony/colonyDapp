@@ -2,7 +2,6 @@ import { FieldArray, useField } from 'formik';
 import { nanoid } from 'nanoid';
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import classNames from 'classnames';
 
 import Button from '~core/Button';
 import Icon from '~core/Icon';
