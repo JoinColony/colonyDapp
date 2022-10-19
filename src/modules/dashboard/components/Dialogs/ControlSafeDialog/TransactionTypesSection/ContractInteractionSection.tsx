@@ -13,6 +13,7 @@ import {
   getContractUsefulMethods,
   AbiItemExtended,
   fetchContractABI,
+  fetchContractName,
 } from '~utils/safes';
 import { SpinnerLoader } from '~core/Preloaders';
 import { isEmpty, isEqual, isNil } from '~utils/lodash';
@@ -161,32 +162,52 @@ const ContractInteractionSection = ({
   );
 
   const onContractChange = useCallback(
-    (contract: AnyUser) => {
+    async (contract: AnyUser) => {
       setIsLoadingABI(true);
       setFetchABIError('');
+
       if (selectedSafe && isAddress(contract.profile.walletAddress)) {
-        const contractPromise = fetchContractABI(
+        const contractABIData = await fetchContractABI(
           contract.profile.walletAddress,
           Number(selectedSafe.chainId),
         );
-        contractPromise.then((data) => {
-          setIsLoadingABI(false);
-          if (data) {
-            onContractABIChange(data);
-          } else {
-            setFetchABIError(formatMessage(MSG.fetchFailedError));
-          }
-        });
+
+        if (contractABIData) {
+          onContractABIChange(contractABIData);
+        } else {
+          setFetchABIError(formatMessage(MSG.fetchFailedError));
+        }
+
+        const contractName = await fetchContractName(
+          contract.profile.walletAddress,
+          Number(selectedSafe?.chainId),
+        );
+
+        setFieldValue(
+          `transactions.${transactionFormIndex}.contract.profile.displayName`,
+          contractName || 'Unknown contract',
+        );
+        setIsLoadingABI(false);
       } else {
         if (!isAddress(contract.profile.walletAddress)) {
           setFetchABIError(formatMessage(MSG.invalidAddressError));
         } else {
           setFetchABIError(formatMessage(MSG.noSafeSelectedError));
         }
+        setFieldValue(
+          `transactions.${transactionFormIndex}.contract.profile.displayName`,
+          'Unknown contract',
+        );
         setIsLoadingABI(false);
       }
     },
-    [selectedSafe, onContractABIChange, formatMessage],
+    [
+      selectedSafe,
+      onContractABIChange,
+      formatMessage,
+      setFieldValue,
+      transactionFormIndex,
+    ],
   );
 
   const usefulMethods: AbiItemExtended[] = useMemo(
@@ -195,9 +216,10 @@ const ContractInteractionSection = ({
   );
 
   useEffect(() => {
-    if (
+    if (!selectedSafe) {
+      setPrevSafeChainId('');
+    } else if (
       transactionValues.contract &&
-      selectedSafe &&
       // only run effect if safe chain changes
       prevSafeChainId !== selectedSafe.chainId
     ) {
@@ -274,6 +296,7 @@ const ContractInteractionSection = ({
             onSelected={onContractChange}
             // handled instead in effect
             validateOnChange={false}
+            showMaskedAddress
           />
         </div>
       </DialogSection>

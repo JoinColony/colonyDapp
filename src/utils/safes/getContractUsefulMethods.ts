@@ -10,6 +10,38 @@ export interface AbiItemExtended extends AbiItem {
   signatureHash: string;
 }
 
+const getCurrentNetworkData = (chainId: number) => {
+  return SUPPORTED_SAFE_NETWORKS.find((network) => network.chainId === chainId);
+};
+
+const getApiKey = (chainId: number) => {
+  if (chainId === BINANCE_NETWORK.chainId) {
+    return process.env.BSCSCAN_API_KEY;
+  }
+  return process.env.ETHERSCAN_API_KEY;
+};
+
+export const fetchContractName = async (
+  contractAddress: string,
+  safeChainId: number,
+): Promise<string> => {
+  // will be defined since fetchContractName is only called if selectedSafe is defined
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const currentNetworkData = getCurrentNetworkData(safeChainId)!;
+
+  const apiKey = getApiKey(currentNetworkData.chainId);
+  const apiUri = `${currentNetworkData.apiUri}?apiKey=${apiKey}&module=contract&action=getsourcecode&address=${contractAddress}`;
+
+  try {
+    const response = await fetch(apiUri);
+    const data = await response.json();
+    return data.result[0].ContractName || '';
+  } catch (error) {
+    console.error('Failed to get contract name', error);
+    return '';
+  }
+};
+
 export const fetchContractABI = async (
   contractAddress: string,
   safeChainId: number,
@@ -19,20 +51,13 @@ export const fetchContractABI = async (
   }
 
   try {
+    // will be defined since fetchContractABI is only called if selectedSafe is defined
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const currentNetworkData = SUPPORTED_SAFE_NETWORKS.find(
-      (network) => network.chainId === safeChainId,
-    )!; // will be defined since fetchContractABI is only called if selectedSafe is defined
+    const currentNetworkData = getCurrentNetworkData(safeChainId)!;
 
-    const getApiKey = () => {
-      if (currentNetworkData.chainId === BINANCE_NETWORK.chainId) {
-        return process.env.BSCSCAN_API_KEY;
-      }
-      return process.env.ETHERSCAN_API_KEY;
-    };
     const getApiUri = () => {
       const apiUri = `${currentNetworkData.apiUri}?module=contract&action=getabi&address=${contractAddress}`;
-      return `${apiUri}&apiKey=${getApiKey()}`;
+      return `${apiUri}&apiKey=${getApiKey(currentNetworkData.chainId)}`;
     };
     const response = await fetch(getApiUri());
 
