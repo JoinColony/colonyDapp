@@ -28,12 +28,14 @@ import {
   defaultTransaction,
   FormValues,
   UpdatedMethods,
+  SafeTransaction,
 } from './ControlSafeDialog';
 import {
   TransferNFTSection,
   TransferFundsSection,
   RawTransactionSection,
   ContractInteractionSection,
+  ErrorMessage,
 } from './TransactionTypesSection';
 import { TransactionTypes, transactionOptions } from './constants';
 
@@ -93,6 +95,11 @@ const MSG = defineMessages({
     id: `dashboard.ControlSafeDialog.ControlSafeForm.deleteTransactionTooltipText`,
     defaultMessage: `Delete transaction.\nBe careful, data can be lost.`,
   },
+  invalidSafeError: {
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.invalidSafeError`,
+    defaultMessage:
+      'Select a safe from the menu or add a new one via Safe Control',
+  },
 });
 
 const displayName = 'dashboard.ControlSafeDialog.ControlSafeForm';
@@ -148,14 +155,14 @@ const ControlSafeForm = ({
 }: FormProps & FormikProps<FormValues>) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState([true]);
   const [prevSafeAddress, setPrevSafeAddress] = useState<string>('');
-
+  const [selectedSafe, setSelectedSafe] = useState<ColonySafe | null>(null);
   const hasRoles = [
     useHasPermission(colony, ColonyRole.Funding),
     useHasPermission(colony, ColonyRole.Root),
   ].every((r) => r === true);
 
   const [userHasPermission] = useDialogActionPermissions(
-    colony.colonyAddress,
+    colonyAddress,
     hasRoles,
     isVotingExtensionEnabled,
     values.forceAction,
@@ -228,8 +235,8 @@ const ControlSafeForm = ({
    * When the selected safe changes, reset the state of
    * the "Transfer NFT" fields.
    */
-  const handleSafeChange = (selectedSafe: SelectedSafe) => {
-    const safeAddress = selectedSafe.profile.walletAddress;
+  const handleSafeChange = (safeSelected: SelectedSafe) => {
+    const safeAddress = safeSelected.profile.walletAddress;
     if (safeAddress !== prevSafeAddress) {
       setPrevSafeAddress(safeAddress);
       values.transactions.forEach((tx, i) => {
@@ -238,6 +245,12 @@ const ControlSafeForm = ({
           setFieldValue(`transactions.${i}.nftData`, null);
         }
       });
+      const verifiedSafe = colony.safes.find(
+        (safe) =>
+          safe.contractAddress === safeSelected.profile.walletAddress &&
+          safe.moduleContractAddress === safeSelected.id,
+      );
+      setSelectedSafe(verifiedSafe || null);
     }
   };
 
@@ -267,6 +280,67 @@ const ControlSafeForm = ({
 
   const savedNFTState = useState({});
   const savedTokenState = useState({});
+
+  const renderTransactionSection = (
+    transaction: SafeTransaction,
+    index: number,
+  ) => {
+    const { transactionType } = transaction;
+    switch (transactionType) {
+      case TransactionTypes.TRANSFER_FUNDS:
+        return (
+          <TransferFundsSection
+            colony={colony}
+            disabledInput={!userHasPermission || isSubmitting}
+            values={values}
+            transactionFormIndex={index}
+            setFieldValue={setFieldValue}
+            handleInputChange={handleInputChange}
+            handleValidation={handleValidation}
+            setFieldTouched={setFieldTouched}
+            savedTokenState={savedTokenState}
+          />
+        );
+      case TransactionTypes.RAW_TRANSACTION:
+        return (
+          <RawTransactionSection
+            colony={colony}
+            disabledInput={!userHasPermission || isSubmitting}
+            transactionFormIndex={index}
+            handleInputChange={handleInputChange}
+            handleValidation={handleValidation}
+          />
+        );
+      case TransactionTypes.CONTRACT_INTERACTION:
+        return (
+          <ContractInteractionSection
+            disabledInput={!userHasPermission || isSubmitting}
+            transactionFormIndex={index}
+            values={values}
+            safes={safes}
+            setFieldValue={setFieldValue}
+            selectedContractMethods={selectedContractMethods}
+            handleSelectedContractMethods={handleSelectedContractMethods}
+            handleValidation={handleValidation}
+            handleInputChange={handleInputChange}
+            removeSelectedContractMethod={removeSelectedContractMethod}
+          />
+        );
+      case TransactionTypes.TRANSFER_NFT:
+        return (
+          <TransferNFTSection
+            colonyAddress={colonyAddress}
+            transactionFormIndex={index}
+            values={values}
+            disabledInput={!userHasPermission || isSubmitting}
+            savedNFTState={savedNFTState}
+            handleValidation={handleValidation}
+          />
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <>
@@ -312,9 +386,9 @@ const ControlSafeForm = ({
             name="transactions"
             render={(arrayHelpers) => (
               <>
-                {values.transactions.map((transaction, index) => (
+                {values.transactions.map((transaction, index, transactions) => (
                   <div key={autogeneratedIds[index]}>
-                    {values.transactions.length > 1 && (
+                    {transactions.length > 1 && (
                       <div
                         className={classnames(styles.transactionHeading, {
                           [styles.transactionHeadingOpen]:
@@ -367,7 +441,7 @@ const ControlSafeForm = ({
                     <div
                       className={classnames({
                         [styles.tabContentClosed]:
-                          values.transactions.length > 1 &&
+                          transactions.length > 1 &&
                           !transactionTabStatus[index],
                       })}
                     >
@@ -377,7 +451,12 @@ const ControlSafeForm = ({
                             options={transactionOptions}
                             label={MSG.transactionLabel}
                             name={`transactions.${index}.transactionType`}
-                            onChange={() => removeSelectedContractMethod(index)}
+                            onChange={() => {
+                              if (!values.safe) {
+                                setSelectedSafe(null);
+                              }
+                              removeSelectedContractMethod(index);
+                            }}
                             appearance={{ theme: 'grey', width: 'fluid' }}
                             placeholder={MSG.transactionPlaceholder}
                             disabled={!userHasPermission || isSubmitting}
@@ -385,59 +464,10 @@ const ControlSafeForm = ({
                           />
                         </div>
                       </DialogSection>
-                      {values.transactions[index]?.transactionType ===
-                        TransactionTypes.TRANSFER_FUNDS && (
-                        <TransferFundsSection
-                          colony={colony}
-                          disabledInput={!userHasPermission || isSubmitting}
-                          values={values}
-                          transactionFormIndex={index}
-                          setFieldValue={setFieldValue}
-                          handleInputChange={handleInputChange}
-                          handleValidation={handleValidation}
-                          setFieldTouched={setFieldTouched}
-                          savedTokenState={savedTokenState}
-                        />
-                      )}
-                      {values.transactions[index]?.transactionType ===
-                        TransactionTypes.RAW_TRANSACTION && (
-                        <RawTransactionSection
-                          colony={colony}
-                          disabledInput={!userHasPermission || isSubmitting}
-                          transactionFormIndex={index}
-                          handleInputChange={handleInputChange}
-                          handleValidation={handleValidation}
-                        />
-                      )}
-                      {values.transactions[index]?.transactionType ===
-                        TransactionTypes.CONTRACT_INTERACTION && (
-                        <ContractInteractionSection
-                          disabledInput={!userHasPermission || isSubmitting}
-                          transactionFormIndex={index}
-                          values={values}
-                          safes={safes}
-                          setFieldValue={setFieldValue}
-                          selectedContractMethods={selectedContractMethods}
-                          handleSelectedContractMethods={
-                            handleSelectedContractMethods
-                          }
-                          handleValidation={handleValidation}
-                          handleInputChange={handleInputChange}
-                          removeSelectedContractMethod={
-                            removeSelectedContractMethod
-                          }
-                        />
-                      )}
-                      {values.transactions[index]?.transactionType ===
-                        TransactionTypes.TRANSFER_NFT && (
-                        <TransferNFTSection
-                          colonyAddress={colonyAddress}
-                          transactionFormIndex={index}
-                          values={values}
-                          disabledInput={!userHasPermission || isSubmitting}
-                          savedNFTState={savedNFTState}
-                          handleValidation={handleValidation}
-                        />
+                      {!selectedSafe && dirty ? (
+                        <ErrorMessage error={MSG.invalidSafeError} />
+                      ) : (
+                        renderTransactionSection(transaction, index)
                       )}
                     </div>
                   </div>
