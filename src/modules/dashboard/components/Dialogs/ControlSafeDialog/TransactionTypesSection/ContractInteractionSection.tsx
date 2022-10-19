@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 import { FormikProps } from 'formik';
 import { isAddress } from 'web3-utils';
 
@@ -17,8 +17,14 @@ import {
 import { isEmpty, isEqual, isNil } from '~utils/lodash';
 import { getChainNameFromSafe } from '~modules/dashboard/sagas/utils/safeHelpers';
 import { Message } from '~types/index';
+import { isMessageDescriptor } from '~utils/strings';
 
-import { FormValues, FormProps, TransactionSectionProps } from '..';
+import {
+  FormValues,
+  FormProps,
+  TransactionSectionProps,
+  invalidSafeError,
+} from '..';
 import { ErrorMessage as Error, Loading, AvatarXs } from './shared';
 
 import styles from './TransactionTypesSection.css';
@@ -48,10 +54,6 @@ const MSG = defineMessages({
     id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.loadingContract`,
     defaultMessage: 'Loading Contract',
   },
-  noSafeSelectedError: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.noSafeSelectedError`,
-    defaultMessage: `You must select a safe before fetching the contract's ABI`,
-  },
   contractNotVerifiedError: {
     id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.contractNotVerifiedError`,
     defaultMessage: `Contract could not be verified. Ensure it exists on {network}`,
@@ -63,6 +65,10 @@ const MSG = defineMessages({
   fetchFailedError: {
     id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.fetchFailedError`,
     defaultMessage: `Unable to fetch contract. Please check your connection`,
+  },
+  noUsefulMethodsError: {
+    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransactionTypesSection.ContractInteractionSection.noUsefulMethodsError`,
+    defaultMessage: `No external methods were found in this ABI`,
   },
 });
 
@@ -180,11 +186,10 @@ const ContractInteractionSection = ({
         );
         setIsLoadingABI(false);
       } else {
-        if (!isAddress(contract.profile.walletAddress)) {
-          setFetchABIError(MSG.invalidAddressError);
-        } else {
-          setFetchABIError(MSG.noSafeSelectedError);
-        }
+        const error = !isAddress(contract.profile.walletAddress)
+          ? MSG.invalidAddressError
+          : invalidSafeError;
+        setFetchABIError(error);
         setFieldValue(
           `transactions.${transactionFormIndex}.contract.profile.displayName`,
           'Unknown contract',
@@ -206,18 +211,29 @@ const ContractInteractionSection = ({
     [transactionValues.abi],
   );
 
+  const isSpecificError = (error: Message, comparison: MessageDescriptor) => {
+    return (
+      isMessageDescriptor(error) &&
+      error.defaultMessage === comparison.defaultMessage
+    );
+  };
+
   useEffect(() => {
-    if (!selectedSafe) {
-      setPrevSafeChainId('');
-    } else if (
+    if (
       transactionValues.contract &&
-      // only run effect if safe chain changes
-      prevSafeChainId !== selectedSafe.chainId
+      safe &&
+      // only run effect if safe chain changes or there was previously an error
+      (prevSafeChainId !== selectedSafe?.chainId || fetchABIError)
     ) {
-      setPrevSafeChainId(selectedSafe.chainId);
+      if (selectedSafe) {
+        setPrevSafeChainId(selectedSafe.chainId);
+      }
       onContractChange(transactionValues.contract);
     }
+    // Don't want to run when ABI error changes, or else cause infinite loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    safe,
     selectedSafe,
     transactionValues.contract,
     onContractChange,
@@ -226,7 +242,7 @@ const ContractInteractionSection = ({
 
   useEffect(() => {
     const updatedFormattedMethodOptions =
-      usefulMethods?.map((method) => {
+      usefulMethods.map((method) => {
         return {
           label: method.name,
           value: method.name,
@@ -236,7 +252,21 @@ const ContractInteractionSection = ({
     if (!isEqual(updatedFormattedMethodOptions, formattedMethodOptions)) {
       setFormattedMethodOptions(updatedFormattedMethodOptions);
     }
-  }, [usefulMethods, transactionFormIndex, formattedMethodOptions]);
+
+    if (
+      !fetchABIError && // so we don't override other errors
+      transactionValues.abi &&
+      !updatedFormattedMethodOptions.length
+    ) {
+      setFetchABIError(MSG.noUsefulMethodsError);
+    }
+  }, [
+    fetchABIError,
+    transactionValues.abi,
+    usefulMethods,
+    transactionFormIndex,
+    formattedMethodOptions,
+  ]);
 
   useEffect(() => {
     if (
@@ -266,7 +296,6 @@ const ContractInteractionSection = ({
     <>
       <DialogSection>
         <div className={styles.singleUserPickerContainer}>
-          {/* @TODO: Connect available contract data with picker */}
           <SingleUserPicker
             data={[]}
             label={MSG.contractLabel}
@@ -282,7 +311,8 @@ const ContractInteractionSection = ({
           />
         </div>
       </DialogSection>
-      {fetchABIError ? (
+      {fetchABIError &&
+      !isSpecificError(fetchABIError, MSG.noUsefulMethodsError) ? (
         <Error error={fetchABIError} />
       ) : (
         <>
@@ -296,29 +326,38 @@ const ContractInteractionSection = ({
           </DialogSection>
           <DialogSection appearance={{ theme: 'sidePadding' }}>
             <div className={styles.contractFunctionSelectorContainer}>
-              {/*
-               * This is the component we don't want to let Formik validate immediately on change.
-               * Validation happens before the form state updates, which causes the form to be valid when
-               * it shouldn't be.
-               */}
-              <Select
-                label={MSG.functionLabel}
-                name={`transactions.${transactionFormIndex}.contractFunction`}
-                appearance={{ theme: 'grey', width: 'fluid' }}
-                placeholder={MSG.functionPlaceholder}
-                disabled={disabledInput}
-                options={formattedMethodOptions}
-                onChange={(value) => {
-                  const updatedSelectedContractMethods = {
-                    ...selectedContractMethods,
-                    [transactionFormIndex]: usefulMethods.find(
-                      (method) => method.name === value,
-                    ),
-                  };
-                  handleSelectedContractMethods(updatedSelectedContractMethods);
-                  handleValidation();
-                }}
-              />
+              {fetchABIError &&
+              isSpecificError(fetchABIError, MSG.noUsefulMethodsError) ? (
+                <div className={styles.noUsefulMethods}>
+                  <Error error={fetchABIError} />
+                </div>
+              ) : (
+                /*
+                 * This is the component we don't want to let Formik validate immediately on change.
+                 * Validation happens before the form state updates, which causes the form to be valid when
+                 * it shouldn't be.
+                 */
+                <Select
+                  label={MSG.functionLabel}
+                  name={`transactions.${transactionFormIndex}.contractFunction`}
+                  appearance={{ theme: 'grey', width: 'fluid' }}
+                  placeholder={MSG.functionPlaceholder}
+                  disabled={disabledInput}
+                  options={formattedMethodOptions}
+                  onChange={(value) => {
+                    const updatedSelectedContractMethods = {
+                      ...selectedContractMethods,
+                      [transactionFormIndex]: usefulMethods.find(
+                        (method) => method.name === value,
+                      ),
+                    };
+                    handleSelectedContractMethods(
+                      updatedSelectedContractMethods,
+                    );
+                    handleValidation();
+                  }}
+                />
+              )}
             </div>
           </DialogSection>
           {selectedContractMethods[transactionFormIndex]?.inputs?.map(
