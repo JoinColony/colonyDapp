@@ -1,9 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  defineMessages,
-  FormattedMessage,
-  MessageDescriptor,
-} from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { FieldArray, FieldArrayRenderProps, FormikProps } from 'formik';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import classnames from 'classnames';
@@ -144,13 +140,11 @@ const ControlSafeForm = ({
   validateForm,
   dirty,
   selectedContractMethods,
+  setFieldTouched,
   handleSelectedContractMethods,
 }: FormProps & FormikProps<FormValues>) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState([true]);
   const [hasTitle, setHasTitle] = useState(true);
-  const [customAmountError, setCustomAmountError] = useState<
-    MessageDescriptor | string | undefined
-  >(undefined);
   const [prevSafeAddress, setPrevSafeAddress] = useState<string>('');
 
   const { walletAddress } = useLoggedInUser();
@@ -191,7 +185,7 @@ const ControlSafeForm = ({
     (arrayHelpers: FieldArrayRenderProps) => {
       arrayHelpers.push({
         transactionType: '',
-        tokenAddress: colony.nativeTokenAddress,
+        tokenData: null,
         amount: undefined,
         recipient: null,
         data: '',
@@ -206,12 +200,7 @@ const ControlSafeForm = ({
       ]);
       handleValidation();
     },
-    [
-      colony.nativeTokenAddress,
-      setTransactionTabStatus,
-      transactionTabStatus,
-      handleValidation,
-    ],
+    [setTransactionTabStatus, transactionTabStatus, handleValidation],
   );
   const handleTabToggle = useCallback(
     (newIndex: number) => {
@@ -421,9 +410,9 @@ const ControlSafeForm = ({
                           values={values}
                           transactionFormIndex={index}
                           setFieldValue={setFieldValue}
-                          customAmountError={customAmountError}
-                          handleCustomAmountError={setCustomAmountError}
                           handleInputChange={handleInputChange}
+                          handleValidation={handleValidation}
+                          setFieldTouched={setFieldTouched}
                         />
                       )}
                       {values.transactions[index]?.transactionType ===
@@ -472,7 +461,7 @@ const ControlSafeForm = ({
                   <div className={styles.addTransaction}>
                     <AddItemButton
                       text={MSG.buttonTransaction}
-                      disabled={isSubmitting || !isValid || !!customAmountError}
+                      disabled={isSubmitting || !isValid}
                       handleClick={() => handleNewTab(arrayHelpers)}
                     />
                   </div>
@@ -500,13 +489,7 @@ const ControlSafeForm = ({
           }
           text={showPreview ? MSG.buttonConfirm : MSG.buttonCreateTransaction}
           loading={isSubmitting}
-          disabled={
-            !isValid ||
-            isSubmitting ||
-            !hasTitle ||
-            !!customAmountError ||
-            !dirty
-          }
+          disabled={!isValid || isSubmitting || !hasTitle || !dirty}
           style={{ width: styles.wideButton }}
         />
       </DialogSection>

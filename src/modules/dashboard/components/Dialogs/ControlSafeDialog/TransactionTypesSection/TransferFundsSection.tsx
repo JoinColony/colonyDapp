@@ -1,13 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { FormikProps } from 'formik';
-import {
-  defineMessages,
-  FormattedMessage,
-  MessageDescriptor,
-} from 'react-intl';
+import { FormikProps, useField } from 'formik';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import moveDecimal from 'move-decimal-point';
-import { AddressZero } from 'ethers/constants';
-import { bigNumberify } from 'ethers/utils';
 
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import { AnyUser, useMembersSubscription } from '~data/index';
@@ -20,7 +14,7 @@ import {
   getChainNameFromSafe,
   getTxServiceBaseUrl,
 } from '~modules/dashboard/sagas/utils/safeHelpers';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { getSelectedSafeBalance } from '~utils/safes/safeBalances';
 
 import AmountBalances, { SafeBalance } from '../AmountBalances';
 import { FormValues, TransactionSectionProps } from '..';
@@ -49,20 +43,14 @@ const MSG = defineMessages({
     defaultMessage:
       'Unable to fetch the Safe balances. Please check your connection',
   },
-  noBalance: {
-    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection.noBalance`,
-    defaultMessage: 'Insufficient safe balance',
-  },
 });
 
 const displayName = `dashboard.ControlSafeDialog.ControlSafeForm.TransferFundsSection`;
 
-interface Props extends TransactionSectionProps {
-  customAmountError: MessageDescriptor | string | undefined;
-  handleCustomAmountError: React.Dispatch<
-    React.SetStateAction<MessageDescriptor | string | undefined>
-  >;
+export interface TransferFundsProps extends TransactionSectionProps {
+  handleValidation: () => void;
 }
+
 const renderAvatar = (address: Address, item: AnyUser) => (
   <UserAvatar address={address} user={item} size="xs" notSet={false} />
 );
@@ -73,21 +61,26 @@ const TransferFundsSection = ({
   values,
   transactionFormIndex,
   setFieldValue,
-  customAmountError,
-  handleCustomAmountError,
   handleInputChange,
-}: Props & Pick<FormikProps<FormValues>, 'setFieldValue' | 'values'>) => {
-  const [safeBalances, setSafeBalances] = useState<SafeBalance[] | null>([]);
+  handleValidation,
+  setFieldTouched,
+}: TransferFundsProps &
+  Pick<
+    FormikProps<FormValues>,
+    'setFieldValue' | 'values' | 'setFieldTouched'
+  >) => {
+  const [{ value: safeBalances }, , { setValue: setSafeBalances }] = useField<
+    SafeBalance[] | null
+  >(`safeBalances`);
   const [isLoadingBalances, setIsLoadingBalances] = useState<boolean>(true);
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress },
   });
 
-  const safeAddress = values.safe?.profile?.walletAddress;
-  const { amount } = values.transactions[transactionFormIndex];
+  const safeAddress = values.safe?.profile.walletAddress;
 
   const getSafeBalance = useCallback(async () => {
-    if (values.safe?.profile?.displayName) {
+    if (values.safe?.profile.displayName) {
       setIsLoadingBalances(true);
       try {
         const chainName = getChainNameFromSafe(values.safe.profile.displayName);
@@ -106,24 +99,19 @@ const TransferFundsSection = ({
         setIsLoadingBalances(false);
       }
     }
+    // setSafeBalances causes infinite loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values.safe, safeAddress]);
 
   const selectedTokenAddress =
-    values.transactions[transactionFormIndex].tokenAddress;
-  const selectedTokenDecimals =
-    values.transactions[transactionFormIndex].tokenData?.decimals;
+    values.transactions[transactionFormIndex].tokenData?.address;
 
   const selectedBalance = useMemo(
-    () =>
-      safeBalances?.find(
-        (balance) =>
-          balance.tokenAddress === selectedTokenAddress ||
-          (!balance.tokenAddress && selectedTokenAddress === AddressZero),
-      ),
+    () => getSelectedSafeBalance(safeBalances, selectedTokenAddress),
     [safeBalances, selectedTokenAddress],
   );
   const selectedSafe = safes.find(
-    (safe) => safe.contractAddress === values.safe?.profile?.walletAddress,
+    (safe) => safe.contractAddress === values.safe?.profile.walletAddress,
   );
 
   useEffect(() => {
@@ -136,29 +124,6 @@ const TransferFundsSection = ({
     selectedBalance?.balance || 0,
     -(selectedBalance?.token?.decimals || DEFAULT_TOKEN_DECIMALS),
   );
-
-  useEffect(() => {
-    if (selectedTokenDecimals && amount) {
-      const decimals = getTokenDecimalsWithFallback(selectedTokenDecimals);
-      const convertedAmount = bigNumberify(moveDecimal(amount, decimals));
-      const safeBalance = bigNumberify(selectedBalance?.balance || 0);
-
-      if (
-        safeBalance &&
-        (safeBalance.lt(convertedAmount) || safeBalance.isZero())
-      ) {
-        handleCustomAmountError(MSG.noBalance);
-      } else {
-        handleCustomAmountError(undefined);
-      }
-    }
-  }, [
-    amount,
-    selectedTokenDecimals,
-    selectedBalance,
-    transactionFormIndex,
-    handleCustomAmountError,
-  ]);
 
   if (isLoadingBalances) {
     return (
@@ -195,9 +160,21 @@ const TransferFundsSection = ({
             fieldName: `transactions.${transactionFormIndex}.amount`,
             maxAmount: `${formattedSafeBalance}`,
             setFieldValue,
+            customOnClickFn() {
+              handleValidation();
+              setTimeout(
+                () =>
+                  setFieldTouched(
+                    `transactions.${transactionFormIndex}.amount`,
+                    true,
+                    false,
+                  ),
+                0,
+              );
+            },
           }}
-          customAmountError={customAmountError}
           transactionFormIndex={transactionFormIndex}
+          handleValidation={handleValidation}
         />
       </DialogSection>
       <DialogSection>
