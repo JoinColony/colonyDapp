@@ -8,4 +8,3 @@ export const inputContainer: string;
 export const tokenIcon: string;
 export const tokeIconWrapper: string;
 export const addTokenLabel: string;
-export const paddingTopZero: string;
