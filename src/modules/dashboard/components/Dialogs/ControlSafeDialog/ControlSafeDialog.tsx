@@ -70,6 +70,7 @@ const ControlSafeDialog = ({
   isVotingExtensionEnabled,
 }: Props) => {
   const [showPreview, setShowPreview] = useState(false);
+  const [isForce, setIsForce] = useState(false);
   const [selectedContractMethods, setSelectedContractMethods] = useState<
     UpdatedMethods
   >();
@@ -101,6 +102,17 @@ const ControlSafeDialog = ({
   const validationSchema = getValidationSchema(
     showPreview,
     expandedValidationSchema,
+  );
+
+  const getFormAction = useCallback(
+    (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
+      const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
+
+      return isVotingExtensionEnabled && !isForce
+        ? ActionTypes[`MOTION_INITIATE_SAFE_TRANSACTION${actionEnd}`]
+        : ActionTypes[`ACTION_INITIATE_SAFE_TRANSACTION${actionEnd}`];
+    },
+    [isVotingExtensionEnabled, isForce],
   );
 
   const transform = useCallback(
@@ -150,9 +162,9 @@ const ControlSafeDialog = ({
         } as FormValues
       }
       validationSchema={validationSchema}
-      submit={ActionTypes.ACTION_INITIATE_SAFE_TRANSACTION}
-      success={ActionTypes.ACTION_INITIATE_SAFE_TRANSACTION_SUCCESS}
-      error={ActionTypes.ACTION_INITIATE_SAFE_TRANSACTION_ERROR}
+      submit={getFormAction('SUBMIT')}
+      error={getFormAction('ERROR')}
+      success={getFormAction('SUCCESS')}
       transform={transform}
       onSuccess={close}
       validateOnMount
@@ -162,21 +174,26 @@ const ControlSafeDialog = ({
        */
       validateOnChange={false}
     >
-      {(formValues: FormikProps<FormValues>) => (
-        <Dialog cancel={cancel}>
-          <ControlSafeForm
-            {...formValues}
-            back={callStep && prevStep ? () => callStep(prevStep) : undefined}
-            colony={colony}
-            safes={safes}
-            isVotingExtensionEnabled={isVotingExtensionEnabled}
-            showPreview={showPreview}
-            setShowPreview={setShowPreview}
-            selectedContractMethods={selectedContractMethods}
-            setSelectedContractMethods={setSelectedContractMethods}
-          />
-        </Dialog>
-      )}
+      {(formValues: FormikProps<FormValues>) => {
+        if (formValues.values.forceAction !== isForce) {
+          setIsForce(formValues.values.forceAction);
+        }
+        return (
+          <Dialog cancel={cancel}>
+            <ControlSafeForm
+              {...formValues}
+              back={callStep && prevStep ? () => callStep(prevStep) : undefined}
+              colony={colony}
+              safes={safes}
+              isVotingExtensionEnabled={isVotingExtensionEnabled}
+              showPreview={showPreview}
+              setShowPreview={setShowPreview}
+              selectedContractMethods={selectedContractMethods}
+              setSelectedContractMethods={setSelectedContractMethods}
+            />
+          </Dialog>
+        );
+      }}
     </ActionForm>
   );
 };
