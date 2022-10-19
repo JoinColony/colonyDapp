@@ -32,7 +32,6 @@ import { SpinnerLoader } from '~core/Preloaders';
 import { DialogActionButton } from '~core/Button';
 import { Table, TableBody, TableCell, TableRow } from '~core/Table';
 import { useTransformer } from '~utils/hooks';
-import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import extensionData from '~data/staticData/extensionData';
 import MaskedAddress from '~core/MaskedAddress';
 import { ActionTypes } from '~redux/index';
@@ -167,17 +166,12 @@ const ExtensionDetails = ({
 
   const openUpgradeVersionDialog = useDialog(NetworkContractUpgradeDialog);
 
-  const { isVotingExtensionEnabled } = useEnabledExtensions({
-    colonyAddress,
-  });
-
   const handleUpgradeColony = useCallback(
     () =>
       openUpgradeVersionDialog({
         colony,
-        isVotingExtensionEnabled,
       }),
-    [colony, openUpgradeVersionDialog, isVotingExtensionEnabled],
+    [colony, openUpgradeVersionDialog],
   );
 
   const { data, loading } = useColonyExtensionQuery({

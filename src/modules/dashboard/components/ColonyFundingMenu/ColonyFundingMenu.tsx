@@ -80,24 +80,21 @@ const ColonyFundingMenu = ({
     () =>
       openTokenManagementDialog({
         colony,
-        isVotingExtensionEnabled,
       }),
-    [openTokenManagementDialog, colony, isVotingExtensionEnabled],
+    [openTokenManagementDialog, colony],
   );
   const handleMintTokens = useCallback(() => {
     openTokenMintDialog({
       colony,
-      isVotingExtensionEnabled,
     });
-  }, [colony, openTokenMintDialog, isVotingExtensionEnabled]);
+  }, [colony, openTokenMintDialog]);
   const handleMoveTokens = useCallback(
     () =>
       openTokensMoveDialog({
         colony,
-        isVotingExtensionEnabled,
         ethDomainId: selectedDomainId,
       }),
-    [colony, openTokensMoveDialog, selectedDomainId, isVotingExtensionEnabled],
+    [colony, openTokensMoveDialog, selectedDomainId],
   );
 
   const oneTxPaymentExtension = data?.processedColony?.installedExtensions.find(
