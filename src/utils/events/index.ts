@@ -1514,9 +1514,15 @@ export const getMotionActionType = async (
   motionId: BigNumberish,
 ) => {
   const motion = await votingClient.getMotion(motionId);
+
+  if (motion.action === '0x') {
+    return motionNameMapping[ColonyMotions.NullMotion];
+  }
+
   if (motion?.action === ACTION_DECISION_MOTION_CODE) {
     return motionNameMapping.createDecision;
   }
+
   const values = colonyClient.interface.parseTransaction({
     data: motion.action,
   });
