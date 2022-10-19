@@ -43,10 +43,6 @@ export const MSG = defineMessages({
     defaultMessage:
       'Unable to fetch Safe balances. Please check your connection',
   },
-  noSafeSelectedError: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.TransferFundsSection.noSafeSelectedError`,
-    defaultMessage: 'You must first select a safe',
-  },
 });
 
 const displayName = `dashboard.ControlSafeDialog.TransactionTypesSection.TransferFundsSection`;
@@ -58,8 +54,7 @@ export interface TransferFundsProps extends TransactionSectionProps {
 const TransferFundsSection = ({
   colony: { colonyAddress, safes },
   disabledInput,
-  values: { safe },
-  values,
+  values: { safe, transactions },
   transactionFormIndex,
   setFieldValue,
   handleInputChange,
@@ -113,7 +108,7 @@ const TransferFundsSection = ({
   }, [safe, safeAddress, setSavedTokens]);
 
   const selectedTokenAddress =
-    values.transactions[transactionFormIndex].tokenData?.address;
+    transactions[transactionFormIndex].tokenData?.address;
 
   const selectedBalance = useMemo(
     () => getSelectedSafeBalance(safeBalances, selectedTokenAddress),
@@ -134,14 +129,6 @@ const TransferFundsSection = ({
     // setSafeBalances causes infinite loop
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [safeAddress, getSafeBalance, savedTokens]);
-
-  useEffect(() => {
-    if (!safeAddress) {
-      setBalanceError(MSG.noSafeSelectedError);
-    }
-    // initialisation only
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const formattedSafeBalance = moveDecimal(
     selectedBalance?.balance || 0,
