@@ -28,13 +28,25 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.amountZeroError',
     defaultMessage: 'Value must be greater than zero',
   },
-  milestoneNameError: {
-    id: 'dashboard.ExpenditurePage.milestoneNameError',
+  nameError: {
+    id: 'dashboard.ExpenditurePage.nameError',
     defaultMessage: 'Name is required',
   },
-  milestoneAmountError: {
-    id: 'dashboard.ExpenditurePage.milestoneAmountError',
+  amountError: {
+    id: 'dashboard.ExpenditurePage.amountError',
     defaultMessage: 'Amount is required',
+  },
+  zeroError: {
+    id: 'dashboard.ExpenditurePage.zeroError',
+    defaultMessage: 'Must be greater than zero',
+  },
+  amountLimitError: {
+    id: 'dashboard.ExpenditurePage.amountLimitError',
+    defaultMessage: `Value cannot be greater than limit`,
+  },
+  limitError: {
+    id: 'dashboard.ExpenditurePage.limitError',
+    defaultMessage: 'Limit is required',
   },
 });
 
@@ -64,6 +76,9 @@ export const initialValues = {
     },
   },
 };
+
+const today = new Date();
+today.setHours(0, 0, 0, 0);
 
 export const validationSchema = yup.object().shape({
   expenditure: yup.string().required(),
@@ -96,14 +111,14 @@ export const validationSchema = yup.object().shape({
         value: yup
           .number()
           .transform((value) => toFinite(value))
-          .required(() => MSG.milestoneAmountError)
+          .required(() => MSG.amountError)
           .moreThan(0, () => MSG.amountZeroError),
         tokenAddress: yup.string().required(),
       }),
       milestones: yup
         .array(
           yup.object().shape({
-            name: yup.string().required(() => MSG.milestoneNameError),
+            name: yup.string().required(() => MSG.nameError),
             percent: yup
               .number()
               .moreThan(0, () => MSG.amountZeroError)
@@ -139,6 +154,61 @@ export const validationSchema = yup.object().shape({
         )
         .min(2)
         .required(),
+    }),
+  }),
+  streaming: yup.object().when('expenditure', {
+    is: (expenditure) => expenditure === ExpenditureTypes.Streaming,
+    then: yup.object().shape({
+      user: yup.object().required(),
+      startDate: yup.object().shape({
+        date: yup.date().required().min(today),
+      }),
+      endDate: yup.object().when('startDate', (startDate, schema) =>
+        schema.shape({
+          option: yup.string().required(),
+          date: yup.date().when('option', {
+            is: (option) => option === ExpenditureEndDateTypes.FixedTime,
+            then: yup.date().min(startDate.date).required(),
+          }),
+        }),
+      ),
+      fundingSources: yup
+        .array()
+        .when('endDate', (endDate, schema) =>
+          schema.of(
+            yup.object().shape({
+              team: yup.string().required(),
+              rate: yup.array().of(
+                yup.object().shape({
+                  amount: yup
+                    .number()
+                    .transform((value) => toFinite(value))
+                    .required(() => MSG.valueError)
+                    .moreThan(0, () => MSG.amountZeroError)
+                    .when('limit', (limit, rateSchema) =>
+                      limit &&
+                      endDate.option === ExpenditureEndDateTypes.LimitIsReached
+                        ? rateSchema.max(limit, () => MSG.amountLimitError)
+                        : rateSchema,
+                    ),
+                  token: yup.string().required(),
+                  time: yup.string().required(),
+                  limit: yup
+                    .number()
+                    .transform((value) => toFinite(value))
+                    .when('endDate', (_, limitSchema) =>
+                      endDate.option === ExpenditureEndDateTypes.LimitIsReached
+                        ? limitSchema
+                            .required(() => MSG.limitError)
+                            .moreThan(0, () => MSG.amountZeroError)
+                        : limitSchema,
+                    ),
+                }),
+              ),
+            }),
+          ),
+        )
+        .min(1),
     }),
   }),
 });

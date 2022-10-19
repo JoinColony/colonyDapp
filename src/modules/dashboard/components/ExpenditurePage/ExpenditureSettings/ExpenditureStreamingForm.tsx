@@ -1,3 +1,4 @@
+import { useField } from 'formik';
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
@@ -9,6 +10,7 @@ import { useMembersSubscription } from '~data/generated';
 import { ExpenditureEndDateTypes } from '~pages/ExpenditurePage/types';
 
 import { supRenderAvatar } from '../Recipient/Recipient';
+import { Streaming } from '../Streaming/types';
 
 import { Props } from './ExpenditureSettings';
 import styles from './ExpenditureSettings.css';
@@ -63,6 +65,9 @@ const ExpenditureStreamingForm = ({ sidebarRef, colony }: Props) => {
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress: colony.colonyAddress || '' },
   });
+  const [, { value: startDate }] = useField<Streaming['startDate']>(
+    'streaming.startDate',
+  );
 
   return (
     <>
@@ -80,31 +85,33 @@ const ExpenditureStreamingForm = ({ sidebarRef, colony }: Props) => {
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
-        <div className={(styles.blue, styles.settingsRow)}>
+        <div className={styles.settingsRow}>
           <InputLabel
             label={MSG.starts}
             appearance={{
               direction: 'horizontal',
             }}
           />
-
-          <DatePicker name="streaming.startDate" showTimeSelect />
+          <DatePicker
+            name="streaming.startDate"
+            showTimeSelect
+            minDate={new Date()}
+          />
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
-        <div className={(styles.blue, styles.settingsRow)}>
+        <div className={styles.settingsRow}>
           <InputLabel
             label={MSG.ends}
             appearance={{
               direction: 'horizontal',
             }}
           />
-
           <DatePicker
             name="streaming.endDate"
             showTimeSelect
             options={endDateOptions}
-            minDate={new Date()}
+            minDate={startDate.date}
           />
         </div>
       </FormSection>

@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl';
 import classNames from 'classnames';
 import { parseInt } from 'lodash';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
-import { useField } from 'formik';
+import { FieldArray, useField } from 'formik';
 
 import { Colony } from '~data/index';
 import { FormSection, InputLabel, SelectOption } from '~core/Fields';
@@ -14,7 +14,7 @@ import { ExpenditureEndDateTypes } from '~pages/ExpenditurePage/types';
 
 import { FundingSource as FundingSourceType } from '../types';
 import Limit from '../Limit';
-import Rate from '../Rate';
+import RateItem from '../RateItem';
 
 import styles from './FundingSource.css';
 
@@ -118,11 +118,25 @@ const FundingSource = ({
               )}
             </div>
           </FormSection>
-          <Rate
-            fundingSource={fundingSource}
-            index={index}
-            sidebarRef={sidebarRef}
-            colony={colony}
+          <FieldArray
+            name={`streaming.fundingSources[${index}].rate`}
+            render={({ push, remove }) => (
+              <FormSection appearance={{ border: 'bottom' }}>
+                {fundingSource.rate?.map((rateItem, rateIndex) => (
+                  <RateItem
+                    // eslint-disable-next-line max-len
+                    name={`streaming.fundingSources[${index}].rate[${rateIndex}]`}
+                    rateItem={rateItem}
+                    index={rateIndex}
+                    push={push}
+                    remove={remove}
+                    colony={colony}
+                    sidebarRef={sidebarRef}
+                    multipleTokens={fundingSource.rate.length > 1}
+                  />
+                ))}
+              </FormSection>
+            )}
           />
           {value.endDate.option === ExpenditureEndDateTypes.LimitIsReached && (
             <FormSection appearance={{ border: 'bottom' }}>
