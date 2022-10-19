@@ -1,12 +1,12 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import { useField } from 'formik';
 
-import { Input } from '~core/Fields';
+import { Input, InputStatus } from '~core/Fields';
 import { Colony } from '~data/index';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 
 import { Rate } from '../types';
-import FieldError from '../FieldError';
 
 import styles from './Limit.css';
 
@@ -30,6 +30,8 @@ interface Props {
 }
 
 const Limit = ({ colony, name, rate }: Props) => {
+  const [, { error }] = useField(name);
+
   const token = colony.tokens?.find(
     (tokenItem) => rate.token && tokenItem.address === rate.token,
   );
@@ -66,7 +68,7 @@ const Limit = ({ colony, name, rate }: Props) => {
           {token.symbol}
         </div>
       </div>
-      <FieldError name={name} />
+      <InputStatus error={error} />
     </>
   );
 };
