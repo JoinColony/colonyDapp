@@ -50,3 +50,9 @@
   text-align: center;
   color: var(--pink);
 }
+
+/* Ensures noUsefulMethods error sits in between
+ * text area and  AddNewItem button */
+.noUsefulMethods > section {
+  padding: 1px 20px 20px;
+}

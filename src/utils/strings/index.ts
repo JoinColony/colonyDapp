@@ -1,9 +1,10 @@
 import { addressNormalizer, addressValidator } from '@purser/core';
 import { customAlphabet, urlAlphabet } from 'nanoid';
+import { MessageDescriptor } from 'react-intl';
 
 import { isTransactionFormat } from '~utils/web3';
 
-import { Address } from '~types/index';
+import { Address, Message } from '~types/index';
 
 const HTTP_PROTOCOL = 'http://';
 const HTTPS_PROTOCOL = 'https://';
@@ -151,4 +152,14 @@ export const ensureHexPrefix = (value: string): string => {
     return value;
   }
   return `${HEX_HEADER}${value}`;
+};
+
+export const isMessageDescriptor = (
+  message: Message,
+): message is MessageDescriptor => {
+  if (typeof message !== 'string') {
+    return true;
+  }
+
+  return false;
 };
