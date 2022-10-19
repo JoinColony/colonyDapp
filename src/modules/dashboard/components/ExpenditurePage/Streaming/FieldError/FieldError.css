@@ -1,7 +1,0 @@
-.wrapper {
-  composes: main stateError from '~core/Fields/InputStatus/InputStatus.css';
-}
-
-.hidden {
-  display: none;
-}

@@ -7,7 +7,6 @@ import { Colony } from '~data/index';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 
 import { Rate } from '../types';
-import FieldError from '../FieldError';
 
 import styles from './Limit.css';
 
