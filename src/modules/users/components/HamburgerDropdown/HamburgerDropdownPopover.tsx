@@ -42,7 +42,6 @@ const MSG = defineMessages({
 const displayName = 'users.HamburgerDropdown.HamburgerDropdownPopover';
 
 interface Props {
-  onlyLogout?: boolean;
   closePopover: () => void;
   colony: Colony;
   colonyName: string;
@@ -52,7 +51,6 @@ interface Props {
 
 const HamburgerDropdownPopover = ({
   closePopover,
-  onlyLogout,
   colony,
   colonyName,
   username,
@@ -63,35 +61,28 @@ const HamburgerDropdownPopover = ({
   return (
     <div className={styles.menu}>
       <DropdownMenu onClick={closePopover}>
-        {!onlyLogout && (
-          <>
-            {username && colonyName && (
-              <DropdownMenuSection>
-                <DropdownMenuItem>
-                  <NavLink to={colonyHomePath} text={MSG.actions} exact />
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <NavLink to={`${colonyHomePath}/funds`} text={MSG.funds} />
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <NavLink
-                    to={`${colonyHomePath}/members`}
-                    text={MSG.members}
-                  />
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <NavLink
-                    to={`${colonyHomePath}/extensions`}
-                    text={MSG.extensions}
-                  />
-                </DropdownMenuItem>
-              </DropdownMenuSection>
-            )}
-            <UserSection colony={colony} username={username} />
-            <ColonySection />
-            <HelperSection />
-          </>
+        {username && colonyName && (
+          <DropdownMenuSection>
+            <DropdownMenuItem>
+              <NavLink to={colonyHomePath} text={MSG.actions} exact />
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <NavLink to={`${colonyHomePath}/funds`} text={MSG.funds} />
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <NavLink to={`${colonyHomePath}/members`} text={MSG.members} />
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <NavLink
+                to={`${colonyHomePath}/extensions`}
+                text={MSG.extensions}
+              />
+            </DropdownMenuItem>
+          </DropdownMenuSection>
         )}
+        <UserSection colony={colony} username={username} />
+        <ColonySection />
+        <HelperSection />
         {isWalletConnected && <MetaSection />}
       </DropdownMenu>
     </div>
