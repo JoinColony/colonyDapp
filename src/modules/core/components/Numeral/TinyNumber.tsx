@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Tooltip } from '~core/Popover';
-import { getValueWithPrefixAndSuffix } from './NewNumeral';
+import { getValueWithPrefixAndSuffix } from './Numeral';
 
 const TINY_NUMBER_PLACEHOLDER = '0.00000...';
 
