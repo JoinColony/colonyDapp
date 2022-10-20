@@ -70,10 +70,6 @@ const MSG = defineMessages({
     id: `dashboard.ControlSafeDialog.ControlSafeForm.buttonCreateTransaction`,
     defaultMessage: 'Create transaction',
   },
-  buttonConfirm: {
-    id: `dashboard.ControlSafeDialog.ControlSafeForm.buttonConfirm`,
-    defaultMessage: 'Confirm',
-  },
   transactionTitle: {
     id: `dashboard.ControlSafeDialog.ControlSafeForm.transactionTitle`,
     defaultMessage: `Transaction #{transactionNumber} {transactionType, select, undefined {} other {({transactionType})}}`,
@@ -159,7 +155,7 @@ const ControlSafeForm = ({
   );
   const userHasRootPermission = userHasRole(fromDomainRoles, ColonyRole.Root);
   const hasRoles = userHasFundingPermission && userHasRootPermission;
-  const [userHasPermission] = useDialogActionPermissions(
+  const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
     colony.colonyAddress,
     hasRoles,
     isVotingExtensionEnabled,
@@ -285,6 +281,14 @@ const ControlSafeForm = ({
   );
 
   const savedNFTState = useState({});
+
+  const submitButtonText = (() => {
+    if (!showPreview) {
+      return MSG.buttonCreateTransaction;
+    }
+    return { id: 'button.confirm' };
+  })();
+
   return (
     <>
       {!showPreview ? (
@@ -472,8 +476,13 @@ const ControlSafeForm = ({
         </>
       ) : (
         <SafeTransactionPreview
+          colony={colony}
+          isSubmitting={isSubmitting}
           values={values}
           selectedContractMethods={selectedContractMethods}
+          isVotingExtensionEnabled={isVotingExtensionEnabled}
+          userHasPermission={userHasPermission}
+          onlyForceAction={onlyForceAction}
         />
       )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
@@ -487,9 +496,15 @@ const ControlSafeForm = ({
           onClick={() =>
             showPreview ? handleSubmit() : handleShowPreview(!showPreview)
           }
-          text={showPreview ? MSG.buttonConfirm : MSG.buttonCreateTransaction}
+          text={submitButtonText}
           loading={isSubmitting}
-          disabled={!isValid || isSubmitting || !hasTitle || !dirty}
+          disabled={
+            !isValid ||
+            isSubmitting ||
+            !hasTitle ||
+            !dirty ||
+            (showPreview && onlyForceAction)
+          }
           style={{ width: styles.wideButton }}
         />
       </DialogSection>
