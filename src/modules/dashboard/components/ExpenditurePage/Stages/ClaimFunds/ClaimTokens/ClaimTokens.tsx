@@ -6,6 +6,8 @@ import { TokenData } from '../types';
 
 import styles from './ClaimTokens.css';
 
+const displayName = 'dashboard.ExpenditurePage.Stages.ClaimFunds.ClaimTokens';
+
 interface Props {
   tokens?: TokenData[];
 }
@@ -25,5 +27,7 @@ const ClaimTokens = ({ tokens }: Props) => {
     </div>
   );
 };
+
+ClaimTokens.displayName = displayName;
 
 export default ClaimTokens;
