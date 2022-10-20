@@ -70,10 +70,6 @@ const MSG = defineMessages({
     id: `dashboard.ControlSafeDialog.ControlSafeForm.buttonCreateTransaction`,
     defaultMessage: 'Create transaction',
   },
-  buttonCreateMotion: {
-    id: `dashboard.ControlSafeDialog.ControlSafeForm.buttonCreateMotion`,
-    defaultMessage: 'Create motion',
-  },
   transactionTitle: {
     id: `dashboard.ControlSafeDialog.ControlSafeForm.transactionTitle`,
     defaultMessage: `Transaction #{transactionNumber} {transactionType, select, undefined {} other {({transactionType})}}`,
