@@ -14,7 +14,7 @@ import {
   getChainNameFromSafe,
   getTxServiceBaseUrl,
 } from '~modules/dashboard/sagas/utils/safeHelpers';
-import { getSelectedSafeBalance } from '~utils/safes';
+import { getColonySafe, getSelectedSafeBalance } from '~utils/safes';
 import { log } from '~utils/debug';
 
 import AmountBalances from '../AmountBalances';
@@ -90,7 +90,7 @@ const ErrorMessage = ({ error }: ErrorMessageProps) => (
 const TransferFundsSection = ({
   colony: { colonyAddress, safes },
   disabledInput,
-  values: { safe: inputtedSafe },
+  values: { safe },
   values,
   transactionFormIndex,
   setFieldValue,
@@ -113,16 +113,14 @@ const TransferFundsSection = ({
     FormValues['safeBalances']
   >(`safeBalances`);
 
-  const safeAddress = inputtedSafe?.profile.walletAddress;
+  const safeAddress = safe?.profile.walletAddress;
 
   const getSafeBalance = useCallback(async () => {
     setBalanceError('');
-    if (inputtedSafe) {
+    if (safe) {
       setIsLoadingBalances(true);
       try {
-        const chainName = getChainNameFromSafe(
-          inputtedSafe.profile.displayName,
-        );
+        const chainName = getChainNameFromSafe(safe.profile.displayName);
         const baseUrl = getTxServiceBaseUrl(chainName);
         const response = await fetch(
           `${baseUrl}/v1/safes/${safeAddress}/balances/`,
@@ -144,7 +142,7 @@ const TransferFundsSection = ({
     }
     // setSafeBalances causes infinite loop
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputtedSafe, safeAddress, setSavedTokens]);
+  }, [safe, safeAddress, setSavedTokens]);
 
   const selectedTokenAddress =
     values.transactions[transactionFormIndex].tokenData?.address;
@@ -153,9 +151,7 @@ const TransferFundsSection = ({
     () => getSelectedSafeBalance(safeBalances, selectedTokenAddress),
     [safeBalances, selectedTokenAddress],
   );
-  const selectedSafe = safes.find(
-    (safe) => safe.contractAddress === inputtedSafe?.profile.walletAddress,
-  );
+  const selectedSafe = getColonySafe(safes, safe);
 
   useEffect(() => {
     if (safeAddress) {
