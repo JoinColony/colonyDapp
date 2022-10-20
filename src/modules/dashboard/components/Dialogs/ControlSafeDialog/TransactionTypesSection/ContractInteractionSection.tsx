@@ -67,8 +67,12 @@ const MSG = defineMessages({
     defaultMessage: `Unable to fetch contract. Please check your connection`,
   },
   noUsefulMethodsError: {
-    id: `dashboard.ControlSafeDialog.ControlSafeForm.TransactionTypesSection.ContractInteractionSection.noUsefulMethodsError`,
+    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.noUsefulMethodsError`,
     defaultMessage: `No external methods were found in this ABI`,
+  },
+  unknownContract: {
+    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.unknownContract`,
+    defaultMessage: `Unknown contract`,
   },
 });
 
@@ -182,7 +186,7 @@ const ContractInteractionSection = ({
 
         setFieldValue(
           `transactions.${transactionFormIndex}.contract.profile.displayName`,
-          contractName || 'Unknown contract',
+          contractName || formatMessage(MSG.unknownContract),
         );
         setIsLoadingABI(false);
       } else {
@@ -192,7 +196,7 @@ const ContractInteractionSection = ({
         setFetchABIError(error);
         setFieldValue(
           `transactions.${transactionFormIndex}.contract.profile.displayName`,
-          'Unknown contract',
+          formatMessage(MSG.unknownContract),
         );
         setIsLoadingABI(false);
       }
