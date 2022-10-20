@@ -74,10 +74,6 @@ const MSG = defineMessages({
     id: `dashboard.ControlSafeDialog.ControlSafeForm.buttonCreateMotion`,
     defaultMessage: 'Create motion',
   },
-  buttonConfirm: {
-    id: `dashboard.ControlSafeDialog.ControlSafeForm.buttonConfirm`,
-    defaultMessage: 'Confirm',
-  },
   transactionTitle: {
     id: `dashboard.ControlSafeDialog.ControlSafeForm.transactionTitle`,
     defaultMessage: `Transaction #{transactionNumber} {transactionType, select, undefined {} other {({transactionType})}}`,
@@ -292,12 +288,9 @@ const ControlSafeForm = ({
 
   const submitButtonText = (() => {
     if (!showPreview) {
-      if (isVotingExtensionEnabled && !values.forceAction) {
-        return MSG.buttonCreateMotion;
-      }
       return MSG.buttonCreateTransaction;
     }
-    return MSG.buttonConfirm;
+    return { id: 'button.confirm' };
   })();
 
   return (
