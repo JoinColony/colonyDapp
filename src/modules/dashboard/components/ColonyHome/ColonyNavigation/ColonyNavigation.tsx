@@ -1,7 +1,9 @@
 import React, { ComponentProps, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
+import { VotingReputationExtensionVersion } from '@colony/colony-js';
 
 import { Colony } from '~data/index';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import NavItem from './NavItem';
 
@@ -44,7 +46,7 @@ type Props = {
 
 const displayName = 'dashboard.ColonyHome.ColonyNavigation';
 
-const ColonyNavigation = ({ colony: { colonyName } }: Props) => {
+const ColonyNavigation = ({ colony: { colonyName, colonyAddress } }: Props) => {
   /*
    * @TODO actually determine these
    * This can be easily inferred from the subgraph queries
@@ -58,19 +60,23 @@ const ColonyNavigation = ({ colony: { colonyName } }: Props) => {
   const hasNewDecisions = false;
   const hasNewExtensions = false;
 
+  const {
+    isVotingExtensionEnabled,
+    votingExtensionVersion,
+  } = useEnabledExtensions({ colonyAddress });
+
+  const decisionsSupported =
+    isVotingExtensionEnabled &&
+    votingExtensionVersion &&
+    votingExtensionVersion >=
+      VotingReputationExtensionVersion.GreenLightweightSpaceship;
+
   const items = useMemo<ComponentProps<typeof NavItem>[]>(() => {
     const navigationItems: ComponentProps<typeof NavItem>[] = [
       {
         linkTo: `/colony/${colonyName}`,
         showDot: hasNewActions,
         text: MSG.linkTextActions,
-      },
-      {
-        exact: false,
-        linkTo: `/colony/${colonyName}/decisions`,
-        showDot: hasNewDecisions,
-        text: MSG.linkTextDecisions,
-        dataTest: 'decisionsNavigationButton',
       },
       {
         exact: false,
@@ -81,8 +87,24 @@ const ColonyNavigation = ({ colony: { colonyName } }: Props) => {
       },
     ];
 
+    if (decisionsSupported) {
+      navigationItems.splice(1, 0, {
+        exact: false,
+        linkTo: `/colony/${colonyName}/decisions`,
+        showDot: hasNewDecisions,
+        text: MSG.linkTextDecisions,
+        dataTest: 'decisionsNavigationButton',
+      });
+    }
+
     return navigationItems;
-  }, [colonyName, hasNewActions, hasNewExtensions, hasNewDecisions]);
+  }, [
+    colonyName,
+    hasNewActions,
+    hasNewExtensions,
+    decisionsSupported,
+    hasNewDecisions,
+  ]);
 
   return (
     <nav role="navigation" className={styles.main}>
