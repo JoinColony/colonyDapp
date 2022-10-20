@@ -35,9 +35,7 @@ interface PrefixSuffixOptions {
 export const getValueWithPrefixAndSuffix = (
   value: string,
   { prefix, suffix }: PrefixSuffixOptions,
-) => {
-  return `${prefix ? `${prefix} ` : ''}${value}${suffix ? ` ${suffix}` : ''}`;
-};
+) => `${prefix ? `${prefix} ` : ''}${value}${suffix ? ` ${suffix}` : ''}`;
 
 export interface Props {
   value: string | BigNumber | number;
@@ -54,6 +52,8 @@ export interface Props {
 
   className?: string;
 }
+
+const displayName = 'Numeral';
 
 const Numeral = ({
   value,
@@ -129,4 +129,5 @@ const Numeral = ({
   );
 };
 
+Numeral.displayName = displayName;
 export default Numeral;

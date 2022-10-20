@@ -12,6 +12,8 @@ interface Props {
   className?: string;
 }
 
+const displayName = 'Numeral.TinyNumber';
+
 const TinyNumber = ({ value, prefix, suffix, className }: Props) => {
   return (
     <Tooltip content={getValueWithPrefixAndSuffix(value, { prefix, suffix })}>
@@ -25,4 +27,5 @@ const TinyNumber = ({ value, prefix, suffix, className }: Props) => {
   );
 };
 
+TinyNumber.displayName = displayName;
 export default TinyNumber;

@@ -9,6 +9,8 @@ interface Props {
   className?: string;
 }
 
+const displayName = 'Numeral.EngineeringNotation';
+
 const EngineeringNotation = ({ value, prefix, suffix, className }: Props) => {
   const format: numbro.Format = { totalLength: 6, trimMantissa: true };
 
@@ -26,4 +28,5 @@ const EngineeringNotation = ({ value, prefix, suffix, className }: Props) => {
   );
 };
 
+EngineeringNotation.displayName = displayName;
 export default EngineeringNotation;
