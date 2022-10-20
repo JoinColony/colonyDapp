@@ -6,14 +6,13 @@
 
 .content {
   display: flex;
-  height: 100%;
+  height: fit-content;
+  min-height: 100%;
 }
 
 .coloniesList {
   flex: 0 0 auto;
-  height: 100%;
   width: 60px;
-  position: fixed;
   border-right: 1px solid var(--temp-grey-13);
 }
 
