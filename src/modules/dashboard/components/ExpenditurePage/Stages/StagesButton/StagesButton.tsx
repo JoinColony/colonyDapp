@@ -59,10 +59,6 @@ const StagesButton = ({
     return <Tag text={buttonText} className={styles.claimed} />;
   }
 
-  if (activeState.id === Stage.Claimed) {
-    return <Tag text={buttonText} className={styles.claimed} />;
-  }
-
   if (activeState.id === Stage.Released) {
     return null;
   }
@@ -103,28 +99,40 @@ const StagesButton = ({
 
   if (activeState?.buttonTooltip) {
     return (
-      <Tooltip
-        placement="top"
-        content={
-          <div className={styles.buttonTooltip}>
-            {typeof activeState.buttonTooltip === 'string'
-              ? activeState.buttonTooltip
-              : formatMessage(activeState.buttonTooltip)}
-          </div>
-        }
-      >
-        <Button
-          onClick={handleButtonClick}
-          style={buttonStyles}
-          disabled={
-            activeState.id === Stage.Claimed ||
-            motion?.status === MotionStatus.Pending ||
-            buttonDisabled
+      <span className={styles.buttonWithTooltip}>
+        <Tooltip
+          placement="top"
+          content={
+            <div className={styles.buttonTooltip}>
+              {typeof activeState.buttonTooltip === 'string'
+                ? activeState.buttonTooltip
+                : formatMessage(activeState.buttonTooltip)}
+            </div>
           }
+          popperOptions={{
+            modifiers: [
+              {
+                name: 'offset',
+                options: {
+                  offset: [0, 8],
+                },
+              },
+            ],
+          }}
         >
-          {buttonText}
-        </Button>
-      </Tooltip>
+          <Button
+            onClick={handleButtonClick}
+            style={buttonStyles}
+            disabled={
+              activeState.id === Stage.Claimed ||
+              motion?.status === MotionStatus.Pending ||
+              buttonDisabled
+            }
+          >
+            {buttonText}
+          </Button>
+        </Tooltip>
+      </span>
     );
   }
 
