@@ -173,7 +173,7 @@ const Stages = ({
                       {
                         name: 'offset',
                         options: {
-                          offset: [0, 6],
+                          offset: [0, 12],
                         },
                       },
                     ],
@@ -216,7 +216,7 @@ const Stages = ({
                         {
                           name: 'offset',
                           options: {
-                            offset: [0, 6],
+                            offset: [0, 12],
                           },
                         },
                       ],
@@ -241,7 +241,7 @@ const Stages = ({
                         {
                           name: 'offset',
                           options: {
-                            offset: [0, 6],
+                            offset: [0, 12],
                           },
                         },
                       ],
@@ -290,7 +290,7 @@ const Stages = ({
                             {
                               name: 'offset',
                               options: {
-                                offset: [0, 6],
+                                offset: [0, 12],
                               },
                             },
                           ],

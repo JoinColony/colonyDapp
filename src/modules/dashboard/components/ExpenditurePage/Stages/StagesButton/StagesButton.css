@@ -11,3 +11,7 @@
 .buttonTooltip {
   max-width: 192px;
 }
+
+.buttonWithTooltip {
+  margin-left: 20px;
+}
