@@ -14,6 +14,7 @@ import {
   AbiItemExtended,
   fetchContractABI,
   fetchContractName,
+  getColonySafe,
 } from '~utils/safes';
 import { SpinnerLoader } from '~core/Preloaders';
 import { isEmpty, isEqual, isNil } from '~utils/lodash';
@@ -91,7 +92,7 @@ const renderAvatar = (address: Address, item: AnyUser) => (
 const ContractInteractionSection = ({
   disabledInput,
   transactionFormIndex,
-  values,
+  values: { safe, transactions },
   setFieldValue,
   selectedContractMethods = {},
   handleSelectedContractMethods,
@@ -109,15 +110,11 @@ const ContractInteractionSection = ({
   const [isLoadingABI, setIsLoadingABI] = useState<boolean>(false);
   const [fetchABIError, setFetchABIError] = useState<string>('');
 
-  const transactionValues = values.transactions[transactionFormIndex];
+  const transactionValues = transactions[transactionFormIndex];
 
-  const selectedSafe = safes.find(
-    (safe) => safe.contractAddress === values.safe?.profile?.walletAddress,
-  );
+  const selectedSafe = getColonySafe(safes, safe);
 
-  const { contract: selectedContract } = values.transactions[
-    transactionFormIndex
-  ];
+  const { contract: selectedContract } = transactions[transactionFormIndex];
 
   useEffect(() => {
     if (!selectedContract) {
@@ -132,7 +129,7 @@ const ContractInteractionSection = ({
           formatMessage(MSG.contractNotVerifiedError, {
             // onContractABIChange is only called if a safe has been selected
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            network: getChainNameFromSafe(values.safe!.profile.displayName),
+            network: getChainNameFromSafe(safe!.profile.displayName),
           }),
         );
       } else if (
@@ -151,7 +148,7 @@ const ContractInteractionSection = ({
     },
     [
       transactionFormIndex,
-      values.safe,
+      safe,
       setFieldValue,
       transactionValues.abi,
       removeSelectedContractMethod,
