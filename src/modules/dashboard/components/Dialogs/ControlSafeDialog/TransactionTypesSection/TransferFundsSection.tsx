@@ -14,7 +14,7 @@ import {
   getChainNameFromSafe,
   getTxServiceBaseUrl,
 } from '~modules/dashboard/sagas/utils/safeHelpers';
-import { getSelectedSafeBalance } from '~utils/safes';
+import { getColonySafe, getSelectedSafeBalance } from '~utils/safes';
 import { log } from '~utils/debug';
 
 import AmountBalances from '../AmountBalances';
@@ -153,9 +153,7 @@ const TransferFundsSection = ({
     () => getSelectedSafeBalance(safeBalances, selectedTokenAddress),
     [safeBalances, selectedTokenAddress],
   );
-  const selectedSafe = safes.find(
-    (safe) => safe.contractAddress === inputtedSafe?.profile.walletAddress,
-  );
+  const selectedSafe = getColonySafe(safes, inputtedSafe);
 
   useEffect(() => {
     if (safeAddress) {
