@@ -24,6 +24,10 @@
   width: 116px;
 }
 
+.progressBarContainer > div > div {
+  top: -21.5px;
+}
+
 .voteResultsWrapper {
   margin: 14px 0;
   padding: 17px 23px;

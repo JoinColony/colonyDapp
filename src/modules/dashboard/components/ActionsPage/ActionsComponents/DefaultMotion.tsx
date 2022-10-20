@@ -222,14 +222,16 @@ const DefaultMotion = ({
   const skillRepValue = bigNumberify(
     votingStateData?.votingState?.skillRep || 0,
   ).div(bigNumberify(10).pow(18));
+
   const currentReputationPercent = !totalVotedReputationValue.isZero()
     ? Math.round(
         totalVotedReputationValue.div(skillRepValue).mul(100).toNumber(),
       )
     : 0;
   const thresholdPercent = !skillRepValue.isZero()
-    ? Math.round(threshold.div(skillRepValue).mul(100).toNumber())
+    ? Math.round(threshold.mul(100).div(skillRepValue).toNumber())
     : 0;
+
   const domainMetadata = {
     name: domainName,
     color: domainColor,
