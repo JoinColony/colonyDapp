@@ -9,14 +9,13 @@ import HamburgerDropdownPopover from './HamburgerDropdownPopover';
 import styles from './HamburgerDropdown.css';
 
 interface Props {
-  onlyLogout?: boolean;
   colony: Colony;
   colonyName: string;
 }
 
 const displayName = 'users.HamburgerDropdown';
 
-const HamburgerDropdown = ({ onlyLogout, colony, colonyName }: Props) => {
+const HamburgerDropdown = ({ colony, colonyName }: Props) => {
   const { username, walletAddress, ethereal } = useLoggedInUser();
   return (
     <Popover
@@ -27,7 +26,6 @@ const HamburgerDropdown = ({ onlyLogout, colony, colonyName }: Props) => {
           {...{
             colony,
             colonyName,
-            onlyLogout,
             username,
           }}
         />

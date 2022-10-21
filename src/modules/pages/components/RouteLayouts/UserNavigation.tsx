@@ -291,7 +291,6 @@ const UserNavigation = () => {
           }}
         />
         <HamburgerDropdown
-          onlyLogout={!isNetworkAllowed}
           colony={colonyData?.processedColony as Colony}
           colonyName={colonyName}
         />
