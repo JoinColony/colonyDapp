@@ -163,14 +163,42 @@ const ControlSafeForm = ({
   }, [validateForm]);
 
   const handleTabRemoval = useCallback(
-    (arrayHelpers: FieldArrayRenderProps, index: number) => {
+    (
+      arrayHelpers: FieldArrayRenderProps,
+      index: number,
+      contractMethods?: UpdatedMethods,
+    ) => {
       arrayHelpers.remove(index);
+
+      const shiftedContractMethods = contractMethods
+        ? Object.keys(contractMethods).reduce((acc, contractMethodIndex) => {
+            if (index < Number(contractMethodIndex)) {
+              return {
+                ...acc,
+                [Number(contractMethodIndex) - 1]: contractMethods[
+                  contractMethodIndex
+                ],
+              };
+            }
+            return {
+              ...acc,
+              [contractMethodIndex]: contractMethods[contractMethodIndex],
+            };
+          }, {})
+        : {};
+      handleSelectedContractMethods(shiftedContractMethods);
+
       const newTransactionTabStatus = [...transactionTabStatus];
       newTransactionTabStatus.splice(index, 1);
       setTransactionTabStatus(newTransactionTabStatus);
       handleValidation();
     },
-    [transactionTabStatus, setTransactionTabStatus, handleValidation],
+    [
+      transactionTabStatus,
+      setTransactionTabStatus,
+      handleValidation,
+      handleSelectedContractMethods,
+    ],
   );
   const handleNewTab = useCallback(
     (arrayHelpers: FieldArrayRenderProps) => {
@@ -341,7 +369,13 @@ const ControlSafeForm = ({
                         />
                         <Button
                           className={styles.tabButton}
-                          onClick={() => handleTabRemoval(arrayHelpers, index)}
+                          onClick={() =>
+                            handleTabRemoval(
+                              arrayHelpers,
+                              index,
+                              selectedContractMethods,
+                            )
+                          }
                         >
                           <IconTooltip
                             icon="trash"
