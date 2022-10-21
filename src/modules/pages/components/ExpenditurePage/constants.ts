@@ -132,8 +132,6 @@ export const validationSchema = yup.object().shape({
         .required(),
     }),
   }),
-  title: yup.string().min(3).required(),
-  description: yup.string().max(4000),
   split: yup.object().when('expenditure', {
     is: (expenditure) => expenditure === ExpenditureTypes.Split,
     then: yup.object().shape({
@@ -213,4 +211,6 @@ export const validationSchema = yup.object().shape({
         .min(1),
     }),
   }),
+  title: yup.string().min(3).required(),
+  description: yup.string().max(4000),
 });

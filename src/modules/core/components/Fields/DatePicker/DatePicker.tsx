@@ -33,6 +33,11 @@ export interface DatePickerOption {
   showDatePicker?: boolean;
 }
 
+interface DatePicerError {
+  date?: string | MessageDescriptor;
+  option?: string | MessageDescriptor;
+}
+
 interface Props {
   name: string;
   showTimeSelect?: boolean;
@@ -51,7 +56,7 @@ interface DateInputProps extends React.HTMLProps<HTMLButtonElement> {
   dateFormat: string;
   shouldShowDatePicker: boolean;
   selectedOption?: DatePickerOption | null;
-  error?: string;
+  error?: DatePicerError;
 }
 
 /** The component displaying the currently selected date / option */
@@ -63,6 +68,7 @@ const DateInput = (
     shouldShowDatePicker,
     selectedOption,
     error,
+    name,
   }: DateInputProps,
   ref: React.Ref<HTMLButtonElement>,
 ) => {
@@ -102,6 +108,8 @@ const DateInput = (
         })}
         onClick={onClick}
         ref={ref}
+        name={name}
+        aria-invalid={!!error?.date}
       >
         {shouldShowDatePicker ? formattedDate : labelText}
 
@@ -274,6 +282,7 @@ const DatePicker = ({
         maxDate={maxDate}
         shouldCloseOnSelect={false}
         popperPlacement="right-start"
+        name={name}
         popperModifiers={[
           {
             name: 'preventOverflow',
@@ -288,7 +297,8 @@ const DatePicker = ({
           selectedDate,
           shouldShowDatePicker,
           dateFormat: dateFormatOrDefault,
-          error,
+          error: error as DatePicerError | undefined,
+          name,
         })}
         renderCustomHeader={renderHeader}
         calendarContainer={renderContainer}

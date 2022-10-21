@@ -1,5 +1,5 @@
 import { useFormikContext, setNestedObjectValues, FormikTouched } from 'formik';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { useDialog } from '~core/Dialog';
@@ -15,9 +15,9 @@ import { FIX_TRIGGER_EVENT_NAME } from '~pages/ExpenditurePage/constants';
 
 import Stages from './Stages';
 import StreamingStages from './StreamingStages';
-import styles from './FormStages.css';
 import { Stage } from './constants';
-import { useObserver } from './hooks';
+import { flattenObject } from './utils';
+import styles from './FormStages.css';
 
 const displayName = 'dashboard.ExpenditurePage.Stages.FormStages';
 
@@ -53,34 +53,26 @@ const FormStages = ({
   colony,
   handleCancelExpenditure,
 }: Props) => {
-  const { values, handleSubmit, validateForm, resetForm, setTouched } =
-    useFormikContext<ValuesType>() || {};
+  const {
+    values,
+    handleSubmit,
+    validateForm,
+    resetForm,
+    setTouched,
+    errors: formikErr,
+  } = useFormikContext<ValuesType>() || {};
   const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
-  const [fieldErrorsAmount, setFieldErrorsAmount] = useState<number>(0);
-  const { observer } = useObserver(setFieldErrorsAmount);
+
+  const formikErrors = useMemo(() => {
+    const errorsFlat = flattenObject(formikErr);
+    return Object.keys(errorsFlat);
+  }, [formikErr]);
 
   const handleSaveDraft = useCallback(async () => {
-    setFieldErrorsAmount(0);
     const errors = await validateForm(values);
     const errorsLength = Object.keys(errors)?.length;
     setTouched(setNestedObjectValues<FormikTouched<ValuesType>>(errors, true));
-
-    const invalidFields = document
-      .getElementById('expenditurePage')
-      ?.querySelectorAll('[aria-invalid="true"]');
-    const invalidFieldsLength = invalidFields?.length;
-    setFieldErrorsAmount(
-      errors && invalidFieldsLength ? invalidFieldsLength : 0,
-    );
-
-    if (invalidFields) {
-      Array.from(invalidFields).map((el) => {
-        return observer.observe(el, {
-          attributes: true,
-        });
-      });
-    }
 
     return !errorsLength && colony
       ? openDraftConfirmDialog({
@@ -100,7 +92,6 @@ const FormStages = ({
     setTouched,
     validateForm,
     values,
-    observer,
   ]);
 
   const handleDeleteDraft = () =>
@@ -127,44 +118,37 @@ const FormStages = ({
   }, [activeState, handleSubmit, setTouched, validateForm, values]);
 
   const handleFixButtonClick = useCallback(() => {
-    // error fields should have aria invalid attr if the validation does not pass - for input it is auto-added
-    const invalidFields = document
-      .getElementById('expenditurePage')
-      ?.querySelectorAll('[aria-invalid="true"]');
-    const invalidFieldsLength = invalidFields?.length;
+    if (!formikErrors.length) return;
 
-    if (invalidFieldsLength !== fieldErrorsAmount) {
-      // check if the invalid fields amount has changed (fieldErrorsAmount was prev set only during the submit)
-      setFieldErrorsAmount(invalidFieldsLength ?? 0);
-    }
+    const firstError = document.getElementsByName(formikErrors[0])?.[0];
 
-    if (!invalidFieldsLength) return;
-
-    const firstInvalidEl = invalidFields && invalidFields[0];
-
-    if (firstInvalidEl?.tagName.toLowerCase() === 'input') {
-      (firstInvalidEl as HTMLElement).focus();
+    if (firstError?.tagName.toLowerCase() === 'input') {
+      (firstError as HTMLElement).focus();
     } else {
       const customEvent = new CustomEvent(FIX_TRIGGER_EVENT_NAME, {
         detail: {
-          order: Number((firstInvalidEl as HTMLElement).dataset.index),
+          order: Number((firstError as HTMLElement).dataset.index),
         },
       });
 
       window.dispatchEvent(customEvent);
+
+      if ((firstError as HTMLButtonElement).name === 'streaming.endDate') {
+        (firstError as HTMLButtonElement).click();
+      }
     }
-  }, [fieldErrorsAmount]);
+  }, [formikErrors]);
 
   return (
     <div className={styles.formStages}>
-      {!!fieldErrorsAmount && (
+      {!!formikErrors.length && (
         <div className={styles.formStagesMsg}>
           <p className={styles.formStagesMsgText}>
             <FormattedMessage
-              {...(fieldErrorsAmount > 1
+              {...(formikErrors.length > 1
                 ? { ...MSG.mulitpleErrorMessage }
                 : { ...MSG.singleErrorMessage })}
-              values={{ number: fieldErrorsAmount }}
+              values={{ number: formikErrors.length }}
             />
           </p>
           <button
