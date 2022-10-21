@@ -197,6 +197,7 @@ const UserPickerWithSearch = ({
             onClick={toggleDropdown}
             disabled={disabled}
             data-index={index}
+            name={name}
           >
             {value ? (
               renderAvatar(value.profile.walletAddress, value)

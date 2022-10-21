@@ -211,7 +211,7 @@ const LogsSection = ({ colony }: Props) => {
           <CommentInput
             colonyAddress={colony?.colonyAddress}
             transactionHash={transactionHash}
-            isRequired={false}
+            isRequired
           />
         </div>
       )}
