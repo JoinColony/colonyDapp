@@ -27,6 +27,11 @@ RUN locale-gen
 # Install new version of NPM
 RUN npm i -g npm@8.2 --registry=https://registry.npmjs.org
 
+# Copy colonyDapp
+COPY . ./colonyDapp
+
+WORKDIR /colonyDapp
+
 # Install node_modules
 RUN ls && npm ci
 
