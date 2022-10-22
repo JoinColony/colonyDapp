@@ -47,10 +47,21 @@ jobs:
         id: login-ecr                        
         uses: aws-actions/amazon-ecr-login@v1
       
-      - name: Build and push image
-        run: |
-          docker build --build-arg DEV=${DEV} --build-arg COMMIT_HASH=$RELEASE_REVISION --no-cache -t 268828583045.dkr.ecr.eu-west-2.amazonaws.com/app-frontend:RELEASE_REVISION .
-          docker push 268828583045.dkr.ecr.eu-west-2.amazonaws.com/app-frontend:$RELEASE_REVISION
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: 268828583045.dkr.ecr.eu-west-2.amazonaws.com/app-frontend:$RELEASE_REVISION
+      
+      # - name: Build and push image
+      #   run: |
+      #     docker build --build-arg DEV=${DEV} --build-arg COMMIT_HASH=$RELEASE_REVISION --no-cache -t 268828583045.dkr.ecr.eu-west-2.amazonaws.com/app-frontend:RELEASE_REVISION .
+      #     docker push 268828583045.dkr.ecr.eu-west-2.amazonaws.com/app-frontend:$RELEASE_REVISION
     
       # - name: Deploy to Kubernetes cluster                                                                            
       #   uses: kodermax/kubectl-aws-eks@master                                                                         
