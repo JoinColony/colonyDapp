@@ -51,7 +51,10 @@ jobs:
         uses: docker/setup-buildx-action@v2
       
       - name: Get workspace
-        run: echo ${{ github.workspace }}
+        run: |
+          echo ${{ github.workspace }}
+          ls -la ${{ github.workspace }}
+          ls -la ../${{ github.workspace }}
         
       - name: Build and push
         uses: docker/build-push-action@v3
