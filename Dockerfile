@@ -33,7 +33,7 @@ COPY . ./colonyDapp
 WORKDIR /colonyDapp
 
 # Install node_modules
-RUN ls && npm ci
+RUN npm ci
 
 # If the DEV build arg was set, then build the bundle in development mode
 # Otherwise, build the normal production bundle
