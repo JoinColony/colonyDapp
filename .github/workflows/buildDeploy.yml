@@ -49,6 +49,9 @@ jobs:
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
+      
+      - name: Get workspace
+        run: echo ${{ github.workspace }}
         
       - name: Build and push
         uses: docker/build-push-action@v3
