@@ -28,7 +28,7 @@ RUN locale-gen
 RUN npm i -g npm@8.2 --registry=https://registry.npmjs.org
 
 # Install node_modules
-RUN npm ci
+RUN ls && npm ci
 
 # If the DEV build arg was set, then build the bundle in development mode
 # Otherwise, build the normal production bundle
