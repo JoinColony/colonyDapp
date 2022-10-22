@@ -56,7 +56,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: 268828583045.dkr.ecr.eu-west-2.amazonaws.com/app-frontend:$RELEASE_REVISION
+          tags: 268828583045.dkr.ecr.eu-west-2.amazonaws.com/app-frontend:${{ github.sha }}
       
       # - name: Build and push image
       #   run: |
