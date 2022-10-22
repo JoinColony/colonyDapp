@@ -47,13 +47,6 @@ jobs:
         id: login-ecr                        
         uses: aws-actions/amazon-ecr-login@v1
       
-      - name: Checkout Dockerfile repository
-        uses: actions/checkout@v1
-        with:
-            repository: joinColony/colony-docker-images
-            path: ./colonyInfrastructure/colony-docker-images
-            ref: master
-      
       - name: Build and push image
         run: |
           docker build --build-arg DEV=${DEV} --build-arg COMMIT_HASH=$RELEASE_REVISION --no-cache -t 268828583045.dkr.ecr.eu-west-2.amazonaws.com/app-frontend:RELEASE_REVISION .
