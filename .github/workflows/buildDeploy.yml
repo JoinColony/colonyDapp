@@ -31,10 +31,10 @@ jobs:
         with:                                    
           access_token: ${{ github.token }}
 
-      - name: Checkout                                  
-        uses: actions/checkout@v2                       
-        with:                                           
-          ref: ${{ github.event.pull_request.head.sha }}
+      # - name: Checkout                                  
+      #   uses: actions/checkout@v2                       
+      #   with:                                           
+      #     ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Configure AWS credentials                          
         uses: aws-actions/configure-aws-credentials@v1           
@@ -54,7 +54,7 @@ jobs:
         run: |
           echo ${{ github.workspace }}
           ls -la ${{ github.workspace }}
-          ls -la ../${{ github.workspace }}
+          ls -la ..${{ github.workspace }}
         
       - name: Build and push
         uses: docker/build-push-action@v3
