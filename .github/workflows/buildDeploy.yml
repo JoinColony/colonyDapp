@@ -53,7 +53,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
-          context: ${{ GITHUB_WORKSPACE }}
+          context: ${{ github.workspace }}
           file: ./Dockerfile
           push: true
           tags: 268828583045.dkr.ecr.eu-west-2.amazonaws.com/app-frontend:${{ github.sha }}
