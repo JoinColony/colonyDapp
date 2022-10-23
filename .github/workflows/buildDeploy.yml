@@ -1,31 +1,31 @@
 name: Build and deploy docker image
 
-# Controls when the workflow will run
-on: [workflow_dispatch, repository_dispatch]   # Allows you to run this workflow manually from the Actions tab
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  # push:
+on: 
+
+  workflow_dispatch: # Allows manual workflow trigger
+  repository_dispatch: # Allows API workflow trigger
+
+  # Triggers the workflow on pull request events but only for the "main" branch
+  # pull_request:
   #   branches: [ "main" ]
 
 env:
-  RELEASE_REVISION: "${{ github.sha }}"
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
   KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
   KUBE_NAMESPACE: default
   ECR_REPOSITORY: app-frontend
-#   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+
+  buildDeploy:
+
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+
       - name: Cancel Previous Runs               
         uses: styfle/cancel-workflow-action@0.4.1
         with:                                    
@@ -45,43 +45,30 @@ jobs:
       - name: Checkout                                  
         uses: actions/checkout@v2
       
-      # - name: Set up Docker Buildx
-      #   uses: docker/setup-buildx-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
         
-      # - name: Build and push
-      #   uses: docker/build-push-action@v3
-      #   with:
-      #     context: ${{ github.workspace }}
-      #     file: ./Dockerfile
-      #     push: true
-      #     tags: 268828583045.dkr.ecr.eu-west-2.amazonaws.com/app-frontend:${{ github.sha }}
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: ${{ github.workspace }}
+          file: ./Dockerfile
+          push: true
+          tags: 268828583045.dkr.ecr.eu-west-2.amazonaws.com/app-frontend:${{ github.event.client_payload.COMMIT_HASH }}
       
-      - name: Build and push image
-        run: bash ./.github/workflows/scripts/buildPushImage.sh
-        env:
-          COMMIT_HASH: "${{ github.sha }}"
-
       - name: Deploy to Kubernetes cluster                                                                            
         uses: kodermax/kubectl-aws-eks@master                                                                         
         env:                                                                                                          
-          RELEASE_IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.RELEASE_REVISION }}
+          RELEASE_IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.event.client_payload.COMMIT_HASH }}
         with:                                                                                                         
           args: set image deployment/dapp-qa-network-100 dapp=${{ env.RELEASE_IMAGE }} --record -n $KUBE_NAMESPACE
             
       - name: Verify Kubernetes deployment                               
         uses: kodermax/kubectl-aws-eks@master                            
         with:                                                            
-          args: rollout status deploy my-pod -n $KUBE_NAMESPACE
+          args: rollout status deployment/dapp-qa-network-100 -n $KUBE_NAMESPACE
       
-      # Placeholder for discord notification step
-      # - name: Slack notification                                
-      #   uses: rtCamp/action-slack-notify@master                 
-      #   env:                                                    
-      #     SLACK_CHANNEL: my_cool_channel                   
-      #     SLACK_MESSAGE: 'Just deployed our cool application!'
-      #     SLACK_TITLE: 'Deploy'                         
-      #     SLACK_USERNAME: 'Some Bot'                           
-      #     SLACK_ICON: "[icon URL]"
-      #     SLACK_COLOR: '#228B22'                                
-      #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}       
-      #     MSG_MINIMAL: true 
+      - uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ env.DISCORD_WEBHOOK }} 
