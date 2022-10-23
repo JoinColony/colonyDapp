@@ -1,7 +1,7 @@
 name: Build and deploy docker image
 
 # Controls when the workflow will run
-on: [workflow_dispatch]   # Allows you to run this workflow manually from the Actions tab
+on: [workflow_dispatch, repository_dispatch]   # Allows you to run this workflow manually from the Actions tab
   # Triggers the workflow on push or pull request events but only for the "main" branch
   # push:
   #   branches: [ "main" ]

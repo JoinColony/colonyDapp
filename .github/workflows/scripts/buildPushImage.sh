@@ -14,7 +14,7 @@ if [ -z "$DEV" ]; then
       TAG=$COMMIT_HASH-dev
 fi
    
-docker build --build-arg DEV=${DEV} --no-cache -t 268828583045.dkr.ecr.eu-west-2.amazonaws.com/app-frontend:$TAG .
+docker build --build-arg DEV=${DEV} --no-cache -t 268828583045.dkr.ecr.eu-west-2.amazonaws.com/$ECR_REPOSITORY:$TAG .
 
-docker push 268828583045.dkr.ecr.eu-west-2.amazonaws.com/app-frontend:$TAG
+docker push 268828583045.dkr.ecr.eu-west-2.amazonaws.com/$ECR_REPOSITORY:$TAG
 
