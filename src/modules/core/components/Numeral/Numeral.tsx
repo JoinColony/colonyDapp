@@ -25,6 +25,9 @@ const mediumNumberFormat: numbro.Format = {
 const bigNumberFormat: numbro.Format = {
   totalLength: 6,
   trimMantissa: true,
+  roundingFunction(num) {
+    return num;
+  },
 };
 
 interface PrefixSuffixOptions {
@@ -63,7 +66,7 @@ const Numeral = ({
   suffix,
   className,
 }: Props) => {
-  // register numbro custom language (mainly used for capital abbreviations)
+  // register numbro custom language (used for capitalised abbreviations)
   numbro.registerLanguage(numbroCustomLanguage);
   numbro.setLanguage('en-GB');
 
