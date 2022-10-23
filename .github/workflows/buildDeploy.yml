@@ -57,7 +57,7 @@ jobs:
       #     tags: 268828583045.dkr.ecr.eu-west-2.amazonaws.com/app-frontend:${{ github.sha }}
       
       - name: Build and push image
-        run: bash ./scripts/buildPushImage.sh
+        run: bash ./.github/workflows/scripts/buildPushImage.sh
 
       # - name: Deploy to Kubernetes cluster                                                                            
       #   uses: kodermax/kubectl-aws-eks@master                                                                         
