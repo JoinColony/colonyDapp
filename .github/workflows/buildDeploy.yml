@@ -61,17 +61,17 @@ jobs:
         env:
           COMMIT_HASH: "${{ github.sha }}"
 
-      # - name: Deploy to Kubernetes cluster                                                                            
-      #   uses: kodermax/kubectl-aws-eks@master                                                                         
-      #   env:                                                                                                          
-      #     RELEASE_IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.RELEASE_REVISION }}
-      #   with:                                                                                                         
-      #     args: set image deployment/my-pod app=${{ env.RELEASE_IMAGE }} --record -n $KUBE_NAMESPACE
+      - name: Deploy to Kubernetes cluster                                                                            
+        uses: kodermax/kubectl-aws-eks@master                                                                         
+        env:                                                                                                          
+          RELEASE_IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.RELEASE_REVISION }}
+        with:                                                                                                         
+          args: set image deployment/my-pod app=${{ env.RELEASE_IMAGE }} --record -n $KUBE_NAMESPACE
             
-      # - name: Verify Kubernetes deployment                               
-      #   uses: kodermax/kubectl-aws-eks@master                            
-      #   with:                                                            
-      #     args: rollout status deploy my-pod -n $KUBE_NAMESPACE
+      - name: Verify Kubernetes deployment                               
+        uses: kodermax/kubectl-aws-eks@master                            
+        with:                                                            
+          args: rollout status deploy my-pod -n $KUBE_NAMESPACE
       
       # Placeholder for discord notification step
       # - name: Slack notification                                
