@@ -6,7 +6,6 @@ import classnames from 'classnames';
 
 import { numbroCustomLanguage } from '~utils/numbers/numbroCustomLanguage';
 
-import TinyNumber from './TinyNumber';
 import EngineeringNotation from './EngineeringNotation';
 
 import styles from './Numeral.css';
@@ -90,18 +89,10 @@ const Numeral = ({
     );
   }
 
-  if (Number(convertedValue) < 0.00001) {
-    return (
-      <TinyNumber
-        value={convertedValue}
-        prefix={prefix}
-        suffix={suffix}
-        className={classNames}
-      />
-    );
-  }
-
-  if (Number(convertedValue) >= 1_000_000_000_000) {
+  if (
+    Number(convertedValue) < 0.00001 ||
+    Number(convertedValue) >= 1_000_000_000_000
+  ) {
     return (
       <EngineeringNotation
         value={convertedValue}
