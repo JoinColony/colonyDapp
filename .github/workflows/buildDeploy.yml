@@ -58,6 +58,8 @@ jobs:
       
       - name: Build and push image
         run: bash ./.github/workflows/scripts/buildPushImage.sh
+        env:
+          COMMIT_HASH: "${{ github.sha }}"
 
       # - name: Deploy to Kubernetes cluster                                                                            
       #   uses: kodermax/kubectl-aws-eks@master                                                                         

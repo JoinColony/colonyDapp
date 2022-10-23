@@ -1,9 +1,11 @@
 #!/bin/bash
 set -e
 
+# Commenting out payload processing as triggering workflow with env variable for now
+
 # Move the variables from the payload in to env variables
-PAYLOAD=`cat $GITHUB_EVENT_PATH | jq -r '.client_payload'`
-$(echo $PAYLOAD | jq -r 'keys[] as $k | "export \($k)=\(.[$k])"')
+# PAYLOAD=`cat $GITHUB_EVENT_PATH | jq -r '.client_payload'`
+# $(echo $PAYLOAD | jq -r 'keys[] as $k | "export \($k)=\(.[$k])"')
 
 echo "Building frontend image"
 echo $COMMIT_HASH
