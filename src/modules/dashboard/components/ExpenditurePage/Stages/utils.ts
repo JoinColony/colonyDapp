@@ -21,7 +21,7 @@ export const flattenObject = (
   }
 
   if (isArray(o) || isPlainObject(o)) {
-    Object.keys(o).map((key) => {
+    Object.keys(o).forEach((key) => {
       let pref = prefix;
       if (isArray(o)) {
         pref += `[${key}]`;
@@ -34,7 +34,6 @@ export const flattenObject = (
       }
 
       flattenObject(o[key], pref, result);
-      return result;
     });
   }
 
