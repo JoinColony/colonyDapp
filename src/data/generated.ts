@@ -839,7 +839,7 @@ export type LoggedInUser = {
   networkId?: Maybe<Scalars['Int']>;
 };
 
-export type SugraphEventProcessedValues = {
+export type SubgraphEventProcessedValues = {
   agent: Scalars['String'];
   who: Scalars['String'];
   fromPot: Scalars['String'];
@@ -857,6 +857,7 @@ export type SugraphEventProcessedValues = {
   newVersion: Scalars['String'];
   storageSlot: Scalars['String'];
   storageSlotValue: Scalars['String'];
+  txHash: Scalars['String'];
 };
 
 export type SubgraphEvent = {
@@ -867,7 +868,7 @@ export type SubgraphEvent = {
   args: Scalars['String'];
   timestamp: Scalars['String'];
   associatedColony: SubgraphColony;
-  processedValues: SugraphEventProcessedValues;
+  processedValues: SubgraphEventProcessedValues;
 };
 
 export type SubgraphMotion = {
@@ -2750,7 +2751,7 @@ export type SubgraphEventsThatAreActionsSubscription = { events: Array<(
     ), transaction: (
       { hash: SubgraphTransaction['id'] }
       & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
-    ), processedValues: Pick<SugraphEventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user' | 'oldVersion' | 'newVersion' | 'storageSlot' | 'storageSlotValue'> }
+    ), processedValues: Pick<SubgraphEventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user' | 'oldVersion' | 'newVersion' | 'storageSlot' | 'storageSlotValue' | 'txHash'> }
   )> };
 
 export type SubgraphMotionsSubscriptionVariables = Exact<{
@@ -7298,7 +7299,7 @@ export type SubgraphOneTxSubscriptionHookResult = ReturnType<typeof useSubgraphO
 export type SubgraphOneTxSubscriptionResult = Apollo.SubscriptionResult<SubgraphOneTxSubscription>;
 export const SubgraphEventsThatAreActionsDocument = gql`
     subscription SubgraphEventsThatAreActions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $sortDirection: String = asc) {
-  events(skip: $skip, first: $first, orderBy: "timestamp", orderDirection: $sortDirection, where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)", "DomainMetadata(address,uint256,string)", "ColonyRoleSet(address,address,uint256,uint8,bool)", "ColonyUpgraded(address,uint256,uint256)", "ColonyUpgraded(uint256,uint256)", "RecoveryModeEntered(address)", "ArbitraryReputationUpdate(address,address,uint256,int256)", "TokenUnlocked(address)", "TokenUnlocked()"]}) {
+  events(skip: $skip, first: $first, orderBy: "timestamp", orderDirection: $sortDirection, where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)", "DomainMetadata(address,uint256,string)", "ColonyRoleSet(address,address,uint256,uint8,bool)", "ColonyUpgraded(address,uint256,uint256)", "ColonyUpgraded(uint256,uint256)", "RecoveryModeEntered(address)", "ArbitraryReputationUpdate(address,address,uint256,int256)", "TokenUnlocked(address)", "TokenUnlocked()", "Annotation(address,bytes32,string)"]}) {
     id
     address
     associatedColony {
@@ -7336,6 +7337,7 @@ export const SubgraphEventsThatAreActionsDocument = gql`
       newVersion
       storageSlot
       storageSlotValue
+      txHash
     }
   }
 }

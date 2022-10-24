@@ -28,11 +28,21 @@ import {
   useColonyHistoricRolesQuery,
   useTokenInfoLazyQuery,
   useNetworkContracts,
+  SafeTransaction,
 } from '~data/index';
 import { createAddress } from '~utils/web3';
-import { FormattedAction, ColonyActions, ColonyMotions } from '~types/index';
+import {
+  FormattedAction,
+  ColonyActions,
+  ColonyMotions,
+  ColonyExtendedActions,
+} from '~types/index';
 import { useDataFetcher } from '~utils/hooks';
-import { parseColonyMetadata, parseDomainMetadata } from '~utils/colonyActions';
+import {
+  ExtendedActions,
+  parseColonyMetadata,
+  parseDomainMetadata,
+} from '~utils/colonyActions';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import {
@@ -40,6 +50,8 @@ import {
   MotionState,
   MOTION_TAG_MAP,
 } from '~utils/colonyMotions';
+import { getSafeTransactionActionMessageId } from '~utils/safes';
+import { useFetchSafeTransactionData } from '~modules/dashboard/hooks/useFetchSafeTransactionData';
 import {
   useColonyMetadataChecks,
   useExtendedColonyActionType,
@@ -84,6 +96,24 @@ interface Props {
   colony: Colony;
   handleOnClick?: (handlerProps: ClickHandlerProps) => void;
 }
+
+const getMessageId = (
+  actionType: ExtendedActions,
+  safeTransactions?: SafeTransaction[],
+) => {
+  if (
+    actionType === ColonyExtendedActions.SafeTransactionInitiated &&
+    safeTransactions
+  ) {
+    return getSafeTransactionActionMessageId(
+      actionType,
+      safeTransactions,
+      'title',
+    );
+  }
+
+  return 'action.title';
+};
 
 const ActionsListItem = ({
   item: {
@@ -149,6 +179,8 @@ const ActionsListItem = ({
     colonyObject,
   );
 
+  const safeTransactions = useFetchSafeTransactionData(metadata);
+
   useEffect(() => {
     if (transactionTokenAddress) {
       fetchTokenInfo({ variables: { address: transactionTokenAddress } });
@@ -179,6 +211,9 @@ const ActionsListItem = ({
     actionType === ColonyMotions.SetUserRolesMotion ? updatedRoles : roles,
     actionType,
   );
+
+  const messageId =
+    roleMessageDescriptorId || getMessageId(actionType, safeTransactions);
 
   const popoverPlacement = useMemo(() => {
     const offsetSkid = (-1 * removeValueUnits(popoverWidth)) / 2;
@@ -306,7 +341,7 @@ const ActionsListItem = ({
           <div className={styles.titleWrapper}>
             <span className={styles.title}>
               <FormattedMessage
-                id={roleMessageDescriptorId || 'action.title'}
+                id={messageId}
                 values={{
                   actionType: extendedActionType,
                   initiator: (
@@ -351,6 +386,8 @@ const ActionsListItem = ({
                     <Numeral value={formattedReputationChange} />
                   ),
                   chainName: addedSafe && SAFE_NAMES_MAP[addedSafe.chainId],
+                  // fallback
+                  safeTransactionTitle: 'Safe Transaction Initiated',
                 }}
               />
             </span>

@@ -15,7 +15,7 @@ import {
   ColonyAction,
   ColonySafe,
   SafeTransaction,
-  SugraphEventProcessedValues,
+  SubgraphEventProcessedValues,
 } from '~data/index';
 
 import {
@@ -59,8 +59,8 @@ export const getDetailsForAction = (
  * Get values for action type based on action type
  */
 export const getValuesForActionType = (
-  values: SugraphEventProcessedValues,
-  actionType: ColonyActions,
+  values: SubgraphEventProcessedValues,
+  actionType: ColonyActions | AddedActions,
   colonyAddress: Address,
 ): ValuesForActionTypesMap => {
   if (Object.keys(values).length) {
@@ -130,6 +130,12 @@ export const getValuesForActionType = (
         return {
           recipient: values.user,
           reputationChange: values.amount,
+        };
+      }
+      case AddedActions.SafeTransactionInitiated: {
+        return {
+          initiator: values.agent,
+          metadata: values.metadata,
         };
       }
       default: {

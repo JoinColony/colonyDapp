@@ -37,6 +37,11 @@ const actionsMessageDescriptors = {
       ${ColonyExtendedActions.SafeTransactionInitiated} {{safeTransactionTitle}}
       other {Generic action we don't have information about}
     }`,
+  [`action.title.${ColonyExtendedActions.SafeTransactionInitiated}.multipleTransactions`]: `Initiate Multiple Transactions from Safe Control`,
+  [`action.title.${ColonyExtendedActions.SafeTransactionInitiated}.transferFunds`]: `Transfer Funds from Safe Control`,
+  [`action.title.${ColonyExtendedActions.SafeTransactionInitiated}.transferNFT`]: `Transfer NFT from Safe Control`,
+  [`action.title.${ColonyExtendedActions.SafeTransactionInitiated}.contractInteraction`]: `Initiate Contract Interaction from Safe Control`,
+  [`action.title.${ColonyExtendedActions.SafeTransactionInitiated}.rawTransaction`]: `Initiate Raw Transaction from Safe Control`,
   [`action.${ColonyActions.SetUserRoles}.assign`]: `Assign the {roles} in {fromDomain} to {recipient}`,
   [`action.${ColonyMotions.SetUserRolesMotion}.assign`]: `Assign the {roles} in {fromDomain} to {recipient}`,
   [`action.${ColonyActions.SetUserRoles}.remove`]: `Remove the {roles} in {fromDomain} from {recipient}`,

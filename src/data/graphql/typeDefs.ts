@@ -35,7 +35,7 @@ export default gql`
     networkId: Int
   }
 
-  type SugraphEventProcessedValues {
+  type SubgraphEventProcessedValues {
     agent: String!
     who: String!
     fromPot: String!
@@ -53,6 +53,7 @@ export default gql`
     newVersion: String!
     storageSlot: String!
     storageSlotValue: String!
+    txHash: String!
   }
 
   type SubgraphEvent {
@@ -63,7 +64,7 @@ export default gql`
     args: String!
     timestamp: String!
     associatedColony: SubgraphColony!
-    processedValues: SugraphEventProcessedValues!
+    processedValues: SubgraphEventProcessedValues!
   }
 
   type SubgraphMotion {

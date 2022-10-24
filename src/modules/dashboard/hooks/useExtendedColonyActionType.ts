@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 
-import { Colony } from '~data/index';
-import { ColonyActionQuery } from '~data/generated';
+import { Colony, ColonyActionQuery } from '~data/index';
 import { ColonyActions, ColonyExtendedActions } from '~types/index';
 import { ColonyMetadata } from '~utils/colonyActions';
 
