@@ -12,6 +12,7 @@ import { Tooltip } from '~core/Popover';
 
 import TimePicker from './TimePicker';
 import { DEFAULT_DATE_FORMAT, DEFAULT_TIME_FORMAT } from './constants';
+import useDateTriggerFocus from './hooks';
 
 import styles from './DatePicker.css';
 
@@ -33,7 +34,7 @@ export interface DatePickerOption {
   showDatePicker?: boolean;
 }
 
-interface DatePicerError {
+interface DatePicKerError {
   date?: string | MessageDescriptor;
   option?: string | MessageDescriptor;
 }
@@ -49,6 +50,7 @@ interface Props {
   options?: DatePickerOption[];
   minDate?: Date | null;
   maxDate?: Date | null;
+  index?: number;
 }
 
 interface DateInputProps extends React.HTMLProps<HTMLButtonElement> {
@@ -56,7 +58,8 @@ interface DateInputProps extends React.HTMLProps<HTMLButtonElement> {
   dateFormat: string;
   shouldShowDatePicker: boolean;
   selectedOption?: DatePickerOption | null;
-  error?: DatePicerError;
+  error?: DatePicKerError;
+  index?: number;
 }
 
 /** The component displaying the currently selected date / option */
@@ -69,6 +72,7 @@ const DateInput = (
     selectedOption,
     error,
     name,
+    index,
   }: DateInputProps,
   ref: React.Ref<HTMLButtonElement>,
 ) => {
@@ -110,6 +114,7 @@ const DateInput = (
         ref={ref}
         name={name}
         aria-invalid={!!error?.date}
+        data-index={index}
       >
         {shouldShowDatePicker ? formattedDate : labelText}
 
@@ -135,6 +140,7 @@ const DatePicker = ({
   minDate,
   maxDate,
   timeInterval = 30,
+  index = 1,
 }: Props) => {
   const [{ value }, { error }, { setValue, setTouched }] = useField<
     DatePickerFieldValue
@@ -268,9 +274,12 @@ const DatePicker = ({
       ? `${DEFAULT_DATE_FORMAT}, ${DEFAULT_TIME_FORMAT}`
       : DEFAULT_DATE_FORMAT;
 
+  const { inputRef: omniInputRef } = useDateTriggerFocus(index, false);
+
   return (
     <div>
       <ReactDatePicker
+        ref={omniInputRef}
         selected={selectedDate}
         onChange={handleDateChange}
         onBlur={() => setTouched(true)}
@@ -297,8 +306,9 @@ const DatePicker = ({
           selectedDate,
           shouldShowDatePicker,
           dateFormat: dateFormatOrDefault,
-          error: error as DatePicerError | undefined,
+          error: error as DatePicKerError | undefined,
           name,
+          index,
         })}
         renderCustomHeader={renderHeader}
         calendarContainer={renderContainer}
