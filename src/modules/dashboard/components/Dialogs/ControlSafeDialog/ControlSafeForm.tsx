@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FieldArray, FieldArrayRenderProps, FormikProps } from 'formik';
-import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { ColonyRole } from '@colony/colony-js';
 import classnames from 'classnames';
 import { nanoid } from 'nanoid';
 
@@ -15,18 +15,20 @@ import Icon from '~core/Icon';
 import { SingleSafePicker, filterUserSelection } from '~core/SingleUserPicker';
 import IconTooltip from '~core/IconTooltip';
 
-import { getUserRolesForDomain } from '~modules/transformers';
-import { userHasRole } from '~modules/users/checks';
-import { useTransformer } from '~utils/hooks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import { SAFE_INTEGRATION_LEARN_MORE } from '~externalUrls';
-import { Colony, ColonySafe, useLoggedInUser } from '~data/index';
+import { Colony, ColonySafe } from '~data/index';
 import { PrimitiveType } from '~types/index';
 import { SelectedSafe } from '~modules/dashboard/sagas/utils/safeHelpers';
 import { debounce, isEqual, omit } from '~utils/lodash';
+import { useHasPermission } from '~utils/hooks/useHasPermissions';
 
 import SafeTransactionPreview from './SafeTransactionPreview';
-import { FormValues, UpdatedMethods } from './ControlSafeDialog';
+import {
+  defaultTransaction,
+  FormValues,
+  UpdatedMethods,
+} from './ControlSafeDialog';
 import {
   TransferNFTSection,
   TransferFundsSection,
@@ -97,7 +99,7 @@ export interface FormProps {
   isVotingExtensionEnabled: boolean;
   back?: () => void;
   showPreview: boolean;
-  handleShowPreview: (showPreview: boolean) => void;
+  setShowPreview: (showPreview: boolean) => void;
   selectedContractMethods?: UpdatedMethods;
   handleSelectedContractMethods: React.Dispatch<
     React.SetStateAction<UpdatedMethods>
@@ -108,6 +110,7 @@ export interface TransactionSectionProps extends Pick<FormProps, 'colony'> {
   disabledInput: boolean;
   transactionFormIndex: number;
   handleInputChange: () => void;
+  handleValidation: () => void;
 }
 
 const renderAvatar = (address: string, item) => (
@@ -132,7 +135,7 @@ const ControlSafeForm = ({
   isVotingExtensionEnabled,
   setFieldValue,
   showPreview,
-  handleShowPreview,
+  setShowPreview,
   validateForm,
   dirty,
   selectedContractMethods,
@@ -140,21 +143,13 @@ const ControlSafeForm = ({
   handleSelectedContractMethods,
 }: FormProps & FormikProps<FormValues>) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState([true]);
-  const [hasTitle, setHasTitle] = useState(true);
   const [prevSafeAddress, setPrevSafeAddress] = useState<string>('');
 
-  const { walletAddress } = useLoggedInUser();
-  const fromDomainRoles = useTransformer(getUserRolesForDomain, [
-    colony,
-    walletAddress,
-    ROOT_DOMAIN_ID,
-  ]);
-  const userHasFundingPermission = userHasRole(
-    fromDomainRoles,
-    ColonyRole.Funding,
-  );
-  const userHasRootPermission = userHasRole(fromDomainRoles, ColonyRole.Root);
-  const hasRoles = userHasFundingPermission && userHasRootPermission;
+  const hasRoles = [
+    useHasPermission(colony, ColonyRole.Funding),
+    useHasPermission(colony, ColonyRole.Root),
+  ].every((r) => r === true);
+
   const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
     colony.colonyAddress,
     hasRoles,
@@ -179,17 +174,7 @@ const ControlSafeForm = ({
   );
   const handleNewTab = useCallback(
     (arrayHelpers: FieldArrayRenderProps) => {
-      arrayHelpers.push({
-        transactionType: '',
-        tokenData: null,
-        amount: undefined,
-        recipient: null,
-        data: '',
-        contract: null,
-        abi: '',
-        contractFunction: '',
-        nft: null,
-      });
+      arrayHelpers.push(defaultTransaction);
       setTransactionTabStatus([
         ...Array(transactionTabStatus.length).fill(false),
         true,
@@ -203,7 +188,7 @@ const ControlSafeForm = ({
       const newTransactionTabs = transactionTabStatus.map((tab, index) =>
         index === newIndex ? !tab : tab,
       );
-      setTransactionTabStatus([...newTransactionTabs]);
+      setTransactionTabStatus(newTransactionTabs);
     },
     [transactionTabStatus, setTransactionTabStatus],
   );
@@ -229,16 +214,6 @@ const ControlSafeForm = ({
     [],
   );
 
-  /* This is necessary as the form validation doesn't work on the first render
-  when we switch to showing preview */
-  useEffect(() => {
-    if (showPreview && values.transactionsTitle === undefined) {
-      setHasTitle(false);
-    } else {
-      setHasTitle(true);
-    }
-  }, [values, showPreview]);
-
   useEffect(() => {
     if (!showPreview) {
       validateForm();
@@ -261,6 +236,11 @@ const ControlSafeForm = ({
     }
   };
 
+  const handleShowPreview = (isPreview: boolean) => {
+    setShowPreview(!isPreview);
+    handleValidation();
+  };
+
   const removeSelectedContractMethod = useCallback(
     (transactionFormIndex: number) => {
       const updatedSelectedContractMethods = omit(
@@ -280,14 +260,15 @@ const ControlSafeForm = ({
     [selectedContractMethods, handleSelectedContractMethods, setFieldValue],
   );
 
-  const savedNFTState = useState({});
-
   const submitButtonText = (() => {
     if (!showPreview) {
       return MSG.buttonCreateTransaction;
     }
     return { id: 'button.confirm' };
   })();
+
+  const savedNFTState = useState({});
+  const savedTokenState = useState({});
 
   return (
     <>
@@ -417,6 +398,7 @@ const ControlSafeForm = ({
                           handleInputChange={handleInputChange}
                           handleValidation={handleValidation}
                           setFieldTouched={setFieldTouched}
+                          savedTokenState={savedTokenState}
                         />
                       )}
                       {values.transactions[index]?.transactionType ===
@@ -456,6 +438,7 @@ const ControlSafeForm = ({
                           values={values}
                           disabledInput={!userHasPermission || isSubmitting}
                           savedNFTState={savedNFTState}
+                          handleValidation={handleValidation}
                         />
                       )}
                     </div>
@@ -488,20 +471,19 @@ const ControlSafeForm = ({
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
-          onClick={showPreview ? () => handleShowPreview(!showPreview) : back}
+          onClick={showPreview ? () => handleShowPreview(showPreview) : back}
           text={{ id: 'button.back' }}
         />
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() =>
-            showPreview ? handleSubmit() : handleShowPreview(!showPreview)
+            showPreview ? handleSubmit() : handleShowPreview(showPreview)
           }
           text={submitButtonText}
           loading={isSubmitting}
           disabled={
             !isValid ||
             isSubmitting ||
-            !hasTitle ||
             !dirty ||
             (showPreview && onlyForceAction)
           }

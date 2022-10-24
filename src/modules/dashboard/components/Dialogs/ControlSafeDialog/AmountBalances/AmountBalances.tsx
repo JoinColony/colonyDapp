@@ -16,17 +16,12 @@ import {
 } from '~constants';
 import { AnyToken } from '~data/index';
 import { TransferFundsProps } from '../TransactionTypesSection/TransferFundsSection';
+import { FormValues } from '..';
 
 import styles from '~core/Fields/AmountTokens/AmountTokens.css';
 
-export interface SafeBalance {
-  balance: number;
-  tokenAddress: string | null;
-  token: AnyToken | null;
-}
-
 interface Props extends Pick<TransferFundsProps, 'handleValidation'> {
-  safeBalances: SafeBalance[];
+  safeBalances: FormValues['safeBalances'];
   disabledInput: boolean;
   selectedSafe: ColonySafe | undefined;
   transactionFormIndex: number;
@@ -59,12 +54,12 @@ const AmountBalances = ({
   const [
     ,
     { value: selectedTokenData },
-    { setValue: setTokenData },
+    { setValue: setSelectedTokenData },
   ] = useField<AnyToken | null>(
     `transactions.${transactionFormIndex}.tokenData`,
   );
 
-  const tokens: AnyToken[] = safeBalances.map((balance) => {
+  const tokens: AnyToken[] = (safeBalances || []).map((balance) => {
     // If selected safe balance uses an ERC20 token
     if (balance.token && balance.tokenAddress) {
       return {
@@ -93,18 +88,18 @@ const AmountBalances = ({
     };
   });
 
-  // Set token data in form state on initialisation
+  // Set token data in form state on initialisation. Ensures native token is always preselected
   useEffect(() => {
-    const isTokenInBalances = safeBalances.some(
+    const isTokenInBalances = safeBalances?.some(
       (b) => b.tokenAddress === selectedTokenData?.address,
     );
     if (!isTokenInBalances) {
-      setTokenData(tokens[0]);
+      setSelectedTokenData(tokens[0]);
     }
 
-    // initialisation only
+    // selectedTokenData and setSelectedTokenData cause infinite loop.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [safeBalances]);
 
   useEffect(() => {
     if (selectedSafe) {
@@ -153,7 +148,7 @@ const AmountBalances = ({
               );
               // can only select a token from "tokens"
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              setTokenData(selectedToken!, false);
+              setSelectedTokenData(selectedToken!, false);
               handleValidation();
             }}
           />

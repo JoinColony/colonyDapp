@@ -11,10 +11,11 @@ import SingleUserPicker, {
 import { useMembersSubscription } from '~data/index';
 import {
   getChainNameFromSafe,
-  getIdFromNFTDisplayName,
   getTxServiceBaseUrl,
+  SelectedNFT,
   SelectedSafe,
 } from '~modules/dashboard/sagas/utils/safeHelpers';
+import { getSelectedNFTData } from '~utils/safes';
 import { Address } from '~types/index';
 import { log } from '~utils/debug';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -106,8 +107,8 @@ const TransferNFTSection = ({
   disabledInput,
   transactionFormIndex,
   values: { safe },
-  values,
   savedNFTState,
+  handleValidation,
 }: Props & Pick<FormikProps<FormValues>, 'values'>) => {
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress },
@@ -116,7 +117,6 @@ const TransferNFTSection = ({
   const [savedNFTs, setSavedNFTs] = savedNFTState;
   const [availableNFTs, setAvailableNFTs] = useState<NFTData>(undefined);
   const [isLoadingNFTData, setIsLoadingNFTData] = useState<boolean>(false);
-  const { nft: selectedNFT } = values.transactions[transactionFormIndex];
 
   const [
     { value: selectedNFTData },
@@ -165,33 +165,6 @@ const TransferNFTSection = ({
     getNFTData();
   }, [safe, savedNFTs, setSavedNFTs]);
 
-  /*
-   * This effect really belongs in the 'onSelected' prop of the SingleNFTPicker.
-   * However, this causes a bug where Formik thinks the NFT is null, even though it isn't.
-   */
-  useEffect(() => {
-    const filteredNFTData = availableNFTs?.find((nft) => {
-      const id = getIdFromNFTDisplayName(
-        selectedNFT?.profile.displayName || '',
-      );
-      return (
-        nft.address === selectedNFT?.profile.walletAddress && nft.id === id
-      );
-    });
-    if (filteredNFTData) {
-      setSelectedNFTData(filteredNFTData, true);
-    }
-
-    if (!selectedNFT) {
-      setSelectedNFTData(null, true);
-    }
-    /*
-     * Including setSelectedNFTData creates an infinite loop,
-     * presumably because it gets recreated on every re-render.
-     */
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
-  }, [selectedNFT, availableNFTs]);
-
   if (isLoadingNFTData) {
     return (
       <DialogSection>
@@ -226,10 +199,18 @@ const TransferNFTSection = ({
             name={`transactions.${transactionFormIndex}.nft`}
             filter={filterUserSelection}
             renderAvatar={renderAvatar}
-            data={availableNFTs || []}
+            data={availableNFTs}
             disabled={disabledInput}
             placeholder={MSG.NFTPickerPlaceholder}
             validateOnChange
+            onSelected={(selectedNFT: SelectedNFT) => {
+              const nftData = getSelectedNFTData(selectedNFT, availableNFTs);
+
+              // selectedNFT comes from availableNFTs, so getSelectedNFTData won't return undefined (it's using .find())
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              setSelectedNFTData(nftData!, false); // setting true causes bug
+              handleValidation();
+            }}
           />
         </div>
       </DialogSection>

@@ -7,11 +7,11 @@ import moveDecimal from 'move-decimal-point';
 import Maybe from 'graphql/tsutils/Maybe';
 
 import { intl } from '~utils/intl';
-import { isAbiItem, validateType } from '~utils/safes';
-import { TransactionTypes } from './constants';
-import { getSelectedSafeBalance } from '~utils/safes/safeBalances';
+import { isAbiItem, validateType, getSelectedSafeBalance } from '~utils/safes';
 
-import { SafeBalance } from './AmountBalances';
+import { TransactionTypes } from './constants';
+
+import { SafeBalance } from '.';
 
 const MSG = defineMessages({
   requiredFieldError: {
@@ -64,8 +64,7 @@ const MSG = defineMessages({
   },
   balanceError: {
     id: `dashboard.ControlSafeDialog.validation.balanceError`,
-    defaultMessage:
-      'Could not retreive balance information. Please try again later',
+    defaultMessage: 'Could not retreive balance information',
   },
 });
 
@@ -160,7 +159,13 @@ export const getValidationSchema = (
         })
         .required(() => MSG.requiredFieldError),
     }),
-    ...(showPreview ? { transactionsTitle: yup.string().required() } : {}),
+    ...(showPreview
+      ? {
+          transactionsTitle: yup
+            .string()
+            .required(() => MSG.requiredFieldError),
+        }
+      : {}),
     transactions: yup.array(
       yup.object().shape({
         transactionType: yup.string().required(() => MSG.requiredFieldError),
@@ -200,72 +205,69 @@ export const getValidationSchema = (
           otherwise: yup.object().nullable(),
         }),
         amount: yup.string().when('transactionType', {
-          is: (transactionType) =>
-            transactionType === TransactionTypes.TRANSFER_FUNDS,
+          is: TransactionTypes.TRANSFER_FUNDS,
           then: yup
             .string()
-            .required(() => MSG.requiredFieldError)
+            .nullable()
             .test(
               'check-amount',
               formatMessage(MSG.balanceError),
               async function testSafeBalance(value) {
-                if (value) {
-                  if (Number(value) <= 0) {
-                    return this.createError({
-                      message: formatMessage(MSG.gtZeroError),
-                    });
-                  }
-                  const selectedToken = this.parent.tokenData?.address;
-                  const selectedTokenDecimals = this.parent.tokenData?.decimals;
-
-                  const {
-                    safeBalances,
-                  }: {
-                    safeBalances: Maybe<SafeBalance[]>;
-                    // Type is incorrect. "from" does appear in yup.TextContext
-                    // @ts-ignore
-                  } = this.from[1].value;
-                  const safeBalance = getSelectedSafeBalance(
-                    safeBalances,
-                    selectedToken,
-                  );
-
-                  if (safeBalance) {
-                    const convertedAmount = bigNumberify(
-                      moveDecimal(value, selectedTokenDecimals),
-                    );
-                    const balance = bigNumberify(safeBalance.balance);
-                    if (balance.lt(convertedAmount) || balance.isZero()) {
-                      return this.createError({
-                        message: formatMessage(MSG.insuffienctFundsError),
-                      });
-                    }
-                    return true;
-                  }
+                if (!value) {
                   return this.createError({
-                    message: formatMessage(MSG.balanceError),
+                    message: formatMessage(MSG.requiredFieldError),
                   });
                 }
+                if (Number(value) <= 0) {
+                  return this.createError({
+                    message: formatMessage(MSG.gtZeroError),
+                  });
+                }
+                const selectedToken = this.parent.tokenData?.address;
+                const selectedTokenDecimals = this.parent.tokenData?.decimals;
 
-                // Will not get here. If value isn't defined or eqls 0, earlier validation will catch it.
-                return false;
+                const {
+                  safeBalances,
+                }: {
+                  safeBalances: Maybe<SafeBalance[]>;
+                  // Type is incorrect. "from" does appear in yup.TextContext
+                  // @ts-ignore
+                } = this.from[1].value;
+                const safeBalance = getSelectedSafeBalance(
+                  safeBalances,
+                  selectedToken,
+                );
+
+                if (safeBalance) {
+                  const convertedAmount = bigNumberify(
+                    moveDecimal(value, selectedTokenDecimals),
+                  );
+                  const balance = bigNumberify(safeBalance.balance);
+                  if (balance.lt(convertedAmount) || balance.isZero()) {
+                    return this.createError({
+                      message: formatMessage(MSG.insuffienctFundsError),
+                    });
+                  }
+                  return true;
+                }
+                return this.createError({
+                  message: formatMessage(MSG.balanceError),
+                });
               },
             ),
-          otherwise: false,
+          otherwise: yup.string().nullable(),
         }),
         rawAmount: yup.number().when('transactionType', {
-          is: (transactionType) =>
-            transactionType === TransactionTypes.RAW_TRANSACTION,
+          is: TransactionTypes.RAW_TRANSACTION,
           then: yup
             .number()
             .transform((value) => toFinite(value))
             .required(() => MSG.requiredFieldError)
             .integer(() => MSG.notIntegerError),
-          otherwise: false,
+          otherwise: yup.number().nullable(),
         }),
         data: yup.string().when('transactionType', {
-          is: (transactionType) =>
-            transactionType === TransactionTypes.RAW_TRANSACTION,
+          is: TransactionTypes.RAW_TRANSACTION,
           then: yup
             .string()
             .required(() => MSG.requiredFieldError)
@@ -274,11 +276,10 @@ export const getValidationSchema = (
               () => MSG.notHexError,
               (value) => isHexString(value),
             ),
-          otherwise: false,
+          otherwise: yup.string(),
         }),
         contract: yup.object().when('transactionType', {
-          is: (transactionType) =>
-            transactionType === TransactionTypes.CONTRACT_INTERACTION,
+          is: TransactionTypes.CONTRACT_INTERACTION,
           then: yup.object().shape({
             profile: yup.object().shape({
               walletAddress: yup
@@ -290,8 +291,7 @@ export const getValidationSchema = (
           otherwise: yup.object().nullable(),
         }),
         abi: yup.string().when('transactionType', {
-          is: (transactionType) =>
-            transactionType === TransactionTypes.CONTRACT_INTERACTION,
+          is: TransactionTypes.CONTRACT_INTERACTION,
           then: yup
             .string()
             .required(() => MSG.requiredFieldError)
@@ -309,17 +309,15 @@ export const getValidationSchema = (
                 return false;
               },
             ),
-          otherwise: false,
+          otherwise: yup.string(),
         }),
         contractFunction: yup.string().when('transactionType', {
-          is: (transactionType) =>
-            transactionType === TransactionTypes.CONTRACT_INTERACTION,
+          is: TransactionTypes.CONTRACT_INTERACTION,
           then: yup.string().required(() => MSG.requiredFieldError),
-          otherwise: false,
+          otherwise: yup.string(),
         }),
         nft: yup.object().when('transactionType', {
-          is: (transactionType) =>
-            transactionType === TransactionTypes.TRANSFER_NFT,
+          is: TransactionTypes.TRANSFER_NFT,
           then: yup.object().shape({
             profile: yup.object().shape({
               displayName: yup.string().required(() => MSG.requiredFieldError),
@@ -331,8 +329,7 @@ export const getValidationSchema = (
           otherwise: yup.object().nullable(),
         }),
         nftData: yup.object().when('transactionType', {
-          is: (transactionType) =>
-            transactionType === TransactionTypes.TRANSFER_NFT,
+          is: TransactionTypes.TRANSFER_NFT,
           then: yup.object().shape({
             address: yup.string(),
             description: yup.string().nullable(),
