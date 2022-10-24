@@ -1,7 +1,8 @@
 import { useCallback, useMemo } from 'react';
 import minBy from 'lodash/minBy';
-
+import { nanoid } from 'nanoid';
 import { uniqBy } from 'lodash';
+
 import { Token } from '~data/index';
 import { Recipient as RecipientType } from './Payments/types';
 
@@ -30,6 +31,7 @@ export const useCalculateTokens = (recipients?: Recipient[]) => {
     return uniqBy(allTokens, 'token.id').map((token) => ({
       ...token,
       amount: 0,
+      key: nanoid(),
     }));
   }, [recipients]);
 
@@ -56,6 +58,7 @@ export const useCalculateTokens = (recipients?: Recipient[]) => {
               return {
                 ...accToken,
                 amount: accToken.amount + Number(token.amount),
+                key: nanoid(),
               };
             }
             return accToken;

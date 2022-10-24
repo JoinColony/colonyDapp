@@ -466,6 +466,12 @@ const ExpenditurePage = ({ match }: Props) => {
       return;
     }
 
+    // If it's not 'Advanced' payment type, change te stage to claimed - mock function
+    if (formValues.expenditure !== ExpenditureTypes.Advanced) {
+      setActiveStateId(Stage.Claimed);
+      return;
+    }
+
     // if the claim date has passed and the amount hasn't been claimed yet it should be claimed now,
     // so we set claimed property to true
     const updatedFormValues = {
@@ -765,7 +771,7 @@ const ExpenditurePage = ({ match }: Props) => {
           </div>
           {colonyData && (
             <LockedStages
-              recipients={formValues?.recipients}
+              formValues={formValues}
               status={status}
               motion={motion}
               states={states}

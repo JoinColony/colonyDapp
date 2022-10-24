@@ -47,10 +47,6 @@
   align-items: center;
 }
 
-.buttonsContainer > span > button {
-  margin-left: 20px;
-}
-
 .buttonsContainer button:not(:last-of-type) {
   margin-right: 30px;
 }
@@ -70,10 +66,6 @@
     color: var(--temp-grey-blue-7);
     cursor: default;
   }
-}
-
-.iconButton > div {
-  margin-bottom: 7px;
 }
 
 .iconButton {

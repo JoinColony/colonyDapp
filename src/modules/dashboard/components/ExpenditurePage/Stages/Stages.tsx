@@ -6,16 +6,18 @@ import classNames from 'classnames';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import { State } from '~pages/ExpenditurePage/types';
+import {
+  ExpenditureTypes,
+  State,
+  ValuesType,
+} from '~pages/ExpenditurePage/types';
 import { Colony } from '~data/index';
-
-import { Recipient } from '../Payments/types';
 
 import StageItem from './StageItem';
 import { Motion, MotionStatus, Stage, Status } from './constants';
-import ClaimFunds from './ClaimFunds';
 import Label from './StageItem/Label';
 import StagesButton from './StagesButton';
+import { ClaimFundsOther, ClaimFundsRecipients } from './ClaimFunds';
 import styles from './Stages.css';
 
 const MSG = defineMessages({
@@ -78,9 +80,9 @@ export interface Props {
   status?: Status;
   motion?: Motion;
   handleCancelExpenditure?: () => void;
-  recipients?: Recipient[];
   colony: Colony;
   buttonDisabled?: boolean;
+  formValues?: ValuesType;
 }
 
 const Stages = ({
@@ -92,9 +94,9 @@ const Stages = ({
   status,
   motion,
   handleCancelExpenditure,
-  recipients,
   colony,
   buttonDisabled,
+  formValues,
 }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
@@ -116,19 +118,34 @@ const Stages = ({
   const isCancelled =
     status === Status.Cancelled || status === Status.ForceCancelled;
 
+  const claimFundsVisible =
+    isLogedIn &&
+    activeStateId === Stage.Released &&
+    status !== Status.Cancelled;
+
   return (
     <div className={styles.mainContainer}>
-      {isLogedIn &&
-        activeStateId === Stage.Released &&
-        status !== Status.Cancelled && (
-          <ClaimFunds
-            recipients={recipients}
-            colony={colony}
-            buttonAction={activeState?.buttonAction}
-            buttonText={activeState?.buttonText}
-            isDisabled={motion?.status === MotionStatus.Pending}
-          />
-        )}
+      {claimFundsVisible && formValues && (
+        <>
+          {formValues.expenditure === ExpenditureTypes.Advanced ? (
+            <ClaimFundsRecipients
+              recipients={formValues.recipients}
+              colony={colony}
+              buttonAction={activeState?.buttonAction}
+              buttonText={activeState?.buttonText}
+              isDisabled={motion?.status === MotionStatus.Pending}
+            />
+          ) : (
+            <ClaimFundsOther
+              formValues={formValues}
+              colony={colony}
+              buttonAction={activeState?.buttonAction}
+              buttonText={activeState?.buttonText}
+              isDisabled={motion?.status === MotionStatus.Pending}
+            />
+          )}
+        </>
+      )}
       <div
         className={classNames(styles.statusContainer, {
           [styles.withTag]: motion?.status === MotionStatus.Pending,
@@ -156,7 +173,7 @@ const Stages = ({
                       {
                         name: 'offset',
                         options: {
-                          offset: [0, 6],
+                          offset: [0, 12],
                         },
                       },
                     ],
@@ -199,7 +216,7 @@ const Stages = ({
                         {
                           name: 'offset',
                           options: {
-                            offset: [0, 6],
+                            offset: [0, 12],
                           },
                         },
                       ],
@@ -224,7 +241,7 @@ const Stages = ({
                         {
                           name: 'offset',
                           options: {
-                            offset: [0, 6],
+                            offset: [0, 12],
                           },
                         },
                       ],
@@ -273,7 +290,7 @@ const Stages = ({
                             {
                               name: 'offset',
                               options: {
-                                offset: [0, 6],
+                                offset: [0, 12],
                               },
                             },
                           ],
