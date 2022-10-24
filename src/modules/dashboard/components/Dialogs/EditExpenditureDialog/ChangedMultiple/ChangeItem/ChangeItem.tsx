@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid';
 import React, { useCallback } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { FormSection } from '~core/Fields';
 import Icon from '~core/Icon';
@@ -12,6 +13,13 @@ import NewRecipient from '../../NewRecipient';
 import NewValue from '../../NewValue';
 
 import styles from './ChangeItem.css';
+
+export const MSG = defineMessages({
+  none: {
+    id: 'dashboard.EditExpenditureDialog.ChangedMultiple.ChangeItem.none',
+    defaultMessage: 'None',
+  },
+});
 
 const displayName =
   'dashboard.EditExpenditureDialog.ChangedMultiple.ChangeItem';
@@ -37,6 +45,13 @@ const ChangeItem = ({ newValue, oldValue, name, colony }: Props) => {
         }
         case 'delay': {
           return <NewDelay newValue={change} key={nanoid()} />;
+        }
+        case 'name': {
+          return (
+            <span className={styles.changeItem}>
+              {change || <FormattedMessage {...MSG.none} />}
+            </span>
+          );
         }
         default:
           return null;

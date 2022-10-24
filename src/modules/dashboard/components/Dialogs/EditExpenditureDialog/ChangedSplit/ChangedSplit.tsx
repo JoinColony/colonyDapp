@@ -3,13 +3,12 @@ import { defineMessages, useIntl } from 'react-intl';
 
 import { nanoid } from 'nanoid';
 import Button from '~core/Button';
-import { Colony, LoggedInUser } from '~data/index';
+import { Colony } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/types';
-import { Staged } from '~dashboard/ExpenditurePage/Staged/types';
-import { Batch } from '~dashboard/ExpenditurePage/Batch/types';
 
 import ChangeItem from '../ChangedMultiple/ChangeItem';
 import ChangeHeader from '../ChangeHeader';
+import { NewValueType } from '../types';
 
 import { isRecipientType } from './utils';
 import ChangedRecipient from './ChangedRecipient';
@@ -43,20 +42,6 @@ export const skip = [
   'percent',
   'unequal',
 ];
-
-export type NewValueType = {
-  id: string;
-  key: string;
-  value?:
-    | ValuesType['recipients']
-    | string
-    | Staged
-    | Pick<
-        LoggedInUser,
-        'walletAddress' | 'balance' | 'username' | 'ethereal' | 'networkId'
-      >
-    | Batch;
-};
 
 interface Props {
   newValues?: NewValueType;

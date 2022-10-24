@@ -312,6 +312,66 @@ export const updateValues = (values, confirmedValues) => {
     };
   }
 
+  if ('staged' in confirmedValues) {
+    // milestones that have been changed
+    const changedMilestones = values.staged.milestones.filter((milestone) =>
+      confirmedValues.staged.milestones?.find(
+        (confMilestone) => confMilestone.id === milestone.id,
+      ),
+    );
+
+    // milestones without any changes
+    const sameMilestones = values.staged.milestones.filter((milestone) => {
+      if (
+        !confirmedValues.staged.milestones ||
+        !confirmedValues.staged.milestones?.length
+      ) {
+        return true;
+      }
+      return confirmedValues.staged.milestones?.every(
+        (confirmedMilestone) => confirmedMilestone.id !== milestone.id,
+      );
+    });
+
+    // newly created milestones
+    const newMilestones =
+      confirmedValues.staged.milestones?.filter((value) => value.created) || [];
+
+    // 'confirmedMilestones' is an array with updated milestones. It is composed of:
+    // - milestones that haven't changed
+    // - updated milestones
+    // - newly created milestones.
+    // And we need to filter out deleted items (with 'removed' property set to true)
+    const confirmedMilestones = [
+      ...sameMilestones,
+      ...changedMilestones?.map((milestone) => {
+        const newValue = confirmedValues.staged.milestones?.find(
+          (confirmedMilestone) => confirmedMilestone.id === milestone.id,
+        );
+
+        return {
+          ...milestone,
+          ...newValue,
+          key: nanoid(),
+          isChanged: true,
+        };
+      }),
+      ...newMilestones?.map((newMilestone) => ({
+        ...newMilestone,
+        created: undefined,
+        isChanged: true,
+        key: nanoid(),
+      })),
+    ].filter((milestone) => !milestone.removed);
+
+    const newValues = merge({}, values, confirmedValues);
+
+    return {
+      ...newValues,
+      staged: { ...newValues.staged, milestones: confirmedMilestones },
+    };
+  }
+
   return merge({}, values, confirmedValues);
 };
 

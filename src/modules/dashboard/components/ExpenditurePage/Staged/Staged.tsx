@@ -1,6 +1,6 @@
 import Decimal from 'decimal.js';
 import { FieldArray, useField, useFormikContext } from 'formik';
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { nanoid } from 'nanoid';
 
@@ -8,7 +8,6 @@ import { FormSection, Input, TokenSymbolSelector } from '~core/Fields';
 import Icon from '~core/Icon';
 import { filterUserSelection } from '~core/SingleUserPicker';
 import UserPickerWithSearch from '~core/UserPickerWithSearch';
-
 import { supRenderAvatar } from '~dashboard/ExpenditurePage/Recipient/Recipient';
 import { Colony, useMembersSubscription } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/types';
@@ -16,6 +15,7 @@ import Button from '~core/Button';
 
 import { initalMilestone } from './constants';
 import Milestone from './Milestone';
+import { Milestone as MilestoneType } from './types';
 import styles from './Staged.css';
 
 const MSG = defineMessages({
@@ -58,9 +58,9 @@ const Staged = ({ colony, sidebarRef }: Props) => {
     value?: string;
     tokenAddress?: string;
   }>('staged.amount');
-  const [, { value: milestones }] = useField<
-    { name: string; amount: number; percent: number; id: string }[]
-  >('staged.milestones');
+  const [, { value: milestones }, { setValue }] = useField<MilestoneType[]>(
+    'staged.milestones',
+  );
   const { tokens: colonyTokens } = colony || {};
 
   const token = useMemo(() => {
@@ -83,21 +83,57 @@ const Staged = ({ colony, sidebarRef }: Props) => {
     const reserve = 100 - (sum || 0);
 
     const remainingStake = milestones?.map((milestone) =>
-      new Decimal(100 - (sum - milestone.percent)).div(100),
-    );
-
-    const milestoneAmount = milestones?.map(
-      (milestone) =>
-        amount?.value && (milestone.percent / 100) * Number(amount?.value),
+      new Decimal(100 - ((sum || 0) - (milestone?.percent || 0))).div(100),
     );
 
     return {
-      sum,
+      sum: sum || 0,
       reserve,
       remainingStake,
-      milestoneAmount,
     };
-  }, [amount, milestones]);
+  }, [milestones]);
+
+  const handleAmountChange = useCallback(
+    (e: React.ChangeEvent<any>) => {
+      const { value } = e.target;
+
+      setValue(
+        milestones.map((milestone) => {
+          return {
+            ...milestone,
+            amount: {
+              value: (Number(milestone.percent) / 100) * Number(value),
+              tokenAddress: amount.tokenAddress,
+            },
+          };
+        }),
+      );
+    },
+
+    // setValue is not included in the dependency array, because it's recreated on each render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [amount.tokenAddress, milestones],
+  );
+
+  const onTokenChange = useCallback(
+    (value: string) => {
+      setValue(
+        milestones.map((milestone) => {
+          return {
+            ...milestone,
+            amount: {
+              value: milestone.amount?.value || 0,
+              tokenAddress: value,
+            },
+          };
+        }),
+      );
+    },
+
+    // same here, setValue is not included
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [milestones],
+  );
 
   return (
     <div className={styles.stagedContainer}>
@@ -140,6 +176,7 @@ const Staged = ({ colony, sidebarRef }: Props) => {
                 maxAmount: '100',
                 fieldName: 'staged.amount.value',
               }}
+              onChange={handleAmountChange}
             />
           </div>
           <div className={styles.tokenWrapper}>
@@ -149,6 +186,7 @@ const Staged = ({ colony, sidebarRef }: Props) => {
                 tokens={colonyTokens}
                 name="staged.amount.tokenAddress"
                 appearance={{ alignOptions: 'right', theme: 'grey' }}
+                onChange={onTokenChange}
                 elementOnly
               />
             </div>
@@ -181,7 +219,7 @@ const Staged = ({ colony, sidebarRef }: Props) => {
                   token={token}
                   amount={amount?.value}
                   calculated={calculated}
-                  name={`staged.milestones[${index}].name`}
+                  name={`staged.milestones[${index}]`}
                 />
               );
             })}
