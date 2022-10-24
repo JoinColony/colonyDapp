@@ -140,7 +140,7 @@ const FormStages = ({
         (firstError as HTMLButtonElement).click();
       }
     }
-  }, [formikErrors]);
+  }, [setTouched, formikErr, formikErrors]);
 
   return (
     <div className={styles.formStages}>
