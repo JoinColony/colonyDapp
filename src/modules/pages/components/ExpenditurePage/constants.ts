@@ -87,23 +87,27 @@ export const validationSchema = yup.object().shape({
   filteredDomainId: yup.string().required(() => MSG.teamRequiredError),
   recipients: yup.array().when('expenditure', {
     is: (expenditure) => expenditure === ExpenditureTypes.Advanced,
-    then: yup.array().of(
-      yup.object().shape({
-        recipient: yup.object().required(),
-        value: yup
-          .array(
-            yup.object().shape({
-              amount: yup
-                .number()
-                .transform((value) => toFinite(value))
-                .required(() => MSG.valueError)
-                .moreThan(0, () => MSG.amountZeroError),
-              tokenAddress: yup.string().required(),
-            }),
-          )
-          .min(1),
-      }),
-    ),
+    then: yup
+      .array()
+      .of(
+        yup.object().shape({
+          recipient: yup.object().required(),
+          value: yup
+            .array(
+              yup.object().shape({
+                amount: yup
+                  .number()
+                  .transform((value) => toFinite(value))
+                  .required(() => MSG.valueError)
+                  .moreThan(0, () => MSG.amountZeroError),
+                tokenAddress: yup.string().required(),
+              }),
+            )
+            .min(1),
+        }),
+      )
+      .min(1)
+      .required(),
   }),
   staged: yup.object().when('expenditure', {
     is: (expenditure) => expenditure === ExpenditureTypes.Staged,
