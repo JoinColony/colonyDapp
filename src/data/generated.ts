@@ -1354,6 +1354,7 @@ export type ActionsFilter = {
 export type MotionsFilter = {
   associatedColony?: Maybe<Scalars['String']>;
   extensionAddress?: Maybe<Scalars['String']>;
+  action_not?: Maybe<Scalars['String']>;
 };
 
 export type OneTxPayment = {
