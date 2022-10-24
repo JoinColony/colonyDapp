@@ -8,6 +8,7 @@ export default gql`
   input MotionsFilter {
     associatedColony: String
     extensionAddress: String
+    action_not: String
   }
 
   type OneTxPayment {
