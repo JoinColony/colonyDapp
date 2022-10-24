@@ -10,7 +10,7 @@ import TokenIcon from '~dashboard/HookedTokenIcon';
 import { AnyUser, Colony, ColonySafe, SafeTransaction } from '~data/index';
 import { AddedActions, ColonyActions, ColonyMotions } from '~types/index';
 import { splitTransactionHash } from '~utils/strings';
-import { getSafeTransactionActionTypeMessageId } from '~utils/safes';
+import { getSafeTransactionActionMessageId } from '~utils/safes';
 import { ExtendedActions, getDetailsForAction } from '~utils/colonyActions';
 import { EventValues } from '../../ActionsPageFeed/ActionsPageFeed';
 import { ACTION_TYPES_ICONS_MAP } from '../../ActionsPage/staticMaps';
@@ -125,7 +125,11 @@ const getMessageId = (
     actionType === AddedActions.SafeTransactionInitiated &&
     safeTransactions
   ) {
-    return getSafeTransactionActionTypeMessageId(actionType, safeTransactions);
+    return getSafeTransactionActionMessageId(
+      actionType,
+      safeTransactions,
+      'type',
+    );
   }
   return 'action.type';
 };

@@ -40,6 +40,7 @@ import {
   MotionState,
   MOTION_TAG_MAP,
 } from '~utils/colonyMotions';
+import { useFetchSafeTransactionTitle } from '~modules/dashboard/hooks/useFetchSafeTransactionData';
 import {
   useColonyMetadataChecks,
   useExtendedColonyActionType,
@@ -67,6 +68,10 @@ const MSG = defineMessages({
       one {comment}
       other {comments}
     }`,
+  },
+  safeTransactionInitiated: {
+    id: `ActionsList.ActionsListItem.safeTransactionInitiated`,
+    defaultMessage: 'Safe Transaction Initiated',
   },
 });
 
@@ -148,6 +153,8 @@ const ActionsListItem = ({
     transactionHash,
     colonyObject,
   );
+
+  const safeTransactionTitle = useFetchSafeTransactionTitle(metadata);
 
   useEffect(() => {
     if (transactionTokenAddress) {
@@ -351,6 +358,9 @@ const ActionsListItem = ({
                     <Numeral value={formattedReputationChange} />
                   ),
                   chainName: addedSafe && SAFE_NAMES_MAP[addedSafe.chainId],
+                  safeTransactionTitle:
+                    safeTransactionTitle ||
+                    formatMessage(MSG.safeTransactionInitiated),
                 }}
               />
             </span>

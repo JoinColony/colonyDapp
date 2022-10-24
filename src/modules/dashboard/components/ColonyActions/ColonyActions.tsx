@@ -43,7 +43,6 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyActions.transactionsLogLink',
     defaultMessage: 'Transactions log',
   },
-
   labelFilter: {
     id: 'dashboard.ColonyActions.labelFilter',
     defaultMessage: 'Filter',

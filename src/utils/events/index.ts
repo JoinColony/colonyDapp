@@ -180,7 +180,7 @@ export const formatEventName = (
 ): ColonyAndExtensionsEvents =>
   rawEventName.split('(')[0] as ColonyAndExtensionsEvents;
 
-const getColonyMetadataIPFS = async (ipfsHash: string) => {
+export const getColonyMetadataIPFS = async (ipfsHash: string) => {
   /*
    * Fetch the colony's metadata
    */

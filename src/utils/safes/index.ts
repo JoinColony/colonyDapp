@@ -54,23 +54,24 @@ export const getColonySafe = (
   );
 };
 
-export const getSafeTransactionActionTypeMessageId = (
+export const getSafeTransactionActionMessageId = (
   actionType: AddedActions.SafeTransactionInitiated,
   safeTransaction: SafeTransaction[],
+  kind: 'type' | 'title',
 ) => {
   const type = getSafeTransactionActionType(actionType, safeTransaction);
   switch (type) {
     case TransactionTypes.RAW_TRANSACTION:
-      return `action.type.${ColonyExtendedActions.SafeTransactionInitiated}.rawTransaction`;
+      return `action.${kind}.${ColonyExtendedActions.SafeTransactionInitiated}.rawTransaction`;
     case TransactionTypes.TRANSFER_FUNDS:
-      return `action.type.${ColonyExtendedActions.SafeTransactionInitiated}.transferFunds`;
+      return `action.${kind}.${ColonyExtendedActions.SafeTransactionInitiated}.transferFunds`;
     case TransactionTypes.TRANSFER_NFT:
-      return `action.type.${ColonyExtendedActions.SafeTransactionInitiated}.transferNFT`;
+      return `action.${kind}.${ColonyExtendedActions.SafeTransactionInitiated}.transferNFT`;
     case TransactionTypes.CONTRACT_INTERACTION:
-      return `action.type.${ColonyExtendedActions.SafeTransactionInitiated}.contractInteraction`;
+      return `action.${kind}.${ColonyExtendedActions.SafeTransactionInitiated}.contractInteraction`;
     case TransactionTypes.MULTIPLE_TRANSACTIONS:
-      return `action.type.${ColonyExtendedActions.SafeTransactionInitiated}.multipleTransactions`;
+      return `action.${kind}.${ColonyExtendedActions.SafeTransactionInitiated}.multipleTransactions`;
     default:
-      return 'action.type';
+      return `action.${kind}`;
   }
 };

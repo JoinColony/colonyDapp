@@ -78,47 +78,63 @@ export const getActionsListData = (
         return [...acc, action];
       }, []) || [],
     events:
-      unformattedActions?.events?.reduce((acc, event) => {
-        if (
-          formatEventName(event.name) ===
-          ColonyAndExtensionsEvents.DomainMetadata
-        ) {
-          const linkedDomainAddedEvent = (
-            unformattedActions?.events || []
-          ).find(
-            (e) =>
-              formatEventName(e.name) ===
-                ColonyAndExtensionsEvents.DomainAdded &&
-              e.transaction?.hash === event.transaction?.hash,
+      unformattedActions?.events
+        /* Remove all annotations that are not the result of initiating a Safe Transaction via Safe Control */
+        ?.filter((event) => {
+          if (event.name !== 'Annotation(address,bytes32,string)') {
+            return true;
+          }
+
+          if (
+            event.processedValues.txHash ===
+            '0x0000000000000000000000000000000000000000000000000000000000000001'
+          ) {
+            return true;
+          }
+
+          return false;
+        })
+        .reduce((acc, event) => {
+          if (
+            formatEventName(event.name) ===
+            ColonyAndExtensionsEvents.DomainMetadata
+          ) {
+            const linkedDomainAddedEvent = (
+              unformattedActions?.events || []
+            ).find(
+              (e) =>
+                formatEventName(e.name) ===
+                  ColonyAndExtensionsEvents.DomainAdded &&
+                e.transaction?.hash === event.transaction?.hash,
+            );
+            if (linkedDomainAddedEvent) return acc;
+          }
+          /* filtering out events that are already shown in `oneTxPayments` */
+          const isTransactionRepeated = unformattedActions?.oneTxPayments?.some(
+            (paymentAction) =>
+              paymentAction.transaction?.hash === event.transaction?.hash,
           );
-          if (linkedDomainAddedEvent) return acc;
-        }
-        /* filtering out events that are already shown in `oneTxPayments` */
-        const isTransactionRepeated = unformattedActions?.oneTxPayments?.some(
-          (paymentAction) =>
-            paymentAction.transaction?.hash === event.transaction?.hash,
-        );
-        if (isTransactionRepeated) return acc;
+          if (isTransactionRepeated) return acc;
 
-        /*
-         * Filter out events that have the recipient or initiator an extension's address
-         *
-         * This is used to filter out setting root roles to extensions after
-         * they have been installed. This also filter out duplicated events
-         * which occurs when motion is finalized.
-         */
-        if (
-          extensionAddresses?.find(
-            (extensionAddress) =>
-              extensionAddress === event?.processedValues?.user ||
-              extensionAddress === event?.processedValues?.agent,
-          )
-        ) {
-          return acc;
-        }
+          /*
+           * Filter out events that have the recipient or initiator an extension's address
+           *
+           * This is used to filter out setting root roles to extensions after
+           * they have been installed. This also filter out duplicated events
+           * which occurs when motion is finalized.
+           */
+          if (
+            extensionAddresses?.find(
+              (extensionAddress) =>
+                extensionAddress === event?.processedValues?.user ||
+                extensionAddress === event?.processedValues?.agent,
+            )
+          ) {
+            return acc;
+          }
 
-        return [...acc, event];
-      }, []) || [],
+          return [...acc, event];
+        }, []) || [],
     /*
      * Only display motions in the list if their stake reached 10% or
      * if they have been escalated
