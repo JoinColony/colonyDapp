@@ -118,6 +118,9 @@ const FormStages = ({
   }, [activeState, handleSubmit, setTouched, validateForm, values]);
 
   const handleFixButtonClick = useCallback(() => {
+    setTouched(
+      setNestedObjectValues<FormikTouched<ValuesType>>(formikErr, true),
+    );
     if (!formikErrors.length) return;
 
     const firstError = document.getElementsByName(formikErrors[0])?.[0];

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { FieldArray, useField, useFormikContext } from 'formik';
+import { FieldArray, useField } from 'formik';
 import { nanoid } from 'nanoid';
 
 import Button from '~core/Button';
@@ -41,7 +41,6 @@ interface Props {
 
 const Payments = ({ sidebarRef, colony }: Props) => {
   const [, { value: recipients }, { setValue }] = useField('recipients');
-  const { setFieldTouched } = useFormikContext();
 
   const { colonyAddress } = colony || {};
 
@@ -106,9 +105,6 @@ const Payments = ({ sidebarRef, colony }: Props) => {
                 <Button
                   onClick={() => {
                     push({ ...newRecipientData, id: nanoid() });
-                    setFieldTouched(
-                      `recipients[${recipients.length}].value[0].amount`,
-                    );
                   }}
                   appearance={{ theme: 'blue' }}
                 >
