@@ -72,7 +72,8 @@ export const getActionsListData = (
       unformattedActions?.oneTxPayments?.reduce((acc, action) => {
         if (
           installedExtensionsAddresses?.find(
-            (extensionAddress) => extensionAddress === action?.agent,
+            (extensionAddress) =>
+              extensionAddress.toLowerCase() === action?.agent?.toLowerCase(),
           )
         ) {
           return acc;
