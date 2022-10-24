@@ -216,8 +216,10 @@ const VoteDetails = ({
                           voterReward.motionVoterReward.reward,
                           nativeToken?.decimals,
                         )}
+                        appearance={{
+                          theme: 'dark',
+                        }}
                         suffix={nativeToken?.symbol}
-                        className={styles.reward}
                       />
                     </>
                   )}

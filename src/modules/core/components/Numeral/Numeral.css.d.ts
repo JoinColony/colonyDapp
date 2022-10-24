@@ -1,1 +1,2 @@
-export const numeral: string;
+export const main: string;
+export const themeDark: string;

@@ -5,6 +5,7 @@ import moveDecimal from 'move-decimal-point';
 import classnames from 'classnames';
 
 import { numbroCustomLanguage } from '~utils/numbers/numbroCustomLanguage';
+import { getMainClasses } from '~utils/css';
 
 import EngineeringNotation from './EngineeringNotation';
 
@@ -39,6 +40,10 @@ export const getValueWithPrefixAndSuffix = (
   { prefix, suffix }: PrefixSuffixOptions,
 ) => `${prefix ? `${prefix} ` : ''}${value}${suffix ? ` ${suffix}` : ''}`;
 
+interface Appearance {
+  theme?: 'dark';
+}
+
 export interface Props {
   value: string | BigNumber | number;
 
@@ -53,6 +58,8 @@ export interface Props {
   suffix?: string;
 
   className?: string;
+
+  appearance?: Appearance;
 }
 
 const displayName = 'Numeral';
@@ -64,6 +71,7 @@ const Numeral = ({
   prefix,
   suffix,
   className,
+  appearance,
 }: Props) => {
   // register numbro custom language (used for capitalised abbreviations)
   numbro.registerLanguage(numbroCustomLanguage);
@@ -79,7 +87,7 @@ const Numeral = ({
     convertedValue = moveDecimal(value.toString(10), -decimals);
   }
 
-  const classNames = classnames(styles.numeral, className);
+  const classNames = classnames(getMainClasses(appearance, styles), className);
 
   if (Number(convertedValue) === 0) {
     return (

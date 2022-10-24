@@ -1,6 +1,10 @@
-.numeral > sup {
+.main > sup {
   position: relative;
   top: -0.8em;
   vertical-align: baseline;
   font-size: 0.7em;
+}
+
+.themeDark {
+  color: var(--dark);
 }
