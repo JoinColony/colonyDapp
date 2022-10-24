@@ -81,6 +81,7 @@ const ExpenditureStreamingForm = ({ sidebarRef, colony }: Props) => {
             renderAvatar={supRenderAvatar}
             placeholder="Search"
             sidebarRef={sidebarRef}
+            index={1}
           />
         </div>
       </FormSection>
@@ -96,6 +97,7 @@ const ExpenditureStreamingForm = ({ sidebarRef, colony }: Props) => {
             name="streaming.startDate"
             showTimeSelect
             minDate={new Date()}
+            index={2}
           />
         </div>
       </FormSection>
@@ -112,6 +114,7 @@ const ExpenditureStreamingForm = ({ sidebarRef, colony }: Props) => {
             showTimeSelect
             options={endDateOptions}
             minDate={startDate.date}
+            index={3}
           />
         </div>
       </FormSection>

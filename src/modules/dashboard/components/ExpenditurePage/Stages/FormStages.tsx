@@ -135,10 +135,6 @@ const FormStages = ({
       });
 
       window.dispatchEvent(customEvent);
-
-      if ((firstError as HTMLButtonElement).name === 'streaming.endDate') {
-        (firstError as HTMLButtonElement).click();
-      }
     }
   }, [setTouched, formikErr, formikErrors]);
 
