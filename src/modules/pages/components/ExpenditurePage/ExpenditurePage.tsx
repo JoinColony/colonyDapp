@@ -209,7 +209,10 @@ const validationSchema = yup.object().shape({
         .of(
           yup.object().shape({
             user: yup.object().required(),
-            amount: yup.number().required(),
+            amount: yup.object().shape({
+              value: yup.number(),
+              tokenAddress: yup.string().required(),
+            }),
           }),
         )
         .min(2),
@@ -252,7 +255,7 @@ export interface State {
 }
 
 const initialValues = {
-  expenditure: ExpenditureTypes.Advanced,
+  expenditure: ExpenditureTypes.Split,
   recipients: [newRecipient],
   filteredDomainId: String(ROOT_DOMAIN_ID),
   owner: undefined,
@@ -264,8 +267,8 @@ const initialValues = {
   split: {
     unequal: false,
     recipients: [
-      { ...initalRecipient, key: nanoid() },
-      { ...initalRecipient, key: nanoid() },
+      { ...initalRecipient, id: nanoid() },
+      { ...initalRecipient, id: nanoid() },
     ],
   },
 };
@@ -348,38 +351,6 @@ const ExpenditurePage = ({ match }: Props) => {
     (values) => {
       if (!activeStateId) {
         setActiveStateId(Stage.Draft);
-      }
-
-      if (values.expenditure === ExpenditureTypes.Split) {
-        const recipientsCount =
-          values.split.recipients?.filter(
-            (recipient) => recipient?.user?.id !== undefined,
-          ).length || 0;
-
-        const splitValues = {
-          ...values,
-          recipients: undefined,
-          split: {
-            ...values.split,
-            recipients: values.split?.recipients?.map((recipient) => {
-              const amount = Number(values.split?.amount?.value);
-              if (values.split?.unequal) {
-                const userAmount =
-                  amount &&
-                  recipient?.percent &&
-                  Number(recipient.percent / 100) *
-                    Number(values.split.amount.value);
-                return { ...recipient, amount: userAmount };
-              }
-              return {
-                ...recipient,
-                amount: !amount ? 0 : Number(amount) / (recipientsCount || 1),
-              };
-            }),
-          },
-        };
-        setFormValues(splitValues);
-        return;
       }
 
       if (values.expenditure === ExpenditureTypes.Staged) {
@@ -696,6 +667,7 @@ const ExpenditurePage = ({ match }: Props) => {
                     sidebarRef={sidebarRef.current}
                     colony={colonyData.processedColony}
                     setShouldValidate={setShouldValidate}
+                    inEditMode={inEditMode}
                   />
                 </>
               )

@@ -41,6 +41,10 @@
   margin-left: 10px;
 }
 
+.editIcon:hover {
+  cursor: pointer;
+}
+
 .amountWrapper {
   display: flex;
   align-items: center;

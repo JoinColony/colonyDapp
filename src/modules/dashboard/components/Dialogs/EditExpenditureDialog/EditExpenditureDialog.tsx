@@ -51,6 +51,7 @@ const EditExpenditureDialog = ({
         return;
       }
 
+      // unused var, because we're using destructuring to remove a property from the object
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [name]: removedProperty, ...updatedValues } =
         confirmedValues || {};

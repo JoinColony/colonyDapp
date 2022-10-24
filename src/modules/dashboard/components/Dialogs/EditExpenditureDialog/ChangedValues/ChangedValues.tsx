@@ -8,6 +8,9 @@ import { Colony } from '~data/index';
 import ColorTag, { Color } from '~core/ColorTag';
 import Icon from '~core/Icon';
 import { ValuesType } from '~pages/ExpenditurePage/types';
+import { capitalize } from '~utils/strings';
+
+import NewValue from '../NewValue';
 
 import styles from './ChangedValues.css';
 
@@ -32,9 +35,9 @@ export const MSG = defineMessages({
     id: 'dashboard.EditExpenditureDialog.ChangedValues.from',
     defaultMessage: 'From',
   },
-  changeTo: {
-    id: 'dashboard.EditExpenditureDialog.ChangedValues.changeTo',
-    defaultMessage: 'Change to',
+  to: {
+    id: 'dashboard.EditExpenditureDialog.ChangedValues.to',
+    defaultMessage: 'To',
   },
 });
 
@@ -84,6 +87,9 @@ const ChangedValues = ({
             </div>
           );
         }
+        case 'amount': {
+          return <NewValue colony={colony} newValue={change} />;
+        }
         default:
           return null;
       }
@@ -110,7 +116,7 @@ const ChangedValues = ({
                       key === 'filteredDomainId' ? (
                         <FormattedMessage {...MSG.teamCaption} />
                       ) : (
-                        key
+                        capitalize(key)
                       ),
                   }}
                 />
@@ -120,7 +126,7 @@ const ChangedValues = ({
                   <FormattedMessage {...MSG.from} />
                 </span>
                 <span>
-                  <FormattedMessage {...MSG.changeTo} />
+                  <FormattedMessage {...MSG.to} />
                 </span>
               </div>
             </FormSection>

@@ -1,13 +1,15 @@
 import { useField } from 'formik';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
+import { isNaN } from 'lodash';
 
 import { FormSection, Toggle } from '~core/Fields';
 import { Colony } from '~data/index';
 
 import SplitUnequal from './SplitUnequal';
 import SplitEqual from './SplitEqual';
+import { Split as SplitType } from './types';
 import styles from './Split.css';
 
 const MSG = defineMessages({
@@ -34,6 +36,43 @@ interface Props {
 
 const Split = ({ colony, sidebarRef }: Props) => {
   const [, { value: splitUnequal }] = useField('split.unequal');
+  const [, { value: amount }] = useField('split.amount');
+  const [, { value: recipients }, { setValue }] = useField<
+    SplitType['recipients']
+  >('split.recipients');
+
+  const onToggleChange = useCallback(
+    (equal: boolean) => {
+      if (equal) {
+        const recipientsCount =
+          recipients?.filter((recipient) => recipient?.user?.id !== undefined)
+            .length || 1;
+
+        const userAmount = isNaN(Number(amount?.value) / recipientsCount)
+          ? 0
+          : Number(amount?.value) / recipientsCount;
+
+        return setValue(
+          recipients?.map((recipient) => ({
+            ...recipient,
+            amount: {
+              value: userAmount,
+              tokenAddress: amount?.tokenAddress,
+            },
+          })),
+        );
+      }
+
+      const rec = recipients?.map((recipient) => ({
+        ...recipient,
+        amount: { value: 0, tokenAddress: amount?.tokenAddress },
+        percent: 0,
+      }));
+      return setValue(rec);
+    },
+    [amount, recipients, setValue],
+  );
+
   return (
     <div className={styles.splitContainer}>
       <FormSection appearance={{ border: 'bottom' }}>
@@ -47,7 +86,11 @@ const Split = ({ colony, sidebarRef }: Props) => {
             >
               <FormattedMessage {...MSG.equal} />
             </div>
-            <Toggle name="split.unequal" elementOnly />
+            <Toggle
+              name="split.unequal"
+              onChange={onToggleChange}
+              elementOnly
+            />
             <div
               className={classNames(styles.splitLabel, {
                 [styles.activeOption]: splitUnequal,

@@ -25,9 +25,15 @@ interface Props {
   colony: Colony;
   sidebarRef: HTMLElement | null;
   setShouldValidate: React.Dispatch<React.SetStateAction<boolean>>;
+  inEditMode: boolean;
 }
 
-const ExpenditureForm = ({ sidebarRef, colony, setShouldValidate }: Props) => {
+const ExpenditureForm = ({
+  sidebarRef,
+  colony,
+  setShouldValidate,
+  inEditMode,
+}: Props) => {
   const { values, handleSubmit, validateForm } =
     useFormikContext<ValuesType>() || {};
 
@@ -83,7 +89,7 @@ const ExpenditureForm = ({ sidebarRef, colony, setShouldValidate }: Props) => {
 
   return (
     <Form onSubmit={onSubmit}>
-      <ExpenditureSettings {...{ sidebarRef, colony }} />
+      <ExpenditureSettings {...{ sidebarRef, colony, inEditMode }} />
       {secondFormSection}
       <button type="submit" tabIndex={-1} className={styles.hiddenSubmit}>
         <FormattedMessage {...MSG.submit} />

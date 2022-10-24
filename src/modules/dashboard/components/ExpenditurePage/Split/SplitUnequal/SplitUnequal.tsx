@@ -1,11 +1,11 @@
 import { FieldArray, useField, useFormikContext } from 'formik';
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import Decimal from 'decimal.js';
 import { nanoid } from 'nanoid';
 
 import { FormSection, Input, TokenSymbolSelector } from '~core/Fields';
-import { AnyUser, Colony, useMembersSubscription } from '~data/index';
+import { Colony, useMembersSubscription } from '~data/index';
 import UserPickerWithSearch from '~core/UserPickerWithSearch';
 import { filterUserSelection } from '~core/SingleUserPicker';
 import { supRenderAvatar } from '~dashboard/ExpenditurePage/Recipient/Recipient';
@@ -18,6 +18,7 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { ValuesType } from '~pages/ExpenditurePage/types';
 
 import { initalRecipient } from '../constants';
+import { Recipient } from '../types';
 
 import styles from './SplitUnequal.css';
 
@@ -56,9 +57,9 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
 
   const { tokens: colonyTokens } = colony || {};
 
-  const [, { value: recipients }] = useField<
-    { user: AnyUser; amount: number; percent: number; key: string }[]
-  >('split.recipients');
+  const [, { value: recipients }, { setValue }] = useField<Recipient[]>(
+    'split.recipients',
+  );
   const [, { value: amount }] = useField<{
     value?: string;
     tokenAddress?: string;
@@ -77,28 +78,67 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
   });
 
   const calculated = useMemo(() => {
-    const sum = recipients.reduce((acc, recipient) => {
+    const sum = recipients?.reduce((acc, recipient) => {
       return acc + Number(recipient.percent);
     }, 0);
 
     const remainingAmount = 100 - sum;
 
-    const remainingStake = recipients.map((recipient) =>
-      new Decimal(100 - (sum - recipient.percent)).div(100),
-    );
-
-    const usersAmount = recipients.map(
-      (recipient) =>
-        amount.value && (recipient.percent / 100) * Number(amount.value),
+    const remainingStake = recipients?.map((recipient) =>
+      new Decimal(100 - (sum - (recipient?.percent || 0))).div(100),
     );
 
     return {
       sum,
       remainingAmount,
       remainingStake,
-      usersAmount,
     };
-  }, [amount.value, recipients]);
+  }, [recipients]);
+
+  const onSliderChange = useCallback(
+    (val: number, name: string) => {
+      setFieldValue(name, {
+        value: (Number(val) / 100) * Number(amount.value),
+        tokenAddress: amount.tokenAddress,
+      });
+    },
+    [amount.value, setFieldValue, amount.tokenAddress],
+  );
+
+  const onTokenChange = useCallback(
+    (value: string) => {
+      setValue(
+        recipients.map((rec) => ({
+          ...rec,
+          amount: {
+            value: rec.amount?.value,
+            tokenAddress: value,
+          },
+        })),
+      );
+    },
+
+    // setValue was not included to the dependency array
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [recipients],
+  );
+
+  const onInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value } = e.target;
+      setValue(
+        recipients.map((rec) => ({
+          ...rec,
+          amount: {
+            value: (Number(rec.percent) / 100) * Number(value),
+            tokenAddress: amount.tokenAddress,
+          },
+        })),
+      );
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [recipients, amount.tokenAddress],
+  );
 
   return (
     <>
@@ -123,6 +163,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
                 maxAmount: '0',
                 fieldName: 'split.amount.value',
               }}
+              onChange={onInputChange}
             />
           </div>
           <div className={styles.tokenWrapper}>
@@ -132,6 +173,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
                 tokens={colonyTokens}
                 name="split.amount.tokenAddress"
                 appearance={{ alignOptions: 'right', theme: 'grey' }}
+                onChange={onTokenChange}
                 elementOnly
               />
             </div>
@@ -158,7 +200,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
               return (
                 <FormSection
                   appearance={{ border: 'bottom' }}
-                  key={recipient?.key}
+                  key={recipient?.id}
                 >
                   <div className={styles.recipientWrapper}>
                     <div>
@@ -210,6 +252,9 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
                       dotStyle={{
                         backgroundColor: 'transparent',
                       }}
+                      onChange={(val) =>
+                        onSliderChange(val, `split.recipients[${index}].amount`)
+                      }
                     />
                     <span className={styles.percent}>
                       {recipients[index].percent}%
@@ -225,7 +270,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
                         />
                         <Numeral
                           unit={getTokenDecimalsWithFallback(0)}
-                          value={calculated.usersAmount[index] || 0}
+                          value={recipients?.[index].amount?.value || 0}
                         />{' '}
                         {token.symbol}
                       </div>
@@ -235,7 +280,7 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
               );
             })}
             <Button
-              onClick={() => push({ ...initalRecipient, key: nanoid() })}
+              onClick={() => push({ ...initalRecipient, id: nanoid() })}
               appearance={{ theme: 'blue' }}
             >
               <div className={styles.addRecipientLabel}>

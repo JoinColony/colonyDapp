@@ -10,18 +10,15 @@ import { DialogSection } from '~core/Dialog';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
-import { getAllUserRoles } from '~modules/transformers';
-import { hasRoot } from '~modules/users/checks';
-import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
-import { useTransformer } from '~utils/hooks';
-import { Colony, useLoggedInUser } from '~data/index';
-import { ValuesType } from '~pages/ExpenditurePage/types';
+import { Colony } from '~data/index';
+import { ExpenditureTypes, ValuesType } from '~pages/ExpenditurePage/types';
 import { Recipient as RecipientType } from '~dashboard/ExpenditurePage/Payments/types';
 import { EDITING_LOCKED_PAYMENTS } from '~externalUrls';
 
 import { FormValuesType } from './EditExpenditureDialog';
 import ChangedValues from './ChangedValues';
 import ChangedMultiple from './ChangedMultiple';
+import ChangedSplit from './ChangedSplit';
 import styles from './EditExpenditureDialogForm.css';
 
 export const MSG = defineMessages({
@@ -88,8 +85,6 @@ const EditExpenditureDialogForm = ({
   handleSubmit,
   values,
 }: Props & FormikProps<FormValuesType>) => {
-  const { walletAddress, username, ethereal } = useLoggedInUser();
-  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
   const [, { value: recipients }] = useField('recipients');
 
   useEffect(() => {
@@ -98,22 +93,13 @@ const EditExpenditureDialogForm = ({
     discardRecipientChange(recipients);
   }, [discardRecipientChange, recipients]);
 
-  const hasRegisteredProfile = !!username && !ethereal;
-  const canCancelExpenditure = hasRegisteredProfile && hasRoot(allUserRoles);
-
-  const [userHasPermission] = useDialogActionPermissions(
-    colony.colonyAddress,
-    canCancelExpenditure,
-    isVotingExtensionEnabled,
-    values.forceAction,
-  );
   const noChanges =
     (confirmedValues && isEmpty(confirmedValues)) ||
     (confirmedValues &&
       Object.values(confirmedValues).every((value) => !value));
 
   const confirmedValuesWithIds = useMemo(() => {
-    if (!confirmedValues) {
+    if (!confirmedValues || isEmpty(confirmedValues)) {
       return [];
     }
 
@@ -125,16 +111,20 @@ const EditExpenditureDialogForm = ({
   }, [confirmedValues]);
 
   const newData = useMemo(() => {
+    const [newPayments] = confirmedValuesWithIds.filter(
+      (newValue) => newValue.key === ExpenditureTypes.Split,
+    );
     const newValues = confirmedValuesWithIds.filter(
-      (newValue) => !Array.isArray(newValue.value),
+      (newValue) => !Array.isArray(newValue.value) && newValue.key !== 'split',
     );
-    const newMultiple = confirmedValuesWithIds.filter((newValue) =>
-      Array.isArray(newValue.value),
-    );
+    const newMultiple = confirmedValuesWithIds.filter((newValue) => {
+      return Array.isArray(newValue.value);
+    });
 
     return {
       newValues,
       newMultiple,
+      newPayments,
     };
   }, [confirmedValuesWithIds]);
 
@@ -143,13 +133,13 @@ const EditExpenditureDialogForm = ({
       <DialogSection>
         <div className={classNames(styles.withoutPadding, styles.forceRow)}>
           <MotionDomainSelect colony={colony} disabled={noChanges} />
-          {canCancelExpenditure && isVotingExtensionEnabled && (
+          {isVotingExtensionEnabled && (
             <div className={styles.toggleContainer}>
               <Toggle
                 label={{ id: 'label.force' }}
                 name="forceAction"
                 appearance={{ theme: 'danger' }}
-                disabled={!userHasPermission || isSubmitting || noChanges}
+                disabled={isSubmitting || noChanges}
                 tooltipText={{ id: 'tooltip.forceAction' }}
                 tooltipPopperOptions={{
                   placement: 'top-end',
@@ -202,6 +192,12 @@ const EditExpenditureDialogForm = ({
               newValues={newData.newMultiple}
               oldValues={oldValues}
               colony={colony}
+            />
+            <ChangedSplit
+              newValues={newData.newPayments}
+              oldValues={oldValues}
+              colony={colony}
+              discardChange={discardChange}
             />
             <ChangedValues
               newValues={newData.newValues}

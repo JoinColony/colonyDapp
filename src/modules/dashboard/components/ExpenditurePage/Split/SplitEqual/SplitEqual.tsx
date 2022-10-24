@@ -1,11 +1,11 @@
 import { FieldArray, useField, useFormikContext } from 'formik';
-import React, { useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { nanoid } from 'nanoid';
 import { isNaN } from 'lodash';
 
 import { FormSection, Input, TokenSymbolSelector } from '~core/Fields';
-import { AnyUser, Colony, useMembersSubscription } from '~data/index';
+import { Colony, useMembersSubscription } from '~data/index';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import { ValuesType } from '~pages/ExpenditurePage/types';
 import Numeral from '~core/Numeral';
@@ -17,6 +17,7 @@ import Icon from '~core/Icon';
 import Button from '~core/Button';
 
 import { initalRecipient } from '../constants';
+import { Recipient } from '../types';
 
 import styles from './SplitEqual.css';
 
@@ -52,9 +53,9 @@ interface Props {
 
 const SplitEqual = ({ colony, sidebarRef }: Props) => {
   const { setFieldValue } = useFormikContext<ValuesType>();
-  const [, { value: recipients }] = useField<
-    { user?: AnyUser; amount?: number; key: string }[]
-  >('split.recipients');
+  const [, { value: recipients }, { setValue }] = useField<Recipient[]>(
+    'split.recipients',
+  );
   const { tokens: colonyTokens } = colony || {};
   const [, { value: amount }] = useField<{
     value: string;
@@ -91,6 +92,35 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
     return isNaN(result) ? 0 : result;
   }, [amount, recipientsCount]);
 
+  useEffect(() => {
+    setValue(
+      recipients.map((recipient) => ({
+        ...recipient,
+        amount: { value: calculatedAmount, tokenAddress: amount.tokenAddress },
+      })),
+    );
+
+    // adding setValue to the dependency array causes an infinite loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [calculatedAmount]);
+
+  const onTokenChange = useCallback(
+    (value: string) => {
+      setValue(
+        recipients.map((rec) => ({
+          ...rec,
+          amount: {
+            value: rec.amount?.value,
+            tokenAddress: value,
+          },
+        })),
+      );
+    },
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [recipients],
+  );
+
   return (
     <>
       <FormSection appearance={{ border: 'bottom' }}>
@@ -126,6 +156,7 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
                 tokens={colonyTokens}
                 name="split.amount.tokenAddress"
                 appearance={{ alignOptions: 'right', theme: 'grey' }}
+                onChange={onTokenChange}
                 elementOnly
               />
             </div>
@@ -178,7 +209,7 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
                   {recipients?.map((recipient, index) => (
                     <div
                       className={styles.recipientWrapper}
-                      key={recipient?.key}
+                      key={recipient?.id}
                     >
                       <div>
                         <UserPickerWithSearch
@@ -204,7 +235,7 @@ const SplitEqual = ({ colony, sidebarRef }: Props) => {
                 </div>
               )}
               <Button
-                onClick={() => push({ ...initalRecipient, key: nanoid() })}
+                onClick={() => push({ ...initalRecipient, id: nanoid() })}
                 appearance={{ theme: 'blue' }}
               >
                 <div className={styles.addRecipientLabel}>
