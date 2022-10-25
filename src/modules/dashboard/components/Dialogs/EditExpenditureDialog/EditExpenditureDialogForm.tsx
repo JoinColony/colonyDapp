@@ -17,10 +17,10 @@ import { EDITING_LOCKED_PAYMENTS } from '~externalUrls';
 
 import { FormValuesType } from './EditExpenditureDialog';
 import ChangedValues from './ChangedValues';
-import ChangedMultiple from './ChangedMultiple';
 import ChangedStaged from './ChangedStaged';
 import ChangedSplit from './ChangedSplit';
 import ChangedBatch from './ChangedBatch';
+import ChangedAdvanced from './ChangedAdvanced';
 import styles from './EditExpenditureDialogForm.css';
 
 export const MSG = defineMessages({
@@ -204,7 +204,7 @@ const EditExpenditureDialogForm = ({
           </div>
         ) : (
           <>
-            <ChangedMultiple
+            <ChangedAdvanced
               newValues={newData.newMultiple}
               oldValues={oldValues}
               colony={colony}

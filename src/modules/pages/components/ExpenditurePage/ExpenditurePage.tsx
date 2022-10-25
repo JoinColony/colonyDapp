@@ -267,7 +267,7 @@ export interface State {
 }
 
 const initialValues = {
-  expenditure: ExpenditureTypes.Batch,
+  expenditure: ExpenditureTypes.Advanced,
   recipients: [newRecipient],
   filteredDomainId: String(ROOT_DOMAIN_ID),
   owner: undefined,

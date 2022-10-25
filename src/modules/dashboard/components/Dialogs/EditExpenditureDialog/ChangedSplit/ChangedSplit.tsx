@@ -6,7 +6,7 @@ import Button from '~core/Button';
 import { Colony } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/types';
 
-import ChangeItem from '../ChangedMultiple/ChangeItem';
+import ChangeItem from '../ChangeItem';
 import ChangeHeader from '../ChangeHeader';
 import { NewValueType } from '../types';
 

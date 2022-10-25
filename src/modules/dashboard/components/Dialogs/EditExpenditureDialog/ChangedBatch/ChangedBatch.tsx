@@ -10,7 +10,7 @@ import { Staged } from '~dashboard/ExpenditurePage/Staged/types';
 import { Batch } from '~dashboard/ExpenditurePage/Batch/types';
 import { FormSection } from '~core/Fields';
 
-import ChangeItem from '../ChangedMultiple/ChangeItem';
+import ChangeItem from '../ChangeItem';
 
 import styles from './ChangedBatch.css';
 
