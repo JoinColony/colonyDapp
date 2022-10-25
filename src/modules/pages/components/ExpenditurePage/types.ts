@@ -34,7 +34,7 @@ export interface ValuesType {
   batch?: BatchType;
 }
 
-export interface State {
+export interface StageObject {
   id: string;
   label: string | MessageDescriptor;
   buttonText: string | MessageDescriptor;

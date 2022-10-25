@@ -7,6 +7,7 @@ import { useDialog } from '~core/Dialog';
 import { FormSection } from '~core/Fields';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import Icon from '~core/Icon';
+import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
 
 import PreviewDialog from '../PreviewDialog';
 import { Batch } from '../types';
@@ -43,27 +44,34 @@ export const MSG = defineMessages({
 const displayName = 'dashboard.ExpenditurePage.Batch.LockedBatch';
 
 interface Props {
-  batch: Batch;
+  batch?: Batch;
   editForm: () => void;
+  activeStageId?: string;
 }
 
-const LockedBatch = ({ batch, editForm }: Props) => {
+const LockedBatch = ({ batch, editForm, activeStageId }: Props) => {
   const { formatMessage } = useIntl();
   const openPreviewDialog = useDialog(PreviewDialog);
+
+  if (!batch) {
+    return null;
+  }
 
   return (
     <div className={styles.batchContainer}>
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.wrapper}>
           <FormattedMessage {...MSG.batch} />
-          <span className={styles.editIcon}>
-            <Icon
-              name="edit"
-              appearance={{ size: 'medium' }}
-              title="Edit expenditure"
-              onClick={editForm}
-            />
-          </span>
+          {activeStageId !== Stage.Claimed && (
+            <span className={styles.editIcon}>
+              <Icon
+                name="edit"
+                appearance={{ size: 'medium' }}
+                title="Edit expenditure"
+                onClick={editForm}
+              />
+            </span>
+          )}
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>

@@ -4,7 +4,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import Button from '~core/Button';
 import Tag from '~core/Tag';
 import TimeRelativeShort from '~dashboard/ExpenditurePage/TimeRelativeShort';
-import { State } from '~pages/ExpenditurePage/types';
+import { StageObject } from '~pages/ExpenditurePage/types';
 
 import styles from './ClaimTag.css';
 
@@ -28,13 +28,13 @@ const displayName = 'dashboard.ExpenditurePage.Payments.ClaimTag';
 interface Props {
   claimDate: number | null;
   claimed?: boolean;
-  activeState?: State;
+  activeStage?: StageObject;
   pendingMotion?: boolean;
 }
 const ClaimTag = ({
   claimDate,
   claimed,
-  activeState,
+  activeStage,
   pendingMotion,
 }: Props) => {
   if (!claimDate) {
@@ -48,7 +48,7 @@ const ClaimTag = ({
       <div className={styles.tagWrapper}>
         <Button
           className={styles.claimButton}
-          onClick={activeState?.buttonAction}
+          onClick={activeStage?.buttonAction}
           disabled={pendingMotion}
         >
           <FormattedMessage {...MSG.claimNow} />

@@ -8,7 +8,7 @@ import LockedStaged from '~dashboard/ExpenditurePage/Staged/LockedStaged/LockedS
 import { Status } from '~dashboard/ExpenditurePage/Stages/constants';
 import { Colony } from '~data/index';
 
-import { ExpenditureTypes, State, ValuesType } from './types';
+import { ExpenditureTypes, StageObject, ValuesType } from './types';
 
 const displayName = 'pages.ExpenditurePage.LockedSidebar';
 
@@ -20,7 +20,7 @@ interface Props {
   status?: Status;
   isCancelled?: boolean;
   pendingMotion?: boolean;
-  activeState?: State;
+  activeStage?: StageObject;
   handleReleaseMilestone: (id: string) => void;
 }
 
@@ -32,7 +32,7 @@ const LockedSidebar = ({
   isCancelled,
   pendingMotion,
   status,
-  activeState,
+  activeStage,
   handleReleaseMilestone,
 }: Props) => {
   const { expenditure, recipients, filteredDomainId, staged, split, batch } =
@@ -50,13 +50,18 @@ const LockedSidebar = ({
             status={status}
             isCancelled={isCancelled}
             pendingMotion={pendingMotion}
-            activeState={activeState}
+            activeStage={activeStage}
           />
         );
       }
       case ExpenditureTypes.Split: {
         return (
-          <LockedSplit colony={colony} split={split} editForm={editForm} />
+          <LockedSplit
+            colony={colony}
+            split={split}
+            editForm={editForm}
+            activeStageId={activeStage?.id}
+          />
         );
       }
       case ExpenditureTypes.Staged: {
@@ -64,20 +69,26 @@ const LockedSidebar = ({
           <LockedStaged
             colony={colony}
             staged={staged}
-            activeStateId={activeState?.id}
+            activeStageId={activeStage?.id}
             handleReleaseMilestone={handleReleaseMilestone}
             editForm={editForm}
           />
         );
       }
       case ExpenditureTypes.Batch: {
-        return batch ? <LockedBatch batch={batch} editForm={editForm} /> : null;
+        return (
+          <LockedBatch
+            batch={batch}
+            editForm={editForm}
+            activeStageId={activeStage?.id}
+          />
+        );
       }
       default:
         return null;
     }
   }, [
-    activeState,
+    activeStage,
     batch,
     colony,
     editForm,
