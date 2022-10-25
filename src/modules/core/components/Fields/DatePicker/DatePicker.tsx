@@ -34,7 +34,7 @@ export interface DatePickerOption {
   showDatePicker?: boolean;
 }
 
-interface DatePicKerError {
+interface DatePickerError {
   date?: string | MessageDescriptor;
   option?: string | MessageDescriptor;
 }
@@ -57,7 +57,7 @@ interface DateInputProps extends React.HTMLProps<HTMLButtonElement> {
   dateFormat: string;
   shouldShowDatePicker: boolean;
   selectedOption?: DatePickerOption | null;
-  error?: DatePicKerError;
+  error?: DatePickerError;
 }
 
 /** The component displaying the currently selected date / option */
@@ -301,7 +301,7 @@ const DatePicker = ({
           selectedDate,
           shouldShowDatePicker,
           dateFormat: dateFormatOrDefault,
-          error: error as DatePicKerError | undefined,
+          error: error as DatePickerError | undefined,
           name,
         })}
         renderCustomHeader={renderHeader}
