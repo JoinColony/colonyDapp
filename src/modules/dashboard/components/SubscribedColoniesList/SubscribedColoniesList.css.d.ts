@@ -9,6 +9,5 @@ export const itemLink: string;
 export const activeColony: string;
 export const itemImage: string;
 export const newColonyIcon: string;
-export const newColonyItem: string;
 export const loadingColonies: string;
 export const dropdownItem: string;
