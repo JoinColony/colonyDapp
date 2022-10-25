@@ -1,3 +1,4 @@
+import { isNil } from 'lodash';
 import { nanoid } from 'nanoid';
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
@@ -7,7 +8,7 @@ import { Recipient } from '~dashboard/ExpenditurePage/Split/types';
 import { AnyUser, Colony } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/types';
 
-import ChangeItem from '../../ChangedMultiple/ChangeItem';
+import ChangeItem from '../../ChangeItem';
 import { ValueOf } from '../../ChangedValues/ChangedValues';
 import { skip } from '../ChangedSplit';
 
@@ -47,11 +48,19 @@ const ChangedRecipient = ({ recipient, oldRecipient, colony }: Props) => {
           return null;
         }
 
+        if (key === 'amount' && isNil(value)) {
+          return null;
+        }
+
         if (key === 'removed') {
+          const keyName = 'recipient' in oldRecipient ? 'recipient' : 'user';
+          const username =
+            oldRecipient[keyName].profile.username ||
+            oldRecipient[keyName].profile.displayname;
+
           return (
             <div className={styles.row} key={id}>
-              {oldRecipient.user?.profile.username ||
-                oldRecipient.user?.profile.displayName}
+              {username}
               <Icon name="arrow-right" className={styles.arrowIcon} />
               <span className={styles.right}>
                 <FormattedMessage {...MSG.removed} />

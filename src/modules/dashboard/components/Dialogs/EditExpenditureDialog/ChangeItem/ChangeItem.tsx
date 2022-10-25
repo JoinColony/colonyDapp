@@ -8,30 +8,25 @@ import Icon from '~core/Icon';
 import { Colony } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/types';
 
-import { ValueOf } from '../../ChangedValues/ChangedValues';
-import NewDelay from '../../NewDelay';
-import NewRecipient from '../../NewRecipient';
-import NewValue from '../../NewValue';
+import { ValueOf } from '../ChangedValues/ChangedValues';
+import NewDelay from '../NewDelay';
+import NewRecipient from '../NewRecipient';
+import NewValue from '../NewValue';
 
 import styles from './ChangeItem.css';
 
 export const MSG = defineMessages({
   importedPayments: {
-    id: `dashboard.EditExpenditureDialog.ChangedMultiple.ChangeItem.importedPayments`,
+    id: `dashboard.EditExpenditureDialog.ChangeItem.importedPayments`,
     defaultMessage: '{count} imported payments',
   },
-  data: {
-    id: 'dashboard.EditExpenditureDialog.ChangedMultiple.ChangeItem.data.',
-    defaultMessage: 'Data',
-  },
-  viewAll: {
-    id: `dashboard.EditExpenditureDialog.ChangedMultiple.ChangeItem.viewAll`,
-    defaultMessage: 'View all',
+  none: {
+    id: 'dashboard.EditExpenditureDialog.ChangeItem.none',
+    defaultMessage: 'None',
   },
 });
 
-const displayName =
-  'dashboard.EditExpenditureDialog.ChangedMultiple.ChangeItem';
+const displayName = 'dashboard.EditExpenditureDialog.ChangeItem';
 
 interface Props {
   newValue: ValueOf<ValuesType>;
