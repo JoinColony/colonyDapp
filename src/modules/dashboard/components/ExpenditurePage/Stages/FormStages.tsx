@@ -131,6 +131,7 @@ const FormStages = ({
       const customEvent = new CustomEvent(FIX_TRIGGER_EVENT_NAME, {
         detail: {
           order: Number((firstError as HTMLElement).dataset.index),
+          name: formikErrors[0],
         },
       });
 

@@ -50,7 +50,6 @@ interface Props {
   options?: DatePickerOption[];
   minDate?: Date | null;
   maxDate?: Date | null;
-  index?: number;
 }
 
 interface DateInputProps extends React.HTMLProps<HTMLButtonElement> {
@@ -59,7 +58,6 @@ interface DateInputProps extends React.HTMLProps<HTMLButtonElement> {
   shouldShowDatePicker: boolean;
   selectedOption?: DatePickerOption | null;
   error?: DatePicKerError;
-  index?: number;
 }
 
 /** The component displaying the currently selected date / option */
@@ -72,7 +70,6 @@ const DateInput = (
     selectedOption,
     error,
     name,
-    index,
   }: DateInputProps,
   ref: React.Ref<HTMLButtonElement>,
 ) => {
@@ -114,7 +111,6 @@ const DateInput = (
         ref={ref}
         name={name}
         aria-invalid={!!error?.date}
-        data-index={index}
       >
         {shouldShowDatePicker ? formattedDate : labelText}
 
@@ -140,7 +136,6 @@ const DatePicker = ({
   minDate,
   maxDate,
   timeInterval = 30,
-  index = 1,
 }: Props) => {
   const [{ value }, { error }, { setValue, setTouched }] = useField<
     DatePickerFieldValue
@@ -274,12 +269,12 @@ const DatePicker = ({
       ? `${DEFAULT_DATE_FORMAT}, ${DEFAULT_TIME_FORMAT}`
       : DEFAULT_DATE_FORMAT;
 
-  const { inputRef: omniInputRef } = useDateTriggerFocus(index, false);
+  const { datePickerRef } = useDateTriggerFocus(name, false);
 
   return (
     <div>
       <ReactDatePicker
-        ref={omniInputRef}
+        ref={datePickerRef}
         selected={selectedDate}
         onChange={handleDateChange}
         onBlur={() => setTouched(true)}
@@ -308,7 +303,6 @@ const DatePicker = ({
           dateFormat: dateFormatOrDefault,
           error: error as DatePicKerError | undefined,
           name,
-          index,
         })}
         renderCustomHeader={renderHeader}
         calendarContainer={renderContainer}

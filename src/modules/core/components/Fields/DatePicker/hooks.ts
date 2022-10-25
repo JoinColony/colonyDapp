@@ -3,21 +3,22 @@ import ReactDatePicker from 'react-datepicker';
 
 import { FIX_TRIGGER_EVENT_NAME } from '~pages/ExpenditurePage/constants';
 
-const useDateTriggerFocus = (index: number, disabled: boolean | undefined) => {
-  const inputRef = useRef<ReactDatePicker>(null);
+const useDateTriggerFocus = (name: string, disabled: boolean | undefined) => {
+  const datePickerRef = useRef<ReactDatePicker>(null);
 
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
 
     const fixAction = (e) => {
       const {
-        detail: { order },
+        detail: { name: targetName },
       } = e;
+
       // isDesiredEl tells to trigger only needed element and not for example all elements in the listing
-      const isDesiredEl = order === index;
+      const isDesiredEl = targetName === name;
 
       if (!disabled && isDesiredEl) {
-        inputRef?.current?.setOpen(true);
+        datePickerRef?.current?.setOpen(true);
       }
     };
 
@@ -28,9 +29,9 @@ const useDateTriggerFocus = (index: number, disabled: boolean | undefined) => {
       window.removeEventListener(FIX_TRIGGER_EVENT_NAME, fixAction);
       clearTimeout(timeout);
     };
-  }, [index, disabled]);
+  }, [name, disabled]);
 
-  return { inputRef };
+  return { datePickerRef };
 };
 
 export default useDateTriggerFocus;
