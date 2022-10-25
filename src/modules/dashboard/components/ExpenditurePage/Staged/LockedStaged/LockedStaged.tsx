@@ -45,7 +45,7 @@ const displayName = 'dashboard.ExpenditurePage.Staged.LockedStaged';
 interface Props {
   colony: Colony;
   staged?: Staged;
-  activeStateId?: string;
+  activeStageId?: string;
   handleReleaseMilestone: (id: string) => void;
   editForm: () => void;
 }
@@ -53,7 +53,7 @@ interface Props {
 const LockedStaged = ({
   colony,
   staged,
-  activeStateId,
+  activeStageId,
   handleReleaseMilestone,
   editForm,
 }: Props) => {
@@ -72,14 +72,16 @@ const LockedStaged = ({
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.staged}>
           <FormattedMessage {...MSG.staged} />
-          <span className={styles.editIcon}>
-            <Icon
-              name="edit"
-              appearance={{ size: 'medium' }}
-              title="Edit expenditure"
-              onClick={editForm}
-            />
-          </span>
+          {activeStageId !== Stage.Claimed && (
+            <span className={styles.editIcon}>
+              <Icon
+                name="edit"
+                appearance={{ size: 'medium' }}
+                title="Edit expenditure"
+                onClick={editForm}
+              />
+            </span>
+          )}
         </div>
       </FormSection>
       {staged?.user && (
@@ -152,8 +154,8 @@ const LockedStaged = ({
                     </>
                   )}
                 </div>
-                {(activeStateId === Stage.Funded ||
-                  activeStateId === Stage.Released) && (
+                {(activeStageId === Stage.Funded ||
+                  activeStageId === Stage.Released) && (
                   <>
                     {milestone.released ? (
                       <Tag text={MSG.completed} className={styles.claimed} />

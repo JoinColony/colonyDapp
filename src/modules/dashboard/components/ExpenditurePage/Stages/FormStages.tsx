@@ -6,7 +6,7 @@ import { useDialog } from '~core/Dialog';
 import DeleteDraftDialog from '~dashboard/Dialogs/DeleteDraftDialog/DeleteDraftDialog';
 import StakeExpenditureDialog from '~dashboard/Dialogs/StakeExpenditureDialog';
 import { Colony } from '~data/index';
-import { State, ValuesType } from '~pages/ExpenditurePage/types';
+import { StageObject, ValuesType } from '~pages/ExpenditurePage/types';
 
 import { Stage } from './constants';
 import Stages from './Stages';
@@ -14,8 +14,8 @@ import Stages from './Stages';
 const displayName = 'dashboard.ExpenditurePage.Stages.FormStages';
 
 interface Props {
-  states: State[];
-  activeStateId?: string;
+  stages: StageObject[];
+  activeStageId?: string;
   setActiveStateId: React.Dispatch<React.SetStateAction<string | undefined>>;
   setFormValues: React.Dispatch<React.SetStateAction<ValuesType | undefined>>;
   colony: Colony;
@@ -23,8 +23,8 @@ interface Props {
 }
 
 const FormStages = ({
-  states,
-  activeStateId,
+  stages,
+  activeStageId,
   setActiveStateId,
   setFormValues,
   colony,
@@ -77,7 +77,7 @@ const FormStages = ({
         setFormValues(undefined);
       },
     });
-  const activeState = states.find((state) => state.id === activeStateId);
+  const activeStage = stages.find((stage) => stage.id === activeStageId);
 
   const handleButtonClick = useCallback(async () => {
     const errors = await validateForm(values);
@@ -86,15 +86,15 @@ const FormStages = ({
 
     if (!hasErrors) {
       handleSubmit(values as any);
-      activeState?.buttonAction();
+      activeStage?.buttonAction();
     }
-  }, [activeState, handleSubmit, setTouched, validateForm, values]);
+  }, [activeStage, handleSubmit, setTouched, validateForm, values]);
 
   return (
     <Stages
       {...{
-        states,
-        activeStateId,
+        stages,
+        activeStageId,
         setActiveStateId,
         handleButtonClick,
         handleDeleteDraft,

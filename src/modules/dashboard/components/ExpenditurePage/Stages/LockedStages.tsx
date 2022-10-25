@@ -5,7 +5,7 @@ import Tag from '~core/Tag';
 import { Colony } from '~data/index';
 import {
   ExpenditureTypes,
-  State,
+  StageObject,
   ValuesType,
 } from '~pages/ExpenditurePage/types';
 
@@ -30,9 +30,9 @@ const MSG = defineMessages({
 const displayName = 'dashboard.ExpenditurePage.Stages.LockedStages';
 
 interface Props {
-  states: State[];
-  setActiveStateId?: React.Dispatch<React.SetStateAction<string | undefined>>;
-  activeStateId?: string;
+  stages: StageObject[];
+  setActiveStageId?: React.Dispatch<React.SetStateAction<string | undefined>>;
+  activeStageId?: string;
   motion?: Motion;
   status?: Status;
   handleCancelExpenditure?: () => void;
@@ -42,9 +42,9 @@ interface Props {
 }
 
 const LockedStages = ({
-  states,
-  activeStateId,
-  setActiveStateId,
+  stages,
+  activeStageId,
+  setActiveStageId,
   motion,
   status,
   handleCancelExpenditure,
@@ -52,12 +52,12 @@ const LockedStages = ({
   colony,
   expenditureType,
 }: Props) => {
-  const activeState = states.find((state) => state.id === activeStateId);
+  const activeStage = stages.find((stage) => stage.id === activeStageId);
   const { formatMessage } = useIntl();
 
   const handleButtonClick = useCallback(async () => {
-    activeState?.buttonAction();
-  }, [activeState]);
+    activeStage?.buttonAction();
+  }, [activeStage]);
 
   const formattedLabel = useMemo(
     () => (text: string | MessageDescriptor | undefined): string => {
@@ -88,15 +88,15 @@ const LockedStages = ({
           motion.status === MotionStatus.Pending
             ? formatMessage(MSG.activeMotion)
             : formatMessage(MSG.motion, {
-                action: formattedLabel(activeState?.buttonText),
+                action: formattedLabel(activeStage?.buttonText),
               })}
         </Tag>
       )}
       <Stages
         {...{
-          states,
-          activeStateId,
-          setActiveStateId,
+          stages,
+          activeStageId,
+          setActiveStageId,
           handleButtonClick,
           motion,
           status,
