@@ -1,5 +1,5 @@
 import React, { useEffect, SyntheticEvent, useCallback } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { useField } from 'formik';
 import { isEmpty } from 'lodash';
 
@@ -24,6 +24,10 @@ const MSG = defineMessages({
   viewAll: {
     id: `dashboard.ExpenditurePage.Batch.CSVUploader.CSVUploaderItem.viewAll`,
     defaultMessage: 'View all',
+  },
+  upload: {
+    id: 'dashboard.ExpenditurePage.Batch.CSVUploader.CSVUploaderItem.upload',
+    defaultMessage: 'Upload .CSV',
   },
 });
 
@@ -73,11 +77,9 @@ const CSVUploaderItem = ({
 
   if (processingData || !file) {
     return (
-      <div className={styles.loadingSpinnerContainer}>
-        <SpinnerLoader
-          loadingText={MSG.processingText}
-          appearance={{ theme: 'primary', size: 'small', layout: 'horizontal' }}
-        />
+      <div className={styles.placeholderWrapper}>
+        <SpinnerLoader appearance={{ size: 'small', theme: 'primary' }} />
+        <FormattedMessage {...MSG.upload} />
       </div>
     );
   }

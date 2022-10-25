@@ -7,9 +7,8 @@ import { Milestone } from '~dashboard/ExpenditurePage/Staged/types';
 import { Colony } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/types';
 
-import ChangeItem from '../../ChangedMultiple/ChangeItem';
 import { ValueOf } from '../../ChangedValues/ChangedValues';
-
+import ChangeItem from '../../ChangeItem';
 import { skip } from '../ChangedStaged';
 
 import styles from './ChangedMilestone.css';

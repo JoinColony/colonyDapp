@@ -11,6 +11,8 @@ import { ValuesType } from '~pages/ExpenditurePage/types';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
 
+import { Stage } from '../Stages/constants';
+
 import styles from './Split.css';
 
 const MSG = defineMessages({
@@ -30,9 +32,10 @@ interface Props {
   colony: Colony;
   split?: ValuesType['split'];
   editForm: () => void;
+  activeStageId?: string;
 }
 
-const LockedSplit = ({ colony, split, editForm }: Props) => {
+const LockedSplit = ({ colony, split, editForm, activeStageId }: Props) => {
   const { amount, recipients } = split || {};
   const token = useMemo(() => {
     return colony.tokens?.find(
@@ -46,14 +49,16 @@ const LockedSplit = ({ colony, split, editForm }: Props) => {
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.split}>
           <FormattedMessage {...MSG.split} />
-          <span className={styles.editIcon}>
-            <Icon
-              name="edit"
-              appearance={{ size: 'medium' }}
-              title="Edit expenditure"
-              onClick={editForm}
-            />
-          </span>
+          {activeStageId !== Stage.Claimed && (
+            <span className={styles.editIcon}>
+              <Icon
+                name="edit"
+                appearance={{ size: 'medium' }}
+                title="Edit expenditure"
+                onClick={editForm}
+              />
+            </span>
+          )}
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>

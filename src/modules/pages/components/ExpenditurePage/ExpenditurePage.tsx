@@ -136,6 +136,10 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.fileError',
     defaultMessage: `File structure is incorrect, try again using the template.`,
   },
+  requiredError: {
+    id: 'dashboard.ExpenditurePage.requiredError',
+    defaultMessage: `Data is required.`,
+  },
 });
 
 const validationSchema = yup.object().shape({
@@ -226,24 +230,29 @@ const validationSchema = yup.object().shape({
     then: yup
       .object()
       .shape({
-        dataCSVUploader: yup.array().of(
-          yup.object().shape({
-            parsedData: yup
-              .array()
-              .min(1, () => MSG.fileError)
-              .max(400, () => MSG.amountError)
-              .test(
-                'valid-payment',
-                () => MSG.fileError,
-                (value) =>
-                  isEmpty(
-                    value?.filter(
-                      (payment: string) => !isBatchPaymentType(payment),
+        dataCSVUploader: yup
+          .array()
+          .of(
+            yup.object().shape({
+              parsedData: yup
+                .array()
+                .min(1, () => MSG.fileError)
+                .max(400, () => MSG.amountError)
+                .test(
+                  'valid-payment',
+                  () => MSG.fileError,
+                  (value) =>
+                    isEmpty(
+                      value?.filter(
+                        (payment: string) => !isBatchPaymentType(payment),
+                      ),
                     ),
-                  ),
-              ),
-          }),
-        ),
+                ),
+            }),
+          )
+          .required(() => MSG.requiredError),
+        recipients: yup.number().moreThan(0),
+        value: yup.array().min(1),
       })
       .required(() => MSG.fileError),
   }),
@@ -258,7 +267,7 @@ export interface State {
 }
 
 const initialValues = {
-  expenditure: ExpenditureTypes.Split,
+  expenditure: ExpenditureTypes.Advanced,
   recipients: [newRecipient],
   filteredDomainId: String(ROOT_DOMAIN_ID),
   owner: undefined,
@@ -292,7 +301,7 @@ const ExpenditurePage = ({ match }: Props) => {
   }>();
   const [isFormEditable, setFormEditable] = useState(true);
   const [formValues, setFormValues] = useState<ValuesType>();
-  const [activeStateId, setActiveStateId] = useState<string>();
+  const [activeStageId, setActiveStageId] = useState<string>();
   const [status, setStatus] = useState<Status>();
   const [motion, setMotion] = useState<Motion>();
   const [inEditMode, setInEditMode] = useState(false);
@@ -352,8 +361,8 @@ const ExpenditurePage = ({ match }: Props) => {
 
   const handleSubmit = useCallback(
     (values) => {
-      if (!activeStateId) {
-        setActiveStateId(Stage.Draft);
+      if (!activeStageId) {
+        setActiveStageId(Stage.Draft);
       }
 
       if (values) {
@@ -374,7 +383,7 @@ const ExpenditurePage = ({ match }: Props) => {
       }
       // add sending form values to backend
     },
-    [activeStateId],
+    [activeStageId],
   );
 
   const lockValues = useCallback(() => {
@@ -384,8 +393,8 @@ const ExpenditurePage = ({ match }: Props) => {
   const handleLockExpenditure = useCallback(() => {
     // Call to backend will be added here, to lock the expenditure
     // fetching active state shoud be added here as well,
-    // and saving the activeState in a state
-    setActiveStateId(Stage.Locked);
+    // and saving the activeStage in a state
+    setActiveStageId(Stage.Locked);
     lockValues();
   }, [lockValues]);
 
@@ -398,7 +407,7 @@ const ExpenditurePage = ({ match }: Props) => {
       openEscrowFundsDialog({
         colony: colonyData?.processedColony,
         handleSubmitClick: () => {
-          setActiveStateId?.(Stage.Funded);
+          setActiveStageId?.(Stage.Funded);
           // add call to backend
         },
         isVotingExtensionEnabled: true, // temporary value
@@ -408,7 +417,7 @@ const ExpenditurePage = ({ match }: Props) => {
 
   const handleReleaseFounds = () => {
     // Call to backend will be added here, to realese founds
-    setActiveStateId(Stage.Released);
+    setActiveStageId(Stage.Released);
   };
 
   const handleClaimExpenditure = useCallback(() => {
@@ -419,7 +428,7 @@ const ExpenditurePage = ({ match }: Props) => {
 
     // If it's not 'Advanced' payment type, change te stage to claimed - mock function
     if (formValues.expenditure !== ExpenditureTypes.Advanced) {
-      setActiveStateId(Stage.Claimed);
+      setActiveStageId(Stage.Claimed);
       return;
     }
 
@@ -443,7 +452,7 @@ const ExpenditurePage = ({ match }: Props) => {
     );
 
     if (isClaimed) {
-      setActiveStateId(Stage.Claimed);
+      setActiveStageId(Stage.Claimed);
     }
 
     setFormValues(updatedFormValues);
@@ -455,7 +464,7 @@ const ExpenditurePage = ({ match }: Props) => {
     );
 
     if (allReleased) {
-      setActiveStateId(Stage.Released);
+      setActiveStageId(Stage.Released);
     }
   }, [formValues]);
 
@@ -488,11 +497,11 @@ const ExpenditurePage = ({ match }: Props) => {
     );
 
     if (allReleased) {
-      setActiveStateId(Stage.Released);
+      setActiveStageId(Stage.Released);
     }
   }, [formValues]);
 
-  const states = [
+  const stages = [
     {
       id: Stage.Draft,
       label: MSG.draft,
@@ -675,9 +684,9 @@ const ExpenditurePage = ({ match }: Props) => {
               ) : (
                 colonyData && (
                   <FormStages
-                    states={states}
-                    activeStateId={activeStateId}
-                    setActiveStateId={setActiveStateId}
+                    stages={stages}
+                    activeStageId={activeStageId}
+                    setActiveStateId={setActiveStageId}
                     setFormValues={setFormValues}
                     handleCancelExpenditure={handleCancelExpenditure}
                     colony={colonyData.processedColony}
@@ -701,7 +710,7 @@ const ExpenditurePage = ({ match }: Props) => {
             status={status}
             isCancelled={status === Status.Cancelled}
             pendingMotion={motion?.status === MotionStatus.Pending}
-            activeState={states.find((state) => state.id === activeStateId)}
+            activeStage={stages.find((stage) => stage.id === activeStageId)}
             handleReleaseMilestone={handleReleaseMilestone}
           />
         )}
@@ -726,9 +735,9 @@ const ExpenditurePage = ({ match }: Props) => {
               formValues={formValues}
               status={status}
               motion={motion}
-              states={states}
-              activeStateId={activeStateId}
-              setActiveStateId={setActiveStateId}
+              stages={stages}
+              activeStageId={activeStageId}
+              setActiveStageId={setActiveStageId}
               handleCancelExpenditure={handleCancelExpenditure}
               colony={colonyData.processedColony}
               expenditureType={formValues?.expenditure}

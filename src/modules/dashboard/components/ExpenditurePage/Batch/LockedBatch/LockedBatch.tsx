@@ -6,6 +6,8 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import { FormSection } from '~core/Fields';
 import TokenIcon from '~dashboard/HookedTokenIcon';
+import Icon from '~core/Icon';
+import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
 
 import PreviewDialog from '../PreviewDialog';
 import { Batch } from '../types';
@@ -21,9 +23,9 @@ export const MSG = defineMessages({
     id: `dashboard.ExpenditurePage.Batch.LockedBatch.viewAll`,
     defaultMessage: 'View all',
   },
-  recipients: {
-    id: 'dashboard.ExpenditurePage.Batch.LockedBatch.recipients',
-    defaultMessage: 'Recipients',
+  importedPayments: {
+    id: 'dashboard.ExpenditurePage.Batch.LockedBatch.importedPayments',
+    defaultMessage: 'Imported payments',
   },
   value: {
     id: 'dashboard.ExpenditurePage.Batch.LockedBatch.value',
@@ -42,18 +44,34 @@ export const MSG = defineMessages({
 const displayName = 'dashboard.ExpenditurePage.Batch.LockedBatch';
 
 interface Props {
-  batch: Batch;
+  batch?: Batch;
+  editForm: () => void;
+  activeStageId?: string;
 }
 
-const LockedBatch = ({ batch }: Props) => {
+const LockedBatch = ({ batch, editForm, activeStageId }: Props) => {
   const { formatMessage } = useIntl();
   const openPreviewDialog = useDialog(PreviewDialog);
+
+  if (!batch) {
+    return null;
+  }
 
   return (
     <div className={styles.batchContainer}>
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.wrapper}>
           <FormattedMessage {...MSG.batch} />
+          {activeStageId !== Stage.Claimed && (
+            <span className={styles.editIcon}>
+              <Icon
+                name="edit"
+                appearance={{ size: 'medium' }}
+                title="Edit expenditure"
+                onClick={editForm}
+              />
+            </span>
+          )}
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
@@ -71,7 +89,7 @@ const LockedBatch = ({ batch }: Props) => {
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.dataRow}>
-          <FormattedMessage {...MSG.recipients} />
+          <FormattedMessage {...MSG.importedPayments} />
           <div className={styles.value}>{batch.recipients}</div>
         </div>
       </FormSection>
@@ -97,7 +115,7 @@ const LockedBatch = ({ batch }: Props) => {
                         batch.value.length > 1 &&
                         index + 1 !== batch.value.length,
                     })}
-                    key={'id' in token ? token.id : index}
+                    key={index}
                   >
                     {formatMessage(MSG.valueWithToken, {
                       token: token.symbol,

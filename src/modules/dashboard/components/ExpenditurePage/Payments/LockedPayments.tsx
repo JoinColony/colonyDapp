@@ -5,7 +5,7 @@ import { FormSection } from '~core/Fields';
 import UserMention from '~core/UserMention';
 
 import { Colony } from '~data/index';
-import { State, ValuesType } from '~pages/ExpenditurePage/types';
+import { StageObject, ValuesType } from '~pages/ExpenditurePage/types';
 import Icon from '~core/Icon';
 
 import { Stage, Status } from '../Stages/constants';
@@ -43,7 +43,7 @@ const displayName = 'dashboard.ExpenditurePage.Payments.LockedPayments';
 
 interface Props {
   recipients?: RecipientType[];
-  activeState?: State;
+  activeStage?: StageObject;
   colony?: Colony;
   editForm: () => void;
   pendingChanges?: Partial<ValuesType>;
@@ -57,7 +57,7 @@ const LockedPayments = ({
   colony,
   editForm,
   pendingChanges,
-  activeState,
+  activeStage,
   isCancelled,
   pendingMotion,
 }: Props) => {
@@ -85,7 +85,7 @@ const LockedPayments = ({
       <div className={styles.recipientContainer}>
         <div className={styles.payments}>
           <FormattedMessage {...MSG.payments} />
-          {activeState?.id !== Stage.Claimed && (
+          {activeStage?.id !== Stage.Claimed && (
             <span className={styles.editIcon}>
               <Icon
                 name="edit"
@@ -116,13 +116,13 @@ const LockedPayments = ({
                     index={index}
                     colony={colony}
                     ClaimTag={
-                      activeState?.id === Stage.Released &&
+                      activeStage?.id === Stage.Released &&
                       claimDate &&
                       !isCancelled && (
                         <ClaimTag
                           claimDate={claimDate}
                           claimed={claimed}
-                          activeState={activeState}
+                          activeStage={activeStage}
                           pendingMotion={pendingMotion}
                         />
                       )

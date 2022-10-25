@@ -8,7 +8,7 @@ import { ValuesType } from '~pages/ExpenditurePage/types';
 import { capitalize } from '~utils/strings';
 
 import ChangeHeader from '../ChangeHeader';
-import ChangeItem from '../ChangedMultiple/ChangeItem';
+import ChangeItem from '../ChangeItem';
 import { NewValueType } from '../types';
 
 import { isMilestoneType } from './utils';
@@ -92,7 +92,7 @@ const ChangedStaged = ({
         const oldValue = oldValues[newValues?.key || 'staged']?.[key];
 
         return (
-          <>
+          <Fragment key={key}>
             {milestones.map((milestone, idx) => {
               if (!isMilestoneType(milestone)) {
                 return null;
@@ -116,7 +116,7 @@ const ChangedStaged = ({
                 </Fragment>
               );
             })}
-          </>
+          </Fragment>
         );
       })}
       <div className={styles.buttonWrappper}>

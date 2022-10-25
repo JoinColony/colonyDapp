@@ -1,5 +1,4 @@
 import { FieldArray } from 'formik';
-import { isNil } from 'lodash';
 import React, { Fragment } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 
@@ -10,23 +9,22 @@ import { Staged } from '~dashboard/ExpenditurePage/Staged/types';
 import { Batch } from '~dashboard/ExpenditurePage/Batch/types';
 
 import ChangeHeader from '../ChangeHeader';
+import ChangedRecipient from '../ChangedSplit/ChangedRecipient';
 
-import ChangeItem from './ChangeItem';
-import styles from './ChangedMultiple.css';
+import styles from './ChangedAdvanced.css';
 
 export const MSG = defineMessages({
   discard: {
-    id: 'dashboard.EditExpenditureDialog.ChangedMultiple.discard',
+    id: 'dashboard.EditExpenditureDialog.ChangedAdvanced.discard',
     defaultMessage: 'Discard',
   },
   changeRecipient: {
-    id: 'dashboard.EditExpenditureDialog.ChangedMultiple.changeRecipient',
+    id: 'dashboard.EditExpenditureDialog.ChangedAdvanced.changeRecipient',
     defaultMessage: 'Change Recipient',
   },
 });
 
-const displayName = 'dashboard.EditExpenditureDialog.ChangedMultiple';
-const skip = ['id', 'claimDate', 'isExpanded', 'created', 'removed'];
+const displayName = 'dashboard.EditExpenditureDialog.ChangedAdvanced';
 
 export type NewValueType = {
   id: string;
@@ -48,7 +46,7 @@ interface Props {
   oldValues: ValuesType;
 }
 
-const ChangedMultiple = ({ newValues, oldValues, colony }: Props) => {
+const ChangedAdvanced = ({ newValues, oldValues, colony }: Props) => {
   const { formatMessage } = useIntl();
 
   if (!Array.isArray(newValues) || !Array.isArray) {
@@ -75,30 +73,11 @@ const ChangedMultiple = ({ newValues, oldValues, colony }: Props) => {
                           count={index + 1}
                           withCounter
                         />
-                        {Object.entries(changeItem)?.map(([key, value]) => {
-                          if (skip.includes(key)) {
-                            return null;
-                          }
-                          if (
-                            key === 'delay' &&
-                            changeItem.created &&
-                            isNil(value.amount)
-                          ) {
-                            return null;
-                          }
-
-                          const oldValue = oldItem?.[key];
-
-                          return (
-                            <ChangeItem
-                              newValue={value}
-                              oldValue={oldValue}
-                              key={key}
-                              colony={colony}
-                              name={key}
-                            />
-                          );
-                        })}
+                        <ChangedRecipient
+                          recipient={changeItem}
+                          oldRecipient={oldItem}
+                          colony={colony}
+                        />
                         <div className={styles.buttonWrappper}>
                           <Button
                             className={styles.discard}
@@ -120,6 +99,6 @@ const ChangedMultiple = ({ newValues, oldValues, colony }: Props) => {
   );
 };
 
-ChangedMultiple.displayName = displayName;
+ChangedAdvanced.displayName = displayName;
 
-export default ChangedMultiple;
+export default ChangedAdvanced;
