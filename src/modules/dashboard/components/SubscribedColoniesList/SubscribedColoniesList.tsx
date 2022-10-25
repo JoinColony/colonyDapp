@@ -51,7 +51,7 @@ const SubscribedColoniesList = ({ loggedInUser, path }: Props) => {
   })[0];
 
   const AddColony = () => (
-    <div className={`${styles.item} ${styles.newColonyItem}`}>
+    <div className={styles.item}>
       <NavLink
         className={styles.itemLink}
         to={CREATE_COLONY_ROUTE}

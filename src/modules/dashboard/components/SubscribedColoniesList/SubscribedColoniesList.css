@@ -50,11 +50,6 @@
   fill: var(--temp-grey-blue-7);
 }
 
-.newColonyItem {
-  position: sticky;
-  bottom: 0;
-}
-
 .loadingColonies {
   padding: 8px 0 2px;
 }
@@ -62,15 +57,6 @@
 @media screen and query700 {
   .main {
     align-items: center;
-  }
-
-  .newColonyItem {
-    transform: scale(0.76) translateX(-8px);
-  }
-
-  .newColonyItem a {
-    height: auto;
-    width: auto;
   }
 
   .scrollableContainer {
