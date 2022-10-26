@@ -149,6 +149,7 @@ const ColonyFunding = ({ match }: Props) => {
                     alignOptions: 'right',
                     width: 'content',
                     theme: 'alt',
+                    unrestrictedOptionsWidth: 'true',
                   }}
                   elementOnly
                   label={MSG.labelSelectDomain}

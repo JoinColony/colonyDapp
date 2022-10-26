@@ -13,6 +13,7 @@ export interface Appearance {
   size?: DropdownSize;
   theme?: 'default' | 'alt' | 'grey' | 'grid';
   width?: 'content' | 'fluid' | 'strict';
+  unrestrictedOptionsWidth?: 'true' | 'false';
 }
 
 export interface SelectOption {

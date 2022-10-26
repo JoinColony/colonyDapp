@@ -287,7 +287,11 @@ const ColonyActions = ({
             >
               <div className={styles.filter}>
                 <Select
-                  appearance={{ alignOptions: 'left', theme: 'alt' }}
+                  appearance={{
+                    alignOptions: 'left',
+                    theme: 'alt',
+                    unrestrictedOptionsWidth: 'true',
+                  }}
                   elementOnly
                   label={MSG.labelFilter}
                   name="filter"

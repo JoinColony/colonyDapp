@@ -76,3 +76,8 @@
 .widthStrict {
   width: 300px;
 }
+
+.stateUnrestrictedWidth {
+  width: auto;
+  min-width: 100%;
+}

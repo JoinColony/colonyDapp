@@ -114,6 +114,7 @@ const MembersTitle = ({
                   alignOptions: 'right',
                   size: 'mediumLarge',
                   theme: 'alt',
+                  unrestrictedOptionsWidth: 'true',
                 }}
                 elementOnly
                 label={MSG.labelFilter}
