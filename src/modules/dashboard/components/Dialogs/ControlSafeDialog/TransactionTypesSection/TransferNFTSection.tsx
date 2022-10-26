@@ -115,7 +115,7 @@ const TransferNFTSection = ({
   );
 
   /*
-   * So the form shows loading spinner when entering from main menu
+   * So the form shows loading spinner immediately when entering from main menu
    * but not when clicking "back" from preview
    */
   const isFirstFetch = safe && !availableNFTs && !nftError && !selectedNFTData;
