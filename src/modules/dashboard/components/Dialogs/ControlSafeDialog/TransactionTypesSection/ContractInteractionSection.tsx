@@ -25,58 +25,58 @@ import {
   TransactionSectionProps,
   invalidSafeError,
 } from '..';
-import { ErrorMessage as Error, Loading, AvatarXs } from './shared';
+import { ErrorMessage as Error, Loading, AvatarXS } from './shared';
 
 import styles from './TransactionTypesSection.css';
 
 const MSG = defineMessages({
   abiLabel: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.abiLabel`,
+    id: `dashboard.ControlSafeDialog.ContractInteractionSection.abiLabel`,
     defaultMessage: 'ABI/JSON',
   },
   functionLabel: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.functionLabel`,
+    id: `dashboard.ControlSafeDialog.ContractInteractionSection.functionLabel`,
     defaultMessage: 'Select function to interact with',
   },
   functionPlaceholder: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.functionPlaceholder`,
+    id: `dashboard.ControlSafeDialog.ContractInteractionSection.functionPlaceholder`,
     defaultMessage: 'Select function',
   },
   contractLabel: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.contractLabel`,
+    id: `dashboard.ControlSafeDialog.ContractInteractionSection.contractLabel`,
     defaultMessage: 'Target contract address',
   },
   userPickerPlaceholder: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.userPickerPlaceholder`,
+    id: `dashboard.ControlSafeDialog.ContractInteractionSection.userPickerPlaceholder`,
     defaultMessage: 'Select or paste a contract address',
   },
   loadingContract: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.loadingContract`,
+    id: `dashboard.ControlSafeDialog.ContractInteractionSection.loadingContract`,
     defaultMessage: 'Loading Contract',
   },
   contractNotVerifiedError: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.contractNotVerifiedError`,
+    id: `dashboard.ControlSafeDialog.ContractInteractionSection.contractNotVerifiedError`,
     defaultMessage: `Contract could not be verified. Ensure it exists on {network}`,
   },
   invalidAddressError: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.invalidAddressError`,
+    id: `dashboard.ControlSafeDialog.ContractInteractionSection.invalidAddressError`,
     defaultMessage: `Contract address is not a valid address`,
   },
   fetchFailedError: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.fetchFailedError`,
+    id: `dashboard.ControlSafeDialog.ContractInteractionSection.fetchFailedError`,
     defaultMessage: `Unable to fetch contract. Please check your connection`,
   },
   noUsefulMethodsError: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.noUsefulMethodsError`,
+    id: `dashboard.ControlSafeDialog.ContractInteractionSection.noUsefulMethodsError`,
     defaultMessage: `No external methods were found in this ABI`,
   },
   unknownContract: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection.unknownContract`,
+    id: `dashboard.ControlSafeDialog.ContractInteractionSection.unknownContract`,
     defaultMessage: `Unknown contract`,
   },
 });
 
-const displayName = `dashboard.ControlSafeDialog.TransactionTypesSection.ContractInteractionSection`;
+const displayName = `dashboard.ControlSafeDialog.ContractInteractionSection`;
 
 interface Props
   extends Pick<
@@ -305,7 +305,7 @@ const ContractInteractionSection = ({
             label={MSG.contractLabel}
             name={`transactions.${transactionFormIndex}.contract`}
             filter={filterUserSelection}
-            renderAvatar={AvatarXs}
+            renderAvatar={AvatarXS}
             disabled={disabledInput}
             placeholder={MSG.userPickerPlaceholder}
             onSelected={onContractChange}

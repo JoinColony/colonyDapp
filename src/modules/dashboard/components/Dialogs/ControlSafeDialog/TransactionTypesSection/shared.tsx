@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
-import Avatar from '~core/Avatar';
 
+import Avatar from '~core/Avatar';
 import { DialogSection } from '~core/Dialog';
 import { SpinnerLoader } from '~core/Preloaders';
 import { AnyUser } from '~data/index';
@@ -9,7 +9,7 @@ import { Address, Message } from '~types/index';
 
 import styles from './TransactionTypesSection.css';
 
-export const AvatarXs = (address: Address, item: AnyUser) => (
+export const AvatarXS = (address: Address, item: AnyUser) => (
   <Avatar
     seed={address?.toLocaleLowerCase()}
     size="xs"

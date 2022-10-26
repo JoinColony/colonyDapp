@@ -17,35 +17,35 @@ import { Message } from '~types/index';
 
 import AmountBalances from '../AmountBalances';
 import { FormValues, TransactionSectionProps } from '..';
-import { ErrorMessage as Error, Loading, AvatarXs } from './shared';
+import { ErrorMessage as Error, Loading, AvatarXS } from './shared';
 
 import styles from './TransactionTypesSection.css';
 
 export const MSG = defineMessages({
   amount: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.TransferFundsSection.amount`,
+    id: `dashboard.ControlSafeDialog.TransferFundsSection.amount`,
     defaultMessage: 'Amount',
   },
   recipient: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.TransferFundsSection.recipient`,
+    id: `dashboard.ControlSafeDialog.TransferFundsSection.recipient`,
     defaultMessage: 'Select Recipient',
   },
   userPickerPlaceholder: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.TransferFundsSection.userPickerPlaceholder`,
+    id: `dashboard.ControlSafeDialog.TransferFundsSection.userPickerPlaceholder`,
     defaultMessage: 'Select or paste a wallet address',
   },
   balancesLoading: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.TransferFundsSection.balancesLoading`,
+    id: `dashboard.ControlSafeDialog.TransferFundsSection.balancesLoading`,
     defaultMessage: 'Loading Safe balances',
   },
   balancesError: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.TransferFundsSection.balancesError`,
+    id: `dashboard.ControlSafeDialog.TransferFundsSection.balancesError`,
     defaultMessage:
       'Unable to fetch Safe balances. Please check your connection',
   },
 });
 
-const displayName = `dashboard.ControlSafeDialog.TransactionTypesSection.TransferFundsSection`;
+const displayName = `dashboard.ControlSafeDialog.TransferFundsSection`;
 
 export interface TransferFundsProps extends TransactionSectionProps {
   savedTokenState: [{}, React.Dispatch<React.SetStateAction<{}>>];
@@ -179,7 +179,7 @@ const TransferFundsSection = ({
             label={MSG.recipient}
             name={`transactions.${transactionFormIndex}.recipient`}
             filter={filterUserSelection}
-            renderAvatar={AvatarXs}
+            renderAvatar={AvatarXS}
             disabled={disabledInput}
             placeholder={MSG.userPickerPlaceholder}
             dataTest="paymentRecipientPicker"

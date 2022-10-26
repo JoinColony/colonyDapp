@@ -20,54 +20,54 @@ import { Address, Message } from '~types/index';
 import { log } from '~utils/debug';
 
 import { FormValues, TransactionSectionProps, SafeTransaction } from '..';
-import { AvatarXs, ErrorMessage as Error, Loading } from './shared';
+import { AvatarXS, ErrorMessage as Error, Loading } from './shared';
 
 import styles from './TransferNFTSection.css';
 
 const MSG = defineMessages({
   selectNFT: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.TransferNFTSection.selectNFT`,
+    id: `dashboard.ControlSafeDialog.TransferNFTSection.selectNFT`,
     defaultMessage: 'Select the NFT held by the Safe',
   },
   NFTPickerPlaceholder: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.TransferNFTSection.NFTPickerPlaceholder`,
+    id: `dashboard.ControlSafeDialog.TransferNFTSection.NFTPickerPlaceholder`,
     defaultMessage: 'Select NFT to transfer',
   },
   selectRecipient: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.TransferNFTSection.selectRecipient`,
+    id: `dashboard.ControlSafeDialog.TransferNFTSection.selectRecipient`,
     defaultMessage: 'Select Recipient',
   },
   userPickerPlaceholder: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.TransferNFTSection.userPickerPlaceholder`,
+    id: `dashboard.ControlSafeDialog.TransferNFTSection.userPickerPlaceholder`,
     defaultMessage: 'Search for a user or paste wallet address',
   },
   contract: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.TransferNFTSection.contract`,
+    id: `dashboard.ControlSafeDialog.TransferNFTSection.contract`,
     defaultMessage: 'Contract',
   },
   idLabel: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.TransferNFTSection.idLabel`,
+    id: `dashboard.ControlSafeDialog.TransferNFTSection.idLabel`,
     defaultMessage: 'Id',
   },
   nftDetails: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.TransferNFTSection.nftDetails`,
+    id: `dashboard.ControlSafeDialog.TransferNFTSection.nftDetails`,
     defaultMessage: 'NFT details',
   },
   noNftsFound: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.TransferNFTSection.noNftsFound`,
+    id: `dashboard.ControlSafeDialog.TransferNFTSection.noNftsFound`,
     defaultMessage: 'No NFTs found',
   },
   nftLoading: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.TransferNFTSection.nftLoading`,
+    id: `dashboard.ControlSafeDialog.TransferNFTSection.nftLoading`,
     defaultMessage: 'Loading NFTs',
   },
   nftError: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.TransferNFTSection.nftError`,
+    id: `dashboard.ControlSafeDialog.TransferNFTSection.nftError`,
     defaultMessage: 'Unable to fetch NFTs. Please check your connection',
   },
 });
 
-const displayName = `dashboard.ControlSafeDialog.TransactionTypesSection.TransferNFTSection`;
+const displayName = `dashboard.ControlSafeDialog.TransferNFTSection`;
 
 interface Props
   extends Omit<TransactionSectionProps, 'colony' | 'handleInputChange'> {
@@ -181,7 +181,7 @@ const TransferNFTSection = ({
             label={MSG.selectNFT}
             name={`transactions.${transactionFormIndex}.nft`}
             filter={filterUserSelection}
-            renderAvatar={AvatarXs}
+            renderAvatar={AvatarXS}
             data={availableNFTs || []}
             disabled={disabledInput}
             placeholder={MSG.NFTPickerPlaceholder}
@@ -260,7 +260,7 @@ const TransferNFTSection = ({
             label={MSG.selectRecipient}
             name={`transactions.${transactionFormIndex}.recipient`}
             filter={filterUserSelection}
-            renderAvatar={AvatarXs}
+            renderAvatar={AvatarXS}
             placeholder={MSG.userPickerPlaceholder}
             disabled={disabledInput}
             dataTest="NFTRecipientSelector"
