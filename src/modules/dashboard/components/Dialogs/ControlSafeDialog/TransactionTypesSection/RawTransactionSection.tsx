@@ -8,30 +8,30 @@ import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import { DialogSection } from '~core/Dialog';
 
 import { TransactionSectionProps } from '..';
-import { AvatarXs } from './shared';
+import { AvatarXS } from './shared';
 
 import styles from './TransactionTypesSection.css';
 
 const MSG = defineMessages({
   valueLabel: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.RawTransactionSection.valueLabel`,
+    id: `dashboard.ControlSafeDialog.RawTransactionSection.valueLabel`,
     defaultMessage: 'Value <span>wei</span>',
   },
   dataLabel: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.RawTransactionSection.dataLabel`,
+    id: `dashboard.ControlSafeDialog.RawTransactionSection.dataLabel`,
     defaultMessage: 'Data <span>bytes</span>',
   },
   recipient: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.RawTransactionSection.recipient`,
+    id: `dashboard.ControlSafeDialog.RawTransactionSection.recipient`,
     defaultMessage: 'Select Recipient',
   },
   userPickerPlaceholder: {
-    id: `dashboard.ControlSafeDialog.TransactionTypesSection.RawTransactionSection.userPickerPlaceholder`,
+    id: `dashboard.ControlSafeDialog.RawTransactionSection.userPickerPlaceholder`,
     defaultMessage: 'Select or paste a wallet address',
   },
 });
 
-const displayName = `dashboard.ControlSafeDialog.TransactionTypesSection.RawTransactionSection`;
+const displayName = `dashboard.ControlSafeDialog.RawTransactionSection`;
 
 const RawTransactionSection = ({
   colony: { colonyAddress },
@@ -64,7 +64,7 @@ const RawTransactionSection = ({
             label={MSG.recipient}
             name={`transactions.${transactionFormIndex}.recipient`}
             filter={filterUserSelection}
-            renderAvatar={AvatarXs}
+            renderAvatar={AvatarXS}
             disabled={disabledInput}
             placeholder={MSG.userPickerPlaceholder}
             validateOnChange
