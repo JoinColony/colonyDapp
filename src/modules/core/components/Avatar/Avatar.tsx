@@ -42,7 +42,8 @@ const Avatar = ({
   size,
   title,
 }: Props) => {
-  const avatar = notSet ? null : avatarURL || getIcon(seed || title);
+  const fallback = getIcon(seed || title);
+  const avatar = notSet ? null : avatarURL || fallback;
   const mainClass = size ? styles[size] : styles.main;
   if (children) {
     return (
@@ -57,7 +58,7 @@ const Avatar = ({
 
   const imageStyle: CSSProperties = avatar
     ? {
-        backgroundImage: `url(${avatar})`,
+        backgroundImage: `url(${avatar}), url(${fallback})`,
         // if using a blockie, do pixelated image scaling
         imageRendering: avatarURL ? undefined : 'pixelated',
       }
