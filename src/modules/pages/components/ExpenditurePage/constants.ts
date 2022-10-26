@@ -64,8 +64,8 @@ export const initialValues = {
   split: {
     unequal: false,
     recipients: [
-      { ...initalRecipient, key: nanoid() },
-      { ...initalRecipient, key: nanoid() },
+      { ...initalRecipient, id: nanoid() },
+      { ...initalRecipient, id: nanoid() },
     ],
   },
   streaming: {
@@ -121,7 +121,10 @@ export const validationSchema = yup.object().shape({
               .number()
               .moreThan(0, () => MSG.amountZeroError)
               .required(),
-            amount: yup.number(),
+            amount: yup.object().shape({
+              value: yup.number(),
+              tokenAddress: yup.string().required(),
+            }),
           }),
         )
         .min(1)
@@ -146,7 +149,7 @@ export const validationSchema = yup.object().shape({
           yup.object().shape({
             user: yup.object().required(),
             amount: yup.object().shape({
-              value: yup.number(),
+              value: yup.number().moreThan(0, () => MSG.amountZeroError),
               tokenAddress: yup.string().required(),
             }),
           }),

@@ -45,11 +45,7 @@ import {
 } from './utils';
 import { ExpenditureTypes, ValuesType } from './types';
 import { ExpenditureForm, LockedSidebar } from '.';
-import {
-  EXPENDITURE_TYPE_KEY,
-  initialValues,
-  validationSchema,
-} from './constants';
+import { initialValues, validationSchema } from './constants';
 import styles from './ExpenditurePage.css';
 
 const displayName = 'pages.ExpenditurePage';
@@ -205,13 +201,14 @@ const ExpenditurePage = ({ match }: Props) => {
 
   const lockValues = useCallback(() => {
     setFormEditable(false);
+    localStorage.removeItem(LOCAL_STORAGE_EXPENDITURE_TYPE_KEY);
   }, []);
 
   const handleSubmit = useCallback(
     (values) => {
       setShouldValidate(true);
-      if (!activeStateId) {
-        setActiveStateId(Stage.Draft);
+      if (!activeStageId) {
+        setActiveStageId(Stage.Draft);
       }
 
       if (values.expenditure === ExpenditureTypes.Streaming) {
@@ -253,11 +250,6 @@ const ExpenditurePage = ({ match }: Props) => {
     },
     [activeStageId, lockValues],
   );
-
-  const lockValues = useCallback(() => {
-    setFormEditable(false);
-    localStorage.removeItem(LOCAL_STORAGE_EXPENDITURE_TYPE_KEY);
-  }, []);
 
   const handleLockExpenditure = useCallback(() => {
     // Call to backend will be added here, to lock the expenditure

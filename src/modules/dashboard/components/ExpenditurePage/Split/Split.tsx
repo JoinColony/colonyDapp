@@ -63,14 +63,16 @@ const Split = ({ colony, sidebarRef }: Props) => {
         );
       }
 
-      const rec = recipients?.map((recipient) => ({
-        ...recipient,
-        amount: { value: 0, tokenAddress: amount?.tokenAddress },
-        percent: 0,
-      }));
-      return setValue(rec);
+      return setValue(
+        recipients?.map((recipient) => ({
+          ...recipient,
+          amount: { value: 0, tokenAddress: amount?.tokenAddress },
+          percent: 0,
+        })),
+      );
     },
-    [amount, recipients, setValue],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [amount, recipients],
   );
 
   return (

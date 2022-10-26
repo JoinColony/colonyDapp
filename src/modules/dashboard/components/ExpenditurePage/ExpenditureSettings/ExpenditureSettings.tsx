@@ -64,12 +64,12 @@ const expeditureTypes = [
     value: ExpenditureTypes.Staged,
   },
   {
-    label: MSG.streaming,
-    value: ExpenditureTypes.Streaming,
-  },
-  {
     label: MSG.batch,
     value: ExpenditureTypes.Batch,
+  },
+  {
+    label: MSG.streaming,
+    value: ExpenditureTypes.Streaming,
   },
 ];
 

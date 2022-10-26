@@ -3,13 +3,12 @@ import React, { Fragment } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 
 import Button from '~core/Button';
-import { Colony, LoggedInUser } from '~data/index';
+import { Colony } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/types';
-import { Staged } from '~dashboard/ExpenditurePage/Staged/types';
-import { Batch } from '~dashboard/ExpenditurePage/Batch/types';
 
 import ChangeHeader from '../ChangeHeader';
 import ChangedRecipient from '../ChangedSplit/ChangedRecipient';
+import { NewValueType } from '../types';
 
 import styles from './ChangedAdvanced.css';
 
@@ -25,20 +24,6 @@ export const MSG = defineMessages({
 });
 
 const displayName = 'dashboard.EditExpenditureDialog.ChangedAdvanced';
-
-export type NewValueType = {
-  id: string;
-  key: string;
-  value?:
-    | ValuesType['recipients']
-    | string
-    | Staged
-    | Pick<
-        LoggedInUser,
-        'walletAddress' | 'balance' | 'username' | 'ethereal' | 'networkId'
-      >
-    | Batch;
-};
 
 interface Props {
   newValues?: NewValueType[];
