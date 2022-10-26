@@ -26,11 +26,26 @@ const MSG = defineMessages({
 
 export const newFundingSource = {
   team: String(ROOT_DOMAIN_ID),
-  rate: {
-    amount: undefined,
-    token: undefined,
-    time: 'month',
-  },
+  rate: [newRate],
   isExpanded: true,
   id: nanoid(),
 };
+
+export const timeOptions = [
+  {
+    label: MSG.month,
+    value: TimePeriod.Month,
+  },
+  {
+    label: MSG.week,
+    value: TimePeriod.Week,
+  },
+  {
+    label: MSG.day,
+    value: TimePeriod.Day,
+  },
+  {
+    label: MSG.hour,
+    value: TimePeriod.Hour,
+  },
+];

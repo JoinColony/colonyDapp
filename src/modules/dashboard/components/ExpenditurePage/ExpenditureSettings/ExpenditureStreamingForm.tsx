@@ -7,12 +7,12 @@ import DatePicker, { DatePickerOption } from '~core/Fields/DatePicker';
 import { filterUserSelection } from '~core/SingleUserPicker';
 import UserPickerWithSearch from '~core/UserPickerWithSearch';
 import { useMembersSubscription } from '~data/generated';
+import { Colony } from '~data/index';
 import { ExpenditureEndDateTypes } from '~pages/ExpenditurePage/types';
 
 import { supRenderAvatar } from '../Recipient/Recipient';
 import { Streaming } from '../Streaming/types';
 
-import { Props } from './ExpenditureSettings';
 import styles from './ExpenditureSettings.css';
 
 export const MSG = defineMessages({
@@ -57,6 +57,11 @@ const endDateOptions: DatePickerOption[] = [
     showDatePicker: true,
   },
 ];
+
+export interface Props {
+  sidebarRef: HTMLElement | null;
+  colony: Colony;
+}
 
 const displayName =
   'dashboard.ExpenditurePage.ExpenditureSettings.ExpenditureStreamingForm';
