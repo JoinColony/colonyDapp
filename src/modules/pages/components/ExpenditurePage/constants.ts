@@ -37,10 +37,6 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.amountError',
     defaultMessage: 'Amount is required',
   },
-  amountError: {
-    id: 'dashboard.ExpenditurePage.amountError',
-    defaultMessage: 'Your file exceeds the max. of 400 entries.',
-  },
   fileError: {
     id: 'dashboard.ExpenditurePage.fileError',
     defaultMessage: `File structure is incorrect, try again using the template.`,
