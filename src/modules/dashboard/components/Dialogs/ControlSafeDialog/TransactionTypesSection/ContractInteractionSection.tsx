@@ -83,7 +83,7 @@ interface Props
       FormProps,
       'safes' | 'selectedContractMethods' | 'handleSelectedContractMethods'
     >,
-    Pick<FormikProps<FormValues>, 'setFieldValue' | 'values'>,
+    Pick<FormikProps<FormValues>, 'setFieldValue' | 'values' | 'isValid'>,
     Omit<TransactionSectionProps, 'colony'> {
   removeSelectedContractMethod: (index: number) => void;
 }
@@ -105,6 +105,7 @@ const ContractInteractionSection = ({
   handleValidation,
   handleInputChange,
   removeSelectedContractMethod,
+  isValid,
 }: Props) => {
   const { formatMessage } = useIntl();
 
@@ -292,7 +293,8 @@ const ContractInteractionSection = ({
     handleValidation,
   ]);
 
-  if (isLoadingABI) {
+  // Ensures spinner doesn't show up when returning back from Preview
+  if (isLoadingABI && !isValid) {
     return <Loading message={MSG.loadingContract} />;
   }
 
