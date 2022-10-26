@@ -1198,10 +1198,17 @@ export const motionsResolvers = ({
           actionValues.args[6],
         );
 
-        const tokenClient = await colonyManager.getTokenClient(
-          actionValues.args[8],
-        );
-        const tokenInfo = await tokenClient.getTokenInfo();
+        let tokenSymbol = DEFAULT_NETWORK_TOKEN.symbol;
+        let tokenDecimals = DEFAULT_NETWORK_TOKEN.decimals;
+
+        if (actionValues.args[8] !== AddressZero) {
+          const tokenClient = await colonyManager.getTokenClient(
+            actionValues.args[8],
+          );
+          const tokenInfo = await tokenClient.getTokenInfo();
+          tokenSymbol = tokenInfo.symbol;
+          tokenDecimals = tokenInfo.decimals;
+        }
 
         return {
           amount: actionValues.args[7].toString(),
@@ -1209,8 +1216,8 @@ export const motionsResolvers = ({
           toDomain: toDomain.toNumber(),
           token: {
             id: actionValues.args[8],
-            symbol: tokenInfo.symbol,
-            decimals: tokenInfo.decimals,
+            symbol: tokenSymbol,
+            decimals: tokenDecimals,
           },
         };
       }
@@ -1239,7 +1246,7 @@ export const motionsResolvers = ({
       }
 
       if (actionValues.name === ColonyMotionActionName.CreateDecision) {
-        return actionValues.args[0];
+        return defaultValues;
       }
 
       if (
@@ -1270,6 +1277,7 @@ export const motionsResolvers = ({
         'emitDomainReputationPenalty(uint256,uint256,uint256,address,int256)'
       ) {
         return {
+          ...defaultValues,
           reputationChange: actionValues?.args[4].toString(),
           recipient: actionValues?.args[3],
         };
@@ -1280,6 +1288,7 @@ export const motionsResolvers = ({
         'emitDomainReputationReward(uint256,address,int256)'
       ) {
         return {
+          ...defaultValues,
           reputationChange: actionValues?.args[2].toString(),
           recipient: actionValues?.args[1],
         };
