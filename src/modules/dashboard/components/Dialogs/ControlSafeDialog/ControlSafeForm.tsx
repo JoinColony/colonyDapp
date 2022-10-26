@@ -328,6 +328,7 @@ const ControlSafeForm = ({
             handleValidation={handleValidation}
             handleInputChange={handleInputChange}
             removeSelectedContractMethod={removeSelectedContractMethod}
+            isValid={isValid}
           />
         );
       case TransactionTypes.TRANSFER_NFT:
