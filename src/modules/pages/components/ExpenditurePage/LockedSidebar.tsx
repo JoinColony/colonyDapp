@@ -7,15 +7,16 @@ import LockedSplit from '~dashboard/ExpenditurePage/Split/LockedSplit';
 import LockedStaged from '~dashboard/ExpenditurePage/Staged/LockedStaged/LockedStaged';
 import { Status } from '~dashboard/ExpenditurePage/Stages/constants';
 import LockedStreaming from '~dashboard/ExpenditurePage/Streaming/LockedStreaming';
+import LockedStreamingSettings from '~dashboard/ExpenditurePage/Streaming/LockedStreamingSettings';
 import { Colony } from '~data/index';
 
 import { ExpenditureTypes, StageObject, ValuesType } from './types';
 
-const displayName = 'pages.ExpenditurePage.LockedSidebar';
-
 // Mock variables
 const startDate = new Date().toLocaleDateString();
 const endDate = 'When cancelled';
+
+const displayName = 'pages.ExpenditurePage.LockedSidebar';
 
 interface Props {
   colony: Colony;
@@ -127,7 +128,7 @@ const LockedSidebar = ({
   return (
     <>
       {expenditure === ExpenditureTypes.Streaming ? (
-        <LockedStreaming startDate={startDate} endDate={endDate} />
+        <LockedStreamingSettings startDate={startDate} endDate={endDate} />
       ) : (
         <LockedExpenditureSettings
           {...{ expenditure, filteredDomainId, colony }}
