@@ -50,9 +50,14 @@
   line-height: 32px;
 }
 
-.value {
+.labelContainer {
+  display: flex;
+  align-items: baseline;
+}
+
+.label {
   composes: inlineEllipsis from '~styles/text.css';
-  display: block;
+  flex-shrink: 1;
 }
 
 @media screen and query700 {

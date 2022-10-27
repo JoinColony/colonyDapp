@@ -50,14 +50,16 @@ const SelectListBox = ({
     // eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex
     <ul
       tabIndex={-1}
-      className={getMainClasses(appearance, styles)}
+      className={getMainClasses(appearance, styles, {
+        unrestrictedWidth: appearance?.unrestrictedOptionsWidth === 'true',
+      })}
       role="listbox"
       aria-activedescendant={getOptionId(name, activeDescendantIdx)}
       id={listboxId}
     >
       {options.map((option, idx) => (
         <SelectOption
-          bordered={appearance ? appearance.borderedOptions === 'true' : false}
+          bordered={appearance?.borderedOptions === 'true'}
           id={getOptionId(name, idx)}
           idx={idx}
           key={getOptionId(name, idx)}

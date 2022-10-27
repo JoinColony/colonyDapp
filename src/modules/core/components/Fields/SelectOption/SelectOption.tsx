@@ -105,19 +105,18 @@ const SelectOption = ({
       onMouseEnter={handleItemSelect}
       data-checked={checked}
       data-test={dataTest}
+      title={label}
     >
-      <span title={label} className={styles.value}>
-        {option.children || (
-          <>
-            {label}
-            {checked && (
-              <small className={styles.selectedHelpText}>
-                ({formatMessage(MSG.selectedLabelHelp)})
-              </small>
-            )}
-          </>
-        )}
-      </span>
+      {option.children || (
+        <div className={styles.labelContainer}>
+          <span className={styles.label}>{label}</span>
+          {checked && (
+            <small className={styles.selectedHelpText}>
+              ({formatMessage(MSG.selectedLabelHelp)})
+            </small>
+          )}
+        </div>
+      )}
     </li>
   );
 };
