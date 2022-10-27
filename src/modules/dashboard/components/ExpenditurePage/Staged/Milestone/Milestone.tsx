@@ -4,7 +4,7 @@ import Decimal from 'decimal.js';
 import { defineMessages } from 'react-intl';
 import classNames from 'classnames';
 
-import { FormSection, Input, InputStatus } from '~core/Fields';
+import { FormSection, Input } from '~core/Fields';
 import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
 import Slider from '~core/Slider';
@@ -55,9 +55,17 @@ const Milestone = ({
     MilestoneType['amount']
   >(`${name}.amount`);
   const [, { error }] = useField(name);
-  const [, { error: milestonePercentError }] = useField(
-    `staged.milestones[${index}].percent`,
-  );
+
+  const handleChange = (val: number) => {
+    if (!amount || !val) {
+      return null;
+    }
+
+    return setAmount({
+      value: (Number(val) / 100) * Number(amount),
+      tokenAddress: token?.address,
+    });
+  };
 
   return (
     <FormSection appearance={{ border: 'bottom' }}>
@@ -73,22 +81,14 @@ const Milestone = ({
             appearance={{ theme: 'underlined' }}
           />
         </div>
-        <button
-          type="button"
-          className={styles.deleteIconBox}
+        <Icon
+          name="trash"
+          className={styles.deleteIcon}
           onClick={() => remove(index)}
-        >
-          <Icon
-            name="trash"
-            title={MSG.deleteIconTitle}
-            className={styles.deleteIcon}
-          />
-        </button>
+          title={MSG.deleteIconTitle}
+        />
       </div>
-      <div
-        className={styles.sliderWrapper}
-        aria-invalid={!!milestonePercentError}
-      >
+      <div className={styles.sliderWrapper}>
         <Slider
           value={milestone?.percent || 0}
           name={`${name}.percent`}
@@ -113,19 +113,14 @@ const Milestone = ({
             position: 'absolute',
             top: 0,
             backgroundImage: 'none',
-            boxShadow: milestonePercentError
-              ? styles.boxShadowInvalid
-              : styles.boxShadow,
+            boxShadow: styles.boxShadow,
             border: styles.border,
           }}
           dotStyle={{
             backgroundColor: 'transparent',
           }}
         />
-        <span className={styles.percent}>{milestones[index].percent}%</span>
-        {!!milestonePercentError && (
-          <InputStatus error={milestonePercentError} />
-        )}
+        <span className={styles.percent}>{milestone?.percent}%</span>
       </div>
       {token && amount && (
         <div className={styles.amountWrapper}>
