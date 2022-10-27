@@ -12,11 +12,11 @@ on:
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  AWS_REGION: ${{ secrets.AWS_REGION }}
-  KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-  KUBE_NAMESPACE: default
+  AWS_REGION: eu-west-2
   ECR_REPOSITORY: app-frontend
   IMAGE_TAG: ${{ github.event.client_payload.COMMIT_HASH != null || github.sha }}
+  KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+  KUBE_NAMESPACE: default
   DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
 
 jobs:
@@ -59,7 +59,7 @@ jobs:
           context: ${{ github.workspace }}
           file: ./Dockerfile
           push: true
-          tags: 268828583045.dkr.ecr.eu-west-2.amazonaws.com/app-frontend:${{ env.IMAGE_TAG }}
+          tags: 204031746016.dkr.ecr.eu-west-2.amazonaws.com/app-frontend:${{ env.IMAGE_TAG }}
       
       - name: Deploy to Kubernetes cluster                                                                            
         uses: kodermax/kubectl-aws-eks@master                                                                         
