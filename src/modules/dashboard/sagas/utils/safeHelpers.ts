@@ -5,12 +5,13 @@ import abis from '@colony/colony-js/lib-esm/abis';
 import moveDecimal from 'move-decimal-point';
 import { AddressZero } from 'ethers/constants';
 
-import { erc721 } from './abis'; // Temporary
 import { SafeTransaction } from '~dashboard/Dialogs/ControlSafeDialog/ControlSafeDialog';
 import { ColonySafe } from '~data/index';
 import { Address, ModuleAddress } from '~types/index';
 import { GNOSIS_AMB_BRIDGES, SAFE_NETWORKS } from '~constants';
 import { getArrayFromString } from '~utils/safes';
+
+import { erc721 } from './abis'; // Temporary
 
 export interface SelectedSafe {
   id: ModuleAddress; // Making explicit that this is the module address
@@ -179,9 +180,30 @@ export const getTxServiceBaseUrl = (selectedChain: string) => {
   return selectedNetwork.safeTxService;
 };
 
-export const getIdFromNFTDisplayName = (displayName: string) => {
-  const chunks = displayName.split(' ');
-  return chunks[chunks.length - 1].substring(1);
+export const getTokenIdFromNFTId = (nftId: SelectedNFT['id']) => {
+  const chunks = nftId.split(' ');
+  return chunks[chunks.length - 1];
+};
+
+export const nftNameContainsTokenId = (tokenName: string): boolean => {
+  const chunks = tokenName.trim().split(' ');
+  // using 'starts with #' to identify a token id
+  if (chunks[chunks.length - 1].startsWith('#')) {
+    return true;
+  }
+
+  return false;
+};
+
+// in the event the token id is also appended to the token name
+export const extractTokenName = (tokenName: string) => {
+  const chunks = tokenName.trim().split(' ');
+  // using 'starts with #' to identify a token id
+  if (chunks[chunks.length - 1].startsWith('#')) {
+    return chunks.slice(0, chunks.length - 1).join(' ');
+  }
+
+  return tokenName;
 };
 
 export const getRawTransactionData = (
