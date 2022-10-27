@@ -15,7 +15,7 @@ import Button from '~core/Button';
 import Icon from '~core/Icon';
 import Avatar from '~core/Avatar';
 import MaskedAddress from '~core/MaskedAddress';
-import { AnyUser, Colony } from '~data/index';
+import { AnyUser, Colony, NftData } from '~data/index';
 import { AbiItemExtended, getArrayFromString } from '~utils/safes';
 import { extractTokenName } from '~modules/dashboard/sagas/utils/safeHelpers';
 import { omit } from '~utils/lodash';
@@ -30,7 +30,6 @@ import {
 import DetailsItem from './DetailsItem';
 
 import styles from './SafeTransactionPreview.css';
-import { NFT } from './TransactionTypesSection/TransferNFTSection';
 
 const MSG = defineMessages({
   previewTitle: {
@@ -138,7 +137,7 @@ const transactionTypeFieldsMap = {
     {
       key: 'nftData',
       label: MSG.nftHeldByTheSafe,
-      value: (nftData: NFT) => (
+      value: (nftData: NftData) => (
         <div className={styles.nftContainer}>
           <Avatar
             avatarURL={nftData.imageUri || undefined}

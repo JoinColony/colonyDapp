@@ -32,6 +32,7 @@ import { toRecipientMSG, valueMSG } from '../DetailsWidget';
 
 import widgetStyles from '../DetailsWidget.css';
 import styles from './DetailsWidgetSafeTransaction.css';
+import { extractTokenName } from '~modules/dashboard/sagas/utils/safeHelpers';
 
 const MSG = defineMessage({
   contract: {
@@ -113,9 +114,11 @@ export const ContractSection = ({
     switch (transactionType) {
       case TransactionTypes.TRANSFER_NFT:
         contractInfo.contractName =
-          safeTransaction.nftData?.name ||
-          safeTransaction.nftData?.tokenName ||
-          formatMessage(MSG.nft);
+          extractTokenName(
+            safeTransaction.nftData?.name ||
+              safeTransaction.nftData?.tokenName ||
+              '',
+          ) || formatMessage(MSG.nft);
         contractInfo.contractAddress =
           safeTransaction.nftData?.address || safe.contractAddress;
         break;

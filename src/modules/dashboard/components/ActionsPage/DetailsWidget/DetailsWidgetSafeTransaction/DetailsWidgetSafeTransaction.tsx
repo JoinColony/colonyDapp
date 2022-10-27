@@ -140,8 +140,8 @@ const DetailsWidgetSafeTransaction = ({
                           </span>
                         </div>
                         <Avatar
-                          notSet={!NFT?.logoUri}
-                          avatarURL={NFT?.logoUri}
+                          notSet={!NFT?.imageUri}
+                          avatarURL={NFT?.imageUri || undefined}
                           seed={NFT?.address?.toLocaleLowerCase()}
                           placeholderIcon="nft-icon"
                           title="nftImage"
