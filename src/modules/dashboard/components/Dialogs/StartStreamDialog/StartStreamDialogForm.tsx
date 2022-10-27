@@ -130,7 +130,7 @@ const StartStreamDialogForm = ({
           </div>
         </FormSection>
         <StreamingDetails {...{ user, endDate, endDateTime, startDate }} />
-        {streaming?.fundingSource?.map((fundingSource, index) => {
+        {streaming?.fundingSources?.map((fundingSource, index) => {
           return (
             <Fragment key={fundingSource.id}>
               <FormSection appearance={{ border: 'bottom' }}>
