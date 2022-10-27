@@ -1,6 +1,12 @@
 import React, { ComponentProps, useMemo } from 'react';
 
+import Avatar from '~core/Avatar';
 import { NFT } from '~dashboard/Dialogs/ControlSafeDialog/TransactionTypesSection/TransferNFTSection';
+import {
+  nftNameContainsTokenId,
+  SelectedNFT,
+} from '~modules/dashboard/sagas/utils/safeHelpers';
+import { getSelectedNFTData } from '~utils/safes';
 
 import SingleUserPicker from './SingleUserPicker';
 
@@ -12,15 +18,34 @@ interface Props extends ComponentProps<typeof SingleUserPicker> {
 const displayName = 'SingleUserPicker.SingleNFTPicker';
 
 const SingleNFTPicker = ({ data, ...props }: Props) => {
+  const renderAvatar = (_, item: SelectedNFT) => {
+    const selectedNFTData = getSelectedNFTData(item, data);
+    return (
+      <Avatar
+        size="xs"
+        placeholderIcon="nft-icon"
+        title="NFT"
+        avatarURL={selectedNFTData?.imageUri || undefined}
+        notSet={!selectedNFTData?.imageUri}
+      />
+    );
+  };
+
   const formattedData = useMemo(
     () =>
-      data.map((item) => ({
-        id: `${item.address} ${item.id}`,
-        profile: {
-          displayName: `${item.name || item.tokenName} #${item.id}`,
-          walletAddress: item.address,
-        },
-      })),
+      data.map((item) => {
+        const tokenName = item.name || item.tokenName;
+        const nftDisplayName = nftNameContainsTokenId(tokenName)
+          ? tokenName
+          : `${tokenName} #${item.id}`;
+        return {
+          id: `${item.address} ${item.id}`,
+          profile: {
+            displayName: nftDisplayName,
+            walletAddress: item.address,
+          },
+        };
+      }),
     [data],
   );
 
@@ -29,6 +54,7 @@ const SingleNFTPicker = ({ data, ...props }: Props) => {
       {...props}
       data={formattedData}
       placeholderIconName="nft-icon"
+      renderAvatar={renderAvatar}
     />
   );
 };
