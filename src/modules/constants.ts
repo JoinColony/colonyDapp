@@ -110,7 +110,7 @@ export const GNOSIS_NETWORK: NetworkInfo = {
   tokenExplorerLink: 'https://blockscout.com/poa/xdai/tokens',
   contractAddressLink: 'https://blockscout.com/poa/xdai/address',
   rpcUrl: 'https://rpc.gnosischain.com',
-  safeTxService: 'https://safe-transaction.xdai.gnosis.io/api',
+  safeTxService: 'https://safe-transaction-gnosis-chain.safe.global/api',
   apiUri: 'https://blockscout.com/xdai/mainnet/api',
   nativeToken: XDAI_TOKEN,
 };
@@ -125,7 +125,7 @@ export const ETHEREUM_NETWORK: NetworkInfo = {
   tokenExplorerLink: 'https://etherscan.io/tokens',
   contractAddressLink: 'https://etherscan.io/address',
   rpcUrl: 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-  safeTxService: 'https://safe-transaction.mainnet.gnosis.io/api',
+  safeTxService: 'https://safe-transaction-mainnet.safe.global/api',
   apiUri: 'https://api.etherscan.io/api',
   nativeToken: ETHER_TOKEN,
 };
@@ -140,7 +140,7 @@ export const GOERLI_NETWORK: NetworkInfo = {
   tokenExplorerLink: 'https://goerli.etherscan.io/tokens',
   contractAddressLink: 'https://goerli.etherscan.io/address',
   rpcUrl: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-  safeTxService: 'https://safe-transaction.goerli.gnosis.io/api',
+  safeTxService: 'https://safe-transaction-goerli.safe.global/api',
   apiUri: 'https://api-goerli.etherscan.io/api',
   nativeToken: GOERLI_TOKEN,
 };
@@ -150,7 +150,7 @@ const ARBITRUM_NETWORK: NetworkInfo = {
   chainId: 42161,
   shortName: 'ETH',
   contractAddressLink: '',
-  safeTxService: 'https://safe-transaction.arbitrum.gnosis.io/api',
+  safeTxService: 'https://safe-transaction-arbitrum.safe.global/api',
   rpcUrl: 'https://rpc.ankr.com/arbitrum',
   apiUri: 'https://api.arbiscan.io/api',
   nativeToken: ETHER_TOKEN,
@@ -161,7 +161,7 @@ const AURORA_NETWORK: NetworkInfo = {
   chainId: 1313161554,
   shortName: 'ETH',
   contractAddressLink: '',
-  safeTxService: 'https://safe-transaction.aurora.gnosis.io/api',
+  safeTxService: 'https://safe-transaction-aurora.safe.global/api',
   rpcUrl: 'https://testnet.aurora.dev/',
   apiUri: 'https://api.aurorascan.dev/api',
   nativeToken: ETHER_TOKEN,
@@ -172,7 +172,7 @@ const AVALANCHE_NETWORK: NetworkInfo = {
   chainId: 43114,
   shortName: 'AVAX',
   contractAddressLink: '',
-  safeTxService: 'https://safe-transaction.avalanche.gnosis.io/api',
+  safeTxService: 'https://safe-transaction-avalanche.safe.global/api',
   rpcUrl: 'https://api.avax.network/ext/bc/C/rpc',
   apiUri: 'https://api.snowtrace.io/api',
   nativeToken: AVALANCHE_TOKEN,
@@ -183,7 +183,7 @@ export const BINANCE_NETWORK: NetworkInfo = {
   chainId: 56,
   shortName: 'BNB',
   contractAddressLink: '',
-  safeTxService: 'https://safe-transaction.bsc.gnosis.io/api',
+  safeTxService: 'https://safe-transaction-bsc.safe.global/api',
   rpcUrl: 'https://bsc-dataseed.binance.org/',
   apiUri: 'https://api.bscscan.com/api',
   nativeToken: BINANCE_TOKEN,
@@ -194,7 +194,7 @@ const OPTIMISM_NETWORK: NetworkInfo = {
   chainId: 10,
   shortName: 'ETH',
   contractAddressLink: '',
-  safeTxService: 'https://safe-transaction.optimism.gnosis.io/api',
+  safeTxService: 'https://safe-transaction-optimism.safe.global/api',
   rpcUrl: 'https://mainnet.optimism.io',
   apiUri: 'https://api-optimistic.etherscan.io/api',
   nativeToken: OPTIMISM_TOKEN,
@@ -205,21 +205,10 @@ export const POLYGON_NETWORK: NetworkInfo = {
   chainId: 137,
   shortName: 'MATIC',
   contractAddressLink: '',
-  safeTxService: 'https://safe-transaction.polygon.gnosis.io/api',
+  safeTxService: 'https://safe-transaction-polygon.safe.global/api',
   rpcUrl: 'https://polygon-rpc.com',
   apiUri: 'https://api.polygonscan.com/api',
   nativeToken: POLYGON_TOKEN,
-};
-
-export const RINKEBY_NETWORK: NetworkInfo = {
-  name: 'Rinkeby',
-  chainId: 4,
-  shortName: 'RIN',
-  contractAddressLink: '',
-  safeTxService: 'https://safe-transaction.rinkeby.gnosis.io/api',
-  rpcUrl: 'https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-  apiUri: 'https://api-rinkeby.etherscan.io/api',
-  nativeToken: ETHER_TOKEN,
 };
 
 /*
@@ -273,7 +262,6 @@ export const SAFE_NETWORKS: NetworkInfo[] = [
   OPTIMISM_NETWORK,
   POLYGON_NETWORK,
   GOERLI_NETWORK,
-  RINKEBY_NETWORK,
 ];
 
 export const SAFE_NAMES_MAP = SAFE_NETWORKS.reduce(
@@ -324,16 +312,6 @@ export const GNOSIS_AMB_BRIDGES: { [x: number]: AmbBridge } = {
       'https://docs.tokenbridge.net/bsc-xdai-amb/about-the-bsc-xdai-amb',
     homeGasLimit: 2000000,
     foreignGasLimit: 2000000,
-    homeFinalizationRate: 20,
-    foreignFinalizationRate: 12,
-  },
-  [RINKEBY_NETWORK.chainId]: {
-    homeAMB: '0xc38D4991c951fE8BCE1a12bEef2046eF36b0FA4A',
-    foreignAMB: '0xD4075FB57fCf038bFc702c915Ef9592534bED5c1',
-    monitor: 'https://alm-rinkeby.herokuapp.com/',
-    referenceUrl: `https://docs.tokenbridge.net/rinkeby-xdai-amb-bridge/about-the-rinkeby-xdai-amb`,
-    homeGasLimit: 3000000,
-    foreignGasLimit: 3000000,
     homeFinalizationRate: 20,
     foreignFinalizationRate: 12,
   },
