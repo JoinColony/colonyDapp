@@ -4,7 +4,7 @@ import { SafeBalance } from '~dashboard/Dialogs/ControlSafeDialog/ControlSafeDia
 import { NFT } from '~dashboard/Dialogs/ControlSafeDialog/TransactionTypesSection/TransferNFTSection';
 import { ColonySafe } from '~data/generated';
 import {
-  getIdFromNFTDisplayName,
+  getTokenIdFromNFTId,
   SelectedNFT,
   SelectedSafe,
 } from '~modules/dashboard/sagas/utils/safeHelpers';
@@ -34,7 +34,7 @@ export const getSelectedNFTData = (
   availableNFTs: NFT[],
 ) =>
   availableNFTs.find((nft) => {
-    const id = getIdFromNFTDisplayName(selectedNFT.profile.displayName);
+    const id = getTokenIdFromNFTId(selectedNFT.id);
     return nft.address === selectedNFT.profile.walletAddress && nft.id === id;
   });
 
