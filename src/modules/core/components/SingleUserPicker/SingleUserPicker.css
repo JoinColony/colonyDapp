@@ -36,6 +36,7 @@
 }
 
 .avatarContainer {
+  display: flex;
   flex: 0 0 26px;
 }
 

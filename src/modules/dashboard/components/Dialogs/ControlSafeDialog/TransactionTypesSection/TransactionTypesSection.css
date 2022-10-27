@@ -1,13 +1,12 @@
 .singleUserPickerContainer div + i {
-  /* @NOTE: Negative value here to compensate for the
-  empty space inside the icon's SVG */
-  right: -7px;
+  right: 3px;
   left: inherit;
 }
 
 .singleUserPickerContainer input,
 .singleUserPickerContainer button {
-  max-width: 424px;
+  margin-left: 0px;
+  max-width: none;
 }
 
 .singleUserPickerContainer > div {
@@ -17,6 +16,10 @@
 .singleUserPickerContainer label,
 .contractFunctionSelectorContainer label {
   color: var(--dark);
+}
+
+.singleUserPickerContainer div[class*="inputContainer"] {
+  column-gap: 10px;
 }
 
 .labelDescription {
@@ -46,4 +49,10 @@
   justify-content: center;
   text-align: center;
   color: var(--pink);
+}
+
+/* Ensures noUsefulMethods error sits in between
+ * text area and  AddNewItem button */
+.noUsefulMethods > section {
+  padding: 1px 20px 20px;
 }

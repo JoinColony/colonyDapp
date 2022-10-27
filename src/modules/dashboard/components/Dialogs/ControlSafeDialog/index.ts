@@ -5,4 +5,8 @@ export {
   SafeTransaction,
   SafeBalance,
 } from './ControlSafeDialog';
-export { FormProps, TransactionSectionProps } from './ControlSafeForm';
+export {
+  FormProps,
+  TransactionSectionProps,
+  invalidSafeError,
+} from './ControlSafeForm';
