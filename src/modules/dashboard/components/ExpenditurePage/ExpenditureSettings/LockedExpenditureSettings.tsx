@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import classNames from 'classnames';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
-import { defineMessages } from 'react-intl';
 
 import { InputLabel, FormSection, Form } from '~core/Fields';
 import UserAvatar from '~core/UserAvatar';
@@ -9,24 +8,10 @@ import UserMention from '~core/UserMention';
 import ColorTag, { Color } from '~core/ColorTag';
 import { Colony, useLoggedInUser } from '~data/index';
 
+import { MSG } from './ExpenditureSettings';
 import BalanceSelect from './BalanceSelect';
 import { tokens as tokensData } from './constants';
 import styles from './ExpenditureSettings.css';
-
-export const MSG = defineMessages({
-  type: {
-    id: `dashboard.ExpenditurePage.ExpenditureSettings.LockedExpenditureSettings.type`,
-    defaultMessage: 'Expenditure type',
-  },
-  team: {
-    id: `dashboard.ExpenditurePage.ExpenditureSettings.LockedExpenditureSettings.team`,
-    defaultMessage: 'Team',
-  },
-  owner: {
-    id: `dashboard.ExpenditurePage.ExpenditureSettings.LockedExpenditureSettings.owner`,
-    defaultMessage: 'Owner',
-  },
-});
 
 const displayName =
   'dashboard.ExpenditurePage.ExpenditureSettings.LockedExpenditureSettings';

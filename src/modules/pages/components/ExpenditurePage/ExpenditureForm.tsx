@@ -12,7 +12,6 @@ import StakeExpenditureDialog from '~dashboard/Dialogs/StakeExpenditureDialog';
 import { useDialog } from '~core/Dialog';
 import Streaming from '~dashboard/ExpenditurePage/Streaming';
 import { LOCAL_STORAGE_EXPENDITURE_TYPE_KEY } from '~constants';
-import Streaming from '~dashboard/ExpenditurePage/ExpenditureSettings/Streaming';
 
 import { ValuesType, ExpenditureTypes } from './types';
 import styles from './ExpenditurePage.css';
@@ -100,7 +99,7 @@ const ExpenditureForm = ({
 
   return (
     <Form onSubmit={onSubmit}>
-      <ExpenditureSettings {...{ sidebarRef, colony }} />
+      <ExpenditureSettings {...{ sidebarRef, colony, inEditMode }} />
       {secondFormSection}
       <button type="submit" tabIndex={-1} className={styles.hiddenSubmit}>
         <FormattedMessage {...MSG.submit} />
