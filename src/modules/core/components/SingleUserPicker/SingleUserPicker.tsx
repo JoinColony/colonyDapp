@@ -137,9 +137,11 @@ const SingleUserPicker = ({
   itemDataTest,
   valueDataTest,
 }: EnhancedProps) => {
-  const [, { error, touched, value }, { setValue }] = useField<AnyUser | null>(
-    name,
-  );
+  const [
+    ,
+    { error, touched, value },
+    { setValue, setTouched },
+  ] = useField<AnyUser | null>(name);
   const { formatMessage } = useIntl();
 
   const handleActiveUserClick = useCallback(() => {
@@ -230,12 +232,17 @@ const SingleUserPicker = ({
             {/* eslint-enable jsx-a11y/click-events-have-key-events */}
             <input
               disabled={disabled}
-              className={touched && error ? styles.inputInvalid : styles.input}
+              className={
+                touched && error && !omniPickerIsOpen
+                  ? styles.inputInvalid
+                  : styles.input
+              }
               {...inputProps}
               placeholder={placeholderText}
               hidden={!!value}
               ref={registerInputNode}
               data-test={dataTest}
+              onBlur={() => setTouched(true)}
             />
             {error && appearance && appearance.direction === 'horizontal' && (
               <span className={styles.errorHorizontal}>{error}</span>
