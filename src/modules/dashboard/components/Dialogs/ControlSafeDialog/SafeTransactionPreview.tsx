@@ -16,6 +16,7 @@ import Avatar from '~core/Avatar';
 import MaskedAddress from '~core/MaskedAddress';
 import { AnyUser, Colony } from '~data/index';
 import { AbiItemExtended, getArrayFromString } from '~utils/safes';
+import { extractTokenName } from '~modules/dashboard/sagas/utils/safeHelpers';
 
 import AddressDetailsView from './TransactionPreview/AddressDetailsView';
 import { FormValues } from './ControlSafeDialog';
@@ -27,6 +28,7 @@ import {
 import DetailsItem from './DetailsItem';
 
 import styles from './SafeTransactionPreview.css';
+import { NFT } from './TransactionTypesSection/TransferNFTSection';
 
 const MSG = defineMessages({
   previewTitle: {
@@ -132,37 +134,20 @@ const transactionTypeFieldsMap = {
       value: () => <FormattedMessage {...ConstantsMSG.transferNft} />,
     },
     {
-      key: 'nft',
-      label: MSG.nftHeldByTheSafe,
-      value: (nft) => (
-        <div className={styles.nftContainer}>
-          <Avatar
-            avatarURL={undefined}
-            placeholderIcon="circle-close"
-            seed={nft.profile.walletAddress.toLocaleLowerCase()}
-            title=""
-            size="xs"
-            className={styles.avatar}
-          />
-          <div className={styles.itemValue}>{nft.profile.displayName}</div>
-        </div>
-      ),
-    },
-    {
       key: 'nftData',
-      label: MSG.targetContract,
-      value: (nftData) => (
+      label: MSG.nftHeldByTheSafe,
+      value: (nftData: NFT) => (
         <div className={styles.nftContainer}>
           <Avatar
-            avatarURL={undefined}
-            placeholderIcon="circle-close"
+            avatarURL={nftData.imageUri || undefined}
+            placeholderIcon="nft-icon"
             seed={nftData.address.toLocaleLowerCase()}
             title=""
             size="xs"
             className={styles.avatar}
           />
           <div className={styles.itemValue}>
-            {nftData.name || nftData.tokenName}
+            {extractTokenName(nftData.name || nftData.tokenName)}
           </div>
         </div>
       ),

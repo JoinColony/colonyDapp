@@ -10,6 +10,7 @@ import SingleUserPicker, {
 } from '~core/SingleUserPicker';
 import { useMembersSubscription } from '~data/index';
 import {
+  extractTokenName,
   getChainNameFromSafe,
   getTxServiceBaseUrl,
   SelectedNFT,
@@ -227,14 +228,16 @@ const TransferNFTSection = ({
                 <div className={styles.nftContractContent}>
                   <Avatar
                     avatarURL={selectedNFTData.imageUri || undefined}
-                    placeholderIcon="circle-close"
-                    seed={selectedNFTData.address.toLocaleLowerCase()}
-                    title=""
+                    notSet={!selectedNFTData.imageUri}
+                    placeholderIcon="nft-icon"
+                    title="NFT"
                     size="xs"
                     className={styles.nftContractAvatar}
                   />
                   <div className={styles.nftName}>
-                    {selectedNFTData.name || selectedNFTData.tokenName}
+                    {extractTokenName(
+                      selectedNFTData.name || selectedNFTData.tokenName,
+                    )}
                   </div>
                 </div>
               )}
