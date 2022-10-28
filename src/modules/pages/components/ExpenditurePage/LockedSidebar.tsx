@@ -64,6 +64,7 @@ const LockedSidebar = ({
             status={status}
             isCancelled={isCancelled}
             pendingMotion={pendingMotion}
+            activeStage={activeStage}
           />
         );
       }
@@ -121,10 +122,10 @@ const LockedSidebar = ({
     pendingChanges,
     pendingMotion,
     recipients,
+    split,
     staged,
     status,
     streaming,
-    split,
   ]);
 
   return (

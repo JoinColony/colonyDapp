@@ -20,7 +20,6 @@ import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 import { FormValues } from './CancelStreamingDialog';
 import FundingSourceItem from './FundingSourceItem';
 import styles from './CancelStreamingDialog.css';
-import FundingSourceItem from './FundingSourceItem';
 
 const MSG = defineMessages({
   header: {
