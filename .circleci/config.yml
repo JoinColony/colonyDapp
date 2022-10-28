@@ -1,62 +1,62 @@
-# version: 2.1
-# orbs:
-#   browser-tools: circleci/browser-tools@1.2.5
-# jobs:
-#   build:
-#     docker:
-#       - image: cimg/node:14.18.2-browsers
-#     resource_class: xlarge
-#     steps:
-#       - browser-tools/install-chrome
-#       - checkout
-#       - run: 
-#           command: wget https://github.com/ipfs/go-ipfs/releases/download/v0.4.23/go-ipfs_v0.4.23_linux-amd64.tar.gz
-#       - run:
-#           command: tar zxf go-ipfs_v0.4.23_linux-amd64.tar.gz
-#       - run: 
-#           command: cd go-ipfs && sudo ./install.sh
-#       - run:
-#           command: ipfs init && ipfs daemon
-#           background: true
-#       - run:
-#           command: sudo npm install -g npm@8.2.0
-#       - run:  
-#           command: sudo apt-get update && sudo apt-get install python postgresql-12 cargo clang libpq-dev libssl-dev pkg-config
-#       - run:
-#           command: yarn --pure-lockfile
-#       - run:
-#           command: yarn provision
-#       - run:
-#           command: cp .env.example .env
-#       - run: 
-#           command: sudo chown -R circleci:circleci /var/run/postgresql
-#       - run: 
-#           command: /usr/lib/postgresql/12/bin/initdb -D .postgres
-#       - run:
-#           command: /usr/lib/postgresql/12/bin/pg_ctl -D .postgres -l logfile start
-#       - run: 
-#           command: createdb graph-node
-#       - run: 
-#           command: cd src/lib/graph-node && cargo update -p lexical-core && cargo build
-#       - run:
-#           command: yarn ganache
-#           background: true
-#       - run:
-#           command: cd src/lib/graph-node && cargo run -p graph-node --release -- --postgres-url postgresql://circleci@localhost:5432/graph-node --ethereum-rpc mainnet:http://127.0.0.1:8545 --ipfs 127.0.0.1:5001
-#           background: true
-#       - run:
-#           command: sed -i s/300000/600000/g ./scripts/start_all.js 
-#       - run:
-#           command: yarn run dev:heavy --skip-graph-node --skip-ganache
-#           background: true
-#       - run:
-#           command: wget --retry-connrefused --waitretry=10 --read-timeout=20 --timeout=15 -t 100 http://localhost:9090/landing
-#       - run:
-#           command: |
-#             sed -i 's/"skipInitTests": true/"skipInitTests": false/g' ./cypress.json
-#       - run: 
-#           command: wget http://127.0.0.1:3001/reputation/monitor/toggle 
-#       - run:
-#           command: yarn cy:run
-#       - store_artifacts:
-#           path: cypress/videos
+version: 2.1
+orbs:
+  browser-tools: circleci/browser-tools@1.2.5
+jobs:
+  build:
+    docker:
+      - image: cimg/node:14.18.2-browsers
+    resource_class: xlarge
+    steps:
+      - browser-tools/install-chrome
+      - checkout
+      - run: 
+          command: wget https://github.com/ipfs/go-ipfs/releases/download/v0.4.23/go-ipfs_v0.4.23_linux-amd64.tar.gz
+      - run:
+          command: tar zxf go-ipfs_v0.4.23_linux-amd64.tar.gz
+      - run: 
+          command: cd go-ipfs && sudo ./install.sh
+      - run:
+          command: ipfs init && ipfs daemon
+          background: true
+      - run:
+          command: sudo npm install -g npm@8.2.0
+      - run:  
+          command: sudo apt-get update && sudo apt-get install python postgresql-12 cargo clang libpq-dev libssl-dev pkg-config
+      - run:
+          command: yarn --pure-lockfile
+      - run:
+          command: yarn provision
+      - run:
+          command: cp .env.example .env
+      - run: 
+          command: sudo chown -R circleci:circleci /var/run/postgresql
+      - run: 
+          command: /usr/lib/postgresql/12/bin/initdb -D .postgres
+      - run:
+          command: /usr/lib/postgresql/12/bin/pg_ctl -D .postgres -l logfile start
+      - run: 
+          command: createdb graph-node
+      - run: 
+          command: cd src/lib/graph-node && cargo update -p lexical-core && cargo build
+      - run:
+          command: yarn ganache
+          background: true
+      - run:
+          command: cd src/lib/graph-node && cargo run -p graph-node --release -- --postgres-url postgresql://circleci@localhost:5432/graph-node --ethereum-rpc mainnet:http://127.0.0.1:8545 --ipfs 127.0.0.1:5001
+          background: true
+      - run:
+          command: sed -i s/300000/600000/g ./scripts/start_all.js 
+      - run:
+          command: yarn run dev:heavy --skip-graph-node --skip-ganache
+          background: true
+      - run:
+          command: wget --retry-connrefused --waitretry=10 --read-timeout=20 --timeout=15 -t 100 http://localhost:9090/landing
+      - run:
+          command: |
+            sed -i 's/"skipInitTests": true/"skipInitTests": false/g' ./cypress.json
+      - run: 
+          command: wget http://127.0.0.1:3001/reputation/monitor/toggle 
+      - run:
+          command: yarn cy:run
+      - store_artifacts:
+          path: cypress/videos
