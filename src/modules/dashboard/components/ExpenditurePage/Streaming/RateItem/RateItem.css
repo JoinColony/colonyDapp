@@ -56,12 +56,20 @@
 }
 
 .tokenWrapper {
-  max-width: 104px;
+  max-width: 100px;
+}
+
+.tokenWrapper button {
+  padding: 10.5px 5px 10.5px 10px;
+}
+
+.tokenWrapper button figure {
+  margin-right: 10px;
 }
 
 .selectWrapper button {
   padding: 0;
-  min-width: 65px;
+  min-width: 62px;
   font-size: var(--size-smallish);
   color: var(--action-secondary);
 }
@@ -72,7 +80,7 @@
 }
 
 .slash {
-  margin: 0 7px;
+  margin: 0 6px;
   font-weight: var(--weight-bold);
   color: var(--dark);
 }
