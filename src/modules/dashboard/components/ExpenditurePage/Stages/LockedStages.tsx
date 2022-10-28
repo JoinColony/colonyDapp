@@ -65,7 +65,6 @@ const LockedStages = ({
     availableToClaim,
     paidToDate,
     claimFunds,
-    claimed,
   } = useClaimStreamingPayment();
 
   const handleButtonClick = useCallback(async () => {
@@ -111,7 +110,7 @@ const LockedStages = ({
           status={status}
           motion={motion}
           colony={colony}
-          activeStateId={activeStateId}
+          activeStageId={activeStageId}
           availableToClaim={availableToClaim}
           paidToDate={paidToDate}
           handleCancelExpenditure={handleCancelExpenditure} // Handler function is temporary. Different modal should be displayed here, but it's not ready yet.
