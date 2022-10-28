@@ -35,8 +35,8 @@ export interface SafeTransaction {
   nft: SelectedNFT | null;
   nftData: NFT | null;
   tokenData: SafeBalanceToken | null;
-  amount: number | null;
-  rawAmount: number | null;
+  amount: string | null;
+  rawAmount: string | null;
   data: string;
   contract: AnyUser | null;
   abi: string;
