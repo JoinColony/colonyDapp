@@ -219,17 +219,6 @@ const ExpenditurePage = ({ match }: Props) => {
       }
 
       if (values.expenditure === ExpenditureTypes.Streaming) {
-        lockValues();
-        setMotion({
-          type: MotionType.StartStream,
-          status: MotionStatus.Pending,
-        });
-        setFormValues(values);
-
-        return;
-      }
-
-      if (values.expenditure === ExpenditureTypes.Streaming) {
         setActiveStageId(Stage.Released);
         lockValues();
         setMotion({
@@ -245,55 +234,6 @@ const ExpenditurePage = ({ match }: Props) => {
             status: MotionStatus.Passed,
           });
           setStatus(Status.StartedStream);
-        }, 5000);
-
-        return;
-      }
-
-      if (values.expenditure === ExpenditureTypes.Split) {
-        const recipientsCount =
-          values.split.recipients?.filter(
-            (recipient) => recipient?.user?.id !== undefined,
-          ).length || 0;
-
-        const splitValues = {
-          ...values,
-          recipients: undefined,
-          split: {
-            ...values.split,
-            recipients: values.split.recipients?.map((recipient) => {
-              const amount = values.split.amount.value;
-              if (values.split.unequal) {
-                const userAmount =
-                  amount &&
-                  recipient?.percent &&
-                  (recipient.percent / 100) * Number(values.split.amount.value);
-                return { ...recipient, amount: userAmount };
-              }
-              return {
-                ...recipient,
-                amount: !amount ? 0 : Number(amount) / (recipientsCount || 1),
-              };
-            }),
-          },
-        };
-        setFormValues(splitValues);
-      }
-
-      if (values.expenditure === ExpenditureTypes.Streaming) {
-        lockValues();
-        setMotion({
-          type: MotionType.StartStream,
-          status: MotionStatus.Pending,
-        });
-        setFormValues(values);
-
-        // it's temporary timeout
-        setTimeout(() => {
-          setMotion({
-            type: MotionType.StartStream,
-            status: MotionStatus.Failed,
-          });
         }, 5000);
 
         return;
@@ -461,12 +401,6 @@ const ExpenditurePage = ({ match }: Props) => {
       buttonAction: () => {},
     },
   ];
-
-  const handleValidate = useCallback(() => {
-    if (!shouldValidate) {
-      setShouldValidate(true);
-    }
-  }, [shouldValidate]);
 
   const handleCancel = (isForce: boolean) => {
     if (isForce) {

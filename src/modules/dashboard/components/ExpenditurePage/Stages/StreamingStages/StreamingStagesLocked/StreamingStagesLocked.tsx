@@ -91,7 +91,7 @@ export interface Props {
   status?: Status;
   motion?: Motion;
   colony?: Colony;
-  activeStateId?: string;
+  activeStageId?: string;
   paidToDate?: FundingSource['rate'][];
   availableToClaim?: FundingSource['rate'][];
   handleCancelExpenditure?: () => void;
@@ -103,7 +103,7 @@ const StreamingStagesLocked = ({
   status,
   motion,
   colony,
-  activeStateId,
+  activeStageId,
   paidToDate,
   availableToClaim,
   handleCancelExpenditure,
@@ -317,7 +317,7 @@ const StreamingStagesLocked = ({
           )}
         </div>
       </div>
-      {activeStateId === Stage.Released &&
+      {activeStageId === Stage.Released &&
         availableToClaim &&
         (status === Status.StartedStream || isCancelled) && (
           <FormSection appearance={{ border: 'top' }}>
