@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import classnames from 'classnames';
 import { nanoid } from 'nanoid';
+import { FormikProps } from 'formik';
 
 import { DialogSection } from '~core/Dialog';
 import { Annotations, Input, Toggle } from '~core/Fields';
@@ -14,12 +15,14 @@ import Button from '~core/Button';
 import Icon from '~core/Icon';
 import Avatar from '~core/Avatar';
 import MaskedAddress from '~core/MaskedAddress';
-import { AnyUser, Colony } from '~data/index';
-import { AbiItemExtended, getArrayFromString } from '~utils/safes';
+import { AnyUser } from '~data/index';
+import { getArrayFromString } from '~utils/safes';
 import { extractTokenName } from '~modules/dashboard/sagas/utils/safeHelpers';
 
 import AddressDetailsView from './TransactionPreview/AddressDetailsView';
 import { FormValues } from './ControlSafeDialog';
+import { NFT } from './TransactionTypesSection/TransferNFTSection';
+import { FormProps, TransactionSectionProps } from './ControlSafeForm';
 import {
   TransactionTypes,
   transactionOptions,
@@ -28,7 +31,6 @@ import {
 import DetailsItem from './DetailsItem';
 
 import styles from './SafeTransactionPreview.css';
-import { NFT } from './TransactionTypesSection/TransferNFTSection';
 
 const MSG = defineMessages({
   previewTitle: {
@@ -205,18 +207,14 @@ const transactionTypeFieldsMap = {
 
 const displayName = 'dashboard.ControlSafeDialog.SafeTransactionPreview';
 
-interface Props {
-  colony: Colony;
-  values: FormValues;
-  isVotingExtensionEnabled: boolean;
+interface Props
+  extends Pick<
+      FormProps,
+      'colony' | 'isVotingExtensionEnabled' | 'selectedContractMethods'
+    >,
+    Pick<TransactionSectionProps, 'handleValidation'> {
   userHasPermission: boolean;
-  isSubmitting: boolean;
   onlyForceAction: boolean;
-  selectedContractMethods?:
-    | {
-        [key: number]: AbiItemExtended | undefined;
-      }
-    | undefined;
 }
 
 const SafeTransactionPreview = ({
@@ -227,7 +225,8 @@ const SafeTransactionPreview = ({
   userHasPermission,
   isSubmitting,
   onlyForceAction,
-}: Props) => {
+  handleValidation,
+}: Props & Pick<FormikProps<FormValues>, 'isSubmitting' | 'values'>) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState(
     Array(values.transactions.length).fill(false),
   );
@@ -454,6 +453,7 @@ const SafeTransactionPreview = ({
             label={MSG.transactionsTitle}
             name="transactionsTitle"
             disabled={onlyForceAction}
+            onChange={handleValidation}
           />
         </DialogSection>
         <DialogSection>

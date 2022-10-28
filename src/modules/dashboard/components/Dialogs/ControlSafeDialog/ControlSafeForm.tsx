@@ -533,6 +533,7 @@ const ControlSafeForm = ({
           isVotingExtensionEnabled={isVotingExtensionEnabled}
           userHasPermission={userHasPermission}
           onlyForceAction={onlyForceAction}
+          handleValidation={handleValidation}
         />
       )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
