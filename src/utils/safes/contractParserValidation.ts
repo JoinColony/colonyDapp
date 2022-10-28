@@ -102,10 +102,10 @@ const isValueArray = (value: string) => {
   return value[0] === '[' && value[value.length - 1] === ']';
 };
 
-const getBytesArrayLength = (input: string) => {
-  let bytes = input.substring(5);
+const getBytesStringLength = (inputType: string) => {
+  let bytes = inputType.substring(5);
   /* "Prior to version 0.8.0, byte used to be an alias for bytes1." https://docs.soliditylang.org/en/v0.8.12/types.html */
-  if (bytes === '') {
+  if (inputType === 'byte') {
     bytes = '1';
   }
 
@@ -115,11 +115,21 @@ const getBytesArrayLength = (input: string) => {
   return prefix + length;
 };
 
-const isByteArrayValid = (value: string, inputType: string) => {
+const isByteStringValid = (value: string, inputType: string) => {
   if (!isHexString(value)) {
     return false;
   }
-  return value.length === getBytesArrayLength(inputType);
+
+  const isFixedLength = inputType !== 'bytes';
+
+  if (isFixedLength) {
+    return value.length === getBytesStringLength(inputType);
+  }
+
+  /*
+   * A dynamically sized byte array can be of arbitrary length. But it must have an even number of characters.
+   */
+  return value.length % 2 === 0;
 };
 
 const isValidBoolean = (value: string) => {
@@ -143,7 +153,7 @@ const typeFunctionMap: {
   uint: isUintSafe,
   int: isIntSafe,
   address: isAddressValid,
-  byte: isByteArrayValid,
+  byte: isByteStringValid,
   bool: isValidBoolean,
   string: isValidString,
 };
