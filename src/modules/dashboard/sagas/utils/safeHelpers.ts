@@ -192,9 +192,13 @@ export const getRawTransactionData = (
     throw new Error('Transaction does not contain a recipient.');
   }
 
+  if (transaction.rawAmount === null) {
+    throw new Error('Transaction does not contain an amount');
+  }
+
   return zodiacBridgeModule.interface.functions.executeTransaction.encode([
     transaction.recipient.profile.walletAddress,
-    Number(transaction.rawAmount),
+    transaction.rawAmount,
     transaction.data,
     0,
   ]);
@@ -277,9 +281,9 @@ export const getTransferFundsData = async (
   const isSafeNativeToken = tokenAddress === AddressZero;
   const tokenDecimals = transaction.tokenData.decimals;
   const { recipient } = transaction;
-  const getAmount = (): number => {
+  const getAmount = (): number | string => {
     if (isSafeNativeToken) {
-      return moveDecimal(transaction.amount, tokenDecimals);
+      return moveDecimal(transaction.amount, tokenDecimals); // moveDecimal returns a string
     }
     return 0;
   };
