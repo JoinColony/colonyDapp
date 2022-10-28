@@ -20,6 +20,8 @@ import {
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 import { WizardDialogType } from '~utils/hooks';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
+import { getVerifiedUsers } from '~utils/verifiedRecipients';
 
 import DialogForm, { calculateFee } from './CreatePaymentDialogForm';
 
@@ -55,7 +57,6 @@ const displayName = 'dashboard.CreatePaymentDialog';
 const CreatePaymentDialog = ({
   colony: { tokens = [], colonyAddress, nativeTokenAddress, colonyName },
   colony,
-  isVotingExtensionEnabled,
   callStep,
   prevStep,
   cancel,
@@ -64,6 +65,10 @@ const CreatePaymentDialog = ({
 }: Props) => {
   const [isForce, setIsForce] = useState(false);
   const history = useHistory();
+
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
 
   const getFormAction = useCallback(
     (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
@@ -114,17 +119,11 @@ const CreatePaymentDialog = ({
   const isWhitelistActivated =
     colonyData?.processedColony?.isWhitelistActivated;
 
-  const filteredVerifiedRecipients = useMemo(() => {
-    return isWhitelistActivated &&
-      colonyData?.processedColony?.whitelistedAddresses &&
-      colonyData.processedColony.whitelistedAddresses.length > 0
-      ? (colonyMembers?.subscribedUsers || []).filter((member) =>
-          colonyData?.processedColony?.whitelistedAddresses.some(
-            (el) => el.toLowerCase() === member.id.toLowerCase(),
-          ),
-        )
-      : colonyMembers?.subscribedUsers || [];
-  }, [colonyMembers, colonyData, isWhitelistActivated]);
+  const subscribedUsers = colonyMembers?.subscribedUsers || [];
+
+  const verifiedUsers = useMemo(() => {
+    return getVerifiedUsers(colony.whitelistedAddresses, subscribedUsers) || [];
+  }, [subscribedUsers, colony]);
 
   const showWarningForAddress = (walletAddress) => {
     if (!walletAddress) return false;
@@ -213,9 +212,10 @@ const CreatePaymentDialog = ({
             <DialogForm
               {...formValues}
               colony={colony}
-              isVotingExtensionEnabled={isVotingExtensionEnabled}
               back={() => callStep(prevStep)}
-              subscribedUsers={filteredVerifiedRecipients}
+              verifiedUsers={
+                isWhitelistActivated ? verifiedUsers : subscribedUsers
+              }
               ethDomainId={ethDomainId}
               showWhitelistWarning={showWarningForAddress(
                 formValues.values?.recipient?.profile?.walletAddress,

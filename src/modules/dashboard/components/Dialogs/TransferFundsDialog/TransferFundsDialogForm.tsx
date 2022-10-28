@@ -3,7 +3,11 @@ import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
-import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import {
+  ColonyRole,
+  ROOT_DOMAIN_ID,
+  VotingReputationExtensionVersion,
+} from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 
 import { useTransformer } from '~utils/hooks';
@@ -26,7 +30,7 @@ import {
 import { ActionDialogProps } from '~core/Dialog';
 import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
-import Toggle from '~core/Fields/Toggle';
+import ForceToggle from '~core/Fields/ForceToggle';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import {
   getBalanceFromToken,
@@ -40,6 +44,7 @@ import styles from './TransferFundsDialogForm.css';
 import { FormValues } from './TransferFundsDialog';
 import Icon from '~core/Icon';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 const MSG = defineMessages({
   title: {
@@ -94,6 +99,10 @@ const MSG = defineMessages({
       'dashboard.TransferFundsDialog.TransferFundsDialogForm.transferIconTitle',
     defaultMessage: 'Transfer',
   },
+  cannotCreateMotion: {
+    id: `dashboard.TransferFundsDialog.TransferFundsDialogForm.cannotCreateMotion`,
+    defaultMessage: `Cannot create motions using the Governance v{version} Extension. Please upgrade to a newer version (when available)`,
+  },
 });
 
 interface Props {
@@ -112,9 +121,15 @@ const TransferFundsDialogForm = ({
   values,
   validateForm,
   errors,
-  isVotingExtensionEnabled,
 }: ActionDialogProps & FormikProps<FormValues> & Props) => {
   const { tokenAddress, amount } = values;
+
+  const {
+    isVotingExtensionEnabled,
+    votingExtensionVersion,
+  } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
 
   const fromDomainId = values.fromDomain
     ? parseInt(values.fromDomain, 10)
@@ -247,6 +262,11 @@ const TransferFundsDialogForm = ({
     toDomainId,
   ]);
 
+  const cannotCreateMotion =
+    votingExtensionVersion ===
+      VotingReputationExtensionVersion.FuchsiaLightweightSpaceship &&
+    !values.forceAction;
+
   return (
     <>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
@@ -268,11 +288,7 @@ const TransferFundsDialogForm = ({
               text={MSG.title}
             />
             {canTransferFunds && isVotingExtensionEnabled && (
-              <Toggle
-                label={{ id: 'label.force' }}
-                name="forceAction"
-                disabled={isSubmitting}
-              />
+              <ForceToggle disabled={isSubmitting} />
             )}
           </div>
         </div>
@@ -444,6 +460,19 @@ const TransferFundsDialogForm = ({
       {onlyForceAction && (
         <NotEnoughReputation appearance={{ marginTop: 'negative' }} />
       )}
+      {cannotCreateMotion && (
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <div className={styles.cannotCreateMotion}>
+            <FormattedMessage
+              {...MSG.cannotCreateMotion}
+              values={{
+                version:
+                  VotingReputationExtensionVersion.FuchsiaLightweightSpaceship,
+              }}
+            />
+          </div>
+        </DialogSection>
+      )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         {back && (
           <Button
@@ -461,7 +490,7 @@ const TransferFundsDialogForm = ({
               : { id: 'button.createMotion' }
           }
           loading={isSubmitting}
-          disabled={!isValid || inputDisabled}
+          disabled={cannotCreateMotion || !isValid || inputDisabled}
           style={{ minWidth: styles.wideButton }}
           data-test="transferFundsConfirmButton"
         />

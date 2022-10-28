@@ -1,7 +1,10 @@
 import React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { FormikProps } from 'formik';
-import { ColonyRole } from '@colony/colony-js';
+import {
+  ColonyRole,
+  VotingReputationExtensionVersion,
+} from '@colony/colony-js';
 
 import Button from '~core/Button';
 import { ActionDialogProps } from '~core/Dialog';
@@ -11,7 +14,7 @@ import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import { MiniSpinnerLoader } from '~core/Preloaders';
-import Toggle from '~core/Fields/Toggle';
+import ForceToggle from '~core/Fields/ForceToggle';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
@@ -22,6 +25,7 @@ import {
 } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot } from '~modules/users/checks';
 import { colonyCanBeUpgraded } from '~modules/dashboard/checks';
@@ -76,6 +80,10 @@ safely upgrade the colony to the next version.
     id: `dashboard.NetworkContractUpgradeDialog.NetworkContractUpgradeDialogForm.loadingData`,
     defaultMessage: "Loading the Colony's Recovery Roles",
   },
+  cannotCreateMotion: {
+    id: `dashboard.NetworkContractUpgradeDialog.NetworkContractUpgradeDialogForm.cannotCreateMotion`,
+    defaultMessage: `Cannot create motions using the Governance v{version} Extension. Please upgrade to a newer version (when available)`,
+  },
 });
 
 const NetworkContractUpgradeDialogForm = ({
@@ -84,7 +92,6 @@ const NetworkContractUpgradeDialogForm = ({
   colony: { colonyAddress, version },
   handleSubmit,
   isSubmitting,
-  isVotingExtensionEnabled,
   values,
 }: ActionDialogProps & FormikProps<FormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
@@ -110,6 +117,13 @@ const NetworkContractUpgradeDialogForm = ({
 
   const hasRootPermission = hasRegisteredProfile && hasRoot(allUserRoles);
 
+  const {
+    votingExtensionVersion,
+    isVotingExtensionEnabled,
+  } = useEnabledExtensions({
+    colonyAddress,
+  });
+
   const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
     colony.colonyAddress,
     hasRootPermission,
@@ -130,6 +144,11 @@ const NetworkContractUpgradeDialogForm = ({
     data?.legacyNumberOfRecoveryRoles
       ? data?.legacyNumberOfRecoveryRoles > 1
       : false;
+
+  const cannotCreateMotion =
+    votingExtensionVersion ===
+      VotingReputationExtensionVersion.FuchsiaLightweightSpaceship &&
+    !values.forceAction;
 
   return (
     <>
@@ -152,11 +171,7 @@ const NetworkContractUpgradeDialogForm = ({
               text={MSG.title}
             />
             {canUpgradeVersion && isVotingExtensionEnabled && (
-              <Toggle
-                label={{ id: 'label.force' }}
-                name="forceAction"
-                disabled={isSubmitting}
-              />
+              <ForceToggle disabled={isSubmitting} />
             )}
           </div>
         </div>
@@ -256,6 +271,19 @@ const NetworkContractUpgradeDialogForm = ({
         </DialogSection>
       )}
       {onlyForceAction && <NotEnoughReputation />}
+      {cannotCreateMotion && (
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <div className={styles.noPermissionMessage}>
+            <FormattedMessage
+              {...MSG.cannotCreateMotion}
+              values={{
+                version:
+                  VotingReputationExtensionVersion.FuchsiaLightweightSpaceship,
+              }}
+            />
+          </div>
+        </DialogSection>
+      )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         {back && (
           <Button
@@ -272,6 +300,7 @@ const NetworkContractUpgradeDialogForm = ({
               : { id: 'button.createMotion' }
           }
           disabled={
+            cannotCreateMotion ||
             inputDisabled ||
             PREVENT_UPGRADE_IF_LEGACY_RECOVERY_ROLES ||
             isSubmitting

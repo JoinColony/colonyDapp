@@ -1,9 +1,11 @@
 import React from 'react';
+import { useMediaQuery } from 'react-responsive';
 
 import NavLink from '~core/NavLink';
 
 import { CrumbText } from './BreadCrumb';
 
+import { query700 as query } from '~styles/queries.css';
 import styles from './BreadCrumb.css';
 
 interface Props {
@@ -14,6 +16,9 @@ interface Props {
 
 const SingleCrumb = ({ crumbText, crumbLink, lastCrumb }: Props) => {
   const crumbTitle = typeof crumbText === 'string' ? crumbText : '';
+  const isMobile = useMediaQuery({ query });
+  const Chevron = () => <span className={styles.arrow}>&gt;</span>;
+
   if (lastCrumb) {
     return (
       <div className={styles.elementLast} title={crumbTitle}>
@@ -39,8 +44,9 @@ const SingleCrumb = ({ crumbText, crumbLink, lastCrumb }: Props) => {
         ) : (
           crumbText
         )}
+        {isMobile && <Chevron />}
       </span>
-      <span className={styles.arrow}>&gt;</span>
+      {!isMobile && <Chevron />}
     </div>
   );
 };

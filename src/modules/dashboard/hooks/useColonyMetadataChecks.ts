@@ -10,9 +10,10 @@ import {
 import { ipfsDataFetcher } from '~modules/core/fetchers';
 import { ColonyAndExtensionsEvents, ColonyActions } from '~types/colonyActions';
 import {
-  getSpecificActionValuesCheck,
+  getColonyValuesCheck,
   sortMetadataHistory,
   parseColonyMetadata,
+  ColonyMetadata,
 } from '~utils/colonyActions';
 import { useDataFetcher } from '~utils/hooks';
 
@@ -24,7 +25,7 @@ const useColonyMetadataChecks = (
   eventName: string,
   colony: Colony,
   transactionHash: string,
-  actionData: Partial<ColonyAction>,
+  actionData: ColonyMetadata | Partial<ColonyAction>,
 ) => {
   let metadataJSON: string | null = null;
   const [metadataIpfsHash, setMetadataIpfsHash] = useState<string>('');
@@ -92,7 +93,7 @@ const useColonyMetadataChecks = (
              *
              * This should be the default case for a colony with metadata history
              */
-            const newMetadataChecks = getSpecificActionValuesCheck(
+            const newMetadataChecks = getColonyValuesCheck(
               ColonyAndExtensionsEvents.ColonyMetadata,
               actionData,
               prevColonyMetadata,

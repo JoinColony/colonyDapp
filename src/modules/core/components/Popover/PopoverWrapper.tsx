@@ -61,6 +61,7 @@ const PopoverWrapper = ({
     }
     return formatMessage(content as MessageDescriptor, contentValues);
   }, [close, content, contentValues, formatMessage]);
+
   return (
     <div
       className={`

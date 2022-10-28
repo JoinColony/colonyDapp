@@ -1,6 +1,10 @@
 import React, { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
+import {
+  getAnnotationMsgFromResponse,
+  getEventMetadataVersion,
+} from '@colony/colony-event-metadata-parser';
 
 import Comment, { Props as CommentProps } from '~core/Comment';
 import CalloutCard from '~core/CalloutCard';
@@ -47,9 +51,24 @@ const ActionsPageFeedItemWithIPFS = ({
     if (!annotation || !ipfsDataJSON) {
       return undefined;
     }
-    const annotationObject = JSON.parse(ipfsDataJSON);
-    if (annotationObject && annotationObject.annotationMessage) {
-      return annotationObject.annotationMessage;
+    try {
+      const metadataVersion = getEventMetadataVersion(ipfsDataJSON);
+      if (metadataVersion === 1) {
+        /*
+         * original metadata format
+         */
+        const annotationObject = JSON.parse(ipfsDataJSON);
+        if (annotationObject?.annotationMessage) {
+          return annotationObject.annotationMessage;
+        }
+      } else {
+        /*
+         * new metadata format
+         */
+        return getAnnotationMsgFromResponse(ipfsDataJSON);
+      }
+    } catch (error) {
+      // silently fail
     }
     return undefined;
   }, [annotation, ipfsDataJSON]);

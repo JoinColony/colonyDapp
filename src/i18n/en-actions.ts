@@ -26,6 +26,7 @@ const actionsMessageDescriptors = {
       ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite {recipient} with a {reputationChangeNumeral} {reputationChange, plural, one {pt} other {pts}} reputation penalty}
       ${ColonyActions.EmitDomainReputationReward} {Award {recipient} with a {reputationChangeNumeral} {reputationChange, plural, one {pt} other {pts}} reputation reward}
       ${ColonyMotions.EmitDomainReputationRewardMotion} {Award {recipient} with a {reputationChangeNumeral} {reputationChange, plural, one {pt} other {pts}} reputation reward}
+      ${ColonyMotions.CreateDecisionMotion} {Create Decision}
       other {Generic action we don't have information about}
     }`,
   [`action.${ColonyActions.SetUserRoles}.assign`]: `Assign the {roles} in {fromDomain} to {recipient}`,
@@ -35,6 +36,7 @@ const actionsMessageDescriptors = {
   [`action.${ColonyActions.SetUserRoles}.assignAndRemove`]: `{roles} in {fromDomain} to/from {recipient}`,
   [`action.${ColonyMotions.SetUserRolesMotion}.assignAndRemove`]: `{roles} in {fromDomain} to/from {recipient}`,
   [`action.${ColonyActions.ColonyEdit}.verifiedAddresses`]: `Address book was updated`,
+  [`action.${ColonyActions.ColonyEdit}.tokens`]: `Colony tokens were updated`,
   'action.type': `{actionType, select,
       ${ColonyActions.WrongColony} {Not part of the Colony}
       ${ColonyActions.Payment} {Payment}

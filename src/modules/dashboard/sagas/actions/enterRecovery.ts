@@ -25,7 +25,7 @@ import {
 } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 
-import { uploadIfpsAnnotation } from '../utils';
+import { ipfsUploadAnnotation } from '../utils';
 import {
   transactionReady,
   transactionPending,
@@ -106,7 +106,7 @@ function* enterRecoveryAction({
     if (annotationMessage) {
       yield put(transactionPending(annotateRecoveryAction.id));
 
-      const ipfsHash = yield call(uploadIfpsAnnotation, annotationMessage);
+      const ipfsHash = yield call(ipfsUploadAnnotation, annotationMessage);
 
       yield put(
         transactionAddParams(annotateRecoveryAction.id, [txHash, ipfsHash]),

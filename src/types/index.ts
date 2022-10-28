@@ -10,7 +10,6 @@ export * from './RecordToJS';
 export * from './context';
 export * from './colonyActions';
 export * from './colonyMotions';
-export * from './extensions';
 export * from './user';
 
 export type WithKey = {
@@ -140,4 +139,11 @@ export enum MetamaskRpcErrors {
    * is dynamic and we can't account for the various chain id's
    */
   TypedDataSignDifferentChain = 'must match the active chainId',
+}
+
+export interface DecisionDetails {
+  title: string;
+  description: string;
+  motionDomainId: number;
+  userAddress: string;
 }

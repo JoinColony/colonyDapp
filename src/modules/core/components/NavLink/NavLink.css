@@ -1,3 +1,11 @@
+@value query700 from '~styles/queries.css';
+
 .active {
   color: var(--sky-blue);
+}
+
+@media screen and query700 {
+  .active {
+    color: var(--primary);
+  }
 }

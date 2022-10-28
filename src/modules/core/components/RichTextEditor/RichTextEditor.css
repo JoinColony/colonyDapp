@@ -1,0 +1,122 @@
+.main {
+  position: relative;
+}
+
+.editorContainer {
+  padding: 8px 4px 20px 15px;
+  border-radius: var(--radius-tiny);
+  border: 1px solid rgb(200, 214, 245);
+  box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.07);
+  transition: border-color 0.1s ease-in;
+}
+
+.editorContainer:focus-within {
+  border-color: var(--primary);
+}
+
+/* Editor */
+.main div[class*='ProseMirror'] {
+  padding-right: 2px;
+  height: 233px;
+  overflow-y: auto;
+  font-family: sans-serif;
+  color: color-mod(var(--dark) alpha(65%));
+}
+
+.main div[class*='focused'] {
+  border: none;
+  outline: none;
+}
+
+.characterCount {
+  position: absolute;
+  top: 285px;
+  right: 20px;
+  font-size: var(--size-tiny);
+  line-height: 18px;
+  color: color-mod(var(--temp-grey-blue-7) alpha(65%));
+  letter-spacing: 0.5px;
+}
+
+.disabled > .editorContainer {
+  background-color: var(--temp-grey-0);
+  cursor: not-allowed;
+}
+
+.disabled > div:first-child {
+  pointer-events: none;
+}
+
+.editorContainer.error {
+  border-color: var(--danger);
+}
+
+/* Scrollbar on text editor */
+.main div[class*='ProseMirror']::-webkit-scrollbar {
+  width: 7px;
+  border-radius: 10px;
+}
+
+.main pre > code::-webkit-scrollbar {
+  height: 7px;
+  border-radius: 10px;
+}
+
+.main div[class*='ProseMirror']::-webkit-scrollbar-track,
+.main pre > code::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background-color: rgb(239, 239, 239);
+}
+
+.main div[class*='ProseMirror']::-webkit-scrollbar-thumb,
+.main pre > code::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: rgb(217, 217, 217);
+}
+
+/* Placeholder */
+.main p[class*='is-editor-empty']:first-child::before {
+  height: 0;
+  float: left;
+  font-family: var(--family-primary);
+  line-height: 18px;
+  color: var(--grey-5);
+  pointer-events: none;
+  letter-spacing: 0.25px;
+  content: attr(data-placeholder);
+}
+
+.main code {
+  color: inherit;
+}
+
+.main h3 {
+  font-size: var(--size-medium);
+}
+
+.main strong {
+  color: color-mod(var(--dark) alpha(70%));
+}
+
+.main ul {
+  padding-left: 1rem;
+  list-style: disc;
+}
+
+.main a {
+  text-decoration: underline;
+}
+
+.main pre {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background-color: color-mod(var(--temp-grey-0) alpha(50%));
+  color: black;
+}
+
+.main pre code {
+  padding: 4px 0;
+  background: none;
+  font-size: 0.8rem;
+  color: inherit;
+}

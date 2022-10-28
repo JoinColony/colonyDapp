@@ -1,4 +1,5 @@
 @value wideButton: 160px;
+@value query700 from '~styles/queries.css';
 
 .tokenAmount {
   display: flex;
@@ -95,4 +96,34 @@
 
 .motionVoteDomain {
   margin: 6px 0;
+}
+
+.cannotCreateMotion {
+  composes: permissionsError;
+  margin: 0 0 30px;
+}
+
+@media screen and query700 {
+  .domainPotBalance {
+    margin-top: 0px;
+    padding-left: 1px;
+  }
+
+  .tokenAmountContainer {
+    margin-top: 0px;
+    padding-top: 10px;
+  }
+
+  .tokenAmount {
+    display: flex;
+    min-height: 91px;
+  }
+
+  .domainSelects {
+    min-height: 105px;
+  }
+
+  .transferIcon {
+    transform: translateY(-8px);
+  }
 }

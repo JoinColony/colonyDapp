@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   display: flex;
   align-items: center;
@@ -15,4 +17,10 @@
 .desc {
   font-size: var(--size-normal);
   color: var(--temp-grey-blue-7);
+}
+
+@media screen and query700 {
+  .main {
+    align-items: flex-start;
+  }
 }

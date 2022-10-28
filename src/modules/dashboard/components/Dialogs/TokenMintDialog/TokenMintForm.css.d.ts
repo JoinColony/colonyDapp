@@ -1,4 +1,5 @@
 export const wideButton: string;
+export const query700: string;
 export const modalHeading: string;
 export const headingContainer: string;
 export const inputContainer: string;

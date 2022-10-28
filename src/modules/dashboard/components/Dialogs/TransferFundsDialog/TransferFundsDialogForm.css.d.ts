@@ -1,4 +1,5 @@
 export const wideButton: string;
+export const query700: string;
 export const tokenAmount: string;
 export const amountContainer: string;
 export const tokenAmountSelect: string;
@@ -13,3 +14,4 @@ export const permissionsError: string;
 export const modalHeading: string;
 export const headingContainer: string;
 export const motionVoteDomain: string;
+export const cannotCreateMotion: string;

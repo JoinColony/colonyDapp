@@ -11,7 +11,7 @@ import {
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 
-import { uploadIfpsAnnotation } from '../utils';
+import { ipfsUploadAnnotation } from '../utils';
 import {
   createTransaction,
   createTransactionChannels,
@@ -98,7 +98,7 @@ function* createVersionUpgradeAction({
     if (annotationMessage && supportAnnotation) {
       yield put(transactionPending(annotateUpgrade.id));
 
-      const ipfsHash = yield call(uploadIfpsAnnotation, annotationMessage);
+      const ipfsHash = yield call(ipfsUploadAnnotation, annotationMessage);
 
       yield put(transactionAddParams(annotateUpgrade.id, [txHash, ipfsHash]));
 

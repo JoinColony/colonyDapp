@@ -1,13 +1,12 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { bigNumberify } from 'ethers/utils';
 
 import { TokenActivationPopover } from '~users/TokenActivation';
 import { Tooltip } from '~core/Popover';
-import { getFormattedTokenValue } from '~utils/tokens';
-import Numeral from '~core/Numeral';
-import { FullColonyFragment, UserLock, UserToken } from '~data/index';
+import { FullColonyFragment } from '~data/index';
 import { Address } from '~types/index';
+import UserTokenActivationDisplay from './UserTokenActivationDisplay';
+import { UserTokenBalanceData } from '~types/tokens';
 
 import styles from './UserTokenActivationButton.css';
 
@@ -21,33 +20,26 @@ const MSG = defineMessages({
   },
 });
 interface Props {
-  userLock: UserLock;
-  nativeToken: UserToken;
   colony?: FullColonyFragment;
   walletAddress: Address;
   dataTest: string;
+  tokenBalanceData: UserTokenBalanceData;
 }
 
 const UserTokenActivationButton = ({
-  nativeToken,
-  userLock,
   colony,
   walletAddress,
   dataTest,
+  tokenBalanceData,
 }: Props) => {
-  const inactiveBalance = bigNumberify(nativeToken?.balance || 0);
-
-  const lockedBalance = bigNumberify(userLock?.totalObligation || 0);
-  const activeBalance = bigNumberify(userLock?.activeTokens || 0);
-  const totalBalance = inactiveBalance.add(activeBalance).add(lockedBalance);
-  const isPendingBalanceZero = bigNumberify(
-    userLock?.pendingBalance || 0,
-  ).isZero();
-
-  const formattedTotalBalance = getFormattedTokenValue(
+  const {
+    nativeToken,
+    activeBalance,
+    inactiveBalance,
     totalBalance,
-    nativeToken.decimals,
-  );
+    lockedBalance,
+    isPendingBalanceZero,
+  } = tokenBalanceData; // State shared with AvatarDropdownPopoverMobile
 
   return (
     <TokenActivationPopover
@@ -88,18 +80,9 @@ const UserTokenActivationButton = ({
                 ],
               }}
             >
-              <div>
-                <span
-                  className={`${styles.dot} ${
-                    (inactiveBalance.gt(0) || totalBalance.isZero()) &&
-                    styles.dotInactive
-                  }`}
-                />
-                <Numeral
-                  value={formattedTotalBalance}
-                  suffix={nativeToken?.symbol}
-                />
-              </div>
+              <UserTokenActivationDisplay
+                {...{ nativeToken, inactiveBalance, totalBalance }}
+              />
             </Tooltip>
           </button>
         </>

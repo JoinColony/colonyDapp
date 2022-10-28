@@ -6,7 +6,7 @@ import { ContextModule, TEMP_getContext } from '~context/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 
-import { uploadIfpsAnnotation } from '../utils';
+import { ipfsUploadAnnotation } from '../utils';
 import {
   createTransaction,
   createTransactionChannels,
@@ -135,7 +135,7 @@ function* createRootMotionSaga({
     if (annotationMessage) {
       yield put(transactionPending(annotateRootMotion.id));
 
-      const ipfsHash = yield call(uploadIfpsAnnotation, annotationMessage);
+      const ipfsHash = yield call(ipfsUploadAnnotation, annotationMessage);
 
       yield put(
         transactionAddParams(annotateRootMotion.id, [txHash, ipfsHash]),

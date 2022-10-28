@@ -2,17 +2,6 @@
   margin-bottom: 10px;
 }
 
-.main h4 {
-  font-size: var(--size-smallish);
-  color: var(--dark);
-  letter-spacing: var(--spacing-medium);
-}
-
-.main a:hover, .main a:active {
-  text-decoration: underline;
-  color: var(--colony-blue);
-}
-
 .tokenBalance {
   display: inline-block;
   font-size: var(--size-normal);

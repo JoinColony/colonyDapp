@@ -1,4 +1,10 @@
-import React, { KeyboardEvent, SyntheticEvent, useCallback } from 'react';
+import React, {
+  KeyboardEvent,
+  SyntheticEvent,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 
 import { getMainClasses } from '~utils/css';
@@ -39,6 +45,23 @@ const SelectOption = ({
   selected,
   dataTest,
 }: Props) => {
+  const ref = useRef<HTMLLIElement>(null);
+
+  /** Scroll to the currently checked item */
+  useEffect(() => {
+    if (!ref.current?.parentElement || !checked) {
+      return;
+    }
+    ref.current.parentElement.scrollTop = ref.current.offsetTop;
+  }, [checked]);
+
+  useEffect(() => {
+    if (!ref.current || !selected) {
+      return;
+    }
+    ref.current.focus();
+  }, [selected]);
+
   const { formatMessage } = useIntl();
 
   const handleItemClick = useCallback(
@@ -76,25 +99,24 @@ const SelectOption = ({
       aria-selected={selected}
       id={id}
       role="option"
-      ref={(e) => selected && e && e.focus()}
+      ref={ref}
       onClick={handleItemClick}
       onKeyPress={handleItemKeyPress}
       onMouseEnter={handleItemSelect}
       data-checked={checked}
       data-test={dataTest}
+      title={label}
     >
-      <span title={label} className={styles.value}>
-        {option.children || (
-          <>
-            {label}
-            {checked && (
-              <small className={styles.selectedHelpText}>
-                ({formatMessage(MSG.selectedLabelHelp)})
-              </small>
-            )}
-          </>
-        )}
-      </span>
+      {option.children || (
+        <div className={styles.labelContainer}>
+          <span className={styles.label}>{label}</span>
+          {checked && (
+            <small className={styles.selectedHelpText}>
+              ({formatMessage(MSG.selectedLabelHelp)})
+            </small>
+          )}
+        </div>
+      )}
     </li>
   );
 };

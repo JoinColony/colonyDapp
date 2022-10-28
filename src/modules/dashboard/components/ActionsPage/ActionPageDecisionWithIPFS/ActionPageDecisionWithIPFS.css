@@ -1,0 +1,107 @@
+.link {
+  font-weight: var(--weight-bold);
+  color: var(--sky-blue);
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.noIPFSLabel {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
+
+.main {
+  padding: 90px 0;
+  height: 100%;
+  width: 100%;
+  background-color: white;
+}
+
+.contentContainer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.objectionContentContainer {
+  composes: contentContainer;
+  padding: 0 16px 7px 18px;
+  border-radius: var(--radius-large);
+  background-color: color-mod(var(--pink) alpha(6%));
+}
+
+.tagWrapper {
+  margin-bottom: 13px;
+}
+
+.leftContent {
+  flex-grow: 1;
+  margin-top: 17px;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+}
+
+.divider {
+  margin-top: 17px 0;
+  height: 1px;
+  width: 100%;
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.header {
+  composes: inlineEllipsis from '~styles/text.css';
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 5px;
+}
+
+.nameAndTime {
+  display: flex;
+  flex-direction: column;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+}
+
+.userName {
+  color: var(--pink);
+}
+
+.time {
+  color: color-mod(var(--dark) alpha(65%));
+}
+
+.tag {
+  align-self: flex-start;
+  margin-left: auto;
+}
+
+.title {
+  margin-bottom: 15px;
+}
+
+.details {
+  margin: 0;
+  margin-top: 20px;
+  width: 340px;
+}
+
+.descriptionContainer > h3 {
+  font-size: var(--size-medium);
+}
+
+.titleDecoration {
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
+
+.loadingWrapper {
+  margin-left: 60px;
+  height: 100%;
+  width: calc(100% - 60px);
+  position: relative;
+}

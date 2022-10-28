@@ -12,10 +12,12 @@ import {
 import {
   Address,
   ColonyActions,
+  ColonyMotions,
   FormattedAction,
   FormattedEvent,
   ColonyAndExtensionsEvents,
 } from '~types/index';
+
 import { ACTIONS_EVENTS } from '~dashboard/ActionsPage/staticMaps';
 import { getValuesForActionType } from '~utils/colonyActions';
 import { TEMP_getContext, ContextModule } from '~context/index';
@@ -70,7 +72,8 @@ export const getActionsListData = (
       unformattedActions?.oneTxPayments?.reduce((acc, action) => {
         if (
           installedExtensionsAddresses?.find(
-            (extensionAddress) => extensionAddress === action?.agent,
+            (extensionAddress) =>
+              extensionAddress.toLowerCase() === action?.agent?.toLowerCase(),
           )
         ) {
           return acc;
@@ -125,11 +128,14 @@ export const getActionsListData = (
      */
     motions:
       unformattedActions?.motions?.reduce((acc, motion) => {
-        const { requiredStake, stakes, escalated } = motion;
+        const { requiredStake, stakes, escalated, type } = motion;
         const totalNayStake = bigNumberify(stakes[0] || 0);
         const totalYayStake = bigNumberify(stakes[1] || 0);
         const currentStake = totalNayStake.add(totalYayStake).toString();
         const enoughStake = shouldDisplayMotion(currentStake, requiredStake);
+        if (type === ColonyMotions.NullMotion || !type) {
+          return acc;
+        }
         if (escalated || enoughStake) {
           return [...acc, motion];
         }
@@ -164,6 +170,9 @@ export const getActionsListData = (
             totalNayStake: '0',
             requiredStake: '0',
             reputationChange: '0',
+            isDecision:
+              unformattedAction.type === ColonyMotions.CreateDecisionMotion,
+            annotationHash: '',
           };
           let hash;
           let timestamp;
@@ -311,6 +320,7 @@ export const getActionsListData = (
                 timeoutPeriods,
                 stakes,
                 requiredStake,
+                annotationHash,
               } = unformattedAction;
 
               if (args?.token) {
@@ -330,6 +340,7 @@ export const getActionsListData = (
               formatedAction.fromDomain = ethDomainId;
               formatedAction.motionId = fundamentalChainId;
               formatedAction.timeoutPeriods = timeoutPeriods;
+              formatedAction.annotationHash = annotationHash;
               formatedAction.totalNayStake = bigNumberify(
                 stakes[0] || 0,
               ).toString();
@@ -474,12 +485,6 @@ export const getEventsListData = (
         toValue,
         motionId,
         vote,
-        _user: whitelistedUserAddress,
-        _status: whiteListStatus,
-        buyer,
-        numTokens,
-        activePeriod,
-        currentPeriod,
       } = JSON.parse(args || '{}');
       const checksummedColonyAddress = createAddress(colonyAddress);
       const getRecipient = () => {
@@ -492,14 +497,7 @@ export const getEventsListData = (
         return checksummedColonyAddress;
       };
       const getAgent = () => {
-        const userAddress =
-          agent ||
-          user ||
-          creator ||
-          staker ||
-          escalator ||
-          whitelistedUserAddress ||
-          buyer;
+        const userAddress = agent || user || creator || staker || escalator;
         if (userAddress) {
           return createAddress(userAddress);
         }
@@ -523,7 +521,7 @@ export const getEventsListData = (
           tokenAddress: token ? createAddress(token) : null,
           paymentId,
           decimals: parseInt(decimals, 10),
-          amount: amount || payoutRemainder || numTokens || '0',
+          amount: amount || payoutRemainder || '0',
           role,
           setTo: setTo === 'true',
           extensionHash: extensionId,
@@ -534,9 +532,6 @@ export const getEventsListData = (
           storageSlotValue: toValue || AddressZero,
           motionId,
           vote,
-          whiteListStatus: whiteListStatus === 'true',
-          activePeriod,
-          currentPeriod,
         },
       ];
     } catch (error) {

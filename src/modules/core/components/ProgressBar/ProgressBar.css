@@ -57,6 +57,10 @@
   background-color: var(--primary);
 }
 
+.barColorBelowThreshold .main::-webkit-progress-value {
+  background-color: var(--golden);
+}
+
 .barThemeDanger .main::-webkit-progress-value {
   background-color: var(--pink);
 }
@@ -70,7 +74,7 @@
   flex-direction: column;
   align-items: center;
   position: absolute;
-  top: -21px;
+  top: -19px;
 }
 
 .thresholdPercentage {
@@ -82,13 +86,18 @@
 
 .thresholdSeparator {
   height: 14px;
-  width: 2px;
+  width: 3px;
   border-radius: 1px;
   background-color: var(--pink);
 }
 
+.thresholdVisibility {
+  visibility: hidden;
+}
+
 .sizeNormal .thresholdSeparator {
-  height: 22px;
+  height: 18px;
+  border-radius: 3px;
 }
 
 .borderRadiusSmall .main::-webkit-progress-bar {

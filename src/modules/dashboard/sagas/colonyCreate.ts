@@ -7,8 +7,9 @@ import {
   ClientType,
   ROOT_DOMAIN_ID,
 } from '@colony/colony-js';
-import { poll } from 'ethers/utils';
+import { getStringForMetadataColony } from '@colony/colony-event-metadata-parser';
 
+import { poll } from 'ethers/utils';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import {
@@ -40,9 +41,8 @@ import {
   transactionPending,
 } from '../../core/actionCreators';
 import { createTransaction, createTransactionChannels } from '../../core/sagas';
-import { ipfsUpload } from '../../core/sagas/ipfs';
 import { createUserWithSecondAttempt } from '../../users/sagas/utils';
-import { log } from '~utils/debug';
+import { ipfsUploadWithFallback } from '../sagas/utils';
 
 interface ChannelDefinition {
   channel: Channel<any>;
@@ -289,37 +289,14 @@ function* colonyCreate({
      */
     let colonyAddress;
     if (createColony) {
-      /*
-       * First IPFS upload try
-       */
-      let colonyMetadataIpfsHash;
-      try {
-        colonyMetadataIpfsHash = yield call(
-          ipfsUpload,
-          JSON.stringify({
-            colonyName,
-            colonyDisplayName: displayName,
-            colonyAvatarHash: null,
-            colonyTokens: [],
-          }),
-        );
-      } catch (error) {
-        log.verbose('Could not upload the colony metadata IPFS. Retrying...');
-        log.verbose(error);
-        /*
-         * If the first try fails, then attempt to upload again
-         * We assume the first error was due to a connection issue
-         */
-        colonyMetadataIpfsHash = yield call(
-          ipfsUpload,
-          JSON.stringify({
-            colonyName,
-            colonyDisplayName: displayName,
-            colonyAvatarHash: null,
-            colonyTokens: [],
-          }),
-        );
-      }
+      const colonyMetadata = getStringForMetadataColony({
+        colonyName,
+        colonyDisplayName: displayName,
+      });
+      const colonyMetadataIpfsHash = yield call(
+        ipfsUploadWithFallback,
+        colonyMetadata,
+      );
 
       const { version: latestVersion } = yield getNetworkContracts();
 

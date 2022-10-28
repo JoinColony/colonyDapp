@@ -9,6 +9,8 @@ import { useLoggedInUser } from '~data/index';
 import { getAllUserRoles } from '~modules/transformers';
 import { canFund, hasRoot } from '~modules/users/checks';
 
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
+
 const MSG = defineMessages({
   dialogHeader: {
     id: 'dashboard.ManageFundsDialog.dialogHeader',
@@ -79,7 +81,7 @@ const MSG = defineMessages({
   unlockTokensDescription: {
     id: 'dashboard.ManageFundsDialog.unlockTokensDescription',
     defaultMessage:
-      'Allow your native token to be transferred between acccounts.',
+      'Allow your native token to be transferred between accounts.',
   },
 });
 
@@ -105,11 +107,14 @@ const ManageFundsDialog = ({
   nextStepMintTokens,
   nextStepManageTokens,
   nextStepUnlockToken,
-  isVotingExtensionEnabled,
 }: Props) => {
   const { walletAddress } = useLoggedInUser();
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
 
   const canMoveFunds = canFund(allUserRoles);
   const canUserMintNativeToken = isVotingExtensionEnabled

@@ -1,5 +1,8 @@
 import React, { useState, useMemo } from 'react';
-import { ColonyRole } from '@colony/colony-js';
+import {
+  ColonyRole,
+  VotingReputationExtensionVersion,
+} from '@colony/colony-js';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { AddressZero } from 'ethers/constants';
 import isEqual from 'lodash/isEqual';
@@ -13,13 +16,14 @@ import Paragraph from '~core/Paragraph';
 import TokenSelector from '~dashboard/CreateColonyWizard/TokenSelector';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import PermissionsLabel from '~core/PermissionsLabel';
-import Toggle from '~core/Fields/Toggle';
+import ForceToggle from '~core/Fields/ForceToggle';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
 import { AnyToken, OneToken, useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot } from '~modules/users/checks';
 import { FormValues } from '~dialogs/ColonyTokenManagementDialog/ColonyTokenManagementDialog';
@@ -53,6 +57,10 @@ const MSG = defineMessages({
     defaultMessage: `You do not have the {roleRequired} permission required
       to take this action.`,
   },
+  cannotCreateMotion: {
+    id: `core.TokenEditDialog.cannotCreateMotion`,
+    defaultMessage: `Cannot create motions using the Governance v{version} Extension. Please upgrade to a newer version (when available)`,
+  },
 });
 
 interface Props extends ActionDialogProps {
@@ -71,7 +79,6 @@ const TokenEditDialog = ({
   isValid,
   values,
   handleSubmit,
-  isVotingExtensionEnabled,
 }: Props & FormikProps<FormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -106,6 +113,13 @@ const TokenEditDialog = ({
   const canEditTokens = hasRegisteredProfile && hasRoot(allUserRoles);
   const requiredRoles: ColonyRole[] = [ColonyRole.Root];
 
+  const {
+    votingExtensionVersion,
+    isVotingExtensionEnabled,
+  } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
+
   const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
     colony.colonyAddress,
     canEditTokens,
@@ -124,6 +138,11 @@ const TokenEditDialog = ({
         ) === index,
     );
   }, [tokens, tokensList, canEditTokens]);
+
+  const cannotCreateMotion =
+    votingExtensionVersion ===
+      VotingReputationExtensionVersion.FuchsiaLightweightSpaceship &&
+    !values.forceAction;
 
   return (
     <>
@@ -146,11 +165,7 @@ const TokenEditDialog = ({
               text={MSG.title}
             />
             {canEditTokens && isVotingExtensionEnabled && (
-              <Toggle
-                label={{ id: 'label.force' }}
-                name="forceAction"
-                disabled={isSubmitting}
-              />
+              <ForceToggle disabled={isSubmitting} />
             )}
           </div>
         </div>
@@ -225,6 +240,19 @@ const TokenEditDialog = ({
       {onlyForceAction && (
         <NotEnoughReputation appearance={{ marginTop: 'negative' }} />
       )}
+      {cannotCreateMotion && (
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <div className={styles.noPermissionMessage}>
+            <FormattedMessage
+              {...MSG.cannotCreateMotion}
+              values={{
+                version:
+                  VotingReputationExtensionVersion.FuchsiaLightweightSpaceship,
+              }}
+            />
+          </div>
+        </DialogSection>
+      )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
@@ -243,6 +271,7 @@ const TokenEditDialog = ({
           loading={isSubmitting}
           onClick={() => handleSubmit()}
           disabled={
+            cannotCreateMotion ||
             tokenSelectorHasError ||
             !isValid ||
             inputDisabled ||

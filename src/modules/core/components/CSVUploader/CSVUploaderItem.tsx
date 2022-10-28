@@ -10,15 +10,15 @@ import styles from './CSVUploaderItem.css';
 
 import Button from '~core/Button';
 
-const displayName = 'dashboard.Whitelist.CSVUploader.CSVUploaderItem';
+const displayName = 'core.CSVUploader.CSVUploaderItem';
 
 const MSG = defineMessages({
   removeCSVText: {
-    id: 'dashboard.Whitelist.CSVUploader.CSVUploaderItem.removeCSVText',
+    id: 'core.CSVUploader.CSVUploaderItem.removeCSVText',
     defaultMessage: 'Remove',
   },
   processingText: {
-    id: 'dashboard.Whitelist.CSVUploader.CSVUploaderItem.processingText',
+    id: 'core.CSVUploader.CSVUploaderItem.processingText',
     defaultMessage: 'Processing',
   },
 });

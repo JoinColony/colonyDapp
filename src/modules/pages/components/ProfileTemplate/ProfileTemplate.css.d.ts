@@ -1,5 +1,6 @@
 export const paddingHorizontal: string;
 export const sidebarWidth: string;
+export const query700: string;
 export const main: string;
 export const sidebar: string;
 export const header: string;

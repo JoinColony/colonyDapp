@@ -252,4 +252,20 @@ export type MotionActionTypes =
   | ActionTypeWithMeta<
       ActionTypes.MOTION_MANAGE_REPUTATION_SUCCESS,
       MetaWithHistory<object>
+    >
+  | UniqueActionType<
+      ActionTypes.MOTION_CREATE_DECISION,
+      {
+        colonyAddress: Address;
+        colonyName: string;
+        decisionTitle: string;
+        decisionDescription: string;
+        motionDomainId: number;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.MOTION_CREATE_DECISION_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.MOTION_CREATE_DECISION_SUCCESS,
+      MetaWithHistory<object>
     >;

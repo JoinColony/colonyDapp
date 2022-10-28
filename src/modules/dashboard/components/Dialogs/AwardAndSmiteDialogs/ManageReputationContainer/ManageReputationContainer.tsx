@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
@@ -14,6 +14,8 @@ import { ActionTypes } from '~redux/index';
 import { useMembersSubscription } from '~data/index';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 import { useSelectedUser } from '~utils/hooks/useSelectedUser';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
+import { getVerifiedUsers } from '~utils/verifiedRecipients';
 
 import DialogForm from '../ManageReputationDialogForm';
 import {
@@ -33,7 +35,6 @@ const MSG = defineMessages({
 const ManageReputationContainer = ({
   colony: { colonyAddress, colonyName, tokens, nativeTokenAddress },
   colony,
-  isVotingExtensionEnabled,
   callStep,
   prevStep,
   cancel,
@@ -52,6 +53,12 @@ const ManageReputationContainer = ({
     variables: { colonyAddress },
   });
 
+  const subscribedUsers = colonyMembers?.subscribedUsers || [];
+
+  const verifiedUsers = useMemo(() => {
+    return getVerifiedUsers(colony.whitelistedAddresses, subscribedUsers) || [];
+  }, [subscribedUsers, colony]);
+
   const updateReputationCallback = (
     userRepPercentage: number,
     totalRep?: string,
@@ -59,6 +66,10 @@ const ManageReputationContainer = ({
     setTotalReputationData(totalRep);
     setUserReputation(userRepPercentage);
   };
+
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress,
+  });
 
   const getFormAction = useCallback(
     (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
@@ -127,7 +138,10 @@ const ManageReputationContainer = ({
     [totalReputationData, isSmiteAction],
   );
 
-  const selectedUser = useSelectedUser(colonyMembers);
+  const { isWhitelistActivated } = colony;
+  const selectedUser = useSelectedUser(
+    isWhitelistActivated ? verifiedUsers : subscribedUsers,
+  );
 
   return (
     <ActionForm
@@ -160,9 +174,11 @@ const ManageReputationContainer = ({
               {...formValues}
               colony={colony}
               nativeTokenDecimals={nativeTokenDecimals}
-              isVotingExtensionEnabled={isVotingExtensionEnabled}
               back={() => callStep(prevStep)}
               ethDomainId={ethDomainId}
+              verifiedUsers={
+                isWhitelistActivated ? verifiedUsers : subscribedUsers
+              }
               updateReputation={
                 isSmiteAction ? updateReputationCallback : undefined
               }

@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   composes: field from '~styles/fields.css';
   width: 100%;
@@ -75,7 +77,7 @@
   color: var(--colony-black);
   outline: none;
 
-  &[aria-invalid="true"] {
+  &[aria-invalid='true'] {
     border-color: var(--danger);
   }
 
@@ -88,10 +90,6 @@
 .baseInput::placeholder {
   color: var(--temp-grey-blue-7);
   opacity: 0.65;
-}
-
-.inputInvalid {
-  border-color: var(--danger);
 }
 
 .input {
@@ -107,11 +105,18 @@
   }
 }
 
+.inputInvalid {
+  composes: input;
+  border-color: var(--danger);
+}
+
 .recipientName {
   composes: baseInput;
+  padding-right: 15px;
   overflow: hidden;
   font-weight: var(--weight-bold);
   text-overflow: ellipsis;
+  white-space: nowrap;
   color: var(--danger);
 
   &:hover {
@@ -158,4 +163,41 @@
 .arrowIconActive svg {
   fill: var(--primary);
   transform: rotate(180deg);
+}
+
+@media screen and query700 {
+  .container {
+    display: flex;
+    align-items: center;
+  }
+
+  .arrowIcon {
+    display: flex;
+    padding: 11px 0;
+    position: static;
+    border-bottom: 1px solid var(--temp-grey-blue-7);
+  }
+
+  .widthWide input {
+    width: auto;
+  }
+
+  .omniPickerContainer {
+    left: 0px;
+  }
+
+  .input:placeholder-shown {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .arrowIconActive {
+    border-bottom-color: var(--primary);
+  }
+
+  .baseInput,
+  .omniPickerContainer,
+  .recipientName {
+    max-width: none;
+  }
 }

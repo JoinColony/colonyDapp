@@ -1,6 +1,5 @@
 .baseSelect {
   padding: 5px 10px;
-  width: auto;
   width: 100%;
   position: relative;
   border: 0;
@@ -101,7 +100,7 @@
 
 .themeGrey {
   composes: baseSelect;
-  padding: 10.5px 15px 10.5px 15px;
+  padding: 10px 15px 10px 15px;
   height: 45px;
   border: 1px solid rgb(200, 214, 245);
   border-radius: var(--radius-tiny);

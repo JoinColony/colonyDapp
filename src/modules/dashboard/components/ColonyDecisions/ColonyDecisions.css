@@ -1,0 +1,46 @@
+.emptyState {
+  margin-top: 90px;
+  width: 100%;
+  text-align: center;
+}
+
+.draftDecisionContainer {
+  margin-top: 20px;
+}
+
+.filter {
+  display: inline-block;
+}
+
+.filter button > div {
+  height: 18px;
+}
+
+.filter span {
+  font-size: var(--size-small);
+}
+
+.loadingSpinner {
+  margin-top: 100px;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+
+  /* The Select component (sorting dropdown) already has 10px top and bottom padding
+  So we are adding the rest as margins to follow the spec */
+  margin-top: 11px;
+  margin-bottom: 2px;
+}
+
+.title {
+  flex-grow: 2;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.installExtension {
+  margin-top: 20px;
+}

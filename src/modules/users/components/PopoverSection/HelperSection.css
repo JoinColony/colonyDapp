@@ -1,0 +1,14 @@
+@value queries: "~styles/queries.css";
+@value query700 from queries;
+
+.externalLink {
+  color: var(--grey-4);
+}
+
+@media screen and query700 {
+  .externalLink {
+    font-size: inherit;
+    font-weight: inherit;
+    color: white;
+  }
+}

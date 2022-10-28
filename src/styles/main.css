@@ -1,5 +1,6 @@
 @import 'variables.css';
 @import 'fonts.css';
+@value query700 from '~styles/queries.css';
 
 /*! minireset.css v0.0.3 | MIT License | github.com/jgthms/minireset.css */
 html,
@@ -208,5 +209,11 @@ table {
     vertical-align: top;
     border-color: inherit;
     text-align: left;
+  }
+}
+
+@media screen and query700 {
+  html {
+    background-color: white;
   }
 }

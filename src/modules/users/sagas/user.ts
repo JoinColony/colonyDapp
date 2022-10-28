@@ -1,5 +1,6 @@
 import { call, fork, put, takeLatest } from 'redux-saga/effects';
 import { ClientType, TokenLockingClient } from '@colony/colony-js';
+import { getStringForColonyAvatarImage } from '@colony/colony-event-metadata-parser';
 import { BigNumber } from 'ethers/utils';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
@@ -27,10 +28,9 @@ import {
 } from '~data/index';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { clearLastWallet } from '~utils/autoLogin';
-import { IPFSAvatarImage } from '~types/index';
+import { ipfsUploadWithFallback } from '../../dashboard/sagas/utils';
 
 import { clearToken } from '../../../api/auth';
-import { ipfsUpload } from '../../core/sagas/ipfs';
 import {
   transactionLoadRelated,
   transactionReady,
@@ -74,8 +74,8 @@ function* userAvatarUpload({
     if (payload.data) {
       try {
         ipfsHash = yield call(
-          ipfsUpload,
-          JSON.stringify({ image: payload.data } as IPFSAvatarImage),
+          ipfsUploadWithFallback,
+          getStringForColonyAvatarImage(payload.data),
         );
       } catch (error) {
         // silent error

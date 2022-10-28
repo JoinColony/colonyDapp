@@ -104,11 +104,4 @@ export type ColonyActionTypes =
       ActionTypes.VERIFIED_RECIPIENTS_MANAGE_SUCCESS,
       object,
       object
-    >
-  | UniqueActionType<
-      ActionTypes.WHITELIST_UPDATE,
-      { userAddresses: [Address]; colonyAddress: Address; status: boolean },
-      WithKey
-    >
-  | UniqueActionType<ActionTypes.WHITELIST_UPDATE_SUCCESS, object, object>
-  | ErrorActionType<ActionTypes.WHITELIST_UPDATE_ERROR, object>;
+    >;

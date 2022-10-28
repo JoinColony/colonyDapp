@@ -2,9 +2,12 @@ import React, { useState, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Decimal } from 'decimal.js';
 import { bigNumberify } from 'ethers/utils';
+import formatNumber from 'format-number';
+import classnames from 'classnames';
 
 import Heading from '~core/Heading';
 import Slider, { Appearance } from '~core/Slider';
+import { Tooltip } from '~core/Popover';
 import Numeral from '~core/Numeral';
 import StakingValidationError from '~dashboard/ActionsPage/StakingValidationError';
 
@@ -30,6 +33,7 @@ interface Props extends StakingAmounts {
   };
   canUserStake: boolean;
   isObjection: boolean;
+  totalPercentage?: number;
 }
 
 const displayName = 'StakingSlider';
@@ -59,6 +63,14 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.StakingSlider.minimumAmount',
     defaultMessage: 'at least {minStake}',
   },
+  tooltip: {
+    id: 'dashboard.ActionsPage.StakingSlider.tooltip',
+    defaultMessage: `Stake above the minimum 10% threshold to make it visible to others within the Actions list.`,
+  },
+  requiredStake: {
+    id: 'dashboard.ActionsPage.StakingSlider.requiredStake',
+    defaultMessage: ` ({stakePercentage}% of required)`,
+  },
 });
 
 const StakingSlider = ({
@@ -72,6 +84,7 @@ const StakingSlider = ({
   appearance,
   userActivatedTokens,
   isObjection,
+  totalPercentage = 0,
 }: Props) => {
   const [limitExceeded, setLimitExceeded] = useState(false);
   const { ethereal } = useLoggedInUser();
@@ -106,6 +119,14 @@ const StakingSlider = ({
     stakeWithMin.round().toString(),
     nativeToken?.decimals,
   );
+
+  const isThresholdAchieved = totalPercentage >= 10;
+
+  const userStakePercentage = stakeWithMin
+    .round()
+    .div(remainingToStake)
+    .times(100)
+    .toNumber();
 
   const errorStakeType = useMemo(() => {
     if (!ethereal) {
@@ -159,30 +180,75 @@ const StakingSlider = ({
           {...(isObjection ? MSG.descriptionObject : MSG.descriptionStake)}
         />
       </p>
-      {errorStakeType === 'tokens' ? (
-        <span className={styles.minStakeAmount}>
-          <FormattedMessage
-            {...MSG.minimumAmount}
-            values={{
-              minStake: (
+      {!remainingToStake.isZero() && (
+        <span className={styles.minStakeAmountContainer}>
+          <Tooltip
+            trigger="hover"
+            content={
+              <div className={styles.tooltip}>
+                <FormattedMessage {...MSG.tooltip} />
+              </div>
+            }
+            placement="top"
+            popperOptions={{
+              modifiers: [
+                {
+                  name: 'offset',
+                  options: {
+                    offset: [0, 0],
+                  },
+                },
+              ],
+            }}
+          >
+            {errorStakeType === 'tokens' ? (
+              <span className={styles.minStakeAmount}>
+                <FormattedMessage
+                  {...MSG.minimumAmount}
+                  values={{
+                    minStake: (
+                      <Numeral
+                        className={styles.minStakeAmount}
+                        value={getFormattedTokenValue(
+                          minUserStake,
+                          nativeToken?.decimals,
+                        )}
+                        suffix={nativeToken?.symbol}
+                      />
+                    ),
+                  }}
+                />
+              </span>
+            ) : (
+              <>
                 <Numeral
-                  className={styles.minStakeAmount}
-                  value={getFormattedTokenValue(
-                    minUserStake,
-                    nativeToken?.decimals,
-                  )}
+                  className={styles.amount}
+                  value={displayStake}
                   suffix={nativeToken?.symbol}
                 />
-              ),
-            }}
-          />
+                <span
+                  className={classnames(styles.requiredStakeText, {
+                    [styles.requiredStakeUnderThreshold]:
+                      !isThresholdAchieved &&
+                      userStakePercentage < 10 - totalPercentage,
+                    [styles.requiredStakeAboveThreshold]:
+                      isThresholdAchieved ||
+                      userStakePercentage >= 10 - totalPercentage,
+                  })}
+                >
+                  <FormattedMessage
+                    {...MSG.requiredStake}
+                    values={{
+                      stakePercentage: formatNumber({
+                        truncate: 2,
+                      })(userStakePercentage),
+                    }}
+                  />
+                </span>
+              </>
+            )}
+          </Tooltip>
         </span>
-      ) : (
-        <Numeral
-          className={styles.amount}
-          value={displayStake}
-          suffix={nativeToken?.symbol}
-        />
       )}
       <div className={styles.sliderContainer}>
         <Slider
@@ -208,6 +274,7 @@ const StakingSlider = ({
                   new Decimal(minUserStake).sub(userActivatedTokens).toString(),
                   nativeToken?.decimals,
                 )}
+                key={1}
               />
             ),
             tokenSymbol: nativeToken?.symbol,

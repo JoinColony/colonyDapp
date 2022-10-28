@@ -1,5 +1,6 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { getStringForMetadataDomain } from '@colony/colony-event-metadata-parser';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
@@ -10,13 +11,13 @@ import {
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 
-import { uploadIfpsAnnotation } from '../utils';
+import { ipfsUploadWithFallback, ipfsUploadAnnotation } from '../utils';
+
 import {
   createTransaction,
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
@@ -100,8 +101,8 @@ function* createDomainAction({
      */
     let domainMetadataIpfsHash = null;
     domainMetadataIpfsHash = yield call(
-      ipfsUpload,
-      JSON.stringify({
+      ipfsUploadWithFallback,
+      getStringForMetadataDomain({
         domainName,
         domainColor,
         domainPurpose,
@@ -129,10 +130,10 @@ function* createDomainAction({
       yield put(transactionPending(annotateCreateDomain.id));
 
       /*
-       * Upload domain metadata to IPFS
+       * Upload annotaiton to IPFS
        */
       const annotationMessageIpfsHash = yield call(
-        uploadIfpsAnnotation,
+        ipfsUploadAnnotation,
         annotationMessage,
       );
 

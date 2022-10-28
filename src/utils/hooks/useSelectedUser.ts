@@ -1,17 +1,12 @@
 import { useMemo } from 'react';
 
-import { useLoggedInUser } from '~data/index';
+import { AnyUser, useLoggedInUser } from '~data/index';
 
-export const useSelectedUser = (colonyMembers) => {
+export const useSelectedUser = (colonyUsers: AnyUser[]) => {
   const { walletAddress: loggedInUserWalletAddress } = useLoggedInUser();
 
   return useMemo(() => {
-    if (!colonyMembers) {
-      return undefined;
-    }
-
-    const [firstSubscriber, secondSubscriber] =
-      colonyMembers?.subscribedUsers || [];
+    const [firstSubscriber, secondSubscriber] = colonyUsers;
 
     if (!secondSubscriber) {
       return firstSubscriber;
@@ -20,5 +15,5 @@ export const useSelectedUser = (colonyMembers) => {
     return firstSubscriber.profile.walletAddress === loggedInUserWalletAddress
       ? secondSubscriber
       : firstSubscriber;
-  }, [colonyMembers, loggedInUserWalletAddress]);
+  }, [colonyUsers, loggedInUserWalletAddress]);
 };

@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   /*
    * @NOTE Center vertically and horizontally
@@ -59,4 +61,15 @@
 .itemLoading {
   composes: itemLink;
   text-align: center;
+}
+
+@media screen and query700 {
+  .main {
+    padding: 0 14px;
+    height: calc(100vh - 43px); /* @NOTE: 43px is the height of the nav */
+  }
+
+  .itemLink {
+    width: auto;
+  }
 }

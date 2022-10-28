@@ -1,3 +1,4 @@
+@value query700 from "~styles/queries.css";
 
 .main {
   display: flex;
@@ -69,4 +70,10 @@
 
 .activeDomain h4 {
   color: var(--primary);
+}
+
+@media screen and query700 {
+  .headingWrapper {
+    max-width: 55vw;
+  }
 }

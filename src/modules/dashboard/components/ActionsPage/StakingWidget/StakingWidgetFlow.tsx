@@ -24,6 +24,7 @@ const displayName = 'StakingWidgetFlow';
 export interface Props {
   colony: Colony;
   motionId: number;
+  isDecision: boolean;
   scrollToRef?: RefObject<HTMLInputElement>;
 }
 
@@ -34,7 +35,12 @@ const MSG = defineMessages({
   },
 });
 
-const StakingWidgetFlow = ({ colony, motionId, scrollToRef }: Props) => {
+const StakingWidgetFlow = ({
+  colony,
+  motionId,
+  isDecision,
+  scrollToRef,
+}: Props) => {
   const [isSummary, setIsSummary] = useState(false);
   const [isObjection, setIsObjection] = useState(false);
 
@@ -135,6 +141,8 @@ const StakingWidgetFlow = ({ colony, motionId, scrollToRef }: Props) => {
           motionId={motionId}
           colony={colony}
           handleWidgetState={setIsSummary}
+          isDecision={isDecision}
+          totalPercentage={!isObjection ? yayPercentage : nayPercentage}
         />
       )}
     </div>

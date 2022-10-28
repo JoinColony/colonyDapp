@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   padding-top: 100px;
   width: 500px;
@@ -34,4 +36,10 @@
 .linkToColony {
   font-weight: var(--weight-bold);
   text-decoration: underline;
+}
+
+@media screen and query700 {
+  .container {
+    padding: 22px 0px 18px 0px;
+  }
 }

@@ -1,4 +1,4 @@
-import React, { useCallback, RefObject } from 'react';
+import React, { useCallback, RefObject, useState, useEffect } from 'react';
 import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
@@ -51,6 +51,10 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.RevealWidget.buttonReveal',
     defaultMessage: `Reveal`,
   },
+  buttonRevealed: {
+    id: 'dashboard.ActionsPage.RevealWidget.buttonRevealed',
+    defaultMessage: `Revealed`,
+  },
 });
 
 const RevealWidget = ({
@@ -60,9 +64,11 @@ const RevealWidget = ({
   scrollToRef,
   motionState,
 }: Props) => {
+  const [userVoteRevealed, setUserVoteRevealed] = useState(false);
+
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
-  const { data: voteRevealed } = useMotionUserVoteRevealedQuery({
+  const { data: voteRevealed, refetch } = useMotionUserVoteRevealedQuery({
     variables: {
       colonyAddress,
       userAddress: walletAddress,
@@ -70,6 +76,12 @@ const RevealWidget = ({
     },
     fetchPolicy: 'network-only',
   });
+
+  useEffect(() => {
+    if (voteRevealed) {
+      setUserVoteRevealed(voteRevealed.motionUserVoteRevealed.revealed);
+    }
+  }, [voteRevealed]);
 
   const { data: userVoted } = useMotionCurrentUserVotedQuery({
     variables: {
@@ -93,12 +105,13 @@ const RevealWidget = ({
     (_, { resetForm }) => {
       resetForm({});
       scrollToRef?.current?.scrollIntoView({ behavior: 'smooth' });
+      refetch();
+      setUserVoteRevealed(true);
     },
-    [scrollToRef],
+    [scrollToRef, refetch],
   );
 
   const hasRegisteredProfile = !!username && !ethereal;
-  const revealed = voteRevealed?.motionUserVoteRevealed?.revealed;
   const vote = voteRevealed?.motionUserVoteRevealed?.vote;
 
   return (
@@ -115,9 +128,7 @@ const RevealWidget = ({
           {userVoted?.motionCurrentUserVoted ? (
             <Heading
               text={MSG.title}
-              textValues={{
-                revealed,
-              }}
+              textValues={{ revealed: userVoteRevealed }}
               appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
             />
           ) : (
@@ -127,7 +138,7 @@ const RevealWidget = ({
             />
           )}
 
-          {revealed ? (
+          {userVoteRevealed ? (
             <>
               {vote === MotionVote.Yay ? (
                 <CustomRadio
@@ -174,10 +185,10 @@ const RevealWidget = ({
             buttonComponent={
               <Button
                 appearance={{ theme: 'primary', size: 'medium' }}
-                text={MSG.buttonReveal}
+                text={userVoteRevealed ? MSG.buttonRevealed : MSG.buttonReveal}
                 disabled={
                   !hasRegisteredProfile ||
-                  revealed ||
+                  userVoteRevealed ||
                   !userVoted?.motionCurrentUserVoted ||
                   isSubmitting
                 }

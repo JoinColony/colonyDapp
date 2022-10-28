@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { ColonyRole } from '@colony/colony-js';
+import {
+  ColonyRole,
+  VotingReputationExtensionVersion,
+} from '@colony/colony-js';
 import { FormikProps } from 'formik';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
@@ -12,13 +15,14 @@ import { Input, Annotations } from '~core/Fields';
 import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
-import Toggle from '~core/Fields/Toggle';
+import ForceToggle from '~core/Fields/ForceToggle';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
 import { useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { getAllUserRoles } from '~modules/transformers';
 import { canArchitect } from '~modules/users/checks';
 
@@ -50,6 +54,10 @@ const MSG = defineMessages({
       // eslint-disable-next-line max-len
       'You need the {roleRequired} permission in {domain} to take this action.',
   },
+  cannotCreateMotion: {
+    id: `dashboard.CreateDomainDialog.CreateDomainDialogForm.cannotCreateMotion`,
+    defaultMessage: `Cannot create motions using the Governance v{version} Extension. Please upgrade to a newer version (when available)`,
+  },
 });
 
 interface Props extends ActionDialogProps {
@@ -63,7 +71,6 @@ const CreateDomainDialogForm = ({
   handleSubmit,
   isSubmitting,
   isValid,
-  isVotingExtensionEnabled,
   values,
 }: Props & FormikProps<FormValues>) => {
   const [domainColor, setDomainColor] = useState(Color.LightPink);
@@ -75,6 +82,13 @@ const CreateDomainDialogForm = ({
   const hasRegisteredProfile = !!username && !ethereal;
   const canCreateDomain = hasRegisteredProfile && canArchitect(allUserRoles);
 
+  const {
+    votingExtensionVersion,
+    isVotingExtensionEnabled,
+  } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
+
   const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
     colony.colonyAddress,
     canCreateDomain,
@@ -83,6 +97,11 @@ const CreateDomainDialogForm = ({
   );
 
   const inputDisabled = !userHasPermission || onlyForceAction || isSubmitting;
+
+  const cannotCreateMotion =
+    votingExtensionVersion ===
+      VotingReputationExtensionVersion.FuchsiaLightweightSpaceship &&
+    !values.forceAction;
 
   return (
     <>
@@ -105,11 +124,7 @@ const CreateDomainDialogForm = ({
               text={MSG.titleCreate}
             />
             {canCreateDomain && isVotingExtensionEnabled && (
-              <Toggle
-                label={{ id: 'label.force' }}
-                name="forceAction"
-                disabled={isSubmitting}
-              />
+              <ForceToggle disabled={isSubmitting} />
             )}
           </div>
         </div>
@@ -179,6 +194,19 @@ const CreateDomainDialogForm = ({
       {onlyForceAction && (
         <NotEnoughReputation appearance={{ marginTop: 'negative' }} />
       )}
+      {cannotCreateMotion && (
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <div className={styles.noPermissionFromMessage}>
+            <FormattedMessage
+              {...MSG.cannotCreateMotion}
+              values={{
+                version:
+                  VotingReputationExtensionVersion.FuchsiaLightweightSpaceship,
+              }}
+            />
+          </div>
+        </DialogSection>
+      )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         {back && (
           <Button
@@ -196,7 +224,7 @@ const CreateDomainDialogForm = ({
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() => handleSubmit()}
           loading={isSubmitting}
-          disabled={inputDisabled || !isValid}
+          disabled={cannotCreateMotion || inputDisabled || !isValid}
           style={{ minWidth: styles.wideButton }}
           data-test="createDomainConfirmButton"
         />

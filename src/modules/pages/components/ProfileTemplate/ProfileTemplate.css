@@ -1,5 +1,6 @@
 @value paddingHorizontal: 60px;
 @value sidebarWidth: 340px;
+@value query700 from '~styles/queries.css';
 
 .main {
   display: flex;
@@ -41,5 +42,74 @@
   & .mainContainer {
     border-left: 2px solid var(--grey-blue-0);
     background-color: transparent;
+  }
+}
+
+@media screen and query700 {
+  .main {
+    flex-direction: column;
+  }
+
+  .mainContainer {
+    background-color: transparent;
+  }
+
+  .sidebar {
+    justify-content: center;
+    padding: 40px 0;
+    height: auto;
+    width: 100%;
+  }
+
+  .sidebar > div > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .sidebar h3 {
+    text-align: center;
+  }
+
+  .sidebar form > div:first-child {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .sidebar form > div:last-child {
+    display: flex;
+    justify-content: center;
+  }
+
+  .sidebar form label {
+    margin-bottom: 20px;
+  }
+
+  .mainContent {
+    padding: 40px 30px;
+  }
+
+  .mainContent div:nth-of-type(2) {
+    justify-content: space-around;
+    row-gap: 10px;
+  }
+
+  .mainContent fieldset:first-child {
+    word-break: break-word;
+  }
+
+  .mainContent fieldset:first-child > div {
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+
+  .mainContent input {
+    padding: 0 8px;
+  }
+
+  .mainContent form > div > div:last-child > div {
+    width: 100%;
   }
 }

@@ -8,6 +8,7 @@ import { Colony, useLoggedInUser } from '~data/index';
 import { WizardDialogType, useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '~modules/transformers';
 import { canArchitect, hasRoot } from '~modules/users/checks';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 const MSG = defineMessages({
   dialogHeader: {
@@ -78,7 +79,6 @@ const ManageDomainsDialog = ({
   nextStepEdit,
   nextStepManageWhitelist,
   colony,
-  isVotingExtensionEnabled,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -87,6 +87,10 @@ const ManageDomainsDialog = ({
   const hasRootPermission = hasRegisteredProfile && hasRoot(allUserRoles);
   const canCreateEditDomain =
     hasRegisteredProfile && canArchitect(allUserRoles);
+
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
 
   const items = [
     {

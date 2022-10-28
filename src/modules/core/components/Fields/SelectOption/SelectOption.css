@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   padding: 0 30px 0 15px;
   overflow: hidden;
@@ -48,7 +50,18 @@
   line-height: 32px;
 }
 
-.value {
+.labelContainer {
+  display: flex;
+  align-items: baseline;
+}
+
+.label {
   composes: inlineEllipsis from '~styles/text.css';
-  display: block;
+  flex-shrink: 1;
+}
+
+@media screen and query700 {
+  .main {
+    padding: 0px 6px;
+  }
 }

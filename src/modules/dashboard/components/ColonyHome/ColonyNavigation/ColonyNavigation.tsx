@@ -1,8 +1,9 @@
 import React, { ComponentProps, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
-import { Extension } from '@colony/colony-js';
+import { VotingReputationExtensionVersion } from '@colony/colony-js';
 
-import { useColonyExtensionsQuery, Colony } from '~data/index';
+import { Colony } from '~data/index';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import NavItem from './NavItem';
 
@@ -21,9 +22,9 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.ColonyNavigation.linkTextExtensions',
     defaultMessage: 'Extensions',
   },
-  linkTextCoinMachine: {
-    id: 'dashboard.ColonyHome.ColonyNavigation.linkTextCoinMachine',
-    defaultMessage: 'Buy Tokens',
+  linkTextDecisions: {
+    id: 'dashboard.ColonyHome.ColonyNavigation.linkTextDecisions',
+    defaultMessage: 'Decisions',
   },
   linkTextUnwrapTokens: {
     id: 'dashboard.ColonyHome.ColonyNavigation.linkTextUnwrapTokens',
@@ -45,10 +46,7 @@ type Props = {
 
 const displayName = 'dashboard.ColonyHome.ColonyNavigation';
 
-const ColonyNavigation = ({ colony: { colonyAddress, colonyName } }: Props) => {
-  const { data } = useColonyExtensionsQuery({
-    variables: { address: colonyAddress },
-  });
+const ColonyNavigation = ({ colony: { colonyName, colonyAddress } }: Props) => {
   /*
    * @TODO actually determine these
    * This can be easily inferred from the subgraph queries
@@ -59,7 +57,19 @@ const ColonyNavigation = ({ colony: { colonyAddress, colonyName } }: Props) => {
    * Problem is I couldn't get @client resolvers to work with subgrap queries :(
    */
   const hasNewActions = false;
+  const hasNewDecisions = false;
   const hasNewExtensions = false;
+
+  const {
+    isVotingExtensionEnabled,
+    votingExtensionVersion,
+  } = useEnabledExtensions({ colonyAddress });
+
+  const decisionsSupported =
+    isVotingExtensionEnabled &&
+    votingExtensionVersion &&
+    votingExtensionVersion >=
+      VotingReputationExtensionVersion.GreenLightweightSpaceship;
 
   const items = useMemo<ComponentProps<typeof NavItem>[]>(() => {
     const navigationItems: ComponentProps<typeof NavItem>[] = [
@@ -76,32 +86,25 @@ const ColonyNavigation = ({ colony: { colonyAddress, colonyName } }: Props) => {
         dataTest: 'extensionsNavigationButton',
       },
     ];
-    if (data?.processedColony?.installedExtensions) {
-      const { installedExtensions } = data.processedColony;
-      const coinMachineExtension = installedExtensions.find(
-        ({ extensionId }) => extensionId === Extension.CoinMachine,
-      );
-      /*
-       * Only show the Buy Tokens navigation link if the Coin Machine extension is:
-       * - installed
-       * - enable
-       * - not deprecated
-       */
-      if (
-        coinMachineExtension &&
-        coinMachineExtension?.details?.initialized &&
-        !coinMachineExtension?.details?.deprecated
-      ) {
-        navigationItems.push({
-          linkTo: `/colony/${colonyName}/buy-tokens`,
-          showDot: false,
-          text: MSG.linkTextCoinMachine,
-        });
-      }
+
+    if (decisionsSupported) {
+      navigationItems.splice(1, 0, {
+        exact: false,
+        linkTo: `/colony/${colonyName}/decisions`,
+        showDot: hasNewDecisions,
+        text: MSG.linkTextDecisions,
+        dataTest: 'decisionsNavigationButton',
+      });
     }
 
     return navigationItems;
-  }, [colonyName, hasNewActions, hasNewExtensions, data]);
+  }, [
+    colonyName,
+    hasNewActions,
+    hasNewExtensions,
+    decisionsSupported,
+    hasNewDecisions,
+  ]);
 
   return (
     <nav role="navigation" className={styles.main}>

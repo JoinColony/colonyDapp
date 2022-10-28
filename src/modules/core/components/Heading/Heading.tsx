@@ -11,7 +11,7 @@ const displayName = 'Heading';
 export type Appearance = {
   theme?: 'primary' | 'dark' | 'invert' | 'uppercase' | 'grey';
   margin?: 'none' | 'small' | 'double';
-  size: 'tiny' | 'small' | 'normal' | 'medium' | 'large' | 'huge';
+  size: 'tiny' | 'small' | 'smallish' | 'normal' | 'medium' | 'large' | 'huge';
   weight?: 'thin' | 'medium' | 'bold';
 };
 
@@ -49,6 +49,7 @@ const Heading = ({
       large: 'h2',
       medium: 'h3',
       normal: 'h4',
+      smallish: 'h4',
       small: 'h5',
       tiny: 'h6',
     }[size || 'huge'];

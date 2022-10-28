@@ -1,4 +1,5 @@
 @value borderColor: var(--grey-blue-0);
+@value query700 from '~styles/queries.css';
 
 .main {
   padding: 20px;
@@ -43,4 +44,24 @@
 .borderGrey {
   border: 1px solid var(--grey-blue-0);
   border-radius: var(--radius-tiny);
+}
+
+@media screen and query700 {
+  .main {
+    padding: 20px 14px;
+  }
+
+  .themeFooter {
+    display: flex;
+    justify-content: flex-end;
+    padding: 20px 14px;
+  }
+
+  .themeFooter > button:first-child {
+    padding: 9px 22px;
+  }
+
+  .themeSidePadding {
+    padding: 0 14px;
+  }
 }

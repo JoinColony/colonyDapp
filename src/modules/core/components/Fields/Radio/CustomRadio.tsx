@@ -97,21 +97,19 @@ const CustomRadio = ({
         </div>
       )}
       <div className={styles.content}>
-        {label && (
-          <span className={styles.label}>
-            {label === 'string' ? (
-              label
-            ) : (
-              <FormattedMessage {...label} values={labelValues} />
-            )}
-          </span>
-        )}
+        <span className={styles.label}>
+          {typeof label === 'object' ? (
+            <FormattedMessage {...label} values={labelValues} />
+          ) : (
+            label
+          )}
+        </span>
         {description && (
           <span className={styles.description}>
-            {description === 'string' ? (
-              description
-            ) : (
+            {typeof description === 'object' ? (
               <FormattedMessage {...description} values={descriptionValues} />
+            ) : (
+              description
             )}
           </span>
         )}

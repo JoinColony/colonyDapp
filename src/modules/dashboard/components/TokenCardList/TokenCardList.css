@@ -1,4 +1,26 @@
+@value query700 from '~styles/queries.css';
 
 .tokenCardContainer {
   padding-bottom: 10px;
+}
+
+@media screen and query700 {
+  .tokenCardContainer {
+    padding-bottom: 0;
+  }
+
+  .tokenCardContainer > ul {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .tokenCardContainer > ul * {
+    margin: 0;
+  }
+
+  .tokenCardContainer > ul > div {
+    width: calc(100% - 28px);
+  }
 }

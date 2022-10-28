@@ -1,5 +1,6 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType } from '@colony/colony-js';
+import { getStringForMetadataColony } from '@colony/colony-event-metadata-parser';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
@@ -15,14 +16,17 @@ import {
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
 
-import { updateColonyDisplayCache, uploadIfpsAnnotation } from '../utils';
+import {
+  updateColonyDisplayCache,
+  ipfsUploadWithFallback,
+  ipfsUploadAnnotation,
+} from '../utils';
 
 function* manageVerifiedRecipients({
   payload: {
@@ -107,8 +111,8 @@ function* manageVerifiedRecipients({
     let colonyMetadataIpfsHash = null;
 
     colonyMetadataIpfsHash = yield call(
-      ipfsUpload,
-      JSON.stringify({
+      ipfsUploadWithFallback,
+      getStringForMetadataColony({
         colonyDisplayName,
         colonyAvatarHash,
         verifiedAddresses,
@@ -140,7 +144,7 @@ function* manageVerifiedRecipients({
        * Upload annotation metadata to IPFS
        */
       const annotationMessageIpfsHash = yield call(
-        uploadIfpsAnnotation,
+        ipfsUploadAnnotation,
         annotationMessage,
       );
 

@@ -127,7 +127,7 @@ const ColonyEvents = ({
   );
 
   return (
-    <div>
+    <div className={styles.main}>
       <div className={styles.bar}>
         <div className={styles.title}>
           <FormattedMessage {...MSG.transactionsLogTitle} />
@@ -138,7 +138,11 @@ const ColonyEvents = ({
         >
           <div className={styles.filter}>
             <Select
-              appearance={{ alignOptions: 'left', theme: 'alt' }}
+              appearance={{
+                alignOptions: 'left',
+                theme: 'alt',
+                unrestrictedOptionsWidth: 'true',
+              }}
               elementOnly
               label={MSG.labelFilter}
               name="filter"

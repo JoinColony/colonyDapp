@@ -1,4 +1,5 @@
 @value tableHeight: 347px;
+@value query700 from '~styles/queries.css';
 
 .inboxContainerFull {
   flex: 0 1;
@@ -72,4 +73,21 @@
   max-width: 700px;
   font-size: var(--size-medium-l);
   font-weight: var(--weight-normal);
+}
+
+@media screen and query700 {
+  .contentContainerFull {
+    padding: 35px 14px 60px;
+  }
+
+  .contentContainerPopup {
+    width: calc(100% - 28px);
+    border-radius: 4px;
+    background-color: white;
+    box-shadow: 0 2px 11px 0px var(--drop-shadow);
+  }
+
+  .inboxHeadingPopover h3 {
+    font-size: var(--size-medium);
+  }
 }

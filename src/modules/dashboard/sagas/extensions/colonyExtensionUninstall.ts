@@ -1,16 +1,9 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
-import { ClientType, getExtensionHash, Extension } from '@colony/colony-js';
-import { AddressZero } from 'ethers/constants';
+import { ClientType, getExtensionHash } from '@colony/colony-js';
 
-import {
-  CoinMachineHasWhitelistQuery,
-  CoinMachineHasWhitelistQueryVariables,
-  CoinMachineHasWhitelistDocument,
-} from '~data/index';
 import { Action, ActionTypes } from '~redux/index';
 import { putError, takeFrom } from '~utils/saga/effects';
 
-import { ContextModule, TEMP_getContext } from '~context/index';
 import {
   createTransaction,
   getTxChannel,
@@ -27,55 +20,12 @@ export function* colonyExtensionUninstall({
 }: Action<ActionTypes.EXTENSION_UNINSTALL>) {
   let txChannel;
   try {
-    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
-    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
     txChannel = yield call(getTxChannel, metaId);
-
-    let haveToUpdateCoinMachineWhitelist = false;
-    if (extensionId === Extension.Whitelist) {
-      let coinMachineClient;
-      let coinMachineDeprecated;
-      /*
-       * Only re-write the coin machine's whitelist address, if it matches
-       * the address of the whitelist we are uninstalling
-       *
-       * If it does not, it means the user is using and external whitelist
-       * (whitelist from a different colony)
-       */
-      let coinmachineWhitelistIsSame = false;
-      try {
-        const whitelistClient = yield colonyManager.getClient(
-          ClientType.WhitelistClient,
-          colonyAddress,
-        );
-        coinMachineClient = yield colonyManager.getClient(
-          ClientType.CoinMachineClient,
-          colonyAddress,
-        );
-        coinMachineDeprecated = yield coinMachineClient.getDeprecated();
-        coinmachineWhitelistIsSame =
-          (yield coinMachineClient.getWhitelist()) === whitelistClient.address;
-      } catch (error) {
-        /*
-         * Silent error since we don't really care about it, but it means
-         * that the coin machine client is not installed in the colony
-         */
-      }
-      haveToUpdateCoinMachineWhitelist =
-        extensionId === Extension.Whitelist &&
-        coinmachineWhitelistIsSame &&
-        !!coinMachineClient &&
-        !coinMachineDeprecated;
-    }
 
     const batchKey = 'unistallExtensions';
     const {
       uninstallExtensionTx: uninstallExtension,
-      updateCoinMachineWhitelistTx: updateCoinMachineWhitelist,
-    } = yield createTransactionChannels(metaId, [
-      'uninstallExtensionTx',
-      'updateCoinMachineWhitelistTx',
-    ]);
+    } = yield createTransactionChannels(metaId, ['uninstallExtensionTx']);
 
     const createGroupTransaction = ({ id, index }, config) =>
       fork(createTransaction, id, {
@@ -95,23 +45,7 @@ export function* colonyExtensionUninstall({
       ready: false,
     });
 
-    if (haveToUpdateCoinMachineWhitelist) {
-      yield createGroupTransaction(updateCoinMachineWhitelist, {
-        context: ClientType.CoinMachineClient,
-        methodName: 'setWhitelist',
-        identifier: colonyAddress,
-        params: [AddressZero],
-        ready: false,
-      });
-    }
-
     yield takeFrom(uninstallExtension.channel, ActionTypes.TRANSACTION_CREATED);
-    if (haveToUpdateCoinMachineWhitelist) {
-      yield takeFrom(
-        updateCoinMachineWhitelist.channel,
-        ActionTypes.TRANSACTION_CREATED,
-      );
-    }
 
     yield put(transactionReady(uninstallExtension.id));
     yield takeFrom(
@@ -119,26 +53,7 @@ export function* colonyExtensionUninstall({
       ActionTypes.TRANSACTION_SUCCEEDED,
     );
 
-    if (haveToUpdateCoinMachineWhitelist) {
-      yield put(transactionReady(updateCoinMachineWhitelist.id));
-      yield takeFrom(
-        updateCoinMachineWhitelist.channel,
-        ActionTypes.TRANSACTION_SUCCEEDED,
-      );
-    }
-
     yield call(refreshExtension, colonyAddress, extensionId);
-
-    yield apolloClient.query<
-      CoinMachineHasWhitelistQuery,
-      CoinMachineHasWhitelistQueryVariables
-    >({
-      query: CoinMachineHasWhitelistDocument,
-      variables: {
-        colonyAddress,
-      },
-      fetchPolicy: 'network-only',
-    });
   } catch (error) {
     return yield putError(ActionTypes.EXTENSION_UNINSTALL_ERROR, error, meta);
   } finally {

@@ -21,13 +21,15 @@ import {
   COLONY_HOME_ROUTE,
   COLONY_EVENTS_ROUTE,
   ACTIONS_PAGE_ROUTE,
-  COIN_MACHINE_ROUTE,
   USER_ROUTE,
   MEMBERS_ROUTE,
+  COLONY_DECISIONS_ROUTE,
+  COLONY_DECISIONS_PREVIEW_ROUTE,
   COLONY_EXTENSION_SETUP_ROUTE,
   COLONY_EXTENSION_DETAILS_ROUTE,
   COLONY_EXTENSIONS_ROUTE,
   COLONY_FUNDING_ROUTE,
+  DECISIONS_PAGE_ROUTE,
 } from '~routes/routeConstants';
 import { SimpleMessageValues } from '~types/index';
 import { useColonyFromNameQuery } from '~data/index';
@@ -87,6 +89,16 @@ const MSG = defineMessages({
     defaultMessage: `Funds | Colony - {colonyName}`,
   },
 
+  colonyDecisions: {
+    id: 'utils.hooks.useTitle.colonyDecisions',
+    defaultMessage: `Decisions | Colony - {colonyName}`,
+  },
+
+  decisionPreview: {
+    id: 'utils.hooks.useTitle.decisionPreview',
+    defaultMessage: `Decision Preview | Colony - {colonyName}`,
+  },
+
   colonyExtensions: {
     id: 'utils.hooks.useTitle.colonyExtensions',
     defaultMessage: `Extensions | Colony - {colonyName}`,
@@ -96,7 +108,6 @@ const MSG = defineMessages({
     id: 'utils.hooks.useTitle.colonyExtensionDetails',
     defaultMessage: `Extensions > {extensionId, select,
       VotingReputation {Governance}
-      CoinMachine {Coin Machine}
       OneTxPayment {One Transaction Payment}
       other {{extensionId}}
       } | Colony - {colonyName}`,
@@ -106,7 +117,6 @@ const MSG = defineMessages({
     id: 'utils.hooks.useTitle.colonyExtensionSetup',
     defaultMessage: `Extensions > {extensionId, select,
       VotingReputation {Governance}
-      CoinMachine {Coin Machine}
       OneTxPayment {One Transaction Payment}
       other {{extensionId}}
       } > Setup | Colony - {colonyName}`,
@@ -153,13 +163,15 @@ const routeMessages: Record<string, MessageDescriptor> = {
   [COLONY_HOME_ROUTE]: MSG.colonyHome,
   [COLONY_EVENTS_ROUTE]: MSG.colonyEvents,
   [COLONY_FUNDING_ROUTE]: MSG.colonyFunds,
+  [COLONY_DECISIONS_ROUTE]: MSG.colonyDecisions,
+  [COLONY_DECISIONS_PREVIEW_ROUTE]: MSG.decisionPreview,
   [COLONY_EXTENSIONS_ROUTE]: MSG.colonyExtensions,
   [COLONY_EXTENSION_DETAILS_ROUTE]: MSG.colonyExtensionDetails,
   [COLONY_EXTENSION_SETUP_ROUTE]: MSG.colonyExtensionSetup,
   [MEMBERS_ROUTE]: MSG.colonyMembers,
   [USER_ROUTE]: MSG.userProfile,
   [ACTIONS_PAGE_ROUTE]: MSG.transactionDetails,
-  [COIN_MACHINE_ROUTE]: MSG.buyTokens,
+  [DECISIONS_PAGE_ROUTE]: MSG.transactionDetails,
   '/': MSG.fallbackTitle,
 };
 

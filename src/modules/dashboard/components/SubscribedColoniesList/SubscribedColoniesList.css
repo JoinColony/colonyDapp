@@ -1,5 +1,8 @@
 @value itemLinkSize: 42px;
+@value itemLinkSizeMobile: 34px;
 @value itemMarginBotton: 4px;
+
+@value query700 from "~styles/queries.css";
 
 .main {
   display: flex;
@@ -47,11 +50,78 @@
   fill: var(--temp-grey-blue-7);
 }
 
-.newColonyItem {
-  position: sticky;
-  bottom: 0;
-}
-
 .loadingColonies {
   padding: 8px 0 2px;
+}
+
+@media screen and query700 {
+  .main {
+    align-items: center;
+  }
+
+  .scrollableContainer {
+    justify-content: start;
+    flex-wrap: nowrap;
+    padding-top: 4px;
+    padding-left: 11px; /* 14px per design - 3px avatar border */
+    padding-right: 20px; /* To escape gradient fade on last colony when overflowed */
+    scrollbar-width: 0px; /* Currently only supported on Firefox. */
+  }
+
+  .scrollableContainer::-webkit-scrollbar {
+    display: none; /* Remove scrollbar on webkit and blink based browsers (basically all except Firefox) */
+  }
+
+  .itemImage {
+    composes: itemLink;
+    min-width: 34px;
+    border-width: 2px;
+  }
+
+  .itemLink {
+    height: itemLinkSizeMobile;
+    width: itemLinkSizeMobile;
+  }
+
+  .dropdownItem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .dropdownItem > div:nth-child(2) {
+    padding-right: 10px;
+    white-space: break-spaces;
+    overflow-wrap: anywhere;
+  }
+
+  .activeColony > .dropdownItem {
+    color: var(--primary);
+  }
+
+  .activeColony .itemImage {
+    border-color: var(--primary);
+  }
+
+  .itemImage figure {
+    border-radius: 50%;
+    box-shadow: 0px 1px 6px var(--drop-shadow);
+  }
+
+  .scrollableContainer > div[role="tooltip"] {
+    border-radius: 4px 0px 4px 4px;
+  }
+
+  .scrollableContainer > div[role="tooltip"] > div {
+    padding: 6px 0;
+    max-height: 80vh;
+    max-width: 85vw;
+    overflow-y: scroll;
+  }
+
+  .scrollableContainer > div[role="tooltip"] li > a,
+  .scrollableContainer > div[role="tooltip"] li:only-child > a {
+    padding: 6px 0px 6px 12px;
+    color: var(--temp-grey-blue-7);
+  }
 }

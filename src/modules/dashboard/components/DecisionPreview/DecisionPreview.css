@@ -1,0 +1,128 @@
+.main {
+  padding: 90px 0;
+  height: 100%;
+  width: 100%;
+  background-color: white;
+}
+
+.containerMargin {
+  /*
+   * @NOTE On specs
+   *
+   * The specs designed this for 1440. On this resolution it looks exactly as spec'd.
+   * But as you widen the view port more and more the offset will blur out more and more
+   * and it will start to look centered (due to the percentage margins).
+   *
+   * This is not a bug, this is by design.
+   */
+  margin: 0 13.19% 0 24.3%;
+  width: 900px;
+}
+
+.dividerTop {
+  composes: containerMargin;
+  height: 1px;
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.contentContainer {
+  composes: containerMargin;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.upperContainer {
+  composes: contentContainer;
+  align-items: baseline;
+}
+
+.tagWrapper {
+  margin-bottom: 13px;
+}
+
+.leftContent {
+  width: 460px;
+  line-height: 18px;
+}
+
+.decisionContent {
+  composes: leftContent;
+  margin-top: 17px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+  word-break: break-word;
+}
+
+.noContent {
+  composes: leftContent;
+  margin-top: 100px;
+  text-align: center;
+}
+
+.rightContent {
+  margin-top: 17px;
+}
+
+.userinfo {
+  composes: inlineEllipsis from '~styles/text.css';
+  display: flex;
+  align-items: center;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
+
+.userName {
+  margin-left: 5px;
+}
+
+.title {
+  margin-top: 16px;
+  margin-bottom: 15px;
+}
+
+.details {
+  margin: 0;
+  margin-top: 20px;
+  width: 340px;
+}
+
+.descriptionContainer > h3 {
+  font-size: var(--size-medium);
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+}
+
+.buttonContainer button:last-child {
+  min-width: 160px;
+}
+
+.buttonContainer > button {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.buttonContainer button:nth-child(2) {
+  margin-right: 35px;
+}
+
+.titleDecoration {
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
+
+.loadingWrapper {
+  margin-left: 60px;
+  height: 100%;
+  width: calc(100% - 60px);
+  position: relative;
+}
+
+.leftContent > p {
+  margin-bottom: 20px;
+}

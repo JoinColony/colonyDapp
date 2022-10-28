@@ -10,13 +10,14 @@ import { STATUS } from './types';
 export enum ActionPageDetails {
   FromDomain = 'FromDomain',
   ToDomain = 'ToDomain',
+  Domain = 'Domain',
   ToRecipient = 'ToRecipient',
   Amount = 'Amount',
-  Domain = 'Domain',
   Description = 'Description',
   Name = 'Name',
   Permissions = 'Permissions',
   ReputationChange = 'ReputationChange',
+  Author = 'Author',
 }
 
 type EventRolesMap = Partial<
@@ -52,6 +53,7 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
   [ColonyAndExtensionsEvents.TokenUnlocked]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.TokensMinted]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.DomainAdded]: [ColonyRole.Architecture],
+  [ColonyAndExtensionsEvents.DecisionCreated]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.ColonyUpgraded]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.ColonyMetadata]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.DomainMetadata]: [ColonyRole.Architecture],
@@ -97,6 +99,8 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyMotions.EmitDomainReputationPenaltyMotion]: 'emoji-firebolt',
   [ColonyMotions.EmitDomainReputationRewardMotion]: 'emoji-shooting-star',
   [ColonyMotions.UnlockTokenMotion]: 'emoji-padlock',
+  [ColonyMotions.CreateDecisionMotion]: 'emoji-decisions',
+  [ColonyMotions.NullMotion]: 'forbidden-signal',
   [ColonyActions.Generic]: 'circle-check-primary',
 };
 
@@ -155,6 +159,7 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
   [ColonyMotions.MoveFundsMotion]: MOTION_EVENTS,
   [ColonyMotions.EmitDomainReputationPenaltyMotion]: MOTION_EVENTS,
   [ColonyMotions.EmitDomainReputationRewardMotion]: MOTION_EVENTS,
+  [ColonyMotions.CreateDecisionMotion]: MOTION_EVENTS,
 };
 
 /*
@@ -279,4 +284,5 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.ReputationChange,
   ],
   [ColonyMotions.UnlockTokenMotion]: [],
+  [ColonyMotions.CreateDecisionMotion]: [ActionPageDetails.Author],
 };

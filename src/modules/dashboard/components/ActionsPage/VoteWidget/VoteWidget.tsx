@@ -1,7 +1,7 @@
-import React, { useCallback, RefObject } from 'react';
+import React, { useCallback, RefObject, useState, useEffect } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
@@ -9,7 +9,12 @@ import Button from '~core/Button';
 import { ActionForm, CustomRadioGroup, CustomRadioProps } from '~core/Fields';
 import Heading from '~core/Heading';
 
-import { Colony, useLoggedInUser, useUserReputationQuery } from '~data/index';
+import {
+  Colony,
+  useLoggedInUser,
+  useUserReputationQuery,
+  useMotionCurrentUserVotedQuery,
+} from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { ColonyMotions } from '~types/index';
 import { mapPayload } from '~utils/actions';
@@ -54,12 +59,21 @@ const MSG = defineMessages({
       ${ColonyMotions.VersionUpgradeMotion} {Version Upgrade}
       ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite}
       ${ColonyMotions.EmitDomainReputationRewardMotion} {Award}
+      ${ColonyMotions.CreateDecisionMotion} {Decision}
       other {Generic Action}
     }" be approved?`,
   },
   buttonVote: {
     id: 'dashboard.ActionsPage.VoteWidget.buttonVote',
     defaultMessage: `Vote`,
+  },
+  buttonChangeVote: {
+    id: 'dashboard.ActionsPage.VoteWidget.buttonChangeVote',
+    defaultMessage: `Change Vote`,
+  },
+  voteHidden: {
+    id: 'dashboard.ActionsPage.VoteWidget.voteHidden',
+    defaultMessage: `Your vote is hidden from others.\nYou can change your vote.`,
   },
 });
 
@@ -76,6 +90,8 @@ const VoteWidget = ({
   scrollToRef,
   motionState,
 }: Props) => {
+  const [hasUserVoted, setHasUserVoted] = useState(false);
+
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
   const { data: userReputationData } = useUserReputationQuery({
@@ -85,6 +101,21 @@ const VoteWidget = ({
       domainId: motionDomain,
     },
   });
+
+  const { data: userVoteData, refetch } = useMotionCurrentUserVotedQuery({
+    variables: {
+      colonyAddress,
+      userAddress: walletAddress,
+      motionId,
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  useEffect(() => {
+    if (userVoteData) {
+      setHasUserVoted(userVoteData.motionCurrentUserVoted);
+    }
+  }, [userVoteData]);
 
   const transform = useCallback(
     mapPayload(({ vote }) => ({
@@ -101,8 +132,10 @@ const VoteWidget = ({
       resetForm({});
       setFieldValue('vote', undefined);
       scrollToRef?.current?.scrollIntoView({ behavior: 'smooth' });
+      refetch();
+      setHasUserVoted(true);
     },
-    [scrollToRef],
+    [scrollToRef, refetch],
   );
 
   const hasRegisteredProfile = !!username && !ethereal;
@@ -145,60 +178,67 @@ const VoteWidget = ({
   ];
 
   return (
-    <ActionForm
-      initialValues={{
-        vote: undefined,
-      }}
-      validationSchema={validationSchema}
-      submit={ActionTypes.MOTION_VOTE}
-      error={ActionTypes.MOTION_VOTE_ERROR}
-      success={ActionTypes.MOTION_VOTE_SUCCESS}
-      transform={transform}
-      onSuccess={handleSuccess}
-    >
-      {({
-        handleSubmit,
-        isSubmitting,
-        isValid,
-        values,
-      }: FormikProps<FormValues>) => (
-        <div className={styles.main}>
-          <Heading
-            text={MSG.title}
-            textValues={{ actionType }}
-            appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
-          />
-          <CustomRadioGroup
-            options={options(values.vote)}
-            currentlyCheckedValue={values.vote}
-            name="vote"
-            disabled={inputDisabled || isSubmitting}
-          />
-          <VoteDetails
-            colony={colony}
-            motionId={motionId}
-            motionState={motionState}
-            showReward={hasReputationToVote}
-            buttonComponent={
-              <Button
-                appearance={{ theme: 'primary', size: 'medium' }}
-                text={MSG.buttonVote}
-                disabled={
-                  !isValid ||
-                  !hasRegisteredProfile ||
-                  !values.vote ||
-                  !hasReputationToVote ||
-                  isSubmitting
-                }
-                onClick={() => handleSubmit()}
-                loading={isSubmitting}
-                dataTest="voteButton"
-              />
-            }
-          />
-        </div>
+    <>
+      {hasUserVoted && (
+        <p className={styles.voteHiddenContainer}>
+          <FormattedMessage {...MSG.voteHidden} />
+        </p>
       )}
-    </ActionForm>
+      <ActionForm
+        initialValues={{
+          vote: undefined,
+        }}
+        validationSchema={validationSchema}
+        submit={ActionTypes.MOTION_VOTE}
+        error={ActionTypes.MOTION_VOTE_ERROR}
+        success={ActionTypes.MOTION_VOTE_SUCCESS}
+        transform={transform}
+        onSuccess={handleSuccess}
+      >
+        {({
+          handleSubmit,
+          isSubmitting,
+          isValid,
+          values,
+        }: FormikProps<FormValues>) => (
+          <div className={styles.main}>
+            <Heading
+              text={MSG.title}
+              textValues={{ actionType }}
+              appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
+            />
+            <CustomRadioGroup
+              options={options(values.vote)}
+              currentlyCheckedValue={values.vote}
+              name="vote"
+              disabled={inputDisabled || isSubmitting}
+            />
+            <VoteDetails
+              colony={colony}
+              motionId={motionId}
+              motionState={motionState}
+              showReward={hasReputationToVote}
+              buttonComponent={
+                <Button
+                  appearance={{ theme: 'primary', size: 'medium' }}
+                  text={hasUserVoted ? MSG.buttonChangeVote : MSG.buttonVote}
+                  disabled={
+                    !isValid ||
+                    !hasRegisteredProfile ||
+                    !values.vote ||
+                    !hasReputationToVote ||
+                    isSubmitting
+                  }
+                  onClick={() => handleSubmit()}
+                  loading={isSubmitting}
+                  dataTest="voteButton"
+                />
+              }
+            />
+          </div>
+        )}
+      </ActionForm>
+    </>
   );
 };
 

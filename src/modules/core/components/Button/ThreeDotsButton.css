@@ -1,0 +1,42 @@
+.main {
+  padding: 0;
+  height: 18px;
+  width: 8px;
+  position: relative;
+  border: 1px solid transparent;
+  border-radius: var(--radius-small);
+  background: transparent;
+  cursor: pointer;
+}
+
+.menuActive, .main:hover {
+  border-color: var(--action-secondary);
+}
+
+.menuActive .icon, .main:hover .icon {
+  fill: var(--action-secondary);
+}
+
+.main:focus {
+  outline: 0;
+}
+
+.icon {
+  height: 10px;
+  width: 10px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  fill: var(--temp-grey-blue-7);
+}
+
+.icon svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.icon:hover {
+  fill: var(--action-secondary);
+}

@@ -15,6 +15,7 @@ import { RootMotionOperationNames } from '~redux/types/actions';
 import { pipe, mapPayload, withMeta } from '~utils/actions';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { WizardDialogType } from '~utils/hooks';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import TokenMintForm from './TokenMintForm';
 
@@ -54,7 +55,6 @@ const validationSchema = yup.object().shape({
 const TokenMintDialog = ({
   colony: { nativeTokenAddress, tokens = [], colonyAddress, colonyName },
   colony,
-  isVotingExtensionEnabled,
   cancel,
   close,
   callStep,
@@ -62,6 +62,10 @@ const TokenMintDialog = ({
 }: Props) => {
   const [isForce, setIsForce] = useState(false);
   const history = useHistory();
+
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
 
   const getFormAction = useCallback(
     (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
@@ -132,7 +136,6 @@ const TokenMintDialog = ({
             <TokenMintForm
               {...formValues}
               colony={colony}
-              isVotingExtensionEnabled={isVotingExtensionEnabled}
               back={prevStep && callStep ? () => callStep(prevStep) : undefined}
               nativeToken={nativeToken}
             />

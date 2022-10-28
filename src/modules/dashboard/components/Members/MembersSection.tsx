@@ -38,9 +38,9 @@ interface Props<U> {
   members: ColonyWatcher[] | ColonyContributor[];
   canAdministerComments: boolean;
   extraItemContent: (user: U) => ReactNode;
+  itemsPerSection?: number;
 }
 
-const ITEMS_PER_SECTION = 10;
 const MembersSection = <U extends ColonyWatcher | ColonyContributor>({
   colony,
   currentDomainId,
@@ -48,10 +48,11 @@ const MembersSection = <U extends ColonyWatcher | ColonyContributor>({
   canAdministerComments,
   extraItemContent,
   isContributorsSection,
+  itemsPerSection = 10,
 }: Props<U>) => {
   const [dataPage, setDataPage] = useState<number>(1);
 
-  const paginatedMembers = members.slice(0, ITEMS_PER_SECTION * dataPage);
+  const paginatedMembers = members.slice(0, itemsPerSection * dataPage);
   const handleDataPagination = useCallback(() => {
     setDataPage(dataPage + 1);
   }, [dataPage]);
@@ -104,7 +105,7 @@ const MembersSection = <U extends ColonyWatcher | ColonyContributor>({
           <FormattedMessage {...MSG.noMemebersFound} />
         </div>
       )}
-      {ITEMS_PER_SECTION * dataPage < members.length && (
+      {itemsPerSection * dataPage < members.length && (
         <LoadMoreButton onClick={handleDataPagination} isLoadingData={false} />
       )}
     </>

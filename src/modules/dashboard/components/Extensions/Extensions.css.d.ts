@@ -1,4 +1,5 @@
 export const lineHeight: string;
+export const query700: string;
 export const main: string;
 export const description: string;
 export const content: string;

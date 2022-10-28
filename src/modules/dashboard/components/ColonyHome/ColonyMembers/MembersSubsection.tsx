@@ -1,11 +1,10 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import Maybe from 'graphql/tsutils/Maybe';
 
 import NavLink from '~core/NavLink';
-import Heading from '~core/Heading';
 import { Tooltip } from '~core/Popover';
 import Icon from '~core/Icon';
+import ClickableHeading from '~core/ClickableHeading';
 import InviteLinkButton from '~dashboard/InviteLinkButton';
 
 import HookedUserAvatar from '~users/HookedUserAvatar';
@@ -13,8 +12,6 @@ import useAvatarDisplayCounter from '~utils/hooks/useAvatarDisplayCounter';
 import {
   Colony,
   useLoggedInUser,
-  BannedUser,
-  UserProfile,
   ColonyContributor,
   ColonyWatcher,
 } from '~data/index';
@@ -62,14 +59,6 @@ const MSG = defineMessages({
     defaultMessage: 'View more',
   },
 });
-
-type BannedMember = Maybe<
-  Pick<BannedUser, 'id' | 'eventId' | 'banned'> & {
-    profile?:
-      | Maybe<Pick<UserProfile, 'displayName' | 'username' | 'walletAddress'>>
-      | undefined;
-  }
->;
 
 interface Props {
   colony: Colony;
@@ -131,17 +120,19 @@ const MembersSubsection = ({
             </div>
           }
         >
-          <NavLink to={membersPageRoute}>
-            <Heading
-              appearance={{ size: 'normal', weight: 'bold' }}
-              text={MSG.title}
-              textValues={{
+          <ClickableHeading
+            linkTo={membersPageRoute}
+            appearance={{ margin: 'none' }}
+          >
+            <FormattedMessage
+              {...MSG.title}
+              values={{
                 count: members?.length,
                 hasCounter,
                 isContributorsSubsection,
               }}
             />
-          </NavLink>
+          </ClickableHeading>
         </Tooltip>
         {!isContributorsSubsection && (
           <InviteLinkButton
@@ -151,7 +142,7 @@ const MembersSubsection = ({
         )}
       </div>
     ),
-    [members, membersPageRoute, isContributorsSubsection, colonyName],
+    [isContributorsSubsection, membersPageRoute, members, colonyName],
   );
 
   if (!members) {

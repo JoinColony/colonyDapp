@@ -64,11 +64,14 @@ const AvatarUploadItem = ({
     if (file && !error && !uploaded) {
       uploadFile();
     }
-    if (error && handleError) {
-      handleError({ ...value, file });
+    if (error) {
+      handleError?.({ ...value, file });
+
+      // reset the form to allow for another upload attempt
+      reset();
     }
     // Only on first render
-  }, [handleError, file, error, uploadFile, uploaded, value]);
+  }, [handleError, file, error, uploadFile, uploaded, value, reset]);
 
   return (
     <div className={styles.main}>

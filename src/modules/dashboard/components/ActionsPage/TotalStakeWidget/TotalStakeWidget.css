@@ -61,3 +61,15 @@
   font-size: var(--size-small);
   font-weight: var(--weight-bold);
 }
+
+.helpTooltip {
+  align-self: flex-end;
+  margin-left: 7px;
+  margin-top: 1px;
+  cursor: pointer;
+}
+
+.subHeading {
+  display: flex;
+  flex-direction: row;
+}

@@ -11,27 +11,27 @@ import { parse as parseQS } from 'query-string';
 
 import LoadingTemplate from '~pages/LoadingTemplate';
 import Extensions, { ExtensionDetails } from '~dashboard/Extensions';
-
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
-import { useColonyFromNameQuery } from '~data/index';
+import ColonyHomeActions from '~dashboard/ColonyHomeActions';
+import { allAllowedExtensions } from '~data/staticData/';
 
 import ColonyActions from '~dashboard/ColonyActions';
 import ColonyEvents from '~dashboard/ColonyEvents';
-import CoinMachine from '~dashboard/CoinMachine';
+import { ColonyDecisionsWrapper } from '~dashboard/ColonyDecisions';
 
-import ColonyHomeLayout from './ColonyHomeLayout';
-
-import styles from './ColonyHomeLayout.css';
-
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import { useColonyFromNameQuery } from '~data/index';
 import {
   COLONY_EVENTS_ROUTE,
+  COLONY_DECISIONS_ROUTE,
   COLONY_EXTENSIONS_ROUTE,
   COLONY_EXTENSION_DETAILS_ROUTE,
   COLONY_EXTENSION_SETUP_ROUTE,
   COLONY_HOME_ROUTE,
   NOT_FOUND_ROUTE,
-  COIN_MACHINE_ROUTE,
 } from '~routes/index';
+
+import ColonyHomeLayout from './ColonyHomeLayout';
+import styles from './ColonyHomeLayout.css';
 
 const MSG = defineMessages({
   loadingText: {
@@ -40,7 +40,7 @@ const MSG = defineMessages({
   },
 });
 
-type Props = RouteChildrenProps<{ colonyName: string }>;
+type Props = RouteChildrenProps<{ colonyName: string; extensionId?: string }>;
 
 const displayName = 'dashboard.ColonyHome';
 
@@ -51,8 +51,9 @@ const ColonyHome = ({ match, location }: Props) => {
     );
   }
 
-  const { colonyName } = useParams<{
+  const { colonyName, extensionId } = useParams<{
     colonyName: string;
+    extensionId?: string;
   }>();
 
   const { domainFilter: queryDomainFilterId } = parseQS(location.search) as {
@@ -70,11 +71,16 @@ const ColonyHome = ({ match, location }: Props) => {
     variables: { name: colonyName, address: '' },
     pollInterval: 5000,
   });
-
   if (error) console.error(error);
 
+  const isExtensionIdValid = useMemo(
+    // if no extensionId is provided, assume it's valid
+    () => (extensionId ? allAllowedExtensions.includes(extensionId) : true),
+    [extensionId],
+  );
+
   const memoizedSwitch = useMemo(() => {
-    if (data?.processedColony) {
+    if (data?.processedColony && isExtensionIdValid) {
       const { processedColony: colony } = data;
       const { colonyAddress } = colony;
       return (
@@ -86,10 +92,19 @@ const ColonyHome = ({ match, location }: Props) => {
                 colony={colony}
                 filteredDomainId={filteredDomainId}
                 onDomainChange={setDomainIdFilter}
-                showActions={false}
               >
                 <ColonyEvents colony={colony} ethDomainId={filteredDomainId} />
               </ColonyHomeLayout>
+            )}
+          />
+          <Route
+            path={COLONY_DECISIONS_ROUTE}
+            component={() => (
+              <ColonyDecisionsWrapper
+                colony={colony}
+                filteredDomainId={filteredDomainId}
+                onDomainChange={setDomainIdFilter}
+              />
             )}
           />
           <Route
@@ -126,27 +141,18 @@ const ColonyHome = ({ match, location }: Props) => {
             )}
           />
           <Route
-            path={COIN_MACHINE_ROUTE}
-            component={() => (
-              <ColonyHomeLayout
-                colony={colony}
-                filteredDomainId={filteredDomainId}
-                onDomainChange={setDomainIdFilter}
-                showControls={false}
-                showSidebar={false}
-              >
-                <CoinMachine colony={colony} />
-              </ColonyHomeLayout>
-            )}
-          />
-          <Route
             path={COLONY_HOME_ROUTE}
             component={() => (
               <ColonyHomeLayout
                 colony={colony}
                 filteredDomainId={filteredDomainId}
                 onDomainChange={setDomainIdFilter}
-                ethDomainId={filteredDomainId}
+                newItemButton={
+                  <ColonyHomeActions
+                    colony={colony}
+                    ethDomainId={filteredDomainId}
+                  />
+                }
               >
                 <ColonyActions colony={colony} ethDomainId={filteredDomainId} />
               </ColonyHomeLayout>
@@ -156,7 +162,7 @@ const ColonyHome = ({ match, location }: Props) => {
       );
     }
     return null;
-  }, [data, setDomainIdFilter, filteredDomainId]);
+  }, [data, isExtensionIdValid, filteredDomainId]);
 
   /*
    * Keep the page loaded when the colony name changes, but we have data
@@ -190,7 +196,8 @@ const ColonyHome = ({ match, location }: Props) => {
     !colonyName ||
     error ||
     !data?.processedColony ||
-    (data?.colonyAddress as any) instanceof Error
+    (data?.colonyAddress as any) instanceof Error ||
+    !isExtensionIdValid
   ) {
     return <Redirect to={NOT_FOUND_ROUTE} />;
   }

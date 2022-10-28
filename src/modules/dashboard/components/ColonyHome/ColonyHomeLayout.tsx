@@ -1,9 +1,8 @@
 import React, { ReactChild, useEffect } from 'react';
+import { useMediaQuery } from 'react-responsive';
 
 import { useDialog } from '~core/Dialog';
-
 import ColonyDomainSelector from '~dashboard/ColonyHome/ColonyDomainSelector';
-import ColonyHomeActions from '~dashboard/ColonyHomeActions';
 import ColonyTotalFunds from '~dashboard/ColonyTotalFunds';
 import WrongNetworkDialog from '~dialogs/WrongNetworkDialog';
 
@@ -12,8 +11,7 @@ import { checkIfNetworkIsAllowed } from '~utils/networks';
 
 import ColonyFunding from './ColonyFunding';
 import ColonyUnclaimedTransfers from './ColonyUnclaimedTransfers';
-import ColonyTitle from './ColonyTitle';
-import ColonyNavigation from './ColonyNavigation';
+import ColonyHomeInfo from './ColonyHomeInfo';
 import ColonyMembers from './ColonyMembers';
 import ColonyExtensions from './ColonyExtensions';
 import ColonyDomainDescription from './ColonyDomainDescription';
@@ -22,6 +20,7 @@ import ColonyFinishDeployment from './ColonyFinishDeployment';
 import ExtensionUpgrade from './ExtensionUpgrade';
 
 import styles from './ColonyHomeLayout.css';
+import { query700 as query } from '~styles/queries.css';
 
 type Props = {
   colony: Colony;
@@ -35,8 +34,7 @@ type Props = {
   showControls?: boolean;
   showNavigation?: boolean;
   showSidebar?: boolean;
-  showActions?: boolean;
-  ethDomainId?: number;
+  newItemButton?: ReactChild;
 };
 
 const displayName = 'dashboard.ColonyHome.ColonyHomeLayout';
@@ -48,13 +46,13 @@ const ColonyHomeLayout = ({
   showControls = true,
   showNavigation = true,
   showSidebar = true,
-  showActions = true,
   onDomainChange = () => null,
-  ethDomainId,
+  newItemButton,
 }: Props) => {
   const { ethereal, networkId } = useLoggedInUser();
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
   const openWrongNetworkDialog = useDialog(WrongNetworkDialog);
+  const isMobile = useMediaQuery({ query });
 
   useEffect(() => {
     if (!ethereal && !isNetworkAllowed) {
@@ -67,10 +65,7 @@ const ColonyHomeLayout = ({
       <div
         className={showSidebar ? styles.mainContentGrid : styles.minimalGrid}
       >
-        <aside className={styles.leftAside}>
-          <ColonyTitle colony={colony} />
-          {showNavigation && <ColonyNavigation colony={colony} />}
-        </aside>
+        <ColonyHomeInfo {...{ colony, isMobile, showNavigation }} />
         <div className={styles.mainContent}>
           {showControls && (
             <>
@@ -83,12 +78,7 @@ const ColonyHomeLayout = ({
                     colony={colony}
                   />
                 </div>
-                {showActions && (
-                  <ColonyHomeActions
-                    colony={colony}
-                    ethDomainId={ethDomainId}
-                  />
-                )}
+                {newItemButton}
               </div>
             </>
           )}

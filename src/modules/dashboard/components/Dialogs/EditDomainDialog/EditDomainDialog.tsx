@@ -9,6 +9,7 @@ import { ActionForm } from '~core/Fields';
 
 import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 
 import DialogForm from './EditDomainDialogForm';
@@ -41,7 +42,6 @@ const EditDomainDialog = ({
   close,
   colony,
   colony: { colonyAddress, colonyName, domains },
-  isVotingExtensionEnabled,
   ethDomainId: preselectedDomainId,
 }: Props) => {
   const selectedDomain = useMemo(
@@ -58,6 +58,10 @@ const EditDomainDialog = ({
 
   const [isForce, setIsForce] = useState(false);
   const history = useHistory();
+
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
 
   const getFormAction = useCallback(
     (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
@@ -119,7 +123,6 @@ const EditDomainDialog = ({
             <DialogForm
               {...formValues}
               back={prevStep && callStep ? () => callStep(prevStep) : undefined}
-              isVotingExtensionEnabled={isVotingExtensionEnabled}
               colony={colony}
             />
           </Dialog>

@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .layoutMain {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   overflow: auto;
@@ -42,4 +44,14 @@
 
 .naked-mole {
   width: 660px;
+}
+
+@media screen and query700 {
+  .hero {
+    width: auto;
+  }
+
+  .herowrapper {
+    padding: 50px 14px;
+  }
 }

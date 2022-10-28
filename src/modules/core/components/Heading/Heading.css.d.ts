@@ -9,6 +9,7 @@ export const marginSmall: string;
 export const marginDouble: string;
 export const sizeTiny: string;
 export const sizeSmall: string;
+export const sizeSmallish: string;
 export const sizeNormal: string;
 export const sizeMedium: string;
 export const sizeLarge: string;

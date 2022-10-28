@@ -1,4 +1,5 @@
 export const tableHeight: string;
+export const query700: string;
 export const inboxContainerFull: string;
 export const inboxContainerPopover: string;
 export const contentContainerFull: string;

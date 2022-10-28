@@ -1,4 +1,5 @@
 @value spaceBetween: 26px;
+@value query700 from '~styles/queries.css';
 
 .content {
   display: flex;
@@ -56,4 +57,16 @@
 .claimWrapper {
   display: flex;
   align-items: center;
+}
+
+@media screen and query700 {
+  .content, .content > div {
+    justify-content: flex-start;
+    align-items: stretch;
+    column-gap: 20px;
+  }
+
+  .button, .amountWrapper, .tokenName {
+    align-self: center;
+  }
 }

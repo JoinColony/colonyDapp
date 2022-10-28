@@ -40,8 +40,6 @@ const eventsMessageDescriptors = {
   [`event.${ColonyAndExtensionsEvents.DomainMetadata}.fallback`]: `{initiator} changed this team, but values are the same`,
   [`event.${ColonyAndExtensionsEvents.ColonyRoleSet}.assign`]: `{initiator} assigned the {role} permission in the {fromDomain} team to {recipient}`,
   [`event.${ColonyAndExtensionsEvents.ColonyRoleSet}.remove`]: `{initiator} removed the {role} permission in the {fromDomain} team from {recipient}`,
-  [`event.${ColonyAndExtensionsEvents.UserApproved}.assign`]: `User {agent} got approved in the whitelist`,
-  [`event.${ColonyAndExtensionsEvents.UserApproved}.remove`]: `User {agent} got removed from the whitelist`,
   [`event.${ColonyAndExtensionsEvents.ArbitraryReputationUpdate}.title`]: `{initiator} {isSmiteAction, select,
     true {smote}
     false {awarded}
@@ -76,8 +74,6 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.RecoveryStorageSlotSet} {{agent} set storage slot {storageSlot} to {storageSlotValue}}
       ${ColonyAndExtensionsEvents.RecoveryModeExitApproved} {{agent} approved exiting the Recovery Mode}
       ${ColonyAndExtensionsEvents.RecoveryModeExited} {{agent} exited the colony from Recovery Mode}
-      ${ColonyAndExtensionsEvents.PeriodUpdated} {Coin machine period updated from {activePeriod} to {currentPeriod}}
-      ${ColonyAndExtensionsEvents.TokensBought} {{agent} bought {amount} {tokenSymbol}}
       ${ColonyAndExtensionsEvents.MotionCreated} {{agent} created motion {motionId} in {domain}}
       ${ColonyAndExtensionsEvents.MotionStaked} {{agent} {voteSide} motion {motionId} for {amount} {tokenSymbol}}
       ${ColonyAndExtensionsEvents.MotionVoteSubmitted} {{agent} voted in motion {motionId}}
@@ -86,8 +82,6 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.MotionEscalated} {{agent} escalated motion {motionId} from {domain} to {newDomain}}
       ${ColonyAndExtensionsEvents.MotionRewardClaimed} {{agent} claimed their stake in motion {motionId}}
       ${ColonyAndExtensionsEvents.MotionEventSet} {Motion {motionId} fast-forwarded to the next lifecycle}
-      ${ColonyAndExtensionsEvents.AgreementSigned} {User {agent} signed the whitelist agreement}
-      other {{eventName} emmited with values: {displayValues}}
     }`,
   [`eventList.${ColonyAndExtensionsEvents.ColonyRoleSet}.assign`]: `{agent} assigned the {role} permission in the {domain} team to {recipient}`,
   [`eventList.${ColonyAndExtensionsEvents.ColonyRoleSet}.remove`]: `{agent} removed the {role} permission in the {domain} team from {recipient}`,

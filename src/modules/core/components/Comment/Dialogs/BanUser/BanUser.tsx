@@ -175,7 +175,12 @@ const BanUser = ({
       onSubmit={handleSubmit}
       enableReinitialize
     >
-      {({ isValid, isSubmitting, submitForm }: FormikProps<FormValues>) => (
+      {({
+        isValid,
+        isSubmitting,
+        values,
+        submitForm,
+      }: FormikProps<FormValues>) => (
         <Dialog cancel={cancel}>
           <DialogSection>
             <Heading
@@ -219,7 +224,7 @@ const BanUser = ({
                   size: 'large',
                 }}
                 text={isBanning ? MSG.banish : MSG.deactivateBan}
-                disabled={!isValid || isSubmitting}
+                disabled={!isValid || isSubmitting || values.userAddress === ''}
                 loading={loadingBanAction || isSubmitting}
                 onClick={submitForm}
               />

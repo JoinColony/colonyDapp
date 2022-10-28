@@ -1,4 +1,5 @@
 export const wideButton: string;
+export const query700: string;
 export const inputContainer: string;
 export const domainSelects: string;
 export const singleUserContainer: string;

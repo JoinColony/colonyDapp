@@ -10,7 +10,7 @@ import {
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 
-import { uploadIfpsAnnotation } from '../utils';
+import { ipfsUploadAnnotation } from '../utils';
 import {
   createTransaction,
   createTransactionChannels,
@@ -150,7 +150,7 @@ function* createMoveFundsAction({
     if (annotationMessage) {
       yield put(transactionPending(annotateMoveFunds.id));
 
-      const ipfsHash = yield call(uploadIfpsAnnotation, annotationMessage);
+      const ipfsHash = yield call(ipfsUploadAnnotation, annotationMessage);
 
       yield put(transactionAddParams(annotateMoveFunds.id, [txHash, ipfsHash]));
 

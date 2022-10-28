@@ -1,4 +1,3 @@
-import { CoinMachineActionTypes } from './coinMachine';
 import { ColonyActionTypes } from './colony';
 import { ColonyActionsActionTypes } from './colonyActions';
 import { MotionActionTypes } from './motion';
@@ -8,7 +7,6 @@ import { TransactionActionTypes } from './transaction';
 import { MessageActionTypes } from './message';
 import { UserActionTypes } from './user';
 import { WalletActionTypes } from './wallet';
-import { WhitelistActionTypes } from './whitelist';
 import { MetacolonyVestingTypes } from './vesting';
 
 export { RootMotionOperationNames } from './motion';
@@ -94,7 +92,6 @@ export interface ErrorActionType<T extends string, M>
  * This is the type that contains ALL of our actions in the app.
  */
 export type AllActions =
-  | CoinMachineActionTypes
   | ColonyActionTypes
   | ColonyActionsActionTypes
   | GasPricesActionTypes
@@ -103,7 +100,6 @@ export type AllActions =
   | MessageActionTypes
   | UserActionTypes
   | WalletActionTypes
-  | WhitelistActionTypes
   | MotionActionTypes
   | MetacolonyVestingTypes;
 

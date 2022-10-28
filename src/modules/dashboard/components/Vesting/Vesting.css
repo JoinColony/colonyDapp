@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   margin: 50px 0 0 45px;
   width: 340px;
@@ -58,4 +60,16 @@
 .popoverWrapper {
   display: inline-block;
   margin-bottom: -10px;
+}
+
+@media screen and query700 {
+  .main {
+    margin-top: 20px;
+    padding: 0 14px;
+    width: auto;
+  }
+
+  .buttonContainer > button {
+    width: auto;
+  }
 }

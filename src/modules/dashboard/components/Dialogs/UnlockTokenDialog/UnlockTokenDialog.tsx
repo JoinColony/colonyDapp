@@ -9,6 +9,7 @@ import { ActionTypes } from '~redux/index';
 import { RootMotionOperationNames } from '~redux/types/actions';
 import { pipe, withMeta, withKey, mapPayload } from '~utils/actions';
 import { WizardDialogType } from '~utils/hooks';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import UnlockTokenForm from './UnlockTokenForm';
 
@@ -31,7 +32,6 @@ const validationSchema = yup.object().shape({
 const UnlockTokenDialog = ({
   colony: { colonyAddress, colonyName },
   colony,
-  isVotingExtensionEnabled,
   cancel,
   close,
   callStep,
@@ -39,6 +39,10 @@ const UnlockTokenDialog = ({
 }: Props) => {
   const [isForce, setIsForce] = useState(false);
   const history = useHistory();
+
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
 
   const getFormAction = useCallback(
     (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
@@ -95,7 +99,6 @@ const UnlockTokenDialog = ({
               {...formValues}
               colony={colony}
               back={prevStep && callStep ? () => callStep(prevStep) : undefined}
-              isVotingExtensionEnabled={isVotingExtensionEnabled}
             />
           </Dialog>
         );

@@ -115,7 +115,7 @@ export default gql`
     newVersion: String!
     colonyDisplayName: String!
     colonyAvatarHash: String!
-    colonyTokens: [String]!
+    colonyTokens: [String!]!
     domainName: String!
     domainPurpose: String!
     domainColor: String!

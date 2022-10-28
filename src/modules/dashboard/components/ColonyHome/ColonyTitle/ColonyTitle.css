@@ -1,3 +1,5 @@
+@value query700 from "~styles/queries.css";
+
 .main {
   display: block;
   margin: 0 -40px 50px 0px;
@@ -26,4 +28,34 @@
   color: var(--dark);
   letter-spacing: 0px;
   cursor: default;
+}
+
+@media screen and query700 {
+  .main {
+    margin: 0;
+    padding: 0px 14px;
+    width: 100%;
+    text-align: left;
+  }
+
+  .wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    column-gap: 10px;
+  }
+
+  .colonyTitle {
+    padding: 0;
+    overflow-wrap: anywhere; /* Wrap very long colony names */
+  }
+
+  .colonyTitle h3 {
+    white-space: break-spaces; /* Wrap very long colony names */
+  }
+
+  .colonyAddress {
+    padding: 4px 0;
+  }
 }

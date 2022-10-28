@@ -12,7 +12,6 @@ import ManageWhitelistDialog from '~dashboard/Dialogs/ManageWhitelistDialog';
 
 import { Colony, useColonyExtensionsQuery, useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
-import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot, canAdminister, canArchitect } from '~modules/users/checks';
@@ -59,10 +58,6 @@ const MemberControls = ({
   const openWrongNetworkDialog = useDialog(WrongNetworkDialog);
   const openToggleBanningDialog = useDialog(BanUserDialog);
 
-  const { isVotingExtensionEnabled } = useEnabledExtensions({
-    colonyAddress,
-  });
-
   useEffect(() => {
     if (!ethereal && !isNetworkAllowed) {
       openWrongNetworkDialog();
@@ -78,9 +73,8 @@ const MemberControls = ({
   const handlePermissionManagementDialog = useCallback(() => {
     openPermissionManagementDialog({
       colony,
-      isVotingExtensionEnabled,
     });
-  }, [openPermissionManagementDialog, colony, isVotingExtensionEnabled]);
+  }, [openPermissionManagementDialog, colony]);
 
   const openToggleManageWhitelistDialog = useDialog(ManageWhitelistDialog);
 

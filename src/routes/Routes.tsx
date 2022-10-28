@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { Route, Redirect, Switch } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
+import { useMediaQuery } from 'react-responsive';
 
 import { WalletMethod } from '~immutable/index';
 import CreateColonyWizard from '~dashboard/CreateColonyWizard';
@@ -20,6 +21,7 @@ import LoadingTemplate from '~pages/LoadingTemplate';
 import LadingPage from '~pages/LandingPage';
 import ActionsPage from '~dashboard/ActionsPage';
 import { ClaimTokensPage, UnwrapTokensPage } from '~dashboard/Vesting';
+import DecisionPreview from '~dashboard/DecisionPreview/DecisionPreview';
 
 import appLoadingContext from '~context/appLoadingState';
 import ColonyFunding from '~dashboard/ColonyFunding';
@@ -28,6 +30,8 @@ import { ActionTypes } from '~redux/index';
 
 import {
   COLONY_EVENTS_ROUTE,
+  COLONY_DECISIONS_ROUTE,
+  COLONY_DECISIONS_PREVIEW_ROUTE,
   COLONY_EXTENSIONS_ROUTE,
   COLONY_EXTENSION_DETAILS_ROUTE,
   COLONY_EXTENSION_SETUP_ROUTE,
@@ -44,14 +48,16 @@ import {
   LANDING_PAGE_ROUTE,
   MEMBERS_ROUTE,
   ACTIONS_PAGE_ROUTE,
-  COIN_MACHINE_ROUTE,
   UNWRAP_TOKEN_ROUTE,
   CLAIM_TOKEN_ROUTE,
+  DECISIONS_PAGE_ROUTE,
 } from './routeConstants';
 
 import AlwaysAccesibleRoute from './AlwaysAccesibleRoute';
 import WalletRequiredRoute from './WalletRequiredRoute';
 import { useTitle } from '~utils/hooks/useTitle';
+import { query700 as query } from '~styles/queries.css';
+import UserLayout from '~pages/RouteLayouts/UserLayout/UserLayout';
 
 const MSG = defineMessages({
   userProfileEditBack: {
@@ -82,7 +88,7 @@ const Routes = () => {
   const didClaimProfile = !!username;
 
   useTitle();
-
+  const isMobile = useMediaQuery({ query });
   /**
    * @NOTE Memoized Switch
    *
@@ -136,7 +142,7 @@ const Routes = () => {
           didClaimProfile={didClaimProfile}
           path={WALLET_ROUTE}
           component={Wallet}
-          layout={SimpleNav}
+          layout={isMobile ? Default : SimpleNav}
           routeProps={{
             hasBackLink: false,
           }}
@@ -146,10 +152,18 @@ const Routes = () => {
           didClaimProfile={didClaimProfile}
           path={INBOX_ROUTE}
           component={Inbox}
-          layout={SimpleNav}
+          layout={isMobile ? Default : SimpleNav}
           routeProps={{
             hasBackLink: false,
           }}
+        />
+        <WalletRequiredRoute
+          isConnected={isConnected}
+          didClaimProfile={didClaimProfile}
+          path={COLONY_DECISIONS_PREVIEW_ROUTE}
+          component={DecisionPreview}
+          layout={NavBar}
+          routeProps={{ hasBackLink: true }}
         />
 
         <AlwaysAccesibleRoute
@@ -165,9 +179,13 @@ const Routes = () => {
           path={[
             COLONY_HOME_ROUTE,
             COLONY_EVENTS_ROUTE,
+            COLONY_DECISIONS_ROUTE,
             COLONY_EXTENSIONS_ROUTE,
             COLONY_EXTENSION_DETAILS_ROUTE,
+            COLONY_EXTENSIONS_ROUTE,
             COLONY_EXTENSION_SETUP_ROUTE,
+            COLONY_HOME_ROUTE,
+            COLONY_EVENTS_ROUTE,
           ]}
           component={ColonyHome}
           layout={Default}
@@ -181,15 +199,17 @@ const Routes = () => {
           routeProps={({ colonyName }) => ({
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,
-            hasSubscribedColonies: false,
+            hasSubscribedColonies: isMobile,
           })}
         />
+
         <AlwaysAccesibleRoute
           path={USER_ROUTE}
           component={UserProfile}
-          layout={SimpleNav}
+          layout={UserLayout}
           routeProps={{
             hasBackLink: false,
+            hasSubscribedColonies: isMobile,
           }}
         />
         <AlwaysAccesibleRoute
@@ -197,7 +217,7 @@ const Routes = () => {
           component={UserProfileEdit}
           layout={Default}
           routeProps={{
-            hasSubscribedColonies: false,
+            hasSubscribedColonies: isMobile,
             backText: MSG.userProfileEditBack,
             backRoute: `/user/${username}`,
           }}
@@ -210,42 +230,48 @@ const Routes = () => {
           routeProps={({ colonyName }) => ({
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,
-            hasSubscribedColonies: false,
+            hasSubscribedColonies: isMobile,
           })}
         />
         <AlwaysAccesibleRoute
           exact
           path={ACTIONS_PAGE_ROUTE}
           component={ActionsPage}
-          layout={NavBar}
+          layout={isMobile ? Default : NavBar}
           routeProps={({ colonyName }) => ({
             backText: '',
             backRoute: `/colony/${colonyName}`,
+            hasSubscribedColonies: isMobile,
           })}
         />
         <AlwaysAccesibleRoute
           exact
-          path={COIN_MACHINE_ROUTE}
-          component={ColonyHome}
-          layout={Default}
-          routeProps={{ hasBackLink: false }}
+          path={DECISIONS_PAGE_ROUTE}
+          component={ActionsPage}
+          layout={NavBar}
+          routeProps={({ colonyName }) => ({
+            backText: '',
+            backRoute: `/colony/${colonyName}/decisions`,
+          })}
         />
         <AlwaysAccesibleRoute
           path={UNWRAP_TOKEN_ROUTE}
           component={UnwrapTokensPage}
-          layout={NavBar}
+          layout={isMobile ? Default : NavBar}
           routeProps={({ colonyName }) => ({
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,
+            hasSubscribedColonies: isMobile,
           })}
         />
         <AlwaysAccesibleRoute
           path={CLAIM_TOKEN_ROUTE}
           component={ClaimTokensPage}
-          layout={NavBar}
+          layout={isMobile ? Default : NavBar}
           routeProps={({ colonyName }) => ({
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,
+            hasSubscribedColonies: isMobile,
           })}
         />
 
@@ -255,7 +281,7 @@ const Routes = () => {
         <Redirect to={NOT_FOUND_ROUTE} />
       </Switch>
     ),
-    [didClaimProfile, isConnected, username],
+    [didClaimProfile, isConnected, username, isMobile],
   );
 
   if (isAppLoading) {

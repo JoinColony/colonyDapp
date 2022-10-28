@@ -1,4 +1,5 @@
 @value wideButton: 160px;
+@value query700 from '~styles/queries.css';
 
 .nameAndColorContainer {
   display: flex;
@@ -41,4 +42,10 @@
 
 .motionVoteDomain {
   margin: 6px 0;
+}
+
+@media screen and query700 {
+  .domainName > div:first-child {
+    min-height: 85px;
+  }
 }

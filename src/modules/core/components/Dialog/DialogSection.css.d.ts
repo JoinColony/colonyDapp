@@ -1,4 +1,5 @@
 export const borderColor: string;
+export const query700: string;
 export const main: string;
 export const themeHeading: string;
 export const themeSidePadding: string;

@@ -3,18 +3,6 @@
   margin-top: 25px;
 }
 
-.main a h4 {
-  display: inline-block;
-  font-size: var(--size-smallish);
-  color: var(--dark);
-  letter-spacing: var(--spacing-medium);
-}
-
-.main a h4:hover, .main a h4:active {
-  text-decoration: underline;
-  color: var(--colony-blue);
-}
-
 .userAvatars {
   max-width: 130px;
 }
@@ -25,11 +13,13 @@
   border-radius: 50px;
 }
 
-.userAvatar:nth-child(3n+0) {
+.userAvatar:nth-child(3n + 0) {
   margin-right: 0px;
 }
 
-.userAvatar:nth-child(13), .userAvatar:nth-child(14), .userAvatar:nth-child(15) {
+.userAvatar:nth-child(13),
+.userAvatar:nth-child(14),
+.userAvatar:nth-child(15) {
   margin-bottom: 0px;
 }
 
@@ -86,7 +76,9 @@
 
 .heading {
   display: flex;
-  align-items: flex-start;
+  align-items: baseline;
+  margin-bottom: 20px;
+  gap: 8px;
 }
 
 .heading > span + span,

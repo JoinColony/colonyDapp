@@ -1,5 +1,6 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import { useMediaQuery } from 'react-responsive';
 
 import { AnyUser, useLoggedInUser } from '~data/index';
 
@@ -12,6 +13,7 @@ import UserMention from '~core/UserMention';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { stripProtocol } from '~utils/strings';
 
+import { query700 as query } from '~styles/queries.css';
 import styles from './UserMeta.css';
 
 const MSG = defineMessages({
@@ -36,13 +38,14 @@ const UserMeta = ({
   user,
 }: Props) => {
   const { walletAddress: currentUserWalletAddress } = useLoggedInUser();
+  const isMobile = useMediaQuery({ query });
   return (
     <div className={styles.main}>
       <div data-test="userProfileAvatar">
         <UserAvatar
           className={styles.avatar}
           address={walletAddress}
-          size="xl"
+          size={isMobile ? 'm' : 'xl'}
           user={user}
           notSet={false}
         />

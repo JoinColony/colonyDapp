@@ -9,7 +9,6 @@ import EditDomainDialog from '~dialogs/EditDomainDialog';
 
 import { Colony, useLoggedInUser, useColonyExtensionsQuery } from '~data/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
-import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
 import { oneTxMustBeUpgraded } from '~modules/dashboard/checks';
 
@@ -36,9 +35,6 @@ const ColonyDomainSelector = ({
   colony,
 }: Props) => {
   const { networkId, ethereal, username } = useLoggedInUser();
-  const { isVotingExtensionEnabled } = useEnabledExtensions({
-    colonyAddress,
-  });
   const { data } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
   });
@@ -49,9 +45,8 @@ const ColonyDomainSelector = ({
       openEditDialog({
         ethDomainId,
         colony,
-        isVotingExtensionEnabled,
       }),
-    [openEditDialog, colony, isVotingExtensionEnabled],
+    [openEditDialog, colony],
   );
 
   const getDomainColor = useCallback<(domainId: string | undefined) => Color>(

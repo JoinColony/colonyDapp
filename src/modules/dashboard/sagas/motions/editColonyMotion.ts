@@ -1,18 +1,22 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType, ROOT_DOMAIN_ID, getChildIndex } from '@colony/colony-js';
+import {
+  getStringForColonyAvatarImage,
+  getStringForMetadataColony,
+} from '@colony/colony-event-metadata-parser';
+
 import { AddressZero } from 'ethers/constants';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 
-import { uploadIfpsAnnotation } from '../utils';
+import { ipfsUploadWithFallback, ipfsUploadAnnotation } from '../utils';
 import {
   createTransaction,
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
@@ -90,10 +94,8 @@ function* editColonyMotion({
     let colonyAvatarIpfsHash = null;
     if (colonyAvatarImage && hasAvatarChanged) {
       colonyAvatarIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          image: colonyAvatarImage,
-        }),
+        ipfsUploadWithFallback,
+        getStringForColonyAvatarImage(colonyAvatarImage),
       );
     }
 
@@ -102,8 +104,8 @@ function* editColonyMotion({
      */
     let colonyMetadataIpfsHash = null;
     colonyMetadataIpfsHash = yield call(
-      ipfsUpload,
-      JSON.stringify({
+      ipfsUploadWithFallback,
+      getStringForMetadataColony({
         colonyDisplayName,
         colonyAvatarHash: hasAvatarChanged
           ? colonyAvatarIpfsHash
@@ -173,7 +175,7 @@ function* editColonyMotion({
     yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
-      const ipfsHash = yield call(uploadIfpsAnnotation, annotationMessage);
+      const ipfsHash = yield call(ipfsUploadAnnotation, annotationMessage);
       yield put(transactionPending(annotateEditColonyMotion.id));
 
       yield put(

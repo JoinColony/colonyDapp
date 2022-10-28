@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { FormattedDate, defineMessages, FormattedMessage } from 'react-intl';
 import {
   useParams,
@@ -14,6 +14,7 @@ import {
   extensionsIncompatibilityMap,
 } from '@colony/colony-js';
 import isEmpty from 'lodash/isEmpty';
+import { useMediaQuery } from 'react-responsive';
 
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 import Heading from '~core/Heading';
@@ -31,7 +32,6 @@ import { SpinnerLoader } from '~core/Preloaders';
 import { DialogActionButton } from '~core/Button';
 import { Table, TableBody, TableCell, TableRow } from '~core/Table';
 import { useTransformer } from '~utils/hooks';
-import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import extensionData from '~data/staticData/extensionData';
 import MaskedAddress from '~core/MaskedAddress';
 import { ActionTypes } from '~redux/index';
@@ -47,6 +47,7 @@ import InvisibleCopyableAddress from '~core/InvisibleCopyableAddress';
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot } from '~modules/users/checks';
 
+import { query700 as query } from '~styles/queries.css';
 import styles from './ExtensionDetails.css';
 import ExtensionActionButton from './ExtensionActionButton';
 import ExtensionSetup from './ExtensionSetup';
@@ -151,7 +152,7 @@ interface Props {
 }
 
 const ExtensionDetails = ({
-  colony: { colonyAddress, version: colonyVersion, nativeTokenAddress },
+  colony: { colonyAddress, version: colonyVersion },
   colony,
 }: Props) => {
   const { colonyName, extensionId } = useParams<{
@@ -165,17 +166,12 @@ const ExtensionDetails = ({
 
   const openUpgradeVersionDialog = useDialog(NetworkContractUpgradeDialog);
 
-  const { isVotingExtensionEnabled } = useEnabledExtensions({
-    colonyAddress,
-  });
-
   const handleUpgradeColony = useCallback(
     () =>
       openUpgradeVersionDialog({
         colony,
-        isVotingExtensionEnabled,
       }),
-    [colony, openUpgradeVersionDialog, isVotingExtensionEnabled],
+    [colony, openUpgradeVersionDialog],
   );
 
   const { data, loading } = useColonyExtensionQuery({
@@ -240,6 +236,19 @@ const ExtensionDetails = ({
         (version: number) => version === parseInt(colonyVersion, 10),
       )
     : false;
+
+  const isMobile = useMediaQuery({ query });
+
+  /*
+   * @NOTE: The following useEffect scrolls the user to the top
+   * of the page on mobile so that they don't have to do it themselves
+   * when moving from a scrolled position on the `Extensions` page
+   * to `ExtensionDetails`.
+   */
+
+  useEffect(() => {
+    if (isMobile) window.scrollTo(0, 0);
+  }, [isMobile]);
 
   let tableData;
 
@@ -334,11 +343,18 @@ const ExtensionDetails = ({
     },
   };
 
+  const ExtnHeading = () => (
+    <>
+      <BreadCrumb elements={breadCrumbs} />
+      <hr className={styles.headerLine} />
+    </>
+  );
+
   return (
     <div className={styles.main}>
-      <div>
-        <BreadCrumb elements={breadCrumbs} />
-        <hr className={styles.headerLine} />
+      {isMobile && <ExtnHeading />}
+      <div className={styles.content}>
+        {!isMobile && <ExtnHeading />}
         <div>
           {!extensionCompatible && (
             <Warning
@@ -363,27 +379,35 @@ const ExtensionDetails = ({
                     }}
                     text={extension.header || extension.name}
                   />
-                  <FormattedMessage
-                    {...extension.descriptionLong}
-                    values={{
-                      h4: (chunks) => (
-                        <Heading
-                          tagName="h4"
-                          appearance={{ size: 'medium', margin: 'small' }}
-                          text={chunks}
-                        />
-                      ),
-                      link0: extension.descriptionLinks?.[0],
-                    }}
-                  />
+                  {typeof extension.descriptionLong === 'object' ? (
+                    <FormattedMessage
+                      {...extension.descriptionLong}
+                      values={{
+                        h4: (chunks) => (
+                          <Heading
+                            tagName="h4"
+                            appearance={{ size: 'medium', margin: 'small' }}
+                            text={chunks}
+                          />
+                        ),
+                        link0: extension.descriptionLinks?.[0],
+                      }}
+                    />
+                  ) : (
+                    extension.descriptionLong
+                  )}
                   {extension.info && (
                     <div className={styles.extensionSubtext}>
-                      <FormattedMessage
-                        {...extension.info}
-                        values={{
-                          link0: extension.descriptionLinks?.[0],
-                        }}
-                      />
+                      {typeof extension.info === 'object' ? (
+                        <FormattedMessage
+                          {...extension.info}
+                          values={{
+                            link0: extension.descriptionLinks?.[0],
+                          }}
+                        />
+                      ) : (
+                        extension.info
+                      )}
                     </div>
                   )}
                   {extensionEnabled &&
@@ -408,7 +432,6 @@ const ExtensionDetails = ({
                     extension={extension}
                     installedExtension={installedExtension}
                     colony={colony}
-                    nativeTokenAddress={nativeTokenAddress}
                   />
                 ) : (
                   <Redirect to={extensionUrl} />

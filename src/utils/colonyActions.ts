@@ -1,6 +1,11 @@
 import { ColonyRole } from '@colony/colony-js';
 import sortBy from 'lodash/sortBy';
 import isEqual from 'lodash/isEqual';
+import {
+  getColonyMetadataFromResponse,
+  getDomainMetadataFromResponse,
+  getEventMetadataVersion,
+} from '@colony/colony-event-metadata-parser';
 
 import {
   ColonyActions,
@@ -203,74 +208,105 @@ export const getAssignmentEventDescriptorsIds = (
     : `${eventMessageType}.${eventName}.remove`;
 };
 
-export const parseColonyMetadata = (
-  jsonMetadata: string,
-): {
+export interface ColonyMetadata {
   colonyDisplayName: string | null;
   colonyAvatarHash: string | null;
   colonyTokens: string[] | null;
   verifiedAddresses: string[] | null;
   isWhitelistActivated: boolean | null;
-} => {
-  try {
-    if (jsonMetadata) {
-      const {
-        colonyDisplayName = null,
-        colonyAvatarHash = null,
-        colonyTokens = [],
-        verifiedAddresses = [],
-        isWhitelistActivated = null,
-      } = JSON.parse(jsonMetadata);
-      return {
-        colonyDisplayName,
-        colonyAvatarHash,
-        colonyTokens,
-        verifiedAddresses,
-        isWhitelistActivated,
-      };
-    }
-  } catch (error) {
-    console.error('Could not parse colony ipfs json blob', jsonMetadata);
-    console.error(error);
-  }
-  return {
+}
+
+export const parseColonyMetadata = (jsonMetadata: string): ColonyMetadata => {
+  const metadata: ColonyMetadata = {
     colonyDisplayName: null,
     colonyAvatarHash: null,
     colonyTokens: [],
+    isWhitelistActivated: false,
     verifiedAddresses: [],
-    isWhitelistActivated: null,
   };
-};
-
-export const parseDomainMetadata = (
-  jsonMetadata: string,
-): {
-  domainName: string | null;
-  domainPurpose: string | null;
-  domainColor: string | null;
-} => {
   try {
     if (jsonMetadata) {
-      const {
-        domainName = null,
-        domainPurpose = null,
-        domainColor = null,
-      } = JSON.parse(jsonMetadata);
-      return {
-        domainName,
-        domainPurpose,
-        domainColor,
-      };
+      const metadataVersion = getEventMetadataVersion(jsonMetadata);
+      if (metadataVersion === 1) {
+        /*
+         * original metadata format
+         */
+        const {
+          colonyDisplayName,
+          colonyAvatarHash,
+          colonyTokens,
+          isWhitelistActivated,
+          verifiedAddresses,
+        } = JSON.parse(jsonMetadata);
+        metadata.colonyDisplayName = colonyDisplayName;
+        metadata.colonyAvatarHash = colonyAvatarHash;
+        metadata.colonyTokens = colonyTokens;
+        metadata.isWhitelistActivated = isWhitelistActivated;
+        metadata.verifiedAddresses = verifiedAddresses;
+      } else {
+        /*
+         * new metadata format
+         */
+        const colonyMetadata = getColonyMetadataFromResponse(jsonMetadata);
+        metadata.colonyDisplayName = colonyMetadata?.colonyDisplayName || null;
+        metadata.colonyAvatarHash = colonyMetadata?.colonyAvatarHash || null;
+        metadata.colonyTokens = colonyMetadata?.colonyTokens || [];
+        metadata.verifiedAddresses = colonyMetadata?.verifiedAddresses || [];
+        metadata.isWhitelistActivated =
+          colonyMetadata?.isWhitelistActivated || false;
+      }
     }
   } catch (error) {
-    console.error('Could not parse domain ipfs json blob', jsonMetadata);
+    console.error('Could not parse Colony ipfs json data', jsonMetadata);
     console.error(error);
   }
-  return {
+  return metadata;
+};
+
+interface DomainMetadata {
+  domainName: string | null;
+  // @TODO set to string instead of number to follow existing prop,
+  // but this needs to be standardised across the app
+  domainColor: string | null;
+  domainPurpose: string | null;
+}
+export const parseDomainMetadata = (jsonMetadata: string): DomainMetadata => {
+  const domainValues: DomainMetadata = {
     domainName: null,
-    domainPurpose: null,
     domainColor: null,
+    domainPurpose: null,
   };
+  try {
+    if (jsonMetadata) {
+      const metadataVersion = getEventMetadataVersion(jsonMetadata);
+      if (metadataVersion === 1) {
+        /*
+         * original metadata format
+         */
+        const {
+          domainName = null,
+          domainPurpose = null,
+          domainColor = null,
+        } = JSON.parse(jsonMetadata);
+        domainValues.domainName = domainName;
+        domainValues.domainPurpose = domainPurpose;
+        domainValues.domainColor = domainColor;
+      } else {
+        /*
+         * new metadata format
+         */
+        const domainMetadata = getDomainMetadataFromResponse(jsonMetadata);
+        domainValues.domainName = domainMetadata?.domainName || null;
+        domainValues.domainColor =
+          domainMetadata?.domainColor?.toString() || null; // @TODO revert to number during refactor
+        domainValues.domainPurpose = domainMetadata?.domainPurpose || null;
+      }
+    }
+  } catch (error) {
+    console.error('Could not parse domain ipfs json data', jsonMetadata);
+    console.error(error);
+  }
+  return domainValues;
 };
 
 export const sortMetadataHistory = (colonyMetadata) =>
@@ -290,80 +326,89 @@ export const sortMetadataHistory = (colonyMetadata) =>
  *
  * Currently only used for the colony metadata changed action
  */
-export const getSpecificActionValuesCheck = (
+
+export const getColonyValuesCheck = (
   actionType: ColonyAndExtensionsEvents,
   {
     colonyDisplayName: currentColonyDisplayName,
     colonyAvatarHash: currentColonyAvatarHash,
     colonyTokens: currentColonyTokens,
-    domainName: currentDomainName,
-    domainPurpose: currentDomainPurpose,
-    domainColor: currentDomainColor,
     verifiedAddresses: currentVerifiedAddresses,
     isWhitelistActivated: currentIsWhitelistActivated,
-  }: Partial<ColonyAction>,
+  }: Partial<ColonyAction> | ColonyMetadata,
   {
     colonyDisplayName: prevColonyDisplayName,
     colonyAvatarHash: prevColonyAvatarHash,
     colonyTokens: prevColonyTokens,
-    domainName: prevDomainName,
-    domainPurpose: prevDomainPurpose,
-    domainColor: prevDomainColor,
     verifiedAddresses: prevVerifiedAddresses,
     isWhitelistActivated: prevIsWhitelistActivated,
   }: {
     colonyDisplayName?: string | null;
     colonyAvatarHash?: string | null;
     colonyTokens?: string[] | null;
-    domainName?: string | null;
-    domainPurpose?: string | null;
-    domainColor?: string | null;
     verifiedAddresses?: string[] | null;
     isWhitelistActivated?: boolean | null;
   },
 ): { [key: string]: boolean } => {
-  switch (actionType) {
-    case ColonyAndExtensionsEvents.ColonyMetadata: {
-      const nameChanged = prevColonyDisplayName !== currentColonyDisplayName;
-      const logoChanged = prevColonyAvatarHash !== currentColonyAvatarHash;
+  if (actionType === ColonyAndExtensionsEvents.ColonyMetadata) {
+    const nameChanged = prevColonyDisplayName !== currentColonyDisplayName;
+    const logoChanged = prevColonyAvatarHash !== currentColonyAvatarHash;
+    const verifiedAddressesChanged =
+      !isEqual(prevVerifiedAddresses || [], currentVerifiedAddresses || []) ||
+      // @NOTE casting to Boolean as IsWhitelistActivated could have a value, null, undefined.
+      Boolean(prevIsWhitelistActivated) !==
+        Boolean(currentIsWhitelistActivated);
 
-      const verifiedAddressesChanged =
-        !isEqual(prevVerifiedAddresses, currentVerifiedAddresses) ||
-        // purposely using loose equality here to compare IsWhitelistActivated flags
-        // eslint-disable-next-line eqeqeq
-        prevIsWhitelistActivated != currentIsWhitelistActivated;
-
-      /*
-       * Tokens arrays might come from a subgraph query, in which case
-       * they're not really "arrays", so we have to create a new instace of
-       * them in order to sort and compare
-       */
-      const tokensChanged = !isEqual(
-        prevColonyTokens ? prevColonyTokens.slice(0).sort() : [],
-        currentColonyTokens?.slice(0).sort() || [],
-      );
-      return {
-        nameChanged,
-        logoChanged,
-        tokensChanged,
-        verifiedAddressesChanged,
-      };
-    }
-    case ColonyAndExtensionsEvents.DomainMetadata: {
-      const nameChanged = prevDomainName !== currentDomainName;
-      const colorChanged =
-        Number(prevDomainColor) !== Number(currentDomainColor);
-      const descriptionChanged = prevDomainPurpose !== currentDomainPurpose;
-      return {
-        nameChanged,
-        colorChanged,
-        descriptionChanged,
-      };
-    }
-    default: {
-      return {
-        hasValues: false,
-      };
-    }
+    /*
+     * Tokens arrays might come from a subgraph query, in which case
+     * they're not really "arrays", so we have to create a new instace of
+     * them in order to sort and compare
+     */
+    const tokensChanged = !isEqual(
+      prevColonyTokens ? prevColonyTokens.slice(0).sort() : [],
+      currentColonyTokens?.slice(0).sort() || [],
+    );
+    return {
+      nameChanged,
+      logoChanged,
+      tokensChanged,
+      verifiedAddressesChanged,
+    };
   }
+
+  return {
+    hasValues: false,
+  };
+};
+
+export const getDomainValuesCheck = (
+  actionType: ColonyAndExtensionsEvents,
+  {
+    domainName: currentDomainName,
+    domainPurpose: currentDomainPurpose,
+    domainColor: currentDomainColor,
+  }: DomainMetadata,
+  {
+    domainName: prevDomainName,
+    domainPurpose: prevDomainPurpose,
+    domainColor: prevDomainColor,
+  }: {
+    domainName?: string | null;
+    domainPurpose?: string | null;
+    domainColor?: string | null;
+  },
+): { [key: string]: boolean } => {
+  if (actionType === ColonyAndExtensionsEvents.DomainMetadata) {
+    const nameChanged = prevDomainName !== currentDomainName;
+    const colorChanged = Number(prevDomainColor) !== Number(currentDomainColor);
+    const descriptionChanged = prevDomainPurpose !== currentDomainPurpose;
+    return {
+      nameChanged,
+      colorChanged,
+      descriptionChanged,
+    };
+  }
+  return {
+    hasValues: false,
+  };
 };

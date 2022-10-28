@@ -1,0 +1,31 @@
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  padding: 10px 6px;
+}
+
+.itemContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 10px;
+  color: var(--temp-grey-blue-7);
+}
+
+.itemChild {
+  padding: 0px 6px;
+  height: 100%;
+  border-radius: 4px;
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
+}
+
+.walletAutoLogin {
+  display: flex;
+  align-items: center;
+  height: 26px;
+  gap: 14px;
+}
+
+.walletAutoLogin h4 {
+  margin-bottom: 0;
+}

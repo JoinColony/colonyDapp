@@ -7,6 +7,18 @@
   padding: 20px 0;
 }
 
+.voteHiddenContainer {
+  margin-top: 20px;
+  padding: 13px 10px;
+  width: 340px;
+  background: var(--colony-light-blue);
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  text-align: center;
+  white-space: pre-line;
+  color: var(--temp-grey-blue-7);
+}
+
 .item {
   composes: item from '../DetailsWidget/DetailsWidget.css';
 }
@@ -25,7 +37,7 @@
 }
 
 .value button {
-  width: 100px;
+  min-width: 100px;
   font-size: var(--size-smal);
 }
 
@@ -60,7 +72,6 @@
   position: absolute;
   top: -2px;
   border-radius: 50%;
-  content: "";
 }
 
 .range::before {

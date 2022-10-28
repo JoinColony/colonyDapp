@@ -11,7 +11,7 @@ import {
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 
-import { uploadIfpsAnnotation } from '../utils';
+import { ipfsUploadAnnotation } from '../utils';
 import {
   createTransaction,
   createTransactionChannels,
@@ -126,7 +126,7 @@ function* managePermissionsAction({
       yield put(transactionPending(annotateSetUserRoles.id));
 
       const annotationMessageIpfsHash = yield call(
-        uploadIfpsAnnotation,
+        ipfsUploadAnnotation,
         annotationMessage,
       );
 

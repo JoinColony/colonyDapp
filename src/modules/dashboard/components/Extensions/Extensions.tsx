@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { extensions, getExtensionHash } from '@colony/colony-js';
+import { getExtensionHash } from '@colony/colony-js';
 import camelCase from 'lodash/camelCase';
 
 import BreadCrumb from '~core/BreadCrumb';
@@ -11,11 +11,11 @@ import {
 } from '~data/index';
 import { Address } from '~types/index';
 import { SpinnerLoader } from '~core/Preloaders';
-import extensionData from '~data/staticData/extensionData';
-
-import styles from './Extensions.css';
+import { extensionData, allAllowedExtensions } from '~data/staticData/';
 
 import ExtensionCard from './ExtensionCard';
+
+import styles from './Extensions.css';
 
 const MSG = defineMessages({
   title: {
@@ -54,13 +54,14 @@ const Extensions = ({ colonyAddress }: Props) => {
   const installedExtensionsData = useMemo(() => {
     if (data?.processedColony?.installedExtensions) {
       const { installedExtensions } = data.processedColony;
-      return installedExtensions.map(
-        ({ extensionId, address, details: { version } }) => ({
+
+      return installedExtensions
+        .filter(({ extensionId }) => allAllowedExtensions.includes(extensionId))
+        .map(({ extensionId, address, details }) => ({
           ...extensionData[extensionId],
           address,
-          currentVersion: version,
-        }),
-      );
+          currentVersion: details?.version || 0,
+        }));
     }
     return [];
   }, [data]);
@@ -68,29 +69,33 @@ const Extensions = ({ colonyAddress }: Props) => {
   const availableExtensionsData = useMemo(() => {
     if (data?.processedColony?.installedExtensions) {
       const { installedExtensions } = data.processedColony;
-      return extensions.reduce((availableExtensions, extensionName) => {
-        const installedExtension = installedExtensions.find(
-          ({ extensionId }) => extensionName === extensionId,
-        );
-        if (
-          !installedExtension &&
-          networkExtensionData?.networkExtensionVersion
-        ) {
-          const { networkExtensionVersion } = networkExtensionData;
-          const networkExtension = networkExtensionVersion?.find(
-            (extension) =>
-              extension?.extensionHash === getExtensionHash(extensionName),
+
+      return allAllowedExtensions.reduce(
+        (availableExtensions, extensionName) => {
+          const installedExtension = installedExtensions.find(
+            ({ extensionId }) => extensionName === extensionId,
           );
-          return [
-            ...availableExtensions,
-            {
-              ...extensionData[extensionName],
-              currentVersion: networkExtension?.version || 0,
-            },
-          ];
-        }
-        return availableExtensions;
-      }, []);
+          if (
+            !installedExtension &&
+            networkExtensionData?.networkExtensionVersion
+          ) {
+            const { networkExtensionVersion } = networkExtensionData;
+            const networkExtension = networkExtensionVersion?.find(
+              (extension) =>
+                extension?.extensionHash === getExtensionHash(extensionName),
+            );
+            return [
+              ...availableExtensions,
+              {
+                ...extensionData[extensionName],
+                currentVersion: networkExtension?.version || 0,
+              },
+            ];
+          }
+          return availableExtensions;
+        },
+        [],
+      );
     }
     return [];
   }, [data, networkExtensionData]);

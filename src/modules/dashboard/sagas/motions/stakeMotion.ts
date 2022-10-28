@@ -15,9 +15,8 @@ import {
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 
-import { updateMotionValues } from '../utils';
+import { updateMotionValues, ipfsUploadAnnotation } from '../utils';
 
 function* stakeMotion({
   meta,
@@ -145,10 +144,8 @@ function* stakeMotion({
        */
       let annotationMessageIpfsHash = null;
       annotationMessageIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
+        ipfsUploadAnnotation,
+        annotationMessage || '',
       );
 
       yield put(

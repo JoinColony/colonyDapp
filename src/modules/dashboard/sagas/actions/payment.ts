@@ -17,7 +17,8 @@ import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 
-import { uploadIfpsAnnotation } from '../utils';
+import { ipfsUploadAnnotation } from '../utils';
+
 import {
   createTransaction,
   createTransactionChannels,
@@ -161,7 +162,7 @@ function* createPaymentAction({
     if (annotationMessage) {
       yield put(transactionPending(annotatePaymentAction.id));
 
-      const ipfsHash = yield call(uploadIfpsAnnotation, annotationMessage);
+      const ipfsHash = yield call(ipfsUploadAnnotation, annotationMessage);
 
       yield put(
         transactionAddParams(annotatePaymentAction.id, [txHash, ipfsHash]),

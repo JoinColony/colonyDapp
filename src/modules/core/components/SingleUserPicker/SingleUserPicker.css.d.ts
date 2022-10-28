@@ -1,3 +1,4 @@
+export const query700: string;
 export const main: string;
 export const directionHorizontal: string;
 export const widthWide: string;
@@ -8,8 +9,8 @@ export const avatarContainer: string;
 export const icon: string;
 export const focusIcon: string;
 export const baseInput: string;
-export const inputInvalid: string;
 export const input: string;
+export const inputInvalid: string;
 export const recipientName: string;
 export const omniPickerContainer: string;
 export const errorHorizontal: string;

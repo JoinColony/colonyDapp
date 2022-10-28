@@ -85,7 +85,26 @@
   padding-top: 35px;
 }
 
-.backButtonWrapper button {
-  margin-left: 14px;
-  width: fit-content;
+.minStakeAmountContainer {
+  display: flex;
+  align-self: flex-end;
+}
+
+.requiredStakeText {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+}
+
+.requiredStakeUnderThreshold {
+  color: var(--golden);
+}
+
+.requiredStakeAboveThreshold {
+  color: var(--primary);
+}
+
+.questionMarkIcon {
+  align-self: flex-end;
+  margin-top: 16px;
+  margin-left: 7px;
 }

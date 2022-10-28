@@ -8,6 +8,7 @@ export default gql`
   input MotionsFilter {
     associatedColony: String
     extensionAddress: String
+    action_not: String
   }
 
   type OneTxPayment {
@@ -34,6 +35,7 @@ export default gql`
     type: String!
     args: SubscriptionMotionArguments!
     timeoutPeriods: MotionTimeoutPeriods!
+    annotationHash: String!
   }
 
   type MotionTimeoutPeriods {

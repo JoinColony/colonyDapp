@@ -20,10 +20,6 @@ export const useEnabledExtensions = ({ colonyAddress }: Props) => {
     ({ extensionId }) => extensionId === Extension.OneTxPayment,
   );
 
-  const installedWhitelistExtension = installedExtensions.find(
-    ({ extensionId }) => extensionId === Extension.Whitelist,
-  );
-
   const isVotingExtensionEnabled = !!(
     installedVotingExtension &&
     installedVotingExtension.details?.initialized &&
@@ -38,18 +34,14 @@ export const useEnabledExtensions = ({ colonyAddress }: Props) => {
   const installedExtensionsAddresses = installedExtensions.map((extension) =>
     extension.address?.toLowerCase(),
   );
-  const isWhitelistExtensionEnabled = !!(
-    installedWhitelistExtension &&
-    installedWhitelistExtension.details?.initialized &&
-    !installedWhitelistExtension.details?.deprecated
-  );
 
   return {
     isVotingExtensionEnabled,
+    votingExtensionVersion: installedVotingExtension
+      ? installedVotingExtension?.details?.version
+      : null,
     isOneTxPaymentExtensionEnabled,
     installedExtensionsAddresses,
-    isWhitelistExtensionEnabled,
-    whitelistAddress: installedWhitelistExtension?.address,
     isLoadingExtensions: loading,
   };
 };

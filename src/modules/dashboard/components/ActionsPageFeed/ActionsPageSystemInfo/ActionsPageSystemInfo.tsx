@@ -14,16 +14,16 @@ export interface Appearance {
 
 interface Props {
   appearance?: Appearance;
-  tip?: MessageDescriptor | string;
+  tip: MessageDescriptor | string;
   tipValues?: UniversalMessageValues;
 }
 
 const ActionsPageSystemInfo = ({ tip, tipValues, appearance }: Props) => (
   <div className={getMainClasses(appearance, styles)}>
-    {tip && tip === 'string' ? (
-      tip
-    ) : (
+    {typeof tip === 'object' ? (
       <FormattedMessage {...tip} values={tipValues} />
+    ) : (
+      tip
     )}
   </div>
 );

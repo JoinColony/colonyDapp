@@ -38,6 +38,7 @@ exports[`DecisionHub component Renders initial component 1`] = `
       data-test="hubOptions"
     >
       <DecisionOption
+        isMobile={false}
         key="row-create"
         name="decisionHubTest"
         option={
@@ -54,97 +55,100 @@ exports[`DecisionHub component Renders initial component 1`] = `
           }
         }
       >
-        <button
-          className=""
-          onClick={[Function]}
-          type="submit"
-        >
-          <DecisionOptionIcon
-            subtitle={
-              Object {
-                "defaultMessage": "Collaborate with others",
-                "id": "ComponentName.exceptional",
-              }
-            }
-            title={
-              Object {
-                "defaultMessage": "Rule the world",
-                "id": "ComponentName.special",
-              }
-            }
-            value="create"
-          />
-          <div>
-            <Heading
-              appearance={
-                Object {
-                  "margin": "small",
-                  "size": "small",
-                  "weight": "bold",
-                }
-              }
-              text={
-                Object {
-                  "defaultMessage": "Rule the world",
-                  "id": "ComponentName.special",
-                }
-              }
-            >
-              <h5
-                className=""
-                title="Rule the world"
-              >
-                Rule the world
-              </h5>
-            </Heading>
-            <Heading
-              appearance={
-                Object {
-                  "margin": "small",
-                  "size": "tiny",
-                  "weight": "thin",
-                }
-              }
-              text={
+        <div>
+          <button
+            className=""
+            onClick={[Function]}
+            type="submit"
+          >
+            <DecisionOptionIcon
+              subtitle={
                 Object {
                   "defaultMessage": "Collaborate with others",
                   "id": "ComponentName.exceptional",
                 }
               }
-            >
-              <h6
-                className=""
-                title="Collaborate with others"
-              >
-                Collaborate with others
-              </h6>
-            </Heading>
-          </div>
-          <Icon
-            name="caret-right"
-            title={
-              Object {
-                "defaultMessage": "Choose this option",
-                "id": "DecisionOption.iconTitle",
+              title={
+                Object {
+                  "defaultMessage": "Rule the world",
+                  "id": "ComponentName.special",
+                }
               }
-            }
-          >
-            <i
-              className=""
-              title="Choose this option"
-            >
-              <svg
-                viewBox="0 0 30 30"
+              value="create"
+            />
+            <div>
+              <Heading
+                appearance={
+                  Object {
+                    "margin": "small",
+                    "size": "small",
+                    "weight": "bold",
+                  }
+                }
+                text={
+                  Object {
+                    "defaultMessage": "Rule the world",
+                    "id": "ComponentName.special",
+                  }
+                }
               >
-                <use
-                  xlinkHref="#undefined"
-                />
-              </svg>
-            </i>
-          </Icon>
-        </button>
+                <h5
+                  className=""
+                  title="Rule the world"
+                >
+                  Rule the world
+                </h5>
+              </Heading>
+              <Heading
+                appearance={
+                  Object {
+                    "margin": "small",
+                    "size": "tiny",
+                    "weight": "thin",
+                  }
+                }
+                text={
+                  Object {
+                    "defaultMessage": "Collaborate with others",
+                    "id": "ComponentName.exceptional",
+                  }
+                }
+              >
+                <h6
+                  className=""
+                  title="Collaborate with others"
+                >
+                  Collaborate with others
+                </h6>
+              </Heading>
+            </div>
+            <Icon
+              name="caret-right"
+              title={
+                Object {
+                  "defaultMessage": "Choose this option",
+                  "id": "DecisionOption.iconTitle",
+                }
+              }
+            >
+              <i
+                className=""
+                title="Choose this option"
+              >
+                <svg
+                  viewBox="0 0 30 30"
+                >
+                  <use
+                    xlinkHref="#undefined"
+                  />
+                </svg>
+              </i>
+            </Icon>
+          </button>
+        </div>
       </DecisionOption>
       <DecisionOption
+        isMobile={false}
         key="row-select"
         name="decisionHubTest"
         option={
@@ -161,95 +165,97 @@ exports[`DecisionHub component Renders initial component 1`] = `
           }
         }
       >
-        <button
-          className=""
-          onClick={[Function]}
-          type="submit"
-        >
-          <DecisionOptionIcon
-            subtitle={
-              Object {
-                "defaultMessage": "Collaborate with others",
-                "id": "ComponentName.exceptional",
-              }
-            }
-            title={
-              Object {
-                "defaultMessage": "Rule the world",
-                "id": "ComponentName.special",
-              }
-            }
-            value="select"
-          />
-          <div>
-            <Heading
-              appearance={
-                Object {
-                  "margin": "small",
-                  "size": "small",
-                  "weight": "bold",
-                }
-              }
-              text={
-                Object {
-                  "defaultMessage": "Rule the world",
-                  "id": "ComponentName.special",
-                }
-              }
-            >
-              <h5
-                className=""
-                title="Rule the world"
-              >
-                Rule the world
-              </h5>
-            </Heading>
-            <Heading
-              appearance={
-                Object {
-                  "margin": "small",
-                  "size": "tiny",
-                  "weight": "thin",
-                }
-              }
-              text={
+        <div>
+          <button
+            className=""
+            onClick={[Function]}
+            type="submit"
+          >
+            <DecisionOptionIcon
+              subtitle={
                 Object {
                   "defaultMessage": "Collaborate with others",
                   "id": "ComponentName.exceptional",
                 }
               }
-            >
-              <h6
-                className=""
-                title="Collaborate with others"
-              >
-                Collaborate with others
-              </h6>
-            </Heading>
-          </div>
-          <Icon
-            name="caret-right"
-            title={
-              Object {
-                "defaultMessage": "Choose this option",
-                "id": "DecisionOption.iconTitle",
+              title={
+                Object {
+                  "defaultMessage": "Rule the world",
+                  "id": "ComponentName.special",
+                }
               }
-            }
-          >
-            <i
-              className=""
-              title="Choose this option"
-            >
-              <svg
-                viewBox="0 0 30 30"
+              value="select"
+            />
+            <div>
+              <Heading
+                appearance={
+                  Object {
+                    "margin": "small",
+                    "size": "small",
+                    "weight": "bold",
+                  }
+                }
+                text={
+                  Object {
+                    "defaultMessage": "Rule the world",
+                    "id": "ComponentName.special",
+                  }
+                }
               >
-                <use
-                  xlinkHref="#undefined"
-                />
-              </svg>
-            </i>
-          </Icon>
-        </button>
+                <h5
+                  className=""
+                  title="Rule the world"
+                >
+                  Rule the world
+                </h5>
+              </Heading>
+              <Heading
+                appearance={
+                  Object {
+                    "margin": "small",
+                    "size": "tiny",
+                    "weight": "thin",
+                  }
+                }
+                text={
+                  Object {
+                    "defaultMessage": "Collaborate with others",
+                    "id": "ComponentName.exceptional",
+                  }
+                }
+              >
+                <h6
+                  className=""
+                  title="Collaborate with others"
+                >
+                  Collaborate with others
+                </h6>
+              </Heading>
+            </div>
+            <Icon
+              name="caret-right"
+              title={
+                Object {
+                  "defaultMessage": "Choose this option",
+                  "id": "DecisionOption.iconTitle",
+                }
+              }
+            >
+              <i
+                className=""
+                title="Choose this option"
+              >
+                <svg
+                  viewBox="0 0 30 30"
+                >
+                  <use
+                    xlinkHref="#undefined"
+                  />
+                </svg>
+              </i>
+            </Icon>
+          </button>
+        </div>
       </DecisionOption>
     </div>
   </DecisionHub>

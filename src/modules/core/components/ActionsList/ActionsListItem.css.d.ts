@@ -1,6 +1,7 @@
 export const mainTextSize: string;
 export const popoverWidth: string;
 export const popoverDistance: string;
+export const query700: string;
 export const main: string;
 export const avatar: string;
 export const status: string;

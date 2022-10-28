@@ -1,5 +1,9 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType } from '@colony/colony-js';
+import {
+  getStringForColonyAvatarImage,
+  getStringForMetadataColony,
+} from '@colony/colony-event-metadata-parser';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
@@ -15,13 +19,16 @@ import {
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
-import { updateColonyDisplayCache, uploadIfpsAnnotation } from '../utils';
+import {
+  updateColonyDisplayCache,
+  ipfsUploadWithFallback,
+  ipfsUploadAnnotation,
+} from '../utils';
 
 function* editColonyAction({
   payload: {
@@ -111,29 +118,26 @@ function* editColonyAction({
     let colonyAvatarIpfsHash = null;
     if (colonyAvatarImage && hasAvatarChanged) {
       colonyAvatarIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          image: colonyAvatarImage,
-        }),
+        ipfsUploadWithFallback,
+        getStringForColonyAvatarImage(colonyAvatarImage),
       );
     }
+
+    let colonyMetadataIpfsHash = null;
+    const colonyMetadata = getStringForMetadataColony({
+      colonyDisplayName,
+      colonyAvatarHash: hasAvatarChanged
+        ? colonyAvatarIpfsHash
+        : colonyAvatarHash,
+      colonyTokens,
+      verifiedAddresses,
+      isWhitelistActivated,
+    });
 
     /*
      * Upload colony metadata to IPFS
      */
-    let colonyMetadataIpfsHash = null;
-    colonyMetadataIpfsHash = yield call(
-      ipfsUpload,
-      JSON.stringify({
-        colonyDisplayName,
-        colonyAvatarHash: hasAvatarChanged
-          ? colonyAvatarIpfsHash
-          : colonyAvatarHash,
-        colonyTokens,
-        verifiedAddresses,
-        isWhitelistActivated,
-      }),
-    );
+    colonyMetadataIpfsHash = yield call(ipfsUploadWithFallback, colonyMetadata);
 
     yield put(
       transactionAddParams(editColony.id, [
@@ -158,7 +162,7 @@ function* editColonyAction({
        * Upload annotation metadata to IPFS
        */
       const annotationMessageIpfsHash = yield call(
-        uploadIfpsAnnotation,
+        ipfsUploadAnnotation,
         annotationMessage,
       );
 

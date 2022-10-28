@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .main {
   margin: 25px 0 20px 0;
 }
@@ -7,4 +9,15 @@
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--dark);
+}
+
+@media screen and query700 {
+  .title {
+    padding: 0 14px;
+  }
+
+  /* Repeat .title to increase specificity to override styles on ColonyFunding */
+  .title.title + ul {
+    align-items: stretch;
+  }
 }

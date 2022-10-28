@@ -1,3 +1,4 @@
+@value query700 from "~styles/queries.css";
 
 .main {
   display: inline-flex;
@@ -48,7 +49,7 @@
 
 .notificationsHighlight {
   display: block;
-  margin: -24px -3px 0 0;/* Using negative margins to group the notification dot and icon. */
+  margin: -24px -3px 0 0; /* Using negative margins to group the notification dot and icon. */
   height: 9px;
   width: 9px;
   position: relative;
@@ -166,7 +167,8 @@
 /* The first selector is for the reputation value text when reputation shows `- %`
  * in the create colony wizard. The second one is for other reputation value texts.
 */
-.reputation:hover div, .reputation:hover span {
+.reputation:hover div,
+.reputation:hover span {
   color: var(--colony-blue);
 }
 
@@ -189,4 +191,41 @@
   margin-right: 10px;
   vertical-align: top;
   font-size: var(--size-tiny);
+}
+
+@media screen and query700 {
+  .elementWrapper,
+  .walletAutoLogin {
+    display: none;
+  }
+
+  .main {
+    height: 100%;
+    gap: 7px;
+  }
+
+  .readyTransactionsCount {
+    display: none;
+  }
+
+  .connectWalletButton {
+    margin-top: 7px;
+    margin-bottom: 7px;
+    margin-right: 0px;
+    width: 120px;
+  }
+
+  .gasStationReference + div,
+  .notificationsButton + div,
+  .connectWalletButton + div {
+    display: flex;
+    justify-content: center;
+    width: 100vw;
+    background-color: transparent;
+    box-shadow: none;
+  }
+
+  .notificationsIcon {
+    margin-right: 0px;
+  }
 }

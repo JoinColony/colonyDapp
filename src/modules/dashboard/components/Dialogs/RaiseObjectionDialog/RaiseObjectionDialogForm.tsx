@@ -1,12 +1,14 @@
 import React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
+import { Editor } from '@tiptap/react';
 import { FormikProps } from 'formik';
 import Decimal from 'decimal.js';
 
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import ExternalLink from '~core/ExternalLink';
-import { Annotations } from '~core/Fields';
+import { InputLabel, Annotations } from '~core/Fields';
+import RichTextEditor from '~core/RichTextEditor/RichTextEditor';
 import Heading from '~core/Heading';
 import {
   StakingSlider,
@@ -33,7 +35,7 @@ const MSG = defineMessages({
   },
   annotation: {
     id: 'dashboard.RaiseObjectionDialog.RaiseObjectionDialogForm.annotation',
-    defaultMessage: 'Explain why you’re making this objection (optional)',
+    defaultMessage: `Explain why you’re making this objection (optional)`,
   },
   stakeButton: {
     id: 'dashboard.RaiseObjectionDialog.RaiseObjectionDialogForm.stakeButton',
@@ -45,7 +47,10 @@ export interface Props extends StakingAmounts {
   colony: Colony;
   canUserStake: boolean;
   userActivatedTokens: Decimal;
+  editor: Editor | null;
+  limit: number;
   cancel: () => void;
+  isDecision?: boolean;
 }
 
 const RaiseObjectionDialogForm = ({
@@ -54,16 +59,21 @@ const RaiseObjectionDialogForm = ({
   isSubmitting,
   canUserStake,
   values,
+  editor,
+  limit,
   cancel,
   userActivatedTokens,
   remainingToFullyNayStaked,
   minUserStake,
+  isDecision = false,
   ...props
 }: Props & FormikProps<FormValues>) => {
   const decimalAmount = new Decimal(values.amount)
     .times(new Decimal(remainingToFullyNayStaked).minus(minUserStake))
     .div(100)
-    .plus(minUserStake);
+    .plus(minUserStake)
+    .round();
+
   return (
     <>
       <DialogSection appearance={{ theme: 'heading' }}>
@@ -74,16 +84,18 @@ const RaiseObjectionDialogForm = ({
         />
       </DialogSection>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
-        <FormattedMessage
-          {...MSG.objectionDescription}
-          values={{
-            a: (chunks) => (
-              <ExternalLink href={MD_OBJECTIONS_HELP}>{chunks}</ExternalLink>
-            ),
-          }}
-        />
+        <div className={styles.descriptionText}>
+          <FormattedMessage
+            {...MSG.objectionDescription}
+            values={{
+              a: (chunks) => (
+                <ExternalLink href={MD_OBJECTIONS_HELP}>{chunks}</ExternalLink>
+              ),
+            }}
+          />
+        </div>
       </DialogSection>
-      <DialogSection appearance={{ theme: 'sidePadding' }}>
+      <DialogSection appearance={{ theme: 'sidePadding', border: 'top' }}>
         <div className={styles.slider}>
           <StakingSlider
             colony={colony}
@@ -99,12 +111,29 @@ const RaiseObjectionDialogForm = ({
         </div>
       </DialogSection>
       <DialogSection appearance={{ border: 'top' }}>
-        <Annotations
-          label={MSG.annotation}
-          name="annotation"
-          maxLength={4000}
-          disabled={!canUserStake || isSubmitting}
-        />
+        {isDecision && editor ? (
+          <>
+            <InputLabel
+              label={MSG.annotation}
+              appearance={{ colorSchema: 'grey' }}
+            />
+            <RichTextEditor
+              editor={editor}
+              name="annotation"
+              isSubmitting={isSubmitting}
+              limit={limit}
+              disabled={!canUserStake || isSubmitting}
+              className={styles.richTextEditor}
+            />
+          </>
+        ) : (
+          <Annotations
+            label={MSG.annotation}
+            name="annotation"
+            maxLength={4000}
+            disabled={!canUserStake || isSubmitting}
+          />
+        )}
       </DialogSection>
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button

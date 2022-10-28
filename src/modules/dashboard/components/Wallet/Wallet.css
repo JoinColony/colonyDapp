@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .layoutMain {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   display: grid;
@@ -52,4 +54,43 @@
   margin-left: 20px;
   margin-top: -5px;
   line-height: 37px;
+}
+
+@media screen and query700 {
+  .layoutMain {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0px 60px;
+  }
+
+  .layoutMain ul {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .content {
+    align-self: stretch;
+  }
+
+  .walletDetails {
+    margin-bottom: 20px;
+    padding: 0 14px;
+  }
+
+  .helpText, .linkText {
+    margin-top: 20px;
+    padding: 0 14px;
+  }
+
+  .address {
+    line-height: 1;
+  }
+
+  .address > div > span {
+    align-self: flex-start;
+  }
+
+  canvas {
+    align-self: center;
+  }
 }

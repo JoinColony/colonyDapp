@@ -1,3 +1,5 @@
+@value query700 from '~styles/queries.css';
+
 .filter {
   display: inline-block;
   margin-right: 10px;
@@ -28,4 +30,14 @@
   font-size: var(--size-small);
   font-weight: var(--weight-bold);
   color: var(--dark-blue);
+}
+
+@media screen and query700 {
+  .main {
+    padding: 0 14px 60px;
+  }
+
+  .bar {
+    margin-top: 0;
+  }
 }

@@ -50,7 +50,11 @@ const ExtensionCard = ({ extension, installedExtension, dataTest }: Props) => {
             </div>
           </div>
           <div className={styles.cardDescription}>
-            <FormattedMessage {...extension.descriptionShort} />
+            {typeof extension.descriptionShort === 'object' ? (
+              <FormattedMessage {...extension.descriptionShort} />
+            ) : (
+              extension.descriptionShort
+            )}
           </div>
           {installedExtension ? (
             <div className={styles.status}>

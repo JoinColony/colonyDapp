@@ -39,6 +39,7 @@ interface Props {
   fromDomain: number;
   motionAmount: string;
   tokenAddress: string;
+  isDecision?: boolean;
 }
 
 export const MSG = defineMessages({
@@ -63,6 +64,7 @@ export const MSG = defineMessages({
       ${ColonyMotions.VersionUpgradeMotion} {Version Upgrade}
       ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite}
       ${ColonyMotions.EmitDomainReputationRewardMotion} {Award}
+      ${ColonyMotions.CreateDecisionMotion} {Proposal}
       other {Generic Action}
     }" be approved?`,
   },
@@ -134,6 +136,7 @@ const FinalizeMotionAndClaimWidget = ({
   fromDomain,
   motionAmount,
   tokenAddress,
+  isDecision = false,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const {
@@ -283,19 +286,21 @@ const FinalizeMotionAndClaimWidget = ({
    * If the motion is in the Root domain, it cannot be escalated further
    * meaning it can be finalized directly
    */
-  const motionNotFinalizable = motionState === MotionState.FailedNoFinalizable;
-  const showFinalizeButton =
-    voteResults?.motionVoteResults &&
-    !finalized?.motionFinalized &&
-    !motionNotFinalizable;
+  const motionNotFinalizable = motionState === MotionState.FailedNotFinalizable;
+  const showFinalizeButton = isDecision
+    ? false
+    : voteResults?.motionVoteResults &&
+      !finalized?.motionFinalized &&
+      !motionNotFinalizable;
 
   const canClaimStakes =
     (bigNumberify(stakerRewards?.motionStakerReward?.stakesYay || 0).gt(0) ||
       bigNumberify(stakerRewards?.motionStakerReward?.stakesNay || 0).gt(0)) &&
     userTotals !== '0';
 
-  const showClaimButton =
-    finalized?.motionFinalized || (motionNotFinalizable && canClaimStakes);
+  const showClaimButton = isDecision
+    ? true
+    : finalized?.motionFinalized || (motionNotFinalizable && canClaimStakes);
 
   const yaySideWon = bigNumberify(
     voteResults?.motionVoteResults?.yayVotes || 0,
@@ -340,7 +345,10 @@ const FinalizeMotionAndClaimWidget = ({
                     appearance={{ theme: 'primary', size: 'medium' }}
                     text={MSG.finalizeButton}
                     disabled={
-                      !hasRegisteredProfile || !isFinalizable || isSubmitting
+                      !hasRegisteredProfile ||
+                      !isFinalizable ||
+                      isSubmitting ||
+                      motionState === MotionState.Escalation
                     }
                     onClick={() => handleSubmit()}
                     loading={isSubmitting}

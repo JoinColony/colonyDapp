@@ -225,6 +225,7 @@ const Members = ({
         searchValue={searchValue}
         setSearchValue={setSearchValue}
         handleSearch={handleSearch}
+        colony={colony}
       />
       {!contributors?.length && !watchers?.length ? (
         <div className={styles.noResults}>

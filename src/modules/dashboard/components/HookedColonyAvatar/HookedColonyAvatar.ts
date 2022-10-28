@@ -1,3 +1,8 @@
+import {
+  getColonyAvatarImage,
+  getEventMetadataVersion,
+} from '@colony/colony-event-metadata-parser';
+
 import ColonyAvatar, { Props as ColonyAvatarProps } from '~core/ColonyAvatar';
 import { useDataFetcher } from '~utils/hooks';
 import { withHooks } from '~utils/hoc';
@@ -28,16 +33,22 @@ export default withHooks<
   const avatarURL = result.colony ? result.colony.avatarURL : null;
   result.avatarURL = avatarURL;
 
-  if (!avatarURL) {
+  if (!avatarURL && avatarHash) {
     const { data: avatar } = useDataFetcher(
       ipfsDataFetcher,
       [avatarHash as string], // Technically a bug, shouldn't need type override
       [avatarHash],
     );
-    try {
-      avatarObject = JSON.parse(avatar);
-    } catch (error) {
-      // silent error
+    if (avatar) {
+      try {
+        const metadataVersion = getEventMetadataVersion(avatar);
+        avatarObject =
+          metadataVersion === 1
+            ? JSON.parse(avatar) // original metadata format
+            : { image: getColonyAvatarImage(avatar) }; // new metadata format
+      } catch (error) {
+        // silent error
+      }
     }
     result.avatarURL = avatarObject?.image || null;
   }

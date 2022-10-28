@@ -24,9 +24,9 @@ interface Props {
 }
 
 const displayName = 'users.GasStation.GasStationHeader';
-
 const GasStationHeader = ({ close }: Props) => {
   const { balance, walletAddress } = useLoggedInUser();
+
   return (
     <div className={styles.main}>
       <div className={styles.walletDetails}>

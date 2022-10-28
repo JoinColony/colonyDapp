@@ -13,6 +13,7 @@ import { Resolvers } from '@apollo/client';
 import { Context } from '~context/index';
 import { createAddress } from '~utils/web3';
 import {
+  getAnnotationFromSubgraph,
   getMotionActionType,
   getMotionState,
   parseSubgraphEvent,
@@ -24,7 +25,10 @@ import {
   getMotionRequiredStake,
   getEarlierEventTimestamp,
 } from '~utils/colonyMotions';
-import { ColonyAndExtensionsEvents } from '~types/index';
+import {
+  ColonyAndExtensionsEvents,
+  ColonyMotionActionName,
+} from '~types/index';
 import {
   SubgraphMotionEventsQuery,
   SubgraphMotionEventsQueryVariables,
@@ -54,6 +58,7 @@ import {
   UserReputationQueryVariables,
   UserReputationDocument,
 } from '~data/index';
+import { log } from '~utils/debug';
 
 import {
   ActionsPageFeedType,
@@ -568,9 +573,10 @@ export const motionsResolvers = ({
           fetchPolicy: 'network-only',
         });
 
-        const hasCurrentUserVoted = !!data?.motionVoteSubmittedEvents.filter(
-          (event) => event.args.includes(userAddress),
-        );
+        const hasCurrentUserVoted =
+          data?.motionVoteSubmittedEvents.filter((event) =>
+            event.args.includes(userAddress.toLowerCase()),
+          ).length !== 0;
 
         return hasCurrentUserVoted;
       } catch (error) {
@@ -1192,10 +1198,17 @@ export const motionsResolvers = ({
           actionValues.args[6],
         );
 
-        const tokenClient = await colonyManager.getTokenClient(
-          actionValues.args[8],
-        );
-        const tokenInfo = await tokenClient.getTokenInfo();
+        let tokenSymbol = DEFAULT_NETWORK_TOKEN.symbol;
+        let tokenDecimals = DEFAULT_NETWORK_TOKEN.decimals;
+
+        if (actionValues.args[8] !== AddressZero) {
+          const tokenClient = await colonyManager.getTokenClient(
+            actionValues.args[8],
+          );
+          const tokenInfo = await tokenClient.getTokenInfo();
+          tokenSymbol = tokenInfo.symbol;
+          tokenDecimals = tokenInfo.decimals;
+        }
 
         return {
           amount: actionValues.args[7].toString(),
@@ -1203,13 +1216,13 @@ export const motionsResolvers = ({
           toDomain: toDomain.toNumber(),
           token: {
             id: actionValues.args[8],
-            symbol: tokenInfo.symbol,
-            decimals: tokenInfo.decimals,
+            symbol: tokenSymbol,
+            decimals: tokenDecimals,
           },
         };
       }
 
-      if (actionValues.name === 'addDomain') {
+      if (actionValues.name === ColonyMotionActionName.AddDomain) {
         return {
           ...defaultValues,
           metadata: actionValues.args[3],
@@ -1225,11 +1238,15 @@ export const motionsResolvers = ({
         };
       }
 
-      if (actionValues.name === 'editColony') {
+      if (actionValues.name === ColonyMotionActionName.EditColony) {
         return {
           ...defaultValues,
           metadata: actionValues.args[0],
         };
+      }
+
+      if (actionValues.name === ColonyMotionActionName.CreateDecision) {
+        return defaultValues;
       }
 
       if (
@@ -1260,6 +1277,7 @@ export const motionsResolvers = ({
         'emitDomainReputationPenalty(uint256,uint256,uint256,address,int256)'
       ) {
         return {
+          ...defaultValues,
           reputationChange: actionValues?.args[4].toString(),
           recipient: actionValues?.args[3],
         };
@@ -1270,6 +1288,7 @@ export const motionsResolvers = ({
         'emitDomainReputationReward(uint256,address,int256)'
       ) {
         return {
+          ...defaultValues,
           reputationChange: actionValues?.args[2].toString(),
           recipient: actionValues?.args[1],
         };
@@ -1284,6 +1303,24 @@ export const motionsResolvers = ({
           decimals,
         },
       };
+    },
+    async annotationHash({ transaction, agent }) {
+      let annotationHash;
+      try {
+        const {
+          values: { metadata },
+        } = await getAnnotationFromSubgraph(
+          agent,
+          transaction.hash,
+          apolloClient,
+        );
+
+        annotationHash = metadata;
+      } catch (error) {
+        log.verbose('Could not fetch IPFS metadata for decision');
+      }
+
+      return annotationHash;
     },
   },
 });

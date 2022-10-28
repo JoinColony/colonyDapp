@@ -7,7 +7,6 @@ import Decimal from 'decimal.js';
 import { ROOT_DOMAIN_ID, ColonyRoles } from '@colony/colony-js';
 
 import Numeral from '~core/Numeral';
-import { CommentInput } from '~core/Comment';
 import Heading from '~core/Heading';
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
@@ -15,11 +14,6 @@ import MemberReputation from '~core/MemberReputation';
 import ProgressBar from '~core/ProgressBar';
 import { ActionButton } from '~core/Button';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
-import ActionsPageFeed, {
-  ActionsPageFeedItemWithIPFS,
-  SystemMessage,
-} from '~dashboard/ActionsPageFeed';
-
 import { getFormattedTokenValue } from '~utils/tokens';
 import {
   getUpdatedDecodedMotionRoles,
@@ -38,11 +32,7 @@ import {
   ColonyActionQuery,
   TokenInfoQuery,
   AnyUser,
-  useMotionsSystemMessagesQuery,
-  useEventsForMotionQuery,
-  useMotionObjectionAnnotationQuery,
   useStakeAmountsForMotionQuery,
-  useUser,
   useVotingStateQuery,
   useMotionStatusQuery,
   OneDomain,
@@ -60,6 +50,7 @@ import FinalizeMotionAndClaimWidget, {
 } from '../FinalizeMotionAndClaimWidget';
 import VoteResults from '../FinalizeMotionAndClaimWidget/VoteResults';
 import CountDownTimer from '../CountDownTimer';
+import ActionPageMotionContent from '../ActionPageMotionContent';
 
 import styles from './DefaultAction.css';
 import motionSpecificStyles from './DefaultMotion.css';
@@ -99,9 +90,7 @@ const DefaultMotion = ({
   colony: { domains, colonyAddress },
   colony,
   colonyAction: {
-    events = [],
     actionType,
-    annotationHash,
     colonyDisplayName,
     amount,
     motionDomain,
@@ -117,6 +106,7 @@ const DefaultMotion = ({
     newVersion,
     tokenAddress,
     reputationChange,
+    createdAt,
   },
   colonyAction,
   token,
@@ -154,19 +144,7 @@ const DefaultMotion = ({
     walletAddress,
     ethereal,
   } = useLoggedInUser();
-  const userHasProfile = currentUserName && !ethereal;
-
-  const { data: motionsSystemMessagesData } = useMotionsSystemMessagesQuery({
-    variables: {
-      motionId,
-      colonyAddress: colony.colonyAddress,
-    },
-    fetchPolicy: 'network-only',
-  });
-  const { data: motionEventsData } = useEventsForMotionQuery({
-    variables: { colonyAddress: colony.colonyAddress, motionId },
-    fetchPolicy: 'network-only',
-  });
+  const userHasProfile = !!(currentUserName && !ethereal);
 
   const { data: motionStakeData } = useStakeAmountsForMotionQuery({
     variables: {
@@ -228,14 +206,6 @@ const DefaultMotion = ({
   const currentStake = totalNayStake.add(totalYayStake).toString();
   const isFullyNayStaked = totalNayStake.gte(requiredStake);
 
-  const { data: objectionAnnotation } = useMotionObjectionAnnotationQuery({
-    variables: {
-      motionId,
-      colonyAddress: colony.colonyAddress,
-    },
-    fetchPolicy: 'network-only',
-  });
-
   const { data: votingStateData } = useVotingStateQuery({
     variables: { colonyAddress: colony.colonyAddress, motionId },
     fetchPolicy: 'network-only',
@@ -252,14 +222,16 @@ const DefaultMotion = ({
   const skillRepValue = bigNumberify(
     votingStateData?.votingState?.skillRep || 0,
   ).div(bigNumberify(10).pow(18));
+
   const currentReputationPercent = !totalVotedReputationValue.isZero()
     ? Math.round(
         totalVotedReputationValue.div(skillRepValue).mul(100).toNumber(),
       )
     : 0;
   const thresholdPercent = !skillRepValue.isZero()
-    ? Math.round(threshold.div(skillRepValue).mul(100).toNumber())
+    ? Math.round(threshold.mul(100).div(skillRepValue).toNumber())
     : 0;
+
   const domainMetadata = {
     name: domainName,
     color: domainColor,
@@ -381,13 +353,7 @@ const DefaultMotion = ({
   const isMotionFinished =
     motionState === MotionState.Passed ||
     motionState === MotionState.Failed ||
-    motionState === MotionState.FailedNoFinalizable;
-
-  const objectionAnnotationUser = useUser(
-    objectionAnnotation?.motionObjectionAnnotation?.address || '',
-  );
-
-  const hasBanner = !shouldDisplayMotion(currentStake, requiredStake);
+    motionState === MotionState.FailedNotFinalizable;
 
   const { formatMessage } = useIntl();
   useTitle(
@@ -397,9 +363,12 @@ const DefaultMotion = ({
     )} | Motion | Colony - ${colony.displayName ?? colony.colonyName ?? ``}`,
   );
 
+  const isDecision = actionType === ColonyMotions.CreateDecisionMotion;
+  const hasBanner = !shouldDisplayMotion(currentStake, requiredStake);
+
   return (
     <div className={styles.main}>
-      <StakeRequiredBanner stakeRequired={hasBanner} />
+      <StakeRequiredBanner stakeRequired={hasBanner} isDecision={isDecision} />
       <div
         className={`${styles.upperContainer} ${
           hasBanner && styles.bannerPadding
@@ -448,6 +417,7 @@ const DefaultMotion = ({
                   }}
                 />
               </div>
+
               <QuestionMarkTooltip
                 tooltipText={MSG.votingProgressBarTooltip}
                 className={motionSpecificStyles.helpProgressBar}
@@ -501,63 +471,20 @@ const DefaultMotion = ({
       <hr className={styles.dividerTop} />
       <div className={styles.container}>
         <div className={styles.content}>
-          <h1 className={styles.heading} data-test="actionHeading">
-            <FormattedMessage
-              id={roleMessageDescriptorId || 'motion.title'}
-              values={{
-                ...actionAndEventValues,
-                fromDomainName: actionAndEventValues.fromDomain?.name,
-                toDomainName: actionAndEventValues.toDomain?.name,
-                roles: roleTitle,
-              }}
-            />
-          </h1>
-          {annotationHash && (
-            <div className={motionSpecificStyles.annotation}>
-              <ActionsPageFeedItemWithIPFS
-                colony={colony}
-                user={initiator}
-                annotation
-                hash={annotationHash}
-              />
-            </div>
-          )}
-          {objectionAnnotation?.motionObjectionAnnotation?.metadata && (
-            <div className={motionSpecificStyles.annotation}>
-              <ActionsPageFeedItemWithIPFS
-                colony={colony}
-                user={objectionAnnotationUser}
-                annotation
-                hash={objectionAnnotation.motionObjectionAnnotation.metadata}
-                appearance={{ theme: 'danger' }}
-              />
-            </div>
-          )}
-          <ActionsPageFeed
-            actionType={actionType}
-            transactionHash={transactionHash as string}
-            networkEvents={[
-              ...events,
-              ...(motionEventsData?.eventsForMotion || []),
-            ]}
-            systemMessages={
-              // eslint-disable-next-line max-len
-              motionsSystemMessagesData?.motionsSystemMessages as SystemMessage[]
-            }
-            values={actionAndEventValues}
-            actionData={colonyAction}
+          <ActionPageMotionContent
             colony={colony}
-            rootHash={rootHash || undefined}
+            colonyAction={colonyAction}
+            initiator={initiator}
+            isDecision={isDecision}
+            actionAndEventValues={actionAndEventValues}
+            transactionHash={transactionHash}
+            roleTitle={roleTitle}
+            userHasProfile={userHasProfile}
+            bottomElementRef={bottomElementRef}
+            motionId={motionId}
+            createdAt={createdAt}
+            roleMessageDescriptorId={roleMessageDescriptorId}
           />
-
-          {userHasProfile && (
-            <div ref={bottomElementRef} className={styles.commentBox}>
-              <CommentInput
-                transactionHash={transactionHash}
-                colonyAddress={colony.colonyAddress}
-              />
-            </div>
-          )}
         </div>
         <div className={styles.details}>
           {isStakingPhase && (
@@ -565,6 +492,7 @@ const DefaultMotion = ({
               motionId={motionId}
               colony={colony}
               scrollToRef={bottomElementRef}
+              isDecision={isDecision}
             />
           )}
           {motionState === MotionState.Voting && (
@@ -595,11 +523,12 @@ const DefaultMotion = ({
               fromDomain={fromDomain}
               motionAmount={amount}
               tokenAddress={tokenAddress}
+              isDecision={isDecision}
             />
           )}
           <DetailsWidget
             actionType={actionType as ColonyMotions}
-            recipient={recipient}
+            recipient={isDecision ? initiator : recipient}
             transactionHash={transactionHash}
             values={{
               ...actionAndEventValues,

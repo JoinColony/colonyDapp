@@ -62,6 +62,7 @@ export const removeValueUnits = (valueWithUnit: string): number => {
     /*
      * Percent char is escaped for sanity
      */
+
     // eslint-disable-next-line no-useless-escape, prettier/prettier
     '\%',
   ];
