@@ -11,7 +11,7 @@ import Heading from '~core/Heading';
 
 import { Colony, useLoggedInUser, useUserReputationQuery } from '~data/index';
 import { ActionTypes } from '~redux/index';
-import { ColonyMotions } from '~types/index';
+import { ColonyExtendedMotions, ColonyMotions } from '~types/index';
 import { mapPayload } from '~utils/actions';
 import { MotionState } from '~utils/colonyMotions';
 
@@ -27,9 +27,10 @@ interface Props {
   colony: Colony;
   actionType: string;
   motionId: number;
+  motionState: MotionState;
+  transactionTitle: string;
   motionDomain?: number;
   scrollToRef?: RefObject<HTMLInputElement>;
-  motionState: MotionState;
 }
 
 const MSG = defineMessages({
@@ -42,6 +43,7 @@ const MSG = defineMessages({
    */
   title: {
     id: 'dashboard.ActionsPage.VoteWidget.title',
+    /* eslint-disable max-len */
     defaultMessage: `Should "{actionType, select,
       ${ColonyMotions.MintTokensMotion} {Mint tokens}
       ${ColonyMotions.PaymentMotion} {Payment}
@@ -54,8 +56,10 @@ const MSG = defineMessages({
       ${ColonyMotions.VersionUpgradeMotion} {Version Upgrade}
       ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite}
       ${ColonyMotions.EmitDomainReputationRewardMotion} {Award}
+      ${ColonyExtendedMotions.SafeTransactionInitiatedMotion} {{transactionTitle}}
       other {Generic Action}
     }" be approved?`,
+    /* eslint-enable max-len */
   },
   buttonVote: {
     id: 'dashboard.ActionsPage.VoteWidget.buttonVote',
@@ -75,6 +79,7 @@ const VoteWidget = ({
   motionDomain = ROOT_DOMAIN_ID,
   scrollToRef,
   motionState,
+  transactionTitle,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -165,7 +170,7 @@ const VoteWidget = ({
         <div className={styles.main}>
           <Heading
             text={MSG.title}
-            textValues={{ actionType }}
+            textValues={{ actionType, transactionTitle }}
             appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
           />
           <CustomRadioGroup

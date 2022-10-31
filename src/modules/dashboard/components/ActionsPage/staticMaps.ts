@@ -5,6 +5,8 @@ import {
   ColonyMotions,
   AddedActions,
   ColonyExtendedActions,
+  ColonyExtendedMotions,
+  AddedMotions,
 } from '~types/index';
 
 import { STATUS } from './types';
@@ -37,13 +39,18 @@ type ActionsEventsMap = Partial<
     [key in
       | ColonyActions
       | ColonyMotions
-      | AddedActions]: ColonyAndExtensionsEvents[];
+      | AddedActions
+      | AddedMotions]: ColonyAndExtensionsEvents[];
   }
 >;
 
 type ActionsDetailsMap = Partial<
   {
-    [key in ColonyActions | ColonyMotions | AddedActions]: ActionPageDetails[];
+    [key in
+      | ColonyActions
+      | ColonyMotions
+      | AddedActions
+      | AddedMotions]: ActionPageDetails[];
   }
 >;
 
@@ -82,7 +89,7 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
  */
 
 export const ACTION_TYPES_ICONS_MAP: {
-  [key in ColonyActions | ColonyMotions | AddedActions]: string;
+  [key in ColonyActions | ColonyMotions | AddedActions | AddedMotions]: string;
 } = {
   [ColonyActions.WrongColony]: 'forbidden-signal',
   [ColonyActions.Payment]: 'emoji-dollar-stack',
@@ -108,6 +115,7 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyMotions.EmitDomainReputationPenaltyMotion]: 'emoji-firebolt',
   [ColonyMotions.EmitDomainReputationRewardMotion]: 'emoji-shooting-star',
   [ColonyMotions.UnlockTokenMotion]: 'emoji-padlock',
+  [ColonyExtendedMotions.SafeTransactionInitiatedMotion]: 'safe-logo',
   [ColonyExtendedActions.AddressBookUpdated]: 'emoji-edit-tools',
   [ColonyExtendedActions.TokensUpdated]: 'emoji-edit-tools',
   [ColonyExtendedActions.SafeRemoved]: 'safe-logo',
@@ -174,6 +182,7 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
   [ColonyMotions.MoveFundsMotion]: MOTION_EVENTS,
   [ColonyMotions.EmitDomainReputationPenaltyMotion]: MOTION_EVENTS,
   [ColonyMotions.EmitDomainReputationRewardMotion]: MOTION_EVENTS,
+  [ColonyExtendedMotions.SafeTransactionInitiatedMotion]: MOTION_EVENTS,
 };
 
 /*
@@ -313,4 +322,7 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.ReputationChange,
   ],
   [ColonyMotions.UnlockTokenMotion]: [],
+  [ColonyExtendedMotions.SafeTransactionInitiatedMotion]: [
+    ActionPageDetails.SafeTransaction,
+  ],
 };

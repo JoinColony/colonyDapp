@@ -16,6 +16,17 @@ export enum ColonyMotions {
   EmitDomainReputationRewardMotion = 'EmitDomainReputationRewardMotion',
 }
 
+export enum AddedMotions {
+  SafeTransactionInitiatedMotion = 'SafeTransactionInitiatedMotion',
+  TransferFunds = 'TransferFunds',
+  RawTransaction = 'RawTransaction',
+  TransferNFT = 'TransferNft',
+  ContractInteraction = 'ContractInteraction',
+  MultipleTransactions = 'MultipleTransactions',
+}
+
+export const ColonyExtendedMotions = { ...ColonyMotions, ...AddedMotions };
+
 export const motionNameMapping = {
   mintTokens: ColonyMotions.MintTokensMotion,
   makePaymentFundedFromDomain: ColonyMotions.PaymentMotion,
@@ -28,4 +39,5 @@ export const motionNameMapping = {
   upgrade: ColonyMotions.VersionUpgradeMotion,
   emitDomainReputationPenalty: ColonyMotions.EmitDomainReputationPenaltyMotion,
   emitDomainReputationReward: ColonyMotions.EmitDomainReputationRewardMotion,
+  makeArbitraryTransactions: AddedMotions.SafeTransactionInitiatedMotion,
 };

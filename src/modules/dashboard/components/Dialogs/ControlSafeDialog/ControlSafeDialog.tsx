@@ -123,6 +123,7 @@ const ControlSafeDialog = ({
           transactionsTitle,
           transactions,
           annotation: annotationMessage,
+          motionDomainId,
         }) => {
           const chainName = getChainNameFromSafe(safe.profile.displayName);
           const transformedSafe: Omit<ColonySafe, 'safeName'> = {
@@ -141,6 +142,7 @@ const ControlSafeDialog = ({
             annotationMessage,
             colonyAddress,
             colonyName,
+            motionDomainId,
           };
         },
       ),

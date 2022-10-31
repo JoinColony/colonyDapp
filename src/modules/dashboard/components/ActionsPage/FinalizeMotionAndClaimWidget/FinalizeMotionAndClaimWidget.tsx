@@ -21,7 +21,7 @@ import {
   useDomainBalanceQuery,
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
-import { ColonyMotions } from '~types/index';
+import { ColonyExtendedMotions, ColonyMotions } from '~types/index';
 import { mapPayload } from '~utils/actions';
 import { getMainClasses } from '~utils/css';
 import { MotionVote, MotionState } from '~utils/colonyMotions';
@@ -39,6 +39,7 @@ interface Props {
   fromDomain: number;
   motionAmount: string;
   tokenAddress: string;
+  transactionTitle: string;
 }
 
 export const MSG = defineMessages({
@@ -51,6 +52,7 @@ export const MSG = defineMessages({
    */
   title: {
     id: 'dashboard.ActionsPage.FinalizeMotionAndClaimWidget.title',
+    /* eslint-disable max-len */
     defaultMessage: `Should "{actionType, select,
       ${ColonyMotions.MintTokensMotion} {Mint tokens}
       ${ColonyMotions.PaymentMotion} {Payment}
@@ -63,8 +65,10 @@ export const MSG = defineMessages({
       ${ColonyMotions.VersionUpgradeMotion} {Version Upgrade}
       ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite}
       ${ColonyMotions.EmitDomainReputationRewardMotion} {Award}
+      ${ColonyExtendedMotions.SafeTransactionInitiatedMotion} {{transactionTitle}}
       other {Generic Action}
     }" be approved?`,
+    /* eslint-enable max-len */
   },
   finalizeLabel: {
     id: 'dashboard.ActionsPage.FinalizeMotionAndClaimWidget.finalizeLabel',
@@ -134,6 +138,7 @@ const FinalizeMotionAndClaimWidget = ({
   fromDomain,
   motionAmount,
   tokenAddress,
+  transactionTitle,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const {
@@ -464,7 +469,7 @@ const FinalizeMotionAndClaimWidget = ({
           <>
             <Heading
               text={MSG.title}
-              textValues={{ actionType }}
+              textValues={{ actionType, transactionTitle }}
               appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
             />
             <VoteResults

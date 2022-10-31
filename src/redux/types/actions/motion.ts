@@ -4,8 +4,7 @@ import { ColonyRole } from '@colony/colony-js';
 import { ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
 import { Color } from '~core/ColorTag';
-import { ColonySafe } from '~data/generated';
-import { SafeTransaction } from '~dashboard/Dialogs/ControlSafeDialog/ControlSafeDialog';
+import { ColonySafe, SafeTransaction } from '~data/generated';
 
 import {
   ErrorActionType,
@@ -263,7 +262,8 @@ export type MotionActionTypes =
         transactions: SafeTransaction[];
         colonyAddress: Address;
         colonyName: string;
-        annotationMessage?: string;
+        motionDomainId: string;
+        annotationMessage: string | null;
       },
       MetaWithHistory<object>
     >

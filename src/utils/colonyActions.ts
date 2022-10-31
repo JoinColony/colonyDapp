@@ -10,6 +10,7 @@ import {
   Address,
   AddedActions,
   ColonyExtendedActions,
+  AddedMotions,
 } from '~types/index';
 import {
   ColonyAction,
@@ -37,7 +38,11 @@ type ValuesForActionTypesMap = Partial<
   }
 >;
 
-export type ExtendedActions = ColonyActions | ColonyMotions | AddedActions;
+export type ExtendedActions =
+  | ColonyActions
+  | ColonyMotions
+  | AddedActions
+  | AddedMotions;
 /*
  * Get colony action details for DetailsWidget based on action type and ActionPageDetails map
  */
@@ -215,11 +220,12 @@ export const getDomainMetadataMessageDescriptorsIds = (
 };
 
 export const getSafeTransactionActionType = (
-  actionType: ExtendedActions,
+  actionType: ExtendedActions | AddedMotions,
   safeTransactions: SafeTransaction[],
 ) => {
   if (
-    actionType === ColonyExtendedActions.SafeTransactionInitiated &&
+    (actionType === ColonyExtendedActions.SafeTransactionInitiated ||
+      actionType === AddedMotions.SafeTransactionInitiatedMotion) &&
     safeTransactions
   ) {
     if ((safeTransactions || []).length >= 2) {
@@ -232,11 +238,12 @@ export const getSafeTransactionActionType = (
 };
 
 export const getSafeTransactionMessageDescriptorIds = (
-  actionType: ExtendedActions,
+  actionType: ExtendedActions | AddedMotions,
   safeTransactions?: SafeTransaction[] | null,
 ) => {
   if (
-    actionType === ColonyExtendedActions.SafeTransactionInitiated &&
+    (actionType === ColonyExtendedActions.SafeTransactionInitiated ||
+      actionType === AddedMotions.SafeTransactionInitiatedMotion) &&
     safeTransactions
   ) {
     const safeTransactionActionType = getSafeTransactionActionType(
