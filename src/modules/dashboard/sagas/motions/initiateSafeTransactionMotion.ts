@@ -162,6 +162,11 @@ function* initiateSafeTransactionMotion({
     // eslint-disable-next-line max-len
     const encodedAction = colonyClient.interface.functions.makeArbitraryTransactions.encode(
       [
+        /**
+         * The first param of makeArbitraryTransactions is an array of addresses of the receivers. For 1 transactionData, there should be 1 address in the array.
+         * All the transactions will be send to the home bridge, therefore we just generate an array filled with the corresponding address.
+         *
+         */
         fill(Array(transactionData.length), homeBridge.address),
         transactionData,
         true,
