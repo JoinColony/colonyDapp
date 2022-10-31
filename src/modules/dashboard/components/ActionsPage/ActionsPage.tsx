@@ -20,7 +20,7 @@ import {
   useTokenInfoLazyQuery,
 } from '~data/index';
 import { NOT_FOUND_ROUTE } from '~routes/index';
-import { ColonyActions, ColonyMotions } from '~types/index';
+import { AddedMotions, ColonyActions, ColonyMotions } from '~types/index';
 import { isTransactionFormat } from '~utils/web3';
 
 import TransactionHash, { Hash } from './TransactionHash';
@@ -280,6 +280,7 @@ const ActionsPage = () => {
     case ColonyMotions.EmitDomainReputationRewardMotion:
     case ColonyMotions.UnlockTokenMotion:
     case ColonyMotions.CreateDecisionMotion:
+    case AddedMotions.SafeTransactionInitiatedMotion:
       return (
         <DefaultMotion
           colony={colonyData?.processedColony}

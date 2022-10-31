@@ -14,6 +14,12 @@ import MemberReputation from '~core/MemberReputation';
 import ProgressBar from '~core/ProgressBar';
 import { ActionButton } from '~core/Button';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
+import MaskedAddress from '~core/MaskedAddress';
+import ActionsPageFeed, {
+  ActionsPageFeedItemWithIPFS,
+  SystemMessage,
+} from '~dashboard/ActionsPageFeed';
+
 import { getFormattedTokenValue } from '~utils/tokens';
 import {
   getUpdatedDecodedMotionRoles,
@@ -24,6 +30,7 @@ import {
 } from '~utils/colonyMotions';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
 import { mapPayload } from '~utils/actions';
+import { useTitle } from '~utils/hooks/useTitle';
 import { ColonyMotions, ColonyAndExtensionsEvents } from '~types/index';
 import { ActionTypes } from '~redux/index';
 import {
@@ -38,6 +45,7 @@ import {
   OneDomain,
   useColonyHistoricRolesQuery,
   useNetworkContracts,
+  SafeTransaction,
 } from '~data/index';
 
 import DetailsWidget from '../DetailsWidget';
@@ -51,10 +59,10 @@ import FinalizeMotionAndClaimWidget, {
 import VoteResults from '../FinalizeMotionAndClaimWidget/VoteResults';
 import CountDownTimer from '../CountDownTimer';
 import ActionPageMotionContent from '../ActionPageMotionContent';
+import { unknownContractMSG } from '../DetailsWidget/DetailsWidgetSafeTransaction';
 
 import styles from './DefaultAction.css';
 import motionSpecificStyles from './DefaultMotion.css';
-import { useTitle } from '~utils/hooks/useTitle';
 
 const MSG = defineMessages({
   or: {
@@ -107,6 +115,9 @@ const DefaultMotion = ({
     tokenAddress,
     reputationChange,
     createdAt,
+    transactionsTitle,
+    safeTransactions,
+    safeData,
   },
   colonyAction,
   token,
@@ -133,6 +144,7 @@ const DefaultMotion = ({
       return acc;
     }, {} as any);
   }, []);
+  const { formatMessage } = useIntl();
 
   const motionCreatedEvent = colonyAction.events.find(
     ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
@@ -255,6 +267,15 @@ const DefaultMotion = ({
       : amount,
     decimals,
   );
+
+  const firstSafeTransaction: SafeTransaction | undefined = safeTransactions[0];
+
+  const safeTransactionSafe = colony.safes.find(
+    (safe) =>
+      safe.contractAddress === safeData?.contractAddress &&
+      safe.chainId === safeData?.chainId,
+  );
+
   const actionAndEventValues = {
     actionType,
     newVersion,
@@ -311,7 +332,7 @@ const DefaultMotion = ({
       <div className={motionSpecificStyles.voteResultsWrapper}>
         <Heading
           text={voteResultsMSG.title}
-          textValues={{ actionType }}
+          textValues={{ actionType, transactionTitle: transactionsTitle }}
           appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
         />
         <VoteResults colony={colony} motionId={motionId} />
@@ -322,6 +343,45 @@ const DefaultMotion = ({
     reputationChange: formattedReputationChange,
     reputationChangeNumeral: <Numeral value={formattedReputationChange} />,
     isSmiteAction: new Decimal(reputationChange).isNegative(),
+    safeName: (
+      <span className={styles.user}>@{safeTransactionSafe?.safeName}</span>
+    ),
+    safeTransactionTitle: transactionsTitle,
+    safeTransactions,
+    /*
+     * The following references to firstSafeTransaction are only used in the event that there's only one safe transaction.
+     * Multiple transactions has its own message.
+     */
+    safeTransactionAmount: (
+      <>
+        <Numeral value={firstSafeTransaction?.amount || ''} />
+        <span> {firstSafeTransaction?.tokenData?.symbol}</span>
+      </>
+    ),
+    safeTransactionRecipient: (
+      <span className={styles.user}>
+        @{firstSafeTransaction?.recipient?.profile.username}
+      </span>
+    ),
+    safeTransactionNftToken: (
+      <span className={styles.user}>
+        {firstSafeTransaction?.nftData?.name ||
+          firstSafeTransaction?.nftData?.tokenName}
+      </span>
+    ),
+    safeTransactionFunctionName: firstSafeTransaction?.contractFunction,
+    safeTransactionContractName:
+      firstSafeTransaction?.contract?.profile.displayName ||
+      formatMessage(unknownContractMSG),
+    safeTransactionAddress: (
+      <MaskedAddress
+        address={firstSafeTransaction?.recipient?.profile.walletAddress || ''}
+      />
+    ),
+    // id will be filterValue if an address was manually entered into the picker
+    isSafeTransactionRecipientUser: !(
+      firstSafeTransaction?.recipient?.id === 'filterValue'
+    ),
   };
 
   const actionAndEventValuesForDocumentTitle = {
@@ -342,6 +402,7 @@ const DefaultMotion = ({
     fromDomain: actionAndEventValues.fromDomain?.name,
     toDomain: actionAndEventValues.toDomain?.name,
     roles: roleTitle,
+    safeTransactionTitle: transactionsTitle,
   };
 
   const motionState = motionStatusData?.motionStatus;
@@ -355,7 +416,6 @@ const DefaultMotion = ({
     motionState === MotionState.Failed ||
     motionState === MotionState.FailedNotFinalizable;
 
-  const { formatMessage } = useIntl();
   useTitle(
     `${formatMessage(
       { id: roleMessageDescriptorId || 'action.title' },
@@ -503,6 +563,7 @@ const DefaultMotion = ({
               motionDomain={motionDomain}
               scrollToRef={bottomElementRef}
               motionState={motionState}
+              transactionTitle={transactionsTitle}
             />
           )}
           {motionState === MotionState.Reveal && (
@@ -524,6 +585,7 @@ const DefaultMotion = ({
               motionAmount={amount}
               tokenAddress={tokenAddress}
               isDecision={isDecision}
+              transactionTitle={transactionsTitle}
             />
           )}
           <DetailsWidget
