@@ -34,12 +34,11 @@ export const getAnnotationFromSubgraph = async (
        * be filtering these out, and show the most recent annotation, no matter
        * who sent it
        */
-      .filter(({ values: { agent, address } }) => {
-        const userAddressLowered = userAddress.toLowerCase();
-        return (
-          agent.toLowerCase() === userAddressLowered ||
-          address.toLowerCase() === userAddressLowered
-        );
-      }) || [];
+      .filter(
+        ({ values: { agent, address } }) =>
+          agent.toLowerCase() === userAddress.toLowerCase() ||
+          address.toLowerCase() === userAddress.toLowerCase(),
+      ) || [];
+
   return mostRecentAnnotation;
 };
