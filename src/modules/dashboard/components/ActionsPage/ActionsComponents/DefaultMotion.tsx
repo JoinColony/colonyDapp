@@ -294,7 +294,7 @@ const DefaultMotion = ({
 
   const firstSafeTransaction: SafeTransaction | undefined = safeTransactions[0];
 
-  const safeTransactionSafe = colony.safes.find(
+  const selectedSafe = colony.safes.find(
     (safe) =>
       safe.contractAddress === safeData?.contractAddress &&
       safe.chainId === safeData?.chainId,
@@ -367,9 +367,8 @@ const DefaultMotion = ({
     reputationChange: formattedReputationChange,
     reputationChangeNumeral: <Numeral value={formattedReputationChange} />,
     isSmiteAction: new Decimal(reputationChange).isNegative(),
-    safeName: (
-      <span className={styles.user}>@{safeTransactionSafe?.safeName}</span>
-    ),
+    safeName: <span className={styles.user}>@{selectedSafe?.safeName}</span>,
+    safeTransactionSafe: selectedSafe,
     safeTransactionTitle: transactionsTitle,
     safeTransactions,
     /*

@@ -18,11 +18,6 @@ export enum ColonyMotions {
 
 export enum AddedMotions {
   SafeTransactionInitiatedMotion = 'SafeTransactionInitiatedMotion',
-  TransferFunds = 'TransferFunds',
-  RawTransaction = 'RawTransaction',
-  TransferNFT = 'TransferNft',
-  ContractInteraction = 'ContractInteraction',
-  MultipleTransactions = 'MultipleTransactions',
 }
 
 export const ColonyExtendedMotions = { ...ColonyMotions, ...AddedMotions };
