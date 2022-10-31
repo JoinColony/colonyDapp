@@ -1,8 +1,80 @@
-# Placeholder to allow triggering of pipeline in branches
 name: Build and deploy docker image
 
-# Controls when the workflow will run
-on: [workflow_dispatch]   # Allows you to run this workflow manually from the Actions tab
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  # push:
+on: 
+
+  workflow_dispatch: # Allows manual workflow trigger
+  repository_dispatch: # Allows API workflow trigger
+
+  # Triggers the workflow on pull request events but only for the "main" branch
+  # pull_request:
   #   branches: [ "main" ]
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+  AWS_REGION: eu-west-2
+  ECR_REPOSITORY: app-frontend
+  IMAGE_TAG: ${{ github.event.client_payload.COMMIT_HASH != null || github.sha }}
+  KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+  KUBE_NAMESPACE: default
+  DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+
+jobs:
+
+  buildDeploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Cancel Previous Runs               
+        uses: styfle/cancel-workflow-action@0.4.1
+        with:                                    
+          access_token: ${{ github.token }}
+
+      - name: Echo Env Vars through Context
+        run: |
+          echo "$GITHUB_CONTEXT"                 
+
+      - name: Configure AWS credentials                          
+        uses: aws-actions/configure-aws-credentials@v1           
+        with:                                                    
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}        
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR            
+        id: login-ecr                        
+        uses: aws-actions/amazon-ecr-login@v1
+      
+      - name: Checkout                                  
+        uses: actions/checkout@v2
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: ${{ github.workspace }}
+          file: ./Dockerfile
+          push: true
+          tags: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com/app-frontend:${{ env.IMAGE_TAG }}
+      
+      - name: Deploy to Kubernetes cluster                                                                            
+        uses: kodermax/kubectl-aws-eks@master                                                                         
+        env:                                                                                                          
+          RELEASE_IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+        with:                                                                                                         
+          args: set image deployment/dapp-qa-network-100 dapp=${{ env.RELEASE_IMAGE }} --record -n $KUBE_NAMESPACE
+            
+      - name: Verify Kubernetes deployment                               
+        uses: kodermax/kubectl-aws-eks@master                            
+        with:                                                            
+          args: rollout status deployment/dapp-qa-network-100 -n $KUBE_NAMESPACE
+      
+      - uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ env.DISCORD_WEBHOOK }} 
