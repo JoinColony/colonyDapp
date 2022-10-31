@@ -15,7 +15,7 @@ env:
   AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
   AWS_REGION: eu-west-2
   ECR_REPOSITORY: app-frontend
-  IMAGE_TAG: ${{ github.event.client_payload.COMMIT_HASH != null || github.sha }}
+  IMAGE_TAG: ${{ github.event.client_payload.COMMIT_HASH != null && github.event.client_payload.COMMIT_HASH || github.sha }}
   KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
   KUBE_NAMESPACE: default
   DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
