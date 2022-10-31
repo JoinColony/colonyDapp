@@ -1282,7 +1282,6 @@ const getSafeTransactionInitiatedMotionValues = async (
     safeData: ColonyAction['safeData'];
     safeTransactions: ColonyAction['safeTransactions'];
     transactionsTitle: ColonyAction['transactionsTitle'];
-    colonySafes: ColonyAction['colonySafes'];
     annotationMessage: ColonyAction['annotationMessage'];
   } = {
     ...motionDefaultValues,
@@ -1290,7 +1289,6 @@ const getSafeTransactionInitiatedMotionValues = async (
     safeData: null,
     safeTransactions: [],
     transactionsTitle: '',
-    colonySafes: [],
     annotationMessage: null,
   };
 
