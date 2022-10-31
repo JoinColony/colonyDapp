@@ -18,6 +18,8 @@ import {
   parseSubgraphEvent,
   NormalizedSubgraphEvent,
   ExtendedLogDescription,
+  getColonyMetadataIPFS,
+  getAnnotationFromSubgraph,
 } from '~utils/events';
 import {
   MotionVote,
@@ -1079,7 +1081,12 @@ export const motionsResolvers = ({
     }) {
       return getTimeoutPeriods(colonyManager, colonyAddress, motionId);
     },
-    async args({ action, associatedColony: { colonyAddress } }) {
+    async args({
+      action,
+      associatedColony: { colonyAddress },
+      agent,
+      transaction,
+    }) {
       const colonyClient = await colonyManager.getClient(
         ClientType.ColonyClient,
         colonyAddress,
@@ -1275,6 +1282,32 @@ export const motionsResolvers = ({
         };
       }
 
+      if (
+        actionValues.signature ===
+        'makeArbitraryTransactions(address[],bytes[],bool)'
+      ) {
+        const annotation = await getAnnotationFromSubgraph(
+          agent,
+          transaction.hash,
+          apolloClient,
+        );
+
+        const safeTxMetadata = JSON.parse(
+          await getColonyMetadataIPFS(annotation.values.metadata),
+        );
+
+        if (safeTxMetadata) {
+          const { annotationMessage: safeTransactionData } = safeTxMetadata;
+          if (safeTransactionData) {
+            return {
+              transactionTitle: safeTransactionData.title,
+            };
+          }
+        }
+        return {
+          transactionTitle: '',
+        };
+      }
       // MintTokenMotion - default
       return {
         amount: bigNumberify(actionValues?.args[0] || '0').toString(),

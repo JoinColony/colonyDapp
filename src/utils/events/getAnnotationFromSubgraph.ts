@@ -36,7 +36,8 @@ export const getAnnotationFromSubgraph = async (
        */
       .filter(
         ({ values: { agent, address } }) =>
-          agent === userAddress || address === userAddress,
+          agent.toLowerCase() === userAddress.toLowerCase() ||
+          address.toLowerCase() === userAddress.toLowerCase(),
       ) || [];
 
   return mostRecentAnnotation;
