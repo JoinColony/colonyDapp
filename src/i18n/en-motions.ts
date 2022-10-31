@@ -36,13 +36,13 @@ const motionsMessageDescriptors = {
       ${ColonyMotions.EmitDomainReputationRewardMotion} {Award}
       ${ColonyMotions.UnlockTokenMotion} {Unlock Token}
       ${ColonyMotions.CreateDecisionMotion} {Decision}
-      ${ColonyExtendedMotions.RawTransaction} {Raw Transaction}
-      ${ColonyExtendedMotions.TransferFunds} {Transfer Funds}
-      ${ColonyExtendedMotions.TransferNFT} {Transfer NFT}
-      ${ColonyExtendedMotions.ContractInteraction} {Contract Interaction}
-      ${ColonyExtendedMotions.MultipleTransactions} {Multiple Transactions}
       other {Generic}
     }`,
+  [`motion.type.${ColonyExtendedMotions.SafeTransactionInitiatedMotion}.rawTransaction`]: `Raw Transaction`,
+  [`motion.type.${ColonyExtendedMotions.SafeTransactionInitiatedMotion}.transferFunds`]: `Transfer Funds`,
+  [`motion.type.${ColonyExtendedMotions.SafeTransactionInitiatedMotion}.transferNFT`]: `Transfer NFT`,
+  [`motion.type.${ColonyExtendedMotions.SafeTransactionInitiatedMotion}.contractInteraction`]: `Contract Interaction`,
+  [`motion.type.${ColonyExtendedMotions.SafeTransactionInitiatedMotion}.multipleTransactions`]: `Multiple Transactions`,
 };
 
 export default motionsMessageDescriptors;
