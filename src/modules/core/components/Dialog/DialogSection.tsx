@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, RefObject, forwardRef } from 'react';
 
 import { getMainClasses } from '~utils/css';
 
@@ -18,8 +18,12 @@ interface Props {
   children?: ReactNode;
 }
 
-const DialogSection = ({ appearance, children }: Props) => (
-  <section className={getMainClasses(appearance, styles)}>{children}</section>
+const DialogSection = forwardRef(
+  ({ appearance, children }: Props, ref: RefObject<any>) => (
+    <section ref={ref} className={getMainClasses(appearance, styles)}>
+      {children}
+    </section>
+  ),
 );
 
 export default DialogSection;
