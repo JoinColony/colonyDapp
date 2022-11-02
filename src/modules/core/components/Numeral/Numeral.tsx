@@ -27,9 +27,6 @@ export interface Props extends HTMLAttributes<HTMLSpanElement> {
   /** Number of mantissa digits to show */
   mantissa?: number;
 
-  /** Total length of number to show */
-  totalLength?: number;
-
   /** Number of decimals to format the number with, or unit from which to determine this (ether, gwei, etc.) */
   unit?: number | string;
 
@@ -43,7 +40,6 @@ const Numeral = ({
   prefix,
   suffix,
   mantissa,
-  totalLength,
   unit,
   value,
   ...props
@@ -55,7 +51,6 @@ const Numeral = ({
     unit,
     value,
     mantissa,
-    totalLength,
   });
 
   useEffect(() => {

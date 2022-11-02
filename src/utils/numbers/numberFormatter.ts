@@ -16,9 +16,6 @@ export interface FunctionArgs {
   /** Number of mantissa digits to show */
   mantissa?: number;
 
-  /** Total length of number to show */
-  totalLength?: number;
-
   /** Actual value */
   value: number | BigNumber | string;
 
@@ -46,7 +43,6 @@ export const numberDisplayFormatter = ({
   unit,
   value,
   mantissa = 5,
-  totalLength = 6,
   useSeparator = true,
   abreviateOverMillion = true,
   useSmallNumberDefault = true,
@@ -54,20 +50,25 @@ export const numberDisplayFormatter = ({
   numbro.registerLanguage(numbroCustomLanguage);
   numbro.setLanguage('en-GB');
 
-  const defaultFormat = {
+  const defaultFormat: numbro.Format = {
     trimMantissa: true,
-    optionalMantissa: true,
     mantissa,
     spaceSeparated: false,
     thousandSeparated: useSeparator,
     average: false,
-    totalLength,
   };
 
-  const aboveMillionFormat = {
+  // numbers between 1,000 and 999,999
+  const mediumNumberFormat: numbro.Format = {
+    mantissa: 2,
+    trimMantissa: true,
+    thousandSeparated: useSeparator,
+  };
+
+  const aboveMillionFormat: numbro.Format = {
     trimMantissa: true,
     mantissa,
-    totalLength,
+    totalLength: 6,
     average: true,
     lowPrecision: true,
     spaceSeparated: false,
@@ -84,15 +85,12 @@ export const numberDisplayFormatter = ({
     return SMALL_TOKEN_AMOUNT_FORMAT;
   }
 
-  const formatType =
-    abreviateOverMillion && convertedNum >= 1000000
-      ? aboveMillionFormat
-      : defaultFormat;
-
-  // protect against Numbro's use of averages & abbreviation
-  // when totalLength is set. Example: 400,000 is formatted to 400k.
-  formatType.totalLength =
-    formatType === defaultFormat && convertedNum.length <= 6 ? 0 : totalLength;
+  let formatType = defaultFormat;
+  if (abreviateOverMillion && convertedNum >= 1000000) {
+    formatType = aboveMillionFormat;
+  } else if (convertedNum >= 1000 && convertedNum < 1000000) {
+    formatType = mediumNumberFormat;
+  }
 
   if (!numbro.validate(convertedNum, formatType)) {
     return value.toString();
