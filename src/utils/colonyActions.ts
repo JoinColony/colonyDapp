@@ -224,7 +224,7 @@ export const getDomainMetadataMessageDescriptorsIds = (
 };
 
 export const getSafeTransactionActionType = (
-  actionType: ExtendedActions | AddedMotions,
+  actionType: ExtendedActions,
   safeTransactions: SafeTransaction[],
 ) => {
   if (
@@ -243,7 +243,7 @@ export const getSafeTransactionActionType = (
 };
 
 export const getSafeTransactionMessageDescriptorIds = (
-  actionType: ExtendedActions | AddedMotions,
+  actionType: ExtendedActions,
   safeTransactions?: SafeTransaction[] | null,
 ) => {
   if (
