@@ -349,7 +349,8 @@ const DefaultMotion = ({
     isSmiteAction: new Decimal(reputationChange).isNegative(),
     safeName: <span className={styles.user}>@{selectedSafe?.safeName}</span>,
     safeTransactionSafe: selectedSafe,
-    safeTransactionTitle: transactionsTitle,
+    safeTransactionTitle:
+      transactionsTitle || formatMessage(MSG.safeTransactionInitiated),
     safeTransactions,
     /*
      * The following references to firstSafeTransaction are only used in the event that there's only one safe transaction.

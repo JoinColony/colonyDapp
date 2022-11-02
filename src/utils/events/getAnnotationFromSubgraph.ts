@@ -23,6 +23,7 @@ export const getAnnotationFromSubgraph = async (
       transactionHash,
       sortDirection: 'desc',
     },
+    fetchPolicy: 'network-only',
   });
 
   const [mostRecentAnnotation] =
