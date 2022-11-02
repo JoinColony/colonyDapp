@@ -26,7 +26,7 @@ const MSG = defineMessages({
 
 export const newFundingSource = {
   team: String(ROOT_DOMAIN_ID),
-  rate: [newRate],
+  rates: [newRate],
   isExpanded: true,
   id: nanoid(),
 };

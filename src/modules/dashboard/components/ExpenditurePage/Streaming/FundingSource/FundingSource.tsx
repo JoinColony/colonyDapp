@@ -119,20 +119,21 @@ const FundingSource = ({
             </div>
           </FormSection>
           <FieldArray
-            name={`streaming.fundingSources[${index}].rate`}
+            name={`streaming.fundingSources[${index}].rates`}
             render={({ push, remove }) => (
               <FormSection appearance={{ border: 'bottom' }}>
-                {fundingSource.rate?.map((rateItem, rateIndex) => (
+                {fundingSource.rates?.map((rateItem, rateIndex) => (
                   <RateItem
                     // eslint-disable-next-line max-len
-                    name={`streaming.fundingSources[${index}].rate[${rateIndex}]`}
+                    name={`streaming.fundingSources[${index}].rates[${rateIndex}]`}
                     rateItem={rateItem}
                     index={rateIndex}
                     push={push}
                     remove={remove}
                     colony={colony}
                     sidebarRef={sidebarRef}
-                    multipleTokens={fundingSource.rate.length > 1}
+                    multipleTokens={fundingSource.rates.length > 1}
+                    key={rateItem.id}
                   />
                 ))}
               </FormSection>
@@ -147,11 +148,11 @@ const FundingSource = ({
                     direction: 'horizontal',
                   }}
                 />
-                {fundingSource.rate.map((rateItem, rateIndex) => {
+                {fundingSource.rates.map((rateItem, rateIndex) => {
                   return (
                     <Limit
                       // eslint-disable-next-line max-len
-                      name={`streaming.fundingSources[${index}].rate[${rateIndex}].limit`}
+                      name={`streaming.fundingSources[${index}].rates[${rateIndex}].limit`}
                       colony={colony}
                       rate={rateItem}
                       key={rateItem.id}
