@@ -57,19 +57,30 @@ const Numeral = ({
     mantissa,
     totalLength,
   });
+  const prefixStr = prefix ? `${prefix} ` : '';
+  const suffixStr = suffix ? ` ${suffix}` : '';
+  const fullNumber = `${prefixStr}${formattedNumber}${suffixStr}`;
 
   useEffect(() => {
     if (outputRef.current) {
-      const prefixStr = prefix ? `${prefix} ` : '';
-      const suffixStr = suffix ? ` ${suffix}` : '';
-      outputRef.current.innerHTML = `${prefixStr}${formattedNumber}${suffixStr}`;
+      outputRef.current.innerHTML = fullNumber;
     }
-  }, [outputRef, formattedNumber, prefix, suffix]);
+  }, [outputRef, fullNumber]);
 
   const classNames = className
     ? `${styles.numeral} ${className}`
     : `${styles.numeral} ${getMainClasses(appearance, styles)}`;
-  return <span className={classNames} {...props} ref={outputRef} />;
+
+  // if display formatter returns engineering notation
+  if (formattedNumber.includes('<sup>')) {
+    return <span className={classNames} {...props} ref={outputRef} />;
+  }
+
+  return (
+    <span className={classNames} {...props}>
+      {fullNumber}
+    </span>
+  );
 };
 
 export default Numeral;
