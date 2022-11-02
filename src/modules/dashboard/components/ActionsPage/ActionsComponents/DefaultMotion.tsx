@@ -81,6 +81,10 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.DefaultMotion.votingProgressBarTooltip',
     defaultMessage: `Voting ends at the sooner of either time-out, or the reputation threshold being reached.`,
   },
+  safeTransactionInitiated: {
+    id: `dashboard.ActionsPage.DefaultMotion.safeTransactionInitiated`,
+    defaultMessage: 'Safe Transaction Initiated',
+  },
 });
 
 const displayName = 'dashboard.ActionsPage.DefaultMotion';
@@ -401,7 +405,8 @@ const DefaultMotion = ({
     fromDomain: actionAndEventValues.fromDomain?.name,
     toDomain: actionAndEventValues.toDomain?.name,
     roles: roleTitle,
-    safeTransactionTitle: transactionsTitle,
+    safeTransactionTitle:
+      transactionsTitle || formatMessage(MSG.safeTransactionInitiated),
   };
 
   const motionState = motionStatusData?.motionStatus;

@@ -1273,7 +1273,7 @@ const getSafeTransactionInitiatedMotionValues = async (
   );
 
   const safeTxData = JSON.parse(
-    await getColonyMetadataIPFS(annotation.values.metadata),
+    (await getColonyMetadataIPFS(annotation?.values?.metadata || '')) || '[]',
   );
 
   const initiateSafeTransactionValues: Partial<MotionValues> & {
