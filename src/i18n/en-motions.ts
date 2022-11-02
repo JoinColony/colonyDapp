@@ -39,7 +39,7 @@ const motionsMessageDescriptors = {
     }`,
   [`motion.type.${ColonyExtendedMotions.SafeTransactionInitiatedMotion}.rawTransaction`]: `Raw Transaction`,
   [`motion.type.${ColonyExtendedMotions.SafeTransactionInitiatedMotion}.transferFunds`]: `Transfer Funds`,
-  [`motion.type.${ColonyExtendedMotions.SafeTransactionInitiatedMotion}.transferNFT`]: `Transfer NFT`,
+  [`motion.type.${ColonyExtendedMotions.SafeTransactionInitiatedMotion}.transferNft`]: `Transfer NFT`,
   [`motion.type.${ColonyExtendedMotions.SafeTransactionInitiatedMotion}.contractInteraction`]: `Contract Interaction`,
   [`motion.type.${ColonyExtendedMotions.SafeTransactionInitiatedMotion}.multipleTransactions`]: `Multiple Transactions`,
 };

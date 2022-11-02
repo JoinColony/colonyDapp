@@ -231,8 +231,12 @@ export const getSafeTransactionActionType = (
     if ((safeTransactions || []).length >= 2) {
       return TransactionTypes.MULTIPLE_TRANSACTIONS;
     }
-    const type = safeTransactions[0].transactionType;
-    return type;
+
+    if (safeTransactions.length === 1) {
+      const type = safeTransactions[0].transactionType;
+      return type;
+    }
+    return null;
   }
   return actionType;
 };

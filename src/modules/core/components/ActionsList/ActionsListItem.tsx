@@ -115,6 +115,7 @@ const ActionsListItem = ({
     requiredStake,
     transactionTokenAddress,
     reputationChange,
+    transactionTitle,
   },
   colony,
   handleOnClick,
@@ -154,7 +155,7 @@ const ActionsListItem = ({
     colonyObject,
   );
 
-  const safeTransactionTitle = useFetchSafeTransactionTitle(metadata);
+  const safeTransactionTitle = useFetchSafeTransactionTitle(metadata) || transactionTitle;
 
   useEffect(() => {
     if (transactionTokenAddress) {
