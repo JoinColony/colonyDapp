@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { useField } from 'formik';
 import classNames from 'classnames';
 
@@ -24,6 +24,10 @@ const MSG = defineMessages({
   titleTooltipError: {
     id: `dashboard.ExpenditurePage.Streaming.SingleFundingSource.titleTooltipError`,
     defaultMessage: 'Required field error',
+  },
+  itemName: {
+    id: `dashboard.ExpenditurePage.Streaming.SingleFundingSource.itemName`,
+    defaultMessage: 'funding source',
   },
 });
 
@@ -52,6 +56,7 @@ const SingleFundingSource = ({
   const [, { error: fundingError }] = useField(
     `streaming.fundingSources[${index}]`,
   );
+  const { formatMessage } = useIntl();
 
   return (
     <div
@@ -65,6 +70,7 @@ const SingleFundingSource = ({
             isExpanded={fundingSource.isExpanded}
             onToogleButtonClick={() => onToggleButtonClick(index)}
             isLastItem={isLastItem}
+            itemName={formatMessage(MSG.itemName)}
           />
           <p className={styles.fundingTitle}>
             <FormattedMessage

@@ -1,5 +1,5 @@
 import React, { ReactNode, useMemo } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import classNames from 'classnames';
 
 import { FormSection } from '~core/Fields';
@@ -35,6 +35,10 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Payments.RecipientHeader.delay',
     defaultMessage: `{amount} {time}`,
   },
+  itemName: {
+    id: `dashboard.ExpenditurePage.Payments.RecipientHeader.itemName`,
+    defaultMessage: 'recipient',
+  },
 });
 
 const displayName = 'dashboard.ExpenditurePage.Payments.RecipientHeader';
@@ -62,6 +66,7 @@ const RecipientHeader = ({
     colony,
     recipient,
   ]);
+  const { formatMessage } = useIntl();
 
   return (
     <FormSection>
@@ -70,6 +75,7 @@ const RecipientHeader = ({
           <CollapseExpandButtons
             isExpanded={isOpen}
             onToogleButtonClick={() => onToggleButtonClick(index)}
+            itemName={formatMessage(MSG.itemName)}
             isLocked
           />
           <div className={styles.header}>

@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import { defineMessages } from 'react-intl';
+import { defineMessages, useIntl } from 'react-intl';
 
 import Icon from '~core/Icon';
 
@@ -9,11 +9,11 @@ import styles from './Payments.css';
 const MSG = defineMessages({
   minusIconTitle: {
     id: `dashboard.ExpenditurePage.Payments.CollapseExpandButtons.minusIconTitle`,
-    defaultMessage: 'Collapse a single recipient settings',
+    defaultMessage: 'Collapse a single {itemName} settings',
   },
   plusIconTitle: {
     id: `dashboard.ExpenditurePage.Payments.CollapseExpandButtons.plusIconTitle`,
-    defaultMessage: 'Expand a single recipient settings',
+    defaultMessage: 'Expand a single {itemName} settings',
   },
 });
 
@@ -22,6 +22,7 @@ interface Props {
   onToogleButtonClick: () => void;
   isLastItem?: boolean;
   isLocked?: boolean;
+  itemName?: string;
 }
 
 const displayName = 'dashboard.ExpenditurePage.Payments.CollapseExpandButtons';
@@ -31,14 +32,17 @@ const CollapseExpandButtons = ({
   onToogleButtonClick,
   isLastItem,
   isLocked,
+  itemName = 'item',
 }: Props) => {
+  const { formatMessage } = useIntl();
+
   return isExpanded ? (
     <>
       <Icon
         name="collapse"
         onClick={onToogleButtonClick}
         className={styles.signWrapper}
-        title={MSG.minusIconTitle}
+        title={formatMessage(MSG.minusIconTitle, { itemName })}
       />
       <div
         className={classNames(styles.verticalDivider, {
@@ -52,7 +56,7 @@ const CollapseExpandButtons = ({
       name="expand"
       onClick={onToogleButtonClick}
       className={styles.signWrapper}
-      title={MSG.plusIconTitle}
+      title={formatMessage(MSG.plusIconTitle, { itemName })}
     />
   );
 };
