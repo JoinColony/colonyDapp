@@ -1,10 +1,4 @@
-import React, {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-} from 'react';
+import React, { ReactNode, useCallback, useMemo, useRef } from 'react';
 import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 import compose from 'recompose/compose';
 import classNames from 'classnames';
@@ -16,7 +10,6 @@ import { getMainClasses } from '~utils/css';
 import UserAvatar from '~core/UserAvatar';
 import { ItemDefault } from '~core/SingleUserPicker';
 import withAdditionalOmniPicker from '~core/OmniPicker/withAdditionalOmniPicker';
-import { fixTriggerEventName } from '~pages/ExpenditurePage/constants';
 
 import { ItemDataType, WrappedComponentAdditionalProps } from '../OmniPicker';
 import { Props as WithOmnipickerInProps } from '../OmniPicker/withOmniPicker';
@@ -141,8 +134,6 @@ const UserPickerWithSearch = ({
   const [, { error, value }, { setValue }] = useField<AnyUser | null>(name);
   const { formatMessage } = useIntl();
   const ref = useRef<HTMLDivElement>(null);
-  const actionRef = useRef<HTMLButtonElement>(null);
-  const omniInputRef = useRef<HTMLInputElement | null>(null);
 
   const toggleDropdown = useCallback(() => {
     if (!disabled) {
@@ -185,17 +176,6 @@ const UserPickerWithSearch = ({
     const height = data.length * DROPDOWN_ITEM_HEIGHT;
     return height > DROPDOWN_HEIGHT ? DROPDOWN_HEIGHT : height;
   }, [data]);
-
-  useEffect(() => {
-    actionRef?.current?.addEventListener('focus', () => {
-      if (!disabled) {
-        toggleDropdown();
-        setTimeout(() => {
-          omniInputRef?.current?.focus();
-        }, 1);
-      }
-    });
-  }, [disabled, toggleDropdown]);
 
   return (
     <OmniPickerWrapper className={getMainClasses({}, styles)}>

@@ -107,7 +107,6 @@ const LockedSidebar = ({
             fundingSources={streaming?.fundingSources}
             editForm={editForm}
             activeStageId={activeStageId}
-            handleReleaseMilestone={handleReleaseMilestone}
           />
         );
       }

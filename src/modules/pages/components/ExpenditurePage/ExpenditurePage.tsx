@@ -574,9 +574,9 @@ const ExpenditurePage = ({ match }: Props) => {
             status={status}
             isCancelled={status === Status.Cancelled}
             pendingMotion={motion?.status === MotionStatus.Pending}
-            activeStage={stages.find((stage) => stage.id === activeStageId)}
+            activeStageId={activeStageId}
             handleReleaseMilestone={handleReleaseMilestone}
-            states={stages}
+            stages={stages}
           />
         )}
       </aside>

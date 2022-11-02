@@ -218,19 +218,6 @@ export const validationSchema = yup.object().shape({
           }),
         }),
       ),
-      user: yup.object().required(),
-      startDate: yup.object().shape({
-        date: yup.date().required().min(today),
-      }),
-      endDate: yup.object().when('startDate', (startDate, schema) =>
-        schema.shape({
-          option: yup.string().required(),
-          date: yup.date().when('option', {
-            is: (option) => option === ExpenditureEndDateTypes.FixedTime,
-            then: yup.date().min(startDate.date).required(),
-          }),
-        }),
-      ),
       fundingSources: yup
         .array()
         .when('endDate', (endDate, schema) =>
