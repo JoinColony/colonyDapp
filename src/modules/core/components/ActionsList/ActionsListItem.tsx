@@ -156,8 +156,6 @@ const ActionsListItem = ({
     title = draftData.title;
   }
 
-  const safeTransactionTitle = useFetchSafeTransactionTitle(metadata);
-
   const { isVotingExtensionEnabled } = useEnabledExtensions({
     colonyAddress: colony.colonyAddress,
   });
