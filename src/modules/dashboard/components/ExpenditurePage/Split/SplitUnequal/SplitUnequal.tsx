@@ -212,7 +212,6 @@ const SplitUnequal = ({ colony, sidebarRef }: Props) => {
                         renderAvatar={supRenderAvatar}
                         placeholder="Search"
                         sidebarRef={sidebarRef}
-                        index={index}
                         elementOnly
                       />
                     </div>

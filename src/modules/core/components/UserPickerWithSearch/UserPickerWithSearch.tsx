@@ -18,8 +18,8 @@ import Icon from '../Icon';
 
 import Dropdown from './Dropdown';
 import { DROPDOWN_HEIGHT, DROPDOWN_ITEM_HEIGHT } from './constants';
-import styles from './UserPickerWithSearch.css';
 import useUserTriggerFocus from './hooks';
+import styles from './UserPickerWithSearch.css';
 
 type AvatarRenderFn = (
   address: Address,
@@ -95,8 +95,6 @@ interface Props extends WithOmnipickerInProps {
   valueDataTest?: string;
 
   sidebarRef?: HTMLElement | null;
-
-  index?: number;
 }
 
 interface EnhancedProps extends Props, WrappedComponentAdditionalProps {}
@@ -129,7 +127,6 @@ const UserPickerWithSearch = ({
   registerTriggerNode,
   sidebarRef,
   data,
-  index = 0,
 }: EnhancedProps) => {
   const [, { error, value }, { setValue }] = useField<AnyUser | null>(name);
   const { formatMessage } = useIntl();
@@ -142,7 +139,7 @@ const UserPickerWithSearch = ({
   }, [disabled, toggleOmniPicker]);
 
   const { inputRef: omniInputRef } = useUserTriggerFocus(
-    index,
+    name,
     disabled,
     toggleDropdown,
   );
@@ -196,7 +193,6 @@ const UserPickerWithSearch = ({
             aria-invalid={!!error}
             onClick={toggleDropdown}
             disabled={disabled}
-            data-index={index}
             name={name}
           >
             {value ? (

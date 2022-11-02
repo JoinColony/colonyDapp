@@ -123,7 +123,6 @@ const Recipient = ({
                 itemDataTest="paymentRecipientItem"
                 placeholder="Search"
                 sidebarRef={sidebarRef}
-                index={index}
               />
             </div>
           </FormSection>

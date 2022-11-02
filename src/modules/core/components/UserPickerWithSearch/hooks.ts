@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { FIX_TRIGGER_EVENT_NAME } from '~pages/ExpenditurePage/constants';
 
 const useUserTriggerFocus = (
-  index: number,
+  name: string,
   disabled: boolean | undefined,
   toggleDropdown: () => void,
 ) => {
@@ -14,10 +14,10 @@ const useUserTriggerFocus = (
 
     const fixAction = (e) => {
       const {
-        detail: { order },
+        detail: { name: targetName },
       } = e;
       // isDesiredEl tells to trigger only needed element and not for example all elements in the listing
-      const isDesiredEl = order === index;
+      const isDesiredEl = targetName === name;
 
       if (!disabled && isDesiredEl) {
         toggleDropdown();
@@ -34,7 +34,7 @@ const useUserTriggerFocus = (
       window.removeEventListener(FIX_TRIGGER_EVENT_NAME, fixAction);
       clearTimeout(timeout);
     };
-  }, [index, disabled, toggleDropdown]);
+  }, [disabled, toggleDropdown, name]);
 
   return { inputRef };
 };
