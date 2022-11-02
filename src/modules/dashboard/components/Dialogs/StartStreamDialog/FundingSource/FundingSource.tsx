@@ -46,7 +46,7 @@ interface Props {
 }
 
 const FundingSource = ({ fundingSource, colony, endDate }: Props) => {
-  const { team, rate } = fundingSource;
+  const { team, rates } = fundingSource;
 
   const domain = useMemo(
     () =>
@@ -89,7 +89,7 @@ const FundingSource = ({ fundingSource, colony, endDate }: Props) => {
           </div>
         </div>
       </FormSection>
-      {rate.map((rateItem, index) => {
+      {rates.map((rateItem, index) => {
         const tokenData = colony.tokens.find(
           (colonyToken) => colonyToken.id === rateItem.token,
         );
@@ -104,7 +104,7 @@ const FundingSource = ({ fundingSource, colony, endDate }: Props) => {
               <div className={styles.label}>
                 <FormattedMessage
                   {...MSG.rate}
-                  values={{ count: rate.length > 1 && `#${index + 1}` }}
+                  values={{ count: rates.length > 1 && `#${index + 1}` }}
                 />
               </div>
               <div className={classNames(styles.value, styles.centered)}>
@@ -138,7 +138,7 @@ const FundingSource = ({ fundingSource, colony, endDate }: Props) => {
         );
       })}
       {endDate === ExpenditureEndDateTypes.LimitIsReached &&
-        rate.map((rateItem, index) => {
+        rates.map((rateItem, index) => {
           const tokenData = colony.tokens.find(
             (colonyToken) => colonyToken.id === rateItem.token,
           );
@@ -153,7 +153,7 @@ const FundingSource = ({ fundingSource, colony, endDate }: Props) => {
                 <div className={styles.label}>
                   <FormattedMessage
                     {...MSG.limit}
-                    values={{ count: rate.length > 1 && `#${index + 1}` }}
+                    values={{ count: rates.length > 1 && `#${index + 1}` }}
                   />
                 </div>
                 <div className={classNames(styles.value, styles.centered)}>
