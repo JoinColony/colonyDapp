@@ -14,12 +14,6 @@ import { ValuesType } from '~pages/ExpenditurePage/types';
 import FundingSource from './FundingSource';
 import { FormValues } from './StartStreamDialog';
 import StreamingDetails from './StreamingDetails';
-import {
-  user,
-  endDate,
-  endDateTime,
-  startDate,
-} from './StreamingDetails/constants';
 import styles from './StartStreamDialog.css';
 
 const displayName = 'dashboard.StartStreamDialog.StartStreamDialogForm';
@@ -31,7 +25,7 @@ const MSG = defineMessages({
   },
   description: {
     id: 'dashboard.StartStreamDialog.StartStreamDialogForm.title',
-    defaultMessage: `To create this Streaming Payment you need to have Adminstration permissions or get collective approval first. To get collective approval, you can create a Motion.`,
+    defaultMessage: `To create this Streaming Payment you need to have Administration permissions or get collective approval first. To get collective approval, you can create a Motion.`,
   },
   createMotion: {
     id: 'dashboard.StartStreamDialog.StartStreamDialogForm.title',
@@ -67,6 +61,7 @@ const StartStreamDialogForm = ({
   formValues,
 }: Props & FormikProps<FormValues>) => {
   const { streaming } = formValues;
+  const { user, startDate, endDate } = streaming || {};
   const [domainID, setDomainID] = useState<number>();
 
   const handleMotionDomainChange = useCallback(
@@ -89,7 +84,6 @@ const StartStreamDialogForm = ({
           onDomainChange={handleMotionDomainChange}
           initialSelectedDomain={domainID}
         />
-
         <div className={styles.toggleContainer}>
           <Toggle
             label={{ id: 'label.force' }}
@@ -129,7 +123,12 @@ const StartStreamDialogForm = ({
             <FormattedMessage {...MSG.streamingDetails} />
           </div>
         </FormSection>
-        <StreamingDetails {...{ user, endDate, endDateTime, startDate }} />
+        <StreamingDetails
+          user={user}
+          endDate={endDate?.option}
+          endDateTime={endDate?.date.getTime()}
+          startDate={startDate?.date.getTime()}
+        />
         {streaming?.fundingSources?.map((fundingSource, index) => {
           return (
             <Fragment key={fundingSource.id}>

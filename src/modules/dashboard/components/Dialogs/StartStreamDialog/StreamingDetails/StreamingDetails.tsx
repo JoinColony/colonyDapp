@@ -7,9 +7,9 @@ import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
 import { AnyUser } from '~data/index';
 import { ExpenditureEndDateTypes } from '~pages/ExpenditurePage/types';
-import { capitalize } from '~utils/strings';
 
 import FormattedDateAndTime from './FormattedDateAndTime';
+import EndDate from './EndDate';
 import styles from './StreamingDetails.css';
 
 const displayName = 'dashboard.StartStreamDialog.StreamingDetails';
@@ -27,13 +27,17 @@ const MSG = defineMessages({
     id: 'dashboard.StartStreamDialog.StreamingDetails.ends',
     defaultMessage: 'Ends',
   },
+  none: {
+    id: 'dashboard.StartStreamDialog.StreamingDetails.none',
+    defaultMessage: 'None',
+  },
 });
 
 interface Props {
-  user: AnyUser;
-  endDate: ExpenditureEndDateTypes;
-  endDateTime: number;
-  startDate: number;
+  user?: AnyUser;
+  endDate?: ExpenditureEndDateTypes;
+  endDateTime?: number;
+  startDate?: number;
 }
 
 const StreamingDetails = ({ user, endDate, endDateTime, startDate }: Props) => (
@@ -44,16 +48,22 @@ const StreamingDetails = ({ user, endDate, endDateTime, startDate }: Props) => (
           <FormattedMessage {...MSG.to} />
         </span>
         <div className={styles.valueContainer}>
-          <div className={styles.userAvatarContainer}>
-            <UserAvatar
-              address={user.profile.walletAddress || ''}
-              size="xs"
-              notSet={false}
-            />
-            <UserMention
-              username={user.profile.username || user.profile.displayName || ''}
-            />
-          </div>
+          {user ? (
+            <div className={styles.userAvatarContainer}>
+              <UserAvatar
+                address={user.profile.walletAddress || ''}
+                size="xs"
+                notSet={false}
+              />
+              <UserMention
+                username={
+                  user.profile.username || user.profile.displayName || ''
+                }
+              />
+            </div>
+          ) : (
+            <FormattedMessage {...MSG.none} />
+          )}
         </div>
       </div>
     </FormSection>
@@ -63,7 +73,11 @@ const StreamingDetails = ({ user, endDate, endDateTime, startDate }: Props) => (
           <FormattedMessage {...MSG.starts} />
         </span>
         <div className={styles.valueContainer}>
-          <FormattedDateAndTime date={startDate} />
+          {startDate ? (
+            <FormattedDateAndTime date={startDate} />
+          ) : (
+            <FormattedMessage {...MSG.none} />
+          )}
         </div>
       </div>
     </FormSection>
@@ -73,11 +87,7 @@ const StreamingDetails = ({ user, endDate, endDateTime, startDate }: Props) => (
           <FormattedMessage {...MSG.ends} />
         </span>
         <div className={styles.valueContainer}>
-          {endDate === ExpenditureEndDateTypes.FixedTime ? (
-            <FormattedDateAndTime date={endDateTime} />
-          ) : (
-            capitalize(endDate.replace(/-/g, ' '))
-          )}
+          <EndDate {...{ endDate, endDateTime }} />
         </div>
       </div>
     </FormSection>
