@@ -184,7 +184,8 @@ const ActionsListItem = ({
     colonyObject,
   );
 
-  const safeTransactionTitle = useFetchSafeTransactionTitle(metadata) || transactionTitle;
+  const safeTransactionTitle =
+    useFetchSafeTransactionTitle(metadata) || transactionTitle;
 
   useEffect(() => {
     if (transactionTokenAddress) {
