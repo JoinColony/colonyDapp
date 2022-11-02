@@ -1,6 +1,5 @@
 .inputContainer {
-  flex: 2.8;
-  width: calc(100% - 30px);
+  flex: 3.3;
 }
 
 .inputContainer input {
@@ -23,15 +22,16 @@
 .tokenIconWrapper {
   display: flex;
   flex: 1;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
-  margin-left: 24px;
 }
 
 .limitContainer {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 26px;
 }
 
 .limitContainer:not(:first-of-type) {

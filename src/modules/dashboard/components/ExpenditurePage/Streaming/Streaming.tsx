@@ -91,7 +91,7 @@ const Streaming = ({ colony, sidebarRef }: Props) => {
                       <CollapseExpandButtons
                         isExpanded={fundingSource.isExpanded}
                         onToogleButtonClick={() => onToggleButtonClick(index)}
-                        isLastitem={index === fundingSources?.length - 1}
+                        isLastItem={index === fundingSources?.length - 1}
                       />
                       <FormattedMessage
                         {...MSG.title}

@@ -221,7 +221,7 @@ export const validationSchema = yup.object().shape({
           schema.of(
             yup.object().shape({
               team: yup.string().required(),
-              rate: yup.array().of(
+              rates: yup.array().of(
                 yup.object().shape({
                   amount: yup
                     .number()

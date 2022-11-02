@@ -12,7 +12,7 @@ export interface Rate {
 
 export interface FundingSource {
   team: string;
-  rate: Rate[];
+  rates: Rate[];
   isExpanded: boolean;
   id: string;
 }
