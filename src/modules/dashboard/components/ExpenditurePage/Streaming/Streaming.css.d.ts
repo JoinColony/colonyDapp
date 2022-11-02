@@ -3,6 +3,7 @@ export const paddingBottom: string;
 export const circlePlusIcon: string;
 export const container: string;
 export const header: string;
+export const headerLocked: string;
 export const fundingSourceLabel: string;
 export const labelWithIcon: string;
 export const deleteIcon: string;

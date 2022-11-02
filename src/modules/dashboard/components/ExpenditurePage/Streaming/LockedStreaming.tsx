@@ -37,14 +37,14 @@ const displayName = 'dashboard.ExpenditurePage.Streaming.LockedStreaming';
 interface Props {
   fundingSources?: FundingSource[];
   colony: Colony;
-  activeStateId?: string;
+  activeStageId?: string;
   editForm: () => void;
 }
 
 const LockedStreaming = ({
   fundingSources,
   colony,
-  activeStateId,
+  activeStageId,
   editForm,
 }: Props) => {
   const [openItemsIds, setOpenItemsIds] = useState<string[]>(
@@ -65,9 +65,9 @@ const LockedStreaming = ({
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
+      <div className={classNames(styles.header, styles.headerLocked)}>
         <FormattedMessage {...MSG.fundingSource} />
-        {activeStateId !== Stage.Claimed && (
+        {activeStageId !== Stage.Claimed && (
           <span className={styles.editIcon}>
             <Icon
               name="edit"
