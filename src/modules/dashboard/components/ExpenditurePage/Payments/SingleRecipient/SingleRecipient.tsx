@@ -10,7 +10,6 @@ import { Props as RecipientProps } from '~dashboard/ExpenditurePage/Recipient/Re
 import { ErrorDot } from '~dashboard/ExpenditurePage/ErrorDot';
 
 import CollapseExpandButtons from '../CollapseExpandButtons';
-import { Recipient as RecipientType } from '../types';
 import styles from '../Payments.css';
 
 const displayName = 'dashboard.ExpenditurePage.Payments.SingleRecipient';
