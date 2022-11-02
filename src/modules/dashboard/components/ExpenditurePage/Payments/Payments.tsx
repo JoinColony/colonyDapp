@@ -98,7 +98,7 @@ const Payments = ({ sidebarRef, colony }: Props) => {
                         <CollapseExpandButtons
                           isExpanded={recipient.isExpanded}
                           onToogleButtonClick={() => onToggleButtonClick(index)}
-                          isLastitem={index === recipients?.length - 1}
+                          isLastItem={index === recipients?.length - 1}
                         />
                         {index + 1}: <FormattedMessage {...MSG.recipient} />
                         {recipients?.length > 1 && (
