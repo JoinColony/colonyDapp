@@ -142,9 +142,11 @@ const getMessageId = (
       actionType,
       safeTransactions || [],
     );
-    return `motion.type.${
-      ColonyExtendedMotions.SafeTransactionInitiatedMotion
-    }.${motionSubtype[0].toLowerCase() + motionSubtype.substring(1)}`;
+    return motionSubtype
+      ? `motion.type.${ColonyExtendedMotions.SafeTransactionInitiatedMotion}.${
+          motionSubtype[0].toLowerCase() + motionSubtype.substring(1)
+        }`
+      : 'motion.type';
   }
 
   if (

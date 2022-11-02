@@ -1312,7 +1312,8 @@ export const motionsResolvers = ({
         );
 
         const safeTxMetadata = JSON.parse(
-          await getColonyMetadataIPFS(annotation.values.metadata),
+          (await getColonyMetadataIPFS(annotation?.values?.metadata || '')) ||
+            '[]',
         );
 
         if (safeTxMetadata) {
