@@ -29,6 +29,10 @@
   letter-spacing: var(--spacing-normal);
 }
 
+.headerLocked {
+  justify-content: space-between;
+}
+
 .fundingSourceLabel {
   display: flex;
   align-items: center;

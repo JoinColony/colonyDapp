@@ -143,8 +143,6 @@ const Staged = ({ colony, sidebarRef }: Props) => {
 
   const [, { error: stagedError }] = useField(`staged`);
 
-  const [, { error: stagedError }] = useField(`staged`);
-
   return (
     <div className={styles.stagedContainer}>
       <FormSection appearance={{ border: 'bottom' }}>

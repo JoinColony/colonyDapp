@@ -12,7 +12,6 @@ import { ExpenditureEndDateTypes } from '~pages/ExpenditurePage/types';
 
 import { supRenderAvatar } from '../Recipient/Recipient';
 import { Streaming } from '../Streaming/types';
-import { FundingSource } from '../Streaming/types';
 
 import styles from './ExpenditureSettings.css';
 
@@ -47,12 +46,10 @@ const endDateOptions: DatePickerOption[] = [
   {
     label: MSG.whenCancelled,
     value: ExpenditureEndDateTypes.WhenCancelled,
-    hideDatePicker: true,
   },
   {
     label: MSG.limitIsReached,
     value: ExpenditureEndDateTypes.LimitIsReached,
-    hideDatePicker: true,
   },
   {
     label: MSG.fixedTime,
