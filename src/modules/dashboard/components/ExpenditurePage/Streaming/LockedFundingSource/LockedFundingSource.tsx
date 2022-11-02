@@ -39,7 +39,7 @@ interface Props {
 
 const LockedFundingSource = ({ fundingSource, colony, isOpen }: Props) => {
   const { formatMessage } = useIntl();
-  const { rate, team } = fundingSource || {};
+  const { rates, team } = fundingSource || {};
 
   const domain = useMemo(
     () =>
@@ -89,7 +89,7 @@ const LockedFundingSource = ({ fundingSource, colony, isOpen }: Props) => {
           </div>
         </div>
       </FormSection>
-      {rate?.map(({ amount, token, time, id }, rateIndex) => {
+      {rates?.map(({ amount, token, time, id }, rateIndex) => {
         const tokenData = colony.tokens?.find(
           (tokenItem) => token && tokenItem.address === token,
         );
@@ -100,7 +100,7 @@ const LockedFundingSource = ({ fundingSource, colony, isOpen }: Props) => {
               <div className={styles.row}>
                 <InputLabel
                   label={formatMessage(MSG.rate, {
-                    count: rate.length > 1 && `#${rateIndex + 1}`,
+                    count: rates.length > 1 && `#${rateIndex + 1}`,
                   })}
                   appearance={{
                     direction: 'horizontal',
@@ -127,7 +127,7 @@ const LockedFundingSource = ({ fundingSource, colony, isOpen }: Props) => {
           )
         );
       })}
-      {rate?.map(({ token, limit, id }, rateIndex) => {
+      {rates?.map(({ token, limit, id }, rateIndex) => {
         const tokenData = colony.tokens?.find(
           (tokenItem) => token && tokenItem.address === token,
         );
@@ -139,7 +139,7 @@ const LockedFundingSource = ({ fundingSource, colony, isOpen }: Props) => {
               <div className={styles.row}>
                 <InputLabel
                   label={formatMessage(MSG.limit, {
-                    count: rate.length > 1 && `#${rateIndex + 1}`,
+                    count: rates.length > 1 && `#${rateIndex + 1}`,
                   })}
                   appearance={{
                     direction: 'horizontal',

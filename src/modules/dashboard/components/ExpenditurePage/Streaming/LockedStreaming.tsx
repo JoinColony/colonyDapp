@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import classNames from 'classnames';
 
 import { FormSection } from '~core/Fields';
@@ -23,6 +23,10 @@ const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.rate',
     defaultMessage: `{amount} {token} / {time}{comma}`,
   },
+  itemName: {
+    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.itemName',
+    defaultMessage: `funding Source`,
+  },
 });
 
 const displayName = 'dashboard.ExpenditurePage.Streaming.LockedStreaming';
@@ -36,6 +40,8 @@ const LockedStreaming = ({ fundingSources, colony }: Props) => {
   const [openItemsIds, setOpenItemsIds] = useState<string[]>(
     fundingSources?.map(({ id }) => id) || [],
   );
+
+  const { formatMessage } = useIntl();
 
   const onToggleButtonClick = useCallback((id) => {
     setOpenItemsIds((expandedIds) => {
@@ -58,7 +64,7 @@ const LockedStreaming = ({ fundingSources, colony }: Props) => {
         );
         const isOpen = !!openItemsIds?.find((id) => id === fundingSource.id);
 
-        const { amount, token, time } = fundingSource.rate?.[0] || {};
+        const { amount, token, time } = fundingSource.rates?.[0] || {};
         const tokenData = colony.tokens?.find(
           (tokenItem) => token && tokenItem.address === token,
         );
@@ -78,6 +84,7 @@ const LockedStreaming = ({ fundingSources, colony }: Props) => {
                     onToggleButtonClick(fundingSource.id)
                   }
                   isLastItem={index === fundingSources?.length - 1}
+                  itemName={formatMessage(MSG.itemName)}
                 />
                 <FormattedMessage
                   {...MSG.title}
@@ -95,15 +102,15 @@ const LockedStreaming = ({ fundingSources, colony }: Props) => {
                             token: tokenData?.symbol,
                             time,
                             comma:
-                              fundingSource.rate.length > 1 && isOpen && ', ',
+                              fundingSource.rates.length > 1 && isOpen && ', ',
                           }}
                         />
                       </div>
                     ),
                     tokens:
-                      fundingSource.rate.length > 1 &&
+                      fundingSource.rates.length > 1 &&
                       (isOpen
-                        ? fundingSource.rate.map((rateItem, idx) => {
+                        ? fundingSource.rates.map((rateItem, idx) => {
                             if (idx === 0) {
                               return null;
                             }
@@ -120,7 +127,7 @@ const LockedStreaming = ({ fundingSources, colony }: Props) => {
                                     token: tokenItemData?.symbol,
                                     time: rateItem.time,
                                     comma:
-                                      fundingSource.rate.length > idx + 1 &&
+                                      fundingSource.rates.length > idx + 1 &&
                                       ',',
                                   }}
                                 />

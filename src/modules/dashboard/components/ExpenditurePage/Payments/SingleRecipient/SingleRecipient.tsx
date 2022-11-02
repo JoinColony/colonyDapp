@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { useField } from 'formik';
 
 import { FormSection } from '~core/Fields';
@@ -27,6 +27,10 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.Payments.SingleRecipient.titleTooltipError',
     defaultMessage: 'Required field error',
   },
+  itemName: {
+    id: `dashboard.ExpenditurePage.Payments.SingleRecipient.itemName`,
+    defaultMessage: 'recipient',
+  },
 });
 
 interface Props extends Omit<RecipientProps, 'subscribedUsers'> {
@@ -49,6 +53,7 @@ const SingleRecipient = ({
   multipleRecipients,
 }: Props) => {
   const [, { error: recipientError }] = useField(`recipients[${index}]`);
+  const { formatMessage } = useIntl();
 
   return (
     <div className={styles.singleRecipient} key={recipient.id}>
@@ -58,6 +63,7 @@ const SingleRecipient = ({
             isExpanded={!!recipient.isExpanded}
             onToogleButtonClick={() => onToggleButtonClick(index)}
             isLastItem={isLastItem}
+            itemName={formatMessage(MSG.itemName)}
           />
           <p className={styles.recipientTitle}>
             {index + 1}: <FormattedMessage {...MSG.recipient} />
