@@ -22,7 +22,9 @@ const renderTokenIcon = (tokenData: SafeBalanceToken) => {
   };
 
   if (tokenData.name === 'Ether') {
-    return <Icon className={styles.ether} name="ether" title="Ether Logo" />;
+    return (
+      <Icon className={styles.ether} name="ether-purple" title="Ether Logo" />
+    );
   }
 
   if (isERC20Token(tokenData)) {

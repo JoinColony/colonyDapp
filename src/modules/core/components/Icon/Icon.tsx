@@ -7,6 +7,7 @@ import { getMainClasses } from '~utils/css';
 import {
   icons as iconNames,
   multiColorIcons as multiColorIconNames,
+  tokens as tokenNames,
 } from '../../../../img/icons.json';
 import styles from './Icon.css';
 
@@ -47,16 +48,16 @@ interface Props extends Omit<HTMLAttributes<HTMLElement>, 'title'> {
   viewBox?: string;
 }
 
-const getIcons = (map: string[]) =>
+const getIcons = (map: string[], directory = 'icons') =>
   map.reduce((prev, current) => {
     // eslint-disable-next-line global-require, import/no-dynamic-require, no-param-reassign
-    prev[current] = require(`../../../../img/icons/${current}.svg`);
+    prev[current] = require(`../../../../img/${directory}/${current}.svg`);
     return prev;
   }, {});
 
 const icons = getIcons(iconNames);
 const multiColorIcons = getIcons(multiColorIconNames);
-
+const tokens = getIcons(tokenNames, 'tokens');
 const Icon = ({
   appearance = { size: 'normal', theme: 'primary' },
   className,
@@ -71,7 +72,8 @@ const Icon = ({
   const multiColorAppearance = multiColorIcons[name]
     ? { size: appearance.size || 'normal' }
     : null;
-  const icon = icons[name] || multiColorIcons[name];
+  // ensure token names don't coincide with icon names
+  const icon = icons[name] || multiColorIcons[name] || tokens[name];
   const iconHref = typeof icon === 'object' ? `#${icon.default.id}` : icon;
   const iconTitle =
     typeof title === 'object' ? formatMessage(title, titleValues) : title;
