@@ -232,7 +232,7 @@ export const getSafeTransactionActionType = (
       return TransactionTypes.MULTIPLE_TRANSACTIONS;
     }
 
-    const type = safeTransactions[0].transactionType;
+    const type = safeTransactions[0]?.transactionType;
     return type;
   }
   return actionType;
