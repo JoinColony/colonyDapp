@@ -10,7 +10,7 @@ import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import { Colony } from '~data/index';
-import { FundingSource } from '~dashboard/ExpenditurePage/Streaming/types';
+import { Rate } from '~dashboard/ExpenditurePage/Streaming/types';
 
 import {
   Motion,
@@ -92,8 +92,8 @@ export interface Props {
   motion?: Motion;
   colony?: Colony;
   activeStageId?: string;
-  paidToDate?: FundingSource['rate'][];
-  availableToClaim?: FundingSource['rate'][];
+  paidToDate?: Rate[];
+  availableToClaim?: Rate[];
   handleCancelExpenditure?: () => void;
   claimed?: boolean;
 }
