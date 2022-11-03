@@ -100,7 +100,12 @@ const ExpenditureSettings = ({ colony, sidebarRef, inEditMode }: Props) => {
             }}
             options={
               inEditMode
-                ? [{ label: capitalize(expenditure), value: expenditure }]
+                ? [
+                    {
+                      label: capitalize(expenditureType),
+                      value: expenditureType,
+                    },
+                  ]
                 : expenditureTypes
             }
             scrollContainer={sidebarRef}
