@@ -18,12 +18,13 @@ interface Props {
   children?: ReactNode;
 }
 
-const DialogSection = forwardRef(
-  ({ appearance, children }: Props, ref: RefObject<any>) => (
-    <section ref={ref} className={getMainClasses(appearance, styles)}>
-      {children}
-    </section>
-  ),
+const DialogSection = (
+  { appearance, children }: Props,
+  ref: RefObject<any>,
+) => (
+  <section ref={ref} className={getMainClasses(appearance, styles)}>
+    {children}
+  </section>
 );
 
-export default DialogSection;
+export default forwardRef(DialogSection);
