@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 
 import Tag from '~core/Tag';
@@ -17,6 +17,7 @@ import StreamingStagesLocked from './StreamingStages/StreamingStagesLocked';
 import styles from './Stages.css';
 
 import { useClaimStreamingPayment } from './StreamingStages/StreamingStagesLocked/hooks';
+import { calcAvailableToClaim } from './utils';
 import styles from './Stages.css';
 
 const MSG = defineMessages({
@@ -60,12 +61,22 @@ const LockedStages = ({
   const isStreamingPaymentType =
     formValues?.expenditure === ExpenditureTypes.Streaming;
 
-  /* This is a mocked claiming function and mocked variables - should to be replaced with call to the backend */
+  const initialAvailableToClaim = useMemo(
+    () => calcAvailableToClaim(formValues?.streaming?.fundingSources),
+    [formValues],
+  );
+
+  /* This is a mocked claiming function - should to be replaced with a call to the backend */
   const {
     availableToClaim,
     paidToDate,
     claimFunds,
+    setAvailableToClaim,
   } = useClaimStreamingPayment();
+
+  useEffect(() => {
+    setAvailableToClaim(initialAvailableToClaim);
+  }, [initialAvailableToClaim, setAvailableToClaim]);
 
   const handleButtonClick = useCallback(async () => {
     activeStage?.buttonAction();

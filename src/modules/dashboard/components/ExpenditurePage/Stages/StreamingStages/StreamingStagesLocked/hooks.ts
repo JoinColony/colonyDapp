@@ -1,18 +1,17 @@
 import { useState } from 'react';
-import { FundingSource } from '~dashboard/ExpenditurePage/Streaming/types';
-import {
-  availableToClaim as initialAvailableToClaim,
-  paidToDate as initialPaidToDate,
-} from './constants';
+import { Rate } from '~dashboard/ExpenditurePage/Streaming/types';
 
-export const useClaimStreamingPayment = () => {
+export const useClaimStreamingPayment = (
+  initialAvailableToClaim?: Rate[],
+  initialPaidToDate?: Rate[],
+) => {
   // these values are mocks, they're set to state to mock claiming funds functionality
-  const [availableToClaim, setAvailableToClaim] = useState<
-    FundingSource['rate'][] | undefined
-  >(initialAvailableToClaim);
-  const [paidToDate, setPaidToDate] = useState<
-    FundingSource['rate'][] | undefined
-  >(initialPaidToDate);
+  const [availableToClaim, setAvailableToClaim] = useState<Rate[] | undefined>(
+    initialAvailableToClaim,
+  );
+  const [paidToDate, setPaidToDate] = useState<Rate[] | undefined>(
+    initialPaidToDate,
+  );
   const [claimed, setClaimed] = useState(false);
 
   const claimFunds = () => {
@@ -20,7 +19,7 @@ export const useClaimStreamingPayment = () => {
       return;
     }
     const newPaidToDate = [...(paidToDate || []), ...availableToClaim].reduce(
-      (acc: FundingSource['rate'][], curr: FundingSource['rate']) => {
+      (acc: Rate[], curr: Rate) => {
         const { amount, token } = curr || {};
         if (!amount || !token) {
           return acc;
@@ -40,11 +39,18 @@ export const useClaimStreamingPayment = () => {
     );
 
     setPaidToDate(newPaidToDate);
+    // it's a mock, it just sets available amount to 0
     setAvailableToClaim((available) =>
       available?.map((availableItem) => ({ ...availableItem, amount: 0 })),
     );
     setClaimed(true);
   };
 
-  return { availableToClaim, paidToDate, claimFunds, claimed };
+  return {
+    availableToClaim,
+    paidToDate,
+    claimFunds,
+    claimed,
+    setAvailableToClaim,
+  };
 };
