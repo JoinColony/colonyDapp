@@ -8,7 +8,6 @@ import React, {
 } from 'react';
 import { MessageDescriptor } from 'react-intl';
 import { nanoid } from 'nanoid';
-import findIndex from 'lodash/findIndex';
 
 import { PopperOptions } from 'react-popper-tooltip';
 
@@ -17,6 +16,7 @@ import { Tooltip } from '~core/Popover';
 import asFieldArray from '~core/Fields/asFieldArray';
 import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
+import { isEqual, findIndex } from '~utils/lodash';
 
 import styles from './Checkbox.css';
 
@@ -91,10 +91,11 @@ const Checkbox = ({
   showTooltipText,
 }: Props) => {
   const [inputId] = useState<string>(nanoid());
+  const findIndexPredicate = (val: any) => isEqual(val, value);
 
   const handleOnChange = useCallback(
     (e: SyntheticEvent<HTMLInputElement>) => {
-      const idx = findIndex(values[name], value);
+      const idx = findIndex(values[name], findIndexPredicate);
       if (idx >= 0) {
         remove(idx.toString());
       } else {
@@ -104,10 +105,10 @@ const Checkbox = ({
         onChange({ ...e, isChecked: !(idx >= 0) });
       }
     },
-    [name, onChange, push, remove, value, values],
+    [name, onChange, push, remove, value, values, findIndexPredicate],
   );
 
-  const isChecked = findIndex(values[name], value) >= 0;
+  const isChecked = findIndex(values[name], findIndexPredicate) >= 0;
   const mainClasses = getMainClasses(appearance, styles, {
     isChecked,
     disabled,
