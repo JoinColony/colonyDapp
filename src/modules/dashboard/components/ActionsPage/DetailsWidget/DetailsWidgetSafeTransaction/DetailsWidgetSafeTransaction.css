@@ -3,11 +3,6 @@
   flex-direction: column;
 }
 
-.main span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .main section:last-of-type {
   margin-bottom: 55px;
 }
@@ -142,11 +137,15 @@
 }
 
 .functionArg {
-  composes: inlineEllipsis from "~styles/text.css";
+  text-align: right;
+  white-space: break-spaces;
+  overflow-wrap: anywhere;
 }
 
 .arrayContainer {
   flex-direction: column;
+  padding: 5px 0px;
+  row-gap: 10px;
 }
 
 .arrayItem {

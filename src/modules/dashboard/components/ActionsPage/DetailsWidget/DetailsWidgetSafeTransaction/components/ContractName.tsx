@@ -8,9 +8,9 @@ import widgetStyles from '../../DetailsWidget.css';
 import styles from '../DetailsWidgetSafeTransaction.css';
 
 const MSG = defineMessage({
-  contract: {
-    id: `dashboard.ActionsPage.DetailsWidget.DetailsWidgetSafeTransaction.ContractName.contract`,
-    defaultMessage: 'Contract',
+  contractName: {
+    id: `dashboard.ActionsPage.DetailsWidget.DetailsWidgetSafeTransaction.ContractName.contractName`,
+    defaultMessage: 'Contract name',
   },
 });
 
@@ -23,7 +23,7 @@ interface ContractNameProps {
 export const ContractName = ({ name, address }: ContractNameProps) => (
   <div className={classnames(widgetStyles.item, styles.contractItem)}>
     <div className={widgetStyles.label}>
-      <FormattedMessage {...MSG.contract} />
+      <FormattedMessage {...MSG.contractName} />
     </div>
     <div className={widgetStyles.value}>
       <Avatar

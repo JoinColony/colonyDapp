@@ -30,9 +30,9 @@ const MSG = defineMessage({
     id: `dashboard.ActionsPage.DetailsWidget.DetailsWidgetSafeTransaction.ContractSection.unknownContract`,
     defaultMessage: 'Unknown contract',
   },
-  functionContract: {
-    id: `dashboard.ActionsPage.DetailsWidget.DetailsWidgetSafeTransaction.ContractSection.functionContract`,
-    defaultMessage: 'Function contract',
+  contractAddress: {
+    id: `dashboard.ActionsPage.DetailsWidget.DetailsWidgetSafeTransaction.ContractSection.contractAddress`,
+    defaultMessage: 'Contract address',
   },
 });
 
@@ -99,6 +99,16 @@ export const ContractSection = ({
   return (
     <>
       <ContractName name={contractName} address={contractAddress} />
+      {functionContract && !hideFunctionContract && (
+        <div className={widgetStyles.item}>
+          <div className={widgetStyles.label}>
+            <FormattedMessage {...MSG.contractAddress} />
+          </div>
+          <div className={widgetStyles.value}>
+            <InvisibleCopyableMaskedAddress address={functionContract} />
+          </div>
+        </div>
+      )}
       {transaction.contractFunction && (
         <div className={widgetStyles.item}>
           <div className={widgetStyles.label}>
@@ -106,16 +116,6 @@ export const ContractSection = ({
           </div>
           <div className={widgetStyles.value}>
             <span>{transaction.contractFunction}</span>
-          </div>
-        </div>
-      )}
-      {functionContract && !hideFunctionContract && (
-        <div className={widgetStyles.item}>
-          <div className={widgetStyles.label}>
-            <FormattedMessage {...MSG.functionContract} />
-          </div>
-          <div className={widgetStyles.value}>
-            <InvisibleCopyableMaskedAddress address={functionContract} />
           </div>
         </div>
       )}

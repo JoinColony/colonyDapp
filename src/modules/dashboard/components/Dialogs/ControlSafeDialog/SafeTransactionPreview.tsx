@@ -14,11 +14,10 @@ import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
 import Avatar from '~core/Avatar';
-import MaskedAddress from '~core/MaskedAddress';
 import { AnyUser, NftData } from '~data/index';
-import { getArrayFromString } from '~utils/safes';
 import { extractTokenName } from '~modules/dashboard/sagas/utils/safeHelpers';
 import { omit } from '~utils/lodash';
+import { formatArgument } from '~dashboard/ActionsPage/DetailsWidget/DetailsWidgetSafeTransaction/components/FunctionsSection';
 
 import AddressDetailsView from './TransactionPreview/AddressDetailsView';
 import { FormProps, TransactionSectionProps } from './ControlSafeForm';
@@ -265,43 +264,6 @@ const SafeTransactionPreview = ({
     values.transactions[index].transactionType ===
     TransactionTypes.TRANSFER_NFT;
 
-  const getDetailsItemValue = (input, transaction) => {
-    const inputName = `${input.name}-${transaction.contractFunction}`;
-    switch (true) {
-      case input.type === 'address': {
-        return <MaskedAddress address={transaction[inputName]} />;
-      }
-      case input.type === 'address[]': {
-        const formattedArray = getArrayFromString(transaction[inputName]);
-
-        const maskedArray = formattedArray.map((address, index, arr) => {
-          return (
-            <div key={nanoid()}>
-              <MaskedAddress address={address.trim()} />
-              {index < arr.length - 1 && <span>, </span>}
-            </div>
-          );
-        });
-        return <div className={styles.rawTransactionValues}>{maskedArray}</div>;
-      }
-      case input.type.substr(input.type.length - 2, input.type.length) ===
-        '[]': {
-        const formattedArray = `[${getArrayFromString(transaction[inputName])
-          .map((item) => item.trim())
-          .join(', ')}]`;
-        return (
-          <div className={styles.rawTransactionValues}>{formattedArray}</div>
-        );
-      }
-      default:
-        return (
-          <div className={styles.rawTransactionValues}>
-            {transaction[inputName]}
-          </div>
-        );
-    }
-  };
-
   /*
    * Remove unused contract functions from form state.
    * Doing it here instead of in the Contract Interaction section so that the user doesn't lose state in the
@@ -461,17 +423,21 @@ const SafeTransactionPreview = ({
                 {values.transactions[index].transactionType ===
                   TransactionTypes.CONTRACT_INTERACTION &&
                   selectedContractMethods &&
-                  selectedContractMethods[index]?.inputs?.map((input) => (
-                    <DetailsItem
-                      key={nanoid()}
-                      label={MSG.contractMethodInputLabel}
-                      textValues={{ name: input.name, type: input.type }}
-                      value={getDetailsItemValue(
-                        input,
-                        values.transactions[index],
-                      )}
-                    />
-                  ))}
+                  selectedContractMethods[index]?.inputs?.map((input) => {
+                    const functionKey = `${input.name}-${values.transactions[index].contractFunction}`;
+                    return (
+                      <DetailsItem
+                        key={nanoid()}
+                        label={MSG.contractMethodInputLabel}
+                        textValues={{ name: input.name, type: input.type }}
+                        value={formatArgument(
+                          input.type,
+                          values.transactions[index][functionKey],
+                          input.type.substring(input.type.length - 2) === '[]',
+                        )}
+                      />
+                    );
+                  })}
               </div>
             </DialogSection>
           </div>

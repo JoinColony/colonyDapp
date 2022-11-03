@@ -20,6 +20,10 @@
 }
 
 .detailsItemValue {
+  display: flex;
+  flex-direction: column;
+  padding: 5px 0px;
   min-width: 0;
   color: var(--dark);
+  row-gap: 10px;
 }
