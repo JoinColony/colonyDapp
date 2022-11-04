@@ -3,7 +3,7 @@ import { bigNumberify } from 'ethers/utils';
 import { FormattedMessage, defineMessages, useIntl } from 'react-intl';
 import classnames from 'classnames';
 import Decimal from 'decimal.js';
-
+import { useLocation } from 'react-router';
 import { ROOT_DOMAIN_ID, ColonyRoles } from '@colony/colony-js';
 
 import Numeral from '~core/Numeral';
@@ -149,6 +149,15 @@ const DefaultMotion = ({
     }, {} as any);
   }, []);
   const { formatMessage } = useIntl();
+  const { state: locationState } = useLocation<{
+    title: string;
+    transactions: SafeTransaction[];
+    annotationMessage: string | null;
+    safeData: {
+      contractAddress: string;
+      chainId: string;
+    };
+  }>();
 
   const motionCreatedEvent = colonyAction.events.find(
     ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
@@ -272,13 +281,18 @@ const DefaultMotion = ({
     decimals,
   );
 
-  const firstSafeTransaction: SafeTransaction | undefined = safeTransactions[0];
+  const firstSafeTransaction: SafeTransaction | undefined =
+    safeTransactions[0] || locationState?.transactions[0];
 
-  const selectedSafe = colony.safes.find(
-    (safe) =>
-      safe.contractAddress === safeData?.contractAddress &&
-      safe.chainId === safeData?.chainId,
-  );
+  const selectedSafe = colony.safes.find((safe) => {
+    const safeContractAddress =
+      safeData?.contractAddress || locationState?.safeData.contractAddress;
+    const safeChainId = safeData?.chainId || locationState?.safeData.chainId;
+    return (
+      safe.contractAddress === safeContractAddress &&
+      safe.chainId === safeChainId
+    );
+  });
 
   const actionAndEventValues = {
     actionType,
@@ -336,7 +350,10 @@ const DefaultMotion = ({
       <div className={motionSpecificStyles.voteResultsWrapper}>
         <Heading
           text={voteResultsMSG.title}
-          textValues={{ actionType, transactionTitle: transactionsTitle }}
+          textValues={{
+            actionType,
+            transactionTitle: transactionsTitle || locationState?.title,
+          }}
           appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
         />
         <VoteResults colony={colony} motionId={motionId} />
@@ -350,8 +367,10 @@ const DefaultMotion = ({
     safeName: <span className={styles.user}>@{selectedSafe?.safeName}</span>,
     safeTransactionSafe: selectedSafe,
     safeTransactionTitle:
-      transactionsTitle || formatMessage(MSG.safeTransactionInitiated),
-    safeTransactions,
+      transactionsTitle ||
+      locationState?.title ||
+      formatMessage(MSG.safeTransactionInitiated),
+    safeTransactions: safeTransactions || locationState?.transactions,
     /*
      * The following references to firstSafeTransaction are only used in the event that there's only one safe transaction.
      * Multiple transactions has its own message.
@@ -407,7 +426,9 @@ const DefaultMotion = ({
     toDomain: actionAndEventValues.toDomain?.name,
     roles: roleTitle,
     safeTransactionTitle:
-      transactionsTitle || formatMessage(MSG.safeTransactionInitiated),
+      transactionsTitle ||
+      locationState?.title ||
+      formatMessage(MSG.safeTransactionInitiated),
   };
 
   const motionState = motionStatusData?.motionStatus;
@@ -568,7 +589,7 @@ const DefaultMotion = ({
               motionDomain={motionDomain}
               scrollToRef={bottomElementRef}
               motionState={motionState}
-              transactionTitle={transactionsTitle}
+              transactionTitle={transactionsTitle || locationState?.title}
             />
           )}
           {motionState === MotionState.Reveal && (
@@ -590,7 +611,7 @@ const DefaultMotion = ({
               motionAmount={amount}
               tokenAddress={tokenAddress}
               isDecision={isDecision}
-              transactionTitle={transactionsTitle}
+              transactionTitle={transactionsTitle || locationState?.title}
             />
           )}
           <DetailsWidget

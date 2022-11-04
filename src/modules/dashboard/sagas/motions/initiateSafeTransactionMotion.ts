@@ -226,11 +226,7 @@ function* initiateSafeTransactionMotion({
 
     yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
-    /*
-     * Upload all data via annotationMessage to IPFS.
-     * This is to avoid storing the data in the colony metadata.
-     */
-    const annotationMessageIpfsHash = yield call(uploadIfpsAnnotation, {
+    const ipfsDataObject = {
       title,
       transactions,
       safeData: {
@@ -238,7 +234,16 @@ function* initiateSafeTransactionMotion({
         chainId: safe.chainId,
       },
       annotationMessage,
-    });
+    };
+
+    /*
+     * Upload all data via annotationMessage to IPFS.
+     * This is to avoid storing the data in the colony metadata.
+     */
+    const annotationMessageIpfsHash = yield call(
+      uploadIfpsAnnotation,
+      ipfsDataObject,
+    );
 
     yield put(transactionPending(annotateInitiateSafeTransactionMotion.id));
 
@@ -273,7 +278,11 @@ function* initiateSafeTransactionMotion({
     });
 
     if (colonyName) {
-      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
+      yield routeRedirect(
+        `/colony/${colonyName}/tx/${txHash}`,
+        history,
+        ipfsDataObject,
+      );
     }
   } catch (error) {
     return yield putError(
