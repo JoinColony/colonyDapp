@@ -54,7 +54,7 @@ const MSG = defineMessages({
   },
   totalStakeTooltip: {
     id: `dashboard.ActionsPage.TotalStakeWidget.GroupedTotalStake.totalStakeTooltip`,
-    defaultMessage: `[TO BE ADDED WHEN AVAILABLE]`,
+    defaultMessage: `The total staked amount and weight for each side of the Motion.`,
   },
   nextButton: {
     id: `dashboard.ActionsPage.TotalStakeWidget.GroupedTotalStake.nextButton`,
