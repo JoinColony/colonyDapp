@@ -121,7 +121,7 @@ const Streaming = ({ colony, sidebarRef }: Props) => {
                 push({
                   ...newFundingSource,
                   id: nanoid(),
-                  rate: [
+                  rates: [
                     {
                       ...newRate,
                       id: nanoid(),
