@@ -110,8 +110,9 @@ export const takeLatestCancellable = (
 export function* routeRedirect(
   route: string,
   historyObject, // Apparently react-router doesn't export proper types for this :(
+  stateObject?: object,
 ) {
   if (route && historyObject) {
-    yield call(historyObject.push, route);
+    yield call(historyObject.push, route, stateObject);
   }
 }
