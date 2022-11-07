@@ -5,6 +5,7 @@ import classnames from 'classnames';
 import Decimal from 'decimal.js';
 import { useLocation } from 'react-router';
 import { ROOT_DOMAIN_ID, ColonyRoles } from '@colony/colony-js';
+import isEmpty from 'lodash/isEmpty';
 
 import Numeral from '~core/Numeral';
 import Heading from '~core/Heading';
@@ -31,6 +32,7 @@ import {
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
 import { mapPayload } from '~utils/actions';
 import { useTitle } from '~utils/hooks/useTitle';
+import { SafeTxData } from '~modules/dashboard/sagas/utils/uploadIfpsAnnotation';
 import { ColonyMotions, ColonyAndExtensionsEvents } from '~types/index';
 import { ActionTypes } from '~redux/index';
 import {
@@ -149,15 +151,7 @@ const DefaultMotion = ({
     }, {} as any);
   }, []);
   const { formatMessage } = useIntl();
-  const { state: locationState } = useLocation<{
-    title: string;
-    transactions: SafeTransaction[];
-    annotationMessage: string | null;
-    safeData: {
-      contractAddress: string;
-      chainId: string;
-    };
-  }>();
+  const { state: locationState } = useLocation<SafeTxData>();
 
   const motionCreatedEvent = colonyAction.events.find(
     ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
@@ -370,7 +364,9 @@ const DefaultMotion = ({
       transactionsTitle ||
       locationState?.title ||
       formatMessage(MSG.safeTransactionInitiated),
-    safeTransactions: safeTransactions || locationState?.transactions,
+    safeTransactions: !isEmpty(safeTransactions)
+      ? safeTransactions
+      : locationState?.transactions,
     /*
      * The following references to firstSafeTransaction are only used in the event that there's only one safe transaction.
      * Multiple transactions has its own message.
