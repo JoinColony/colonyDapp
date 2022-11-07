@@ -83,7 +83,6 @@ export interface Props {
 
 const ExpenditureSettings = ({ colony, sidebarRef, inEditMode }: Props) => {
   const { values } = useFormikContext<ValuesType>() || {};
-  const { expenditure } = values;
   const expenditureType = values.expenditure;
 
   return (
