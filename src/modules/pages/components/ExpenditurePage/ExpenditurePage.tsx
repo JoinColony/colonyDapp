@@ -43,10 +43,10 @@ import {
   setClaimDate,
   isExpenditureType,
 } from './utils';
-import { ExpenditureTypes, ValuesType } from './types';
-import LockedSidebar from './LockedSidebar';
-import { initialValues, validationSchema } from './constants';
 import ExpenditureForm from './ExpenditureForm';
+import LockedSidebar from './LockedSidebar';
+import { ExpenditureTypes, ValuesType } from './types';
+import { initialValues, validationSchema } from './constants';
 import styles from './ExpenditurePage.css';
 
 const displayName = 'pages.ExpenditurePage';
@@ -496,7 +496,7 @@ const ExpenditurePage = ({ match }: Props) => {
       enableReinitialize
     >
       {({ values, validateForm }) => (
-        <div className={getMainClasses({}, styles)}>
+        <div className={getMainClasses({}, styles)} id="expenditurePage">
           <aside className={styles.sidebar} ref={sidebarRef}>
             {loading ? (
               <div className={styles.spinnerContainer}>
@@ -550,7 +550,7 @@ const ExpenditurePage = ({ match }: Props) => {
                   <FormStages
                     stages={stages}
                     activeStageId={activeStageId}
-                    setActiveStateId={setActiveStageId}
+                    setActiveStageId={setActiveStageId}
                     setFormValues={setFormValues}
                     handleCancelExpenditure={handleCancelExpenditure}
                     colony={colonyData.processedColony}
@@ -574,8 +574,9 @@ const ExpenditurePage = ({ match }: Props) => {
             status={status}
             isCancelled={status === Status.Cancelled}
             pendingMotion={motion?.status === MotionStatus.Pending}
-            activeStage={stages.find((stage) => stage.id === activeStageId)}
+            activeStageId={activeStageId}
             handleReleaseMilestone={handleReleaseMilestone}
+            stages={stages}
           />
         )}
       </aside>

@@ -4,15 +4,14 @@ import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
-import { FormSection } from '~core/Fields';
 import Icon from '~core/Icon';
-import { CollapseExpandButtons } from '~dashboard/ExpenditurePage/Payments';
 import { Colony } from '~data/index';
 
+import { newRate } from './FundingSource/constants';
+
+import SingleFundingSource from './SingleFundingSource';
 import { newFundingSource } from './constants';
 import { Streaming as StreamingType } from './types';
-import FundingSource from './FundingSource';
-import { newRate } from './FundingSource/constants';
 import styles from './Streaming.css';
 
 const MSG = defineMessages({
@@ -44,7 +43,7 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.ExpenditurePage.Streaming';
 
-interface Props {
+export interface Props {
   sidebarRef: HTMLElement | null;
   colony: Colony;
 }
@@ -76,46 +75,21 @@ const Streaming = ({ colony, sidebarRef }: Props) => {
         name="streaming.fundingSources"
         render={({ push, remove }) => (
           <>
-            {fundingSources?.map((fundingSource, index) => {
-              const domain = colony?.domains.find(
-                ({ ethDomainId }) => Number(fundingSource.team) === ethDomainId,
-              );
-
-              return (
-                <div
-                  className={styles.singleFundingSource}
-                  key={fundingSource.id}
-                >
-                  <FormSection>
-                    <div className={styles.fundingSourceLabel}>
-                      <CollapseExpandButtons
-                        isExpanded={fundingSource.isExpanded}
-                        onToogleButtonClick={() => onToggleButtonClick(index)}
-                        isLastItem={index === fundingSources?.length - 1}
-                      />
-                      <FormattedMessage
-                        {...MSG.title}
-                        values={{ nr: index + 1, team: domain?.name }}
-                      />
-                      {fundingSources?.length > 1 && (
-                        <Icon
-                          name="trash"
-                          className={styles.deleteIcon}
-                          onClick={() => remove(index)}
-                        />
-                      )}
-                    </div>
-                  </FormSection>
-                  <FundingSource
-                    sidebarRef={sidebarRef}
-                    colony={colony}
-                    index={index}
-                    fundingSource={fundingSource}
-                    isLast={index === fundingSources?.length - 1}
-                  />
-                </div>
-              );
-            })}
+            {fundingSources?.map((fundingSource, index) => (
+              <SingleFundingSource
+                {...{
+                  fundingSource,
+                  index,
+                  onToggleButtonClick,
+                  remove,
+                  sidebarRef,
+                  colony,
+                }}
+                isLastItem={index === fundingSources?.length - 1}
+                multipleFundingSources={fundingSources?.length > 1}
+                key={fundingSource.id}
+              />
+            ))}
             <Button
               onClick={() => {
                 push({

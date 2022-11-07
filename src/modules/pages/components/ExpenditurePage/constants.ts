@@ -12,6 +12,8 @@ import { newFundingSource } from '~dashboard/ExpenditurePage/Streaming/constants
 
 import { ExpenditureEndDateTypes, ExpenditureTypes } from './types';
 
+export const FIX_TRIGGER_EVENT_NAME = 'fix-trigger';
+
 const MSG = defineMessages({
   userRequiredError: {
     id: 'dashboard.ExpenditurePage.userRequiredError',
@@ -98,7 +100,8 @@ export const validationSchema = yup.object().shape({
       yup.object().shape({
         recipient: yup.object().required(),
         value: yup
-          .array(
+          .array()
+          .of(
             yup.object().shape({
               amount: yup
                 .number()

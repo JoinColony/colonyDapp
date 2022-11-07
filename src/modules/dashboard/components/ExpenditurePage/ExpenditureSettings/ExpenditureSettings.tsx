@@ -1,10 +1,10 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import { useField } from 'formik';
+import { useFormikContext } from 'formik';
 
 import { SelectHorizontal, FormSection } from '~core/Fields';
 import { Colony } from '~data/index';
-import { ExpenditureTypes } from '~pages/ExpenditurePage/types';
+import { ExpenditureTypes, ValuesType } from '~pages/ExpenditurePage/types';
 import { capitalize } from '~utils/strings';
 
 import ExpenditureStreamingForm from './ExpenditureStreamingForm';
@@ -15,6 +15,18 @@ export const MSG = defineMessages({
   type: {
     id: 'dashboard.ExpenditurePage.ExpenditureSettings.type',
     defaultMessage: 'Expenditure type',
+  },
+  team: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.team',
+    defaultMessage: 'Team',
+  },
+  balance: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.balance',
+    defaultMessage: 'Balance',
+  },
+  owner: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.owner',
+    defaultMessage: 'Owner',
   },
   advancedPayment: {
     id: 'dashboard.ExpenditurePage.ExpenditureSettings.advancedPayment',
@@ -70,7 +82,9 @@ export interface Props {
 }
 
 const ExpenditureSettings = ({ colony, sidebarRef, inEditMode }: Props) => {
-  const [, { value: expenditure }] = useField('expenditure');
+  const { values } = useFormikContext<ValuesType>() || {};
+  const { expenditure } = values;
+  const expenditureType = values.expenditure;
 
   return (
     <div className={styles.container}>
@@ -96,7 +110,7 @@ const ExpenditureSettings = ({ colony, sidebarRef, inEditMode }: Props) => {
           />
         </div>
       </FormSection>
-      {expenditure === ExpenditureTypes.Streaming ? (
+      {expenditureType === ExpenditureTypes.Streaming ? (
         <ExpenditureStreamingForm sidebarRef={sidebarRef} colony={colony} />
       ) : (
         <ExpenditureBaseForm sidebarRef={sidebarRef} colony={colony} />

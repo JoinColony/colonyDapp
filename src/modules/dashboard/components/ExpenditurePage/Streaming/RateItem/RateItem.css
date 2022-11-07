@@ -1,5 +1,5 @@
 .rateContainer {
-  padding: 13px 0 12px;
+  padding: 5px 0;
 }
 
 .labelButtonWrapper {
@@ -22,8 +22,9 @@
 
 .rate {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
   width: 100%;
   letter-spacing: 0.1px;
 }
@@ -56,20 +57,12 @@
 }
 
 .tokenWrapper {
-  max-width: 100px;
-}
-
-.tokenWrapper button {
-  padding: 10.5px 5px 10.5px 10px;
-}
-
-.tokenWrapper button figure {
-  margin-right: 10px;
+  max-width: 104px;
 }
 
 .selectWrapper button {
   padding: 0;
-  min-width: 62px;
+  min-width: 65px;
   font-size: var(--size-smallish);
   color: var(--action-secondary);
 }
@@ -80,7 +73,7 @@
 }
 
 .slash {
-  margin: 0 6px;
+  margin: 0 7px;
   font-weight: var(--weight-bold);
   color: var(--dark);
 }

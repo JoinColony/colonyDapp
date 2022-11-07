@@ -12,6 +12,7 @@ import { Tooltip } from '~core/Popover';
 
 import TimePicker from './TimePicker';
 import { DEFAULT_DATE_FORMAT, DEFAULT_TIME_FORMAT } from './constants';
+import useDateTriggerFocus from './hooks';
 
 import styles from './DatePicker.css';
 
@@ -33,6 +34,11 @@ export interface DatePickerOption {
   showDatePicker?: boolean;
 }
 
+interface DatePickerError {
+  date?: string | MessageDescriptor;
+  option?: string | MessageDescriptor;
+}
+
 interface Props {
   name: string;
   showTimeSelect?: boolean;
@@ -51,7 +57,7 @@ interface DateInputProps extends React.HTMLProps<HTMLButtonElement> {
   dateFormat: string;
   shouldShowDatePicker: boolean;
   selectedOption?: DatePickerOption | null;
-  error?: string;
+  error?: DatePickerError;
 }
 
 /** The component displaying the currently selected date / option */
@@ -63,6 +69,7 @@ const DateInput = (
     shouldShowDatePicker,
     selectedOption,
     error,
+    name,
   }: DateInputProps,
   ref: React.Ref<HTMLButtonElement>,
 ) => {
@@ -102,6 +109,8 @@ const DateInput = (
         })}
         onClick={onClick}
         ref={ref}
+        name={name}
+        aria-invalid={!!error?.date}
       >
         {shouldShowDatePicker ? formattedDate : labelText}
 
@@ -260,9 +269,12 @@ const DatePicker = ({
       ? `${DEFAULT_DATE_FORMAT}, ${DEFAULT_TIME_FORMAT}`
       : DEFAULT_DATE_FORMAT;
 
+  const { datePickerRef } = useDateTriggerFocus(name, false);
+
   return (
     <div>
       <ReactDatePicker
+        ref={datePickerRef}
         selected={selectedDate}
         onChange={handleDateChange}
         onBlur={() => setTouched(true)}
@@ -274,6 +286,7 @@ const DatePicker = ({
         maxDate={maxDate}
         shouldCloseOnSelect={false}
         popperPlacement="right-start"
+        name={name}
         popperModifiers={[
           {
             name: 'preventOverflow',
@@ -288,7 +301,8 @@ const DatePicker = ({
           selectedDate,
           shouldShowDatePicker,
           dateFormat: dateFormatOrDefault,
-          error,
+          error: error as DatePickerError | undefined,
+          name,
         })}
         renderCustomHeader={renderHeader}
         calendarContainer={renderContainer}

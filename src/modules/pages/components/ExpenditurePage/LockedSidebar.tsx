@@ -1,21 +1,22 @@
 import React, { useMemo } from 'react';
-import LockedBatch from '~dashboard/ExpenditurePage/Batch/LockedBatch';
 
+import LockedBatch from '~dashboard/ExpenditurePage/Batch/LockedBatch';
 import { LockedExpenditureSettings } from '~dashboard/ExpenditurePage/ExpenditureSettings';
 import { LockedPayments } from '~dashboard/ExpenditurePage/Payments';
 import LockedSplit from '~dashboard/ExpenditurePage/Split/LockedSplit';
 import LockedStaged from '~dashboard/ExpenditurePage/Staged/LockedStaged/LockedStaged';
 import { Status } from '~dashboard/ExpenditurePage/Stages/constants';
 import LockedStreaming from '~dashboard/ExpenditurePage/Streaming/LockedStreaming';
+import LockedStreamingSettings from '~dashboard/ExpenditurePage/Streaming/LockedStreamingSettings';
 import { Colony } from '~data/index';
 
 import { ExpenditureTypes, StageObject, ValuesType } from './types';
 
-const displayName = 'pages.ExpenditurePage.LockedSidebar';
-
 // Mock variables
 const startDate = new Date().toLocaleDateString();
 const endDate = 'When cancelled';
+
+const displayName = 'pages.ExpenditurePage.LockedSidebar';
 
 interface Props {
   colony: Colony;
@@ -25,8 +26,9 @@ interface Props {
   status?: Status;
   isCancelled?: boolean;
   pendingMotion?: boolean;
-  activeStage?: StageObject;
+  activeStageId?: string;
   handleReleaseMilestone: (id: string) => void;
+  stages: StageObject[];
 }
 
 const LockedSidebar = ({
@@ -37,11 +39,20 @@ const LockedSidebar = ({
   isCancelled,
   pendingMotion,
   status,
-  activeStage,
+  activeStageId,
   handleReleaseMilestone,
+  stages,
 }: Props) => {
-  const { expenditure, recipients, filteredDomainId, staged, split, batch } =
-    formValues || {};
+  const {
+    expenditure,
+    recipients,
+    filteredDomainId,
+    staged,
+    split,
+    batch,
+    streaming,
+  } = formValues || {};
+  const activeStage = stages.find((state) => state.id === activeStageId);
 
   const secondFormSection = useMemo(() => {
     switch (expenditure) {
@@ -89,11 +100,22 @@ const LockedSidebar = ({
           />
         );
       }
+      case ExpenditureTypes.Streaming: {
+        return (
+          <LockedStreaming
+            colony={colony}
+            fundingSources={streaming?.fundingSources}
+            editForm={editForm}
+            activeStageId={activeStageId}
+          />
+        );
+      }
       default:
         return null;
     }
   }, [
     activeStage,
+    activeStageId,
     batch,
     colony,
     editForm,
@@ -106,12 +128,13 @@ const LockedSidebar = ({
     split,
     staged,
     status,
+    streaming,
   ]);
 
   return (
     <>
       {expenditure === ExpenditureTypes.Streaming ? (
-        <LockedStreaming startDate={startDate} endDate={endDate} />
+        <LockedStreamingSettings startDate={startDate} endDate={endDate} />
       ) : (
         <LockedExpenditureSettings
           {...{ expenditure, filteredDomainId, colony }}

@@ -1,99 +1,172 @@
-import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import React, { useCallback, useState } from 'react';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
+import classNames from 'classnames';
 
-import { FormSection, InputLabel } from '~core/Fields';
-import UserAvatar from '~core/UserAvatar';
-import UserMention from '~core/UserMention';
-import { useLoggedInUser } from '~data/index';
+import { FormSection } from '~core/Fields';
+import { CollapseExpandButtons } from '~dashboard/ExpenditurePage/Payments';
+import { Colony } from '~data/index';
+import Icon from '~core/Icon';
 
-import styles from './LockedStreaming.css';
+import { Stage } from '../Stages/constants';
 
-export const MSG = defineMessages({
-  type: {
-    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.type',
-    defaultMessage: 'Expenditure type',
+import LockedFundingSource from './LockedFundingSource';
+import { FundingSource } from './types';
+import styles from './Streaming.css';
+
+const MSG = defineMessages({
+  fundingSource: {
+    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.fundingSource',
+    defaultMessage: 'Funding source',
   },
-  streaming: {
-    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.streaming',
-    defaultMessage: 'Streaming',
+  title: {
+    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.title',
+    defaultMessage: `{counter}: {team}, {rate} {tokens}`,
   },
-  to: {
-    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.to',
-    defaultMessage: 'To',
+  rate: {
+    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.rate',
+    defaultMessage: `{amount} {token} / {time}{comma}`,
   },
-  starts: {
-    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.starts',
-    defaultMessage: 'Starts',
-  },
-  ends: {
-    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.ends',
-    defaultMessage: 'Ends',
+  itemName: {
+    id: 'dashboard.ExpenditurePage.Streaming.LockedStreaming.itemName',
+    defaultMessage: `funding Source`,
   },
 });
 
-interface Props {
-  startDate: string;
-  endDate: string;
-}
-
 const displayName = 'dashboard.ExpenditurePage.Streaming.LockedStreaming';
 
-const LockedStreaming = ({ startDate, endDate }: Props) => {
-  const { username, walletAddress } = useLoggedInUser();
+interface Props {
+  fundingSources?: FundingSource[];
+  colony: Colony;
+  activeStageId?: string;
+  editForm: () => void;
+}
+
+const LockedStreaming = ({
+  fundingSources,
+  colony,
+  activeStageId,
+  editForm,
+}: Props) => {
+  const [openItemsIds, setOpenItemsIds] = useState<string[]>(
+    fundingSources?.map(({ id }) => id) || [],
+  );
+
+  const { formatMessage } = useIntl();
+
+  const onToggleButtonClick = useCallback((id) => {
+    setOpenItemsIds((expandedIds) => {
+      const isOpen = expandedIds?.find((expanded) => expanded === id);
+
+      return isOpen
+        ? expandedIds?.filter((expandedId) => expandedId !== id)
+        : [...(expandedIds || []), id];
+    });
+  }, []);
 
   return (
     <div className={styles.container}>
-      <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.settingsRow}>
-          <InputLabel
-            label={MSG.type}
-            appearance={{
-              direction: 'horizontal',
-            }}
-          />
-          <span className={styles.expenditure}>
-            <FormattedMessage {...MSG.streaming} />
+      <div className={classNames(styles.header, styles.headerLocked)}>
+        <FormattedMessage {...MSG.fundingSource} />
+        {activeStageId !== Stage.Claimed && (
+          <span className={styles.editIcon}>
+            <Icon
+              name="edit"
+              appearance={{ size: 'medium' }}
+              title="Edit expenditure"
+              onClick={editForm}
+            />
           </span>
-        </div>
-      </FormSection>
-      <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.userContainer}>
-          <InputLabel
-            label={MSG.to}
-            appearance={{
-              direction: 'horizontal',
-            }}
-          />
-          <div className={styles.userAvatarContainer}>
-            <UserAvatar address={walletAddress} size="xs" notSet={false} />
-            <div className={styles.userName}>
-              <UserMention username={username || ''} />
-            </div>
+        )}
+      </div>
+      {fundingSources?.map((fundingSource, index) => {
+        const domain = colony?.domains.find(
+          ({ ethDomainId }) => Number(fundingSource.team) === ethDomainId,
+        );
+        const isOpen = !!openItemsIds?.find((id) => id === fundingSource.id);
+
+        const { amount, token, time } = fundingSource.rates?.[0] || {};
+        const tokenData = colony.tokens?.find(
+          (tokenItem) => token && tokenItem.address === token,
+        );
+
+        return (
+          <div
+            className={classNames(styles.singleFundingSource, {
+              [styles.marginBottomLarge]: isOpen,
+            })}
+            key={fundingSource.id}
+          >
+            <FormSection>
+              <div className={styles.fundingSourceLabel}>
+                <CollapseExpandButtons
+                  isExpanded={isOpen}
+                  onToogleButtonClick={() =>
+                    onToggleButtonClick(fundingSource.id)
+                  }
+                  isLastItem={index === fundingSources?.length - 1}
+                  itemName={formatMessage(MSG.itemName)}
+                />
+                <FormattedMessage
+                  {...MSG.title}
+                  values={{
+                    counter: index + 1,
+                    team: domain?.name,
+                    rate: (
+                      <div
+                        className={classNames(styles.rate, styles.marginLeft)}
+                      >
+                        <FormattedMessage
+                          {...MSG.rate}
+                          values={{
+                            amount,
+                            token: tokenData?.symbol,
+                            time,
+                            comma:
+                              fundingSource.rates.length > 1 && isOpen && ', ',
+                          }}
+                        />
+                      </div>
+                    ),
+                    tokens:
+                      fundingSource.rates.length > 1 &&
+                      (isOpen
+                        ? fundingSource.rates.map((rateItem, idx) => {
+                            if (idx === 0) {
+                              return null;
+                            }
+                            const tokenItemData = colony.tokens?.find(
+                              (tokenItem) =>
+                                token && tokenItem.address === rateItem.token,
+                            );
+                            return (
+                              <div className={styles.rate} key={rateItem.id}>
+                                <FormattedMessage
+                                  {...MSG.rate}
+                                  values={{
+                                    amount: rateItem.amount,
+                                    token: tokenItemData?.symbol,
+                                    time: rateItem.time,
+                                    comma:
+                                      fundingSource.rates.length > idx + 1 &&
+                                      ',',
+                                  }}
+                                />
+                              </div>
+                            );
+                          })
+                        : '...'),
+                  }}
+                />
+              </div>
+            </FormSection>
+            <LockedFundingSource
+              colony={colony}
+              fundingSource={fundingSource}
+              isOpen={isOpen}
+            />
           </div>
-        </div>
-      </FormSection>
-      <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.settingsRow}>
-          <InputLabel
-            label={MSG.starts}
-            appearance={{
-              direction: 'horizontal',
-            }}
-          />
-          <span className={styles.value}>{startDate}</span>
-        </div>
-      </FormSection>
-      <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.settingsRow}>
-          <InputLabel
-            label={MSG.ends}
-            appearance={{
-              direction: 'horizontal',
-            }}
-          />
-          <span className={styles.value}>{endDate}</span>
-        </div>
-      </FormSection>
+        );
+      })}
     </div>
   );
 };

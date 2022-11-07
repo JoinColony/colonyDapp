@@ -1,6 +1,5 @@
 import React, { ReactNode, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
-import classNames from 'classnames';
 import { parseInt } from 'lodash';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { FieldArray, useField } from 'formik';
@@ -31,21 +30,14 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.ExpenditurePage.Streaming.FundingSource';
 
-interface Props {
+export interface Props {
   sidebarRef: HTMLElement | null;
   colony: Colony;
-  isLast?: boolean;
   fundingSource: FundingSourceType;
   index: number;
 }
 
-const FundingSource = ({
-  isLast,
-  fundingSource,
-  index,
-  colony,
-  sidebarRef,
-}: Props) => {
+const FundingSource = ({ fundingSource, index, colony, sidebarRef }: Props) => {
   const [, { value }] = useField('streaming');
 
   const getDomainColor = useCallback<(domainId: string | undefined) => Color>(
@@ -91,12 +83,7 @@ const FundingSource = ({
   return (
     <>
       {fundingSource.isExpanded && (
-        <div
-          className={classNames(
-            styles.formContainer,
-            !isLast && styles.marginBottom,
-          )}
-        >
+        <div className={styles.formContainer}>
           <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.settingsRow}>
               <InputLabel

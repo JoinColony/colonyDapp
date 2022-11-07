@@ -10,7 +10,6 @@ import { getMainClasses } from '~utils/css';
 import UserAvatar from '~core/UserAvatar';
 import { ItemDefault } from '~core/SingleUserPicker';
 import withAdditionalOmniPicker from '~core/OmniPicker/withAdditionalOmniPicker';
-import Button from '~core/Button';
 
 import { ItemDataType, WrappedComponentAdditionalProps } from '../OmniPicker';
 import { Props as WithOmnipickerInProps } from '../OmniPicker/withOmniPicker';
@@ -19,6 +18,7 @@ import Icon from '../Icon';
 
 import Dropdown from './Dropdown';
 import { DROPDOWN_HEIGHT, DROPDOWN_ITEM_HEIGHT } from './constants';
+import useUserTriggerFocus from './hooks';
 import styles from './UserPickerWithSearch.css';
 
 type AvatarRenderFn = (
@@ -138,6 +138,12 @@ const UserPickerWithSearch = ({
     }
   }, [disabled, toggleOmniPicker]);
 
+  const { inputRef: omniInputRef } = useUserTriggerFocus(
+    name,
+    disabled,
+    toggleDropdown,
+  );
+
   const handlePick = useCallback(
     (user: AnyUser) => {
       if (setValue) setValue(user);
@@ -168,8 +174,6 @@ const UserPickerWithSearch = ({
     return height > DROPDOWN_HEIGHT ? DROPDOWN_HEIGHT : height;
   }, [data]);
 
-  const userName = value?.profile.displayName || value?.profile.username;
-
   return (
     <OmniPickerWrapper className={getMainClasses({}, styles)}>
       <div className={styles.container} ref={ref}>
@@ -183,38 +187,45 @@ const UserPickerWithSearch = ({
           screenReaderOnly={elementOnly}
         />
         <div className={styles.inputWithIcon} ref={registerTriggerNode}>
-          {value ? (
-            <Button
-              type="button"
-              onClick={toggleDropdown}
-              appearance={{ theme: 'secondary' }}
-              style={{ padding: '0' }}
-            >
-              {renderAvatar(value.profile.walletAddress, value)}
-            </Button>
-          ) : (
+          <button
+            type="button"
+            className={styles.inputWithIconBtn}
+            aria-invalid={!!error}
+            onClick={toggleDropdown}
+            disabled={disabled}
+            name={name}
+          >
+            {value ? (
+              renderAvatar(value.profile.walletAddress, value)
+            ) : (
+              <Icon
+                className={classNames(styles.icon, {
+                  [styles.focusIcon]: omniPickerIsOpen,
+                  [styles.errorIcon]: error,
+                })}
+                name="circle-person"
+                title={MSG.selectMember}
+              />
+            )}
+            {value && (
+              <span
+                className={classNames(styles.recipientName)}
+                data-test={valueDataTest}
+              >
+                {value.profile.displayName ||
+                  value.profile.username ||
+                  value.profile.walletAddress}
+              </span>
+            )}
             <Icon
-              className={classNames(styles.icon, {
-                [styles.focusIcon]: omniPickerIsOpen,
+              className={classNames(styles.arrowIcon, {
+                [styles.arrowIconActive]: omniPickerIsOpen,
                 [styles.errorIcon]: error,
               })}
-              name="circle-person"
-              title={MSG.selectMember}
-              onClick={toggleDropdown}
+              name="caret-down-small"
+              title={omniPickerIsOpen ? MSG.openedCaret : MSG.closedCaret}
             />
-          )}
-          {value && (
-            <button
-              type="button"
-              className={classNames(styles.recipientName)}
-              onClick={toggleDropdown}
-              tabIndex={0}
-              disabled={disabled}
-              data-test={valueDataTest}
-            >
-              {userName ? `@${userName}` : value.profile.walletAddress}
-            </button>
-          )}
+          </button>
           {omniPickerIsOpen && (
             <Dropdown
               element={ref.current}
@@ -233,7 +244,10 @@ const UserPickerWithSearch = ({
                       className={styles.input}
                       {...inputProps}
                       placeholder={placeholderText}
-                      ref={registerInputNode}
+                      ref={(inputRef) => {
+                        registerInputNode(inputRef);
+                        omniInputRef.current = inputRef;
+                      }}
                       data-test={dataTest}
                     />
                   </div>
@@ -241,15 +255,6 @@ const UserPickerWithSearch = ({
               </div>
             </Dropdown>
           )}
-          <Icon
-            {...(disabled ? {} : { onClick: toggleOmniPicker })}
-            className={classNames(styles.arrowIcon, {
-              [styles.arrowIconActive]: omniPickerIsOpen,
-              [styles.errorIcon]: error,
-            })}
-            name="caret-down-small"
-            title={omniPickerIsOpen ? MSG.openedCaret : MSG.closedCaret}
-          />
         </div>
       </div>
     </OmniPickerWrapper>
