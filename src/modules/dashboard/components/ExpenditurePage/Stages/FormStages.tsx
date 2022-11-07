@@ -181,10 +181,7 @@ const FormStages = ({
         </div>
       )}
       {values.expenditure === ExpenditureTypes.Streaming ? (
-        <StreamingStages
-          handleSaveDraft={handleSaveDraft}
-          formValues={formValues}
-        />
+        <StreamingStages handleSaveDraft={handleSaveDraft} />
       ) : (
         <Stages
           {...{

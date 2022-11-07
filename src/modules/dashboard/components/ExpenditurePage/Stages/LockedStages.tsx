@@ -14,8 +14,6 @@ import { Motion, MotionStatus, MotionType, Status } from './constants';
 import LinkedMotions from './LinkedMotions';
 import Stages from './Stages';
 import StreamingStagesLocked from './StreamingStages/StreamingStagesLocked';
-import styles from './Stages.css';
-
 import { useClaimStreamingPayment } from './StreamingStages/StreamingStagesLocked/hooks';
 import { calcAvailableToClaim } from './utils';
 import styles from './Stages.css';
