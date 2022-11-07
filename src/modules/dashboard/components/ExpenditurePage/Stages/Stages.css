@@ -36,6 +36,14 @@
   border-bottom: 1px solid var(--temp-grey-6);
 }
 
+.statusContainer:first-child {
+  padding-top: 0;
+}
+
+.withTag {
+  padding: 14px 0 10px;
+}
+
 .icon svg {
   height: 18px;
   width: 18px;
@@ -127,10 +135,6 @@
   border-radius: 5px;
   color: var(--temp-grey-blue-7);
   letter-spacing: 0.5px;
-}
-
-.withTag {
-  padding: 14px 0 10px;
 }
 
 .tagStagesWrapper > span {

@@ -1,5 +1,6 @@
 @value white: rgb(255, 255, 255);
 @value boxShadow: inset 0px 2px 4px rgba(14, 37, 88, 0.07);
+@value boxShadowInvalid: inset 0px 2px 4px rgba(248, 43, 101, 0.2);
 @value border: 1px solid var(--temp-grey-blue-8);
 
 .amountWrapper {
@@ -58,6 +59,21 @@
   line-height: 18px;
   color: var(--temp-grey-blue-7);
   letter-spacing: 0.1px;
+}
+
+.deleteIconBox {
+  margin-bottom: 14px;
+  padding: 0;
+  height: 20px;
+  width: 20px;
+  border: 0;
+  background-color: transparent;
+  appearance: none;
+  transition: opacity 0.15s;
+}
+
+.deleteIconBox:focus {
+  opacity: 0.5;
 }
 
 .deleteIcon {

@@ -1,10 +1,10 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import { useField } from 'formik';
+import { useFormikContext } from 'formik';
 
 import { SelectHorizontal, FormSection } from '~core/Fields';
 import { Colony } from '~data/index';
-import { ExpenditureTypes } from '~pages/ExpenditurePage/types';
+import { ExpenditureTypes, ValuesType } from '~pages/ExpenditurePage/types';
 import { capitalize } from '~utils/strings';
 
 import ExpenditureStreamingForm from './ExpenditureStreamingForm';
@@ -50,7 +50,7 @@ export const MSG = defineMessages({
   },
 });
 
-const expeditureTypes = [
+const expenditureTypes = [
   {
     label: MSG.advancedPayment,
     value: ExpenditureTypes.Advanced,
@@ -82,12 +82,15 @@ export interface Props {
 }
 
 const ExpenditureSettings = ({ colony, sidebarRef, inEditMode }: Props) => {
-  const [, { value: expenditure }] = useField('expenditure');
+  const { values } = useFormikContext<ValuesType>() || {};
+  const { expenditure } = values;
+  const expenditureType = values.expenditure;
 
   return (
     <div className={styles.container}>
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.blue}>
+          {/* withDropdownElement - dropdown component created because there is a need to render element outside DOM hierarchy */}
           <SelectHorizontal
             name="expenditure"
             label={MSG.type}
@@ -98,7 +101,7 @@ const ExpenditureSettings = ({ colony, sidebarRef, inEditMode }: Props) => {
             options={
               inEditMode
                 ? [{ label: capitalize(expenditure), value: expenditure }]
-                : expeditureTypes
+                : expenditureTypes
             }
             scrollContainer={sidebarRef}
             placement="bottom"
@@ -107,7 +110,7 @@ const ExpenditureSettings = ({ colony, sidebarRef, inEditMode }: Props) => {
           />
         </div>
       </FormSection>
-      {expenditure === ExpenditureTypes.Streaming ? (
+      {expenditureType === ExpenditureTypes.Streaming ? (
         <ExpenditureStreamingForm sidebarRef={sidebarRef} colony={colony} />
       ) : (
         <ExpenditureBaseForm sidebarRef={sidebarRef} colony={colony} />

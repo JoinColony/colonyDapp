@@ -43,8 +43,9 @@ import {
   setClaimDate,
   isExpenditureType,
 } from './utils';
+import ExpenditureForm from './ExpenditureForm';
+import LockedSidebar from './LockedSidebar';
 import { ExpenditureTypes, ValuesType } from './types';
-import { ExpenditureForm, LockedSidebar } from '.';
 import { initialValues, validationSchema } from './constants';
 import styles from './ExpenditurePage.css';
 
@@ -188,10 +189,12 @@ const ExpenditurePage = ({ match }: Props) => {
           fundingSources: [
             {
               ...newFundingSource,
-              rate: {
-                ...newFundingSource.rate,
-                token: colonyData?.processedColony.nativeTokenAddress,
-              },
+              rates: [
+                {
+                  ...newFundingSource.rates[0],
+                  token: colonyData?.processedColony.nativeTokenAddress,
+                },
+              ],
             },
           ],
         },
@@ -493,7 +496,7 @@ const ExpenditurePage = ({ match }: Props) => {
       enableReinitialize
     >
       {({ values, validateForm }) => (
-        <div className={getMainClasses({}, styles)}>
+        <div className={getMainClasses({}, styles)} id="expenditurePage">
           <aside className={styles.sidebar} ref={sidebarRef}>
             {loading ? (
               <div className={styles.spinnerContainer}>
@@ -547,7 +550,7 @@ const ExpenditurePage = ({ match }: Props) => {
                   <FormStages
                     stages={stages}
                     activeStageId={activeStageId}
-                    setActiveStateId={setActiveStageId}
+                    setActiveStageId={setActiveStageId}
                     setFormValues={setFormValues}
                     handleCancelExpenditure={handleCancelExpenditure}
                     colony={colonyData.processedColony}
@@ -571,8 +574,9 @@ const ExpenditurePage = ({ match }: Props) => {
             status={status}
             isCancelled={status === Status.Cancelled}
             pendingMotion={motion?.status === MotionStatus.Pending}
-            activeStage={stages.find((stage) => stage.id === activeStageId)}
+            activeStageId={activeStageId}
             handleReleaseMilestone={handleReleaseMilestone}
+            stages={stages}
           />
         )}
       </aside>

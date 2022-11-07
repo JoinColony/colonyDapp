@@ -1,0 +1,44 @@
+
+.toggleContainer span div {
+  margin-left: 0;
+}
+
+/* this selector is for tooltip wrapper */
+.toggleContainer > div > div:last-child {
+  max-width: 250px;
+  white-space: normal;
+}
+
+.toggleContainer > div > div:first-of-type {
+  margin-right: 11px;
+  height: 16px;
+}
+
+.toggleContainer label {
+  margin-bottom: 0;
+}
+
+.title {
+  padding-bottom: 16px;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.description {
+  color: var(--temp-grey-blue-7);
+  letter-spacing: 0.1px;
+}
+
+.annotationsWrapper {
+  margin-top: 38px;
+}
+
+.sectionTitle {
+  padding: 24px 0 10px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}

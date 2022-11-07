@@ -3,7 +3,6 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { FormSection } from '~core/Fields';
 import UserMention from '~core/UserMention';
-
 import { Colony } from '~data/index';
 import { StageObject, ValuesType } from '~pages/ExpenditurePage/types';
 import Icon from '~core/Icon';

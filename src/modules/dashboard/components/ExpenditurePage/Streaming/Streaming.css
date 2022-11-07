@@ -15,10 +15,13 @@
 }
 
 .container {
-  padding: 0 paddingRightLeft paddingBottom;
+  margin-bottom: 72px;
+  padding: 0 paddingRightLeft;
 }
 
 .header {
+  display: flex;
+  align-items: center;
   margin-bottom: 18px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
@@ -26,10 +29,14 @@
   letter-spacing: var(--spacing-normal);
 }
 
+.headerLocked {
+  justify-content: space-between;
+}
+
 .fundingSourceLabel {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
   margin-bottom: 10px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
@@ -37,11 +44,16 @@
   letter-spacing: var(--spacing-normal);
 }
 
-.fundingSourceLabel div {
-  height: 68%;
+.labelWithIcon {
+  justify-content: space-between;
+}
+
+.fundingSourceLabel > div {
+  height: calc(100% - 80px);
 }
 
 .deleteIcon {
+  margin-right: 7px;
   height: 20px;
   width: 20px;
   fill: var(--temp-grey-blue-7);
@@ -58,4 +70,33 @@
 .addFundingSourceLabel {
   display: flex;
   align-items: center;
+}
+
+.marginBottomLarge {
+  margin-bottom: 48px;
+}
+
+.fundingTitle {
+  margin-right: auto;
+}
+
+.rate {
+  margin-right: 6px;
+  white-space: nowrap;
+}
+
+.marginLeft {
+  margin-left: 4px;
+}
+
+.wrapper {
+  margin-bottom: 36px;
+}
+
+.editIcon {
+  margin-left: 10px;
+}
+
+.editIcon:hover {
+  cursor: pointer;
 }

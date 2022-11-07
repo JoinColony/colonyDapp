@@ -1,24 +1,19 @@
 import React, { ReactNode, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
-import classNames from 'classnames';
 import { parseInt } from 'lodash';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { FieldArray, useField } from 'formik';
 
 import { Colony } from '~data/index';
-import {
-  FormSection,
-  Input,
-  InputLabel,
-  SelectHorizontal,
-  SelectOption,
-  TokenSymbolSelector,
-} from '~core/Fields';
+import { FormSection, InputLabel, SelectOption } from '~core/Fields';
 import DomainDropdown from '~core/DomainDropdown';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import ColorTag, { Color } from '~core/ColorTag';
-import TokenIcon from '~dashboard/HookedTokenIcon';
+import { ExpenditureEndDateTypes } from '~pages/ExpenditurePage/types';
 
 import { FundingSource as FundingSourceType } from '../types';
+import Limit from '../Limit';
+import RateItem from '../RateItem';
 
 import styles from './FundingSource.css';
 
@@ -26,34 +21,6 @@ const MSG = defineMessages({
   team: {
     id: 'dashboard.ExpenditurePage.Streaming.FundingSource.team',
     defaultMessage: 'Team',
-  },
-  rate: {
-    id: 'dashboard.ExpenditurePage.Streaming.FundingSource.rate',
-    defaultMessage: 'Rate',
-  },
-  notSet: {
-    id: 'dashboard.ExpenditurePage.Streaming.FundingSource.notSet',
-    defaultMessage: 'Not set',
-  },
-  time: {
-    id: 'dashboard.ExpenditurePage.Streaming.FundingSource.time',
-    defaultMessage: 'Rate time',
-  },
-  month: {
-    id: 'dashboard.ExpenditurePage.Streaming.FundingSource.month',
-    defaultMessage: 'month',
-  },
-  week: {
-    id: 'dashboard.ExpenditurePage.Streaming.FundingSource.week',
-    defaultMessage: 'week',
-  },
-  day: {
-    id: 'dashboard.ExpenditurePage.Streaming.FundingSource.day',
-    defaultMessage: 'day',
-  },
-  hour: {
-    id: 'dashboard.ExpenditurePage.Streaming.FundingSource.hour',
-    defaultMessage: 'hour',
   },
   limit: {
     id: 'dashboard.ExpenditurePage.Streaming.FundingSource.limit',
@@ -63,47 +30,16 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.ExpenditurePage.Streaming.FundingSource';
 
-enum TimePeriod {
-  Month = 'month',
-  Week = 'week',
-  Day = 'day',
-  Hour = 'hour',
-}
-
-const timeOptions = [
-  {
-    label: MSG.month,
-    value: TimePeriod.Month,
-  },
-  {
-    label: MSG.week,
-    value: TimePeriod.Week,
-  },
-  {
-    label: MSG.day,
-    value: TimePeriod.Day,
-  },
-  {
-    label: MSG.hour,
-    value: TimePeriod.Hour,
-  },
-];
-
-interface Props {
+export interface Props {
   sidebarRef: HTMLElement | null;
   colony: Colony;
-  isLast?: boolean;
   fundingSource: FundingSourceType;
   index: number;
 }
 
-const FundingSource = ({
-  isLast,
-  fundingSource,
-  index,
-  colony,
-  sidebarRef,
-}: Props) => {
+const FundingSource = ({ fundingSource, index, colony, sidebarRef }: Props) => {
+  const [, { value }] = useField('streaming');
+
   const getDomainColor = useCallback<(domainId: string | undefined) => Color>(
     (domainId) => {
       const rootDomainColor: Color = Color.LightPink;
@@ -126,8 +62,8 @@ const FundingSource = ({
     (option: SelectOption | undefined, label: string) => ReactNode
   >(
     (option, label) => {
-      const value = option?.value;
-      const color = getDomainColor(value);
+      const optionValue = option?.value;
+      const color = getDomainColor(optionValue);
 
       return (
         <div className={styles.activeItem}>
@@ -144,21 +80,10 @@ const FundingSource = ({
     return optionDomainId !== COLONY_TOTAL_BALANCE_DOMAIN_ID;
   }, []);
 
-  const token = colony.tokens?.find(
-    (tokenItem) =>
-      fundingSource.rate.token &&
-      tokenItem.address === fundingSource.rate.token,
-  );
-
   return (
     <>
       {fundingSource.isExpanded && (
-        <div
-          className={classNames(
-            styles.formContainer,
-            !isLast && styles.marginBottom,
-          )}
-        >
+        <div className={styles.formContainer}>
           <FormSection appearance={{ border: 'bottom' }}>
             <div className={styles.settingsRow}>
               <InputLabel
@@ -180,98 +105,50 @@ const FundingSource = ({
               )}
             </div>
           </FormSection>
-          <FormSection appearance={{ border: 'bottom' }}>
-            <div className={styles.rateContainer}>
-              <InputLabel
-                label={MSG.rate}
-                appearance={{
-                  direction: 'horizontal',
-                }}
-              />
-              <div className={styles.rate}>
-                <div className={styles.inputRateAmount}>
-                  <Input
-                    name={`streaming.fundingSources[${index}].rate.amount`}
-                    appearance={{
-                      theme: 'underlined',
-                      size: 'small',
-                    }}
-                    label={MSG.rate}
-                    placeholder={MSG.notSet}
-                    formattingOptions={{
-                      numeral: true,
-                      numeralDecimalScale: 10,
-                    }}
-                    elementOnly
+          <FieldArray
+            name={`streaming.fundingSources[${index}].rates`}
+            render={({ push, remove }) => (
+              <FormSection appearance={{ border: 'bottom' }}>
+                {fundingSource.rates?.map((rateItem, rateIndex) => (
+                  <RateItem
+                    // eslint-disable-next-line max-len
+                    name={`streaming.fundingSources[${index}].rates[${rateIndex}]`}
+                    rateItem={rateItem}
+                    index={rateIndex}
+                    push={push}
+                    remove={remove}
+                    colony={colony}
+                    sidebarRef={sidebarRef}
+                    multipleTokens={fundingSource.rates.length > 1}
+                    key={rateItem.id}
                   />
-                </div>
-                <div className={styles.tokenWrapper}>
-                  <TokenSymbolSelector
-                    label=""
-                    tokens={colony.tokens}
-                    name={`streaming.fundingSources[${index}].rate.token`}
-                    appearance={{ alignOptions: 'right', theme: 'grey' }}
-                    elementOnly
-                  />
-                </div>
-                <span className={styles.slash}>/</span>
-                <div className={styles.selectWrapper}>
-                  <SelectHorizontal
-                    name={`streaming.fundingSources[${index}].rate.time`}
-                    label={MSG.time}
-                    appearance={{
-                      theme: 'alt',
-                      width: 'content',
-                    }}
-                    options={timeOptions}
-                    scrollContainer={sidebarRef}
-                    placement="bottom"
-                    elementOnly
-                    withDropdownElement
-                    optionSizeLarge
-                  />
-                </div>
-              </div>
-            </div>
-          </FormSection>
-          <FormSection appearance={{ border: 'bottom' }}>
-            <div className={styles.inputWrapper}>
-              <InputLabel
-                label={MSG.limit}
-                appearance={{
-                  direction: 'horizontal',
-                }}
-              />
-              <div className={styles.limitContainer}>
-                <div className={styles.inputContainer}>
-                  <Input
-                    name={`streaming.fundingSources[${index}].limit`}
-                    appearance={{
-                      theme: 'underlined',
-                      size: 'small',
-                    }}
-                    label={MSG.rate}
-                    placeholder={MSG.notSet}
-                    formattingOptions={{
-                      numeral: true,
-                      numeralDecimalScale: 10,
-                    }}
-                    elementOnly
-                  />
-                </div>
-                {token && (
-                  <div className={styles.tokeIconWrapper}>
-                    <TokenIcon
-                      className={styles.tokenIcon}
-                      token={token}
-                      name={token.name || token.address}
+                ))}
+              </FormSection>
+            )}
+          />
+          {value.endDate.option === ExpenditureEndDateTypes.LimitIsReached && (
+            <FormSection appearance={{ border: 'bottom' }}>
+              <div className={styles.inputWrapper}>
+                <InputLabel
+                  label={MSG.limit}
+                  appearance={{
+                    direction: 'horizontal',
+                  }}
+                />
+                {fundingSource.rates.map((rateItem, rateIndex) => {
+                  return (
+                    <Limit
+                      // eslint-disable-next-line max-len
+                      name={`streaming.fundingSources[${index}].rates[${rateIndex}].limit`}
+                      colony={colony}
+                      rate={rateItem}
+                      key={rateItem.id}
                     />
-                    {token.symbol}
-                  </div>
-                )}
+                  );
+                })}
               </div>
-            </div>
-          </FormSection>
+            </FormSection>
+          )}
         </div>
       )}
     </>

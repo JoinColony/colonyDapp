@@ -12,6 +12,7 @@ import { Tooltip } from '~core/Popover';
 
 import TimePicker from './TimePicker';
 import { DEFAULT_DATE_FORMAT, DEFAULT_TIME_FORMAT } from './constants';
+import useDateTriggerFocus from './hooks';
 
 import styles from './DatePicker.css';
 
@@ -22,7 +23,7 @@ const MSG = defineMessages({
   },
 });
 
-interface DatePickerFieldValue {
+export interface DatePickerFieldValue {
   date: Date;
   option?: string;
 }
@@ -31,6 +32,11 @@ export interface DatePickerOption {
   label: string | MessageDescriptor;
   value: string;
   showDatePicker?: boolean;
+}
+
+interface DatePickerError {
+  date?: string | MessageDescriptor;
+  option?: string | MessageDescriptor;
 }
 
 interface Props {
@@ -51,6 +57,7 @@ interface DateInputProps extends React.HTMLProps<HTMLButtonElement> {
   dateFormat: string;
   shouldShowDatePicker: boolean;
   selectedOption?: DatePickerOption | null;
+  error?: DatePickerError;
 }
 
 /** The component displaying the currently selected date / option */
@@ -61,6 +68,8 @@ const DateInput = (
     dateFormat,
     shouldShowDatePicker,
     selectedOption,
+    error,
+    name,
   }: DateInputProps,
   ref: React.Ref<HTMLButtonElement>,
 ) => {
@@ -95,13 +104,21 @@ const DateInput = (
     >
       <button
         type="button"
-        className={styles.dateButton}
+        className={classnames(styles.dateButton, {
+          [styles.error]: error,
+        })}
         onClick={onClick}
         ref={ref}
+        name={name}
+        aria-invalid={!!error?.date}
       >
         {shouldShowDatePicker ? formattedDate : labelText}
 
-        <span className={styles.expandDateIcon}>
+        <span
+          className={classnames(styles.expandDateIcon, {
+            [styles.iconError]: error,
+          })}
+        >
           <Icon name="caret-down-small" title={MSG.expandIconHTMLTitle} />
         </span>
       </button>
@@ -120,7 +137,7 @@ const DatePicker = ({
   maxDate,
   timeInterval = 30,
 }: Props) => {
-  const [{ value }, , { setValue, setTouched }] = useField<
+  const [{ value }, { error }, { setValue, setTouched }] = useField<
     DatePickerFieldValue
   >(name);
   const { formatMessage, formatDate } = useIntl();
@@ -252,9 +269,12 @@ const DatePicker = ({
       ? `${DEFAULT_DATE_FORMAT}, ${DEFAULT_TIME_FORMAT}`
       : DEFAULT_DATE_FORMAT;
 
+  const { datePickerRef } = useDateTriggerFocus(name, false);
+
   return (
     <div>
       <ReactDatePicker
+        ref={datePickerRef}
         selected={selectedDate}
         onChange={handleDateChange}
         onBlur={() => setTouched(true)}
@@ -266,6 +286,7 @@ const DatePicker = ({
         maxDate={maxDate}
         shouldCloseOnSelect={false}
         popperPlacement="right-start"
+        name={name}
         popperModifiers={[
           {
             name: 'preventOverflow',
@@ -280,6 +301,8 @@ const DatePicker = ({
           selectedDate,
           shouldShowDatePicker,
           dateFormat: dateFormatOrDefault,
+          error: error as DatePickerError | undefined,
+          name,
         })}
         renderCustomHeader={renderHeader}
         calendarContainer={renderContainer}

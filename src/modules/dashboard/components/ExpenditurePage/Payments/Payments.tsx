@@ -1,19 +1,16 @@
 import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { FieldArray, useField, useFormikContext } from 'formik';
+import { FieldArray, useField } from 'formik';
 import { nanoid } from 'nanoid';
 
 import Button from '~core/Button';
 import Icon from '~core/Icon';
-import { FormSection } from '~core/Fields';
-import { useMembersSubscription } from '~data/generated';
 import { SpinnerLoader } from '~core/Preloaders';
+import { useMembersSubscription } from '~data/generated';
 import { Colony } from '~data/index';
 
-import Recipient from '../Recipient';
-
+import SingleRecipient from './SingleRecipient';
 import { newRecipient } from './constants';
-import CollapseExpandButtons from './CollapseExpandButtons';
 import styles from './Payments.css';
 
 export const MSG = defineMessages({
@@ -44,7 +41,6 @@ interface Props {
 
 const Payments = ({ sidebarRef, colony }: Props) => {
   const [, { value: recipients }, { setValue }] = useField('recipients');
-  const { setFieldTouched } = useFormikContext();
 
   const { colonyAddress } = colony || {};
 
@@ -92,43 +88,23 @@ const Payments = ({ sidebarRef, colony }: Props) => {
             render={({ push, remove }) => (
               <>
                 {recipients?.map((recipient, index) => (
-                  <div className={styles.singleRecipient} key={recipient.id}>
-                    <FormSection>
-                      <div className={styles.recipientLabel}>
-                        <CollapseExpandButtons
-                          isExpanded={recipient.isExpanded}
-                          onToogleButtonClick={() => onToggleButtonClick(index)}
-                          isLastitem={index === recipients?.length - 1}
-                        />
-                        {index + 1}: <FormattedMessage {...MSG.recipient} />
-                        {recipients?.length > 1 && (
-                          <Icon
-                            name="trash"
-                            className={styles.deleteIcon}
-                            onClick={() => remove(index)}
-                            title={MSG.deleteIconTitle}
-                          />
-                        )}
-                      </div>
-                    </FormSection>
-                    <Recipient
-                      {...{
-                        recipient,
-                        index,
-                        sidebarRef,
-                      }}
-                      subscribedUsers={colonyMembers?.subscribedUsers || []}
-                      isLast={index === recipients?.length - 1}
-                      colony={colony}
-                    />
-                  </div>
+                  <SingleRecipient
+                    {...{
+                      recipient,
+                      index,
+                      colony,
+                      colonyMembers,
+                      sidebarRef,
+                      onToggleButtonClick,
+                      remove,
+                    }}
+                    isLastItem={index === recipients?.length - 1}
+                    multipleRecipients={recipients?.length > 1}
+                  />
                 ))}
                 <Button
                   onClick={() => {
                     push({ ...newRecipientData, id: nanoid() });
-                    setFieldTouched(
-                      `recipients[${recipients.length}].value[0].amount`,
-                    );
                   }}
                   appearance={{ theme: 'blue' }}
                 >
