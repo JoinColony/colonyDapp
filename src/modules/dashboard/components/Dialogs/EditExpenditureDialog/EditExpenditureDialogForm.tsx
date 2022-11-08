@@ -22,6 +22,7 @@ import ChangedSplit from './ChangedSplit';
 import ChangedBatch from './ChangedBatch';
 import ChangedAdvanced from './ChangedAdvanced';
 import styles from './EditExpenditureDialogForm.css';
+import ChangedStreaming from './ChangedStreaming';
 
 export const MSG = defineMessages({
   header: {
@@ -124,12 +125,17 @@ const EditExpenditureDialogForm = ({
       (newValue) => newValue.key === ExpenditureTypes.Staged,
     );
 
+    const [newStreaming] = confirmedValuesWithIds.filter(
+      (newValue) => newValue.key === ExpenditureTypes.Streaming,
+    );
+
     const newValues = confirmedValuesWithIds.filter(
       (newValue) =>
         !Array.isArray(newValue.value) &&
         newValue.key !== 'split' &&
         newValue.key !== 'staged' &&
-        newValue.key !== 'batch',
+        newValue.key !== 'batch' &&
+        newValue.key !== 'streaming',
     );
     const newMultiple = confirmedValuesWithIds.filter((newValue) => {
       return Array.isArray(newValue.value);
@@ -141,6 +147,7 @@ const EditExpenditureDialogForm = ({
       newPayments,
       newStaged,
       newBatch,
+      newStreaming,
     };
   }, [confirmedValuesWithIds]);
 
@@ -223,6 +230,12 @@ const EditExpenditureDialogForm = ({
             />
             <ChangedBatch
               newValues={newData.newBatch}
+              oldValues={oldValues}
+              colony={colony}
+              discardChange={discardChange}
+            />
+            <ChangedStreaming
+              newValues={newData.newStreaming}
               oldValues={oldValues}
               colony={colony}
               discardChange={discardChange}

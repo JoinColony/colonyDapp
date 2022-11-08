@@ -1,0 +1,21 @@
+.row {
+  display: grid;
+  align-items: center;
+  padding: 11px 0 12px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+  grid-template-columns: 4.5fr 1fr 4.5fr;
+}
+
+.arrowIcon {
+  height: 16px;
+  width: 16px;
+  color: color-mod(var(--dark) alpha(65%));
+  justify-self: center;
+}
+
+.right {
+  justify-self: end;
+}
