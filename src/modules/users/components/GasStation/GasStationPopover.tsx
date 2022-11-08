@@ -95,6 +95,7 @@ const GasStationPopover = ({
       placement="bottom-end"
       showArrow={false}
       isOpen={isOpen}
+      closeDelay={3000}
       closeAfterDelay={useCloseDelay}
       onClose={() => {
         setOpen(false);

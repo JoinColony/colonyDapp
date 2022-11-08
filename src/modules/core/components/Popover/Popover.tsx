@@ -54,6 +54,8 @@ interface Props {
   onClose?: (data?: any, modifiers?: { cancelled: boolean }) => void;
   /** Delay opening of popover for `openDelay` ms */
   openDelay?: number;
+  /** Delay closing of popover for `closeDelay` ms */
+  closeDelay?: number;
   /** Should close popover after delay */
   closeAfterDelay?: boolean;
   /** Popover placement */
@@ -89,6 +91,7 @@ const Popover = ({
   isOpen: isOpenProp = false,
   onClose,
   openDelay,
+  closeDelay,
   closeAfterDelay,
   placement: placementProp = 'auto',
   popperOptions = {},
@@ -97,7 +100,7 @@ const Popover = ({
   trigger = 'click',
 }: Props) => {
   // Use dangle to encourage use of callbackFn for setting state
-  const [isOpen, _setIsOpen] = useState<boolean>(isOpenProp);
+  const [isOpen, setIsOpen] = useState<boolean>(isOpenProp);
   const [referenceElement, setReferenceElement] = useState<Element | null>(
     null,
   );
@@ -128,8 +131,10 @@ const Popover = ({
       if (closeTimeoutRef.current) {
         clearTimeout(closeTimeoutRef.current);
       }
-      _setIsOpen(false);
-      if (typeof onClose == 'function') onClose(data, modifiers);
+      setIsOpen(false);
+      if (typeof onClose == 'function') {
+        onClose(data, modifiers);
+      }
     },
     [onClose],
   );
@@ -138,9 +143,9 @@ const Popover = ({
     if (closeAfterDelay) {
       closeTimeoutRef.current = setTimeout(() => {
         close();
-      }, 3000 + (openDelay || 0));
+      }, (closeDelay || 0) + (openDelay || 0));
     }
-  }, [close, openDelay, closeAfterDelay]);
+  }, [close, openDelay, closeDelay, closeAfterDelay]);
 
   const requestOpen = useCallback(() => {
     if (isOpen) {
@@ -149,11 +154,11 @@ const Popover = ({
 
     if (openDelay) {
       openTimeoutRef.current = setTimeout(() => {
-        _setIsOpen(true);
+        setIsOpen(true);
       }, openDelay);
       return;
     }
-    _setIsOpen(true);
+    setIsOpen(true);
   }, [isOpen, openDelay]);
 
   const handleWrapperFocus = useCallback(() => {
@@ -261,7 +266,7 @@ const Popover = ({
       } else {
         close();
       }
-      _setIsOpen(!!isOpenProp);
+      setIsOpen(!!isOpenProp);
     }
   }, [close, isOpen, isOpenProp, lastIsOpenProp, requestOpen]);
 
