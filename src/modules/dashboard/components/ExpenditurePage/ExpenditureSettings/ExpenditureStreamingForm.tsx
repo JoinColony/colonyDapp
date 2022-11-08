@@ -1,5 +1,5 @@
 import { useField } from 'formik';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { InputLabel, FormSection } from '~core/Fields';
@@ -73,6 +73,28 @@ const ExpenditureStreamingForm = ({ sidebarRef, colony }: Props) => {
   const [, { value: startDate }] = useField<Streaming['startDate']>(
     'streaming.startDate',
   );
+  const [, { value: fundingSources }, { setValue }] = useField<
+    Streaming['fundingSources']
+  >('streaming.fundingSources');
+
+  const handleDatePickerChange = useCallback(
+    (endDate) => {
+      if (endDate.option !== ExpenditureEndDateTypes.LimitIsReached) {
+        setValue(
+          fundingSources.map((fundingSource) => ({
+            ...fundingSource,
+            rates: fundingSource.rates.map((rate) => ({
+              ...rate,
+              limit: undefined,
+            })),
+          })),
+        );
+      }
+    },
+    // disabled because setValue is not added as a dependenty
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [fundingSources],
+  );
 
   return (
     <>
@@ -117,6 +139,7 @@ const ExpenditureStreamingForm = ({ sidebarRef, colony }: Props) => {
             showTimeSelect
             options={endDateOptions}
             minDate={startDate.date}
+            handleChange={handleDatePickerChange}
           />
         </div>
       </FormSection>
