@@ -194,6 +194,7 @@ export const findDifferences = (
         (acc, [currKey, currVal]) => {
           if (Array.isArray(currVal)) {
             const changes = checkArray(currVal, oldValue[currKey]);
+            // all rates are compared together
             return { ...acc, ...(!isEmpty(changes) && { [currKey]: changes }) };
           }
           if (!isEqual(currVal, oldValue[currKey])) {
@@ -399,6 +400,76 @@ export const updateValues = (values, confirmedValues) => {
     return {
       ...newValues,
       batch: confirmedValues.batch,
+    };
+  }
+
+  if ('streaming' in confirmedValues) {
+    // fundingSources that have been changed
+    const changedFundingSources = values.streaming.fundingSources.filter(
+      (fundingSource) =>
+        confirmedValues.streaming.fundingSources?.find(
+          (confFundingSources) => confFundingSources.id === fundingSource.id,
+        ),
+    );
+
+    // fundingSources without any changes
+    const sameFundingSources = values.streaming.fundingSources.filter(
+      (fundingSource) => {
+        if (
+          !confirmedValues.streaming.fundingSources ||
+          !confirmedValues.streaming.fundingSources?.length
+        ) {
+          return true;
+        }
+        return confirmedValues.streaming.fundingSources?.every(
+          (confirmedFundingSource) =>
+            confirmedFundingSource.id !== fundingSource.id,
+        );
+      },
+    );
+
+    // newly created fundingSources
+    const newFundingSources =
+      confirmedValues.streaming.fundingSources?.filter(
+        (value) => value.created,
+      ) || [];
+
+    // 'confirmedFundingSources' is an array with updated fundingSources. It is composed of:
+    // - fundingSources that haven't changed
+    // - updated fundingSources
+    // - newly created fundingSources.
+    // And we need to filter out deleted items (with 'removed' property set to true)
+    const confirmedFundingSources = [
+      ...sameFundingSources,
+      ...changedFundingSources?.map((fundingSource) => {
+        const newValue = confirmedValues.streaming.fundingSources?.find(
+          (confirmedFundingSource) =>
+            confirmedFundingSource.id === fundingSource.id,
+        );
+
+        return {
+          ...fundingSource,
+          ...newValue,
+          key: nanoid(),
+          isChanged: true,
+        };
+      }),
+      ...newFundingSources?.map((newFundingSource) => ({
+        ...newFundingSource,
+        created: undefined,
+        isChanged: true,
+        key: nanoid(),
+      })),
+    ].filter((fundingSource) => !fundingSource.removed);
+
+    const newValues = merge({}, values, confirmedValues);
+
+    return {
+      ...newValues,
+      streaming: {
+        ...newValues.streaming,
+        fundingSources: confirmedFundingSources,
+      },
     };
   }
 

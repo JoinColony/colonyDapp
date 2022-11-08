@@ -50,6 +50,7 @@ interface Props {
   options?: DatePickerOption[];
   minDate?: Date | null;
   maxDate?: Date | null;
+  handleChange?: (value: DatePickerFieldValue) => void;
 }
 
 interface DateInputProps extends React.HTMLProps<HTMLButtonElement> {
@@ -136,6 +137,7 @@ const DatePicker = ({
   minDate,
   maxDate,
   timeInterval = 30,
+  handleChange,
 }: Props) => {
   const [{ value }, { error }, { setValue, setTouched }] = useField<
     DatePickerFieldValue
@@ -150,8 +152,9 @@ const DatePicker = ({
         ...value,
         date,
       });
+      handleChange?.({ date });
     },
-    [setTouched, setValue, value],
+    [handleChange, setTouched, setValue, value],
   );
 
   const handleOptionChange = useCallback(
@@ -162,8 +165,9 @@ const DatePicker = ({
         ...value,
         option,
       });
+      handleChange?.({ ...value, option });
     },
-    [setTouched, setValue, value],
+    [handleChange, setTouched, setValue, value],
   );
 
   const selectedDate = value?.date ? new Date(value.date) : null;
