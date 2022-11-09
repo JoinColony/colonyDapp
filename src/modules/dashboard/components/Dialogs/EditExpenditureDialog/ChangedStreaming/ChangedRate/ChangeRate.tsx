@@ -11,7 +11,7 @@ const displayName = `dashboard.EditExpenditureDialog.ChangedStreaming.ChangedRat
 
 interface Props {
   rates: Partial<Rate>[];
-  oldRates: Rate[];
+  oldRates?: Rate[];
   colony: Colony;
 }
 
@@ -36,7 +36,7 @@ const ChangedRate = ({ rates, oldRates, colony }: Props) => {
                 oldValue={oldRate}
                 key={rateItem.id}
                 colony={colony}
-                name="rate"
+                name="rates"
               />
               <ChangeItem
                 newValue={{
@@ -64,7 +64,10 @@ const ChangedRate = ({ rates, oldRates, colony }: Props) => {
 
           return (
             <ChangeItem
-              newValue={{ value: rateItem.limit, tokenAddress: rateItem.token }}
+              newValue={{
+                value: rateItem.limit || 0,
+                tokenAddress: rateItem.token,
+              }}
               oldValue={
                 oldRate?.limit
                   ? { value: oldRate?.limit, tokenAddress: oldRate?.token }
@@ -84,7 +87,7 @@ const ChangedRate = ({ rates, oldRates, colony }: Props) => {
               oldValue={oldRate}
               key={rateItem.id}
               colony={colony}
-              name="rate"
+              name="rates"
             />
           );
         }

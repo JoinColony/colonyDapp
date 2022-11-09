@@ -72,7 +72,7 @@ const ChangeItem = ({ newValue, oldValue, name, colony }: Props) => {
             </span>
           );
         }
-        case 'rate': {
+        case 'rates': {
           return <NewRate newValue={change} colony={colony} key={nanoid()} />;
         }
         case 'team': {

@@ -27,13 +27,17 @@ export const MSG = defineMessages({
     id: `dashboard.EditExpenditureDialog.ChangedStreaming.ChangedFundingSource.removedRate`,
     defaultMessage: 'Rate has been deleted',
   },
+  none: {
+    id: `dashboard.EditExpenditureDialog.ChangedStreaming.ChangedFundingSource.none`,
+    defaultMessage: 'None',
+  },
 });
 
 const displayName = `dashboard.EditExpenditureDialog.ChangedStreaming.ChangedFundingSource`;
 
 interface Props {
   fundingSource: Partial<FundingSource> & { removed?: boolean };
-  oldFundingSource: FundingSource;
+  oldFundingSource?: FundingSource;
   colony: Colony;
 }
 
@@ -71,7 +75,11 @@ const ChangedFundingSource = ({
         if (key === 'removed') {
           return (
             <div className={styles.row} key={id}>
-              <NewTeam team={oldFundingSource.team} colony={colony} />
+              {oldFundingSource?.team ? (
+                <NewTeam team={oldFundingSource.team} colony={colony} />
+              ) : (
+                <FormattedMessage {...MSG.none} />
+              )}
               <Icon name="arrow-right" className={styles.arrowIcon} />
               <span className={styles.right}>
                 <FormattedMessage {...MSG.removed} />
