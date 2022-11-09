@@ -242,6 +242,12 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
     reputationChange
     isWhitelistActivated
     verifiedAddresses
+    colonySafes {
+      safeName
+      contractAddress
+      chainId
+      moduleContractAddress
+    }
     safeData
     safeTransactions
     transactionsTitle

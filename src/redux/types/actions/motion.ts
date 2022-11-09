@@ -270,7 +270,7 @@ export type MotionActionTypes =
       ActionTypes.MOTION_CREATE_DECISION_SUCCESS,
       MetaWithHistory<object>
     >
-    | UniqueActionType<
+  | UniqueActionType<
       ActionTypes.MOTION_INITIATE_SAFE_TRANSACTION,
       {
         safe: Omit<ColonySafe, 'safeName'>;

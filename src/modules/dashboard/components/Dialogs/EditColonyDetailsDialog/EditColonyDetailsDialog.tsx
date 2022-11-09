@@ -97,6 +97,7 @@ const EditColonyDetailsDialog = ({
           annotationMessage,
           isWhitelistActivated:
             colonyData?.processedColony?.isWhitelistActivated,
+          colonySafes: colonyData?.processedColony.safes,
         }),
       ),
       withMeta({ history }),

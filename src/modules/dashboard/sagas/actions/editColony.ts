@@ -10,9 +10,6 @@ import {
   ColonyFromNameDocument,
   ColonyFromNameQuery,
   ColonyFromNameQueryVariables,
-  SubgraphColonyDocument,
-  SubgraphColonyQuery,
-  SubgraphColonyQueryVariables,
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
@@ -45,6 +42,7 @@ function* editColonyAction({
     annotationMessage,
     verifiedAddresses,
     isWhitelistActivated,
+    colonySafes = [],
   },
   meta: { id: metaId, history },
   meta,
@@ -52,7 +50,6 @@ function* editColonyAction({
   let txChannel;
   try {
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
-    const ipfsWithFallback = TEMP_getContext(ContextModule.IPFSWithFallback);
 
     /*
      * Validate the required values for the payment
@@ -136,37 +133,8 @@ function* editColonyAction({
       colonyTokens,
       verifiedAddresses,
       isWhitelistActivated,
+      colonySafes,
     });
-
-    /*
-     * Fetch colony data from the subgraph
-     * And destructure the metadata hash.
-     */
-
-    const {
-      data: {
-        colony: { metadata: currentMetadataIPFSHash },
-      },
-    } = yield apolloClient.query<
-      SubgraphColonyQuery,
-      SubgraphColonyQueryVariables
-    >({
-      query: SubgraphColonyDocument,
-      variables: {
-        address: colonyAddress.toLowerCase(),
-      },
-      fetchPolicy: 'network-only',
-    });
-
-    let updatedColonyMetadata = {
-      colonyDisplayName,
-      colonyAvatarHash: hasAvatarChanged
-        ? colonyAvatarIpfsHash
-        : colonyAvatarHash,
-      colonyTokens,
-      verifiedAddresses,
-      isWhitelistActivated,
-    };
 
     /*
      * If metadata exists,

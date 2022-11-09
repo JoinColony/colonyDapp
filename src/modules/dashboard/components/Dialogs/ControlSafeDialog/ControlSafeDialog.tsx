@@ -16,6 +16,7 @@ import {
 } from '~modules/dashboard/sagas/utils/safeHelpers';
 import { mapPayload, withMeta } from '~utils/actions';
 import { SAFE_NETWORKS } from '~constants';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import ControlSafeForm from './ControlSafeForm';
 import { getMethodInputValidation, getValidationSchema } from './validation';
@@ -78,6 +79,13 @@ const ControlSafeDialog = ({
   >({});
   const { safes } = colony;
   const history = useHistory();
+
+  const {
+    isVotingExtensionEnabled,
+    votingExtensionVersion,
+  } = useEnabledExtensions({
+    colonyAddress,
+  });
 
   useEffect(() => {
     if (selectedContractMethods) {
@@ -175,20 +183,27 @@ const ControlSafeDialog = ({
        */
       validateOnChange={false}
     >
-      {(formValues: FormikProps<FormValues>) => (
-        <Dialog cancel={cancel}>
-          <ControlSafeForm
-            {...formValues}
-            back={callStep && prevStep ? () => callStep(prevStep) : undefined}
-            colony={colony}
-            safes={safes}
-            showPreview={showPreview}
-            setShowPreview={setShowPreview}
-            selectedContractMethods={selectedContractMethods}
-            setSelectedContractMethods={setSelectedContractMethods}
-          />
-        </Dialog>
-      )}
+      {(formValues: FormikProps<FormValues>) => {
+        if (formValues.values.forceAction !== isForce) {
+          setIsForce(formValues.values.forceAction);
+        }
+        return (
+          <Dialog cancel={cancel}>
+            <ControlSafeForm
+              {...formValues}
+              back={callStep && prevStep ? () => callStep(prevStep) : undefined}
+              colony={colony}
+              safes={safes}
+              showPreview={showPreview}
+              setShowPreview={setShowPreview}
+              selectedContractMethods={selectedContractMethods}
+              setSelectedContractMethods={setSelectedContractMethods}
+              votingExtensionVersion={votingExtensionVersion}
+              isVotingExtensionEnabled={isVotingExtensionEnabled}
+            />
+          </Dialog>
+        );
+      }}
     </ActionForm>
   );
 };
