@@ -1,16 +1,9 @@
-import {
-  FundingSource,
-  Streaming,
-} from '~dashboard/ExpenditurePage/Streaming/types';
+import { Streaming } from '~dashboard/ExpenditurePage/Streaming/types';
 import { ExpenditureEndDateTypes } from '~pages/ExpenditurePage/types';
 
 import { checkIfRateIsChanged } from './ChangedRate/utils';
 
-export const hasChanges = (
-  newValue: Partial<FundingSource>,
-  oldValue,
-  endDate,
-) => {
+export const hasChanges = ({ newValue, oldValue, endDate }) => {
   if (!oldValue) {
     return true;
   }
