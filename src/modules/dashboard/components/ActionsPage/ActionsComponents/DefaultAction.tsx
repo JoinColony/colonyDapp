@@ -1,6 +1,7 @@
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import Decimal from 'decimal.js';
+import { useMediaQuery } from 'react-responsive';
 
 import Tag, { Appearance as TagAppareance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
@@ -12,6 +13,7 @@ import { useTitle } from '~utils/hooks/useTitle';
 import ActionsPageFeed, {
   ActionsPageFeedItemWithIPFS,
 } from '~dashboard/ActionsPageFeed';
+import ColonyHomeInfo from '~dashboard/ColonyHome/ColonyHomeInfo';
 import { CommentInput } from '~core/Comment';
 import MaskedAddress from '~core/MaskedAddress';
 
@@ -45,6 +47,7 @@ import { ipfsDataFetcher } from '../../../../core/fetchers';
 import DetailsWidget from '../DetailsWidget';
 import { unknownContractMSG } from '../DetailsWidget/DetailsWidgetSafeTransaction';
 
+import { query700 as query } from '~styles/queries.css';
 import styles from './DefaultAction.css';
 
 const displayName = 'dashboard.ActionsPage.DefaultAction';
@@ -110,7 +113,12 @@ const DefaultAction = ({
   );
 
   let domainMetadata;
-  const { removedSafes, addedSafe } = useColonyMetadataChecks(
+  const {
+    verifiedAddressesChanged,
+    tokensChanged,
+    removedSafes,
+    addedSafe,
+  } = useColonyMetadataChecks(
     actionType,
     colony,
     transactionHash,
@@ -327,8 +335,11 @@ const DefaultAction = ({
     )} | Action | Colony - ${colony.displayName ?? colony.colonyName ?? ``}`,
   );
 
+  const isMobile = useMediaQuery({ query });
+
   return (
     <div className={styles.main}>
+      {isMobile && <ColonyHomeInfo colony={colony} showNavigation isMobile />}
       {isVotingExtensionEnabled && (
         <div className={styles.upperContainer}>
           <p className={styles.tagWrapper}>
@@ -352,7 +363,14 @@ const DefaultAction = ({
            */}
           <h1 className={styles.heading} data-test="actionHeading">
             <FormattedMessage
-              id={roleMessageDescriptorId || 'action.title'}
+              id={
+                (verifiedAddressesChanged &&
+                  `action.${ColonyActions.ColonyEdit}.verifiedAddresses`) ||
+                (tokensChanged &&
+                  `action.${ColonyActions.ColonyEdit}.tokens`) ||
+                roleMessageDescriptorId ||
+                'action.title'
+              }
               values={{
                 ...actionAndEventValues,
                 fromDomain: actionAndEventValues.fromDomain?.name,
