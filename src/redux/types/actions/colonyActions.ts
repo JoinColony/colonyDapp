@@ -5,8 +5,7 @@ import { ColonyRole } from '@colony/colony-js';
 import { ActionTypes } from '~redux/index';
 import { Address, WithKey } from '~types/index';
 import { Color } from '~core/ColorTag';
-import { ColonySafe } from '~data/index';
-import { SafeTransaction } from '~dashboard/Dialogs/ControlSafeDialog/ControlSafeDialog';
+import { ColonySafe, SafeTransaction } from '~data/index';
 
 import {
   ErrorActionType,
@@ -275,7 +274,7 @@ export type ColonyActionsActionTypes =
         transactions: SafeTransaction[];
         colonyAddress: Address;
         colonyName: string;
-        annotationMessage?: string;
+        annotationMessage: string | null;
       },
       MetaWithHistory<object>
     >

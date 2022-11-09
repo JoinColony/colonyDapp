@@ -40,6 +40,18 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
             "name": "TransactionMessageEvent"
           }
         ]
+      },
+      {
+        "kind": "UNION",
+        "name": "SafeBalanceToken",
+        "possibleTypes": [
+          {
+            "name": "ERC20Token"
+          },
+          {
+            "name": "SafeNativeToken"
+          }
+        ]
       }
     ]
   }
@@ -827,7 +839,7 @@ export type LoggedInUser = {
   networkId?: Maybe<Scalars['Int']>;
 };
 
-export type SugraphEventProcessedValues = {
+export type SubgraphEventProcessedValues = {
   agent: Scalars['String'];
   who: Scalars['String'];
   fromPot: Scalars['String'];
@@ -845,6 +857,7 @@ export type SugraphEventProcessedValues = {
   newVersion: Scalars['String'];
   storageSlot: Scalars['String'];
   storageSlotValue: Scalars['String'];
+  txHash: Scalars['String'];
 };
 
 export type SubgraphEvent = {
@@ -855,7 +868,7 @@ export type SubgraphEvent = {
   args: Scalars['String'];
   timestamp: Scalars['String'];
   associatedColony: SubgraphColony;
-  processedValues: SugraphEventProcessedValues;
+  processedValues: SubgraphEventProcessedValues;
 };
 
 export type SubgraphMotion = {
@@ -889,6 +902,79 @@ export type ColonyActionRoles = {
   setTo: Scalars['Boolean'];
 };
 
+export type SimpleUserProfile = {
+  avatarHash?: Maybe<Scalars['String']>;
+  displayName?: Maybe<Scalars['String']>;
+  username?: Maybe<Scalars['String']>;
+  walletAddress: Scalars['String'];
+};
+
+export type SimpleUser = {
+  id: Scalars['String'];
+  profile: SimpleUserProfile;
+};
+
+export type Nft = {
+  id: Scalars['String'];
+  profile: NftProfile;
+};
+
+export type NftProfile = {
+  displayName: Scalars['String'];
+  walletAddress: Scalars['String'];
+};
+
+export type NftData = {
+  address: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  imageUri?: Maybe<Scalars['String']>;
+  logoUri: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
+  tokenName: Scalars['String'];
+  tokenSymbol: Scalars['String'];
+  uri: Scalars['String'];
+};
+
+export type SafeBalanceToken = Erc20Token | SafeNativeToken;
+
+export type Erc20Token = {
+  name: Scalars['String'];
+  decimals: Scalars['Int'];
+  symbol: Scalars['String'];
+  logoUri: Scalars['String'];
+  address: Scalars['String'];
+};
+
+export type SafeNativeToken = {
+  name: Scalars['String'];
+  decimals: Scalars['Int'];
+  symbol: Scalars['String'];
+  address: Scalars['String'];
+  networkName: Scalars['String'];
+};
+
+export type FunctionParamType = {
+  name: Scalars['String'];
+  type: Scalars['String'];
+};
+
+export type SafeTransaction = {
+  transactionType: Scalars['String'];
+  tokenAddress?: Maybe<Scalars['String']>;
+  tokenData?: Maybe<SafeBalanceToken>;
+  amount?: Maybe<Scalars['String']>;
+  rawAmount?: Maybe<Scalars['String']>;
+  recipient?: Maybe<SimpleUser>;
+  data: Scalars['String'];
+  contract?: Maybe<SimpleUser>;
+  abi: Scalars['String'];
+  contractFunction: Scalars['String'];
+  nft?: Maybe<Nft>;
+  nftData?: Maybe<NftData>;
+  functionParamTypes?: Maybe<Array<FunctionParamType>>;
+};
+
 export type ColonyAction = {
   hash: Scalars['String'];
   actionInitiator: Scalars['String'];
@@ -903,6 +989,7 @@ export type ColonyAction = {
   tokenAddress: Scalars['String'];
   roles: Array<ColonyActionRoles>;
   annotationHash?: Maybe<Scalars['String']>;
+  annotationMessage?: Maybe<Scalars['String']>;
   oldVersion: Scalars['String'];
   newVersion: Scalars['String'];
   colonyDisplayName: Scalars['String'];
@@ -918,7 +1005,9 @@ export type ColonyAction = {
   reputationChange: Scalars['String'];
   isWhitelistActivated: Scalars['Boolean'];
   verifiedAddresses: Array<Scalars['String']>;
-  colonySafes: Array<ColonySafe>;
+  safeData?: Maybe<SafeData>;
+  safeTransactions: Array<SafeTransaction>;
+  transactionsTitle: Scalars['String'];
 };
 
 export type NetworkContractsInput = {
@@ -1158,6 +1247,11 @@ export type ColonySafe = {
   contractAddress: Scalars['String'];
   chainId: Scalars['String'];
   moduleContractAddress: Scalars['String'];
+};
+
+export type SafeData = {
+  chainId: Scalars['String'];
+  contractAddress: Scalars['String'];
 };
 
 export type ProcessedColony = {
@@ -1721,8 +1815,8 @@ export type ColonyActionQueryVariables = Exact<{
 
 
 export type ColonyActionQuery = { colonyAction: (
-    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionState' | 'motionDomain' | 'blockNumber' | 'rootHash' | 'reputationChange' | 'isWhitelistActivated' | 'verifiedAddresses'>
-    & { events: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'transactionHash'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>>, colonySafes: Array<Pick<ColonySafe, 'safeName' | 'contractAddress' | 'chainId' | 'moduleContractAddress'>> }
+    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'annotationMessage' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionState' | 'motionDomain' | 'blockNumber' | 'rootHash' | 'reputationChange' | 'isWhitelistActivated' | 'verifiedAddresses' | 'safeData' | 'safeTransactions' | 'transactionsTitle'>
+    & { events: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'transactionHash'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>> }
   ) };
 
 export type MetaColonyQueryVariables = Exact<{ [key: string]: never; }>;
@@ -2658,7 +2752,7 @@ export type SubgraphEventsThatAreActionsSubscription = { events: Array<(
     ), transaction: (
       { hash: SubgraphTransaction['id'] }
       & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
-    ), processedValues: Pick<SugraphEventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user' | 'oldVersion' | 'newVersion' | 'storageSlot' | 'storageSlotValue'> }
+    ), processedValues: Pick<SubgraphEventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user' | 'oldVersion' | 'newVersion' | 'storageSlot' | 'storageSlotValue' | 'txHash'> }
   )> };
 
 export type SubgraphMotionsSubscriptionVariables = Exact<{
@@ -4103,6 +4197,7 @@ export const ColonyActionDocument = gql`
     amount
     tokenAddress
     annotationHash
+    annotationMessage
     newVersion
     oldVersion
     colonyDisplayName
@@ -4122,12 +4217,9 @@ export const ColonyActionDocument = gql`
     reputationChange
     isWhitelistActivated
     verifiedAddresses
-    colonySafes {
-      safeName
-      contractAddress
-      chainId
-      moduleContractAddress
-    }
+    safeData
+    safeTransactions
+    transactionsTitle
   }
 }
     `;
@@ -7234,7 +7326,7 @@ export type SubgraphOneTxSubscriptionHookResult = ReturnType<typeof useSubgraphO
 export type SubgraphOneTxSubscriptionResult = Apollo.SubscriptionResult<SubgraphOneTxSubscription>;
 export const SubgraphEventsThatAreActionsDocument = gql`
     subscription SubgraphEventsThatAreActions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $sortDirection: String = asc) {
-  events(skip: $skip, first: $first, orderBy: "timestamp", orderDirection: $sortDirection, where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)", "DomainMetadata(address,uint256,string)", "ColonyRoleSet(address,address,uint256,uint8,bool)", "ColonyUpgraded(address,uint256,uint256)", "ColonyUpgraded(uint256,uint256)", "RecoveryModeEntered(address)", "ArbitraryReputationUpdate(address,address,uint256,int256)", "TokenUnlocked(address)", "TokenUnlocked()"]}) {
+  events(skip: $skip, first: $first, orderBy: "timestamp", orderDirection: $sortDirection, where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)", "DomainMetadata(address,uint256,string)", "ColonyRoleSet(address,address,uint256,uint8,bool)", "ColonyUpgraded(address,uint256,uint256)", "ColonyUpgraded(uint256,uint256)", "RecoveryModeEntered(address)", "ArbitraryReputationUpdate(address,address,uint256,int256)", "TokenUnlocked(address)", "TokenUnlocked()", "Annotation(address,bytes32,string)"]}) {
     id
     address
     associatedColony {
@@ -7272,6 +7364,7 @@ export const SubgraphEventsThatAreActionsDocument = gql`
       newVersion
       storageSlot
       storageSlotValue
+      txHash
     }
   }
 }

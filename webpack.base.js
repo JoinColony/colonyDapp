@@ -50,7 +50,10 @@ const config = {
         '~types': path.resolve(__dirname, 'src/types'),
         '~immutable': path.resolve(__dirname, 'src/immutable'),
         '~modules': path.resolve(__dirname, 'src/modules'),
-        '~dialogs': path.resolve(__dirname, 'src/modules/dashboard/components/Dialogs')
+        '~dialogs': path.resolve(
+          __dirname,
+          'src/modules/dashboard/components/Dialogs',
+        ),
       },
       generateModulesAliases(),
     ),
@@ -81,15 +84,16 @@ const config = {
       },
       {
         test: /\.css$/,
-        include: [path.resolve('node_modules', 'draft-js'), path.resolve('node_modules', 'rc-slider')],
+        include: [
+          path.resolve('node_modules', 'draft-js'),
+          path.resolve('node_modules', 'rc-slider'),
+        ],
         use: ['style-loader', 'css-loader'],
       },
       {
         test: /\.(woff|woff2|png|jpe?g|gif)$/,
         loader: 'file-loader',
-        include: [
-          path.resolve('src'),
-        ],
+        include: [path.resolve('src')],
         options: {
           esModule: false,
         },
@@ -99,7 +103,10 @@ const config = {
        */
       {
         test: /\.svg$/,
-        exclude: [path.resolve(__dirname, 'src', 'img', 'icons')],
+        exclude: [
+          path.resolve(__dirname, 'src', 'img', 'icons'),
+          path.resolve(__dirname, 'src', 'img', 'tokens'),
+        ],
         use: '@svgr/webpack',
       },
       /*
@@ -128,10 +135,11 @@ const config = {
       },
       {
         test: /\.svg$/,
-        include: [
-          path.resolve(__dirname, 'src', 'img', 'tokens'),
-        ],
+        include: [path.resolve(__dirname, 'src', 'img', 'tokens')],
         use: [
+          {
+            loader: 'svg-sprite-loader',
+          },
           {
             loader: 'svgo-loader',
             options: {

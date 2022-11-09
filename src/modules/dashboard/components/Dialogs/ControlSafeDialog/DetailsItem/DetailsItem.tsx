@@ -11,7 +11,7 @@ const DetailsItem = ({
 }: {
   label: MessageDescriptor;
   textValues?: SimpleMessageValues;
-  value: JSX.Element;
+  value: JSX.Element | JSX.Element[];
 }) => {
   const { formatMessage } = useIntl();
 

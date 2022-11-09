@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import classnames from 'classnames';
 import { nanoid } from 'nanoid';
@@ -14,15 +14,14 @@ import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
 import Avatar from '~core/Avatar';
-import MaskedAddress from '~core/MaskedAddress';
-import { AnyUser } from '~data/index';
-import { getArrayFromString } from '~utils/safes';
+import { AnyUser, NftData } from '~data/index';
 import { extractTokenName } from '~modules/dashboard/sagas/utils/safeHelpers';
+import { omit } from '~utils/lodash';
+import { formatArgument } from '~dashboard/ActionsPage/DetailsWidget/DetailsWidgetSafeTransaction/components/FunctionsSection';
 
 import AddressDetailsView from './TransactionPreview/AddressDetailsView';
-import { FormValues } from './ControlSafeDialog';
-import { NFT } from './TransactionTypesSection/TransferNFTSection';
 import { FormProps, TransactionSectionProps } from './ControlSafeForm';
+import { defaultTransaction, FormValues } from './ControlSafeDialog';
 import {
   TransactionTypes,
   transactionOptions,
@@ -138,7 +137,7 @@ const transactionTypeFieldsMap = {
     {
       key: 'nftData',
       label: MSG.nftHeldByTheSafe,
-      value: (nftData: NFT) => (
+      value: (nftData: NftData) => (
         <div className={styles.nftContainer}>
           <Avatar
             avatarURL={nftData.imageUri || undefined}
@@ -208,11 +207,9 @@ const transactionTypeFieldsMap = {
 const displayName = 'dashboard.ControlSafeDialog.SafeTransactionPreview';
 
 interface Props
-  extends Pick<
-      FormProps,
-      'colony' | 'isVotingExtensionEnabled' | 'selectedContractMethods'
-    >,
+  extends Pick<FormProps, 'colony' | 'selectedContractMethods'>,
     Pick<TransactionSectionProps, 'handleValidation'> {
+  isVotingExtensionEnabled: boolean;
   userHasPermission: boolean;
   onlyForceAction: boolean;
 }
@@ -226,7 +223,12 @@ const SafeTransactionPreview = ({
   isSubmitting,
   onlyForceAction,
   handleValidation,
-}: Props & Pick<FormikProps<FormValues>, 'isSubmitting' | 'values'>) => {
+  setFieldValue,
+}: Props &
+  Pick<
+    FormikProps<FormValues>,
+    'setFieldValue' | 'isSubmitting' | 'values'
+  >) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState(
     Array(values.transactions.length).fill(false),
   );
@@ -259,42 +261,30 @@ const SafeTransactionPreview = ({
     values.transactions[index].transactionType ===
     TransactionTypes.TRANSFER_NFT;
 
-  const getDetailsItemValue = (input, transaction) => {
-    const inputName = `${input.name}-${transaction.contractFunction}`;
-    switch (true) {
-      case input.type === 'address': {
-        return <MaskedAddress address={transaction[inputName]} />;
-      }
-      case input.type === 'address[]': {
-        const formattedArray = getArrayFromString(transaction[inputName]);
-
-        const maskedArray = formattedArray.map((address, index, arr) => {
-          return (
-            <div>
-              <MaskedAddress address={address.trim()} />
-              {index < arr.length - 1 && <span>, </span>}
-            </div>
-          );
-        });
-        return <div className={styles.rawTransactionValues}>{maskedArray}</div>;
-      }
-      case input.type.substr(input.type.length - 2, input.type.length) ===
-        '[]': {
-        const formattedArray = `[${getArrayFromString(transaction[inputName])
-          .map((item) => item.trim())
-          .join(', ')}]`;
-        return (
-          <div className={styles.rawTransactionValues}>{formattedArray}</div>
-        );
-      }
-      default:
-        return (
-          <div className={styles.rawTransactionValues}>
-            {transaction[inputName]}
-          </div>
-        );
-    }
-  };
+  /*
+   * Remove unused contract functions from form state.
+   * Doing it here instead of in the Contract Interaction section so that the user doesn't lose state in the
+   * event they switch between contract functions. We need this so the correct functions appear on the actions page.
+   */
+  useEffect(() => {
+    values.transactions.forEach((transaction, index) => {
+      const actualSelectedFunction = transaction.contractFunction;
+      const allSelectedMethodKeys = Object.keys(
+        omit(transaction, Object.keys(defaultTransaction)),
+      );
+      const keysToExclude = allSelectedMethodKeys.filter(
+        // the keys end with "-[functionName]", so we exclude the ones that don't end in the
+        // function name that the user ended up choosing
+        (key) => !new RegExp(`-${actualSelectedFunction}$`).test(key),
+      );
+      const updatedTransaction = {
+        ...omit(transaction, keysToExclude),
+      };
+      setFieldValue(`transactions.${index}`, updatedTransaction);
+    });
+    // initialisation only
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -430,17 +420,21 @@ const SafeTransactionPreview = ({
                 {values.transactions[index].transactionType ===
                   TransactionTypes.CONTRACT_INTERACTION &&
                   selectedContractMethods &&
-                  selectedContractMethods[index]?.inputs?.map((input) => (
-                    <DetailsItem
-                      key={nanoid()}
-                      label={MSG.contractMethodInputLabel}
-                      textValues={{ name: input.name, type: input.type }}
-                      value={getDetailsItemValue(
-                        input,
-                        values.transactions[index],
-                      )}
-                    />
-                  ))}
+                  selectedContractMethods[index]?.inputs?.map((input) => {
+                    const functionKey = `${input.name}-${values.transactions[index].contractFunction}`;
+                    return (
+                      <DetailsItem
+                        key={nanoid()}
+                        label={MSG.contractMethodInputLabel}
+                        textValues={{ name: input.name, type: input.type }}
+                        value={formatArgument(
+                          input.type,
+                          values.transactions[index][functionKey],
+                          input.type.substring(input.type.length - 2) === '[]',
+                        )}
+                      />
+                    );
+                  })}
               </div>
             </DialogSection>
           </div>

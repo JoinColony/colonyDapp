@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 
-import { ColonyAndExtensionsEvents } from '~types/index';
+import { ColonyAndExtensionsEvents, ColonyExtendedActions } from '~types/index';
 
 const eventsMessageDescriptors = {
   'event.title': `{eventName, select,
@@ -40,6 +40,21 @@ const eventsMessageDescriptors = {
   [`event.${ColonyAndExtensionsEvents.DomainMetadata}.name`]: `{initiator} changed teams's name from {oldName} to {domainName}`,
   [`event.${ColonyAndExtensionsEvents.DomainMetadata}.color`]: `{initiator} changed teams's color from {oldColor} to {domainColor}`,
   [`event.${ColonyAndExtensionsEvents.DomainMetadata}.fallback`]: `{initiator} changed this team, but values are the same`,
+  [`event.${ColonyExtendedActions.SafeTransactionInitiated}.rawTransaction`]: `{safeName} initiated a transaction with {isSafeTransactionRecipientUser, select, 
+    true {{safeTransactionRecipient}}
+    other {{safeTransactionRawTransactionAddress}}
+  }`, // @TODO Confirm w product
+  [`event.${ColonyExtendedActions.SafeTransactionInitiated}.transferFunds`]: `{safeName} made a payment using the Administration and Funding permissions to pay {safeTransactionAmount} from {fromDomain} to {isSafeTransactionRecipientUser, select, 
+    true {{safeTransactionRecipient}}
+    other {{safeTransactionAddress}}
+  }`,
+  [`event.${ColonyExtendedActions.SafeTransactionInitiated}.transferNFT`]: `{safeName} made a payment using the Administration and Funding permissions to pay with NFT token called {safeTransactionNftToken} from {fromDomain} to {isSafeTransactionRecipientUser, select, 
+    true {{safeTransactionRecipient}}
+    other {{safeTransactionAddress}}
+  }`,
+  [`event.${ColonyExtendedActions.SafeTransactionInitiated}.contractInteraction`]: `{safeName} called the {safeTransactionFunctionName} function on the {safeTransactionContractName} contract`, // @TODO Confirm w product
+  [`event.${ColonyExtendedActions.SafeTransactionInitiated}.multipleTransactions`]: `{safeName} initiated multiple transactions`, // @TODO Confirm w product
+  [`event.${ColonyExtendedActions.SafeTransactionInitiated}.fallback`]: `{{safeName} initiated a transaction}`,
   [`event.${ColonyAndExtensionsEvents.ColonyRoleSet}.assign`]: `{initiator} assigned the {role} permission in the {fromDomain} team to {recipient}`,
   [`event.${ColonyAndExtensionsEvents.ColonyRoleSet}.remove`]: `{initiator} removed the {role} permission in the {fromDomain} team from {recipient}`,
   [`event.${ColonyAndExtensionsEvents.ArbitraryReputationUpdate}.title`]: `{initiator} {isSmiteAction, select,

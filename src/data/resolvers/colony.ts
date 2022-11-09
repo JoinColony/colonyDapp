@@ -183,6 +183,8 @@ export const getProcessedColony = async (
         if (colonyMetadata?.isWhitelistActivated) {
           whitelistActivated = colonyMetadata.isWhitelistActivated;
         }
+        // @TODO: Add colonySafes to ColonyMetadata
+        // @ts-ignore
         safes = colonyMetadata?.colonySafes || [];
       }
 
