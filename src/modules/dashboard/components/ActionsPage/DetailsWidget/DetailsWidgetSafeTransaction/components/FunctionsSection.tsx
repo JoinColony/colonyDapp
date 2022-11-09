@@ -81,7 +81,7 @@ export const formatArgument = (
   }
 };
 
-export const FunctionsSection = ({ transaction }: FunctionsSectionProps) => {
+const FunctionsSection = ({ transaction }: FunctionsSectionProps) => {
   const functions = Object.entries(
     omit(transaction, Object.keys(defaultTransaction)),
   );
@@ -115,3 +115,5 @@ export const FunctionsSection = ({ transaction }: FunctionsSectionProps) => {
     </>
   );
 };
+
+export default FunctionsSection;

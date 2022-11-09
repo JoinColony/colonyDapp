@@ -6,7 +6,7 @@ export {
   ContractSectionProps,
 } from './ContractSection';
 export { DefaultArgument } from './DefaultArgument';
-export { FunctionsSection } from './FunctionsSection';
+export { default as FunctionsSection } from './FunctionsSection';
 export { InvisibleCopyableMaskedAddress } from './InvisibleCopyableMaskedAddress';
 export { Recipient } from './Recipient';
 export { Title } from './Title';
