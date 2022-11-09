@@ -16,10 +16,6 @@ import ProgressBar from '~core/ProgressBar';
 import { ActionButton } from '~core/Button';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import MaskedAddress from '~core/MaskedAddress';
-import ActionsPageFeed, {
-  ActionsPageFeedItemWithIPFS,
-  SystemMessage,
-} from '~dashboard/ActionsPageFeed';
 
 import { getFormattedTokenValue } from '~utils/tokens';
 import {
@@ -32,7 +28,7 @@ import {
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
 import { mapPayload } from '~utils/actions';
 import { useTitle } from '~utils/hooks/useTitle';
-import { SafeTxData } from '~modules/dashboard/sagas/utils/uploadIfpsAnnotation';
+import { SafeTxData } from '~modules/dashboard/sagas/utils/safeHelpers';
 import { ColonyMotions, ColonyAndExtensionsEvents } from '~types/index';
 import { ActionTypes } from '~redux/index';
 import {
@@ -50,7 +46,7 @@ import {
   SafeTransaction,
 } from '~data/index';
 
-import DetailsWidget from '../DetailsWidget';
+import DetailsWidget from '../DetailsWidget/DetailsWidget';
 import StakingWidgetFlow from '../StakingWidget';
 import VoteWidget from '../VoteWidget';
 import RevealWidget from '../RevealWidget';
@@ -124,6 +120,7 @@ const DefaultMotion = ({
     transactionsTitle,
     safeTransactions,
     safeData,
+    annotationMessage,
   },
   colonyAction,
   token,
@@ -566,6 +563,9 @@ const DefaultMotion = ({
             motionId={motionId}
             createdAt={createdAt}
             roleMessageDescriptorId={roleMessageDescriptorId}
+            annotationMessage={
+              annotationMessage || locationState?.annotationMessage
+            }
           />
         </div>
         <div className={styles.details}>

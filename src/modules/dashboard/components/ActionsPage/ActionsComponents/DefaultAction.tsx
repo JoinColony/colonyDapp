@@ -44,7 +44,7 @@ import { SAFE_NAMES_MAP } from '~constants';
 
 import { ipfsDataFetcher } from '../../../../core/fetchers';
 
-import DetailsWidget from '../DetailsWidget';
+import DetailsWidget from '../DetailsWidget/DetailsWidget';
 import { unknownContractMSG } from '../DetailsWidget/DetailsWidgetSafeTransaction';
 
 import { query700 as query } from '~styles/queries.css';
@@ -287,7 +287,7 @@ const DefaultAction = ({
           firstSafeTransaction?.nftData?.tokenName}
       </span>
     ),
-    safeTransactionFunctionName: firstSafeTransaction?.contractFunction,
+    safeTransactionFunctionName: firstSafeTransaction?.contractFunction || '',
     safeTransactionContractName:
       firstSafeTransaction?.contract?.profile.displayName ||
       formatMessage(unknownContractMSG),

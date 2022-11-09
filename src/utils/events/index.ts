@@ -1272,8 +1272,8 @@ const getSafeTransactionInitiatedMotionValues = async (
     apolloClient,
   );
 
-  const safeTxData = JSON.parse(
-    (await getColonyMetadataIPFS(annotation?.values?.metadata || '')) || '[]',
+  const ipfsMetadata = JSON.parse(
+    await getColonyMetadataIPFS(annotation?.values?.metadata),
   );
 
   const initiateSafeTransactionValues: Partial<MotionValues> & {
@@ -1292,17 +1292,19 @@ const getSafeTransactionInitiatedMotionValues = async (
     annotationMessage: null,
   };
 
-  if (safeTxData) {
-    // We storing the safeTransactionData in the annotation message to avoid storing in colony metadata
-    const { annotationMessage: safeTransactionData } = safeTxData;
-    if (safeTransactionData) {
-      initiateSafeTransactionValues.safeData = safeTransactionData.safeData;
+  if (ipfsMetadata) {
+    // We storing the safeTxData in the annotation message to avoid storing in colony metadata
+    const {
+      data: { annotationMsg },
+    } = ipfsMetadata;
+    const safeTxData = JSON.parse(annotationMsg || '[]');
+    if (safeTxData) {
+      initiateSafeTransactionValues.safeData = safeTxData.safeData;
       initiateSafeTransactionValues.safeTransactions =
-        safeTransactionData.transactions || [];
-      initiateSafeTransactionValues.transactionsTitle =
-        safeTransactionData.title || '';
+        safeTxData.transactions || [];
+      initiateSafeTransactionValues.transactionsTitle = safeTxData.title || '';
       initiateSafeTransactionValues.annotationMessage =
-        safeTransactionData.annotationMessage || '';
+        safeTxData.annotationMessage || '';
     }
   }
 
