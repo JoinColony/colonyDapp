@@ -16,6 +16,7 @@ import {
 } from '~modules/dashboard/sagas/utils/safeHelpers';
 import { mapPayload, withMeta } from '~utils/actions';
 import { SAFE_NETWORKS } from '~constants';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import ControlSafeForm from './ControlSafeForm';
 import { getMethodInputValidation, getValidationSchema } from './validation';
@@ -69,6 +70,7 @@ const ControlSafeDialog = ({
   prevStep,
 }: Props) => {
   const [showPreview, setShowPreview] = useState(false);
+  const [isForce, setIsForce] = useState(false);
   const [selectedContractMethods, setSelectedContractMethods] = useState<
     UpdatedMethods
   >();
@@ -77,6 +79,13 @@ const ControlSafeDialog = ({
   >({});
   const { safes } = colony;
   const history = useHistory();
+
+  const {
+    isVotingExtensionEnabled,
+    votingExtensionVersion,
+  } = useEnabledExtensions({
+    colonyAddress,
+  });
 
   useEffect(() => {
     if (selectedContractMethods) {
@@ -102,6 +111,17 @@ const ControlSafeDialog = ({
     expandedValidationSchema,
   );
 
+  const getFormAction = useCallback(
+    (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
+      const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
+
+      return isVotingExtensionEnabled && !isForce
+        ? ActionTypes[`MOTION_INITIATE_SAFE_TRANSACTION${actionEnd}`]
+        : ActionTypes[`ACTION_INITIATE_SAFE_TRANSACTION${actionEnd}`];
+    },
+    [isVotingExtensionEnabled, isForce],
+  );
+
   const transform = useCallback(
     pipe(
       mapPayload(
@@ -110,6 +130,7 @@ const ControlSafeDialog = ({
           transactionsTitle,
           transactions,
           annotation: annotationMessage,
+          motionDomainId,
         }) => {
           const chainName = getChainNameFromSafe(safe.profile.displayName);
           const transformedSafe: Omit<ColonySafe, 'safeName'> = {
@@ -128,6 +149,7 @@ const ControlSafeDialog = ({
             annotationMessage,
             colonyAddress,
             colonyName,
+            motionDomainId,
           };
         },
       ),
@@ -149,9 +171,9 @@ const ControlSafeDialog = ({
         } as FormValues
       }
       validationSchema={validationSchema}
-      submit={ActionTypes.ACTION_INITIATE_SAFE_TRANSACTION}
-      success={ActionTypes.ACTION_INITIATE_SAFE_TRANSACTION_SUCCESS}
-      error={ActionTypes.ACTION_INITIATE_SAFE_TRANSACTION_ERROR}
+      submit={getFormAction('SUBMIT')}
+      error={getFormAction('ERROR')}
+      success={getFormAction('SUCCESS')}
       transform={transform}
       onSuccess={close}
       validateOnMount
@@ -161,20 +183,27 @@ const ControlSafeDialog = ({
        */
       validateOnChange={false}
     >
-      {(formValues: FormikProps<FormValues>) => (
-        <Dialog cancel={cancel}>
-          <ControlSafeForm
-            {...formValues}
-            back={callStep && prevStep ? () => callStep(prevStep) : undefined}
-            colony={colony}
-            safes={safes}
-            showPreview={showPreview}
-            setShowPreview={setShowPreview}
-            selectedContractMethods={selectedContractMethods}
-            setSelectedContractMethods={setSelectedContractMethods}
-          />
-        </Dialog>
-      )}
+      {(formValues: FormikProps<FormValues>) => {
+        if (formValues.values.forceAction !== isForce) {
+          setIsForce(formValues.values.forceAction);
+        }
+        return (
+          <Dialog cancel={cancel}>
+            <ControlSafeForm
+              {...formValues}
+              back={callStep && prevStep ? () => callStep(prevStep) : undefined}
+              colony={colony}
+              safes={safes}
+              showPreview={showPreview}
+              setShowPreview={setShowPreview}
+              selectedContractMethods={selectedContractMethods}
+              setSelectedContractMethods={setSelectedContractMethods}
+              votingExtensionVersion={votingExtensionVersion}
+              isVotingExtensionEnabled={isVotingExtensionEnabled}
+            />
+          </Dialog>
+        );
+      }}
     </ActionForm>
   );
 };

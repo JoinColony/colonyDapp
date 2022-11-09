@@ -126,6 +126,7 @@ const ActionsListItem = ({
     reputationChange,
     isDecision,
     annotationHash,
+    transactionTitle,
   },
   colony,
   handleOnClick,
@@ -155,8 +156,6 @@ const ActionsListItem = ({
     title = draftData.title;
   }
 
-  const safeTransactionTitle = useFetchSafeTransactionTitle(metadata);
-
   const { isVotingExtensionEnabled } = useEnabledExtensions({
     colonyAddress: colony.colonyAddress,
   });
@@ -171,13 +170,12 @@ const ActionsListItem = ({
   const [fetchTokenInfo, { data: tokenData }] = useTokenInfoLazyQuery();
 
   const colonyObject = parseColonyMetadata(metadataJSON);
-  const { tokensChanged, verifiedAddressesChanged } = useColonyMetadataChecks(
-    actionType,
-    colony,
-    transactionHash,
-    colonyObject,
-  );
-  const { addedSafe } = useColonyMetadataChecks(
+
+  const {
+    verifiedAddressesChanged,
+    tokensChanged,
+    addedSafe,
+  } = useColonyMetadataChecks(
     actionType,
     colony,
     transactionHash,
@@ -189,6 +187,9 @@ const ActionsListItem = ({
     transactionHash,
     colonyObject,
   );
+
+  const safeTransactionTitle =
+    useFetchSafeTransactionTitle(metadata) || transactionTitle;
 
   useEffect(() => {
     if (transactionTokenAddress) {

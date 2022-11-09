@@ -13,6 +13,8 @@ import {
 } from '@colony/colony-event-metadata-parser';
 import { bigNumberify, BigNumberish, hexStripZeros } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
+import { ApolloClient } from '@apollo/client';
+
 import ColonyManagerClass from '~lib/ColonyManager';
 import {
   ColonyActions,
@@ -23,6 +25,7 @@ import {
   FormattedAction,
   ActionUserRoles,
   AddedActions,
+  AddedMotions,
 } from '~types/index';
 import { ColonySafe, ParsedEvent, ColonyAction } from '~data/index';
 import { ProcessedEvent } from '~data/resolvers/colonyActions';
@@ -37,6 +40,8 @@ import { ACTION_DECISION_MOTION_CODE } from '~constants';
 import { availableRoles } from '~dialogs/PermissionManagementDialog';
 
 import { getMotionRequiredStake, MotionState } from '../colonyMotions';
+
+import { getAnnotationFromSubgraph } from './getAnnotationFromSubgraph';
 
 interface ActionValues {
   recipient: Address;
@@ -1244,12 +1249,75 @@ const getCreateDecisionMotionValues = async (
   return getMotionValues(processedEvents, votingClient, colonyClient);
 };
 
+const getSafeTransactionInitiatedMotionValues = async (
+  processedEvents: ProcessedEvent[],
+  votingClient: ExtensionClient,
+  colonyClient: ColonyClient,
+  apolloClient: ApolloClient<object>,
+): Promise<Partial<ActionValues>> => {
+  const motionCreatedEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
+  ) as ProcessedEvent;
+  const { address, transactionHash } = motionCreatedEvent;
+
+  const motionDefaultValues = await getMotionValues(
+    processedEvents,
+    votingClient,
+    colonyClient,
+  );
+
+  const annotation = await getAnnotationFromSubgraph(
+    motionDefaultValues.actionInitiator || address,
+    transactionHash,
+    apolloClient,
+  );
+
+  const ipfsMetadata = JSON.parse(
+    await getColonyMetadataIPFS(annotation?.values?.metadata),
+  );
+
+  const initiateSafeTransactionValues: Partial<MotionValues> & {
+    address: Address;
+    actionInitiator?: ColonyAction['actionInitiator'];
+    safeData: ColonyAction['safeData'];
+    safeTransactions: ColonyAction['safeTransactions'];
+    transactionsTitle: ColonyAction['transactionsTitle'];
+    annotationMessage: ColonyAction['annotationMessage'];
+  } = {
+    ...motionDefaultValues,
+    address,
+    safeData: null,
+    safeTransactions: [],
+    transactionsTitle: '',
+    annotationMessage: null,
+  };
+
+  if (ipfsMetadata) {
+    // We storing the safeTxData in the annotation message to avoid storing in colony metadata
+    const {
+      data: { annotationMsg },
+    } = ipfsMetadata;
+    const safeTxData = JSON.parse(annotationMsg || '[]');
+    if (safeTxData) {
+      initiateSafeTransactionValues.safeData = safeTxData.safeData;
+      initiateSafeTransactionValues.safeTransactions =
+        safeTxData.transactions || [];
+      initiateSafeTransactionValues.transactionsTitle = safeTxData.title || '';
+      initiateSafeTransactionValues.annotationMessage =
+        safeTxData.annotationMessage || '';
+    }
+  }
+
+  return initiateSafeTransactionValues;
+};
+
 export const getActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
   votingClient: ExtensionClient,
   oneTxPaymentClient: ExtensionClient,
-  actionType: ColonyActions | ColonyMotions | AddedActions,
+  apolloClient: ApolloClient<object>,
+  actionType: ColonyActions | ColonyMotions | AddedActions | AddedMotions,
 ): Promise<ActionValues> => {
   const fallbackValues = {
     recipient: AddressZero,
@@ -1504,6 +1572,19 @@ export const getActionValues = async (
       return {
         ...fallbackValues,
         ...unlockTokenMotionValues,
+      };
+    }
+    case AddedMotions.SafeTransactionInitiatedMotion: {
+      // eslint-disable-next-line max-len
+      const safeTransactionInitiatedMotionValues = await getSafeTransactionInitiatedMotionValues(
+        processedEvents,
+        votingClient,
+        colonyClient,
+        apolloClient,
+      );
+      return {
+        ...fallbackValues,
+        ...safeTransactionInitiatedMotionValues,
       };
     }
     default: {

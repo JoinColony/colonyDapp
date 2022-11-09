@@ -158,6 +158,7 @@ export interface FormattedAction {
   reputationChange?: string;
   isDecision?: boolean;
   annotationHash?: string;
+  transactionTitle?: string;
 }
 
 export interface FormattedEvent {

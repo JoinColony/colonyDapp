@@ -26,7 +26,6 @@ import { SelectedSafe } from '~modules/dashboard/sagas/utils/safeHelpers';
 import { debounce, isEqual, omit } from '~utils/lodash';
 import { useHasPermission } from '~utils/hooks/useHasPermissions';
 import { getColonySafe } from '~utils/safes';
-import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import SafeTransactionPreview from './SafeTransactionPreview';
 import {
@@ -115,6 +114,8 @@ export interface FormProps {
   setSelectedContractMethods: React.Dispatch<
     React.SetStateAction<UpdatedMethods>
   >;
+  isVotingExtensionEnabled: boolean;
+  votingExtensionVersion: number | null;
 }
 
 export interface TransactionSectionProps extends Pick<FormProps, 'colony'> {
@@ -156,6 +157,8 @@ const ControlSafeForm = ({
   selectedContractMethods,
   setFieldTouched,
   setSelectedContractMethods,
+  isVotingExtensionEnabled,
+  votingExtensionVersion,
 }: FormProps & FormikProps<FormValues>) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState([true]);
   const [prevSafeAddress, setPrevSafeAddress] = useState<string>('');
@@ -167,13 +170,6 @@ const ControlSafeForm = ({
     useHasPermission(colony, ColonyRole.Funding),
     useHasPermission(colony, ColonyRole.Root),
   ].every((r) => r === true);
-
-  const {
-    isVotingExtensionEnabled,
-    votingExtensionVersion,
-  } = useEnabledExtensions({
-    colonyAddress,
-  });
 
   const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
     colony.colonyAddress,
@@ -265,6 +261,7 @@ const ControlSafeForm = ({
     },
     [transactionTabStatus, setTransactionTabStatus],
   );
+
   const getTransactionTypeLabel = useCallback(
     (transactionTypeValue: string) => {
       const transactionType = transactionOptions.find(

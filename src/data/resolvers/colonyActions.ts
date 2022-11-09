@@ -21,6 +21,7 @@ import {
   ColonyActions,
   ColonyAndExtensionsEvents,
   Address,
+  ColonyExtendedMotions,
 } from '~types/index';
 import { ActionsPageFeedType } from '~dashboard/ActionsPageFeed';
 import { MotionVote } from '~utils/colonyMotions';
@@ -190,6 +191,7 @@ export const colonyActionsResolvers = ({
           colonyClient as ColonyClient,
           votingClient as ExtensionClient,
           oneTxPaymentClient as ExtensionClient,
+          apolloClient,
           actionType,
         );
 
@@ -222,7 +224,10 @@ export const colonyActionsResolvers = ({
 
         const clientVersion = await colonyClient?.version();
         let annotation;
-        if (clientVersion.toNumber() >= ColonyVersion.LightweightSpaceship) {
+        if (
+          clientVersion.toNumber() >= ColonyVersion.LightweightSpaceship &&
+          actionType !== ColonyExtendedMotions.SafeTransactionInitiatedMotion
+        ) {
           annotation = await getAnnotationFromSubgraph(
             actionValues?.actionInitiator || actionValues?.address || from,
             hash,
@@ -258,6 +263,7 @@ export const colonyActionsResolvers = ({
           rootHash: null,
           isWhitelistActivated: false,
           verifiedAddresses: [],
+          colonySafes: [],
           safeData: null,
           safeTransactions: [],
           transactionsTitle: '',
@@ -285,6 +291,7 @@ export const colonyActionsResolvers = ({
         colonyClient as ColonyClient,
         votingClient as ExtensionClient,
         oneTxPaymentClient as ExtensionClient,
+        apolloClient,
         ColonyActions.Generic,
       );
 

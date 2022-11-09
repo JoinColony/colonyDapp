@@ -205,6 +205,7 @@ export default gql`
     reputationChange: String!
     isWhitelistActivated: Boolean!
     verifiedAddresses: [String!]!
+    colonySafes: [ColonySafe!]!
     safeData: SafeData
     safeTransactions: [SafeTransaction!]!
     transactionsTitle: String!

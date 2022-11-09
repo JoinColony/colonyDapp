@@ -8,10 +8,20 @@ import TransactionLink from '~core/TransactionLink';
 import Numeral from '~core/Numeral';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import { AnyUser, Colony, ColonySafe, SafeTransaction } from '~data/index';
-import { AddedActions, ColonyActions, ColonyMotions } from '~types/index';
+import {
+  AddedActions,
+  AddedMotions,
+  ColonyActions,
+  ColonyExtendedMotions,
+  ColonyMotions,
+} from '~types/index';
 import { splitTransactionHash } from '~utils/strings';
 import { getSafeTransactionActionMessageId } from '~utils/safes';
-import { ExtendedActions, getDetailsForAction } from '~utils/colonyActions';
+import {
+  ExtendedActions,
+  getDetailsForAction,
+  getSafeTransactionActionType,
+} from '~utils/colonyActions';
 import { EventValues } from '../../ActionsPageFeed/ActionsPageFeed';
 import { ACTION_TYPES_ICONS_MAP } from '../../ActionsPage/staticMaps';
 
@@ -22,6 +32,7 @@ import {
   DetailsWidgetSafe,
   DetailsWidgetSafeTransaction,
 } from './index';
+
 import styles from './DetailsWidget.css';
 
 const displayName = 'dashboard.ActionsPage.DetailsWidget';
@@ -112,10 +123,10 @@ export interface SafeInfo {
 
 interface Props {
   actionType: ExtendedActions;
+  colony: Colony;
   recipient?: AnyUser;
   values?: EventValues;
   transactionHash?: string;
-  colony: Colony;
 }
 
 const getMessageId = (
@@ -125,6 +136,19 @@ const getMessageId = (
   if (ColonyMotions[actionType]) {
     return 'motion.type';
   }
+
+  if (AddedMotions[actionType]) {
+    const motionSubtype = getSafeTransactionActionType(
+      actionType,
+      safeTransactions || [],
+    );
+    return motionSubtype
+      ? `motion.type.${ColonyExtendedMotions.SafeTransactionInitiatedMotion}.${
+          motionSubtype[0].toLowerCase() + motionSubtype.substring(1)
+        }`
+      : 'motion.type';
+  }
+
   if (
     actionType === AddedActions.SafeTransactionInitiated &&
     safeTransactions
@@ -135,6 +159,7 @@ const getMessageId = (
       'type',
     );
   }
+
   return 'action.type';
 };
 const DetailsWidget = ({

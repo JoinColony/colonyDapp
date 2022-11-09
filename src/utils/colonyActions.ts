@@ -15,6 +15,7 @@ import {
   Address,
   AddedActions,
   ColonyExtendedActions,
+  AddedMotions,
 } from '~types/index';
 import {
   ColonySafe,
@@ -41,8 +42,11 @@ type ValuesForActionTypesMap = Partial<
   }
 >;
 
-export type ExtendedActions = ColonyActions | ColonyMotions | AddedActions;
-
+export type ExtendedActions =
+  | ColonyActions
+  | ColonyMotions
+  | AddedActions
+  | AddedMotions;
 /*
  * Get colony action details for DetailsWidget based on action type and ActionPageDetails map
  */
@@ -224,13 +228,15 @@ export const getSafeTransactionActionType = (
   safeTransactions: SafeTransaction[],
 ) => {
   if (
-    actionType === ColonyExtendedActions.SafeTransactionInitiated &&
+    (actionType === ColonyExtendedActions.SafeTransactionInitiated ||
+      actionType === AddedMotions.SafeTransactionInitiatedMotion) &&
     safeTransactions
   ) {
     if ((safeTransactions || []).length >= 2) {
       return TransactionTypes.MULTIPLE_TRANSACTIONS;
     }
-    const type = safeTransactions[0].transactionType;
+
+    const type = safeTransactions[0]?.transactionType;
     return type;
   }
   return actionType;
@@ -241,7 +247,8 @@ export const getSafeTransactionMessageDescriptorIds = (
   safeTransactions?: SafeTransaction[] | null,
 ) => {
   if (
-    actionType === ColonyExtendedActions.SafeTransactionInitiated &&
+    (actionType === ColonyExtendedActions.SafeTransactionInitiated ||
+      actionType === AddedMotions.SafeTransactionInitiatedMotion) &&
     safeTransactions
   ) {
     const safeTransactionActionType = getSafeTransactionActionType(

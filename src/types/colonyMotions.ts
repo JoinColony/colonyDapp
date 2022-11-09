@@ -18,6 +18,12 @@ export enum ColonyMotions {
   NullMotion = 'NullMotion',
 }
 
+export enum AddedMotions {
+  SafeTransactionInitiatedMotion = 'SafeTransactionInitiatedMotion',
+}
+
+export const ColonyExtendedMotions = { ...ColonyMotions, ...AddedMotions };
+
 export const motionNameMapping = {
   mintTokens: ColonyMotions.MintTokensMotion,
   makePaymentFundedFromDomain: ColonyMotions.PaymentMotion,
@@ -32,6 +38,7 @@ export const motionNameMapping = {
   emitDomainReputationReward: ColonyMotions.EmitDomainReputationRewardMotion,
   createDecision: ColonyMotions.CreateDecisionMotion,
   nullMotion: ColonyMotions.NullMotion,
+  makeArbitraryTransactions: AddedMotions.SafeTransactionInitiatedMotion,
 };
 
 export enum ColonyMotionActionName {

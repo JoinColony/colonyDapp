@@ -33,6 +33,7 @@ interface Props {
   motionId: number;
   createdAt: number;
   roleMessageDescriptorId?: string | null;
+  annotationMessage?: string | null;
 }
 
 const ActionPageMotionContent = ({
@@ -49,6 +50,7 @@ const ActionPageMotionContent = ({
   bottomElementRef,
   createdAt,
   roleMessageDescriptorId,
+  annotationMessage,
 }: Props) => {
   const { data: objectionAnnotation } = useMotionObjectionAnnotationQuery({
     variables: {
@@ -97,7 +99,17 @@ const ActionPageMotionContent = ({
           />
         </h1>
       )}
-
+      {!isDecision && (annotationHash || annotationMessage) && (
+        <div className={styles.annotation}>
+          <ActionsPageFeedItemWithIPFS
+            colony={colony}
+            user={initiator}
+            annotation
+            comment={annotationMessage || undefined}
+            hash={annotationHash || undefined}
+          />
+        </div>
+      )}
       {isDecision
         ? objectionAnnotation?.motionObjectionAnnotation?.metadata && (
             <div className={styles.annotation}>

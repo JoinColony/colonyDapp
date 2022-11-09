@@ -4,6 +4,7 @@ import {
   ColonyActions,
   ColonyMotions,
   ColonyExtendedActions,
+  ColonyExtendedMotions,
 } from '~types/index';
 
 const actionsMessageDescriptors = {
@@ -35,6 +36,7 @@ const actionsMessageDescriptors = {
       ${ColonyExtendedActions.SafeRemoved} {Remove Safe}
       ${ColonyExtendedActions.SafeAdded} {Add Safe from {chainName}}
       ${ColonyExtendedActions.SafeTransactionInitiated} {{safeTransactionTitle}}
+      ${ColonyExtendedMotions.SafeTransactionInitiatedMotion} {{safeTransactionTitle}}
       ${ColonyMotions.CreateDecisionMotion} {Create Decision}
       other {Generic action we don't have information about}
     }`,

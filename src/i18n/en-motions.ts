@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { ColonyMotions } from '~types/index';
+import { ColonyExtendedMotions, ColonyMotions } from '~types/index';
 
 const motionsMessageDescriptors = {
   'motion.title': `{actionType, select,
@@ -17,6 +17,7 @@ const motionsMessageDescriptors = {
       ${ColonyMotions.EmitDomainReputationRewardMotion}
         {Award {recipient} with a {reputationChangeNumeral} {reputationChange, plural, one {pt} other {pts}} reputation reward}
       ${ColonyMotions.UnlockTokenMotion} {Unlock native token {tokenSymbol}}
+      ${ColonyExtendedMotions.SafeTransactionInitiatedMotion} {{safeTransactionTitle}}
       other {Generic motion we don't have information about}
     }`,
   [`motion.${ColonyMotions.SetUserRolesMotion}.assign`]: `Assign the {roles} in {fromDomainName} to {recipient}`,
@@ -37,6 +38,11 @@ const motionsMessageDescriptors = {
       ${ColonyMotions.CreateDecisionMotion} {Decision}
       other {Generic}
     }`,
+  [`motion.type.${ColonyExtendedMotions.SafeTransactionInitiatedMotion}.rawTransaction`]: `Raw Transaction`,
+  [`motion.type.${ColonyExtendedMotions.SafeTransactionInitiatedMotion}.transferFunds`]: `Transfer Funds`,
+  [`motion.type.${ColonyExtendedMotions.SafeTransactionInitiatedMotion}.transferNft`]: `Transfer NFT`,
+  [`motion.type.${ColonyExtendedMotions.SafeTransactionInitiatedMotion}.contractInteraction`]: `Contract Interaction`,
+  [`motion.type.${ColonyExtendedMotions.SafeTransactionInitiatedMotion}.multipleTransactions`]: `Multiple Transactions`,
 };
 
 export default motionsMessageDescriptors;

@@ -42,6 +42,7 @@ function* editColonyAction({
     annotationMessage,
     verifiedAddresses,
     isWhitelistActivated,
+    colonySafes = [],
   },
   meta: { id: metaId, history },
   meta,
@@ -132,10 +133,12 @@ function* editColonyAction({
       colonyTokens,
       verifiedAddresses,
       isWhitelistActivated,
+      colonySafes,
     });
 
     /*
-     * Upload colony metadata to IPFS
+     * If metadata exists,
+     * fetch most recent metadata stored in IPFS.
      */
     colonyMetadataIpfsHash = yield call(ipfsUploadWithFallback, colonyMetadata);
 
