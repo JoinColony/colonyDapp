@@ -24,7 +24,7 @@ import { ActionTypes } from '~redux/actionTypes';
 import { Action, AllActions } from '~redux/types';
 import { putError, routeRedirect, takeFrom } from '~utils/saga/effects';
 
-import { uploadIfpsAnnotation } from '../utils';
+import { ipfsUploadAnnotation } from '../utils';
 import {
   getForeignBridgeMock,
   getHomeBridge,
@@ -43,7 +43,7 @@ function* initiateSafeTransactionAction({
     transactionsTitle: title,
     colonyAddress,
     colonyName,
-    annotationMessage,
+    annotationMessage = null,
   },
   meta: { id: metaId, history },
   meta,
@@ -194,7 +194,7 @@ function* initiateSafeTransactionAction({
      * Upload all data via annotationMessage to IPFS.
      * This is to avoid storing the data in the colony metadata.
      */
-    const annotationMessageIpfsHash = yield call(uploadIfpsAnnotation, {
+    const safeTransactionData = JSON.stringify({
       title,
       transactions,
       safeData: {
@@ -203,6 +203,10 @@ function* initiateSafeTransactionAction({
       },
       annotationMessage,
     });
+    const annotationMessageIpfsHash = yield call(
+      ipfsUploadAnnotation,
+      safeTransactionData,
+    );
 
     yield put(
       transactionAddParams(annotateInitiateSafeTx.id, [

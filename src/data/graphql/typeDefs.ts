@@ -35,7 +35,7 @@ export default gql`
     networkId: Int
   }
 
-  type SugraphEventProcessedValues {
+  type SubgraphEventProcessedValues {
     agent: String!
     who: String!
     fromPot: String!
@@ -53,6 +53,7 @@ export default gql`
     newVersion: String!
     storageSlot: String!
     storageSlotValue: String!
+    txHash: String!
   }
 
   type SubgraphEvent {
@@ -63,7 +64,7 @@ export default gql`
     args: String!
     timestamp: String!
     associatedColony: SubgraphColony!
-    processedValues: SugraphEventProcessedValues!
+    processedValues: SubgraphEventProcessedValues!
   }
 
   type SubgraphMotion {
@@ -97,6 +98,83 @@ export default gql`
     setTo: Boolean!
   }
 
+  # Type: UserProfile is being merged with a type of the
+  # same name in ColonyServer.I only want these keys.
+  type SimpleUserProfile {
+    avatarHash: String
+    displayName: String
+    username: String
+    walletAddress: String!
+  }
+
+  type SimpleUser {
+    id: String!
+    profile: SimpleUserProfile!
+  }
+
+  type NFT {
+    id: String!
+    profile: NFTProfile!
+  }
+
+  type NFTProfile {
+    displayName: String!
+    walletAddress: String!
+  }
+
+  # Note: excluding "metadata" since we're not using it and, given that it's
+  # an arbitrary object, there's no easy way to represent its type.
+  type NFTData {
+    address: String!
+    description: String
+    id: String!
+    imageUri: String
+    logoUri: String!
+    name: String
+    tokenName: String!
+    tokenSymbol: String!
+    uri: String!
+  }
+
+  union SafeBalanceToken = ERC20Token | SafeNativeToken
+
+  type ERC20Token {
+    name: String!
+    decimals: Int!
+    symbol: String!
+    logoUri: String!
+    address: String!
+  }
+
+  type SafeNativeToken {
+    name: String!
+    decimals: Int!
+    symbol: String!
+    address: String!
+    networkName: String!
+  }
+
+  type FunctionParamType {
+    name: String!
+    type: String!
+  }
+
+  type SafeTransaction {
+    transactionType: String!
+    tokenAddress: String
+    tokenData: SafeBalanceToken
+    amount: String
+    rawAmount: String
+    recipient: SimpleUser
+    data: String!
+    contract: SimpleUser
+    abi: String!
+    contractFunction: String!
+    nft: NFT
+    nftData: NFTData
+    functionParamTypes: [FunctionParamType!]
+  }
+
   type ColonyAction {
     hash: String!
     actionInitiator: String!
@@ -111,6 +189,7 @@ export default gql`
     tokenAddress: String!
     roles: [ColonyActionRoles!]!
     annotationHash: String
+    annotationMessage: String
     oldVersion: String!
     newVersion: String!
     colonyDisplayName: String!
@@ -126,7 +205,9 @@ export default gql`
     reputationChange: String!
     isWhitelistActivated: Boolean!
     verifiedAddresses: [String!]!
-    colonySafes: [ColonySafe!]!
+    safeData: SafeData
+    safeTransactions: [SafeTransaction!]!
+    transactionsTitle: String!
   }
 
   input NetworkContractsInput {
@@ -454,6 +535,11 @@ export default gql`
     contractAddress: String!
     chainId: String!
     moduleContractAddress: String!
+  }
+
+  type SafeData {
+    chainId: String!
+    contractAddress: String!
   }
 
   type ProcessedColony {

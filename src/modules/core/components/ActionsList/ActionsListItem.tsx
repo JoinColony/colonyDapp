@@ -41,6 +41,7 @@ import { useDataFetcher } from '~utils/hooks';
 import { parseColonyMetadata, parseDomainMetadata } from '~utils/colonyActions';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
+import { useFetchSafeTransactionTitle } from '~modules/dashboard/hooks/useFetchSafeTransactionData';
 import {
   getUpdatedDecodedMotionRoles,
   MotionState,
@@ -73,6 +74,10 @@ const MSG = defineMessages({
       one {comment}
       other {comments}
     }`,
+  },
+  safeTransactionInitiated: {
+    id: `ActionsList.ActionsListItem.safeTransactionInitiated`,
+    defaultMessage: 'Safe Transaction Initiated',
   },
 });
 
@@ -149,6 +154,8 @@ const ActionsListItem = ({
   if (draftData !== undefined) {
     title = draftData.title;
   }
+
+  const safeTransactionTitle = useFetchSafeTransactionTitle(metadata);
 
   const { isVotingExtensionEnabled } = useEnabledExtensions({
     colonyAddress: colony.colonyAddress,
@@ -414,6 +421,9 @@ const ActionsListItem = ({
                       <Numeral value={formattedReputationChange} />
                     ),
                     chainName: addedSafe && SAFE_NAMES_MAP[addedSafe.chainId],
+                    safeTransactionTitle:
+                      safeTransactionTitle ||
+                      formatMessage(MSG.safeTransactionInitiated),
                   }}
                 />
               )}

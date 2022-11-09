@@ -24,7 +24,7 @@ import {
   ActionUserRoles,
   AddedActions,
 } from '~types/index';
-import { ColonySafe, ParsedEvent } from '~data/index';
+import { ColonySafe, ParsedEvent, ColonyAction } from '~data/index';
 import { ProcessedEvent } from '~data/resolvers/colonyActions';
 
 import {
@@ -34,7 +34,6 @@ import {
 import ipfs from '~context/ipfsWithFallbackContext';
 import { log } from '~utils/debug';
 import { ACTION_DECISION_MOTION_CODE } from '~constants';
-import { SafeTransaction } from '~redux/types/actions/colonyActions';
 import { availableRoles } from '~dialogs/PermissionManagementDialog';
 
 import { getMotionRequiredStake, MotionState } from '../colonyMotions';
@@ -187,7 +186,7 @@ export const formatEventName = (
 ): ColonyAndExtensionsEvents =>
   rawEventName.split('(')[0] as ColonyAndExtensionsEvents;
 
-const getColonyMetadataIPFS = async (ipfsHash: string) => {
+export const getColonyMetadataIPFS = async (ipfsHash: string) => {
   /*
    * Fetch the colony's metadata
    */
@@ -566,7 +565,7 @@ const getColonyEditActionValues = async (
         colonyEditValues.verifiedAddresses =
           colonyMetadata?.verifiedAddresses || [];
         colonyEditValues.isWhitelistActivated =
-          colonyMetadata?.isWhitelistActivated;
+          colonyMetadata?.isWhitelistActivated || false;
         colonyEditValues.colonySafes = colonyMetadata?.colonySafes || [];
       }
     }
@@ -743,25 +742,31 @@ const getSafeTransactionInitiatedValues = async (
 
   const initiateSafeTransactionValues: {
     address: Address;
-    actionInitiator?: string;
-    safe: ColonySafe | null;
-    transactions: SafeTransaction[] | null;
-    transactionsTitle: string | null;
+    actionInitiator?: ColonyAction['actionInitiator'];
+    safeData: ColonyAction['safeData'];
+    safeTransactions: ColonyAction['safeTransactions'];
+    transactionsTitle: ColonyAction['transactionsTitle'];
+    annotationMessage: ColonyAction['annotationMessage'];
   } = {
     address,
-    safe: null,
-    transactions: null,
-    transactionsTitle: null,
+    safeData: null,
+    safeTransactions: [],
+    transactionsTitle: '',
+    annotationMessage: null,
   };
 
   if (ipfsMetadata) {
-    const { annotationMessage } = JSON.parse(ipfsMetadata);
-    if (annotationMessage) {
-      initiateSafeTransactionValues.safe = annotationMessage.safe;
-      initiateSafeTransactionValues.transactions =
-        annotationMessage.transactions;
-      initiateSafeTransactionValues.transactionsTitle =
-        annotationMessage.transactionsTitle;
+    const {
+      data: { annotationMsg },
+    } = JSON.parse(ipfsMetadata);
+    if (annotationMsg) {
+      const parsedAnnotation = JSON.parse(annotationMsg);
+      initiateSafeTransactionValues.safeData = parsedAnnotation.safeData;
+      initiateSafeTransactionValues.safeTransactions =
+        parsedAnnotation.transactions;
+      initiateSafeTransactionValues.transactionsTitle = parsedAnnotation.title;
+      initiateSafeTransactionValues.annotationMessage =
+        parsedAnnotation.annotationMessage || '';
     }
   }
   if (agent) {

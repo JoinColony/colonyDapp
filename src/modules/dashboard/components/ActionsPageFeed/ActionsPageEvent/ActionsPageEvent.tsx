@@ -18,7 +18,11 @@ import {
   Colony,
   useUser,
 } from '~data/index';
-import { ColonyAndExtensionsEvents, ColonyActions } from '~types/index';
+import {
+  ColonyAndExtensionsEvents,
+  ColonyActions,
+  ColonyExtendedActions,
+} from '~types/index';
 import {
   getDomainValuesCheck,
   sortMetadataHistory,
@@ -26,6 +30,7 @@ import {
   getColonyMetadataMessageDescriptorsIds,
   getDomainMetadataMessageDescriptorsIds,
   getAssignmentEventDescriptorsIds,
+  getSafeTransactionMessageDescriptorIds,
 } from '~utils/colonyActions';
 import { useDataFetcher } from '~utils/hooks';
 import { getFormattedTokenValue } from '~utils/tokens';
@@ -241,6 +246,11 @@ const ActionsPageEvent = ({
           ColonyAndExtensionsEvents.ColonyRoleSet,
           'event',
         );
+      case ColonyAndExtensionsEvents.Annotation:
+        return getSafeTransactionMessageDescriptorIds(
+          ColonyExtendedActions.SafeTransactionInitiated,
+          actionData.safeTransactions,
+        );
       case ColonyAndExtensionsEvents.ArbitraryReputationUpdate:
         return `event.${ColonyAndExtensionsEvents.ArbitraryReputationUpdate}.title`;
       default:
@@ -252,6 +262,7 @@ const ActionsPageEvent = ({
     colonyMetadataChecks,
     eventIndex,
     values,
+    actionData.safeTransactions,
   ]);
 
   const { domainPurpose, domainName, domainColor } = actionData;

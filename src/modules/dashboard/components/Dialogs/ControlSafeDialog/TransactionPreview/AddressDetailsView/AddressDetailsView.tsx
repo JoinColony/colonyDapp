@@ -4,15 +4,17 @@ import { isAddress } from 'web3-utils';
 import MaskedAddress from '~core/MaskedAddress';
 import Avatar from '~core/Avatar';
 import { AnyUser } from '~data/index';
+import { InvisibleCopyableMaskedAddress } from '~dashboard/ActionsPage/DetailsWidget/DetailsWidgetSafeTransaction/';
 
 import styles from './AddressDetailsView.css';
 
 interface Props {
   item: AnyUser;
   isSafeItem: boolean;
+  isCopyable?: boolean;
 }
 
-const AddressDetailsView = ({ item, isSafeItem }: Props) => {
+const AddressDetailsView = ({ item, isSafeItem, isCopyable }: Props) => {
   const userDisplayName = isAddress(item.profile.displayName || '')
     ? /*
        * If address entered manually, e.g. in raw transaction
@@ -22,6 +24,7 @@ const AddressDetailsView = ({ item, isSafeItem }: Props) => {
     : item.profile.displayName;
   const { username } = item.profile;
 
+  const Address = isCopyable ? InvisibleCopyableMaskedAddress : MaskedAddress;
   return (
     <div className={styles.main}>
       <Avatar
@@ -33,7 +36,7 @@ const AddressDetailsView = ({ item, isSafeItem }: Props) => {
         className={styles.avatar}
       />
       <span className={styles.name}>{userDisplayName || `@${username}`}</span>
-      <MaskedAddress address={item.profile.walletAddress} />
+      <Address address={item.profile.walletAddress} />
     </div>
   );
 };

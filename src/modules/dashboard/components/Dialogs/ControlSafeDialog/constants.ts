@@ -5,6 +5,7 @@ export enum TransactionTypes {
   TRANSFER_NFT = 'transferNft',
   CONTRACT_INTERACTION = 'contractInteraction',
   RAW_TRANSACTION = 'rawTransaction',
+  MULTIPLE_TRANSACTIONS = 'multipleTransactions',
 }
 
 export const MSG = defineMessages({
