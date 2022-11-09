@@ -3,9 +3,9 @@ import { ColonyRole } from '@colony/colony-js';
 import { ItemStatus } from '~core/ActionsList';
 import { MotionTimeoutPeriods } from '~data/generated';
 import { MotionState } from '~utils/colonyMotions';
+import { ExtendedActions } from '~utils/colonyActions';
 
 import { Address, ActionUserRoles } from './index';
-import { ColonyMotions } from './colonyMotions';
 
 export enum ColonyActions {
   Generic = 'Generic',
@@ -132,7 +132,7 @@ export enum ColonyAndExtensionsEvents {
 export interface FormattedAction {
   id: string;
   status?: ItemStatus;
-  actionType: ColonyActions | ColonyMotions;
+  actionType: ExtendedActions;
   initiator: Address;
   recipient: Address;
   amount: string;

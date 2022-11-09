@@ -115,18 +115,6 @@ export interface FixedToken {
   iconHash?: string;
 }
 
-interface ERC20Token {
-  name: string;
-  decimals: number;
-  symbol: string;
-  logoUri: string;
-  address: string;
-}
-
-type SafeNativeToken = Omit<ERC20Token, 'logoUri'> & { networkName: string };
-
-export type SafeBalanceToken = ERC20Token | SafeNativeToken;
-
 export enum ExtendedClientType {
   WrappedTokenClient = 'WrappedTokenClient',
   VestingSimpleClient = 'VestingSimpleClient',

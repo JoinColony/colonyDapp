@@ -24,6 +24,7 @@ export enum ActionPageDetails {
   Chain = 'Chain',
   SafeAddress = 'SafeAddress',
   SafeName = 'SafeName',
+  SafeTransaction = 'SafeTransaction',
 }
 
 type EventRolesMap = Partial<
@@ -163,6 +164,9 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
   [ColonyActions.EmitDomainReputationReward]: [
     ColonyAndExtensionsEvents.ArbitraryReputationUpdate,
   ],
+  [ColonyExtendedActions.SafeTransactionInitiated]: [
+    ColonyAndExtensionsEvents.Annotation,
+  ],
   [ColonyMotions.UnlockTokenMotion]: MOTION_EVENTS,
   [ColonyMotions.MintTokensMotion]: MOTION_EVENTS,
   [ColonyMotions.CreateDomainMotion]: MOTION_EVENTS,
@@ -272,6 +276,9 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.Chain,
     ActionPageDetails.SafeName,
     ActionPageDetails.SafeAddress,
+  ],
+  [ColonyExtendedActions.SafeTransactionInitiated]: [
+    ActionPageDetails.SafeTransaction,
   ],
   [ColonyMotions.MintTokensMotion]: [ActionPageDetails.Amount],
   [ColonyMotions.PaymentMotion]: [

@@ -25,7 +25,7 @@ import ManageReputationDialog from '~dialogs/ManageReputationDialog';
 import ColonyTokenManagementDialog from '~dialogs/ColonyTokenManagementDialog';
 import { SmiteDialog, AwardDialog } from '~dialogs/AwardAndSmiteDialogs';
 import ManageSafeDialog from '~dialogs/ManageSafeDialog';
-import ControlSafeDialog from '~dialogs/ControlSafeDialog';
+import ControlSafeDialog from '~dialogs/ControlSafeDialog/ControlSafeDialog';
 import RemoveSafeDialog from '~dialogs/RemoveSafeDialog';
 import AddExistingSafeDialog from '~dialogs/AddExistingSafeDialog';
 
@@ -227,7 +227,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
       props: {
         prevStep: 'dashboard.ManageSafeDialog',
         colony,
-        isVotingExtensionEnabled,
       },
     },
     {

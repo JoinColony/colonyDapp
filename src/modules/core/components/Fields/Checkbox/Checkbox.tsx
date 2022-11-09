@@ -5,18 +5,21 @@ import React, {
   useCallback,
   useMemo,
   useEffect,
+  ComponentType,
 } from 'react';
 import { MessageDescriptor } from 'react-intl';
 import { nanoid } from 'nanoid';
-import findIndex from 'lodash/findIndex';
 
 import { PopperOptions } from 'react-popper-tooltip';
 
 import InputLabel from '~core/Fields/InputLabel';
 import { Tooltip } from '~core/Popover';
-import asFieldArray from '~core/Fields/asFieldArray';
+import asFieldArray, {
+  AsFieldArrayEnhancedProps,
+} from '~core/Fields/asFieldArray';
 import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
+import { isEqual, findIndex } from '~utils/lodash';
 
 import styles from './Checkbox.css';
 
@@ -33,7 +36,7 @@ interface Props {
   /** Additional className for customizing styles */
   className?: string;
   /** Disable the input */
-  disabled: boolean;
+  disabled?: boolean;
   /** Display the element without label */
   elementOnly?: boolean;
   /** Help text (will appear next to label text) */
@@ -41,7 +44,7 @@ interface Props {
   /** Values for help text (react-intl interpolation) */
   helpValues?: SimpleMessageValues;
   /** Label text */
-  label: string | MessageDescriptor;
+  label?: string | MessageDescriptor;
   /** Values for label text (react-intl interpolation) */
   labelValues?: SimpleMessageValues;
   /** Input field name (form variable) */
@@ -50,19 +53,14 @@ interface Props {
   onChange?: Function;
   /** Just to check what is a default value of checkbox */
   getDefaultValue?: Function;
-  /** Input field value */
-  value: string;
-  showTooltipText: boolean;
+  /** Value to be added/removed from fieldArray */
+  value: any;
+  /** Tooltip text visibility */
+  showTooltipText?: boolean;
   /**  Text for the checkbox tooltip */
   tooltipText?: string;
   /** Options to pass to the underlying PopperJS element. See here for more: https://popper.js.org/docs/v2/constructors/#options. */
   tooltipPopperOptions?: PopperOptions;
-  /** @ignore injected by `asFieldArray` */
-  form: { [s: string]: any };
-  /** @ignore injected by `asFieldArray` */
-  push: (value: string) => void;
-  /** @ignore injected by `asFieldArray` */
-  remove: (value: string) => void;
   dataTest?: string;
 }
 
@@ -72,31 +70,33 @@ const Checkbox = ({
   appearance,
   children,
   className,
-  disabled,
-  elementOnly,
-  form: { values },
+  disabled = false,
+  elementOnly = false,
   help,
   helpValues,
   label,
   labelValues,
   name,
   onChange,
-  push,
-  remove,
   value,
   tooltipText,
   tooltipPopperOptions,
   dataTest,
   getDefaultValue,
   showTooltipText,
-}: Props) => {
+  /* Injected by asFieldArray */
+  form: { values },
+  push,
+  remove,
+}: AsFieldArrayEnhancedProps<Props>) => {
   const [inputId] = useState<string>(nanoid());
+  const equalsValue = useCallback((val: any) => isEqual(val, value), [value]);
 
   const handleOnChange = useCallback(
     (e: SyntheticEvent<HTMLInputElement>) => {
-      const idx = findIndex(values[name], value);
+      const idx = findIndex(values[name], equalsValue);
       if (idx >= 0) {
-        remove(idx.toString());
+        remove(idx);
       } else {
         push(value);
       }
@@ -104,10 +104,10 @@ const Checkbox = ({
         onChange({ ...e, isChecked: !(idx >= 0) });
       }
     },
-    [name, onChange, push, remove, value, values],
+    [name, onChange, push, remove, value, values, equalsValue],
   );
 
-  const isChecked = findIndex(values[name], value) >= 0;
+  const isChecked = findIndex(values[name], equalsValue) >= 0;
   const mainClasses = getMainClasses(appearance, styles, {
     isChecked,
     disabled,
@@ -184,4 +184,4 @@ Checkbox.defaultProps = {
   showTooltipText: false,
 };
 
-export default asFieldArray()(Checkbox);
+export default asFieldArray()(Checkbox) as ComponentType<Props>;

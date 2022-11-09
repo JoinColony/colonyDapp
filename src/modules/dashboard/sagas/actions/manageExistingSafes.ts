@@ -1,6 +1,7 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType } from '@colony/colony-js';
 import isEmpty from 'lodash/isEmpty';
+import { getStringForMetadataColony } from '@colony/colony-event-metadata-parser';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
@@ -15,18 +16,18 @@ import {
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 
-import { uploadIfpsAnnotation } from '../utils';
 import {
   createTransaction,
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
+
+import { ipfsUploadAnnotation, ipfsUploadWithFallback } from '../utils';
 
 function* manageExistingSafesAction({
   payload: {
@@ -126,19 +127,19 @@ function* manageExistingSafesAction({
       currentMetadataIPFSHash,
     );
 
-    const colonyMetadata = JSON.parse(currentMetadata);
+    const currentColonyMetadata = JSON.parse(currentMetadata);
 
     let updatedColonyMetadata: any = {};
 
     if (!isRemovingSafes) {
       updatedColonyMetadata = {
-        ...colonyMetadata,
-        colonySafes: colonyMetadata.colonySafes
-          ? [...colonyMetadata.colonySafes, ...safeList]
+        ...currentColonyMetadata.data,
+        colonySafes: currentColonyMetadata.colonySafes
+          ? [...currentColonyMetadata.colonySafes, ...safeList]
           : safeList,
       };
     } else {
-      const updatedColonySafes = colonyMetadata.colonySafes.filter(
+      const updatedColonySafes = currentColonyMetadata.data.colonySafes.filter(
         (safe: ColonySafe) =>
           !safeList.some(
             (removedSafe) =>
@@ -147,18 +148,19 @@ function* manageExistingSafesAction({
           ),
       );
       updatedColonyMetadata = {
-        ...colonyMetadata,
+        ...currentColonyMetadata.data,
         colonySafes: updatedColonySafes,
       };
     }
 
+    const colonyMetadata = getStringForMetadataColony(updatedColonyMetadata);
     /*
      * Upload updated metadata object to IPFS
      */
 
     const updatedColonyMetadataIpfsHash = yield call(
-      ipfsUpload,
-      JSON.stringify(updatedColonyMetadata),
+      ipfsUploadWithFallback,
+      colonyMetadata,
     );
 
     yield put(
@@ -188,7 +190,7 @@ function* manageExistingSafesAction({
        * Upload annotationMessage to IPFS
        */
       const annotationMessageIpfsHash = yield call(
-        uploadIfpsAnnotation,
+        ipfsUploadAnnotation,
         annotationMessage,
       );
 

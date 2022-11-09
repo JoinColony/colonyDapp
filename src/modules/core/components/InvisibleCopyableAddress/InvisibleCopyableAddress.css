@@ -1,3 +1,4 @@
 .addressWrapper {
   display: inline-block;
+  cursor: pointer;
 }

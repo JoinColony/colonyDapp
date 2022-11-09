@@ -14,11 +14,12 @@ import {
   FormattedAction,
   Address,
   AddedActions,
+  ColonyExtendedActions,
 } from '~types/index';
 import {
-  ColonyAction,
   ColonySafe,
-  SugraphEventProcessedValues,
+  SafeTransaction,
+  SubgraphEventProcessedValues,
 } from '~data/index';
 
 import {
@@ -26,6 +27,7 @@ import {
   ActionPageDetails,
 } from '~dashboard/ActionsPage/staticMaps';
 import { ColonyMetadataChecks } from '~modules/dashboard/hooks/useColonyMetadataChecks';
+import { TransactionTypes } from '~dashboard/Dialogs/ControlSafeDialog/constants';
 
 type DetailsValuesMap = Partial<
   {
@@ -39,11 +41,13 @@ type ValuesForActionTypesMap = Partial<
   }
 >;
 
+export type ExtendedActions = ColonyActions | ColonyMotions | AddedActions;
+
 /*
  * Get colony action details for DetailsWidget based on action type and ActionPageDetails map
  */
 export const getDetailsForAction = (
-  actionType: ColonyActions | ColonyMotions | AddedActions,
+  actionType: ExtendedActions,
 ): DetailsValuesMap => {
   const detailsForActionType = DETAILS_FOR_ACTION[actionType];
   return Object.keys(ActionPageDetails).reduce((detailsMap, detailsKey) => {
@@ -60,8 +64,8 @@ export const getDetailsForAction = (
  * Get values for action type based on action type
  */
 export const getValuesForActionType = (
-  values: SugraphEventProcessedValues,
-  actionType: ColonyActions,
+  values: SubgraphEventProcessedValues,
+  actionType: ColonyActions | AddedActions,
   colonyAddress: Address,
 ): ValuesForActionTypesMap => {
   if (Object.keys(values).length) {
@@ -131,6 +135,12 @@ export const getValuesForActionType = (
         return {
           recipient: values.user,
           reputationChange: values.amount,
+        };
+      }
+      case AddedActions.SafeTransactionInitiated: {
+        return {
+          initiator: values.agent,
+          metadata: values.metadata,
         };
       }
       default: {
@@ -207,6 +217,53 @@ export const getDomainMetadataMessageDescriptorsIds = (
     }
   }
   return `event.${ColonyAndExtensionsEvents.DomainMetadata}.fallback`;
+};
+
+export const getSafeTransactionActionType = (
+  actionType: ExtendedActions,
+  safeTransactions: SafeTransaction[],
+) => {
+  if (
+    actionType === ColonyExtendedActions.SafeTransactionInitiated &&
+    safeTransactions
+  ) {
+    if ((safeTransactions || []).length >= 2) {
+      return TransactionTypes.MULTIPLE_TRANSACTIONS;
+    }
+    const type = safeTransactions[0].transactionType;
+    return type;
+  }
+  return actionType;
+};
+
+export const getSafeTransactionMessageDescriptorIds = (
+  actionType: ExtendedActions,
+  safeTransactions?: SafeTransaction[] | null,
+) => {
+  if (
+    actionType === ColonyExtendedActions.SafeTransactionInitiated &&
+    safeTransactions
+  ) {
+    const safeTransactionActionType = getSafeTransactionActionType(
+      actionType,
+      safeTransactions,
+    );
+    switch (safeTransactionActionType) {
+      case TransactionTypes.TRANSFER_FUNDS:
+        return `event.${ColonyExtendedActions.SafeTransactionInitiated}.transferFunds`;
+      case TransactionTypes.RAW_TRANSACTION:
+        return `event.${ColonyExtendedActions.SafeTransactionInitiated}.rawTransaction`;
+      case TransactionTypes.TRANSFER_NFT:
+        return `event.${ColonyExtendedActions.SafeTransactionInitiated}.transferNFT`;
+      case TransactionTypes.CONTRACT_INTERACTION:
+        return `event.${ColonyExtendedActions.SafeTransactionInitiated}.contractInteraction`;
+      case TransactionTypes.MULTIPLE_TRANSACTIONS:
+        return `event.${ColonyExtendedActions.SafeTransactionInitiated}.multipleTransactions`;
+      default:
+        return `event.${ColonyExtendedActions.SafeTransactionInitiated}.fallback`;
+    }
+  }
+  return `event.${ColonyExtendedActions.SafeTransactionInitiated}.fallback`;
 };
 
 export const getAssignmentEventDescriptorsIds = (
@@ -356,7 +413,14 @@ export const getColonyValuesCheck = (
     verifiedAddresses: currentVerifiedAddresses,
     isWhitelistActivated: currentIsWhitelistActivated,
     colonySafes: currentColonySafes = [],
-  }: Partial<ColonyAction> | ColonyMetadata,
+  }: {
+    colonyDisplayName?: string | null;
+    colonyAvatarHash?: string | null;
+    colonyTokens?: string[] | null;
+    verifiedAddresses?: string[] | null;
+    isWhitelistActivated?: boolean | null;
+    colonySafes?: ColonySafe[];
+  },
   {
     colonyDisplayName: prevColonyDisplayName,
     colonyAvatarHash: prevColonyAvatarHash,
@@ -399,16 +463,16 @@ export const getColonyValuesCheck = (
           )
         : null;
     const removedSafes =
-    (currentColonySafes || []).length < (prevColonySafes || []).length
-      ? (prevColonySafes || []).filter(
-          (safe) =>
-            !(currentColonySafes || []).some(
-              ({ contractAddress, chainId }) =>
-                contractAddress === safe.contractAddress &&
-                chainId === safe.chainId,
-            ),
-        )
-      : [];
+      (currentColonySafes || []).length < (prevColonySafes || []).length
+        ? (prevColonySafes || []).filter(
+            (safe) =>
+              !(currentColonySafes || []).some(
+                ({ contractAddress, chainId }) =>
+                  contractAddress === safe.contractAddress &&
+                  chainId === safe.chainId,
+              ),
+          )
+        : [];
     return {
       nameChanged,
       logoChanged,

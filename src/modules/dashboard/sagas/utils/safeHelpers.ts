@@ -5,13 +5,19 @@ import abis from '@colony/colony-js/lib-esm/abis';
 import moveDecimal from 'move-decimal-point';
 import { AddressZero } from 'ethers/constants';
 
-import { SafeTransaction } from '~dashboard/Dialogs/ControlSafeDialog/ControlSafeDialog';
-import { ColonySafe } from '~data/index';
+import { ColonySafe, SafeTransaction } from '~data/index';
 import { Address, ModuleAddress } from '~types/index';
 import { GNOSIS_AMB_BRIDGES, SAFE_NETWORKS } from '~constants';
 import { getArrayFromString } from '~utils/safes';
 
 import { erc721 } from './abis'; // Temporary
+
+export interface SafeTxData {
+  title: string;
+  transactions: SafeTransaction[];
+  safeData: Omit<ColonySafe, 'safeName' | 'moduleContractAddress'>;
+  annotationMessage?: string;
+}
 
 export interface SelectedSafe {
   id: ModuleAddress; // Making explicit that this is the module address
@@ -239,15 +245,16 @@ export const getTransferNFTData = (
     throw new Error('Transaction does not contain a recipient.');
   }
 
+  // If this function is called, nftData will be defined.
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const nftData = transaction.nftData!;
   const safeAddress = onLocalDevEnvironment
     ? LOCAL_SAFE_ADDRESS
     : safe.contractAddress;
-  const tokenId = onLocalDevEnvironment
-    ? LOCAL_TOKEN_ID
-    : Number(transaction.nftData.id);
+  const tokenId = onLocalDevEnvironment ? LOCAL_TOKEN_ID : Number(nftData.id);
   const erc721Address = onLocalDevEnvironment
     ? LOCAL_ERC721_ADDRESS
-    : transaction.nftData.address;
+    : nftData.address;
 
   if (!safeAddress) {
     throw new Error('LOCAL_SAFE_ADDRESS not set in .env.');
