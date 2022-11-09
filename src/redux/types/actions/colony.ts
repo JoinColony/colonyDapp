@@ -1,3 +1,4 @@
+import { ColonySafe } from '~data/generated';
 import { ActionTypes } from '~redux/index';
 import { Address, WithKey } from '~types/index';
 import {
@@ -96,6 +97,7 @@ export type ColonyActionTypes =
         annotationMessage?: string;
         colonyName: string;
         isWhitelistActivated: boolean;
+        colonySafes: ColonySafe[];
       },
       MetaWithHistory<object>
     >

@@ -31,8 +31,6 @@ const actionsMessageDescriptors = {
       ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite {recipient} with a {reputationChangeNumeral} {reputationChange, plural, one {pt} other {pts}} reputation penalty}
       ${ColonyActions.EmitDomainReputationReward} {Award {recipient} with a {reputationChangeNumeral} {reputationChange, plural, one {pt} other {pts}} reputation reward}
       ${ColonyMotions.EmitDomainReputationRewardMotion} {Award {recipient} with a {reputationChangeNumeral} {reputationChange, plural, one {pt} other {pts}} reputation reward}
-      ${ColonyExtendedActions.AddressBookUpdated} {Address book was updated}
-      ${ColonyExtendedActions.TokensUpdated} {Colony tokens were updated}
       ${ColonyExtendedActions.SafeRemoved} {Remove Safe}
       ${ColonyExtendedActions.SafeAdded} {Add Safe from {chainName}}
       ${ColonyExtendedActions.SafeTransactionInitiated} {{safeTransactionTitle}}
@@ -46,6 +44,8 @@ const actionsMessageDescriptors = {
   [`action.${ColonyMotions.SetUserRolesMotion}.remove`]: `Remove the {roles} in {fromDomain} from {recipient}`,
   [`action.${ColonyActions.SetUserRoles}.assignAndRemove`]: `{roles} in {fromDomain} to/from {recipient}`,
   [`action.${ColonyMotions.SetUserRolesMotion}.assignAndRemove`]: `{roles} in {fromDomain} to/from {recipient}`,
+  [`action.${ColonyActions.ColonyEdit}.verifiedAddresses`]: `Address book was updated`,
+  [`action.${ColonyActions.ColonyEdit}.tokens`]: `Colony tokens were updated`,
   'action.type': `{actionType, select,
       ${ColonyActions.WrongColony} {Not part of the Colony}
       ${ColonyActions.Payment} {Payment}
