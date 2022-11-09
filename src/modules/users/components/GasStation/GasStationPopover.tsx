@@ -30,7 +30,7 @@ const GasStationPopover = ({
   transactionAndMessageGroups,
 }: Props) => {
   const [isOpen, setOpen] = useState(false);
-  const [useCloseDelay, setUseCloseDelay] = useState(false);
+  const [hasCloseDelay, setHasCloseDelay] = useState(false);
   const [txNeedsSigning, setTxNeedsSigning] = useState(false);
   const [groupStatus, setGroupStatus] = useState(TRANSACTION_STATUSES.READY);
 
@@ -58,9 +58,9 @@ const GasStationPopover = ({
 
   useEffect(() => {
     if (groupStatus === TRANSACTION_STATUSES.SUCCEEDED) {
-      setUseCloseDelay(true);
+      setHasCloseDelay(true);
     } else {
-      setUseCloseDelay(false);
+      setHasCloseDelay(false);
     }
   }, [groupStatus]);
 
@@ -96,11 +96,11 @@ const GasStationPopover = ({
       showArrow={false}
       isOpen={isOpen}
       closeDelay={3000}
-      closeAfterDelay={useCloseDelay}
+      closeAfterDelay={hasCloseDelay}
       onClose={() => {
         setOpen(false);
         setTxNeedsSigning(false);
-        setUseCloseDelay(false);
+        setHasCloseDelay(false);
       }}
       popperOptions={{
         modifiers: [
