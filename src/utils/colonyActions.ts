@@ -337,8 +337,6 @@ export const parseColonyMetadata = (jsonMetadata: string): ColonyMetadata => {
         metadata.verifiedAddresses = colonyMetadata?.verifiedAddresses || [];
         metadata.isWhitelistActivated =
           colonyMetadata?.isWhitelistActivated || false;
-        // @TODO: Add colonySafes to ColonyMetadata
-        // @ts-ignore
         metadata.colonySafes = colonyMetadata?.colonySafes || [];
       }
     }
