@@ -13,7 +13,6 @@ import { Resolvers } from '@apollo/client';
 import { Context } from '~context/index';
 import { createAddress } from '~utils/web3';
 import {
-  getAnnotationFromSubgraph,
   getMotionActionType,
   getMotionState,
   parseSubgraphEvent,
@@ -1317,10 +1316,13 @@ export const motionsResolvers = ({
         );
 
         if (safeTxMetadata) {
-          const { annotationMessage: safeTransactionData } = safeTxMetadata;
-          if (safeTransactionData) {
+          const {
+            data: { annotationMsg },
+          } = safeTxMetadata;
+          if (annotationMsg) {
+            const parsedAnnotation = JSON.parse(annotationMsg);
             return {
-              transactionTitle: safeTransactionData.title,
+              transactionTitle: parsedAnnotation.title,
             };
           }
         }

@@ -90,6 +90,7 @@ export type ColonyActionsActionTypes =
         verifiedAddresses?: Address[];
         annotationMessage?: string;
         isWhitelistActivated?: boolean;
+        colonySafes?: ColonySafe[];
         /*
          * @TODO I think this will also store the subscribed-to tokens list
          */

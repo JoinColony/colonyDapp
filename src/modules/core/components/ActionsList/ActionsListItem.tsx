@@ -171,7 +171,11 @@ const ActionsListItem = ({
 
   const colonyObject = parseColonyMetadata(metadataJSON);
 
-  const { verifiedAddressesChanged, tokensChanged, addedSafe } = useColonyMetadataChecks(
+  const {
+    verifiedAddressesChanged,
+    tokensChanged,
+    addedSafe,
+  } = useColonyMetadataChecks(
     actionType,
     colony,
     transactionHash,

@@ -30,8 +30,8 @@ import { getColonyManager } from '~modules/core/sagas/utils';
 import { ActionTypes } from '~redux/actionTypes';
 import { Action, AllActions } from '~redux/types';
 import { putError, routeRedirect, takeFrom } from '~utils/saga/effects';
+import { ipfsUploadAnnotation } from '../utils';
 
-import { uploadIfpsAnnotation } from '../utils';
 import {
   getHomeBridge,
   getRawTransactionData,
@@ -226,7 +226,7 @@ function* initiateSafeTransactionMotion({
 
     yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
-    const ipfsDataObject = {
+    const safeTransactionData = {
       title,
       transactions,
       safeData: {
@@ -235,14 +235,14 @@ function* initiateSafeTransactionMotion({
       },
       annotationMessage,
     };
-
+    const annotationObject = JSON.stringify(safeTransactionData);
     /*
      * Upload all data via annotationMessage to IPFS.
      * This is to avoid storing the data in the colony metadata.
      */
     const annotationMessageIpfsHash = yield call(
-      uploadIfpsAnnotation,
-      ipfsDataObject,
+      ipfsUploadAnnotation,
+      annotationObject,
     );
 
     yield put(transactionPending(annotateInitiateSafeTransactionMotion.id));
@@ -281,7 +281,7 @@ function* initiateSafeTransactionMotion({
       yield routeRedirect(
         `/colony/${colonyName}/tx/${txHash}`,
         history,
-        ipfsDataObject,
+        safeTransactionData,
       );
     }
   } catch (error) {
