@@ -92,18 +92,19 @@ const ChangedStreaming = ({
         );
       })}
       {changed.fundingSources?.map((fundingSource, idx) => {
-        const oldFundingSource = oldValues.streaming.fundingSources.find(
+        const oldFundingSource = oldValues?.streaming?.fundingSources?.find(
           (fundingSourceItem) => fundingSourceItem.id === fundingSource.id,
         );
 
         // check if only limit has been changed (it changes when endDate is changing from 'limit-is-reached',
         // but we don't want to show this change)
-        const noChanges = !hasChanges(
-          fundingSource,
-          oldFundingSource,
-          newValues.value?.['endDate']?.option ||
-            oldValues.streaming.endDate.option,
-        );
+        const noChanges = !hasChanges({
+          newValue: fundingSource,
+          oldValue: oldFundingSource,
+          endDate:
+            newValues.value?.['endDate']?.option ||
+            oldValues?.streaming?.endDate?.option,
+        });
 
         if (noChanges) {
           return null;

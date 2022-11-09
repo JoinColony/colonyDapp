@@ -9,7 +9,12 @@ import { LoggedInUser } from '~data/generated';
 import { Staged as StagedType } from '~dashboard/ExpenditurePage/Staged/types';
 import { Split as SplitType } from '~dashboard/ExpenditurePage/Split/types';
 import { Batch as BatchType } from '~dashboard/ExpenditurePage/Batch/types';
-import { Streaming as StreamingType } from '~dashboard/ExpenditurePage/Streaming/types';
+import {
+  FundingSource,
+  Rate,
+  Streaming as StreamingType,
+} from '~dashboard/ExpenditurePage/Streaming/types';
+import { DatePickerFieldValue } from '~core/Fields/DatePicker/DatePicker';
 
 export enum ExpenditureTypes {
   Advanced = 'multiple',
@@ -41,6 +46,10 @@ export interface ValuesType {
   staged?: StagedType;
   batch?: BatchType;
   streaming?: StreamingType;
+  fundingSources?: FundingSource;
+  rates?: Partial<Rate>;
+  amount?: { value?: number; tokenAddress?: string };
+  date?: DatePickerFieldValue;
 }
 
 export interface StageObject {
