@@ -122,7 +122,7 @@ export const getProcessedColony = async (
   let safes: Array<{
     safeName: string;
     contractAddress: string;
-    chainId: number;
+    chainId: string;
   }> = [];
 
   const sortedMetadataHistory = sortMetadataHistory(metadataHistory);
@@ -183,8 +183,6 @@ export const getProcessedColony = async (
         if (colonyMetadata?.isWhitelistActivated) {
           whitelistActivated = colonyMetadata.isWhitelistActivated;
         }
-        // @TODO: Add colonySafes to ColonyMetadata
-        // @ts-ignore
         safes = colonyMetadata?.colonySafes || [];
       }
 
