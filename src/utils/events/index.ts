@@ -566,6 +566,8 @@ const getColonyEditActionValues = async (
           colonyMetadata?.verifiedAddresses || [];
         colonyEditValues.isWhitelistActivated =
           colonyMetadata?.isWhitelistActivated || false;
+        // @TODO: Add colonySafes to ColonyMetadata
+        // @ts-ignore
         colonyEditValues.colonySafes = colonyMetadata?.colonySafes || [];
       }
     }
