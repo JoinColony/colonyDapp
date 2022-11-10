@@ -152,6 +152,7 @@ const ManageWhitelistDialog = ({
             colonyTokens: (
               colonyData?.processedColony?.tokenAddresses || tokenAddresses
             ).filter((tokenAddress) => tokenAddress !== nativeTokenAddress),
+            colonySafes: colonyData?.processedColony?.safes,
           };
         },
       ),

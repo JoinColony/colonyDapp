@@ -38,6 +38,7 @@ function* manageVerifiedRecipients({
     colonyTokens = [],
     annotationMessage,
     isWhitelistActivated,
+    colonySafes = [],
   },
   meta: { id: metaId, history },
   meta,
@@ -118,6 +119,7 @@ function* manageVerifiedRecipients({
         verifiedAddresses,
         colonyTokens,
         isWhitelistActivated,
+        colonySafes,
       }),
     );
 

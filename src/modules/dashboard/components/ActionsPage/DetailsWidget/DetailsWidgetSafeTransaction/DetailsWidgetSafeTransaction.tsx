@@ -14,12 +14,17 @@ import {
 import {
   ContractName,
   ContractSection,
-  FunctionsSection,
   nftMSG,
   Recipient,
   Title,
   Value,
 } from '../DetailsWidgetSafeTransaction';
+/*
+  @NOTE: For some reason, this import and a few others have started crashing the Dapp
+  when they were working preflecty fine before. 
+  The solution for now has been to be really specific with the route. 
+*/
+import FunctionsSection from '../DetailsWidgetSafeTransaction/components/FunctionsSection';
 
 import widgetStyles from '../DetailsWidget.css';
 import styles from './DetailsWidgetSafeTransaction.css';
