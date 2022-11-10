@@ -12,7 +12,7 @@ import ChangeItem from '../ChangeItem';
 import { NewValueType } from '../types';
 
 import ChangedFundingSource from './ChangedFundingSource';
-import { hasChanges, isStreamingPaymentType } from './utils';
+import { fundingSourceWasChanged, isStreamingPaymentType } from './utils';
 import styles from './ChangedStreaming.css';
 
 export const MSG = defineMessages({
@@ -96,9 +96,10 @@ const ChangedStreaming = ({
           (fundingSourceItem) => fundingSourceItem.id === fundingSource.id,
         );
 
-        // check if only limit has been changed (it changes when endDate is changing from 'limit-is-reached',
-        // but we don't want to show this change)
-        const noChanges = !hasChanges({
+        // checking if only limit has been changed
+        // (limit is set to 0 when endDate is changing to optin other than 'limit-is-reached'),
+        // but we don't want to show this change
+        const noChanges = !fundingSourceWasChanged({
           newValue: fundingSource,
           oldValue: oldFundingSource,
           endDate:

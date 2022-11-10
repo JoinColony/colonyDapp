@@ -4,7 +4,10 @@ import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Icon from '~core/Icon';
-import { FundingSource } from '~dashboard/ExpenditurePage/Streaming/types';
+import {
+  FundingSource,
+  Rate,
+} from '~dashboard/ExpenditurePage/Streaming/types';
 import { Colony } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/types';
 
@@ -15,6 +18,7 @@ import NewRate from '../../NewRate';
 import ChangeRate from '../ChangedRate/ChangeRate';
 import { skip } from '../ChangedStreaming';
 import NewTeam from '../NewTeam';
+import { findRemovedRates } from '../utils';
 
 import styles from './ChangedFundingSource.css';
 
@@ -57,12 +61,10 @@ const ChangedFundingSource = ({
   );
 
   // we have to find rates that have been removed
-  const removedRates = fundingSource?.removed
-    ? undefined
-    : oldFundingSource?.rates.filter(
-        (oldItem) =>
-          !fundingSource?.rates?.find((rate) => rate.id === oldItem.id),
-      );
+  const removedRates = findRemovedRates({
+    newFundingSource: fundingSource,
+    oldFundingSource,
+  });
 
   return (
     <>
@@ -91,7 +93,7 @@ const ChangedFundingSource = ({
         if (key === 'rates') {
           return (
             <ChangeRate
-              rates={value as any}
+              rates={value as Rate[]}
               oldRates={oldFundingSource?.rates}
               colony={colony}
             />
