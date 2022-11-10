@@ -86,6 +86,13 @@
   transition: fill 200ms ease-in-out;
 }
 
+.gridContainer {
+  display: grid;
+  padding: 12px 0 13px;
+  border-bottom: 1px solid var(--grey-blue-0);
+  grid-template-columns: 1fr max-content;
+}
+
 .label {
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
@@ -125,7 +132,8 @@
   width: 18px;
 }
 
-.borderBottom {
+.border {
+  margin: 12px 0;
   border-bottom: 1px solid var(--grey-blue-0);
 }
 
@@ -147,10 +155,6 @@
 .valueWrapper {
   display: flex;
   flex-direction: column;
-}
-
-.alignStart {
-  align-items: flex-start;
 }
 
 .cancelled > span {
