@@ -11,6 +11,8 @@ import { Tooltip } from '~core/Popover';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import { Colony } from '~data/index';
 import { Rate } from '~dashboard/ExpenditurePage/Streaming/types';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import Numeral from '~core/Numeral';
 
 import {
   Motion,
@@ -274,14 +276,10 @@ const StreamingStagesLocked = ({
           </div>
         </div>
       </FormSection>
-      <div
-        className={classNames(styles.stagesRow, {
-          [styles.alignStart]: paidToDate && paidToDate.length > 1,
-        })}
-      >
-        <span className={styles.label}>
+      <div className={styles.gridContainer}>
+        <div className={styles.label}>
           <FormattedMessage {...MSG.paidToDate} />
-        </span>
+        </div>
         <div className={styles.valueWrapper}>
           {(status === Status.StartedStream || isCancelled) && paidToDate ? (
             paidToDate.map((paidToDateItem) => {
@@ -305,7 +303,12 @@ const StreamingStagesLocked = ({
                           name={token?.name || token?.address}
                         />
                       ),
-                      amount: paidToDateItem?.amount,
+                      amount: paidToDateItem.amount && (
+                        <Numeral
+                          unit={getTokenDecimalsWithFallback(0)} // 0 is a mock
+                          value={paidToDateItem.amount}
+                        />
+                      ),
                       token: token?.symbol,
                     }}
                   />
@@ -316,55 +319,54 @@ const StreamingStagesLocked = ({
             <FormattedMessage {...MSG.notStarted} />
           )}
         </div>
-      </div>
-      {activeStageId === Stage.Released &&
-        availableToClaim &&
-        (status === Status.StartedStream || isCancelled) && (
-          <FormSection appearance={{ border: 'top' }}>
-            <div
-              className={classNames(styles.stagesRow, styles.borderBottom, {
-                [styles.alignStart]: availableToClaim?.length > 1,
-              })}
-            >
-              <span className={styles.label}>
-                <FormattedMessage {...MSG.availableToClaim} />
-              </span>
-              <div className={styles.valueWrapper}>
-                {availableToClaim.map((availableItem) => {
-                  const token = colony?.tokens?.find(
-                    (tokenItem) => tokenItem.address === availableItem.token,
-                  );
-                  if (!token) {
-                    return null;
-                  }
-
-                  if (!token) {
-                    return null;
-                  }
-
-                  return (
-                    <span className={styles.value} key={availableItem.id}>
-                      <FormattedMessage
-                        {...MSG.paidValue}
-                        values={{
-                          icon: token && (
-                            <TokenIcon
-                              className={styles.tokenIcon}
-                              token={token}
-                              name={token?.name || token?.address}
-                            />
-                          ),
-                          amount: availableItem.amount,
-                          token: token?.symbol,
-                        }}
-                      />
-                    </span>
-                  );
-                })}
-              </div>
+        <hr className={styles.border} />
+        <hr className={styles.border} />
+        {activeStageId === Stage.Released && availableToClaim && (
+          <>
+            <div className={styles.label}>
+              <FormattedMessage {...MSG.availableToClaim} />
             </div>
-          </FormSection>
+            <div className={styles.valueWrapper}>
+              {availableToClaim.map((availableItem) => {
+                const token = colony?.tokens?.find(
+                  (tokenItem) => tokenItem.address === availableItem.token,
+                );
+                if (!token) {
+                  return null;
+                }
+
+                if (!token) {
+                  return null;
+                }
+
+                return (
+                  <span className={styles.value} key={availableItem.id}>
+                    <FormattedMessage
+                      {...MSG.paidValue}
+                      values={{
+                        icon: token && (
+                          <TokenIcon
+                            className={styles.tokenIcon}
+                            token={token}
+                            name={token?.name || token?.address}
+                          />
+                        ),
+                        amount: availableItem.amount && (
+                          <Numeral
+                            unit={getTokenDecimalsWithFallback(0)} // 0 is a mock
+                            value={availableItem.amount}
+                          />
+                        ),
+                        token: token?.symbol,
+                      }}
+                    />
+                  </span>
+                );
+              })}
+            </div>
+          </>
         )}
+      </div>
     </div>
   );
 };
