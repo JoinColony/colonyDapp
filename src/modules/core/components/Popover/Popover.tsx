@@ -54,6 +54,10 @@ interface Props {
   onClose?: (data?: any, modifiers?: { cancelled: boolean }) => void;
   /** Delay opening of popover for `openDelay` ms */
   openDelay?: number;
+  /** Delay closing of popover for `closeDelay` ms */
+  closeDelay?: number;
+  /** Should close popover after delay */
+  closeAfterDelay?: boolean;
   /** Popover placement */
   placement?: Placement;
   /** Options to pass to the underlying PopperJS element. See here for more: https://popper.js.org/docs/v2/constructors/#options. */
@@ -87,6 +91,8 @@ const Popover = ({
   isOpen: isOpenProp = false,
   onClose,
   openDelay,
+  closeDelay,
+  closeAfterDelay,
   placement: placementProp = 'auto',
   popperOptions = {},
   retainRefFocus,
@@ -94,14 +100,15 @@ const Popover = ({
   trigger = 'click',
 }: Props) => {
   // Use dangle to encourage use of callbackFn for setting state
-  const [isOpen, _setIsOpen] = useState<boolean>(isOpenProp);
+  const [isOpen, setIsOpen] = useState<boolean>(isOpenProp);
   const [referenceElement, setReferenceElement] = useState<Element | null>(
     null,
   );
   const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
   const [arrowElement, setArrowElement] = useState<HTMLElement | null>(null);
 
-  const openTimeoutRef = useRef<number>();
+  const openTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
   const { current: elementId } = useRef<string>(nanoid());
 
   const { attributes, styles, state } = usePopper(
@@ -116,30 +123,43 @@ const Popover = ({
 
   const lastIsOpenProp = usePrevious(isOpenProp);
 
+  const close = useCallback(
+    (data?: any, modifiers?: { cancelled: boolean }) => {
+      if (openTimeoutRef.current) {
+        clearTimeout(openTimeoutRef.current);
+      }
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+      }
+      setIsOpen(false);
+      if (typeof onClose == 'function') {
+        onClose(data, modifiers);
+      }
+    },
+    [onClose],
+  );
+
+  useEffect(() => {
+    if (closeAfterDelay) {
+      closeTimeoutRef.current = setTimeout(() => {
+        close();
+      }, (closeDelay || 0) + (openDelay || 0));
+    }
+  }, [close, openDelay, closeDelay, closeAfterDelay]);
+
   const requestOpen = useCallback(() => {
     if (isOpen) {
       return;
     }
-    if (openDelay && window) {
-      openTimeoutRef.current = window.setTimeout(() => {
-        _setIsOpen(true);
+
+    if (openDelay) {
+      openTimeoutRef.current = setTimeout(() => {
+        setIsOpen(true);
       }, openDelay);
       return;
     }
-    _setIsOpen(true);
+    setIsOpen(true);
   }, [isOpen, openDelay]);
-
-  const close = useCallback(
-    (data?: any, modifiers?: { cancelled: boolean }) => {
-      if (window) {
-        window.clearTimeout(openTimeoutRef.current);
-      }
-      if (!isOpen) return;
-      _setIsOpen(false);
-      if (typeof onClose == 'function') onClose(data, modifiers);
-    },
-    [isOpen, onClose],
-  );
 
   const handleWrapperFocus = useCallback(() => {
     if (retainRefFocus && referenceElement instanceof HTMLInputElement) {
@@ -246,19 +266,9 @@ const Popover = ({
       } else {
         close();
       }
-      _setIsOpen(!!isOpenProp);
+      setIsOpen(!!isOpenProp);
     }
   }, [close, isOpen, isOpenProp, lastIsOpenProp, requestOpen]);
-
-  // Timeouts
-  useEffect(() => {
-    const currentOpenTimeoutRef = openTimeoutRef && openTimeoutRef.current;
-    return () => {
-      if (window && currentOpenTimeoutRef) {
-        window.clearTimeout(currentOpenTimeoutRef);
-      }
-    };
-  }, []);
 
   return (
     <>
