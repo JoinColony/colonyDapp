@@ -1272,8 +1272,8 @@ const getSafeTransactionInitiatedMotionValues = async (
     apolloClient,
   );
 
-  const ipfsMetadata = JSON.parse(
-    await getColonyMetadataIPFS(annotation?.values?.metadata),
+  const ipfsMetadata = await getColonyMetadataIPFS(
+    annotation?.values?.metadata,
   );
 
   const initiateSafeTransactionValues: Partial<MotionValues> & {
@@ -1296,7 +1296,7 @@ const getSafeTransactionInitiatedMotionValues = async (
     // We storing the safeTxData in the annotation message to avoid storing in colony metadata
     const {
       data: { annotationMsg },
-    } = ipfsMetadata;
+    } = JSON.parse(ipfsMetadata);
     const safeTxData = JSON.parse(annotationMsg || '[]');
     if (safeTxData) {
       initiateSafeTransactionValues.safeData = safeTxData.safeData;
