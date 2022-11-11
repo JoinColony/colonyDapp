@@ -1310,20 +1310,21 @@ export const motionsResolvers = ({
           apolloClient,
         );
 
-        const safeTxMetadata = JSON.parse(
-          (await getColonyMetadataIPFS(annotation?.values?.metadata || '')) ||
-            '[]',
-        );
+        if (annotation) {
+          const safeTxMetadata = await getColonyMetadataIPFS(
+            annotation.values?.metadata,
+          );
 
-        if (safeTxMetadata) {
-          const {
-            data: { annotationMsg },
-          } = safeTxMetadata;
-          if (annotationMsg) {
-            const parsedAnnotation = JSON.parse(annotationMsg);
-            return {
-              transactionTitle: parsedAnnotation.title,
-            };
+          if (safeTxMetadata) {
+            const {
+              data: { annotationMsg },
+            } = JSON.parse(safeTxMetadata);
+            if (annotationMsg) {
+              const parsedAnnotation = JSON.parse(annotationMsg);
+              return {
+                transactionTitle: parsedAnnotation.title,
+              };
+            }
           }
         }
         return {
