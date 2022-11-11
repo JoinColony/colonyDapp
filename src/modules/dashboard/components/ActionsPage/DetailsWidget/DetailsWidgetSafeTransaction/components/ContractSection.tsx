@@ -28,7 +28,7 @@ const MSG = defineMessage({
   },
   unknownContract: {
     id: `dashboard.ActionsPage.DetailsWidget.DetailsWidgetSafeTransaction.ContractSection.unknownContract`,
-    defaultMessage: 'Unknown contract',
+    defaultMessage: 'Unknown',
   },
   contractAddress: {
     id: `dashboard.ActionsPage.DetailsWidget.DetailsWidgetSafeTransaction.ContractSection.contractAddress`,
