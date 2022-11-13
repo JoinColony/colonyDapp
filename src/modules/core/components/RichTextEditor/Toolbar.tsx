@@ -26,8 +26,7 @@ enum ICONS {
   droplet = 'droplet',
 }
 
-// @ts-ignore. userAgentData does exist on the Navigator object, contrary to TS's assertion
-const OS = window.navigator.userAgentData.platform;
+const OS = window.navigator.userAgentData?.platform;
 const ctrl = OS === 'macOS' ? 'Cmd' : 'Ctrl';
 
 export const toolbarActions = (editor: Editor) => [
