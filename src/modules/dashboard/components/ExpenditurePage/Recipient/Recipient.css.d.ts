@@ -1,4 +1,3 @@
-export const buttonMargin: string;
 export const singleUserContainer: string;
 export const formContainer: string;
 export const marginBottom: string;
@@ -14,3 +13,4 @@ export const questionIcon: string;
 export const tooltip: string;
 export const tooltipDescription: string;
 export const error: string;
+export const labelWrapper: string;
