@@ -5,7 +5,7 @@ import { nanoid } from 'nanoid';
 import { FormikProps } from 'formik';
 
 import { DialogSection } from '~core/Dialog';
-import { Annotations, Input, Toggle } from '~core/Fields';
+import { Annotations, Input, ForceToggle } from '~core/Fields';
 import Heading from '~core/Heading';
 import Numeral from '~core/Numeral';
 import TokenIcon from '~dashboard/HookedTokenIcon';
@@ -300,11 +300,7 @@ const SafeTransactionPreview = ({
             />
           )}
           {userHasPermission && isVotingExtensionEnabled && (
-            <Toggle
-              label={{ id: 'label.force' }}
-              name="forceAction"
-              disabled={isSubmitting}
-            />
+            <ForceToggle disabled={isSubmitting} />
           )}
         </div>
       </DialogSection>

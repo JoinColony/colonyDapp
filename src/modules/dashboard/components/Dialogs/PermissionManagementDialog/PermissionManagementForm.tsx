@@ -8,12 +8,11 @@ import {
 import sortBy from 'lodash/sortBy';
 import { FormikProps } from 'formik';
 
-import { InputLabel, Select, Annotations } from '~core/Fields';
+import { InputLabel, Select, Annotations, ForceToggle } from '~core/Fields';
 import { DialogSection } from '~core/Dialog';
 import Heading from '~core/Heading';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
-import ForceToggle from '~core/Fields/ForceToggle';
 import { ItemDataType } from '~core/OmniPicker';
 
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
