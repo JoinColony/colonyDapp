@@ -10,7 +10,7 @@ import AvatarUploader from '~core/AvatarUploader';
 import Button from '~core/Button';
 import { ActionDialogProps } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
-import { Annotations, Input } from '~core/Fields';
+import { Annotations, Input, ForceToggle } from '~core/Fields';
 import { DefaultPlaceholder } from '~core/FileUpload';
 import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
@@ -18,7 +18,6 @@ import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 import ColonyAvatar from '~core/ColonyAvatar';
 import InputStatus from '~core/Fields/InputStatus';
-import ForceToggle from '~core/Fields/ForceToggle';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
