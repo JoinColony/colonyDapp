@@ -12,7 +12,7 @@ import { Batch as BatchType } from '~dashboard/ExpenditurePage/Batch/types';
 import { Streaming as StreamingType } from '~dashboard/ExpenditurePage/Streaming/types';
 
 export enum ExpenditureTypes {
-  Advanced = 'advanced',
+  Advanced = 'multiple',
   Split = 'split',
   Staged = 'staged',
   Batch = 'batch',
