@@ -27,3 +27,4 @@ export const buttonsRow: string;
 export const stagesMsg: string;
 export const slideIn: string;
 export const stagesMsgText: string;
+export const error: string;

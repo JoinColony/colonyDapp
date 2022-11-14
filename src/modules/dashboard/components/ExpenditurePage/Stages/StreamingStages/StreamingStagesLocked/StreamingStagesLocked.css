@@ -207,3 +207,7 @@
 .stagesMsgText {
   color: var(--pink);
 }
+
+.error {
+  color: var(--pink);
+}

@@ -214,8 +214,8 @@ const ExpenditurePage = ({ match }: Props) => {
   const handleSubmit = useCallback(
     (values) => {
       setShouldValidate(true);
-      if (!activeStateId && values.expenditure !== ExpenditureTypes.Streaming) {
-        setActiveStateId(Stage.Draft);
+      if (!activeStageId && values.expenditure !== ExpenditureTypes.Streaming) {
+        setActiveStageId(Stage.Draft);
       }
 
       if (values.expenditure === ExpenditureTypes.Streaming) {

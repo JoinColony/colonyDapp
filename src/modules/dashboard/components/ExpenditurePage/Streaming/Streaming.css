@@ -100,3 +100,13 @@
 .editIcon:hover {
   cursor: pointer;
 }
+
+.titleRow {
+  display: flex;
+  justify-content: space-between;
+  column-gap: 8px;
+}
+
+.titleRow > section {
+  width: 100%;
+}

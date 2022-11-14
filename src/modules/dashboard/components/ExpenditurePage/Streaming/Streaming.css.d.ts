@@ -15,3 +15,4 @@ export const rate: string;
 export const marginLeft: string;
 export const wrapper: string;
 export const editIcon: string;
+export const titleRow: string;

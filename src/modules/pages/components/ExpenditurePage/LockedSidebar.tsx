@@ -4,7 +4,6 @@ import EndDate from '~dashboard/Dialogs/StartStreamDialog/StreamingDetails/EndDa
 import FormattedDateAndTime from '~dashboard/Dialogs/StartStreamDialog/StreamingDetails/FormattedDateAndTime';
 import LockedBatch from '~dashboard/ExpenditurePage/Batch/LockedBatch';
 import { LockedExpenditureSettings } from '~dashboard/ExpenditurePage/ExpenditureSettings';
-import LockedStreaming from '~dashboard/ExpenditurePage/ExpenditureSettings/Streaming/LockedStreaming';
 import { LockedPayments } from '~dashboard/ExpenditurePage/Payments';
 import LockedSplit from '~dashboard/ExpenditurePage/Split/LockedSplit';
 import LockedStaged from '~dashboard/ExpenditurePage/Staged/LockedStaged/LockedStaged';
@@ -104,22 +103,6 @@ const LockedSidebar = ({
             fundingSources={streaming?.fundingSources}
             editForm={editForm}
             activeStageId={activeStage?.id}
-          />
-        );
-      }
-      case ExpenditureTypes.Streaming: {
-        return (
-          <LockedStreaming
-            colony={colony}
-            fundingSources={streaming?.fundingSources}
-          />
-        );
-      }
-      case ExpenditureTypes.Streaming: {
-        return (
-          <LockedStreaming
-            colony={colony}
-            fundingSources={streaming?.fundingSource}
           />
         );
       }
