@@ -17,10 +17,6 @@ import StreamingStagesLocked from './StreamingStages/StreamingStagesLocked';
 import { useClaimStreamingPayment } from './StreamingStages/StreamingStagesLocked/hooks';
 import { calcAvailableToClaim } from './utils';
 import styles from './Stages.css';
-import StreamingStagesLocked from './StreamingStages/StreamingStagesLocked';
-
-import { useClaimStreamingPayment } from './StreamingStages/StreamingStagesLocked/hooks';
-import styles from './Stages.css';
 
 const MSG = defineMessages({
   motion: {
@@ -74,6 +70,7 @@ const LockedStages = ({
     paidToDate,
     claimFunds,
     setAvailableToClaim,
+    claimed,
   } = useClaimStreamingPayment();
 
   useEffect(() => {
@@ -127,6 +124,8 @@ const LockedStages = ({
           availableToClaim={availableToClaim}
           paidToDate={paidToDate}
           handleCancelExpenditure={handleCancelExpenditure} // Handler function is temporary. Different modal should be displayed here, but it's not ready yet.
+          teamCount={formValues?.streaming?.fundingSources?.length || 0}
+          claimed={claimed}
         />
       ) : (
         <Stages

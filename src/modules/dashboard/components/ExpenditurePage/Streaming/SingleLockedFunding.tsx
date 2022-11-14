@@ -9,9 +9,9 @@ import { ErrorDot } from '../ErrorDot';
 import { CollapseExpandButtons } from '../Payments';
 
 import LockedFundingSource from './LockedFundingSource';
-import styles from './Streaming.css';
 import { FundingSource } from './types';
 import useInsufficientFunds from './hooks';
+import styles from './Streaming.css';
 
 const displayName = 'dashboard.ExpenditurePage.Streaming.SingleLockedFunding';
 
@@ -52,7 +52,7 @@ const SingleLockedFunding = ({
   );
   const isOpen = !!openItemsIds?.find((id) => id === fundingSource.id);
 
-  const { amount, token, time } = fundingSource.rate?.[0] || {};
+  const { amount, token, time } = fundingSource.rates?.[0] || {};
   const tokenData = colony.tokens?.find(
     (tokenItem) => token && tokenItem.address === token,
   );
@@ -89,15 +89,15 @@ const SingleLockedFunding = ({
                         amount,
                         token: tokenData?.symbol,
                         time,
-                        comma: fundingSource.rate.length > 1 && isOpen && ', ',
+                        comma: fundingSource.rates.length > 1 && isOpen && ', ',
                       }}
                     />
                   </div>
                 ),
                 tokens:
-                  fundingSource.rate.length > 1 &&
+                  fundingSource.rates.length > 1 &&
                   (isOpen
-                    ? fundingSource.rate.map((rateItem, idx) => {
+                    ? fundingSource.rates.map((rateItem, idx) => {
                         if (idx === 0) {
                           return null;
                         }
@@ -114,7 +114,7 @@ const SingleLockedFunding = ({
                                 token: tokenItemData?.symbol,
                                 time: rateItem.time,
                                 comma:
-                                  fundingSource.rate.length > idx + 1 && ',',
+                                  fundingSource.rates.length > idx + 1 && ',',
                               }}
                             />
                           </div>

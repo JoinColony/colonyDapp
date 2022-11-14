@@ -22,8 +22,8 @@ import {
   Status,
 } from '../../constants';
 
-import styles from './StreamingStagesLocked.css';
 import { insufficientFundsEventTrigger } from './constants';
+import styles from './StreamingStagesLocked.css';
 
 const MSG = defineMessages({
   startStream: {
@@ -78,13 +78,9 @@ const MSG = defineMessages({
     id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.cancelled`,
     defaultMessage: 'Cancelled',
   },
-  singleErrorMessage: {
-    id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.singleErrorMessage`,
-    defaultMessage: 'Insufficient funds in team. Ensure team is funded.',
-  },
-  mulitpleErrorMessage: {
-    id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.mulitpleErrorMessage`,
-    defaultMessage: 'Insufficient funds in team. Ensure all teams are funded.',
+  errorMessage: {
+    id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.errorMessage`,
+    defaultMessage: `Insufficient funds in team. Ensure {teamCount, plural, one {team is} other {all teams are}} funded.`,
   },
 });
 
@@ -107,9 +103,11 @@ export interface Props {
   availableToClaim?: Rate[];
   handleCancelExpenditure?: () => void;
   claimed?: boolean;
+  teamCount: number;
 }
 
 const StreamingStagesLocked = ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleButtonClick,
   status,
   motion,
@@ -119,6 +117,7 @@ const StreamingStagesLocked = ({
   availableToClaim,
   handleCancelExpenditure,
   claimed,
+  teamCount,
 }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const [hasInsufficentFunds, setHasInsufficentFunds] = useState<boolean>(
@@ -140,11 +139,20 @@ const StreamingStagesLocked = ({
   const isCancelled =
     status === Status.Cancelled || status === Status.ForceCancelled;
 
-
   const handleClaimFunds = () => {
     // mock - add logic/functionality when it should change to true
     // if rate or limit is insufficient set to true
-    setHasInsufficentFunds(true);
+    try {
+      // logic to claim funds
+      // handleButtonClick function is commented, to show insufficent funds error, it should be uncommented when functionality will be ready
+      // handleButtonClick?.();
+      // setHasInsufficentFunds(false);
+      throw new Error('insufficentFunds');
+    } catch (e) {
+      if (e.message === 'insufficentFunds') {
+        setHasInsufficentFunds(true);
+      }
+    }
   };
 
   useEffect(() => {
@@ -167,11 +175,7 @@ const StreamingStagesLocked = ({
       {hasInsufficentFunds && (
         <div className={styles.stagesMsg}>
           <p className={styles.stagesMsgText}>
-            <FormattedMessage
-              {...(recipients && recipients?.length > 1
-                ? { ...MSG.mulitpleErrorMessage }
-                : { ...MSG.singleErrorMessage })}
-            />
+            <FormattedMessage {...MSG.errorMessage} values={{ teamCount }} />
           </p>
         </div>
       )}
@@ -226,30 +230,6 @@ const StreamingStagesLocked = ({
                   fontSize: 'tiny',
                 }}
                 text={MSG.cancelled}
-              />
-            </span>
-          )}
-          {status === Status.StartedStream && (
-            <span className={styles.tagWrapper}>
-              <Tag
-                appearance={{
-                  theme: 'blue',
-                  colorSchema: 'fullColor',
-                  fontSize: 'tiny',
-                }}
-                text={MSG.active}
-              />
-            </span>
-          )}
-          {status === Status.StartedStream && (
-            <span className={styles.tagWrapper}>
-              <Tag
-                appearance={{
-                  theme: 'blue',
-                  colorSchema: 'fullColor',
-                  fontSize: 'tiny',
-                }}
-                text={MSG.active}
               />
             </span>
           )}
@@ -330,16 +310,18 @@ const StreamingStagesLocked = ({
               status !== Status.Cancelled && (
                 <Button
                   text={MSG.startStream}
-                  onClick={handleButtonClick}
+                  onClick={handleClaimFunds}
                   style={buttonStyles}
+                  disabled={claimed || hasInsufficentFunds}
                 />
               )}
             {(status === Status.StartedStream || status === Status.Cancelled) &&
               availableToClaim && (
                 <Button
                   text={MSG.claimFunds}
-                  onClick={handleButtonClick}
+                  onClick={handleClaimFunds}
                   style={buttonStyles}
+                  disabled={claimed || hasInsufficentFunds}
                 />
               )}
           </div>
@@ -409,7 +391,12 @@ const StreamingStagesLocked = ({
                 }
 
                 return (
-                  <span className={styles.value} key={availableItem.id}>
+                  <span
+                    className={classNames(styles.value, {
+                      [styles.error]: hasInsufficentFunds,
+                    })}
+                    key={availableItem.id}
+                  >
                     <FormattedMessage
                       {...MSG.paidValue}
                       values={{
@@ -436,51 +423,6 @@ const StreamingStagesLocked = ({
           </>
         )}
       </div>
-      {activeStateId === Stage.Released &&
-        availableToClaim &&
-        status === Status.StartedStream && (
-          <FormSection appearance={{ border: 'top' }}>
-            <div
-              className={classNames(styles.stagesRow, styles.borderBottom, {
-                [styles.alignStart]: availableToClaim?.length > 1,
-              })}
-            >
-              <span className={styles.label}>
-                <FormattedMessage {...MSG.availableToClaim} />
-              </span>
-              <div className={styles.valueWrapper}>
-                {availableToClaim.map((availableItem) => {
-                  const token = colony?.tokens?.find(
-                    (tokenItem) => tokenItem.address === availableItem.token,
-                  );
-
-                  if (!token) {
-                    return null;
-                  }
-
-                  return (
-                    <span className={styles.value} key={availableItem.id}>
-                      <FormattedMessage
-                        {...MSG.paidValue}
-                        values={{
-                          icon: token && (
-                            <TokenIcon
-                              className={styles.tokenIcon}
-                              token={token}
-                              name={token?.name || token?.address}
-                            />
-                          ),
-                          amount: availableItem.amount,
-                          token: token?.symbol,
-                        }}
-                      />
-                    </span>
-                  );
-                })}
-              </div>
-            </div>
-          </FormSection>
-        )}
     </div>
   );
 };
