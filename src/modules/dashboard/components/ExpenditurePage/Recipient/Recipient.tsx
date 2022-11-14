@@ -5,7 +5,13 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
 
 import Button from '~core/Button';
-import { FormSection, Input, Select, TokenSymbolSelector } from '~core/Fields';
+import {
+  FormSection,
+  Input,
+  InputLabel,
+  Select,
+  TokenSymbolSelector,
+} from '~core/Fields';
 import Icon from '~core/Icon';
 import { ItemDataType } from '~core/OmniPicker';
 import { Tooltip } from '~core/Popover';
@@ -133,13 +139,33 @@ const Recipient = ({
                 {tokens?.map((token, idx) => (
                   <div className={styles.valueContainer} key={token.id}>
                     <div className={styles.inputContainer}>
+                      <div className={styles.labelWrapper}>
+                        <InputLabel label={MSG.valueLabel} />
+                        {idx === 0 && (
+                          <Button
+                            type="button"
+                            onClick={() => {
+                              arrayHelpers.push({
+                                ...newTokenData,
+                                id: nanoid(),
+                              });
+                              setFieldTouched(
+                                `recipients[${index}].value[${idx + 1}].amount`,
+                              );
+                            }}
+                            appearance={{ theme: 'blue' }}
+                          >
+                            <FormattedMessage {...MSG.addTokenText} />
+                          </Button>
+                        )}
+                      </div>
                       <Input
                         name={`recipients[${index}].value[${idx}].amount`}
                         appearance={{
                           theme: 'underlined',
                           size: 'small',
                         }}
-                        label={MSG.valueLabel}
+                        label=""
                         placeholder="Not set"
                         formattingOptions={{
                           numeral: true,
@@ -175,25 +201,6 @@ const Recipient = ({
                           elementOnly
                         />
                       </div>
-                      {/* if last */}
-                      {tokens.length === idx + 1 && (
-                        <Button
-                          type="button"
-                          onClick={() => {
-                            arrayHelpers.push({
-                              ...newTokenData,
-                              id: nanoid(),
-                            });
-                            setFieldTouched(
-                              `recipients[${index}].value[${idx + 1}].amount`,
-                            );
-                          }}
-                          appearance={{ theme: 'blue' }}
-                          style={{ margin: styles.buttonMargin }}
-                        >
-                          <FormattedMessage {...MSG.addTokenText} />
-                        </Button>
-                      )}
                     </div>
                   </div>
                 ))}
