@@ -14,11 +14,16 @@ import Button from '~core/Button';
 import { ItemDataType } from '~core/OmniPicker';
 import { ActionDialogProps } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
-import { Select, Input, Annotations, SelectOption } from '~core/Fields';
+import {
+  Select,
+  Input,
+  Annotations,
+  SelectOption,
+  ForceToggle,
+} from '~core/Fields';
 import Heading from '~core/Heading';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
-import ForceToggle from '~core/Fields/ForceToggle';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import PermissionsLabel from '~core/PermissionsLabel';

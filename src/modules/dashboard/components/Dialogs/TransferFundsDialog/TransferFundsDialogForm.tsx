@@ -19,6 +19,7 @@ import {
   Annotations,
   TokenSymbolSelector,
   SelectOption,
+  ForceToggle,
 } from '~core/Fields';
 import Heading from '~core/Heading';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
@@ -30,7 +31,6 @@ import {
 import { ActionDialogProps } from '~core/Dialog';
 import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
-import ForceToggle from '~core/Fields/ForceToggle';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import {
   getBalanceFromToken,

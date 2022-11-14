@@ -22,12 +22,11 @@ import ConfusableWarning from '~core/ConfusableWarning';
 import { ItemDataType } from '~core/OmniPicker';
 import { ActionDialogProps } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
-import { Select, Annotations, AmountTokens } from '~core/Fields';
+import { Select, Annotations, AmountTokens, ForceToggle } from '~core/Fields';
 import { calculateFee } from '~core/Fields/AmountTokens';
 import Heading from '~core/Heading';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
-import ForceToggle from '~core/Fields/ForceToggle';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
