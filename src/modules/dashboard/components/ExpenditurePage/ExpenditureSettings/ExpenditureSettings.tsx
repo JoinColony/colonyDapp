@@ -28,9 +28,9 @@ export const MSG = defineMessages({
     id: 'dashboard.ExpenditurePage.ExpenditureSettings.owner',
     defaultMessage: 'Owner',
   },
-  advancedPayment: {
-    id: 'dashboard.ExpenditurePage.ExpenditureSettings.advancedPayment',
-    defaultMessage: 'Advanced payment',
+  multiple: {
+    id: 'dashboard.ExpenditurePage.ExpenditureSettings.multiple',
+    defaultMessage: 'Multiple',
   },
   staged: {
     id: 'dashboard.ExpenditurePage.ExpenditureSettings.staged',
@@ -52,7 +52,7 @@ export const MSG = defineMessages({
 
 const expenditureTypes = [
   {
-    label: MSG.advancedPayment,
+    label: MSG.multiple,
     value: ExpenditureTypes.Advanced,
   },
   {
