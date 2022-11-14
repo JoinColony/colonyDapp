@@ -29,10 +29,6 @@
   color: var(--temp-grey-blue-7);
 }
 
-.inputWrapper label {
-  color: var(--temp-grey-blue-7);
-}
-
 .limitContainer {
   display: flex;
   align-items: center;
