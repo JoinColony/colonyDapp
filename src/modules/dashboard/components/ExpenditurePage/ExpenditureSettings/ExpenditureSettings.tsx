@@ -97,10 +97,6 @@ const ExpenditureSettings = ({ colony, sidebarRef, inEditMode }: Props) => {
   const { values } = useFormikContext<ValuesType>() || {};
   const expenditureType = values.expenditure;
 
-  const { data: colonyMembers } = useMembersSubscription({
-    variables: { colonyAddress: colony.colonyAddress || '' },
-  });
-
   return (
     <div className={styles.container}>
       <FormSection appearance={{ border: 'bottom' }}>

@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
 
 import { Colony } from '~data/index';
@@ -48,8 +48,6 @@ const LockedStreaming = ({
   const [openItemsIds, setOpenItemsIds] = useState<string[]>(
     fundingSources?.map(({ id }) => id) || [],
   );
-
-  const { formatMessage } = useIntl();
 
   const onToggleButtonClick = useCallback((id) => {
     setOpenItemsIds((expandedIds) => {

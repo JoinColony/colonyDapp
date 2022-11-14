@@ -1,6 +1,5 @@
 import { isEqual, uniq, isEmpty, assign, isNil, merge } from 'lodash';
 import { nanoid } from 'nanoid';
-import { ExpenditureTypes } from './types';
 
 import { DelayTime, ExpenditureTypes } from './types';
 
