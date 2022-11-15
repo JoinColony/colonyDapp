@@ -13,11 +13,10 @@ import { ActionDialogProps } from '~core/Dialog';
 import ColorSelect from '~core/ColorSelect';
 import { Color } from '~core/ColorTag';
 import DialogSection from '~core/Dialog/DialogSection';
-import { Input, Annotations, Select } from '~core/Fields';
+import { Input, Annotations, Select, ForceToggle } from '~core/Fields';
 import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
-import ForceToggle from '~core/Fields/ForceToggle';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 

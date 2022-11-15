@@ -13,6 +13,7 @@ export { default as Radio, CustomRadio, CustomRadioProps } from './Radio';
 export { default as RadioGroup, CustomRadioGroup } from './RadioGroup';
 export { default as Annotations } from './Annotations';
 export { default as Toggle } from './Toggle';
+export { default as ForceToggle } from './ForceToggle';
 
 export { default as asFieldArray } from './asFieldArray';
 

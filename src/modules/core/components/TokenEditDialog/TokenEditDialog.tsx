@@ -10,13 +10,12 @@ import { FormikProps } from 'formik';
 
 import Button from '~core/Button';
 import { ActionDialogProps, DialogSection } from '~core/Dialog';
-import { Annotations } from '~core/Fields';
+import { Annotations, ForceToggle } from '~core/Fields';
 import Heading from '~core/Heading';
 import Paragraph from '~core/Paragraph';
 import TokenSelector from '~dashboard/CreateColonyWizard/TokenSelector';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import PermissionsLabel from '~core/PermissionsLabel';
-import ForceToggle from '~core/Fields/ForceToggle';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
