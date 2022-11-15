@@ -1,41 +1,36 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { insufficientFundsEventTrigger } from '../Stages/StreamingStages/StreamingStagesLocked/constants';
+import { INSUFFICIENT_FUNDS_EVENT_TRIGGER } from '~pages/ExpenditurePage/constants';
 
-const useInsufficientFunds = (index: number) => {
+const useInsufficientFunds = () => {
   const ref = useRef<HTMLDivElement | null>(null);
-  const [hasRateError, setHasRateError] = useState<boolean>(false);
-  const [hasLimitError, setHasLimitError] = useState<boolean>(false);
+  const [fundingSourcesError, setFundingSourcesError] = useState<string[]>();
+  const [tokensError, setTokensError] = useState<string[]>();
 
   useEffect(() => {
     const handleInsufficientFunds = (e: CustomEvent) => {
       const {
-        detail: { index: itemIndex, rateError, limitError },
+        detail: { fundingSources, tokens },
       } = e;
 
-      if (itemIndex === index && rateError) {
-        setHasRateError(true);
-      }
-
-      if (itemIndex === index && limitError) {
-        setHasLimitError(true);
-      }
+      setFundingSourcesError(fundingSources);
+      setTokensError(tokens);
     };
 
     window.addEventListener(
-      insufficientFundsEventTrigger,
+      INSUFFICIENT_FUNDS_EVENT_TRIGGER,
       handleInsufficientFunds,
     );
 
     return () => {
       window.removeEventListener(
-        insufficientFundsEventTrigger,
+        INSUFFICIENT_FUNDS_EVENT_TRIGGER,
         handleInsufficientFunds,
       );
     };
-  }, [index]);
+  }, []);
 
-  return { ref, hasRateError, hasLimitError };
+  return { ref, fundingSourcesError, tokensError };
 };
 
 export default useInsufficientFunds;

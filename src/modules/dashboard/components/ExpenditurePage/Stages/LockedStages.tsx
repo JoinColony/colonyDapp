@@ -124,7 +124,7 @@ const LockedStages = ({
           availableToClaim={availableToClaim}
           paidToDate={paidToDate}
           handleCancelExpenditure={handleCancelExpenditure} // Handler function is temporary. Different modal should be displayed here, but it's not ready yet.
-          teamCount={formValues?.streaming?.fundingSources?.length || 0}
+          fundingSources={formValues?.streaming?.fundingSources}
           claimed={claimed}
         />
       ) : (
