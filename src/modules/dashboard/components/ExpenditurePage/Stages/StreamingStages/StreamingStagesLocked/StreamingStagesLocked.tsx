@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import classNames from 'classnames';
 import copyToClipboard from 'copy-to-clipboard';
 
+import { isEmpty } from 'lodash';
 import Button from '~core/Button';
 import { FormSection } from '~core/Fields';
 import Tag from '~core/Tag';
@@ -10,9 +11,13 @@ import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import { Colony } from '~data/index';
-import { Rate } from '~dashboard/ExpenditurePage/Streaming/types';
+import {
+  FundingSource,
+  Rate,
+} from '~dashboard/ExpenditurePage/Streaming/types';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import Numeral from '~core/Numeral';
+import { INSUFFICIENT_FUNDS_EVENT_TRIGGER } from '~pages/ExpenditurePage/constants';
 
 import {
   Motion,
@@ -22,7 +27,7 @@ import {
   Status,
 } from '../../constants';
 
-import { insufficientFundsEventTrigger } from './constants';
+import { checkIfEnoughFunds } from './utils';
 import styles from './StreamingStagesLocked.css';
 
 const MSG = defineMessages({
@@ -103,7 +108,7 @@ export interface Props {
   availableToClaim?: Rate[];
   handleCancelExpenditure?: () => void;
   claimed?: boolean;
-  teamCount: number;
+  fundingSources?: FundingSource[];
 }
 
 const StreamingStagesLocked = ({
@@ -117,12 +122,13 @@ const StreamingStagesLocked = ({
   availableToClaim,
   handleCancelExpenditure,
   claimed,
-  teamCount,
+  fundingSources,
 }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const [hasInsufficentFunds, setHasInsufficentFunds] = useState<boolean>(
     false,
   );
+  const [tokensWithError, setTokensWithError] = useState<string[]>();
   const userFeedbackTimer = useRef<any>(null);
   const { formatMessage } = useIntl();
 
@@ -139,43 +145,46 @@ const StreamingStagesLocked = ({
   const isCancelled =
     status === Status.Cancelled || status === Status.ForceCancelled;
 
-  const handleClaimFunds = () => {
-    // mock - add logic/functionality when it should change to true
-    // if rate or limit is insufficient set to true
-    try {
-      // logic to claim funds
-      // handleButtonClick function is commented, to show insufficent funds error, it should be uncommented when functionality will be ready
-      // handleButtonClick?.();
-      // setHasInsufficentFunds(false);
-      throw new Error('insufficentFunds');
-    } catch (e) {
-      if (e.message === 'insufficentFunds') {
-        setHasInsufficentFunds(true);
-      }
-    }
-  };
+  const setInsufficentFunds = useCallback((insufficientFunds) => {
+    setHasInsufficentFunds(true);
+    setTokensWithError(insufficientFunds?.tokens);
 
-  useEffect(() => {
-    if (!hasInsufficentFunds) return;
-
-    const mockElementIndex = 0; // mock const with index to trigger proper funding source item from list
-    const customEvent = new CustomEvent(insufficientFundsEventTrigger, {
+    const customEvent = new CustomEvent(INSUFFICIENT_FUNDS_EVENT_TRIGGER, {
       detail: {
-        index: mockElementIndex,
-        rateError: true, // mock - rate state - add logic when it's true
-        limitError: false, // mock - limit state - add logic when it's true
+        fundingSources: insufficientFunds?.fundingSources,
+        tokens: insufficientFunds?.tokens,
       },
     });
 
     window.dispatchEvent(customEvent);
-  }, [hasInsufficentFunds]);
+  }, []);
+
+  const handleClaimFunds = useCallback(() => {
+    // mock - add logic/functionality when it should change to true
+    // set insufficient funding sources and tokens
+    const insufficientFunds = checkIfEnoughFunds(fundingSources);
+    if (
+      !insufficientFunds ||
+      (isEmpty(insufficientFunds?.fundingSources) &&
+        isEmpty(insufficientFunds?.tokens))
+    ) {
+      handleButtonClick?.();
+      setHasInsufficentFunds(false);
+      setTokensWithError(undefined);
+    } else {
+      setInsufficentFunds(insufficientFunds);
+    }
+  }, [fundingSources, handleButtonClick, setInsufficentFunds]);
 
   return (
     <div className={styles.stagesWrapper}>
       {hasInsufficentFunds && (
         <div className={styles.stagesMsg}>
           <p className={styles.stagesMsgText}>
-            <FormattedMessage {...MSG.errorMessage} values={{ teamCount }} />
+            <FormattedMessage
+              {...MSG.errorMessage}
+              values={{ teamCount: fundingSources?.length || 0 }}
+            />
           </p>
         </div>
       )}
@@ -393,7 +402,11 @@ const StreamingStagesLocked = ({
                 return (
                   <span
                     className={classNames(styles.value, {
-                      [styles.error]: hasInsufficentFunds,
+                      [styles.error]:
+                        hasInsufficentFunds &&
+                        tokensWithError?.find(
+                          (tokenAddress) => tokenAddress === token.id,
+                        ),
                     })}
                     key={availableItem.id}
                   >

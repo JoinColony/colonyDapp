@@ -57,7 +57,10 @@ const SingleLockedFunding = ({
     (tokenItem) => token && tokenItem.address === token,
   );
 
-  const { ref, hasRateError, hasLimitError } = useInsufficientFunds(index);
+  const { ref, fundingSourcesError, tokensError } = useInsufficientFunds();
+  const hasError = fundingSourcesError?.find(
+    (sourceId) => sourceId === fundingSource.id,
+  );
 
   return (
     <div
@@ -125,7 +128,7 @@ const SingleLockedFunding = ({
             />
           </div>
         </FormSection>
-        {(hasRateError || hasLimitError) && (
+        {hasError && (
           <ErrorDot
             tooltipContent={<FormattedMessage {...MSG.titleTooltipError} />}
           />
@@ -135,7 +138,8 @@ const SingleLockedFunding = ({
         colony={colony}
         fundingSource={fundingSource}
         isOpen={isOpen}
-        {...{ hasRateError, hasLimitError }}
+        tokensError={tokensError}
+        hasError={!!hasError}
       />
     </div>
   );
