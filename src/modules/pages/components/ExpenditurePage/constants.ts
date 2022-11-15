@@ -13,6 +13,7 @@ import { newFundingSource } from '~dashboard/ExpenditurePage/Streaming/constants
 import { ExpenditureEndDateTypes, ExpenditureTypes } from './types';
 
 export const FIX_TRIGGER_EVENT_NAME = 'fix-trigger';
+export const INSUFFICIENT_FUNDS_EVENT_TRIGGER = 'funds-trigger';
 
 const MSG = defineMessages({
   userRequiredError: {

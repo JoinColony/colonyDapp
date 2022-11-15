@@ -25,5 +25,3 @@ export const availableToClaim = [
     id: nanoid(),
   },
 ];
-
-export const insufficientFundsEventTrigger = 'funds-trigger';

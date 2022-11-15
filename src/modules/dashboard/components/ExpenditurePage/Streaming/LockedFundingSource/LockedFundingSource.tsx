@@ -35,16 +35,16 @@ interface Props {
   fundingSource?: FundingSource;
   colony: Colony;
   isOpen?: boolean;
-  hasRateError?: boolean;
-  hasLimitError?: boolean;
+  tokensError?: string[];
+  hasError: boolean;
 }
 
 const LockedFundingSource = ({
   fundingSource,
   colony,
   isOpen,
-  hasRateError,
-  hasLimitError,
+  tokensError,
+  hasError,
 }: Props) => {
   const { formatMessage } = useIntl();
   const { rates, team } = fundingSource || {};
@@ -116,7 +116,11 @@ const LockedFundingSource = ({
                 />
                 <div
                   className={classNames(styles.valueAmount, {
-                    [styles.error]: hasRateError,
+                    [styles.error]:
+                      hasError &&
+                      tokensError?.find(
+                        (tokenAddress) => tokenAddress === token,
+                      ),
                   })}
                 >
                   <span className={styles.icon}>
@@ -157,11 +161,7 @@ const LockedFundingSource = ({
                     direction: 'horizontal',
                   }}
                 />
-                <div
-                  className={classNames(styles.valueAmount, {
-                    [styles.error]: hasLimitError,
-                  })}
-                >
+                <div className={styles.valueAmount}>
                   <span className={styles.icon}>
                     <TokenIcon
                       className={styles.tokenIcon}

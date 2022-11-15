@@ -234,7 +234,7 @@ const ExpenditurePage = ({ match }: Props) => {
             status: MotionStatus.Passed,
           });
           setStatus(Status.StartedStream);
-        }, 1000);
+        }, 500);
 
         return;
       }
