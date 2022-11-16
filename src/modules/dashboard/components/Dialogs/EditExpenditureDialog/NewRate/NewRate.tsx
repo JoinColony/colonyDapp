@@ -40,22 +40,20 @@ const NewRate = ({ colony, newValue }: Props) => {
 
   return (
     <div className={styles.row}>
-      <div>
-        {newValue.amount && token && (
-          <div>
-            <TokenIcon
-              className={styles.tokenIcon}
-              token={token}
-              name={token.name || token.address}
-            />
-            <Numeral
-              unit={getTokenDecimalsWithFallback(0)} // 0 is a mock value
-              value={newValue.amount}
-            />{' '}
-            {token.symbol}/{newValue.time}
-          </div>
-        )}
-      </div>
+      {newValue.amount && token && (
+        <div className={styles.valueWrapper}>
+          <TokenIcon
+            className={styles.tokenIcon}
+            token={token}
+            name={token.name || token.address}
+          />
+          <Numeral
+            unit={getTokenDecimalsWithFallback(0)} // 0 is a mock value
+            value={newValue.amount}
+          />
+          {token.symbol}/{newValue.time}
+        </div>
+      )}
     </div>
   );
 };
