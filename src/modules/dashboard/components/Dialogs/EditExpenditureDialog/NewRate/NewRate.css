@@ -11,3 +11,12 @@
   height: 16px;
   width: 16px;
 }
+
+.valueWrapper {
+  display: inline-flex;
+  align-items: center;
+}
+
+.valueWrapper > span {
+  margin-right: 4px;
+}

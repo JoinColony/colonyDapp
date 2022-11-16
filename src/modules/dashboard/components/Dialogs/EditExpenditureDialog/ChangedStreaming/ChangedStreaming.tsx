@@ -1,11 +1,11 @@
 import React, { Fragment, useMemo } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { nanoid } from 'nanoid';
+import { startCase } from 'lodash';
 
 import Button from '~core/Button';
 import { Colony } from '~data/index';
 import { ValuesType } from '~pages/ExpenditurePage/types';
-import { capitalize } from '~utils/strings';
 
 import ChangeHeader from '../ChangeHeader';
 import ChangeItem from '../ChangeItem';
@@ -80,7 +80,7 @@ const ChangedStreaming = ({
 
         return (
           <Fragment key={id}>
-            <ChangeHeader name={capitalize(key)} />
+            <ChangeHeader name={startCase(key)} />
             <ChangeItem
               newValue={value}
               oldValue={oldValue}
