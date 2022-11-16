@@ -32,8 +32,8 @@ export const MSG = defineMessages({
 });
 
 interface Props {
-  startDate: string;
-  endDate: string;
+  startDate: JSX.Element;
+  endDate: string | JSX.Element;
 }
 
 const displayName = `dashboard.ExpenditurePage.Streaming.LockedStreamingSettings`;

@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react';
 
+import EndDate from '~dashboard/Dialogs/StartStreamDialog/StreamingDetails/EndDate';
+import FormattedDateAndTime from '~dashboard/Dialogs/StartStreamDialog/StreamingDetails/FormattedDateAndTime';
 import LockedBatch from '~dashboard/ExpenditurePage/Batch/LockedBatch';
 import { LockedExpenditureSettings } from '~dashboard/ExpenditurePage/ExpenditureSettings';
 import { LockedPayments } from '~dashboard/ExpenditurePage/Payments';
@@ -11,10 +13,6 @@ import LockedStreamingSettings from '~dashboard/ExpenditurePage/Streaming/Locked
 import { Colony } from '~data/index';
 
 import { ExpenditureTypes, StageObject, ValuesType } from './types';
-
-// Mock variables
-const startDate = new Date().toLocaleDateString();
-const endDate = 'When cancelled';
 
 const displayName = 'pages.ExpenditurePage.LockedSidebar';
 
@@ -127,11 +125,24 @@ const LockedSidebar = ({
     status,
     streaming,
   ]);
+  const { endDate, startDate } = streaming || {};
 
   return (
     <>
       {expenditure === ExpenditureTypes.Streaming ? (
-        <LockedStreamingSettings startDate={startDate} endDate={endDate} />
+        <LockedStreamingSettings
+          startDate={
+            <FormattedDateAndTime
+              date={startDate?.date.getTime() || new Date().getTime()}
+            />
+          }
+          endDate={
+            <EndDate
+              endDate={endDate?.option}
+              endDateTime={endDate?.date.getTime()}
+            />
+          }
+        />
       ) : (
         <LockedExpenditureSettings
           {...{ expenditure, filteredDomainId, colony }}
