@@ -30,7 +30,7 @@ interface Props {
 }
 
 const Limit = ({ colony, name, rate }: Props) => {
-  const [, { error }] = useField(name);
+  const [, { error, touched }] = useField(name);
 
   const token = colony.tokens?.find(
     (tokenItem) => rate.token && tokenItem.address === rate.token,
@@ -68,7 +68,7 @@ const Limit = ({ colony, name, rate }: Props) => {
           {token.symbol}
         </div>
       </div>
-      <InputStatus error={error} />
+      <InputStatus error={error} touched={touched} />
     </>
   );
 };

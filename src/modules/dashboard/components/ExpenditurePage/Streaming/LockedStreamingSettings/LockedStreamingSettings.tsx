@@ -4,7 +4,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { FormSection, InputLabel } from '~core/Fields';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
-import { useLoggedInUser } from '~data/index';
+import { AnyUser } from '~data/index';
 
 import styles from './LockedStreamingSettings.css';
 
@@ -34,13 +34,12 @@ export const MSG = defineMessages({
 interface Props {
   startDate: JSX.Element;
   endDate: string | JSX.Element;
+  user?: AnyUser;
 }
 
 const displayName = `dashboard.ExpenditurePage.Streaming.LockedStreamingSettings`;
 
-const LockedStreamingSettings = ({ startDate, endDate }: Props) => {
-  const { username, walletAddress } = useLoggedInUser();
-
+const LockedStreamingSettings = ({ startDate, endDate, user }: Props) => {
   return (
     <div className={styles.container}>
       <FormSection appearance={{ border: 'bottom' }}>
@@ -64,12 +63,22 @@ const LockedStreamingSettings = ({ startDate, endDate }: Props) => {
               direction: 'horizontal',
             }}
           />
-          <div className={styles.userAvatarContainer}>
-            <UserAvatar address={walletAddress} size="xs" notSet={false} />
-            <div className={styles.userName}>
-              <UserMention username={username || ''} />
+          {user && (
+            <div className={styles.userAvatarContainer}>
+              <UserAvatar
+                address={user.profile.walletAddress}
+                size="xs"
+                notSet={false}
+              />
+              <div className={styles.userName}>
+                <UserMention
+                  username={
+                    user.profile.username || user.profile.displayName || ''
+                  }
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
