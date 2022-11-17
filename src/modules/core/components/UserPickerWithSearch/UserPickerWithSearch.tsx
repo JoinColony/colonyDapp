@@ -128,7 +128,9 @@ const UserPickerWithSearch = ({
   sidebarRef,
   data,
 }: EnhancedProps) => {
-  const [, { error, value }, { setValue }] = useField<AnyUser | null>(name);
+  const [, { error, value, touched }, { setValue }] = useField<AnyUser | null>(
+    name,
+  );
   const { formatMessage } = useIntl();
   const ref = useRef<HTMLDivElement>(null);
 
@@ -201,7 +203,7 @@ const UserPickerWithSearch = ({
               <Icon
                 className={classNames(styles.icon, {
                   [styles.focusIcon]: omniPickerIsOpen,
-                  [styles.errorIcon]: error,
+                  [styles.errorIcon]: error && touched,
                 })}
                 name="circle-person"
                 title={MSG.selectMember}
@@ -220,7 +222,7 @@ const UserPickerWithSearch = ({
             <Icon
               className={classNames(styles.arrowIcon, {
                 [styles.arrowIconActive]: omniPickerIsOpen,
-                [styles.errorIcon]: error,
+                [styles.errorIcon]: error && touched,
               })}
               name="caret-down-small"
               title={omniPickerIsOpen ? MSG.openedCaret : MSG.closedCaret}

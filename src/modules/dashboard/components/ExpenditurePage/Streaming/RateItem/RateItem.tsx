@@ -65,7 +65,7 @@ const RateItem = ({
   name,
   multipleTokens,
 }: Props) => {
-  const [, { error }] = useField(`${name}.amount`);
+  const [, { error, touched }] = useField(`${name}.amount`);
 
   return (
     <div className={styles.rateContainer} key={rateItem.id}>
@@ -149,7 +149,7 @@ const RateItem = ({
             />
           </div>
         </div>
-        <InputStatus error={error} />
+        <InputStatus error={error} touched={touched} />
       </div>
     </div>
   );

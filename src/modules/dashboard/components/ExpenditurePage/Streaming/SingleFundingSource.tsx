@@ -53,7 +53,7 @@ const SingleFundingSource = ({
   const domain = colony?.domains.find(
     ({ ethDomainId }) => Number(fundingSource.team) === ethDomainId,
   );
-  const [, { error: fundingError }] = useField(
+  const [, { error: fundingError, touched }] = useField(
     `streaming.fundingSources[${index}]`,
   );
   const { formatMessage } = useIntl();
@@ -85,7 +85,7 @@ const SingleFundingSource = ({
               onClick={() => remove(index)}
             />
           )}
-          {fundingError && (
+          {fundingError && touched && (
             <ErrorDot
               tooltipContent={<FormattedMessage {...MSG.titleTooltipError} />}
             />
