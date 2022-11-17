@@ -141,7 +141,7 @@ const Staged = ({ colony, sidebarRef }: Props) => {
     [milestones],
   );
 
-  const [, { error: stagedError }] = useField(`staged`);
+  const [, { error: stagedError, touched }] = useField(`staged`);
 
   return (
     <div className={styles.stagedContainer}>
@@ -149,7 +149,7 @@ const Staged = ({ colony, sidebarRef }: Props) => {
         <div className={styles.label}>
           <FormattedMessage {...MSG.staged} />
         </div>
-        {stagedError && (
+        {stagedError && touched && (
           <ErrorDot
             tooltipContent={<FormattedMessage {...MSG.titleTooltipError} />}
           />

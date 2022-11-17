@@ -52,7 +52,9 @@ const SingleRecipient = ({
   isLastItem,
   multipleRecipients,
 }: Props) => {
-  const [, { error: recipientError }] = useField(`recipients[${index}]`);
+  const [, { error: recipientError, touched }] = useField(
+    `recipients[${index}]`,
+  );
   const { formatMessage } = useIntl();
 
   return (
@@ -76,7 +78,7 @@ const SingleRecipient = ({
               title={MSG.deleteIconTitle}
             />
           )}
-          {recipientError && (
+          {recipientError && touched && (
             <div className={styles.errorDotContainer}>
               <ErrorDot
                 tooltipContent={<FormattedMessage {...MSG.titleTooltipError} />}

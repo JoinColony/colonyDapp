@@ -125,7 +125,7 @@ const LockedSidebar = ({
     status,
     streaming,
   ]);
-  const { endDate, startDate } = streaming || {};
+  const { endDate, startDate, user } = streaming || {};
 
   return (
     <>
@@ -142,6 +142,7 @@ const LockedSidebar = ({
               endDateTime={endDate?.date.getTime()}
             />
           }
+          user={user}
         />
       ) : (
         <LockedExpenditureSettings
