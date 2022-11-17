@@ -18,7 +18,7 @@ export const fundingSourceWasChanged = ({
   endDate,
 }: Params) => {
   if (!oldValue) {
-    return true; // funding shource has been added
+    return true; // funding source has been added
   }
 
   if ('removed' in newValue) {
@@ -53,7 +53,12 @@ export const fundingSourceWasChanged = ({
 };
 
 export const isStreamingPaymentType = (obj: any): obj is Streaming => {
-  return Object.prototype.hasOwnProperty.call(obj, 'fundingSources');
+  return (
+    Object.prototype.hasOwnProperty.call(obj, 'fundingSources') ||
+    Object.prototype.hasOwnProperty.call(obj, 'endDate') ||
+    Object.prototype.hasOwnProperty.call(obj, 'startDate') ||
+    Object.prototype.hasOwnProperty.call(obj, 'user')
+  );
 };
 
 interface RemovedRatesParams {
