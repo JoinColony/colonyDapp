@@ -6,6 +6,10 @@
   color: var(--dark);
 }
 
+.row figure {
+  transform: translate(0px, 1px);
+}
+
 .tokenIcon {
   margin-right: 10px;
   height: 16px;
