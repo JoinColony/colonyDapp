@@ -126,6 +126,10 @@
   margin-bottom: 24px;
 }
 
+.value > span {
+  margin-right: 4px;
+}
+
 .tokenIcon {
   margin-right: 8px;
   height: 18px;
