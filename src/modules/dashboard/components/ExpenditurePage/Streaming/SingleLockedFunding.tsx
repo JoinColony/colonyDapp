@@ -57,9 +57,9 @@ const SingleLockedFunding = ({
     (tokenItem) => token && tokenItem.address === token,
   );
 
-  const { ref, fundingSourcesError, tokensError } = useInsufficientFunds();
-  const hasError = fundingSourcesError?.find(
-    (sourceId) => sourceId === fundingSource.id,
+  const { ref, teamsError, tokensError } = useInsufficientFunds();
+  const hasError = teamsError?.find(
+    (sourceId) => sourceId === fundingSource.team,
   );
 
   return (
