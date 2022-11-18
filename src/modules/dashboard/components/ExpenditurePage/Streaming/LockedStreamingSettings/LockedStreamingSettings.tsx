@@ -39,73 +39,69 @@ interface Props {
 
 const displayName = `dashboard.ExpenditurePage.Streaming.LockedStreamingSettings`;
 
-const LockedStreamingSettings = ({ startDate, endDate, user }: Props) => {
-  return (
-    <div className={styles.container}>
-      <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.settingsRow}>
-          <InputLabel
-            label={MSG.type}
-            appearance={{
-              direction: 'horizontal',
-            }}
-          />
-          <span className={styles.expenditure}>
-            <FormattedMessage {...MSG.streaming} />
-          </span>
-        </div>
-      </FormSection>
-      <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.userContainer}>
-          <InputLabel
-            label={MSG.to}
-            appearance={{
-              direction: 'horizontal',
-            }}
-          />
-          {user && (
-            <div className={styles.userAvatarContainer}>
-              <UserAvatar
-                address={user.profile.walletAddress}
-                size="xs"
-                notSet={false}
+const LockedStreamingSettings = ({ startDate, endDate, user }: Props) => (
+  <div className={styles.container}>
+    <FormSection appearance={{ border: 'bottom' }}>
+      <div className={styles.settingsRow}>
+        <InputLabel
+          label={MSG.type}
+          appearance={{
+            direction: 'horizontal',
+          }}
+        />
+        <span className={styles.expenditure}>
+          <FormattedMessage {...MSG.streaming} />
+        </span>
+      </div>
+    </FormSection>
+    <FormSection appearance={{ border: 'bottom' }}>
+      <div className={styles.userContainer}>
+        <InputLabel
+          label={MSG.to}
+          appearance={{
+            direction: 'horizontal',
+          }}
+        />
+        {user && (
+          <div className={styles.userAvatarContainer}>
+            <UserAvatar
+              address={user.profile.walletAddress}
+              size="xs"
+              notSet={false}
+            />
+            <div className={styles.userName}>
+              <UserMention
+                username={user.profile.username || user.profile.walletAddress}
               />
-              <div className={styles.userName}>
-                <UserMention
-                  username={
-                    user.profile.username || user.profile.displayName || ''
-                  }
-                />
-              </div>
             </div>
-          )}
-        </div>
-      </FormSection>
-      <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.settingsRow}>
-          <InputLabel
-            label={MSG.starts}
-            appearance={{
-              direction: 'horizontal',
-            }}
-          />
-          <span className={styles.value}>{startDate}</span>
-        </div>
-      </FormSection>
-      <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.settingsRow}>
-          <InputLabel
-            label={MSG.ends}
-            appearance={{
-              direction: 'horizontal',
-            }}
-          />
-          <span className={styles.value}>{endDate}</span>
-        </div>
-      </FormSection>
-    </div>
-  );
-};
+          </div>
+        )}
+      </div>
+    </FormSection>
+    <FormSection appearance={{ border: 'bottom' }}>
+      <div className={styles.settingsRow}>
+        <InputLabel
+          label={MSG.starts}
+          appearance={{
+            direction: 'horizontal',
+          }}
+        />
+        <span className={styles.value}>{startDate}</span>
+      </div>
+    </FormSection>
+    <FormSection appearance={{ border: 'bottom' }}>
+      <div className={styles.settingsRow}>
+        <InputLabel
+          label={MSG.ends}
+          appearance={{
+            direction: 'horizontal',
+          }}
+        />
+        <span className={styles.value}>{endDate}</span>
+      </div>
+    </FormSection>
+  </div>
+);
 
 LockedStreamingSettings.displayName = displayName;
 
