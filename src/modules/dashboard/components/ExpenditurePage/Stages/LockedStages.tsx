@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 
 import Tag from '~core/Tag';
@@ -14,6 +14,8 @@ import { Motion, MotionStatus, MotionType, Status } from './constants';
 import LinkedMotions from './LinkedMotions';
 import Stages from './Stages';
 import StreamingStagesLocked from './StreamingStages/StreamingStagesLocked';
+import { useClaimStreamingPayment } from './StreamingStages/StreamingStagesLocked/hooks';
+import { calcAvailableToClaim } from './utils';
 import styles from './Stages.css';
 
 const MSG = defineMessages({
@@ -57,6 +59,23 @@ const LockedStages = ({
   const isStreamingPaymentType =
     formValues?.expenditure === ExpenditureTypes.Streaming;
 
+  const initialAvailableToClaim = useMemo(
+    () => calcAvailableToClaim(formValues?.streaming?.fundingSources),
+    [formValues],
+  );
+
+  /* This is a mocked claiming function - should to be replaced with a call to the backend */
+  const {
+    availableToClaim,
+    paidToDate,
+    claimFunds,
+    setAvailableToClaim,
+  } = useClaimStreamingPayment();
+
+  useEffect(() => {
+    setAvailableToClaim(initialAvailableToClaim);
+  }, [initialAvailableToClaim, setAvailableToClaim]);
+
   const handleButtonClick = useCallback(async () => {
     activeStage?.buttonAction();
   }, [activeStage]);
@@ -96,9 +115,14 @@ const LockedStages = ({
       )}
       {isStreamingPaymentType ? (
         <StreamingStagesLocked
-          motion={motion}
+          handleButtonClick={claimFunds}
           status={status}
-          handleButtonClick={() => {}}
+          motion={motion}
+          colony={colony}
+          activeStageId={activeStageId}
+          availableToClaim={availableToClaim}
+          paidToDate={paidToDate}
+          handleCancelExpenditure={handleCancelExpenditure} // Handler function is temporary. Different modal should be displayed here, but it's not ready yet.
         />
       ) : (
         <Stages

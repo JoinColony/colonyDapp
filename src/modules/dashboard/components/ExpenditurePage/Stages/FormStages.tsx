@@ -124,6 +124,7 @@ const FormStages = ({
         setFormValues(undefined);
       },
     });
+
   const activeStage = stages.find((stage) => stage.id === activeStageId);
 
   const handleButtonClick = useCallback(async () => {

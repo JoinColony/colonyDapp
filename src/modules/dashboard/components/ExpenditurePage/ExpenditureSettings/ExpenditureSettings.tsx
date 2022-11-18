@@ -83,7 +83,6 @@ export interface Props {
 
 const ExpenditureSettings = ({ colony, sidebarRef, inEditMode }: Props) => {
   const { values } = useFormikContext<ValuesType>() || {};
-  const { expenditure } = values;
   const expenditureType = values.expenditure;
 
   return (
@@ -100,7 +99,12 @@ const ExpenditureSettings = ({ colony, sidebarRef, inEditMode }: Props) => {
             }}
             options={
               inEditMode
-                ? [{ label: capitalize(expenditure), value: expenditure }]
+                ? [
+                    {
+                      label: capitalize(expenditureType),
+                      value: expenditureType,
+                    },
+                  ]
                 : expenditureTypes
             }
             scrollContainer={sidebarRef}

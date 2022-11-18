@@ -36,6 +36,7 @@ import Tag from '~core/Tag';
 import CancelExpenditureDialog from '~dashboard/Dialogs/CancelExpenditureDialog';
 import { newFundingSource } from '~dashboard/ExpenditurePage/Streaming/constants';
 import { LOCAL_STORAGE_EXPENDITURE_TYPE_KEY } from '~constants';
+import CancelStreamingDialog from '~dashboard/Dialogs/CancelStreamingDialog';
 
 import {
   findDifferences,
@@ -140,6 +141,9 @@ const ExpenditurePage = ({ match }: Props) => {
   }, [shouldValidate]);
 
   const openEditExpenditureDialog = useDialog(EditExpenditureDialog);
+  const openEscrowFundsDialog = useDialog(EscrowFundsDialog);
+  const openCancelExpenditureDialog = useDialog(CancelExpenditureDialog);
+  const openCancelStreamingDialog = useDialog(CancelStreamingDialog);
 
   const { data: colonyData, loading } = useColonyFromNameQuery({
     variables: { name: colonyName, address: '' },
@@ -215,6 +219,7 @@ const ExpenditurePage = ({ match }: Props) => {
       }
 
       if (values.expenditure === ExpenditureTypes.Streaming) {
+        setActiveStageId(Stage.Released);
         lockValues();
         setMotion({
           type: MotionType.StartStream,
@@ -226,8 +231,9 @@ const ExpenditurePage = ({ match }: Props) => {
         setTimeout(() => {
           setMotion({
             type: MotionType.StartStream,
-            status: MotionStatus.Failed,
+            status: MotionStatus.Passed,
           });
+          setStatus(Status.StartedStream);
         }, 5000);
 
         return;
@@ -261,9 +267,6 @@ const ExpenditurePage = ({ match }: Props) => {
     setActiveStageId(Stage.Locked);
     lockValues();
   }, [lockValues]);
-
-  const openEscrowFundsDialog = useDialog(EscrowFundsDialog);
-  const openCancelExpenditureDialog = useDialog(CancelExpenditureDialog);
 
   const handleFundExpenditure = useCallback(
     () =>
@@ -399,25 +402,53 @@ const ExpenditurePage = ({ match }: Props) => {
     },
   ];
 
-  const handleCancelExpenditure = () =>
-    colonyData &&
-    openCancelExpenditureDialog({
-      onCancelExpenditure: (isForce: boolean) => {
-        if (isForce) {
-          // temporary action
-          setStatus(Status.ForceCancelled);
-        } else {
-          // setTimeout is temporary, call to backend should be added here
-          setMotion({ type: MotionType.Cancel, status: MotionStatus.Pending });
-          setTimeout(() => {
-            setStatus(Status.Cancelled);
-            setMotion({ type: MotionType.Cancel, status: MotionStatus.Passed });
-          }, 5000);
-        }
-      },
-      colony: colonyData.processedColony,
-      isVotingExtensionEnabled: true, // temporary value
-    });
+  const handleCancel = (isForce: boolean) => {
+    if (isForce) {
+      // temporary action
+      setStatus(Status.ForceCancelled);
+    } else {
+      // setTimeout is temporary, call to backend should be added here
+      setMotion({
+        type: MotionType.Cancel,
+        status: MotionStatus.Pending,
+      });
+      setTimeout(() => {
+        setStatus(Status.Cancelled);
+        setMotion({
+          type: MotionType.Cancel,
+          status: MotionStatus.Passed,
+        });
+      }, 5000);
+    }
+  };
+
+  const handleCancelExpenditure = useCallback(() => {
+    if (!colonyData) {
+      return null;
+    }
+
+    if (formValues?.expenditure === ExpenditureTypes.Streaming) {
+      return openCancelStreamingDialog({
+        onCancelStreaming: (isForce: boolean) => handleCancel(isForce),
+        colony: colonyData.processedColony,
+        isVotingExtensionEnabled: true, // temporary value
+      });
+    }
+
+    return (
+      colonyData &&
+      openCancelExpenditureDialog({
+        onCancelExpenditure: (isForce: boolean) => handleCancel(isForce),
+        colony: colonyData.processedColony,
+        isVotingExtensionEnabled: true, // temporary value
+      })
+    );
+  }, [
+    colonyData,
+    formValues,
+    openCancelExpenditureDialog,
+    openCancelStreamingDialog,
+  ]);
 
   const handleConfirmEition = useCallback(
     (confirmedValues: Partial<ValuesType> | undefined, isForced: boolean) => {
@@ -574,7 +605,7 @@ const ExpenditurePage = ({ match }: Props) => {
             status={status}
             isCancelled={status === Status.Cancelled}
             pendingMotion={motion?.status === MotionStatus.Pending}
-            activeStageId={activeStageId}
+            activeStage={stages.find((stage) => stage.id === activeStageId)}
             handleReleaseMilestone={handleReleaseMilestone}
             stages={stages}
           />

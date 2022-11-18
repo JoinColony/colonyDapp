@@ -8,15 +8,34 @@ import { FormSection } from '~core/Fields';
 import Tag from '~core/Tag';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
+import TokenIcon from '~dashboard/HookedTokenIcon';
+import { Colony } from '~data/index';
+import { Rate } from '~dashboard/ExpenditurePage/Streaming/types';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import Numeral from '~core/Numeral';
 
-import { Motion, MotionStatus, Status } from '../../constants';
+import {
+  Motion,
+  MotionStatus,
+  MotionType,
+  Stage,
+  Status,
+} from '../../constants';
 
 import styles from './StreamingStagesLocked.css';
 
 const MSG = defineMessages({
+  startStream: {
+    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.startStream`,
+    defaultMessage: 'Start Stream',
+  },
   paidToDate: {
     id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.paidToDate`,
     defaultMessage: 'Paid to date',
+  },
+  paidValue: {
+    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.paidValue`,
+    defaultMessage: '{icon} {amount} {token}',
   },
   activeMotion: {
     id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.activeMotion`,
@@ -34,13 +53,29 @@ const MSG = defineMessages({
     id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.notStarted`,
     defaultMessage: 'Not started',
   },
+  availableToClaim: {
+    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.availableToClaim`,
+    defaultMessage: 'Available to claim',
+  },
+  active: {
+    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.active`,
+    defaultMessage: 'Active',
+  },
   claimFunds: {
     id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.claimFunds`,
     defaultMessage: 'Claim funds',
   },
-  startStream: {
-    id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.startStream`,
-    defaultMessage: 'Start Stream',
+  ended: {
+    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.ended`,
+    defaultMessage: 'Ended',
+  },
+  claimed: {
+    id: `dashboard.ExpenditurePage.Stages.StreamingStage.StreamingStagesLocked.claimed`,
+    defaultMessage: 'Claimed',
+  },
+  cancelled: {
+    id: `dashboard.ExpenditurePage.Stages.StreamingStages.StreamingStagesLocked.cancelled`,
+    defaultMessage: 'Cancelled',
   },
 });
 
@@ -54,15 +89,27 @@ export const buttonStyles = {
 };
 
 export interface Props {
-  motion?: Motion;
-  status?: Status;
   handleButtonClick?: () => void;
+  status?: Status;
+  motion?: Motion;
+  colony?: Colony;
+  activeStageId?: string;
+  paidToDate?: Rate[];
+  availableToClaim?: Rate[];
+  handleCancelExpenditure?: () => void;
+  claimed?: boolean;
 }
 
 const StreamingStagesLocked = ({
-  motion,
-  status,
   handleButtonClick,
+  status,
+  motion,
+  colony,
+  activeStageId,
+  paidToDate,
+  availableToClaim,
+  handleCancelExpenditure,
+  claimed,
 }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
@@ -78,25 +125,64 @@ const StreamingStagesLocked = ({
     userFeedbackTimer,
   ]);
 
-  const handleCancelExpenditure = () => {
-    // add cancel modal in next PR
-  };
+  const isCancelled =
+    status === Status.Cancelled || status === Status.ForceCancelled;
 
   return (
     <div className={styles.stagesWrapper}>
       <FormSection appearance={{ border: 'bottom' }}>
-        <div className={classNames(styles.stagesRow, styles.paddingTopZero)}>
+        <div
+          className={classNames(
+            styles.stagesRow,
+            styles.paddingTopZero,
+            styles.headerRow,
+          )}
+        >
           {motion?.status === MotionStatus.Pending && (
-            <Tag
-              appearance={{
-                theme: 'golden',
-                colorSchema: 'fullColor',
-              }}
+            <div
+              className={classNames(styles.tag, {
+                [styles.fullWidth]: motion?.type !== MotionType.StartStream,
+              })}
             >
-              <span className={styles.motionText}>
-                {formatMessage(MSG.activeMotion)}
-              </span>
-            </Tag>
+              <Tag
+                appearance={{
+                  theme: 'golden',
+                  colorSchema: 'fullColor',
+                }}
+              >
+                <span className={styles.motionText}>
+                  {formatMessage(MSG.activeMotion)}
+                </span>
+              </Tag>
+            </div>
+          )}
+          {status === Status.StartedStream && (
+            <span
+              className={classNames(styles.tagWrapper, {
+                [styles.tagClaimed]: claimed,
+              })}
+            >
+              <Tag
+                appearance={{
+                  theme: 'blue',
+                  colorSchema: 'fullColor',
+                  fontSize: 'tiny',
+                }}
+                text={claimed ? MSG.ended : MSG.active}
+              />
+            </span>
+          )}
+          {status === Status.Cancelled && (
+            <span className={classNames(styles.tagWrapper, styles.cancelled)}>
+              <Tag
+                appearance={{
+                  theme: 'pink',
+                  colorSchema: 'fullColor',
+                  fontSize: 'tiny',
+                }}
+                text={MSG.cancelled}
+              />
+            </span>
           )}
           <div className={styles.buttonsWrapper}>
             <Button
@@ -131,14 +217,15 @@ const StreamingStagesLocked = ({
             </Button>
             <Button
               className={classNames(styles.iconButton, {
-                [styles.cancelIcon]: motion?.status !== MotionStatus.Pending,
+                [styles.cancelIcon]:
+                  motion?.status !== MotionStatus.Pending || isCancelled,
                 [styles.iconButtonDisabled]:
-                  motion?.status === MotionStatus.Pending,
+                  motion?.status === MotionStatus.Pending || isCancelled,
               })}
               onClick={handleCancelExpenditure}
-              disabled={motion?.status === MotionStatus.Pending}
+              disabled={isCancelled || motion?.status === MotionStatus.Pending}
             >
-              {motion?.status === MotionStatus.Pending ? (
+              {motion?.status === MotionStatus.Pending || isCancelled ? (
                 <Icon
                   name="circle-minus"
                   appearance={{ size: 'normal' }}
@@ -178,16 +265,107 @@ const StreamingStagesLocked = ({
                   style={buttonStyles}
                 />
               )}
+            {(status === Status.StartedStream || status === Status.Cancelled) &&
+              availableToClaim && (
+                <Button
+                  text={MSG.claimFunds}
+                  onClick={handleButtonClick}
+                  style={buttonStyles}
+                />
+              )}
           </div>
         </div>
       </FormSection>
-      <div className={styles.stagesRow}>
-        <span className={styles.label}>
+      <div className={styles.gridContainer}>
+        <div className={styles.label}>
           <FormattedMessage {...MSG.paidToDate} />
-        </span>
-        <div className={styles.valueWrapper}>
-          <FormattedMessage {...MSG.notStarted} />
         </div>
+        <div className={styles.valueWrapper}>
+          {(status === Status.StartedStream || isCancelled) && paidToDate ? (
+            paidToDate.map((paidToDateItem) => {
+              const token = colony?.tokens?.find(
+                (tokenItem) => tokenItem.address === paidToDateItem.token,
+              );
+
+              if (!token) {
+                return null;
+              }
+
+              return (
+                <div className={styles.value} key={paidToDateItem.id}>
+                  <FormattedMessage
+                    {...MSG.paidValue}
+                    values={{
+                      icon: token && (
+                        <TokenIcon
+                          className={styles.tokenIcon}
+                          token={token}
+                          name={token?.name || token?.address}
+                        />
+                      ),
+                      amount: paidToDateItem.amount && (
+                        <Numeral
+                          unit={getTokenDecimalsWithFallback(0)} // 0 is a mock
+                          value={paidToDateItem.amount}
+                        />
+                      ),
+                      token: token?.symbol,
+                    }}
+                  />
+                </div>
+              );
+            })
+          ) : (
+            <FormattedMessage {...MSG.notStarted} />
+          )}
+        </div>
+        <hr className={styles.border} />
+        <hr className={styles.border} />
+        {activeStageId === Stage.Released && availableToClaim && (
+          <>
+            <div className={styles.label}>
+              <FormattedMessage {...MSG.availableToClaim} />
+            </div>
+            <div className={styles.valueWrapper}>
+              {availableToClaim.map((availableItem) => {
+                const token = colony?.tokens?.find(
+                  (tokenItem) => tokenItem.address === availableItem.token,
+                );
+                if (!token) {
+                  return null;
+                }
+
+                if (!token) {
+                  return null;
+                }
+
+                return (
+                  <span className={styles.value} key={availableItem.id}>
+                    <FormattedMessage
+                      {...MSG.paidValue}
+                      values={{
+                        icon: token && (
+                          <TokenIcon
+                            className={styles.tokenIcon}
+                            token={token}
+                            name={token?.name || token?.address}
+                          />
+                        ),
+                        amount: availableItem.amount && (
+                          <Numeral
+                            unit={getTokenDecimalsWithFallback(0)} // 0 is a mock
+                            value={availableItem.amount}
+                          />
+                        ),
+                        token: token?.symbol,
+                      }}
+                    />
+                  </span>
+                );
+              })}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
