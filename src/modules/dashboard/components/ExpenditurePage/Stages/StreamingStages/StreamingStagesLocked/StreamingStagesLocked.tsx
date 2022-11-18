@@ -27,7 +27,7 @@ import {
   Status,
 } from '../../constants';
 
-import { checkIfEnoughFunds } from './utils';
+import { useAvailableFundsInTeam } from './hooks';
 import styles from './StreamingStagesLocked.css';
 
 const MSG = defineMessages({
@@ -142,39 +142,37 @@ const StreamingStagesLocked = ({
     userFeedbackTimer,
   ]);
 
+  const insufficientFunds = useAvailableFundsInTeam({ fundingSources, colony });
+
   const isCancelled =
     status === Status.Cancelled || status === Status.ForceCancelled;
 
-  const setInsufficentFunds = useCallback((insufficientFunds) => {
+  const setInsufficentFunds = useCallback(() => {
     setHasInsufficentFunds(true);
     setTokensWithError(insufficientFunds?.tokens);
 
     const customEvent = new CustomEvent(INSUFFICIENT_FUNDS_EVENT_TRIGGER, {
       detail: {
-        fundingSources: insufficientFunds?.fundingSources,
+        teams: insufficientFunds?.teams,
         tokens: insufficientFunds?.tokens,
       },
     });
 
     window.dispatchEvent(customEvent);
-  }, []);
+  }, [insufficientFunds]);
 
   const handleClaimFunds = useCallback(() => {
-    // mock - add logic/functionality when it should change to true
-    // set insufficient funding sources and tokens
-    const insufficientFunds = checkIfEnoughFunds(fundingSources);
     if (
       !insufficientFunds ||
-      (isEmpty(insufficientFunds?.fundingSources) &&
-        isEmpty(insufficientFunds?.tokens))
+      (isEmpty(insufficientFunds?.teams) && isEmpty(insufficientFunds?.tokens))
     ) {
       handleButtonClick?.();
       setHasInsufficentFunds(false);
       setTokensWithError(undefined);
     } else {
-      setInsufficentFunds(insufficientFunds);
+      setInsufficentFunds();
     }
-  }, [fundingSources, handleButtonClick, setInsufficentFunds]);
+  }, [handleButtonClick, insufficientFunds, setInsufficentFunds]);
 
   return (
     <div className={styles.stagesWrapper}>
