@@ -50,6 +50,12 @@ jobs:
       
       - name: Checkout                                  
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Checkout relevant branch
+        run:
+          git checkout ${{ github.event.client_payload.COMMIT_HASH != null && github.event.client_payload.COMMIT_HASH || github.sha }}
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
