@@ -4,7 +4,7 @@ import { INSUFFICIENT_FUNDS_EVENT_TRIGGER } from '~pages/ExpenditurePage/constan
 
 const useInsufficientFunds = () => {
   const ref = useRef<HTMLDivElement | null>(null);
-  const [teamsError, setTeamsError] = useState<string[]>();
+  const [teamsError, setTeamsError] = useState<Record<string, string[]>>();
   const [tokensError, setTokensError] = useState<string[]>();
 
   useEffect(() => {

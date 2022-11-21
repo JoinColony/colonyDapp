@@ -76,12 +76,10 @@ export const useAvailableFundsInTeam = ({
   colony?: Colony;
 }) => {
   const { colonyAddress, domains, tokens: colonyTokens } = colony || {};
-  const domainIds = fundingSources?.map((fundingSource) => {
-    const domain = domains?.find(
-      ({ ethDomainId }) => Number(fundingSource.team) === ethDomainId,
-    );
-    return domain?.ethDomainId || 0;
-  });
+
+  const domainIds = uniq(
+    fundingSources?.map((fundingSource) => Number(fundingSource.team) || 0),
+  ) || [0];
 
   const { data } = useTokenBalancesForDomainsQuery({
     variables: {
@@ -91,14 +89,21 @@ export const useAvailableFundsInTeam = ({
     },
     fetchPolicy: 'network-only',
   });
-
-  // checking each funding source - if team has enough balance
+  /*
+   * Checking each funding source - does the team have enough balance?
+   */
   const notFundedTeams = fundingSources?.reduce<{
+    teams: Record<string, string[]>;
     tokens: string[];
-    teams: string[];
   }>(
     (accumulator, fundingSource) => {
-      // calculate tokens, create an array with rates summed by token id
+      /*
+       * @NOTE These calculations should be double checked before going on prod.
+       * Gas price was not included.
+       *
+       * The reduce function below sums tokens by token id.
+       */
+
       const tokensSum = fundingSource.rates.reduce<
         { token: string; amount: BigNumber }[]
       >((acc, curr) => {
@@ -107,13 +112,14 @@ export const useAvailableFundsInTeam = ({
         const tokenObj = colonyTokens?.find(
           (tokenItem) => tokenItem.id === curr.token,
         );
+
         const convertedAmount = bigNumberify(
           moveDecimal(
             curr.amount,
             getTokenDecimalsWithFallback(tokenObj?.decimals),
           ),
         );
-        // if token has already been added to the tokensSum array, then add to the exisitng object
+
         if (acc?.find((accItem) => accItem?.token === curr.token)) {
           return acc.map((accItem) =>
             accItem?.token === curr.token
@@ -121,15 +127,18 @@ export const useAvailableFundsInTeam = ({
               : accItem,
           );
         }
-        // if not added, then add a new object with token
+
         return [...acc, { token: curr.token, amount: convertedAmount }];
       }, []);
+
       const domain = domains?.find(
         ({ ethDomainId }) => Number(fundingSource.team) === ethDomainId,
       );
 
-      // if team from funding source hasn't got enough balance,
-      // then add the tokenId to the notEnoughBalances array
+      /*
+       * If team from funding source hasn't got enough balance,
+       * then add the tokenId to the notEnoughBalances array.
+       */
       const notEnoughBalances = tokensSum.reduce<string[]>((acc, curr) => {
         const tokenItem = data?.tokens.find((token) => token.id === curr.token);
         const tokenBalance = getBalanceFromToken(
@@ -146,15 +155,18 @@ export const useAvailableFundsInTeam = ({
       return isEmpty(notEnoughBalances)
         ? accumulator
         : {
-            teams: [...accumulator.teams, fundingSource.team],
+            teams: {
+              ...accumulator.teams,
+              [fundingSource.team]: notEnoughBalances,
+            },
             tokens: [...accumulator.tokens, ...notEnoughBalances],
           };
     },
-    { teams: [], tokens: [] },
+    { teams: {}, tokens: [] },
   );
   const { teams, tokens } = notFundedTeams || {};
   const teamsWithError = {
-    teams: uniq(teams),
+    teams,
     tokens: uniq(tokens),
   };
 
