@@ -19,6 +19,7 @@ interface Props {
   optionSizeLarge?: boolean;
   hasBlueActiveState?: boolean;
   dropdownHeight?: number;
+  autoHeight?: boolean;
   children: React.ReactNode;
 }
 
@@ -32,6 +33,7 @@ const Dropdown = React.forwardRef(
       optionSizeLarge,
       dropdownHeight,
       hasBlueActiveState,
+      autoHeight,
       children,
     }: Props,
     ref: RefObject<HTMLDivElement>,
@@ -114,6 +116,7 @@ const Dropdown = React.forwardRef(
             className={classNames(styles.dropdown, {
               [styles.optionSizeLarge]: optionSizeLarge,
               [styles.hasBlueActiveState]: hasBlueActiveState,
+              [styles.autoHeight]: autoHeight,
             })}
             style={{
               top: posTop,

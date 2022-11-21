@@ -13,6 +13,7 @@ import { nanoid } from 'nanoid';
 
 import { getMainClasses } from '~utils/css';
 import { DOWN, ENTER, ESC, SimpleMessageValues, SPACE, UP } from '~types/index';
+import Dropdown from '~core/UserPickerWithSearch/Dropdown';
 
 import SelectListBox from './SelectListBox';
 import { Appearance, SelectOption } from './types';
@@ -21,7 +22,6 @@ import InputStatus from '../InputStatus';
 import Icon from '../../Icon';
 
 import styles from './Select.css';
-import Dropdown from '~core/UserPickerWithSearch/Dropdown';
 
 const MSG = defineMessages({
   expandIconHTMLTitle: {
@@ -94,6 +94,7 @@ export interface Props {
   optionSizeLarge?: boolean;
   hasBlueActiveState?: boolean;
   dropdownHeight?: number;
+  autoHeight?: boolean;
 }
 
 const displayName = 'Select';
@@ -123,6 +124,7 @@ const Select = ({
   optionSizeLarge,
   hasBlueActiveState,
   dropdownHeight,
+  autoHeight = false,
 }: Props) => {
   const [id] = useState<string>(idProp || nanoid());
   const [, { error, value }, { setValue }] = useField(name);
@@ -354,6 +356,7 @@ const Select = ({
                 optionSizeLarge={optionSizeLarge}
                 hasBlueActiveState={hasBlueActiveState}
                 dropdownHeight={dropdownHeight}
+                autoHeight={autoHeight}
               >
                 <SelectListBox
                   checkedOption={checkedOption}
