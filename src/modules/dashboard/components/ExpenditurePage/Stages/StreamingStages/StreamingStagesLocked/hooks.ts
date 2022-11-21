@@ -98,7 +98,7 @@ export const useAvailableFundsInTeam = ({
   }>(
     (accumulator, fundingSource) => {
       /*
-       * @NOTE These calculations should be double checked before going on prod.
+       * These calculations should be double checked before going on prod.
        * Gas price was not included.
        *
        * The reduce function below sums tokens by token id.
