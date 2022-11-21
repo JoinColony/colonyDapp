@@ -18,6 +18,7 @@ interface Props extends SelectProps {
   scrollContainer?: HTMLElement | null;
   placement?: 'bottom' | 'right';
   hasBlueActiveState?: boolean;
+  autoHeight?: boolean;
 }
 
 const SelectHorizontal = ({
@@ -26,6 +27,7 @@ const SelectHorizontal = ({
   withDropdownElement,
   scrollContainer,
   placement,
+  autoHeight,
   ...selectProps
 }: Props) => {
   const {
@@ -72,6 +74,7 @@ const SelectHorizontal = ({
             placement,
             hasBlueActiveState,
             dropdownHeight,
+            autoHeight,
             ...selectProps,
           }}
           elementOnly

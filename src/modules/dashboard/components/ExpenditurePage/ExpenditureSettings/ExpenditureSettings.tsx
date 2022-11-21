@@ -111,6 +111,7 @@ const ExpenditureSettings = ({ colony, sidebarRef, inEditMode }: Props) => {
             placement="bottom"
             withDropdownElement
             optionSizeLarge
+            autoHeight
           />
         </div>
       </FormSection>
