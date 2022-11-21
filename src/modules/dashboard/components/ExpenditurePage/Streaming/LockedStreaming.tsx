@@ -8,8 +8,8 @@ import Icon from '~core/Icon';
 import { Stage } from '../Stages/constants';
 
 import { FundingSource } from './types';
-import styles from './Streaming.css';
 import SingleLockedFunding from './SingleLockedFunding';
+import styles from './Streaming.css';
 
 const MSG = defineMessages({
   fundingSource: {

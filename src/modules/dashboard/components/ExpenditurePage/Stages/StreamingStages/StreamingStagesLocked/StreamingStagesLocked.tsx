@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import classNames from 'classnames';
 import copyToClipboard from 'copy-to-clipboard';
-
 import { isEmpty } from 'lodash';
+
 import Button from '~core/Button';
 import { FormSection } from '~core/Fields';
 import Tag from '~core/Tag';

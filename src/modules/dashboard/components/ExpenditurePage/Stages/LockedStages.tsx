@@ -123,7 +123,7 @@ const LockedStages = ({
           activeStageId={activeStageId}
           availableToClaim={availableToClaim}
           paidToDate={paidToDate}
-          handleCancelExpenditure={handleCancelExpenditure} // Handler function is temporary. Different modal should be displayed here, but it's not ready yet.
+          handleCancelExpenditure={handleCancelExpenditure}
           fundingSources={formValues?.streaming?.fundingSources}
           claimed={claimed}
         />

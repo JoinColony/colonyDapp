@@ -13,6 +13,7 @@ import {
   ValuesType,
 } from '~pages/ExpenditurePage/types';
 import { FIX_TRIGGER_EVENT_NAME } from '~pages/ExpenditurePage/constants';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import Stages from './Stages';
 import StreamingStages from './StreamingStages';
@@ -66,6 +67,10 @@ const FormStages = ({
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
   const openStartStreamDialog = useDialog(StartStreamDialog);
 
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
+
   const formikErrors = useMemo(() => {
     const errorsFlat = flattenObject(formikErr);
     return Object.keys(errorsFlat);
@@ -85,7 +90,7 @@ const FormStages = ({
             handleSubmit(values as any);
             setActiveStageId?.(Stage.Released);
           },
-          isVotingExtensionEnabled: true,
+          isVotingExtensionEnabled,
           values,
           colony,
         })
@@ -100,13 +105,14 @@ const FormStages = ({
           handleSubmit(values as any);
           setActiveStageId?.(Stage.Draft);
         },
-        isVotingExtensionEnabled: true, // 'true' is temporary value
+        isVotingExtensionEnabled,
         colony,
       })
     );
   }, [
     colony,
     handleSubmit,
+    isVotingExtensionEnabled,
     openDraftConfirmDialog,
     openStartStreamDialog,
     setActiveStageId,
