@@ -89,7 +89,7 @@ export const getActionsListData = (
           }
 
           if (
-            event.processedValues.txHash ===
+            event.processedValues?.txHash ===
             '0x0000000000000000000000000000000000000000000000000000000000000001'
           ) {
             return true;
