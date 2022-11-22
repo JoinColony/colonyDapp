@@ -3,6 +3,10 @@
   position: absolute;
 }
 
+.autoHeight ul {
+  max-height: unset;
+}
+
 .optionSizeLarge li {
   min-height: 40px;
   line-height: 40px;
