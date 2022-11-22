@@ -37,6 +37,6 @@
     "strictPropertyInitialization": true,
     "target": "es6",
     "typeRoots": ["src/typeDefs", "node_modules/@types"],
-    "types": ["node", "events", "jest"]
+    "types": ["node", "events", "jest", "./node_modules/user-agent-data-types"]
   }
 }
