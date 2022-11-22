@@ -100,6 +100,10 @@ const extractUsefulMethods = (abi: AbiItem[]): AbiItemExtended[] => {
       ...method,
       action: getMethodAction(method),
     }))
+    .filter((method) => {
+      // @NOTE: We don't have the UI to handle view functions
+      return method.action === 'write';
+    })
     .sort(({ name: a }, { name: b }) => {
       return a.toLowerCase() > b.toLowerCase() ? 1 : -1;
     });

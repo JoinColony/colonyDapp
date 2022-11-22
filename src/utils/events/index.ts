@@ -7,6 +7,7 @@ import {
 } from '@colony/colony-js';
 
 import {
+  getAnnotationMsgFromResponse,
   getColonyMetadataFromResponse,
   getDomainMetadataFromResponse,
   getEventMetadataVersion,
@@ -191,20 +192,17 @@ export const formatEventName = (
 ): ColonyAndExtensionsEvents =>
   rawEventName.split('(')[0] as ColonyAndExtensionsEvents;
 
-export const getColonyMetadataIPFS = async (ipfsHash: string) => {
-  /*
-   * Fetch the colony's metadata
-   */
-  let ipfsMetadata: any = null;
+export const getSafeTransactionFromAnnotation = async (ipfsHash: string) => {
   try {
-    ipfsMetadata = await ipfs.getString(ipfsHash);
+    const ipfsMetadata = await ipfs.getString(ipfsHash);
+    return getAnnotationMsgFromResponse(ipfsMetadata);
   } catch (error) {
     log.verbose(
-      'Could not fetch IPFS metadata for colony with hash:',
+      'Could not fetch IPFS safe transactions metadata with hash:',
       ipfsHash,
     );
+    return null;
   }
-  return ipfsMetadata;
 };
 
 const getPaymentActionValues = async (
@@ -571,8 +569,6 @@ const getColonyEditActionValues = async (
           colonyMetadata?.verifiedAddresses || [];
         colonyEditValues.isWhitelistActivated =
           colonyMetadata?.isWhitelistActivated || false;
-        // @TODO: Add colonySafes to ColonyMetadata
-        // @ts-ignore
         colonyEditValues.colonySafes = colonyMetadata?.colonySafes || [];
       }
     }
@@ -745,7 +741,7 @@ const getSafeTransactionInitiatedValues = async (
     address,
     values: { agent, metadata },
   } = colonyMetadataEvent;
-  const ipfsMetadata = await getColonyMetadataIPFS(metadata);
+  const ipfsMetadata = await getSafeTransactionFromAnnotation(metadata);
 
   const initiateSafeTransactionValues: {
     address: Address;
@@ -1289,7 +1285,7 @@ const getSafeTransactionInitiatedMotionValues = async (
   };
 
   if (annotation) {
-    const ipfsMetadata = await getColonyMetadataIPFS(
+    const ipfsMetadata = await getSafeTransactionFromAnnotation(
       annotation.values?.metadata,
     );
 

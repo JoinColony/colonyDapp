@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { SafeTransaction } from '~data/index';
-import { getColonyMetadataIPFS } from '~utils/events';
+import { getSafeTransactionFromAnnotation } from '~utils/events';
 
 export const useFetchSafeTransactionTitle = (metadata?: string) => {
   const [safeTransactionsTitle, setSafeTransactionTitle] = useState<
@@ -11,7 +11,9 @@ export const useFetchSafeTransactionTitle = (metadata?: string) => {
   useEffect(() => {
     const fetchSafeTxData = async () => {
       if (metadata) {
-        const safeTransactionData = await getColonyMetadataIPFS(metadata);
+        const safeTransactionData = await getSafeTransactionFromAnnotation(
+          metadata,
+        );
         if (safeTransactionData) {
           const {
             data: { annotationMsg },
