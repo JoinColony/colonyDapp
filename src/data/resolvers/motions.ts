@@ -18,7 +18,7 @@ import {
   parseSubgraphEvent,
   NormalizedSubgraphEvent,
   ExtendedLogDescription,
-  getSafeTransactionMetadataFromAnnotation,
+  getSafeTransactionFromAnnotation,
   getAnnotationFromSubgraph,
 } from '~utils/events';
 import {
@@ -1311,7 +1311,7 @@ export const motionsResolvers = ({
         );
 
         if (annotation) {
-          const safeTxMetadata = await getSafeTransactionMetadataFromAnnotation(
+          const safeTxMetadata = await getSafeTransactionFromAnnotation(
             annotation.values?.metadata,
           );
 
