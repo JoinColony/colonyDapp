@@ -1,6 +1,6 @@
 import { useField } from 'formik';
 import { nanoid } from 'nanoid';
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { defineMessages } from 'react-intl';
 
 import Button from '~core/Button';
@@ -53,6 +53,8 @@ interface Props {
   remove: <T>(index: number) => T | undefined;
   rateItem: Rate;
   multipleTokens: boolean;
+  setError: React.Dispatch<React.SetStateAction<number[]>>;
+  setLimitError: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
 const RateItem = ({
@@ -64,8 +66,31 @@ const RateItem = ({
   index,
   name,
   multipleTokens,
+  setError,
+  setLimitError,
 }: Props) => {
   const [, { error, touched }] = useField(`${name}.amount`);
+
+  useEffect(() => {
+    if (error && touched) {
+      return setError((oldErrors) => [...oldErrors, index]);
+    }
+    return setError((oldErrors) =>
+      oldErrors.filter((rateError) => rateError !== index),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error, touched, index]);
+
+  const handleRemove = useCallback((rateIndex: number) => {
+    remove(rateIndex);
+    setError((oldErrors) =>
+      oldErrors.filter((rateError) => rateError !== rateIndex),
+    );
+    setLimitError((oldErrors) =>
+      oldErrors.filter((limitError) => limitError !== rateIndex),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className={styles.rateContainer} key={rateItem.id}>
@@ -97,7 +122,9 @@ const RateItem = ({
           {multipleTokens && (
             <Button
               type="button"
-              onClick={() => remove(index)}
+              onClick={() => {
+                handleRemove(index);
+              }}
               appearance={{ theme: 'dangerLink' }}
               text={MSG.discard}
             />

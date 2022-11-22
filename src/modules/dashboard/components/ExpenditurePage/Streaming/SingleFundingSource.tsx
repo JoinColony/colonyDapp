@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
-import { useField } from 'formik';
 import classNames from 'classnames';
+import { isEmpty } from 'lodash';
 
 import { FormSection } from '~core/Fields';
 import Icon from '~core/Icon';
@@ -53,9 +53,12 @@ const SingleFundingSource = ({
   const domain = colony?.domains.find(
     ({ ethDomainId }) => Number(fundingSource.team) === ethDomainId,
   );
-  const [, { error: fundingError, touched }] = useField(
-    `streaming.fundingSources[${index}]`,
-  );
+
+  const [hasRateError, setRateError] = useState<number[]>([]);
+  const [hasLimitError, setLimitError] = useState<number[]>([]);
+
+  const hasError = !isEmpty(hasRateError) || !isEmpty(hasLimitError);
+
   const { formatMessage } = useIntl();
 
   return (
@@ -85,7 +88,7 @@ const SingleFundingSource = ({
               onClick={() => remove(index)}
             />
           )}
-          {fundingError && touched && (
+          {hasError && (
             <ErrorDot
               tooltipContent={<FormattedMessage {...MSG.titleTooltipError} />}
             />
@@ -97,6 +100,8 @@ const SingleFundingSource = ({
         colony={colony}
         index={index}
         fundingSource={fundingSource}
+        setRateError={setRateError}
+        setLimitError={setLimitError}
       />
     </div>
   );

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { defineMessages } from 'react-intl';
 import { useField } from 'formik';
 
@@ -27,10 +27,22 @@ interface Props {
   colony: Colony;
   name: string;
   rate: Rate;
+  setError: React.Dispatch<React.SetStateAction<number[]>>;
+  index: number;
 }
 
-const Limit = ({ colony, name, rate }: Props) => {
+const Limit = ({ colony, name, rate, setError, index }: Props) => {
   const [, { error, touched }] = useField(name);
+
+  useEffect(() => {
+    if (error && touched) {
+      return setError((oldErrors) => [...oldErrors, index]);
+    }
+    return setError((oldErrors) =>
+      oldErrors.filter((limitError) => limitError !== index),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error, touched, index]);
 
   const token = colony.tokens?.find(
     (tokenItem) => rate.token && tokenItem.address === rate.token,
