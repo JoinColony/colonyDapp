@@ -1216,14 +1216,20 @@ const getEmitDomainReputationPenaltyAndRewardMotionValues = async (
 
   const reputationChange = (values.args[4] || values.args[2]).toString();
   const recipient = values.args[3] || values.args[1];
+  const fromDomain = (bigNumberify(reputationChange).lt(0)
+    ? values.args[2]
+    : values.args[0]
+  ).toNumber();
 
   const domainReputationChangeAction: {
     reputationChange: BigNumberish;
     recipient: Address;
+    fromDomain: number;
   } = {
     ...motionDefaultValues,
     reputationChange,
     recipient,
+    fromDomain,
   };
 
   return domainReputationChangeAction;

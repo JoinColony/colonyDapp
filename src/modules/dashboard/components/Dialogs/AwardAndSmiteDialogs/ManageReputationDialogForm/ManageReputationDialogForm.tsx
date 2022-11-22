@@ -310,13 +310,16 @@ const ManageReputationDialogForm = ({
               <MotionDomainSelect
                 colony={colony}
                 onDomainChange={handleMotionDomainChange}
-                disabled={values.forceAction}
+                // @NOTE: When rewarding rep, we can only create motions in the root domain
+                disabled={isSmiteAction ? values.forceAction : true}
                 /*
                  * @NOTE We can only create a motion to vote in a subdomain if we
                  * change reputation in that subdomain
                  */
                 filterDomains={handleFilterMotionDomains}
-                initialSelectedDomain={domainId}
+                initialSelectedDomain={
+                  isSmiteAction ? domainId : ROOT_DOMAIN_ID
+                }
               />
             </div>
           )}
