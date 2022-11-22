@@ -1,9 +1,6 @@
 {
   "extends": "./tsconfig.base",
-  "include": [
-    "globals.d.ts",
-    "src"
-  ],
+  "include": ["globals.d.ts", "src"],
   "exclude": [
     "node_modules",
     "src/lib/colonyNetwork",
