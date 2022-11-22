@@ -4,6 +4,7 @@ import {
   getChildIndex,
   getPermissionProofs,
   ColonyRole,
+  ROOT_DOMAIN_ID,
 } from '@colony/colony-js';
 
 import { AddressZero } from 'ethers/constants';
@@ -82,7 +83,7 @@ function* manageReputationMotion({
       getChildIndex,
       colonyClient,
       motionDomainId,
-      domainId,
+      isSmitingReputation ? domainId : ROOT_DOMAIN_ID,
     );
 
     const { skillId } = yield call(
