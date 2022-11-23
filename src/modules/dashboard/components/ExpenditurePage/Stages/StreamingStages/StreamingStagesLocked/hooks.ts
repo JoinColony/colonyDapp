@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import moveDecimal from 'move-decimal-point';
 import { isEmpty, uniq } from 'lodash';
 import { BigNumber, bigNumberify } from 'ethers/utils';
 
@@ -9,10 +8,7 @@ import {
 } from '~dashboard/ExpenditurePage/Streaming/types';
 import { Colony } from '~data/index';
 import { useTokenBalancesForDomainsQuery } from '~data/generated';
-import {
-  getBalanceFromToken,
-  getTokenDecimalsWithFallback,
-} from '~utils/tokens';
+import { getBalanceFromToken } from '~utils/tokens';
 
 export const useClaimStreamingPayment = (
   initialAvailableToClaim?: Rate[],
@@ -93,7 +89,7 @@ export const useAvailableFundsInTeam = ({
    * Checking each funding source - does the team have enough balance?
    */
   const notFundedTeams = fundingSources?.reduce<{
-    teams: Record<string, string[]>;
+    fundingSources: Record<string, string[]>;
     tokens: string[];
   }>(
     (accumulator, fundingSource) => {
@@ -109,17 +105,13 @@ export const useAvailableFundsInTeam = ({
       >((acc, curr) => {
         if (!curr.token) return acc;
 
-        const tokenObj = colonyTokens?.find(
-          (tokenItem) => tokenItem.id === curr.token,
-        );
+        const convertedAmount = bigNumberify(curr?.amount || 0);
 
-        const convertedAmount = bigNumberify(
-          moveDecimal(
-            curr.amount,
-            getTokenDecimalsWithFallback(tokenObj?.decimals),
-          ),
-        );
-
+        /*
+         * Here we are checking if token has already been added
+         * If so, then add the current amount to the exisitng token amount.
+         * If not, add token to the array.
+         */
         if (acc?.find((accItem) => accItem?.token === curr.token)) {
           return acc.map((accItem) =>
             accItem?.token === curr.token
@@ -152,23 +144,26 @@ export const useAvailableFundsInTeam = ({
         return acc;
       }, []);
 
+      /*
+       * If "notEnoughBalances" array is not empty, then there are not enough funds in the team.
+       * In this case, add the team ID to the teams object and the token IDs to the token array.
+       */
       return isEmpty(notEnoughBalances)
         ? accumulator
         : {
-            teams: {
-              ...accumulator.teams,
-              [fundingSource.team]: notEnoughBalances,
+            fundingSources: {
+              ...accumulator.fundingSources,
+              [fundingSource.id]: notEnoughBalances,
             },
             tokens: [...accumulator.tokens, ...notEnoughBalances],
           };
     },
-    { teams: {}, tokens: [] },
+    { fundingSources: {}, tokens: [] },
   );
-  const { teams, tokens } = notFundedTeams || {};
-  const teamsWithError = {
-    teams,
-    tokens: uniq(tokens),
-  };
 
-  return teamsWithError;
+  /*
+   * Token IDs can be repeated, so we call the uniq function on the tokens array
+   */
+
+  return { ...notFundedTeams, tokens: uniq(notFundedTeams?.tokens) };
 };
