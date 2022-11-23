@@ -57,11 +57,11 @@ const SingleLockedFunding = ({
     (tokenItem) => token && tokenItem.address === token,
   );
 
-  const { ref, teamsError } = useInsufficientFunds();
+  const { ref, fundingSourcesError } = useInsufficientFunds();
   const hasError =
-    teamsError &&
-    Object.keys(teamsError)?.find(
-      (sourceId) => sourceId === fundingSource.team,
+    fundingSourcesError &&
+    Object.keys(fundingSourcesError)?.find(
+      (sourceId) => sourceId === fundingSource.id,
     );
 
   return (
@@ -140,7 +140,7 @@ const SingleLockedFunding = ({
         colony={colony}
         fundingSource={fundingSource}
         isOpen={isOpen}
-        tokensError={teamsError?.[fundingSource.team]}
+        tokensError={fundingSourcesError?.[fundingSource.id]}
         hasError={!!hasError}
       />
     </div>
