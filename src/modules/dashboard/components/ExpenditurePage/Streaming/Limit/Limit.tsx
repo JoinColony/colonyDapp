@@ -7,7 +7,7 @@ import { Colony } from '~data/index';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 
 import { Rate } from '../types';
-import { useStreamingContext } from '../StreamingContext';
+import { useStreamingErrorsContext } from '../StreamingErrorsContext';
 
 import styles from './Limit.css';
 
@@ -33,7 +33,7 @@ interface Props {
 
 const Limit = ({ colony, name, rate, index }: Props) => {
   const [, { error, touched }] = useField(name);
-  const { setLimitsWithError } = useStreamingContext();
+  const { setLimitsWithError } = useStreamingErrorsContext();
 
   useEffect(() => {
     if (error && touched) {

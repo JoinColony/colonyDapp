@@ -12,7 +12,7 @@ import { ErrorDot } from '../ErrorDot';
 import { Props as StreamingProps } from './Streaming';
 import FundingSource from './FundingSource';
 import { FundingSource as FundingSourceType } from './types';
-import { StreamingContextProvider } from './StreamingContext';
+import { StreamingErrorsContextProvider } from './StreamingErrorsContext';
 import styles from './Streaming.css';
 
 const displayName = 'dashboard.ExpenditurePage.Streaming.SingleFundingSource';
@@ -74,7 +74,7 @@ const SingleFundingSource = ({
   );
 
   return (
-    <StreamingContextProvider value={streamingContextValue}>
+    <StreamingErrorsContextProvider value={streamingContextValue}>
       <div
         className={classNames(styles.singleFundingSource, {
           [styles.wrapper]: !isLastItem && fundingSource.isExpanded,
@@ -115,7 +115,7 @@ const SingleFundingSource = ({
           fundingSource={fundingSource}
         />
       </div>
-    </StreamingContextProvider>
+    </StreamingErrorsContextProvider>
   );
 };
 
