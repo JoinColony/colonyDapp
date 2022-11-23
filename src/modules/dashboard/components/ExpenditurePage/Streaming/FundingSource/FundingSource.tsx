@@ -35,18 +35,9 @@ export interface Props {
   colony: Colony;
   fundingSource: FundingSourceType;
   index: number;
-  setRateError: React.Dispatch<React.SetStateAction<number[]>>;
-  setLimitError: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
-const FundingSource = ({
-  fundingSource,
-  index,
-  colony,
-  sidebarRef,
-  setRateError,
-  setLimitError,
-}: Props) => {
+const FundingSource = ({ fundingSource, index, colony, sidebarRef }: Props) => {
   const [, { value }] = useField('streaming');
 
   const getDomainColor = useCallback<(domainId: string | undefined) => Color>(
@@ -130,8 +121,6 @@ const FundingSource = ({
                     sidebarRef={sidebarRef}
                     multipleTokens={fundingSource.rates.length > 1}
                     key={rateItem.id}
-                    setError={setRateError}
-                    setLimitError={setLimitError}
                   />
                 ))}
               </FormSection>
@@ -154,7 +143,6 @@ const FundingSource = ({
                       colony={colony}
                       rate={rateItem}
                       key={rateItem.id}
-                      setError={setLimitError}
                       index={rateIndex}
                     />
                   );

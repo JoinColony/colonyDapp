@@ -7,6 +7,7 @@ import { Colony } from '~data/index';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 
 import { Rate } from '../types';
+import { useStreamingContext } from '../StreamingContext';
 
 import styles from './Limit.css';
 
@@ -27,19 +28,19 @@ interface Props {
   colony: Colony;
   name: string;
   rate: Rate;
-  setError: React.Dispatch<React.SetStateAction<number[]>>;
   index: number;
 }
 
-const Limit = ({ colony, name, rate, setError, index }: Props) => {
+const Limit = ({ colony, name, rate, index }: Props) => {
   const [, { error, touched }] = useField(name);
+  const { setLimitsWithError } = useStreamingContext();
 
   useEffect(() => {
     if (error && touched) {
-      setError((oldErrors) => [...oldErrors, index]);
+      setLimitsWithError((oldErrors) => [...oldErrors, index]);
       return;
     }
-    setError((oldErrors) =>
+    setLimitsWithError((oldErrors) =>
       oldErrors.filter((limitError) => limitError !== index),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
