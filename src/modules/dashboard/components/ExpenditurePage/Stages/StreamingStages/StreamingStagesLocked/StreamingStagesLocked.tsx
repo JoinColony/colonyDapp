@@ -153,7 +153,7 @@ const StreamingStagesLocked = ({
 
     const customEvent = new CustomEvent(INSUFFICIENT_FUNDS_EVENT_TRIGGER, {
       detail: {
-        teams: insufficientFunds?.teams,
+        fundingSources: insufficientFunds?.fundingSources,
         tokens: insufficientFunds?.tokens,
       },
     });
@@ -164,7 +164,8 @@ const StreamingStagesLocked = ({
   const handleClaimFunds = useCallback(() => {
     if (
       !insufficientFunds ||
-      (isEmpty(insufficientFunds?.teams) && isEmpty(insufficientFunds?.tokens))
+      (isEmpty(insufficientFunds?.fundingSources) &&
+        isEmpty(insufficientFunds?.tokens))
     ) {
       handleButtonClick?.();
       setHasInsufficentFunds(false);

@@ -4,16 +4,18 @@ import { INSUFFICIENT_FUNDS_EVENT_TRIGGER } from '~pages/ExpenditurePage/constan
 
 const useInsufficientFunds = () => {
   const ref = useRef<HTMLDivElement | null>(null);
-  const [teamsError, setTeamsError] = useState<Record<string, string[]>>();
+  const [fundingSourcesError, setfundingSourcesError] = useState<
+    Record<string, string[]>
+  >();
   const [tokensError, setTokensError] = useState<string[]>();
 
   useEffect(() => {
     const handleInsufficientFunds = (e: CustomEvent) => {
       const {
-        detail: { teams, tokens },
+        detail: { fundingSources, tokens },
       } = e;
 
-      setTeamsError(teams);
+      setfundingSourcesError(fundingSources);
       setTokensError(tokens);
     };
 
@@ -30,7 +32,7 @@ const useInsufficientFunds = () => {
     };
   }, []);
 
-  return { ref, teamsError, tokensError };
+  return { ref, fundingSourcesError, tokensError };
 };
 
 export default useInsufficientFunds;
