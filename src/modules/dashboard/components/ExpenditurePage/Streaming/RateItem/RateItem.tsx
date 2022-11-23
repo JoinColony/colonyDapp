@@ -15,6 +15,7 @@ import { Colony } from '~data/index';
 
 import { timeOptions } from '../constants';
 import { newRate } from '../FundingSource/constants';
+import { useStreamingContext } from '../StreamingContext';
 import { Rate } from '../types';
 
 import styles from './RateItem.css';
@@ -53,8 +54,6 @@ interface Props {
   remove: <T>(index: number) => T | undefined;
   rateItem: Rate;
   multipleTokens: boolean;
-  setError: React.Dispatch<React.SetStateAction<number[]>>;
-  setLimitError: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
 const RateItem = ({
@@ -66,17 +65,16 @@ const RateItem = ({
   index,
   name,
   multipleTokens,
-  setError,
-  setLimitError,
 }: Props) => {
   const [, { error, touched }] = useField(`${name}.amount`);
+  const { setRatesWithError, setLimitsWithError } = useStreamingContext();
 
   useEffect(() => {
     if (error && touched) {
-      setError((oldErrors) => [...oldErrors, index]);
+      setRatesWithError((oldErrors) => [...oldErrors, index]);
       return;
     }
-    setError((oldErrors) =>
+    setRatesWithError((oldErrors) =>
       oldErrors.filter((rateError) => rateError !== index),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -84,10 +82,10 @@ const RateItem = ({
 
   const handleRemove = useCallback((rateIndex: number) => {
     remove(rateIndex);
-    setError((oldErrors) =>
+    setRatesWithError((oldErrors) =>
       oldErrors.filter((rateError) => rateError !== rateIndex),
     );
-    setLimitError((oldErrors) =>
+    setLimitsWithError((oldErrors) =>
       oldErrors.filter((limitError) => limitError !== rateIndex),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
