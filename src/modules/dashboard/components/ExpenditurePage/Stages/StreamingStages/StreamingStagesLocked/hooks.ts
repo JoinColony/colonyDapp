@@ -165,5 +165,8 @@ export const useAvailableFundsInTeam = ({
    * Token IDs can be repeated, so we call the uniq function on the tokens array
    */
 
-  return { ...notFundedTeams, tokens: uniq(notFundedTeams?.tokens) };
+  return {
+    fundingSources: notFundedTeams?.fundingSources,
+    tokens: uniq(notFundedTeams?.tokens),
+  };
 };
