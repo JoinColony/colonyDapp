@@ -15,7 +15,7 @@ import { Colony } from '~data/index';
 
 import { timeOptions } from '../constants';
 import { newRate } from '../FundingSource/constants';
-import { useStreamingContext } from '../StreamingContext';
+import { useStreamingErrorsContext } from '../StreamingErrorsContext';
 import { Rate } from '../types';
 
 import styles from './RateItem.css';
@@ -67,7 +67,7 @@ const RateItem = ({
   multipleTokens,
 }: Props) => {
   const [, { error, touched }] = useField(`${name}.amount`);
-  const { setRatesWithError, setLimitsWithError } = useStreamingContext();
+  const { setRatesWithError, setLimitsWithError } = useStreamingErrorsContext();
 
   useEffect(() => {
     if (error && touched) {
