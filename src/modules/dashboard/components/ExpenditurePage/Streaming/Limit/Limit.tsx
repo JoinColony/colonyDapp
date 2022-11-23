@@ -36,9 +36,10 @@ const Limit = ({ colony, name, rate, setError, index }: Props) => {
 
   useEffect(() => {
     if (error && touched) {
-      return setError((oldErrors) => [...oldErrors, index]);
+      setError((oldErrors) => [...oldErrors, index]);
+      return;
     }
-    return setError((oldErrors) =>
+    setError((oldErrors) =>
       oldErrors.filter((limitError) => limitError !== index),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
