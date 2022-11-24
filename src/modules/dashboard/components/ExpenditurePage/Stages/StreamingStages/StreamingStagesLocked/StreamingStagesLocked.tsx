@@ -27,7 +27,7 @@ import {
   Status,
 } from '../../constants';
 
-import { useAvailableFundsInTeam } from './hooks';
+import { useClaimStreamingPayment } from './hooks';
 import styles from './StreamingStagesLocked.css';
 
 const MSG = defineMessages({
@@ -112,16 +112,11 @@ export interface Props {
 }
 
 const StreamingStagesLocked = ({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  handleButtonClick,
   status,
   motion,
   colony,
   activeStageId,
-  paidToDate,
-  availableToClaim,
   handleCancelExpenditure,
-  claimed,
   fundingSources,
 }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
@@ -142,7 +137,17 @@ const StreamingStagesLocked = ({
     userFeedbackTimer,
   ]);
 
-  const insufficientFunds = useAvailableFundsInTeam({ fundingSources, colony });
+  /* This is a mocked claiming function - should to be replaced with a call to the backend */
+  const {
+    availableToClaim,
+    paidToDate,
+    claimFunds,
+    claimed,
+    insufficientFunds,
+  } = useClaimStreamingPayment({
+    fundingSources,
+    colony,
+  });
 
   const isCancelled =
     status === Status.Cancelled || status === Status.ForceCancelled;
@@ -162,18 +167,19 @@ const StreamingStagesLocked = ({
   }, [insufficientFunds]);
 
   const handleClaimFunds = useCallback(() => {
+    claimFunds();
+
     if (
       !insufficientFunds ||
       (isEmpty(insufficientFunds?.fundingSources) &&
         isEmpty(insufficientFunds?.tokens))
     ) {
-      handleButtonClick?.();
       setHasInsufficentFunds(false);
       setTokensWithError(undefined);
     } else {
       setInsufficentFunds();
     }
-  }, [handleButtonClick, insufficientFunds, setInsufficentFunds]);
+  }, [claimFunds, insufficientFunds, setInsufficentFunds]);
 
   return (
     <div className={styles.stagesWrapper}>
@@ -329,7 +335,7 @@ const StreamingStagesLocked = ({
                   text={MSG.claimFunds}
                   onClick={handleClaimFunds}
                   style={buttonStyles}
-                  disabled={claimed || hasInsufficentFunds}
+                  disabled={claimed}
                 />
               )}
           </div>
@@ -340,7 +346,9 @@ const StreamingStagesLocked = ({
           <FormattedMessage {...MSG.paidToDate} />
         </div>
         <div className={styles.valueWrapper}>
-          {(status === Status.StartedStream || isCancelled) && paidToDate ? (
+          {(status === Status.StartedStream || isCancelled) &&
+          paidToDate &&
+          !isEmpty(paidToDate) ? (
             paidToDate.map((paidToDateItem) => {
               const token = colony?.tokens?.find(
                 (tokenItem) => tokenItem.address === paidToDateItem.token,
@@ -390,10 +398,6 @@ const StreamingStagesLocked = ({
                 const token = colony?.tokens?.find(
                   (tokenItem) => tokenItem.address === availableItem.token,
                 );
-                if (!token) {
-                  return null;
-                }
-
                 if (!token) {
                   return null;
                 }
