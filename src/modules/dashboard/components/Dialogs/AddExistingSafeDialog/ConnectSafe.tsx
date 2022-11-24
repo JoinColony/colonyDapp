@@ -1,18 +1,24 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormikProps } from 'formik';
 import {
   defineMessages,
   FormattedMessage,
   MessageDescriptor,
+  useIntl,
 } from 'react-intl';
-import classnames from 'classnames';
+import copyToClipboard from 'copy-to-clipboard';
 
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import ExternalLink from '~core/ExternalLink';
 import Icon from '~core/Icon';
-import { GNOSIS_AMB_BRIDGES, GNOSIS_NETWORK } from '~constants';
-import { useClipboardCopy } from '~modules/dashboard/hooks';
+import { Tooltip } from '~core/Popover';
+
+import {
+  GNOSIS_AMB_BRIDGES,
+  GNOSIS_NETWORK,
+  SUPPORTED_SAFE_NETWORKS,
+} from '~constants';
 
 import { FormValues, AddExistingSafeProps } from './index';
 
@@ -25,11 +31,11 @@ const MSG = defineMessages({
   },
   warning: {
     id: 'dashboard.AddExistingSafeDialog.ConnectSafe.warning',
-    defaultMessage: `<span>Warning.</span> Bridging across chains can have an element of risk.`,
+    defaultMessage: `<span>Be aware.</span> Cross-chain bridging can have an element of risk.`,
   },
   instructions: {
     id: 'dashboard.AddExistingSafeDialog.ConnectSafe.instructions',
-    defaultMessage: `To give this colony permission to control the Safe, you need to provide the follow details in the Zodiac Bridge Module in your Safe. <a>Read the set up instructions here.</a>`,
+    defaultMessage: `To give this colony permission to control the Safe, you need to provide the following details in the Zodiac Bridge Module in your Safe. <a>Learn how to set up the Zodiac Bridge Module.</a>`,
   },
   amb: {
     id: 'dashboard.AddExistingSafeDialog.ConnectSafe.amb',
@@ -43,14 +49,37 @@ const MSG = defineMessages({
     id: 'dashboard.AddExistingSafeDialog.ConnectSafe.chain',
     defaultMessage: 'Chain ID',
   },
+  moduleLink: {
+    id: 'dashboard.AddExistingSafeDialog.ConnectSafe.moduleLink',
+    defaultMessage: `<a>Click to go to the Safe and add the Bridge Module</a>`,
+  },
+  moduleSubtitle: {
+    id: 'dashboard.AddExistingSafeDialog.ConnectSafe.moduleSubtitle',
+    defaultMessage: 'Add the module to the Safe',
+  },
+  moduleDetailsSubtitle: {
+    id: 'dashboard.AddExistingSafeDialog.ConnectSafe.moduleDetailsSubtitle',
+    defaultMessage: 'Bridge Module setup details',
+  },
+  copyDataTooltip: {
+    id: 'InvisibleCopyableAddress.copyAddressTooltip',
+    defaultMessage: `{copied, select,
+      true {Copied}
+      false {{tooltipMessage}}
+    }`,
+  },
+  copyMessage: {
+    id: 'InvisibleCopyableAddress.copyMessage',
+    defaultMessage: 'Click to copy',
+  },
 });
 
-const instructionsHref = `https://colony.gitbook.io/colony/advanced-features/safe-control-gnosis-safe`;
+const instructionsHref = `https://colony.gitbook.io/colony/advanced-features/safe-control-gnosis-safe/adding-a-safe#step-2-connect-the-safe`;
 
-type ConnectSafeProps = Pick<
-  AddExistingSafeProps,
-  'colonyAddress' | 'setStepIndex'
->;
+interface ConnectSafeProps
+  extends Pick<AddExistingSafeProps, 'colonyAddress' | 'setStepIndex'> {
+  safeAddress: string;
+}
 
 interface CopyableProps {
   label: MessageDescriptor;
@@ -62,25 +91,54 @@ const ConnectSafe = ({
   values: { chainId },
   setStepIndex,
   colonyAddress,
+  safeAddress,
 }: ConnectSafeProps & FormikProps<FormValues>) => {
+  const selectedChain = SUPPORTED_SAFE_NETWORKS.find(
+    (network) => network.chainId === Number(chainId),
+  );
+  const { formatMessage } = useIntl();
+  const moduleHref = `https://app.safe.global/${selectedChain?.shortName.toLowerCase()}:${safeAddress}/apps?appUrl=https%3A%2F%2Fzodiac.gnosisguild.org%2F`;
   const CopyableData = ({ label, text }: CopyableProps) => {
-    const { isCopied, handleClipboardCopy } = useClipboardCopy(text);
+    const [copied, setCopied] = useState(false);
+    const tooltipMessage = formatMessage(MSG.copyMessage);
+
+    const handleClipboardCopy = () => {
+      setCopied(true);
+      copyToClipboard(text);
+    };
+
+    useEffect(() => {
+      let timeout;
+      if (copied) {
+        timeout = setTimeout(() => setCopied(false), 2000);
+      }
+      return () => {
+        clearTimeout(timeout);
+      };
+    }, [copied]);
+
     return (
       <div className={styles.copyableContainer}>
         <span className={styles.subtitle}>
           <FormattedMessage {...label} />
         </span>
-        <div
-          className={classnames(styles.copyable, styles.fat, {
-            [styles.copied]: isCopied,
-          })}
-        >
+        <div className={`${styles.copyable} ${styles.fat}`}>
           <span>{text}</span>
-          <Icon
-            appearance={{ size: 'normal' }}
-            name="copy"
-            onClick={handleClipboardCopy}
-          />
+          <Tooltip
+            trigger="hover"
+            content={
+              <FormattedMessage
+                {...MSG.copyDataTooltip}
+                values={{ copied, tooltipMessage }}
+              />
+            }
+          >
+            <Icon
+              appearance={{ size: 'normal' }}
+              name="copy"
+              onClick={handleClipboardCopy}
+            />
+          </Tooltip>
         </div>
       </div>
     );
@@ -116,7 +174,23 @@ const ConnectSafe = ({
         </div>
       </DialogSection>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <div className={`${styles.instructions} ${styles.moduleLinkSection}`}>
+          <span className={styles.subtitle}>
+            <FormattedMessage {...MSG.moduleSubtitle} />
+          </span>
+          <FormattedMessage
+            {...MSG.moduleLink}
+            values={{
+              a: (chunks) => <ExternalLink text={chunks} href={moduleHref} />,
+            }}
+          />
+        </div>
+      </DialogSection>
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
         <div className={styles.info}>
+          <span className={styles.subtitle}>
+            <FormattedMessage {...MSG.moduleDetailsSubtitle} />
+          </span>
           <CopyableData
             label={MSG.amb}
             text={GNOSIS_AMB_BRIDGES[chainId].foreignAMB}
