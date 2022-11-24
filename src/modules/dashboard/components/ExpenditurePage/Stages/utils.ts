@@ -41,8 +41,24 @@ export const flattenObject = (
 
   return result;
 };
+export const calcTokensFromRates = (rates?: Rate[]) => {
+  return rates?.reduce<Rate[]>((acc, curr) => {
+    // check if token has already been added
+    const isTokenAdded = acc.find((rateItem) => rateItem.token === curr.token);
+    return isTokenAdded
+      ? acc.map((accItem) =>
+          accItem.token === curr.token
+            ? {
+                ...accItem,
+                amount: Number(accItem.amount || 0) + Number(curr.amount || 0),
+              }
+            : accItem,
+        )
+      : [...acc, curr];
+  }, []);
+};
 
-export const calcAvailableToClaim = (funds?: FundingSource[]) => {
+export const calculateTokens = (funds?: FundingSource[]) => {
   if (!funds) {
     return undefined;
   }
@@ -50,29 +66,5 @@ export const calcAvailableToClaim = (funds?: FundingSource[]) => {
   // create an array with all available rates
   const rates = funds.map((fundItem) => fundItem.rates).flat();
 
-  const calcAvailable = rates.reduce<Rate[]>((acc, curr) => {
-    // variable isAvailableToClaim is a mock, it should be replaced with an actual value
-    const isAvailableToClaim = true;
-
-    if (isAvailableToClaim) {
-      // check if token has already been added
-      const isTokenAdded = acc.find(
-        (rateItem) => rateItem.token === curr.token,
-      );
-      return isTokenAdded
-        ? acc.map((accItem) =>
-            accItem.token === curr.token
-              ? {
-                  ...accItem,
-                  amount:
-                    Number(accItem.amount || 0) + Number(curr.amount || 0),
-                }
-              : accItem,
-          )
-        : [...acc, curr];
-    }
-    return acc;
-  }, []);
-
-  return calcAvailable;
+  return calcTokensFromRates(rates);
 };
