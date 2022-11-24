@@ -18,7 +18,7 @@ import {
   parseSubgraphEvent,
   NormalizedSubgraphEvent,
   ExtendedLogDescription,
-  getColonyMetadataIPFS,
+  getSafeTransactionFromAnnotation,
   getAnnotationFromSubgraph,
 } from '~utils/events';
 import {
@@ -1311,7 +1311,7 @@ export const motionsResolvers = ({
         );
 
         if (annotation) {
-          const safeTxMetadata = await getColonyMetadataIPFS(
+          const safeTxMetadata = await getSafeTransactionFromAnnotation(
             annotation.values?.metadata,
           );
 
