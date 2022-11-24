@@ -40,7 +40,7 @@ export interface AddExistingSafeProps {
 
 const AddExistingSafeDialogForm = ({
   networkOptions,
-  values: { chainId },
+  values: { chainId, contractAddress },
   values,
   loadingState,
   stepIndex,
@@ -74,7 +74,12 @@ const AddExistingSafeDialogForm = ({
         );
       case 2:
         return (
-          <ConnectSafe {...props} values={values} setStepIndex={setStepIndex} />
+          <ConnectSafe
+            {...props}
+            values={values}
+            setStepIndex={setStepIndex}
+            safeAddress={contractAddress}
+          />
         );
       case 3:
         return (
