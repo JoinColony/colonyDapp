@@ -1316,11 +1316,8 @@ export const motionsResolvers = ({
           );
 
           if (safeTxMetadata) {
-            const {
-              data: { annotationMsg },
-            } = JSON.parse(safeTxMetadata);
-            if (annotationMsg) {
-              const parsedAnnotation = JSON.parse(annotationMsg);
+            const parsedAnnotation = JSON.parse(safeTxMetadata);
+            if (parsedAnnotation) {
               return {
                 transactionTitle: parsedAnnotation.title,
               };
