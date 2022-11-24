@@ -5,6 +5,7 @@ export const step1Subtitle: string;
 export const chainSelect: string;
 export const headingContainer: string;
 export const instructions: string;
+export const moduleLinkSection: string;
 export const copyable: string;
 export const fat: string;
 export const copyableContainer: string;
