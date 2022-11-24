@@ -759,11 +759,8 @@ const getSafeTransactionInitiatedValues = async (
   };
 
   if (ipfsMetadata) {
-    const {
-      data: { annotationMsg },
-    } = JSON.parse(ipfsMetadata);
-    if (annotationMsg) {
-      const parsedAnnotation = JSON.parse(annotationMsg);
+    const parsedAnnotation = JSON.parse(ipfsMetadata);
+    if (parsedAnnotation) {
       initiateSafeTransactionValues.safeData = parsedAnnotation.safeData;
       initiateSafeTransactionValues.safeTransactions =
         parsedAnnotation.transactions;
@@ -1297,10 +1294,7 @@ const getSafeTransactionInitiatedMotionValues = async (
 
     if (ipfsMetadata) {
       // We storing the safeTxData in the annotation message to avoid storing in colony metadata
-      const {
-        data: { annotationMsg },
-      } = JSON.parse(ipfsMetadata);
-      const safeTxData = JSON.parse(annotationMsg || '[]');
+      const safeTxData = JSON.parse(ipfsMetadata);
       if (safeTxData) {
         initiateSafeTransactionValues.safeData = safeTxData.safeData;
         initiateSafeTransactionValues.safeTransactions =

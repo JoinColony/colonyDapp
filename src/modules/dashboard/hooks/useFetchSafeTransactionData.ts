@@ -15,11 +15,8 @@ export const useFetchSafeTransactionTitle = (metadata?: string) => {
           metadata,
         );
         if (safeTransactionData) {
-          const {
-            data: { annotationMsg },
-          } = JSON.parse(safeTransactionData);
-          if (annotationMsg) {
-            const parsedAnnotation = JSON.parse(annotationMsg);
+          const parsedAnnotation = JSON.parse(safeTransactionData);
+          if (parsedAnnotation) {
             setSafeTransactionTitle(parsedAnnotation.title);
           }
         }
