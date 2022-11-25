@@ -67,6 +67,7 @@ const RateItem = ({
   multipleTokens,
 }: Props) => {
   const [, { error, touched }] = useField(`${name}.amount`);
+  const [, { touched: limitTouched }] = useField(`${name}.limit`);
   const { setRatesWithError, setLimitsWithError } = useStreamingErrorsContext();
 
   useEffect(() => {
@@ -175,7 +176,7 @@ const RateItem = ({
             />
           </div>
         </div>
-        <InputStatus error={error} touched={touched} />
+        <InputStatus error={error} touched={touched || limitTouched} />
       </div>
     </div>
   );
