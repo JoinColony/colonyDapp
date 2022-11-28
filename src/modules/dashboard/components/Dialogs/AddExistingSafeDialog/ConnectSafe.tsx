@@ -64,14 +64,14 @@ const MSG = defineMessages({
     defaultMessage: 'Bridge Module setup details',
   },
   copyDataTooltip: {
-    id: 'InvisibleCopyableAddress.copyAddressTooltip',
+    id: 'dashboard.AddExistingSafeDialog.ConnectSafe.copyAddressTooltip',
     defaultMessage: `{isCopied, select,
       true {Copied}
       false {{tooltipMessage}}
     }`,
   },
   copyMessage: {
-    id: 'InvisibleCopyableAddress.copyMessage',
+    id: 'dashboard.AddExistingSafeDialog.ConnectSafe.copyMessage',
     defaultMessage: 'Click to copy',
   },
 });
