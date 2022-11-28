@@ -23,6 +23,7 @@ import {
   Stage,
   Status,
 } from '../../constants';
+import { calculateTokens } from '../../utils';
 
 import { useClaimStreamingPayment } from './hooks';
 import styles from './StreamingStagesLocked.css';
@@ -134,6 +135,7 @@ const StreamingStagesLocked = ({
   /* This is a mocked claiming function - should to be replaced with a call to the backend */
   const {
     availableToClaim,
+    setAvailableToClaim,
     paidToDate,
     claimFunds,
     claimed,
@@ -142,6 +144,16 @@ const StreamingStagesLocked = ({
     fundingSources,
     colony,
   });
+
+  useEffect(() => {
+    if (
+      motion?.type === MotionType.Edit &&
+      motion.status === MotionStatus.Passed &&
+      !claimed
+    ) {
+      setAvailableToClaim(calculateTokens({ funds: fundingSources, colony }));
+    }
+  }, [motion, colony, fundingSources, setAvailableToClaim, claimed]);
 
   const isCancelled =
     status === Status.Cancelled || status === Status.ForceCancelled;

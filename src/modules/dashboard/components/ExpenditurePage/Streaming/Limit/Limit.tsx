@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { defineMessages } from 'react-intl';
+import { useField } from 'formik';
 
-import { Input } from '~core/Fields';
+import { Input, InputStatus } from '~core/Fields';
 import { Colony } from '~data/index';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 
@@ -80,7 +81,7 @@ const Limit = ({ colony, name, rate, index }: Props) => {
         {token.symbol}
       </div>
       <InputStatus error={error} touched={touched} />
-    </>
+    </div>
   );
 };
 
