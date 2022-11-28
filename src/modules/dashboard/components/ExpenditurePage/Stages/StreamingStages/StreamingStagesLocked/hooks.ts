@@ -21,9 +21,11 @@ export interface InsufficientError {
 export const useClaimStreamingPayment = ({
   fundingSources,
   colony,
+  initialPaidToDate,
 }: {
   fundingSources?: FundingSource[];
   colony?: Colony;
+  initialPaidToDate?: RateWithAmount[];
 }) => {
   const { colonyAddress, tokens: colonyTokens } = colony || {};
   /*
@@ -42,9 +44,12 @@ export const useClaimStreamingPayment = ({
       : undefined,
   );
 
-  const [paidToDate, setPaidToDate] = useState<RateWithAmount[] | undefined>();
+  const [paidToDate, setPaidToDate] = useState<RateWithAmount[] | undefined>(
+    initialPaidToDate,
+  );
+  const [claimed, setClaimed] = useState(false);
 
-  const usedTokens = useMemo(
+  const usedTokens = useMemo<RateWithAmount[] | undefined>(
     () => calculateTokens({ funds: fundingSources, colony }),
     [colony, fundingSources],
   );
@@ -86,18 +91,20 @@ export const useClaimStreamingPayment = ({
       (acc, curr) => {
         const [team, ratesArr] = curr;
 
-        const notFundedTokens = ratesArr
-          .map((rate) => {
-            const tokenData = data?.tokens.find(
-              (token) => token.id === rate.token,
-            );
-            const tokenBalance = getBalanceFromToken(tokenData, Number(team));
-            if (tokenBalance.lt(rate.amount)) {
-              return rate;
-            }
-            return undefined;
-          })
-          .filter((item): item is RateWithAmount => !!item);
+        const notFundedTokens =
+          Array.isArray(ratesArr) &&
+          ratesArr
+            .map((rate) => {
+              const tokenData = data?.tokens.find(
+                (token) => token.id === rate.token,
+              );
+              const tokenBalance = getBalanceFromToken(tokenData, Number(team));
+              if (tokenBalance.lt(rate.amount)) {
+                return rate;
+              }
+              return undefined;
+            })
+            .filter((item): item is RateWithAmount => !!item);
 
         return !notFundedTokens || isEmpty(notFundedTokens)
           ? acc
@@ -164,6 +171,7 @@ export const useClaimStreamingPayment = ({
          * If team has enough funds, then remove it from the available array
          */
         if (!hasNotEnoughFunds) {
+          setClaimed(true);
           newPaidToDate.push(
             ...ratesArr.map((item) => ({
               ...item,
@@ -226,9 +234,10 @@ export const useClaimStreamingPayment = ({
 
   return {
     availableToClaim: availableArray,
+    setAvailableToClaim,
     paidToDate,
     claimFunds,
-    claimed: isEmpty(availableToClaim),
+    claimed,
     insufficientFunds,
   };
 };
