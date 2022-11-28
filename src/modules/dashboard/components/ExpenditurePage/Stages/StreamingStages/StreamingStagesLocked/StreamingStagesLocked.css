@@ -211,7 +211,3 @@
 .error {
   color: var(--pink);
 }
-
-.value > span {
-  margin-right: 4px;
-}
