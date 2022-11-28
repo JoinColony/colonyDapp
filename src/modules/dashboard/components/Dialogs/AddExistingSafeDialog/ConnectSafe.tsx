@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { FormikProps } from 'formik';
 import {
   defineMessages,
@@ -6,7 +6,6 @@ import {
   MessageDescriptor,
   useIntl,
 } from 'react-intl';
-import copyToClipboard from 'copy-to-clipboard';
 
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
@@ -15,10 +14,13 @@ import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
 
 import {
+  ETHEREUM_NETWORK,
   GNOSIS_AMB_BRIDGES,
   GNOSIS_NETWORK,
   SUPPORTED_SAFE_NETWORKS,
 } from '~constants';
+import { CONNECT_SAFE_INSTRUCTIONS, getModuleLink } from '~externalUrls';
+import { useClipboardCopy } from '~modules/dashboard/hooks';
 
 import { FormValues, AddExistingSafeProps } from './index';
 
@@ -63,7 +65,7 @@ const MSG = defineMessages({
   },
   copyDataTooltip: {
     id: 'InvisibleCopyableAddress.copyAddressTooltip',
-    defaultMessage: `{copied, select,
+    defaultMessage: `{isCopied, select,
       true {Copied}
       false {{tooltipMessage}}
     }`,
@@ -73,8 +75,6 @@ const MSG = defineMessages({
     defaultMessage: 'Click to copy',
   },
 });
-
-const instructionsHref = `https://colony.gitbook.io/colony/advanced-features/safe-control-gnosis-safe/adding-a-safe#step-2-connect-the-safe`;
 
 interface ConnectSafeProps
   extends Pick<AddExistingSafeProps, 'colonyAddress' | 'setStepIndex'> {
@@ -97,25 +97,14 @@ const ConnectSafe = ({
     (network) => network.chainId === Number(chainId),
   );
   const { formatMessage } = useIntl();
-  const moduleHref = `https://app.safe.global/${selectedChain?.shortName.toLowerCase()}:${safeAddress}/apps?appUrl=https%3A%2F%2Fzodiac.gnosisguild.org%2F`;
+  const moduleHref = getModuleLink(
+    selectedChain?.shortName.toLowerCase() ||
+      ETHEREUM_NETWORK.shortName.toLowerCase(),
+    safeAddress,
+  );
   const CopyableData = ({ label, text }: CopyableProps) => {
-    const [copied, setCopied] = useState(false);
+    const { isCopied, handleClipboardCopy } = useClipboardCopy(text);
     const tooltipMessage = formatMessage(MSG.copyMessage);
-
-    const handleClipboardCopy = () => {
-      setCopied(true);
-      copyToClipboard(text);
-    };
-
-    useEffect(() => {
-      let timeout;
-      if (copied) {
-        timeout = setTimeout(() => setCopied(false), 2000);
-      }
-      return () => {
-        clearTimeout(timeout);
-      };
-    }, [copied]);
 
     return (
       <div className={styles.copyableContainer}>
@@ -129,7 +118,7 @@ const ConnectSafe = ({
             content={
               <FormattedMessage
                 {...MSG.copyDataTooltip}
-                values={{ copied, tooltipMessage }}
+                values={{ isCopied, tooltipMessage }}
               />
             }
           >
@@ -167,7 +156,7 @@ const ConnectSafe = ({
             {...MSG.instructions}
             values={{
               a: (chunks) => (
-                <ExternalLink text={chunks} href={instructionsHref} />
+                <ExternalLink text={chunks} href={CONNECT_SAFE_INSTRUCTIONS} />
               ),
             }}
           />
