@@ -1,42 +1,59 @@
 import { useMemo, useState } from 'react';
 import { isEmpty, uniq } from 'lodash';
-import { BigNumber, bigNumberify } from 'ethers/utils';
-import moveDecimal from 'move-decimal-point';
 
-import {
-  FundingSource,
-  Rate,
-} from '~dashboard/ExpenditurePage/Streaming/types';
+import { FundingSource } from '~dashboard/ExpenditurePage/Streaming/types';
 import { Colony } from '~data/index';
 import { useTokenBalancesForDomainsQuery } from '~data/generated';
-import {
-  getBalanceFromToken,
-  getTokenDecimalsWithFallback,
-} from '~utils/tokens';
+import { getBalanceFromToken } from '~utils/tokens';
 
-import { calcTokensFromRates, calculateTokens } from '../../utils';
+import {
+  calcTokensFromRates,
+  calculateTokens,
+  RateWithAmount,
+} from '../../utils';
 
 interface ClaimProps {
   fundingSources?: FundingSource[];
-  paidTokens?: Rate[];
   colony?: Colony;
+}
+
+export interface InsufficientError {
+  teams: Record<string, string[]>;
+  tokens: string[];
 }
 
 export const useClaimStreamingPayment = ({
   fundingSources,
-  paidTokens,
   colony,
 }: ClaimProps) => {
   const { colonyAddress, tokens: colonyTokens } = colony || {};
+  /*
+   * 1. Find all unique teams from funding sources
+   */
+  const allTeams = useMemo(
+    () => uniq(fundingSources?.map((fundingSource) => fundingSource.team)),
+    [fundingSources],
+  );
 
-  const domainIds = uniq(
-    fundingSources?.map((fundingSource) => Number(fundingSource.team) || 0),
-  ) || [0];
+  const [availableToClaim, setAvailableToClaim] = useState<
+    RateWithAmount[] | undefined
+  >(
+    fundingSources
+      ? calculateTokens({ funds: fundingSources, colony })
+      : undefined,
+  );
+
+  const [paidToDate, setPaidToDate] = useState<RateWithAmount[] | undefined>();
+
+  const usedTokens = useMemo(
+    () => calculateTokens({ funds: fundingSources, colony }),
+    [colony, fundingSources],
+  );
 
   const { data } = useTokenBalancesForDomainsQuery({
     variables: {
       colonyAddress: colonyAddress || '',
-      domainIds,
+      domainIds: allTeams.map((team) => Number(team)),
       tokenAddresses: colonyTokens?.map((token) => token.address || '') || [''],
     },
     fetchPolicy: 'network-only',
@@ -44,191 +61,168 @@ export const useClaimStreamingPayment = ({
 
   const insufficientFunds = useMemo(() => {
     /*
-     * Checking each funding source - does the team have enough balance?
+     * 1. Sum up all tokens form fundingSources by team
      */
-    const notFundedTeams = fundingSources?.reduce<{
-      fundingSources: Record<string, string[]>;
-      tokens: string[];
-    }>(
-      (accumulator, fundingSource) => {
-        /*
-         * These calculations should be double checked before going on prod.
-         * Gas price was not included.
-         *
-         * The reduce function below sums tokens by token id.
-         */
+    const tokensByTeam = allTeams.reduce<Record<string, RateWithAmount[]>>(
+      (acc, curr) => {
+        const tokensSum = calculateTokens({
+          funds: fundingSources?.filter(
+            (fundingSource) => fundingSource.team === curr,
+          ),
+          colony,
+        });
 
-        const tokensSum = fundingSource.rates.reduce<
-          { token: string; amount: BigNumber }[]
-        >((acc, curr) => {
-          if (!curr.token) return acc;
+        if (!tokensSum) return acc;
 
-          const tokenObj = colonyTokens?.find(
-            (tokenItem) => tokenItem.id === curr.token,
-          );
-          const convertedAmount = bigNumberify(
-            moveDecimal(
-              curr.amount,
-              getTokenDecimalsWithFallback(tokenObj?.decimals),
-            ),
-          );
+        return { ...acc, [curr]: tokensSum };
+      },
+      {},
+    );
+    /*
+     * 3. Return errors object with teams and tokens that does not have enough funds
+     */
+    const teamsWithErrors = Object.entries(tokensByTeam).reduce<
+      InsufficientError
+    >(
+      (acc, curr) => {
+        const [team, ratesArr] = curr;
 
-          /*
-           * Here we are checking if token has already been added
-           * If so, then add the current amount to the exisitng token amount.
-           * If not, add token to the array.
-           */
-          if (acc?.find((accItem) => accItem?.token === curr.token)) {
-            return acc.map((accItem) =>
-              accItem?.token === curr.token
-                ? { ...accItem, amount: accItem.amount.add(convertedAmount) }
-                : accItem,
+        const notFundedTokens = ratesArr
+          .map((rate) => {
+            const tokenData = data?.tokens.find(
+              (token) => token.id === rate.token,
             );
-          }
+            const tokenBalance = getBalanceFromToken(tokenData, Number(team));
+            if (tokenBalance.lt(rate.amount)) {
+              return rate;
+            }
+            return undefined;
+          })
+          .filter((item): item is RateWithAmount => !!item);
 
-          return [...acc, { token: curr.token, amount: convertedAmount }];
-        }, []);
-
-        /*
-         * If team from funding source hasn't got enough balance,
-         * then add the tokenId to the notEnoughBalances array.
-         */
-        const notEnoughBalances = tokensSum.reduce<string[]>((acc, curr) => {
-          const tokenItem = data?.tokens.find(
-            (token) => token.id === curr.token,
-          );
-
-          const tokenBalance = getBalanceFromToken(
-            tokenItem,
-            Number(fundingSource.team),
-          );
-
-          if (tokenBalance.lt(curr.amount)) {
-            return [...acc, curr.token];
-          }
-          return acc;
-        }, []);
-
-        /*
-         * If "notEnoughBalances" array is not empty, then there are not enough funds in the team.
-         * In this case, add the team ID to the teams object and the token IDs to the token array.
-         */
-        return isEmpty(notEnoughBalances)
-          ? accumulator
+        return !notFundedTokens || isEmpty(notFundedTokens)
+          ? acc
           : {
-              fundingSources: {
-                ...accumulator.fundingSources,
-                [fundingSource.id]: notEnoughBalances,
+              teams: {
+                ...acc.teams,
+                [team]: notFundedTokens
+                  .map((rate) => rate.token)
+                  .filter((item): item is string => !!item),
               },
-              tokens: [...accumulator.tokens, ...notEnoughBalances],
+              tokens: [
+                ...acc.tokens,
+                ...notFundedTokens
+                  .map((rate) => rate.token)
+                  .filter((item): item is string => !!item),
+              ],
             };
       },
-      { fundingSources: {}, tokens: [] },
+      { teams: {}, tokens: [] },
     );
 
-    /*
-     * Token IDs can be repeated, so we call the uniq function on the tokens array
-     */
-
     return {
-      fundingSources: notFundedTeams?.fundingSources,
-      tokens: uniq(notFundedTeams?.tokens),
+      teams: teamsWithErrors?.teams,
+      tokens: uniq(teamsWithErrors?.tokens),
     };
-  }, [colonyTokens, data, fundingSources]);
+  }, [allTeams, colony, data, fundingSources]);
 
   /*
    * Claiming funds is a mock
    */
-  const [availableToClaim, setAvailableToClaim] = useState<
-    FundingSource[] | undefined
-  >(fundingSources);
-
-  const [paidToDate, setPaidToDate] = useState<Rate[] | undefined>(paidTokens);
-
-  const [claimed, setClaimed] = useState(false);
-
-  const usedTokens = useMemo(() => {
-    return calculateTokens(fundingSources);
-  }, [fundingSources]);
-
-  const calculatedAvailable = useMemo(() => {
-    const tokensSum = calculateTokens(availableToClaim);
-    if (!tokensSum || isEmpty(tokensSum)) {
-      return usedTokens?.map((paidItem) => ({
-        ...paidItem,
-        amount: 0,
-      }));
-    }
-    return tokensSum;
-  }, [availableToClaim, usedTokens]);
 
   const claimFunds = () => {
     if (!availableToClaim) {
       return;
     }
 
-    const newPaidToDate: Rate[] = [];
-    const newAvailable = availableToClaim
-      .map((fundingSourceItem) => {
+    const tokensByTeam = allTeams.reduce<Record<string, RateWithAmount[]>>(
+      (acc, curr) => {
+        const tokensSum = calculateTokens({
+          funds: fundingSources?.filter(
+            (fundingSource) => fundingSource.team === curr,
+          ),
+          colony,
+        });
+
+        if (!tokensSum) return acc;
+
+        return { ...acc, [curr]: tokensSum };
+      },
+      {},
+    );
+
+    const newPaidToDate: RateWithAmount[] = [];
+    const newAvailable = Object.entries(tokensByTeam).reduce<RateWithAmount[]>(
+      (acc, curr) => {
+        const [team, ratesArr] = curr;
         /*
-         * Check if funding source is in insufficient funds array
+         * Check if team is in insufficient funds array
          */
         const hasNotEnoughFunds = Object.keys(
-          insufficientFunds.fundingSources || {},
-        ).find((key) => key === fundingSourceItem.id);
-
+          insufficientFunds.teams || {},
+        ).find((key) => key === team);
         /*
          * If team has enough funds, then remove it from the available array
          */
         if (!hasNotEnoughFunds) {
           newPaidToDate.push(
-            ...fundingSourceItem.rates.map((item) => ({
+            ...ratesArr.map((item) => ({
               ...item,
               isClaimable: false,
             })),
           );
-          return undefined; // funding source claimed
+          return acc;
         }
         /*
          * One or all of the tokens do not have sufficient funds
          */
-        const tokensWithUnsufficientFunds =
-          insufficientFunds.fundingSources?.[fundingSourceItem.id];
+        const tokensWithUnsufficientFunds = insufficientFunds.teams?.[team];
+        const newRates = ratesArr
+          .map((rateItem) => {
+            const notEnoughFunds = tokensWithUnsufficientFunds?.find(
+              (notFundedItem) => notFundedItem === rateItem.token,
+            );
 
-        const newFundingSourceItem = {
-          ...fundingSourceItem,
-          rates: fundingSourceItem.rates
-            .map((rateItem) => {
-              const notEnoughFunds = tokensWithUnsufficientFunds?.find(
-                (notFundedItem) => notFundedItem === rateItem.token,
-              );
-              if (!notEnoughFunds) {
-                newPaidToDate.push(rateItem);
-                return undefined;
-              }
+            if (!notEnoughFunds) {
+              // token has funds
+              newPaidToDate.push(rateItem);
+              return undefined;
+            }
+            const tokenData = data?.tokens.find(
+              (token) => token.id === rateItem.token,
+            );
+            const tokenBalance = getBalanceFromToken(tokenData, Number(team));
+            /*
+             * Claim funds up to the amount held by the team. The missing part leave as available to claim,
+             * but with unsufficient funds error.
+             */
+            newPaidToDate.push({ ...rateItem, amount: tokenBalance });
+            return {
+              ...rateItem,
+              amount: rateItem.amount.sub(tokenBalance),
+            };
+          })
+          .filter((rateItem): rateItem is RateWithAmount => !!rateItem);
 
-              return { ...rateItem, isClaimable: !notEnoughFunds };
-            })
-            .filter((rateItem) => !!rateItem),
-        };
-        return newFundingSourceItem;
-      })
-      .filter((fundingItem) => !!fundingItem);
-
-    setPaidToDate((oldPaidToDate) => [
-      ...(oldPaidToDate || []),
-      ...(calcTokensFromRates(newPaidToDate) || []),
-    ]);
-
-    setAvailableToClaim(newAvailable as FundingSource[]);
-    setClaimed(true);
+        return [...acc, ...newRates];
+      },
+      [],
+    );
+    setAvailableToClaim(calcTokensFromRates({ rates: newAvailable, colony }));
+    setPaidToDate(calcTokensFromRates({ rates: newPaidToDate, colony }));
   };
 
   return {
-    availableToClaim: calculatedAvailable,
+    availableToClaim:
+      availableToClaim && !isEmpty(availableToClaim)
+        ? availableToClaim
+        : usedTokens?.map((paidItem) => ({
+            ...paidItem,
+            amount: 0,
+          })),
     paidToDate,
     claimFunds,
-    claimed,
+    claimed: isEmpty(availableToClaim),
     insufficientFunds,
   };
 };
