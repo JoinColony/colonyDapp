@@ -52,22 +52,20 @@ const NewValue = ({ colony, newValue }: Props) => {
 
     return (
       <div className={styles.row}>
-        <div>
-          {newValue.value && token && (
-            <div>
-              <TokenIcon
-                className={styles.tokenIcon}
-                token={token}
-                name={token.name || token.address}
-              />
-              <Numeral
-                unit={getTokenDecimalsWithFallback(0)}
-                value={newValue.value}
-              />{' '}
-              {token.symbol}
-            </div>
-          )}
-        </div>
+        {newValue.value && token && (
+          <>
+            <TokenIcon
+              className={styles.tokenIcon}
+              token={token}
+              name={token.name || token.address}
+            />
+            <Numeral
+              unit={getTokenDecimalsWithFallback(0)} // 0 is a mock value, must be replaced with a valid value
+              value={newValue.value}
+            />{' '}
+            {token.symbol}
+          </>
+        )}
       </div>
     );
   }
@@ -102,7 +100,7 @@ const NewValue = ({ colony, newValue }: Props) => {
                     name={token.name || token.address}
                   />
                   <Numeral
-                    unit={getTokenDecimalsWithFallback(0)} // it's a mock value, must be replaced with a valid value
+                    unit={getTokenDecimalsWithFallback(0)} // 0 is a mock value, must be replaced with a valid value
                     value={value}
                   />{' '}
                   {token.symbol}
@@ -133,26 +131,24 @@ const NewValue = ({ colony, newValue }: Props) => {
         [styles.smallerPadding]: multipleValues,
       })}
     >
-      <div>
-        {recipientValues?.map(
-          ({ amount, token }, index) =>
-            amount &&
-            token && (
-              <div className={styles.valueItem} key={index}>
-                <TokenIcon
-                  className={styles.tokenIcon}
-                  token={token}
-                  name={token.name || token.address}
-                />
-                <Numeral
-                  unit={getTokenDecimalsWithFallback(0)}
-                  value={amount}
-                />{' '}
-                {token.symbol}
-              </div>
-            ),
-        )}
-      </div>
+      {recipientValues?.map(
+        ({ amount, token }, index) =>
+          amount &&
+          token && (
+            <div className={styles.valueItem} key={index}>
+              <TokenIcon
+                className={styles.tokenIcon}
+                token={token}
+                name={token.name || token.address}
+              />
+              <Numeral
+                unit={getTokenDecimalsWithFallback(0)} // 0 is a mock value
+                value={amount}
+              />{' '}
+              {token.symbol}
+            </div>
+          ),
+      )}
     </div>
   );
 };

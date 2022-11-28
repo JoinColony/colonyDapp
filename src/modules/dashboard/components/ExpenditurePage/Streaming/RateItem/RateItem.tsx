@@ -1,6 +1,6 @@
 import { useField } from 'formik';
 import { nanoid } from 'nanoid';
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { defineMessages } from 'react-intl';
 
 import Button from '~core/Button';
@@ -15,6 +15,7 @@ import { Colony } from '~data/index';
 
 import { timeOptions } from '../constants';
 import { newRate } from '../FundingSource/constants';
+import { useStreamingErrorsContext } from '../StreamingErrorsContext';
 import { Rate } from '../types';
 
 import styles from './RateItem.css';
@@ -65,7 +66,43 @@ const RateItem = ({
   name,
   multipleTokens,
 }: Props) => {
-  const [, { error }] = useField(`${name}.amount`);
+  const [, { error, touched }] = useField(`${name}.amount`);
+  const [, { touched: limitTouched }] = useField(`${name}.limit`);
+  const { setRatesWithError, setLimitsWithError } = useStreamingErrorsContext();
+
+  useEffect(() => {
+    if (
+      typeof error === 'object' &&
+      error?.['id'] === 'dashboard.ExpenditurePage.amountLimitError' &&
+      (limitTouched || touched)
+    ) {
+      /*
+       * If it's "value greater than limit" error, then the amount field doesn't need to be touched.
+       * The error is set when a limit is given.
+       */
+      setRatesWithError((oldErrors) => [...oldErrors, index]);
+      return;
+    }
+    if (error && touched) {
+      setRatesWithError((oldErrors) => [...oldErrors, index]);
+      return;
+    }
+    setRatesWithError((oldErrors) =>
+      oldErrors.filter((rateError) => rateError !== index),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error, touched, index, limitTouched]);
+
+  const handleRemove = useCallback((rateIndex: number) => {
+    remove(rateIndex);
+    setRatesWithError((oldErrors) =>
+      oldErrors.filter((rateError) => rateError !== rateIndex),
+    );
+    setLimitsWithError((oldErrors) =>
+      oldErrors.filter((limitError) => limitError !== rateIndex),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className={styles.rateContainer} key={rateItem.id}>
@@ -97,7 +134,9 @@ const RateItem = ({
           {multipleTokens && (
             <Button
               type="button"
-              onClick={() => remove(index)}
+              onClick={() => {
+                handleRemove(index);
+              }}
               appearance={{ theme: 'dangerLink' }}
               text={MSG.discard}
             />
@@ -149,7 +188,7 @@ const RateItem = ({
             />
           </div>
         </div>
-        <InputStatus error={error} />
+        <InputStatus error={error} touched={touched || limitTouched} />
       </div>
     </div>
   );

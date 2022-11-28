@@ -37,6 +37,5 @@
 
 .value {
   font-size: var(--size-normal);
-  text-transform: capitalize;
   color: var(--dark);
 }

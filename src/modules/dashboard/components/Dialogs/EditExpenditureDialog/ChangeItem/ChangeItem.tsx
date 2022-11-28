@@ -12,6 +12,9 @@ import { ValueOf } from '../ChangedValues/ChangedValues';
 import NewDelay from '../NewDelay';
 import NewRecipient from '../NewRecipient';
 import NewValue from '../NewValue';
+import NewRate from '../NewRate';
+import NewTeam from '../ChangedStreaming/NewTeam';
+import NewDate from '../NewDate';
 
 import styles from './ChangeItem.css';
 
@@ -44,7 +47,8 @@ const ChangeItem = ({ newValue, oldValue, name, colony }: Props) => {
           return <NewRecipient newValue={change} key={nanoid()} />;
         }
         case 'value':
-        case 'amount': {
+        case 'amount':
+        case 'limit': {
           return <NewValue colony={colony} newValue={change} key={nanoid()} />;
         }
         case 'delay': {
@@ -67,6 +71,16 @@ const ChangeItem = ({ newValue, oldValue, name, colony }: Props) => {
               />
             </span>
           );
+        }
+        case 'rates': {
+          return <NewRate newValue={change} colony={colony} key={nanoid()} />;
+        }
+        case 'team': {
+          return <NewTeam team={change} colony={colony} key={nanoid()} />;
+        }
+        case 'startDate':
+        case 'endDate': {
+          return <NewDate newValue={change} />;
         }
         default:
           return null;

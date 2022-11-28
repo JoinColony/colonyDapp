@@ -4,7 +4,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { FormSection, InputLabel } from '~core/Fields';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
-import { useLoggedInUser } from '~data/index';
+import { AnyUser } from '~data/index';
 
 import styles from './LockedStreamingSettings.css';
 
@@ -32,71 +32,76 @@ export const MSG = defineMessages({
 });
 
 interface Props {
-  startDate: string;
-  endDate: string;
+  startDate: JSX.Element;
+  endDate: string | JSX.Element;
+  user?: AnyUser;
 }
 
 const displayName = `dashboard.ExpenditurePage.Streaming.LockedStreamingSettings`;
 
-const LockedStreamingSettings = ({ startDate, endDate }: Props) => {
-  const { username, walletAddress } = useLoggedInUser();
-
-  return (
-    <div className={styles.container}>
-      <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.settingsRow}>
-          <InputLabel
-            label={MSG.type}
-            appearance={{
-              direction: 'horizontal',
-            }}
-          />
-          <span className={styles.expenditure}>
-            <FormattedMessage {...MSG.streaming} />
-          </span>
-        </div>
-      </FormSection>
-      <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.userContainer}>
-          <InputLabel
-            label={MSG.to}
-            appearance={{
-              direction: 'horizontal',
-            }}
-          />
+const LockedStreamingSettings = ({ startDate, endDate, user }: Props) => (
+  <div className={styles.container}>
+    <FormSection appearance={{ border: 'bottom' }}>
+      <div className={styles.settingsRow}>
+        <InputLabel
+          label={MSG.type}
+          appearance={{
+            direction: 'horizontal',
+          }}
+        />
+        <span className={styles.expenditure}>
+          <FormattedMessage {...MSG.streaming} />
+        </span>
+      </div>
+    </FormSection>
+    <FormSection appearance={{ border: 'bottom' }}>
+      <div className={styles.userContainer}>
+        <InputLabel
+          label={MSG.to}
+          appearance={{
+            direction: 'horizontal',
+          }}
+        />
+        {user && (
           <div className={styles.userAvatarContainer}>
-            <UserAvatar address={walletAddress} size="xs" notSet={false} />
+            <UserAvatar
+              address={user.profile.walletAddress}
+              size="xs"
+              notSet={false}
+            />
             <div className={styles.userName}>
-              <UserMention username={username || ''} />
+              <UserMention
+                username={user.profile.username || user.profile.walletAddress}
+              />
             </div>
           </div>
-        </div>
-      </FormSection>
-      <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.settingsRow}>
-          <InputLabel
-            label={MSG.starts}
-            appearance={{
-              direction: 'horizontal',
-            }}
-          />
-          <span className={styles.value}>{startDate}</span>
-        </div>
-      </FormSection>
-      <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.settingsRow}>
-          <InputLabel
-            label={MSG.ends}
-            appearance={{
-              direction: 'horizontal',
-            }}
-          />
-          <span className={styles.value}>{endDate}</span>
-        </div>
-      </FormSection>
-    </div>
-  );
-};
+        )}
+      </div>
+    </FormSection>
+    <FormSection appearance={{ border: 'bottom' }}>
+      <div className={styles.settingsRow}>
+        <InputLabel
+          label={MSG.starts}
+          appearance={{
+            direction: 'horizontal',
+          }}
+        />
+        <span className={styles.value}>{startDate}</span>
+      </div>
+    </FormSection>
+    <FormSection appearance={{ border: 'bottom' }}>
+      <div className={styles.settingsRow}>
+        <InputLabel
+          label={MSG.ends}
+          appearance={{
+            direction: 'horizontal',
+          }}
+        />
+        <span className={styles.value}>{endDate}</span>
+      </div>
+    </FormSection>
+  </div>
+);
 
 LockedStreamingSettings.displayName = displayName;
 

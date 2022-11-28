@@ -143,6 +143,7 @@ const FundingSource = ({ fundingSource, index, colony, sidebarRef }: Props) => {
                       colony={colony}
                       rate={rateItem}
                       key={rateItem.id}
+                      index={rateIndex}
                     />
                   );
                 })}

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
-import { useField } from 'formik';
 import classNames from 'classnames';
+import { isEmpty } from 'lodash';
 
 import { FormSection } from '~core/Fields';
 import Icon from '~core/Icon';
@@ -12,6 +12,7 @@ import { ErrorDot } from '../ErrorDot';
 import { Props as StreamingProps } from './Streaming';
 import FundingSource from './FundingSource';
 import { FundingSource as FundingSourceType } from './types';
+import { StreamingErrorsContextProvider } from './StreamingErrorsContext';
 import styles from './Streaming.css';
 
 const displayName = 'dashboard.ExpenditurePage.Streaming.SingleFundingSource';
@@ -53,52 +54,68 @@ const SingleFundingSource = ({
   const domain = colony?.domains.find(
     ({ ethDomainId }) => Number(fundingSource.team) === ethDomainId,
   );
-  const [, { error: fundingError }] = useField(
-    `streaming.fundingSources[${index}]`,
+
+  const [ratesWithError, setRatesWithError] = useState<number[]>([]);
+  const [limitsWithError, setLimitsWithError] = useState<number[]>([]);
+
+  const hasError = useMemo(
+    () => !isEmpty(ratesWithError) || !isEmpty(limitsWithError),
+    [limitsWithError, ratesWithError],
   );
+
   const { formatMessage } = useIntl();
 
+  const streamingContextValue = useMemo(
+    () => ({
+      setRatesWithError,
+      setLimitsWithError,
+    }),
+    [],
+  );
+
   return (
-    <div
-      className={classNames(styles.singleFundingSource, {
-        [styles.wrapper]: !isLastItem && fundingSource.isExpanded,
-      })}
-    >
-      <FormSection>
-        <div className={styles.fundingSourceLabel}>
-          <CollapseExpandButtons
-            isExpanded={fundingSource.isExpanded}
-            onToogleButtonClick={() => onToggleButtonClick(index)}
-            isLastItem={isLastItem}
-            itemName={formatMessage(MSG.itemName)}
-          />
-          <p className={styles.fundingTitle}>
-            <FormattedMessage
-              {...MSG.title}
-              values={{ nr: index + 1, team: domain?.name }}
+    <StreamingErrorsContextProvider value={streamingContextValue}>
+      <div
+        className={classNames(styles.singleFundingSource, {
+          [styles.wrapper]: !isLastItem && fundingSource.isExpanded,
+        })}
+      >
+        <FormSection>
+          <div className={styles.fundingSourceLabel}>
+            <CollapseExpandButtons
+              isExpanded={fundingSource.isExpanded}
+              onToogleButtonClick={() => onToggleButtonClick(index)}
+              isLastItem={isLastItem}
+              itemName={formatMessage(MSG.itemName)}
             />
-          </p>
-          {multipleFundingSources && (
-            <Icon
-              name="trash"
-              className={styles.deleteIcon}
-              onClick={() => remove(index)}
-            />
-          )}
-          {fundingError && (
-            <ErrorDot
-              tooltipContent={<FormattedMessage {...MSG.titleTooltipError} />}
-            />
-          )}
-        </div>
-      </FormSection>
-      <FundingSource
-        sidebarRef={sidebarRef}
-        colony={colony}
-        index={index}
-        fundingSource={fundingSource}
-      />
-    </div>
+            <p className={styles.fundingTitle}>
+              <FormattedMessage
+                {...MSG.title}
+                values={{ nr: index + 1, team: domain?.name }}
+              />
+            </p>
+            {multipleFundingSources && (
+              <Icon
+                name="trash"
+                className={styles.deleteIcon}
+                onClick={() => remove(index)}
+              />
+            )}
+            {hasError && (
+              <ErrorDot
+                tooltipContent={<FormattedMessage {...MSG.titleTooltipError} />}
+              />
+            )}
+          </div>
+        </FormSection>
+        <FundingSource
+          sidebarRef={sidebarRef}
+          colony={colony}
+          index={index}
+          fundingSource={fundingSource}
+        />
+      </div>
+    </StreamingErrorsContextProvider>
   );
 };
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { defineMessages } from 'react-intl';
 import { useField } from 'formik';
 
@@ -7,6 +7,7 @@ import { Colony } from '~data/index';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 
 import { Rate } from '../types';
+import { useStreamingErrorsContext } from '../StreamingErrorsContext';
 
 import styles from './Limit.css';
 
@@ -27,10 +28,23 @@ interface Props {
   colony: Colony;
   name: string;
   rate: Rate;
+  index: number;
 }
 
-const Limit = ({ colony, name, rate }: Props) => {
-  const [, { error }] = useField(name);
+const Limit = ({ colony, name, rate, index }: Props) => {
+  const [, { error, touched }] = useField(name);
+  const { setLimitsWithError } = useStreamingErrorsContext();
+
+  useEffect(() => {
+    if (error && touched) {
+      setLimitsWithError((oldErrors) => [...oldErrors, index]);
+      return;
+    }
+    setLimitsWithError((oldErrors) =>
+      oldErrors.filter((limitError) => limitError !== index),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error, touched, index]);
 
   const token = colony.tokens?.find(
     (tokenItem) => rate.token && tokenItem.address === rate.token,
@@ -68,7 +82,7 @@ const Limit = ({ colony, name, rate }: Props) => {
           {token.symbol}
         </div>
       </div>
-      <InputStatus error={error} />
+      <InputStatus error={error} touched={touched} />
     </>
   );
 };

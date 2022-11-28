@@ -56,7 +56,7 @@ const Milestone = ({
   >(`${name}.amount`);
   const [, { error }] = useField(name);
 
-  const [, { error: milestonePercentError }] = useField(
+  const [, { error: milestonePercentError, touched }] = useField(
     `staged.milestones[${index}].percent`,
   );
 
@@ -134,7 +134,7 @@ const Milestone = ({
         />
         <span className={styles.percent}>{milestone?.percent}%</span>
         {!!milestonePercentError && (
-          <InputStatus error={milestonePercentError} />
+          <InputStatus error={milestonePercentError} touched={touched} />
         )}
       </div>
       {token && amount && (

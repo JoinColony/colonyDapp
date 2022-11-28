@@ -234,7 +234,7 @@ const ExpenditurePage = ({ match }: Props) => {
             status: MotionStatus.Passed,
           });
           setStatus(Status.StartedStream);
-        }, 5000);
+        }, 1000);
 
         return;
       }
@@ -469,7 +469,11 @@ const ExpenditurePage = ({ match }: Props) => {
           const data = updateValues(formValues, confirmedValues);
           setPendingChanges(undefined);
           setFormValues(data);
-          setStatus(undefined);
+          setStatus(
+            formValues?.expenditure === ExpenditureTypes.Streaming
+              ? Status.StartedStream
+              : undefined,
+          );
           setMotion({ type: MotionType.Edit, status: MotionStatus.Passed });
         }, 5000);
       }
