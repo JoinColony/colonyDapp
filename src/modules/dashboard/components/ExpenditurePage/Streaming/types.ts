@@ -3,7 +3,7 @@ import { AnyUser } from '~data/index';
 import { ExpenditureEndDateTypes } from '~pages/ExpenditurePage/types';
 
 export interface Rate {
-  amount?: number;
+  amount?: string;
   token?: string;
   time?: string;
   limit?: number;

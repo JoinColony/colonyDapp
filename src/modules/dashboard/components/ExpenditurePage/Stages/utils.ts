@@ -1,3 +1,4 @@
+import { BigNumber, bigNumberify } from 'ethers/utils';
 import {
   isArray,
   isBoolean,
@@ -6,6 +7,10 @@ import {
   isPlainObject,
   isString,
 } from 'lodash';
+import moveDecimal from 'move-decimal-point';
+
+import { Colony } from '~data/index';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import { FundingSource, Rate } from '../Streaming/types';
 
@@ -41,30 +46,69 @@ export const flattenObject = (
 
   return result;
 };
-export const calcTokensFromRates = (rates?: Rate[]) => {
-  return rates?.reduce<Rate[]>((acc, curr) => {
-    // check if token has already been added
+
+export interface RateWithAmount extends Omit<Rate, 'amount'> {
+  amount: BigNumber;
+}
+export const calcTokensFromRates = ({
+  rates,
+  colony,
+}: {
+  rates: (Rate | RateWithAmount)[];
+  colony?: Colony;
+}) => {
+  return rates?.reduce<RateWithAmount[]>((acc, curr) => {
+    const tokenObj = colony?.tokens?.find(
+      (tokenItem) => tokenItem.id === curr.token,
+    );
+    /*
+     * Amount can be of string or BigNumber type. If it's a string, then it needs to be converted to BigNumber.
+     */
+    const convertedAmount =
+      typeof curr.amount === 'string'
+        ? bigNumberify(
+            moveDecimal(
+              curr.amount,
+              getTokenDecimalsWithFallback(tokenObj?.decimals),
+            ),
+          )
+        : curr.amount || bigNumberify(0);
+    /*
+     * Check if the token has already been added. If so, add up the amount.
+     * If not added, add the entire token object to the array.
+     */
     const isTokenAdded = acc.find((rateItem) => rateItem.token === curr.token);
     return isTokenAdded
       ? acc.map((accItem) =>
           accItem.token === curr.token
             ? {
                 ...accItem,
-                amount: Number(accItem.amount || 0) + Number(curr.amount || 0),
+                amount: accItem.amount.add(convertedAmount),
               }
             : accItem,
         )
-      : [...acc, curr];
+      : [...acc, { ...curr, amount: convertedAmount }];
   }, []);
 };
 
-export const calculateTokens = (funds?: FundingSource[]) => {
+export const calculateTokens = ({
+  funds,
+  colony,
+}: {
+  funds?: FundingSource[];
+  colony?: Colony;
+}) => {
   if (!funds) {
     return undefined;
   }
-
-  // create an array with all available rates
+  /*
+   * Create an array with all available rates.
+   */
   const rates = funds.map((fundItem) => fundItem.rates).flat();
 
-  return calcTokensFromRates(rates);
+  return calcTokensFromRates({ rates, colony });
+};
+
+export const convertToRate = (rates: RateWithAmount[]) => {
+  return rates.map((item) => ({ ...item, amount: item.amount.toString() }));
 };
