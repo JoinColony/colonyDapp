@@ -71,6 +71,18 @@ const RateItem = ({
   const { setRatesWithError, setLimitsWithError } = useStreamingErrorsContext();
 
   useEffect(() => {
+    if (
+      typeof error === 'object' &&
+      error?.['id'] === 'dashboard.ExpenditurePage.amountLimitError' &&
+      (limitTouched || touched)
+    ) {
+      /*
+       * If it's "value greater than limit" error, then the amount field doesn't need to be touched.
+       * The error is set when a limit is given.
+       */
+      setRatesWithError((oldErrors) => [...oldErrors, index]);
+      return;
+    }
     if (error && touched) {
       setRatesWithError((oldErrors) => [...oldErrors, index]);
       return;
@@ -79,7 +91,7 @@ const RateItem = ({
       oldErrors.filter((rateError) => rateError !== index),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [error, touched, index]);
+  }, [error, touched, index, limitTouched]);
 
   const handleRemove = useCallback((rateIndex: number) => {
     remove(rateIndex);
