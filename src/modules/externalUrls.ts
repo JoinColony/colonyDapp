@@ -52,3 +52,10 @@ export const METATRANSACTIONS_LEARN_MORE = `https://colony.gitbook.io/colony/ann
  * Safe control
  */
 export const SAFE_INTEGRATION_LEARN_MORE = `https://colony.gitbook.io/colony/manage-funds/safe-integration`;
+
+export const CONNECT_SAFE_INSTRUCTIONS = `https://colony.gitbook.io/colony/advanced-features/safe-control-gnosis-safe/adding-a-safe#step-2-connect-the-safe`;
+
+const SAFE_APP = `https://app.safe.global`;
+
+export const getModuleLink = (chainShortName: string, safeAddress: string) =>
+  `${SAFE_APP}/${chainShortName}:${safeAddress}/apps?appUrl=https%3A%2F%2Fzodiac.gnosisguild.org%2F`;
