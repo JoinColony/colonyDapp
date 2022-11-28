@@ -90,6 +90,9 @@ const LockedFundingSource = ({
               className={classNames(
                 styles.activeItemLabel,
                 styles.lockedActiveItemLabel,
+                {
+                  [styles.error]: hasError,
+                },
               )}
             >
               {domain?.name}

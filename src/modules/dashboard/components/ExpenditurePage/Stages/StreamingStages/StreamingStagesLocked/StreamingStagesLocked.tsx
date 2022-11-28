@@ -158,7 +158,7 @@ const StreamingStagesLocked = ({
 
     const customEvent = new CustomEvent(INSUFFICIENT_FUNDS_EVENT_TRIGGER, {
       detail: {
-        fundingSources: insufficientFunds?.fundingSources,
+        teams: insufficientFunds?.teams,
         tokens: insufficientFunds?.tokens,
       },
     });
@@ -171,8 +171,7 @@ const StreamingStagesLocked = ({
 
     if (
       !insufficientFunds ||
-      (isEmpty(insufficientFunds?.fundingSources) &&
-        isEmpty(insufficientFunds?.tokens))
+      (isEmpty(insufficientFunds?.teams) && isEmpty(insufficientFunds?.tokens))
     ) {
       setHasInsufficentFunds(false);
       setTokensWithError(undefined);
@@ -372,7 +371,7 @@ const StreamingStagesLocked = ({
                       ),
                       amount: paidToDateItem.amount && (
                         <Numeral
-                          unit={getTokenDecimalsWithFallback(0)} // 0 is a mock
+                          unit={getTokenDecimalsWithFallback(token.decimals)}
                           value={paidToDateItem.amount}
                         />
                       ),
@@ -425,7 +424,7 @@ const StreamingStagesLocked = ({
                         ),
                         amount: availableItem.amount && (
                           <Numeral
-                            unit={getTokenDecimalsWithFallback(0)} // 0 is a mock
+                            unit={getTokenDecimalsWithFallback(token.decimals)}
                             value={availableItem.amount}
                           />
                         ),
