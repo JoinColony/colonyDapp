@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { isEmpty, uniq } from 'lodash';
+import { bigNumberify } from 'ethers/utils';
 
 import { FundingSource } from '~dashboard/ExpenditurePage/Streaming/types';
 import { Colony } from '~data/index';
@@ -12,11 +13,6 @@ import {
   RateWithAmount,
 } from '../../utils';
 
-interface ClaimProps {
-  fundingSources?: FundingSource[];
-  colony?: Colony;
-}
-
 export interface InsufficientError {
   teams: Record<string, string[]>;
   tokens: string[];
@@ -25,7 +21,10 @@ export interface InsufficientError {
 export const useClaimStreamingPayment = ({
   fundingSources,
   colony,
-}: ClaimProps) => {
+}: {
+  fundingSources?: FundingSource[];
+  colony?: Colony;
+}) => {
   const { colonyAddress, tokens: colonyTokens } = colony || {};
   /*
    * 1. Find all unique teams from funding sources
@@ -212,14 +211,21 @@ export const useClaimStreamingPayment = ({
     setPaidToDate(calcTokensFromRates({ rates: newPaidToDate, colony }));
   };
 
+  const availableArray = useMemo(() => {
+    if (!availableToClaim || !usedTokens) {
+      return [];
+    }
+    if (!availableToClaim || isEmpty(availableToClaim)) {
+      return usedTokens.map((paidItem) => ({
+        ...paidItem,
+        amount: bigNumberify(0),
+      }));
+    }
+    return availableToClaim;
+  }, [availableToClaim, usedTokens]);
+
   return {
-    availableToClaim:
-      availableToClaim && !isEmpty(availableToClaim)
-        ? availableToClaim
-        : usedTokens?.map((paidItem) => ({
-            ...paidItem,
-            amount: 0,
-          })),
+    availableToClaim: availableArray,
     paidToDate,
     claimFunds,
     claimed: isEmpty(availableToClaim),

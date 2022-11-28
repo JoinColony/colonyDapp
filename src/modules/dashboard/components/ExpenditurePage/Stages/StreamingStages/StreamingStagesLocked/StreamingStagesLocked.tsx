@@ -11,10 +11,7 @@ import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import { Colony } from '~data/index';
-import {
-  FundingSource,
-  Rate,
-} from '~dashboard/ExpenditurePage/Streaming/types';
+import { FundingSource } from '~dashboard/ExpenditurePage/Streaming/types';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import Numeral from '~core/Numeral';
 import { INSUFFICIENT_FUNDS_EVENT_TRIGGER } from '~pages/ExpenditurePage/constants';
@@ -104,10 +101,7 @@ export interface Props {
   motion?: Motion;
   colony?: Colony;
   activeStageId?: string;
-  paidToDate?: Rate[];
-  availableToClaim?: Rate[];
   handleCancelExpenditure?: () => void;
-  claimed?: boolean;
   fundingSources?: FundingSource[];
 }
 
