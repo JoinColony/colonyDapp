@@ -156,10 +156,10 @@ const StreamingStagesLocked = ({
               </Tag>
             </div>
           )}
-          {status === Status.StartedStream && (
+          {(status === Status.StartedStream || status === Status.Edited) && (
             <span
               className={classNames(styles.tagWrapper, {
-                [styles.tagClaimed]: claimed,
+                [styles.tagClaimed]: claimed || status === Status.Edited,
               })}
             >
               <Tag

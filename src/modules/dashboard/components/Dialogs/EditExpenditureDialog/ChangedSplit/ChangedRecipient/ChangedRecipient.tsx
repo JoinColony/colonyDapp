@@ -56,7 +56,7 @@ const ChangedRecipient = ({ recipient, oldRecipient, colony }: Props) => {
           const keyName = 'recipient' in oldRecipient ? 'recipient' : 'user';
           const username =
             oldRecipient[keyName].profile.username ||
-            oldRecipient[keyName].profile.displayname;
+            oldRecipient[keyName].profile.displayName;
 
           return (
             <div className={styles.row} key={id}>

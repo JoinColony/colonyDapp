@@ -57,6 +57,7 @@ const SingleFundingSource = ({
 
   const [ratesWithError, setRatesWithError] = useState<number[]>([]);
   const [limitsWithError, setLimitsWithError] = useState<number[]>([]);
+
   const hasError = useMemo(
     () => !isEmpty(ratesWithError) || !isEmpty(limitsWithError),
     [limitsWithError, ratesWithError],
