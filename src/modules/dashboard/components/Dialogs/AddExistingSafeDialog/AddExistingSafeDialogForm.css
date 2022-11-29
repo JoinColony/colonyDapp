@@ -53,6 +53,11 @@
   color: var(--temp-grey-blue-7);
 }
 
+.moduleLinkSection {
+  display: flex;
+  flex-direction: column;
+}
+
 .copyable {
   composes: colorSchemaGrey from '~core/Fields/Input/InputComponent.css';
   display: flex;
