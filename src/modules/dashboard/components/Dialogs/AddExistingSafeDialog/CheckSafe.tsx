@@ -98,16 +98,14 @@ const CheckSafe = ({
   const [
     ,
     { error: addressError, touched: addressTouched, value: address },
-    { setError: setAddressError },
+    { setError: setAddressError, setTouched: setAddressTouched },
   ] = useField<string>('contractAddress');
 
   useEffect(() => {
-    if (isLoadingSafe) {
+    if (isLoadingSafe && addressError) {
       setAddressError('');
     }
-    // setAddressError causes infinite loop
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoadingSafe]);
+  }, [isLoadingSafe, addressError, setAddressError]);
 
   const getStatusText = (): StatusText | {} => {
     const isValidAddress =
@@ -188,7 +186,11 @@ const CheckSafe = ({
             disabled={isSubmitting}
             elementOnly
             onChange={(e) => {
-              if (addressTouched && isAddress(e.target.value)) {
+              if (!addressTouched) {
+                setAddressTouched(true);
+              }
+
+              if (isAddress(e.target.value)) {
                 setIsLoadingSafe(true);
               }
             }}
