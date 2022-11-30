@@ -21,6 +21,8 @@ import {
 import { FETCH_ABORTED } from '~constants';
 import { SimpleMessageValues } from '~types/index';
 import Avatar from '~core/Avatar';
+import ExternalLink from '~core/ExternalLink';
+import { ADD_SAFE_INSTRUCTIONS } from '~externalUrls';
 
 import { FormValues, AddExistingSafeProps, SafeData } from './index';
 
@@ -50,6 +52,14 @@ const MSG = defineMessages({
   safe: {
     id: 'dashboard.AddExistingSafeDialog.CheckSafe.safe',
     defaultMessage: 'Safe',
+  },
+  callout: {
+    id: 'dashboard.AddExistingSafeDialog.CheckSafe.callout',
+    defaultMessage: '<span>Important!</span>  Read instuctions before starting',
+  },
+  calloutLink: {
+    id: 'dashboard.AddExistingSafeDialog.CheckSafe.calloutLink',
+    defaultMessage: 'Set up instructions',
   },
 });
 
@@ -162,6 +172,26 @@ const CheckSafe = ({
       <DialogSection appearance={{ theme: 'sidePadding' }}>
         <div className={classnames(styles.subtitle, styles.step1Subtitle)}>
           <FormattedMessage {...MSG.subtitle} />
+        </div>
+      </DialogSection>
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <div className={styles.callout}>
+          <div>
+            <FormattedMessage
+              {...MSG.callout}
+              values={{
+                span: (chunks) => (
+                  <span className={styles.calloutWarning}>{chunks}</span>
+                ),
+              }}
+            />
+          </div>
+          <ExternalLink
+            href={ADD_SAFE_INSTRUCTIONS}
+            className={styles.calloutLink}
+          >
+            <FormattedMessage {...MSG.calloutLink} />
+          </ExternalLink>
         </div>
       </DialogSection>
       <DialogSection>
