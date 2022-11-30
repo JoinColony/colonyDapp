@@ -204,3 +204,24 @@
 .tooltip {
   width: 220px;
 }
+
+.callout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px;
+  border-radius: 5px;
+  background-color: color-mod(var(--action-secondary) alpha(15%));
+  font-size: var(--size-normal);
+  color: var(--dark);
+}
+
+.calloutWarning {
+  font-weight: var(--weight-bold);
+}
+
+.calloutLink {
+  margin-right: 4px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+}
