@@ -1,13 +1,15 @@
 import { Network } from '@colony/colony-js';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { DEFAULT_NETWORK, NETWORK_DATA } from '~constants';
 
 import Dialog, { DialogProps, DialogSection } from '~core/Dialog';
 import ExternalLink from '~core/ExternalLink';
 import Heading from '~core/Heading';
+import { useLoggedInUser } from '~data/helpers';
 
 import { WALLET_CONNECT_XDAI } from '~externalUrls';
+import { checkIfNetworkIsAllowed } from '~utils/networks';
 
 import styles from './WrongNetworkDialog.css';
 
@@ -25,7 +27,16 @@ const MSG = defineMessages({
 const displayName = 'dashboard.ColonyHome.WrongNetworkDialog';
 
 const WrongNetworkDialog = ({ cancel }: DialogProps) => {
+  const { networkId, ethereal } = useLoggedInUser();
+  const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
+
   const networkName = NETWORK_DATA[process.env.NETWORK || DEFAULT_NETWORK].name;
+
+  useEffect(() => {
+    if (ethereal || isNetworkAllowed) {
+      cancel();
+    }
+  }, [ethereal, isNetworkAllowed, cancel]);
 
   return (
     <Dialog cancel={cancel}>
