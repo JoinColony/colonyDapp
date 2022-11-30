@@ -61,7 +61,18 @@ const DialogProvider = ({ children }: Props) => {
             rejectPromise = reject;
           }),
       };
-      setOpenDialogs((prevOpenDialogs) => [...prevOpenDialogs, dialog]);
+
+      setOpenDialogs((prevOpenDialogs) => {
+        if (
+          !prevOpenDialogs.find(
+            (prevOpenDialog) =>
+              prevOpenDialog.Dialog.displayName === dialog.Dialog.displayName,
+          )
+        ) {
+          return [...prevOpenDialogs, dialog];
+        }
+        return prevOpenDialogs;
+      });
       return dialog;
     },
     [closeDialog],
