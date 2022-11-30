@@ -10,7 +10,6 @@ import {
 import {
   open as purserOpenMetaMaskWallet,
   accountChangeHook,
-  chainChangeHook,
 } from '@purser/metamask';
 import { addChain } from '@purser/metamask/lib-esm/helpers';
 
@@ -36,13 +35,7 @@ function* metaMaskWatch(walletAddress: Address) {
     });
     return () => null;
   });
-  /*
-   * @TODO Make this smart at some point by allowing the chain to change
-   * w/o needing to refresh the page
-   */
-  chainChangeHook((): void => {
-    return window.location.reload();
-  });
+
   let previousAddress = walletAddress;
   while (true) {
     const selectedAddress: Address = yield take(channel);
