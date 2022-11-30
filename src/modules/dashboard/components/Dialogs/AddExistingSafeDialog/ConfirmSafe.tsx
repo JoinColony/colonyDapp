@@ -14,6 +14,7 @@ import ExternalLink from '~core/ExternalLink';
 import MaskedAddress from '~core/MaskedAddress';
 import Avatar from '~core/Avatar';
 import { SAFE_NAMES_MAP } from '~constants';
+import { MODULE_ADDRESS_INSTRUCTIONS } from '~externalUrls';
 
 import { FormValues, CheckSafeProps, StatusText } from './index';
 
@@ -22,7 +23,7 @@ import styles from './AddExistingSafeDialogForm.css';
 const MSG = defineMessages({
   subtitle: {
     id: 'dashboard.AddExistingSafeDialog.ConfirmSafe.subtitle',
-    defaultMessage: 'Step 3: Confirm the Safe',
+    defaultMessage: 'Step 3: Provide module address and add Safe',
   },
   instructions: {
     id: 'dashboard.AddExistingSafeDialog.ConfirmSafe.instructions',
@@ -50,7 +51,7 @@ const MSG = defineMessages({
   },
   where: {
     id: 'dashboard.AddExistingSafeDialog.ConfirmSafe.where',
-    defaultMessage: 'Where to find this',
+    defaultMessage: 'Where to find this?',
   },
   moduleFound: {
     id: 'dashboard.AddExistingSafeDialog.ConfirmSafe.moduleFound',
@@ -65,8 +66,6 @@ const MSG = defineMessages({
     defaultMessage: 'Add Safe',
   },
 });
-
-const whereHref = `https://colony.gitbook.io/colony/advanced-features/safe-control-gnosis-safe#finding-module-contract-address`;
 
 type ConfirmSafeProps = Pick<
   CheckSafeProps,
@@ -174,7 +173,7 @@ const ConfirmSafe = ({
           <span>
             <FormattedMessage {...MSG.moduleAddress} />
           </span>
-          <ExternalLink href={whereHref} text={MSG.where} />
+          <ExternalLink href={MODULE_ADDRESS_INSTRUCTIONS} text={MSG.where} />
         </div>
         <Input
           name="moduleContractAddress"

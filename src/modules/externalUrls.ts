@@ -59,3 +59,5 @@ const SAFE_APP = `https://app.safe.global`;
 
 export const getModuleLink = (chainShortName: string, safeAddress: string) =>
   `${SAFE_APP}/${chainShortName}:${safeAddress}/apps?appUrl=https%3A%2F%2Fzodiac.gnosisguild.org%2F`;
+
+export const MODULE_ADDRESS_INSTRUCTIONS = `https://colony.gitbook.io/colony/advanced-features/safe-control-gnosis-safe/adding-a-safe#finding-the-module-contract-address`;
