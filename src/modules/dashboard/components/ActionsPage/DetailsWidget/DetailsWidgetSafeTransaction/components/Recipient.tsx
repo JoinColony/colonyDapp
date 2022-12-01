@@ -3,7 +3,6 @@ import classnames from 'classnames';
 import { FormattedMessage } from 'react-intl';
 
 import { AnyUser, Colony } from '~data/index';
-import AddressDetailsView from '~dashboard/Dialogs/ControlSafeDialog/TransactionPreview/AddressDetailsView';
 import DetailsWidgetUser from '~core/DetailsWidgetUser';
 
 import { toRecipientMSG } from '../../DetailsWidget';
@@ -22,14 +21,10 @@ export const Recipient = ({ recipient, colony }: RecipientProps) => (
       <FormattedMessage {...toRecipientMSG} />
     </div>
     <div className={widgetStyles.value}>
-      {recipient.id === 'filterValue' ? (
-        <AddressDetailsView item={recipient} isSafeItem={false} isCopyable />
-      ) : (
-        <DetailsWidgetUser
-          colony={colony}
-          walletAddress={recipient.profile.walletAddress}
-        />
-      )}
+      <DetailsWidgetUser
+        colony={colony}
+        walletAddress={recipient.profile.walletAddress}
+      />
     </div>
   </div>
 );
