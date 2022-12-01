@@ -97,24 +97,6 @@
   border-radius: 4px;
 }
 
-.tokenValue figure {
-  margin-right: 10px;
-}
-
-.tokenValue figure + div {
-  column-gap: 2px;
-}
-
-.tokenValue figure > div {
-  height: 28px;
-  width: 28px;
-  min-width: 28px;
-}
-
-.tokenValue figure + div > span:last-of-type {
-  min-width: fit-content;
-}
-
 .tokenContainer {
   display: flex;
   align-items: center;
@@ -151,4 +133,18 @@
 
 .address {
   color: var(--temp-grey-blue-7);
+}
+
+.tokenAvatar {
+  height: 28px;
+  width: 28px;
+  min-width: 28px;
+}
+
+.tokenAvatar + div {
+  column-gap: 2px;
+}
+
+.tokenAvatar + div > span:last-of-type {
+  min-width: fit-content;
 }

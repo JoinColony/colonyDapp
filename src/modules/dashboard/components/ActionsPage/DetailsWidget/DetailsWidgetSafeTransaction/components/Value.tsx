@@ -1,5 +1,4 @@
 import React from 'react';
-import classnames from 'classnames';
 import { FormattedMessage } from 'react-intl';
 
 import Numeral from '~core/Numeral';
@@ -30,6 +29,7 @@ const renderTokenIcon = (tokenData: SafeBalanceToken) => {
   if (isERC20Token(tokenData)) {
     return (
       <Avatar
+        className={styles.tokenAvatar}
         avatarURL={tokenData.logoUri}
         notSet={!tokenData.logoUri}
         title={`${tokenData.name} token logo`}
@@ -55,7 +55,7 @@ interface ValueProps {
 }
 
 export const Value = ({ transaction, token }: ValueProps) => (
-  <div className={classnames(widgetStyles.item, styles.tokenValue)}>
+  <div className={widgetStyles.item}>
     <div className={widgetStyles.label}>
       <FormattedMessage {...valueMSG} />
     </div>
