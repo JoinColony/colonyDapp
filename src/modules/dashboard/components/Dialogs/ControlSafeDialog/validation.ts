@@ -163,6 +163,7 @@ export const getValidationSchema = (
       ? {
           transactionsTitle: yup
             .string()
+            .trim()
             .required(() => MSG.requiredFieldError),
         }
       : {}),
