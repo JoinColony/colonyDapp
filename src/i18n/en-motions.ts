@@ -17,7 +17,7 @@ const motionsMessageDescriptors = {
       ${ColonyMotions.EmitDomainReputationRewardMotion}
         {Award {recipient} with a {reputationChangeNumeral} {reputationChange, plural, one {pt} other {pts}} reputation reward}
       ${ColonyMotions.UnlockTokenMotion} {Unlock native token {tokenSymbol}}
-      ${ColonyExtendedMotions.SafeTransactionInitiatedMotion} {{safeTransactionTitle}}
+      ${ColonyExtendedMotions.SafeTransactionInitiatedMotion} {Safe transaction: {safeTransactionTitle}}
       other {Generic motion we don't have information about}
     }`,
   [`motion.${ColonyMotions.SetUserRolesMotion}.assign`]: `Assign the {roles} in {fromDomainName} to {recipient}`,

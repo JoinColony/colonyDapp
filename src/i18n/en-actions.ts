@@ -33,8 +33,8 @@ const actionsMessageDescriptors = {
       ${ColonyMotions.EmitDomainReputationRewardMotion} {Award {recipient} with a {reputationChangeNumeral} {reputationChange, plural, one {pt} other {pts}} reputation reward}
       ${ColonyExtendedActions.SafeRemoved} {Remove Safe}
       ${ColonyExtendedActions.SafeAdded} {Add Safe from {chainName}}
-      ${ColonyExtendedActions.SafeTransactionInitiated} {{safeTransactionTitle}}
-      ${ColonyExtendedMotions.SafeTransactionInitiatedMotion} {{safeTransactionTitle}}
+      ${ColonyExtendedActions.SafeTransactionInitiated} {Safe transaction: {safeTransactionTitle}}
+      ${ColonyExtendedMotions.SafeTransactionInitiatedMotion} {Safe transaction: {safeTransactionTitle}}
       ${ColonyMotions.CreateDecisionMotion} {Create Decision}
       other {Generic action we don't have information about}
     }`,
