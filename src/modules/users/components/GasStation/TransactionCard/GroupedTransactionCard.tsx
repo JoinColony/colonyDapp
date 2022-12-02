@@ -162,7 +162,9 @@ const GroupedTransactionCard = ({
     but not clear enough.
   */
   const methodName =
-    group?.key === 'removeExistingSafes' || group?.key === 'addExistingSafe'
+    (group?.key === 'removeExistingSafes' ||
+      group?.key === 'addExistingSafe') &&
+    defaultMethodName === 'editColony'
       ? group.key
       : defaultMethodName;
   const defaultTransactionMessageDescriptorId = {
