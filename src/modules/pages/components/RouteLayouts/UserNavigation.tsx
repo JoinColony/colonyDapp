@@ -120,14 +120,17 @@ const UserNavigation = () => {
   const isMobile = useMediaQuery({ query });
 
   useEffect(() => {
-    // @NOTE: .ethereum exists in window unlike what TS believes.
+    // @NOTE: .ethereum can exist in window unlike what TS believes.
     // @ts-ignore
-    window.ethereum.on('chainChanged', () => {
-      dispatch({
-        type: ActionTypes.WALLET_CREATE,
-        payload: { method: WalletMethod.MetaMask },
+    if (window.ethereum) {
+      // @ts-ignore
+      window.ethereum.on('chainChanged', () => {
+        dispatch({
+          type: ActionTypes.WALLET_CREATE,
+          payload: { method: WalletMethod.MetaMask },
+        });
       });
-    });
+    }
   }, [dispatch]);
 
   useEffect(() => {
