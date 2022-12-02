@@ -58,7 +58,7 @@ const Avatar = ({
 
   const imageStyle: CSSProperties = avatar
     ? {
-        backgroundImage: `url(${avatar}), url(${fallback})`,
+        backgroundImage: `url(${avatar})`,
         // if using a blockie, do pixelated image scaling
         imageRendering: avatarURL ? undefined : 'pixelated',
       }
