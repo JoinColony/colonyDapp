@@ -127,15 +127,21 @@ function* manageExistingSafesAction({
       currentMetadataIPFSHash,
     );
 
-    const currentColonyMetadata = JSON.parse(currentMetadata);
+    const currentColonyMetadata = JSON.parse(currentMetadata || '{}');
+
+    if (!currentColonyMetadata?.data) {
+      throw new Error(
+        `There was an error wile fetching the current colony metadata. Please try again later.`,
+      );
+    }
 
     let updatedColonyMetadata: any = {};
 
     if (!isRemovingSafes) {
       updatedColonyMetadata = {
         ...currentColonyMetadata.data,
-        colonySafes: currentColonyMetadata.colonySafes
-          ? [...currentColonyMetadata.colonySafes, ...safeList]
+        colonySafes: currentColonyMetadata.data.colonySafes
+          ? [...currentColonyMetadata.data.colonySafes, ...safeList]
           : safeList,
       };
     } else {
