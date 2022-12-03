@@ -25,5 +25,7 @@ export const moduleAddressSubtitle: string;
 export const safeNameContainer: string;
 export const tooltip: string;
 export const callout: string;
+export const calloutContainer: string;
 export const calloutWarning: string;
 export const calloutLink: string;
+export const warningIcon: string;
