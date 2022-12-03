@@ -27,6 +27,7 @@ import { ADD_SAFE_INSTRUCTIONS } from '~externalUrls';
 import { FormValues, AddExistingSafeProps, SafeData } from './index';
 
 import styles from './AddExistingSafeDialogForm.css';
+import Icon from '~core/Icon';
 
 const MSG = defineMessages({
   subtitle: {
@@ -55,11 +56,15 @@ const MSG = defineMessages({
   },
   callout: {
     id: 'dashboard.AddExistingSafeDialog.CheckSafe.callout',
-    defaultMessage: '<span>Important!</span>  Read instuctions before starting',
+    defaultMessage: '<span>Important!</span>  Read the instuctions first.',
   },
   calloutLink: {
     id: 'dashboard.AddExistingSafeDialog.CheckSafe.calloutLink',
     defaultMessage: 'Set up instructions',
+  },
+  warning: {
+    id: 'dashboard.AddExistingSafeDialog.CheckSafe.warning',
+    defaultMessage: 'Warning!',
   },
 });
 
@@ -176,7 +181,12 @@ const CheckSafe = ({
       </DialogSection>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
         <div className={styles.callout}>
-          <div>
+          <div className={styles.calloutContainer}>
+            <Icon
+              name="triangle-warning"
+              className={styles.warningIcon}
+              title={MSG.warning}
+            />
             <FormattedMessage
               {...MSG.callout}
               values={{

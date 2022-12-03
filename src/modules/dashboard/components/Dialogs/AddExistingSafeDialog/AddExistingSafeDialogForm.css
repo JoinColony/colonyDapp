@@ -211,12 +211,21 @@
   align-items: center;
   padding: 14px;
   border-radius: 5px;
-  background-color: color-mod(var(--action-secondary) alpha(15%));
+  background-color: color-mod(var(--golden) alpha(15%));
   font-size: var(--size-normal);
+  line-height: 18px;
   color: var(--dark);
 }
 
+.calloutContainer {
+  display: flex;
+  align-items: center;
+}
+
 .calloutWarning {
+  margin-right: 4px;
+  position: relative;
+  top: 1px;
   font-weight: var(--weight-bold);
 }
 
@@ -224,4 +233,11 @@
   margin-right: 4px;
   font-size: var(--size-small);
   font-weight: var(--weight-bold);
+}
+
+.warningIcon {
+  margin-right: 15px;
+  height: 18px;
+  width: 18px;
+  fill: var(--golden);
 }
