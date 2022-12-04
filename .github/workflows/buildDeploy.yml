@@ -5,108 +5,108 @@ on:
   workflow_dispatch: # Allows manual workflow trigger
   repository_dispatch: # Allows API workflow trigger
 
-  # Triggers the workflow on pull request events but only for the "main" branch
-  # pull_request:
-  #   branches: [ "main" ]
-
+# Set global env variables
 env:
   AWS_REGION: eu-west-2
   ECR_REPOSITORY: app-frontend
-  IMAGE_TAG: ce43eab516aa165a4acdb5a88a4534512680462e #${{ github.event.client_payload.COMMIT_HASH != null && github.event.client_payload.COMMIT_HASH || github.sha }}
+  IMAGE_TAG: ${{ github.event.client_payload.COMMIT_HASH != null && github.event.client_payload.COMMIT_HASH || github.sha }}
   DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
 
 jobs:
 
-  # buildAndPush:
+  # # Build dapp frontend and push to AWS ECR
+  buildAndPush:
 
-  #   runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-  #   steps:
+    steps:
 
-  #     - name: Cancel Previous Runs               
-  #       uses: styfle/cancel-workflow-action@0.4.1
-  #       with:                                    
-  #         access_token: ${{ github.token }}
+      - name: Cancel Previous Runs               
+        uses: styfle/cancel-workflow-action@0.4.1
+        with:                                    
+          access_token: ${{ github.token }}
 
-  #     - name: Echo Env Vars through Context
-  #       run: |
-  #         echo "$GITHUB_CONTEXT"                 
+      - name: Echo Env Vars through Context
+        run: |
+          echo "$GITHUB_CONTEXT"                 
 
-  #     - name: Configure AWS credentials                          
-  #       uses: aws-actions/configure-aws-credentials@v1           
-  #       with:                                                    
-  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}        
-  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         aws-region: ${{ env.AWS_REGION }}
+      - name: Configure AWS credentials                          
+        uses: aws-actions/configure-aws-credentials@v1           
+        with:                                                    
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}        
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
-  #     - name: Login to Amazon ECR            
-  #       id: login-ecr                        
-  #       uses: aws-actions/amazon-ecr-login@v1
+      - name: Login to Amazon ECR            
+        id: login-ecr                        
+        uses: aws-actions/amazon-ecr-login@v1
       
-  #     - name: Checkout                                  
-  #       uses: actions/checkout@v2
-  #       with:
-  #         fetch-depth: 0
+      - name: Checkout                                  
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
-  #     - name: Checkout relevant branch
-  #       run:
-  #         git checkout ${{ github.event.client_payload.COMMIT_HASH != null && github.event.client_payload.COMMIT_HASH || github.sha }}
+      - name: Checkout relevant branch
+        run:
+          git checkout ${{ github.event.client_payload.COMMIT_HASH != null && github.event.client_payload.COMMIT_HASH || github.sha }}
       
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
         
-  #     - name: Build and push
-  #       uses: docker/build-push-action@v3
-  #       with:
-  #         context: ${{ github.workspace }}
-  #         file: ./Dockerfile
-  #         push: true
-  #         tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com/app-frontend:${{ env.IMAGE_TAG }}
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: ${{ github.workspace }}
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com/app-frontend:${{ env.IMAGE_TAG }}
       
-  #     - uses: sarisia/actions-status-discord@c193626e5ce172002b8161e116aa897de7ab5383
-  #       if: always()
-  #       with:
-  #         webhook: ${{ env.DISCORD_WEBHOOK }}
+      - uses: sarisia/actions-status-discord@c193626e5ce172002b8161e116aa897de7ab5383
+        if: always()
+        with:
+          webhook: ${{ env.DISCORD_WEBHOOK }}
 
-  # deployQA:
+  # Deploy dapp frontend to QA environment
+  deployQA:
 
-  #   needs: buildAndPush
+    needs: buildAndPush
 
-  #   runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-  #   env:
-  #     NAMESPACE: default
-  #     KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+    env:
+      NAMESPACE: default
+      KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
 
-  #   steps:
+    steps:
 
-  #   - name: Configure AWS credentials                          
-  #     uses: aws-actions/configure-aws-credentials@v1           
-  #     with:                                                    
-  #       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}        
-  #       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #       aws-region: ${{ env.AWS_REGION }}
+    - name: Configure AWS credentials                          
+      uses: aws-actions/configure-aws-credentials@v1           
+      with:                                                    
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}        
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
 
-  #   - name: Deploy to Kubernetes cluster                                                                            
-  #     uses: kodermax/kubectl-aws-eks@c18ef8acdb80d5311a7dd3611c57fcc70e954b37                                                                            
-  #     env:                                                                                                          
-  #       RELEASE_IMAGE: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
-  #     with:                                                                                                         
-  #       args: set image deployment/dapp-qa-network-100 dapp=${{ env.RELEASE_IMAGE }} --record -n $NAMESPACE
+    - name: Deploy to Kubernetes cluster                                                                            
+      uses: kodermax/kubectl-aws-eks@c18ef8acdb80d5311a7dd3611c57fcc70e954b37                                                                            
+      env:                                                                                                          
+        RELEASE_IMAGE: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+      with:                                                                                                         
+        args: set image deployment/dapp-qa-network-100 dapp=${{ env.RELEASE_IMAGE }} --record -n $NAMESPACE
           
-  #   - name: Verify Kubernetes deployment                               
-  #     uses: kodermax/kubectl-aws-eks@c18ef8acdb80d5311a7dd3611c57fcc70e954b37                              
-  #     with:                                                            
-  #       args: rollout status deployment/dapp-qa-network-100 -n $NAMESPACE
+    - name: Verify Kubernetes deployment                               
+      uses: kodermax/kubectl-aws-eks@c18ef8acdb80d5311a7dd3611c57fcc70e954b37                              
+      with:                                                            
+        args: rollout status deployment/dapp-qa-network-100 -n $NAMESPACE
     
-  #   # - uses: sarisia/actions-status-discord@c193626e5ce172002b8161e116aa897de7ab5383
-  #   #   if: always()
-  #   #   with:
-  #   #     webhook: ${{ env.DISCORD_WEBHOOK }}
-  
+    - uses: sarisia/actions-status-discord@c193626e5ce172002b8161e116aa897de7ab5383
+      if: always()
+      with:
+        webhook: ${{ env.DISCORD_WEBHOOK }}
+
+  # Deploy dapp frontend to staging environment and sync production data to staging  
   deployStaging:
 
-    # needs: deployQA
+    needs: deployQA
 
     environment: 'staging'
 
@@ -142,16 +142,17 @@ jobs:
       with:
         token: ${{ secrets.COLONY_INFRASTRUCTURE_PROD_TO_STAGING_TOKEN }}
         repository: JoinColony/colonyInfrastructure
-        event-type: Prod to staging data sync
+        event-type: data-sync
     
     - uses: sarisia/actions-status-discord@c193626e5ce172002b8161e116aa897de7ab5383
       if: always()
       with:
         webhook: ${{ env.DISCORD_WEBHOOK }}
   
+  # Deploy dapp frontend to production environment
   deployProd:
 
-    # needs: [deployQA, deployStaging]
+    needs: deployStaging
 
     environment: 'prod'
 
