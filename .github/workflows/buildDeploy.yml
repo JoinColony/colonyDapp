@@ -12,7 +12,7 @@ on:
 env:
   AWS_REGION: eu-west-2
   ECR_REPOSITORY: app-frontend
-  IMAGE_TAG: 9250491f5eabd0ab6c0b092976c0bbc5ae19f4ff #ce43eab516aa165a4acdb5a88a4534512680462e #${{ github.event.client_payload.COMMIT_HASH != null && github.event.client_payload.COMMIT_HASH || github.sha }}
+  IMAGE_TAG: ce43eab516aa165a4acdb5a88a4534512680462e #${{ github.event.client_payload.COMMIT_HASH != null && github.event.client_payload.COMMIT_HASH || github.sha }}
   DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
 
 jobs:
@@ -63,7 +63,7 @@ jobs:
   #         push: true
   #         tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com/app-frontend:${{ env.IMAGE_TAG }}
       
-  #     - uses: sarisia/actions-status-discord@v1
+  #     - uses: sarisia/actions-status-discord@c193626e5ce172002b8161e116aa897de7ab5383
   #       if: always()
   #       with:
   #         webhook: ${{ env.DISCORD_WEBHOOK }}
@@ -88,18 +88,18 @@ jobs:
   #       aws-region: ${{ env.AWS_REGION }}
 
   #   - name: Deploy to Kubernetes cluster                                                                            
-  #     uses: kodermax/kubectl-aws-eks@master                                                                         
+  #     uses: kodermax/kubectl-aws-eks@c18ef8acdb80d5311a7dd3611c57fcc70e954b37                                                                            
   #     env:                                                                                                          
   #       RELEASE_IMAGE: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
   #     with:                                                                                                         
   #       args: set image deployment/dapp-qa-network-100 dapp=${{ env.RELEASE_IMAGE }} --record -n $NAMESPACE
           
   #   - name: Verify Kubernetes deployment                               
-  #     uses: kodermax/kubectl-aws-eks@master                            
+  #     uses: kodermax/kubectl-aws-eks@c18ef8acdb80d5311a7dd3611c57fcc70e954b37                              
   #     with:                                                            
   #       args: rollout status deployment/dapp-qa-network-100 -n $NAMESPACE
     
-  #   # - uses: sarisia/actions-status-discord@v1
+  #   # - uses: sarisia/actions-status-discord@c193626e5ce172002b8161e116aa897de7ab5383
   #   #   if: always()
   #   #   with:
   #   #     webhook: ${{ env.DISCORD_WEBHOOK }}
@@ -126,28 +126,28 @@ jobs:
         aws-region: ${{ env.AWS_REGION }}
 
     - name: Deploy to Kubernetes cluster                                                                            
-      uses: kodermax/kubectl-aws-eks@master                                                                         
+      uses: kodermax/kubectl-aws-eks@c18ef8acdb80d5311a7dd3611c57fcc70e954b37                                                                        
       env:                                                                                                          
         RELEASE_IMAGE: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
       with:                                                                                                         
         args: set image deployment/dapp-staging-network-100 dapp=${{ env.RELEASE_IMAGE }} --record -n $NAMESPACE
           
     - name: Verify Kubernetes deployment                               
-      uses: kodermax/kubectl-aws-eks@master                            
+      uses: kodermax/kubectl-aws-eks@c18ef8acdb80d5311a7dd3611c57fcc70e954b37                          
       with:                                                            
         args: rollout status deployment/dapp-staging-network-100 -n $NAMESPACE
     
     - name: Repository Dispatch
-      uses: peter-evans/repository-dispatch@v2
+      uses: peter-evans/repository-dispatch@f2696244ec00ed5c659a5cc77f7138ad0302dffb
       with:
         token: ${{ secrets.COLONY_INFRASTRUCTURE_PROD_TO_STAGING_TOKEN }}
         repository: JoinColony/colonyInfrastructure
-        event-type: my-event
+        event-type: Prod to staging data sync
     
-    # - uses: sarisia/actions-status-discord@v1
-    #   if: always()
-    #   with:
-    #     webhook: ${{ env.DISCORD_WEBHOOK }}
+    - uses: sarisia/actions-status-discord@c193626e5ce172002b8161e116aa897de7ab5383
+      if: always()
+      with:
+        webhook: ${{ env.DISCORD_WEBHOOK }}
   
   deployProd:
 
@@ -171,18 +171,18 @@ jobs:
         aws-region: ${{ env.AWS_REGION }}
 
     - name: Deploy to Kubernetes cluster                                                                            
-      uses: kodermax/kubectl-aws-eks@master                                                                         
+      uses: kodermax/kubectl-aws-eks@c18ef8acdb80d5311a7dd3611c57fcc70e954b37                                                                         
       env:                                                                                                          
         RELEASE_IMAGE: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
       with:                                                                                                         
         args: set image deployment/dapp-prod-network-100 dapp=${{ env.RELEASE_IMAGE }} --record -n $NAMESPACE
           
     - name: Verify Kubernetes deployment                               
-      uses: kodermax/kubectl-aws-eks@master                            
+      uses: kodermax/kubectl-aws-eks@c18ef8acdb80d5311a7dd3611c57fcc70e954b37                            
       with:                                                            
         args: rollout status deployment/dapp-prod-network-100 -n $NAMESPACE
     
-    # - uses: sarisia/actions-status-discord@v1
-    #   if: always()
-    #   with:
-    #     webhook: ${{ env.DISCORD_WEBHOOK }}
+    - uses: sarisia/actions-status-discord@c193626e5ce172002b8161e116aa897de7ab5383
+      if: always()
+      with:
+        webhook: ${{ env.DISCORD_WEBHOOK }}
