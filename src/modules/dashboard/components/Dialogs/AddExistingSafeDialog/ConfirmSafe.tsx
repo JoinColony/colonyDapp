@@ -1,33 +1,30 @@
-import React, { useEffect } from 'react';
-import { FormikProps, useField } from 'formik';
+import React from 'react';
+import { FormikProps } from 'formik';
 import {
   defineMessages,
   FormattedMessage,
   MessageDescriptor,
 } from 'react-intl';
-import { isAddress } from 'web3-utils';
 
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Input, Annotations } from '~core/Fields';
-import ExternalLink from '~core/ExternalLink';
 import MaskedAddress from '~core/MaskedAddress';
 import Avatar from '~core/Avatar';
 import { SAFE_NAMES_MAP } from '~constants';
-import { MODULE_ADDRESS_INSTRUCTIONS } from '~externalUrls';
 
-import { FormValues, CheckSafeProps, StatusText } from './index';
+import { FormValues, CheckSafeProps } from './index';
 
 import styles from './AddExistingSafeDialogForm.css';
 
 const MSG = defineMessages({
   subtitle: {
     id: 'dashboard.AddExistingSafeDialog.ConfirmSafe.subtitle',
-    defaultMessage: 'Step 3: Provide module address and add Safe',
+    defaultMessage: 'Step 3: Add Safe',
   },
   instructions: {
     id: 'dashboard.AddExistingSafeDialog.ConfirmSafe.instructions',
-    defaultMessage: `Confirm the details of the Safe, add the address of your Zodiac Module Contract, and give the Safe a name in Colony.`,
+    defaultMessage: `Confirm the details of the Safe, and give the Safe a name in Colony.`,
   },
   chain: {
     id: 'dashboard.AddExistingSafeDialog.ConfirmSafe.chain',
@@ -45,34 +42,13 @@ const MSG = defineMessages({
     id: 'dashboard.AddExistingSafeDialog.ConfirmSafe.safeName',
     defaultMessage: 'Name the Safe',
   },
-  moduleAddress: {
-    id: 'dashboard.AddExistingSafeDialog.ConfirmSafe.moduleAddress',
-    defaultMessage: 'Module contract address',
-  },
-  where: {
-    id: 'dashboard.AddExistingSafeDialog.ConfirmSafe.where',
-    defaultMessage: 'Where to find this?',
-  },
-  moduleFound: {
-    id: 'dashboard.AddExistingSafeDialog.ConfirmSafe.moduleFound',
-    defaultMessage: 'Safe module found on {selectedChain}',
-  },
-  moduleLoading: {
-    id: 'dashboard.AddExistingSafeDialog.ConfirmSafe.moduleLoading',
-    defaultMessage: 'Loading Module details...',
-  },
   addSafe: {
     id: 'dashboard.AddExistingSafeDialog.ConfirmSafe.addSafe',
     defaultMessage: 'Add Safe',
   },
 });
 
-type ConfirmSafeProps = Pick<
-  CheckSafeProps,
-  'selectedChain' | 'setStepIndex'
-> & {
-  loadingState: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
-};
+type ConfirmSafeProps = Pick<CheckSafeProps, 'setStepIndex'>;
 
 interface SummaryRowProps {
   label: MessageDescriptor;
@@ -82,47 +58,10 @@ interface SummaryRowProps {
 const ConfirmSafe = ({
   isSubmitting,
   values: { chainId, contractAddress },
-  loadingState,
-  selectedChain,
   isValid,
   setStepIndex,
   handleSubmit,
 }: ConfirmSafeProps & FormikProps<FormValues>) => {
-  const [
-    { value: moduleAddress },
-    { error: moduleError, touched: moduleTouched },
-    { setError: setModuleError },
-  ] = useField<string>('moduleContractAddress');
-  const [isLoadingModule, setIsLoadingModule] = loadingState;
-
-  useEffect(() => {
-    if (isLoadingModule) {
-      setModuleError('');
-    }
-    // setModuleError causes infinite loop
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoadingModule]);
-
-  const getStatusText = (): StatusText | {} => {
-    const isValidAddress =
-      !moduleError && moduleTouched && isAddress(moduleAddress);
-
-    if (isLoadingModule) {
-      return { status: MSG.moduleLoading };
-    }
-
-    if (!isValidAddress) {
-      return {};
-    }
-
-    return {
-      status: MSG.moduleFound,
-      statusValues: {
-        selectedChain: selectedChain.label.toString(),
-      },
-    };
-  };
-
   const SummaryRow = ({ label, item }: SummaryRowProps) => {
     return (
       <div className={styles.summaryRow}>
@@ -140,7 +79,7 @@ const ConfirmSafe = ({
         </span>
       </DialogSection>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
-        <div className={styles.instructions}>
+        <div className={`${styles.instructions} ${styles.step3Instructions}`}>
           <FormattedMessage {...MSG.instructions} />
         </div>
       </DialogSection>
@@ -166,30 +105,6 @@ const ConfirmSafe = ({
               <MaskedAddress address={contractAddress} />
             </div>
           }
-        />
-      </DialogSection>
-      <DialogSection appearance={{ theme: 'sidePadding' }}>
-        <div className={styles.moduleLabel}>
-          <span>
-            <FormattedMessage {...MSG.moduleAddress} />
-          </span>
-          <ExternalLink href={MODULE_ADDRESS_INSTRUCTIONS} text={MSG.where} />
-        </div>
-        <Input
-          name="moduleContractAddress"
-          appearance={{ colorSchema: 'grey', theme: 'fat' }}
-          disabled={isSubmitting}
-          onChange={(e) => {
-            if (isAddress(e.target.value) && moduleTouched) {
-              setIsLoadingModule(true);
-            }
-          }}
-          onBlur={(e) => {
-            if (!moduleTouched && isAddress(e.target.value)) {
-              setIsLoadingModule(true);
-            }
-          }}
-          {...getStatusText()}
         />
       </DialogSection>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
@@ -222,7 +137,7 @@ const ConfirmSafe = ({
           onClick={() => handleSubmit()}
           text={MSG.addSafe}
           type="submit"
-          disabled={!isValid || isSubmitting || isLoadingModule}
+          disabled={!isValid || isSubmitting}
           loading={isSubmitting}
           style={{ width: styles.wideButton }}
         />

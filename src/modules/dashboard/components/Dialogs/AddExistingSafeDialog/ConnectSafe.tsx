@@ -1,17 +1,19 @@
-import React from 'react';
-import { FormikProps } from 'formik';
+import React, { useEffect } from 'react';
+import { FormikProps, useField } from 'formik';
 import {
   defineMessages,
   FormattedMessage,
   MessageDescriptor,
   useIntl,
 } from 'react-intl';
+import { isAddress } from 'web3-utils';
 
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import ExternalLink from '~core/ExternalLink';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
+import { Input } from '~core/Fields';
 
 import {
   ETHEREUM_NETWORK,
@@ -19,10 +21,15 @@ import {
   GNOSIS_NETWORK,
   SUPPORTED_SAFE_NETWORKS,
 } from '~constants';
-import { CONNECT_SAFE_INSTRUCTIONS, getModuleLink } from '~externalUrls';
+import {
+  CONNECT_SAFE_INSTRUCTIONS,
+  getModuleLink,
+  MODULE_ADDRESS_INSTRUCTIONS,
+  SAFE_CONTROL_LEARN_MORE,
+} from '~externalUrls';
 import { useClipboardCopy } from '~modules/dashboard/hooks';
 
-import { FormValues, AddExistingSafeProps } from './index';
+import { FormValues, AddExistingSafeProps, StatusText } from './index';
 
 import styles from './AddExistingSafeDialogForm.css';
 
@@ -33,11 +40,11 @@ const MSG = defineMessages({
   },
   warning: {
     id: 'dashboard.AddExistingSafeDialog.ConnectSafe.warning',
-    defaultMessage: `<span>Be aware.</span> Cross-chain bridging can have an element of risk.`,
+    defaultMessage: `Be sure you understand bridging before using. <a>Learn more</a>`,
   },
   instructions: {
     id: 'dashboard.AddExistingSafeDialog.ConnectSafe.instructions',
-    defaultMessage: `To give this colony permission to control the Safe, you need to provide the following details in the Zodiac Bridge Module in your Safe. <a>Learn how to set up the Zodiac Bridge Module.</a>`,
+    defaultMessage: `Giving this colony permission to control a Safe requires installing an app within your Safe. <a>Bridge Module app setup instructions</a>`,
   },
   amb: {
     id: 'dashboard.AddExistingSafeDialog.ConnectSafe.amb',
@@ -61,7 +68,7 @@ const MSG = defineMessages({
   },
   moduleDetailsSubtitle: {
     id: 'dashboard.AddExistingSafeDialog.ConnectSafe.moduleDetailsSubtitle',
-    defaultMessage: 'Bridge Module setup details',
+    defaultMessage: 'Add Bridge details',
   },
   copyDataTooltip: {
     id: 'dashboard.AddExistingSafeDialog.ConnectSafe.copyAddressTooltip',
@@ -74,11 +81,32 @@ const MSG = defineMessages({
     id: 'dashboard.AddExistingSafeDialog.ConnectSafe.copyMessage',
     defaultMessage: 'Click to copy',
   },
+  moduleAddress: {
+    id: 'dashboard.AddExistingSafeDialog.ConfirmSafe.moduleAddress',
+    defaultMessage: 'Module contract address',
+  },
+  where: {
+    id: 'dashboard.AddExistingSafeDialog.ConfirmSafe.where',
+    defaultMessage: 'Where to find this?',
+  },
+  moduleFound: {
+    id: 'dashboard.AddExistingSafeDialog.ConfirmSafe.moduleFound',
+    defaultMessage: 'Safe module found on {selectedChain}',
+  },
+  moduleLoading: {
+    id: 'dashboard.AddExistingSafeDialog.ConfirmSafe.moduleLoading',
+    defaultMessage: 'Loading Module details...',
+  },
+  beware: {
+    id: 'dashboard.AddExistingSafeDialog.CheckSafe.beware',
+    defaultMessage: 'Beware!',
+  },
 });
 
 interface ConnectSafeProps
   extends Pick<AddExistingSafeProps, 'colonyAddress' | 'setStepIndex'> {
   safeAddress: string;
+  loadingState: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
 }
 
 interface CopyableProps {
@@ -92,7 +120,24 @@ const ConnectSafe = ({
   setStepIndex,
   colonyAddress,
   safeAddress,
+  loadingState,
+  errors,
 }: ConnectSafeProps & FormikProps<FormValues>) => {
+  const [
+    { value: moduleAddress },
+    { error: moduleError, touched: moduleTouched },
+    { setError: setModuleError },
+  ] = useField<string>('moduleContractAddress');
+  const [isLoadingModule, setIsLoadingModule] = loadingState;
+
+  useEffect(() => {
+    if (isLoadingModule) {
+      setModuleError('');
+    }
+    // setModuleError causes infinite loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoadingModule]);
+
   const selectedChain = SUPPORTED_SAFE_NETWORKS.find(
     (network) => network.chainId === Number(chainId),
   );
@@ -133,14 +178,46 @@ const ConnectSafe = ({
     );
   };
 
+  const getStatusText = (): StatusText | {} => {
+    const isValidAddress =
+      !moduleError && moduleTouched && isAddress(moduleAddress);
+
+    if (isLoadingModule) {
+      return { status: MSG.moduleLoading };
+    }
+
+    if (!isValidAddress) {
+      return {};
+    }
+
+    return {
+      status: MSG.moduleFound,
+      statusValues: {
+        selectedChain: selectedChain?.name,
+      },
+    };
+  };
+
   return (
     <>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
         <div className={styles.warning}>
+          <Icon
+            name="triangle-warning"
+            className={styles.warningIcon}
+            title={MSG.beware}
+          />
           <FormattedMessage
             {...MSG.warning}
             values={{
-              span: (chunks) => <span>{chunks}</span>,
+              a: (chunks) => (
+                <ExternalLink
+                  href={SAFE_CONTROL_LEARN_MORE}
+                  className={styles.learnMoreLink}
+                >
+                  {chunks}
+                </ExternalLink>
+              ),
             }}
           />
         </div>
@@ -177,9 +254,6 @@ const ConnectSafe = ({
       </DialogSection>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
         <div className={styles.info}>
-          <span className={styles.subtitle}>
-            <FormattedMessage {...MSG.moduleDetailsSubtitle} />
-          </span>
           <CopyableData
             label={MSG.amb}
             text={GNOSIS_AMB_BRIDGES[chainId].foreignAMB}
@@ -188,6 +262,35 @@ const ConnectSafe = ({
           <CopyableData
             label={MSG.chain}
             text={GNOSIS_NETWORK.chainId.toString()}
+          />
+        </div>
+      </DialogSection>
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <div className={styles.moduleContractAddressContainer}>
+          <div className={`${styles.subtitle} ${styles.moduleAddressSubtitle}`}>
+            <FormattedMessage {...MSG.moduleDetailsSubtitle} />
+          </div>
+          <div className={styles.moduleLabel}>
+            <span>
+              <FormattedMessage {...MSG.moduleAddress} />
+            </span>
+            <ExternalLink href={MODULE_ADDRESS_INSTRUCTIONS} text={MSG.where} />
+          </div>
+          <Input
+            name="moduleContractAddress"
+            appearance={{ colorSchema: 'grey', theme: 'fat' }}
+            disabled={isSubmitting}
+            onChange={(e) => {
+              if (isAddress(e.target.value) && moduleTouched) {
+                setIsLoadingModule(true);
+              }
+            }}
+            onBlur={(e) => {
+              if (!moduleTouched && isAddress(e.target.value)) {
+                setIsLoadingModule(true);
+              }
+            }}
+            {...getStatusText()}
           />
         </div>
       </DialogSection>
@@ -203,6 +306,7 @@ const ConnectSafe = ({
           text={{ id: 'button.continue' }}
           type="submit"
           loading={isSubmitting}
+          disabled={!!errors.moduleContractAddress || isLoadingModule}
           style={{ width: styles.wideButton }}
         />
       </DialogSection>
