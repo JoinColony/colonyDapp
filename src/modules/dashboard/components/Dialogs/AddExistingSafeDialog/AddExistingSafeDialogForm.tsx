@@ -79,17 +79,12 @@ const AddExistingSafeDialogForm = ({
             values={values}
             setStepIndex={setStepIndex}
             safeAddress={contractAddress}
+            loadingState={loadingState[1]}
           />
         );
       case 3:
         return (
-          <ConfirmSafe
-            {...props}
-            values={values}
-            setStepIndex={setStepIndex}
-            loadingState={loadingState[1]}
-            selectedChain={selectedChain}
-          />
+          <ConfirmSafe {...props} values={values} setStepIndex={setStepIndex} />
         );
       default:
         return null;
