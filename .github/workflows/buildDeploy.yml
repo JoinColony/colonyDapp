@@ -140,7 +140,8 @@ jobs:
     - name: Repository Dispatch
       uses: peter-evans/repository-dispatch@v2
       with:
-        token: ${{ secrets.INFRA_REPO_ACCESS_TOKEN }}
+        token: ${{ secrets.COLONY_INFRASTRUCTURE_PROD_TO_STAGING_TOKEN }}
+        repository: JoinColony/colonyInfrastructure
         event-type: my-event
     
     # - uses: sarisia/actions-status-discord@v1
