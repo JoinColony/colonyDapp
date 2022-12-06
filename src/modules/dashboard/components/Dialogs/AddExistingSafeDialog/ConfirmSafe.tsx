@@ -8,9 +8,10 @@ import {
 
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
-import { Input, Annotations } from '~core/Fields';
+import { Input, Annotations, InputLabel } from '~core/Fields';
 import MaskedAddress from '~core/MaskedAddress';
 import Avatar from '~core/Avatar';
+import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import { SAFE_NAMES_MAP } from '~constants';
 
 import { FormValues, CheckSafeProps } from './index';
@@ -41,6 +42,11 @@ const MSG = defineMessages({
   safeName: {
     id: 'dashboard.AddExistingSafeDialog.ConfirmSafe.safeName',
     defaultMessage: 'Name the Safe',
+  },
+  safeNameTooltip: {
+    id: 'dashboard.AddExistingSafeDialog.ConfirmSafe.safeNameTooltip',
+    defaultMessage:
+      'Give the Safe a name so it can easily be identified on Colony.',
   },
   addSafe: {
     id: 'dashboard.AddExistingSafeDialog.ConfirmSafe.addSafe',
@@ -108,8 +114,20 @@ const ConfirmSafe = ({
         />
       </DialogSection>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <div className={styles.safeNameContainer}>
+          <InputLabel
+            appearance={{ colorSchema: 'grey', theme: 'fat' }}
+            label={MSG.safeName}
+          />
+          <QuestionMarkTooltip
+            tooltipClassName={styles.tooltip}
+            tooltipText={MSG.safeNameTooltip}
+            tooltipPopperOptions={{
+              placement: 'top',
+            }}
+          />
+        </div>
         <Input
-          label={MSG.safeName}
           name="safeName"
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
           disabled={isSubmitting}

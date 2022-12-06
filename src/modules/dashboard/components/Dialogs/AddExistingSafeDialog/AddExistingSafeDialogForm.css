@@ -194,3 +194,13 @@
 .moduleAddressSubtitle {
   margin-bottom: 10px;
 }
+
+.safeNameContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tooltip {
+  width: 220px;
+}

@@ -22,3 +22,5 @@ export const learnMoreLink: string;
 export const moduleContractAddressContainer: string;
 export const warningIcon: string;
 export const moduleAddressSubtitle: string;
+export const safeNameContainer: string;
+export const tooltip: string;
