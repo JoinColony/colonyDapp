@@ -35,7 +35,7 @@ const MSG = defineMessages({
   },
   moduleNotConnectedError: {
     id: 'dashboard.AddExistingSafeDialog.validation.moduleNotConnectedError',
-    defaultMessage: `Module not connected to safe on {selectedChain}`,
+    defaultMessage: `Module not connected to Safe on {selectedChain}`,
   },
   moduleNotFoundError: {
     id: 'dashboard.AddExistingSafeDialog.validation.moduleNotFoundError',
