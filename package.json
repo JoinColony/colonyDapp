@@ -180,7 +180,7 @@
     "graphql-tag": "^2.10.1",
     "html-react-parser": "^3.0.4",
     "immutable": "^4.0.0-rc.12",
-    "ipfs": "^0.43.1",
+    "ipfs": "^0.65.0",
     "jwt-decode": "^2.2.0",
     "linkify-it": "^3.0.0",
     "localforage": "^1.7.3",
