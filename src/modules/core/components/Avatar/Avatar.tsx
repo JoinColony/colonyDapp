@@ -58,7 +58,6 @@ const Avatar = ({
 
   const imageStyle: CSSProperties = avatar
     ? {
-        backgroundImage: `url(${avatar}), url(${fallback})`,
         // if using a blockie, do pixelated image scaling
         imageRendering: avatarURL ? undefined : 'pixelated',
       }
@@ -69,7 +68,17 @@ const Avatar = ({
       title={title}
     >
       {avatar ? (
-        <div className={styles.image} style={imageStyle} />
+        <img
+          src={avatar}
+          className={styles.image}
+          style={imageStyle}
+          onError={(e) => {
+            // @NOTE: We do this just in case the browser fails to retrieve the avatar
+            e.currentTarget.src = fallback;
+            e.currentTarget.style.imageRendering = 'pixelated';
+          }}
+          alt=""
+        />
       ) : (
         <Icon
           className={
