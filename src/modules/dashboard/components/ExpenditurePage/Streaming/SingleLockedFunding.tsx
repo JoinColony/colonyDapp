@@ -1,6 +1,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
+import { isEmpty } from 'lodash';
 
 import { FormSection } from '~core/Fields';
 import { Colony } from '~data/index';
@@ -57,10 +58,16 @@ const SingleLockedFunding = ({
     (tokenItem) => token && tokenItem.address === token,
   );
 
-  const { ref, teamsError } = useInsufficientFunds();
+  const { ref, teamsError, tokensError } = useInsufficientFunds();
+  const hasTokenError = !isEmpty(
+    fundingSource.rates.filter(
+      (rateItem) => rateItem.token && tokensError?.includes(rateItem.token),
+    ),
+  );
   const hasError =
     teamsError &&
-    Object.keys(teamsError)?.find((team) => team === fundingSource.team);
+    Object.keys(teamsError)?.find((team) => team === fundingSource.team) &&
+    hasTokenError;
 
   return (
     <div
