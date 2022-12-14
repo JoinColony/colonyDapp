@@ -51,12 +51,14 @@ interface Props {
   safe: ColonySafe;
   safeTransactions: SafeTransaction[];
   colony: Colony;
+  safeTransactionStatuses: string[];
 }
 
 const DetailsWidgetSafeTransaction = ({
   safe,
   safeTransactions,
   colony,
+  safeTransactionStatuses,
 }: Props) => {
   const [openWidgets, setOpenWidgets] = useState<boolean[]>(
     new Array(safeTransactions.length).fill(true),
@@ -81,6 +83,7 @@ const DetailsWidgetSafeTransaction = ({
                 <>
                   <Title
                     index={idx}
+                    transactionStatus={safeTransactionStatuses[index]}
                     title={TypesMSG.transferFunds}
                     {...{
                       isOpen: openWidgets[index],
@@ -108,6 +111,7 @@ const DetailsWidgetSafeTransaction = ({
                 <>
                   <Title
                     index={idx}
+                    transactionStatus={safeTransactionStatuses[index]}
                     title={TypesMSG.transferNft}
                     {...{ isOpen: openWidgets[index], setIsOpen }}
                   />
@@ -159,6 +163,7 @@ const DetailsWidgetSafeTransaction = ({
                 <>
                   <Title
                     index={idx}
+                    transactionStatus={safeTransactionStatuses[index]}
                     title={TypesMSG.contractInteraction}
                     {...{ isOpen: openWidgets[index], setIsOpen }}
                   />
@@ -179,6 +184,7 @@ const DetailsWidgetSafeTransaction = ({
                 <>
                   <Title
                     index={idx}
+                    transactionStatus={safeTransactionStatuses[index]}
                     title={TypesMSG.rawTransaction}
                     {...{ isOpen: openWidgets[index], setIsOpen }}
                   />

@@ -92,7 +92,7 @@ subscription SubgraphEventsThatAreActions($skip: Int = 0, $first: Int = 1000, $c
         "ArbitraryReputationUpdate(address,address,uint256,int256)",
         "TokenUnlocked(address)",
         "TokenUnlocked()",
-        "Annotation(address,bytes32,string)",
+        "ArbitraryTransaction(address,bytes,bool)",
       ]
     }) {
     id

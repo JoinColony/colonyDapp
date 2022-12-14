@@ -382,11 +382,13 @@ const DetailsWidget = ({
         ))}
       {detailsForAction.SafeTransaction &&
         values?.safeTransactionSafe &&
-        values?.safeTransactions && (
+        values.safeTransactions &&
+        values.safeTransactionStatuses && (
           <DetailsWidgetSafeTransaction
             safe={values.safeTransactionSafe}
             safeTransactions={values.safeTransactions}
             colony={colony}
+            safeTransactionStatuses={values.safeTransactionStatuses}
           />
         )}
       {!!shortenedHash && (

@@ -1,6 +1,7 @@
 import { AddressZero, HashZero } from 'ethers/constants';
 import { bigNumberify } from 'ethers/utils';
 import Decimal from 'decimal.js';
+import uniqWith from 'lodash/uniqWith';
 
 import {
   TransactionsMessagesCount,
@@ -81,23 +82,9 @@ export const getActionsListData = (
         return [...acc, action];
       }, []) || [],
     events:
-      unformattedActions?.events
-        /* Remove all annotations that are not the result of initiating a Safe Transaction via Safe Control */
-        ?.filter((event) => {
-          if (event.name !== 'Annotation(address,bytes32,string)') {
-            return true;
-          }
-
-          if (
-            event.processedValues?.txHash ===
-            '0x0000000000000000000000000000000000000000000000000000000000000001'
-          ) {
-            return true;
-          }
-
-          return false;
-        })
-        .reduce((acc, event) => {
+      /* Remove all duplicate safe transactions that were created by making a multi transaction */
+      uniqWith(
+        unformattedActions?.events?.reduce((acc, event) => {
           if (
             formatEventName(event.name) ===
             ColonyAndExtensionsEvents.DomainMetadata
@@ -138,6 +125,15 @@ export const getActionsListData = (
 
           return [...acc, event];
         }, []) || [],
+        (valueA, valueB) =>
+          valueA.name.includes(
+            ColonyAndExtensionsEvents.ArbitraryTransaction,
+          ) &&
+          valueB.name.includes(
+            ColonyAndExtensionsEvents.ArbitraryTransaction,
+          ) &&
+          valueA.transaction.hash === valueB.transaction.hash,
+      ),
     /*
      * Only display motions in the list if their stake reached 10% or
      * if they have been escalated

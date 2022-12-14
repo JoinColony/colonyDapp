@@ -9,6 +9,7 @@ import {
 import { BigNumberish } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
 import { Resolvers } from '@apollo/client';
+import uniqWith from 'lodash/uniqWith';
 
 import {
   getActionType,
@@ -22,9 +23,15 @@ import {
   ColonyAndExtensionsEvents,
   Address,
   ColonyExtendedMotions,
+  ColonyExtendedActions,
 } from '~types/index';
 import { ActionsPageFeedType } from '~dashboard/ActionsPageFeed';
 import { MotionVote } from '~utils/colonyMotions';
+import {
+  getTransactionStatuses,
+  TRANSACTION_STATUS,
+} from '~utils/safes/getTransactionStatuses';
+import { ETHEREUM_NETWORK } from '~constants';
 
 export interface EventValue {
   agent: Address;
@@ -45,6 +52,8 @@ export interface EventValue {
   setTo: boolean;
   vote: MotionVote;
   skillId: BigNumberish;
+  data: string;
+  target: Address;
 }
 
 export interface ProcessedEvent {
@@ -136,40 +145,52 @@ export const colonyActionsResolvers = ({
          *
          * This way we can use that index position to inferr the action type from them
          */
-        const reverseSortedEvents = logs
-          ?.map((log) => {
-            const [parsedLog] = clientsInstancesArray
-              .map((clientType) => {
-                const type = clientType?.clientType;
-                const potentialParsedLog = clientType?.interface.parseLog(log);
-                if (potentialParsedLog) {
-                  const {
-                    address,
-                    transactionHash: currentLogTransactionHash,
-                  } = log;
-                  const { name, values } = potentialParsedLog;
-                  return {
-                    type: ActionsPageFeedType.NetworkEvent,
-                    name,
-                    values,
-                    createdAt,
-                    emmitedBy: type,
-                    address,
-                    transactionHash: currentLogTransactionHash,
-                  } as ProcessedEvent;
-                }
-                return null;
-              })
-              .filter((potentialLog) => !!potentialLog);
-            return parsedLog;
-          })
-          .reverse()
-          /*
-           * Events list needs to be filtered one more time since in the case
-           * of events created by the network resolver they will show up undefined
-           * as well as we cannot parse them with any client we can instantiate
-           */
-          .filter((log) => !!log) as ProcessedEvent[];
+        const reverseSortedEvents = uniqWith(
+          logs
+            ?.map((log) => {
+              const [parsedLog] = clientsInstancesArray
+                .map((clientType) => {
+                  const type = clientType?.clientType;
+                  const potentialParsedLog = clientType?.interface.parseLog(
+                    log,
+                  );
+                  if (potentialParsedLog) {
+                    const {
+                      address,
+                      transactionHash: currentLogTransactionHash,
+                    } = log;
+                    const { name, values } = potentialParsedLog;
+                    return {
+                      type: ActionsPageFeedType.NetworkEvent,
+                      name,
+                      values,
+                      createdAt,
+                      emmitedBy: type,
+                      address,
+                      transactionHash: currentLogTransactionHash,
+                    } as ProcessedEvent;
+                  }
+                  return null;
+                })
+                .filter((potentialLog) => !!potentialLog);
+              return parsedLog;
+            })
+            .reverse()
+            /*
+             * Events list needs to be filtered one more time since in the case
+             * of events created by the network resolver they will show up undefined
+             * as well as we cannot parse them with any client we can instantiate
+             */
+            .filter((log) => !!log) as ProcessedEvent[],
+          (valueA, valueB) =>
+            valueA.name.includes(
+              ColonyAndExtensionsEvents.ArbitraryTransaction,
+            ) &&
+            valueB.name.includes(
+              ColonyAndExtensionsEvents.ArbitraryTransaction,
+            ) &&
+            valueA.transactionHash === valueB.transactionHash,
+        );
 
         let actionType;
         const motionCreatedEvent = reverseSortedEvents.find(
@@ -222,11 +243,23 @@ export const colonyActionsResolvers = ({
           events = [];
         }
 
+        let safeTransactionStatuses: TRANSACTION_STATUS[] = [];
+        if (
+          actionType === ColonyExtendedActions.SafeTransactionInitiated ||
+          actionType === ColonyExtendedMotions.SafeTransactionInitiatedMotion
+        ) {
+          safeTransactionStatuses = await getTransactionStatuses(
+            actionValues.safeData?.chainId ||
+              ETHEREUM_NETWORK.chainId.toString(),
+            transactionReceipt,
+          );
+        }
         const clientVersion = await colonyClient?.version();
         let annotation;
         if (
           clientVersion.toNumber() >= ColonyVersion.LightweightSpaceship &&
-          actionType !== ColonyExtendedMotions.SafeTransactionInitiatedMotion
+          actionType !== ColonyExtendedMotions.SafeTransactionInitiatedMotion &&
+          actionType !== ColonyExtendedActions.SafeTransactionInitiated
         ) {
           annotation = await getAnnotationFromSubgraph(
             actionValues?.actionInitiator || actionValues?.address || from,
@@ -250,7 +283,6 @@ export const colonyActionsResolvers = ({
           createdAt,
           actionType,
           annotationHash: annotation ? annotation?.values?.metadata : null,
-          annotationMessage: '',
           colonyDisplayName: null,
           colonyAvatarHash: null,
           colonyTokens: [],
@@ -264,9 +296,7 @@ export const colonyActionsResolvers = ({
           isWhitelistActivated: false,
           verifiedAddresses: [],
           colonySafes: [],
-          safeData: null,
-          safeTransactions: [],
-          transactionsTitle: '',
+          safeTransactionStatuses,
           ...actionValues,
         };
       }
@@ -319,10 +349,7 @@ export const colonyActionsResolvers = ({
         rootHash: null,
         isWhitelistActivated: false,
         verifiedAddresses: [],
-        safeData: null,
-        safeTransactions: [],
-        transactionsTitle: '',
-        annotationMessage: '',
+        safeTransactionStatuses: [],
         ...pendingActionValues,
       };
     },

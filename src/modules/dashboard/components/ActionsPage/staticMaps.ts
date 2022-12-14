@@ -83,6 +83,10 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
     ColonyRole.Root,
     ColonyRole.Arbitration,
   ],
+  [ColonyAndExtensionsEvents.ArbitraryTransaction]: [
+    ColonyRole.Root,
+    ColonyRole.Administration,
+  ],
   [ColonyAndExtensionsEvents.Generic]: [],
 };
 
@@ -174,7 +178,7 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
     ColonyAndExtensionsEvents.ArbitraryReputationUpdate,
   ],
   [ColonyExtendedActions.SafeTransactionInitiated]: [
-    ColonyAndExtensionsEvents.Annotation,
+    ColonyAndExtensionsEvents.ArbitraryTransaction,
   ],
   [ColonyMotions.UnlockTokenMotion]: MOTION_EVENTS,
   [ColonyMotions.MintTokensMotion]: MOTION_EVENTS,
@@ -233,7 +237,7 @@ export const EVENTS_REQUIRED_FOR_ACTION: ActionsEventsMap = {
   ],
   // Used by Gnosis Safe Control in the absence of a corresponding native Colony event
   [AddedActions.SafeTransactionInitiated]: [
-    ColonyAndExtensionsEvents.Annotation,
+    ColonyAndExtensionsEvents.ArbitraryTransaction,
   ],
 };
 

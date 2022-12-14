@@ -16,7 +16,6 @@ import {
   useLoggedInUser,
   useMotionVoteResultsQuery,
   useMotionCurrentUserVotedQuery,
-  useMotionFinalizedQuery,
   useMotionStakerRewardQuery,
   useDomainBalanceQuery,
 } from '~data/index';
@@ -34,13 +33,15 @@ interface Props {
   colony: Colony;
   motionId: number;
   actionType: string;
-  scrollToRef?: RefObject<HTMLInputElement>;
   motionState: MotionState;
   fromDomain: number;
   motionAmount: string;
   tokenAddress: string;
-  isDecision?: boolean;
   transactionTitle: string;
+  loadingMotionFinalized: boolean;
+  motionFinalized: boolean | undefined;
+  isDecision?: boolean;
+  scrollToRef?: RefObject<HTMLInputElement>;
 }
 
 export const MSG = defineMessages({
@@ -142,6 +143,8 @@ const FinalizeMotionAndClaimWidget = ({
   tokenAddress,
   isDecision = false,
   transactionTitle,
+  loadingMotionFinalized,
+  motionFinalized,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const {
@@ -162,17 +165,6 @@ const FinalizeMotionAndClaimWidget = ({
     variables: {
       colonyAddress,
       userAddress: walletAddress,
-      motionId,
-    },
-    fetchPolicy: 'network-only',
-  });
-
-  const {
-    data: finalized,
-    loading: loadingFinalized,
-  } = useMotionFinalizedQuery({
-    variables: {
-      colonyAddress,
       motionId,
     },
     fetchPolicy: 'network-only',
@@ -269,7 +261,7 @@ const FinalizeMotionAndClaimWidget = ({
   if (
     loadingVoteResults ||
     loadingUserVoted ||
-    loadingFinalized ||
+    loadingMotionFinalized ||
     loadingStakerRewards
   ) {
     return (
@@ -295,7 +287,7 @@ const FinalizeMotionAndClaimWidget = ({
   const showFinalizeButton = isDecision
     ? false
     : voteResults?.motionVoteResults &&
-      !finalized?.motionFinalized &&
+      !motionFinalized &&
       !motionNotFinalizable;
 
   const canClaimStakes =
@@ -305,7 +297,7 @@ const FinalizeMotionAndClaimWidget = ({
 
   const showClaimButton = isDecision
     ? true
-    : finalized?.motionFinalized || (motionNotFinalizable && canClaimStakes);
+    : motionFinalized || (motionNotFinalizable && canClaimStakes);
 
   const yaySideWon = bigNumberify(
     voteResults?.motionVoteResults?.yayVotes || 0,

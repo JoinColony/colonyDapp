@@ -73,6 +73,7 @@ export enum ColonyAndExtensionsEvents {
   PaymentFinalized = 'PaymentFinalized',
   TokensBurned = 'TokensBurned',
   ArbitraryReputationUpdate = 'ArbitraryReputationUpdate',
+  ArbitraryTransaction = 'ArbitraryTransaction',
   /*
    * Network events
    */
@@ -159,6 +160,7 @@ export interface FormattedAction {
   isDecision?: boolean;
   annotationHash?: string;
   transactionTitle?: string;
+  safeTransactionsStatuses?: string[];
 }
 
 export interface FormattedEvent {

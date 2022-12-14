@@ -28,7 +28,14 @@ import {
   AddedActions,
   AddedMotions,
 } from '~types/index';
-import { ColonySafe, ParsedEvent, ColonyAction } from '~data/index';
+import {
+  ColonySafe,
+  ParsedEvent,
+  ColonyAction,
+  SubgraphAnnotationEventsQuery,
+  SubgraphAnnotationEventsQueryVariables,
+  SubgraphAnnotationEventsDocument,
+} from '~data/index';
 import { ProcessedEvent } from '~data/resolvers/colonyActions';
 
 import {
@@ -43,6 +50,7 @@ import { availableRoles } from '~dialogs/PermissionManagementDialog';
 import { getMotionRequiredStake, MotionState } from '../colonyMotions';
 
 import { getAnnotationFromSubgraph } from './getAnnotationFromSubgraph';
+import { parseSubgraphEvent } from './subgraphEvents';
 
 interface ActionValues {
   recipient: Address;
@@ -55,6 +63,10 @@ interface ActionValues {
   address: Address;
   roles: ActionUserRoles[];
   reputationChange: BigNumberish;
+  safeData: ColonyAction['safeData'];
+  safeTransactions: ColonyAction['safeTransactions'];
+  transactionsTitle: ColonyAction['transactionsTitle'];
+  annotationMessage: ColonyAction['annotationMessage'];
   actionInitiator?: Address;
 }
 
@@ -733,45 +745,68 @@ const getEmitDomainReputationPenaltyAndRewardValues = async (
 
 const getSafeTransactionInitiatedValues = async (
   processedEvents: ProcessedEvent[],
+  apolloClient: ApolloClient<object>,
 ): Promise<Partial<ActionValues>> => {
-  const colonyMetadataEvent = processedEvents.find(
-    ({ name }) => name === ColonyAndExtensionsEvents.Annotation,
+  const arbitraryTransactionEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.ArbitraryTransaction,
   ) as ProcessedEvent;
-  const {
-    address,
-    values: { agent, metadata },
-  } = colonyMetadataEvent;
-  const ipfsMetadata = await getSafeTransactionFromAnnotation(metadata);
+  const { address: colonyAddress, transactionHash } = arbitraryTransactionEvent;
 
   const initiateSafeTransactionValues: {
     address: Address;
-    actionInitiator?: ColonyAction['actionInitiator'];
     safeData: ColonyAction['safeData'];
     safeTransactions: ColonyAction['safeTransactions'];
     transactionsTitle: ColonyAction['transactionsTitle'];
     annotationMessage: ColonyAction['annotationMessage'];
+    actionInitiator?: ColonyAction['actionInitiator'];
   } = {
-    address,
+    address: colonyAddress,
     safeData: null,
     safeTransactions: [],
     transactionsTitle: '',
     annotationMessage: null,
   };
 
-  if (ipfsMetadata) {
-    const parsedAnnotation = JSON.parse(ipfsMetadata);
-    if (parsedAnnotation) {
-      initiateSafeTransactionValues.safeData = parsedAnnotation.safeData;
-      initiateSafeTransactionValues.safeTransactions =
-        parsedAnnotation.transactions;
-      initiateSafeTransactionValues.transactionsTitle = parsedAnnotation.title;
-      initiateSafeTransactionValues.annotationMessage =
-        parsedAnnotation.annotationMessage || '';
+  const { data: subgraphEvents } = await apolloClient.query<
+    SubgraphAnnotationEventsQuery,
+    SubgraphAnnotationEventsQueryVariables
+  >({
+    query: SubgraphAnnotationEventsDocument,
+    variables: {
+      transactionHash,
+      sortDirection: 'desc',
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  const [safeTransactionsAnnotation] = (
+    subgraphEvents?.annotationEvents || []
+  ).map(parseSubgraphEvent);
+
+  if (safeTransactionsAnnotation) {
+    const safeTxMetadata = await getSafeTransactionFromAnnotation(
+      safeTransactionsAnnotation.values?.metadata,
+    );
+
+    if (safeTxMetadata) {
+      const parsedAnnotation = JSON.parse(safeTxMetadata);
+      if (parsedAnnotation) {
+        initiateSafeTransactionValues.transactionsTitle =
+          parsedAnnotation.title || '';
+        initiateSafeTransactionValues.annotationMessage =
+          parsedAnnotation.annotationMessage || '';
+        initiateSafeTransactionValues.safeTransactions =
+          parsedAnnotation.transactions || [];
+        initiateSafeTransactionValues.safeData = parsedAnnotation.safeData;
+      }
+    }
+
+    if (safeTransactionsAnnotation.values.agent) {
+      initiateSafeTransactionValues.actionInitiator =
+        safeTransactionsAnnotation.values.agent;
     }
   }
-  if (agent) {
-    initiateSafeTransactionValues.actionInitiator = agent;
-  }
+
   return initiateSafeTransactionValues;
 };
 
@@ -1329,6 +1364,10 @@ export const getActionValues = async (
     address: AddressZero,
     roles: [{ id: 0, setTo: false }],
     reputationChange: '0',
+    safeData: null,
+    safeTransactions: [],
+    transactionsTitle: '',
+    annotationMessage: '',
   };
 
   switch (actionType) {
@@ -1442,6 +1481,7 @@ export const getActionValues = async (
       // eslint-disable-next-line max-len
       const safeTransactionInitiatedActionValues = await getSafeTransactionInitiatedValues(
         processedEvents,
+        apolloClient,
       );
       return {
         ...fallbackValues,

@@ -1,30 +1,58 @@
 import { useEffect, useState } from 'react';
 
-import { SafeTransaction } from '~data/index';
 import { getSafeTransactionFromAnnotation } from '~utils/events';
+import {
+  getTransactionStatuses,
+  TRANSACTION_STATUS,
+} from '~utils/safes/getTransactionStatuses';
+import { getProvider } from '~modules/core/sagas/utils';
 
-export const useFetchSafeTransactionTitle = (metadata?: string) => {
-  const [safeTransactionsTitle, setSafeTransactionTitle] = useState<
-    SafeTransaction[]
-  >();
+export const useFetchSafeTransactionData = (
+  transactionHash: string,
+  metadata: string | undefined,
+) => {
+  const [safeTransactionData, setSafeTransactionData] = useState<{
+    transactionTitle: string;
+    safeTransactionStatus: TRANSACTION_STATUS | null;
+  }>({
+    transactionTitle: '',
+    safeTransactionStatus: null,
+  });
 
   useEffect(() => {
     const fetchSafeTxData = async () => {
       if (metadata) {
-        const safeTransactionData = await getSafeTransactionFromAnnotation(
+        // eslint-disable-next-line max-len
+        const safeTransactionAnnotation = await getSafeTransactionFromAnnotation(
           metadata,
         );
-        if (safeTransactionData) {
-          const parsedAnnotation = JSON.parse(safeTransactionData);
+        if (safeTransactionAnnotation) {
+          const parsedAnnotation = JSON.parse(safeTransactionAnnotation);
           if (parsedAnnotation) {
-            setSafeTransactionTitle(parsedAnnotation.title);
+            const provider = getProvider();
+            const transactionReceipt = await provider.getTransactionReceipt(
+              transactionHash,
+            );
+            const safeTransactionStatuses = await getTransactionStatuses(
+              parsedAnnotation.safeData.chainId,
+              transactionReceipt,
+            );
+            const safeTransactionStatus = safeTransactionStatuses.find(
+              (status) => status === TRANSACTION_STATUS.PENDING,
+            )
+              ? TRANSACTION_STATUS.PENDING
+              : TRANSACTION_STATUS.SUCCESS;
+            setSafeTransactionData({
+              transactionTitle: parsedAnnotation.title,
+              safeTransactionStatus,
+            });
           }
         }
       }
     };
 
     fetchSafeTxData();
-  }, [metadata]);
+  }, [transactionHash, metadata]);
 
-  return safeTransactionsTitle;
+  return safeTransactionData;
 };

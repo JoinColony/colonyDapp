@@ -1,3 +1,5 @@
+import { GNOSIS_AMB_BRIDGES } from '~constants';
+
 /* eslint-disable max-len */
 
 export const FEEDBACK = `https://portal.productboard.com/colony/1-colony-portal/tabs/4-bugs`;
@@ -65,3 +67,14 @@ export const MODULE_ADDRESS_INSTRUCTIONS = `https://colony.gitbook.io/colony/adv
 export const SAFE_CONTROL_LEARN_MORE = `https://colony.gitbook.io/colony/advanced-features/safe-control-gnosis-safe#how-it-all-works`;
 
 export const ADD_SAFE_INSTRUCTIONS = `https://colony.gitbook.io/colony/advanced-features/safe-control-gnosis-safe/adding-a-safe`;
+
+export const getSafeTransactionMonitor = (
+  chainId: string,
+  transactionHash: string,
+) => {
+  const monitorUrl = GNOSIS_AMB_BRIDGES[chainId].monitor;
+
+  return `${monitorUrl}100/${transactionHash}`;
+};
+
+/* eslint-enable max-len */
