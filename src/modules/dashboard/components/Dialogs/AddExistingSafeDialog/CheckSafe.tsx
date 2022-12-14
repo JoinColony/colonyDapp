@@ -184,7 +184,7 @@ const CheckSafe = ({
           <div className={styles.calloutContainer}>
             <Icon
               name="triangle-warning"
-              className={styles.warningIcon}
+              className={`${styles.warningIcon} ${styles.warningIconCheckSafe}`}
               title={MSG.important}
             />
             <FormattedMessage
