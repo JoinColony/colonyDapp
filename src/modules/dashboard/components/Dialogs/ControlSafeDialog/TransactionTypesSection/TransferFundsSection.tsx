@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormikProps, useField } from 'formik';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import moveDecimal from 'move-decimal-point';
 
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
@@ -20,6 +20,7 @@ import { FormValues, TransactionSectionProps } from '..';
 import { ErrorMessage as Error, Loading, AvatarXS } from './shared';
 
 import styles from './TransactionTypesSection.css';
+import Icon from '~core/Icon';
 
 export const MSG = defineMessages({
   amount: {
@@ -42,6 +43,14 @@ export const MSG = defineMessages({
     id: `dashboard.ControlSafeDialog.TransferFundsSection.balancesError`,
     defaultMessage:
       'Unable to fetch Safe balances. Please check your connection',
+  },
+  warning: {
+    id: `dashboard.ControlSafeDialog.TransferFundsSection.warning`,
+    defaultMessage: `Please confirm that the recipient’s address exists on the same chain as the selected Safe: <span>{safeChainName}</span>`,
+  },
+  warningIconTitle: {
+    id: `dashboard.ControlSafeDialog.TransferFundsSection.warningIconTitle`,
+    defaultMessage: 'Warning!',
   },
 });
 
@@ -171,6 +180,27 @@ const TransferFundsSection = ({
           transactionFormIndex={transactionFormIndex}
           handleValidation={handleValidation}
         />
+      </DialogSection>
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <div className={styles.warningContainer}>
+          <Icon
+            name="triangle-warning"
+            className={styles.warningIcon}
+            title={MSG.warningIconTitle}
+          />
+          <p>
+            <FormattedMessage
+              {...MSG.warning}
+              values={{
+                span: (chunks) => (
+                  <span className={styles.warningSafeChainName}>{chunks}</span>
+                ),
+                safeChainName:
+                  safe && getChainNameFromSafe(safe.profile.displayName),
+              }}
+            />
+          </p>
+        </div>
       </DialogSection>
       <DialogSection>
         <div className={styles.singleUserPickerContainer}>

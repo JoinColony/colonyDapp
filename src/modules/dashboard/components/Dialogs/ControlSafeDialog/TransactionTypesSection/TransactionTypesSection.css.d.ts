@@ -5,3 +5,6 @@ export const inputParamContainer: string;
 export const spinner: string;
 export const error: string;
 export const noUsefulMethods: string;
+export const warningContainer: string;
+export const warningSafeChainName: string;
+export const warningIcon: string;
