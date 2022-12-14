@@ -235,9 +235,6 @@
   font-weight: var(--weight-bold);
 }
 
-.warningIcon {
+.warningIconCheckSafe {
   margin-right: 15px;
-  height: 18px;
-  width: 18px;
-  fill: var(--golden);
 }
