@@ -246,7 +246,7 @@ const ActionsPageEvent = ({
           ColonyAndExtensionsEvents.ColonyRoleSet,
           'event',
         );
-      case ColonyAndExtensionsEvents.Annotation:
+      case ColonyAndExtensionsEvents.ArbitraryTransaction:
         return getSafeTransactionMessageDescriptorIds(
           ColonyExtendedActions.SafeTransactionInitiated,
           actionData.safeTransactions,

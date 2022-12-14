@@ -41,7 +41,7 @@ import { useDataFetcher } from '~utils/hooks';
 import { parseColonyMetadata, parseDomainMetadata } from '~utils/colonyActions';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
-import { useFetchSafeTransactionTitle } from '~modules/dashboard/hooks/useFetchSafeTransactionData';
+import { useFetchSafeTransactionData } from '~modules/dashboard/hooks/useFetchSafeTransactionData';
 import {
   getUpdatedDecodedMotionRoles,
   MotionState,
@@ -58,6 +58,7 @@ import { ipfsDataFetcher } from '../../../core/fetchers';
 import { ClickHandlerProps } from './ActionsList';
 
 import styles, { popoverWidth, popoverDistance } from './ActionsListItem.css';
+import { TRANSACTION_STATUS } from '~utils/safes/getTransactionStatuses';
 
 const displayName = 'ActionsList.ActionsListItem';
 
@@ -126,7 +127,7 @@ const ActionsListItem = ({
     reputationChange,
     isDecision,
     annotationHash,
-    transactionTitle,
+    transactionTitle: fallbackTransactionTitle,
   },
   colony,
   handleOnClick,
@@ -187,9 +188,11 @@ const ActionsListItem = ({
     transactionHash,
     colonyObject,
   );
-
-  const safeTransactionTitle =
-    useFetchSafeTransactionTitle(metadata) || transactionTitle;
+  const {
+    transactionTitle,
+    safeTransactionStatus,
+  } = useFetchSafeTransactionData(transactionHash, metadata);
+  const safeTransactionTitle = transactionTitle || fallbackTransactionTitle;
 
   useEffect(() => {
     if (transactionTokenAddress) {
@@ -430,21 +433,33 @@ const ActionsListItem = ({
               )}
             </span>
             {(motionState || isVotingExtensionEnabled) && (
-              <>
-                <div className={styles.motionTagWrapper}>
-                  <Tag
-                    text={motionStyles.name}
-                    appearance={{
-                      theme: motionStyles.theme as TagAppearance['theme'],
-                      /*
-                       * @NOTE Prettier is being stupid
-                       */
-                      // eslint-disable-next-line max-len
-                      colorSchema: motionStyles.colorSchema as TagAppearance['colorSchema'],
-                    }}
-                  />
-                </div>
-              </>
+              <div className={styles.motionTagWrapper}>
+                <Tag
+                  text={motionStyles.name}
+                  appearance={{
+                    theme: motionStyles.theme as TagAppearance['theme'],
+                    /*
+                     * @NOTE Prettier is being stupid
+                     */
+                    // eslint-disable-next-line max-len
+                    colorSchema: motionStyles.colorSchema as TagAppearance['colorSchema'],
+                  }}
+                />
+              </div>
+            )}
+            {safeTransactionStatus && (
+              <div className={styles.motionTagWrapper}>
+                <Tag
+                  text={safeTransactionStatus}
+                  appearance={{
+                    theme:
+                      safeTransactionStatus === TRANSACTION_STATUS.PENDING
+                        ? 'golden'
+                        : 'primary',
+                    colorSchema: 'fullColor',
+                  }}
+                />
+              </div>
             )}
           </div>
           <div className={styles.meta}>

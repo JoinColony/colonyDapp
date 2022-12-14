@@ -1,0 +1,35 @@
+.safeTransactionBannerContainer {
+  margin-top: -90px;
+  margin-bottom: 40px;
+  width: 100%;
+  position: static;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+  text-align: center;
+}
+
+.safeTransactionBanner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 9px 0;
+  font-weight: var(--weight-bold);
+}
+
+.monitorUrl {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 5px 5px 14px;
+  width: 175px;
+  position: absolute;
+  right: 20px;
+  border-radius: 2px;
+  background-color: rgba(255, 255, 255);
+  color: var(--action-secondary);
+}
+
+.monitorUrl svg {
+  fill: var(--action-secondary);
+  stroke: none;
+}

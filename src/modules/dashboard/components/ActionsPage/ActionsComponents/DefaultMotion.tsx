@@ -7,6 +7,7 @@ import { useLocation } from 'react-router';
 import { ROOT_DOMAIN_ID, ColonyRoles } from '@colony/colony-js';
 import isEmpty from 'lodash/isEmpty';
 
+import { ETHEREUM_NETWORK } from '~constants';
 import Numeral from '~core/Numeral';
 import Heading from '~core/Heading';
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
@@ -28,6 +29,7 @@ import {
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
 import { mapPayload } from '~utils/actions';
 import { useTitle } from '~utils/hooks/useTitle';
+import { TRANSACTION_STATUS } from '~utils/safes/getTransactionStatuses';
 import { SafeTxData } from '~modules/dashboard/sagas/utils/safeHelpers';
 import { ColonyMotions, ColonyAndExtensionsEvents } from '~types/index';
 import { ActionTypes } from '~redux/index';
@@ -44,6 +46,7 @@ import {
   useColonyHistoricRolesQuery,
   useNetworkContracts,
   SafeTransaction,
+  useMotionFinalizedQuery,
 } from '~data/index';
 
 import DetailsWidget from '../DetailsWidget/DetailsWidget';
@@ -58,6 +61,7 @@ import VoteResults from '../FinalizeMotionAndClaimWidget/VoteResults';
 import CountDownTimer from '../CountDownTimer';
 import ActionPageMotionContent from '../ActionPageMotionContent';
 import { unknownContractMSG } from '../DetailsWidget/DetailsWidgetSafeTransaction';
+import SafeTransactionBanner from '../SafeTransactionBanner';
 
 import styles from './DefaultAction.css';
 import motionSpecificStyles from './DefaultMotion.css';
@@ -121,6 +125,7 @@ const DefaultMotion = ({
     safeTransactions,
     safeData,
     annotationMessage,
+    safeTransactionStatuses,
   },
   colonyAction,
   token,
@@ -176,6 +181,17 @@ const DefaultMotion = ({
   } = useMotionStatusQuery({
     variables: {
       colonyAddress: colony.colonyAddress,
+      motionId,
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  const {
+    data: finalized,
+    loading: loadingFinalized,
+  } = useMotionFinalizedQuery({
+    variables: {
+      colonyAddress,
       motionId,
     },
     fetchPolicy: 'network-only',
@@ -398,6 +414,7 @@ const DefaultMotion = ({
     isSafeTransactionRecipientUser: !(
       firstSafeTransaction?.recipient?.id === 'filterValue'
     ),
+    safeTransactionStatuses,
   };
 
   const actionAndEventValuesForDocumentTitle = {
@@ -444,10 +461,23 @@ const DefaultMotion = ({
 
   const isDecision = actionType === ColonyMotions.CreateDecisionMotion;
   const hasBanner = !shouldDisplayMotion(currentStake, requiredStake);
-
+  const hasPendingSafeTransactions = !!safeTransactionStatuses.find(
+    (status) => status === TRANSACTION_STATUS.PENDING,
+  );
+  const canProcessPendingSafeTransactions =
+    hasPendingSafeTransactions &&
+    !loadingFinalized &&
+    motionState === MotionState.Passed &&
+    finalized?.motionFinalized;
   return (
     <div className={styles.main}>
       <StakeRequiredBanner stakeRequired={hasBanner} isDecision={isDecision} />
+      {canProcessPendingSafeTransactions && (
+        <SafeTransactionBanner
+          chainId={selectedSafe?.chainId || ETHEREUM_NETWORK.chainId.toString()}
+          transactionHash={transactionHash}
+        />
+      )}
       <div
         className={`${styles.upperContainer} ${
           hasBanner && styles.bannerPadding
@@ -608,6 +638,8 @@ const DefaultMotion = ({
               tokenAddress={tokenAddress}
               isDecision={isDecision}
               transactionTitle={transactionsTitle || locationState?.title}
+              motionFinalized={finalized?.motionFinalized}
+              loadingMotionFinalized={loadingFinalized}
             />
           )}
           <DetailsWidget

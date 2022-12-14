@@ -85,6 +85,7 @@ export interface EventValues {
   safeTransactionFunctionName?: string;
   safeTransactionContractName?: string;
   safeTransactionRawTransactionAddress?: JSX.Element;
+  safeTransactionStatuses?: string[];
 }
 
 export type FeedItemWithId<T> = T & { uniqueId: string };

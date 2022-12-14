@@ -148,3 +148,7 @@
 .tokenAvatar + div > span:last-of-type {
   min-width: fit-content;
 }
+
+.transactionTag {
+  margin-left: 8px;
+}
