@@ -66,7 +66,7 @@ const GroupedTransactionCard = ({
     error,
     id,
     methodContext,
-    methodName,
+    methodName: defaultMethodName,
     params,
     status,
     loadingRelated,
@@ -156,6 +156,17 @@ const GroupedTransactionCard = ({
   // A prior transaction was selected
   const hasDependency = ready && !selected;
 
+  /*
+    @NOTE: We do this so that we can display a more specific transaction copy in the case of adding/removing safes,
+    otherwise the transaction would display the copy we have for editColony actions, which is technically correct
+    but not clear enough.
+  */
+  const methodName =
+    (group?.key === 'removeExistingSafes' ||
+      group?.key === 'addExistingSafe') &&
+    defaultMethodName === 'editColony'
+      ? group.key
+      : defaultMethodName;
   const defaultTransactionMessageDescriptorId = {
     id: `${metatransaction ? 'meta' : ''}transaction.${
       context ? `${context}.` : ''
