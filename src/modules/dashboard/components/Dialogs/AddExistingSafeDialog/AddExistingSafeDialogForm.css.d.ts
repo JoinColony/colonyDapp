@@ -28,4 +28,4 @@ export const callout: string;
 export const calloutContainer: string;
 export const calloutWarning: string;
 export const calloutLink: string;
-export const warningIcon: string;
+export const warningIconCheckSafe: string;
