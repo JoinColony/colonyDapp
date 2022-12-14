@@ -1009,6 +1009,7 @@ export type ColonyAction = {
   safeData?: Maybe<SafeData>;
   safeTransactions: Array<SafeTransaction>;
   transactionsTitle: Scalars['String'];
+  safeTransactionStatuses: Array<Scalars['String']>;
 };
 
 export type NetworkContractsInput = {
@@ -1816,7 +1817,7 @@ export type ColonyActionQueryVariables = Exact<{
 
 
 export type ColonyActionQuery = { colonyAction: (
-    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'annotationMessage' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionState' | 'motionDomain' | 'blockNumber' | 'rootHash' | 'reputationChange' | 'isWhitelistActivated' | 'verifiedAddresses' | 'safeData' | 'safeTransactions' | 'transactionsTitle'>
+    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'annotationMessage' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionState' | 'motionDomain' | 'blockNumber' | 'rootHash' | 'reputationChange' | 'isWhitelistActivated' | 'verifiedAddresses' | 'safeData' | 'safeTransactions' | 'transactionsTitle' | 'safeTransactionStatuses'>
     & { events: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'transactionHash'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>>, colonySafes: Array<Pick<ColonySafe, 'safeName' | 'contractAddress' | 'chainId' | 'moduleContractAddress'>> }
   ) };
 
@@ -4227,6 +4228,7 @@ export const ColonyActionDocument = gql`
     safeData
     safeTransactions
     transactionsTitle
+    safeTransactionStatuses
   }
 }
     `;
@@ -7333,7 +7335,7 @@ export type SubgraphOneTxSubscriptionHookResult = ReturnType<typeof useSubgraphO
 export type SubgraphOneTxSubscriptionResult = Apollo.SubscriptionResult<SubgraphOneTxSubscription>;
 export const SubgraphEventsThatAreActionsDocument = gql`
     subscription SubgraphEventsThatAreActions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $sortDirection: String = asc) {
-  events(skip: $skip, first: $first, orderBy: "timestamp", orderDirection: $sortDirection, where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)", "DomainMetadata(address,uint256,string)", "ColonyRoleSet(address,address,uint256,uint8,bool)", "ColonyUpgraded(address,uint256,uint256)", "ColonyUpgraded(uint256,uint256)", "RecoveryModeEntered(address)", "ArbitraryReputationUpdate(address,address,uint256,int256)", "TokenUnlocked(address)", "TokenUnlocked()", "Annotation(address,bytes32,string)"]}) {
+  events(skip: $skip, first: $first, orderBy: "timestamp", orderDirection: $sortDirection, where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)", "DomainMetadata(address,uint256,string)", "ColonyRoleSet(address,address,uint256,uint8,bool)", "ColonyUpgraded(address,uint256,uint256)", "ColonyUpgraded(uint256,uint256)", "RecoveryModeEntered(address)", "ArbitraryReputationUpdate(address,address,uint256,int256)", "TokenUnlocked(address)", "TokenUnlocked()", "ArbitraryTransaction(address,bytes,bool)"]}) {
     id
     address
     associatedColony {

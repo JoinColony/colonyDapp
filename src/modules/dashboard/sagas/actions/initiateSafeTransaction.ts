@@ -1,4 +1,5 @@
-import { ClientType, ColonyClient } from '@colony/colony-js';
+import { ClientType } from '@colony/colony-js';
+import { fill } from 'lodash';
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
@@ -8,7 +9,6 @@ import {
   ColonyFromNameQuery,
   ColonyFromNameQueryVariables,
 } from '~data/generated';
-import ColonyManager from '~lib/ColonyManager';
 import {
   transactionAddParams,
   transactionPending,
@@ -19,21 +19,19 @@ import {
   createTransactionChannels,
   getTxChannel,
 } from '~modules/core/sagas';
-import { getColonyManager } from '~modules/core/sagas/utils';
 import { ActionTypes } from '~redux/actionTypes';
 import { Action, AllActions } from '~redux/types';
 import { putError, routeRedirect, takeFrom } from '~utils/saga/effects';
 
 import { ipfsUploadAnnotation } from '../utils';
 import {
-  getForeignBridgeMock,
-  getHomeBridge,
   getRawTransactionData,
   getTransferNFTData,
   getTransferFundsData,
   getContractInteractionData,
   getZodiacModule,
   onLocalDevEnvironment,
+  getHomeBridgeByChain,
 } from '../utils/safeHelpers';
 
 function* initiateSafeTransactionAction({
@@ -62,19 +60,13 @@ function* initiateSafeTransactionAction({
         `Please provide a ZODIAC_BRIDGE_MODULE_ADDRESS. If running local, please add key-pair to your .env file.`,
       );
     }
-    const homeBridge = getHomeBridge(safe);
-    const foreignBridgeMock = getForeignBridgeMock();
+    const homeBridge = getHomeBridgeByChain(safe.chainId);
     const zodiacBridgeModule = getZodiacModule(
       ZODIAC_BRIDGE_MODULE_ADDRESS,
       safe,
     );
 
-    const colonyManager: ColonyManager = yield getColonyManager();
-    const colony: ColonyClient = yield colonyManager.getClient(
-      ClientType.ColonyClient,
-      colonyAddress,
-    );
-
+    const transactionData: string[] = [];
     /*
      * Calls HomeBridge for each Tx, with the Colony as the sender.
      * Loop necessary as yield cannot be called inside of an array iterator (like forEach).
@@ -116,52 +108,22 @@ function* initiateSafeTransactionAction({
           );
       }
 
-      /*
-       * Set up promise that will see it bridged across.
-       * Dev mode only.
-       */
-      let bridgeListener;
-      if (foreignBridgeMock) {
-        bridgeListener = new Promise<void>((resolve) => {
-          foreignBridgeMock.on(
-            'RelayedMessage',
-            async (_sender, msgSender, _messageId, success) => {
-              /* eslint-disable-next-line no-console */
-              console.log(
-                'bridged with ',
-                _sender,
-                msgSender,
-                _messageId,
-                success,
-              );
-              resolve();
-            },
-          );
-        });
-      }
-
       /* eslint-disable-next-line max-len */
       const txDataToBeSentToAMB = yield homeBridge.interface.functions.requireToPassMessage.encode(
         [zodiacBridgeModule.address, txDataToBeSentToZodiacModule, 1000000],
       );
 
-      yield colony.makeArbitraryTransaction(
-        homeBridge.address,
-        txDataToBeSentToAMB,
-      );
-
-      yield bridgeListener;
+      transactionData.push(txDataToBeSentToAMB);
     }
 
-    /*
-     * Once transactions have all been successfully bridged, initiate colony action & redirect.
-     */
-    const batchKey = 'initiateSafeTx';
+    const batchKey = 'initiateSafeTransaction';
 
     const {
-      annotateInitiateSafeTransactionAction: annotateInitiateSafeTx,
+      initiateSafeTransaction,
+      annotateInitiateSafeTransaction,
     } = yield createTransactionChannels(metaId, [
-      'annotateInitiateSafeTransactionAction',
+      'initiateSafeTransaction',
+      'annotateInitiateSafeTransaction',
     ]);
 
     const createGroupTransaction = ({ id, index }, config) =>
@@ -175,7 +137,20 @@ function* initiateSafeTransactionAction({
         },
       });
 
-    yield createGroupTransaction(annotateInitiateSafeTx, {
+    yield createGroupTransaction(initiateSafeTransaction, {
+      context: ClientType.ColonyClient,
+      methodName: 'makeArbitraryTransactions',
+      identifier: colonyAddress,
+      params: [
+        fill(Array(transactionData.length), homeBridge.address),
+        transactionData,
+        true,
+      ],
+      ready: false,
+      titleValues: { title },
+    });
+
+    yield createGroupTransaction(annotateInitiateSafeTransaction, {
       context: ClientType.ColonyClient,
       methodName: 'annotateTransaction',
       identifier: colonyAddress,
@@ -184,48 +159,58 @@ function* initiateSafeTransactionAction({
     });
 
     yield takeFrom(
-      annotateInitiateSafeTx.channel,
+      initiateSafeTransaction.channel,
       ActionTypes.TRANSACTION_CREATED,
     );
 
-    yield put(transactionPending(annotateInitiateSafeTx.id));
+    yield takeFrom(
+      annotateInitiateSafeTransaction.channel,
+      ActionTypes.TRANSACTION_CREATED,
+    );
 
-    /*
-     * Upload all data via annotationMessage to IPFS.
-     * This is to avoid storing the data in the colony metadata.
-     */
+    yield put(transactionReady(initiateSafeTransaction.id));
+
+    const {
+      payload: { hash: txHash },
+    } = yield takeFrom(
+      initiateSafeTransaction.channel,
+      ActionTypes.TRANSACTION_HASH_RECEIVED,
+    );
+
+    yield takeFrom(
+      initiateSafeTransaction.channel,
+      ActionTypes.TRANSACTION_SUCCEEDED,
+    );
+
+    yield put(transactionPending(annotateInitiateSafeTransaction.id));
+
     const safeTransactionData = JSON.stringify({
       title,
       transactions,
+      annotationMessage,
       safeData: {
         contractAddress: safe.contractAddress,
         chainId: safe.chainId,
       },
-      annotationMessage,
     });
-    const annotationMessageIpfsHash = yield call(
+
+    let annotationMessageIpfsHash = null;
+    annotationMessageIpfsHash = yield call(
       ipfsUploadAnnotation,
       safeTransactionData,
     );
 
     yield put(
-      transactionAddParams(annotateInitiateSafeTx.id, [
-        /* Arbitary tx hash to appease `annotateTransaction` contract function */
-        '0x0000000000000000000000000000000000000000000000000000000000000001',
+      transactionAddParams(annotateInitiateSafeTransaction.id, [
+        txHash,
         annotationMessageIpfsHash,
       ]),
     );
-    yield put(transactionReady(annotateInitiateSafeTx.id));
 
-    const {
-      payload: { hash: txHash },
-    } = yield takeFrom(
-      annotateInitiateSafeTx.channel,
-      ActionTypes.TRANSACTION_HASH_RECEIVED,
-    );
+    yield put(transactionReady(annotateInitiateSafeTransaction.id));
 
     yield takeFrom(
-      annotateInitiateSafeTx.channel,
+      annotateInitiateSafeTransaction.channel,
       ActionTypes.TRANSACTION_SUCCEEDED,
     );
 

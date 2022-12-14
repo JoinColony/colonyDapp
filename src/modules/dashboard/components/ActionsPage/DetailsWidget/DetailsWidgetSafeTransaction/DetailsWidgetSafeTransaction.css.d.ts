@@ -14,3 +14,4 @@ export const arrayContainer: string;
 export const arrayItem: string;
 export const address: string;
 export const tokenAvatar: string;
+export const transactionTag: string;

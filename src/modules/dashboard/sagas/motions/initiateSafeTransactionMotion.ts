@@ -33,13 +33,13 @@ import { putError, routeRedirect, takeFrom } from '~utils/saga/effects';
 import { ipfsUploadAnnotation } from '../utils';
 
 import {
-  getHomeBridge,
   getRawTransactionData,
   getTransferNFTData,
   getTransferFundsData,
   getContractInteractionData,
   getZodiacModule,
   onLocalDevEnvironment,
+  getHomeBridgeByChain,
 } from '../utils/safeHelpers';
 
 function* initiateSafeTransactionMotion({
@@ -74,7 +74,7 @@ function* initiateSafeTransactionMotion({
         `Please provide a ZODIAC_BRIDGE_MODULE_ADDRESS. If running local, please add key-pair to your .env file.`,
       );
     }
-    const homeBridge = getHomeBridge(safe);
+    const homeBridge = getHomeBridgeByChain(safe.chainId);
     const zodiacBridgeModule = getZodiacModule(
       ZODIAC_BRIDGE_MODULE_ADDRESS,
       safe,

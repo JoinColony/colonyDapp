@@ -209,6 +209,7 @@ export default gql`
     safeData: SafeData
     safeTransactions: [SafeTransaction!]!
     transactionsTitle: String!
+    safeTransactionStatuses: [String!]!
   }
 
   input NetworkContractsInput {

@@ -10,7 +10,7 @@ import { Address, ModuleAddress } from '~types/index';
 import { GNOSIS_AMB_BRIDGES, SAFE_NETWORKS } from '~constants';
 import { getArrayFromString } from '~utils/safes';
 
-import { erc721 } from './abis'; // Temporary
+import { erc721, ForeignAMB, HomeAMB } from './abis'; // Temporary
 
 export interface SafeTxData {
   title: string;
@@ -31,7 +31,7 @@ export interface SelectedNFT extends SelectedSafe {
   id: string; // id is address + id,
 }
 
-const { ZodiacBridgeModule, AMB } = abis;
+const { ZodiacBridgeModule } = abis;
 
 /* eslint-disable prefer-destructuring */
 const LOCAL_HOME_BRIDGE_ADDRESS = process.env.LOCAL_HOME_BRIDGE_ADDRESS;
@@ -49,14 +49,14 @@ export const onLocalDevEnvironment =
   process.env.NETWORK === Network.Local &&
   process.env.NODE_ENV === 'development';
 
-const getHomeProvider = () => {
+export const getHomeProvider = () => {
   return onLocalDevEnvironment
     ? new ethers.providers.JsonRpcProvider(LOCAL_HOME_CHAIN)
     : new ethers.providers.Web3Provider(Web3.givenProvider); // Metamask
 };
 
-const getForeignProvider = (safe: Omit<ColonySafe, 'safeName'>) => {
-  const network = SAFE_NETWORKS.find((n) => n.chainId === Number(safe.chainId));
+export const getForeignProvider = (safeChainId: string) => {
+  const network = SAFE_NETWORKS.find((n) => n.chainId === Number(safeChainId));
 
   if (!network) {
     throw new Error(
@@ -69,81 +69,43 @@ const getForeignProvider = (safe: Omit<ColonySafe, 'safeName'>) => {
   );
 };
 
-export const getHomeBridge = (safe: Omit<ColonySafe, 'safeName'>) => {
+export const getForeignBridgeByChain = (safeChainId: string) => {
+  const foreignProvider = getForeignProvider(safeChainId);
+  const foreignSigner = foreignProvider.getSigner();
+  const foreignBridgeAddress: string | undefined = onLocalDevEnvironment
+    ? LOCAL_FOREIGN_BRIDGE_ADDRESS
+    : GNOSIS_AMB_BRIDGES[safeChainId]?.foreignAMB;
+
+  if (!foreignBridgeAddress) {
+    throw new Error(
+      `Foreign bridge address for chain with chainID ${safeChainId} not found.`,
+    );
+  }
+  // @ts-ignore abi type is wrong.
+  return new ethers.Contract(foreignBridgeAddress, ForeignAMB, foreignSigner);
+};
+
+export const getHomeBridgeByChain = (safeChainId: string) => {
   const homeProvider = getHomeProvider();
   const homeSigner = homeProvider.getSigner();
   const homeBridgeAddress: string | undefined = onLocalDevEnvironment
     ? LOCAL_HOME_BRIDGE_ADDRESS
-    : GNOSIS_AMB_BRIDGES[safe.chainId]?.homeAMB;
+    : GNOSIS_AMB_BRIDGES[safeChainId]?.homeAMB;
 
   if (!homeBridgeAddress) {
     throw new Error(
-      `Home bridge address for chain with chainID ${safe.chainId} not found.`,
+      `Home bridge address for chain with chainID ${safeChainId} not found.`,
     );
   }
   // @ts-ignore abi type is wrong.
-  return new ethers.Contract(homeBridgeAddress, AMB.default.abi, homeSigner);
-};
-
-/* Currently only used to get the ForeignBridgeMock contract from Colony Network, for testing locally. */
-const getBuildFromColonyNetwork = (contractName: string) => {
-  /*
-   * "isProduction" is injected by webpack in the relevant config.
-   * This is to avoid a github actions build error. https://github.com/JoinColony/colonyDapp/actions/runs/3175487585/jobs/5176947845
-   */
-  // @ts-ignore
-  // eslint-disable-next-line no-undef
-  if (!isProduction) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require, import/no-dynamic-require
-    return require(`~lib/colonyNetwork/build/contracts/${contractName}.json`);
-  }
-  return undefined;
-};
-
-/* Only used locally in order to confirm foreign bridge received message from home bridge. */
-export const getForeignBridgeMock = () => {
-  if (!onLocalDevEnvironment) {
-    return undefined;
-  }
-
-  if (!LOCAL_FOREIGN_BRIDGE_ADDRESS) {
-    throw new Error(
-      `Local foreign bridge address not found. Please set in your .env.`,
-    );
-  }
-
-  let ForeignBridgeMock;
-
-  /*
-   * process.env.DEV is set by the QA server in case we want to have a debug build.
-   * We don't have access to the compiled contracts then.
-   */
-  if (!process.env.DEV) {
-    try {
-      ForeignBridgeMock = getBuildFromColonyNetwork('ForeignBridgeMock');
-    } catch {
-      throw new Error(
-        `Ensure you're on the correct colonyNetwork branch and that the ForeignBridgeMock is in the build folder.`,
-      );
-    }
-  }
-
-  if (ForeignBridgeMock) {
-    return new ethers.Contract(
-      LOCAL_FOREIGN_BRIDGE_ADDRESS,
-      ForeignBridgeMock.abi,
-      new ethers.providers.JsonRpcProvider(LOCAL_FOREIGN_CHAIN),
-    );
-  }
-
-  return undefined;
+  return new ethers.Contract(homeBridgeAddress, HomeAMB, homeSigner);
 };
 
 const getErc721 = (
   safe: Omit<ColonySafe, 'safeName'>,
   erc721Address: Address,
 ) => {
-  const foreignProvider = getForeignProvider(safe);
+  const foreignProvider = getForeignProvider(safe.chainId);
 
   return new ethers.Contract(
     erc721Address,
@@ -156,7 +118,7 @@ const getTokenInterface = async (
   safe: Omit<ColonySafe, 'safeName'>,
   tokenAddress: Address,
 ) => {
-  const foreignProvider = getForeignProvider(safe);
+  const foreignProvider = getForeignProvider(safe.chainId);
   const tokenClient = await getTokenClient(tokenAddress, foreignProvider);
   return tokenClient.interface;
 };
@@ -165,7 +127,7 @@ export const getZodiacModule = (
   zodiacModuleAddress: Address,
   safe: Omit<ColonySafe, 'safeName'>,
 ) => {
-  const foreignProvider = getForeignProvider(safe);
+  const foreignProvider = getForeignProvider(safe.chainId);
   return new ethers.Contract(
     zodiacModuleAddress,
     // @ts-ignore abi type is wrong.
@@ -400,7 +362,7 @@ export const getContractInteractionData = async (
   }
 
   const getData = () => {
-    const foreignProvider = getForeignProvider(safe);
+    const foreignProvider = getForeignProvider(safe.chainId);
     const contract = new ethers.Contract(contractAddress, abi, foreignProvider);
     const { inputs, name = '' } = contract.interface.functions[
       contractFunction

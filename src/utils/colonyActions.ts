@@ -257,20 +257,20 @@ export const getSafeTransactionMessageDescriptorIds = (
     );
     switch (safeTransactionActionType) {
       case TransactionTypes.TRANSFER_FUNDS:
-        return `event.${ColonyExtendedActions.SafeTransactionInitiated}.transferFunds`;
+        return `event.${ColonyAndExtensionsEvents.ArbitraryTransaction}.transferFunds`;
       case TransactionTypes.RAW_TRANSACTION:
-        return `event.${ColonyExtendedActions.SafeTransactionInitiated}.rawTransaction`;
+        return `event.${ColonyAndExtensionsEvents.ArbitraryTransaction}.rawTransaction`;
       case TransactionTypes.TRANSFER_NFT:
-        return `event.${ColonyExtendedActions.SafeTransactionInitiated}.transferNFT`;
+        return `event.${ColonyAndExtensionsEvents.ArbitraryTransaction}.transferNFT`;
       case TransactionTypes.CONTRACT_INTERACTION:
-        return `event.${ColonyExtendedActions.SafeTransactionInitiated}.contractInteraction`;
+        return `event.${ColonyAndExtensionsEvents.ArbitraryTransaction}.contractInteraction`;
       case TransactionTypes.MULTIPLE_TRANSACTIONS:
-        return `event.${ColonyExtendedActions.SafeTransactionInitiated}.multipleTransactions`;
+        return `event.${ColonyAndExtensionsEvents.ArbitraryTransaction}.multipleTransactions`;
       default:
-        return `event.${ColonyExtendedActions.SafeTransactionInitiated}.fallback`;
+        return `event.${ColonyAndExtensionsEvents.ArbitraryTransaction}.fallback`;
     }
   }
-  return `event.${ColonyExtendedActions.SafeTransactionInitiated}.fallback`;
+  return `event.${ColonyAndExtensionsEvents.ArbitraryTransaction}.fallback`;
 };
 
 export const getAssignmentEventDescriptorsIds = (

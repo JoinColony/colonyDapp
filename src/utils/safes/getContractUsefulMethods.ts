@@ -15,7 +15,7 @@ const getCurrentNetworkData = (chainId: number) => {
   return SUPPORTED_SAFE_NETWORKS.find((network) => network.chainId === chainId);
 };
 
-const getApiKey = (chainId: number) => {
+export const getApiKey = (chainId: number) => {
   if (chainId === BINANCE_NETWORK.chainId) {
     return process.env.BSCSCAN_API_KEY;
   }

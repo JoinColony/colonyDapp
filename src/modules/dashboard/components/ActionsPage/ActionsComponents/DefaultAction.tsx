@@ -27,7 +27,11 @@ import {
   AnyUser,
   SafeTransaction,
 } from '~data/index';
-import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
+import {
+  ColonyActions,
+  ColonyAndExtensionsEvents,
+  ColonyExtendedActions,
+} from '~types/index';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import {
@@ -40,12 +44,14 @@ import {
 } from '~utils/tokens';
 import { useDataFetcher } from '~utils/hooks';
 import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
-import { SAFE_NAMES_MAP } from '~constants';
+import { TRANSACTION_STATUS } from '~utils/safes/getTransactionStatuses';
+import { ETHEREUM_NETWORK, SAFE_NAMES_MAP } from '~constants';
 
 import { ipfsDataFetcher } from '../../../../core/fetchers';
 
 import DetailsWidget from '../DetailsWidget/DetailsWidget';
 import { unknownContractMSG } from '../DetailsWidget/DetailsWidgetSafeTransaction';
+import SafeTransactionBanner from '../SafeTransactionBanner';
 
 import { query700 as query } from '~styles/queries.css';
 import styles from './DefaultAction.css';
@@ -83,6 +89,7 @@ const DefaultAction = ({
     transactionsTitle,
     safeTransactions,
     safeData,
+    safeTransactionStatuses,
   },
   colonyAction,
   transactionHash,
@@ -301,6 +308,7 @@ const DefaultAction = ({
     isSafeTransactionRecipientUser: !(
       firstSafeTransaction?.recipient?.id === 'filterValue'
     ),
+    safeTransactionStatuses,
   };
 
   const actionAndEventValuesForDocumentTitle = {
@@ -336,9 +344,22 @@ const DefaultAction = ({
   );
 
   const isMobile = useMediaQuery({ query });
-
+  const hasPendingSafeTransactions = !!safeTransactionStatuses.find(
+    (status) => status === TRANSACTION_STATUS.PENDING,
+  );
   return (
     <div className={styles.main}>
+      {hasPendingSafeTransactions &&
+        extendedActionType ===
+          ColonyExtendedActions.SafeTransactionInitiated && (
+          <SafeTransactionBanner
+            chainId={
+              safeTransactionSafe?.chainId ||
+              ETHEREUM_NETWORK.chainId.toString()
+            }
+            transactionHash={transactionHash}
+          />
+        )}
       {isMobile && <ColonyHomeInfo colony={colony} showNavigation isMobile />}
       {isVotingExtensionEnabled && (
         <div className={styles.upperContainer}>
