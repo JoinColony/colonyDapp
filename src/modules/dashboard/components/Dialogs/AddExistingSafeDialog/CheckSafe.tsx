@@ -56,15 +56,15 @@ const MSG = defineMessages({
   },
   callout: {
     id: 'dashboard.AddExistingSafeDialog.CheckSafe.callout',
-    defaultMessage: '<span>Important!</span>  Read the instuctions first.',
+    defaultMessage: '<span>Important!</span>  Read the instructions first.',
   },
   calloutLink: {
     id: 'dashboard.AddExistingSafeDialog.CheckSafe.calloutLink',
     defaultMessage: 'Set up instructions',
   },
-  warning: {
-    id: 'dashboard.AddExistingSafeDialog.CheckSafe.warning',
-    defaultMessage: 'Warning!',
+  important: {
+    id: 'dashboard.AddExistingSafeDialog.CheckSafe.important',
+    defaultMessage: 'Important!',
   },
 });
 
@@ -185,7 +185,7 @@ const CheckSafe = ({
             <Icon
               name="triangle-warning"
               className={styles.warningIcon}
-              title={MSG.warning}
+              title={MSG.important}
             />
             <FormattedMessage
               {...MSG.callout}
