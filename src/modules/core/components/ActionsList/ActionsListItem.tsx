@@ -47,6 +47,7 @@ import {
   MotionState,
   MOTION_TAG_MAP,
 } from '~utils/colonyMotions';
+import { TRANSACTION_STATUS } from '~utils/safes/getTransactionStatuses';
 import {
   useColonyMetadataChecks,
   useExtendedColonyActionType,
@@ -58,7 +59,6 @@ import { ipfsDataFetcher } from '../../../core/fetchers';
 import { ClickHandlerProps } from './ActionsList';
 
 import styles, { popoverWidth, popoverDistance } from './ActionsListItem.css';
-import { TRANSACTION_STATUS } from '~utils/safes/getTransactionStatuses';
 
 const displayName = 'ActionsList.ActionsListItem';
 
@@ -191,7 +191,7 @@ const ActionsListItem = ({
   const {
     transactionTitle,
     safeTransactionStatus,
-  } = useFetchSafeTransactionData(transactionHash, metadata);
+  } = useFetchSafeTransactionData(transactionHash, metadata, actionType);
   const safeTransactionTitle = transactionTitle || fallbackTransactionTitle;
 
   useEffect(() => {
@@ -433,7 +433,7 @@ const ActionsListItem = ({
               )}
             </span>
             {(motionState || isVotingExtensionEnabled) && (
-              <div className={styles.motionTagWrapper}>
+              <div className={styles.tagWrapper}>
                 <Tag
                   text={motionStyles.name}
                   appearance={{
@@ -448,7 +448,10 @@ const ActionsListItem = ({
               </div>
             )}
             {safeTransactionStatus && (
-              <div className={styles.motionTagWrapper}>
+              <div
+                // eslint-disable-next-line max-len
+                className={`${styles.tagWrapper} ${styles.safeTransactionTagWrapper}`}
+              >
                 <Tag
                   text={safeTransactionStatus}
                   appearance={{

@@ -10,7 +10,7 @@ import {
   AnyUser,
   Colony,
   ColonyActionQuery,
-  useEventsForMotionQuery,
+  EventsForMotionQuery,
   useMotionObjectionAnnotationQuery,
   useMotionsSystemMessagesQuery,
   useUser,
@@ -32,6 +32,7 @@ interface Props {
   bottomElementRef: React.RefObject<HTMLInputElement>;
   motionId: number;
   createdAt: number;
+  eventsForMotion: EventsForMotionQuery['eventsForMotion'] | undefined;
   roleMessageDescriptorId?: string | null;
   annotationMessage?: string | null;
 }
@@ -51,17 +52,13 @@ const ActionPageMotionContent = ({
   createdAt,
   roleMessageDescriptorId,
   annotationMessage,
+  eventsForMotion,
 }: Props) => {
   const { data: objectionAnnotation } = useMotionObjectionAnnotationQuery({
     variables: {
       motionId,
       colonyAddress: colony.colonyAddress,
     },
-    fetchPolicy: 'network-only',
-  });
-
-  const { data: motionEventsData } = useEventsForMotionQuery({
-    variables: { colonyAddress: colony.colonyAddress, motionId },
     fetchPolicy: 'network-only',
   });
 
@@ -137,10 +134,7 @@ const ActionPageMotionContent = ({
       <ActionsPageFeed
         actionType={actionType}
         transactionHash={transactionHash as string}
-        networkEvents={[
-          ...events,
-          ...(motionEventsData?.eventsForMotion || []),
-        ]}
+        networkEvents={[...events, ...(eventsForMotion || [])]}
         systemMessages={
           motionsSystemMessagesData?.motionsSystemMessages as SystemMessage[]
         }

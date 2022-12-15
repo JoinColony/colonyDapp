@@ -43,12 +43,16 @@ import {
   MotionTimeoutPeriodsQuery,
   MotionTimeoutPeriodsQueryVariables,
   MotionTimeoutPeriodsDocument,
+  MotionSafeTransactionStatusesQuery,
+  MotionSafeTransactionStatusesQueryVariables,
+  MotionSafeTransactionStatusesDocument,
 } from '~data/index';
 
 export function* updateMotionValues(
   colonyAddress: Address,
   userAddress: Address,
   motionId: BigNumber,
+  safeChainId?: string,
 ) {
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
   const context = TEMP_getContext(ContextModule.ColonyManager);
@@ -250,4 +254,22 @@ export function* updateMotionValues(
     },
     fetchPolicy: 'network-only',
   });
+
+  /*
+   * Motion Safe transaction status
+   */
+  if (safeChainId) {
+    yield apolloClient.query<
+      MotionSafeTransactionStatusesQuery,
+      MotionSafeTransactionStatusesQueryVariables
+    >({
+      query: MotionSafeTransactionStatusesDocument,
+      variables: {
+        motionId: motionId.toNumber(),
+        colonyAddress,
+        safeChainId,
+      },
+      fetchPolicy: 'network-only',
+    });
+  }
 }

@@ -70,8 +70,12 @@ import { availableRoles } from '~dialogs/PermissionManagementDialog';
 import { DEFAULT_NETWORK_TOKEN } from '~constants';
 
 import { ProcessedEvent } from './colonyActions';
+import {
+  getTransactionStatuses,
+  TRANSACTION_STATUS,
+} from '~utils/safes/getTransactionStatuses';
 
-const getMotionEvents = (
+export const getMotionEvents = (
   isSystemEvents: boolean,
   motionEvents?: NormalizedSubgraphEvent[],
 ): ProcessedEvent[] => {
@@ -1039,6 +1043,53 @@ export const motionsResolvers = ({
         console.error(error);
         return null;
       }
+    },
+    async motionSafeTransactionStatuses(
+      _,
+      { colonyAddress, motionId, safeChainId },
+    ) {
+      let safeTransactionStatuses: TRANSACTION_STATUS[] = [];
+
+      if (safeChainId) {
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+
+        const { data } = await apolloClient.query<
+          SubgraphMotionEventsQuery,
+          SubgraphMotionEventsQueryVariables
+        >({
+          query: SubgraphMotionEventsDocument,
+          variables: {
+            /*
+             * Subgraph addresses are not checksummed
+             */
+            colonyAddress: colonyAddress.toLowerCase(),
+            motionId: `"motionId":"${motionId}"`,
+            extensionAddress: votingReputationClient.address.toLowerCase(),
+          },
+          fetchPolicy: 'network-only',
+        });
+        const sortedMotionEvents = getMotionEvents(false, data?.motionEvents);
+        const finalizedMotionEvent = sortedMotionEvents.find(
+          (motionEvent) =>
+            motionEvent.name === ColonyAndExtensionsEvents.MotionFinalized,
+        );
+
+        if (finalizedMotionEvent) {
+          // eslint-disable-next-line max-len
+          const motionFinalizedTransactionReceipt = await networkClient.provider.getTransactionReceipt(
+            finalizedMotionEvent.transactionHash,
+          );
+          safeTransactionStatuses = await getTransactionStatuses(
+            safeChainId,
+            motionFinalizedTransactionReceipt,
+          );
+        }
+      }
+
+      return safeTransactionStatuses;
     },
   },
   Motion: {

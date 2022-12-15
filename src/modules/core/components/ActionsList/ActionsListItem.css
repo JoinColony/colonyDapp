@@ -157,11 +157,15 @@
   color: var(--pink);
 }
 
-.motionTagWrapper {
+.tagWrapper {
   display: inline-block;
   margin: -1px 0 0 12px;
   padding: 0;
   vertical-align: middle;
+}
+
+.safeTransactionTagWrapper > span {
+  border: 1px solid transparent;
 }
 
 .countdownTimerContainer {

@@ -47,6 +47,8 @@ import {
   useNetworkContracts,
   SafeTransaction,
   useMotionFinalizedQuery,
+  useEventsForMotionQuery,
+  useMotionSafeTransactionStatusesQuery,
 } from '~data/index';
 
 import DetailsWidget from '../DetailsWidget/DetailsWidget';
@@ -125,7 +127,6 @@ const DefaultMotion = ({
     safeTransactions,
     safeData,
     annotationMessage,
-    safeTransactionStatuses,
   },
   colonyAction,
   token,
@@ -202,6 +203,11 @@ const DefaultMotion = ({
       colonyAddress: colony.colonyAddress,
       blockNumber,
     },
+  });
+
+  const { data: motionEventsData } = useEventsForMotionQuery({
+    variables: { colonyAddress: colony.colonyAddress, motionId },
+    fetchPolicy: 'network-only',
   });
 
   const escalateTransform = useCallback(
@@ -300,6 +306,20 @@ const DefaultMotion = ({
       safe.chainId === safeChainId
     );
   });
+
+  const {
+    data: transactionStatusesData,
+  } = useMotionSafeTransactionStatusesQuery({
+    variables: {
+      colonyAddress: colony.colonyAddress,
+      motionId,
+      safeChainId: selectedSafe?.chainId || '',
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  const safeTransactionStatuses =
+    transactionStatusesData?.motionSafeTransactionStatuses || [];
 
   const actionAndEventValues = {
     actionType,
@@ -469,13 +489,18 @@ const DefaultMotion = ({
     !loadingFinalized &&
     motionState === MotionState.Passed &&
     finalized?.motionFinalized;
+  const motionFinalizedEvent =
+    canProcessPendingSafeTransactions &&
+    motionEventsData?.eventsForMotion.find(
+      (event) => event.name === ColonyAndExtensionsEvents.MotionFinalized,
+    );
   return (
     <div className={styles.main}>
       <StakeRequiredBanner stakeRequired={hasBanner} isDecision={isDecision} />
-      {canProcessPendingSafeTransactions && (
+      {canProcessPendingSafeTransactions && motionFinalizedEvent && (
         <SafeTransactionBanner
           chainId={selectedSafe?.chainId || ETHEREUM_NETWORK.chainId.toString()}
-          transactionHash={transactionHash}
+          transactionHash={motionFinalizedEvent.transactionHash}
         />
       )}
       <div
@@ -596,6 +621,7 @@ const DefaultMotion = ({
             annotationMessage={
               annotationMessage || locationState?.annotationMessage
             }
+            eventsForMotion={motionEventsData?.eventsForMotion}
           />
         </div>
         <div className={styles.details}>
@@ -640,6 +666,7 @@ const DefaultMotion = ({
               transactionTitle={transactionsTitle || locationState?.title}
               motionFinalized={finalized?.motionFinalized}
               loadingMotionFinalized={loadingFinalized}
+              safeChainId={safeData?.chainId || ''}
             />
           )}
           <DetailsWidget
