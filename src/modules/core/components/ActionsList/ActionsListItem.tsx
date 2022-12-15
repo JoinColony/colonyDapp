@@ -36,6 +36,7 @@ import {
   ColonyActions,
   ColonyMotions,
   DecisionDetails,
+  ColonyExtendedActions,
 } from '~types/index';
 import { useDataFetcher } from '~utils/hooks';
 import { parseColonyMetadata, parseDomainMetadata } from '~utils/colonyActions';
@@ -75,10 +76,6 @@ const MSG = defineMessages({
       one {comment}
       other {comments}
     }`,
-  },
-  safeTransactionInitiated: {
-    id: `ActionsList.ActionsListItem.safeTransactionInitiated`,
-    defaultMessage: 'Safe Transaction Initiated',
   },
 });
 
@@ -231,6 +228,11 @@ const ActionsListItem = ({
     actionType,
   );
 
+  const fallbackTransactionTitleId =
+    actionType.includes(ColonyExtendedActions.SafeTransactionInitiated) &&
+    !safeTransactionTitle &&
+    `action.${actionType}.fallback`;
+
   const popoverPlacement = useMemo(() => {
     const offsetSkid = (-1 * removeValueUnits(popoverWidth)) / 2;
     return [offsetSkid, removeValueUnits(popoverDistance)];
@@ -378,6 +380,7 @@ const ActionsListItem = ({
                     (tokensChanged &&
                       `action.${ColonyActions.ColonyEdit}.tokens`) ||
                     roleMessageDescriptorId ||
+                    fallbackTransactionTitleId ||
                     'action.title'
                   }
                   values={{
@@ -425,9 +428,7 @@ const ActionsListItem = ({
                       <Numeral value={formattedReputationChange} />
                     ),
                     chainName: addedSafe && SAFE_NAMES_MAP[addedSafe.chainId],
-                    safeTransactionTitle:
-                      safeTransactionTitle ||
-                      formatMessage(MSG.safeTransactionInitiated),
+                    safeTransactionTitle,
                   }}
                 />
               )}

@@ -31,7 +31,11 @@ import { mapPayload } from '~utils/actions';
 import { useTitle } from '~utils/hooks/useTitle';
 import { TRANSACTION_STATUS } from '~utils/safes/getTransactionStatuses';
 import { SafeTxData } from '~modules/dashboard/sagas/utils/safeHelpers';
-import { ColonyMotions, ColonyAndExtensionsEvents } from '~types/index';
+import {
+  ColonyMotions,
+  ColonyAndExtensionsEvents,
+  ColonyExtendedMotions,
+} from '~types/index';
 import { ActionTypes } from '~redux/index';
 import {
   useLoggedInUser,
@@ -84,10 +88,6 @@ const MSG = defineMessages({
   votingProgressBarTooltip: {
     id: 'dashboard.ActionsPage.DefaultMotion.votingProgressBarTooltip',
     defaultMessage: `Voting ends at the sooner of either time-out, or the reputation threshold being reached.`,
-  },
-  safeTransactionInitiated: {
-    id: `dashboard.ActionsPage.DefaultMotion.safeTransactionInitiated`,
-    defaultMessage: 'Safe Transaction Initiated',
   },
 });
 
@@ -232,6 +232,10 @@ const DefaultMotion = ({
     true,
   );
 
+  const fallbackTransactionTitleId =
+    actionType === ColonyExtendedMotions.SafeTransactionInitiatedMotion &&
+    !(transactionsTitle || locationState?.title) &&
+    `action.${actionType}.fallback`;
   const requiredStake = bigNumberify(
     motionStakeData?.stakeAmountsForMotion?.requiredStake || 0,
   ).toString();
@@ -393,10 +397,7 @@ const DefaultMotion = ({
     isSmiteAction: new Decimal(reputationChange).isNegative(),
     safeName: <span className={styles.user}>@{selectedSafe?.safeName}</span>,
     safeTransactionSafe: selectedSafe,
-    safeTransactionTitle:
-      transactionsTitle ||
-      locationState?.title ||
-      formatMessage(MSG.safeTransactionInitiated),
+    safeTransactionTitle: transactionsTitle || locationState?.title,
     safeTransactions: !isEmpty(safeTransactions)
       ? safeTransactions
       : locationState?.transactions,
@@ -455,10 +456,7 @@ const DefaultMotion = ({
     fromDomain: actionAndEventValues.fromDomain?.name,
     toDomain: actionAndEventValues.toDomain?.name,
     roles: roleTitle,
-    safeTransactionTitle:
-      transactionsTitle ||
-      locationState?.title ||
-      formatMessage(MSG.safeTransactionInitiated),
+    safeTransactionTitle: transactionsTitle || locationState?.title,
   };
 
   const motionState = motionStatusData?.motionStatus;
@@ -474,7 +472,12 @@ const DefaultMotion = ({
 
   useTitle(
     `${formatMessage(
-      { id: roleMessageDescriptorId || 'action.title' },
+      {
+        id:
+          roleMessageDescriptorId ||
+          fallbackTransactionTitleId ||
+          'action.title',
+      },
       actionAndEventValuesForDocumentTitle,
     )} | Motion | Colony - ${colony.displayName ?? colony.colonyName ?? ``}`,
   );
