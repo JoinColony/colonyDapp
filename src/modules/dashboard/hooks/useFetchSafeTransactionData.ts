@@ -6,10 +6,13 @@ import {
   TRANSACTION_STATUS,
 } from '~utils/safes/getTransactionStatuses';
 import { getProvider } from '~modules/core/sagas/utils';
+import { ExtendedActions } from '~utils/colonyActions';
+import { ColonyExtendedActions } from '~types/colonyActions';
 
 export const useFetchSafeTransactionData = (
   transactionHash: string,
   metadata: string | undefined,
+  actionType: ExtendedActions,
 ) => {
   const [safeTransactionData, setSafeTransactionData] = useState<{
     transactionTitle: string;
@@ -51,8 +54,10 @@ export const useFetchSafeTransactionData = (
       }
     };
 
-    fetchSafeTxData();
-  }, [transactionHash, metadata]);
+    if (actionType.includes(ColonyExtendedActions.SafeTransactionInitiated)) {
+      fetchSafeTxData();
+    }
+  }, [transactionHash, metadata, actionType]);
 
   return safeTransactionData;
 };

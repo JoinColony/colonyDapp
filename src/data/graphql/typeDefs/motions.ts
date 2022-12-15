@@ -158,5 +158,10 @@ export default gql`
       motionIds: [String!]!
       colonyAddress: String!
     ): MotionTxHashMap!
+    motionSafeTransactionStatuses(
+      motionId: Int!
+      colonyAddress: String!
+      safeChainId: String!
+    ): [String!]!
   }
 `;
