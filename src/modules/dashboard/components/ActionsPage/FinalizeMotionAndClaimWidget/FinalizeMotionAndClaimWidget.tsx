@@ -40,6 +40,7 @@ interface Props {
   transactionTitle: string;
   loadingMotionFinalized: boolean;
   motionFinalized: boolean | undefined;
+  safeChainId: string;
   isDecision?: boolean;
   scrollToRef?: RefObject<HTMLInputElement>;
 }
@@ -145,6 +146,7 @@ const FinalizeMotionAndClaimWidget = ({
   transactionTitle,
   loadingMotionFinalized,
   motionFinalized,
+  safeChainId,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const {
@@ -215,6 +217,7 @@ const FinalizeMotionAndClaimWidget = ({
       colonyAddress,
       userAddress: walletAddress,
       motionId,
+      safeChainId,
     })),
     [walletAddress],
   );

@@ -266,6 +266,7 @@ export type Query = {
   motionCurrentUserVoted: Scalars['Boolean'];
   motionFinalized: Scalars['Boolean'];
   motionObjectionAnnotation: MotionObjectionAnnotation;
+  motionSafeTransactionStatuses: Array<Scalars['String']>;
   motionStakerReward: MotionStakerRewards;
   motionStakes: MotionStakes;
   motionStatus: Scalars['String'];
@@ -458,6 +459,13 @@ export type QueryMotionFinalizedArgs = {
 export type QueryMotionObjectionAnnotationArgs = {
   motionId: Scalars['Int'];
   colonyAddress: Scalars['String'];
+};
+
+
+export type QueryMotionSafeTransactionStatusesArgs = {
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+  safeChainId: Scalars['String'];
 };
 
 
@@ -2472,6 +2480,15 @@ export type MotionTimeoutPeriodsQueryVariables = Exact<{
 
 
 export type MotionTimeoutPeriodsQuery = { motionTimeoutPeriods: Pick<MotionTimeoutPeriods, 'timeLeftToStake' | 'timeLeftToSubmit' | 'timeLeftToReveal' | 'timeLeftToEscalate'> };
+
+export type MotionSafeTransactionStatusesQueryVariables = Exact<{
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+  safeChainId: Scalars['String'];
+}>;
+
+
+export type MotionSafeTransactionStatusesQuery = Pick<Query, 'motionSafeTransactionStatuses'>;
 
 export type SubgraphLatestSyncedBlockQueryVariables = Exact<{
   blockNumber: Scalars['Int'];
@@ -6522,6 +6539,39 @@ export function useMotionTimeoutPeriodsLazyQuery(baseOptions?: Apollo.LazyQueryH
 export type MotionTimeoutPeriodsQueryHookResult = ReturnType<typeof useMotionTimeoutPeriodsQuery>;
 export type MotionTimeoutPeriodsLazyQueryHookResult = ReturnType<typeof useMotionTimeoutPeriodsLazyQuery>;
 export type MotionTimeoutPeriodsQueryResult = Apollo.QueryResult<MotionTimeoutPeriodsQuery, MotionTimeoutPeriodsQueryVariables>;
+export const MotionSafeTransactionStatusesDocument = gql`
+    query MotionSafeTransactionStatuses($motionId: Int!, $colonyAddress: String!, $safeChainId: String!) {
+  motionSafeTransactionStatuses(motionId: $motionId, colonyAddress: $colonyAddress, safeChainId: $safeChainId) @client
+}
+    `;
+
+/**
+ * __useMotionSafeTransactionStatusesQuery__
+ *
+ * To run a query within a React component, call `useMotionSafeTransactionStatusesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionSafeTransactionStatusesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionSafeTransactionStatusesQuery({
+ *   variables: {
+ *      motionId: // value for 'motionId'
+ *      colonyAddress: // value for 'colonyAddress'
+ *      safeChainId: // value for 'safeChainId'
+ *   },
+ * });
+ */
+export function useMotionSafeTransactionStatusesQuery(baseOptions?: Apollo.QueryHookOptions<MotionSafeTransactionStatusesQuery, MotionSafeTransactionStatusesQueryVariables>) {
+        return Apollo.useQuery<MotionSafeTransactionStatusesQuery, MotionSafeTransactionStatusesQueryVariables>(MotionSafeTransactionStatusesDocument, baseOptions);
+      }
+export function useMotionSafeTransactionStatusesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionSafeTransactionStatusesQuery, MotionSafeTransactionStatusesQueryVariables>) {
+          return Apollo.useLazyQuery<MotionSafeTransactionStatusesQuery, MotionSafeTransactionStatusesQueryVariables>(MotionSafeTransactionStatusesDocument, baseOptions);
+        }
+export type MotionSafeTransactionStatusesQueryHookResult = ReturnType<typeof useMotionSafeTransactionStatusesQuery>;
+export type MotionSafeTransactionStatusesLazyQueryHookResult = ReturnType<typeof useMotionSafeTransactionStatusesLazyQuery>;
+export type MotionSafeTransactionStatusesQueryResult = Apollo.QueryResult<MotionSafeTransactionStatusesQuery, MotionSafeTransactionStatusesQueryVariables>;
 export const SubgraphLatestSyncedBlockDocument = gql`
     query SubgraphLatestSyncedBlock($blockNumber: Int!) {
   domain(id: 1, block: {number: $blockNumber}) {

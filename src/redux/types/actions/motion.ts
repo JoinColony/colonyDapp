@@ -70,6 +70,7 @@ export type MotionActionTypes =
         userAddress: Address;
         colonyAddress: Address;
         motionId: BigNumber;
+        safeChainId: string;
       },
       MetaWithHistory<object>
     >

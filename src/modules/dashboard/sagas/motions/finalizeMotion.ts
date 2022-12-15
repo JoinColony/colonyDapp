@@ -18,7 +18,7 @@ import { updateMotionValues } from '../utils';
 
 function* finalizeMotion({
   meta,
-  payload: { userAddress, colonyAddress, motionId },
+  payload: { userAddress, colonyAddress, motionId, safeChainId },
 }: Action<ActionTypes.MOTION_FINALIZE>) {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
@@ -85,7 +85,13 @@ function* finalizeMotion({
     /*
      * Update motion page values
      */
-    yield fork(updateMotionValues, colonyAddress, userAddress, motionId);
+    yield fork(
+      updateMotionValues,
+      colonyAddress,
+      userAddress,
+      motionId,
+      safeChainId,
+    );
 
     yield put<AllActions>({
       type: ActionTypes.MOTION_FINALIZE_SUCCESS,

@@ -123,6 +123,19 @@ export const getActionsListData = (
             return acc;
           }
 
+          /* 
+            @NOTE: Filter out ArbitraryTransactions/Safe transactions that don't have an agent.
+            This means that the transaction was created by finalizing a motion, therefore, 
+            no data was stored in IPFS associated with this transaction hash (Like the agent).
+          */
+          if (
+            formatEventName(event.name) ===
+              ColonyAndExtensionsEvents.ArbitraryTransaction &&
+            !event?.processedValues?.agent
+          ) {
+            return acc;
+          }
+
           return [...acc, event];
         }, []) || [],
         (valueA, valueB) =>

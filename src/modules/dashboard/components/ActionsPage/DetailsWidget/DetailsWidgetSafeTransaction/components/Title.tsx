@@ -28,18 +28,20 @@ export const Title = ({
     <div className={widgetStyles.label}>
       {index && `${index}. `}
       <FormattedMessage {...title} />
-      <div className={styles.transactionTag}>
-        <Tag
-          text={transactionStatus}
-          appearance={{
-            theme:
-              transactionStatus === TRANSACTION_STATUS.PENDING
-                ? 'golden'
-                : 'primary',
-            colorSchema: 'fullColor',
-          }}
-        />
-      </div>
+      {transactionStatus && (
+        <div className={styles.transactionTag}>
+          <Tag
+            text={transactionStatus}
+            appearance={{
+              theme:
+                transactionStatus === TRANSACTION_STATUS.PENDING
+                  ? 'golden'
+                  : 'primary',
+              colorSchema: 'fullColor',
+            }}
+          />
+        </div>
+      )}
     </div>
     <div className={widgetStyles.value}>
       <Icon
