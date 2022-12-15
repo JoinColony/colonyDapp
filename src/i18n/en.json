@@ -419,6 +419,7 @@
     "metatransaction.group.initiateSafeTransaction.description": "Initiate Safe transaction",
     "metatransaction.ColonyClient.initiateSafeTransaction.title": "{title}",
     "metatransaction.ColonyClient.initiateSafeTransaction.description": "Initiate Safe transaction",
+    "metatransaction.ColonyClient.makeArbitraryTransactions.title": "{title}",
 
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",
