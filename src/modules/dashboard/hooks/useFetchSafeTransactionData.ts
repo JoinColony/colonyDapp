@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { TransactionReceipt } from 'ethers/providers';
 import { getSafeTransactionFromAnnotation } from '~utils/events';
 import {
   getTransactionStatuses,
@@ -7,12 +8,18 @@ import {
 } from '~utils/safes/getTransactionStatuses';
 import { getProvider } from '~modules/core/sagas/utils';
 import { ExtendedActions } from '~utils/colonyActions';
-import { ColonyExtendedActions } from '~types/colonyActions';
+import {
+  ColonyAndExtensionsEvents,
+  ColonyExtendedActions,
+} from '~types/colonyActions';
+import { useEventsForMotionLazyQuery } from '~data/generated';
 
 export const useFetchSafeTransactionData = (
   transactionHash: string,
   metadata: string | undefined,
   actionType: ExtendedActions,
+  colonyAddress: string,
+  motionId: string | undefined,
 ) => {
   const [safeTransactionData, setSafeTransactionData] = useState<{
     transactionTitle: string;
@@ -21,6 +28,48 @@ export const useFetchSafeTransactionData = (
     transactionTitle: '',
     safeTransactionStatus: null,
   });
+  const [
+    transactionReceipt,
+    setTransactionReceipt,
+  ] = useState<TransactionReceipt | null>(null);
+  const [fetchEvents, { data: motionEventsData }] = useEventsForMotionLazyQuery(
+    {
+      fetchPolicy: 'network-only',
+    },
+  );
+
+  useEffect(() => {
+    if (motionId) {
+      fetchEvents({ variables: { colonyAddress, motionId: Number(motionId) } });
+    }
+  }, [colonyAddress, motionId, fetchEvents]);
+
+  useEffect(() => {
+    const fetchTransactionReceipt = async () => {
+      const provider = getProvider();
+      if (motionId) {
+        const motionFinalizedEvent = motionEventsData?.eventsForMotion.find(
+          (event) => event.name === ColonyAndExtensionsEvents.MotionFinalized,
+        );
+
+        if (motionFinalizedEvent) {
+          setTransactionReceipt(
+            await provider.getTransactionReceipt(
+              motionFinalizedEvent?.transactionHash,
+            ),
+          );
+        }
+      } else {
+        setTransactionReceipt(
+          await provider.getTransactionReceipt(transactionHash),
+        );
+      }
+    };
+
+    if (actionType.includes(ColonyExtendedActions.SafeTransactionInitiated)) {
+      fetchTransactionReceipt();
+    }
+  }, [actionType, motionEventsData, motionId, transactionHash]);
 
   useEffect(() => {
     const fetchSafeTxData = async () => {
@@ -32,10 +81,6 @@ export const useFetchSafeTransactionData = (
         if (safeTransactionAnnotation) {
           const parsedAnnotation = JSON.parse(safeTransactionAnnotation);
           if (parsedAnnotation) {
-            const provider = getProvider();
-            const transactionReceipt = await provider.getTransactionReceipt(
-              transactionHash,
-            );
             const safeTransactionStatuses = await getTransactionStatuses(
               parsedAnnotation.safeData.chainId,
               transactionReceipt,
@@ -57,7 +102,7 @@ export const useFetchSafeTransactionData = (
     if (actionType.includes(ColonyExtendedActions.SafeTransactionInitiated)) {
       fetchSafeTxData();
     }
-  }, [transactionHash, metadata, actionType]);
+  }, [transactionHash, metadata, actionType, transactionReceipt]);
 
   return safeTransactionData;
 };
