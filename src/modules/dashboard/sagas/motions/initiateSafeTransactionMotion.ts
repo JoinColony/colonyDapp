@@ -5,7 +5,6 @@ import {
   ROOT_DOMAIN_ID,
 } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
-import { fill } from 'lodash';
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
@@ -30,8 +29,9 @@ import { getColonyManager } from '~modules/core/sagas/utils';
 import { ActionTypes } from '~redux/actionTypes';
 import { Action, AllActions } from '~redux/types';
 import { putError, routeRedirect, takeFrom } from '~utils/saga/effects';
-import { ipfsUploadAnnotation } from '../utils';
+import { fill } from '~utils/lodash';
 
+import { ipfsUploadAnnotation } from '../utils';
 import {
   getRawTransactionData,
   getTransferNFTData,

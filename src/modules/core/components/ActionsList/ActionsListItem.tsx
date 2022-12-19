@@ -188,7 +188,13 @@ const ActionsListItem = ({
   const {
     transactionTitle,
     safeTransactionStatus,
-  } = useFetchSafeTransactionData(transactionHash, metadata, actionType);
+  } = useFetchSafeTransactionData(
+    transactionHash,
+    metadata,
+    actionType,
+    colony.colonyAddress,
+    motionId,
+  );
   const safeTransactionTitle = transactionTitle || fallbackTransactionTitle;
 
   useEffect(() => {

@@ -9,7 +9,6 @@ import {
 import { BigNumberish } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
 import { Resolvers } from '@apollo/client';
-import uniqWith from 'lodash/uniqWith';
 
 import {
   getActionType,
@@ -22,7 +21,6 @@ import {
   ColonyActions,
   ColonyAndExtensionsEvents,
   Address,
-  ColonyExtendedMotions,
   ColonyExtendedActions,
 } from '~types/index';
 import { ActionsPageFeedType } from '~dashboard/ActionsPageFeed';
@@ -31,6 +29,7 @@ import {
   getTransactionStatuses,
   TRANSACTION_STATUS,
 } from '~utils/safes/getTransactionStatuses';
+import { uniqWith } from '~utils/lodash';
 import { ETHEREUM_NETWORK } from '~constants';
 
 export interface EventValue {
@@ -244,10 +243,7 @@ export const colonyActionsResolvers = ({
         }
 
         let safeTransactionStatuses: TRANSACTION_STATUS[] = [];
-        if (
-          actionType === ColonyExtendedActions.SafeTransactionInitiated ||
-          actionType === ColonyExtendedMotions.SafeTransactionInitiatedMotion
-        ) {
+        if (actionType === ColonyExtendedActions.SafeTransactionInitiated) {
           safeTransactionStatuses = await getTransactionStatuses(
             actionValues.safeData?.chainId ||
               ETHEREUM_NETWORK.chainId.toString(),

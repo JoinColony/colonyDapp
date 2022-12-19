@@ -1,5 +1,4 @@
 import { Contract, ethers, Event } from 'ethers';
-import isArray from 'lodash/isArray';
 
 import { SUPPORTED_SAFE_NETWORKS } from '~constants';
 import {
@@ -7,6 +6,7 @@ import {
   getHomeBridgeByChain,
   onLocalDevEnvironment,
 } from '~modules/dashboard/sagas/utils/safeHelpers';
+import { isArray } from '~utils/lodash';
 
 import { getApiKey } from './getContractUsefulMethods';
 
@@ -97,8 +97,12 @@ export const getMessageIds = (
 
 export const getTransactionStatuses = async (
   safeChainId: string,
-  transactionReceipt: ethers.providers.TransactionReceipt,
+  transactionReceipt: ethers.providers.TransactionReceipt | null,
 ) => {
+  if (!transactionReceipt) {
+    return [];
+  }
+
   const networkApiURI =
     SUPPORTED_SAFE_NETWORKS.find(
       (network) => network.chainId === Number(safeChainId),

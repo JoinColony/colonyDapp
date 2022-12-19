@@ -1,5 +1,4 @@
 import { ClientType } from '@colony/colony-js';
-import { fill } from 'lodash';
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
@@ -22,6 +21,7 @@ import {
 import { ActionTypes } from '~redux/actionTypes';
 import { Action, AllActions } from '~redux/types';
 import { putError, routeRedirect, takeFrom } from '~utils/saga/effects';
+import { fill } from '~utils/lodash';
 
 import { ipfsUploadAnnotation } from '../utils';
 import {
@@ -184,7 +184,7 @@ function* initiateSafeTransactionAction({
 
     yield put(transactionPending(annotateInitiateSafeTransaction.id));
 
-    const safeTransactionData = JSON.stringify({
+    const safeTransactionData = {
       title,
       transactions,
       annotationMessage,
@@ -192,12 +192,13 @@ function* initiateSafeTransactionAction({
         contractAddress: safe.contractAddress,
         chainId: safe.chainId,
       },
-    });
+    };
+    const annotationObject = JSON.stringify(safeTransactionData);
 
     let annotationMessageIpfsHash = null;
     annotationMessageIpfsHash = yield call(
       ipfsUploadAnnotation,
-      safeTransactionData,
+      annotationObject,
     );
 
     yield put(
@@ -231,7 +232,11 @@ function* initiateSafeTransactionAction({
     });
 
     if (colonyName) {
-      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
+      yield routeRedirect(
+        `/colony/${colonyName}/tx/${txHash}`,
+        history,
+        safeTransactionData,
+      );
     }
   } catch (error) {
     return yield putError(

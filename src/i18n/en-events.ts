@@ -43,7 +43,7 @@ const eventsMessageDescriptors = {
   [`event.${ColonyAndExtensionsEvents.ArbitraryTransaction}.rawTransaction`]: `{safeName} initiated a transaction with {isSafeTransactionRecipientUser, select, 
     true {{safeTransactionRecipient}}
     other {{safeTransactionRawTransactionAddress}}
-  }`, // @TODO Confirm w product
+  }`,
   [`event.${ColonyAndExtensionsEvents.ArbitraryTransaction}.transferFunds`]: `{safeName} made a payment using the Administration and Funding permissions to pay {safeTransactionAmount} from {fromDomain} to {isSafeTransactionRecipientUser, select, 
     true {{safeTransactionRecipient}}
     other {{safeTransactionAddress}}
@@ -52,8 +52,8 @@ const eventsMessageDescriptors = {
     true {{safeTransactionRecipient}}
     other {{safeTransactionAddress}}
   }`,
-  [`event.${ColonyAndExtensionsEvents.ArbitraryTransaction}.contractInteraction`]: `{safeName} called the {safeTransactionFunctionName} function on the {safeTransactionContractName} contract`, // @TODO Confirm w product
-  [`event.${ColonyAndExtensionsEvents.ArbitraryTransaction}.multipleTransactions`]: `{safeName} initiated multiple transactions`, // @TODO Confirm w product
+  [`event.${ColonyAndExtensionsEvents.ArbitraryTransaction}.contractInteraction`]: `{safeName} called the {safeTransactionFunctionName} function on the {safeTransactionContractName} contract`,
+  [`event.${ColonyAndExtensionsEvents.ArbitraryTransaction}.multipleTransactions`]: `{safeName} initiated multiple transactions`,
   [`event.${ColonyAndExtensionsEvents.ArbitraryTransaction}.fallback`]: `{safeName} initiated a transaction`,
   [`event.${ColonyAndExtensionsEvents.ColonyRoleSet}.assign`]: `{initiator} assigned the {role} permission in the {fromDomain} team to {recipient}`,
   [`event.${ColonyAndExtensionsEvents.ColonyRoleSet}.remove`]: `{initiator} removed the {role} permission in the {fromDomain} team from {recipient}`,
