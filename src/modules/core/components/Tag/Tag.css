@@ -70,7 +70,7 @@
 }
 
 .colorSchemaPlain {
-  border: none;
+  border: 1px solid transparent;
   background-color: var(--temp-grey-blue-8);
 }
 

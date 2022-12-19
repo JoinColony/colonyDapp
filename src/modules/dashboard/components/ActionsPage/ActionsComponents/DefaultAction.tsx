@@ -2,6 +2,7 @@ import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import Decimal from 'decimal.js';
 import { useMediaQuery } from 'react-responsive';
+import { useLocation } from 'react-router';
 
 import Tag, { Appearance as TagAppareance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
@@ -38,6 +39,7 @@ import {
   useColonyMetadataChecks,
   useExtendedColonyActionType,
 } from '~modules/dashboard/hooks';
+import { SafeTxData } from '~modules/dashboard/sagas/utils/safeHelpers';
 import {
   getFormattedTokenValue,
   getTokenDecimalsWithFallback,
@@ -97,6 +99,7 @@ const DefaultAction = ({
   initiator,
 }: Props) => {
   const { formatMessage } = useIntl();
+  const { state: locationState } = useLocation<SafeTxData>();
   const { username: currentUserName, ethereal } = useLoggedInUser();
 
   const { isVotingExtensionEnabled } = useEnabledExtensions({ colonyAddress });
@@ -204,13 +207,18 @@ const DefaultAction = ({
     <></>,
   );
 
-  const firstSafeTransaction: SafeTransaction | undefined = safeTransactions[0];
+  const firstSafeTransaction: SafeTransaction | undefined =
+    safeTransactions[0] || locationState?.transactions[0];
 
-  const safeTransactionSafe = safes.find(
-    (safe) =>
-      safe.contractAddress === safeData?.contractAddress &&
-      safe.chainId === safeData.chainId,
-  );
+  const safeTransactionSafe = safes.find((safe) => {
+    const safeContractAddress =
+      safeData?.contractAddress || locationState?.safeData.contractAddress;
+    const safeChainId = safeData?.chainId || locationState?.safeData.chainId;
+    return (
+      safe.contractAddress === safeContractAddress &&
+      safe.chainId === safeChainId
+    );
+  });
 
   /*
    * @NOTE We need to convert the action type name into a forced camel-case string
@@ -271,8 +279,8 @@ const DefaultAction = ({
     moduleAddress: addedSafe && (
       <MaskedAddress address={addedSafe.moduleContractAddress} />
     ),
-    safeTransactionTitle: transactionsTitle,
-    safeTransactions,
+    safeTransactionTitle: transactionsTitle || locationState?.title,
+    safeTransactions: safeTransactions || locationState?.transactions,
     /*
      * The following references to firstSafeTransaction are only used in the event that there's only one safe transaction.
      * Multiple transactions has its own message.
@@ -331,7 +339,7 @@ const DefaultAction = ({
     reputationChange: actionAndEventValues.reputationChange,
     reputationChangeNumeral: actionAndEventValues.reputationChangeNumeral,
     chainName: addedSafe && SAFE_NAMES_MAP[addedSafe.chainId],
-    safeTransactionTitle: transactionsTitle,
+    safeTransactionTitle: transactionsTitle || locationState?.title,
   };
 
   const motionStyles = MOTION_TAG_MAP[MotionState.Forced];
@@ -402,13 +410,19 @@ const DefaultAction = ({
             />
           </h1>
           {actionType !== ColonyActions.Generic &&
-            (annotationHash || annotationMessage) && (
+            (annotationHash ||
+              annotationMessage ||
+              locationState?.annotationMessage) && (
               <ActionsPageFeedItemWithIPFS
                 colony={colony}
                 createdAt={createdAt}
                 user={initiator}
                 annotation
-                comment={annotationMessage || undefined}
+                comment={
+                  annotationMessage ||
+                  locationState?.annotationMessage ||
+                  undefined
+                }
                 hash={annotationHash || undefined}
               />
             )}

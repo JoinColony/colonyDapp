@@ -1371,6 +1371,7 @@ export const motionsResolvers = ({
             if (parsedAnnotation) {
               return {
                 transactionTitle: parsedAnnotation.title,
+                metadata: annotation.values?.metadata,
               };
             }
           }

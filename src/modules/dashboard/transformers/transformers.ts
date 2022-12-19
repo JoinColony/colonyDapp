@@ -1,7 +1,6 @@
 import { AddressZero, HashZero } from 'ethers/constants';
 import { bigNumberify } from 'ethers/utils';
 import Decimal from 'decimal.js';
-import uniqWith from 'lodash/uniqWith';
 
 import {
   TransactionsMessagesCount,
@@ -27,6 +26,7 @@ import { formatEventName, groupSetUserRolesActions } from '~utils/events';
 import { log } from '~utils/debug';
 import { ItemStatus } from '~core/ActionsList';
 import { shouldDisplayMotion } from '~utils/colonyMotions';
+import { uniqWith } from '~utils/lodash';
 
 enum FilteredUnformattedAction {
   OneTxPayments = 'oneTxPayments',
