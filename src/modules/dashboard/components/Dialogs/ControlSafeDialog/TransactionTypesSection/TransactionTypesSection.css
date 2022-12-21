@@ -56,3 +56,25 @@
 .noUsefulMethods > section {
   padding: 1px 20px 20px;
 }
+
+.warningContainer {
+  display: flex;
+  align-items: center;
+  padding: 14px;
+  border-radius: 5px;
+  background-color: color-mod(var(--golden) alpha(15%));
+  font-size: var(--size-normal);
+  line-height: 18px;
+  color: var(--dark);
+  column-gap: 10px;
+}
+
+.warningSafeChainName {
+  font-weight: var(--weight-bold);
+}
+
+.warningIcon {
+  height: 18px;
+  min-width: 18px;
+  fill: var(--golden);
+}
