@@ -99,7 +99,10 @@ export const useFetchSafeTransactionData = (
       }
     };
 
-    if (actionType.includes(ColonyExtendedActions.SafeTransactionInitiated)) {
+    if (
+      actionType.includes(ColonyExtendedActions.SafeTransactionInitiated) &&
+      transactionReceipt
+    ) {
       fetchSafeTxData();
     }
   }, [transactionHash, metadata, actionType, transactionReceipt]);

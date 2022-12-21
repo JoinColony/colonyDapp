@@ -10,6 +10,7 @@ import { EventValue } from '~data/resolvers/colonyActions';
 import { parseDomainMetadata } from '~utils/colonyActions';
 import Numeral from '~core/Numeral';
 import { useTitle } from '~utils/hooks/useTitle';
+import { isEmpty } from '~utils/lodash';
 
 import ActionsPageFeed, {
   ActionsPageFeedItemWithIPFS,
@@ -280,7 +281,9 @@ const DefaultAction = ({
       <MaskedAddress address={addedSafe.moduleContractAddress} />
     ),
     safeTransactionTitle: transactionsTitle || locationState?.title,
-    safeTransactions: safeTransactions || locationState?.transactions,
+    safeTransactions: !isEmpty(safeTransactions)
+      ? safeTransactions
+      : locationState?.transactions,
     /*
      * The following references to firstSafeTransaction are only used in the event that there's only one safe transaction.
      * Multiple transactions has its own message.
