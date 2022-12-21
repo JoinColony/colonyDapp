@@ -61,6 +61,25 @@ export function* updateMotionValues(
     colonyAddress,
   );
   const tokenAddress = colonyClient.tokenClient.address;
+
+  /*
+   * Motion Safe transaction status
+   */
+  if (safeChainId) {
+    yield apolloClient.query<
+      MotionSafeTransactionStatusesQuery,
+      MotionSafeTransactionStatusesQueryVariables
+    >({
+      query: MotionSafeTransactionStatusesDocument,
+      variables: {
+        motionId: motionId.toNumber(),
+        colonyAddress,
+        safeChainId,
+      },
+      fetchPolicy: 'network-only',
+    });
+  }
+
   /*
    * Staking values
    */
@@ -254,22 +273,4 @@ export function* updateMotionValues(
     },
     fetchPolicy: 'network-only',
   });
-
-  /*
-   * Motion Safe transaction status
-   */
-  if (safeChainId) {
-    yield apolloClient.query<
-      MotionSafeTransactionStatusesQuery,
-      MotionSafeTransactionStatusesQueryVariables
-    >({
-      query: MotionSafeTransactionStatusesDocument,
-      variables: {
-        motionId: motionId.toNumber(),
-        colonyAddress,
-        safeChainId,
-      },
-      fetchPolicy: 'network-only',
-    });
-  }
 }
