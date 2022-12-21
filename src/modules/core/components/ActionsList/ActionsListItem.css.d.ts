@@ -20,5 +20,6 @@ export const commentCountIcon: string;
 export const userMention: string;
 export const stateNoPointer: string;
 export const titleDecoration: string;
-export const motionTagWrapper: string;
+export const tagWrapper: string;
+export const safeTransactionTagWrapper: string;
 export const countdownTimerContainer: string;
