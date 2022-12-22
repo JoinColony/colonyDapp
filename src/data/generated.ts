@@ -463,8 +463,7 @@ export type QueryMotionObjectionAnnotationArgs = {
 
 
 export type QueryMotionSafeTransactionStatusesArgs = {
-  motionId: Scalars['Int'];
-  colonyAddress: Scalars['String'];
+  finalizeMotionEventTxHash: Scalars['String'];
   safeChainId: Scalars['String'];
 };
 
@@ -2482,8 +2481,7 @@ export type MotionTimeoutPeriodsQueryVariables = Exact<{
 export type MotionTimeoutPeriodsQuery = { motionTimeoutPeriods: Pick<MotionTimeoutPeriods, 'timeLeftToStake' | 'timeLeftToSubmit' | 'timeLeftToReveal' | 'timeLeftToEscalate'> };
 
 export type MotionSafeTransactionStatusesQueryVariables = Exact<{
-  motionId: Scalars['Int'];
-  colonyAddress: Scalars['String'];
+  finalizeMotionEventTxHash: Scalars['String'];
   safeChainId: Scalars['String'];
 }>;
 
@@ -6540,8 +6538,8 @@ export type MotionTimeoutPeriodsQueryHookResult = ReturnType<typeof useMotionTim
 export type MotionTimeoutPeriodsLazyQueryHookResult = ReturnType<typeof useMotionTimeoutPeriodsLazyQuery>;
 export type MotionTimeoutPeriodsQueryResult = Apollo.QueryResult<MotionTimeoutPeriodsQuery, MotionTimeoutPeriodsQueryVariables>;
 export const MotionSafeTransactionStatusesDocument = gql`
-    query MotionSafeTransactionStatuses($motionId: Int!, $colonyAddress: String!, $safeChainId: String!) {
-  motionSafeTransactionStatuses(motionId: $motionId, colonyAddress: $colonyAddress, safeChainId: $safeChainId) @client
+    query MotionSafeTransactionStatuses($finalizeMotionEventTxHash: String!, $safeChainId: String!) {
+  motionSafeTransactionStatuses(finalizeMotionEventTxHash: $finalizeMotionEventTxHash, safeChainId: $safeChainId) @client
 }
     `;
 
@@ -6557,8 +6555,7 @@ export const MotionSafeTransactionStatusesDocument = gql`
  * @example
  * const { data, loading, error } = useMotionSafeTransactionStatusesQuery({
  *   variables: {
- *      motionId: // value for 'motionId'
- *      colonyAddress: // value for 'colonyAddress'
+ *      finalizeMotionEventTxHash: // value for 'finalizeMotionEventTxHash'
  *      safeChainId: // value for 'safeChainId'
  *   },
  * });
