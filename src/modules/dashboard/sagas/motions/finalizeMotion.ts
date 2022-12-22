@@ -77,6 +77,13 @@ function* finalizeMotion({
 
     yield put(transactionReady(finalizeMotionTransaction.id));
 
+    const {
+      payload: { hash: txHash },
+    } = yield takeFrom(
+      finalizeMotionTransaction.channel,
+      ActionTypes.TRANSACTION_HASH_RECEIVED,
+    );
+
     yield takeFrom(
       finalizeMotionTransaction.channel,
       ActionTypes.TRANSACTION_SUCCEEDED,
@@ -91,6 +98,7 @@ function* finalizeMotion({
       userAddress,
       motionId,
       safeChainId,
+      txHash,
     );
 
     yield put<AllActions>({

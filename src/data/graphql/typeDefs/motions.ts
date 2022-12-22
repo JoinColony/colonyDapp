@@ -159,8 +159,7 @@ export default gql`
       colonyAddress: String!
     ): MotionTxHashMap!
     motionSafeTransactionStatuses(
-      motionId: Int!
-      colonyAddress: String!
+      finalizeMotionEventTxHash: String!
       safeChainId: String!
     ): [String!]!
   }

@@ -3,6 +3,7 @@ import { useIntl, FormattedMessage, defineMessages } from 'react-intl';
 import { nanoid } from 'nanoid';
 import findLastIndex from 'lodash/findLastIndex';
 import { ColonyRole } from '@colony/colony-js';
+import { useLocation } from 'react-router';
 
 import PermissionsLabel from '~core/PermissionsLabel';
 import { TransactionMeta, TransactionStatus } from '~dashboard/ActionsPage';
@@ -11,6 +12,7 @@ import FriendlyName from '~core/FriendlyName';
 import MemberReputation from '~core/MemberReputation';
 import Tag from '~core/Tag';
 import Numeral from '~core/Numeral';
+import { SafeTxData } from '~modules/dashboard/sagas/utils/safeHelpers';
 
 import {
   ColonyAction,
@@ -35,6 +37,7 @@ import {
 import { useDataFetcher } from '~utils/hooks';
 import { getFormattedTokenValue } from '~utils/tokens';
 import { MotionVote } from '~utils/colonyMotions';
+import { isEmpty } from '~utils/lodash';
 
 import { ipfsDataFetcher } from '../../../../core/fetchers';
 import useColonyMetadataChecks from '../../../hooks/useColonyMetadataChecks';
@@ -116,6 +119,7 @@ const ActionsPageEvent = ({
   const [metdataIpfsHash, setMetdataIpfsHash] = useState<string | undefined>(
     undefined,
   );
+  const { state: locationState } = useLocation<SafeTxData>();
 
   const initiator = useUser(
     values?.agent ||
@@ -249,7 +253,9 @@ const ActionsPageEvent = ({
       case ColonyAndExtensionsEvents.ArbitraryTransaction:
         return getSafeTransactionMessageDescriptorIds(
           ColonyExtendedActions.SafeTransactionInitiated,
-          actionData.safeTransactions,
+          !isEmpty(actionData.safeTransactions)
+            ? actionData.safeTransactions
+            : locationState?.transactions,
         );
       case ColonyAndExtensionsEvents.ArbitraryReputationUpdate:
         return `event.${ColonyAndExtensionsEvents.ArbitraryReputationUpdate}.title`;
@@ -263,6 +269,7 @@ const ActionsPageEvent = ({
     eventIndex,
     values,
     actionData.safeTransactions,
+    locationState,
   ]);
 
   const { domainPurpose, domainName, domainColor } = actionData;

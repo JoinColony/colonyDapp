@@ -367,6 +367,6 @@ query MotionTimeoutPeriods($motionId: Int!, $colonyAddress: String!) {
   }
 }
 
-query MotionSafeTransactionStatuses($motionId: Int!, $colonyAddress: String!, $safeChainId: String!) {
-  motionSafeTransactionStatuses(motionId: $motionId, colonyAddress: $colonyAddress, safeChainId: $safeChainId) @client
+query MotionSafeTransactionStatuses($finalizeMotionEventTxHash: String!, $safeChainId: String!) {
+  motionSafeTransactionStatuses(finalizeMotionEventTxHash: $finalizeMotionEventTxHash, safeChainId: $safeChainId) @client
 }
