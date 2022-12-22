@@ -311,12 +311,15 @@ const DefaultMotion = ({
     );
   });
 
+  const motionFinalizedEvent = motionEventsData?.eventsForMotion.find(
+    (event) => event.name === ColonyAndExtensionsEvents.MotionFinalized,
+  );
+
   const {
     data: transactionStatusesData,
   } = useMotionSafeTransactionStatusesQuery({
     variables: {
-      colonyAddress: colony.colonyAddress,
-      motionId,
+      finalizeMotionEventTxHash: motionFinalizedEvent?.transactionHash || '',
       safeChainId: selectedSafe?.chainId || '',
     },
     fetchPolicy: 'network-only',
@@ -492,11 +495,6 @@ const DefaultMotion = ({
     !loadingFinalized &&
     motionState === MotionState.Passed &&
     finalized?.motionFinalized;
-  const motionFinalizedEvent =
-    canProcessPendingSafeTransactions &&
-    motionEventsData?.eventsForMotion.find(
-      (event) => event.name === ColonyAndExtensionsEvents.MotionFinalized,
-    );
   return (
     <div className={styles.main}>
       <StakeRequiredBanner stakeRequired={hasBanner} isDecision={isDecision} />

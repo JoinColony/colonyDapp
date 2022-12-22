@@ -1046,47 +1046,19 @@ export const motionsResolvers = ({
     },
     async motionSafeTransactionStatuses(
       _,
-      { colonyAddress, motionId, safeChainId },
+      { finalizeMotionEventTxHash, safeChainId },
     ) {
       let safeTransactionStatuses: TRANSACTION_STATUS[] = [];
 
-      if (safeChainId) {
-        const votingReputationClient = await colonyManager.getClient(
-          ClientType.VotingReputationClient,
-          colonyAddress,
+      if (safeChainId && finalizeMotionEventTxHash) {
+        // eslint-disable-next-line max-len
+        const motionFinalizedTransactionReceipt = await networkClient.provider.getTransactionReceipt(
+          finalizeMotionEventTxHash,
         );
-
-        const { data } = await apolloClient.query<
-          SubgraphMotionEventsQuery,
-          SubgraphMotionEventsQueryVariables
-        >({
-          query: SubgraphMotionEventsDocument,
-          variables: {
-            /*
-             * Subgraph addresses are not checksummed
-             */
-            colonyAddress: colonyAddress.toLowerCase(),
-            motionId: `"motionId":"${motionId}"`,
-            extensionAddress: votingReputationClient.address.toLowerCase(),
-          },
-          fetchPolicy: 'network-only',
-        });
-        const sortedMotionEvents = getMotionEvents(false, data?.motionEvents);
-        const finalizedMotionEvent = sortedMotionEvents.find(
-          (motionEvent) =>
-            motionEvent.name === ColonyAndExtensionsEvents.MotionFinalized,
+        safeTransactionStatuses = await getTransactionStatuses(
+          safeChainId,
+          motionFinalizedTransactionReceipt,
         );
-
-        if (finalizedMotionEvent) {
-          // eslint-disable-next-line max-len
-          const motionFinalizedTransactionReceipt = await networkClient.provider.getTransactionReceipt(
-            finalizedMotionEvent.transactionHash,
-          );
-          safeTransactionStatuses = await getTransactionStatuses(
-            safeChainId,
-            motionFinalizedTransactionReceipt,
-          );
-        }
       }
 
       return safeTransactionStatuses;
