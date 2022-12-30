@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { RouteChildrenProps, useParams } from 'react-router';
 import { Formik } from 'formik';
 
@@ -6,8 +6,14 @@ import { useColonyFromNameQuery } from '~data/generated';
 import { getMainClasses } from '~utils/css';
 import { SpinnerLoader } from '~core/Preloaders';
 import IncorporationForm from '~dashboard/DAOIncorporation/IncorporationForm';
+import Stages from '~dashboard/DAOIncorporation/Stages';
 
-import { initialValues, validationSchema } from './constants';
+import {
+  initialValues,
+  stages,
+  validationSchema,
+  Stages as StagesEnum,
+} from './constants';
 import styles from './IncorporationPage.css';
 
 const displayName = 'pages.IncorporationPage';
@@ -27,7 +33,37 @@ const IncorporationPage = ({ match }: Props) => {
     colonyName: string;
   }>();
   const [shouldValidate, setShouldValidate] = useState(false);
+  const [activeStageId, setActiveStageId] = useState(StagesEnum.Draft);
   const sidebarRef = useRef<HTMLElement>(null);
+
+  const handleSubmit = useCallback(() => {
+    setActiveStageId(StagesEnum.Created);
+  }, []);
+
+  const handleProceed = useCallback(() => {
+    setActiveStageId(StagesEnum.Payment);
+  }, []);
+
+  const handlePay = useCallback(() => {
+    setActiveStageId(StagesEnum.Processing);
+  }, []);
+
+  const buttonAction = useMemo(() => {
+    switch (activeStageId) {
+      case StagesEnum.Draft: {
+        return handleSubmit;
+      }
+      case StagesEnum.Created: {
+        return handleProceed;
+      }
+      case StagesEnum.Payment: {
+        return handlePay;
+      }
+      default: {
+        return () => {};
+      }
+    }
+  }, [activeStageId, handlePay, handleProceed, handleSubmit]);
 
   const handleValidate = useCallback(() => {
     if (!shouldValidate) {
@@ -66,7 +102,14 @@ const IncorporationPage = ({ match }: Props) => {
             )}
           </aside>
           <div className={styles.mainContainer}>
-            <main className={styles.mainContent} />
+            <main className={styles.mainContent}>
+              <div />
+              <Stages
+                activeStageId={activeStageId}
+                stages={stages}
+                buttonAction={buttonAction}
+              />
+            </main>
           </div>
         </div>
       )}
