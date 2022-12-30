@@ -144,6 +144,7 @@ export const stages: StageObject[] = [
     title: MSG.create,
     description: MSG.createDesc,
     buttonText: MSG.createButtonText,
+    buttonTooltip: MSG.createTooltip,
   },
   {
     id: Stages.Created,
