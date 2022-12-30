@@ -112,7 +112,7 @@ const IncorporationForm = ({ colony, sidebarRef }: Props) => {
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.inputWrapper}>
           <Textarea
-            name="description"
+            name="purpose"
             label={MSG.descriptionLabel}
             maxLength={90}
           />

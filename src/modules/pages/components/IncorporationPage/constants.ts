@@ -5,6 +5,7 @@ import { SignOption } from '~dashboard/DAOIncorporation/IncorporationForm/Protec
 export const initialValues = {
   name: undefined,
   alternativeNames: ['', ''],
+  purpose: undefined,
   description: undefined,
   protectors: [undefined],
   mainContact: undefined,
@@ -14,8 +15,9 @@ export const initialValues = {
 export const validationSchema = yup.object().shape({
   name: yup.string().required(),
   alternativeNames: yup.array().of(yup.string()).min(2).max(2),
-  description: yup.string(),
+  description: yup.string().required(),
   protectors: yup.array().min(1).max(5),
   mainContact: yup.object().required(),
   signOption: yup.string(),
+  purpose: yup.string(),
 });

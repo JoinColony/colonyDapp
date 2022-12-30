@@ -20,7 +20,7 @@
 .mainContent {
   display: flex;
   justify-content: space-between;
-  padding: 76px 100px 70px 25px;
+  padding: 54px 85px 70px 40px;
   min-height: calc(100vh - navBarHeight);
 }
 

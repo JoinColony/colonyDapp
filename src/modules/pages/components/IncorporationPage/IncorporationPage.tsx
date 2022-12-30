@@ -6,6 +6,7 @@ import { useColonyFromNameQuery } from '~data/generated';
 import { getMainClasses } from '~utils/css';
 import { SpinnerLoader } from '~core/Preloaders';
 import IncorporationForm from '~dashboard/DAOIncorporation/IncorporationForm';
+import DescriptionForm from '~dashboard/DAOIncorporation/DescriptionForm';
 
 import { initialValues, validationSchema } from './constants';
 import styles from './IncorporationPage.css';
@@ -66,7 +67,9 @@ const IncorporationPage = ({ match }: Props) => {
             )}
           </aside>
           <div className={styles.mainContainer}>
-            <main className={styles.mainContent} />
+            <main className={styles.mainContent}>
+              <DescriptionForm />
+            </main>
           </div>
         </div>
       )}
