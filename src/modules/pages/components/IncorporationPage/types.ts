@@ -1,4 +1,5 @@
 import { MessageDescriptor } from 'react-intl';
+
 import { SignOption } from '~dashboard/Incorporation/IncorporationForm/types';
 import { AnyUser } from '~data/index';
 
