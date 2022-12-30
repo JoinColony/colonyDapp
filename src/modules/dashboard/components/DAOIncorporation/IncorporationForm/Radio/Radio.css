@@ -1,0 +1,33 @@
+.radioWrapper > label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 9px;
+  padding: 0 7px;
+  height: 40px;
+  width: 100%;
+  position: relative;
+  border: 1px solid color-mod(var(--action-secondary) alpha(25%));
+  border-radius: 2px;
+  background-color: color-mod(var(--action-secondary) alpha(5%));
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.radioWrapper > label > span {
+  height: 27px;
+  width: 27px;
+  top: 0;
+  border: 1px solid color-mod(var(--action-secondary) alpha(25%));
+  background-color: var(--colony-white);
+
+  &::after {
+    height: 7px;
+    width: 7px;
+  }
+}
+
+.selected > label {
+  border: 1px solid var(--primary);
+  background-color: color-mod(var(--primary) alpha(12%));
+}

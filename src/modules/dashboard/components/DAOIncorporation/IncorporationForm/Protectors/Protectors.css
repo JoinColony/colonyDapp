@@ -1,0 +1,85 @@
+.wrapper {
+  margin: 8px 0 16px;
+}
+
+.labelWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.labelWrapper label {
+  margin-right: 8px;
+  width: auto;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--dark) alpha(85%));
+}
+
+.labelWrapper > div {
+  max-width: 250px;
+}
+
+.protectorsLabelWrapper {
+  composes: labelWrapper;
+}
+
+.protectorsLabelWrapper i {
+  display: block;
+  margin-left: 8px;
+}
+
+.label {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--dark) alpha(85%));
+}
+
+.protectorWrapper {
+  display: flex;
+  justify-content: space-between;
+  padding: 11px 0 14px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
+.mainContactWrapper {
+  composes: protectorWrapper;
+  padding-bottom: 0;
+}
+
+.protectorWrapper label {
+  margin-right: 0;
+}
+
+.deleteIcon {
+  height: 20px;
+  width: 20px;
+  fill: var(--pink);
+}
+
+.deleteIcon:hover {
+  cursor: pointer;
+}
+
+.circlePlusIcon {
+  display: flex;
+  height: 30px;
+  width: 30px;
+  fill: var(--action-secondary);
+  transform: translate(-2px, 0);
+}
+
+.signOptionWrapper {
+  margin-top: 12px;
+}
+
+.additionalText {
+  font-size: var(--size-small);
+  font-weight: var(--weight-normal);
+}
+
+.additionalMargin {
+  margin-bottom: 4px;
+}

@@ -25,6 +25,7 @@
     "circle-eye",
     "circle-person",
     "circle-plus",
+    "circle-plus-2",
     "circle-minus",
     "circle-thumbs-down",
     "circle-thumbs-down-grey",
@@ -100,6 +101,7 @@
     "triangle-warning",
     "unlock",
     "user-plus",
+    "usd-coin",
     "wallet"
   ],
   "multiColorIcons": ["circle-check-primary", "metamask", "shield-pink"],
