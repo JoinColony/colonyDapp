@@ -73,6 +73,15 @@ export const initialValues = {
   signOption: SignOption.Individual,
 };
 
+export const validationSchema = yup.object().shape({
+  name: yup.string().required(),
+  alternativeNames: yup.array().of(yup.string()).min(2).max(2),
+  description: yup.string(),
+  protectors: yup.array().min(1).max(5),
+  mainContact: yup.object().required(),
+  signOption: yup.string(),
+});
+
 export enum Stages {
   Draft,
   Created,
@@ -87,6 +96,7 @@ export const stages: StageObject[] = [
     title: MSG.create,
     description: MSG.createDesc,
     buttonText: MSG.createButtonText,
+    buttonTooltip: MSG.createTooltip,
   },
   {
     id: Stages.Created,

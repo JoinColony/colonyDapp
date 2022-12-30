@@ -8,7 +8,12 @@ import { SpinnerLoader } from '~core/Preloaders';
 import Stages from '~dashboard/Incorporation/Stages';
 import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
 
-import { initialValues, stages, Stages as StagesEnum } from './constants';
+import {
+  initialValues,
+  stages,
+  validationSchema,
+  Stages as StagesEnum,
+} from './constants';
 import styles from './IncorporationPage.css';
 
 const displayName = 'pages.IncorporationPage';
@@ -21,6 +26,7 @@ const IncorporationPage = () => {
   const { colonyName } = useParams<{
     colonyName: string;
   }>();
+  const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStageId, setActiveStageId] = useState(StagesEnum.Draft);
   const sidebarRef = useRef<HTMLElement>(null);
 
@@ -53,12 +59,24 @@ const IncorporationPage = () => {
     }
   }, [activeStageId, handlePay, handleProceed, handleSubmit]);
 
+  const handleValidate = useCallback(() => {
+    if (!shouldValidate) {
+      setShouldValidate(true);
+    }
+  }, [shouldValidate]);
+
   const { data: colonyData, loading } = useColonyFromNameQuery({
     variables: { name: colonyName, address: '' },
   });
 
   return (
-    <Formik initialValues={initialValues} onSubmit={() => {}}>
+    <Formik 
+      initialValues={initialValues} 
+      validationSchema={validationSchema}
+      validateOnBlur={shouldValidate}
+      validateOnChange={shouldValidate}
+      validate={handleValidate} onSubmit={() => {}}
+    >
       {() => (
         <div className={getMainClasses({}, styles)}>
           <aside className={styles.sidebar} ref={sidebarRef}>
