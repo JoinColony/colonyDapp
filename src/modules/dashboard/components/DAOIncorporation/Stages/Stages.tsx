@@ -10,7 +10,7 @@ import { Tooltip } from '~core/Popover';
 import StageItem from './StageItem';
 import StagesButton from './StagesButton';
 import styles from './Stages.css';
-import { StageObject } from '~pages/IncorporationPage/types';
+import { StageObject, ValuesType } from '~pages/IncorporationPage/types';
 import { Stages as StagesEnum } from '~pages/IncorporationPage/constants';
 
 const MSG = defineMessages({
@@ -38,7 +38,7 @@ export interface Props {
   stages: StageObject[];
   activeStageId: StagesEnum;
   buttonDisabled?: boolean;
-  buttonAction?: VoidFunction;
+  buttonAction?: (values?: ValuesType) => void;
 }
 
 const Stages = ({
