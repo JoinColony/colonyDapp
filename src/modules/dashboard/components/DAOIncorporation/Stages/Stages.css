@@ -102,3 +102,55 @@
 .buttonTooltip {
   max-width: 192px;
 }
+
+.formStages {
+  position: relative;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.formStagesMsg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 21px;
+  width: 100%;
+  position: absolute;
+  top: -14px;
+  border: 1px solid var(--pink);
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 18px;
+  transform: translateY(-100%);
+  letter-spacing: 0.5px;
+  animation-name: fadeIn;
+  animation-duration: 500ms;
+}
+
+.formStagesMsgText {
+  color: var(--pink);
+}
+
+.formStagesMsgAction {
+  margin: 0 0 0 8px;
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+  font-size: inherit;
+  color: var(--action-secondary);
+  appearance: none;
+  cursor: pointer;
+}
+
+.formStagesMsgAction:focus {
+  opacity: 0.5;
+}
