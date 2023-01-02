@@ -43,7 +43,7 @@ const IncorporationPage = () => {
   const buttonAction = useMemo(() => {
     switch (activeStageId) {
       case StagesEnum.Draft: {
-        return handleSubmit;
+        return undefined;
       }
       case StagesEnum.Created: {
         return handleProceed;
@@ -55,7 +55,7 @@ const IncorporationPage = () => {
         return () => {};
       }
     }
-  }, [activeStageId, handlePay, handleProceed, handleSubmit]);
+  }, [activeStageId, handlePay, handleProceed]);
 
   const handleValidate = useCallback(() => {
     if (!shouldValidate) {
