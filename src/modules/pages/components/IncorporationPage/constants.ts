@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid';
 import { defineMessages } from 'react-intl';
+import * as yup from 'yup';
 
 import { SignOption } from '~dashboard/Incorporation/IncorporationForm/types';
 
@@ -58,6 +59,26 @@ const MSG = defineMessages({
     id: 'dashboard.IncorporationPage.completeDesc',
     defaultMessage: 'Such DAO! So Incorporate!',
   },
+  nameRequiredError: {
+    id: 'dashboard.IncorporationPage.nameRequiredError',
+    defaultMessage: 'Corporation name is required',
+  },
+  altNamesRequiredError: {
+    id: 'dashboard.IncorporationPage.altNamesRequiredError',
+    defaultMessage: 'Please provide alternative names',
+  },
+  purposeRequiredError: {
+    id: 'dashboard.IncorporationPage.altNamesRequiredError',
+    defaultMessage: 'Please explain the purpose of your DAO',
+  },
+  protectorRequiredError: {
+    id: 'dashboard.IncorporationPage.altNamesRequiredError',
+    defaultMessage: 'You need to nominate a protector',
+  },
+  lengthError: {
+    id: 'dashboard.IncorporationPage.altNamesRequiredError',
+    defaultMessage: 'Must have more than 2 letters',
+  },
 });
 
 export const initialValues = {
@@ -71,11 +92,28 @@ export const initialValues = {
 };
 
 export const validationSchema = yup.object().shape({
-  name: yup.string().required(),
-  alternativeNames: yup.array().of(yup.string()).min(2).max(2),
-  description: yup.string(),
-  protectors: yup.array().min(1).max(5),
-  mainContact: yup.object().required(),
+  name: yup.string().required(() => MSG.nameRequiredError),
+  alternativeNames: yup
+    .array()
+    .of(
+      yup
+        .string()
+        .min(2, () => MSG.lengthError)
+        .required(() => MSG.altNamesRequiredError),
+    )
+    .min(2)
+    .max(2),
+  purpose: yup
+    .string()
+    .min(3, () => MSG.lengthError)
+    .max(90)
+    .required(() => MSG.purposeRequiredError),
+  protectors: yup
+    .array()
+    .of(yup.object().required(() => MSG.protectorRequiredError))
+    .min(1)
+    .max(5),
+  mainContact: yup.object().required(() => MSG.protectorRequiredError),
   signOption: yup.string(),
 });
 
@@ -93,7 +131,6 @@ export const stages: StageObject[] = [
     title: MSG.create,
     description: MSG.createDesc,
     buttonText: MSG.createButtonText,
-    buttonTooltip: MSG.createTooltip,
   },
   {
     id: Stages.Created,

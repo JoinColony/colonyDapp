@@ -68,12 +68,13 @@ const IncorporationPage = () => {
   });
 
   return (
-    <Formik 
-      initialValues={initialValues} 
+    <Formik
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
       validationSchema={validationSchema}
       validateOnBlur={shouldValidate}
       validateOnChange={shouldValidate}
-      validate={handleValidate} onSubmit={() => {}}
+      validate={handleValidate}
     >
       {() => (
         <div className={getMainClasses({}, styles)}>
