@@ -8,3 +8,8 @@ export const iconButton: string;
 export const iconButtonDisabled: string;
 export const iconWrapper: string;
 export const buttonTooltip: string;
+export const formStages: string;
+export const formStagesMsg: string;
+export const fadeIn: string;
+export const formStagesMsgText: string;
+export const formStagesMsgAction: string;
