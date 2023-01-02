@@ -7,6 +7,7 @@ import { getMainClasses } from '~utils/css';
 import { SpinnerLoader } from '~core/Preloaders';
 import Stages from '~dashboard/Incorporation/Stages';
 import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
+import { FormStages } from '~dashboard/Incorporation/Stages';
 
 import {
   initialValues,
@@ -70,12 +71,13 @@ const IncorporationPage = () => {
   });
 
   return (
-    <Formik 
-      initialValues={initialValues} 
+    <Formik
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
       validationSchema={validationSchema}
       validateOnBlur={shouldValidate}
       validateOnChange={shouldValidate}
-      validate={handleValidate} onSubmit={() => {}}
+      validate={handleValidate}
     >
       {() => (
         <div className={getMainClasses({}, styles)}>
@@ -96,11 +98,15 @@ const IncorporationPage = () => {
           <div className={styles.mainContainer}>
             <main className={styles.mainContent}>
               <div />
-              <Stages
-                activeStageId={activeStageId}
-                stages={stages}
-                buttonAction={buttonAction}
-              />
+              {activeStageId === StagesEnum.Draft ? (
+                <FormStages activeStageId={activeStageId} stages={stages} />
+              ) : (
+                <Stages
+                  activeStageId={activeStageId}
+                  stages={stages}
+                  buttonAction={buttonAction}
+                />
+              )}
             </main>
           </div>
         </div>
