@@ -57,10 +57,21 @@
   margin-bottom: 12px;
 }
 
+.marginSmall > div:last-of-type {
+  margin-bottom: 4px;
+}
+
 .nameInputs label {
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: color-mod(var(--dark) alpha(85%));
+}
+
+.nameInputs p {
+  margin-bottom: 8px;
+  font-size: var(--size-tiny);
+  color: var(--danger);
+  letter-spacing: var(--spacing-medium);
 }
 
 .inputWrapper {
@@ -81,6 +92,13 @@
   color: color-mod(var(--dark) alpha(85%));
 }
 
+.inputWrapper p {
+  margin-bottom: 8px;
+  font-size: var(--size-tiny);
+  color: var(--danger);
+  letter-spacing: var(--spacing-medium);
+}
+
 .title {
   margin-bottom: 16px;
   font-size: var(--size-smallish);
@@ -94,4 +112,12 @@
   font-weight: var(--weight-bold);
   color: color-mod(var(--temp-grey-blue-7) alpha(85%));
   letter-spacing: var(--spacing-medium);
+}
+
+.error input {
+  background-color: color-mod(var(--danger) alpha(5%));
+}
+
+.error textarea {
+  background-color: color-mod(var(--danger) alpha(5%));
 }

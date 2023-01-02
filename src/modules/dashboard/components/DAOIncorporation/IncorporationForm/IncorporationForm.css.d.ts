@@ -6,6 +6,8 @@ export const costRow: string;
 export const cost: string;
 export const labelWrapper: string;
 export const nameInputs: string;
+export const marginSmall: string;
 export const inputWrapper: string;
 export const title: string;
 export const label: string;
+export const error: string;

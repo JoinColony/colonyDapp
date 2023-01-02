@@ -1,8 +1,15 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useFormikContext } from 'formik';
+import classNames from 'classnames';
 
-import { FormSection, Input, Textarea, InputLabel } from '~core/Fields';
+import {
+  FormSection,
+  Input,
+  Textarea,
+  InputLabel,
+  InputStatus,
+} from '~core/Fields';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import { Colony } from '~data/index';
 import Icon from '~core/Icon';
@@ -40,7 +47,7 @@ export const MSG = defineMessages({
     id: 'dashboard.DAOIncorporation.IncorporationForm.alternativeNamesTooltip',
     defaultMessage: `If your first choice is unavailable, we will try to register one of these alternatives. Please avoid trademark infringement.`,
   },
-  descriptionLabel: {
+  purposeLabel: {
     id: 'dashboard.DAOIncorporation.IncorporationForm.descriptionLabel',
     defaultMessage: 'Describe the purpose of the DAO',
   },
@@ -54,7 +61,7 @@ export interface Props {
 }
 
 const IncorporationForm = ({ colony, sidebarRef }: Props) => {
-  const { values } = useFormikContext<ValuesType>();
+  const { values, errors, touched } = useFormikContext<ValuesType>();
 
   return (
     <div className={styles.container}>
@@ -98,24 +105,49 @@ const IncorporationForm = ({ colony, sidebarRef }: Props) => {
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.nameInputs}>
-          <Input name="name" label={MSG.nameLabel} />
+        <div
+          className={classNames(styles.nameInputs, {
+            [styles.marginSmall]: errors.alternativeNames,
+          })}
+        >
+          <div
+            className={classNames({
+              [styles.error]: errors.name,
+            })}
+          >
+            <Input name="name" label={MSG.nameLabel} />
+          </div>
+
           <div className={styles.labelWrapper}>
             <InputLabel label={MSG.alternativelNamesLabel} />
             <QuestionMarkTooltip tooltipText={MSG.alternativeNamesTooltip} />
           </div>
           {values.alternativeNames.map((_, index) => (
-            <Input name={`alternativeNames[${index}]`} elementOnly />
+            <div
+              className={classNames({
+                [styles.error]: errors.alternativeNames?.[index],
+              })}
+            >
+              <Input name={`alternativeNames[${index}]`} elementOnly />
+            </div>
           ))}
+          {errors.alternativeNames && (
+            <InputStatus
+              error={errors.alternativeNames[0] || errors.alternativeNames[1]}
+              touched={
+                touched.alternativeNames?.[0] || touched.alternativeNames?.[1]
+              }
+            />
+          )}
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.inputWrapper}>
-          <Textarea
-            name="description"
-            label={MSG.descriptionLabel}
-            maxLength={90}
-          />
+        <div
+          className={classNames(styles.inputWrapper, {
+            [styles.error]: errors.purpose,
+          })}
+        >
+          <Textarea name="purpose" label={MSG.purposeLabel} maxLength={90} />
         </div>
       </FormSection>
       <Protectors colony={colony} sidebarRef={sidebarRef} />

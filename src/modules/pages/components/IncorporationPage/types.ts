@@ -8,7 +8,7 @@ import { Stages } from './constants';
 export interface ValuesType {
   name: string;
   alternativeNames: string[];
-  description: string;
+  purpose: string;
   protectors?: AnyUser[];
   mainContact?: AnyUser;
   signOption: SignOption;

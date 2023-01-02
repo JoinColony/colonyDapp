@@ -6,7 +6,7 @@ import { useColonyFromNameQuery } from '~data/generated';
 import { getMainClasses } from '~utils/css';
 import { SpinnerLoader } from '~core/Preloaders';
 import IncorporationForm from '~dashboard/DAOIncorporation/IncorporationForm';
-import Stages from '~dashboard/DAOIncorporation/Stages';
+import Stages, { FormStages } from '~dashboard/DAOIncorporation/Stages';
 
 import {
   initialValues,
@@ -51,7 +51,7 @@ const IncorporationPage = ({ match }: Props) => {
   const buttonAction = useMemo(() => {
     switch (activeStageId) {
       case StagesEnum.Draft: {
-        return handleSubmit;
+        return undefined;
       }
       case StagesEnum.Created: {
         return handleProceed;
@@ -63,7 +63,7 @@ const IncorporationPage = ({ match }: Props) => {
         return () => {};
       }
     }
-  }, [activeStageId, handlePay, handleProceed, handleSubmit]);
+  }, [activeStageId, handlePay, handleProceed]);
 
   const handleValidate = useCallback(() => {
     if (!shouldValidate) {
@@ -78,7 +78,7 @@ const IncorporationPage = ({ match }: Props) => {
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={() => {}}
+      onSubmit={handleSubmit}
       validationSchema={validationSchema}
       validateOnBlur={shouldValidate}
       validateOnChange={shouldValidate}
@@ -104,11 +104,15 @@ const IncorporationPage = ({ match }: Props) => {
           <div className={styles.mainContainer}>
             <main className={styles.mainContent}>
               <div />
-              <Stages
-                activeStageId={activeStageId}
-                stages={stages}
-                buttonAction={buttonAction}
-              />
+              {activeStageId === StagesEnum.Draft ? (
+                <FormStages activeStageId={activeStageId} stages={stages} />
+              ) : (
+                <Stages
+                  activeStageId={activeStageId}
+                  stages={stages}
+                  buttonAction={buttonAction}
+                />
+              )}
             </main>
           </div>
         </div>

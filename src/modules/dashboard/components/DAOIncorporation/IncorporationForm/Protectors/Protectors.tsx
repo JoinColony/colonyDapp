@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import React, { useEffect, useMemo } from 'react';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { FieldArray, useField, useFormikContext } from 'formik';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
@@ -15,6 +15,7 @@ import { ValuesType } from '~pages/IncorporationPage/types';
 import Button from '~core/Button';
 
 import Radio from '../Radio';
+import SingleUserPicker from '../SingleUserPicker';
 
 import styles from './Protectors.css';
 
@@ -71,9 +72,12 @@ export enum SignOption {
 
 const Protectors = ({ colony, sidebarRef }: Props) => {
   const { values } = useFormikContext<ValuesType>();
-  const [, { value: mainContact }, { setValue: setMainContact }] = useField(
-    'mainContact',
-  );
+  const [
+    ,
+    { value: mainContact, error, touched },
+    { setValue: setMainContact },
+  ] = useField('mainContact');
+  const { formatMessage } = useIntl();
 
   const { data: colonyMembers, loading } = useMembersSubscription({
     variables: { colonyAddress: colony.colonyAddress || '' },
@@ -91,6 +95,14 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
   const mainContactsData = useMemo(() => {
     return values.protectors?.filter((protector) => !isEmpty(protector));
   }, [values.protectors]);
+
+  useEffect(() => {
+    if (!mainContact && !shouldShowMainContact) {
+      setMainContact(values.protectors?.[0]);
+    }
+    // didn't want to add setMainContact to dependencies array
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mainContact, shouldShowMainContact, values.protectors]);
 
   return (
     <>
@@ -113,43 +125,28 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
             name="protectors"
             render={({ push, remove }) => (
               <>
-                {values.protectors?.map((protector, index) => (
-                  <div className={styles.protectorWrapper} key={protector?.id}>
-                    {colonyMembers?.subscribedUsers && (
-                      <div>
-                        <UserPickerWithSearch
-                          data={colonyMembers?.subscribedUsers || []}
-                          label=""
-                          name={`protectors[${index}]`}
-                          filter={filterUserSelection}
-                          renderAvatar={supRenderAvatar}
-                          placeholder="Search"
-                          sidebarRef={sidebarRef}
-                          disabled={loading}
-                          onSelected={(user) => {
-                            if (index === 0) {
-                              setMainContact(user);
-                            }
-                            if (values.protectors?.length === 1) {
-                              setMainContact(user);
-                            }
-                          }}
-                        />
-                      </div>
-                    )}
-                    <Icon
-                      name="trash"
-                      className={styles.deleteIcon}
-                      onClick={() => {
-                        remove(index);
-                        if (protector.id === mainContact.id) {
-                          setMainContact(undefined);
+                {values.protectors?.map((_, index) => {
+                  return (
+                    <SingleUserPicker
+                      data={colonyMembers?.subscribedUsers || []}
+                      label=""
+                      name={`protectors[${index}]`}
+                      placeholder="Search"
+                      sidebarRef={sidebarRef}
+                      disabled={loading}
+                      onSelected={(user) => {
+                        if (!mainContact && index === 0) {
+                          setMainContact(user);
                         }
                       }}
-                      title={MSG.deleteIconTitle}
+                      filter={filterUserSelection}
+                      renderAvatar={supRenderAvatar}
+                      remove={remove}
+                      index={index}
+                      setMainContact={setMainContact}
                     />
-                  </div>
-                ))}
+                  );
+                })}
                 {values.protectors && values.protectors?.length < 5 && (
                   <Button
                     onClick={() => {
@@ -176,7 +173,7 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
               <QuestionMarkTooltip tooltipText={MSG.mainContactTooltip} />
             </div>
             <div className={styles.mainContactWrapper}>
-              <div>
+              <div className={styles.selectWrapper}>
                 <UserPickerWithSearch
                   data={mainContactsData}
                   label=""
@@ -187,6 +184,9 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
                   sidebarRef={sidebarRef}
                   disabled={!values.protectors}
                 />
+                {error && typeof error === 'object' && touched && (
+                  <div className={styles.error}>{formatMessage(error)}</div>
+                )}
               </div>
               <Icon
                 name="trash"
