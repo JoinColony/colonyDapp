@@ -15,6 +15,8 @@ import {
   Stages as StagesEnum,
 } from './constants';
 import styles from './IncorporationPage.css';
+import { ValuesType } from './types';
+import LockedIncorporationForm from '~dashboard/DAOIncorporation/IncorporationForm/LockedIncorporationForm';
 
 const displayName = 'pages.IncorporationPage';
 
@@ -24,11 +26,15 @@ const IncorporationPage = () => {
   const { colonyName } = useParams<{
     colonyName: string;
   }>();
+  const [isFormEditable, setFormEditable] = useState(true);
+  const [formValues, setFormValues] = useState<ValuesType>();
   const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStageId, setActiveStageId] = useState(StagesEnum.Draft);
   const sidebarRef = useRef<HTMLElement>(null);
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback((values) => {
+    setFormValues(values);
+    setFormEditable(false);
     setActiveStageId(StagesEnum.Created);
   }, []);
 
@@ -67,7 +73,7 @@ const IncorporationPage = () => {
     variables: { name: colonyName, address: '' },
   });
 
-  return (
+  return isFormEditable ? (
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
@@ -109,6 +115,34 @@ const IncorporationPage = () => {
         </div>
       )}
     </Formik>
+  ) : (
+    <div className={getMainClasses({}, styles)} id="expenditurePage">
+      <aside className={styles.sidebar} ref={sidebarRef}>
+        {loading ? (
+          <div className={styles.spinnerContainer}>
+            <SpinnerLoader appearance={{ size: 'medium' }} />
+          </div>
+        ) : (
+          colonyData && (
+            <LockedIncorporationForm
+              sidebarRef={sidebarRef.current}
+              colony={colonyData.processedColony}
+              formValues={formValues}
+            />
+          )
+        )}
+      </aside>
+      <div className={styles.mainContainer}>
+        <main className={styles.mainContent}>
+          <div />
+          <Stages
+            activeStageId={activeStageId}
+            stages={stages}
+            buttonAction={buttonAction}
+          />
+        </main>
+      </div>
+    </div>
   );
 };
 
