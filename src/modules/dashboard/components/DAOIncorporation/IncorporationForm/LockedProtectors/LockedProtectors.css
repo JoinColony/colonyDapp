@@ -1,0 +1,47 @@
+.wrapper {
+  /* border: 1px solid red */
+}
+
+.protectorsLabelWrapper {
+  /* border: 1px solid red */
+}
+
+.label {
+  /* border: 1px solid red */
+}
+
+.userAvatarContainer {
+  /* border: 1px solid red */
+}
+
+.userName {
+  /* border: 1px solid red */
+}
+
+.row {
+  display: flex;
+}
+
+.row label {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--dark) alpha(85%));
+}
+
+.signing {
+  /* border: 1px solid red */
+}
+
+.labelWrapper {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--dark) alpha(85%));
+}
+
+.signOptionWrapper {
+  /* border: 1px solid red */
+}
+
+.signOptionLabel {
+  /* border: 1px solid red */
+}
