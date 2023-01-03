@@ -23,6 +23,8 @@ import {
 } from './constants';
 import { ValuesType } from './types';
 import styles from './IncorporationPage.css';
+import { ValuesType } from './types';
+import LockedIncorporationForm from '~dashboard/DAOIncorporation/IncorporationForm/LockedIncorporationForm';
 
 const displayName = 'pages.IncorporationPage';
 
@@ -38,6 +40,8 @@ const IncorporationPage = () => {
   });
   const [isFormEditable, setFormEditable] = useState(false);
   const [formValues, setFormValues] = useState<ValuesType>(formValuesMock);
+  const [isFormEditable, setFormEditable] = useState(true);
+  const [formValues, setFormValues] = useState<ValuesType>();
   const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStageId, setActiveStageId] = useState(StagesEnum.Payment);
   const sidebarRef = useRef<HTMLElement>(null);
@@ -46,6 +50,9 @@ const IncorporationPage = () => {
 
   const openPayDialog = useDialog(IncorporationPaymentDialog);
 
+  const handleSubmit = useCallback((values) => {
+    setFormValues(values);
+    setFormEditable(false);
   const handleSubmit = useCallback((values) => {
     setFormValues(values);
     setFormEditable(false);
@@ -91,6 +98,10 @@ const IncorporationPage = () => {
       setShouldValidate(true);
     }
   }, [shouldValidate]);
+
+  const { data: colonyData, loading } = useColonyFromNameQuery({
+    variables: { name: colonyName, address: '' },
+  });
 
   return isFormEditable ? (
     <Formik
@@ -140,6 +151,34 @@ const IncorporationPage = () => {
         </div>
       )}
     </Formik>
+  ) : (
+    <div className={getMainClasses({}, styles)} id="expenditurePage">
+      <aside className={styles.sidebar} ref={sidebarRef}>
+        {loading ? (
+          <div className={styles.spinnerContainer}>
+            <SpinnerLoader appearance={{ size: 'medium' }} />
+          </div>
+        ) : (
+          colonyData && (
+            <LockedIncorporationForm
+              sidebarRef={sidebarRef.current}
+              colony={colonyData.processedColony}
+              formValues={formValues}
+            />
+          )
+        )}
+      </aside>
+      <div className={styles.mainContainer}>
+        <main className={styles.mainContent}>
+          <div />
+          <Stages
+            activeStageId={activeStageId}
+            stages={stages}
+            buttonAction={buttonAction}
+          />
+        </main>
+      </div>
+    </div>
   ) : (
     <div className={getMainClasses({}, styles)}>
       <aside className={styles.sidebar} ref={sidebarRef}>
