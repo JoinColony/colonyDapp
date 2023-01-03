@@ -7,7 +7,7 @@ import { LockedExpenditureSettings } from '~dashboard/ExpenditurePage/Expenditur
 import { LockedPayments } from '~dashboard/ExpenditurePage/Payments';
 import LockedSplit from '~dashboard/ExpenditurePage/Split/LockedSplit';
 import LockedStaged from '~dashboard/ExpenditurePage/Staged/LockedStaged/LockedStaged';
-import { Status } from '~dashboard/ExpenditurePage/Stages/constants';
+import { Status } from '~dashboard/ExpenditurePage/Stages/types';
 import LockedStreaming from '~dashboard/ExpenditurePage/Streaming/LockedStreaming';
 import LockedStreamingSettings from '~dashboard/ExpenditurePage/Streaming/LockedStreamingSettings';
 import { Colony } from '~data/index';

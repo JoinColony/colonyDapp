@@ -9,6 +9,3 @@ ganache-accounts.json
 .dappPids.json
 cypress/videos
 cypress/screenshots
-
-.DS_Store
-.vscode/

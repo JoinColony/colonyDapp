@@ -16,13 +16,7 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import Numeral from '~core/Numeral';
 import { INSUFFICIENT_FUNDS_EVENT_TRIGGER } from '~pages/ExpenditurePage/constants';
 
-import {
-  Motion,
-  MotionStatus,
-  MotionType,
-  Stage,
-  Status,
-} from '../../constants';
+import { Motion, MotionStatus, MotionType, Stage, Status } from '../../types';
 import { calculateTokens } from '../../utils';
 
 import { useClaimStreamingPayment } from './hooks';

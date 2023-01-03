@@ -14,7 +14,7 @@ import {
 import { Colony } from '~data/index';
 
 import StageItem from './StageItem';
-import { Motion, MotionStatus, Stage, Status } from './constants';
+import { Motion, MotionStatus, Stage, Status } from './types';
 import Label from './StageItem/Label';
 import StagesButton from './StagesButton';
 import { ClaimFundsOther, ClaimFundsRecipients } from './ClaimFunds';

@@ -4,7 +4,7 @@ import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
 import {
   MotionStatus,
   MotionType,
-} from '~dashboard/ExpenditurePage/Stages/constants';
+} from '~dashboard/ExpenditurePage/Stages/types';
 import { LoggedInUser } from '~data/generated';
 import { Staged as StagedType } from '~dashboard/ExpenditurePage/Staged/types';
 import { Split as SplitType } from '~dashboard/ExpenditurePage/Split/types';

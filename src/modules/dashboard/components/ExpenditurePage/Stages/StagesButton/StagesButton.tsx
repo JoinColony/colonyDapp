@@ -6,7 +6,7 @@ import { Tooltip } from '~core/Popover';
 import Tag from '~core/Tag';
 import { ExpenditureTypes, StageObject } from '~pages/ExpenditurePage/types';
 
-import { Motion, MotionStatus, Stage, Status } from '../constants';
+import { Motion, MotionStatus, Stage, Status } from '../types';
 import { buttonStyles } from '../Stages';
 
 import styles from './StagesButton.css';

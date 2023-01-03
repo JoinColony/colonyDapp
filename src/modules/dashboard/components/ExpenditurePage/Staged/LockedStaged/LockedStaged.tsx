@@ -8,7 +8,7 @@ import Numeral from '~core/Numeral';
 import Tag from '~core/Tag';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
-import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
+import { Stage } from '~dashboard/ExpenditurePage/Stages/types';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import { Colony } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';

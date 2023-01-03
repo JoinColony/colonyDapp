@@ -11,7 +11,7 @@ import { ValuesType } from '~pages/ExpenditurePage/types';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
 
-import { Stage } from '../Stages/constants';
+import { Stage } from '../Stages/types';
 
 import styles from './Split.css';
 

@@ -4,7 +4,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import Link from '~core/Link';
 import Tag from '~core/Tag';
 
-import { MotionStatus } from '../constants';
+import { MotionStatus } from '../types';
 
 import styles from './LinkedMotions.css';
 

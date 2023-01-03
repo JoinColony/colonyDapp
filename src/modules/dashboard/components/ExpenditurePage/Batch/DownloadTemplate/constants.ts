@@ -1,4 +1,6 @@
 /* eslint-disable max-len */
+// This constant is converted into a blob, using Blob() constructor.
+// It is used as a template CSV file in batch payment type.
 export const CSV = [
   `Recipient,Token Contract Address,Amount
 0x0000000000000000000000000000000000000000,0x0000000000000000000000000000000000000000,200000

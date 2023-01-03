@@ -7,7 +7,7 @@ import { useDialog } from '~core/Dialog';
 import { FormSection } from '~core/Fields';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import Icon from '~core/Icon';
-import { Stage } from '~dashboard/ExpenditurePage/Stages/constants';
+import { Stage } from '~dashboard/ExpenditurePage/Stages/types';
 
 import PreviewDialog from '../PreviewDialog';
 import { Batch } from '../types';

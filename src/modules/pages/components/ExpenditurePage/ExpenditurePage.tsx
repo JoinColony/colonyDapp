@@ -25,7 +25,7 @@ import {
   MotionType,
   Stage,
   Status,
-} from '~dashboard/ExpenditurePage/Stages/constants';
+} from '~dashboard/ExpenditurePage/Stages/types';
 import { SpinnerLoader } from '~core/Preloaders';
 import { useLoggedInUser } from '~data/helpers';
 import { useDialog } from '~core/Dialog';

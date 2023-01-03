@@ -73,6 +73,7 @@ interface Props {
   isVotingExtensionEnabled: boolean;
 }
 
+// Mock value, needs to be replaced.
 const fundingSourcesMock = [
   {
     rateToken: {

@@ -17,7 +17,7 @@ import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import Stages from './Stages';
 import StreamingStages from './StreamingStages';
-import { Stage } from './constants';
+import { Stage } from './types';
 import { flattenObject } from './utils';
 import styles from './FormStages.css';
 

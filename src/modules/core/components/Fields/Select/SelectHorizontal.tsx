@@ -2,14 +2,16 @@ import React, { useMemo } from 'react';
 import classNames from 'classnames';
 import { useField } from 'formik';
 
+import {
+  DROPDOWN_HEIGHT,
+  DROPDOWN_ITEM_HEIGHT,
+} from '~core/UserPickerWithSearch/constants';
+
 import InputStatus from '../InputStatus';
 import InputLabel from '../InputLabel';
 
 import Select, { Props as SelectProps } from './Select';
 import styles from './SelectHorizontal.css';
-
-const DROPDOWN_HEIGHT = 160;
-const DROPDOWN_ITEM_HEIGHT = 32;
 
 interface Props extends SelectProps {
   unselectable?: boolean;

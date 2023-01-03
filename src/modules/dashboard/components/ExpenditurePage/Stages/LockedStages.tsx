@@ -10,7 +10,7 @@ import {
 } from '~pages/ExpenditurePage/types';
 import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
 
-import { Motion, MotionStatus, MotionType, Status } from './constants';
+import { Motion, MotionStatus, MotionType, Status } from './types';
 import LinkedMotions from './LinkedMotions';
 import Stages from './Stages';
 import StreamingStagesLocked from './StreamingStages/StreamingStagesLocked';

@@ -7,7 +7,7 @@ import { Colony } from '~data/index';
 import { StageObject, ValuesType } from '~pages/ExpenditurePage/types';
 import Icon from '~core/Icon';
 
-import { Stage, Status } from '../Stages/constants';
+import { Stage, Status } from '../Stages/types';
 import LockedRecipient from '../Recipient/LockedRecipient/LockedRecipient';
 
 import { Recipient as RecipientType } from './types';

@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { Colony } from '~data/index';
 import Icon from '~core/Icon';
 
-import { Stage } from '../Stages/constants';
+import { Stage } from '../Stages/types';
 
 import { FundingSource } from './types';
 import SingleLockedFunding from './SingleLockedFunding';

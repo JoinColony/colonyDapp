@@ -22,7 +22,7 @@ const MSG = defineMessages({
   },
   placeholder: {
     id: 'dashboard.ExpenditurePage.Staged.Milestone.placeholder',
-    defaultMessage: 'Enter Milestone name',
+    defaultMessage: 'Enter milestone name',
   },
 });
 

@@ -46,12 +46,8 @@ const MSG = defineMessages({
   },
 });
 
-const requiredValidationSchema = yup.object().shape({
+const validationSchema = yup.object().shape({
   message: yup.string().trim().min(3).required(),
-});
-
-const defaultValidationSchema = yup.object().shape({
-  message: yup.string().trim().min(3),
 });
 
 type FormValues = {
@@ -64,7 +60,6 @@ interface Props {
   disabled?: boolean;
   callback?: (message: string) => void;
   disabledInputPlaceholder?: MessageDescriptor | string;
-  isRequired?: boolean;
 }
 
 const handleKeyboardSubmit = (
@@ -90,7 +85,6 @@ const CommentInput = ({
   callback,
   disabled,
   disabledInputPlaceholder,
-  isRequired = true,
 }: Props) => {
   const commentBoxRef = useRef<HTMLInputElement>(null);
   const [
@@ -150,9 +144,7 @@ const CommentInput = ({
     <div className={styles.main}>
       <Form
         initialValues={{ message: '' }}
-        validationSchema={
-          isRequired ? requiredValidationSchema : defaultValidationSchema
-        }
+        validationSchema={validationSchema}
         onSubmit={onSubmit}
         validateOnMount
         validateOnBlur
