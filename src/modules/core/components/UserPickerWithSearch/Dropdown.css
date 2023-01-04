@@ -13,7 +13,7 @@
 }
 
 .hasBlueActiveState li:hover {
-  background-color: var(--light-blue);
+  background-color: var(--colony-light-blue);
   color: var(--colony-blue);
 }
 
