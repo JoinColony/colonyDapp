@@ -38,6 +38,7 @@ import {
   colonyMustBeUpgraded,
   oneTxMustBeUpgraded,
 } from '~modules/dashboard/checks';
+import DAOIncorporationDialog from '~dashboard/Dialogs/DAOIncorporationDialog';
 
 const displayName = 'dashboard.ColonyHomeCreateActionsButton';
 
@@ -96,6 +97,7 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         nextStepManageDomains: 'dashboard.ManageDomainsDialog',
         nextStepAdvanced: 'dashboard.AdvancedDialog',
         nextStepManageReputation: 'dashboard.ManageReputationDialog',
+        nextStepDAOInterporation: 'dashboard.DAOIncorporationDialog',
       },
     },
     {
@@ -259,6 +261,9 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         colony,
         isVotingExtensionEnabled,
       },
+    },
+    {
+      component: DAOIncorporationDialog,
     },
   ]);
 

@@ -1,0 +1,161 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.wrapper {
+  padding: var(--pad-large);
+  color: var(--text-invert);
+  animation-name: fadeIn;
+  animation-duration: 500ms;
+}
+
+.costWrapper {
+  composes: wrapper;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.title {
+  margin-bottom: 14px;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--spacing-medium);
+}
+
+.description {
+  font-size: var(--size-normal);
+  letter-spacing: 0.1px;
+}
+
+.note {
+  margin-top: 12px;
+  margin-bottom: 42px;
+}
+
+.noteTransparent {
+  composes: note;
+  color: color-mod(var(--colony-white) alpha(65%));
+}
+
+.benefits {
+  margin-top: 36px;
+  font-size: var(--size-normal);
+}
+
+.benefitItem {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding-bottom: var(--pad-medium);
+}
+
+.benefitItem::before {
+  display: block;
+  margin-right: 8px;
+  height: 4px;
+  width: 4px;
+  border-radius: 50%;
+  background-color: var(--colony-white);
+  color: var(--colony-white);
+  content: '';
+  transform: translate(0, 2px);
+}
+
+/*
+  Target Tag component
+*/
+.wrapper > span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 20px;
+  width: 70px;
+}
+
+.boldText {
+  margin: 0 4px;
+  font-weight: var(--weight-bold);
+  color: var(--colony-white);
+}
+
+.link {
+  font-weight: var(--weight-bold);
+  color: var(--primary);
+}
+
+.stepWrapper {
+  display: flex;
+  align-items: flex-start;
+  line-height: 18px;
+}
+
+.stepWrapper > span {
+  margin-right: 12px;
+  height: 20px;
+  width: 59px;
+  white-space: nowrap;
+}
+
+.stepItem {
+  display: flex;
+  align-items: center;
+  padding-bottom: var(--pad-medium);
+}
+
+.time {
+  display: block;
+  width: 100%;
+  color: color-mod(var(--colony-white) alpha(65%));
+}
+
+.cost {
+  margin-top: 16px;
+  border-top: 1px solid color-mod(var(--action-secondary) alpha(65%));
+}
+
+.costItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+  color: color-mod(var(--colony-white) alpha(65%));
+}
+
+.price {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 17px 15px;
+  height: 62px;
+  width: 255px;
+  border-radius: 22px;
+  background-color: rgba(9, 46, 96, 255);
+  color: var(--colony-white);
+  box-shadow: inset 0px 2px 4px rgba(14, 37, 88, 0.07);
+}
+
+.currency {
+  display: flex;
+  align-items: center;
+}
+
+.currency i {
+  margin-right: 8px;
+}
+
+.priceText {
+  max-width: 150px;
+}
+
+.priceAmount {
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+}

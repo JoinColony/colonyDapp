@@ -31,3 +31,7 @@
   stroke: var(--colony-white);
   cursor: pointer;
 }
+
+.widthUnset {
+  width: unset;
+}
