@@ -2,6 +2,16 @@
 @value lockedPaddingTop: 75px;
 @value paddingRightLeftBottom: 54px;
 
+@keyframes slideDown {
+  0% {
+    max-height: 0;
+  }
+
+  100% {
+    max-height: 180px;
+  }
+}
+
 .container {
   padding: paddingTop paddingRightLeftBottom paddingRightLeftBottom;
 }
@@ -63,23 +73,10 @@
   color: color-mod(var(--dark) alpha(85%));
 }
 
-.namesWrapper {
-  /* border: 1px solid red */
-}
-
-.namesWrapper label {
-  flex: 1;
-  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
-  letter-spacing: var(--spacing-medium);
-}
-
-.description {
-  /* border: 1px solid red */
-}
-
 .descriptionWrapper {
   display: flex;
   align-items: baseline;
+  padding: 12px 0;
 }
 
 .descriptionWrapper label {
@@ -88,7 +85,7 @@
   letter-spacing: var(--spacing-medium);
 }
 
-.descriptionWrapper > div {
+.description {
   flex: 2.5;
   font-size: var(--size-normal);
   font-weight: var(--weight-bold);
@@ -110,4 +107,25 @@
   font-weight: var(--weight-bold);
   color: color-mod(var(--temp-grey-blue-7) alpha(85%));
   letter-spacing: var(--spacing-medium);
+}
+
+.namesWrapper label {
+  flex: 1;
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+  letter-spacing: var(--spacing-medium);
+}
+
+.namesWrapper ul {
+  position: static;
+  overflow: hidden;
+  animation-name: slideDown;
+  animation-duration: 250ms;
+}
+
+.namesWrapper span {
+  font-size: var(--size-smallish);
+}
+
+.namesWrapper li:hover {
+  background-color: transparent;
 }
