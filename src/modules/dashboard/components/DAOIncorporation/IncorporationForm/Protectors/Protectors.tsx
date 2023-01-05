@@ -16,6 +16,7 @@ import Button from '~core/Button';
 
 import Radio from '../Radio';
 import SingleUserPicker from '../SingleUserPicker';
+import { SignOption } from '../constants';
 
 import styles from './Protectors.css';
 
@@ -63,11 +64,6 @@ const displayName = 'dashboard.DAOIncorporation.IncorporationForm.Protectors';
 export interface Props {
   sidebarRef: HTMLElement | null;
   colony: Colony;
-}
-
-export enum SignOption {
-  Individual = 'individual',
-  Multiple = 'multiple',
 }
 
 const Protectors = ({ colony, sidebarRef }: Props) => {
@@ -215,7 +211,7 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
           <Radio
             checked={values.signOption === SignOption.Multiple}
             name="signOption"
-            label={MSG.individual}
+            label={MSG.multiple}
             value={SignOption.Multiple}
           />
         </div>
