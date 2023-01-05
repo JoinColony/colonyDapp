@@ -9,7 +9,7 @@ import styles from './TabPanels.css';
 const MSG = defineMessages({
   title: {
     id: 'dashboard.DAOIncorporationDialog.TabPanels.WhyPanel.title',
-    defaultMessage: 'About incorporation',
+    defaultMessage: 'Why incorporate your DAO',
   },
   description: {
     id: 'dashboard.DAOIncorporationDialog.TabPanels.WhyPanel.description',
