@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { FormSection, InputLabel } from '~core/Fields';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
-import { Colony } from '~data/index';
+import { ValuesType } from '~pages/IncorporationPage/types';
+import UserAvatar from '~core/UserAvatar';
+import UserMention from '~core/UserMention';
+import Tag from '~core/Tag';
+
+import { SignOption, VerificationStatus } from '../constants';
 
 import styles from './LockedProtectors.css';
-import { ValuesType } from '~pages/IncorporationPage/types';
 
 export const MSG = defineMessages({
   protectors: {
@@ -41,19 +45,32 @@ export const MSG = defineMessages({
     id: `dashboard.DAOIncorporation.IncorporationForm.LockedProtectors.signOptionTooltip`,
     defaultMessage: `Decide the requirements as to how many Protectors are required to sign legal documents to enact the decisions of a DAO.`,
   },
+  individual: {
+    id: `dashboard.DAOIncorporation.IncorporationForm.LockedProtectors.individual`,
+    defaultMessage: 'Individual signing',
+  },
+  multiple: {
+    id: `dashboard.DAOIncorporation.IncorporationForm.LockedProtectors.multiple`,
+    defaultMessage: 'All need to sign',
+  },
 });
 
 const displayName = `dashboard.DAOIncorporation.IncorporationForm.LockedProtectors`;
 
 export interface Props {
-  protectors: ValuesType['protectors'];
-  colony: Colony;
+  formValues: ValuesType;
 }
 
-const LockedProtectors = () => {
+const LockedProtectors = ({ formValues }: Props) => {
+  const signLabel = useMemo(() => {
+    return formValues.signOption === SignOption.Individual
+      ? MSG.individual
+      : MSG.multiple;
+  }, [formValues]);
+
   return (
     <>
-      <FormSection appearance={{ border: 'bottom' }}>
+      <FormSection>
         <div className={styles.wrapper}>
           <div className={styles.protectorsLabelWrapper}>
             <div className={styles.label}>
@@ -64,34 +81,64 @@ const LockedProtectors = () => {
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
-        {/* {protectors?.map((protector) => {
+        {formValues.protectors?.map((protector) => {
+          const { profile } = protector || {};
+          const { walletAddress, username, displayName: userDispalyName } =
+            profile || {};
+
           return (
-          <div className={styles.userAvatarContainer}>
-            <UserAvatar address={walletAddress} size="xs" notSet={false} />
-            <div className={styles.userName}>
-              <UserMention username={username || ''} />
+            <div className={styles.row}>
+              <Tag
+                appearance={{
+                  colorSchema: 'fullColor',
+                  theme: protector.verified ? 'primary' : 'danger',
+                }}
+              >
+                {protector.verified
+                  ? VerificationStatus.Verified
+                  : VerificationStatus.Unverified}
+              </Tag>
+              <div className={styles.userAvatarContainer}>
+                <UserAvatar address={walletAddress} size="xs" notSet={false} />
+                <div className={styles.userName}>
+                  <UserMention username={username || userDispalyName || ''} />
+                </div>
+              </div>
             </div>
-          </div>
-        )})} */}
+          );
+        })}
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.row}>
-          <InputLabel label={MSG.mainContact} />
-          {/* <div className={styles.userAvatarContainer}>
-            <UserAvatar address={walletAddress} size="xs" notSet={false} />
+        <div className={styles.mainContactRow}>
+          <div className={styles.labelWrapper}>
+            <InputLabel label={MSG.mainContact} />
+            <QuestionMarkTooltip tooltipText={MSG.mainContactTooltip} />
+          </div>
+          <div className={styles.userAvatarContainer}>
+            <UserAvatar
+              address={formValues.mainContact?.profile.walletAddress || ''}
+              size="xs"
+              notSet={false}
+            />
             <div className={styles.userName}>
-              <UserMention username={username || ''} />
+              <UserMention
+                username={formValues.mainContact?.profile.username || ''}
+              />
             </div>
-          </div> */}
+          </div>
         </div>
       </FormSection>
-      <div className={styles.signOptionWrapper}>
-        <div className={styles.labelWrapper}>
-          <InputLabel label={MSG.signing} />
-          <QuestionMarkTooltip tooltipText={MSG.signOptionTooltip} />
+      <FormSection appearance={{ border: 'bottom' }}>
+        <div className={styles.signOptionWrapper}>
+          <div className={styles.labelWrapper}>
+            <InputLabel label={MSG.signing} />
+            <QuestionMarkTooltip tooltipText={MSG.signOptionTooltip} />
+          </div>
+          <div className={styles.signing}>
+            <FormattedMessage {...signLabel} />
+          </div>
         </div>
-        <div className={styles.signing}>All need to sign</div>
-      </div>
+      </FormSection>
     </>
   );
 };
