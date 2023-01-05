@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { FormSection, InputLabel, SelectHorizontal, Form } from '~core/Fields';
-import { Colony } from '~data/index';
 import Icon from '~core/Icon';
 import { ValuesType } from '~pages/IncorporationPage/types';
 
@@ -40,12 +39,19 @@ export const MSG = defineMessages({
 const displayName = `dashboard.DAOIncorporation.IncorporationForm.LockedIncorporationForm`;
 
 export interface Props {
-  sidebarRef: HTMLElement | null;
-  colony: Colony;
   formValues: ValuesType;
 }
 
-const LockedIncorporationForm = ({ sidebarRef }: Props) => {
+const LockedIncorporationForm = ({ formValues }: Props) => {
+  const alternativeNames = useMemo(
+    () =>
+      formValues.alternativeNames.map((name) => ({
+        label: name,
+        value: name,
+      })),
+    [formValues.alternativeNames],
+  );
+
   return (
     <div className={styles.container}>
       <FormSection appearance={{ border: 'bottom' }}>
@@ -88,9 +94,9 @@ const LockedIncorporationForm = ({ sidebarRef }: Props) => {
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.namesWrapper}>
-          {/* <InputLabel label={MSG.nameLabel} /> */}
-          <Form initialValues={{}} onSubmit={() => {}}>
+        {/* A form is used here because the SelectHorizontal component must be wrapped in a Formik form. It doesn't send data anywhere. */}
+        <Form initialValues={{}} onSubmit={() => {}}>
+          <div className={styles.namesWrapper}>
             <SelectHorizontal
               name="name"
               label={MSG.nameLabel}
@@ -98,30 +104,21 @@ const LockedIncorporationForm = ({ sidebarRef }: Props) => {
                 theme: 'alt',
                 width: 'content',
               }}
-              options={[
-                { label: 'WallStreetBets', value: 'WallStreetBets' },
-                { label: 'WallStreetBets2', value: 'WallStreetBets' },
-              ]}
-              scrollContainer={sidebarRef}
-              placement="bottom"
-              withDropdownElement
-              optionSizeLarge
+              renderActiveOption={() => <>{formValues.name}</>}
+              options={alternativeNames}
               autoHeight
               unselectable
             />
-          </Form>
-        </div>
+          </div>
+        </Form>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.descriptionWrapper}>
           <InputLabel label={MSG.descriptionLabel} />
-          <div className={styles.description}>
-            WallStreetBets is on a mission to deploy decentralized satellites in
-            our skies.
-          </div>
+          <div className={styles.description}>{formValues.purpose}</div>
         </div>
       </FormSection>
-      <LockedProtectors />
+      <LockedProtectors formValues={formValues} />
     </div>
   );
 };
