@@ -28,7 +28,20 @@ class PinataCache {
        * @NOTE That this.cache exists at this point in time, just that TS doesn't
        * realize this as it can't properly deal with async constructor assignments
        */
-      let response = await this.cache?.match(new Request(HASH_URL));
+      let response = await this.cache?.match(
+        new Request(HASH_URL, {
+          /*
+           * CORS setting attributes made to match 'img' element's `crossOrigin` attribute
+           * Note that most likely these won't locally
+           *
+           * See:
+           * https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/crossorigin
+           * https://html.spec.whatwg.org/multipage/urls-and-fetching.html#cors-settings-attributes
+           */
+          mode: 'cors',
+          credentials: 'same-origin',
+        }),
+      );
       /*
        * @NOTE If we don't find the object in the local cache, attempt to get it
        * from the Gateway
@@ -74,7 +87,20 @@ class PinataCache {
          * upload the IPFS blob ourself, in which case, we'll have to request it from
          * the Gateway
          */
-        await this.cache?.add(new Request(HASH_URL));
+        await this.cache?.add(
+          new Request(HASH_URL, {
+            /*
+             * CORS setting attributes made to match 'img' element's `crossOrigin` attribute
+             * Note that most likely these won't locally
+             *
+             * See:
+             * https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/crossorigin
+             * https://html.spec.whatwg.org/multipage/urls-and-fetching.html#cors-settings-attributes
+             */
+            mode: 'cors',
+            credentials: 'same-origin',
+          }),
+        );
       } else {
         /*
          * @NOTE If we have a network response, that means that we've uploaded to IPFS
