@@ -1,0 +1,48 @@
+.step {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 11px;
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.title {
+  margin-bottom: 16px;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.description {
+  font-size: var(--size-normal);
+  color: var(--dark);
+  letter-spacing: 0.1px;
+}
+
+.link {
+  margin: 12px 0;
+}
+
+.link a {
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.paragraph {
+  margin: 12px 0;
+}
+
+.button {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+  padding-top: 28px;
+  border-top: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+  gap: 18px;
+}
+
+.button button {
+  height: 44px;
+  width: 160px;
+}
