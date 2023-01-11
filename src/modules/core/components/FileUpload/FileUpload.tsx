@@ -13,7 +13,7 @@ import { compose } from 'recompose';
 
 import { AsFieldArrayEnhancedProps } from '~core/Fields/asFieldArray';
 import { Appearance } from '~core/Fields/Input/InputComponent';
-import { SimpleMessageValues } from '~types/index';
+import { SimpleMessageValues, UniversalMessageValues } from '~types/index';
 import { withForwardingRef, ForwardedRefProps } from '~utils/hoc';
 
 import DefaultPlaceholder from './DefaultPlaceholder';
@@ -63,7 +63,7 @@ interface Props {
   /** Help text (will appear next to label text) */
   help?: string | MessageDescriptor;
   /** Values for help text (react-intl interpolation) */
-  helpValues?: SimpleMessageValues;
+  helpValues?: UniversalMessageValues;
   /** Element html `id` */
   id?: string;
   /** The component to render each item to be uploaded */

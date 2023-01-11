@@ -1,0 +1,102 @@
+.wrapper {
+  width: 100%;
+}
+
+.step {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 11px;
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.title {
+  margin-bottom: 16px;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.addressWrapper {
+  margin-bottom: 14px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.addressWrapper label {
+  margin-bottom: 14px;
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.addressWrapper label span:last-of-type {
+  display: block;
+  margin-left: 0;
+  margin-top: 4px;
+  color: var(--temp-grey-blue-7);
+}
+
+.addressWrapper textarea::placeholder {
+  font-style: normal;
+  color: var(--temp-grey-blue-7);
+  letter-spacing: var(--spacing-normal);
+}
+
+.addressWrapper p {
+  color: var(--temp-grey-blue-7);
+  letter-spacing: var(--spacing-medium);
+
+  &::before {
+    display: none;
+  }
+}
+
+.fieldWrapper label {
+  margin-bottom: 14px;
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.fieldWrapper label span:last-of-type {
+  display: block;
+  margin-left: 0;
+  margin-top: 4px;
+  color: var(--temp-grey-blue-7);
+}
+
+.fieldWrapper input {
+  height: 44px;
+}
+
+.selectWrapper button {
+  height: 44px;
+}
+
+.selectWrapper label {
+  margin-bottom: 14px;
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.uploadWrapper p {
+  color: var(--temp-grey-blue-7);
+  letter-spacing: var(--spacing-medium);
+
+  &::before {
+    display: none;
+  }
+}
+
+.uploadWrapper label span:last-of-type {
+  display: block;
+  margin-left: 0;
+  margin-top: 4px;
+  color: var(--temp-grey-blue-7);
+}
+
+.uploadWrapper label {
+  margin-bottom: 14px;
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}

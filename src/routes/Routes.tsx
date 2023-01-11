@@ -56,12 +56,14 @@ import {
   UNWRAP_TOKEN_ROUTE,
   CLAIM_TOKEN_ROUTE,
   EXPENDITURE_ROUTE,
+  VERIFICATION_ROUTE,
 } from './routeConstants';
 
 import AlwaysAccesibleRoute from './AlwaysAccesibleRoute';
 import WalletRequiredRoute from './WalletRequiredRoute';
 import { useTitle } from '~utils/hooks/useTitle';
 import ExpenditurePage from '~pages/ExpenditurePage';
+import VerificationPage from '~pages/VerificationPage';
 
 const MSG = defineMessages({
   userProfileEditBack: {
@@ -269,6 +271,11 @@ const Routes = () => {
               colonyName,
             }),
           })}
+        />
+        <AlwaysAccesibleRoute
+          path={VERIFICATION_ROUTE}
+          component={VerificationPage}
+          layout={SimpleNav}
         />
         {/*
          * Redirect anything else that's not found to the 404 route
