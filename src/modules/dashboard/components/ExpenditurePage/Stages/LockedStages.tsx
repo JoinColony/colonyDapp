@@ -3,14 +3,17 @@ import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 
 import Tag from '~core/Tag';
 import { Colony } from '~data/index';
-import { State } from '~pages/ExpenditurePage/types';
-
+import {
+  ExpenditureTypes,
+  StageObject,
+  ValuesType,
+} from '~pages/ExpenditurePage/types';
 import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
-import { Recipient } from '../Payments/types';
 
-import { Motion, MotionStatus, MotionType, Status } from './constants';
+import { Motion, MotionStatus, MotionType, Status } from './types';
 import LinkedMotions from './LinkedMotions';
 import Stages from './Stages';
+import StreamingStagesLocked from './StreamingStages/StreamingStagesLocked';
 import styles from './Stages.css';
 
 const MSG = defineMessages({
@@ -27,32 +30,36 @@ const MSG = defineMessages({
 const displayName = 'dashboard.ExpenditurePage.Stages.LockedStages';
 
 interface Props {
-  states: State[];
-  setActiveStateId?: React.Dispatch<React.SetStateAction<string | undefined>>;
-  activeStateId?: string;
+  stages: StageObject[];
+  setActiveStageId?: React.Dispatch<React.SetStateAction<string | undefined>>;
+  activeStageId?: string;
   motion?: Motion;
   status?: Status;
   handleCancelExpenditure?: () => void;
-  recipients?: Recipient[];
   colony: Colony;
+  expenditureType?: ExpenditureTypes;
+  formValues?: ValuesType;
 }
 
 const LockedStages = ({
-  states,
-  activeStateId,
-  setActiveStateId,
+  stages,
+  activeStageId,
+  setActiveStageId,
   motion,
   status,
   handleCancelExpenditure,
-  recipients,
+  formValues,
   colony,
+  expenditureType,
 }: Props) => {
-  const activeState = states.find((state) => state.id === activeStateId);
+  const activeStage = stages.find((stage) => stage.id === activeStageId);
   const { formatMessage } = useIntl();
+  const isStreamingPaymentType =
+    formValues?.expenditure === ExpenditureTypes.Streaming;
 
   const handleButtonClick = useCallback(async () => {
-    activeState?.buttonAction();
-  }, [activeState]);
+    activeStage?.buttonAction();
+  }, [activeStage]);
 
   const formattedLabel = useMemo(
     () => (text: string | MessageDescriptor | undefined): string => {
@@ -72,7 +79,7 @@ const LockedStages = ({
 
   return (
     <div className={styles.tagStagesWrapper}>
-      {motion?.status === MotionStatus.Pending && (
+      {motion?.status === MotionStatus.Pending && !isStreamingPaymentType && (
         <Tag
           appearance={{
             theme: 'golden',
@@ -83,28 +90,41 @@ const LockedStages = ({
           motion.status === MotionStatus.Pending
             ? formatMessage(MSG.activeMotion)
             : formatMessage(MSG.motion, {
-                action: formattedLabel(activeState?.buttonText),
+                action: formattedLabel(activeStage?.buttonText),
               })}
         </Tag>
       )}
-      <Stages
-        {...{
-          states,
-          activeStateId,
-          setActiveStateId,
-          handleButtonClick,
-          motion,
-          status,
-          handleCancelExpenditure,
-          recipients,
-          colony,
-        }}
-      />
+      {isStreamingPaymentType ? (
+        <StreamingStagesLocked
+          status={status}
+          motion={motion}
+          colony={colony}
+          activeStageId={activeStageId}
+          handleCancelExpenditure={handleCancelExpenditure}
+          fundingSources={formValues?.streaming?.fundingSources}
+        />
+      ) : (
+        <Stages
+          {...{
+            stages,
+            activeStageId,
+            setActiveStageId,
+            handleButtonClick,
+            motion,
+            status,
+            handleCancelExpenditure,
+            formValues,
+            colony,
+            expenditureType,
+          }}
+        />
+      )}
       {motion && (
-        // motion link needs to be changed and redirects to actual motions page
         <LinkedMotions
           status={motion.status}
           motion={motion.type}
+          // The id and the link are hardcoded, they should be replaced with actual values.
+          // Link should redirect to the motion page
           motionLink={LANDING_PAGE_ROUTE}
           id="25"
         />

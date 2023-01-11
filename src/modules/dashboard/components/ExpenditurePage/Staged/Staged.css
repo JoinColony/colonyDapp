@@ -1,0 +1,141 @@
+@value paddingRightLeft: 54px;
+
+.stagedContainer {
+  padding: 0 paddingRightLeft 80px;
+}
+
+.stagedContainer > section:first-child {
+  display: flex;
+  justify-content: space-between;
+}
+
+.label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 6px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: color-mod(var(--dark) alpha(85%));
+}
+
+.user {
+  padding: 7px 0;
+}
+
+.user label {
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
+.user i {
+  transform: translateX(7px);
+}
+
+.valueContainer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-top: 11px;
+}
+
+.valueContainer .container {
+  width: 100%;
+}
+
+.valueContainer label {
+  margin-bottom: 0;
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
+.valueContainer input {
+  padding: 0;
+  height: 42px;
+  width: 100%;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(65%));
+}
+
+.inputContainer {
+  margin-right: 15px;
+  width: 100%;
+}
+
+.inputContainer button {
+  padding-left: 0;
+  right: unset;
+  bottom: 4px;
+  left: 0;
+  font-size: var(--size-small);
+}
+
+.inputContainer input {
+  padding: 20px 0 4px;
+  height: 42px;
+  font-size: var(--size-normal);
+  color: var(--dark);
+}
+
+.inputContainer input::placeholder {
+  color: var(--dark);
+}
+
+.tokenWrapper {
+  margin-top: 21px;
+}
+
+.reserveWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 45px;
+  width: 100%;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+  letter-spacing: 0.5px;
+}
+
+.reserveBar {
+  margin: 0 10px 0 30px;
+  height: 14px;
+  width: 184px;
+  position: relative;
+  border-radius: 7px;
+  background-color: var(--colony-white);
+  box-shadow: inset 0px 2px 4px rgba(14, 37, 88, 0.07);
+}
+
+.reserveIndicator {
+  height: 14px;
+  position: absolute;
+  left: 0;
+  border-radius: 7px;
+  background-color: color-mod(var(--golden) alpha(85%));
+}
+
+.sliderWrapper > span {
+  justify-self: end;
+}
+
+.addLabel {
+  display: flex;
+  align-items: center;
+  padding-top: 4px;
+}
+
+.circlePlusIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  width: 30px;
+  transform: translateX(-8px);
+  fill: var(--action-secondary);
+}
+
+.percent {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--dark) alpha(85%));
+  letter-spacing: 0.5px;
+}

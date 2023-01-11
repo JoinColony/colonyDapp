@@ -1,10 +1,27 @@
-import { isEqual, uniq, isEmpty, assign, isNil } from 'lodash';
+import { isEqual, uniq, isEmpty, assign, isNil, merge } from 'lodash';
 import { nanoid } from 'nanoid';
+
+import { DelayTime, ExpenditureTypes } from './types';
 
 interface Delay {
   amount?: string;
   time: string;
 }
+
+export const isExpenditureType = (
+  name: string | null,
+): name is ExpenditureTypes => {
+  if (!name) {
+    return false;
+  }
+
+  return (
+    name === ExpenditureTypes.Advanced ||
+    name === ExpenditureTypes.Split ||
+    name === ExpenditureTypes.Staged ||
+    name === ExpenditureTypes.Streaming
+  );
+};
 
 const isDelayType = (obj: any): obj is Delay => {
   return (
@@ -13,15 +30,29 @@ const isDelayType = (obj: any): obj is Delay => {
   );
 };
 
-const timeMultiplier = (time: 'hours' | 'days' | 'months') => {
+export const isDelayTimeType = (time?: string): time is DelayTime => {
+  if (!time) {
+    return false;
+  }
+  if (
+    time === DelayTime.Hours ||
+    time === DelayTime.Days ||
+    time === DelayTime.Months
+  ) {
+    return true;
+  }
+  return false;
+};
+
+const timeMultiplier = (time: DelayTime) => {
   switch (time) {
-    case 'hours': {
+    case DelayTime.Hours: {
       return 3600;
     }
-    case 'days': {
+    case DelayTime.Days: {
       return 86400;
     }
-    case 'months': {
+    case DelayTime.Months: {
       return 2629743.83;
     }
     default: {
@@ -33,7 +64,10 @@ const timeMultiplier = (time: 'hours' | 'days' | 'months') => {
 export const getTimeDifference = ({
   amount,
   time,
-}: GetTimeDifferenceParameters): number => {
+}: {
+  amount: string;
+  time: DelayTime;
+}): number => {
   const multiplicator = timeMultiplier(time);
 
   return Number(amount) * multiplicator;
@@ -42,10 +76,86 @@ export const getTimeDifference = ({
 export const setClaimDate = ({
   amount,
   time,
-}: GetTimeDifferenceParameters): number => {
+}: GetTimeDifferenceParameters): number | undefined => {
+  if (!isDelayTimeType(time)) {
+    return undefined;
+  }
+
   const differenceInSeconds = getTimeDifference({ amount, time });
   const currentDate = new Date();
   return currentDate.setSeconds(currentDate.getSeconds() + differenceInSeconds);
+};
+
+const skip = [
+  'id',
+  'claimed',
+  'isExpanded',
+  'removed',
+  'created',
+  'isChanged',
+  'claimDate',
+  'expenditure',
+];
+
+const checkArray = (newArray, oldArray) => {
+  const allIds = uniq([
+    ...newArray?.map((val) => val.id),
+    ...oldArray?.map((val) => val.id),
+  ]);
+
+  const changes = allIds
+    .map((id) => {
+      const newValueById = newArray?.find((val) => val.id === id);
+      const oldValueById = oldArray?.find((val) => val.id === id);
+
+      if (!newValueById && oldValueById) {
+        // value has been removed, so we set removed field to true
+        return { id, removed: true };
+      }
+
+      if (newValueById && !oldValueById) {
+        // value has been added, so we set created field to true
+        return { ...newValueById, created: true };
+      }
+
+      if (typeof newValueById === 'object') {
+        const change = Object.entries(newValueById).reduce(
+          (acc, [currKey, currVal]) => {
+            // we don't want to check if 'isExpanded', 'id', etc. have been changed
+            if (skip.includes(currKey)) {
+              return acc;
+            }
+
+            // if delay amount hasn't been set
+            if (currKey === 'delay' && isDelayType(currVal)) {
+              if (
+                isEmpty(currVal.amount) &&
+                isEmpty(oldValueById[currKey].amount)
+              ) {
+                return acc;
+              }
+            }
+            if (!isEqual(currVal, oldValueById[currKey])) {
+              return { ...acc, ...{ [currKey]: currVal } };
+            }
+
+            return acc;
+          },
+          {},
+        );
+
+        return isEmpty(change) ? undefined : { id, ...change };
+      }
+
+      if (!isEqual(newValueById, oldValueById)) {
+        return newValueById;
+      }
+
+      return undefined;
+    })
+    .filter((change) => !!change);
+
+  return changes;
 };
 
 export const findDifferences = (
@@ -58,7 +168,7 @@ export const findDifferences = (
 
   const allKeys = uniq([...Object.keys(newValues), ...Object.keys(oldValues)]);
 
-  const differentValues = allKeys.reduce((result, key) => {
+  const differentValues = allKeys?.reduce((result, key) => {
     if (key === 'id') {
       return result;
     }
@@ -66,67 +176,36 @@ export const findDifferences = (
     const oldValue = oldValues[key];
     const newValue = newValues[key];
 
+    if (key === ExpenditureTypes.Batch) {
+      if (!isEqual(oldValue?.data, newValue?.data)) {
+        return { ...result, batch: newValue };
+      }
+      return result;
+    }
+
     if (Array.isArray(newValue)) {
-      const allIds = uniq([
-        ...newValue.map((val) => val.id),
-        ...oldValue.map((val) => val.id),
-      ]);
-      const changes = allIds
-        .map((id, index) => {
-          const newValueById = newValue.find((val) => val.id === id);
-          const oldValueById = oldValue.find((val) => val.id === id);
-
-          if (!newValueById && oldValueById) {
-            // value has been removed, so we set removed field to true
-            return { id, removed: true };
-          }
-
-          if (newValueById && !oldValueById) {
-            // value has been added, so we set created field to true
-            return { ...newValueById, created: true };
-          }
-
-          // check each value in an object
-          if (typeof newValueById === 'object') {
-            const change = Object.entries(newValueById).reduce(
-              (acc, [currKey, currVal]) => {
-                const initialVal = oldValue[index][currKey];
-
-                // we don't want to check if 'isExpanded' and 'id' have been changed
-                if (currKey === 'isExpanded' || currKey === 'id') {
-                  return acc;
-                }
-
-                // if delay amount hasn't been set
-                if (currKey === 'delay' && isDelayType(currVal)) {
-                  if (isEmpty(currVal.amount) && isEmpty(initialVal.amount)) {
-                    return acc;
-                  }
-                }
-
-                if (!isEqual(currVal, initialVal)) {
-                  return { ...acc, ...{ [currKey]: currVal } };
-                }
-
-                return acc;
-              },
-              {},
-            );
-
-            return Object.keys(change).length > 0
-              ? { id, ...change }
-              : undefined;
-          }
-
-          if (!isEqual(newValueById, oldValueById)) {
-            return newValueById;
-          }
-
-          return undefined;
-        })
-        .filter((change) => !!change);
+      const changes = checkArray(newValue, oldValue);
 
       return changes.length > 0 ? { ...result, ...{ [key]: changes } } : result;
+    }
+
+    if (typeof newValue === 'object' && typeof oldValue === 'object') {
+      const change = Object.entries(newValue).reduce(
+        (acc, [currKey, currVal]) => {
+          if (Array.isArray(currVal)) {
+            const changes = checkArray(currVal, oldValue[currKey]);
+            // all rates are compared together
+            return { ...acc, ...(!isEmpty(changes) && { [currKey]: changes }) };
+          }
+          if (!isEqual(currVal, oldValue[currKey])) {
+            return { ...acc, ...{ [currKey]: currVal } };
+          }
+
+          return acc;
+        },
+        {},
+      );
+      return { ...result, ...(!isEmpty(change) && { [key]: change }) };
     }
 
     if (!isEqual(oldValue, newValue)) {
@@ -187,7 +266,7 @@ export const updateValues = (values, confirmedValues) => {
                 amount: newRecip.delay.amount,
                 time: newRecip.delay.time,
               })
-            : new Date(),
+            : new Date().getTime(),
         })),
       ].filter((rec) => !rec.removed),
     };
@@ -204,14 +283,200 @@ export const updateValues = (values, confirmedValues) => {
       },
       {},
     );
-    const here = assign({}, newValues, newConfirmed);
 
-    return here;
+    return assign({}, newValues, newConfirmed);
   }
-  return assign({}, values, confirmedValues);
+
+  if ('split' in confirmedValues) {
+    const changedRecipients = values.split.recipients.filter((recipient) =>
+      confirmedValues.split.recipients.find(
+        (confRec) => confRec.id === recipient.id,
+      ),
+    );
+
+    const sameRecipients = values.split.recipients.filter((recipient) =>
+      confirmedValues.split.recipients.every(
+        (confRec) => confRec.id !== recipient.id,
+      ),
+    );
+
+    const newRecipients = confirmedValues.split.recipients.filter(
+      (value) => value.created,
+    );
+
+    const confirmedRecipients = [
+      ...sameRecipients,
+      ...changedRecipients.map((recipient) => {
+        const newValue = confirmedValues.split.recipients.find(
+          (recip) => recip.id === recipient.id,
+        );
+
+        return {
+          ...recipient,
+          ...newValue,
+          key: nanoid(),
+          isChanged: true,
+        };
+      }),
+      ...newRecipients.map((newRecip) => ({
+        ...newRecip,
+        created: undefined,
+        isChanged: true,
+        key: nanoid(),
+      })),
+    ].filter((rec) => !rec.removed);
+
+    const newValues = merge({}, values, confirmedValues);
+
+    return {
+      ...newValues,
+      split: { ...newValues.split, recipients: confirmedRecipients },
+    };
+  }
+
+  if ('staged' in confirmedValues) {
+    // milestones that have been changed
+    const changedMilestones = values.staged.milestones.filter((milestone) =>
+      confirmedValues.staged.milestones?.find(
+        (confMilestone) => confMilestone.id === milestone.id,
+      ),
+    );
+
+    // milestones without any changes
+    const sameMilestones = values.staged.milestones.filter((milestone) => {
+      if (
+        !confirmedValues.staged.milestones ||
+        !confirmedValues.staged.milestones?.length
+      ) {
+        return true;
+      }
+      return confirmedValues.staged.milestones?.every(
+        (confirmedMilestone) => confirmedMilestone.id !== milestone.id,
+      );
+    });
+
+    // newly created milestones
+    const newMilestones =
+      confirmedValues.staged.milestones?.filter((value) => value.created) || [];
+
+    // 'confirmedMilestones' is an array with updated milestones. It is composed of:
+    // - milestones that haven't changed
+    // - updated milestones
+    // - newly created milestones.
+    // And we need to filter out deleted items (with 'removed' property set to true)
+    const confirmedMilestones = [
+      ...sameMilestones,
+      ...changedMilestones?.map((milestone) => {
+        const newValue = confirmedValues.staged.milestones?.find(
+          (confirmedMilestone) => confirmedMilestone.id === milestone.id,
+        );
+
+        return {
+          ...milestone,
+          ...newValue,
+          key: nanoid(),
+          isChanged: true,
+        };
+      }),
+      ...newMilestones?.map((newMilestone) => ({
+        ...newMilestone,
+        created: undefined,
+        isChanged: true,
+        key: nanoid(),
+      })),
+    ].filter((milestone) => !milestone.removed);
+
+    const newValues = merge({}, values, confirmedValues);
+
+    return {
+      ...newValues,
+      staged: { ...newValues.staged, milestones: confirmedMilestones },
+    };
+  }
+
+  if ('batch' in confirmedValues) {
+    const newValues = merge({}, values, confirmedValues);
+
+    return {
+      ...newValues,
+      batch: confirmedValues.batch,
+    };
+  }
+
+  if ('streaming' in confirmedValues) {
+    // fundingSources that have been changed
+    const changedFundingSources = values.streaming.fundingSources.filter(
+      (fundingSource) =>
+        confirmedValues.streaming.fundingSources?.find(
+          (confFundingSources) => confFundingSources.id === fundingSource.id,
+        ),
+    );
+
+    // fundingSources without any changes
+    const sameFundingSources = values.streaming.fundingSources.filter(
+      (fundingSource) => {
+        if (
+          !confirmedValues.streaming.fundingSources ||
+          !confirmedValues.streaming.fundingSources?.length
+        ) {
+          return true;
+        }
+        return confirmedValues.streaming.fundingSources?.every(
+          (confirmedFundingSource) =>
+            confirmedFundingSource.id !== fundingSource.id,
+        );
+      },
+    );
+
+    // newly created fundingSources
+    const newFundingSources =
+      confirmedValues.streaming.fundingSources?.filter(
+        (value) => value.created,
+      ) || [];
+
+    // 'confirmedFundingSources' is an array with updated fundingSources. It is composed of:
+    // - fundingSources that haven't changed
+    // - updated fundingSources
+    // - newly created fundingSources.
+    // And we need to filter out deleted items (with 'removed' property set to true)
+    const confirmedFundingSources = [
+      ...sameFundingSources,
+      ...changedFundingSources?.map((fundingSource) => {
+        const newValue = confirmedValues.streaming.fundingSources?.find(
+          (confirmedFundingSource) =>
+            confirmedFundingSource.id === fundingSource.id,
+        );
+
+        return {
+          ...fundingSource,
+          ...newValue,
+          key: nanoid(),
+          isChanged: true,
+        };
+      }),
+      ...newFundingSources?.map((newFundingSource) => ({
+        ...newFundingSource,
+        created: undefined,
+        isChanged: true,
+        key: nanoid(),
+      })),
+    ].filter((fundingSource) => !fundingSource.removed);
+
+    const newValues = merge({}, values, confirmedValues);
+
+    return {
+      ...newValues,
+      streaming: {
+        ...newValues.streaming,
+        fundingSources: confirmedFundingSources,
+      },
+    };
+  }
+
+  return merge({}, values, confirmedValues);
 };
 
 type GetTimeDifferenceParameters = {
   amount: string;
-  time: 'hours' | 'days' | 'months';
+  time: string;
 };

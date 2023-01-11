@@ -1,0 +1,129 @@
+import { uniqBy } from 'lodash';
+import { useEffect, useMemo, useState } from 'react';
+
+import apolloClient from '~context/apolloClient';
+import {
+  Token,
+  TokenDocument,
+  TokenQuery,
+  TokenQueryVariables,
+} from '~data/index';
+import { AddressElements, splitAddress } from '~utils/strings';
+
+import { BatchDataItem } from './types';
+
+export const useCalculateBatchPayment = (
+  setProcessingData: React.Dispatch<React.SetStateAction<boolean>>,
+  data?: BatchDataItem[],
+) => {
+  const [uniqTokens, setUniqTokens] = useState<
+    (
+      | Pick<
+          Token,
+          'symbol' | 'id' | 'address' | 'iconHash' | 'decimals' | 'name'
+        >
+      | undefined
+    )[]
+  >();
+
+  useEffect(() => {
+    const fetchTokens = async () => {
+      setProcessingData(true);
+      const uniq = uniqBy(data, 'token');
+      const tokensData = await Promise.all(
+        uniq
+          .map(async ({ token }) => {
+            if (!token) {
+              return undefined;
+            }
+
+            try {
+              const { data: tokenData } = await apolloClient.query<
+                TokenQuery,
+                TokenQueryVariables
+              >({
+                query: TokenDocument,
+                variables: { address: token },
+              });
+              return tokenData && tokenData.token;
+            } catch (error) {
+              return undefined;
+            }
+          })
+          .filter((token) => !!token),
+      );
+      setUniqTokens(tokensData);
+      setProcessingData(false);
+    };
+    fetchTokens();
+  }, [data, setProcessingData]);
+
+  return useMemo(() => {
+    if (!data || !uniqTokens || !uniqTokens.length) {
+      return null;
+    }
+
+    const validatedData = data.map(({ recipient, amount, token }) => {
+      const correctRecipient = recipient && splitAddress(recipient);
+      const correctToken = uniqTokens?.find(
+        (tokenItem) => tokenItem?.id === token,
+      );
+      return {
+        recipient,
+        amount,
+        token: correctToken || undefined,
+        error: correctRecipient instanceof Error || !correctToken,
+      };
+    });
+
+    const filteredData = data.filter((item) => {
+      if (!item.recipient || !item.amount || !item.token) {
+        return false;
+      }
+
+      const correctRecipient: AddressElements | Error = splitAddress(
+        item.recipient,
+      );
+      const correctToken = uniqTokens?.find(
+        (tokenItem) => tokenItem?.id === item.token,
+      );
+      return (
+        !!item.amount && !(correctRecipient instanceof Error) && correctToken
+      );
+    });
+
+    const amount = filteredData.reduce((acc, item) => {
+      if (!item || !item.token) {
+        return acc;
+      }
+
+      if (item.token in acc) {
+        return {
+          ...acc,
+          [item.token]: acc[item.token] + Number(item.amount),
+        };
+      }
+      return { ...acc, [item.token]: Number(item.amount) };
+    }, {});
+
+    const tokens = Object.entries(amount || {})?.map(
+      ([tokenId, tokenValue]) => {
+        const token = uniqTokens?.find(
+          (tokenItem) => tokenItem?.id === tokenId,
+        );
+
+        return {
+          value: Number(tokenValue),
+          token,
+        };
+      },
+    );
+
+    return {
+      tokens,
+      recipientsCount: filteredData.length,
+      invalidRows: data.length !== filteredData.length,
+      validatedData,
+    };
+  }, [data, uniqTokens]);
+};

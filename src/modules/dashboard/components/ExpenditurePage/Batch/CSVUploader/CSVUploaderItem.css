@@ -1,0 +1,29 @@
+.main {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.fileName {
+  align-items: center;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
+
+.clear {
+  composes: themeBlue from '~core/Button/Button.css';
+  transform: translate(120px, -47px);
+}
+
+.placeholderWrapper {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: var(--weight-bold);
+  color: var(--action-secondary);
+}
+
+.placeholderWrapper > div {
+  margin-right: 10px;
+}

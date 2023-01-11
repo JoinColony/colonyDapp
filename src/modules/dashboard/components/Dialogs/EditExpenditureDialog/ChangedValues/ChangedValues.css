@@ -11,32 +11,65 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 27px 0 8px;
-  font-size: var(--size-normal);
+  padding-top: 20px;
+  font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   line-height: 18px;
-  color: color-mod(var(--dark) alpha(85%));
-}
-
-.changeContainer button {
-  padding: 0;
-  height: auto;
-  color: var(--action-secondary);
-}
-
-.changeItem {
-  padding: 11px 0 12px;
-  font-size: var(--size-smallish);
-  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+  color: var(--dark);
   letter-spacing: var(--spacing-medium);
 }
 
-.changeWrapper {
-  max-width: 70%;
-  overflow: hidden;
+.row {
+  display: grid;
+  align-items: center;
+  padding: 8px 0;
   font-size: var(--size-normal);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: color-mod(var(--dark) alpha(85%));
-  letter-spacing: 0.1px;
+  font-weight: var(--weight-normal);
+  line-height: 18px;
+  color: var(--dark);
+  grid-template-columns: 4.5fr 1fr 4.5fr;
+  grid-template-rows: auto;
+}
+
+.arrowIcon {
+  height: 16px;
+  width: 16px;
+  color: color-mod(var(--dark) alpha(65%));
+  justify-self: center;
+}
+
+.left {
+  max-width: 90%;
+  overflow: hidden;
+  justify-self: start;
+  opacity: 0.5;
+}
+
+.right {
+  max-width: 90%;
+  overflow: hidden;
+  justify-self: end;
+}
+
+.buttonWrappper {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.discard {
+  composes: main from '~core/Button/Button.css';
+  padding: 0;
+  height: auto;
+  font-size: var(--size-smallish);
+  font-weight: 600;
+  color: var(--action-secondary);
+}
+
+.subheader {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-weight: var(--weight-bold);
+  color: var(--dark);
 }

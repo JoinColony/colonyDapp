@@ -1,9 +1,11 @@
-import React from 'react';
-import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
-import Link from '~core/Link';
+import React, { useMemo } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
+import Link from '~core/Link';
 import Tag from '~core/Tag';
-import { MotionStatus } from '../constants';
+
+import { MotionStatus } from '../types';
+
 import styles from './LinkedMotions.css';
 
 const MSG = defineMessages({
@@ -39,7 +41,18 @@ interface Props {
 }
 
 const LinkedMotions = ({ status, motionLink, motion, id }: Props) => {
-  const { formatMessage } = useIntl();
+  const tagOptions = useMemo(() => {
+    switch (status) {
+      case MotionStatus.Pending:
+        return { text: MSG.motion, color: undefined };
+      case MotionStatus.Passed:
+        return { text: MSG.passed, color: styles.passedColor };
+      case MotionStatus.Failed:
+        return { text: MSG.failed, color: styles.failedColor };
+      default:
+        return { text: '', color: undefined };
+    }
+  }, [status]);
 
   return (
     <div className={styles.wrapper}>
@@ -52,24 +65,22 @@ const LinkedMotions = ({ status, motionLink, motion, id }: Props) => {
         </div>
       </div>
       <div className={styles.statusWrapper}>
-        {formatMessage(MSG.foundExp, { motion, id })}
-        {status === MotionStatus.Pending && motionLink ? (
+        {motionLink ? (
           <Link to={motionLink} className={styles.link}>
-            <FormattedMessage {...MSG.motion} />
+            <FormattedMessage {...MSG.foundExp} values={{ motion, id }} />
           </Link>
         ) : (
-          <Tag
-            text={status === MotionStatus.Passed ? MSG.passed : MSG.failed}
-            data-test="deprecatedStatusTag"
-            style={{
-              color:
-                status === MotionStatus.Passed
-                  ? styles.passedColor
-                  : styles.failedColor,
-            }}
-            appearance={{ theme: 'light' }}
-          />
+          <FormattedMessage {...MSG.foundExp} values={{ motion, id }} />
         )}
+        <Tag
+          text={tagOptions.text}
+          style={{
+            color: tagOptions.color,
+          }}
+          appearance={{
+            theme: status === MotionStatus.Pending ? 'primary' : 'light',
+          }}
+        />
       </div>
     </div>
   );

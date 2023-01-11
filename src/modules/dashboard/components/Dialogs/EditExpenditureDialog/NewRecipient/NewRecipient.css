@@ -1,13 +1,6 @@
 .row {
   composes: row from '../EditExpenditureDialogForm.css';
-}
-
-.label {
-  composes: label from '../NewDelay/NewDelay.css';
-}
-
-.smallerPadding {
-  padding: 4px 0 8px;
+  padding: 8px 0;
 }
 
 .valueContainer {
@@ -22,4 +15,9 @@
 .userAvatarContainer > span {
   margin-left: 8px;
   font-size: var(--size-normal);
+}
+
+.userAvatarContainer figure {
+  height: 24px;
+  width: 24px;
 }

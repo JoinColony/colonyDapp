@@ -6,16 +6,18 @@ import classNames from 'classnames';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import { State } from '~pages/ExpenditurePage/types';
+import {
+  ExpenditureTypes,
+  StageObject,
+  ValuesType,
+} from '~pages/ExpenditurePage/types';
 import { Colony } from '~data/index';
 
-import { Recipient } from '../Payments/types';
-
 import StageItem from './StageItem';
-import { Motion, MotionStatus, Stage, Status } from './constants';
-import ClaimFunds from './ClaimFunds';
+import { Motion, MotionStatus, Stage, Status } from './types';
 import Label from './StageItem/Label';
 import StagesButton from './StagesButton';
+import { ClaimFundsOther, ClaimFundsRecipients } from './ClaimFunds';
 import styles from './Stages.css';
 
 const MSG = defineMessages({
@@ -70,29 +72,31 @@ export const buttonStyles = {
 };
 
 export interface Props {
-  states: State[];
-  activeStateId?: string;
+  stages: StageObject[];
+  activeStageId?: string;
   handleDeleteDraft?: () => void;
   handleSaveDraft?: () => void;
   handleButtonClick: () => void;
   status?: Status;
   motion?: Motion;
   handleCancelExpenditure?: () => void;
-  recipients?: Recipient[];
   colony: Colony;
+  buttonDisabled?: boolean;
+  formValues?: ValuesType;
 }
 
 const Stages = ({
-  states,
-  activeStateId,
+  stages,
+  activeStageId,
   handleDeleteDraft,
   handleSaveDraft,
   handleButtonClick,
   status,
   motion,
   handleCancelExpenditure,
-  recipients,
   colony,
+  buttonDisabled,
+  formValues,
 }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
@@ -107,26 +111,41 @@ const Stages = ({
     userFeedbackTimer,
   ]);
 
-  const activeIndex = states.findIndex((state) => state.id === activeStateId);
-  const activeState = states.find((state) => state.id === activeStateId);
+  const activeIndex = stages.findIndex((stage) => stage.id === activeStageId);
+  const activeStage = stages.find((stage) => stage.id === activeStageId);
   const isLogedIn = true;
 
   const isCancelled =
     status === Status.Cancelled || status === Status.ForceCancelled;
 
+  const claimFundsVisible =
+    isLogedIn &&
+    activeStageId === Stage.Released &&
+    status !== Status.Cancelled;
+
   return (
     <div className={styles.mainContainer}>
-      {isLogedIn &&
-        activeStateId === Stage.Released &&
-        status !== Status.Cancelled && (
-          <ClaimFunds
-            recipients={recipients}
-            colony={colony}
-            buttonAction={activeState?.buttonAction}
-            buttonText={activeState?.buttonText}
-            isDisabled={motion?.status === MotionStatus.Pending}
-          />
-        )}
+      {claimFundsVisible && formValues && (
+        <>
+          {formValues.expenditure === ExpenditureTypes.Advanced ? (
+            <ClaimFundsRecipients
+              recipients={formValues.recipients}
+              colony={colony}
+              buttonAction={activeStage?.buttonAction}
+              buttonText={activeStage?.buttonText}
+              isDisabled={motion?.status === MotionStatus.Pending}
+            />
+          ) : (
+            <ClaimFundsOther
+              formValues={formValues}
+              colony={colony}
+              buttonAction={activeStage?.buttonAction}
+              buttonText={activeStage?.buttonText}
+              isDisabled={motion?.status === MotionStatus.Pending}
+            />
+          )}
+        </>
+      )}
       <div
         className={classNames(styles.statusContainer, {
           [styles.withTag]: motion?.status === MotionStatus.Pending,
@@ -136,14 +155,14 @@ const Stages = ({
           <span className={styles.status}>
             <FormattedMessage {...MSG.stages} />
           </span>
-          {!activeStateId && (
+          {!activeStageId && (
             <span className={styles.notSaved}>
               <FormattedMessage {...MSG.notSaved} />
             </span>
           )}
         </div>
         <div className={styles.buttonsContainer}>
-          {!activeStateId ? (
+          {!activeStageId ? (
             <>
               <Button className={styles.iconButton} onClick={handleDeleteDraft}>
                 <Tooltip
@@ -154,7 +173,7 @@ const Stages = ({
                       {
                         name: 'offset',
                         options: {
-                          offset: [0, 14],
+                          offset: [0, 12],
                         },
                       },
                     ],
@@ -169,7 +188,11 @@ const Stages = ({
                   </div>
                 </Tooltip>
               </Button>
-              <Button onClick={handleSaveDraft} style={buttonStyles}>
+              <Button
+                onClick={handleSaveDraft}
+                style={buttonStyles}
+                disabled={buttonDisabled}
+              >
                 <FormattedMessage {...MSG.submitDraft} />
               </Button>
             </>
@@ -188,6 +211,16 @@ const Stages = ({
                   <Tooltip
                     placement="top-start"
                     content={<FormattedMessage {...MSG.tooltipShareText} />}
+                    popperOptions={{
+                      modifiers: [
+                        {
+                          name: 'offset',
+                          options: {
+                            offset: [0, 12],
+                          },
+                        },
+                      ],
+                    }}
                   >
                     <div className={styles.iconWrapper}>
                       <Icon name="share" className={styles.icon} />
@@ -195,7 +228,7 @@ const Stages = ({
                   </Tooltip>
                 )}
               </Button>
-              {!isCancelled && activeStateId === Stage.Draft && (
+              {!isCancelled && activeStageId === Stage.Draft && (
                 <Button
                   className={styles.iconButton}
                   onClick={handleDeleteDraft}
@@ -203,6 +236,16 @@ const Stages = ({
                   <Tooltip
                     placement="top-start"
                     content={<FormattedMessage {...MSG.tooltipDeleteText} />}
+                    popperOptions={{
+                      modifiers: [
+                        {
+                          name: 'offset',
+                          options: {
+                            offset: [0, 12],
+                          },
+                        },
+                      ],
+                    }}
                   >
                     <div className={styles.iconWrapper}>
                       <Icon
@@ -216,8 +259,8 @@ const Stages = ({
                 </Button>
               )}
               {!isCancelled &&
-                activeStateId !== Stage.Draft &&
-                activeStateId !== Stage.Claimed && (
+                activeStageId !== Stage.Draft &&
+                activeStageId !== Stage.Claimed && (
                   <Button
                     className={classNames(styles.iconButton, {
                       [styles.cancelIcon]:
@@ -242,6 +285,16 @@ const Stages = ({
                         content={
                           <FormattedMessage {...MSG.tooltipCancelText} />
                         }
+                        popperOptions={{
+                          modifiers: [
+                            {
+                              name: 'offset',
+                              options: {
+                                offset: [0, 12],
+                              },
+                            },
+                          ],
+                        }}
                       >
                         <div className={styles.iconWrapper}>
                           <Icon
@@ -255,22 +308,24 @@ const Stages = ({
                   </Button>
                 )}
               <StagesButton
-                activeState={activeState}
+                activeStage={activeStage}
                 handleButtonClick={handleButtonClick}
                 motion={motion}
                 status={status}
+                buttonDisabled={buttonDisabled}
                 canReleaseFunds // it's temporary value
+                expenditureType={formValues?.expenditure}
               />
             </>
           )}
         </div>
       </div>
-      {states.map(({ id, label }, index) => (
+      {stages.map(({ id, label }, index) => (
         <StageItem
           key={id}
           label={label}
           isFirst={index === 0}
-          isActive={activeState ? index <= activeIndex : false}
+          isActive={activeStage ? index <= activeIndex : false}
           isCancelled={isCancelled && status === Status.ForceCancelled}
           labelComponent={
             status === Status.ForceEdited &&

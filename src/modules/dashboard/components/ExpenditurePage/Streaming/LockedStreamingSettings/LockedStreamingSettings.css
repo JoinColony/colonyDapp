@@ -1,0 +1,41 @@
+@value paddingTop: 56px;
+@value lockedPaddingTop: 75px;
+@value paddingRightLeftBottom: 54px;
+
+.container {
+  padding: paddingTop paddingRightLeftBottom paddingRightLeftBottom;
+}
+
+.settingsRow {
+  composes: flexContainerRow flexAlignCenter flexJustifyBetween from '~styles/layout.css';
+  min-height: 41px;
+}
+
+.userContainer {
+  composes: settingsRow;
+  padding: 8px 0;
+}
+
+.userAvatarContainer {
+  display: flex;
+}
+
+.userName {
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
+
+.expenditure {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  text-transform: capitalize;
+  color: var(--dark);
+}
+
+.value {
+  font-size: var(--size-normal);
+  color: var(--dark);
+}

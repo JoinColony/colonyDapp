@@ -50,17 +50,6 @@
   color: var(--pink);
 }
 
-.link {
-  padding: 0px 10px;
-  height: 20px;
-  border-radius: var(--radius-large);
-  background-color: var(--primary);
-  font-size: var(--size-tiny);
-  font-weight: var(--weight-bold);
-  color: var(--colony-white);
-}
-
 .link:hover {
-  background-color: color-mod(var(--primary) shade(15%));
-  color: var(--colony-white);
+  color: var(--action-secondary);
 }

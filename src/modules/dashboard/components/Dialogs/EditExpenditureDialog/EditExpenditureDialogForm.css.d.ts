@@ -7,4 +7,4 @@ export const descriptionWrapper: string;
 export const noChanges: string;
 export const annotationsWrapper: string;
 export const toggleContainer: string;
-export const row: string;
+export const link: string;

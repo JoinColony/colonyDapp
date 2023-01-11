@@ -1,0 +1,107 @@
+@value white: rgb(255, 255, 255);
+@value boxShadow: inset 0px 2px 4px rgba(14, 37, 88, 0.07);
+@value boxShadowInvalid: inset 0px 2px 4px rgba(248, 43, 101, 0.2);
+@value border: 1px solid var(--temp-grey-blue-8);
+
+.amountWrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.value {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+  color: var(--dark);
+}
+
+.value > span {
+  margin-right: 4px;
+}
+
+.percent {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  text-align: right;
+  color: color-mod(var(--dark) alpha(85%));
+  letter-spacing: 0.5px;
+}
+
+.nameWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 13px;
+}
+
+.nameWrapper > div {
+  margin-right: 40px;
+  width: 100%;
+}
+
+.nameWrapper input {
+  padding: 0 0 2px;
+  height: 20px;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  text-align: left;
+  line-height: 18px;
+  color: var(--dark);
+  letter-spacing: 0.25px;
+}
+
+.nameWrapper input::placeholder {
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+  line-height: 18px;
+  color: var(--temp-grey-blue-7);
+  letter-spacing: 0.1px;
+}
+
+.deleteIconBox {
+  margin-bottom: 14px;
+  padding: 0;
+  height: 20px;
+  width: 20px;
+  border: 0;
+  background-color: transparent;
+  appearance: none;
+  transition: opacity 0.15s;
+}
+
+.deleteIconBox:focus {
+  opacity: 0.5;
+}
+
+.deleteIcon {
+  margin-bottom: 14px;
+  height: 20px;
+  width: 20px;
+  fill: var(--pink);
+}
+
+.deleteIcon:hover {
+  cursor: pointer;
+}
+
+.sliderWrapper {
+  display: grid;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  grid-template-columns: 278px 40px;
+  column-gap: 10px;
+}
+
+.tokenIcon {
+  margin-right: 10px;
+  height: 16px;
+  width: 16px;
+}
+
+.nameError {
+  margin-bottom: 8px;
+}

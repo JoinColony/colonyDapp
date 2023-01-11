@@ -1,16 +1,24 @@
 import React, { useCallback, useMemo } from 'react';
 import classNames from 'classnames';
+import { defineMessages } from 'react-intl';
 
 import { SelectHorizontal } from '~core/Fields';
-import styles from './ExpenditureSettings.css';
-import { MSG } from './ExpenditureSettings';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import Numeral from '~core/Numeral';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import { Token } from '~data/generated';
 
-const displayName = 'dashboard.ExpenditurePage.BalanceSelect';
+import styles from './ExpenditureSettings.css';
+
+const displayName = `dashboard.ExpenditurePage.ExpenditureSettings.BalanceSelect`;
+
+const MSG = defineMessages({
+  balance: {
+    id: `dashboard.ExpenditurePage.ExpenditureSettings.BalanceSelect.balance`,
+    defaultMessage: 'Balance',
+  },
+});
 
 interface Props {
   activeToken: Token;
@@ -80,7 +88,7 @@ const BalanceSelect = ({ activeToken, tokens, name, isLocked }: Props) => {
     <div className={styles.balance}>
       <SelectHorizontal
         name={name}
-        label={MSG.balanceLabel}
+        label={MSG.balance}
         appearance={{
           theme: 'alt',
         }}

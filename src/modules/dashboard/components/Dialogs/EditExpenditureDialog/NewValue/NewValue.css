@@ -1,21 +1,19 @@
 .row {
-  composes: row from '../EditExpenditureDialogForm.css';
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+  line-height: 18px;
+  color: var(--dark);
 }
 
-.label {
-  composes: label from '../NewDelay/NewDelay.css';
-}
-
-.value {
-  composes: value from '../NewDelay/NewDelay.css';
+.row > span {
+  margin-right: 4px;
 }
 
 .smallerPadding {
-  padding: 4px 0 8px;
-}
-
-.valueContainer {
-  text-align: right;
+  padding: 8px 0;
 }
 
 .userAvatarContainer {
@@ -31,12 +29,17 @@
   align-items: flex-start;
 }
 
-.paddingBottom {
+.valueItem {
+  display: flex;
+  align-items: center;
+}
+
+.valueItem:not(:last-of-type) {
   padding-bottom: 6px;
 }
 
 .tokenIcon {
-  margin-right: 6px;
+  margin-right: 10px;
   height: 16px;
   width: 16px;
 }

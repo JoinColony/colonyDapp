@@ -1,0 +1,39 @@
+.inputContainer {
+  flex: 2.8;
+  width: calc(100% - 30px);
+}
+
+.inputContainer input {
+  height: 28px;
+  border-bottom: 1px solid var(--temp-grey-blue-7);
+  line-height: 18px;
+  color: var(--dark);
+}
+
+.inputContainer input::placeholder {
+  color: var(--dark);
+}
+
+.tokenIcon {
+  margin-right: 6px;
+  height: 16px;
+  width: 16px;
+}
+
+.tokenIconWrapper {
+  display: flex;
+  flex: 1;
+  justify-content: flex-start;
+  align-items: center;
+  margin-left: 24px;
+}
+
+.limitContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.limitContainer:not(:first-of-type) {
+  margin-top: 26px;
+}

@@ -1,0 +1,130 @@
+.recipientWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.recipientWrapper:last-of-type {
+  margin-bottom: 0;
+}
+
+.recipientsWrapper {
+  padding: 11px 0 14px;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
+.recipientsWrapper label {
+  margin-right: 0;
+}
+
+.deleteIcon {
+  height: 20px;
+  width: 20px;
+  fill: var(--pink);
+}
+
+.deleteIcon:hover {
+  cursor: pointer;
+}
+
+.addRecipientLabel {
+  display: flex;
+  align-items: center;
+  padding-top: 4px;
+}
+
+.circlePlusIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 2px;
+
+  /* a negative margin is used here to align the entire "Add recipient" row to the left */
+  margin-left: -8px;
+  height: 30px;
+  width: 30px;
+  fill: var(--action-secondary);
+}
+
+.valueContainer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-top: 11px;
+}
+
+.valueContainer .container {
+  width: 100%;
+}
+
+.valueContainer label {
+  margin-bottom: 0;
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
+.valueContainer input {
+  padding: 0;
+  height: 42px;
+  width: 100%;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(65%));
+}
+
+.inputContainer {
+  margin-right: 15px;
+  width: 100%;
+}
+
+.inputContainer button {
+  padding-left: 0;
+  right: unset;
+  bottom: 4px;
+  left: 0;
+  font-size: var(--size-small);
+}
+
+.inputContainer input {
+  padding: 20px 0 4px 32px;
+  height: 42px;
+  font-size: var(--size-normal);
+  color: var(--dark);
+}
+
+.inputContainer input::placeholder {
+  color: var(--dark);
+}
+
+.tokenWrapper {
+  margin-top: 21px;
+}
+
+.counterWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  min-height: 45px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
+.tokenCounterWrapper {
+  display: flex;
+  align-items: center;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+  color: var(--dark);
+}
+
+.tokenCounterWrapper span {
+  margin: 0 4px;
+}
+
+.tokenIcon {
+  height: 18px;
+  width: 18px;
+}

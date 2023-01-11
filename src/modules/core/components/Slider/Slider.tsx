@@ -24,6 +24,10 @@ interface Props {
   step?: number;
   onReset?: (val: any) => void;
   handleLimitExceeded?: (val: boolean) => void;
+  handleStyle?: React.CSSProperties;
+  dotStyle?: React.CSSProperties;
+  railStyle?: React.CSSProperties;
+  trackStyle?: React.CSSProperties;
 }
 
 const displayName = 'Slider';
@@ -39,6 +43,10 @@ const Slider = ({
   step = 1,
   disabled = false,
   handleLimitExceeded,
+  handleStyle,
+  dotStyle,
+  railStyle,
+  trackStyle,
 }: Props) => {
   const [sliderValue, setSliderValue] = useState<number>(value);
   const [, , { setValue }] = useField(name);
@@ -145,6 +153,7 @@ const Slider = ({
         trackStyle={{
           backgroundColor: colors.backgroundColor,
           height: sizes.height,
+          ...trackStyle,
         }}
         handleStyle={{
           borderColor: colors.borderColor,
@@ -153,6 +162,7 @@ const Slider = ({
           width: 15,
           marginTop: appearance?.size === 'thick' ? -6 : -7,
           backgroundColor: '#FFFFFF',
+          ...handleStyle,
         }}
         dotStyle={{
           display:
@@ -166,11 +176,13 @@ const Slider = ({
           borderRadius: 0,
           top: sizes.markPositionTop,
           marginLeft: `${gradientPercentage}%`,
+          ...dotStyle,
         }}
         railStyle={{
           backgroundColor: '#C2CCCC',
           height: sizes.height,
           backgroundImage: `linear-gradient(90deg, #76748B 0% ${gradientPercentage}%, transparent ${gradientPercentage}%)`,
+          ...railStyle,
         }}
         data-test="slider"
       />

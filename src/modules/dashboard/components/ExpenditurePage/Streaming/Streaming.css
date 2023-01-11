@@ -1,0 +1,112 @@
+@value paddingRightLeft: 54px;
+@value paddingBottom: 54px;
+
+.circlePlusIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 2px;
+
+  /* a negative margin is used here to align the entire "Add recipient" row to the left */
+  margin-left: -8px;
+  height: 30px;
+  width: 30px;
+  fill: var(--action-secondary);
+}
+
+.container {
+  margin-bottom: 72px;
+  padding: 0 paddingRightLeft;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--dark) alpha(85%));
+  letter-spacing: var(--spacing-normal);
+}
+
+.headerLocked {
+  justify-content: space-between;
+}
+
+.fundingSourceLabel {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--dark) alpha(85%));
+  letter-spacing: var(--spacing-normal);
+}
+
+.labelWithIcon {
+  justify-content: space-between;
+}
+
+.fundingSourceLabel > div {
+  height: calc(100% - 80px);
+}
+
+.deleteIcon {
+  margin-right: 7px;
+  height: 20px;
+  width: 20px;
+  fill: var(--temp-grey-blue-7);
+}
+
+.deleteIcon:hover {
+  cursor: pointer;
+}
+
+.singleFundingSource {
+  position: relative;
+}
+
+.addFundingSourceLabel {
+  display: flex;
+  align-items: center;
+}
+
+.marginBottomLarge {
+  margin-bottom: 48px;
+}
+
+.fundingTitle {
+  margin-right: auto;
+}
+
+.rate {
+  margin-right: 6px;
+  white-space: nowrap;
+}
+
+.marginLeft {
+  margin-left: 4px;
+}
+
+.wrapper {
+  margin-bottom: 36px;
+}
+
+.editIcon {
+  margin-left: 10px;
+}
+
+.editIcon:hover {
+  cursor: pointer;
+}
+
+.titleRow {
+  display: flex;
+  justify-content: space-between;
+  column-gap: 8px;
+}
+
+.titleRow > section {
+  width: 100%;
+}

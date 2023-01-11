@@ -1,5 +1,3 @@
-@value buttonMargin: 7px 0 5px 0;
-
 .singleUserContainer {
   padding: 6px 0;
 }
@@ -17,6 +15,7 @@
   align-items: flex-start;
   justify-content: space-between;
   padding-top: 10px;
+  padding-bottom: 7px;
 }
 
 .valueContainer:not(:first-of-type) {
@@ -37,6 +36,10 @@
   height: 42px;
   width: 100%;
   border-bottom: 1px solid var(--text);
+}
+
+.valueContainer .inputContainer p[class*="InputStatus"] {
+  margin-top: 12px;
 }
 
 .delayContainer {
@@ -99,7 +102,6 @@
 
 .inputContainer {
   margin-right: 20px;
-  padding-bottom: 26px;
   padding-top: 2px;
   width: 100%;
   position: relative;
@@ -144,4 +146,19 @@
 .inputContainer input {
   padding: 20px 0 4px;
   height: 42px;
+}
+
+.labelWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.labelWrapper button {
+  bottom: 0;
+}
+
+.labelWrapper label {
+  margin-right: 14px;
+  width: auto;
 }

@@ -1,0 +1,149 @@
+@value paddingRightLeft: 54px;
+
+.stagedContainer {
+  padding: 0 paddingRightLeft 80px;
+}
+
+.editIcon {
+  margin-left: 10px;
+}
+
+.editIcon:hover {
+  cursor: pointer;
+}
+
+.recipientAmountWrapper {
+  display: flex;
+  align-items: center;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+  color: var(--dark);
+  letter-spacing: 0.1px;
+}
+
+.recipientAmountWrapper span {
+  margin-right: 3px;
+}
+
+.label {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.staged {
+  composes: row label;
+  padding-bottom: 6px;
+  color: color-mod(var(--dark) alpha(85%));
+}
+
+.userWrapper {
+  composes: row label;
+  padding: 8px 0;
+}
+
+.user {
+  display: flex;
+  align-items: center;
+}
+
+.user figure {
+  margin-right: 6px;
+}
+
+.valueWrapper {
+  composes: row label;
+  padding: 11px 0;
+}
+
+.value figure {
+  margin-right: 10px;
+}
+
+.reserveWrapper {
+  composes: row;
+  padding-bottom: 19px;
+}
+
+.milestoneName {
+  padding-bottom: 19px;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: var(--spacing-normal);
+}
+
+.milestoneWrapper {
+  padding: 13px 0 0;
+}
+
+.tokenIcon {
+  margin-right: 4px;
+  height: 18px;
+  width: 18px;
+}
+
+.amountWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.amountWrapper button {
+  height: 29px;
+  width: 100px;
+}
+
+.value {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+  color: var(--dark);
+}
+
+.value > span {
+  margin-right: 4px;
+}
+
+.reserveBar {
+  height: 14px;
+  width: 294px;
+  position: relative;
+  border-radius: 7px;
+  background-color: var(--colony-white);
+  box-shadow: inset 0px 2px 4px rgba(14, 37, 88, 0.07);
+}
+
+.reserveIndicator {
+  height: 14px;
+  position: absolute;
+  left: 0;
+  border-radius: 7px;
+  background-color: color-mod(var(--primary) alpha(85%));
+}
+
+.percent {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--dark) alpha(85%));
+  letter-spacing: var(--spacing-medium);
+}
+
+.claimed {
+  composes: themeLight from '~core/Tag/Tag.css';
+  padding: 1px 12px 2px;
+  height: 20px;
+  border-radius: 5px;
+  color: var(--temp-grey-blue-7);
+  letter-spacing: 0.5px;
+}

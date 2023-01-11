@@ -1,21 +1,19 @@
-/* eslint-disable max-len */
 import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { FormSection } from '~core/Fields';
 import UserMention from '~core/UserMention';
-
 import { Colony } from '~data/index';
+import { StageObject, ValuesType } from '~pages/ExpenditurePage/types';
+import Icon from '~core/Icon';
 
-import { Stage, Status } from '../Stages/constants';
+import { Stage, Status } from '../Stages/types';
 import LockedRecipient from '../Recipient/LockedRecipient/LockedRecipient';
 
 import { Recipient as RecipientType } from './types';
 import ClaimTag from './ClaimTag';
-import styles from './Payments.css';
-import Icon from '~core/Icon';
 import RecipientHeader from './RecipientHeader';
-import { State, ValuesType } from '~pages/ExpenditurePage/types';
+import styles from './Payments.css';
 
 const MSG = defineMessages({
   payments: {
@@ -44,7 +42,7 @@ const displayName = 'dashboard.ExpenditurePage.Payments.LockedPayments';
 
 interface Props {
   recipients?: RecipientType[];
-  activeState?: State;
+  activeStage?: StageObject;
   colony?: Colony;
   editForm: () => void;
   pendingChanges?: Partial<ValuesType>;
@@ -58,7 +56,7 @@ const LockedPayments = ({
   colony,
   editForm,
   pendingChanges,
-  activeState,
+  activeStage,
   isCancelled,
   pendingMotion,
 }: Props) => {
@@ -86,7 +84,7 @@ const LockedPayments = ({
       <div className={styles.recipientContainer}>
         <div className={styles.payments}>
           <FormattedMessage {...MSG.payments} />
-          {activeState?.id !== Stage.Claimed && (
+          {activeStage?.id !== Stage.Claimed && (
             <span className={styles.editIcon}>
               <Icon
                 name="edit"
@@ -117,13 +115,13 @@ const LockedPayments = ({
                     index={index}
                     colony={colony}
                     ClaimTag={
-                      activeState?.id === Stage.Released &&
+                      activeStage?.id === Stage.Released &&
                       claimDate &&
                       !isCancelled && (
                         <ClaimTag
                           claimDate={claimDate}
                           claimed={claimed}
-                          activeState={activeState}
+                          activeStage={activeStage}
                           pendingMotion={pendingMotion}
                         />
                       )

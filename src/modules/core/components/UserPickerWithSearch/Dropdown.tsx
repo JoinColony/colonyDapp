@@ -17,9 +17,13 @@ interface Props {
   scrollContainer?: Window | HTMLElement | null;
   placement?: 'right' | 'bottom' | 'exact'; // 'exact' - portal will appear in the same place element would. Allowing dropdowns with full width to appear in dialogs
   optionSizeLarge?: boolean;
+  hasBlueActiveState?: boolean;
+  dropdownHeight?: number;
+  autoHeight?: boolean;
   children: React.ReactNode;
 }
 
+// createPortal is used because of dropdown being cut off - issue: https://github.com/JoinColony/colonyDapp/issues/3488
 const Dropdown = React.forwardRef(
   (
     {
@@ -27,6 +31,9 @@ const Dropdown = React.forwardRef(
       scrollContainer = window,
       placement = 'right',
       optionSizeLarge,
+      dropdownHeight,
+      hasBlueActiveState,
+      autoHeight,
       children,
     }: Props,
     ref: RefObject<HTMLDivElement>,
@@ -54,19 +61,44 @@ const Dropdown = React.forwardRef(
       return (elemLeft || 0) + (elemWidth || 0);
     }, [element, placement]);
 
+    const getScrollDimensions = (
+      scrollElement: Window | HTMLElement | null,
+    ) => {
+      if (scrollElement instanceof HTMLElement) {
+        return scrollElement.getBoundingClientRect();
+      }
+      return undefined;
+    };
+
     const onScroll = useCallback(() => {
-      const elementDimentions = element?.getBoundingClientRect();
-      if (!elementDimentions) {
+      const { top: elTop, bottom: elBottom, height: elHeight } =
+        element?.getBoundingClientRect() || {};
+      const scrollDimentions = getScrollDimensions(scrollContainer);
+
+      if (!elTop || !elBottom || !elHeight) {
         setPosTop(0);
         return;
       }
-      const topPosition =
-        placement === 'bottom'
-          ? elementDimentions.top + elementDimentions.height
-          : elementDimentions.top;
+
+      if (
+        dropdownHeight &&
+        scrollDimentions &&
+        elTop + dropdownHeight > scrollDimentions.height &&
+        elBottom < scrollDimentions.bottom
+      ) {
+        const difference = elTop + dropdownHeight - scrollDimentions.height;
+
+        const topPosition =
+          placement === 'bottom' ? elBottom - difference : elTop - difference;
+
+        setPosTop(topPosition);
+        return;
+      }
+
+      const topPosition = placement === 'bottom' ? elBottom : elTop;
 
       setPosTop(topPosition);
-    }, [element, placement]);
+    }, [element, scrollContainer, dropdownHeight, placement]);
 
     useEffect(() => {
       onScroll();
@@ -83,6 +115,8 @@ const Dropdown = React.forwardRef(
           <div
             className={classNames(styles.dropdown, {
               [styles.optionSizeLarge]: optionSizeLarge,
+              [styles.hasBlueActiveState]: hasBlueActiveState,
+              [styles.autoHeight]: autoHeight,
             })}
             style={{
               top: posTop,

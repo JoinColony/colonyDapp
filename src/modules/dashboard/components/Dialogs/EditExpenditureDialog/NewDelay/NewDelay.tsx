@@ -1,7 +1,6 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { FormSection } from '~core/Fields';
 import { Recipient } from '~dashboard/ExpenditurePage/Payments/types';
 
 import styles from './NewDelay.css';
@@ -15,6 +14,10 @@ export const MSG = defineMessages({
     id: 'dashboard.EditExpenditureDialog.NewDelay.none',
     defaultMessage: 'None',
   },
+  delay: {
+    id: 'dashboard.EditExpenditureDialog.NewDelay.delay',
+    defaultMessage: '{amount} {time}',
+  },
 });
 
 const displayName = 'dashboard.EditExpenditureDialog.NewDelay';
@@ -25,22 +28,18 @@ interface Props {
 
 const NewDelay = ({ newValue }: Props) => {
   return (
-    <FormSection appearance={{ border: 'bottom' }}>
-      <div className={styles.row}>
-        <span className={styles.label}>
-          <FormattedMessage {...MSG.newClaimDelay} />
-        </span>
-        <div className={styles.value}>
-          {!newValue?.amount ? (
-            <FormattedMessage {...MSG.none} />
-          ) : (
-            <>
-              {newValue?.amount} {newValue?.time}
-            </>
-          )}
-        </div>
+    <div className={styles.row}>
+      <div className={styles.value}>
+        {!newValue?.amount ? (
+          <FormattedMessage {...MSG.none} />
+        ) : (
+          <FormattedMessage
+            {...MSG.delay}
+            values={{ amount: newValue?.amount, time: newValue?.time }}
+          />
+        )}
       </div>
-    </FormSection>
+    </div>
   );
 };
 

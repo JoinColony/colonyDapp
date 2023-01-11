@@ -1,0 +1,14 @@
+.buttonWrappper {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.discard {
+  composes: main from '~core/Button/Button.css';
+  padding: 0;
+  height: auto;
+  font-size: var(--size-smallish);
+  font-weight: 600;
+  color: var(--action-secondary);
+}

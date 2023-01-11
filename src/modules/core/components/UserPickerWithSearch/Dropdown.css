@@ -3,7 +3,20 @@
   position: absolute;
 }
 
+.autoHeight ul {
+  max-height: unset;
+}
+
 .optionSizeLarge li {
   min-height: 40px;
   line-height: 40px;
+}
+
+.hasBlueActiveState li:hover {
+  background-color: var(--colony-light-blue);
+  color: var(--colony-blue);
+}
+
+.hasBlueActiveState li[data-checked="true"] {
+  color: var(--colony-blue);
 }

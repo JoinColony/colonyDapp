@@ -16,6 +16,8 @@
 }
 
 .forceRow {
+  display: flex;
+  justify-content: space-between;
   align-items: baseline;
   padding-top: 16px;
   white-space: nowrap;
@@ -27,6 +29,8 @@
 
 .descriptionWrapper {
   padding-top: 10px;
+  font-size: var(--size-normal);
+  letter-spacing: 0.1px;
 }
 
 .noChanges {
@@ -38,11 +42,8 @@
   margin-bottom: 11px;
 }
 
-.toggleContainer i {
-  margin: 0 -20px 4px 21px;
-
-  /* next lines are used for the correct tooltip arrow placement */
-  transform: translateX(-25px);
+.toggleContainer span div {
+  margin-left: 0;
 }
 
 /* this selector is for tooltip wrapper */
@@ -51,17 +52,24 @@
   white-space: normal;
 }
 
-.toggleContainer label {
-  margin-bottom: 4px;
+.toggleContainer > div > div:first-of-type {
+  margin-right: 11px;
+  height: 16px;
 }
 
-.row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 11px 0 12px;
-  font-size: var(--size-smallish);
-  font-weight: var(--weight-bold);
-  line-height: 18px;
-  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+.toggleContainer label {
+  margin-bottom: 0;
+}
+
+.toggleContainer i {
+  transform: translate(0, -1px);
+}
+
+.link {
+  font-weight: 600;
+  color: var(--action-secondary);
+}
+
+.link:hover {
+  color: var(--action-secondary);
 }

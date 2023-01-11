@@ -1,0 +1,18 @@
+.headerStyles {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.header {
+  composes: headerStyles;
+  margin-top: 20px;
+}
+
+.subheader {
+  composes: headerStyles;
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+}

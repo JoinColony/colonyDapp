@@ -13,6 +13,7 @@
   padding: 1px 13px 2px;
   border-radius: 12px;
   background-color: var(--text-disabled);
+  white-space: nowrap;
   color: var(--colony-white);
 }
 
@@ -26,6 +27,7 @@
 .tagWrapper > span {
   padding: 2px 14px 3px;
   border-radius: 12px;
+  white-space: nowrap;
 }
 
 .tagWrapper {
@@ -33,4 +35,5 @@
   flex-basis: 100px;
   flex-grow: 1;
   justify-content: flex-end;
+  white-space: nowrap;
 }

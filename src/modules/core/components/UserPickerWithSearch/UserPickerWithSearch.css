@@ -7,25 +7,38 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  padding-right: 18px;
   position: relative;
+}
+
+.inputWithIconBtn {
+  display: flex;
+  padding: 0 18px 0 0;
+  border: 0;
+  background: transparent;
+  appearance: none;
+  cursor: pointer;
 }
 
 .inputWithIcon:hover {
   cursor: pointer;
+}
 
-  & .icon::after {
-    height: 38px;
-    width: 38px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    border-radius: 50%;
-    background-color: var(--action-secondary);
-    transform: translate(-5px, -5px);
-    content: '';
-    opacity: 0.1;
-  }
+.inputWithIconBtn:disabled {
+  opacity: 0.5;
+  cursor: unset;
+}
+
+.inputWithIconBtn:enabled:hover .icon::after {
+  height: 38px;
+  width: 38px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  background-color: var(--action-secondary);
+  transform: translate(-5px, -5px);
+  content: '';
+  opacity: 0.1;
 }
 
 .container input:disabled {
@@ -87,8 +100,13 @@
   border-bottom: 1px solid rgb(113, 213, 213);
 }
 
+span.recipientName {
+  padding: 2px 6px;
+}
+
 .recipientName {
   composes: baseInput;
+  padding: 2px 6px;
   overflow: hidden;
   font-weight: var(--weight-bold);
   text-overflow: ellipsis;

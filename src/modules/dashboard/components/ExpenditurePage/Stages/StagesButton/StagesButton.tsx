@@ -4,9 +4,9 @@ import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import Button from '~core/Button';
 import { Tooltip } from '~core/Popover';
 import Tag from '~core/Tag';
-import { State } from '~pages/ExpenditurePage/types';
+import { ExpenditureTypes, StageObject } from '~pages/ExpenditurePage/types';
 
-import { Motion, MotionStatus, Stage, Status } from '../constants';
+import { Motion, MotionStatus, Stage, Status } from '../types';
 import { buttonStyles } from '../Stages';
 
 import styles from './StagesButton.css';
@@ -25,27 +25,31 @@ const MSG = defineMessages({
 const displayName = 'dashboard.ExpenditurePage.Stages.StagesButton';
 
 interface Props {
-  activeState?: State;
+  activeStage?: StageObject;
   canReleaseFunds: boolean;
   handleButtonClick: () => void;
   status?: Status;
   motion?: Motion;
+  buttonDisabled?: boolean;
+  expenditureType?: ExpenditureTypes;
 }
 
 const StagesButton = ({
-  activeState,
+  activeStage,
   canReleaseFunds,
   handleButtonClick,
   status,
   motion,
+  buttonDisabled,
+  expenditureType,
 }: Props) => {
   const { formatMessage } = useIntl();
   const buttonText =
-    typeof activeState?.buttonText === 'string'
-      ? activeState.buttonText
-      : activeState?.buttonText && formatMessage(activeState.buttonText);
+    typeof activeStage?.buttonText === 'string'
+      ? activeStage.buttonText
+      : activeStage?.buttonText && formatMessage(activeStage.buttonText);
 
-  if (!activeState) {
+  if (!activeStage) {
     return null;
   }
 
@@ -53,23 +57,30 @@ const StagesButton = ({
     return <Tag text={MSG.cancelled} className={styles.claimed} />;
   }
 
-  if (activeState.id === Stage.Claimed) {
+  if (activeStage.id === Stage.Claimed) {
     return <Tag text={buttonText} className={styles.claimed} />;
   }
 
-  if (activeState.id === Stage.Claimed) {
-    return <Tag text={buttonText} className={styles.claimed} />;
-  }
-
-  if (activeState.id === Stage.Released) {
+  if (activeStage.id === Stage.Released) {
     return null;
   }
 
-  if (activeState.id === Stage.Funded) {
+  if (
+    activeStage.id === Stage.Funded &&
+    expenditureType === ExpenditureTypes.Staged
+  ) {
+    return null;
+  }
+
+  if (activeStage.id === Stage.Funded) {
     return (
       <>
         {canReleaseFunds ? (
-          <Button onClick={activeState?.buttonAction} style={buttonStyles}>
+          <Button
+            onClick={activeStage?.buttonAction}
+            style={buttonStyles}
+            disabled={buttonDisabled}
+          >
             {buttonText}
           </Button>
         ) : (
@@ -83,7 +94,7 @@ const StagesButton = ({
             }
           >
             <Button
-              onClick={activeState?.buttonAction}
+              onClick={activeStage?.buttonAction}
               style={buttonStyles}
               disabled
             >
@@ -95,29 +106,42 @@ const StagesButton = ({
     );
   }
 
-  if (activeState?.buttonTooltip) {
+  if (activeStage?.buttonTooltip) {
     return (
-      <Tooltip
-        placement="top"
-        content={
-          <div className={styles.buttonTooltip}>
-            {typeof activeState.buttonTooltip === 'string'
-              ? activeState.buttonTooltip
-              : formatMessage(activeState.buttonTooltip)}
-          </div>
-        }
-      >
-        <Button
-          onClick={handleButtonClick}
-          style={buttonStyles}
-          disabled={
-            activeState.id === Stage.Claimed ||
-            motion?.status === MotionStatus.Pending
+      <span className={styles.buttonWithTooltip}>
+        <Tooltip
+          placement="top"
+          content={
+            <div className={styles.buttonTooltip}>
+              {typeof activeStage.buttonTooltip === 'string'
+                ? activeStage.buttonTooltip
+                : formatMessage(activeStage.buttonTooltip)}
+            </div>
           }
+          popperOptions={{
+            modifiers: [
+              {
+                name: 'offset',
+                options: {
+                  offset: [0, 8],
+                },
+              },
+            ],
+          }}
         >
-          {buttonText}
-        </Button>
-      </Tooltip>
+          <Button
+            onClick={handleButtonClick}
+            style={buttonStyles}
+            disabled={
+              activeStage.id === Stage.Claimed ||
+              motion?.status === MotionStatus.Pending ||
+              buttonDisabled
+            }
+          >
+            {buttonText}
+          </Button>
+        </Tooltip>
+      </span>
     );
   }
 
@@ -126,8 +150,9 @@ const StagesButton = ({
       onClick={handleButtonClick}
       style={buttonStyles}
       disabled={
-        activeState.id === Stage.Claimed ||
-        motion?.status === MotionStatus.Pending
+        activeStage.id === Stage.Claimed ||
+        motion?.status === MotionStatus.Pending ||
+        buttonDisabled
       }
       type="submit"
     >
