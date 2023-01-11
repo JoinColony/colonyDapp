@@ -30,11 +30,13 @@
   letter-spacing: var(--spacing-medium);
 }
 
-.addressWrapper label span:last-of-type {
+.addressWrapper label span:nth-of-type(2) {
   display: block;
-  margin-left: 0;
   margin-top: 4px;
+  margin-left: 0;
+  font-weight: var(--weight-bold);
   color: var(--temp-grey-blue-7);
+  letter-spacing: var(--spacing-medium);
 }
 
 .addressWrapper textarea::placeholder {
@@ -58,10 +60,10 @@
   letter-spacing: var(--spacing-medium);
 }
 
-.fieldWrapper label span:last-of-type {
+.fieldWrapper label span:nth-last-of-type(2) {
   display: block;
   margin-left: 0;
-  margin-top: 4px;
+  margin-top: 6px;
   color: var(--temp-grey-blue-7);
 }
 
@@ -90,9 +92,11 @@
 
 .uploadWrapper label span:last-of-type {
   display: block;
+  margin-top: 6px;
   margin-left: 0;
-  margin-top: 4px;
+  font-weight: var(--weight-bold);
   color: var(--temp-grey-blue-7);
+  letter-spacing: var(--spacing-medium);
 }
 
 .uploadWrapper label {

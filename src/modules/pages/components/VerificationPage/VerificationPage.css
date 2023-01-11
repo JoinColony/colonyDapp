@@ -8,7 +8,7 @@
   display: flex;
   margin-top: marginTop;
   margin-bottom: marginBottom;
-  padding: 0 10% 0 30%;
+  padding: 0 10% 0 25%;
   position: relative;
   top: sidebarHeight;
 }

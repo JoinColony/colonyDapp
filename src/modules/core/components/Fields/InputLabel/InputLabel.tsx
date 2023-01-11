@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
-import { FormattedMessage, MessageDescriptor, useIntl } from 'react-intl';
+import { MessageDescriptor, useIntl } from 'react-intl';
 
-import { SimpleMessageValues, UniversalMessageValues } from '~types/index';
+import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
 
 import styles from './InputLabel.css';
@@ -27,7 +27,7 @@ interface Props {
   help?: string | MessageDescriptor;
 
   /** Values for help text (react-intl interpolation) */
-  helpValues?: UniversalMessageValues;
+  helpValues?: SimpleMessageValues;
 
   /** `id` attribute value of accompanied input field */
   inputId?: string;
@@ -55,11 +55,7 @@ const InputLabel = ({
   const { formatMessage } = useIntl();
 
   const helpText =
-    typeof help === 'object' ? (
-      <FormattedMessage {...help} values={helpValues} />
-    ) : (
-      help
-    );
+    typeof help === 'object' ? formatMessage(help, helpValues) : help;
   const labelText =
     typeof inputLabel === 'object'
       ? formatMessage(inputLabel, labelValues)

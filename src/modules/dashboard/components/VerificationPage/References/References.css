@@ -1,23 +1,32 @@
 .wrapper {
   padding-bottom: 14px;
   width: 100%;
-  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
 }
 
 .step {
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
-  line-height: 11px;
+  line-height: 9px;
   color: var(--dark);
   letter-spacing: var(--spacing-medium);
 }
 
 .title {
+  display: flex;
+  align-items: center;
   margin-bottom: 16px;
   font-size: var(--size-medium-l);
   font-weight: var(--weight-bold);
   color: var(--dark);
   letter-spacing: var(--spacing-medium);
+}
+
+.title span {
+  margin-left: 8px;
+}
+
+.titleText {
+  transform: translateY(3px);
 }
 
 .fieldWrapper label {

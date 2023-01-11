@@ -158,11 +158,10 @@ const Details = ({ setActiveStep }: Props) => {
               name="country"
               label={MSG.country}
               options={[
-                { label: 'Poland', value: 'Poland' },
-                { label: 'England', value: 'England' },
+                { label: 'Test', value: 'test' },
+                { label: 'Test 2', value: 'test2' },
               ]}
               placeholder={MSG.countryPlaceholder}
-              optionSizeLarge
             />
           </div>
           <div>

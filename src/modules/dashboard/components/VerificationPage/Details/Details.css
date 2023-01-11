@@ -19,7 +19,7 @@
 }
 
 .userWrapper {
-  margin-bottom: 18px;
+  margin-bottom: 22px;
 }
 
 .userWrapper label {
@@ -34,7 +34,7 @@
   letter-spacing: var(--spacing-medium);
 }
 
-.fieldWrapper label span:last-of-type {
+.fieldWrapper label span:nth-of-type(2) {
   display: block;
   margin-left: 0;
   margin-top: 4px;
@@ -117,4 +117,14 @@
   margin-bottom: 14px;
   color: var(--dark);
   letter-spacing: var(--spacing-medium);
+}
+
+.selectWrapper ul {
+  background-color: white;
+}
+
+.selectWrapper li {
+  display: flex;
+  align-items: center;
+  height: 44px;
 }

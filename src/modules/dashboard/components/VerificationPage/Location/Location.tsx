@@ -4,7 +4,6 @@ import { Formik } from 'formik';
 
 import { Input, Select, Textarea } from '~core/Fields';
 import FileUpload from '~core/FileUpload';
-import ExternalLink from '~core/ExternalLink';
 import { useVerificationContext } from '~pages/VerificationPage/VerificationDataContext';
 import { Step } from '~pages/VerificationPage/types';
 
@@ -39,7 +38,7 @@ export const MSG = defineMessages({
   },
   proofOfAddressExtra: {
     id: 'dashboard.VerificationPage.Location.proofOfAddressExtra',
-    defaultMessage: `Upload a utility bill or document confirming the stated address. <a>Upload guide</a>`,
+    defaultMessage: `Upload a utility bill or document confirming the stated address.`,
   },
   proofOfAddressDescription: {
     id: 'dashboard.VerificationPage.Location.proofOfAddressDescription',
@@ -55,7 +54,7 @@ export const MSG = defineMessages({
   },
   country: {
     id: 'dashboard.VerificationPage.Location.country',
-    defaultMessage: 'Country that issued the passport: -',
+    defaultMessage: 'Country that issued the passport:',
   },
   countryPlaceholder: {
     id: `dashboard.VerificationPage.Location.countryPlaceholder`,
@@ -67,7 +66,7 @@ export const MSG = defineMessages({
   },
   confirmPassportAdditional: {
     id: `dashboard.VerificationPage.Location.confirmPassportAdditional`,
-    defaultMessage: `Upload a utility bill or document confirming the stated address. <a>Upload guide</a>`,
+    defaultMessage: `Upload a utility bill or document confirming the stated address.`,
   },
 });
 
@@ -134,9 +133,6 @@ const Location = ({ setActiveStep }: Props) => {
               upload={() => 'uploaded!'}
               maxSize={9437184} // 9MB
               help={MSG.proofOfAddressExtra}
-              helpValues={{
-                a: (chunks) => <ExternalLink href="/">{chunks}</ExternalLink>,
-              }}
               status={MSG.proofOfAddressDescription}
             />
           </div>
@@ -169,9 +165,6 @@ const Location = ({ setActiveStep }: Props) => {
               upload={() => 'uploaded!'}
               maxSize={9437184} // 9MB
               help={MSG.confirmPassportAdditional}
-              helpValues={{
-                a: (chunks) => <ExternalLink href="/">{chunks}</ExternalLink>,
-              }}
               status={MSG.proofOfAddressDescription}
             />
           </div>

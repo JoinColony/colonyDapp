@@ -5,6 +5,7 @@ import { Formik } from 'formik';
 import { Input } from '~core/Fields';
 import { Step } from '~pages/VerificationPage/types';
 import { useVerificationContext } from '~pages/VerificationPage/VerificationDataContext';
+import IconTooltip from '~core/IconTooltip';
 
 import FormButtons from '../FormButtons';
 
@@ -17,7 +18,7 @@ export const MSG = defineMessages({
   },
   references: {
     id: 'dashboard.VerificationPage.References.references',
-    defaultMessage: 'References',
+    defaultMessage: '<div>References</div> {icon}',
   },
   bankingReference: {
     id: 'dashboard.VerificationPage.References.bankingReference',
@@ -94,7 +95,21 @@ const References = ({ setActiveStep }: Props) => {
             <FormattedMessage {...MSG.step} />
           </div>
           <div className={styles.title}>
-            <FormattedMessage {...MSG.references} />
+            <FormattedMessage
+              {...MSG.references}
+              values={{
+                icon: (
+                  <IconTooltip
+                    icon="question-mark"
+                    tooltipText={{ id: 'tooltip.lockedToken' }}
+                    appearance={{ size: 'huge' }}
+                  />
+                ),
+                div: (chunks) => (
+                  <div className={styles.titleText}>{chunks}</div>
+                ),
+              }}
+            />
           </div>
           <div className={styles.wrapper}>
             <div className={styles.groupTitle}>
