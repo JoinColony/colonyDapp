@@ -3,6 +3,12 @@
   justify-content: flex-end;
   padding-top: 18px;
   border-top: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.buttonsWrapper {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 14px;
   gap: 8px;
 }
 

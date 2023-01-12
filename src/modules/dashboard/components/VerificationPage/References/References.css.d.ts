@@ -6,4 +6,5 @@ export const fieldWrapper: string;
 export const required: string;
 export const groupTitle: string;
 export const subtitle: string;
+export const error: string;
 export const commercialWrapper: string;
