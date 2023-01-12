@@ -296,7 +296,7 @@ export const GNOSIS_AMB_BRIDGES: { [x: number]: AmbBridge } = {
   [ETHEREUM_NETWORK.chainId]: {
     homeAMB: '0x75Df5AF045d91108662D8080fD1FEFAd6aA0bb59',
     foreignAMB: '0x4C36d2919e407f0Cc2Ee3c993ccF8ac26d9CE64e',
-    monitor: 'https://alm-xdai.herokuapp.com/',
+    monitor: 'http://13.40.211.40/',
     referenceUrl:
       'https://docs.tokenbridge.net/eth-xdai-amb-bridge/about-the-eth-xdai-amb',
     homeGasLimit: 2000000,
