@@ -58,7 +58,7 @@ const VerificationPage = ({ match }: Props) => {
   const [formValues, setFormValues] = useState<ContextValuesType>(
     initialFormValues,
   );
-  const [activeStep, setActiveStep] = useState<Step>(Step.References);
+  const [activeStep, setActiveStep] = useState<Step>(Step.About);
 
   const steps: StepObject[] = [
     {

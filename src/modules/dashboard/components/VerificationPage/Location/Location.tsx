@@ -1,14 +1,21 @@
-import React, { useCallback } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import React, { useCallback, useState } from 'react';
+import {
+  defineMessages,
+  FormattedMessage,
+  MessageDescriptor,
+} from 'react-intl';
 import { Formik } from 'formik';
+import classNames from 'classnames';
 
-import { Input, Select, Textarea } from '~core/Fields';
+import { Input, InputStatus, Select, Textarea } from '~core/Fields';
 import FileUpload from '~core/FileUpload';
 import { useVerificationContext } from '~pages/VerificationPage/VerificationDataContext';
 import { Step } from '~pages/VerificationPage/types';
 
 import FormButtons from '../FormButtons/FormButtons';
+import ErrorsCounter from '../ErrorsCounter';
 
+import { validationSchema } from './constants';
 import styles from './Location.css';
 
 export const MSG = defineMessages({
@@ -50,7 +57,7 @@ export const MSG = defineMessages({
   },
   passport: {
     id: 'dashboard.VerificationPage.Location.passport',
-    defaultMessage: `Passport`,
+    defaultMessage: `Passport number`,
   },
   country: {
     id: 'dashboard.VerificationPage.Location.country',
@@ -68,9 +75,21 @@ export const MSG = defineMessages({
     id: `dashboard.VerificationPage.Location.confirmPassportAdditional`,
     defaultMessage: `Upload a utility bill or document confirming the stated address.`,
   },
+  taxCountry: {
+    id: `dashboard.VerificationPage.Location.taxCountry`,
+    defaultMessage: `Country of tax residency`,
+  },
+  taxResidency: {
+    id: `dashboard.VerificationPage.Location.taxCountry`,
+    defaultMessage: `Tax residency`,
+  },
+  taxID: {
+    id: `dashboard.VerificationPage.Location.taxID`,
+    defaultMessage: `Tax ID`,
+  },
 });
 
-const MIME_TYPES = ['image/png', 'image/jpg', 'text.pdf'];
+export const MIME_TYPES = ['image/png', 'image/jpg', 'text.pdf', 'image/jpeg'];
 
 const displayName = 'dashboard.VerificationPage.Location';
 
@@ -105,9 +124,38 @@ const Location = ({ setActiveStep }: Props) => {
     [setActiveStep, setFormValues],
   );
 
+  const renderActiveOption = useCallback(
+    (value) => (_, activeOptionLabel: string) => {
+      if (!value) {
+        return (
+          <span className={styles.placeholder}>
+            <FormattedMessage {...MSG.countryPlaceholder} />
+          </span>
+        );
+      }
+
+      return activeOptionLabel;
+    },
+    [],
+  );
+
+  const [shouldValidate, setShouldValidate] = useState(false);
+  const handleValidate = useCallback(() => {
+    if (!shouldValidate) {
+      setShouldValidate(true);
+    }
+  }, [shouldValidate]);
+
   return (
-    <Formik initialValues={location} onSubmit={handleSubmit}>
-      {({ values }) => (
+    <Formik
+      initialValues={location}
+      onSubmit={handleSubmit}
+      validationSchema={validationSchema}
+      validateOnBlur={shouldValidate}
+      validateOnChange={shouldValidate}
+      validate={handleValidate}
+    >
+      {({ values, errors }) => (
         <div className={styles.wrapper}>
           <div className={styles.step}>
             <FormattedMessage {...MSG.step} />
@@ -116,33 +164,59 @@ const Location = ({ setActiveStep }: Props) => {
             <FormattedMessage {...MSG.location} />
           </div>
           <div className={styles.addressWrapper}>
-            <Textarea
-              name="address"
-              label={MSG.address}
-              help={MSG.addressDescription}
-              placeholder={MSG.addressPlaceholder}
-              maxLength={90}
-            />
-            <FileUpload
-              dropzoneOptions={{
-                accept: MIME_TYPES,
-              }}
-              label={MSG.proofOfAddress}
-              maxFilesLimit={1}
-              name="proofOfAddress"
-              upload={() => 'uploaded!'}
-              maxSize={9437184} // 9MB
-              help={MSG.proofOfAddressExtra}
-              status={MSG.proofOfAddressDescription}
-            />
+            <div
+              className={classNames({
+                [styles.textateaError]: errors.address,
+              })}
+            >
+              <Textarea
+                name="address"
+                label={MSG.address}
+                help={MSG.addressDescription}
+                placeholder={MSG.addressPlaceholder}
+                maxLength={90}
+              />
+            </div>
+            <div
+              className={classNames({
+                [styles.fileError]: errors.proofOfAddress,
+              })}
+              data-name="proofOfAddress"
+            >
+              <FileUpload
+                dropzoneOptions={{
+                  accept: MIME_TYPES,
+                }}
+                label={MSG.proofOfAddress}
+                maxFilesLimit={1}
+                name="proofOfAddress"
+                upload={() => {}} // temporary upload function
+                maxSize={9437184} // 9MB 526030
+                help={MSG.proofOfAddressExtra}
+                status={MSG.proofOfAddressDescription}
+              />
+              {errors.proofOfAddress && (
+                <InputStatus
+                  error={errors.proofOfAddress[0] as MessageDescriptor}
+                />
+              )}
+            </div>
           </div>
           <div className={styles.title}>
             <FormattedMessage {...MSG.passportInfo} />
           </div>
-          <div className={styles.fieldWrapper}>
+          <div
+            className={classNames(styles.fieldWrapper, {
+              [styles.error]: errors.passport,
+            })}
+          >
             <Input label={MSG.passport} name="passport" />
           </div>
-          <div className={styles.selectWrapper}>
+          <div
+            className={classNames(styles.selectWrapper, {
+              [styles.selectError]: errors.country,
+            })}
+          >
             <Select
               name="country"
               label={MSG.country}
@@ -150,11 +224,15 @@ const Location = ({ setActiveStep }: Props) => {
                 { label: 'Test', value: 'test' },
                 { label: 'Test 2', value: 'test2' },
               ]}
-              placeholder={MSG.countryPlaceholder}
+              renderActiveOption={renderActiveOption(values.country)}
               optionSizeLarge
             />
           </div>
-          <div className={styles.uploadWrapper}>
+          <div
+            className={classNames(styles.addressWrapper, {
+              [styles.fileError]: errors.confirmPassport,
+            })}
+          >
             <FileUpload
               dropzoneOptions={{
                 accept: MIME_TYPES,
@@ -162,15 +240,48 @@ const Location = ({ setActiveStep }: Props) => {
               label={MSG.confirmPassport}
               maxFilesLimit={1}
               name="confirmPassport"
-              upload={() => 'uploaded!'}
+              upload={() => {}} // temporary upload function
               maxSize={9437184} // 9MB
               help={MSG.confirmPassportAdditional}
               status={MSG.proofOfAddressDescription}
             />
+            {errors.confirmPassport && (
+              <InputStatus
+                error={errors.confirmPassport[0] as MessageDescriptor}
+              />
+            )}
+          </div>
+          <div>
+            <div className={styles.title}>
+              <FormattedMessage {...MSG.taxResidency} />
+            </div>
+            <div
+              className={classNames(styles.selectWrapper, {
+                [styles.selectError]: errors.taxCountry,
+              })}
+            >
+              <Select
+                name="taxCountry"
+                label={MSG.taxCountry}
+                options={[
+                  { label: 'Test', value: 'test' },
+                  { label: 'Test 2', value: 'test2' },
+                ]}
+                renderActiveOption={renderActiveOption(values.taxCountry)}
+              />
+            </div>
+            <div
+              className={classNames(styles.fieldWrapper, {
+                [styles.error]: errors.taxID,
+              })}
+            >
+              <Input label={MSG.taxID} name="taxID" />
+            </div>
           </div>
           <FormButtons
             onNextClick={() => setActiveStep(Step.References)}
             onPrevClick={() => handlePrevClick(values)}
+            errorMessage={<ErrorsCounter />}
           />
         </div>
       )}

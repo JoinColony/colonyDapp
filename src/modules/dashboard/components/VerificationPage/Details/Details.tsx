@@ -1,9 +1,13 @@
-import React, { useCallback } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import React, { useCallback, useState } from 'react';
+import {
+  defineMessages,
+  FormattedMessage,
+  MessageDescriptor,
+} from 'react-intl';
 import classNames from 'classnames';
 
 import { Formik } from 'formik';
-import { Input, InputLabel, Radio, Select } from '~core/Fields';
+import { Input, InputLabel, InputStatus, Radio } from '~core/Fields';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
 import { useLoggedInUser } from '~data/helpers';
@@ -12,7 +16,9 @@ import { useVerificationContext } from '~pages/VerificationPage/VerificationData
 
 import FormButtons from '../FormButtons/FormButtons';
 
+import { validationSchema } from './constants';
 import styles from './Details.css';
+import ErrorsCounter from '../ErrorsCounter';
 
 export const MSG = defineMessages({
   step: {
@@ -111,9 +117,23 @@ const Details = ({ setActiveStep }: Props) => {
     [setActiveStep, setFormValues],
   );
 
+  const [shouldValidate, setShouldValidate] = useState(false);
+  const handleValidate = useCallback(() => {
+    if (!shouldValidate) {
+      setShouldValidate(true);
+    }
+  }, [shouldValidate]);
+
   return (
-    <Formik initialValues={details} onSubmit={handleSubmit}>
-      {({ values }) => (
+    <Formik
+      initialValues={details}
+      validationSchema={validationSchema}
+      validateOnBlur={shouldValidate}
+      validateOnChange={shouldValidate}
+      validate={handleValidate}
+      onSubmit={handleSubmit}
+    >
+      {({ values, errors }) => (
         <div className={styles.wrapper}>
           <div className={styles.step}>
             <FormattedMessage {...MSG.step} />
@@ -130,45 +150,36 @@ const Details = ({ setActiveStep }: Props) => {
               </div>
             </div>
           </div>
-          <div className={styles.fieldWrapper}>
+          <div
+            className={classNames(styles.fieldWrapper, {
+              [styles.error]: errors.name,
+            })}
+          >
             <Input label={MSG.name} name="name" />
           </div>
-          <div className={styles.fieldWrapper}>
+          <div
+            className={classNames(styles.fieldWrapper, {
+              [styles.error]: errors.phone,
+            })}
+          >
             <Input label={MSG.phone} name="phone" />
           </div>
-          <div className={styles.fieldWrapper}>
+          <div
+            className={classNames(styles.fieldWrapper, {
+              [styles.error]: errors.email,
+            })}
+          >
             <Input label={MSG.email} name="email" />
-          </div>
-          <div className={styles.fieldWrapper}>
-            <Input
-              label={MSG.businessActivity}
-              name="businessActivity"
-              help={MSG.businessActivityDescription}
-            />
-          </div>
-          <div className={styles.fieldWrapper}>
-            <Input
-              label={MSG.describeActivity}
-              name="businessActivityDescription"
-              help={MSG.describeActivityDescription}
-            />
-          </div>
-          <div className={styles.selectWrapper}>
-            <Select
-              name="country"
-              label={MSG.country}
-              options={[
-                { label: 'Test', value: 'test' },
-                { label: 'Test 2', value: 'test2' },
-              ]}
-              placeholder={MSG.countryPlaceholder}
-            />
           </div>
           <div>
             <div className={styles.textWrapper}>
               <FormattedMessage {...MSG.pep} />
             </div>
-            <div className={styles.radioGroup}>
+            <div
+              className={classNames(styles.radioGroup, {
+                [styles.radioError]: errors.pep,
+              })}
+            >
               <div
                 className={classNames(styles.radioWrapper, {
                   [styles.selected]: values.pep === 'no',
@@ -198,10 +209,14 @@ const Details = ({ setActiveStep }: Props) => {
                 </Radio>
               </div>
             </div>
+            {errors.pep && (
+              <InputStatus error={errors.pep as MessageDescriptor} />
+            )}
           </div>
           <FormButtons
             onNextClick={() => setActiveStep(Step.Location)}
             onPrevClick={() => handlePrevClick(values)}
+            errorMessage={<ErrorsCounter />}
           />
         </div>
       )}

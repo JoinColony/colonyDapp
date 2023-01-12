@@ -58,3 +58,11 @@
   color: var(--dark);
   letter-spacing: 0.1px;
 }
+
+.error {
+  margin-bottom: 8px;
+}
+
+.error input {
+  background-color: color-mod(var(--danger) alpha(5%));
+}

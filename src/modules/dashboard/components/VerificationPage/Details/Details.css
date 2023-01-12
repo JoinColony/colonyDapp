@@ -19,7 +19,7 @@
 }
 
 .userWrapper {
-  margin-bottom: 22px;
+  margin-bottom: 28px;
 }
 
 .userWrapper label {
@@ -28,8 +28,21 @@
   letter-spacing: var(--spacing-medium);
 }
 
+.error {
+  margin-bottom: 8px;
+}
+
+.error input {
+  background-color: color-mod(var(--danger) alpha(5%));
+}
+
+.selectError button {
+  border: 1px solid var(--danger);
+  background-color: color-mod(var(--danger) alpha(5%));
+}
+
 .fieldWrapper label {
-  margin-bottom: 14px;
+  margin-bottom: 5px;
   color: var(--dark);
   letter-spacing: var(--spacing-medium);
 }
@@ -104,27 +117,16 @@
   }
 }
 
+.radioError label {
+  border: 1px solid var(--danger);
+  background-color: color-mod(var(--danger) alpha(5%));
+}
+
+.radioError label > span {
+  border: 1px solid var(--danger);
+}
+
 .selected > label {
   border: 1px solid var(--primary);
   background-color: color-mod(var(--primary) alpha(12%));
-}
-
-.selectWrapper button {
-  height: 44px;
-}
-
-.selectWrapper label {
-  margin-bottom: 14px;
-  color: var(--dark);
-  letter-spacing: var(--spacing-medium);
-}
-
-.selectWrapper ul {
-  background-color: white;
-}
-
-.selectWrapper li {
-  display: flex;
-  align-items: center;
-  height: 44px;
 }

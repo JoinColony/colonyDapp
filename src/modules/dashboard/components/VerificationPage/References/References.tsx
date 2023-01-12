@@ -1,6 +1,7 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Formik } from 'formik';
+import classNames from 'classnames';
 
 import { Input } from '~core/Fields';
 import { Step } from '~pages/VerificationPage/types';
@@ -8,8 +9,10 @@ import { useVerificationContext } from '~pages/VerificationPage/VerificationData
 import IconTooltip from '~core/IconTooltip';
 
 import FormButtons from '../FormButtons';
+import ErrorsCounter from '../ErrorsCounter';
 
 import styles from './References.css';
+import { validationSchema } from './constants';
 
 export const MSG = defineMessages({
   step: {
@@ -87,9 +90,23 @@ const References = ({ setActiveStep }: Props) => {
     [setActiveStep, setFormValues],
   );
 
+  const [shouldValidate, setShouldValidate] = useState(false);
+  const handleValidate = useCallback(() => {
+    if (!shouldValidate) {
+      setShouldValidate(true);
+    }
+  }, [shouldValidate]);
+
   return (
-    <Formik initialValues={references} onSubmit={handleSubmit}>
-      {({ values }) => (
+    <Formik
+      initialValues={references}
+      validationSchema={validationSchema}
+      validateOnBlur={shouldValidate}
+      validateOnChange={shouldValidate}
+      validate={handleValidate}
+      onSubmit={handleSubmit}
+    >
+      {({ values, errors }) => (
         <div className={styles.wrapper}>
           <div className={styles.step}>
             <FormattedMessage {...MSG.step} />
@@ -126,10 +143,18 @@ const References = ({ setActiveStep }: Props) => {
               <FormattedMessage {...MSG.bankingReferenceAdditional} />
             </div>
 
-            <div className={styles.fieldWrapper}>
+            <div
+              className={classNames(styles.fieldWrapper, {
+                [styles.error]: errors.bankName,
+              })}
+            >
               <Input label={MSG.nameOfBank} name="bankName" />
             </div>
-            <div className={styles.fieldWrapper}>
+            <div
+              className={classNames(styles.fieldWrapper, {
+                [styles.error]: errors.contactDetails,
+              })}
+            >
               <Input label={MSG.contactDetails} name="contactDetails" />
             </div>
           </div>
@@ -147,17 +172,28 @@ const References = ({ setActiveStep }: Props) => {
             <div className={styles.subtitle}>
               <FormattedMessage {...MSG.commercialReferenceAdditional} />
             </div>
-            <div className={styles.fieldWrapper}>
+            <div
+              className={classNames(styles.fieldWrapper, {
+                [styles.error]: errors.businessName,
+              })}
+            >
               <Input label={MSG.nameOfBusiness} name="businessName" />
             </div>
-            <div className={styles.fieldWrapper}>
+            <div
+              className={classNames(styles.fieldWrapper, {
+                [styles.error]: errors.commercianContactDetails,
+              })}
+            >
               <Input
                 label={MSG.commercialContactDetails}
                 name="commercianContactDetails"
               />
             </div>
           </div>
-          <FormButtons onPrevClick={() => handlePrevClick(values)} />
+          <FormButtons
+            onPrevClick={() => handlePrevClick(values)}
+            errorMessage={<ErrorsCounter />}
+          />
         </div>
       )}
     </Formik>
