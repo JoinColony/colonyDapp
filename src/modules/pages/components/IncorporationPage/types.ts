@@ -3,7 +3,7 @@ import { MessageDescriptor } from 'react-intl';
 import {
   SignOption,
   VerificationStatus,
-} from '~dashboard/DAOIncorporation/IncorporationForm/constants';
+} from '~dashboard/Incorporation/IncorporationForm/constants';
 import { AnyUser } from '~data/index';
 
 import { Stages } from './constants';
