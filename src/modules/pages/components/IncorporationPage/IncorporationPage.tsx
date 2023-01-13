@@ -5,8 +5,8 @@ import { Formik } from 'formik';
 import { useColonyFromNameQuery } from '~data/generated';
 import { getMainClasses } from '~utils/css';
 import { SpinnerLoader } from '~core/Preloaders';
-import IncorporationForm from '~dashboard/DAOIncorporation/IncorporationForm';
-import Stages, { FormStages } from '~dashboard/DAOIncorporation/Stages';
+import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
+import Stages, { FormStages } from '~dashboard/Incorporation/Stages';
 
 import {
   initialValues,
@@ -16,7 +16,7 @@ import {
 } from './constants';
 import styles from './IncorporationPage.css';
 import { ValuesType } from './types';
-import LockedIncorporationForm from '~dashboard/DAOIncorporation/IncorporationForm/LockedIncorporationForm';
+import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
 
 const displayName = 'pages.IncorporationPage';
 

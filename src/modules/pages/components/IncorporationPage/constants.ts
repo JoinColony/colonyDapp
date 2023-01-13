@@ -1,7 +1,7 @@
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
-import { SignOption } from '~dashboard/DAOIncorporation/IncorporationForm/constants';
+import { SignOption } from '~dashboard/Incorporation/IncorporationForm/constants';
 
 import { StageObject } from './types';
 
