@@ -148,13 +148,8 @@ const IncorporationPage = () => {
             <SpinnerLoader appearance={{ size: 'medium' }} />
           </div>
         ) : (
-          colonyData && (
-            <LockedIncorporationForm
-              sidebarRef={sidebarRef.current}
-              colony={colonyData.processedColony}
-              formValues={formValues}
-            />
-          )
+          colonyData &&
+          formValues && <LockedIncorporationForm formValues={formValues} />
         )}
       </aside>
       <div className={styles.mainContainer}>
