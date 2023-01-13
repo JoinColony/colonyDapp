@@ -14,7 +14,7 @@ import { nanoid } from 'nanoid';
 import { getMainClasses } from '~utils/css';
 import { DOWN, ENTER, ESC, SimpleMessageValues, SPACE, UP } from '~types/index';
 import Dropdown from '~core/UserPickerWithSearch/Dropdown';
-import useUserTriggerFocus from '~core/UserPickerWithSearch/hooks';
+// import useUserTriggerFocus from '~core/UserPickerWithSearch/hooks';
 
 import SelectListBox from './SelectListBox';
 import { Appearance, SelectOption } from './types';
@@ -267,7 +267,7 @@ const Select = ({
     setSelectedOption(idx);
   };
 
-  useUserTriggerFocus(name, disabled, toggle);
+  // useUserTriggerFocus(name, disabled, toggle);
 
   useEffect(() => {
     if (isOpen) {
