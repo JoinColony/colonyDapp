@@ -7,6 +7,30 @@
   height: 100%;
 }
 
+.mainContainer {
+  padding: 54px 100px 80px 25px;
+  height: 600px;
+  min-height: 100%;
+  min-height: calc(100vh - navBarHeight);
+  width: calc(100% - sidebarWidth);
+  overflow-y: auto;
+  background-color: var(--colony-white);
+}
+
+.smallerPadding {
+  padding: 36px 100px 80px 25px;
+}
+
+.mainContent {
+  display: flex;
+  justify-content: space-between;
+  min-height: calc(100vh - navBarHeight);
+}
+
+.titleCommentsContainer {
+  min-width: 458px;
+}
+
 .sidebar {
   height: 600px;
   min-height: calc(100vh - navBarHeight);

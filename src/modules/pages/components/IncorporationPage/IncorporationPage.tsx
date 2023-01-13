@@ -1,22 +1,26 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 import { Formik } from 'formik';
+import classNames from 'classnames';
 
 import { useColonyFromNameQuery } from '~data/generated';
 import { getMainClasses } from '~utils/css';
 import { SpinnerLoader } from '~core/Preloaders';
-import Stages, { FormStages } from '~dashboard/Incorporation/Stages';
 import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
+import Stages, { FormStages } from '~dashboard/Incorporation/Stages';
+import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
+import VerificationBanner from '~dashboard/Incorporation/VerificationBanner';
 
 import {
   initialValues,
   stages,
   validationSchema,
   Stages as StagesEnum,
+  formValuesMock,
+  userMock,
 } from './constants';
-import styles from './IncorporationPage.css';
 import { ValuesType } from './types';
-import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
+import styles from './IncorporationPage.css';
 
 const displayName = 'pages.IncorporationPage';
 
@@ -26,11 +30,13 @@ const IncorporationPage = () => {
   const { colonyName } = useParams<{
     colonyName: string;
   }>();
-  const [isFormEditable, setFormEditable] = useState(true);
-  const [formValues, setFormValues] = useState<ValuesType>();
+  const [isFormEditable, setFormEditable] = useState(false);
+  const [formValues, setFormValues] = useState<ValuesType>(formValuesMock);
   const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStageId, setActiveStageId] = useState(StagesEnum.Draft);
   const sidebarRef = useRef<HTMLElement>(null);
+
+  const notVerified = true; // temporary valule
 
   const handleSubmit = useCallback((values) => {
     setFormValues(values);
@@ -132,7 +138,12 @@ const IncorporationPage = () => {
           )
         )}
       </aside>
-      <div className={styles.mainContainer}>
+      <div
+        className={classNames(styles.mainContainer, {
+          [styles.smallerPadding]: notVerified,
+        })}
+      >
+        {notVerified && <VerificationBanner user={userMock} />}
         <main className={styles.mainContent}>
           <div />
           <Stages
