@@ -126,17 +126,15 @@ const ConnectSafe = ({
   const [
     { value: moduleAddress },
     { error: moduleError, touched: moduleTouched },
-    { setError: setModuleError },
+    { setTouched: setModuleTouched, setError: setModuleError },
   ] = useField<string>('moduleContractAddress');
   const [isLoadingModule, setIsLoadingModule] = loadingState;
 
   useEffect(() => {
-    if (isLoadingModule) {
+    if (isLoadingModule && moduleError) {
       setModuleError('');
     }
-    // setModuleError causes infinite loop
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoadingModule]);
+  }, [isLoadingModule, moduleError, setModuleError]);
 
   const selectedChain = SUPPORTED_SAFE_NETWORKS.find(
     (network) => network.chainId === Number(chainId),
@@ -281,7 +279,11 @@ const ConnectSafe = ({
             appearance={{ colorSchema: 'grey', theme: 'fat' }}
             disabled={isSubmitting}
             onChange={(e) => {
-              if (isAddress(e.target.value) && moduleTouched) {
+              if (!moduleTouched) {
+                setModuleTouched(true);
+              }
+
+              if (isAddress(e.target.value)) {
                 setIsLoadingModule(true);
               }
             }}
