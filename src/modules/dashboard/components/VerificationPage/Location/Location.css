@@ -169,8 +169,10 @@
   }
 }
 
+@value selectHeight: 44px;
+
 .selectWrapper button {
-  height: 44px;
+  height: selectHeight;
 }
 
 .selectWrapper label {
@@ -180,7 +182,9 @@
 }
 
 .selectWrapper ul {
+  top: selectHeight;
   background-color: white;
+  box-shadow: 0px 6px 11px rgb(62 118 244 / 14%);
 }
 
 .selectWrapper li {
