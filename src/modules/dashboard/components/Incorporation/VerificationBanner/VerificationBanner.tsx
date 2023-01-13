@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
-
-import styles from './VerificationBanner.css';
 import UserMention from '~core/UserMention';
 import { AnyUser } from '~data/index';
+import { useDialog } from '~core/Dialog';
+import RemoveNominationDialog from '~dashboard/Dialogs/RemoveNominationDialog';
+
+import styles from './VerificationBanner.css';
 
 const MSG = defineMessages({
   title: {
@@ -33,6 +35,18 @@ export interface Props {
 }
 
 const VerificationBanner = ({ user }: Props) => {
+  const openRemoveDialog = useDialog(RemoveNominationDialog);
+
+  const handleRemove = useCallback(
+    () =>
+      openRemoveDialog({
+        onClick: () => {
+          // logic to remove nominated protector
+        },
+      }),
+    [openRemoveDialog],
+  );
+
   return (
     <div className={styles.wrapper}>
       <div>
@@ -55,7 +69,11 @@ const VerificationBanner = ({ user }: Props) => {
         </div>
       </div>
       <div className={styles.buttonsWrapper}>
-        <Button text={MSG.remove} className={styles.removeButton} />
+        <Button
+          text={MSG.remove}
+          className={styles.removeButton}
+          onClick={handleRemove}
+        />
         <Button text={MSG.verify} className={styles.verifyButton} />
       </div>
     </div>
