@@ -1,6 +1,9 @@
 import { MessageDescriptor } from 'react-intl';
 
-import { SignOption } from '~dashboard/Incorporation/IncorporationForm/types';
+import {
+  SignOption,
+  VerificationStatus,
+} from '~dashboard/Incorporation/IncorporationForm/constants';
 import { AnyUser } from '~data/index';
 
 import { Stages } from './constants';
@@ -10,6 +13,7 @@ export interface Protector {
   key: string;
   removed?: boolean;
   created?: boolean;
+  verified?: VerificationStatus;
 }
 export interface ValuesType {
   name: string;
