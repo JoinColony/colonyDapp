@@ -8,17 +8,17 @@ import { SpinnerLoader } from '~core/Preloaders';
 import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
 import Stages, { FormStages } from '~dashboard/ExpenditurePage/Stages';
 import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
+import IncorporationPaymentDialog from '~dashboard/Dialogs/IncorporationPaymentDialog';
 
 import {
   initialValues,
   stages,
   validationSchema,
   Stages as StagesEnum,
+  formValuesMock,
 } from './constants';
 import { ValuesType } from './types';
 import styles from './IncorporationPage.css';
-import { ValuesType } from './types';
-import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
 
 const displayName = 'pages.IncorporationPage';
 
@@ -28,11 +28,17 @@ const IncorporationPage = () => {
   const { colonyName } = useParams<{
     colonyName: string;
   }>();
-  const [isFormEditable, setFormEditable] = useState(true);
-  const [formValues, setFormValues] = useState<ValuesType>();
+
+  const { data: colonyData, loading } = useColonyFromNameQuery({
+    variables: { name: colonyName, address: '' },
+  });
+  const [isFormEditable, setFormEditable] = useState(false);
+  const [formValues, setFormValues] = useState<ValuesType>(formValuesMock);
   const [shouldValidate, setShouldValidate] = useState(false);
-  const [activeStageId, setActiveStageId] = useState(StagesEnum.Draft);
+  const [activeStageId, setActiveStageId] = useState(StagesEnum.Payment);
   const sidebarRef = useRef<HTMLElement>(null);
+
+  const openPayDialog = useDialog(IncorporationPaymentDialog);
 
   const handleSubmit = useCallback((values) => {
     setFormValues(values);
@@ -45,8 +51,17 @@ const IncorporationPage = () => {
   }, []);
 
   const handlePay = useCallback(() => {
-    setActiveStageId(StagesEnum.Processing);
-  }, []);
+    if (!colonyData) return;
+
+    openPayDialog({
+      onClick: () => {
+        // add a logic to pay for incorporation
+        setActiveStageId(StagesEnum.Processing);
+      },
+      isVotingExtensionEnabled: true,
+      colony: colonyData.processedColony,
+    });
+  }, [colonyData, openPayDialog]);
 
   const buttonAction = useMemo(() => {
     switch (activeStageId) {
@@ -70,10 +85,6 @@ const IncorporationPage = () => {
       setShouldValidate(true);
     }
   }, [shouldValidate]);
-
-  const { data: colonyData, loading } = useColonyFromNameQuery({
-    variables: { name: colonyName, address: '' },
-  });
 
   return isFormEditable ? (
     <Formik

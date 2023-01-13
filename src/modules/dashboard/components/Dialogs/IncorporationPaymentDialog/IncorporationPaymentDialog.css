@@ -1,0 +1,96 @@
+@value submitButtonWidth: 160px;
+
+.title {
+  padding: 32px 0 20px;
+  width: 100%;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  line-height: 24px;
+  color: var(--dark);
+}
+
+.forceContainer {
+  display: flex;
+  align-items: center;
+  font-size: var(--size-smallish);
+}
+
+.amountContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--grey-blue-0);
+  font-size: var(--size-normal);
+  color: var(--temp-grey-blue-7);
+  letter-spacing: var(--spacing-medium);
+}
+
+.available {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+}
+
+.available span {
+  font-size: var(--size-tiny);
+}
+
+.details {
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.messageContainer {
+  padding-bottom: 30px;
+  color: var(--temp-grey-blue-7);
+}
+
+.label {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.icon {
+  margin-right: 10px;
+}
+
+.toggleContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--size-tiny);
+  color: var(--temp-grey-blue-7);
+}
+
+.toggleContainer > span:first-of-type {
+  margin-bottom: 8px;
+}
+
+/* this selector is for tooltip wrapper */
+.toggleContainer > div > div:last-child {
+  max-width: 250px;
+  white-space: normal;
+}
+
+/* this selector is toggle button */
+.toggleContainer > div > div:first-of-type {
+  margin-right: 12px;
+}
+
+.toggleContainer > div > span > div {
+  margin-left: 0;
+  height: 18px;
+}
+
+.messageParagraph {
+  padding-top: 14px;
+}
+
+.annotation {
+  margin: 32px 0 12px;
+}
