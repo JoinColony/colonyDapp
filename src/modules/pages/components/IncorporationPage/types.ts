@@ -13,6 +13,7 @@ export interface Protector {
   key: string;
   removed?: boolean;
   created?: boolean;
+  verified?: VerificationStatus;
 }
 export interface ValuesType {
   name: string;
