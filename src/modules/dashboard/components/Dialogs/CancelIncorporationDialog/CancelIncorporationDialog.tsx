@@ -53,9 +53,9 @@ const MSG = defineMessages({
     id: `dashboard.CancelExpenditureDialog.CancelIncorporationDialog.mercyMessage`,
     defaultMessage: 'Owner will keep their stake and reputation.',
   },
-  createMotion: {
-    id: `dashboard.CancelExpenditureDialog.CancelIncorporationDialog.createMotion`,
-    defaultMessage: 'Create Motion',
+  submit: {
+    id: 'dashboard.CancelExpenditureDialog.CancelIncorporationDialog.submit',
+    defaultMessage: 'Submit',
   },
   textareaLabel: {
     id: `dashboard.CancelExpenditureDialog.CancelIncorporationDialog.textareaLabel`,
@@ -65,9 +65,9 @@ const MSG = defineMessages({
     id: `dashboard.CancelExpenditureDialog.CancelIncorporationDialog.effectTooltip`,
     defaultMessage: `Decide what to do with the owner's stake when cancelling this incorporation.`,
   },
-  continue: {
-    id: `dashboard.CancelExpenditureDialog.CancelIncorporationDialog.continue`,
-    defaultMessage: 'Continue',
+  createDomain: {
+    id: `dashboard.CancelExpenditureDialog.CancelIncorporationDialog.createDomain`,
+    defaultMessage: 'Motion will be created in',
   },
 });
 
@@ -88,14 +88,14 @@ export interface FormValues {
 interface Props {
   close: () => void;
   colony: Colony;
-  onCancelIncorporation: (isForce: boolean) => void;
+  onCancelExpenditure: (isForce: boolean) => void;
   isVotingExtensionEnabled: boolean;
 }
 
 const CancelIncorporationDialog = ({
   close,
   colony,
-  onCancelIncorporation,
+  onCancelExpenditure,
   isVotingExtensionEnabled,
 }: Props) => {
   const [isForce, setIsForce] = useState(false);
@@ -269,14 +269,10 @@ const CancelIncorporationDialog = ({
                   width: styles.buttonWidth,
                 }}
                 autoFocus
-                text={
-                  formValues.values.forceAction
-                    ? MSG.continue
-                    : MSG.createMotion
-                }
+                text={{ id: 'button.submit' }}
                 type="submit"
                 onClick={() => {
-                  onCancelIncorporation(formValues.values.forceAction);
+                  onCancelExpenditure(formValues.values.forceAction);
                   close();
                   formValues.handleSubmit();
                 }}
