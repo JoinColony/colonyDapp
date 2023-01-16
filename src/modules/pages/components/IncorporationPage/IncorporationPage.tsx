@@ -7,6 +7,9 @@ import { getMainClasses } from '~utils/css';
 import { SpinnerLoader } from '~core/Preloaders';
 import Stages, { FormStages } from '~dashboard/Incorporation/Stages';
 import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
+import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
+import CancelIncorporationDialog from '~dashboard/Dialogs/CancelIncorporationDialog';
+import { useDialog } from '~core/Dialog';
 
 import {
   initialValues,
@@ -14,9 +17,8 @@ import {
   validationSchema,
   Stages as StagesEnum,
 } from './constants';
-import styles from './IncorporationPage.css';
 import { ValuesType } from './types';
-import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
+import styles from './IncorporationPage.css';
 
 const displayName = 'pages.IncorporationPage';
 
@@ -31,6 +33,7 @@ const IncorporationPage = () => {
   const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStageId, setActiveStageId] = useState(StagesEnum.Draft);
   const sidebarRef = useRef<HTMLElement>(null);
+  const openCancelIncorporationDialog = useDialog(CancelIncorporationDialog);
 
   const handleSubmit = useCallback((values) => {
     setFormValues(values);
@@ -73,6 +76,30 @@ const IncorporationPage = () => {
     variables: { name: colonyName, address: '' },
   });
 
+  const handleCancel = (isForce: boolean) => {
+    if (isForce) {
+      // temporary action
+    } else {
+      // setTimeout is temporary, call to backend should be added here
+      setTimeout(() => {}, 3000);
+    }
+  };
+
+  const handleCancelIncorporation = useCallback(() => {
+    if (!colonyData) {
+      return null;
+    }
+
+    return (
+      colonyData &&
+      openCancelIncorporationDialog({
+        onCancelExpenditure: (isForce: boolean) => handleCancel(isForce),
+        colony: colonyData.processedColony,
+        isVotingExtensionEnabled: true, // temporary value
+      })
+    );
+  }, [colonyData, openCancelIncorporationDialog]);
+
   return isFormEditable ? (
     <Formik
       initialValues={initialValues}
@@ -101,22 +128,14 @@ const IncorporationPage = () => {
           <div className={styles.mainContainer}>
             <main className={styles.mainContent}>
               <div />
-              {activeStageId === StagesEnum.Draft ? (
-                <FormStages activeStageId={activeStageId} stages={stages} />
-              ) : (
-                <Stages
-                  activeStageId={activeStageId}
-                  stages={stages}
-                  buttonAction={buttonAction}
-                />
-              )}
+              <FormStages activeStageId={activeStageId} stages={stages} />
             </main>
           </div>
         </div>
       )}
     </Formik>
   ) : (
-    <div className={getMainClasses({}, styles)} id="expenditurePage">
+    <div className={getMainClasses({}, styles)} id="incorporationPage">
       <aside className={styles.sidebar} ref={sidebarRef}>
         {loading ? (
           <div className={styles.spinnerContainer}>
@@ -139,6 +158,7 @@ const IncorporationPage = () => {
             activeStageId={activeStageId}
             stages={stages}
             buttonAction={buttonAction}
+            handleCancelIncorporation={handleCancelIncorporation}
           />
         </main>
       </div>
