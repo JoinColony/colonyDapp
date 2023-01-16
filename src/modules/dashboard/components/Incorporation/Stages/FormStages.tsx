@@ -98,6 +98,7 @@ const FormStages = ({ stages, activeStageId }: Props) => {
         stages={stages}
         activeStageId={activeStageId}
         buttonAction={handleSaveDraft}
+        handleCancelIncorporation={() => {}}
       />
     </div>
   );
