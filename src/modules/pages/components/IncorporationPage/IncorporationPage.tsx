@@ -23,8 +23,9 @@ import {
 } from './constants';
 import { ValuesType } from './types';
 import styles from './IncorporationPage.css';
-import { ValuesType } from './types';
-import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
+import { useDialog } from '~core/Dialog';
+import CancelIncorporationDialog from '~dashboard/Dialogs/CancelIncorporationDialog';
+import IncorporationPaymentDialog from '~dashboard/Dialogs/IncorporationPaymentDialog';
 
 const displayName = 'pages.IncorporationPage';
 
@@ -43,6 +44,7 @@ const IncorporationPage = () => {
   const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStageId, setActiveStageId] = useState(StagesEnum.Payment);
   const sidebarRef = useRef<HTMLElement>(null);
+  const openCancelIncorporationDialog = useDialog(CancelIncorporationDialog);
 
   const notVerified = true; // temporary valule
 
@@ -93,6 +95,30 @@ const IncorporationPage = () => {
       setShouldValidate(true);
     }
   }, [shouldValidate]);
+
+  const handleCancel = (isForce: boolean) => {
+    if (isForce) {
+      // temporary action
+    } else {
+      // setTimeout is temporary, call to backend should be added here
+      setTimeout(() => {}, 3000);
+    }
+  };
+
+  const handleCancelIncorporation = useCallback(() => {
+    if (!colonyData) {
+      return null;
+    }
+
+    return (
+      colonyData &&
+      openCancelIncorporationDialog({
+        onCancelExpenditure: (isForce: boolean) => handleCancel(isForce),
+        colony: colonyData.processedColony,
+        isVotingExtensionEnabled: true, // temporary value
+      })
+    );
+  }, [colonyData, openCancelIncorporationDialog]);
 
   return isFormEditable ? (
     <Formik
