@@ -12,7 +12,7 @@ import { getApiKey } from './getContractUsefulMethods';
 
 export enum TRANSACTION_STATUS {
   SUCCESS = 'Completed',
-  PENDING = 'Pending',
+  PENDING = 'Action needed',
 }
 
 const getMessageLogs = async (
