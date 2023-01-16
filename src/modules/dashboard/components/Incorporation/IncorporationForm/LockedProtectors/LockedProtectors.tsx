@@ -14,48 +14,48 @@ import styles from './LockedProtectors.css';
 
 export const MSG = defineMessages({
   protectors: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.LockedProtectors.protectors`,
+    id: `dashboard.Incorporation.IncorporationForm.LockedProtectors.protectors`,
     defaultMessage: 'Protectors',
   },
   protectorsTooltip: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.LockedProtectors.protectorsTooltip`,
+    id: `dashboard.Incorporation.IncorporationForm.LockedProtectors.protectorsTooltip`,
     defaultMessage: `A Protector's role in a DAO legal corporation is to ratify the decisions of the DAO. Their purpose is to act on behalf of the DAO and handle legal the required administration. Learn more`,
   },
   unverified: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.LockedProtectors.unverified`,
+    id: `dashboard.Incorporation.IncorporationForm.LockedProtectors.unverified`,
     defaultMessage: 'Unverified',
   },
   verified: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.LockedProtectors.verified`,
+    id: `dashboard.Incorporation.IncorporationForm.LockedProtectors.verified`,
     defaultMessage: 'Verified',
   },
   mainContact: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.LockedProtectors.mainContact`,
+    id: `dashboard.Incorporation.IncorporationForm.LockedProtectors.mainContact`,
     defaultMessage: 'Main contact',
   },
   signing: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.LockedProtectors.signing`,
+    id: `dashboard.Incorporation.IncorporationForm.LockedProtectors.signing`,
     defaultMessage: 'Signing',
   },
   mainContactTooltip: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.LockedProtectors.mainContactTooltip`,
+    id: `dashboard.Incorporation.IncorporationForm.LockedProtectors.mainContactTooltip`,
     defaultMessage: `The main contact is required during the incorporation process and is also required to use their delivery address details for the registration.`,
   },
   signOptionTooltip: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.LockedProtectors.signOptionTooltip`,
+    id: `dashboard.Incorporation.IncorporationForm.LockedProtectors.signOptionTooltip`,
     defaultMessage: `Decide the requirements as to how many Protectors are required to sign legal documents to enact the decisions of a DAO.`,
   },
   individual: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.LockedProtectors.individual`,
+    id: `dashboard.Incorporation.IncorporationForm.LockedProtectors.individual`,
     defaultMessage: 'Individual signing',
   },
   multiple: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.LockedProtectors.multiple`,
+    id: `dashboard.Incorporation.IncorporationForm.LockedProtectors.multiple`,
     defaultMessage: 'All need to sign',
   },
 });
 
-const displayName = `dashboard.DAOIncorporation.IncorporationForm.LockedProtectors`;
+const displayName = `dashboard.Incorporation.IncorporationForm.LockedProtectors`;
 
 export interface Props {
   formValues: ValuesType;
@@ -82,7 +82,8 @@ const LockedProtectors = ({ formValues }: Props) => {
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
         {formValues.protectors?.map((protector) => {
-          const { profile } = protector || {};
+          const { user } = protector || {};
+          const { profile } = user || {};
           const { walletAddress, username, displayName: userDispalyName } =
             profile || {};
 
@@ -99,7 +100,11 @@ const LockedProtectors = ({ formValues }: Props) => {
                   : VerificationStatus.Unverified}
               </Tag>
               <div className={styles.userAvatarContainer}>
-                <UserAvatar address={walletAddress} size="xs" notSet={false} />
+                <UserAvatar
+                  address={walletAddress || ''}
+                  size="xs"
+                  notSet={false}
+                />
                 <div className={styles.userName}>
                   <UserMention username={username || userDispalyName || ''} />
                 </div>

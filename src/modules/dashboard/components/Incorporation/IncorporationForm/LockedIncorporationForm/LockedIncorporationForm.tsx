@@ -3,7 +3,9 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { FormSection, InputLabel, SelectHorizontal, Form } from '~core/Fields';
 import Icon from '~core/Icon';
+import { Stages } from '~pages/IncorporationPage/constants';
 import { ValuesType } from '~pages/IncorporationPage/types';
+import { multiLineTextEllipsis } from '~utils/strings';
 
 import LockedProtectors from '../LockedProtectors';
 
@@ -11,45 +13,50 @@ import styles from './LockedIncorporationForm.css';
 
 export const MSG = defineMessages({
   incorporation: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.LockedIncorporationForm.incorporation`,
+    id: `dashboard.Incorporation.IncorporationForm.LockedIncorporationForm.incorporation`,
     defaultMessage: 'Incorporation',
   },
   initialCost: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.LockedIncorporationForm.initialCost`,
+    id: `dashboard.Incorporation.IncorporationForm.LockedIncorporationForm.initialCost`,
     defaultMessage: 'Initial cost',
   },
   ongoingCost: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.LockedIncorporationForm.ongoingCost`,
+    id: `dashboard.Incorporation.IncorporationForm.LockedIncorporationForm.ongoingCost`,
     defaultMessage: 'Ongoing cost',
   },
   cost: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.LockedIncorporationForm.cost`,
+    id: `dashboard.Incorporation.IncorporationForm.LockedIncorporationForm.cost`,
     defaultMessage: '{icon} {amount} {currency}',
   },
   nameLabel: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.LockedIncorporationForm.nameLabel`,
+    id: `dashboard.Incorporation.IncorporationForm.LockedIncorporationForm.nameLabel`,
     defaultMessage: 'Corporation name',
   },
   descriptionLabel: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.LockedIncorporationForm.descriptionLabel`,
+    id: `dashboard.Incorporation.IncorporationForm.LockedIncorporationForm.descriptionLabel`,
     defaultMessage: 'DAO Purpose',
+  },
+  editApplication: {
+    id: `dashboard.Incorporation.IncorporationForm.LockedIncorporationForm.editApplication`,
+    defaultMessage: 'Edit application',
   },
 });
 
-const displayName = `dashboard.DAOIncorporation.IncorporationForm.LockedIncorporationForm`;
+const displayName = `dashboard.Incorporation.IncorporationForm.LockedIncorporationForm`;
 
 export interface Props {
   formValues: ValuesType;
+  activeStageId: Stages;
 }
 
-const LockedIncorporationForm = ({ formValues }: Props) => {
+const LockedIncorporationForm = ({ formValues, activeStageId }: Props) => {
+  const { alternativeName1: altName1, alternativeName2: altName2 } = formValues;
   const alternativeNames = useMemo(
-    () =>
-      formValues.alternativeNames.map((name) => ({
-        label: name,
-        value: name,
-      })),
-    [formValues.alternativeNames],
+    () => [
+      { label: multiLineTextEllipsis(altName1, 20), value: altName1 },
+      { label: multiLineTextEllipsis(altName2, 20), value: altName2 },
+    ],
+    [altName1, altName2],
   );
 
   return (
@@ -57,6 +64,15 @@ const LockedIncorporationForm = ({ formValues }: Props) => {
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.title}>
           <FormattedMessage {...MSG.incorporation} />
+          {activeStageId !== Stages.Complete && (
+            <span className={styles.editIcon}>
+              <Icon
+                name="edit"
+                appearance={{ size: 'medium' }}
+                title={MSG.editApplication}
+              />
+            </span>
+          )}
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
@@ -104,7 +120,9 @@ const LockedIncorporationForm = ({ formValues }: Props) => {
                 theme: 'alt',
                 width: 'content',
               }}
-              renderActiveOption={() => <>{formValues.name}</>}
+              renderActiveOption={() => (
+                <>{multiLineTextEllipsis(formValues.name || '', 20)}</>
+              )}
               options={alternativeNames}
               autoHeight
               unselectable

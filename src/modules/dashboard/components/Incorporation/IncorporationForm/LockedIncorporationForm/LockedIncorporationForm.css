@@ -20,7 +20,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
+  height: 42px;
 }
 
 .cost {
@@ -75,14 +75,15 @@
 
 .descriptionWrapper {
   display: flex;
-  align-items: baseline;
-  padding: 12px 0;
+  align-items: center;
+  height: 42px;
 }
 
 .descriptionWrapper label {
   flex: 1;
   color: color-mod(var(--temp-grey-blue-7) alpha(85%));
   letter-spacing: var(--spacing-medium);
+  margin-bottom: 0;
 }
 
 .description {
@@ -95,6 +96,8 @@
 }
 
 .title {
+  display: flex;
+  align-items: center;
   margin-bottom: 16px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
@@ -128,4 +131,12 @@
 
 .namesWrapper li:hover {
   background-color: transparent;
+}
+
+.editIcon {
+  margin-left: 10px;
+}
+
+.editIcon:hover {
+  cursor: pointer;
 }
