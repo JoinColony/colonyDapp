@@ -12,3 +12,4 @@ export const title: string;
 export const label: string;
 export const namesWrapper: string;
 export const slideDown: string;
+export const editIcon: string;
