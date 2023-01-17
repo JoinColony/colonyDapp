@@ -6,6 +6,8 @@ import { flattenObject } from '~dashboard/ExpenditurePage/Stages/utils';
 import { FIX_TRIGGER_EVENT_NAME } from '~pages/ExpenditurePage/constants';
 import { StageObject, ValuesType } from '~pages/IncorporationPage/types';
 import { Stages as StagesEnum } from '~pages/IncorporationPage/constants';
+import { useDialog } from '~core/Dialog';
+import DeleteDraftIncorporationDialog from '~dashboard/Dialogs/DeleteDraftIncorporationDialog';
 
 import Stages from './Stages';
 import styles from './Stages.css';
@@ -30,11 +32,20 @@ const MSG = defineMessages({
 export interface Props {
   stages: StageObject[];
   activeStageId: StagesEnum;
+  setFormValues: React.Dispatch<React.SetStateAction<ValuesType | undefined>>;
 }
 
-const FormStages = ({ stages, activeStageId }: Props) => {
-  const { values, handleSubmit, validateForm, setTouched, errors: formikErr } =
-    useFormikContext<ValuesType>() || {};
+const FormStages = ({ stages, activeStageId, setFormValues }: Props) => {
+  const {
+    values,
+    handleSubmit,
+    validateForm,
+    setTouched,
+    errors: formikErr,
+    resetForm,
+  } = useFormikContext<ValuesType>() || {};
+
+  const openDeleteDraftDialog = useDialog(DeleteDraftIncorporationDialog);
 
   const formikErrors = useMemo(() => {
     const errorsFlat = flattenObject(formikErr);
@@ -48,6 +59,15 @@ const FormStages = ({ stages, activeStageId }: Props) => {
 
     return !errorsLength && handleSubmit(values as any);
   }, [handleSubmit, setTouched, validateForm, values]);
+
+  const handleDeleteDraft = () =>
+    openDeleteDraftDialog({
+      onClick: () => {
+        resetForm();
+        // add logic to delete the draft from database
+        setFormValues(undefined);
+      },
+    });
 
   const handleFixButtonClick = useCallback(() => {
     setTouched(
@@ -98,6 +118,7 @@ const FormStages = ({ stages, activeStageId }: Props) => {
         stages={stages}
         activeStageId={activeStageId}
         buttonAction={handleSaveDraft}
+        handleDeleteDraft={handleDeleteDraft}
       />
     </div>
   );

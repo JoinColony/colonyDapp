@@ -6,12 +6,12 @@ import classNames from 'classnames';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
+import { StageObject, ValuesType } from '~pages/IncorporationPage/types';
+import { Stages as StagesEnum } from '~pages/IncorporationPage/constants';
 
 import StageItem from './StageItem';
 import StagesButton from './StagesButton';
 import styles from './Stages.css';
-import { StageObject, ValuesType } from '~pages/IncorporationPage/types';
-import { Stages as StagesEnum } from '~pages/IncorporationPage/constants';
 
 const MSG = defineMessages({
   stages: {
@@ -39,6 +39,7 @@ export interface Props {
   activeStageId: StagesEnum;
   buttonDisabled?: boolean;
   buttonAction?: (values?: ValuesType) => void;
+  handleDeleteDraft?: VoidFunction;
 }
 
 const Stages = ({
@@ -46,6 +47,7 @@ const Stages = ({
   activeStageId,
   buttonDisabled,
   buttonAction,
+  handleDeleteDraft,
 }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
@@ -101,7 +103,14 @@ const Stages = ({
                 </Tooltip>
               )}
             </Button>
-            <Button className={styles.iconButton}>
+            <Button
+              className={styles.iconButton}
+              onClick={
+                activeStageId === StagesEnum.Draft
+                  ? handleDeleteDraft
+                  : () => {}
+              }
+            >
               <Tooltip
                 placement="top-start"
                 content={<FormattedMessage {...MSG.tooltipDeleteText} />}

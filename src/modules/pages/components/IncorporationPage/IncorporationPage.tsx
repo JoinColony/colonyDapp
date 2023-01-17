@@ -7,6 +7,7 @@ import { getMainClasses } from '~utils/css';
 import { SpinnerLoader } from '~core/Preloaders';
 import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
 import Stages, { FormStages } from '~dashboard/Incorporation/Stages';
+import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
 
 import {
   initialValues,
@@ -14,9 +15,8 @@ import {
   validationSchema,
   Stages as StagesEnum,
 } from './constants';
-import styles from './IncorporationPage.css';
 import { ValuesType } from './types';
-import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
+import styles from './IncorporationPage.css';
 
 const displayName = 'pages.IncorporationPage';
 
@@ -111,7 +111,11 @@ const IncorporationPage = ({ match }: Props) => {
             <main className={styles.mainContent}>
               <div />
               {activeStageId === StagesEnum.Draft ? (
-                <FormStages activeStageId={activeStageId} stages={stages} />
+                <FormStages
+                  activeStageId={activeStageId}
+                  stages={stages}
+                  setFormValues={setFormValues}
+                />
               ) : (
                 <Stages
                   activeStageId={activeStageId}
