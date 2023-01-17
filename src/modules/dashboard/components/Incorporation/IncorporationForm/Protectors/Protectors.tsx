@@ -1,17 +1,16 @@
 import React, { useEffect, useMemo } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
-import { FieldArray, useField, useFormikContext } from 'formik';
+import { FieldArray, useField } from 'formik';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 
 import { FormSection, InputLabel } from '~core/Fields';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
-import { Colony, useMembersSubscription } from '~data/index';
+import { AnyUser, Colony, useMembersSubscription } from '~data/index';
 import Icon from '~core/Icon';
 import UserPickerWithSearch from '~core/UserPickerWithSearch';
 import { filterUserSelection } from '~core/SingleUserPicker';
 import { supRenderAvatar } from '~dashboard/ExpenditurePage/Recipient/Recipient';
-import { ValuesType } from '~pages/IncorporationPage/types';
 import Button from '~core/Button';
 
 import Radio from '../Radio';
@@ -67,7 +66,8 @@ export interface Props {
 }
 
 const Protectors = ({ colony, sidebarRef }: Props) => {
-  const { values } = useFormikContext<ValuesType>();
+  const [, { value: protectors }] = useField<AnyUser[]>('protectors');
+  const [, { value: signOption }] = useField('signOption');
   const [
     ,
     { value: mainContact, error, touched },
@@ -80,25 +80,32 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
   });
 
   const shouldShowMainContact = useMemo(() => {
-    const protectors = values.protectors?.filter(
+    const protectorsData = protectors?.filter(
       (protector) => !isEmpty(protector),
     );
-    if (!protectors) return false;
-    if (protectors?.length < 2) return false;
+    if (!protectorsData) return false;
+    if (protectorsData?.length < 2) return false;
     return true;
-  }, [values.protectors]);
+  }, [protectors]);
 
-  const mainContactsData = useMemo(() => {
-    return values.protectors?.filter((protector) => !isEmpty(protector));
-  }, [values.protectors]);
+  const mainContactData = useMemo(() => {
+    return protectors?.filter((protector) => !isEmpty(protector));
+  }, [protectors]);
+
+  // users are filtered to remove selected protectors from the options
+  const protectorsData = useMemo(() => {
+    return (colonyMembers?.subscribedUsers || []).filter(
+      (item) => !protectors.includes(item),
+    );
+  }, [colonyMembers, protectors]);
 
   useEffect(() => {
-    if (!mainContact && !shouldShowMainContact) {
-      setMainContact(values.protectors?.[0]);
+    if (!protectors.includes(mainContact)) {
+      setMainContact(undefined);
     }
     // didn't want to add setMainContact to dependencies array
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mainContact, shouldShowMainContact, values.protectors]);
+  }, [mainContact, protectors]);
 
   return (
     <>
@@ -121,20 +128,21 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
             name="protectors"
             render={({ push, remove }) => (
               <>
-                {values.protectors?.map((_, index) => {
+                {protectors?.map((protector, index) => {
+                  const key =
+                    protector?.id === 'filterValue'
+                      ? `filterValue${index}`
+                      : protector?.id;
+
                   return (
                     <SingleUserPicker
-                      data={colonyMembers?.subscribedUsers || []}
+                      key={key || index}
+                      data={protectorsData}
                       label=""
                       name={`protectors[${index}]`}
                       placeholder="Search"
                       sidebarRef={sidebarRef}
                       disabled={loading}
-                      onSelected={(user) => {
-                        if (!mainContact && index === 0) {
-                          setMainContact(user);
-                        }
-                      }}
                       filter={filterUserSelection}
                       renderAvatar={supRenderAvatar}
                       remove={remove}
@@ -143,7 +151,7 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
                     />
                   );
                 })}
-                {values.protectors && values.protectors?.length < 5 && (
+                {protectors && protectors?.length < 5 && (
                   <Button
                     onClick={() => {
                       push(undefined);
@@ -161,7 +169,7 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
           />
         </div>
       </FormSection>
-      {shouldShowMainContact && mainContactsData && (
+      {shouldShowMainContact && mainContactData && (
         <FormSection appearance={{ border: 'bottom' }}>
           <div className={styles.wrapper}>
             <div className={styles.labelWrapper}>
@@ -171,14 +179,14 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
             <div className={styles.mainContactWrapper}>
               <div className={styles.selectWrapper}>
                 <UserPickerWithSearch
-                  data={mainContactsData}
+                  data={mainContactData}
                   label=""
                   name="mainContact"
                   filter={filterUserSelection}
                   renderAvatar={supRenderAvatar}
                   placeholder="Search"
                   sidebarRef={sidebarRef}
-                  disabled={!values.protectors}
+                  disabled={!protectors}
                 />
                 {error && typeof error === 'object' && touched && (
                   <div className={styles.error}>{formatMessage(error)}</div>
@@ -203,13 +211,13 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
             <QuestionMarkTooltip tooltipText={MSG.signOptionTooltip} />
           </div>
           <Radio
-            checked={values.signOption === SignOption.Individual}
+            checked={signOption === SignOption.Individual}
             name="signOption"
             label={MSG.individual}
             value={SignOption.Individual}
           />
           <Radio
-            checked={values.signOption === SignOption.Multiple}
+            checked={signOption === SignOption.Multiple}
             name="signOption"
             label={MSG.multiple}
             value={SignOption.Multiple}

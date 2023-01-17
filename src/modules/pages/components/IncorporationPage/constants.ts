@@ -115,8 +115,14 @@ export const validationSchema = yup.object().shape({
     .of(yup.object().required(() => MSG.protectorRequiredError))
     .min(1)
     .max(5),
-  mainContact: yup.object().required(() => MSG.protectorRequiredError),
-  signOption: yup.string(),
+  mainContact: yup.object().when('protectors', {
+    is: (protectors) => protectors?.length > 1,
+    then: yup.object().required(() => MSG.protectorRequiredError),
+  }),
+  signOption: yup.string().when('protectors', {
+    is: (protectors) => protectors?.length > 1,
+    then: yup.string().required(() => MSG.protectorRequiredError),
+  }),
 });
 
 export enum Stages {
