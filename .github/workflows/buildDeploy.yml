@@ -65,6 +65,7 @@ jobs:
         if: always()
         with:
           webhook: ${{ env.DISCORD_WEBHOOK }}
+          title: "Build and push"
 
   # Deploy dapp frontend to QA environment
   deployQA:
@@ -102,6 +103,7 @@ jobs:
       if: always()
       with:
         webhook: ${{ env.DISCORD_WEBHOOK }}
+        title: "Deploy to QA"
 
   # Deploy dapp frontend to staging environment and sync production data to staging  
   deployStaging:
@@ -148,6 +150,7 @@ jobs:
       if: always()
       with:
         webhook: ${{ env.DISCORD_WEBHOOK }}
+        title: "Deploy to Staging"
   
   # Deploy dapp frontend to production environment
   deployProd:
@@ -187,3 +190,4 @@ jobs:
       if: always()
       with:
         webhook: ${{ env.DISCORD_WEBHOOK }}
+        title: "Deploy to Production"
