@@ -1,5 +1,6 @@
 export const wrapper: string;
 export const labelWrapper: string;
+export const additionalPaddign: string;
 export const protectorsLabelWrapper: string;
 export const label: string;
 export const mainContactWrapper: string;

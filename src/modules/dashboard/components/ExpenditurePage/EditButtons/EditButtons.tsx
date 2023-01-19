@@ -23,7 +23,7 @@ const displayName = 'dashboard.ExpenditurePage.EditButtons';
 
 interface Props {
   handleEditSubmit: () => void;
-  handleEditCancel: () => void;
+  handleEditCancel?: () => void;
 }
 
 const EditButtons = ({ handleEditCancel, handleEditSubmit }: Props) => {
@@ -35,9 +35,11 @@ const EditButtons = ({ handleEditCancel, handleEditSubmit }: Props) => {
 
   return (
     <div className={styles.wrapper}>
-      <Button appearance={{ theme: 'secondary' }} onClick={handleEditCancel}>
-        <FormattedMessage {...MSG.cancel} />
-      </Button>
+      {handleEditCancel && (
+        <Button appearance={{ theme: 'secondary' }} onClick={handleEditCancel}>
+          <FormattedMessage {...MSG.cancel} />
+        </Button>
+      )}
       <Button
         onClick={handleSubmit}
         disabled={!isEmpty(errors) && !isEmpty(touched)}
