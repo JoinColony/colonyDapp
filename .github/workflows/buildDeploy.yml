@@ -29,7 +29,6 @@ jobs:
       - name: Echo Env Vars through Context
         run: |
           echo "$GITHUB_CONTEXT"                 
-
       - name: Configure AWS credentials                          
         uses: aws-actions/configure-aws-credentials@v1           
         with:                                                    
