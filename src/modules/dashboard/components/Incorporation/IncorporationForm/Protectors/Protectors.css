@@ -8,6 +8,10 @@
   justify-content: flex-start;
 }
 
+.additionalPaddign {
+  padding: 8px 0 10px;
+}
+
 .labelWrapper label {
   margin-right: 8px;
   width: auto;
