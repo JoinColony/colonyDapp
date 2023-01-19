@@ -20,7 +20,7 @@ const MSG = defineMessages({
   },
   wrongNetwork: {
     id: 'pages.LandingPage.wrongNetwork',
-    defaultMessage: `You're connected to the wrong network. Please connect to the appriopriate Ethereum network.`,
+    defaultMessage: `You're connected to the wrong network. Please connect to the appropriate network.`,
   },
   createColony: {
     id: 'pages.LandingPage.createColony',
