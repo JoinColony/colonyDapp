@@ -1,5 +1,6 @@
 export const wrapper: string;
 export const labelWrapper: string;
+export const additionalPaddign: string;
 export const protectorsLabelWrapper: string;
 export const label: string;
 export const mainContactWrapper: string;
@@ -8,3 +9,5 @@ export const circlePlusIcon: string;
 export const signOptionWrapper: string;
 export const additionalText: string;
 export const additionalMargin: string;
+export const mianContactWrapper: string;
+export const fadeIn: string;

@@ -143,3 +143,14 @@
 .formStagesMsgAction:focus {
   opacity: 0.5;
 }
+
+.tagWrapper {
+  width: 100%;
+}
+
+.tagWrapper > span {
+  height: 21px;
+  width: 100%;
+  text-align: center;
+  letter-spacing: var(--spacing-medium);
+}

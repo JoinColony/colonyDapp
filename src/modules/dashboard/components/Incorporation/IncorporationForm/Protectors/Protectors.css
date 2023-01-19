@@ -8,6 +8,10 @@
   justify-content: flex-start;
 }
 
+.additionalPaddign {
+  padding: 8px 0 10px;
+}
+
 .labelWrapper label {
   margin-right: 8px;
   width: auto;
@@ -78,4 +82,19 @@
 
 .additionalMargin {
   margin-bottom: 4px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.mianContactWrapper {
+  animation-name: fadeIn;
+  animation-duration: 500ms;
 }
