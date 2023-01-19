@@ -82,7 +82,8 @@ const LockedProtectors = ({ formValues }: Props) => {
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
         {formValues.protectors?.map((protector) => {
-          const { profile } = protector || {};
+          const { user } = protector || {};
+          const { profile } = user || {};
           const { walletAddress, username, displayName: userDispalyName } =
             profile || {};
 
@@ -99,7 +100,11 @@ const LockedProtectors = ({ formValues }: Props) => {
                   : VerificationStatus.Unverified}
               </Tag>
               <div className={styles.userAvatarContainer}>
-                <UserAvatar address={walletAddress} size="xs" notSet={false} />
+                <UserAvatar
+                  address={walletAddress || ''}
+                  size="xs"
+                  notSet={false}
+                />
                 <div className={styles.userName}>
                   <UserMention username={username || userDispalyName || ''} />
                 </div>
@@ -108,37 +113,45 @@ const LockedProtectors = ({ formValues }: Props) => {
           );
         })}
       </FormSection>
-      <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.mainContactRow}>
-          <div className={styles.labelWrapper}>
-            <InputLabel label={MSG.mainContact} />
-            <QuestionMarkTooltip tooltipText={MSG.mainContactTooltip} />
-          </div>
-          <div className={styles.userAvatarContainer}>
-            <UserAvatar
-              address={formValues.mainContact?.profile.walletAddress || ''}
-              size="xs"
-              notSet={false}
-            />
-            <div className={styles.userName}>
-              <UserMention
-                username={formValues.mainContact?.profile.username || ''}
-              />
+      {(formValues.protectors?.length || 0) > 1 && (
+        <div className={styles.mianContactWrapper}>
+          <FormSection appearance={{ border: 'bottom' }}>
+            <div className={styles.mainContactRow}>
+              <div className={styles.labelWrapper}>
+                <InputLabel label={MSG.mainContact} />
+                <QuestionMarkTooltip tooltipText={MSG.mainContactTooltip} />
+              </div>
+              <div className={styles.userAvatarContainer}>
+                <UserAvatar
+                  address={formValues.mainContact?.profile?.walletAddress || ''}
+                  size="xs"
+                  notSet={false}
+                />
+                <div className={styles.userName}>
+                  <UserMention
+                    username={
+                      formValues.mainContact?.profile.username ||
+                      formValues.mainContact?.profile.displayName ||
+                      ''
+                    }
+                  />
+                </div>
+              </div>
             </div>
-          </div>
+          </FormSection>
+          <FormSection appearance={{ border: 'bottom' }}>
+            <div className={styles.signOptionWrapper}>
+              <div className={styles.labelWrapper}>
+                <InputLabel label={MSG.signing} />
+                <QuestionMarkTooltip tooltipText={MSG.signOptionTooltip} />
+              </div>
+              <div className={styles.signing}>
+                <FormattedMessage {...signLabel} />
+              </div>
+            </div>
+          </FormSection>
         </div>
-      </FormSection>
-      <FormSection appearance={{ border: 'bottom' }}>
-        <div className={styles.signOptionWrapper}>
-          <div className={styles.labelWrapper}>
-            <InputLabel label={MSG.signing} />
-            <QuestionMarkTooltip tooltipText={MSG.signOptionTooltip} />
-          </div>
-          <div className={styles.signing}>
-            <FormattedMessage {...signLabel} />
-          </div>
-        </div>
-      </FormSection>
+      )}
     </>
   );
 };

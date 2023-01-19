@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { FieldArray, useField } from 'formik';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
+import { nanoid } from 'nanoid';
 
 import { FormSection, InputLabel } from '~core/Fields';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
@@ -12,6 +13,7 @@ import UserPickerWithSearch from '~core/UserPickerWithSearch';
 import { filterUserSelection } from '~core/SingleUserPicker';
 import { supRenderAvatar } from '~dashboard/ExpenditurePage/Recipient/Recipient';
 import Button from '~core/Button';
+import { Protector } from '~pages/IncorporationPage/types';
 
 import Radio from '../Radio';
 import SingleUserPicker from '../SingleUserPicker';
@@ -66,7 +68,7 @@ export interface Props {
 }
 
 const Protectors = ({ colony, sidebarRef }: Props) => {
-  const [, { value: protectors }] = useField<AnyUser[]>('protectors');
+  const [, { value: protectors }] = useField<Protector[]>('protectors');
   const [, { value: signOption }] = useField('signOption');
   const [
     ,
@@ -81,7 +83,7 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
 
   const shouldShowMainContact = useMemo(() => {
     const protectorsData = protectors?.filter(
-      (protector) => !isEmpty(protector),
+      (protector) => !isEmpty(protector?.user),
     );
     if (!protectorsData) return false;
     if (protectorsData?.length < 2) return false;
@@ -89,23 +91,33 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
   }, [protectors]);
 
   const mainContactData = useMemo(() => {
-    return protectors?.filter((protector) => !isEmpty(protector));
+    return protectors
+      ?.map((item) => item?.user)
+      .filter((protector) => !isEmpty(protector));
   }, [protectors]);
 
   // users are filtered to remove selected protectors from the options
   const protectorsData = useMemo(() => {
     return (colonyMembers?.subscribedUsers || []).filter(
-      (item) => !protectors.includes(item),
+      (item) =>
+        !protectors.some(
+          (protector) =>
+            item.id === protector.user?.id &&
+            item.profile.walletAddress === protector.user.profile.walletAddress,
+        ),
     );
   }, [colonyMembers, protectors]);
 
-  useEffect(() => {
-    if (!protectors.includes(mainContact)) {
-      setMainContact(undefined);
-    }
-    // didn't want to add setMainContact to dependencies array
+  const onSelected = useCallback(
+    (value: AnyUser) => {
+      if (!mainContact) {
+        setMainContact(value);
+      }
+    },
+    // didn't want to add setMainContact to the dependencies array
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mainContact, protectors]);
+    [mainContact],
+  );
 
   return (
     <>
@@ -128,33 +140,27 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
             name="protectors"
             render={({ push, remove }) => (
               <>
-                {protectors?.map((protector, index) => {
-                  const key =
-                    protector?.id === 'filterValue'
-                      ? `filterValue${index}`
-                      : protector?.id;
-
-                  return (
-                    <SingleUserPicker
-                      key={key || index}
-                      data={protectorsData}
-                      label=""
-                      name={`protectors[${index}]`}
-                      placeholder="Search"
-                      sidebarRef={sidebarRef}
-                      disabled={loading}
-                      filter={filterUserSelection}
-                      renderAvatar={supRenderAvatar}
-                      remove={remove}
-                      index={index}
-                      setMainContact={setMainContact}
-                    />
-                  );
-                })}
+                {protectors?.map((protector, index) => (
+                  <SingleUserPicker
+                    key={protector.key}
+                    data={protectorsData}
+                    label=""
+                    name={`protectors[${index}].user`}
+                    placeholder="Search"
+                    sidebarRef={sidebarRef}
+                    disabled={loading}
+                    filter={filterUserSelection}
+                    renderAvatar={supRenderAvatar}
+                    remove={remove}
+                    index={index}
+                    setMainContact={setMainContact}
+                    onSelected={onSelected}
+                  />
+                ))}
                 {protectors && protectors?.length < 5 && (
                   <Button
                     onClick={() => {
-                      push(undefined);
+                      push({ key: nanoid(), user: undefined });
                     }}
                     appearance={{ theme: 'blue' }}
                   >
@@ -169,61 +175,71 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
           />
         </div>
       </FormSection>
-      {shouldShowMainContact && mainContactData && (
-        <FormSection appearance={{ border: 'bottom' }}>
-          <div className={styles.wrapper}>
-            <div className={styles.labelWrapper}>
-              <InputLabel label={MSG.mainContact} />
-              <QuestionMarkTooltip tooltipText={MSG.mainContactTooltip} />
-            </div>
-            <div className={styles.mainContactWrapper}>
-              <div className={styles.selectWrapper}>
-                <UserPickerWithSearch
-                  data={mainContactData}
-                  label=""
-                  name="mainContact"
-                  filter={filterUserSelection}
-                  renderAvatar={supRenderAvatar}
-                  placeholder="Search"
-                  sidebarRef={sidebarRef}
-                  disabled={!protectors}
-                />
-                {error && typeof error === 'object' && touched && (
-                  <div className={styles.error}>{formatMessage(error)}</div>
+      <div className={styles.mianContactWrapper}>
+        {shouldShowMainContact && mainContactData && (
+          <FormSection appearance={{ border: 'bottom' }}>
+            <div className={styles.wrapper}>
+              <div
+                className={classNames(
+                  styles.labelWrapper,
+                  styles.additionalPaddign,
                 )}
+              >
+                <InputLabel label={MSG.mainContact} />
+                <QuestionMarkTooltip tooltipText={MSG.mainContactTooltip} />
               </div>
-              <Icon
-                name="trash"
-                className={styles.deleteIcon}
-                onClick={() => setMainContact(undefined)}
-                title={MSG.deleteIconTitle}
-              />
+              <div className={styles.mainContactWrapper}>
+                <div className={styles.selectWrapper}>
+                  <UserPickerWithSearch
+                    data={mainContactData}
+                    label=""
+                    name="mainContact"
+                    filter={filterUserSelection}
+                    renderAvatar={supRenderAvatar}
+                    placeholder="Search"
+                    sidebarRef={sidebarRef}
+                    disabled={!protectors}
+                  />
+                  {error && typeof error === 'object' && touched && (
+                    <div className={styles.error}>{formatMessage(error)}</div>
+                  )}
+                </div>
+                <Icon
+                  name="trash"
+                  className={styles.deleteIcon}
+                  onClick={() => setMainContact(undefined)}
+                  title={MSG.deleteIconTitle}
+                />
+              </div>
             </div>
+          </FormSection>
+        )}
+        {shouldShowMainContact && (
+          <div className={styles.signOptionWrapper}>
+            <div
+              className={classNames(
+                styles.labelWrapper,
+                styles.additionalMargin,
+              )}
+            >
+              <InputLabel label={MSG.signOptionLabel} />
+              <QuestionMarkTooltip tooltipText={MSG.signOptionTooltip} />
+            </div>
+            <Radio
+              checked={signOption === SignOption.Individual}
+              name="signOption"
+              label={MSG.individual}
+              value={SignOption.Individual}
+            />
+            <Radio
+              checked={signOption === SignOption.Multiple}
+              name="signOption"
+              label={MSG.multiple}
+              value={SignOption.Multiple}
+            />
           </div>
-        </FormSection>
-      )}
-      {shouldShowMainContact && (
-        <div className={styles.signOptionWrapper}>
-          <div
-            className={classNames(styles.labelWrapper, styles.additionalMargin)}
-          >
-            <InputLabel label={MSG.signOptionLabel} />
-            <QuestionMarkTooltip tooltipText={MSG.signOptionTooltip} />
-          </div>
-          <Radio
-            checked={signOption === SignOption.Individual}
-            name="signOption"
-            label={MSG.individual}
-            value={SignOption.Individual}
-          />
-          <Radio
-            checked={signOption === SignOption.Multiple}
-            name="signOption"
-            label={MSG.multiple}
-            value={SignOption.Multiple}
-          />
-        </div>
-      )}
+        )}
+      </div>
     </>
   );
 };

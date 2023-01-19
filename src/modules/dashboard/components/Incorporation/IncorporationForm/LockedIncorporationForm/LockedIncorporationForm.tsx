@@ -3,6 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { FormSection, InputLabel, SelectHorizontal, Form } from '~core/Fields';
 import Icon from '~core/Icon';
+import { Stages } from '~pages/IncorporationPage/constants';
 import { ValuesType } from '~pages/IncorporationPage/types';
 
 import LockedProtectors from '../LockedProtectors';
@@ -40,16 +41,22 @@ const displayName = `dashboard.DAOIncorporation.IncorporationForm.LockedIncorpor
 
 export interface Props {
   formValues: ValuesType;
+  editForm: VoidFunction;
+  activeStageId: Stages;
 }
 
-const LockedIncorporationForm = ({ formValues }: Props) => {
+const LockedIncorporationForm = ({
+  formValues,
+  editForm,
+  activeStageId,
+}: Props) => {
+  const { alternativeName1: a1, alternativeName2: a2 } = formValues;
   const alternativeNames = useMemo(
-    () =>
-      formValues.alternativeNames.map((name) => ({
-        label: name,
-        value: name,
-      })),
-    [formValues.alternativeNames],
+    () => [
+      { label: a1, value: a1 },
+      { label: a2, value: a2 },
+    ],
+    [a1, a2],
   );
 
   return (
@@ -57,6 +64,16 @@ const LockedIncorporationForm = ({ formValues }: Props) => {
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.title}>
           <FormattedMessage {...MSG.incorporation} />
+          {activeStageId !== Stages.Complete && (
+            <span className={styles.editIcon}>
+              <Icon
+                name="edit"
+                appearance={{ size: 'medium' }}
+                title="Edit expenditure"
+                onClick={editForm}
+              />
+            </span>
+          )}
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>

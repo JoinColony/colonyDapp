@@ -1,0 +1,23 @@
+.row {
+  composes: row from '../EditIncorporationDialogForm.css';
+  padding: 8px 0;
+}
+
+.valueContainer {
+  text-align: right;
+}
+
+.userAvatarContainer {
+  display: flex;
+  align-items: center;
+}
+
+.userAvatarContainer > span {
+  margin-left: 8px;
+  font-size: var(--size-normal);
+}
+
+.userAvatarContainer figure {
+  height: 24px;
+  width: 24px;
+}

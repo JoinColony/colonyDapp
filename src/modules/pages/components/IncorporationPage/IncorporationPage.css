@@ -26,6 +26,10 @@
 
 .titleCommentsContainer {
   min-width: 458px;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
 }
 
 .sidebar {
@@ -52,17 +56,21 @@
 }
 
 .tagWrapper > span {
+  height: 21px;
   width: 100%;
   border-radius: 12px;
+  background-color: var(--temp-grey-blue-7);
   text-align: center;
+  color: white;
+  letter-spacing: var(--spacing-medium);
 }
 
 .tagWrapper {
-  margin-bottom: -50px;
+  margin-bottom: -30px;
   padding: 34px 54px 0;
 }
 
-.tagStagesWrapper span {
+.tagStagesWrapper > span {
   display: flex;
   justify-content: center;
   align-items: center;

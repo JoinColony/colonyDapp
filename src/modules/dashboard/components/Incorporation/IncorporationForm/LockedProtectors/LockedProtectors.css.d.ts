@@ -8,3 +8,5 @@ export const mainContactRow: string;
 export const labelWrapper: string;
 export const signOptionWrapper: string;
 export const signing: string;
+export const mianContactWrapper: string;
+export const fadeIn: string;

@@ -1,6 +1,5 @@
 export const paddingTop: string;
 export const lockedPaddingTop: string;
-export const paddingRightLeftBottom: string;
 export const container: string;
 export const costRow: string;
 export const cost: string;

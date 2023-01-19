@@ -13,3 +13,4 @@ export const formStagesMsg: string;
 export const fadeIn: string;
 export const formStagesMsgText: string;
 export const formStagesMsgAction: string;
+export const tagWrapper: string;

@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
@@ -86,25 +87,27 @@ const MSG = defineMessages({
 
 export const initialValues = {
   name: undefined,
-  alternativeNames: ['', ''],
+  alternativeName1: undefined,
+  alternativeName2: undefined,
   purpose: undefined,
-  protectors: [undefined],
+  protectors: [
+    { key: nanoid(), user: undefined },
+    { key: nanoid(), user: undefined },
+  ],
   mainContact: undefined,
   signOption: SignOption.Individual,
 };
 
 export const validationSchema = yup.object().shape({
   name: yup.string().required(() => MSG.nameRequiredError),
-  alternativeNames: yup
-    .array()
-    .of(
-      yup
-        .string()
-        .min(2, () => MSG.lengthError)
-        .required(() => MSG.altNamesRequiredError),
-    )
-    .min(2)
-    .max(2),
+  alternativeName1: yup
+    .string()
+    .min(2, () => MSG.lengthError)
+    .required(() => MSG.altNamesRequiredError),
+  alternativeName2: yup
+    .string()
+    .min(2, () => MSG.lengthError)
+    .required(() => MSG.altNamesRequiredError),
   purpose: yup
     .string()
     .min(3, () => MSG.lengthError)
@@ -112,7 +115,11 @@ export const validationSchema = yup.object().shape({
     .required(() => MSG.purposeRequiredError),
   protectors: yup
     .array()
-    .of(yup.object().required(() => MSG.protectorRequiredError))
+    .of(
+      yup.object().shape({
+        user: yup.object().required(() => MSG.protectorRequiredError),
+      }),
+    )
     .min(1)
     .max(5),
   mainContact: yup.object().when('protectors', {

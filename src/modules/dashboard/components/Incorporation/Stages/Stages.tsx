@@ -6,12 +6,18 @@ import classNames from 'classnames';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
+import { StageObject, ValuesType } from '~pages/IncorporationPage/types';
+import { Stages as StagesEnum } from '~pages/IncorporationPage/constants';
+import { Motion } from '~pages/ExpenditurePage/types';
+import {
+  MotionStatus,
+  MotionType,
+} from '~dashboard/ExpenditurePage/Stages/constants';
+import Tag from '~core/Tag';
 
 import StageItem from './StageItem';
 import StagesButton from './StagesButton';
 import styles from './Stages.css';
-import { StageObject, ValuesType } from '~pages/IncorporationPage/types';
-import { Stages as StagesEnum } from '~pages/IncorporationPage/constants';
 
 const MSG = defineMessages({
   stages: {
@@ -30,6 +36,10 @@ const MSG = defineMessages({
     id: 'dashboard.DAOIncorporation.Stages.tooltipShareText',
     defaultMessage: 'Share URL',
   },
+  activeMotion: {
+    id: 'dashboard.DAOIncorporation.Stages.activeMotion',
+    defaultMessage: 'There is an active motion for this application',
+  },
 });
 
 const displayName = 'dashboard.DAOIncorporation.Stages';
@@ -39,6 +49,7 @@ export interface Props {
   activeStageId: StagesEnum;
   buttonDisabled?: boolean;
   buttonAction?: (values?: ValuesType) => void;
+  motion?: Motion;
 }
 
 const Stages = ({
@@ -46,6 +57,7 @@ const Stages = ({
   activeStageId,
   buttonDisabled,
   buttonAction,
+  motion,
 }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
@@ -65,6 +77,21 @@ const Stages = ({
 
   return (
     <div className={styles.mainContainer}>
+      {motion?.status === MotionStatus.Pending && (
+        <div className={styles.tagWrapper}>
+          <Tag
+            appearance={{
+              theme: 'golden',
+              colorSchema: 'fullColor',
+            }}
+          >
+            {motion.type === MotionType.Edit &&
+              motion.status === MotionStatus.Pending && (
+                <FormattedMessage {...MSG.activeMotion} />
+              )}
+          </Tag>
+        </div>
+      )}
       <div className={classNames(styles.statusContainer)}>
         <div className={styles.stagesText}>
           <FormattedMessage {...MSG.stages} />

@@ -95,6 +95,9 @@
 }
 
 .title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 16px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
@@ -128,4 +131,16 @@
 
 .namesWrapper li:hover {
   background-color: transparent;
+}
+
+.namesWrapper button {
+  width: 100%;
+}
+
+.editIcon {
+  margin-left: 10px;
+}
+
+.editIcon:hover {
+  cursor: pointer;
 }

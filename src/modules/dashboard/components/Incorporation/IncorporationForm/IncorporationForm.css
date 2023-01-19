@@ -1,9 +1,8 @@
 @value paddingTop: 46px;
 @value lockedPaddingTop: 75px;
-@value paddingRightLeftBottom: 54px;
 
 .container {
-  padding: paddingTop paddingRightLeftBottom paddingRightLeftBottom;
+  padding: paddingTop 54px 100px;
 }
 
 .costRow {

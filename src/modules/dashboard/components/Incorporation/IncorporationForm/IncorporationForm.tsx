@@ -61,7 +61,7 @@ export interface Props {
 }
 
 const IncorporationForm = ({ colony, sidebarRef }: Props) => {
-  const { values, errors, touched } = useFormikContext<ValuesType>();
+  const { errors, touched } = useFormikContext<ValuesType>();
 
   return (
     <div className={styles.container}>
@@ -107,7 +107,8 @@ const IncorporationForm = ({ colony, sidebarRef }: Props) => {
       <FormSection appearance={{ border: 'bottom' }}>
         <div
           className={classNames(styles.nameInputs, {
-            [styles.marginSmall]: errors.alternativeNames,
+            [styles.marginSmall]:
+              errors.alternativeName1 || errors.alternativeName2,
           })}
         >
           <div
@@ -122,21 +123,26 @@ const IncorporationForm = ({ colony, sidebarRef }: Props) => {
             <InputLabel label={MSG.alternativelNamesLabel} />
             <QuestionMarkTooltip tooltipText={MSG.alternativeNamesTooltip} />
           </div>
-          {values.alternativeNames.map((_, index) => (
-            <div
-              className={classNames({
-                [styles.error]: errors.alternativeNames?.[index],
-              })}
-            >
-              <Input name={`alternativeNames[${index}]`} elementOnly />
-            </div>
-          ))}
-          {errors.alternativeNames && (
+          <div
+            className={classNames({
+              [styles.error]:
+                errors.alternativeName1 || errors.alternativeName2,
+            })}
+          >
+            <Input name="alternativeName1" elementOnly />
+          </div>
+          <div
+            className={classNames({
+              [styles.error]:
+                errors.alternativeName1 || errors.alternativeName2,
+            })}
+          >
+            <Input name="alternativeName2" elementOnly />
+          </div>
+          {(errors.alternativeName1 || errors.alternativeName2) && (
             <InputStatus
-              error={errors.alternativeNames[0] || errors.alternativeNames[1]}
-              touched={
-                touched.alternativeNames?.[0] || touched.alternativeNames?.[1]
-              }
+              error={errors.alternativeName1 || errors.alternativeName2}
+              touched={touched.alternativeName1 || touched.alternativeName2}
             />
           )}
         </div>
