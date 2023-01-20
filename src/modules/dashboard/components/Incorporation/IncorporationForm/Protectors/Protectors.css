@@ -1,5 +1,5 @@
 .wrapper {
-  margin: 8px 0 16px;
+  margin: 18px 0 14px;
 }
 
 .labelWrapper {
@@ -35,21 +35,17 @@
   color: color-mod(var(--dark) alpha(85%));
 }
 
-.protectorWrapper {
+.mainContactWrapper {
   display: flex;
   justify-content: space-between;
   padding: 11px 0 14px;
+  padding-bottom: 0;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: color-mod(var(--temp-grey-blue-7) alpha(85%));
 }
 
-.mainContactWrapper {
-  composes: protectorWrapper;
-  padding-bottom: 0;
-}
-
-.protectorWrapper label {
+.mainContactWrapper label {
   margin-right: 0;
 }
 

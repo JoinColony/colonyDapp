@@ -1,16 +1,15 @@
 @value paddingTop: 46px;
 @value lockedPaddingTop: 75px;
-@value paddingRightLeftBottom: 54px;
 
 .container {
-  padding: paddingTop paddingRightLeftBottom paddingRightLeftBottom;
+  padding: paddingTop 54px 75px;
 }
 
 .costRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
+  height: 42px;
 }
 
 .cost {
@@ -53,7 +52,7 @@
   letter-spacing: var(--spacing-normal);
 }
 
-.nameInputs > div:not(:first-child) {
+.altNameWrapper {
   margin-bottom: 12px;
 }
 
@@ -63,11 +62,11 @@
   color: color-mod(var(--dark) alpha(85%));
 }
 
-.inputWrapper {
+.textareaWrapper {
   margin-top: 8px;
 }
 
-.inputWrapper textarea {
+.textareaWrapper textarea {
   height: 88px;
   font-size: var(--size-normal);
   font-weight: var(--weight-bold);
@@ -75,7 +74,7 @@
   letter-spacing: var(--spacing-normal);
 }
 
-.inputWrapper label {
+.textareaWrapper label {
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: color-mod(var(--dark) alpha(85%));
@@ -94,4 +93,8 @@
   font-weight: var(--weight-bold);
   color: color-mod(var(--temp-grey-blue-7) alpha(85%));
   letter-spacing: var(--spacing-medium);
+}
+
+.hiddenSubmit {
+  visibility: hidden;
 }

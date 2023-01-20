@@ -49,7 +49,7 @@ const MSG = defineMessages({
   },
 });
 
-interface Props extends WithOmnipickerInProps {
+export interface Props extends WithOmnipickerInProps {
   /** Renders an extra button to remove selection */
   disabled?: boolean;
 

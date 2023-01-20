@@ -1,13 +1,13 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { RouteChildrenProps, useParams } from 'react-router';
 import { Formik } from 'formik';
 
 import { useColonyFromNameQuery } from '~data/generated';
 import { getMainClasses } from '~utils/css';
 import { SpinnerLoader } from '~core/Preloaders';
-import IncorporationForm from '~dashboard/DAOIncorporation/IncorporationForm';
+import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
 
-import { initialValues, validationSchema } from './constants';
+import { initialValues } from './constants';
 import styles from './IncorporationPage.css';
 
 const displayName = 'pages.IncorporationPage';
@@ -26,31 +26,16 @@ const IncorporationPage = ({ match }: Props) => {
   const { colonyName } = useParams<{
     colonyName: string;
   }>();
-  const [shouldValidate, setShouldValidate] = useState(false);
   const sidebarRef = useRef<HTMLElement>(null);
-
-  const handleValidate = useCallback(() => {
-    if (!shouldValidate) {
-      setShouldValidate(true);
-    }
-  }, [shouldValidate]);
 
   const { data: colonyData, loading } = useColonyFromNameQuery({
     variables: { name: colonyName, address: '' },
   });
 
   return (
-    <Formik
-      initialValues={initialValues}
-      onSubmit={() => {}}
-      validationSchema={validationSchema}
-      validateOnBlur={shouldValidate}
-      validateOnChange={shouldValidate}
-      validate={handleValidate}
-      enableReinitialize
-    >
+    <Formik initialValues={initialValues} onSubmit={() => {}}>
       {() => (
-        <div className={getMainClasses({}, styles)} id="expenditurePage">
+        <div className={getMainClasses({}, styles)}>
           <aside className={styles.sidebar} ref={sidebarRef}>
             {loading ? (
               <div className={styles.spinnerContainer}>
@@ -65,9 +50,7 @@ const IncorporationPage = ({ match }: Props) => {
               )
             )}
           </aside>
-          <div className={styles.mainContainer}>
-            <main className={styles.mainContent} />
-          </div>
+          <div />
         </div>
       )}
     </Formik>

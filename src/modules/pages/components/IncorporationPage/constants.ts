@@ -1,21 +1,16 @@
-import * as yup from 'yup';
+import { nanoid } from 'nanoid';
 
-import { SignOption } from '~dashboard/DAOIncorporation/IncorporationForm/Protectors/Protectors';
+import { SignOption } from '~dashboard/Incorporation/IncorporationForm/types';
 
 export const initialValues = {
   name: undefined,
-  alternativeNames: ['', ''],
-  description: undefined,
-  protectors: [undefined],
+  alternativeName1: undefined,
+  alternativeName2: undefined,
+  purpose: undefined,
+  protectors: [
+    { key: nanoid(), user: undefined },
+    { key: nanoid(), user: undefined },
+  ],
   mainContact: undefined,
   signOption: SignOption.Individual,
 };
-
-export const validationSchema = yup.object().shape({
-  name: yup.string().required(),
-  alternativeNames: yup.array().of(yup.string()).min(2).max(2),
-  description: yup.string(),
-  protectors: yup.array().min(1).max(5),
-  mainContact: yup.object().required(),
-  signOption: yup.string(),
-});

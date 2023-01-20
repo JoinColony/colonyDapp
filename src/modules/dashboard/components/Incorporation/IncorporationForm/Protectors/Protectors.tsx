@@ -1,76 +1,75 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { FieldArray, useField, useFormikContext } from 'formik';
+import { FieldArray, useField } from 'formik';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
+import { nanoid } from 'nanoid';
 
 import { FormSection, InputLabel } from '~core/Fields';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
-import { Colony, useMembersSubscription } from '~data/index';
+import { AnyUser, Colony, useMembersSubscription } from '~data/index';
 import Icon from '~core/Icon';
 import UserPickerWithSearch from '~core/UserPickerWithSearch';
 import { filterUserSelection } from '~core/SingleUserPicker';
 import { supRenderAvatar } from '~dashboard/ExpenditurePage/Recipient/Recipient';
-import { ValuesType } from '~pages/IncorporationPage/types';
+import { Protector } from '~pages/IncorporationPage/types';
 import Button from '~core/Button';
 
 import Radio from '../Radio';
+import { SignOption } from '../types';
+import SingleUserPicker from '../SingleUserPicker';
 
 import styles from './Protectors.css';
 
 export const MSG = defineMessages({
   protectorsLabel: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.Protectors.protectorsLabel`,
+    id: `dashboard.Incorporation.IncorporationForm.Protectors.protectorsLabel`,
     defaultMessage: 'Nominate protectors <span>(max 5)</span>',
   },
   protectorsTooltip: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.Protectors.protectorsTooltip`,
+    id: `dashboard.Incorporation.IncorporationForm.Protectors.protectorsTooltip`,
     defaultMessage: `A Protector's role in a DAO legal corporation is to ratify the decisions of the DAO. Their purpose is to act on behalf of the DAO and handle legal the required administration. Learn more`,
   },
   deleteIconTitle: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.Protectors.deleteIconTitle`,
+    id: `dashboard.Incorporation.IncorporationForm.Protectors.deleteIconTitle`,
     defaultMessage: 'Delete recipient',
   },
   signOptionLabel: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.Protectors.signOptionLabel`,
+    id: `dashboard.Incorporation.IncorporationForm.Protectors.signOptionLabel`,
     defaultMessage: 'How documents are signed',
   },
   signOptionTooltip: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.Protectors.signOptionTooltip`,
+    id: `dashboard.Incorporation.IncorporationForm.Protectors.signOptionTooltip`,
     defaultMessage: `Decide the requirements as to how many Protectors are required to sign legal documents to enact the decisions of a DAO.`,
   },
   individual: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.Protectors.individual`,
+    id: `dashboard.Incorporation.IncorporationForm.Protectors.individual`,
     defaultMessage: 'Individual signing (security concerns)',
   },
   multiple: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.Protectors.multiple`,
+    id: `dashboard.Incorporation.IncorporationForm.Protectors.multiple`,
     defaultMessage: 'All need to sign (the risk is a stalemate)',
   },
   mainContact: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.Protectors.mainContact`,
+    id: `dashboard.Incorporation.IncorporationForm.Protectors.mainContact`,
     defaultMessage: 'Main contact',
   },
   mainContactTooltip: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.Protectors.mainContactTooltip`,
+    id: `dashboard.Incorporation.IncorporationForm.Protectors.mainContactTooltip`,
     defaultMessage: `The main contact is required during the incorporation process and is also required to use their delivery address details for the registration.`,
   },
 });
 
-const displayName = 'dashboard.DAOIncorporation.IncorporationForm.Protectors';
+const displayName = 'dashboard.Incorporation.IncorporationForm.Protectors';
 
 export interface Props {
   sidebarRef: HTMLElement | null;
   colony: Colony;
 }
 
-export enum SignOption {
-  Individual = 'individual',
-  Multiple = 'multiple',
-}
-
 const Protectors = ({ colony, sidebarRef }: Props) => {
-  const { values } = useFormikContext<ValuesType>();
+  const [, { value: protectors }] = useField<Protector[]>('protectors');
+  const [, { value: signOption }] = useField('signOption');
   const [, { value: mainContact }, { setValue: setMainContact }] = useField(
     'mainContact',
   );
@@ -80,17 +79,42 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
   });
 
   const shouldShowMainContact = useMemo(() => {
-    const protectors = values.protectors?.filter(
-      (protector) => !isEmpty(protector),
+    const protectorsData = protectors?.filter(
+      (protector) => !isEmpty(protector?.user),
     );
-    if (!protectors) return false;
-    if (protectors?.length < 2) return false;
+    if (!protectorsData) return false;
+    if (protectorsData?.length < 2) return false;
     return true;
-  }, [values.protectors]);
+  }, [protectors]);
 
-  const mainContactsData = useMemo(() => {
-    return values.protectors?.filter((protector) => !isEmpty(protector));
-  }, [values.protectors]);
+  const mainContactData = useMemo(() => {
+    return protectors
+      ?.map((item) => item?.user)
+      .filter((protector) => !isEmpty(protector));
+  }, [protectors]);
+
+  // users are filtered to remove selected protectors from the options
+  const protectorsData = useMemo(() => {
+    return (colonyMembers?.subscribedUsers || []).filter(
+      (item) =>
+        !protectors.some(
+          (protector) =>
+            item.id === protector.user?.id &&
+            item.profile.walletAddress === protector.user.profile.walletAddress,
+        ),
+    );
+  }, [colonyMembers, protectors]);
+
+  const onSelected = useCallback(
+    (value: AnyUser) => {
+      if (!mainContact) {
+        setMainContact(value);
+      }
+    },
+    // didn't want to add setMainContact to the dependencies array
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [mainContact],
+  );
 
   return (
     <>
@@ -113,47 +137,27 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
             name="protectors"
             render={({ push, remove }) => (
               <>
-                {values.protectors?.map((protector, index) => (
-                  <div className={styles.protectorWrapper} key={protector?.id}>
-                    {colonyMembers?.subscribedUsers && (
-                      <div>
-                        <UserPickerWithSearch
-                          data={colonyMembers?.subscribedUsers || []}
-                          label=""
-                          name={`protectors[${index}]`}
-                          filter={filterUserSelection}
-                          renderAvatar={supRenderAvatar}
-                          placeholder="Search"
-                          sidebarRef={sidebarRef}
-                          disabled={loading}
-                          onSelected={(user) => {
-                            if (index === 0) {
-                              setMainContact(user);
-                            }
-                            if (values.protectors?.length === 1) {
-                              setMainContact(user);
-                            }
-                          }}
-                        />
-                      </div>
-                    )}
-                    <Icon
-                      name="trash"
-                      className={styles.deleteIcon}
-                      onClick={() => {
-                        remove(index);
-                        if (protector.id === mainContact.id) {
-                          setMainContact(undefined);
-                        }
-                      }}
-                      title={MSG.deleteIconTitle}
-                    />
-                  </div>
+                {protectors?.map((protector, index) => (
+                  <SingleUserPicker
+                    key={protector.key}
+                    data={protectorsData}
+                    label=""
+                    name={`protectors[${index}].user`}
+                    placeholder="Search"
+                    sidebarRef={sidebarRef}
+                    disabled={loading}
+                    filter={filterUserSelection}
+                    renderAvatar={supRenderAvatar}
+                    remove={remove}
+                    index={index}
+                    setMainContact={setMainContact}
+                    onSelected={onSelected}
+                  />
                 ))}
-                {values.protectors && values.protectors?.length < 5 && (
+                {protectors && protectors?.length < 5 && (
                   <Button
                     onClick={() => {
-                      push(undefined);
+                      push({ key: nanoid(), user: undefined });
                     }}
                     appearance={{ theme: 'blue' }}
                   >
@@ -168,7 +172,7 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
           />
         </div>
       </FormSection>
-      {shouldShowMainContact && mainContactsData && (
+      {shouldShowMainContact && mainContactData && (
         <FormSection appearance={{ border: 'bottom' }}>
           <div className={styles.wrapper}>
             <div className={styles.labelWrapper}>
@@ -178,14 +182,14 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
             <div className={styles.mainContactWrapper}>
               <div>
                 <UserPickerWithSearch
-                  data={mainContactsData}
+                  data={mainContactData}
                   label=""
                   name="mainContact"
                   filter={filterUserSelection}
                   renderAvatar={supRenderAvatar}
                   placeholder="Search"
                   sidebarRef={sidebarRef}
-                  disabled={!values.protectors}
+                  disabled={!protectors}
                 />
               </div>
               <Icon
@@ -207,15 +211,15 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
             <QuestionMarkTooltip tooltipText={MSG.signOptionTooltip} />
           </div>
           <Radio
-            checked={values.signOption === SignOption.Individual}
+            checked={signOption === SignOption.Individual}
             name="signOption"
             label={MSG.individual}
             value={SignOption.Individual}
           />
           <Radio
-            checked={values.signOption === SignOption.Multiple}
+            checked={signOption === SignOption.Multiple}
             name="signOption"
-            label={MSG.individual}
+            label={MSG.multiple}
             value={SignOption.Multiple}
           />
         </div>
