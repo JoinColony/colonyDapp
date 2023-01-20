@@ -2,13 +2,12 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 
 import Button from '~core/Button';
-import { Tooltip } from '~core/Popover';
 import { Stages } from '~pages/IncorporationPage/constants';
 import { StageObject } from '~pages/IncorporationPage/types';
 
 import styles from './StagesButton.css';
 
-const displayName = 'dashboard.ExpenditurePage.Stages.StagesButton';
+const displayName = 'dashboard.Incorporation.Stages.StagesButton';
 
 interface Props {
   activeStage?: StageObject;
@@ -30,42 +29,6 @@ const StagesButton = ({ activeStage, buttonDisabled, buttonAction }: Props) => {
     activeStage.id === Stages.Complete
   ) {
     return null;
-  }
-
-  if (activeStage?.buttonTooltip) {
-    return (
-      <span className={styles.buttonWithTooltip}>
-        <Tooltip
-          placement="top"
-          content={
-            <div className={styles.buttonTooltip}>
-              {typeof activeStage.buttonTooltip === 'string'
-                ? activeStage.buttonTooltip
-                : formatMessage(activeStage.buttonTooltip)}
-            </div>
-          }
-          popperOptions={{
-            modifiers: [
-              {
-                name: 'offset',
-                options: {
-                  offset: [0, 8],
-                },
-              },
-            ],
-          }}
-        >
-          <Button
-            disabled={buttonDisabled}
-            className={styles.button}
-            type="submit"
-            onClick={buttonAction}
-          >
-            {buttonText}
-          </Button>
-        </Tooltip>
-      </span>
-    );
   }
 
   return (

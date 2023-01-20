@@ -5,34 +5,29 @@ import classNames from 'classnames';
 
 import Button from '~core/Button';
 import Icon from '~core/Icon';
-import { Tooltip } from '~core/Popover';
+import { StageObject } from '~pages/IncorporationPage/types';
+import { Stages as StagesEnum } from '~pages/IncorporationPage/constants';
 
 import StageItem from './StageItem';
 import StagesButton from './StagesButton';
 import styles from './Stages.css';
-import { StageObject } from '~pages/IncorporationPage/types';
-import { Stages as StagesEnum } from '~pages/IncorporationPage/constants';
 
 const MSG = defineMessages({
   stages: {
-    id: 'dashboard.DAOIncorporation.Stages.stages',
+    id: 'dashboard.Incorporation.Stages.stages',
     defaultMessage: 'Stages',
   },
   deleteDraft: {
-    id: 'dashboard.DAOIncorporation.Stages.deleteDraft',
+    id: 'dashboard.Incorporation.Stages.deleteDraft',
     defaultMessage: 'Delete draft',
   },
-  tooltipDeleteText: {
-    id: 'dashboard.DAOIncorporation.Stages.tooltipDeleteText',
-    defaultMessage: 'Delete',
-  },
-  tooltipShareText: {
-    id: 'dashboard.DAOIncorporation.Stages.tooltipShareText',
+  shareURL: {
+    id: 'dashboard.Incorporation.Stages.shareURL',
     defaultMessage: 'Share URL',
   },
 });
 
-const displayName = 'dashboard.DAOIncorporation.Stages';
+const displayName = 'dashboard.Incorporation.Stages';
 
 export interface Props {
   stages: StageObject[];
@@ -78,53 +73,24 @@ const Stages = ({
               onClick={handleClipboardCopy}
               disabled={valueIsCopied}
             >
-              {valueIsCopied ? (
-                <Icon name="share" className={styles.icon} />
-              ) : (
-                <Tooltip
-                  placement="top-start"
-                  content={<FormattedMessage {...MSG.tooltipShareText} />}
-                  popperOptions={{
-                    modifiers: [
-                      {
-                        name: 'offset',
-                        options: {
-                          offset: [0, 12],
-                        },
-                      },
-                    ],
-                  }}
-                >
-                  <div className={styles.iconWrapper}>
-                    <Icon name="share" className={styles.icon} />
-                  </div>
-                </Tooltip>
-              )}
+              <div className={styles.iconWrapper}>
+                <Icon
+                  name="share"
+                  title={MSG.shareURL}
+                  appearance={{ size: 'normal' }}
+                  style={{ fill: styles.iconColor }}
+                />
+              </div>
             </Button>
             <Button className={styles.iconButton}>
-              <Tooltip
-                placement="top-start"
-                content={<FormattedMessage {...MSG.tooltipDeleteText} />}
-                popperOptions={{
-                  modifiers: [
-                    {
-                      name: 'offset',
-                      options: {
-                        offset: [0, 12],
-                      },
-                    },
-                  ],
-                }}
-              >
-                <div className={styles.iconWrapper}>
-                  <Icon
-                    name="trash"
-                    title={MSG.deleteDraft}
-                    appearance={{ size: 'normal' }}
-                    style={{ fill: styles.iconColor }}
-                  />
-                </div>
-              </Tooltip>
+              <div className={styles.iconWrapper}>
+                <Icon
+                  name="trash"
+                  title={MSG.deleteDraft}
+                  appearance={{ size: 'normal' }}
+                  style={{ fill: styles.iconColor }}
+                />
+              </div>
             </Button>
             <StagesButton
               activeStage={activeStage}

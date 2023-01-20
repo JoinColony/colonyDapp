@@ -5,14 +5,10 @@ import { Formik } from 'formik';
 import { useColonyFromNameQuery } from '~data/generated';
 import { getMainClasses } from '~utils/css';
 import { SpinnerLoader } from '~core/Preloaders';
-import IncorporationForm from '~dashboard/DAOIncorporation/IncorporationForm';
-import Stages from '~dashboard/DAOIncorporation/Stages';
+import Stages from '~dashboard/Incorporation/Stages';
+import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
 
-import {
-  initialValues,
-  stages,
-  Stages as StagesEnum,
-} from './constants';
+import { initialValues, stages, Stages as StagesEnum } from './constants';
 import styles from './IncorporationPage.css';
 
 const displayName = 'pages.IncorporationPage';
@@ -56,8 +52,6 @@ const IncorporationPage = () => {
       }
     }
   }, [activeStageId, handlePay, handleProceed, handleSubmit]);
-
-
 
   const { data: colonyData, loading } = useColonyFromNameQuery({
     variables: { name: colonyName, address: '' },

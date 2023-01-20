@@ -1,9 +1,7 @@
 import { nanoid } from 'nanoid';
 import { defineMessages } from 'react-intl';
-import * as yup from 'yup';
 
 import { SignOption } from '~dashboard/Incorporation/IncorporationForm/types';
-
 
 import { StageObject } from './types';
 
@@ -19,10 +17,6 @@ const MSG = defineMessages({
   createButtonText: {
     id: 'dashboard.IncorporationPage.createButtonText',
     defaultMessage: 'Submit',
-  },
-  createTooltip: {
-    id: 'dashboard.IncorporationPage.createTooltip',
-    defaultMessage: `At least one member should be nominated as a Protector to create the application`,
   },
   collectiveInput: {
     id: 'dashboard.IncorporationPage.collectiveInput',
@@ -79,7 +73,6 @@ export const initialValues = {
   signOption: SignOption.Individual,
 };
 
-
 export enum Stages {
   Draft,
   Created,
@@ -94,7 +87,6 @@ export const stages: StageObject[] = [
     title: MSG.create,
     description: MSG.createDesc,
     buttonText: MSG.createButtonText,
-    buttonTooltip: MSG.createTooltip,
   },
   {
     id: Stages.Created,
