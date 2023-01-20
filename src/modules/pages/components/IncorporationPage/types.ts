@@ -1,8 +1,8 @@
 import { MessageDescriptor } from 'react-intl';
 import { SignOption } from '~dashboard/Incorporation/IncorporationForm/types';
-
-
 import { AnyUser } from '~data/index';
+
+import { Stages } from './constants';
 
 export interface Protector {
   user?: AnyUser;
@@ -10,9 +10,6 @@ export interface Protector {
   removed?: boolean;
   created?: boolean;
 }
-
-import { Stages } from './constants';
-
 export interface ValuesType {
   name: string;
   alternativeName1: string;
@@ -28,5 +25,4 @@ export interface StageObject {
   title: MessageDescriptor;
   description: MessageDescriptor;
   buttonText?: MessageDescriptor;
-  buttonTooltip?: MessageDescriptor;
 }

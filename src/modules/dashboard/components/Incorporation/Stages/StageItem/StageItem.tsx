@@ -10,7 +10,7 @@ interface Props {
   isActive: boolean;
   isLast?: boolean;
 }
-const displayName = 'dashboard.ExpenditurePage.Stages.StageItem';
+const displayName = 'dashboard.Incorporation.Stages.StageItem';
 
 const StageItem = ({ title, description, isActive, isLast }: Props) => {
   return (
