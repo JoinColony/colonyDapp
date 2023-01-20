@@ -11,13 +11,13 @@ import styles from './SingleUserPicker.css';
 
 export const MSG = defineMessages({
   deleteIconTitle: {
-    id: `dashboard.DAOIncorporation.IncorporationForm.SingleUserPicker.deleteIconTitle`,
+    id: `dashboard.Incorporation.IncorporationForm.SingleUserPicker.deleteIconTitle`,
     defaultMessage: 'Delete recipient',
   },
 });
 
 const displayName =
-  'dashboard.DAOIncorporation.IncorporationForm.SingleUserPicker';
+  'dashboard.Incorporation.IncorporationForm.SingleUserPicker';
 
 export interface Props extends UserPickerProps {
   sidebarRef: HTMLElement | null;

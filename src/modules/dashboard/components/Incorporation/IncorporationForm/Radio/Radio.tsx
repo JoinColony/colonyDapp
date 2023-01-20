@@ -7,7 +7,7 @@ import { Props as RadioProps } from '~core/Fields/Radio/Radio';
 
 import styles from './Radio.css';
 
-const displayName = 'dashboard.DAOIncorporation.IncorporationForm.Radio';
+const displayName = 'dashboard.Incorporation.IncorporationForm.Radio';
 
 const Radio = ({ name, checked, label, value }: RadioProps) => {
   const { formatMessage } = useIntl();
