@@ -9,4 +9,6 @@ export const altNameWrapper: string;
 export const textareaWrapper: string;
 export const title: string;
 export const label: string;
+export const marginSmall: string;
+export const error: string;
 export const hiddenSubmit: string;

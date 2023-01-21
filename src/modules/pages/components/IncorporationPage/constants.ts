@@ -96,16 +96,14 @@ export const initialValues = {
 
 export const validationSchema = yup.object().shape({
   name: yup.string().required(() => MSG.nameRequiredError),
-  alternativeNames: yup
-    .array()
-    .of(
-      yup
-        .string()
-        .min(2, () => MSG.lengthError)
-        .required(() => MSG.altNamesRequiredError),
-    )
-    .min(2)
-    .max(2),
+  alternativeName1: yup
+    .string()
+    .min(2, () => MSG.lengthError)
+    .required(() => MSG.altNamesRequiredError),
+  alternativeName2: yup
+    .string()
+    .min(2, () => MSG.lengthError)
+    .required(() => MSG.altNamesRequiredError),
   purpose: yup
     .string()
     .min(3, () => MSG.lengthError)
@@ -113,11 +111,20 @@ export const validationSchema = yup.object().shape({
     .required(() => MSG.purposeRequiredError),
   protectors: yup
     .array()
-    .of(yup.object().required(() => MSG.protectorRequiredError))
+    .of(
+      yup.object().shape({
+        user: yup.object().required(() => MSG.protectorRequiredError),
+      }),
+    )
     .min(1)
     .max(5),
   mainContact: yup.object().when('protectors', {
-    is: (protectors) => protectors?.length > 1,
+    is: (protectors) => {
+      const selectedProtectors = protectors.filter(
+        (protector) => !!protector.user,
+      );
+      return protectors?.length > 1 && selectedProtectors?.length > 1;
+    },
     then: yup.object().required(() => MSG.protectorRequiredError),
   }),
   signOption: yup.string().when('protectors', {
