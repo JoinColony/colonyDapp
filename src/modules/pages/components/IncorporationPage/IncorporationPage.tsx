@@ -5,9 +5,8 @@ import { Formik } from 'formik';
 import { useColonyFromNameQuery } from '~data/generated';
 import { getMainClasses } from '~utils/css';
 import { SpinnerLoader } from '~core/Preloaders';
-import Stages from '~dashboard/Incorporation/Stages';
+import Stages, { FormStages } from '~dashboard/Incorporation/Stages';
 import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
-import { FormStages } from '~dashboard/Incorporation/Stages';
 
 import {
   initialValues,
