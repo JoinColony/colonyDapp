@@ -103,6 +103,18 @@
   letter-spacing: var(--spacing-medium);
 }
 
+.marginSmall {
+  margin-bottom: 4px;
+}
+
+.error input {
+  background-color: color-mod(var(--danger) alpha(5%));
+}
+
+.error textarea {
+  background-color: color-mod(var(--danger) alpha(5%));
+}
+
 .hiddenSubmit {
   visibility: hidden;
 }
