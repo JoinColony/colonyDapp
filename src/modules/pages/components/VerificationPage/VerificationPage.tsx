@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { RouteChildrenProps } from 'react-router';
+
 import ContactSection from '~dashboard/VerificationPage/ContactSection/ContactSection';
 import Tabs from '~dashboard/VerificationPage/Tabs';
-
-import { ContextValuesType, Step, StepObject } from './types';
-import styles from './VerificationPage.css';
 import AboutVerification from '~dashboard/VerificationPage/AboutVerification';
 import Details from '~dashboard/VerificationPage/Details';
 import Location from '~dashboard/VerificationPage/Location';
 import References from '~dashboard/VerificationPage/References';
+import ConfirmationPage from '~dashboard/VerificationPage/ConfirmationPage';
+
+import { ContextValuesType, Step, StepObject } from './types';
 import { VerificationDataContextProvider } from './VerificationDataContext';
 import { initialFormValues } from './constants';
+import styles from './VerificationPage.css';
 
 const displayName = 'pages.VerificationPage';
 
@@ -59,6 +61,8 @@ const VerificationPage = ({ match }: Props) => {
     initialFormValues,
   );
   const [activeStep, setActiveStep] = useState<Step>(Step.References);
+  // add logic to set form as a submitted after adding sign step
+  const [submitted] = useState<boolean>(true);
 
   const steps: StepObject[] = [
     {
@@ -88,6 +92,10 @@ const VerificationPage = ({ match }: Props) => {
   ];
 
   const activeStepObject = steps.find((step) => step.id === activeStep);
+
+  if (submitted) {
+    return <ConfirmationPage />;
+  }
 
   return (
     <VerificationDataContextProvider value={{ formValues, setFormValues }}>
