@@ -9,24 +9,24 @@ import { AnyUser } from '~data/index';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.DAOIncorporation.VerificationBanner.title',
+    id: 'dashboard.Incorporation.VerificationBanner.title',
     defaultMessage: '{user} Verify your identity',
   },
   description: {
-    id: 'dashboard.DAOIncorporation.VerificationBanner.title',
+    id: 'dashboard.Incorporation.VerificationBanner.title',
     defaultMessage: `To be a Protector of the incorporated organisation, you need to verify your identity. You can also remove your nomination.`,
   },
   remove: {
-    id: 'dashboard.DAOIncorporation.VerificationBanner.remove',
+    id: 'dashboard.Incorporation.VerificationBanner.remove',
     defaultMessage: 'Remove',
   },
   verify: {
-    id: 'dashboard.DAOIncorporation.VerificationBanner.verify',
+    id: 'dashboard.Incorporation.VerificationBanner.verify',
     defaultMessage: 'Verify',
   },
 });
 
-const displayName = 'dashboard.DAOIncorporation.VerificationBanner';
+const displayName = 'dashboard.Incorporation.VerificationBanner';
 
 export interface Props {
   user: AnyUser;
