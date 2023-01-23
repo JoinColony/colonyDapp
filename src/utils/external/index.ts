@@ -119,7 +119,7 @@ export const beamerInitialize = (id: string, url?: string, args = {}) => {
   }
 
   if (!id) {
-    throw Error('Must provide "id". https://app.getbeamer.com/embed');
+    throw Error('Must provide Beamer "id".');
   }
 
   /* eslint-disable camelcase */
