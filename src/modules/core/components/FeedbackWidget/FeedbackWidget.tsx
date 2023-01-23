@@ -1,8 +1,6 @@
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
-
-import ExternalLink from '~core/ExternalLink';
-import { FEEDBACK } from '~externalUrls';
+import Button from '~core/Button';
 
 import styles from './FeedbackWidget.css';
 
@@ -15,7 +13,12 @@ const MSG = {
 
 const FeedbackWidget = () => (
   <div className={styles.main}>
-    <ExternalLink className={styles.link} href={FEEDBACK}>
+    <Button
+      appearance={{ theme: 'no-style' }}
+      className={styles.link}
+      // eslint-disable-next-line no-undef
+      onClick={() => Beamer.show()}
+    >
       <FormattedMessage
         {...MSG.loveFeedback}
         values={{
@@ -26,7 +29,7 @@ const FeedbackWidget = () => (
           ),
         }}
       />
-    </ExternalLink>
+    </Button>
   </div>
 );
 

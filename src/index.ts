@@ -1,7 +1,6 @@
 import { createElement } from 'react';
 import { render } from 'react-dom';
 import ReactModal from 'react-modal';
-import userflow from 'userflow.js';
 import { errors } from 'ethers';
 
 import './styles/main.css';
@@ -9,6 +8,7 @@ import './modules/validations';
 
 import App from './App';
 import store from '~redux/createReduxStore';
+import { beamerInitialize } from '~utils/external';
 
 errors.setLogLevel('error');
 
@@ -23,6 +23,6 @@ if (rootNode) {
 if (module.hot) module.hot.accept();
 
 // Initiate Userflow
-if (process.env.USERFLOW_TOKEN) {
-  userflow.init(process.env.USERFLOW_TOKEN);
+if (process.env.BEAMER_PRODUCT_ID) {
+  beamerInitialize(process.env.BEAMER_PRODUCT_ID);
 }
