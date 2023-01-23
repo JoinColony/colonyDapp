@@ -57,9 +57,7 @@ const FormStages = ({ stages, activeStageId }: Props) => {
 
     const firstError = document.getElementsByName(formikErrors[0])?.[0];
 
-    if (firstError?.tagName.toLowerCase() === 'input') {
-      (firstError as HTMLElement).focus();
-    } else if (firstError?.tagName.toLowerCase() === 'textarea') {
+    if (['textarea', 'input'].includes(firstError?.tagName.toLowerCase())) {
       (firstError as HTMLElement).focus();
     } else {
       const customEvent = new CustomEvent(FIX_TRIGGER_EVENT_NAME, {
