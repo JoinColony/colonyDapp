@@ -4,7 +4,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 32px 0 20px;
+  padding: 32px 0 38px;
   width: 100%;
   border-bottom: 1px solid var(--grey-blue-0);
   font-size: var(--size-medium-l);
@@ -31,7 +31,7 @@
 }
 
 .messageContainer {
-  padding-bottom: 90px;
+  padding-bottom: 48px;
   font-size: var(--size-normal);
   color: var(--temp-grey-blue-7);
   letter-spacing: 0.1px;
@@ -65,16 +65,20 @@
   margin-left: 4px;
 }
 
-.toggleContainer {
-  /* megative margin here corrects tooltip arrow placement */
-  margin-right: -7px;
+.toggleContainer > div {
+  align-items: center;
 }
 
-.toggleContainer i {
-  margin-left: 9px;
+.toggleContainer span div {
+  margin-left: 0;
+}
 
-  /* next lines corrects tooltip arrow placement */
-  transform: translate(-9px, 4px);
+.toggleContainer > div > div > span {
+  margin-right: 11px;
+}
+
+.thumbDark > div > div > span > span {
+  background-color: var(--temp-grey-blue-7);
 }
 
 /* this selector is for tooltip wrapper */
@@ -84,9 +88,12 @@
 }
 
 .toggleContainer label {
+  margin-bottom: 0;
+}
+
+.toggleContainer > div > div:first-of-type {
   display: flex;
-  align-items: center;
-  margin-bottom: 4px;
+  height: 16px;
 }
 
 .toggleContainer > div > span {

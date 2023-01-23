@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FormikProps } from 'formik';
+import classNames from 'classnames';
 
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm, Toggle } from '~core/Fields';
 import Heading from '~core/Heading';
@@ -18,35 +18,35 @@ import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissi
 import { hasRoot } from '~modules/users/checks';
 import { Colony } from '~data/index';
 
-import styles from './StartApplicationDialog.css';
+import styles from './StakeApplicationDialog.css';
 
 const MSG = defineMessages({
   header: {
-    id: 'dashboard.StartApplicationDialog.header',
+    id: 'dashboard.StakeApplicationDialog.header',
     defaultMessage: 'Stake to start application',
   },
   force: {
-    id: 'dashboard.StartApplicationDialog.force',
+    id: 'dashboard.StakeApplicationDialog.force',
     defaultMessage: 'Force',
   },
   stake: {
-    id: 'dashboard.StartApplicationDialog.stake',
+    id: 'dashboard.StakeApplicationDialog.stake',
     defaultMessage: 'Stake',
   },
   descriptionText: {
-    id: 'dashboard.StartApplicationDialog.descriptionText',
+    id: 'dashboard.StakeApplicationDialog.descriptionText',
     defaultMessage: `In order to start the incorporation process you have to provide a stake first. This is to protect the DAO from anyone wrongfully creating a corporation on it's behalf.`,
   },
   descriptionText2: {
-    id: 'dashboard.StartApplicationDialog.descriptionText2',
+    id: 'dashboard.StakeApplicationDialog.descriptionText2',
     defaultMessage: `If the Motion succeeds or you cancel the application, you will get your stake back.`,
   },
   cancelText: {
-    id: 'dashboard.StartApplicationDialog.cancelText',
+    id: 'dashboard.StakeApplicationDialog.cancelText',
     defaultMessage: 'Cancel',
   },
   confirmText: {
-    id: 'dashboard.StartApplicationDialog.confirmText',
+    id: 'dashboard.StakeApplicationDialog.confirmText',
     defaultMessage: 'Stake',
   },
 });
@@ -62,7 +62,7 @@ const activeToken = {
   symbol: 'ETH',
 };
 
-const displayName = 'dashboard.StartApplicationDialog';
+const displayName = 'dashboard.StakeApplicationDialog';
 
 interface FormValues {
   forceAction: boolean;
@@ -75,7 +75,7 @@ type Props = {
   colony: Colony;
 };
 
-const StartApplicationDialog = ({
+const StakeApplicationDialog = ({
   onClick,
   close,
   isVotingExtensionEnabled,
@@ -127,7 +127,11 @@ const StartApplicationDialog = ({
               >
                 <FormattedMessage {...MSG.header} />
                 {isVotingExtensionEnabled && (
-                  <div className={styles.toggleContainer}>
+                  <div
+                    className={classNames(styles.toggleContainer, {
+                      [styles.thumbDark]: !values.forceAction,
+                    })}
+                  >
                     <Toggle
                       label={{ id: 'label.force' }}
                       name="forceAction"
@@ -140,7 +144,7 @@ const StartApplicationDialog = ({
                           {
                             name: 'offset',
                             options: {
-                              offset: [8, 2],
+                              offset: [0, 6],
                             },
                           },
                         ],
@@ -164,10 +168,8 @@ const StartApplicationDialog = ({
                   </span>
                   <Numeral
                     unit={getTokenDecimalsWithFallback(activeToken.decimals)}
-                    value={
-                      activeToken.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID]
-                        .amount
-                    }
+                    // Value is a mock
+                    value="10000000000000"
                   />
                   <span className={styles.symbol}>{activeToken.symbol}</span>
                 </div>
@@ -212,6 +214,6 @@ const StartApplicationDialog = ({
   );
 };
 
-StartApplicationDialog.displayName = displayName;
+StakeApplicationDialog.displayName = displayName;
 
-export default StartApplicationDialog;
+export default StakeApplicationDialog;

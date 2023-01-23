@@ -6,6 +6,10 @@ import { flattenObject } from '~dashboard/ExpenditurePage/Stages/utils';
 import { FIX_TRIGGER_EVENT_NAME } from '~pages/ExpenditurePage/constants';
 import { StageObject, ValuesType } from '~pages/IncorporationPage/types';
 import { Stages as StagesEnum } from '~pages/IncorporationPage/constants';
+import { useDialog } from '~core/Dialog';
+import { Colony } from '~data/index';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
+import StakeApplicationDialog from '~dashboard/Dialogs/StakeApplicationDialog';
 
 import Stages from './Stages';
 import styles from './Stages.css';
@@ -30,11 +34,17 @@ const MSG = defineMessages({
 export interface Props {
   stages: StageObject[];
   activeStageId: StagesEnum;
+  colony: Colony;
 }
 
-const FormStages = ({ stages, activeStageId }: Props) => {
+const FormStages = ({ stages, activeStageId, colony }: Props) => {
   const { values, handleSubmit, validateForm, setTouched, errors: formikErr } =
     useFormikContext<ValuesType>() || {};
+  const openStartApplicationDialog = useDialog(StakeApplicationDialog);
+
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
 
   const formikErrors = useMemo(() => {
     const errorsFlat = flattenObject(formikErr);
@@ -46,8 +56,26 @@ const FormStages = ({ stages, activeStageId }: Props) => {
     const errorsLength = Object.keys(errors)?.length;
     setTouched(setNestedObjectValues<FormikTouched<ValuesType>>(errors, true));
 
-    return !errorsLength && handleSubmit(values as any);
-  }, [handleSubmit, setTouched, validateForm, values]);
+    return (
+      !errorsLength &&
+      colony &&
+      openStartApplicationDialog({
+        onClick: () => {
+          handleSubmit(values as any);
+        },
+        isVotingExtensionEnabled,
+        colony,
+      })
+    );
+  }, [
+    colony,
+    handleSubmit,
+    isVotingExtensionEnabled,
+    openStartApplicationDialog,
+    setTouched,
+    validateForm,
+    values,
+  ]);
 
   const handleFixButtonClick = useCallback(() => {
     setTouched(
@@ -91,7 +119,6 @@ const FormStages = ({ stages, activeStageId }: Props) => {
           </button>
         </div>
       )}
-
       <Stages
         stages={stages}
         activeStageId={activeStageId}

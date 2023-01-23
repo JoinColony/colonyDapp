@@ -8,6 +8,7 @@ export const icon: string;
 export const tokenIcon: string;
 export const symbol: string;
 export const toggleContainer: string;
+export const thumbDark: string;
 export const messageParagraph: string;
 export const button: string;
 export const cancelButton: string;
