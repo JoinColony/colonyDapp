@@ -31,6 +31,8 @@ const HelperSection = () => (
       <Button
         appearance={{ theme: 'no-style' }}
         text={MSG.whatsNew}
+        // Ignored undefined third party script, this should be implemented better in future
+        // @ts-ignore
         // eslint-disable-next-line no-undef
         onClick={() => Beamer.show()}
       />
@@ -39,6 +41,8 @@ const HelperSection = () => (
       <Button
         appearance={{ theme: 'no-style' }}
         text={MSG.reportBugs}
+        // Ignored undefined third party script, this should be implemented better in future
+        // @ts-ignore
         // eslint-disable-next-line no-undef
         onClick={() => Beamer.show()}
       />
