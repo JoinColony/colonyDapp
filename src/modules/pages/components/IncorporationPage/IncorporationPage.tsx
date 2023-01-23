@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { RouteChildrenProps, useParams } from 'react-router';
+import { useParams } from 'react-router';
 import { Formik } from 'formik';
 
 import { useColonyFromNameQuery } from '~data/generated';
@@ -19,8 +19,6 @@ import styles from './IncorporationPage.css';
 const displayName = 'pages.IncorporationPage';
 
 export type InitialValuesType = typeof initialValues;
-
-type Props = RouteChildrenProps<{ colonyName: string }>;
 
 const IncorporationPage = () => {
   const { colonyName } = useParams<{
