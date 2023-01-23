@@ -16,6 +16,8 @@ const FeedbackWidget = () => (
     <Button
       appearance={{ theme: 'no-style' }}
       className={styles.link}
+      // Ignored undefined third party script, this should be implemented better in future
+      // @ts-ignore
       // eslint-disable-next-line no-undef
       onClick={() => Beamer.show()}
     >
