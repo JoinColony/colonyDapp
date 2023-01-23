@@ -18,7 +18,6 @@ import Link from '~core/Link';
 import { SignOption } from '~dashboard/Incorporation/IncorporationForm/constants';
 
 import SingleUserPicker from '../SingleUserPicker';
-import { SignOption } from '../constants';
 
 import styles from './Protectors.css';
 
