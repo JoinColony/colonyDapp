@@ -166,7 +166,8 @@ export const stages: StageObject[] = [
 ];
 
 export const formValuesMock: ValuesType = {
-  alternativeNames: ['WallStreetBets Foundation', 'WallStreet Corp'],
+  alternativeName1: 'WallStreetBets Foundation',
+  alternativeName2: 'WallStreet Corp',
   mainContact: {
     id: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
     profile: {
@@ -179,20 +180,26 @@ export const formValuesMock: ValuesType = {
   name: 'WallStreetBets',
   protectors: [
     {
-      id: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
-      profile: {
-        avatarHash: null,
-        displayName: null,
-        username: 'ajarosik',
-        walletAddress: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
+      user: {
+        id: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
+        profile: {
+          avatarHash: null,
+          displayName: null,
+          username: 'ajarosik',
+          walletAddress: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
+        },
       },
+      key: nanoid(),
     },
     {
-      id: 'filterValue',
-      profile: { displayName: 'asd asdf', walletAddress: 'asd asdf' },
+      user: {
+        id: 'filterValue',
+        profile: { displayName: 'asd asdf', walletAddress: 'asd asdf' },
+      },
+      key: nanoid(),
     },
   ],
-  purpose: `WallStreetBets is on a mission to deploy \ndecentralized satellites in our skies.`,
+  purpose: `WallStreetBets is on a mission to deploy decentralized satellites in our skies.`,
   signOption: SignOption.Individual,
 };
 
