@@ -176,7 +176,7 @@ export const formValuesMock: ValuesType = {
     profile: {
       avatarHash: null,
       displayName: null,
-      username: 'ajarosik',
+      username: 'Storm',
       walletAddress: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
     },
   },
@@ -188,7 +188,7 @@ export const formValuesMock: ValuesType = {
         profile: {
           avatarHash: null,
           displayName: null,
-          username: 'ajarosik',
+          username: 'Storm',
           walletAddress: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
         },
       },
@@ -197,7 +197,7 @@ export const formValuesMock: ValuesType = {
     {
       user: {
         id: 'filterValue',
-        profile: { displayName: 'asd asdf', walletAddress: 'asd asdf' },
+        profile: { displayName: 'Ragnar', walletAddress: 'Ragnar' },
       },
       key: nanoid(),
     },
@@ -211,7 +211,7 @@ export const userMock = {
   profile: {
     avatarHash: null,
     displayName: null,
-    username: 'ajarosik',
+    username: 'Storm',
     walletAddress: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
   },
 };
