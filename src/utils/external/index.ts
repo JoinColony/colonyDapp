@@ -111,3 +111,30 @@ export const getBlockExplorerLink = ({
 
 export const getNetworkRelaseLink = (version: ColonyVersion) =>
   `${NETWORK_RELEASES}/${releaseMap[version]}`;
+
+// Add support for Beamer (getbeamer.com) in app feature announcements
+export const beamerInitialize = (id: string, url?: string, args = {}) => {
+  if (!window) {
+    return;
+  }
+
+  if (!id) {
+    throw Error('Must provide "id". https://app.getbeamer.com/embed');
+  }
+
+  /* eslint-disable camelcase */
+  (window as any).beamer_config = {
+    product_id: id,
+    ...args,
+  };
+  /* eslint-enable camelcase */
+
+  const beamerURL = url || 'https://app.getbeamer.com/js/beamer-embed.js';
+
+  const head = document.getElementsByTagName('head')[0];
+  const script = document.createElement('script');
+
+  script.defer = true;
+  script.src = beamerURL;
+  head.appendChild(script);
+};
