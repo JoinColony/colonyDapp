@@ -149,7 +149,12 @@ const IncorporationPage = () => {
           </div>
         ) : (
           colonyData &&
-          formValues && <LockedIncorporationForm formValues={formValues} />
+          formValues && (
+            <LockedIncorporationForm
+              formValues={formValues}
+              activeStageId={activeStageId}
+            />
+          )
         )}
       </aside>
       <div className={styles.mainContainer}>
