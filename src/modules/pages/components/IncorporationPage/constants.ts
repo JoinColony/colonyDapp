@@ -202,3 +202,13 @@ export const formValuesMock: ValuesType = {
   purpose: `WallStreetBets is on a mission to deploy decentralized satellites in our skies.`,
   signOption: SignOption.Individual,
 };
+
+export const userMock = {
+  id: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
+  profile: {
+    avatarHash: null,
+    displayName: null,
+    username: 'Storm',
+    walletAddress: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
+  },
+};
