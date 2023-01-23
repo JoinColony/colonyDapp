@@ -16,13 +16,7 @@ export type InitialValuesType = typeof initialValues;
 
 type Props = RouteChildrenProps<{ colonyName: string }>;
 
-const IncorporationPage = ({ match }: Props) => {
-  if (!match) {
-    throw new Error(
-      `No match found for route in ${displayName} Please check route setup.`,
-    );
-  }
-
+const IncorporationPage = () => {
   const { colonyName } = useParams<{
     colonyName: string;
   }>();

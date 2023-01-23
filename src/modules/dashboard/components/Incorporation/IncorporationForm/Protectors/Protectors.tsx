@@ -82,7 +82,6 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
     const protectorsData = protectors?.filter(
       (protector) => !isEmpty(protector?.user),
     );
-    if (!protectorsData) return false;
     if (protectorsData?.length < 2) return false;
     return true;
   }, [protectors]);
