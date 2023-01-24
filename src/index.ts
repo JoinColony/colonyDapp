@@ -8,7 +8,7 @@ import './modules/validations';
 
 import App from './App';
 import store from '~redux/createReduxStore';
-import { beamerInitialize } from '~utils/external';
+import { getBeamerInitialize, getBeamerId } from '~utils/external';
 
 errors.setLogLevel('error');
 
@@ -22,7 +22,7 @@ if (rootNode) {
 // @ts-ignore
 if (module.hot) module.hot.accept();
 
-// Initiate Userflow
-if (process.env.BEAMER_PRODUCT_ID) {
-  beamerInitialize(process.env.BEAMER_PRODUCT_ID);
+// Initiate Beamer
+if (getBeamerId) {
+  getBeamerInitialize(getBeamerId);
 }
