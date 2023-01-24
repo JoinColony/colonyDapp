@@ -4,7 +4,8 @@ import Button from '~core/Button';
 
 import { DropdownMenuItem, DropdownMenuSection } from '~core/DropdownMenu';
 import ExternalLink from '~core/ExternalLink';
-import { HELP } from '~externalUrls';
+import { BEAMER_BUGS, BEAMER_NEWS, HELP } from '~externalUrls';
+import { getBeamerId } from '~utils/external';
 
 import styles from './HelperSection.css';
 
@@ -25,26 +26,42 @@ const MSG = defineMessages({
 
 const displayName = 'users.PopoverSection.HelperSection';
 
+const handleWhatsNew = () => {
+  if (getBeamerId) {
+    // Ignored undefined third party script, this should be implemented better in future
+    // @ts-ignore
+    // eslint-disable-next-line no-undef
+    Beamer.show();
+  } else {
+    window.open(BEAMER_NEWS, '_blank');
+  }
+};
+
+const handleReportBugs = () => {
+  if (getBeamerId) {
+    // Ignored undefined third party script, this should be implemented better in future
+    // @ts-ignore
+    // eslint-disable-next-line no-undef
+    Beamer.show();
+  } else {
+    window.open(BEAMER_BUGS, '_blank');
+  }
+};
+
 const HelperSection = () => (
   <DropdownMenuSection separator>
     <DropdownMenuItem>
       <Button
         appearance={{ theme: 'no-style' }}
         text={MSG.whatsNew}
-        // Ignored undefined third party script, this should be implemented better in future
-        // @ts-ignore
-        // eslint-disable-next-line no-undef
-        onClick={() => Beamer.show()}
+        onClick={handleWhatsNew}
       />
     </DropdownMenuItem>
     <DropdownMenuItem>
       <Button
         appearance={{ theme: 'no-style' }}
         text={MSG.reportBugs}
-        // Ignored undefined third party script, this should be implemented better in future
-        // @ts-ignore
-        // eslint-disable-next-line no-undef
-        onClick={() => Beamer.show()}
+        onClick={handleReportBugs}
       />
     </DropdownMenuItem>
     <DropdownMenuItem>
