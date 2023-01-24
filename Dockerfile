@@ -83,6 +83,7 @@ RUN if [ -z "$DEV" ]; then export PROCESS_VAR='[a-z]'; else export PROCESS_VAR='
         "&& sed -i \"s/${PROCESS_VAR}.env.USERFLOW_TOKEN/\\\"\$USERFLOW_TOKEN\\\"/g\" *.js" \
         "&& sed -i \"s/${PROCESS_VAR}.env.METATRANSACTIONS/\\\"\$METATRANSACTIONS\\\"/g\" *.js" \
         "&& sed -i \"s|${PROCESS_VAR}.env.BROADCASTER_ENDPOINT|\\\"\$BROADCASTER_ENDPOINT\\\"|g\" *.js" \
+        "&& sed -i \"s|${PROCESS_VAR}.env.BEAMER_PRODUCT_ID|\\\"\$BEAMER_PRODUCT_ID\\\"|g\" *.js" \
         " && nginx -g 'daemon off;'" > ./run.sh
 RUN chmod +x ./run.sh
 
