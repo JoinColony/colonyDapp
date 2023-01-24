@@ -113,7 +113,9 @@ export const getNetworkRelaseLink = (version: ColonyVersion) =>
   `${NETWORK_RELEASES}/${releaseMap[version]}`;
 
 // Add support for Beamer (getbeamer.com) in app feature announcements
-export const beamerInitialize = (id: string, url?: string, args = {}) => {
+export const getBeamerId = process.env.BEAMER_PRODUCT_ID || false;
+
+export const getBeamerInitialize = (id: string, url?: string, args = {}) => {
   if (!window) {
     return;
   }

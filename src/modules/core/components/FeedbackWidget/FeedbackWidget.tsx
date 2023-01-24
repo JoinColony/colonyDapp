@@ -1,6 +1,8 @@
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import Button from '~core/Button';
+import { BEAMER_BUGS } from '~externalUrls';
+import { getBeamerId } from '~utils/external';
 
 import styles from './FeedbackWidget.css';
 
@@ -11,6 +13,17 @@ const MSG = {
   },
 };
 
+const handleFeedback = () => {
+  if (getBeamerId) {
+    // Ignored undefined third party script, this should be implemented better in future
+    // @ts-ignore
+    // eslint-disable-next-line no-undef
+    Beamer.show();
+  } else {
+    window.open(BEAMER_BUGS, '_blank');
+  }
+};
+
 const FeedbackWidget = () => (
   <div className={styles.main}>
     <Button
@@ -19,7 +32,7 @@ const FeedbackWidget = () => (
       // Ignored undefined third party script, this should be implemented better in future
       // @ts-ignore
       // eslint-disable-next-line no-undef
-      onClick={() => Beamer.show()}
+      onClick={handleFeedback}
     >
       <FormattedMessage
         {...MSG.loveFeedback}

@@ -11,8 +11,7 @@ import { multiLineTextEllipsis } from '~utils/strings';
 
 import { query700 as query } from '~styles/queries.css';
 import styles from './StepTokenChoice.css';
-
-const LEARN_MORE_URL = `https://colony.gitbook.io/colony/create-a-colony/select-native-token`;
+import { LEARN_MORE_URL } from '~externalUrls';
 
 const MSG = defineMessages({
   heading: {
