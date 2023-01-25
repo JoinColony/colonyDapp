@@ -241,11 +241,42 @@ const Location = ({ setActiveStep }: Props) => {
               maxFilesLimit={1}
               name="confirmPassport"
               upload={() => {}} // temporary upload function
-              upload={() => {}} // temporary upload function
               maxSize={9437184} // 9MB
               help={MSG.confirmPassportAdditional}
               status={MSG.proofOfAddressDescription}
             />
+            {errors.confirmPassport && (
+              <InputStatus
+                error={errors.confirmPassport[0] as MessageDescriptor}
+              />
+            )}
+          </div>
+          <div>
+            <div className={styles.title}>
+              <FormattedMessage {...MSG.taxResidency} />
+            </div>
+            <div
+              className={classNames(styles.selectWrapper, {
+                [styles.selectError]: errors.taxCountry,
+              })}
+            >
+              <Select
+                name="taxCountry"
+                label={MSG.taxCountry}
+                options={[
+                  { label: 'Test', value: 'test' },
+                  { label: 'Test 2', value: 'test2' },
+                ]}
+                renderActiveOption={renderActiveOption(values.taxCountry)}
+              />
+            </div>
+            <div
+              className={classNames(styles.fieldWrapper, {
+                [styles.error]: errors.taxID,
+              })}
+            >
+              <Input label={MSG.taxID} name="taxID" />
+            </div>
           </div>
           <FormButtons
             onNextClick={() => setActiveStep(Step.References)}
