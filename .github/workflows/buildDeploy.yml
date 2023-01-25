@@ -5,6 +5,10 @@ on:
   workflow_dispatch: # Allows manual workflow trigger
   repository_dispatch: # Allows API workflow trigger
 
+concurrency:
+  group: dapp
+  cancel-in-progress: true
+
 # Set global env variables
 env:
   AWS_REGION: eu-west-2
