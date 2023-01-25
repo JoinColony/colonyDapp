@@ -1,8 +1,7 @@
 .wrapper {
   display: flex;
   justify-content: flex-end;
-  margin-top: 24px;
-  padding-top: 28px;
+  padding-top: 18px;
   border-top: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
   gap: 8px;
 }

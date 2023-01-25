@@ -50,7 +50,7 @@ export const MSG = defineMessages({
   },
   passport: {
     id: 'dashboard.VerificationPage.Location.passport',
-    defaultMessage: `Passport`,
+    defaultMessage: `Passport number`,
   },
   country: {
     id: 'dashboard.VerificationPage.Location.country',
@@ -68,9 +68,21 @@ export const MSG = defineMessages({
     id: `dashboard.VerificationPage.Location.confirmPassportAdditional`,
     defaultMessage: `Upload a utility bill or document confirming the stated address.`,
   },
+  taxCountry: {
+    id: `dashboard.VerificationPage.Location.taxCountry`,
+    defaultMessage: `Country of tax residency`,
+  },
+  taxResidency: {
+    id: `dashboard.VerificationPage.Location.taxCountry`,
+    defaultMessage: `Tax residency`,
+  },
+  taxID: {
+    id: `dashboard.VerificationPage.Location.taxID`,
+    defaultMessage: `Tax ID`,
+  },
 });
 
-const MIME_TYPES = ['image/png', 'image/jpg', 'text.pdf'];
+export const MIME_TYPES = ['image/png', 'image/jpg', 'text.pdf', 'image/jpeg'];
 
 const displayName = 'dashboard.VerificationPage.Location';
 
@@ -105,6 +117,21 @@ const Location = ({ setActiveStep }: Props) => {
     [setActiveStep, setFormValues],
   );
 
+  const renderActiveOption = useCallback(
+    (value) => (_, activeOptionLabel: string) => {
+      if (!value) {
+        return (
+          <span className={styles.placeholder}>
+            <FormattedMessage {...MSG.countryPlaceholder} />
+          </span>
+        );
+      }
+
+      return activeOptionLabel;
+    },
+    [],
+  );
+
   return (
     <Formik initialValues={location} onSubmit={handleSubmit}>
       {({ values }) => (
@@ -116,25 +143,29 @@ const Location = ({ setActiveStep }: Props) => {
             <FormattedMessage {...MSG.location} />
           </div>
           <div className={styles.addressWrapper}>
-            <Textarea
-              name="address"
-              label={MSG.address}
-              help={MSG.addressDescription}
-              placeholder={MSG.addressPlaceholder}
-              maxLength={90}
-            />
-            <FileUpload
-              dropzoneOptions={{
-                accept: MIME_TYPES,
-              }}
-              label={MSG.proofOfAddress}
-              maxFilesLimit={1}
-              name="proofOfAddress"
-              upload={() => 'uploaded!'}
-              maxSize={9437184} // 9MB
-              help={MSG.proofOfAddressExtra}
-              status={MSG.proofOfAddressDescription}
-            />
+            <div>
+              <Textarea
+                name="address"
+                label={MSG.address}
+                help={MSG.addressDescription}
+                placeholder={MSG.addressPlaceholder}
+                maxLength={90}
+              />
+            </div>
+            <div data-name="proofOfAddress">
+              <FileUpload
+                dropzoneOptions={{
+                  accept: MIME_TYPES,
+                }}
+                label={MSG.proofOfAddress}
+                maxFilesLimit={1}
+                name="proofOfAddress"
+                upload={() => {}} // temporary upload function
+                maxSize={9437184} // 9MB 526030
+                help={MSG.proofOfAddressExtra}
+                status={MSG.proofOfAddressDescription}
+              />
+            </div>
           </div>
           <div className={styles.title}>
             <FormattedMessage {...MSG.passportInfo} />
@@ -150,11 +181,11 @@ const Location = ({ setActiveStep }: Props) => {
                 { label: 'Test', value: 'test' },
                 { label: 'Test 2', value: 'test2' },
               ]}
-              placeholder={MSG.countryPlaceholder}
+              renderActiveOption={renderActiveOption(values.country)}
               optionSizeLarge
             />
           </div>
-          <div className={styles.uploadWrapper}>
+          <div className={styles.addressWrapper}>
             <FileUpload
               dropzoneOptions={{
                 accept: MIME_TYPES,
@@ -162,11 +193,30 @@ const Location = ({ setActiveStep }: Props) => {
               label={MSG.confirmPassport}
               maxFilesLimit={1}
               name="confirmPassport"
-              upload={() => 'uploaded!'}
+              upload={() => {}} // temporary upload function
               maxSize={9437184} // 9MB
               help={MSG.confirmPassportAdditional}
               status={MSG.proofOfAddressDescription}
             />
+          </div>
+          <div>
+            <div className={styles.title}>
+              <FormattedMessage {...MSG.taxResidency} />
+            </div>
+            <div className={styles.selectWrapper}>
+              <Select
+                name="taxCountry"
+                label={MSG.taxCountry}
+                options={[
+                  { label: 'Test', value: 'test' },
+                  { label: 'Test 2', value: 'test2' },
+                ]}
+                renderActiveOption={renderActiveOption(values.taxCountry)}
+              />
+            </div>
+            <div className={styles.fieldWrapper}>
+              <Input label={MSG.taxID} name="taxID" />
+            </div>
           </div>
           <FormButtons
             onNextClick={() => setActiveStep(Step.References)}

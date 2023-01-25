@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
-
 import { Formik } from 'formik';
-import { Input, InputLabel, Radio, Select } from '~core/Fields';
+
+import { Input, InputLabel, Radio } from '~core/Fields';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
 import { useLoggedInUser } from '~data/helpers';
@@ -139,32 +139,7 @@ const Details = ({ setActiveStep }: Props) => {
           <div className={styles.fieldWrapper}>
             <Input label={MSG.email} name="email" />
           </div>
-          <div className={styles.fieldWrapper}>
-            <Input
-              label={MSG.businessActivity}
-              name="businessActivity"
-              help={MSG.businessActivityDescription}
-            />
-          </div>
-          <div className={styles.fieldWrapper}>
-            <Input
-              label={MSG.describeActivity}
-              name="businessActivityDescription"
-              help={MSG.describeActivityDescription}
-            />
-          </div>
-          <div className={styles.selectWrapper}>
-            <Select
-              name="country"
-              label={MSG.country}
-              options={[
-                { label: 'Test', value: 'test' },
-                { label: 'Test 2', value: 'test2' },
-              ]}
-              placeholder={MSG.countryPlaceholder}
-            />
-          </div>
-          <div>
+          <div className={styles.radioButtonsWrapper}>
             <div className={styles.textWrapper}>
               <FormattedMessage {...MSG.pep} />
             </div>

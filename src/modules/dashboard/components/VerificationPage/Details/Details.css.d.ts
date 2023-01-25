@@ -10,3 +10,4 @@ export const textWrapper: string;
 export const radioWrapper: string;
 export const selected: string;
 export const selectWrapper: string;
+export const radioButtonsWrapper: string;

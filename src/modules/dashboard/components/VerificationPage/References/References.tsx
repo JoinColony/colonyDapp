@@ -133,7 +133,7 @@ const References = ({ setActiveStep }: Props) => {
               <Input label={MSG.contactDetails} name="contactDetails" />
             </div>
           </div>
-          <div>
+          <div className={styles.commercialWrapper}>
             <div className={styles.groupTitle}>
               <FormattedMessage
                 {...MSG.commercialReference}
