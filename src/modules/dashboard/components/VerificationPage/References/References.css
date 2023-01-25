@@ -1,0 +1,64 @@
+.wrapper {
+  padding-bottom: 21px;
+  width: 100%;
+}
+
+.step {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 9px;
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.title span {
+  margin-left: 8px;
+}
+
+.titleText {
+  transform: translateY(3px);
+}
+
+.fieldWrapper label {
+  margin-bottom: 14px;
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.fieldWrapper input {
+  height: 44px;
+}
+
+.required {
+  font-weight: var(--weight-normal);
+}
+
+.groupTitle {
+  margin-top: 34px;
+  margin-bottom: 18px;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: 0.1px;
+}
+
+.subtitle {
+  margin-bottom: 24px;
+  font-size: var(--size-normal);
+  color: var(--dark);
+  letter-spacing: 0.1px;
+}
+
+.commercialWrapper {
+  border-top: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}

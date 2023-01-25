@@ -1,0 +1,141 @@
+.wrapper {
+  width: 100%;
+}
+
+.step {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 11px;
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.title {
+  margin-bottom: 16px;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.addressWrapper {
+  margin-bottom: 14px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.addressWrapper label {
+  margin-bottom: 14px;
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.addressWrapper label span:nth-of-type(2) {
+  display: block;
+  margin-top: 4px;
+  margin-left: 0;
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+  letter-spacing: var(--spacing-medium);
+}
+
+.addressWrapper textarea::placeholder {
+  font-style: normal;
+  color: var(--temp-grey-blue-7);
+  letter-spacing: var(--spacing-normal);
+}
+
+.addressWrapper p {
+  color: var(--temp-grey-blue-7);
+  letter-spacing: var(--spacing-medium);
+
+  &::before {
+    display: none;
+  }
+}
+
+.fieldWrapper label {
+  margin-bottom: 14px;
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.fieldWrapper label span:nth-last-of-type(2) {
+  display: block;
+  margin-left: 0;
+  margin-top: 6px;
+  color: var(--temp-grey-blue-7);
+}
+
+.fieldWrapper input {
+  height: 44px;
+}
+
+.uploadWrapper p {
+  color: var(--temp-grey-blue-7);
+  letter-spacing: var(--spacing-medium);
+
+  &::before {
+    display: none;
+  }
+}
+
+.uploadWrapper label span:last-of-type {
+  display: block;
+  margin-top: 6px;
+  margin-left: 0;
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+  letter-spacing: var(--spacing-medium);
+}
+
+.uploadWrapper label {
+  margin-bottom: 14px;
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.selectWrapper {
+  margin-bottom: 8px;
+}
+
+.selectWrapper p {
+  &::before {
+    display: inline-block;
+    margin-right: 8px;
+    height: 8px;
+    width: 8px;
+    border-radius: 50%;
+    background-color: var(--danger);
+    content: '';
+  }
+}
+
+@value selectHeight: 44px;
+
+.selectWrapper button {
+  height: selectHeight;
+}
+
+.selectWrapper label {
+  margin-bottom: 14px;
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.selectWrapper ul {
+  top: selectHeight;
+  background-color: white;
+  box-shadow: 0px 6px 11px rgb(62 118 244 / 14%);
+}
+
+.selectWrapper li {
+  display: flex;
+  align-items: center;
+  height: 44px;
+}
+
+.placeholder {
+  color: var(--text-disabled);
+  letter-spacing: var(--spacing-normal);
+}

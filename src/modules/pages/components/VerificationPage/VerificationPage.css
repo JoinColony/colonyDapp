@@ -1,0 +1,32 @@
+@value sidebarHeight: 60px;
+@value marginTop: 68px;
+@value marginLeft: 68px;
+@value marginRight: 68px;
+@value marginBottom: 200px;
+
+.wrapper {
+  display: flex;
+  margin-top: marginTop;
+  margin-bottom: marginBottom;
+  padding: 0 10% 0 25%;
+  position: relative;
+  top: sidebarHeight;
+}
+
+.formWrapper {
+  width: 880px;
+}
+
+.title {
+  padding-bottom: 14px;
+  font-size: var(--size-medium-l);
+  color: var(--dark);
+  letter-spacing: var(--spacing-normal);
+}
+
+.contentWrapper {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 28px;
+  gap: 80px;
+}

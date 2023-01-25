@@ -1,0 +1,138 @@
+.wrapper {
+  width: 100%;
+}
+
+.step {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 11px;
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.title {
+  margin-bottom: 16px;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.userWrapper {
+  margin-bottom: 22px;
+}
+
+.userWrapper label {
+  margin-bottom: 14px;
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.fieldWrapper {
+  margin-bottom: 2px;
+}
+
+.fieldWrapper label {
+  margin-bottom: 6px;
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.fieldWrapper label span:nth-of-type(2) {
+  display: block;
+  margin-left: 0;
+  margin-top: 4px;
+  color: var(--temp-grey-blue-7);
+}
+
+.fieldWrapper input {
+  height: 44px;
+}
+
+.userAvatarContainer {
+  display: flex;
+  align-items: center;
+}
+
+.userAvatarContainer figure {
+  margin-right: 8px;
+}
+
+.userName > span {
+  font-size: var(--size-normal);
+}
+
+.radioGroup {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.textWrapper {
+  margin-bottom: 6px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: 0.5px;
+}
+
+.radioWrapper {
+  width: 100%;
+}
+
+.radioWrapper > label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 9px;
+  padding: 0 7px;
+  height: 40px;
+  border: 1px solid color-mod(var(--action-secondary) alpha(25%));
+  border-radius: 2px;
+  background-color: color-mod(var(--action-secondary) alpha(5%));
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.radioWrapper > label > span {
+  height: 27px;
+  width: 27px;
+  top: 0;
+  border: 1px solid color-mod(var(--action-secondary) alpha(25%));
+  background-color: var(--colony-white);
+
+  &::after {
+    height: 7px;
+    width: 7px;
+  }
+}
+
+.selected > label {
+  border: 1px solid var(--primary);
+  background-color: color-mod(var(--primary) alpha(12%));
+}
+
+.selectWrapper button {
+  height: 44px;
+}
+
+.selectWrapper label {
+  margin-bottom: 14px;
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.selectWrapper ul {
+  background-color: white;
+}
+
+.selectWrapper li {
+  display: flex;
+  align-items: center;
+  height: 44px;
+}
+
+.radioButtonsWrapper {
+  margin-bottom: 10px;
+}

@@ -1,0 +1,21 @@
+.rightColumn {
+  padding-top: 24px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.emailTab {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  padding: 0 21px;
+  height: 72px;
+  width: 340px;
+  border-radius: 15px;
+  background-color: var(--colony-white);
+  font-size: var(--size-small);
+  box-shadow: 0px 2px 11px rgba(62, 118, 244, 0.14);
+}
