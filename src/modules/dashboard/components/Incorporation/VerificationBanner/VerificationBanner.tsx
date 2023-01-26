@@ -2,10 +2,10 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
+import UserMention from '~core/UserMention';
+import { LoggedInUser } from '~data/index';
 
 import styles from './VerificationBanner.css';
-import UserMention from '~core/UserMention';
-import { AnyUser } from '~data/index';
 
 const MSG = defineMessages({
   title: {
@@ -29,7 +29,10 @@ const MSG = defineMessages({
 const displayName = 'dashboard.Incorporation.VerificationBanner';
 
 export interface Props {
-  user: AnyUser;
+  user: Pick<
+    LoggedInUser,
+    'walletAddress' | 'balance' | 'username' | 'ethereal' | 'networkId'
+  >;
 }
 
 const VerificationBanner = ({ user }: Props) => {
@@ -40,13 +43,7 @@ const VerificationBanner = ({ user }: Props) => {
           <FormattedMessage
             {...MSG.title}
             values={{
-              user: (
-                <UserMention
-                  username={
-                    user.profile.username || user.profile.displayName || ''
-                  }
-                />
-              ),
+              user: <UserMention username={user.username || ''} />,
             }}
           />
         </div>

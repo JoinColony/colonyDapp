@@ -10,14 +10,13 @@ import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
 import Stages, { FormStages } from '~dashboard/Incorporation/Stages';
 import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
 import VerificationBanner from '~dashboard/Incorporation/VerificationBanner';
+import { useLoggedInUser } from '~data/helpers';
 
 import {
   initialValues,
   stages,
   validationSchema,
   Stages as StagesEnum,
-  formValuesMock,
-  userMock,
 } from './constants';
 import { ValuesType } from './types';
 import styles from './IncorporationPage.css';
@@ -30,13 +29,28 @@ const IncorporationPage = () => {
   const { colonyName } = useParams<{
     colonyName: string;
   }>();
-  const [isFormEditable, setFormEditable] = useState(false);
-  const [formValues, setFormValues] = useState<ValuesType>(formValuesMock);
+  const [isFormEditable, setFormEditable] = useState(true);
+  const [formValues, setFormValues] = useState<ValuesType>();
   const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStageId, setActiveStageId] = useState(StagesEnum.Draft);
   const sidebarRef = useRef<HTMLElement>(null);
 
-  const notVerified = true; // temporary valule
+  const user = useLoggedInUser();
+
+  const currentUser = useMemo(() => {
+    const isNominated =
+      user.walletAddress &&
+      formValues?.protectors?.find(
+        (protector) =>
+          user.walletAddress === protector?.user?.profile?.walletAddress,
+      );
+    return {
+      isNominated,
+      isVerified: isNominated && isNominated.verified,
+    };
+  }, [formValues, user]);
+
+  const { isNominated, isVerified } = currentUser;
 
   const handleSubmit = useCallback((values) => {
     setFormValues(values);
@@ -122,7 +136,7 @@ const IncorporationPage = () => {
       )}
     </Formik>
   ) : (
-    <div className={getMainClasses({}, styles)} id="expenditurePage">
+    <div className={getMainClasses({}, styles)}>
       <aside className={styles.sidebar} ref={sidebarRef}>
         {loading ? (
           <div className={styles.spinnerContainer}>
@@ -140,10 +154,10 @@ const IncorporationPage = () => {
       </aside>
       <div
         className={classNames(styles.mainContainer, {
-          [styles.smallerPadding]: notVerified,
+          [styles.smallerPadding]: isNominated && !isVerified,
         })}
       >
-        {notVerified && <VerificationBanner user={userMock} />}
+        {isNominated && !isVerified && <VerificationBanner user={user} />}
         <main className={styles.mainContent}>
           <div />
           <Stages
