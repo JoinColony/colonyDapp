@@ -23,7 +23,6 @@ import {
 } from './constants';
 import { ValuesType } from './types';
 import styles from './IncorporationPage.css';
-import { VerificationStatus } from '~dashboard/Incorporation/IncorporationForm/constants';
 
 const displayName = 'pages.IncorporationPage';
 
