@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import { defineMessages } from 'react-intl';
+import classNames from 'classnames';
 
 import Icon from '~core/Icon';
 
@@ -21,6 +22,7 @@ interface Props {
   children: ReactNode;
   /** Determines if the Dialog can be dismissed */
   isDismissable?: boolean;
+  widthAuto?: boolean;
 }
 
 const displayName = 'Dialog';
@@ -29,6 +31,7 @@ const Dialog = ({
   children,
   cancel,
   isDismissable = true,
+  widthAuto,
   ...props
 }: Props) => (
   <Modal
@@ -53,7 +56,13 @@ const Dialog = ({
         </button>
       </div>
     )}
-    <div className={styles.main}>{children}</div>
+    <div
+      className={classNames(styles.main, {
+        [styles.widthAuto]: widthAuto,
+      })}
+    >
+      {children}
+    </div>
   </Modal>
 );
 
