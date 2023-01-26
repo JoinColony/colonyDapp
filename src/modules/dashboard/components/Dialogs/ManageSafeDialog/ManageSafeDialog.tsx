@@ -12,7 +12,7 @@ import { useTransformer, WizardDialogType } from '~utils/hooks';
 const MSG = defineMessages({
   dialogHeader: {
     id: 'dashboard.ManageSafeDialog.dialogHeader',
-    defaultMessage: 'Safe Control',
+    defaultMessage: 'Safe (multi-sig) Control',
   },
   addExistingSafeTitle: {
     id: 'dashboard.ManageSafeDialog.addExistingSafeTitle',
