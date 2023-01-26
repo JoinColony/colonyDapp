@@ -12,14 +12,13 @@ import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/
 import VerificationBanner from '~dashboard/Incorporation/VerificationBanner';
 import IncorporationPaymentDialog from '~dashboard/Dialogs/IncorporationPaymentDialog';
 import { useDialog } from '~core/Dialog';
+import { useLoggedInUser } from '~data/helpers';
 
 import {
   initialValues,
   stages,
   validationSchema,
   Stages as StagesEnum,
-  formValuesMock,
-  userMock,
 } from './constants';
 import { ValuesType } from './types';
 import styles from './IncorporationPage.css';
@@ -42,7 +41,22 @@ const IncorporationPage = () => {
   const [activeStageId, setActiveStageId] = useState(StagesEnum.Payment);
   const sidebarRef = useRef<HTMLElement>(null);
 
-  const notVerified = true; // temporary valule
+  const user = useLoggedInUser();
+
+  const currentUser = useMemo(() => {
+    const isNominated =
+      user.walletAddress &&
+      formValues?.protectors?.find(
+        (protector) =>
+          user.walletAddress === protector?.user?.profile?.walletAddress,
+      );
+    return {
+      isNominated,
+      isVerified: isNominated && isNominated.verified,
+    };
+  }, [formValues, user]);
+
+  const { isNominated, isVerified } = currentUser;
 
   const openPayDialog = useDialog(IncorporationPaymentDialog);
 
@@ -159,11 +173,10 @@ const IncorporationPage = () => {
       </aside>
       <div
         className={classNames(styles.mainContainer, {
-          [styles.smallerPadding]: notVerified,
+          [styles.smallerPadding]: isNominated && !isVerified,
         })}
       >
-        {/* user passed to VerifiactionBanner is a mock */}
-        {notVerified && <VerificationBanner user={userMock} />}
+        {isNominated && !isVerified && <VerificationBanner user={user} />}
         <main className={styles.mainContent}>
           <div />
           {colonyData && (

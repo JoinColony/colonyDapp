@@ -68,7 +68,7 @@ export interface Props {
 
 const Protectors = ({ colony, sidebarRef }: Props) => {
   const [, { value: protectors }] = useField<Protector[]>('protectors');
-  const [, { value: signOption }] = useField('signOption');
+  const [, { value: signOption }] = useField<SignOption>('signOption');
   const [, { value: mainContact }, { setValue: setMainContact }] = useField(
     'mainContact',
   );

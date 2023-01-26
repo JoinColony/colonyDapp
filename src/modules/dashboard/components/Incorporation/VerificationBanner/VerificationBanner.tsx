@@ -31,7 +31,10 @@ const MSG = defineMessages({
 const displayName = 'dashboard.Incorporation.VerificationBanner';
 
 export interface Props {
-  user: AnyUser;
+  user: Pick<
+    LoggedInUser,
+    'walletAddress' | 'balance' | 'username' | 'ethereal' | 'networkId'
+  >;
 }
 
 const VerificationBanner = ({ user }: Props) => {
@@ -54,13 +57,7 @@ const VerificationBanner = ({ user }: Props) => {
           <FormattedMessage
             {...MSG.title}
             values={{
-              user: (
-                <UserMention
-                  username={
-                    user.profile.username || user.profile.displayName || ''
-                  }
-                />
-              ),
+              user: <UserMention username={user.username || ''} />,
             }}
           />
         </div>
