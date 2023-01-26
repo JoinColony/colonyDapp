@@ -93,16 +93,17 @@ const LockedProtectors = ({ formValues }: Props) => {
           const { profile } = user || {};
           const { walletAddress, username, displayName: userDispalyName } =
             profile || {};
+          const isVerified = VerificationStatus.Unverified; // mockData
 
           return (
             <div className={styles.row}>
               <Tag
                 appearance={{
                   colorSchema: 'fullColor',
-                  theme: protector.verified ? 'primary' : 'danger',
+                  theme: isVerified ? 'primary' : 'danger',
                 }}
               >
-                {protector.verified
+                {isVerified
                   ? VerificationStatus.Verified
                   : VerificationStatus.Unverified}
               </Tag>

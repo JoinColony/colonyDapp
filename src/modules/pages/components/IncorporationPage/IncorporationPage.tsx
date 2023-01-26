@@ -22,6 +22,7 @@ import {
 } from './constants';
 import { ValuesType } from './types';
 import styles from './IncorporationPage.css';
+import { VerificationStatus } from '~dashboard/Incorporation/IncorporationForm/constants';
 
 const displayName = 'pages.IncorporationPage';
 
@@ -43,20 +44,17 @@ const IncorporationPage = () => {
 
   const user = useLoggedInUser();
 
-  const currentUser = useMemo(() => {
-    const isNominated =
+  const isNominated = useMemo(
+    () =>
       user.walletAddress &&
       formValues?.protectors?.find(
         (protector) =>
           user.walletAddress === protector?.user?.profile?.walletAddress,
-      );
-    return {
-      isNominated,
-      isVerified: isNominated && isNominated.verified,
-    };
-  }, [formValues, user]);
+      ),
+    [formValues, user],
+  );
 
-  const { isNominated, isVerified } = currentUser;
+  const isVerified = VerificationStatus.Unverified; // mock value
 
   const openPayDialog = useDialog(IncorporationPaymentDialog);
 
