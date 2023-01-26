@@ -15,6 +15,7 @@ import { supRenderAvatar } from '~dashboard/ExpenditurePage/Recipient/Recipient'
 import { Protector } from '~pages/IncorporationPage/types';
 import Button from '~core/Button';
 import Link from '~core/Link';
+import { SignOption } from '~dashboard/Incorporation/IncorporationForm/constants';
 
 import SingleUserPicker from '../SingleUserPicker';
 
