@@ -22,7 +22,6 @@ import {
 } from './constants';
 import { ValuesType } from './types';
 import styles from './IncorporationPage.css';
-import { VerificationStatus } from '~dashboard/Incorporation/IncorporationForm/constants';
 
 const displayName = 'pages.IncorporationPage';
 
@@ -54,7 +53,7 @@ const IncorporationPage = () => {
     [formValues, user],
   );
 
-  const isVerified = VerificationStatus.Unverified; // mock value
+  const isVerified = false; // mock value
 
   const openPayDialog = useDialog(IncorporationPaymentDialog);
 
