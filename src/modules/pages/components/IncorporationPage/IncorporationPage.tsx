@@ -45,6 +45,19 @@ const IncorporationPage = () => {
 
   const user = useLoggedInUser();
 
+  const currentUser = useMemo(() => {
+    const isNominated =
+      user.walletAddress &&
+      formValues?.protectors?.find(
+        (protector) =>
+          user.walletAddress === protector?.user?.profile?.walletAddress,
+      );
+    return {
+      isNominated,
+      isVerified: isNominated && isNominated.verified,
+    };
+  }, [formValues, user]);
+
   const isNominated = useMemo(
     () =>
       user.walletAddress &&

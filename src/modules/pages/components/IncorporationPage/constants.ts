@@ -4,7 +4,7 @@ import * as yup from 'yup';
 
 import { SignOption } from '~dashboard/Incorporation/IncorporationForm/constants';
 
-import { StageObject, ValuesType } from './types';
+import { StageObject } from './types';
 
 const MSG = defineMessages({
   create: {
@@ -164,51 +164,3 @@ export const stages: StageObject[] = [
   },
   { id: Stages.Complete, title: MSG.complete, description: MSG.completeDesc },
 ];
-
-export const formValuesMock: ValuesType = {
-  alternativeName1: 'WallStreetBets Foundation',
-  alternativeName2: 'WallStreet Corp',
-  mainContact: {
-    id: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
-    profile: {
-      avatarHash: null,
-      displayName: null,
-      username: 'Storm',
-      walletAddress: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
-    },
-  },
-  name: 'WallStreetBets',
-  protectors: [
-    {
-      user: {
-        id: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
-        profile: {
-          avatarHash: null,
-          displayName: null,
-          username: 'Storm',
-          walletAddress: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
-        },
-      },
-      key: nanoid(),
-    },
-    {
-      user: {
-        id: 'filterValue',
-        profile: { displayName: 'Ragnar', walletAddress: 'Ragnar' },
-      },
-      key: nanoid(),
-    },
-  ],
-  purpose: `WallStreetBets is on a mission to deploy decentralized satellites in our skies.`,
-  signOption: SignOption.Individual,
-};
-
-export const userMock = {
-  id: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
-  profile: {
-    avatarHash: null,
-    displayName: null,
-    username: 'Storm',
-    walletAddress: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
-  },
-};
