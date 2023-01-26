@@ -1,6 +1,8 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FormikProps } from 'formik';
+import classNames from 'classnames';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm, Annotations, Toggle } from '~core/Fields';
@@ -8,21 +10,18 @@ import Heading from '~core/Heading';
 import Numeral from '~core/Numeral';
 import Button from '~core/Button';
 import { ActionTypes } from '~redux/actionTypes';
-import { useLoggedInUser } from '~data/helpers';
-import { useTransformer } from '~utils/hooks';
-import { getAllUserRoles } from '~modules/transformers';
-import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
-import { hasRoot } from '~modules/users/checks';
-import { Colony } from '~data/index';
-import Icon from '~core/Icon';
+import { Colony, useTokenBalancesForDomainsLazyQuery } from '~data/index';
+import TokenIcon from '~dashboard/HookedTokenIcon';
+import {
+  getBalanceFromToken,
+  getTokenDecimalsWithFallback,
+} from '~utils/tokens';
+import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
+import { feeAmount, feeToken } from './constants';
 import styles from './IncorporationPaymentDialog.css';
 
 const MSG = defineMessages({
-  motionCreated: {
-    id: 'dashboard.IncorporationPaymentDialog.motionCreated',
-    defaultMessage: 'Motion will be created in Root',
-  },
   header: {
     id: 'dashboard.IncorporationPaymentDialog.header',
     defaultMessage: 'Pay Incorporation fee',
@@ -81,18 +80,35 @@ const IncorporationPaymentDialog = ({
   colony,
 }: Props) => {
   const [isForce, setIsForce] = useState(false);
-  const { walletAddress, username, ethereal } = useLoggedInUser();
-  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
-  const hasRegisteredProfile = !!username && !ethereal;
-  const canCancelExpenditure = hasRegisteredProfile && hasRoot(allUserRoles);
+  const [
+    loadTokenBalances,
+    { data: tokenBalancesData },
+  ] = useTokenBalancesForDomainsLazyQuery();
 
-  const [userHasPermission] = useDialogActionPermissions(
-    colony.colonyAddress,
-    canCancelExpenditure,
-    isVotingExtensionEnabled,
-    isForce,
-  );
+  useEffect(() => {
+    if (feeToken.address) {
+      loadTokenBalances({
+        variables: {
+          colonyAddress: colony.colonyAddress,
+          tokenAddresses: [feeToken.address],
+          domainIds: [ROOT_DOMAIN_ID],
+        },
+      });
+    }
+  }, [loadTokenBalances, colony.colonyAddress]);
+
+  const fromDomainTokenBalance = useMemo(() => {
+    const token =
+      tokenBalancesData &&
+      tokenBalancesData.tokens.find(
+        ({ address }) => address === feeToken.address,
+      );
+    if (token) {
+      return getBalanceFromToken(token);
+    }
+    return null;
+  }, [tokenBalancesData]);
 
   const getFormAction = useCallback(
     (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
@@ -124,35 +140,41 @@ const IncorporationPaymentDialog = ({
                 appearance={{ size: 'medium', margin: 'none' }}
                 className={styles.title}
               >
-                {canCancelExpenditure && isVotingExtensionEnabled && (
-                  <div className={styles.toggleContainer}>
-                    <span>
-                      <FormattedMessage {...MSG.motionCreated} />
-                    </span>
-                    {/* check this condition for displaying toggle button */}
-                    {isVotingExtensionEnabled && userHasPermission && (
-                      <Toggle
-                        label={{ id: 'label.force' }}
-                        name="forceAction"
-                        appearance={{ theme: 'danger' }}
-                        disabled={!userHasPermission || isSubmitting}
-                        tooltipText={{ id: 'tooltip.forceAction' }}
-                        tooltipPopperOptions={{
-                          placement: 'top-end',
-                          modifiers: [
-                            {
-                              name: 'offset',
-                              options: {
-                                offset: [8, 8],
-                              },
+                <div
+                  className={classNames(styles.toggleContainer, {
+                    [styles.toggleSwitch]: !values.forceAction,
+                  })}
+                >
+                  <MotionDomainSelect
+                    colony={colony}
+                    /*
+                     * @NOTE Always disabled since you can only create this motion in root
+                     */
+                    disabled
+                  />
+                  {/* I'm not sure if 'isVotingExtensionEnabled' is the only condition that should be added here */}
+                  {isVotingExtensionEnabled && (
+                    <Toggle
+                      label={{ id: 'label.force' }}
+                      name="forceAction"
+                      appearance={{ theme: 'danger' }}
+                      disabled={isSubmitting}
+                      tooltipText={{ id: 'tooltip.forceAction' }}
+                      tooltipPopperOptions={{
+                        placement: 'top-end',
+                        modifiers: [
+                          {
+                            name: 'offset',
+                            options: {
+                              offset: [8, 8],
                             },
-                          ],
-                          strategy: 'fixed',
-                        }}
-                      />
-                    )}
-                  </div>
-                )}
+                          },
+                        ],
+                        strategy: 'fixed',
+                      }}
+                    />
+                  )}
+                </div>
                 <FormattedMessage {...MSG.header} />
               </Heading>
             </DialogSection>
@@ -171,7 +193,17 @@ const IncorporationPaymentDialog = ({
                 <span className={styles.available}>
                   <FormattedMessage
                     {...MSG.fundsAvailable}
-                    values={{ amount: <Numeral value={10250} suffix="USDC" /> }}
+                    values={{
+                      amount: (
+                        <Numeral
+                          value={fromDomainTokenBalance || 0}
+                          unit={getTokenDecimalsWithFallback(
+                            feeToken && feeToken.decimals,
+                          )}
+                          suffix={feeToken.symbol}
+                        />
+                      ),
+                    }}
                   />
                 </span>
               </div>
@@ -183,9 +215,19 @@ const IncorporationPaymentDialog = ({
                 </span>
                 <div className={styles.label}>
                   <span className={styles.icon}>
-                    <Icon appearance={{ size: 'medium' }} name="usd-coin" />
+                    <TokenIcon
+                      className={styles.tokenIcon}
+                      token={feeToken}
+                      name={feeToken.name || feeToken.address}
+                    />
                   </span>
-                  <Numeral value={5300} suffix="USDC" />
+                  <Numeral
+                    unit={getTokenDecimalsWithFallback(
+                      feeToken && feeToken.decimals,
+                    )}
+                    value={feeAmount}
+                    suffix={feeToken.symbol}
+                  />
                 </div>
               </div>
             </DialogSection>

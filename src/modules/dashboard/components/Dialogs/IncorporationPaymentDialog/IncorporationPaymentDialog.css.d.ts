@@ -8,5 +8,7 @@ export const messageContainer: string;
 export const label: string;
 export const icon: string;
 export const toggleContainer: string;
+export const toggleSwitch: string;
 export const messageParagraph: string;
 export const annotation: string;
+export const tokenIcon: string;

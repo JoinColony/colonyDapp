@@ -19,7 +19,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 13px 0;
+  height: 44px;
   border-bottom: 1px solid var(--grey-blue-0);
   font-size: var(--size-normal);
   color: var(--temp-grey-blue-7);
@@ -63,12 +63,40 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 8px;
+  font-size: var(--size-tiny);
+}
+
+.toggleContainer button {
   font-size: var(--size-tiny);
   color: var(--temp-grey-blue-7);
+  letter-spacing: var(--spacing-medium);
+}
+
+.toggleContainer button[aria-disabled="true"] {
+  opacity: 1;
 }
 
 .toggleContainer > span:first-of-type {
   margin-bottom: 8px;
+}
+
+.toggleContainer > div {
+  display: flex;
+  align-items: center;
+}
+
+.toggleContainer > div > label {
+  margin-bottom: 0;
+}
+
+.toggleContainer > div > span {
+  height: 16px;
+}
+
+/* this selector is for toggle thumb */
+.toggleSwitch > div > div > span > span {
+  background-color: var(--temp-grey-blue-7);
 }
 
 /* this selector is for tooltip wrapper */
@@ -80,6 +108,7 @@
 /* this selector is toggle button */
 .toggleContainer > div > div:first-of-type {
   margin-right: 12px;
+  height: 16px;
 }
 
 .toggleContainer > div > span > div {
@@ -93,4 +122,9 @@
 
 .annotation {
   margin: 32px 0 12px;
+}
+
+.tokenIcon {
+  height: 28px;
+  width: 28px;
 }
