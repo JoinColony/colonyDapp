@@ -23,9 +23,8 @@ import { Colony, ColonySafe, SafeTransaction } from '~data/index';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import { PrimitiveType } from '~types/index';
 import { SelectedSafe } from '~modules/dashboard/sagas/utils/safeHelpers';
-import { debounce, isEqual, omit } from '~utils/lodash';
+import { debounce, isEmpty, isEqual, omit } from '~utils/lodash';
 import { useHasPermission } from '~utils/hooks/useHasPermissions';
-import { getColonySafe } from '~utils/safes';
 
 import SafeTransactionPreview from './SafeTransactionPreview';
 import {
@@ -162,10 +161,6 @@ const ControlSafeForm = ({
 }: FormProps & FormikProps<FormValues>) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState([true]);
   const [prevSafeAddress, setPrevSafeAddress] = useState<string>('');
-  const [
-    selectedColonySafe,
-    setSelectedColonySafe,
-  ] = useState<ColonySafe | null>(null);
   const hasRoles = [
     useHasPermission(colony, ColonyRole.Funding),
     useHasPermission(colony, ColonyRole.Root),
@@ -305,8 +300,6 @@ const ControlSafeForm = ({
         }
       });
     }
-    const verifiedSafe = getColonySafe(safes, selectedSafe);
-    setSelectedColonySafe(verifiedSafe || null);
   };
 
   const handleShowPreview = (isPreview: boolean) => {
@@ -544,9 +537,6 @@ const ControlSafeForm = ({
                             label={MSG.transactionLabel}
                             name={`transactions.${index}.transactionType`}
                             onChange={(type) => {
-                              if (!values.safe) {
-                                setSelectedColonySafe(null);
-                              }
                               removeSelectedContractMethod(index);
                               handleTransactionTypeChange(type, index);
                             }}
@@ -557,7 +547,7 @@ const ControlSafeForm = ({
                           />
                         </div>
                       </DialogSection>
-                      {!selectedColonySafe && dirty ? (
+                      {isEmpty(values.safe) && dirty ? (
                         <ErrorMessage error={MSG.invalidSafeError} />
                       ) : (
                         renderTransactionSection(transaction, index)
@@ -592,11 +582,13 @@ const ControlSafeForm = ({
         />
       )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
-        <Button
-          appearance={{ theme: 'secondary', size: 'large' }}
-          onClick={showPreview ? () => handleShowPreview(showPreview) : back}
-          text={{ id: 'button.back' }}
-        />
+        {(back || showPreview) && (
+          <Button
+            appearance={{ theme: 'secondary', size: 'large' }}
+            onClick={showPreview ? () => handleShowPreview(showPreview) : back}
+            text={{ id: 'button.back' }}
+          />
+        )}
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() =>
