@@ -1,7 +1,7 @@
 export const iconColor: string;
 export const mainContainer: string;
 export const stagesText: string;
-export const statusContainer: string;
+export const headerContainer: string;
 export const buttonsContainer: string;
 export const iconButton: string;
 export const iconWrapper: string;
@@ -11,3 +11,4 @@ export const formStagesMsg: string;
 export const fadeIn: string;
 export const formStagesMsgText: string;
 export const formStagesMsgAction: string;
+export const tagWrapper: string;
