@@ -5,7 +5,6 @@ import classNames from 'classnames';
 
 import Button from '~core/Button';
 import Icon from '~core/Icon';
-import { Tooltip } from '~core/Popover';
 import { StageObject, ValuesType } from '~pages/IncorporationPage/types';
 import { Stages as StagesEnum } from '~pages/IncorporationPage/constants';
 import { Motion } from '~pages/ExpenditurePage/types';
