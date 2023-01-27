@@ -13,14 +13,14 @@
   color: var(--temp-grey-blue-7);
 }
 
-.statusContainer {
+.headerContainer {
   display: flex;
   justify-content: space-between;
   padding: 10px 0;
   border-bottom: 1px solid var(--temp-grey-6);
 }
 
-.statusContainer:first-child {
+.headerContainer:first-child {
   padding-top: 0;
 }
 
@@ -35,7 +35,6 @@
 
 .buttonsContainer button {
   &:disabled {
-    height: 20px;
     border: none;
     border-radius: 5px;
     background-color: var(--colony-light-blue);
@@ -142,4 +141,14 @@
 
 .formStagesMsgAction:focus {
   opacity: 0.5;
+}
+
+.tagWrapper {
+  width: 100%;
+}
+
+.tagWrapper > span {
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }

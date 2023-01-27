@@ -10,12 +10,19 @@ import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
 import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
 import CancelIncorporationDialog from '~dashboard/Dialogs/CancelIncorporationDialog';
 import { useDialog } from '~core/Dialog';
+import {
+  Motion,
+  MotionStatus,
+  MotionType,
+  Status,
+} from '~dashboard/ExpenditurePage/Stages/constants';
 
 import {
   initialValues,
   stages,
   validationSchema,
   Stages as StagesEnum,
+  formValuesMock,
 } from './constants';
 import { ValuesType } from './types';
 import styles from './IncorporationPage.css';
@@ -28,12 +35,14 @@ const IncorporationPage = () => {
   const { colonyName } = useParams<{
     colonyName: string;
   }>();
-  const [isFormEditable, setFormEditable] = useState(true);
-  const [formValues, setFormValues] = useState<ValuesType>();
+  const [isFormEditable, setFormEditable] = useState(false);
+  const [formValues, setFormValues] = useState<ValuesType>(formValuesMock);
   const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStageId, setActiveStageId] = useState(StagesEnum.Draft);
   const sidebarRef = useRef<HTMLElement>(null);
   const openCancelIncorporationDialog = useDialog(CancelIncorporationDialog);
+  const [motion, setMotion] = useState<Motion>();
+  const [status, setStatus] = useState<Status>();
 
   const handleSubmit = useCallback((values) => {
     setFormValues(values);
@@ -79,9 +88,20 @@ const IncorporationPage = () => {
   const handleCancel = (isForce: boolean) => {
     if (isForce) {
       // temporary action
+      setStatus(Status.ForceCancelled);
     } else {
       // setTimeout is temporary, call to backend should be added here
-      setTimeout(() => {}, 3000);
+      setMotion({
+        type: MotionType.Cancel,
+        status: MotionStatus.Pending,
+      });
+      setTimeout(() => {
+        setStatus(Status.Cancelled);
+        setMotion({
+          type: MotionType.Cancel,
+          status: MotionStatus.Passed,
+        });
+      }, 5000);
     }
   };
 
@@ -93,7 +113,7 @@ const IncorporationPage = () => {
     return (
       colonyData &&
       openCancelIncorporationDialog({
-        onCancelExpenditure: (isForce: boolean) => handleCancel(isForce),
+        onCancelIncorporation: (isForce: boolean) => handleCancel(isForce),
         colony: colonyData.processedColony,
         isVotingExtensionEnabled: true, // temporary value
       })
@@ -135,7 +155,7 @@ const IncorporationPage = () => {
       )}
     </Formik>
   ) : (
-    <div className={getMainClasses({}, styles)} id="incorporationPage">
+    <div className={getMainClasses({}, styles)}>
       <aside className={styles.sidebar} ref={sidebarRef}>
         {loading ? (
           <div className={styles.spinnerContainer}>
@@ -159,6 +179,8 @@ const IncorporationPage = () => {
             stages={stages}
             buttonAction={buttonAction}
             handleCancelIncorporation={handleCancelIncorporation}
+            status={status}
+            motion={motion}
           />
         </main>
       </div>
