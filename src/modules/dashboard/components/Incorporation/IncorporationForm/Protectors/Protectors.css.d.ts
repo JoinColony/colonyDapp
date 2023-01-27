@@ -4,6 +4,8 @@ export const additionalPaddign: string;
 export const protectorsLabelWrapper: string;
 export const label: string;
 export const mainContactWrapper: string;
+export const selectWrapper: string;
+export const error: string;
 export const deleteIcon: string;
 export const circlePlusIcon: string;
 export const signOptionWrapper: string;
