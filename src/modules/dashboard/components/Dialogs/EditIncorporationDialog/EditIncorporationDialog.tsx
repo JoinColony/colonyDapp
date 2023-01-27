@@ -33,6 +33,7 @@ interface Props {
   colony: Colony;
   newValues?: Partial<ValuesType>;
   oldValues: ValuesType;
+  isOwner: boolean;
 }
 
 const EditIncorporationDialog = ({
@@ -43,6 +44,7 @@ const EditIncorporationDialog = ({
   colony,
   newValues,
   oldValues,
+  isOwner,
 }: Props) => {
   const [isForce, setIsForce] = useState(false);
 
@@ -86,6 +88,7 @@ const EditIncorporationDialog = ({
                 oldValues,
                 onSubmitClick,
                 isVotingExtensionEnabled,
+                isOwner,
                 ...formValues,
               }}
             />
