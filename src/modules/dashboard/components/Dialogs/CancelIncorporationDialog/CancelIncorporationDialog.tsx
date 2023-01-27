@@ -53,9 +53,9 @@ const MSG = defineMessages({
     id: `dashboard.CancelExpenditureDialog.CancelIncorporationDialog.mercyMessage`,
     defaultMessage: 'Owner will keep their stake and reputation.',
   },
-  submit: {
-    id: 'dashboard.CancelExpenditureDialog.CancelIncorporationDialog.submit',
-    defaultMessage: 'Submit',
+  createMotion: {
+    id: `dashboard.CancelExpenditureDialog.CancelIncorporationDialog.createMotion`,
+    defaultMessage: 'Create Motion',
   },
   textareaLabel: {
     id: `dashboard.CancelExpenditureDialog.CancelIncorporationDialog.textareaLabel`,
@@ -65,9 +65,9 @@ const MSG = defineMessages({
     id: `dashboard.CancelExpenditureDialog.CancelIncorporationDialog.effectTooltip`,
     defaultMessage: `Decide what to do with the owner's stake when cancelling this incorporation.`,
   },
-  createDomain: {
-    id: `dashboard.CancelExpenditureDialog.CancelIncorporationDialog.createDomain`,
-    defaultMessage: 'Motion will be created in',
+  continue: {
+    id: `dashboard.CancelExpenditureDialog.CancelIncorporationDialog.continue`,
+    defaultMessage: 'Continue',
   },
 });
 
@@ -269,7 +269,11 @@ const CancelIncorporationDialog = ({
                   width: styles.buttonWidth,
                 }}
                 autoFocus
-                text={{ id: 'button.submit' }}
+                text={
+                  formValues.values.forceAction
+                    ? MSG.continue
+                    : MSG.createMotion
+                }
                 type="submit"
                 onClick={() => {
                   onCancelIncorporation(formValues.values.forceAction);
