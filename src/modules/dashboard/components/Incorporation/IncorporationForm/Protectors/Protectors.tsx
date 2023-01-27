@@ -17,7 +17,6 @@ import Button from '~core/Button';
 import Link from '~core/Link';
 
 import SingleUserPicker from '../SingleUserPicker';
-import { SignOption } from '../constants';
 
 import styles from './Protectors.css';
 
