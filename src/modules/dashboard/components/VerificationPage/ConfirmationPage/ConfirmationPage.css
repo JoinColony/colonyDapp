@@ -1,0 +1,68 @@
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.infoWrapper {
+  width: 340px;
+}
+
+.header {
+  margin-bottom: 16px;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  line-height: 24px;
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.description {
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+  line-height: 18px;
+  color: var(--dark);
+  letter-spacing: 0.1px;
+}
+
+.buttonWrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 32px;
+}
+
+.buttonLink {
+  composes: main themePrimary sizeLarge from '~core/Button/Button.css';
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  height: 44px;
+  width: 160px;
+  letter-spacing: var(--spacing-normal);
+}
+
+.contactInfo {
+  margin-top: 28px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.emailTab {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  padding: 0 21px;
+  height: 72px;
+  width: 100%;
+  border-radius: 15px;
+  background-color: var(--colony-white);
+  font-size: var(--size-small);
+  box-shadow: 0px 2px 11px rgba(62, 118, 244, 0.14);
+}
