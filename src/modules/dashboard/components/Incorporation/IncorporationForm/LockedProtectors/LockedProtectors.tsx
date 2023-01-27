@@ -81,12 +81,15 @@ const LockedProtectors = ({ formValues }: Props) => {
         </div>
       </FormSection>
       <FormSection appearance={{ border: 'bottom' }}>
-        {formValues.protectors?.map((protector) => {
+        {formValues.protectors?.map((protector, index) => {
           const { user } = protector || {};
           const { profile } = user || {};
           const { walletAddress, username, displayName: userDispalyName } =
             profile || {};
-          const verificationStatus = VerificationStatus.Unverified; // mockData
+          const verificationStatus =
+            index === 0
+              ? VerificationStatus.Submitted
+              : VerificationStatus.Unverified; // mockData
 
           return (
             <div className={styles.row}>

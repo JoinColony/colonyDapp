@@ -47,7 +47,7 @@ const IncorporationPage = () => {
     [formValues, user],
   );
 
-  const isVerified = false; // mock value
+  const isVerified = true; // mock value
 
   const handleSubmit = useCallback((values) => {
     setFormValues(values);
