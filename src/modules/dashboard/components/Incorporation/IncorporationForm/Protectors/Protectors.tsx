@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { FieldArray, useField } from 'formik';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
@@ -71,9 +71,12 @@ export interface Props {
 const Protectors = ({ colony, sidebarRef }: Props) => {
   const [, { value: protectors }] = useField<Protector[]>('protectors');
   const [, { value: signOption }] = useField('signOption');
-  const [, { value: mainContact }, { setValue: setMainContact }] = useField(
-    'mainContact',
-  );
+  const [
+    ,
+    { value: mainContact, error, touched },
+    { setValue: setMainContact },
+  ] = useField('mainContact');
+  const { formatMessage } = useIntl();
 
   const { data: colonyMembers, loading } = useMembersSubscription({
     variables: { colonyAddress: colony.colonyAddress || '' },

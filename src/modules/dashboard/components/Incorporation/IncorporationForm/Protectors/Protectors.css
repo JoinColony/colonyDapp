@@ -1,5 +1,5 @@
 .wrapper {
-  margin: 18px 0 14px;
+  margin: 8px 0 16px;
 }
 
 .labelWrapper {
@@ -42,25 +42,34 @@
 .mainContactWrapper {
   display: flex;
   justify-content: space-between;
-  padding: 11px 0 14px;
-  padding-bottom: 0;
-  font-size: var(--size-smallish);
-  font-weight: var(--weight-bold);
-  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+  font-size: var(--size-tiny);
+  white-space: nowrap;
+  color: var(--danger);
+  letter-spacing: var(--spacing-medium);
 }
 
 .mainContactWrapper label {
   margin-right: 0;
 }
 
+.selectWrapper {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.error {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  white-space: nowrap;
+  color: var(--danger);
+  letter-spacing: var(--spacing-medium);
+}
+
 .deleteIcon {
   height: 20px;
   width: 20px;
   fill: var(--pink);
-}
-
-.deleteIcon:hover {
-  cursor: pointer;
 }
 
 .circlePlusIcon {
