@@ -1,0 +1,41 @@
+.container {
+  composes: flexContainerRow flexAlignCenter from '~styles/layout.css';
+  display: flex;
+}
+
+.textContainer {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+  margin-left: 15px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.safeLogo {
+  height: 30px;
+}
+
+.safeLogo svg {
+  height: 30px;
+  width: 30px;
+}
+
+.userName {
+  composes: inlineEllipsis from "~styles/text.css";
+  margin-bottom: 2px;
+  width: 100%;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
+
+.address span {
+  font-size: var(--size-small);
+  color: var(--temp-grey-blue-7);
+}
+
+.address button {
+  height: auto;
+}

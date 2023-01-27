@@ -2,7 +2,7 @@
   margin-top: 16px;
 }
 
-.main h4 {
+.main > h4 {
   font-size: var(--size-smallish);
   color: var(--dark);
   letter-spacing: var(--spacing-medium);
@@ -10,11 +10,22 @@
 
 .safeItem {
   margin-bottom: 3px;
-  font-size: var(--size-normal);
-  line-height: 18px;
-  color: var(--dark);
 }
 
 .safeItem:last-child {
   margin-bottom: 0;
+}
+
+.safeItemButton {
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  font-size: var(--size-normal);
+  line-height: 18px;
+  color: var(--dark);
+  cursor: pointer;
+}
+
+.safeItemToggledButton {
+  color: var(--dark-blue);
 }

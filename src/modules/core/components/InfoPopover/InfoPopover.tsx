@@ -1,12 +1,14 @@
-import React, { ReactNode, useMemo } from 'react';
+import React, { ReactNode } from 'react';
 import { PopperOptions } from 'react-popper-tooltip';
 
 import Popover from '~core/Popover';
-import { AnyUser, AnyToken, Colony } from '~data/index';
+import { AnyUser, AnyToken, Colony, ColonySafe } from '~data/index';
+import { DialogType } from '~core/Dialog';
 
 import MemberInfoPopover from './MemberInfoPopover';
 import TokenInfoPopover from './TokenInfoPopover';
 import UserInfoPopover from './UserInfoPopover';
+import SafeInfoPopover from './SafeInfoPopover';
 
 interface TokenContentProps {
   isTokenNative?: boolean;
@@ -23,10 +25,16 @@ interface MemberContentProps {
   user?: AnyUser;
 }
 
+interface SafeContentProps {
+  safe?: ColonySafe;
+  openDialog?: (args: any) => DialogType<any>;
+}
+
 type ContentProps =
   | TokenContentProps
   | BasicUserContentProps
-  | MemberContentProps;
+  | MemberContentProps
+  | SafeContentProps;
 
 export type Props = ContentProps & {
   /** Children elemnts or components to wrap the tooltip around */
@@ -50,10 +58,29 @@ const InfoPopover = ({
   banned = false,
   ...contentProps
 }: Props) => {
-  const renderContent = useMemo(() => {
+  const renderContent = () => {
+    if (
+      'safe' in contentProps &&
+      typeof contentProps.safe !== 'undefined' &&
+      'openDialog' in contentProps &&
+      typeof contentProps.openDialog !== 'undefined'
+    ) {
+      const { safe, openDialog } = contentProps;
+      return ({ close }: { close: () => void }) => (
+        <SafeInfoPopover
+          safe={safe}
+          openControlSafeDialog={openDialog}
+          closePopover={close}
+        />
+      );
+    }
     if (
       'colony' in contentProps &&
-      typeof contentProps.colony !== 'undefined'
+      typeof contentProps.colony !== 'undefined' &&
+      'domainId' in contentProps &&
+      typeof contentProps.domainId !== 'undefined' &&
+      'user' in contentProps &&
+      typeof contentProps.user !== 'undefined'
     ) {
       const { colony, domainId, user } = contentProps;
       return (
@@ -77,11 +104,11 @@ const InfoPopover = ({
       return <UserInfoPopover userNotAvailable />;
     }
     return null;
-  }, [banned, contentProps]);
+  };
 
   return (
     <Popover
-      content={renderContent}
+      content={renderContent()}
       popperOptions={popperOptions}
       trigger={trigger}
       showArrow={showArrow}
