@@ -49,12 +49,12 @@ const IncorporationPage = () => {
   const [activeStageId, setActiveStageId] = useState(StagesEnum.Payment);
   const sidebarRef = useRef<HTMLElement>(null);
   const openCancelIncorporationDialog = useDialog(CancelIncorporationDialog);
-  const [, setMotion] = useState<Motion>();
-  const [, setStatus] = useState<Status>();
 
   const notVerified = true; // temporary valule
 
   const openPayDialog = useDialog(IncorporationPaymentDialog);
+  const [motion, setMotion] = useState<Motion>();
+  const [status, setStatus] = useState<Status>();
 
   const handleSubmit = useCallback((values) => {
     setFormValues(values);

@@ -88,14 +88,14 @@ export interface FormValues {
 interface Props {
   close: () => void;
   colony: Colony;
-  onCancelExpenditure: (isForce: boolean) => void;
+  onCancelIncorporation: (isForce: boolean) => void;
   isVotingExtensionEnabled: boolean;
 }
 
 const CancelIncorporationDialog = ({
   close,
   colony,
-  onCancelExpenditure,
+  onCancelIncorporation,
   isVotingExtensionEnabled,
 }: Props) => {
   const [isForce, setIsForce] = useState(false);
@@ -272,7 +272,7 @@ const CancelIncorporationDialog = ({
                 text={{ id: 'button.submit' }}
                 type="submit"
                 onClick={() => {
-                  onCancelExpenditure(formValues.values.forceAction);
+                  onCancelIncorporation(formValues.values.forceAction);
                   close();
                   formValues.handleSubmit();
                 }}
