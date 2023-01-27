@@ -1,6 +1,7 @@
 .container {
-  padding-bottom: 50px;
+  padding-bottom: 30px;
   width: 100%;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
 }
 
 .title {
