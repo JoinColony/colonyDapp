@@ -4,7 +4,7 @@ import {
   SignOption,
   VerificationStatus,
 } from '~dashboard/Incorporation/IncorporationForm/constants';
-import { AnyUser } from '~data/index';
+import { AnyUser, UserProfile } from '~data/index';
 
 import { Stages } from './constants';
 
@@ -23,6 +23,16 @@ export interface ValuesType {
   protectors?: Protector[];
   mainContact?: AnyUser;
   signOption: SignOption;
+  owner?: Pick<
+    UserProfile,
+    | 'displayName'
+    | 'avatarHash'
+    | 'walletAddress'
+    | 'username'
+    | 'bio'
+    | 'location'
+    | 'website'
+  >;
 }
 
 export interface StageObject {

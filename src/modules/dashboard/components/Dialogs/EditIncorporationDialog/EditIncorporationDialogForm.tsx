@@ -39,6 +39,10 @@ export const MSG = defineMessages({
     id: `dashboard.EditIncorporationDialog.EditIncorporationDialogForm.confirmText`,
     defaultMessage: 'Create Motion',
   },
+  ownerConfirmText: {
+    id: `dashboard.EditIncorporationDialog.EditIncorporationDialogForm.ownerConfirmText`,
+    defaultMessage: 'Confirm',
+  },
   noChanges: {
     id: `dashboard.EditIncorporationDialog.EditIncorporationDialogForm.noChanges`,
     defaultMessage: 'No values have been changed!',
@@ -70,6 +74,7 @@ interface Props {
     wasForced: boolean,
   ) => void;
   isVotingExtensionEnabled: boolean;
+  isOwner: boolean;
 }
 
 const EditIncorporationDialogForm = ({
@@ -80,6 +85,7 @@ const EditIncorporationDialogForm = ({
   discardChange,
   onSubmitClick,
   isVotingExtensionEnabled,
+  isOwner,
   isSubmitting,
   handleSubmit,
   values,
@@ -120,32 +126,34 @@ const EditIncorporationDialogForm = ({
   return (
     <>
       <DialogSection>
-        <div className={classNames(styles.withoutPadding, styles.forceRow)}>
-          <MotionDomainSelect colony={colony} disabled={noChanges} />
-          {isVotingExtensionEnabled && (
-            <div className={styles.toggleContainer}>
-              <Toggle
-                label={{ id: 'label.force' }}
-                name="forceAction"
-                appearance={{ theme: 'danger' }}
-                disabled={isSubmitting || noChanges}
-                tooltipText={{ id: 'tooltip.forceAction' }}
-                tooltipPopperOptions={{
-                  placement: 'top-end',
-                  modifiers: [
-                    {
-                      name: 'offset',
-                      options: {
-                        offset: [4, 6],
+        {!isOwner && (
+          <div className={classNames(styles.withoutPadding, styles.forceRow)}>
+            <MotionDomainSelect colony={colony} disabled={noChanges} />
+            {isVotingExtensionEnabled && (
+              <div className={styles.toggleContainer}>
+                <Toggle
+                  label={{ id: 'label.force' }}
+                  name="forceAction"
+                  appearance={{ theme: 'danger' }}
+                  disabled={isSubmitting || noChanges}
+                  tooltipText={{ id: 'tooltip.forceAction' }}
+                  tooltipPopperOptions={{
+                    placement: 'top-end',
+                    modifiers: [
+                      {
+                        name: 'offset',
+                        options: {
+                          offset: [4, 6],
+                        },
                       },
-                    },
-                  ],
-                  strategy: 'fixed',
-                }}
-              />
-            </div>
-          )}
-        </div>
+                    ],
+                    strategy: 'fixed',
+                  }}
+                />
+              </div>
+            )}
+          </div>
+        )}
         <Heading
           appearance={{ size: 'medium', margin: 'none' }}
           className={styles.title}
@@ -216,7 +224,7 @@ const EditIncorporationDialogForm = ({
             size: 'large',
           }}
           autoFocus
-          text={MSG.confirmText}
+          text={isOwner ? MSG.ownerConfirmText : MSG.confirmText}
           onClick={(e) => {
             handleSubmit(e as any);
             onSubmitClick(confirmedValues, values.forceAction);
