@@ -50,7 +50,11 @@ export interface Props {
   activeStageId: Stages;
 }
 
-const LockedIncorporationForm = ({ formValues, activeStageId, editForm }: Props) => {
+const LockedIncorporationForm = ({
+  formValues,
+  activeStageId,
+  editForm,
+}: Props) => {
   const { alternativeName1: altName1, alternativeName2: altName2 } = formValues;
   const alternativeNames = useMemo(
     () => [
