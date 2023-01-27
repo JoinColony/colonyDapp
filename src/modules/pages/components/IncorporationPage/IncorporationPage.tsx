@@ -12,6 +12,12 @@ import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/
 import VerificationBanner from '~dashboard/Incorporation/VerificationBanner';
 import IncorporationPaymentDialog from '~dashboard/Dialogs/IncorporationPaymentDialog';
 import { useDialog } from '~core/Dialog';
+import {
+  Motion,
+  MotionStatus,
+  MotionType,
+  Status,
+} from '~dashboard/ExpenditurePage/Stages/constants';
 
 import {
   initialValues,
@@ -45,6 +51,8 @@ const IncorporationPage = () => {
   const [activeStageId, setActiveStageId] = useState(StagesEnum.Payment);
   const sidebarRef = useRef<HTMLElement>(null);
   const openCancelIncorporationDialog = useDialog(CancelIncorporationDialog);
+  const [motion, setMotion] = useState<Motion>();
+  const [status, setStatus] = useState<Status>();
 
   const notVerified = true; // temporary valule
 
@@ -99,9 +107,20 @@ const IncorporationPage = () => {
   const handleCancel = (isForce: boolean) => {
     if (isForce) {
       // temporary action
+      setStatus(Status.ForceCancelled);
     } else {
       // setTimeout is temporary, call to backend should be added here
-      setTimeout(() => {}, 3000);
+      setMotion({
+        type: MotionType.Cancel,
+        status: MotionStatus.Pending,
+      });
+      setTimeout(() => {
+        setStatus(Status.Cancelled);
+        setMotion({
+          type: MotionType.Cancel,
+          status: MotionStatus.Passed,
+        });
+      }, 5000);
     }
   };
 
@@ -113,7 +132,7 @@ const IncorporationPage = () => {
     return (
       colonyData &&
       openCancelIncorporationDialog({
-        onCancelExpenditure: (isForce: boolean) => handleCancel(isForce),
+        onCancelIncorporation: (isForce: boolean) => handleCancel(isForce),
         colony: colonyData.processedColony,
         isVotingExtensionEnabled: true, // temporary value
       })

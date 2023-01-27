@@ -5,7 +5,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0 13px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   line-height: 18px;
@@ -125,7 +124,7 @@
 }
 
 .tokens {
-  padding: 11px 0 15px;
+  height: 46px;
   border-top: 1px solid var(--grey-blue-0);
   border-bottom: 1px solid var(--grey-blue-0);
 }
