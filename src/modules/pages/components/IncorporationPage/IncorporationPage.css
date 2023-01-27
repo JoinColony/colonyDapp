@@ -22,10 +22,7 @@
   justify-content: space-between;
   padding: 54px 85px 70px 40px;
   min-height: calc(100vh - navBarHeight);
-}
-
-.titleCommentsContainer {
-  min-width: 458px;
+  max-width: 458px;
 }
 
 .sidebar {
@@ -34,14 +31,6 @@
   width: sidebarWidth;
   overflow-y: auto;
   background-color: var(--grey-blue-3);
-}
-
-.wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  width: 100%;
 }
 
 .spinnerContainer {

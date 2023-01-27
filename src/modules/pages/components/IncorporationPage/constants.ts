@@ -13,4 +13,5 @@ export const initialValues = {
   ],
   mainContact: undefined,
   signOption: SignOption.Individual,
+  description: undefined,
 };

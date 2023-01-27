@@ -16,4 +16,5 @@ export interface ValuesType {
   protectors?: Protector[];
   mainContact?: AnyUser;
   signOption: SignOption;
+  description: string;
 }

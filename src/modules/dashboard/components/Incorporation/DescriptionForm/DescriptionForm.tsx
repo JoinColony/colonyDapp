@@ -8,16 +8,16 @@ import styles from './DescriptionForm.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.DAOIncorporation.DescriptionForm.title',
+    id: 'dashboard.Incorporation.DescriptionForm.title',
     defaultMessage: 'Incorporate this DAO',
   },
   descriptionPlaceholder: {
-    id: `dashboard.DAOIncorporation.DescriptionForm.descriptionPlaceholder`,
+    id: `dashboard.Incorporation.DescriptionForm.descriptionPlaceholder`,
     defaultMessage: 'Add description of why you are incorporating...',
   },
 });
 
-const displayName = 'dashboard.DAOIncorporation.DescriptionForm';
+const displayName = 'dashboard.Incorporation.DescriptionForm';
 
 const DescriptionForm = () => {
   const [, { value: description }] = useField('description');
