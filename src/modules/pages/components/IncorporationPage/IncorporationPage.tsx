@@ -7,6 +7,7 @@ import { getMainClasses } from '~utils/css';
 import { SpinnerLoader } from '~core/Preloaders';
 import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
 import DescriptionForm from '~dashboard/Incorporation/DescriptionForm';
+import LogsSection from '~dashboard/Incorporation/LogsSection/LogsSection';
 
 import { initialValues } from './constants';
 import styles from './IncorporationPage.css';
@@ -48,6 +49,13 @@ const IncorporationPage = () => {
           <div className={styles.mainContainer}>
             <main className={styles.mainContent}>
               <DescriptionForm />
+              {loading ? (
+                <div className={styles.spinnerContainer}>
+                  <SpinnerLoader appearance={{ size: 'medium' }} />
+                </div>
+              ) : (
+                <LogsSection colony={colonyData?.processedColony} />
+              )}
             </main>
           </div>
         </div>

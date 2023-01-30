@@ -69,6 +69,16 @@ export enum SystemMessagesName {
   ExpenditureReleaseFunds = 'ExpenditureReleaseFunds',
   ExpenditureFundsClaimed = 'ExpenditureFundsClaimed',
   ExpenditureAllFundsClaimed = 'ExpenditureAllFundsClaimed',
+
+  IncorporationCreated = 'IncorporationCreated',
+  IncorporationStaked = 'IncorporationStaked',
+  IncorporationOwnerOrForceEdit = 'IncorporationOwnerOrForceEdit',
+  IncorporationMotionModified = 'IncorporationMotionModified',
+  IncorporationMotionPayment = 'IncorporationMotionPayment',
+  IncorporationFailedMotionPayment = 'IncorporationFailedMotionPayment',
+  IncorporationPassedMotionPayment = 'IncorporationPassedMotionPayment',
+  IncorporationWaitingOnIndemnityForms = 'IncorporationWaitingOnIndemnityForms',
+  IncorporationCompleted = 'IncorporationCompleted',
 }
 
 export interface SystemMessage {

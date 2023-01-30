@@ -18,9 +18,7 @@
 }
 
 .mainContent {
-  display: flex;
-  justify-content: space-between;
-  padding: 54px 85px 70px 40px;
+  padding: 54px 50px 70px 40px;
   max-width: 500px;
 }
 
