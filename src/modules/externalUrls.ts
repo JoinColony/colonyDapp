@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 export const BEAMER_NEWS = `https://news.colony.io/en`;
 export const BEAMER_BUGS = `https://news.colony.io/requests/en`;
+export const BEAMER_LIBRARY = 'https://app.getbeamer.com/js/beamer-embed.js';
 export const HELP = `https://docs.colony.io/learn/`;
 export const BETA_DISCLAIMER = `https://docs.colony.io/use/beta`;
 export const TERMS_AND_CONDITIONS = `https://colony.io/pdf/terms.pdf`;
@@ -8,7 +9,7 @@ export const TERMS_AND_CONDITIONS = `https://colony.io/pdf/terms.pdf`;
 /*
  * Utils
  */
-export const LEARN_MORE_URL = `https://docs.colony.io/use/launch-a-colony/#step-2-setup-your-token`;
+export const SETUP_NATIVE_TOKEN = `https://docs.colony.io/use/launch-a-colony/#step-2-setup-your-token`;
 export const TOKEN_LOGOS_REPO = `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains`;
 export const NETWORK_RELEASES = `https://github.com/JoinColony/colonyNetwork/releases/tag`;
 export const ETHERSCAN_CONVERSION_RATE = `https://api.etherscan.io/api?module=stats&action=ethprice`;

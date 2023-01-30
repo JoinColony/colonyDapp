@@ -8,7 +8,7 @@ import './modules/validations';
 
 import App from './App';
 import store from '~redux/createReduxStore';
-import { getBeamerInitialize, getBeamerId } from '~utils/external';
+import getBeamerInitialize, { getBeamerId } from '~lib/beamer';
 
 errors.setLogLevel('error');
 
