@@ -110,6 +110,7 @@ const LogsSection = ({ colony }: Props) => {
       const { name, changes, user } = feedItem;
 
       return {
+        user: user?.profile?.walletAddress,
         name,
         changes:
           changes?.map((change, index) => (
