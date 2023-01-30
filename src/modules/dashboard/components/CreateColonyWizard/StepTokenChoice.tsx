@@ -11,8 +11,7 @@ import { multiLineTextEllipsis } from '~utils/strings';
 
 import { query700 as query } from '~styles/queries.css';
 import styles from './StepTokenChoice.css';
-
-const LEARN_MORE_URL = `https://colony.gitbook.io/colony/create-a-colony/select-native-token`;
+import { SETUP_NATIVE_TOKEN } from '~externalUrls';
 
 const MSG = defineMessages({
   heading: {
@@ -148,7 +147,7 @@ const StepTokenChoice = ({ nextStep, wizardForm, wizardValues }: Props) => {
           <ExternalLink
             className={styles.link}
             text={{ id: 'text.learnMore' }}
-            href={LEARN_MORE_URL}
+            href={SETUP_NATIVE_TOKEN}
           />
         </div>
       </section>
