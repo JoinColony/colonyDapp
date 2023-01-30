@@ -32,6 +32,16 @@ const systemMessagesMessageDescriptors = {
       ${SystemMessagesName.ExpenditureReleaseFunds} {{user} {reputation} released the funds. Funds may be claimed after the security delay.}
       ${SystemMessagesName.ExpenditureFundsClaimed} {{user} {reputation} claimed their funds of {funds}.}
       ${SystemMessagesName.ExpenditureAllFundsClaimed} {All funds have been claimed.}
+
+      ${SystemMessagesName.IncorporationCreated} {{user} {reputation} started an incorporation application. {user} is the owner and has control to make changes. Everyone else will need to create a motion to make changes.}
+      ${SystemMessagesName.IncorporationStaked} {{user} {reputation} has staked {amount} to back the incorporation. Nominated protectors now need to verify their identity to be included in the application.}
+      ${SystemMessagesName.IncorporationOwnerOrForceEdit} {{user} {reputation} made changes to the {changes} of the incorporation application.}
+      ${SystemMessagesName.IncorporationMotionModified} {{user} {reputation} created a motion to change the {changes} of the incorporation application.}
+      ${SystemMessagesName.IncorporationMotionPayment} {{user} {reputation} created a motion to fund and pay the incorporation cost.}
+      ${SystemMessagesName.IncorporationFailedMotionPayment} {Motion has failed, you are able to review details and resubmit.}
+      ${SystemMessagesName.IncorporationPassedMotionPayment} {Payment for incorporation and the application documents has been sent to the registrant agent. They will update here with progress.}
+      ${SystemMessagesName.IncorporationWaitingOnIndemnityForms} {Application has now been processed, all Protectors are now required to sign and return the required Indemnity Form to the registrant agent.}
+      ${SystemMessagesName.IncorporationCompleted} {Application is complete, the organization has been successfully incorporated.}
       other {Generic system message}
     }`,
   /*

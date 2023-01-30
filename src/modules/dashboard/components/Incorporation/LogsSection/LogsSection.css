@@ -1,0 +1,94 @@
+@value inputBackground: rgb(249, 250, 250);
+@value shadow: inset 0px 2px 4px color-mod(black alpha(7%));
+
+.container {
+  padding-right: 37px;
+  padding-bottom: 50px;
+  width: 100%;
+}
+
+/* selector is for nested ActionPageEvent style */
+.container ul > div > div > div:last-of-type > div {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+/* selector is for nested Comment style */
+.container ul > div > div > div:last-of-type {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.commentInput {
+  margin-top: 29px;
+}
+
+.commentInput textarea::placeholder {
+  font-size: var(--size-smallish);
+  font-style: normal;
+  color: var(--text-disabled);
+}
+
+.logContainer {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 18px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
+
+.dot {
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background-color: var(--text-disabled);
+}
+
+.dotContainer {
+  margin: 0 9px 0 22px;
+  width: 26px;
+}
+
+.transactionMeta {
+  width: 100%;
+}
+
+.reputationWrapper {
+  display: inline-block;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+}
+
+.reputationWrapper > div {
+  padding-right: 0;
+}
+
+.reputationStarWrapper {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  padding-right: 4px;
+  padding-left: 10px;
+  position: relative;
+}
+
+.reputationWrapper i {
+  right: unset;
+  left: -16px;
+}
+
+.titleDecoration {
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
+
+.divider {
+  margin: 0 0 8px 0;
+  background-color: var(--temp-grey-blue-7);
+  opacity: 0.15;
+}
