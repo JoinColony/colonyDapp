@@ -23,22 +23,24 @@ export interface Props {
 const Tabs = ({ steps, activeId }: Props) => {
   return (
     <div className={styles.tabsWrapper}>
-      {steps.map((step, index) => (
-        <div
-          className={classNames(styles.stepItem, {
-            [styles.stepActive]: step.id === activeId,
-          })}
-        >
+      {steps.map((step, index) =>
+        step?.label ? (
           <div
-            className={classNames(styles.label, {
-              [styles.labelActive]: step.id === activeId,
+            className={classNames(styles.stepItem, {
+              [styles.stepActive]: step.id === activeId,
             })}
           >
-            <FormattedMessage {...MSG.step} values={{ nr: index + 1 }} />
+            <div
+              className={classNames(styles.label, {
+                [styles.labelActive]: step.id === activeId,
+              })}
+            >
+              <FormattedMessage {...MSG.step} values={{ nr: index + 1 }} />
+            </div>
+            <FormattedMessage {...step.label} />
           </div>
-          <FormattedMessage {...step.label} />
-        </div>
-      ))}
+        ) : null,
+      )}
     </div>
   );
 };

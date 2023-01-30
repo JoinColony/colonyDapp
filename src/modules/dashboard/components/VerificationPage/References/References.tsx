@@ -75,8 +75,9 @@ const References = ({ setActiveStep }: Props) => {
         ...oldFormValues,
         references: values,
       }));
+      setActiveStep(Step.Signature);
     },
-    [setFormValues],
+    [setActiveStep, setFormValues],
   );
 
   const handlePrevClick = useCallback(

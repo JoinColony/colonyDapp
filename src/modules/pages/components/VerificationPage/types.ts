@@ -6,12 +6,12 @@ export enum Step {
   Details = 'details',
   Location = 'location',
   References = 'references',
+  Signature = 'signature',
 }
 
 export interface StepObject {
   id: Step;
-  label: MessageDescriptor;
-  validationSchema: any;
+  label?: MessageDescriptor;
   component: ReactNode;
 }
 
@@ -30,6 +30,10 @@ export interface References {
   bankName: string;
 }
 
+export interface Signature {
+  signature: string;
+}
+
 export interface ValuesType {
   details: Details;
   location: Location;
@@ -40,4 +44,5 @@ export interface ContextValuesType {
   details: Partial<Details>;
   location: Partial<Location>;
   references: Partial<References>;
+  signature: Partial<Signature>;
 }
