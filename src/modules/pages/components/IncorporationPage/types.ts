@@ -1,6 +1,9 @@
 import { MessageDescriptor } from 'react-intl';
 
-import { SignOption } from '~dashboard/Incorporation/IncorporationForm/constants';
+import {
+  SignOption,
+  VerificationStatus as VerificationStatusType,
+} from '~dashboard/Incorporation/IncorporationForm/constants';
 import { AnyUser } from '~data/index';
 
 import { Stages } from './constants';
@@ -26,4 +29,10 @@ export interface StageObject {
   title: MessageDescriptor;
   description: MessageDescriptor;
   buttonText?: MessageDescriptor;
+}
+
+export interface VerificationStatus {
+  id?: string;
+  walletAddress?: string;
+  verified: VerificationStatusType;
 }
