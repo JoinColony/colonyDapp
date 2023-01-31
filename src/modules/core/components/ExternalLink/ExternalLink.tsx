@@ -13,7 +13,7 @@ interface Props {
   href: string;
 
   /** A string or a `messageDescriptor` that make up the link's text */
-  text?: MessageDescriptor | string;
+  text?: MessageDescriptor | ReactNode | string;
 
   /** Values for text (react-intl interpolation) */
   textValues?: SimpleMessageValues;
@@ -41,10 +41,14 @@ const ExternalLink = ({
   download,
 }: Props) => {
   const { formatMessage } = useIntl();
-  // eslint-disable-next-line max-len
-  const typeOfText =
-    typeof text == 'string' ? text : text && formatMessage(text, textValues);
-  const linkText = children || typeOfText || href;
+  const getLinkText = (): ReactNode | string | null | undefined => {
+    if (text && typeof text === 'object' && 'id' in text) {
+      return formatMessage(text, textValues);
+    }
+
+    return text;
+  };
+  const linkText = children || getLinkText() || href;
   return (
     <a
       className={`${className} ${styles.main}`}

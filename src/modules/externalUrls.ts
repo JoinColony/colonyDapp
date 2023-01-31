@@ -53,20 +53,26 @@ export const METATRANSACTIONS_LEARN_MORE = `https://colony.gitbook.io/colony/ann
 /*
  * Safe control
  */
-export const SAFE_INTEGRATION_LEARN_MORE = `https://colony.gitbook.io/colony/manage-funds/safe-integration`;
+export const SAFE_INTEGRATION_LEARN_MORE = `https://docs.colony.io/use/managing-funds/gnosis-safe-control/controlling-a-safe`;
 
-export const CONNECT_SAFE_INSTRUCTIONS = `https://colony.gitbook.io/colony/advanced-features/safe-control-gnosis-safe/adding-a-safe#step-2-connect-the-safe`;
+export const CONNECT_SAFE_INSTRUCTIONS = `https://docs.colony.io/use/managing-funds/gnosis-safe-control/adding-a-safe#step-2-connect-the-safe`;
 
 const SAFE_APP = `https://app.safe.global`;
 
+export const getSafeLink = (chainShortName: string, safeAddress: string) =>
+  `${SAFE_APP}/${chainShortName}:${safeAddress}`;
+
 export const getModuleLink = (chainShortName: string, safeAddress: string) =>
-  `${SAFE_APP}/${chainShortName}:${safeAddress}/apps?appUrl=https%3A%2F%2Fzodiac.gnosisguild.org%2F`;
+  `${getSafeLink(
+    chainShortName,
+    safeAddress,
+  )}/apps?appUrl=https%3A%2F%2Fzodiac.gnosisguild.org%2F`;
 
-export const MODULE_ADDRESS_INSTRUCTIONS = `https://colony.gitbook.io/colony/advanced-features/safe-control-gnosis-safe/adding-a-safe#finding-the-module-contract-address`;
+export const MODULE_ADDRESS_INSTRUCTIONS = `https://docs.colony.io/use/managing-funds/gnosis-safe-control/adding-a-safe#finding-the-module-contract-address`;
 
-export const SAFE_CONTROL_LEARN_MORE = `https://colony.gitbook.io/colony/advanced-features/safe-control-gnosis-safe#how-it-all-works`;
+export const SAFE_CONTROL_LEARN_MORE = `https://docs.colony.io/use/managing-funds/gnosis-safe-control/#how-it-all-works`;
 
-export const ADD_SAFE_INSTRUCTIONS = `https://colony.gitbook.io/colony/advanced-features/safe-control-gnosis-safe/adding-a-safe`;
+export const ADD_SAFE_INSTRUCTIONS = `https://docs.colony.io/use/managing-funds/gnosis-safe-control/adding-a-safe`;
 
 export const getSafeTransactionMonitor = (
   chainId: string,

@@ -235,7 +235,7 @@ export const EVENTS_REQUIRED_FOR_ACTION: ActionsEventsMap = {
   [ColonyActions.EmitDomainReputationReward]: [
     ColonyAndExtensionsEvents.ArbitraryReputationUpdate,
   ],
-  // Used by Gnosis Safe Control in the absence of a corresponding native Colony event
+  // Used by Safe Control in the absence of a corresponding native Colony event
   [AddedActions.SafeTransactionInitiated]: [
     ColonyAndExtensionsEvents.ArbitraryTransaction,
   ],

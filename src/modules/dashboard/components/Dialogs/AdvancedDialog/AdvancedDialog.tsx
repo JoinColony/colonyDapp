@@ -88,11 +88,12 @@ const MSG = defineMessages({
   },
   manageSafeTitle: {
     id: 'dashboard.AdvancedDialog.manageSafeTitle',
-    defaultMessage: 'Safe Control',
+    defaultMessage: 'Safe (multi-sig) Control',
   },
   manageSafeDescription: {
     id: 'dashboard.AdvancedDialog.manageSafeDescription',
-    defaultMessage: 'Control a safe to interact with external contracts.',
+    defaultMessage:
+      'Control a Safe (multi-sig) on another chain with your colony',
   },
   adminFundingPermissions: {
     id: 'dashboard.AdvancedDialog.adminFundingPermissions',

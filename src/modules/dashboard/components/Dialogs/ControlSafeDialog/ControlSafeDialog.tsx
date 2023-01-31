@@ -15,7 +15,7 @@ import {
   getChainNameFromSafe,
 } from '~modules/dashboard/sagas/utils/safeHelpers';
 import { mapPayload, withMeta } from '~utils/actions';
-import { SAFE_NETWORKS } from '~constants';
+import { SAFE_NETWORKS, SUPPORTED_SAFE_NETWORKS } from '~constants';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import ControlSafeForm from './ControlSafeForm';
@@ -36,9 +36,13 @@ export interface FormValues {
   motionDomainId: number;
 }
 
+interface CustomWizardDialogProps extends ActionDialogProps {
+  preselectedSafe?: ColonySafe;
+}
+
 type Props = DialogProps &
   Partial<WizardDialogType<object>> &
-  ActionDialogProps;
+  CustomWizardDialogProps;
 
 export type UpdatedMethods = {
   [key: number]: AbiItemExtended | undefined;
@@ -68,6 +72,7 @@ const ControlSafeDialog = ({
   close,
   callStep,
   prevStep,
+  preselectedSafe,
 }: Props) => {
   const [showPreview, setShowPreview] = useState(false);
   const [isForce, setIsForce] = useState(false);
@@ -158,11 +163,23 @@ const ControlSafeDialog = ({
     [],
   );
 
+  const preselectedSafeChain = SUPPORTED_SAFE_NETWORKS.find(
+    (network) => network.chainId === Number(preselectedSafe?.chainId || '0'),
+  );
+
   return (
     <ActionForm
       initialValues={
         {
-          safe: null,
+          safe: preselectedSafe
+            ? {
+                id: preselectedSafe.moduleContractAddress,
+                profile: {
+                  displayName: `${preselectedSafe.safeName} (${preselectedSafeChain?.name})`,
+                  walletAddress: preselectedSafe.contractAddress,
+                },
+              }
+            : null,
           safeBalances: null,
           transactionsTitle: '',
           transactions: [defaultTransaction],
