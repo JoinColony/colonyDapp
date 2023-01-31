@@ -72,7 +72,7 @@ const IncorporationPage = () => {
         return {
           id: protector.user?.id,
           walletAddress: protector.user?.profile?.walletAddress,
-          verified: VerificationStatus.Submitted,
+          verified: VerificationStatus.Verified,
         };
       }),
     [formValues],
