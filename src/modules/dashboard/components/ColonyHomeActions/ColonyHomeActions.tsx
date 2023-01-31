@@ -97,7 +97,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         nextStepManageDomains: 'dashboard.ManageDomainsDialog',
         nextStepAdvanced: 'dashboard.AdvancedDialog',
         nextStepManageReputation: 'dashboard.ManageReputationDialog',
-        nextStepDAOInterporation: 'dashboard.DAOIncorporationDialog',
       },
     },
     {
@@ -210,6 +209,7 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         nextStepRecovery: 'dashboard.RecoveryModeDialog',
         nextStepEditDetails: 'dashboard.EditColonyDetailsDialog',
         nextStepVersionUpgrade: 'dashboard.NetworkContractUpgradeDialog',
+        nextStepDAOIncorporation: 'dashboard.DAOIncorporationDialog',
         colony,
         isVotingExtensionEnabled,
       },

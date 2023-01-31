@@ -52,14 +52,6 @@ const MSG = defineMessages({
     defaultMessage:
       'Need to tinker under the hood? This is the place to do it.',
   },
-  DAOIncorporationTitle: {
-    id: 'dashboard.ColonyActionsDialog.DAOIncorporationTitle',
-    defaultMessage: 'DAO Incorporation',
-  },
-  DAOIncorporationDesc: {
-    id: 'dashboard.ColonyActionsDialog.DAOIncorporationDesc',
-    defaultMessage: `Setup a legal entity to extend functionality and protect contributors.`,
-  },
 });
 
 interface CustomWizardDialogProps {
@@ -68,7 +60,6 @@ interface CustomWizardDialogProps {
   nextStepManageDomains: string;
   nextStepAdvanced: string;
   nextStepManageReputation: string;
-  nextStepDAOInterporation: string;
 }
 
 type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
@@ -84,7 +75,6 @@ const ColonyActionsDialog = ({
   nextStepManageDomains,
   nextStepAdvanced,
   nextStepManageReputation,
-  nextStepDAOInterporation,
 }: Props) => {
   const items = [
     {
@@ -121,13 +111,6 @@ const ColonyActionsDialog = ({
       icon: 'emoji-smiley-nerd',
       onClick: () => callStep(nextStepAdvanced),
       dataTest: 'advancedDialogIndexItem',
-    },
-    {
-      title: MSG.DAOIncorporationTitle,
-      description: MSG.DAOIncorporationDesc,
-      icon: 'flag',
-      onClick: () => callStep(nextStepDAOInterporation),
-      dataTest: 'nextStepDAOInterporation',
     },
   ];
   return (
