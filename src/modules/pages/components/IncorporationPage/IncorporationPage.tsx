@@ -13,6 +13,7 @@ import VerificationBanner from '~dashboard/Incorporation/VerificationBanner';
 import IncorporationPaymentDialog from '~dashboard/Dialogs/IncorporationPaymentDialog';
 import { useDialog } from '~core/Dialog';
 import { useLoggedInUser } from '~data/helpers';
+import { VerificationStatus } from '~dashboard/Incorporation/IncorporationForm/constants';
 
 import {
   initialValues,
@@ -53,7 +54,25 @@ const IncorporationPage = () => {
     [formValues, user],
   );
 
-  const isVerified = false; // mock value
+  // mock data, add here fetching verification status from backend
+  const verificationStatuses = useMemo(
+    () =>
+      formValues?.protectors?.map((protector) => {
+        return {
+          id: protector.user?.id,
+          walletAddress: protector.user?.profile?.walletAddress,
+          verified: VerificationStatus.Unverified,
+        };
+      }),
+    [formValues],
+  );
+
+  const isVerified = useMemo(() => {
+    const verificationStatus = verificationStatuses?.find(
+      (protector) => protector.walletAddress === user.walletAddress,
+    );
+    return verificationStatus?.verified;
+  }, [user.walletAddress, verificationStatuses]);
 
   const openPayDialog = useDialog(IncorporationPaymentDialog);
 
@@ -164,6 +183,7 @@ const IncorporationPage = () => {
             <LockedIncorporationForm
               formValues={formValues}
               activeStageId={activeStageId}
+              verificationStatuses={verificationStatuses}
             />
           )
         )}
@@ -173,7 +193,9 @@ const IncorporationPage = () => {
           [styles.smallerPadding]: isNominated && !isVerified,
         })}
       >
-        {isNominated && !isVerified && <VerificationBanner user={user} />}
+        {isNominated && isVerified === VerificationStatus.Unverified && (
+          <VerificationBanner user={user} />
+        )}
         <main className={styles.mainContent}>
           <div />
           {colonyData && (

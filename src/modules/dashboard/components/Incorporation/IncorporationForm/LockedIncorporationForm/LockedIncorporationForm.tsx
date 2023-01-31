@@ -4,7 +4,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { FormSection, InputLabel, SelectHorizontal, Form } from '~core/Fields';
 import Icon from '~core/Icon';
 import { Stages } from '~pages/IncorporationPage/constants';
-import { ValuesType } from '~pages/IncorporationPage/types';
+import { ValuesType, VerificationStatus } from '~pages/IncorporationPage/types';
 import { multiLineTextEllipsis } from '~utils/strings';
 
 import LockedProtectors from '../LockedProtectors';
@@ -47,9 +47,14 @@ const displayName = `dashboard.Incorporation.IncorporationForm.LockedIncorporati
 export interface Props {
   formValues: ValuesType;
   activeStageId: Stages;
+  verificationStatuses: VerificationStatus[] | undefined;
 }
 
-const LockedIncorporationForm = ({ formValues, activeStageId }: Props) => {
+const LockedIncorporationForm = ({
+  formValues,
+  activeStageId,
+  verificationStatuses,
+}: Props) => {
   const { alternativeName1: altName1, alternativeName2: altName2 } = formValues;
   const alternativeNames = useMemo(
     () => [
@@ -136,7 +141,10 @@ const LockedIncorporationForm = ({ formValues, activeStageId }: Props) => {
           <div className={styles.description}>{formValues.purpose}</div>
         </div>
       </FormSection>
-      <LockedProtectors formValues={formValues} />
+      <LockedProtectors
+        formValues={formValues}
+        verificationStatuses={verificationStatuses}
+      />
     </div>
   );
 };
