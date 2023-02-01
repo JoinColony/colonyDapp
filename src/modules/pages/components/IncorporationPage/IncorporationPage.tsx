@@ -26,6 +26,9 @@ import {
   validationSchema,
   Stages as StagesEnum,
   formValuesMock,
+  Motion,
+  MotionType,
+  MotionStatus,
   userMock,
 } from './constants';
 import { ValuesType } from './types';
@@ -105,19 +108,31 @@ const IncorporationPage = () => {
   const handleCancel = (isForce: boolean) => {
     if (isForce) {
       // temporary action
-      setStatus(Status.ForceCancelled);
-    } else {
-      // setTimeout is temporary, call to backend should be added here
-      setMotion({
-        type: MotionType.Cancel,
-        status: MotionStatus.Pending,
-      });
-      setTimeout(() => {
-        setStatus(Status.Cancelled);
-        setMotion({
+      setMotions((prevState) => [
+        ...prevState,
+        {
           type: MotionType.Cancel,
           status: MotionStatus.Passed,
-        });
+        },
+      ]);
+    } else {
+      // setTimeout is temporary, call to backend should be added here
+      setMotions((prevState) => [
+        ...prevState,
+        {
+          type: MotionType.Cancel,
+          status: MotionStatus.Pending,
+        },
+      ]);
+      setTimeout(() => {
+        setMotions((prevState) =>
+          prevState.map((motionItem) => {
+            if (motionItem.type !== MotionType.Cancel) {
+              return motionItem;
+            }
+            return { ...motionItem, status: MotionStatus.Passed };
+          }),
+        );
       }, 5000);
     }
   };
