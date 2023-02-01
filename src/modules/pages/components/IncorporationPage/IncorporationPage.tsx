@@ -56,7 +56,7 @@ const IncorporationPage = () => {
   const notVerified = true; // temporary valule
 
   const openPayDialog = useDialog(IncorporationPaymentDialog);
-  const [motion, setMotion] = useState<Motion>();
+  const [motions, setMotions] = useState<Motion[]>([]);
   const [status, setStatus] = useState<Status>();
 
   const handleSubmit = useCallback((values) => {
@@ -72,14 +72,31 @@ const IncorporationPage = () => {
   const handlePay = useCallback(() => {
     if (!colonyData) return;
 
+    setMotions((prevState) => [
+      ...prevState,
+      { status: MotionStatus.Pending, type: MotionType.Payment },
+    ]);
+
     openPayDialog({
       onClick: () => {
-        // add a logic to pay for incorporation
-        setActiveStageId(StagesEnum.Processing);
+        const passed = Math.floor(Math.random() * 10) > 5;
+        setMotions((prevState) =>
+          prevState.map((motionItem) => {
+            if (
+              motionItem.type === MotionType.Payment &&
+              motionItem.status === MotionStatus.Pending
+            ) {
+              return {
+                ...motionItem,
+                status: passed ? MotionStatus.Passed : MotionStatus.Failed,
+              };
+            }
+            return motionItem;
+          }),
+        );
       },
       isVotingExtensionEnabled: true,
-      colony: colonyData.processedColony,
-    });
+      colony: colonyData?.processedColony,});
   }, [colonyData, openPayDialog]);
 
   const buttonAction = useMemo(() => {

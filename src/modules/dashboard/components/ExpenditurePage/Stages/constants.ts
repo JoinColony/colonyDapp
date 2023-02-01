@@ -16,6 +16,7 @@ export enum MotionType {
   Cancel = 'Cancel',
   Edit = 'Edit',
   StartStream = 'Start stream',
+  Payment = 'Payment',
 }
 
 export enum Status {
