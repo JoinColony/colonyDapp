@@ -10,12 +10,6 @@ import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
 import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
 import CancelIncorporationDialog from '~dashboard/Dialogs/CancelIncorporationDialog';
 import { useDialog } from '~core/Dialog';
-import {
-  Motion,
-  MotionStatus,
-  MotionType,
-  Status,
-} from '~dashboard/ExpenditurePage/Stages/constants';
 
 import {
   initialValues,
@@ -23,6 +17,9 @@ import {
   validationSchema,
   Stages as StagesEnum,
   formValuesMock,
+  Motion,
+  MotionType,
+  MotionStatus,
 } from './constants';
 import { ValuesType } from './types';
 import styles from './IncorporationPage.css';
@@ -38,11 +35,10 @@ const IncorporationPage = () => {
   const [isFormEditable, setFormEditable] = useState(false);
   const [formValues, setFormValues] = useState<ValuesType>(formValuesMock);
   const [shouldValidate, setShouldValidate] = useState(false);
-  const [activeStageId, setActiveStageId] = useState(StagesEnum.Draft);
+  const [activeStageId, setActiveStageId] = useState(StagesEnum.Created);
   const sidebarRef = useRef<HTMLElement>(null);
   const openCancelIncorporationDialog = useDialog(CancelIncorporationDialog);
-  const [motion, setMotion] = useState<Motion>();
-  const [status, setStatus] = useState<Status>();
+  const [motions, setMotions] = useState<Motion[]>([]);
 
   const handleSubmit = useCallback((values) => {
     setFormValues(values);
@@ -88,19 +84,31 @@ const IncorporationPage = () => {
   const handleCancel = (isForce: boolean) => {
     if (isForce) {
       // temporary action
-      setStatus(Status.ForceCancelled);
-    } else {
-      // setTimeout is temporary, call to backend should be added here
-      setMotion({
-        type: MotionType.Cancel,
-        status: MotionStatus.Pending,
-      });
-      setTimeout(() => {
-        setStatus(Status.Cancelled);
-        setMotion({
+      setMotions((prevState) => [
+        ...prevState,
+        {
           type: MotionType.Cancel,
           status: MotionStatus.Passed,
-        });
+        },
+      ]);
+    } else {
+      // setTimeout is temporary, call to backend should be added here
+      setMotions((prevState) => [
+        ...prevState,
+        {
+          type: MotionType.Cancel,
+          status: MotionStatus.Pending,
+        },
+      ]);
+      setTimeout(() => {
+        setMotions((prevState) =>
+          prevState.map((motionItem) => {
+            if (motionItem.type !== MotionType.Cancel) {
+              return motionItem;
+            }
+            return { ...motionItem, status: MotionStatus.Passed };
+          }),
+        );
       }, 5000);
     }
   };
@@ -179,8 +187,7 @@ const IncorporationPage = () => {
             stages={stages}
             buttonAction={buttonAction}
             handleCancelIncorporation={handleCancelIncorporation}
-            status={status}
-            motion={motion}
+            motions={motions}
           />
         </main>
       </div>
