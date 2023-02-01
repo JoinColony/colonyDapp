@@ -205,3 +205,20 @@ export const formValuesMock: ValuesType = {
   purpose: `WallStreetBets is on a mission to deploy decentralized satellites in our skies.`,
   signOption: SignOption.Individual,
 };
+
+export enum MotionStatus {
+  Passed = 'passed',
+  Failed = 'failed',
+  Pending = 'pending',
+}
+
+export enum MotionType {
+  Cancel = 'Cancel',
+  Edit = 'Edit',
+  Payment = 'Payment',
+}
+
+export interface Motion {
+  type: MotionType;
+  status: MotionStatus;
+}

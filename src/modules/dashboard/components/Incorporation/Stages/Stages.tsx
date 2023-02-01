@@ -1,22 +1,25 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import copyToClipboard from 'copy-to-clipboard';
 import classNames from 'classnames';
+import { isEmpty } from 'lodash';
 
 import Button from '~core/Button';
 import Icon from '~core/Icon';
 import { StageObject, ValuesType } from '~pages/IncorporationPage/types';
-import { Stages as StagesEnum } from '~pages/IncorporationPage/constants';
-import { Motion } from '~pages/ExpenditurePage/types';
 import {
+  Motion,
   MotionStatus,
-  Status,
-} from '~dashboard/ExpenditurePage/Stages/constants';
+  MotionType,
+  Stages as StagesEnum,
+} from '~pages/IncorporationPage/constants';
+import Tag from '~core/Tag';
+
+import LinkedMotions from '../LinkedMotions';
 
 import StageItem from './StageItem';
 import StagesButton from './StagesButton';
 import styles from './Stages.css';
-import Tag from '~core/Tag';
 
 const MSG = defineMessages({
   stages: {
@@ -44,8 +47,7 @@ export interface Props {
   activeStageId: StagesEnum;
   buttonAction?: (values?: ValuesType) => void;
   handleCancelIncorporation: VoidFunction;
-  motion?: Motion;
-  status?: Status;
+  motions?: Motion[];
 }
 
 const Stages = ({
@@ -53,8 +55,7 @@ const Stages = ({
   activeStageId,
   buttonAction,
   handleCancelIncorporation,
-  status,
-  motion,
+  motions,
 }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
@@ -69,17 +70,31 @@ const Stages = ({
     userFeedbackTimer,
   ]);
 
-  const isCancelled =
-    status === Status.Cancelled || status === Status.ForceCancelled;
+  const isCancelled = useMemo(
+    () =>
+      motions?.find(
+        (motionItem) =>
+          motionItem.type === MotionType.Cancel &&
+          motionItem.status === MotionStatus.Passed,
+      ),
+    [motions],
+  );
 
-  const buttonDisabled = isCancelled || motion?.status === MotionStatus.Pending;
+  // searching for motion in pending state is a mock. Will be replaced with call to backend
+  const pendingMotion = useMemo(
+    () =>
+      motions?.find((motionItem) => motionItem.status === MotionStatus.Pending),
+    [motions],
+  );
+
+  const buttonDisabled = isCancelled || pendingMotion;
 
   const activeIndex = stages.findIndex((stage) => stage.id === activeStageId);
   const activeStage = stages.find((stage) => stage.id === activeStageId);
 
   return (
     <div className={styles.mainContainer}>
-      {motion?.status === MotionStatus.Pending && (
+      {pendingMotion && (
         <div className={styles.tagWrapper}>
           <Tag
             appearance={{
@@ -130,7 +145,7 @@ const Stages = ({
             {!isCancelled && (
               <StagesButton
                 activeStage={activeStage}
-                buttonDisabled={buttonDisabled}
+                buttonDisabled={!!buttonDisabled}
                 buttonAction={buttonAction}
               />
             )}
@@ -146,6 +161,7 @@ const Stages = ({
           isLast={stages.length === index + 1}
         />
       ))}
+      {motions && !isEmpty(motions) && <LinkedMotions motions={motions} />}
     </div>
   );
 };
