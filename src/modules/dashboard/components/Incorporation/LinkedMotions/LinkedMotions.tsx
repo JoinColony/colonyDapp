@@ -45,6 +45,10 @@ const MSG = defineMessages({
     id: 'dashboard.Incorporation.LinkedMotions.cancel',
     defaultMessage: 'Cancel Incorporation',
   },
+  motionText: {
+    id: 'dashboard.Incorporation.LinkedMotions.motionText',
+    defaultMessage: '{text} {count}',
+  },
 });
 
 const displayName = 'dashboard.Incorporation.LinkedMotions';
@@ -104,6 +108,12 @@ const LinkedMotions = ({ motions }: Props) => {
     [],
   );
 
+  // mocks, needed to display correct UI, must be adjusted to display data from the backend
+  const multiplePayments =
+    motions.filter((motionItem) => motionItem.type === MotionType.Payment)
+      ?.length > 1;
+  let paymentCount = 0;
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.titleWrapper}>
@@ -117,11 +127,26 @@ const LinkedMotions = ({ motions }: Props) => {
       {/* The link is hardcoded. Link should redirect to the motion page */}
       {motions.map((motionItem) => {
         const motion = motionSettings(motionItem);
+        if (motionItem.type === MotionType.Payment) paymentCount += 1;
 
         return (
           <div className={styles.statusWrapper}>
             <Link to={LANDING_PAGE_ROUTE} className={styles.link}>
-              {motion.text && <FormattedMessage {...motion.text} />}
+              {motion.text && (
+                <FormattedMessage
+                  {...MSG.motionText}
+                  values={{
+                    text: <FormattedMessage {...motion.text} />,
+                    count: (
+                      <span>
+                        {multiplePayments &&
+                          paymentCount > 1 &&
+                          `#${paymentCount}`}
+                      </span>
+                    ),
+                  }}
+                />
+              )}
             </Link>
             <Tag
               text={motion.tagText}
