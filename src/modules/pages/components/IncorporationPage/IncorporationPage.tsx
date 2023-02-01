@@ -11,6 +11,7 @@ import Stages, { FormStages } from '~dashboard/ExpenditurePage/Stages';
 import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
 import VerificationBanner from '~dashboard/Incorporation/VerificationBanner';
 import IncorporationPaymentDialog from '~dashboard/Dialogs/IncorporationPaymentDialog';
+import InfoBanner from '~dashboard/Incorporation/InfoBanner';
 import { useDialog } from '~core/Dialog';
 
 import {
@@ -25,8 +26,6 @@ import { ValuesType } from './types';
 import styles from './IncorporationPage.css';
 
 const displayName = 'pages.IncorporationPage';
-
-export type InitialValuesType = typeof initialValues;
 
 const IncorporationPage = () => {
   const { colonyName } = useParams<{
@@ -67,6 +66,11 @@ const IncorporationPage = () => {
       isVotingExtensionEnabled: true,
       colony: colonyData.processedColony,
     });
+
+    // mock
+    setTimeout(() => {
+      setActiveStageId(StagesEnum.Complete);
+    }, 10000);
   }, [colonyData, openPayDialog]);
 
   const buttonAction = useMemo(() => {
@@ -159,11 +163,15 @@ const IncorporationPage = () => {
       </aside>
       <div
         className={classNames(styles.mainContainer, {
-          [styles.smallerPadding]: notVerified,
+          [styles.smallerPadding]: activeStageId === StagesEnum.Processing,
         })}
       >
         {/* user passed to VerifiactionBanner is a mock */}
         {notVerified && <VerificationBanner user={userMock} />}
+        {(activeStageId === StagesEnum.Processing ||
+          activeStageId === StagesEnum.Complete) && (
+          <InfoBanner activeStageId={activeStageId} />
+        )}
         <main className={styles.mainContent}>
           <div />
           {colonyData && (

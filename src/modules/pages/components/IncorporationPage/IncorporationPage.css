@@ -36,6 +36,7 @@
 }
 
 .mainContainer {
+  padding: 76px 100px 70px 25px;
   padding-bottom: 50px;
   height: 600px;
   min-height: 100%;
