@@ -23,12 +23,8 @@ import {
 } from './constants';
 import { ValuesType } from './types';
 import styles from './IncorporationPage.css';
-import { ValuesType } from './types';
-import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
 
 const displayName = 'pages.IncorporationPage';
-
-export type InitialValuesType = typeof initialValues;
 
 const IncorporationPage = () => {
   const { colonyName } = useParams<{
@@ -168,7 +164,15 @@ const IncorporationPage = () => {
           )
         )}
       </aside>
-      <div className={styles.mainContainer}>
+      <div
+        className={classNames(styles.mainContainer, {
+          [styles.smallerPadding]: activeStageId === StagesEnum.Processing,
+        })}
+      >
+        {(activeStageId === StagesEnum.Processing ||
+          activeStageId === StagesEnum.Complete) && (
+          <InfoBanner activeStageId={activeStageId} />
+        )}
         <main className={styles.mainContent}>
           <div />
           <Stages
