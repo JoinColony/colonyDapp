@@ -35,7 +35,7 @@ const IncorporationPage = () => {
   const [isFormEditable, setFormEditable] = useState(false);
   const [formValues, setFormValues] = useState<ValuesType>(formValuesMock);
   const [shouldValidate, setShouldValidate] = useState(false);
-  const [activeStageId, setActiveStageId] = useState(StagesEnum.Created);
+  const [activeStageId, setActiveStageId] = useState(StagesEnum.Payment);
   const sidebarRef = useRef<HTMLElement>(null);
   const openCancelIncorporationDialog = useDialog(CancelIncorporationDialog);
   const [motions, setMotions] = useState<Motion[]>([]);
@@ -51,7 +51,31 @@ const IncorporationPage = () => {
   }, []);
 
   const handlePay = useCallback(() => {
-    setActiveStageId(StagesEnum.Processing);
+    setMotions((prevState) => [
+      ...prevState,
+      { status: MotionStatus.Pending, type: MotionType.Payment },
+    ]);
+    setTimeout(() => {
+      // mock
+      const passed = Math.floor(Math.random() * 10) > 5;
+      setMotions((prevState) =>
+        prevState.map((motionItem) => {
+          if (
+            motionItem.type === MotionType.Payment &&
+            motionItem.status === MotionStatus.Pending
+          ) {
+            return {
+              ...motionItem,
+              status: passed ? MotionStatus.Passed : MotionStatus.Failed,
+            };
+          }
+          return motionItem;
+        }),
+      );
+      if (passed) {
+        setActiveStageId(StagesEnum.Processing);
+      }
+    }, 5000);
   }, []);
 
   const buttonAction = useMemo(() => {
