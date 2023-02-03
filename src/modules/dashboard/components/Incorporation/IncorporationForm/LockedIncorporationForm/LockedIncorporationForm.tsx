@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import Button from '~core/Button';
 import { FormSection, InputLabel, SelectHorizontal, Form } from '~core/Fields';
 import Icon from '~core/Icon';
 import { Stages } from '~pages/IncorporationPage/constants';
@@ -40,6 +41,10 @@ export const MSG = defineMessages({
     id: `dashboard.Incorporation.IncorporationForm.LockedIncorporationForm.editApplication`,
     defaultMessage: 'Edit application',
   },
+  manageApplication: {
+    id: `dashboard.Incorporation.IncorporationForm.LockedIncorporationForm.manageApplication`,
+    defaultMessage: 'Manage application',
+  },
 });
 
 const displayName = `dashboard.Incorporation.IncorporationForm.LockedIncorporationForm`;
@@ -59,19 +64,30 @@ const LockedIncorporationForm = ({ formValues, activeStageId }: Props) => {
     [altName1, altName2],
   );
 
+  const hasPermissions = true; // add logic here to check if user has permissions to manage the application
+
   return (
     <div className={styles.container}>
       <FormSection appearance={{ border: 'bottom' }}>
         <div className={styles.title}>
-          <FormattedMessage {...MSG.incorporation} />
-          {activeStageId !== Stages.Complete && (
-            <span className={styles.editIcon}>
-              <Icon
-                name="edit"
-                appearance={{ size: 'medium' }}
-                title={MSG.editApplication}
-              />
-            </span>
+          <div className={styles.titleIconWrapper}>
+            <FormattedMessage {...MSG.incorporation} />
+            {activeStageId !== Stages.Complete && (
+              <span className={styles.editIcon}>
+                <Icon
+                  name="edit"
+                  appearance={{ size: 'medium' }}
+                  title={MSG.editApplication}
+                />
+              </span>
+            )}
+          </div>
+          {hasPermissions && (
+            <Button
+              text={MSG.manageApplication}
+              appearance={{ theme: 'blue' }}
+              className={styles.manageButton}
+            />
           )}
         </div>
       </FormSection>
