@@ -17,6 +17,9 @@ export enum ActionPageDetails {
   Name = 'Name',
   Permissions = 'Permissions',
   ReputationChange = 'ReputationChange',
+  Source = 'Source',
+  Cost = 'Cost',
+  LinkedIncorporation = 'LinkedIncorporation',
 }
 
 type EventRolesMap = Partial<
@@ -97,6 +100,7 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyMotions.EmitDomainReputationPenaltyMotion]: 'emoji-firebolt',
   [ColonyMotions.EmitDomainReputationRewardMotion]: 'emoji-shooting-star',
   [ColonyMotions.UnlockTokenMotion]: 'emoji-padlock',
+  [ColonyMotions.DAOIncorporationMotion]: 'flag',
   [ColonyActions.Generic]: 'circle-check-primary',
 };
 
@@ -279,4 +283,9 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.ReputationChange,
   ],
   [ColonyMotions.UnlockTokenMotion]: [],
+  [ColonyMotions.DAOIncorporationMotion]: [
+    ActionPageDetails.Source,
+    ActionPageDetails.Cost,
+    ActionPageDetails.LinkedIncorporation,
+  ],
 };

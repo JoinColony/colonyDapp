@@ -1,0 +1,49 @@
+@value passedColor: var(--primary);
+@value failedColor: var(--pink);
+
+.wrapper {
+  margin: 60px 0;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+}
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.statusWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.line {
+  width: 7px;
+  border-top: 1px solid var(--dark);
+}
+
+.dot {
+  margin: 0 2px;
+  height: 7px;
+  width: 7px;
+  min-width: 7px;
+  border: 1px solid var(--dark);
+  border-radius: 50%;
+  background-color: transparent;
+}
+
+.title {
+  margin-left: 8px;
+  font-size: var(--size-smallish);
+  color: color-mod(var(--dark) alpha(85%));
+  letter-spacing: var(--spacing-medium);
+}
+
+.link:hover {
+  color: var(--action-secondary);
+}

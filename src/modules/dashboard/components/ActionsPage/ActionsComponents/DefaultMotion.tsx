@@ -49,6 +49,7 @@ import {
   useColonyHistoricRolesQuery,
   useNetworkContracts,
 } from '~data/index';
+import { useTitle } from '~utils/hooks/useTitle';
 
 import DetailsWidget from '../DetailsWidget';
 import StakingWidgetFlow from '../StakingWidget';
@@ -61,9 +62,9 @@ import FinalizeMotionAndClaimWidget, {
 import VoteResults from '../FinalizeMotionAndClaimWidget/VoteResults';
 import CountDownTimer from '../CountDownTimer';
 
-import styles from './DefaultAction.css';
 import motionSpecificStyles from './DefaultMotion.css';
-import { useTitle } from '~utils/hooks/useTitle';
+import { cost, source, incorporationName } from './constants';
+import styles from './DefaultAction.css';
 
 const MSG = defineMessages({
   or: {
@@ -350,6 +351,12 @@ const DefaultMotion = ({
     reputationChange: formattedReputationChange,
     reputationChangeNumeral: <Numeral value={formattedReputationChange} />,
     isSmiteAction: new Decimal(reputationChange).isNegative(),
+    // Cost, source and incorporationName are mocks. Add backend data here when ready.
+    cost: <Numeral value={cost} />,
+    source: domains.find(
+      ({ ethDomainId }) => ethDomainId === source,
+    ) as OneDomain,
+    incorporationName,
   };
 
   const actionAndEventValuesForDocumentTitle = {
