@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { useParams } from 'react-router';
+import { useParams, useHistory } from 'react-router';
 import { Formik } from 'formik';
 import classNames from 'classnames';
 
@@ -35,6 +35,7 @@ const IncorporationPage = () => {
   const { data: colonyData, loading } = useColonyFromNameQuery({
     variables: { name: colonyName, address: '' },
   });
+  const history = useHistory();
   const [isFormEditable, setFormEditable] = useState(false);
   const [formValues, setFormValues] = useState<ValuesType>(formValuesMock);
   const [shouldValidate, setShouldValidate] = useState(false);
@@ -66,12 +67,10 @@ const IncorporationPage = () => {
       isVotingExtensionEnabled: true,
       colony: colonyData.processedColony,
     });
-
-    // mock
-    setTimeout(() => {
-      setActiveStageId(StagesEnum.Complete);
-    }, 10000);
-  }, [colonyData, openPayDialog]);
+    // Redirection to the Actions page is a mock action.
+    const txHash = 'DAOIncorporation';
+    history.push(`/colony/${colonyName}/tx/${txHash}`);
+  }, [colonyData, openPayDialogcolonyName, history]);
 
   const buttonAction = useMemo(() => {
     switch (activeStageId) {

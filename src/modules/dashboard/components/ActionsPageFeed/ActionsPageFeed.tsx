@@ -71,6 +71,9 @@ export interface EventValues {
   isSmiteAction?: boolean;
   changes?: ReactElement[];
   funds?: ReactElement[];
+  source?: OneDomain;
+  cost?: string | ReactElement;
+  incorporationName?: string;
 }
 
 export type FeedItemWithId<T> = T & { uniqueId: string };

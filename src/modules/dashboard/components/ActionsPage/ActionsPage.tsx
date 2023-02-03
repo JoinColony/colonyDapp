@@ -28,6 +28,12 @@ import { STATUS_MAP } from './staticMaps';
 
 import NakedMoleImage from '../../../../img/naked-mole.svg';
 import styles from './ActionsPage.css';
+import {
+  initiatorProfileWithFallbackMock,
+  mockColonyActionData,
+  recipientProfileWithFallbackMock,
+  tokenDataMock,
+} from './ActionsComponents/constants';
 
 const MSG = defineMessages({
   loading: {
@@ -160,6 +166,21 @@ const ActionsPage = () => {
   const fallbackInitiatorProfile = useUser(
     colonyActionData?.colonyAction?.actionInitiator || '',
   );
+
+  // It's temporary condition for displaying DAOIncorporation motion.
+  // Remove this condition when DAOIncorporation motion data are fetched from the backend.
+  if (transactionHash === 'DAOIncorporation' && colonyData) {
+    return (
+      <DefaultMotion
+        colony={colonyData?.processedColony}
+        token={tokenDataMock}
+        colonyAction={mockColonyActionData.colonyAction}
+        transactionHash={transactionHash as string}
+        recipient={recipientProfileWithFallbackMock}
+        initiator={initiatorProfileWithFallbackMock}
+      />
+    );
+  }
 
   if (!isTransactionFormat(transactionHash) || colonyActionError) {
     return (

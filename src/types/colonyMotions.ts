@@ -14,6 +14,7 @@ export enum ColonyMotions {
   VersionUpgradeMotion = 'VersionUpgradeMotion',
   EmitDomainReputationPenaltyMotion = 'EmitDomainReputationPenaltyMotion',
   EmitDomainReputationRewardMotion = 'EmitDomainReputationRewardMotion',
+  DAOIncorporationMotion = 'DAOIncorporationMotion',
 }
 
 export const motionNameMapping = {
@@ -28,4 +29,5 @@ export const motionNameMapping = {
   upgrade: ColonyMotions.VersionUpgradeMotion,
   emitDomainReputationPenalty: ColonyMotions.EmitDomainReputationPenaltyMotion,
   emitDomainReputationReward: ColonyMotions.EmitDomainReputationRewardMotion,
+  DAOIncorporation: ColonyMotions.DAOIncorporationMotion,
 };
