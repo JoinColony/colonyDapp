@@ -8,3 +8,6 @@ export const noUsefulMethods: string;
 export const warningContainer: string;
 export const warningSafeChainName: string;
 export const warningIcon: string;
+export const abiContainer: string;
+export const attributionMessage: string;
+export const fetchFailedErrorContainer: string;

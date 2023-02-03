@@ -1,5 +1,10 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  MessageDescriptor,
+  useIntl,
+} from 'react-intl';
 import { FormikProps } from 'formik';
 import { isAddress } from 'web3-utils';
 
@@ -18,6 +23,7 @@ import { isEmpty, isEqual, isNil } from '~utils/lodash';
 import { getChainNameFromSafe } from '~modules/dashboard/sagas/utils/safeHelpers';
 import { Message } from '~types/index';
 import { isMessageDescriptor } from '~utils/strings';
+import { BINANCE_NETWORK } from '~constants';
 
 import {
   FormValues,
@@ -75,6 +81,14 @@ const MSG = defineMessages({
     id: `dashboard.ControlSafeDialog.ContractInteractionSection.unknownContract`,
     defaultMessage: `Unknown contract`,
   },
+  etherscanAttribution: {
+    id: `dashboard.ControlSafeDialog.ContractInteractionSection.etherscanAttribution`,
+    defaultMessage: 'Powered by Etherscan.io APIs',
+  },
+  bscScanAttribution: {
+    id: `dashboard.ControlSafeDialog.ContractInteractionSection.bscScanAttribution`,
+    defaultMessage: 'Powered by BscScan APIs',
+  },
 });
 
 const displayName = `dashboard.ControlSafeDialog.ContractInteractionSection`;
@@ -95,6 +109,13 @@ interface ABIResponse {
   message: string;
   result: string;
 }
+
+const getAttributionMessage = (chainId: string | undefined) => {
+  if (chainId === BINANCE_NETWORK.chainId.toString()) {
+    return MSG.bscScanAttribution;
+  }
+  return MSG.etherscanAttribution;
+};
 
 const ContractInteractionSection = ({
   disabledInput,
@@ -179,7 +200,7 @@ const ContractInteractionSection = ({
         if (contractABIData) {
           onContractABIChange(contractABIData);
         } else {
-          setFetchABIError(formatMessage(MSG.fetchFailedError));
+          setFetchABIError(MSG.fetchFailedError);
         }
 
         const contractName = await fetchContractName(
@@ -320,17 +341,33 @@ const ContractInteractionSection = ({
         </div>
       </DialogSection>
       {fetchABIError &&
-      !isSpecificError(fetchABIError, MSG.noUsefulMethodsError) ? (
+      !isSpecificError(fetchABIError, MSG.noUsefulMethodsError) &&
+      !isSpecificError(fetchABIError, MSG.fetchFailedError) ? (
         <Error error={fetchABIError} />
       ) : (
         <>
           <DialogSection>
-            <Textarea
-              label={MSG.abiLabel}
-              name={`transactions.${transactionFormIndex}.abi`}
-              appearance={{ colorSchema: 'grey', resizable: 'vertical' }}
-              disabled={disabledInput}
-            />
+            <div className={styles.abiContainer}>
+              <Textarea
+                label={MSG.abiLabel}
+                name={`transactions.${transactionFormIndex}.abi`}
+                appearance={{ colorSchema: 'grey', resizable: 'vertical' }}
+                disabled={disabledInput}
+              />
+              {selectedSafe?.chainId && (
+                <span className={styles.attributionMessage}>
+                  <FormattedMessage
+                    {...getAttributionMessage(selectedSafe.chainId)}
+                  />
+                </span>
+              )}
+            </div>
+            {fetchABIError &&
+              isSpecificError(fetchABIError, MSG.fetchFailedError) && (
+                <div className={styles.fetchFailedErrorContainer}>
+                  <Error error={fetchABIError} />
+                </div>
+              )}
           </DialogSection>
           <DialogSection appearance={{ theme: 'sidePadding' }}>
             <div className={styles.contractFunctionSelectorContainer}>
