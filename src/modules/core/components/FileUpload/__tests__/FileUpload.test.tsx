@@ -8,6 +8,11 @@ import { mountWithIntl } from '~testutils';
 
 import FileUpload from '../FileUpload';
 
+jest.mock('~core/UserPickerWithSearch/hooks', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+
 describe('FileUpload component', () => {
   test('Renders initial component', () => {
     const wrapper = mountWithIntl(

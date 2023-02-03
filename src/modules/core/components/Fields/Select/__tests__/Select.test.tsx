@@ -27,6 +27,11 @@ const DEFAULT_PROPS = {
   'data-test': 'selectButton',
 };
 
+jest.mock('~core/UserPickerWithSearch/hooks', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+
 describe('Select component', () => {
   test('Renders initial component', () => {
     const wrapper = mountWithIntl(
