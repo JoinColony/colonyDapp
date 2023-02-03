@@ -17,3 +17,6 @@ export const nftValue: string;
 export const tokenAmount: string;
 export const transactionDetailsSection: string;
 export const rawTransactionValues: string;
+export const warningIcon: string;
+export const upgradeWarning: string;
+export const upgradePath: string;
