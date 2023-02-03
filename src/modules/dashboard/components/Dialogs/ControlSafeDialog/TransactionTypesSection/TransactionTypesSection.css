@@ -78,3 +78,20 @@
   min-width: 18px;
   fill: var(--golden);
 }
+
+.abiContainer {
+  position: relative;
+}
+
+.attributionMessage {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  font-size: var(--size-tiny);
+  line-height: 18px;
+  color: var(--dark);
+}
+
+.fetchFailedErrorContainer {
+  margin-top: 19px;
+}
