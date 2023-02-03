@@ -100,11 +100,17 @@
 .title {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 16px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: color-mod(var(--dark) alpha(85%));
   letter-spacing: var(--spacing-medium);
+}
+
+.titleIconWrapper {
+  display: flex;
+  align-items: center;
 }
 
 .label {
@@ -141,4 +147,10 @@
 
 .editIcon:hover {
   cursor: pointer;
+}
+
+.manageButton {
+  composes: themeBlue from '~core/Button/Button.css';
+  font-size: var(--size-smallish);
+  letter-spacing: var(--spacing-medium);
 }
