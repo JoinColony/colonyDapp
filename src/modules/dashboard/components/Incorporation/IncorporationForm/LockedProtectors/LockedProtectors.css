@@ -1,3 +1,13 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 .wrapper {
   margin-top: 32px;
 }
@@ -88,4 +98,9 @@
   font-weight: var(--weight-bold);
   color: color-mod(var(--dark) alpha(85%));
   letter-spacing: var(--spacing-medium);
+}
+
+.mianContactWrapper {
+  animation-name: fadeIn;
+  animation-duration: 500ms;
 }
