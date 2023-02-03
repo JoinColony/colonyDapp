@@ -163,3 +163,28 @@
   text-align: right;
   overflow-wrap: anywhere;
 }
+
+.warningIcon {
+  margin-top: 3px;
+  margin-right: 12px;
+}
+
+.warningIcon svg {
+  height: 18px;
+  width: 18px;
+  fill: var(--golden);
+}
+
+.upgradeWarning {
+  display: flex;
+  margin-top: 20px;
+  padding: 15px 12px 15px 18px;
+  border-radius: 5px;
+  background-color: color-mod(var(--golden) alpha(15%));
+  line-height: 18px;
+  color: var(--dark);
+}
+
+.upgradePath {
+  font-weight: var(--weight-bold);
+}

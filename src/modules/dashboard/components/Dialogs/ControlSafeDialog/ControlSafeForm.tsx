@@ -4,6 +4,7 @@ import { FieldArray, FieldArrayRenderProps, FormikProps } from 'formik';
 import {
   ColonyRole,
   VotingReputationExtensionVersion,
+  ColonyVersion,
 } from '@colony/colony-js';
 import classnames from 'classnames';
 import { nanoid } from 'nanoid';
@@ -98,6 +99,14 @@ const MSG = defineMessages({
     defaultMessage:
       'Select a safe from the menu or add a new one via Safe Control',
   },
+  warningIconTitle: {
+    id: 'dashboard.ControlSafeDialog.ControlSafeForm.warningIconTitle',
+    defaultMessage: `Warning!`,
+  },
+  upgradeWarning: {
+    id: 'dashboard.ControlSafeDialog.ControlSafeForm.upgradeWarning',
+    defaultMessage: `Controlling a Safe is not supported on your current Colony version. Please upgrade Colony to at least version 11.{break}You can do this via <span>New Action > Advanced > Upgrade</span>`,
+  },
 });
 
 export const { invalidSafeError } = MSG;
@@ -141,7 +150,7 @@ const renderAvatar = (address: string, item) => (
 
 const ControlSafeForm = ({
   colony,
-  colony: { colonyAddress },
+  colony: { colonyAddress, version },
   back,
   handleSubmit,
   safes,
@@ -358,6 +367,10 @@ const ControlSafeForm = ({
 
   const savedNFTState = useState({});
   const savedTokenState = useState({});
+  const isSupportedColonyVersion =
+    parseInt(version, 10) >= ColonyVersion.GreenLightweightSpaceshipTwo;
+  const disabledInputs =
+    !userHasPermission || isSubmitting || !isSupportedColonyVersion;
 
   const renderTransactionSection = (
     transaction: SafeTransaction,
@@ -369,7 +382,7 @@ const ControlSafeForm = ({
         return (
           <TransferFundsSection
             colony={colony}
-            disabledInput={!userHasPermission || isSubmitting}
+            disabledInput={disabledInputs}
             values={values}
             transactionFormIndex={index}
             setFieldValue={setFieldValue}
@@ -383,7 +396,7 @@ const ControlSafeForm = ({
         return (
           <RawTransactionSection
             colony={colony}
-            disabledInput={!userHasPermission || isSubmitting}
+            disabledInput={disabledInputs}
             transactionFormIndex={index}
             handleInputChange={handleInputChange}
             handleValidation={handleValidation}
@@ -392,7 +405,7 @@ const ControlSafeForm = ({
       case TransactionTypes.CONTRACT_INTERACTION:
         return (
           <ContractInteractionSection
-            disabledInput={!userHasPermission || isSubmitting}
+            disabledInput={disabledInputs}
             transactionFormIndex={index}
             values={values}
             safes={safes}
@@ -411,7 +424,7 @@ const ControlSafeForm = ({
             colonyAddress={colonyAddress}
             transactionFormIndex={index}
             values={values}
-            disabledInput={!userHasPermission || isSubmitting}
+            disabledInput={disabledInputs}
             savedNFTState={savedNFTState}
             handleValidation={handleValidation}
           />
@@ -445,6 +458,28 @@ const ControlSafeForm = ({
               }}
             />
           </DialogSection>
+          {!isSupportedColonyVersion && (
+            <DialogSection appearance={{ theme: 'sidePadding' }}>
+              <div className={styles.upgradeWarning}>
+                <Icon
+                  name="triangle-warning"
+                  className={styles.warningIcon}
+                  title={MSG.warningIconTitle}
+                />
+                <div>
+                  <FormattedMessage
+                    {...MSG.upgradeWarning}
+                    values={{
+                      span: (chunks) => (
+                        <span className={styles.upgradePath}>{chunks}</span>
+                      ),
+                      break: <br />,
+                    }}
+                  />
+                </div>
+              </div>
+            </DialogSection>
+          )}
           <DialogSection>
             <div className={styles.safePicker}>
               <SingleSafePicker
@@ -454,7 +489,7 @@ const ControlSafeForm = ({
                 renderAvatar={renderAvatar}
                 data={safes}
                 showMaskedAddress
-                disabled={!userHasPermission || isSubmitting}
+                disabled={disabledInputs}
                 placeholder={MSG.safePickerPlaceholder}
                 onSelected={handleSafeChange}
                 validateOnChange
@@ -542,7 +577,7 @@ const ControlSafeForm = ({
                             }}
                             appearance={{ theme: 'grey', width: 'fluid' }}
                             placeholder={MSG.transactionPlaceholder}
-                            disabled={!userHasPermission || isSubmitting}
+                            disabled={disabledInputs}
                             validateOnChange
                           />
                         </div>
