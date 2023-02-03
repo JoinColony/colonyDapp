@@ -6,7 +6,7 @@ const { NETWORK_ROOT } = require('./paths');
 
 
 const deployContracts = () => {
-  return spawn('node_modules/.bin/truffle', ['migrate', '--reset', '--compile-all'], {
+  return spawn('npx', ['truffle', 'migrate', '--reset', '--compile-all'], {
     stdio: 'inherit',
     cwd: NETWORK_ROOT,
     env: {
