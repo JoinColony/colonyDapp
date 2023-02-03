@@ -59,6 +59,14 @@
   letter-spacing: 0.1px;
 }
 
+.error {
+  margin-bottom: 8px;
+}
+
+.error input {
+  background-color: color-mod(var(--danger) alpha(5%));
+}
+
 .commercialWrapper {
   border-top: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
 }

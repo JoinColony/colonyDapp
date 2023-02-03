@@ -1,5 +1,5 @@
 import { FormikTouched, setNestedObjectValues, useFormikContext } from 'formik';
-import React, { useCallback } from 'react';
+import React, { ReactNode, useCallback } from 'react';
 import { defineMessages, MessageDescriptor } from 'react-intl';
 
 import Button from '~core/Button';
@@ -25,6 +25,7 @@ export interface Props {
   nextText?: MessageDescriptor;
   onPrevClick?: VoidFunction;
   prevText?: MessageDescriptor;
+  errorMessage?: ReactNode;
 }
 
 const FormButtons = ({
@@ -32,6 +33,7 @@ const FormButtons = ({
   nextText,
   onPrevClick,
   prevText,
+  errorMessage,
 }: Props) => {
   const { values, handleSubmit, validateForm, setTouched } =
     useFormikContext<ValuesType>() || {};
@@ -47,18 +49,21 @@ const FormButtons = ({
 
   return (
     <div className={styles.wrapper}>
-      {onPrevClick && (
+      {errorMessage}
+      <div className={styles.buttonsWrapper}>
+        {onPrevClick && (
+          <Button
+            onClick={onPrevClick}
+            text={prevText || MSG.back}
+            className={styles.backButton}
+          />
+        )}
         <Button
-          onClick={onPrevClick}
-          text={prevText || MSG.back}
-          className={styles.backButton}
+          onClick={handleNextClick}
+          text={nextText || MSG.continue}
+          className={styles.nextButton}
         />
-      )}
-      <Button
-        onClick={handleNextClick}
-        text={nextText || MSG.continue}
-        className={styles.nextButton}
-      />
+      </div>
     </div>
   );
 };

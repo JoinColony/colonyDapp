@@ -19,7 +19,7 @@
 }
 
 .userWrapper {
-  margin-bottom: 22px;
+  margin-bottom: 28px;
 }
 
 .userWrapper label {
@@ -30,6 +30,19 @@
 
 .fieldWrapper {
   margin-bottom: 2px;
+}
+
+.error {
+  margin-bottom: 8px;
+}
+
+.error input {
+  background-color: color-mod(var(--danger) alpha(5%));
+}
+
+.selectError button {
+  border: 1px solid var(--danger);
+  background-color: color-mod(var(--danger) alpha(5%));
 }
 
 .fieldWrapper label {
@@ -106,6 +119,15 @@
     height: 7px;
     width: 7px;
   }
+}
+
+.radioError label {
+  border: 1px solid var(--danger);
+  background-color: color-mod(var(--danger) alpha(5%));
+}
+
+.radioError label > span {
+  border: 1px solid var(--danger);
 }
 
 .selected > label {
