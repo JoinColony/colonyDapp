@@ -296,7 +296,7 @@ export const GNOSIS_AMB_BRIDGES: { [x: number]: AmbBridge } = {
   [ETHEREUM_NETWORK.chainId]: {
     homeAMB: '0x75Df5AF045d91108662D8080fD1FEFAd6aA0bb59',
     foreignAMB: '0x4C36d2919e407f0Cc2Ee3c993ccF8ac26d9CE64e',
-    monitor: 'http://13.40.211.40/',
+    monitor: 'https://alm-gnosis-eth.colony.io/',
     referenceUrl:
       'https://docs.tokenbridge.net/eth-xdai-amb-bridge/about-the-eth-xdai-amb',
     homeGasLimit: 2000000,
@@ -307,7 +307,7 @@ export const GNOSIS_AMB_BRIDGES: { [x: number]: AmbBridge } = {
   [BINANCE_NETWORK.chainId]: {
     homeAMB: '0x162E898bD0aacB578C8D5F8d6ca588c13d2A383F',
     foreignAMB: '0x05185872898b6f94AA600177EF41B9334B1FA48B',
-    monitor: 'https://alm-bsc-xdai.herokuapp.com/',
+    monitor: 'https://alm-gnosis-bsc.colony.io/',
     referenceUrl:
       'https://docs.tokenbridge.net/bsc-xdai-amb/about-the-bsc-xdai-amb',
     homeGasLimit: 2000000,
