@@ -29,6 +29,7 @@ interface Props {
 
   /** Set the open state from outside */
   isOpen?: boolean;
+  interactive?: boolean;
 }
 
 const Tooltip = ({
@@ -39,6 +40,7 @@ const Tooltip = ({
   showArrow = true,
   trigger = 'hover',
   isOpen,
+  interactive = false,
 }: Props) => {
   const {
     getArrowProps,
@@ -52,6 +54,8 @@ const Tooltip = ({
       placement,
       trigger: content ? trigger : null,
       visible: isOpen,
+      delayHide: interactive ? 200 : 0,
+      interactive,
     },
     popperOptions,
   );

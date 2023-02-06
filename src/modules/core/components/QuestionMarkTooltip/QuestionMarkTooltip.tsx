@@ -4,13 +4,13 @@ import { MessageDescriptor, FormattedMessage } from 'react-intl';
 
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import { SimpleMessageValues } from '~types/index';
+import { UniversalMessageValues } from '~types/index';
 
 const displayName = 'QuestionMarkTooltip';
 
 interface Props {
   tooltipText: string | MessageDescriptor;
-  tooltipTextValues?: SimpleMessageValues;
+  tooltipTextValues?: UniversalMessageValues;
   /** Options to pass to the underlying PopperJS element. See here for more: https://popper.js.org/docs/v2/constructors/#options. */
   tooltipPopperOptions?: PopperOptions;
   className?: string;
@@ -18,6 +18,7 @@ interface Props {
   iconTitle?: string;
   showArrow?: boolean;
   invertedIcon?: boolean;
+  interactive?: boolean;
 }
 
 const QuestionMarkTooltip = ({
@@ -39,6 +40,7 @@ const QuestionMarkTooltip = ({
   className,
   showArrow,
   invertedIcon,
+  interactive,
 }: Props) => {
   return (
     <>
@@ -55,6 +57,7 @@ const QuestionMarkTooltip = ({
         trigger="hover"
         showArrow={showArrow}
         popperOptions={tooltipPopperOptions}
+        interactive={interactive}
       >
         <div className={className}>
           <Icon

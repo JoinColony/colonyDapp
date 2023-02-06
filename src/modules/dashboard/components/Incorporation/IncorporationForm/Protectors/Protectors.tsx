@@ -14,6 +14,7 @@ import { filterUserSelection } from '~core/SingleUserPicker';
 import { supRenderAvatar } from '~dashboard/ExpenditurePage/Recipient/Recipient';
 import { Protector } from '~pages/IncorporationPage/types';
 import Button from '~core/Button';
+import Link from '~core/Link';
 
 import Radio from '../Radio';
 import { SignOption } from '../types';
@@ -28,7 +29,7 @@ export const MSG = defineMessages({
   },
   protectorsTooltip: {
     id: `dashboard.Incorporation.IncorporationForm.Protectors.protectorsTooltip`,
-    defaultMessage: `A Protector's role in a DAO legal corporation is to ratify the decisions of the DAO. Their purpose is to act on behalf of the DAO and handle legal the required administration. Learn more`,
+    defaultMessage: `A Protector's role in a DAO legal corporation is to ratify the decisions of the DAO. Their purpose is to act on behalf of the DAO for legal matters and any required legal administration. <a>Learn more.</a>`,
   },
   deleteIconTitle: {
     id: `dashboard.Incorporation.IncorporationForm.Protectors.deleteIconTitle`,
@@ -56,7 +57,7 @@ export const MSG = defineMessages({
   },
   mainContactTooltip: {
     id: `dashboard.Incorporation.IncorporationForm.Protectors.mainContactTooltip`,
-    defaultMessage: `The main contact is required during the incorporation process and is also required to use their delivery address details for the registration.`,
+    defaultMessage: `The main contact is required during the incorporation process for administration purposes.`,
   },
 });
 
@@ -130,7 +131,13 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
                 }}
               />
             </div>
-            <QuestionMarkTooltip tooltipText={MSG.protectorsTooltip} />
+            <QuestionMarkTooltip
+              tooltipText={MSG.protectorsTooltip}
+              tooltipTextValues={{
+                a: (chunks) => <Link to="/">{chunks}</Link>, // link is a mock, add redirection to the correct page
+              }}
+              interactive
+            />
           </div>
           <FieldArray
             name="protectors"
