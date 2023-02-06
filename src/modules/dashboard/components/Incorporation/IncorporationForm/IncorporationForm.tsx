@@ -4,9 +4,12 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { FormSection, Input, Textarea, InputLabel } from '~core/Fields';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import { Colony } from '~data/index';
-import Icon from '~core/Icon';
+import TokenIcon from '~dashboard/HookedTokenIcon';
+import Numeral from '~core/Numeral';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import Protectors from './Protectors';
+import { cost } from './constants';
 import styles from './IncorporationForm.css';
 
 export const MSG = defineMessages({
@@ -68,14 +71,18 @@ const IncorporationForm = ({ colony, sidebarRef }: Props) => (
           <FormattedMessage {...MSG.initialCost} />
         </div>
         <div className={styles.cost}>
-          <FormattedMessage
-            {...MSG.cost}
-            values={{
-              icon: <Icon name="usd-coin" appearance={{ size: 'medium' }} />,
-              amount: '5,300',
-              currency: 'USDC',
-            }}
+          <TokenIcon
+            token={cost.initial.token}
+            name={cost.initial.token.name}
+            size="xs"
           />
+          <Numeral
+            value={cost.initial.amount || 0}
+            unit={getTokenDecimalsWithFallback(
+              cost.initial.token && cost.initial.token.decimals,
+            )}
+          />
+          {cost.initial.token.symbol}
         </div>
       </div>
     </FormSection>
@@ -85,14 +92,18 @@ const IncorporationForm = ({ colony, sidebarRef }: Props) => (
           <FormattedMessage {...MSG.ongoingCost} />
         </div>
         <div className={styles.cost}>
-          <FormattedMessage
-            {...MSG.cost}
-            values={{
-              icon: <Icon name="usd-coin" appearance={{ size: 'medium' }} />,
-              amount: '3,800 / year',
-              currency: 'USDC',
-            }}
+          <TokenIcon
+            token={cost.reneval.token}
+            name={cost.reneval.token.name}
+            size="xs"
           />
+          <Numeral
+            value={cost.reneval.amount || 0}
+            unit={getTokenDecimalsWithFallback(
+              cost.reneval.token && cost.reneval.token.decimals,
+            )}
+          />
+          {cost.reneval.token.symbol} / year
         </div>
       </div>
     </FormSection>

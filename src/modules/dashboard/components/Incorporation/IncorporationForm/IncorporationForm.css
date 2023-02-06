@@ -21,7 +21,11 @@
   letter-spacing: var(--spacing-medium);
 }
 
-.cost i {
+.cost figure {
+  margin-right: 8px;
+}
+
+.cost > span {
   margin-right: 8px;
 }
 
