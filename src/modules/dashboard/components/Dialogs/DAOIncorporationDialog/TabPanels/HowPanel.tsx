@@ -32,7 +32,7 @@ const MSG = defineMessages({
   },
   step5: {
     id: 'dashboard.DAOIncorporationDialog.TabPanels.HowPanel.step5',
-    defaultMessage: `Korporatio will process the application and finalise the incorporate. The DAO will then be able to start benefitting for a legal DAO wrapper.<div> Step time: 15 - 20 business days </div>`,
+    defaultMessage: `Korporatio will process the application and finalize the incorporation. The DAO and contributors will then start benefiting from the legal DAO wrapper.<div> Step time: 15 - 20 business days </div>`,
   },
   step: {
     id: 'dashboard.DAOIncorporationDialog.TabPanels.HowPanel.step',

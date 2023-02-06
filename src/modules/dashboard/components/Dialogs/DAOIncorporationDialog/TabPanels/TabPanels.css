@@ -145,9 +145,10 @@
 .currency {
   display: flex;
   align-items: center;
+  font-size: var(--size-normal);
 }
 
-.currency i {
+.currency figure {
   margin-right: 8px;
 }
 
@@ -155,7 +156,7 @@
   max-width: 150px;
 }
 
-.priceAmount {
+.priceAmount > span {
   font-size: var(--size-medium-l);
   font-weight: var(--weight-bold);
 }

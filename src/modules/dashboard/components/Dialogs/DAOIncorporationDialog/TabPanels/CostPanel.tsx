@@ -1,8 +1,11 @@
-import { nanoid } from 'nanoid';
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import Icon from '~core/Icon';
+import Numeral from '~core/Numeral';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import TokenIcon from '~dashboard/HookedTokenIcon';
+
+import { IncorporationPayment, prices } from '../constants';
 
 import styles from './TabPanels.css';
 
@@ -19,16 +22,16 @@ const MSG = defineMessages({
     id: 'dashboard.DAOIncorporationDialog.TabPanels.CostPanel.note',
     defaultMessage: `Note: Price can change if the number of protectors is greater then 5. The additional cost will be $50 per extra protector over 5.`,
   },
-  price1: {
-    id: 'dashboard.DAOIncorporationDialog.TabPanels.CostPanel.price1',
+  initialPayment: {
+    id: 'dashboard.DAOIncorporationDialog.TabPanels.CostPanel.initialPayment',
     defaultMessage: 'Payment will be made via Colony',
   },
   currency: {
     id: 'dashboard.DAOIncorporationDialog.TabPanels.CostPanel.currency',
     defaultMessage: 'USDC',
   },
-  price2: {
-    id: 'dashboard.DAOIncorporationDialog.TabPanels.CostPanel.price2',
+  reneval: {
+    id: 'dashboard.DAOIncorporationDialog.TabPanels.CostPanel.reneval',
     defaultMessage: 'Yearly renewal',
   },
   cost: {
@@ -36,19 +39,6 @@ const MSG = defineMessages({
     defaultMessage: 'Cost',
   },
 });
-
-const prices = [
-  {
-    id: nanoid(),
-    text: <FormattedMessage {...MSG.price1} />,
-    amount: '5,300.00',
-  },
-  {
-    id: nanoid(),
-    text: <FormattedMessage {...MSG.price2} />,
-    amount: '3,800.00',
-  },
-];
 
 const displayName = 'dashboard.DAOIncorporationDialog.TabPanels.CostPanel';
 
@@ -71,13 +61,30 @@ const CostPanel = () => {
         <ul className={styles.cost}>
           {prices.map((price) => (
             <li key={price.id} className={styles.costItem}>
-              <span className={styles.priceText}>{price.text}</span>
+              <span className={styles.priceText}>
+                {price.type === IncorporationPayment.Cost ? (
+                  <FormattedMessage {...MSG.initialPayment} />
+                ) : (
+                  <FormattedMessage {...MSG.reneval} />
+                )}
+              </span>
               <div className={styles.price}>
                 <div className={styles.currency}>
-                  <Icon name="usd-coin" appearance={{ size: 'medium' }} />
-                  <FormattedMessage {...MSG.currency} />
+                  <TokenIcon
+                    token={price.token}
+                    name={price.token.name}
+                    size="xs"
+                  />
+                  {price.token.symbol}
                 </div>
-                <div className={styles.priceAmount}>{price.amount}</div>
+                <div className={styles.priceAmount}>
+                  <Numeral
+                    value={price.amount || 0}
+                    unit={getTokenDecimalsWithFallback(
+                      price.token && price.token.decimals,
+                    )}
+                  />
+                </div>
               </div>
             </li>
           ))}
