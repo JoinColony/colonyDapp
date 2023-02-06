@@ -7,6 +7,7 @@ import { ValuesType } from '~pages/IncorporationPage/types';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
 import Tag from '~core/Tag';
+import Link from '~core/Link';
 
 import { SignOption, VerificationStatus } from '../constants';
 
@@ -19,7 +20,7 @@ export const MSG = defineMessages({
   },
   protectorsTooltip: {
     id: `dashboard.Incorporation.IncorporationForm.LockedProtectors.protectorsTooltip`,
-    defaultMessage: `A Protector's role in a DAO legal corporation is to ratify the decisions of the DAO. Their purpose is to act on behalf of the DAO and handle legal the required administration. Learn more`,
+    defaultMessage: `A Protector's role in a DAO legal corporation is to ratify the decisions of the DAO. Their purpose is to act on behalf of the DAO for legal matters and any required legal administration. <a>Learn more.</a>`,
   },
   unverified: {
     id: `dashboard.Incorporation.IncorporationForm.LockedProtectors.unverified`,
@@ -39,7 +40,7 @@ export const MSG = defineMessages({
   },
   mainContactTooltip: {
     id: `dashboard.Incorporation.IncorporationForm.LockedProtectors.mainContactTooltip`,
-    defaultMessage: `The main contact is required during the incorporation process and is also required to use their delivery address details for the registration.`,
+    defaultMessage: `The main contact is required during the incorporation process for administration purposes.`,
   },
   signOptionTooltip: {
     id: `dashboard.Incorporation.IncorporationForm.LockedProtectors.signOptionTooltip`,
@@ -76,7 +77,13 @@ const LockedProtectors = ({ formValues }: Props) => {
             <div className={styles.label}>
               <FormattedMessage {...MSG.protectors} />
             </div>
-            <QuestionMarkTooltip tooltipText={MSG.protectorsTooltip} />
+            <QuestionMarkTooltip
+              tooltipText={MSG.protectorsTooltip}
+              tooltipTextValues={{
+                a: (chunks) => <Link to="/">{chunks}</Link>, // link is a mock, add redirection to the correct page
+              }}
+              interactive
+            />
           </div>
         </div>
       </FormSection>
