@@ -1,8 +1,9 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import Button from '~core/Button';
+import Link from '~core/Link';
 import { Stages } from '~pages/IncorporationPage/constants';
+import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
 
 import styles from './InfoBanner.css';
 
@@ -56,7 +57,11 @@ const InfoBanner = ({ activeStageId }: Props) => {
       </div>
       {activeStageId === Stages.Complete && (
         <div className={styles.buttonsWrapper}>
-          <Button text={MSG.buttonText} className={styles.verifyButton} />
+          <Link
+            to={LANDING_PAGE_ROUTE}
+            text={MSG.buttonText}
+            className={styles.verifyButton}
+          />
         </div>
       )}
     </div>
