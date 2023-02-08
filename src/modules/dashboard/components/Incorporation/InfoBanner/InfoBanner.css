@@ -46,6 +46,10 @@
 
 .verifyButton {
   composes: themePrimary main from '~core/Button/Button.css';
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
   height: 44px;
   width: 160px;
   font-size: var(--size-normal);
