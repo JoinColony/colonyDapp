@@ -2,7 +2,7 @@ import { nanoid } from 'nanoid';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
-import { SignOption } from '~dashboard/Incorporation/IncorporationForm/types';
+import { SignOption } from '~dashboard/Incorporation/IncorporationForm/constants';
 
 import { StageObject, ValuesType } from './types';
 
@@ -169,33 +169,40 @@ export const stages: StageObject[] = [
 ];
 
 export const formValuesMock: ValuesType = {
-  alternativeNames: ['WallStreetBets Foundation', 'WallStreet Corp'],
+  alternativeName1: 'WallStreetBets Foundation',
+  alternativeName2: 'WallStreet Corp',
   mainContact: {
     id: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
     profile: {
       avatarHash: null,
       displayName: null,
-      username: 'ajarosik',
+      username: 'Storm',
       walletAddress: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
     },
   },
   name: 'WallStreetBets',
   protectors: [
     {
-      id: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
-      profile: {
-        avatarHash: null,
-        displayName: null,
-        username: 'ajarosik',
-        walletAddress: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
+      user: {
+        id: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
+        profile: {
+          avatarHash: null,
+          displayName: null,
+          username: 'Storm',
+          walletAddress: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
+        },
       },
+      key: nanoid(),
     },
     {
-      id: 'filterValue',
-      profile: { displayName: 'asd asdf', walletAddress: 'asd asdf' },
+      user: {
+        id: 'filterValue',
+        profile: { displayName: 'Ragnar', walletAddress: 'Ragnar' },
+      },
+      key: nanoid(),
     },
   ],
-  purpose: `WallStreetBets is on a mission to deploy \ndecentralized satellites in our skies.`,
+  purpose: `WallStreetBets is on a mission to deploy decentralized satellites in our skies.`,
   signOption: SignOption.Individual,
 };
 

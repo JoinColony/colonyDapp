@@ -17,7 +17,6 @@ import Button from '~core/Button';
 import Link from '~core/Link';
 
 import Radio from '../Radio';
-import { SignOption } from '../types';
 import SingleUserPicker from '../SingleUserPicker';
 import { SignOption } from '../constants';
 
