@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useParams, useHistory } from 'react-router';
 import { Formik } from 'formik';
-import classNames from 'classnames';
 
 import { useColonyFromNameQuery } from '~data/generated';
 import { getMainClasses } from '~utils/css';
@@ -11,7 +10,6 @@ import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
 import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
 import { useDialog } from '~core/Dialog';
 import IncorporationPaymentDialog from '~dashboard/Dialogs/IncorporationPaymentDialog';
-import InfoBanner from '~dashboard/Incorporation/InfoBanner';
 
 import {
   initialValues,
@@ -151,17 +149,7 @@ const IncorporationPage = () => {
           )
         )}
       </aside>
-      <div
-        className={classNames(styles.mainContainer, {
-          [styles.smallerPadding]:
-            activeStageId === StagesEnum.Processing ||
-            activeStageId === StagesEnum.Complete,
-        })}
-      >
-        {(activeStageId === StagesEnum.Processing ||
-          activeStageId === StagesEnum.Complete) && (
-          <InfoBanner activeStageId={activeStageId} />
-        )}
+      <div className={styles.mainContainer}>
         <main className={styles.mainContent}>
           <div />
           <Stages
