@@ -1,7 +1,10 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType } from '@colony/colony-js';
 import isEmpty from 'lodash/isEmpty';
-import { getStringForMetadataColony } from '@colony/colony-event-metadata-parser';
+import {
+  getStringForMetadataColony,
+  getEventMetadataVersion,
+} from '@colony/colony-event-metadata-parser';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
@@ -127,25 +130,30 @@ function* manageExistingSafesAction({
       currentMetadataIPFSHash,
     );
 
-    const currentColonyMetadata = JSON.parse(currentMetadata || '{}');
-
-    if (!currentColonyMetadata?.data) {
+    if (!currentMetadata) {
       throw new Error(
-        `There was an error wile fetching the current colony metadata. Please try again later.`,
+        `There was an error while fetching the current colony metadata. Please try again later.`,
       );
     }
+
+    const parsedColonyMetadata = JSON.parse(currentMetadata);
+    const metadataVersion = getEventMetadataVersion(currentMetadata);
+    const currentColonyMetadata =
+      metadataVersion === 1
+        ? { ...parsedColonyMetadata }
+        : parsedColonyMetadata.data;
 
     let updatedColonyMetadata: any = {};
 
     if (!isRemovingSafes) {
       updatedColonyMetadata = {
-        ...currentColonyMetadata.data,
-        colonySafes: currentColonyMetadata.data.colonySafes
-          ? [...currentColonyMetadata.data.colonySafes, ...safeList]
+        ...currentColonyMetadata,
+        colonySafes: currentColonyMetadata.colonySafes
+          ? [...currentColonyMetadata.colonySafes, ...safeList]
           : safeList,
       };
     } else {
-      const updatedColonySafes = currentColonyMetadata.data.colonySafes.filter(
+      const updatedColonySafes = currentColonyMetadata.colonySafes.filter(
         (safe: ColonySafe) =>
           !safeList.some(
             (removedSafe) =>
@@ -154,7 +162,7 @@ function* manageExistingSafesAction({
           ),
       );
       updatedColonyMetadata = {
-        ...currentColonyMetadata.data,
+        ...currentColonyMetadata,
         colonySafes: updatedColonySafes,
       };
     }
