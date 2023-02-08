@@ -56,21 +56,22 @@ const IncorporationPage = () => {
     setActiveStageId(StagesEnum.Payment);
   }, []);
 
+  const handleConfirmPayment = useCallback(() => {
+    // Redirection to the Actions page is a mock action.
+    const txHash = 'DAOIncorporation';
+    history.push(`/colony/${colonyName}/tx/${txHash}`);
+    setActiveStageId(StagesEnum.Processing);
+  }, [colonyName, history]);
+
   const handlePay = useCallback(() => {
     if (!colonyData) return;
 
     openPayDialog({
-      onClick: () => {
-        // add a logic to pay for incorporation
-        setActiveStageId(StagesEnum.Processing);
-      },
+      onClick: handleConfirmPayment,
       isVotingExtensionEnabled: true,
       colony: colonyData.processedColony,
     });
-    // Redirection to the Actions page is a mock action.
-    const txHash = 'DAOIncorporation';
-    history.push(`/colony/${colonyName}/tx/${txHash}`);
-  }, [colonyData, openPayDialogcolonyName, history]);
+  }, [colonyData, openPayDialog, handleConfirmPayment]);
 
   const buttonAction = useMemo(() => {
     switch (activeStageId) {
