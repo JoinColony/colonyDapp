@@ -166,7 +166,9 @@ const IncorporationPage = () => {
       </aside>
       <div
         className={classNames(styles.mainContainer, {
-          [styles.smallerPadding]: activeStageId === StagesEnum.Processing,
+          [styles.smallerPadding]:
+            activeStageId === StagesEnum.Processing ||
+            activeStageId === StagesEnum.Complete,
         })}
       >
         {(activeStageId === StagesEnum.Processing ||
