@@ -20,7 +20,7 @@
 }
 
 .description {
-  margin-bottom: 14px;
+  margin-bottom: 28px;
   font-size: var(--size-normal);
   font-weight: var(--weight-normal);
   line-height: 18px;
@@ -31,11 +31,20 @@
 .inputWrapper {
   margin-bottom: 16px;
   padding-top: 12px;
-  border-top: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
 }
 
 .inputWrapper input {
   height: 44px;
+  font-family: var(--family-italic);
+  font-size: var(--size-large);
+  line-height: 18px;
+  color: black;
+  letter-spacing: var(--spacing-medium);
+}
+
+.inputWrapper button {
+  margin-bottom: 6px;
+  height: auto;
 }
 
 .labelClearWrapper {
