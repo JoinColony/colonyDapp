@@ -40,16 +40,12 @@ const MSG = defineMessages({
   },
   permissionText: {
     id: 'dashboard.ManageSafeDialog.permissionsText',
-    defaultMessage: `You must have the {permissionsList} permissions in the
+    defaultMessage: `You must have the {permission} permission in the
       relevant teams, in order to take this action`,
   },
-  adminFundingPermissions: {
-    id: 'dashboard.ManageSafeDialog.adminFundingPermissions',
-    defaultMessage: 'administration and funding ',
-  },
-  rootFundingPermissions: {
-    id: 'dashboard.ManageSafeDialog.rootFundingPermissions',
-    defaultMessage: 'root and funding ',
+  manageSafePermission: {
+    id: 'dashboard.ManageSafeDialog.manageSafePermission',
+    defaultMessage: 'root',
   },
 });
 
@@ -91,7 +87,7 @@ const ManageSafeDialog = ({
       permissionRequired: !canManageAndControlSafes,
       permissionInfoText: MSG.permissionText,
       permissionInfoTextValues: {
-        permissionsList: <FormattedMessage {...MSG.adminFundingPermissions} />,
+        permission: <FormattedMessage {...MSG.manageSafePermission} />,
       },
     },
     {
@@ -103,7 +99,7 @@ const ManageSafeDialog = ({
       permissionRequired: !canManageAndControlSafes,
       permissionInfoText: MSG.permissionText,
       permissionInfoTextValues: {
-        permissionsList: <FormattedMessage {...MSG.adminFundingPermissions} />,
+        permission: <FormattedMessage {...MSG.manageSafePermission} />,
       },
     },
     {
@@ -115,7 +111,7 @@ const ManageSafeDialog = ({
       permissionRequired: !canManageAndControlSafes,
       permissionInfoText: MSG.permissionText,
       permissionInfoTextValues: {
-        permissionsList: <FormattedMessage {...MSG.rootFundingPermissions} />,
+        permission: <FormattedMessage {...MSG.manageSafePermission} />,
       },
     },
   ];
