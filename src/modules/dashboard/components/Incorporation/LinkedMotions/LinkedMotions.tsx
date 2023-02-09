@@ -19,7 +19,7 @@ import styles from './LinkedMotions.css';
 const MSG = defineMessages({
   linkedMotion: {
     id: 'dashboard.Incorporation.LinkedMotions.linkedMotion',
-    defaultMessage: 'Linked motions',
+    defaultMessage: 'Relates to motion',
   },
   passed: {
     id: 'dashboard.Incorporation.LinkedMotions.passed',
