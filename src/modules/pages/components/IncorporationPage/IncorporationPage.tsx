@@ -78,6 +78,10 @@ const IncorporationPage = () => {
     [formValues],
   );
 
+  // Mock data
+  const isOwner = false;
+  const hasPermissions = isNominated || isOwner;
+
   const isVerified = useMemo(() => {
     const verificationStatus = verificationStatuses?.find(
       (protector) => protector.walletAddress === user.walletAddress,
@@ -119,13 +123,13 @@ const IncorporationPage = () => {
         return handleProceed;
       }
       case StagesEnum.Payment: {
-        return handlePay;
+        return hasPermissions ? handlePay : undefined;
       }
       default: {
         return () => {};
       }
     }
-  }, [activeStageId, handlePay, handleProceed]);
+  }, [activeStageId, handlePay, handleProceed, hasPermissions]);
 
   const handleValidate = useCallback(() => {
     if (!shouldValidate) {
