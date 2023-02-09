@@ -4,4 +4,5 @@ export const initialFormValues: ContextValuesType = {
   details: {},
   location: {},
   references: {},
+  signature: {},
 };

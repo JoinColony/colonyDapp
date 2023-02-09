@@ -1,4 +1,5 @@
 import { FormikTouched, setNestedObjectValues, useFormikContext } from 'formik';
+import { isEmpty } from 'lodash';
 import React, { ReactNode, useCallback } from 'react';
 import { defineMessages, MessageDescriptor } from 'react-intl';
 
@@ -35,8 +36,13 @@ const FormButtons = ({
   prevText,
   errorMessage,
 }: Props) => {
-  const { values, handleSubmit, validateForm, setTouched } =
-    useFormikContext<ValuesType>() || {};
+  const {
+    values,
+    handleSubmit,
+    validateForm,
+    setTouched,
+    errors: formikErrors,
+  } = useFormikContext<ValuesType>() || {};
 
   const handleNextClick = useCallback(async () => {
     const errors = await validateForm(values);
@@ -62,6 +68,7 @@ const FormButtons = ({
           onClick={handleNextClick}
           text={nextText || MSG.continue}
           className={styles.nextButton}
+          disabled={!isEmpty(formikErrors)}
         />
       </div>
     </div>

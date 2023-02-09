@@ -48,3 +48,11 @@
     url('../fonts/muliweb-bold.woff2') format('woff2'),
     url('../fonts/muliweb-bold.woff') format('woff');
 }
+
+@font-face {
+  font-family: Brush Script MT;
+  font-weight: 700;
+  src:
+    url('../fonts/brushscript.woff2') format('woff2'),
+    url('../fonts/brushscript.woff') format('woff');
+}

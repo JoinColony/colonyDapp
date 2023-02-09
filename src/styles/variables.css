@@ -119,6 +119,7 @@
   --family-monospace: "Source Code Pro", "Monaco", "Inconsolata", monospace;
   --family-techie: "IBM Plex Mono", sans-serif;
   --weight-medium: 500;
+  --family-italic: "Brush Script MT", sans-serif;
 
   /*
    * Media queries
