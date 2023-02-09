@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FieldArray, FieldArrayRenderProps, FormikProps } from 'formik';
 import {
-  ColonyRole,
   VotingReputationExtensionVersion,
   ColonyVersion,
 } from '@colony/colony-js';
@@ -20,12 +19,19 @@ import { SingleSafePicker, filterUserSelection } from '~core/SingleUserPicker';
 import IconTooltip from '~core/IconTooltip';
 
 import { SAFE_INTEGRATION_LEARN_MORE } from '~externalUrls';
-import { Colony, ColonySafe, SafeTransaction } from '~data/index';
+import {
+  Colony,
+  ColonySafe,
+  SafeTransaction,
+  useLoggedInUser,
+} from '~data/index';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import { PrimitiveType } from '~types/index';
 import { SelectedSafe } from '~modules/dashboard/sagas/utils/safeHelpers';
 import { debounce, isEmpty, isEqual, omit } from '~utils/lodash';
-import { useHasPermission } from '~utils/hooks/useHasPermissions';
+import { hasRoot } from '~modules/users/checks';
+import { getAllUserRoles } from '~modules/transformers';
+import { useTransformer } from '~utils/hooks';
 
 import SafeTransactionPreview from './SafeTransactionPreview';
 import {
@@ -170,14 +176,13 @@ const ControlSafeForm = ({
 }: FormProps & FormikProps<FormValues>) => {
   const [transactionTabStatus, setTransactionTabStatus] = useState([true]);
   const [prevSafeAddress, setPrevSafeAddress] = useState<string>('');
-  const hasRoles = [
-    useHasPermission(colony, ColonyRole.Funding),
-    useHasPermission(colony, ColonyRole.Root),
-  ].every((r) => r === true);
+  const { walletAddress } = useLoggedInUser();
+  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+  const canManageAndControlSafes = hasRoot(allUserRoles);
 
   const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
     colony.colonyAddress,
-    hasRoles,
+    canManageAndControlSafes,
     isVotingExtensionEnabled,
     values.forceAction,
   );

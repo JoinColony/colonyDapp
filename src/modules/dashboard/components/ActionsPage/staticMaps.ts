@@ -83,10 +83,7 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
     ColonyRole.Root,
     ColonyRole.Arbitration,
   ],
-  [ColonyAndExtensionsEvents.ArbitraryTransaction]: [
-    ColonyRole.Root,
-    ColonyRole.Administration,
-  ],
+  [ColonyAndExtensionsEvents.ArbitraryTransaction]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.Generic]: [],
 };
 

@@ -10,7 +10,7 @@ import { ActionDialogProps } from '~core/Dialog';
 import { ColonySafe, useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '~modules/transformers';
-import { canEnterRecoveryMode } from '~modules/users/checks';
+import { hasRoot } from '~modules/users/checks';
 
 import SafeListItem from './SafeListItem';
 import { FormValues } from './RemoveSafeDialog';
@@ -47,8 +47,7 @@ const RemoveSafeDialogForm = ({
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
   const hasRegisteredProfile = !!username && !ethereal;
-  const userHasPermission =
-    hasRegisteredProfile && canEnterRecoveryMode(allUserRoles);
+  const userHasPermission = hasRegisteredProfile && hasRoot(allUserRoles);
 
   return (
     <>

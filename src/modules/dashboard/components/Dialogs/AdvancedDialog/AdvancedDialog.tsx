@@ -13,8 +13,6 @@ import {
   canEnterRecoveryMode,
   hasRoot,
   canArchitect,
-  canFund,
-  canAdminister,
 } from '~modules/users/checks';
 
 const MSG = defineMessages({
@@ -24,7 +22,7 @@ const MSG = defineMessages({
   },
   permissionsText: {
     id: 'dashboard.AdvancedDialog.permissionsText',
-    defaultMessage: `You must have the {permissionsList} permissions in the
+    defaultMessage: `You must have the {permission} permission in the
       relevant teams, in order to take this action`,
   },
   managePermissionsTitle: {
@@ -65,8 +63,8 @@ const MSG = defineMessages({
     defaultMessage:
       'New colony network version available? Get your colony’s swole on here.',
   },
-  upgradePermissionsList: {
-    id: 'dashboard.AdvancedDialog.upgradePermissionsList',
+  rootActionsPermission: {
+    id: 'dashboard.AdvancedDialog.rootActionsPermission',
     defaultMessage: 'root',
   },
   editColonyDetailsTitle: {
@@ -94,10 +92,6 @@ const MSG = defineMessages({
     id: 'dashboard.AdvancedDialog.manageSafeDescription',
     defaultMessage:
       'Control a Safe (multi-sig) on another chain with your colony',
-  },
-  adminFundingPermissions: {
-    id: 'dashboard.AdvancedDialog.adminFundingPermissions',
-    defaultMessage: 'funding and administration or root',
   },
 });
 
@@ -146,10 +140,7 @@ const AdvancedDialog = ({
   const { isVotingExtensionEnabled } = useEnabledExtensions({
     colonyAddress: colony.colonyAddress,
   });
-  const canManageSafes =
-    hasRegisteredProfile &&
-    canFund(allUserRoles) &&
-    (canAdminister(allUserRoles) || hasRoot(allUserRoles));
+  const canManageSafes = hasRegisteredProfile && hasRoot(allUserRoles);
 
   const items = [
     {
@@ -162,7 +153,7 @@ const AdvancedDialog = ({
       ),
       permissionInfoText: MSG.permissionsText,
       permissionInfoTextValues: {
-        permissionsList: (
+        permission: (
           <FormattedMessage {...MSG.managePermissionsPermissionList} />
         ),
       },
@@ -178,7 +169,7 @@ const AdvancedDialog = ({
       permissionRequired: !canEnterRecovery,
       permissionInfoText: MSG.permissionsText,
       permissionInfoTextValues: {
-        permissionsList: <FormattedMessage {...MSG.recoveryPermissionsList} />,
+        permission: <FormattedMessage {...MSG.recoveryPermissionsList} />,
       },
       disabled: !isSupportedColonyVersion,
       dataTest: 'recoveryDialogIndexItem',
@@ -190,7 +181,7 @@ const AdvancedDialog = ({
       permissionRequired: !(hasRootPermission || isVotingExtensionEnabled),
       permissionInfoText: MSG.permissionsText,
       permissionInfoTextValues: {
-        permissionsList: <FormattedMessage {...MSG.upgradePermissionsList} />,
+        permission: <FormattedMessage {...MSG.rootActionsPermission} />,
       },
       onClick: () => callStep(nextStepVersionUpgrade),
     },
@@ -201,7 +192,7 @@ const AdvancedDialog = ({
       permissionRequired: !(hasRootPermission || isVotingExtensionEnabled),
       permissionInfoText: MSG.permissionsText,
       permissionInfoTextValues: {
-        permissionsList: <FormattedMessage {...MSG.upgradePermissionsList} />,
+        permission: <FormattedMessage {...MSG.rootActionsPermission} />,
       },
       onClick: () => callStep(nextStepEditDetails),
       dataTest: 'updateColonyDialogIndexItem',
@@ -215,7 +206,7 @@ const AdvancedDialog = ({
       permissionRequired: !canManageSafes,
       permissionInfoText: MSG.permissionsText,
       permissionInfoTextValues: {
-        permissionsList: <FormattedMessage {...MSG.adminFundingPermissions} />,
+        permission: <FormattedMessage {...MSG.rootActionsPermission} />,
       },
     },
     {

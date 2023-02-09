@@ -1,4 +1,3 @@
-import { ColonyRole } from '@colony/colony-js';
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
@@ -6,7 +5,7 @@ import { DialogProps, ActionDialogProps } from '~core/Dialog';
 import IndexModal from '~core/IndexModal';
 import { useLoggedInUser } from '~data/index';
 import { getAllUserRoles } from '~modules/transformers';
-import { userHasRole } from '~modules/users/checks';
+import { hasRoot } from '~modules/users/checks';
 import { useTransformer, WizardDialogType } from '~utils/hooks';
 
 const MSG = defineMessages({
@@ -41,16 +40,12 @@ const MSG = defineMessages({
   },
   permissionText: {
     id: 'dashboard.ManageSafeDialog.permissionsText',
-    defaultMessage: `You must have the {permissionsList} permissions in the
+    defaultMessage: `You must have the {permission} permission in the
       relevant teams, in order to take this action`,
   },
-  adminFundingPermissions: {
-    id: 'dashboard.ManageSafeDialog.adminFundingPermissions',
-    defaultMessage: 'administration and funding ',
-  },
-  rootFundingPermissions: {
-    id: 'dashboard.ManageSafeDialog.rootFundingPermissions',
-    defaultMessage: 'root and funding ',
+  manageSafePermission: {
+    id: 'dashboard.ManageSafeDialog.manageSafePermission',
+    defaultMessage: 'root',
   },
 });
 
@@ -79,15 +74,8 @@ const ManageSafeDialog = ({
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   const hasRegisteredProfile = !!username && !ethereal;
-  const canAddRemoveSafes =
-    hasRegisteredProfile &&
-    userHasRole(allUserRoles, ColonyRole.Administration) &&
-    userHasRole(allUserRoles, ColonyRole.Funding);
-
-  const canControlSafes =
-    hasRegisteredProfile &&
-    userHasRole(allUserRoles, ColonyRole.Root) &&
-    userHasRole(allUserRoles, ColonyRole.Funding);
+  const canManageAndControlSafes =
+    hasRegisteredProfile && hasRoot(allUserRoles);
 
   const items = [
     {
@@ -96,10 +84,10 @@ const ManageSafeDialog = ({
       icon: 'plus-heavy',
       dataTest: 'addExistingSafeItem',
       onClick: () => callStep(nextStepAddExistingSafe),
-      permissionRequired: !canAddRemoveSafes,
+      permissionRequired: !canManageAndControlSafes,
       permissionInfoText: MSG.permissionText,
       permissionInfoTextValues: {
-        permissionsList: <FormattedMessage {...MSG.adminFundingPermissions} />,
+        permission: <FormattedMessage {...MSG.manageSafePermission} />,
       },
     },
     {
@@ -108,10 +96,10 @@ const ManageSafeDialog = ({
       icon: 'trash-can',
       dataTest: 'removeSafeItem',
       onClick: () => callStep(nextStepRemoveSafe),
-      permissionRequired: !canAddRemoveSafes,
+      permissionRequired: !canManageAndControlSafes,
       permissionInfoText: MSG.permissionText,
       permissionInfoTextValues: {
-        permissionsList: <FormattedMessage {...MSG.adminFundingPermissions} />,
+        permission: <FormattedMessage {...MSG.manageSafePermission} />,
       },
     },
     {
@@ -120,10 +108,10 @@ const ManageSafeDialog = ({
       icon: 'joystick',
       dataTest: 'controlSafeItem',
       onClick: () => callStep(nextStepControlSafe),
-      permissionRequired: !canControlSafes,
+      permissionRequired: !canManageAndControlSafes,
       permissionInfoText: MSG.permissionText,
       permissionInfoTextValues: {
-        permissionsList: <FormattedMessage {...MSG.rootFundingPermissions} />,
+        permission: <FormattedMessage {...MSG.manageSafePermission} />,
       },
     },
   ];
