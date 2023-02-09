@@ -20,7 +20,6 @@ import {
   stages,
   validationSchema,
   Stages as StagesEnum,
-  formValuesMock,
 } from './constants';
 import { ValuesType } from './types';
 import styles from './IncorporationPage.css';
@@ -40,7 +39,7 @@ const IncorporationPage = () => {
   const [isFormEditable, setFormEditable] = useState(false);
   const [formValues, setFormValues] = useState<ValuesType>(formValuesMock);
   const [shouldValidate, setShouldValidate] = useState(false);
-  const [activeStageId, setActiveStageId] = useState(StagesEnum.Payment);
+  const [activeStageId, setActiveStageId] = useState(StagesEnum.Draft);
   const sidebarRef = useRef<HTMLElement>(null);
 
   const user = useLoggedInUser();
