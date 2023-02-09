@@ -17,7 +17,7 @@
   display: flex;
   justify-content: space-between;
   padding: 10px 0;
-  border-bottom: 1px solid var(--temp-grey-6);
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
 }
 
 .headerContainer:first-child {
