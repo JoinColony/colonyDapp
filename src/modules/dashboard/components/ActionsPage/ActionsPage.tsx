@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams, Redirect } from 'react-router-dom';
+import { useParams, Redirect, useLocation } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Heading from '~core/Heading';
@@ -22,6 +22,7 @@ import {
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import { ColonyActions, ColonyMotions } from '~types/index';
 import { isTransactionFormat } from '~utils/web3';
+import { ValuesType } from '~pages/IncorporationPage/types';
 
 import TransactionHash, { Hash } from './TransactionHash';
 import { STATUS_MAP } from './staticMaps';
@@ -74,6 +75,8 @@ const ActionsPage = () => {
     transactionHash?: string;
     colonyName: string;
   }>();
+
+  const { state } = useLocation<Partial<ValuesType>>();
 
   const {
     data: colonyData,
@@ -178,6 +181,23 @@ const ActionsPage = () => {
         transactionHash={transactionHash as string}
         recipient={recipientProfileWithFallbackMock}
         initiator={initiatorProfileWithFallbackMock}
+      />
+    );
+  }
+
+  if (transactionHash === 'UpdateDAOIncorporation' && colonyData) {
+    return (
+      <DefaultMotion
+        colony={colonyData?.processedColony}
+        token={tokenDataMock}
+        colonyAction={{
+          ...mockColonyActionData.colonyAction,
+          actionType: ColonyMotions.UpdateIncorporationMotion,
+        }}
+        transactionHash={transactionHash as string}
+        recipient={recipientProfileWithFallbackMock}
+        initiator={initiatorProfileWithFallbackMock}
+        state={state}
       />
     );
   }

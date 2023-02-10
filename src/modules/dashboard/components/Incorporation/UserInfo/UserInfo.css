@@ -1,0 +1,9 @@
+.container {
+  display: flex;
+  align-items: center;
+  padding: 6px 0;
+}
+
+.userName {
+  margin-left: 8px;
+}
