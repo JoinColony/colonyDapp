@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { RouteChildrenProps, useParams, useHistory } from 'react-router';
+import { useParams, useHistory } from 'react-router';
 import { Formik, FormikErrors } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
@@ -11,9 +11,6 @@ import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
 import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
 import { useDialog } from '~core/Dialog';
 import IncorporationPaymentDialog from '~dashboard/Dialogs/IncorporationPaymentDialog';
-import Stages, { FormStages } from '~dashboard/Incorporation/Stages';
-import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
-import { useDialog } from '~core/Dialog';
 import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
 import EditIncorporationDialog from '~dashboard/Dialogs/EditIncorporationDialog';
 import Tag from '~core/Tag';
@@ -61,7 +58,7 @@ const IncorporationPage = () => {
   const [isFormEditable, setFormEditable] = useState(false);
   const [formValues, setFormValues] = useState<ValuesType>(formValuesMock);
   const [shouldValidate, setShouldValidate] = useState(false);
-  const [activeStageId, setActiveStageId] = useState(StagesEnum.Draft);
+  const [activeStageId, setActiveStageId] = useState(StagesEnum.Payment);
   const [inEditMode, setInEditMode] = useState(false);
   const oldValues = useRef<ValuesType>();
   const sidebarRef = useRef<HTMLElement>(null);
@@ -70,10 +67,6 @@ const IncorporationPage = () => {
   const [motion, setMotion] = useState<Motion>();
 
   const openEditIncorporationDialog = useDialog(EditIncorporationDialog);
-
-  const { data: colonyData, loading } = useColonyFromNameQuery({
-    variables: { name: colonyName, address: '' },
-  });
 
   const { walletAddress } = useLoggedInUser();
 
@@ -139,6 +132,21 @@ const IncorporationPage = () => {
       setFormEditable(false);
 
       const data = updateValues(formValues, confirmedValues);
+      // it's only a mock needed to sent to the motions page
+      const motionData = {
+        ...confirmedValues,
+        protectors: confirmedValues?.protectors?.map((protector) => {
+          if (protector.removed) {
+            return {
+              ...formValues.protectors?.find(
+                (item) => item.key === protector.key,
+              ),
+              removed: true,
+            };
+          }
+          return protector;
+        }),
+      };
 
       if (isOwner) {
         setFormValues(data);
@@ -149,6 +157,9 @@ const IncorporationPage = () => {
         // call to backend to set new values goes here, setting state is temorary
         setFormValues(data);
       } else {
+        // Redirection to the Actions page is a mock action.
+        const txHash = 'UpdateDAOIncorporation';
+        history.push(`/colony/${colonyName}/tx/${txHash}`, motionData);
         setMotion({ type: MotionType.Edit, status: MotionStatus.Pending });
         // setTimeout is temporary, it should be replaced with call to api
         setTimeout(() => {
@@ -157,7 +168,7 @@ const IncorporationPage = () => {
         }, 3000);
       }
     },
-    [formValues, isOwner],
+    [colonyName, formValues, history, isOwner],
   );
 
   const handleEditLockedForm = useCallback(() => {

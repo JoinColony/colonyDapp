@@ -50,6 +50,7 @@ import {
   useNetworkContracts,
 } from '~data/index';
 import { useTitle } from '~utils/hooks/useTitle';
+import { ValuesType } from '~pages/IncorporationPage/types';
 
 import DetailsWidget from '../DetailsWidget';
 import StakingWidgetFlow from '../StakingWidget';
@@ -94,6 +95,7 @@ interface Props {
   transactionHash: string;
   recipient: AnyUser;
   initiator: AnyUser;
+  state?: Partial<ValuesType>; // it is a mock to show changes until backend will not be ready
 }
 
 const DefaultMotion = ({
@@ -125,6 +127,7 @@ const DefaultMotion = ({
   transactionHash,
   recipient,
   initiator,
+  state,
 }: Props) => {
   const bottomElementRef = useRef<HTMLInputElement>(null);
   const {
@@ -357,6 +360,20 @@ const DefaultMotion = ({
       ({ ethDomainId }) => ethDomainId === source,
     ) as OneDomain,
     incorporationName,
+    newIncorporationName: state?.name,
+    altName: [state?.alternativeName1, state?.alternativeName2],
+    purpose: state?.purpose,
+    removedProtector: state?.protectors?.filter(
+      (protector) => protector.removed === true,
+    ),
+    addedProtector: state?.protectors?.filter(
+      (protector) => protector.created === true,
+    ),
+    changeProtector: state?.protectors?.filter(
+      (protector) => !protector.created && !protector.removed,
+    ),
+    changeMainContact: state?.mainContact,
+    signing: state?.signOption,
   };
 
   const actionAndEventValuesForDocumentTitle = {

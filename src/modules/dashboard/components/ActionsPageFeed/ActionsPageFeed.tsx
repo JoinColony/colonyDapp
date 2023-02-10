@@ -25,6 +25,7 @@ import { useTransformer } from '~utils/hooks';
 import { commentTransformer } from '~modules/dashboard/transformers';
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot, canAdminister } from '~modules/users/checks';
+import { Protector } from '~pages/IncorporationPage/types';
 
 import ActionsPageEvent from './ActionsPageEvent';
 import ActionsPageSystemInfo from './ActionsPageSystemInfo';
@@ -74,6 +75,14 @@ export interface EventValues {
   source?: OneDomain;
   cost?: string | ReactElement;
   incorporationName?: string;
+  newIncorporationName?: string;
+  altName?: string[];
+  purpose?: string;
+  removedProtector?: Protector[];
+  addedProtector?: Protector[];
+  changeProtector?: Protector[];
+  changeMainContact?: Protector;
+  signing?: string;
 }
 
 export type FeedItemWithId<T> = T & { uniqueId: string };

@@ -20,6 +20,14 @@ export enum ActionPageDetails {
   Source = 'Source',
   Cost = 'Cost',
   LinkedIncorporation = 'LinkedIncorporation',
+  NewIncorporationName = 'NewIncorporationName',
+  AltName = 'AltName',
+  Purpose = 'Purpose',
+  RemovedProtector = 'RemovedProtector',
+  AddedProtector = 'AddedProtector',
+  ChangedProtector = 'ChangeProtector',
+  ChangedMainContact = 'ChangeMainContact',
+  Signing = 'Signing',
 }
 
 type EventRolesMap = Partial<
@@ -74,7 +82,7 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
  * Which icons correspond to which action types in the details widget
  */
 export const ACTION_TYPES_ICONS_MAP: {
-  [key in ColonyActions | ColonyMotions]: string;
+  [key in ColonyActions | ColonyMotions]: string | null;
 } = {
   [ColonyActions.WrongColony]: 'forbidden-signal',
   [ColonyActions.Payment]: 'emoji-dollar-stack',
@@ -101,6 +109,7 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyMotions.EmitDomainReputationRewardMotion]: 'emoji-shooting-star',
   [ColonyMotions.UnlockTokenMotion]: 'emoji-padlock',
   [ColonyMotions.DAOIncorporationMotion]: 'flag',
+  [ColonyMotions.UpdateIncorporationMotion]: null,
   [ColonyActions.Generic]: 'circle-check-primary',
 };
 
@@ -286,6 +295,18 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
   [ColonyMotions.DAOIncorporationMotion]: [
     ActionPageDetails.Source,
     ActionPageDetails.Cost,
+    ActionPageDetails.LinkedIncorporation,
+  ],
+  [ColonyMotions.UpdateIncorporationMotion]: [
+    ActionPageDetails.Source,
+    ActionPageDetails.NewIncorporationName,
+    ActionPageDetails.AltName,
+    ActionPageDetails.Purpose,
+    ActionPageDetails.RemovedProtector,
+    ActionPageDetails.AddedProtector,
+    ActionPageDetails.ChangedProtector,
+    ActionPageDetails.ChangedMainContact,
+    ActionPageDetails.Signing,
     ActionPageDetails.LinkedIncorporation,
   ],
 };

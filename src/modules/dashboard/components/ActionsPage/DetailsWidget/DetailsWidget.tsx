@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import Decimal from 'decimal.js';
+import { isEmpty } from 'lodash';
 
 import Icon from '~core/Icon';
 import DetailsWidgetUser from '~core/DetailsWidgetUser';
@@ -12,6 +13,7 @@ import { ColonyActions, ColonyMotions } from '~types/index';
 import { splitTransactionHash } from '~utils/strings';
 import { getDetailsForAction } from '~utils/colonyActions';
 import LinkedIncorporation from '~dashboard/Incorporation/LinkedIncorporation';
+import UserInfo from '~dashboard/Incorporation/UserInfo';
 
 import { EventValues } from '../../ActionsPageFeed/ActionsPageFeed';
 import { ACTION_TYPES_ICONS_MAP } from '../../ActionsPage/staticMaps';
@@ -83,6 +85,38 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.DetailsWidget.cost',
     defaultMessage: 'Cost',
   },
+  newIncorporationName: {
+    id: 'dashboard.ActionsPage.DetailsWidget.newIncorporationName',
+    defaultMessage: 'Name',
+  },
+  altName: {
+    id: 'dashboard.ActionsPage.DetailsWidget.altName',
+    defaultMessage: 'Alternative name',
+  },
+  purpose: {
+    id: 'dashboard.ActionsPage.DetailsWidget.purpose',
+    defaultMessage: 'Purpose',
+  },
+  removedProtector: {
+    id: 'dashboard.ActionsPage.DetailsWidget.removedProtector',
+    defaultMessage: 'Removed protector',
+  },
+  addedProtector: {
+    id: 'dashboard.ActionsPage.DetailsWidget.addedProtector',
+    defaultMessage: 'Added protector',
+  },
+  changedProtector: {
+    id: 'dashboard.ActionsPage.DetailsWidget.changedProtector',
+    defaultMessage: 'Changed protector',
+  },
+  changedMainContact: {
+    id: 'dashboard.ActionsPage.DetailsWidget.changedMainContact',
+    defaultMessage: 'Changed main contact',
+  },
+  signing: {
+    id: 'dashboard.ActionsPage.DetailsWidget.signing',
+    defaultMessage: 'Signing',
+  },
 });
 
 interface Props {
@@ -122,6 +156,7 @@ const DetailsWidget = ({
   const Cost = () => values?.cost as ReactElement;
 
   const detailsForAction = getDetailsForAction(actionType);
+  const iconName = ACTION_TYPES_ICONS_MAP[actionType];
 
   return (
     <div>
@@ -130,16 +165,18 @@ const DetailsWidget = ({
           <FormattedMessage {...MSG.actionType} />
         </div>
         <div className={styles.value}>
-          <Icon
-            title={formatMessage(
-              { id: messageId },
-              {
-                actionType: values?.actionType,
-              },
-            )}
-            appearance={{ size: 'small' }}
-            name={ACTION_TYPES_ICONS_MAP[actionType]}
-          />
+          {iconName && (
+            <Icon
+              title={formatMessage(
+                { id: messageId },
+                {
+                  actionType: values?.actionType,
+                },
+              )}
+              appearance={{ size: 'small' }}
+              name={iconName}
+            />
+          )}
           <div className={styles.text}>
             <FormattedMessage
               id={messageId}
@@ -155,7 +192,8 @@ const DetailsWidget = ({
         </div>
       </div>
       {values?.motionDomain &&
-        actionType !== ColonyMotions.DAOIncorporationMotion && (
+        actionType !== ColonyMotions.DAOIncorporationMotion &&
+        actionType !== ColonyMotions.UpdateIncorporationMotion && (
           <div className={styles.item}>
             <div className={styles.label}>
               <FormattedMessage {...MSG.motionDomain} />
@@ -296,6 +334,86 @@ const DetailsWidget = ({
               <Cost /> <Symbol />
             </div>
           </div>
+        </div>
+      )}
+      {values?.newIncorporationName && (
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG.newIncorporationName} />
+          </div>
+          <div className={styles.value}>{values.newIncorporationName}</div>
+        </div>
+      )}
+      {!!values?.altName?.[0] && !!values.altName?.[1] && (
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG.altName} />
+          </div>
+          <div>
+            {values.altName?.map((item) => (
+              <div className={styles.value}>{item}</div>
+            ))}
+          </div>
+        </div>
+      )}
+      {values?.purpose && (
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG.purpose} />
+          </div>
+          <div className={styles.value}>{values.purpose}</div>
+        </div>
+      )}
+      {values?.removedProtector && !isEmpty(values?.removedProtector) && (
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG.removedProtector} />
+          </div>
+          <div>
+            {values.removedProtector?.map(
+              (item) => item?.user && <UserInfo user={item.user} />,
+            )}
+          </div>
+        </div>
+      )}
+      {values?.addedProtector && !isEmpty(values?.addedProtector) && (
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG.addedProtector} />
+          </div>
+          <div>
+            {values.addedProtector?.map(
+              (item) => item?.user && <UserInfo user={item.user} />,
+            )}
+          </div>
+        </div>
+      )}
+      {values?.changeProtector && !isEmpty(values?.changeProtector) && (
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG.changedProtector} />
+          </div>
+          <div>
+            {values.changeProtector?.map(
+              (item) => item?.user && <UserInfo user={item.user} />,
+            )}
+          </div>
+        </div>
+      )}
+      {values?.changeMainContact && values?.changeMainContact?.user && (
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG.changedProtector} />
+          </div>
+          <UserInfo user={values?.changeMainContact?.user} />
+        </div>
+      )}
+      {values?.signing && (
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG.signing} />
+          </div>
+          <div className={styles.value}>{values.signing}</div>
         </div>
       )}
       {!!shortenedHash && (
