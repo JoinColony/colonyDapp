@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import { useField } from 'formik';
 
 import { InputStatus } from '~core/Fields';
+
 import Toolbar from './Toolbar';
 
 import styles from './RichTextEditor.css';
@@ -39,12 +40,17 @@ const RichTextEditor = ({
       setContentValue(editorContent.getHTML());
 
     editor.on('update', handleUpdate);
-    editor.setEditable(!disabled);
 
     return () => {
       editor.off('update', handleUpdate);
     };
-  }, [disabled, editor, setContentValue]);
+  });
+
+  useEffect(() => {
+    if (editor.isEditable !== !disabled) {
+      editor.setEditable(!disabled);
+    }
+  }, [editor, disabled]);
 
   return (
     <div

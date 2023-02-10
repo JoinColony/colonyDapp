@@ -28,7 +28,7 @@ import { ColonyMotions, DecisionDetails } from '~types/index';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import LoadingTemplate from '~pages/LoadingTemplate';
 
-import DetailsWidget from '../ActionsPage/DetailsWidget';
+import DetailsWidget from '../ActionsPage/DetailsWidget/DetailsWidget';
 
 import styles from './DecisionPreview.css';
 
@@ -245,9 +245,7 @@ const DecisionPreview = () => {
               actionType={ColonyMotions.CreateDecisionMotion}
               recipient={userProfile}
               colony={colony}
-              values={{
-                ...actionAndEventValues,
-              }}
+              values={actionAndEventValues}
             />
           </div>
         </div>
