@@ -8,6 +8,7 @@ import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
 import Tag from '~core/Tag';
 import Link from '~core/Link';
+import { Tooltip } from '~core/Popover';
 
 import { SignOption, VerificationStatus } from '../constants';
 
@@ -54,15 +55,20 @@ export const MSG = defineMessages({
     id: `dashboard.Incorporation.IncorporationForm.LockedProtectors.multiple`,
     defaultMessage: 'All need to sign',
   },
+  motionTooltip: {
+    id: `dashboard.Incorporation.IncorporationForm.LockedProtectors.motionTooltip`,
+    defaultMessage: `There is an active Motion to change this application.`,
+  },
 });
 
 const displayName = `dashboard.Incorporation.IncorporationForm.LockedProtectors`;
 
 export interface Props {
   formValues: ValuesType;
+  pendingMotion?: boolean;
 }
 
-const LockedProtectors = ({ formValues }: Props) => {
+const LockedProtectors = ({ formValues, pendingMotion }: Props) => {
   const signLabel = useMemo(() => {
     return formValues.signOption === SignOption.Individual
       ? MSG.individual
@@ -73,17 +79,38 @@ const LockedProtectors = ({ formValues }: Props) => {
     <>
       <FormSection>
         <div className={styles.wrapper}>
-          <div className={styles.protectorsLabelWrapper}>
-            <div className={styles.label}>
-              <FormattedMessage {...MSG.protectors} />
+          <div className={styles.labelDotWrapper}>
+            <div className={styles.protectorsLabelWrapper}>
+              <div className={styles.label}>
+                <FormattedMessage {...MSG.protectors} />
+              </div>
+              <QuestionMarkTooltip
+                tooltipText={MSG.protectorsTooltip}
+                tooltipTextValues={{
+                  a: (chunks) => <Link to="/">{chunks}</Link>, // link is a mock, add redirection to the correct page
+                }}
+                interactive
+              />
             </div>
-            <QuestionMarkTooltip
-              tooltipText={MSG.protectorsTooltip}
-              tooltipTextValues={{
-                a: (chunks) => <Link to="/">{chunks}</Link>, // link is a mock, add redirection to the correct page
-              }}
-              interactive
-            />
+            {pendingMotion && (
+              <Tooltip
+                placement="top-start"
+                trigger="hover"
+                content={<FormattedMessage {...MSG.motionTooltip} />}
+                popperOptions={{
+                  modifiers: [
+                    {
+                      name: 'offset',
+                      options: {
+                        offset: [-2, 6],
+                      },
+                    },
+                  ],
+                }}
+              >
+                <div className={styles.dot} />
+              </Tooltip>
+            )}
           </div>
         </div>
       </FormSection>

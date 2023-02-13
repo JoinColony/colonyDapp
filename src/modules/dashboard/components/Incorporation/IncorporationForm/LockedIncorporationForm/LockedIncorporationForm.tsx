@@ -47,9 +47,14 @@ const displayName = `dashboard.Incorporation.IncorporationForm.LockedIncorporati
 export interface Props {
   formValues: ValuesType;
   activeStageId: Stages;
+  pendingMotion?: boolean;
 }
 
-const LockedIncorporationForm = ({ formValues, activeStageId }: Props) => {
+const LockedIncorporationForm = ({
+  formValues,
+  activeStageId,
+  pendingMotion,
+}: Props) => {
   const { alternativeName1: altName1, alternativeName2: altName2 } = formValues;
   const alternativeNames = useMemo(
     () => [
@@ -136,7 +141,7 @@ const LockedIncorporationForm = ({ formValues, activeStageId }: Props) => {
           <div className={styles.description}>{formValues.purpose}</div>
         </div>
       </FormSection>
-      <LockedProtectors formValues={formValues} />
+      <LockedProtectors formValues={formValues} pendingMotion={pendingMotion} />
     </div>
   );
 };

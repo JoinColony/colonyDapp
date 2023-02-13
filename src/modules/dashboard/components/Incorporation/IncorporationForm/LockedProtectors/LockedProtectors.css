@@ -104,3 +104,21 @@
   animation-name: fadeIn;
   animation-duration: 500ms;
 }
+
+.dot {
+  height: 9px;
+  width: 9px;
+  border-radius: 50%;
+  background-color: var(--golden);
+}
+
+.labelDotWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* targets toolitp */
+.labelDotWrapper > div:last-of-type {
+  max-width: 220px;
+}

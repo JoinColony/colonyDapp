@@ -10,3 +10,5 @@ export const signOptionWrapper: string;
 export const signing: string;
 export const mianContactWrapper: string;
 export const fadeIn: string;
+export const dot: string;
+export const labelDotWrapper: string;

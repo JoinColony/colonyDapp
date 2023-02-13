@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 import { Formik } from 'formik';
+import { isEmpty } from 'lodash';
 
 import { useColonyFromNameQuery } from '~data/generated';
 import { getMainClasses } from '~utils/css';
@@ -152,6 +153,12 @@ const IncorporationPage = () => {
     );
   }, [colonyData, openCancelIncorporationDialog]);
 
+  const pendingMotion = useMemo(
+    () =>
+      motions?.find((motionItem) => motionItem.status === MotionStatus.Pending),
+    [motions],
+  );
+
   return isFormEditable ? (
     <Formik
       initialValues={initialValues}
@@ -199,6 +206,7 @@ const IncorporationPage = () => {
             <LockedIncorporationForm
               formValues={formValues}
               activeStageId={activeStageId}
+              pendingMotion={!isEmpty(pendingMotion)}
             />
           )
         )}
