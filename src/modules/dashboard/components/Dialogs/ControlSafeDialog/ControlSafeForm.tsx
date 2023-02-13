@@ -105,7 +105,7 @@ const MSG = defineMessages({
   },
   upgradeWarning: {
     id: 'dashboard.ControlSafeDialog.ControlSafeForm.upgradeWarning',
-    defaultMessage: `Controlling a Safe is not supported on your current Colony version. Please upgrade Colony to at least version 11.{break}You can do this via <span>New Action > Advanced > Upgrade</span>`,
+    defaultMessage: `Controlling a Safe is not supported on your current Colony version. Please upgrade Colony to at least version 12.{break}You can do this via <span>New Action > Advanced > Upgrade</span>`,
   },
 });
 
@@ -368,7 +368,7 @@ const ControlSafeForm = ({
   const savedNFTState = useState({});
   const savedTokenState = useState({});
   const isSupportedColonyVersion =
-    parseInt(version, 10) >= ColonyVersion.GreenLightweightSpaceshipTwo;
+    parseInt(version, 10) >= ColonyVersion.GreenLightweightSpaceshipThree;
   const disabledInputs =
     !userHasPermission || isSubmitting || !isSupportedColonyVersion;
 
