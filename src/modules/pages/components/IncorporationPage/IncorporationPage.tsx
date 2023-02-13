@@ -169,6 +169,12 @@ const IncorporationPage = () => {
     );
   }, [colonyData, openCancelIncorporationDialog]);
 
+  const pendingMotion = useMemo(
+    () =>
+      motions?.find((motionItem) => motionItem.status === MotionStatus.Pending),
+    [motions],
+  );
+
   return isFormEditable ? (
     <Formik
       initialValues={initialValues} // mock values are used here to fill in the form
@@ -230,6 +236,7 @@ const IncorporationPage = () => {
             <LockedIncorporationForm
               formValues={formValues}
               activeStageId={activeStageId}
+              pendingMotion={!isEmpty(pendingMotion)}
             />
           )
         )}
