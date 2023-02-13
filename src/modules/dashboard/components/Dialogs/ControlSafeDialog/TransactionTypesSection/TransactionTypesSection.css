@@ -1,0 +1,97 @@
+.singleUserPickerContainer div + i {
+  right: 3px;
+  left: inherit;
+}
+
+.singleUserPickerContainer input,
+.singleUserPickerContainer button {
+  margin-left: 0px;
+  max-width: none;
+}
+
+.singleUserPickerContainer > div {
+  padding-left: 0;
+}
+
+.singleUserPickerContainer label,
+.contractFunctionSelectorContainer label {
+  color: var(--dark);
+}
+
+.singleUserPickerContainer div[class*="inputContainer"] {
+  column-gap: 10px;
+}
+
+.labelDescription {
+  color: var(--temp-grey-blue-7);
+}
+
+/*
+  I can't think of any other way of overriding the theme styles
+  right now without adding another theme or prop just to change the color
+*/
+.inputParamContainer label span,
+.inputParamContainer input::placeholder {
+  color: var(--temp-grey-blue-7) !important;
+}
+
+.inputParamContainer p {
+  margin-bottom: 10px;
+}
+
+.spinner {
+  display: flex;
+  justify-content: center;
+}
+
+.error {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  color: var(--pink);
+}
+
+/* Ensures noUsefulMethods error sits in between
+ * text area and  AddNewItem button */
+.noUsefulMethods > section {
+  padding: 1px 20px 20px;
+}
+
+.warningContainer {
+  display: flex;
+  align-items: center;
+  padding: 14px;
+  border-radius: 5px;
+  background-color: color-mod(var(--golden) alpha(15%));
+  font-size: var(--size-normal);
+  line-height: 18px;
+  color: var(--dark);
+  column-gap: 10px;
+}
+
+.warningSafeChainName {
+  font-weight: var(--weight-bold);
+}
+
+.warningIcon {
+  height: 18px;
+  min-width: 18px;
+  fill: var(--golden);
+}
+
+.abiContainer {
+  position: relative;
+}
+
+.attributionMessage {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  font-size: var(--size-tiny);
+  line-height: 18px;
+  color: var(--dark);
+}
+
+.fetchFailedErrorContainer {
+  margin-top: 19px;
+}

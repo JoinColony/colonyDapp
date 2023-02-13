@@ -3,9 +3,11 @@ import { bigNumberify } from 'ethers/utils';
 import { FormattedMessage, defineMessages, useIntl } from 'react-intl';
 import classnames from 'classnames';
 import Decimal from 'decimal.js';
-
+import { useLocation } from 'react-router';
 import { ROOT_DOMAIN_ID, ColonyRoles } from '@colony/colony-js';
+import isEmpty from 'lodash/isEmpty';
 
+import { ETHEREUM_NETWORK } from '~constants';
 import Numeral from '~core/Numeral';
 import Heading from '~core/Heading';
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
@@ -14,6 +16,8 @@ import MemberReputation from '~core/MemberReputation';
 import ProgressBar from '~core/ProgressBar';
 import { ActionButton } from '~core/Button';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
+import MaskedAddress from '~core/MaskedAddress';
+
 import { getFormattedTokenValue } from '~utils/tokens';
 import {
   getUpdatedDecodedMotionRoles,
@@ -24,7 +28,14 @@ import {
 } from '~utils/colonyMotions';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
 import { mapPayload } from '~utils/actions';
-import { ColonyMotions, ColonyAndExtensionsEvents } from '~types/index';
+import { useTitle } from '~utils/hooks/useTitle';
+import { TRANSACTION_STATUS } from '~utils/safes/getTransactionStatuses';
+import { SafeTxData } from '~modules/dashboard/sagas/utils/safeHelpers';
+import {
+  ColonyMotions,
+  ColonyAndExtensionsEvents,
+  ColonyExtendedMotions,
+} from '~types/index';
 import { ActionTypes } from '~redux/index';
 import {
   useLoggedInUser,
@@ -38,9 +49,13 @@ import {
   OneDomain,
   useColonyHistoricRolesQuery,
   useNetworkContracts,
+  SafeTransaction,
+  useMotionFinalizedQuery,
+  useEventsForMotionQuery,
+  useMotionSafeTransactionStatusesQuery,
 } from '~data/index';
 
-import DetailsWidget from '../DetailsWidget';
+import DetailsWidget from '../DetailsWidget/DetailsWidget';
 import StakingWidgetFlow from '../StakingWidget';
 import VoteWidget from '../VoteWidget';
 import RevealWidget from '../RevealWidget';
@@ -51,10 +66,11 @@ import FinalizeMotionAndClaimWidget, {
 import VoteResults from '../FinalizeMotionAndClaimWidget/VoteResults';
 import CountDownTimer from '../CountDownTimer';
 import ActionPageMotionContent from '../ActionPageMotionContent';
+import { unknownContractMSG } from '../DetailsWidget/DetailsWidgetSafeTransaction';
+import SafeTransactionBanner from '../SafeTransactionBanner';
 
 import styles from './DefaultAction.css';
 import motionSpecificStyles from './DefaultMotion.css';
-import { useTitle } from '~utils/hooks/useTitle';
 
 const MSG = defineMessages({
   or: {
@@ -107,6 +123,10 @@ const DefaultMotion = ({
     tokenAddress,
     reputationChange,
     createdAt,
+    transactionsTitle,
+    safeTransactions,
+    safeData,
+    annotationMessage,
   },
   colonyAction,
   token,
@@ -133,6 +153,8 @@ const DefaultMotion = ({
       return acc;
     }, {} as any);
   }, []);
+  const { formatMessage } = useIntl();
+  const { state: locationState } = useLocation<SafeTxData>();
 
   const motionCreatedEvent = colonyAction.events.find(
     ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
@@ -165,11 +187,27 @@ const DefaultMotion = ({
     fetchPolicy: 'network-only',
   });
 
+  const {
+    data: finalized,
+    loading: loadingFinalized,
+  } = useMotionFinalizedQuery({
+    variables: {
+      colonyAddress,
+      motionId,
+    },
+    fetchPolicy: 'network-only',
+  });
+
   const { data: historicColonyRoles } = useColonyHistoricRolesQuery({
     variables: {
       colonyAddress: colony.colonyAddress,
       blockNumber,
     },
+  });
+
+  const { data: motionEventsData } = useEventsForMotionQuery({
+    variables: { colonyAddress: colony.colonyAddress, motionId },
+    fetchPolicy: 'network-only',
   });
 
   const escalateTransform = useCallback(
@@ -194,6 +232,10 @@ const DefaultMotion = ({
     true,
   );
 
+  const fallbackTransactionTitleId =
+    actionType === ColonyExtendedMotions.SafeTransactionInitiatedMotion &&
+    !(transactionsTitle || locationState?.title) &&
+    `action.${actionType}.fallback`;
   const requiredStake = bigNumberify(
     motionStakeData?.stakeAmountsForMotion?.requiredStake || 0,
   ).toString();
@@ -255,6 +297,37 @@ const DefaultMotion = ({
       : amount,
     decimals,
   );
+
+  const firstSafeTransaction: SafeTransaction | undefined =
+    safeTransactions[0] || locationState?.transactions[0];
+
+  const selectedSafe = colony.safes.find((safe) => {
+    const safeContractAddress =
+      safeData?.contractAddress || locationState?.safeData.contractAddress;
+    const safeChainId = safeData?.chainId || locationState?.safeData.chainId;
+    return (
+      safe.contractAddress === safeContractAddress &&
+      safe.chainId === safeChainId
+    );
+  });
+
+  const motionFinalizedEvent = motionEventsData?.eventsForMotion.find(
+    (event) => event.name === ColonyAndExtensionsEvents.MotionFinalized,
+  );
+
+  const {
+    data: transactionStatusesData,
+  } = useMotionSafeTransactionStatusesQuery({
+    variables: {
+      finalizeMotionEventTxHash: motionFinalizedEvent?.transactionHash || '',
+      safeChainId: selectedSafe?.chainId || '',
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  const safeTransactionStatuses =
+    transactionStatusesData?.motionSafeTransactionStatuses || [];
+
   const actionAndEventValues = {
     actionType,
     newVersion,
@@ -311,7 +384,10 @@ const DefaultMotion = ({
       <div className={motionSpecificStyles.voteResultsWrapper}>
         <Heading
           text={voteResultsMSG.title}
-          textValues={{ actionType }}
+          textValues={{
+            actionType,
+            transactionTitle: transactionsTitle || locationState?.title,
+          }}
           appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
         />
         <VoteResults colony={colony} motionId={motionId} />
@@ -322,6 +398,47 @@ const DefaultMotion = ({
     reputationChange: formattedReputationChange,
     reputationChangeNumeral: <Numeral value={formattedReputationChange} />,
     isSmiteAction: new Decimal(reputationChange).isNegative(),
+    safeName: <span className={styles.user}>@{selectedSafe?.safeName}</span>,
+    safeTransactionSafe: selectedSafe,
+    safeTransactionTitle: transactionsTitle || locationState?.title,
+    safeTransactions: !isEmpty(safeTransactions)
+      ? safeTransactions
+      : locationState?.transactions,
+    /*
+     * The following references to firstSafeTransaction are only used in the event that there's only one safe transaction.
+     * Multiple transactions has its own message.
+     */
+    safeTransactionAmount: (
+      <>
+        <Numeral value={firstSafeTransaction?.amount || ''} />
+        <span> {firstSafeTransaction?.tokenData?.symbol}</span>
+      </>
+    ),
+    safeTransactionRecipient: (
+      <span className={styles.user}>
+        @{firstSafeTransaction?.recipient?.profile.username}
+      </span>
+    ),
+    safeTransactionNftToken: (
+      <span className={styles.user}>
+        {firstSafeTransaction?.nftData?.name ||
+          firstSafeTransaction?.nftData?.tokenName}
+      </span>
+    ),
+    safeTransactionFunctionName: firstSafeTransaction?.contractFunction,
+    safeTransactionContractName:
+      firstSafeTransaction?.contract?.profile.displayName ||
+      formatMessage(unknownContractMSG),
+    safeTransactionAddress: (
+      <MaskedAddress
+        address={firstSafeTransaction?.recipient?.profile.walletAddress || ''}
+      />
+    ),
+    // id will be filterValue if an address was manually entered into the picker
+    isSafeTransactionRecipientUser: !(
+      firstSafeTransaction?.recipient?.id === 'filterValue'
+    ),
+    safeTransactionStatuses,
   };
 
   const actionAndEventValuesForDocumentTitle = {
@@ -342,6 +459,7 @@ const DefaultMotion = ({
     fromDomain: actionAndEventValues.fromDomain?.name,
     toDomain: actionAndEventValues.toDomain?.name,
     roles: roleTitle,
+    safeTransactionTitle: transactionsTitle || locationState?.title,
   };
 
   const motionState = motionStatusData?.motionStatus;
@@ -355,20 +473,37 @@ const DefaultMotion = ({
     motionState === MotionState.Failed ||
     motionState === MotionState.FailedNotFinalizable;
 
-  const { formatMessage } = useIntl();
   useTitle(
     `${formatMessage(
-      { id: roleMessageDescriptorId || 'action.title' },
+      {
+        id:
+          roleMessageDescriptorId ||
+          fallbackTransactionTitleId ||
+          'action.title',
+      },
       actionAndEventValuesForDocumentTitle,
     )} | Motion | Colony - ${colony.displayName ?? colony.colonyName ?? ``}`,
   );
 
   const isDecision = actionType === ColonyMotions.CreateDecisionMotion;
   const hasBanner = !shouldDisplayMotion(currentStake, requiredStake);
-
+  const hasPendingSafeTransactions = !!safeTransactionStatuses.find(
+    (status) => status === TRANSACTION_STATUS.PENDING,
+  );
+  const canProcessPendingSafeTransactions =
+    hasPendingSafeTransactions &&
+    !loadingFinalized &&
+    motionState === MotionState.Passed &&
+    finalized?.motionFinalized;
   return (
     <div className={styles.main}>
       <StakeRequiredBanner stakeRequired={hasBanner} isDecision={isDecision} />
+      {canProcessPendingSafeTransactions && motionFinalizedEvent && (
+        <SafeTransactionBanner
+          chainId={selectedSafe?.chainId || ETHEREUM_NETWORK.chainId.toString()}
+          transactionHash={motionFinalizedEvent.transactionHash}
+        />
+      )}
       <div
         className={`${styles.upperContainer} ${
           hasBanner && styles.bannerPadding
@@ -484,6 +619,10 @@ const DefaultMotion = ({
             motionId={motionId}
             createdAt={createdAt}
             roleMessageDescriptorId={roleMessageDescriptorId}
+            annotationMessage={
+              annotationMessage || locationState?.annotationMessage
+            }
+            eventsForMotion={motionEventsData?.eventsForMotion}
           />
         </div>
         <div className={styles.details}>
@@ -503,6 +642,7 @@ const DefaultMotion = ({
               motionDomain={motionDomain}
               scrollToRef={bottomElementRef}
               motionState={motionState}
+              transactionTitle={transactionsTitle || locationState?.title}
             />
           )}
           {motionState === MotionState.Reveal && (
@@ -524,6 +664,10 @@ const DefaultMotion = ({
               motionAmount={amount}
               tokenAddress={tokenAddress}
               isDecision={isDecision}
+              transactionTitle={transactionsTitle || locationState?.title}
+              motionFinalized={finalized?.motionFinalized}
+              loadingMotionFinalized={loadingFinalized}
+              safeChainId={safeData?.chainId || ''}
             />
           )}
           <DetailsWidget

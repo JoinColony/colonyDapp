@@ -39,6 +39,7 @@
     "codeBlock",
     "colony-logo",
     "comment",
+    "copy",
     "cup",
     "drag-handle",
     "droplet",
@@ -75,19 +76,24 @@
     "emoji-yellow-superman",
     "empty-task",
     "envelope",
+    "ether",
     "file",
     "filled-circle-person",
     "forbidden-signal",
     "four-square",
+    "safe-logo",
     "graph-line",
     "heading",
     "trash",
+    "joystick",
     "line-arrow-circle",
     "lock",
+    "nft-icon",
     "no-task",
     "pencil",
     "person",
     "phrase",
+    "plus-heavy",
     "question-mark",
     "question-mark-inverted",
     "return-arrow",
@@ -100,17 +106,15 @@
     "strike",
     "tag",
     "three-dots-row",
+    "trash",
+    "trash-can",
     "triangle-warning",
     "underline",
     "unlock",
     "user-plus",
     "wallet"
   ],
-  "multiColorIcons": [
-    "circle-check-primary",
-    "metamask",
-    "shield-pink"
-  ],
+  "multiColorIcons": ["circle-check-primary", "metamask", "shield-pink"],
   "badges": [
     "Alessandra Aphid",
     "Terry Termite",
@@ -120,5 +124,9 @@
     "Berthold Beetle",
     "Sanjeet Shrimp",
     "Norman Naked Mole Rat"
+  ],
+  "tokens": [
+    "ether", 
+    "ether-purple"
   ]
 }

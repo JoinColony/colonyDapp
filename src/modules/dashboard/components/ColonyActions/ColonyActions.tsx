@@ -44,7 +44,6 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyActions.transactionsLogLink',
     defaultMessage: 'Transactions log',
   },
-
   labelFilter: {
     id: 'dashboard.ColonyActions.labelFilter',
     defaultMessage: 'Filter',
@@ -185,7 +184,7 @@ const ColonyActions = ({
     },
   ]);
 
-  /* Needs to be tested when all action types are wirde up & reflected in the list */
+  /* Needs to be tested when all action types are wired up & reflected in the list */
   const filteredActions = useMemo(() => {
     const filterActions = !ethDomainId
       ? actions

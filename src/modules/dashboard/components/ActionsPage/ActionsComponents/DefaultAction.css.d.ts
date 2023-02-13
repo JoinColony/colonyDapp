@@ -15,4 +15,5 @@ export const addressInTitle: string;
 export const titleDecoration: string;
 export const tagWrapper: string;
 export const commentBox: string;
+export const user: string;
 export const setMarginWidth: string;

@@ -10,6 +10,7 @@ import React, {
 import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 import { useField } from 'formik';
 import { nanoid } from 'nanoid';
+import isEqual from 'lodash/isEqual';
 
 import { getMainClasses } from '~utils/css';
 import { DOWN, ENTER, ESC, SimpleMessageValues, SPACE, UP } from '~types/index';
@@ -86,6 +87,9 @@ export interface Props {
 
   /** Provides value for data-test prop in select items used on cypress testing */
   itemDataTest?: string;
+
+  /** In the event form-level onChange validation is disabled, this prop can be passed to activate at the component level */
+  validateOnChange?: boolean;
 }
 
 const displayName = 'Select';
@@ -109,9 +113,10 @@ const Select = ({
   statusValues,
   dataTest,
   itemDataTest,
+  validateOnChange,
 }: Props) => {
   const [id] = useState<string>(idProp || nanoid());
-  const [, { error, value }, { setValue }] = useField(name);
+  const [, { error, value, touched }, { setValue }] = useField(name);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const { formatMessage } = useIntl();
 
@@ -119,7 +124,7 @@ const Select = ({
   const [selectedOption, setSelectedOption] = useState<number>(-1);
 
   const checkedOption = useMemo(
-    () => options.findIndex((option) => option.value === value),
+    () => options.findIndex((option) => isEqual(option.value, value)),
     [value, options],
   );
 
@@ -165,7 +170,7 @@ const Select = ({
       return;
     }
     const { value: optionValue } = options[selectedOption];
-    setValue(optionValue);
+    setValue(optionValue, validateOnChange);
     if (onChangeCallback) {
       onChangeCallback(optionValue);
     }
@@ -255,11 +260,7 @@ const Select = ({
   }, [handleOutsideClick, isOpen]);
 
   const activeOptionDisplay = useMemo<ReactNode>(() => {
-    /*
-     * @NOTE If the active option is removed by something (ie: filtered out),
-     * fall back to the last entry in the options array
-     */
-    const activeOption = options[checkedOption] || options[options.length - 1];
+    const activeOption = options[checkedOption];
     let activeOptionLabel;
     if (activeOption) {
       if (typeof activeOption.label === 'object') {
@@ -273,7 +274,16 @@ const Select = ({
         activeOptionLabel = activeOption.label;
       }
     }
-    const activeOptionLabelText = activeOptionLabel || placeholder;
+
+    let placeholderText;
+    if (placeholder) {
+      if (typeof placeholder === 'string') {
+        placeholderText = placeholder;
+      } else {
+        placeholderText = formatMessage(placeholder);
+      }
+    }
+    const activeOptionLabelText = activeOptionLabel || placeholderText;
     if (renderActiveOption) {
       return renderActiveOption(activeOption, activeOptionLabelText);
     }
@@ -343,6 +353,7 @@ const Select = ({
           status={status}
           statusValues={statusValues}
           error={error}
+          touched={touched}
         />
       )}
     </div>

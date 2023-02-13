@@ -5,13 +5,15 @@ import { Color } from '~core/ColorTag';
 export type TokenInfo = {
   name: string;
   symbol: string;
-  decimals?: number;
+  decimals: number;
 };
 
 export type NetworkInfo = {
   name: string;
   chainId: number;
   shortName: string;
+  apiUri: string;
+  nativeToken: TokenInfo;
   description?: string;
   displayENSDomain?: string;
   /**
@@ -31,6 +33,10 @@ export type NetworkInfo = {
    * Used when adding the network to Metamask
    */
   rpcUrl?: string;
+  /*
+   * Used when interacting with Safe Transaction Service
+   */
+  safeTxService?: string;
 };
 
 export const DEFAULT_NETWORK = process.env.NETWORK || Network.Goerli;
@@ -67,6 +73,30 @@ export const GOERLI_TOKEN: TokenInfo = {
   decimals: 18,
 };
 
+const AVALANCHE_TOKEN: TokenInfo = {
+  name: 'Avalanche',
+  symbol: 'AVAX',
+  decimals: 18,
+};
+
+const BINANCE_TOKEN: TokenInfo = {
+  name: 'Binance',
+  symbol: 'BNB',
+  decimals: 18,
+};
+
+const POLYGON_TOKEN: TokenInfo = {
+  name: 'Polygon',
+  symbol: 'MATIC',
+  decimals: 18,
+};
+
+const OPTIMISM_TOKEN: TokenInfo = {
+  name: 'Optimism',
+  symbol: 'OP',
+  decimals: 18,
+};
+
 export const GNOSIS_NETWORK: NetworkInfo = {
   /*
    * Needs to be this exact name, otherwise Metamask marks it as "not valid" when adding it
@@ -80,6 +110,9 @@ export const GNOSIS_NETWORK: NetworkInfo = {
   tokenExplorerLink: 'https://blockscout.com/poa/xdai/tokens',
   contractAddressLink: 'https://blockscout.com/poa/xdai/address',
   rpcUrl: 'https://rpc.gnosischain.com',
+  safeTxService: 'https://safe-transaction-gnosis-chain.safe.global/api',
+  apiUri: 'https://blockscout.com/xdai/mainnet/api',
+  nativeToken: XDAI_TOKEN,
 };
 
 export const ETHEREUM_NETWORK: NetworkInfo = {
@@ -91,11 +124,14 @@ export const ETHEREUM_NETWORK: NetworkInfo = {
   displayENSDomain: 'joincolony.eth',
   tokenExplorerLink: 'https://etherscan.io/tokens',
   contractAddressLink: 'https://etherscan.io/address',
-  rpcUrl: 'https://mainnet.infura.io/v3',
+  rpcUrl: 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+  safeTxService: 'https://safe-transaction-mainnet.safe.global/api',
+  apiUri: 'https://api.etherscan.io/api',
+  nativeToken: ETHER_TOKEN,
 };
 
 export const GOERLI_NETWORK: NetworkInfo = {
-  name: 'Goerli Testnet',
+  name: 'Goerli',
   chainId: 5,
   shortName: 'GTH',
   blockExplorerName: 'Etherscan',
@@ -103,7 +139,76 @@ export const GOERLI_NETWORK: NetworkInfo = {
   displayENSDomain: 'joincolony.eth',
   tokenExplorerLink: 'https://goerli.etherscan.io/tokens',
   contractAddressLink: 'https://goerli.etherscan.io/address',
-  rpcUrl: 'https://goerli.infura.io/v3',
+  rpcUrl: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+  safeTxService: 'https://safe-transaction-goerli.safe.global/api',
+  apiUri: 'https://api-goerli.etherscan.io/api',
+  nativeToken: GOERLI_TOKEN,
+};
+
+const ARBITRUM_NETWORK: NetworkInfo = {
+  name: 'Arbitrum',
+  chainId: 42161,
+  shortName: 'ETH',
+  contractAddressLink: '',
+  safeTxService: 'https://safe-transaction-arbitrum.safe.global/api',
+  rpcUrl: 'https://rpc.ankr.com/arbitrum',
+  apiUri: 'https://api.arbiscan.io/api',
+  nativeToken: ETHER_TOKEN,
+};
+
+const AURORA_NETWORK: NetworkInfo = {
+  name: 'Aurora',
+  chainId: 1313161554,
+  shortName: 'ETH',
+  contractAddressLink: '',
+  safeTxService: 'https://safe-transaction-aurora.safe.global/api',
+  rpcUrl: 'https://testnet.aurora.dev/',
+  apiUri: 'https://api.aurorascan.dev/api',
+  nativeToken: ETHER_TOKEN,
+};
+
+const AVALANCHE_NETWORK: NetworkInfo = {
+  name: 'Avalanche',
+  chainId: 43114,
+  shortName: 'AVAX',
+  contractAddressLink: '',
+  safeTxService: 'https://safe-transaction-avalanche.safe.global/api',
+  rpcUrl: 'https://api.avax.network/ext/bc/C/rpc',
+  apiUri: 'https://api.snowtrace.io/api',
+  nativeToken: AVALANCHE_TOKEN,
+};
+
+export const BINANCE_NETWORK: NetworkInfo = {
+  name: 'Binance Smart Chain',
+  chainId: 56,
+  shortName: 'BNB',
+  contractAddressLink: '',
+  safeTxService: 'https://safe-transaction-bsc.safe.global/api',
+  rpcUrl: 'https://bsc-dataseed.binance.org/',
+  apiUri: 'https://api.bscscan.com/api',
+  nativeToken: BINANCE_TOKEN,
+};
+
+const OPTIMISM_NETWORK: NetworkInfo = {
+  name: 'Optimism',
+  chainId: 10,
+  shortName: 'ETH',
+  contractAddressLink: '',
+  safeTxService: 'https://safe-transaction-optimism.safe.global/api',
+  rpcUrl: 'https://mainnet.optimism.io',
+  apiUri: 'https://api-optimistic.etherscan.io/api',
+  nativeToken: OPTIMISM_TOKEN,
+};
+
+export const POLYGON_NETWORK: NetworkInfo = {
+  name: 'Polygon',
+  chainId: 137,
+  shortName: 'MATIC',
+  contractAddressLink: '',
+  safeTxService: 'https://safe-transaction-polygon.safe.global/api',
+  rpcUrl: 'https://polygon-rpc.com',
+  apiUri: 'https://api.polygonscan.com/api',
+  nativeToken: POLYGON_TOKEN,
 };
 
 /*
@@ -120,6 +225,8 @@ export const GANACHE_NETWORK: NetworkInfo = {
   tokenExplorerLink: 'http://localhost',
   contractAddressLink: 'http://localhost',
   rpcUrl: 'http://localhost:8545',
+  apiUri: '',
+  nativeToken: ETHER_TOKEN,
 };
 
 export const NETWORK_DATA: { [key: string]: NetworkInfo } = {
@@ -145,9 +252,76 @@ export const SUPPORTED_NETWORKS = {
   [GANACHE_NETWORK.chainId]: GANACHE_NETWORK,
 };
 
+export const SAFE_NETWORKS: NetworkInfo[] = [
+  GNOSIS_NETWORK,
+  ETHEREUM_NETWORK,
+  ARBITRUM_NETWORK,
+  AURORA_NETWORK,
+  AVALANCHE_NETWORK,
+  BINANCE_NETWORK,
+  OPTIMISM_NETWORK,
+  POLYGON_NETWORK,
+  GOERLI_NETWORK,
+];
+
+export const SAFE_NAMES_MAP = SAFE_NETWORKS.reduce(
+  (acc, safe) => ({
+    ...acc,
+    [safe.chainId]: safe.name,
+  }),
+  {},
+);
+
 export const DEFAULT_NETWORK_TOKEN = TOKEN_DATA[DEFAULT_NETWORK];
 
 export const DEFAULT_NETWORK_INFO = NETWORK_DATA[DEFAULT_NETWORK];
+
+/*
+ * "Home" here always refers to Gnosis Chain.
+ * "Foreign" is the chain to which we are bridging.
+ */
+
+interface AmbBridge {
+  homeAMB: string;
+  foreignAMB: string;
+  monitor?: string;
+  referenceUrl?: string;
+  homeGasLimit?: number;
+  foreignGasLimit?: number;
+  homeFinalizationRate?: number;
+  foreignFinalizationRate: number;
+}
+
+export const GNOSIS_AMB_BRIDGES: { [x: number]: AmbBridge } = {
+  [ETHEREUM_NETWORK.chainId]: {
+    homeAMB: '0x75Df5AF045d91108662D8080fD1FEFAd6aA0bb59',
+    foreignAMB: '0x4C36d2919e407f0Cc2Ee3c993ccF8ac26d9CE64e',
+    monitor: 'https://alm-gnosis-eth.colony.io/',
+    referenceUrl:
+      'https://docs.tokenbridge.net/eth-xdai-amb-bridge/about-the-eth-xdai-amb',
+    homeGasLimit: 2000000,
+    foreignGasLimit: 2000000,
+    homeFinalizationRate: 20,
+    foreignFinalizationRate: 20,
+  },
+  [BINANCE_NETWORK.chainId]: {
+    homeAMB: '0x162E898bD0aacB578C8D5F8d6ca588c13d2A383F',
+    foreignAMB: '0x05185872898b6f94AA600177EF41B9334B1FA48B',
+    monitor: 'https://alm-gnosis-bsc.colony.io/',
+    referenceUrl:
+      'https://docs.tokenbridge.net/bsc-xdai-amb/about-the-bsc-xdai-amb',
+    homeGasLimit: 2000000,
+    foreignGasLimit: 2000000,
+    homeFinalizationRate: 20,
+    foreignFinalizationRate: 12,
+  },
+};
+
+export const SUPPORTED_SAFE_NETWORKS = SAFE_NETWORKS.filter((network) =>
+  Object.keys(GNOSIS_AMB_BRIDGES).some(
+    (chainId) => chainId === network.chainId.toString(),
+  ),
+);
 
 export const ALLDOMAINS_DOMAIN_SELECTION = {
   id: String(COLONY_TOTAL_BALANCE_DOMAIN_ID),
@@ -164,3 +338,7 @@ export const SMALL_TOKEN_AMOUNT_FORMAT = '0.00000...';
 // to identify the type of motion as a Decision
 export const ACTION_DECISION_MOTION_CODE = '0x12345678';
 export const LOCAL_STORAGE_DECISION_KEY = 'decision';
+
+export const SAFE_ALREADY_EXISTS = 'alreadyExists';
+
+export const FETCH_ABORTED = 'fetchAborted';

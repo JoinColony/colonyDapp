@@ -24,6 +24,10 @@ import EditColonyDetailsDialog from '~dialogs/EditColonyDetailsDialog';
 import ManageReputationDialog from '~dialogs/ManageReputationDialog';
 import ColonyTokenManagementDialog from '~dialogs/ColonyTokenManagementDialog';
 import { SmiteDialog, AwardDialog } from '~dialogs/AwardAndSmiteDialogs';
+import ManageSafeDialog from '~dialogs/ManageSafeDialog';
+import ControlSafeDialog from '~dialogs/ControlSafeDialog/ControlSafeDialog';
+import RemoveSafeDialog from '~dialogs/RemoveSafeDialog';
+import AddExistingSafeDialog from '~dialogs/AddExistingSafeDialog';
 
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
@@ -196,9 +200,43 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         nextStepRecovery: 'dashboard.RecoveryModeDialog',
         nextStepEditDetails: 'dashboard.EditColonyDetailsDialog',
         nextStepVersionUpgrade: 'dashboard.NetworkContractUpgradeDialog',
+        nextStepManageSafe: 'dashboard.ManageSafeDialog',
         colony,
       },
     },
+
+    {
+      component: ManageSafeDialog,
+      props: {
+        nextStepAddExistingSafe: 'dashboard.AddExistingSafeDialog',
+        nextStepRemoveSafe: 'dashboard.RemoveSafeDialog',
+        nextStepControlSafe: 'dashboard.ControlSafeDialog',
+        prevStep: 'dashboard.AdvancedDialog',
+        colony,
+      },
+    },
+    {
+      component: AddExistingSafeDialog,
+      props: {
+        prevStep: 'dashboard.ManageSafeDialog',
+        colony,
+      },
+    },
+    {
+      component: ControlSafeDialog,
+      props: {
+        prevStep: 'dashboard.ManageSafeDialog',
+        colony,
+      },
+    },
+    {
+      component: RemoveSafeDialog,
+      props: {
+        prevStep: 'dashboard.ManageSafeDialog',
+        colony,
+      },
+    },
+
     {
       component: PermissionManagementDialog,
       props: {

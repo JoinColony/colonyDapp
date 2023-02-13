@@ -111,6 +111,10 @@
   padding-bottom: 40px;
 }
 
+.user {
+  composes: username from '~core/DetailsWidgetUser/DetailsWidgetUser.css';
+}
+
 @media screen and query700 {
   .main {
     padding-top: 0px;

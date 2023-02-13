@@ -1,0 +1,127 @@
+.heading {
+  margin-bottom: 0px;
+}
+
+.footer {
+  margin-top: 20px;
+}
+
+.transactionHeading {
+  display: flex;
+  align-items: center;
+  padding: 16px 32px 16px 20px;
+  height: 52px;
+  border-bottom: 1px solid color-mod(var(--action-secondary) alpha(12%));
+  background-color: color-mod(var(--action-secondary) alpha(6%));
+}
+
+.transactionHeading h4 {
+  margin-right: auto;
+}
+
+.transactionHeadingOpen .toggleTabIcon {
+  transform: none;
+}
+
+.tabButton {
+  display: flex;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.deleteTabIcon {
+  display: none;
+  margin-right: 10px;
+  padding: 5px;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  fill: var(--danger);
+}
+
+.deleteTabIcon:hover {
+  background-color: color-mod(var(--action-secondary) alpha(10%));
+}
+
+.deleteTabTooltip {
+  text-align: left;
+  white-space: pre-line;
+}
+
+.transactionHeading:hover .deleteTabIcon {
+  display: unset;
+}
+
+.toggleTabIcon {
+  width: 10px;
+  fill: var(--dark);
+  transform: rotate(180deg);
+}
+
+.tabContentClosed {
+  display: none;
+}
+
+.transactionTitle {
+  margin-bottom: 20px;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.tokenAmount {
+  display: flex;
+  align-items: center;
+}
+
+.tokenAmount > figure {
+  margin-right: 8px;
+}
+
+.tokenAmount > span {
+  font-size: var(--size-smallish);
+}
+
+.tokenAmount > figure > div {
+  border-radius: 0;
+}
+
+.transactionDetailsSection {
+  padding-bottom: 5px;
+}
+
+.rawTransactionValues {
+  padding: 10px 0;
+  max-width: 270px;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.nftContainer {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  color: var(--pink);
+  column-gap: 11px;
+}
+
+.avatar {
+  flex-shrink: 0;
+}
+
+.itemValue {
+  composes: inlineEllipsis from '~styles/text.css';
+}
+
+.contractName {
+  font-size: var(--size-normal);
+  color: var(--pink);
+}
+
+.motionHeading {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 18px;
+}

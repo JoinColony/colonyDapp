@@ -32,7 +32,8 @@ const MSG = defineMessages({
   },
 });
 interface Props extends CommentProps {
-  hash: string;
+  hash?: string;
+  comment?: string;
 }
 
 const ActionsPageFeedItemWithIPFS = ({
@@ -43,11 +44,16 @@ const ActionsPageFeedItemWithIPFS = ({
 }: Props) => {
   const { data: ipfsDataJSON } = useDataFetcher(
     ipfsDataFetcher,
-    [hash],
-    [hash],
+    [hash || ''],
+    [hash || ''],
   );
 
   const annotationMessage = useMemo(() => {
+    if (annotation && comment) {
+      // annotation message passed through as comment when executing a safe transaction
+      return comment;
+    }
+
     if (!annotation || !ipfsDataJSON) {
       return undefined;
     }
@@ -71,11 +77,11 @@ const ActionsPageFeedItemWithIPFS = ({
       // silently fail
     }
     return undefined;
-  }, [annotation, ipfsDataJSON]);
+  }, [annotation, ipfsDataJSON, comment]);
 
   const location = useLocation();
   // trouble connecting to IPFS
-  if (!ipfsDataJSON) {
+  if (!ipfsDataJSON && !annotationMessage) {
     return (
       <CalloutCard
         label={MSG.warningTitle}
@@ -109,7 +115,7 @@ const ActionsPageFeedItemWithIPFS = ({
   return (
     <Comment
       {...rest}
-      comment={annotation ? annotationMessage : comment}
+      comment={annotation && hash ? annotationMessage : comment}
       annotation={annotation}
       disableHover
     />

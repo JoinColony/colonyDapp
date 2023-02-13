@@ -1,0 +1,54 @@
+.main {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 11px 11px;
+  height: 42px;
+  border: 1px solid color-mod(var(--action-secondary) alpha(25%));
+  border-radius: var(--radius-tiny);
+  background-color: color-mod(var(--action-secondary) alpha(5%));
+}
+
+.main:last-child {
+  margin-bottom: 0px;
+}
+
+.avatar {
+  min-width: 26px;
+}
+
+.checked {
+  border: 1px solid var(--pink);
+  background-color: color-mod(var(--pink) alpha(12%));
+}
+
+.address {
+  composes: inlineEllipsis from '~styles/text.css';
+  margin-top: 4px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-normal);
+  color: var(--temp-grey-blue-7);
+  cursor: pointer;
+}
+
+.checkbox {
+  margin-top: 4px;
+  margin-right: 8px;
+}
+
+.label {
+  margin-right: 10px;
+  margin-left: 8px;
+  overflow: hidden;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.selectedLabel {
+  composes: label;
+  font-weight: var(--weight-bold);
+  color: var(--grey-2);
+}

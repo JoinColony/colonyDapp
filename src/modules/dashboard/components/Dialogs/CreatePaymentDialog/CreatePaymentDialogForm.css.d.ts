@@ -7,7 +7,6 @@ export const tokenAmountUsd: string;
 export const domainPotBalance: string;
 export const networkFee: string;
 export const domainSelects: string;
-export const tokenAmountInputContainer: string;
 export const singleUserContainer: string;
 export const noPermissionFromMessage: string;
 export const modalHeading: string;

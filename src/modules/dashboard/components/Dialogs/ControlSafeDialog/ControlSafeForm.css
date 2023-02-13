@@ -1,0 +1,190 @@
+@value wideButton: 197px;
+
+.heading {
+  margin-bottom: 0px;
+}
+
+.footer {
+  margin-top: 20px;
+}
+
+.safePicker {
+  margin: 20px 0;
+}
+
+.safePicker div[class*="inputContainer"] {
+  column-gap: 10px;
+}
+
+.safePicker > div {
+  padding-left: 0px;
+}
+
+.safePicker input,
+.safePicker button {
+  margin-left: 0px;
+  max-width: none;
+}
+
+.safePicker button,
+.safePicker label,
+.transactionTypeSelectContainer label {
+  color: var(--dark);
+}
+
+.safePicker div + i {
+  right: 3px;
+  left: initial;
+}
+
+.safePicker label + i svg {
+  stroke: unset;
+}
+
+/* Avatar container */
+.safePicker label + div {
+  display: flex;
+}
+
+.addTransaction {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.transactionHeading {
+  display: flex;
+  align-items: center;
+  padding: 16px 32px 16px 20px;
+  height: 52px;
+  border-bottom: 1px solid color-mod(var(--action-secondary) alpha(12%));
+  background-color: color-mod(var(--action-secondary) alpha(6%));
+}
+
+.transactionHeading h4 {
+  margin-right: auto;
+}
+
+.transactionHeadingOpen {
+  margin-bottom: 15px;
+}
+
+.transactionHeadingOpen .toggleTabIcon {
+  transform: none;
+}
+
+.tabButton {
+  display: flex;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.tabButtonIcon {
+  display: flex;
+  height: 100%;
+  width: 10px;
+  fill: var(--temp-grey-blue-7);
+}
+
+.tabButtonIcon:last-child {
+  margin-left: 18px;
+}
+
+.deleteTabIcon {
+  display: none;
+  margin-right: 10px;
+  padding: 5px;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  fill: var(--danger);
+}
+
+.deleteTabIcon:hover {
+  background-color: color-mod(var(--action-secondary) alpha(10%));
+}
+
+.deleteTabTooltip {
+  text-align: left;
+  white-space: pre-line;
+}
+
+.transactionHeading:hover .deleteTabIcon {
+  display: unset;
+}
+
+.toggleTabIcon {
+  width: 10px;
+  fill: var(--dark);
+  transform: rotate(180deg);
+}
+
+.tabContentClosed {
+  display: none;
+}
+
+.transactionTitle {
+  margin-bottom: 20px;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.nftValue {
+  color: var(--pink);
+}
+
+.tokenAmount {
+  display: flex;
+  align-items: center;
+}
+
+.tokenAmount > figure {
+  margin-right: 8px;
+}
+
+.tokenAmount > span {
+  font-size: var(--size-smallish);
+}
+
+.tokenAmount > figure > div {
+  border-radius: 0;
+}
+
+.transactionDetailsSection {
+  padding-bottom: 5px;
+}
+
+.rawTransactionValues {
+  padding: 10px 0;
+  max-width: 270px;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.warningIcon {
+  margin-top: 3px;
+  margin-right: 12px;
+}
+
+.warningIcon svg {
+  height: 18px;
+  width: 18px;
+  fill: var(--golden);
+}
+
+.upgradeWarning {
+  display: flex;
+  margin-top: 20px;
+  padding: 15px 12px 15px 18px;
+  border-radius: 5px;
+  background-color: color-mod(var(--golden) alpha(15%));
+  line-height: 18px;
+  color: var(--dark);
+}
+
+.upgradePath {
+  font-weight: var(--weight-bold);
+}

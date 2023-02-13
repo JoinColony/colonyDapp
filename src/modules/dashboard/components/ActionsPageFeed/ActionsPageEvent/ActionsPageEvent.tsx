@@ -3,6 +3,7 @@ import { useIntl, FormattedMessage, defineMessages } from 'react-intl';
 import { nanoid } from 'nanoid';
 import findLastIndex from 'lodash/findLastIndex';
 import { ColonyRole } from '@colony/colony-js';
+import { useLocation } from 'react-router';
 
 import PermissionsLabel from '~core/PermissionsLabel';
 import { TransactionMeta, TransactionStatus } from '~dashboard/ActionsPage';
@@ -11,6 +12,7 @@ import FriendlyName from '~core/FriendlyName';
 import MemberReputation from '~core/MemberReputation';
 import Tag from '~core/Tag';
 import Numeral from '~core/Numeral';
+import { SafeTxData } from '~modules/dashboard/sagas/utils/safeHelpers';
 
 import {
   ColonyAction,
@@ -18,7 +20,11 @@ import {
   Colony,
   useUser,
 } from '~data/index';
-import { ColonyAndExtensionsEvents, ColonyActions } from '~types/index';
+import {
+  ColonyAndExtensionsEvents,
+  ColonyActions,
+  ColonyExtendedActions,
+} from '~types/index';
 import {
   getDomainValuesCheck,
   sortMetadataHistory,
@@ -26,10 +32,12 @@ import {
   getColonyMetadataMessageDescriptorsIds,
   getDomainMetadataMessageDescriptorsIds,
   getAssignmentEventDescriptorsIds,
+  getSafeTransactionMessageDescriptorIds,
 } from '~utils/colonyActions';
 import { useDataFetcher } from '~utils/hooks';
 import { getFormattedTokenValue } from '~utils/tokens';
 import { MotionVote } from '~utils/colonyMotions';
+import { isEmpty } from '~utils/lodash';
 
 import { ipfsDataFetcher } from '../../../../core/fetchers';
 import useColonyMetadataChecks from '../../../hooks/useColonyMetadataChecks';
@@ -111,6 +119,7 @@ const ActionsPageEvent = ({
   const [metdataIpfsHash, setMetdataIpfsHash] = useState<string | undefined>(
     undefined,
   );
+  const { state: locationState } = useLocation<SafeTxData>();
 
   const initiator = useUser(
     values?.agent ||
@@ -231,7 +240,7 @@ const ActionsPageEvent = ({
       case ColonyAndExtensionsEvents.DomainMetadata:
         return getDomainMetadataMessageDescriptorsIds(
           ColonyAndExtensionsEvents.DomainMetadata,
-          getDomainMetadataChecks,
+          getDomainMetadataChecks as { [key: string]: boolean },
         );
       case ColonyAndExtensionsEvents.ColonyRoleSet:
         return getAssignmentEventDescriptorsIds(
@@ -240,6 +249,13 @@ const ActionsPageEvent = ({
             values?.roles[eventIndex]?.setTo,
           ColonyAndExtensionsEvents.ColonyRoleSet,
           'event',
+        );
+      case ColonyAndExtensionsEvents.ArbitraryTransaction:
+        return getSafeTransactionMessageDescriptorIds(
+          ColonyExtendedActions.SafeTransactionInitiated,
+          !isEmpty(actionData.safeTransactions)
+            ? actionData.safeTransactions
+            : locationState?.transactions,
         );
       case ColonyAndExtensionsEvents.ArbitraryReputationUpdate:
         return `event.${ColonyAndExtensionsEvents.ArbitraryReputationUpdate}.title`;
@@ -252,6 +268,8 @@ const ActionsPageEvent = ({
     colonyMetadataChecks,
     eventIndex,
     values,
+    actionData.safeTransactions,
+    locationState,
   ]);
 
   const { domainPurpose, domainName, domainColor } = actionData;

@@ -43,6 +43,7 @@ interface ExtendedFormikConfig {
   onSubmit?: (values: any, formikActions: FormikHelpers<any>) => void;
   validationSchema?: any | (() => any);
   validate?: (values: any) => void | object | Promise<FormikErrors<any>>;
+  validateOnMount?: boolean;
 }
 
 interface Props extends ExtendedFormikConfig {

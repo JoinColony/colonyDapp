@@ -1,7 +1,5 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType, ExtensionClient } from '@colony/colony-js';
-import { AddressZero } from 'ethers/constants';
-import { bigNumberify } from 'ethers/utils';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom } from '~utils/saga/effects';
@@ -20,44 +18,27 @@ import { updateMotionValues } from '../utils';
 
 function* finalizeMotion({
   meta,
-  payload: { userAddress, colonyAddress, motionId },
+  payload: { userAddress, colonyAddress, motionId, safeChainId },
 }: Action<ActionTypes.MOTION_FINALIZE>) {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
     const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
     const { provider } = colonyManager;
-    const colonyClient = yield colonyManager.getClient(
-      ClientType.ColonyClient,
-      colonyAddress,
-    );
     // @NOTE This line exceeds the max-len but there's no prettier solution
     // eslint-disable-next-line max-len
     const votingReputationClient: ExtensionClient = yield colonyManager.getClient(
       ClientType.VotingReputationClient,
       colonyAddress,
     );
-    const motion = yield votingReputationClient.getMotion(motionId);
 
-    const networkEstimate = yield provider.estimateGas({
-      from: votingReputationClient.address,
-      to:
-        /*
-         * If the motion target is 0x000... then we pass in the colony's address
-         */
-        motion.altTarget === AddressZero
-          ? colonyClient.address
-          : motion.altTarget,
-      data: motion.action,
+    const encodedFinalizeMotion = votingReputationClient.interface.functions[
+      'finalizeMotion(uint256)'
+    ].encode([motionId]);
+    const finalizeEstimate = yield provider.estimateGas({
+      from: userAddress,
+      to: votingReputationClient.address,
+      data: encodedFinalizeMotion,
     });
-
-    /*
-     * Increase the estimate by 100k WEI. This is a flat increase for all networks
-     *
-     * @NOTE This will need to be increased further for `setExpenditureState` since
-     * that requires even more gas, but since we don't use that one yet, there's
-     * no reason to account for it just yet
-     */
-    const estimate = bigNumberify(networkEstimate).add(bigNumberify(100000));
 
     const {
       finalizeMotionTransaction,
@@ -90,11 +71,18 @@ function* finalizeMotion({
 
     yield put(
       transactionUpdateGas(finalizeMotionTransaction.id, {
-        gasLimit: estimate.toString(),
+        gasLimit: finalizeEstimate.toString(),
       }),
     );
 
     yield put(transactionReady(finalizeMotionTransaction.id));
+
+    const {
+      payload: { hash: txHash },
+    } = yield takeFrom(
+      finalizeMotionTransaction.channel,
+      ActionTypes.TRANSACTION_HASH_RECEIVED,
+    );
 
     yield takeFrom(
       finalizeMotionTransaction.channel,
@@ -104,7 +92,14 @@ function* finalizeMotion({
     /*
      * Update motion page values
      */
-    yield fork(updateMotionValues, colonyAddress, userAddress, motionId);
+    yield fork(
+      updateMotionValues,
+      colonyAddress,
+      userAddress,
+      motionId,
+      safeChainId,
+      txHash,
+    );
 
     yield put<AllActions>({
       type: ActionTypes.MOTION_FINALIZE_SUCCESS,

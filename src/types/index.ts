@@ -40,6 +40,8 @@ export interface KeyedDataObject<T> extends DataObject<T> {
 
 export type Address = string;
 
+export type ModuleAddress = Address;
+
 export type ENSName = string;
 
 export type AddressOrENSName = Address | ENSName;
@@ -60,6 +62,8 @@ export type ComplexMessageValues = Record<string, ReactNode>;
  * For messages that contain both JSX and Primitive values - use with FormattedMessage directly
  */
 export type UniversalMessageValues = Record<string, PrimitiveType | ReactNode>;
+
+export type Message = MessageDescriptor | string;
 
 export type MethodParam = string | BigNumberish | boolean;
 export type MethodParams = (MethodParam | MethodParam[])[];

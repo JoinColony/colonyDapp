@@ -13,12 +13,13 @@ import { Resolvers } from '@apollo/client';
 import { Context } from '~context/index';
 import { createAddress } from '~utils/web3';
 import {
-  getAnnotationFromSubgraph,
   getMotionActionType,
   getMotionState,
   parseSubgraphEvent,
   NormalizedSubgraphEvent,
   ExtendedLogDescription,
+  getSafeTransactionFromAnnotation,
+  getAnnotationFromSubgraph,
 } from '~utils/events';
 import {
   MotionVote,
@@ -69,8 +70,12 @@ import { availableRoles } from '~dialogs/PermissionManagementDialog';
 import { DEFAULT_NETWORK_TOKEN } from '~constants';
 
 import { ProcessedEvent } from './colonyActions';
+import {
+  getTransactionStatuses,
+  TRANSACTION_STATUS,
+} from '~utils/safes/getTransactionStatuses';
 
-const getMotionEvents = (
+export const getMotionEvents = (
   isSystemEvents: boolean,
   motionEvents?: NormalizedSubgraphEvent[],
 ): ProcessedEvent[] => {
@@ -1039,6 +1044,25 @@ export const motionsResolvers = ({
         return null;
       }
     },
+    async motionSafeTransactionStatuses(
+      _,
+      { finalizeMotionEventTxHash, safeChainId },
+    ) {
+      let safeTransactionStatuses: TRANSACTION_STATUS[] = [];
+
+      if (safeChainId && finalizeMotionEventTxHash) {
+        // eslint-disable-next-line max-len
+        const motionFinalizedTransactionReceipt = await networkClient.provider.getTransactionReceipt(
+          finalizeMotionEventTxHash,
+        );
+        safeTransactionStatuses = await getTransactionStatuses(
+          safeChainId,
+          motionFinalizedTransactionReceipt,
+        );
+      }
+
+      return safeTransactionStatuses;
+    },
   },
   Motion: {
     async state({ fundamentalChainId, associatedColony: { colonyAddress } }) {
@@ -1085,7 +1109,12 @@ export const motionsResolvers = ({
     }) {
       return getTimeoutPeriods(colonyManager, colonyAddress, motionId);
     },
-    async args({ action, associatedColony: { colonyAddress } }) {
+    async args({
+      action,
+      associatedColony: { colonyAddress },
+      agent,
+      transaction,
+    }) {
       const colonyClient = await colonyManager.getClient(
         ClientType.ColonyClient,
         colonyAddress,
@@ -1294,6 +1323,35 @@ export const motionsResolvers = ({
         };
       }
 
+      if (
+        actionValues.signature ===
+        'makeArbitraryTransactions(address[],bytes[],bool)'
+      ) {
+        const annotation = await getAnnotationFromSubgraph(
+          agent,
+          transaction.hash,
+          apolloClient,
+        );
+
+        if (annotation) {
+          const safeTxMetadata = await getSafeTransactionFromAnnotation(
+            annotation.values?.metadata,
+          );
+
+          if (safeTxMetadata) {
+            const parsedAnnotation = JSON.parse(safeTxMetadata);
+            if (parsedAnnotation) {
+              return {
+                transactionTitle: parsedAnnotation.title,
+                metadata: annotation.values?.metadata,
+              };
+            }
+          }
+        }
+        return {
+          transactionTitle: '',
+        };
+      }
       // MintTokenMotion - default
       return {
         amount: bigNumberify(actionValues?.args[0] || '0').toString(),

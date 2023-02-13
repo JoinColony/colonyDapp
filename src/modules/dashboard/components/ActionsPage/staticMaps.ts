@@ -3,6 +3,10 @@ import {
   ColonyAndExtensionsEvents,
   ColonyActions,
   ColonyMotions,
+  AddedActions,
+  ColonyExtendedActions,
+  ColonyExtendedMotions,
+  AddedMotions,
 } from '~types/index';
 
 import { STATUS } from './types';
@@ -18,6 +22,11 @@ export enum ActionPageDetails {
   Permissions = 'Permissions',
   ReputationChange = 'ReputationChange',
   Author = 'Author',
+  Safe = 'Safe',
+  Chain = 'Chain',
+  SafeAddress = 'SafeAddress',
+  SafeName = 'SafeName',
+  SafeTransaction = 'SafeTransaction',
 }
 
 type EventRolesMap = Partial<
@@ -28,13 +37,21 @@ type EventRolesMap = Partial<
 
 type ActionsEventsMap = Partial<
   {
-    [key in ColonyActions | ColonyMotions]: ColonyAndExtensionsEvents[];
+    [key in
+      | ColonyActions
+      | ColonyMotions
+      | AddedActions
+      | AddedMotions]: ColonyAndExtensionsEvents[];
   }
 >;
 
 type ActionsDetailsMap = Partial<
   {
-    [key in ColonyActions | ColonyMotions]: ActionPageDetails[];
+    [key in
+      | ColonyActions
+      | ColonyMotions
+      | AddedActions
+      | AddedMotions]: ActionPageDetails[];
   }
 >;
 
@@ -66,14 +83,16 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
     ColonyRole.Root,
     ColonyRole.Arbitration,
   ],
+  [ColonyAndExtensionsEvents.ArbitraryTransaction]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.Generic]: [],
 };
 
 /*
  * Which icons correspond to which action types in the details widget
  */
+
 export const ACTION_TYPES_ICONS_MAP: {
-  [key in ColonyActions | ColonyMotions]: string;
+  [key in ColonyActions | ColonyMotions | AddedActions | AddedMotions]: string;
 } = {
   [ColonyActions.WrongColony]: 'forbidden-signal',
   [ColonyActions.Payment]: 'emoji-dollar-stack',
@@ -99,6 +118,12 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyMotions.EmitDomainReputationPenaltyMotion]: 'emoji-firebolt',
   [ColonyMotions.EmitDomainReputationRewardMotion]: 'emoji-shooting-star',
   [ColonyMotions.UnlockTokenMotion]: 'emoji-padlock',
+  [ColonyExtendedMotions.SafeTransactionInitiatedMotion]: 'safe-logo',
+  [ColonyExtendedActions.AddressBookUpdated]: 'emoji-edit-tools',
+  [ColonyExtendedActions.TokensUpdated]: 'emoji-edit-tools',
+  [ColonyExtendedActions.SafeRemoved]: 'safe-logo',
+  [ColonyExtendedActions.SafeAdded]: 'safe-logo',
+  [ColonyExtendedActions.SafeTransactionInitiated]: 'safe-logo',
   [ColonyMotions.CreateDecisionMotion]: 'emoji-decisions',
   [ColonyMotions.NullMotion]: 'forbidden-signal',
   [ColonyActions.Generic]: 'circle-check-primary',
@@ -149,6 +174,9 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
   [ColonyActions.EmitDomainReputationReward]: [
     ColonyAndExtensionsEvents.ArbitraryReputationUpdate,
   ],
+  [ColonyExtendedActions.SafeTransactionInitiated]: [
+    ColonyAndExtensionsEvents.ArbitraryTransaction,
+  ],
   [ColonyMotions.UnlockTokenMotion]: MOTION_EVENTS,
   [ColonyMotions.MintTokensMotion]: MOTION_EVENTS,
   [ColonyMotions.CreateDomainMotion]: MOTION_EVENTS,
@@ -160,6 +188,7 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
   [ColonyMotions.EmitDomainReputationPenaltyMotion]: MOTION_EVENTS,
   [ColonyMotions.EmitDomainReputationRewardMotion]: MOTION_EVENTS,
   [ColonyMotions.CreateDecisionMotion]: MOTION_EVENTS,
+  [ColonyExtendedMotions.SafeTransactionInitiatedMotion]: MOTION_EVENTS,
 };
 
 /*
@@ -202,6 +231,10 @@ export const EVENTS_REQUIRED_FOR_ACTION: ActionsEventsMap = {
   ],
   [ColonyActions.EmitDomainReputationReward]: [
     ColonyAndExtensionsEvents.ArbitraryReputationUpdate,
+  ],
+  // Used by Safe Control in the absence of a corresponding native Colony event
+  [AddedActions.SafeTransactionInitiated]: [
+    ColonyAndExtensionsEvents.ArbitraryTransaction,
   ],
 };
 
@@ -247,6 +280,17 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.ToRecipient,
     ActionPageDetails.ReputationChange,
   ],
+  [ColonyExtendedActions.SafeRemoved]: [ActionPageDetails.Safe],
+  [ColonyExtendedActions.TokensUpdated]: [ActionPageDetails.Name],
+  [ColonyExtendedActions.AddressBookUpdated]: [ActionPageDetails.Name],
+  [ColonyExtendedActions.SafeAdded]: [
+    ActionPageDetails.Chain,
+    ActionPageDetails.SafeName,
+    ActionPageDetails.SafeAddress,
+  ],
+  [ColonyExtendedActions.SafeTransactionInitiated]: [
+    ActionPageDetails.SafeTransaction,
+  ],
   [ColonyMotions.MintTokensMotion]: [ActionPageDetails.Amount],
   [ColonyMotions.PaymentMotion]: [
     ActionPageDetails.FromDomain,
@@ -285,4 +329,7 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
   ],
   [ColonyMotions.UnlockTokenMotion]: [],
   [ColonyMotions.CreateDecisionMotion]: [ActionPageDetails.Author],
+  [ColonyExtendedMotions.SafeTransactionInitiatedMotion]: [
+    ActionPageDetails.SafeTransaction,
+  ],
 };

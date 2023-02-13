@@ -1,0 +1,119 @@
+.nftPicker,
+.recipientPicker {
+  margin: 20px 0;
+}
+
+.nftPicker > div,
+.recipientPicker > div {
+  padding-left: 0px;
+}
+
+.nftPicker input,
+.nftPicker button,
+.recipientPicker input,
+.recipientPicker button {
+  margin-left: 0px;
+  width: 100%;
+  max-width: none;
+}
+
+.nftPicker div[class*="inputContainer"],
+.recipientPicker div[class*="inputContainer"] {
+  column-gap: 10px;
+}
+
+.nftPicker label,
+.recipientPicker label {
+  color: var(--dark);
+}
+
+.nftPicker i,
+.recipientPicker i {
+  right: 3px;
+  left: initial;
+}
+
+.nftDetailsContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+}
+
+.nftDetails {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-top: 20px;
+  width: 100px;
+}
+
+.nftLineItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  min-height: 43px;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+  font-size: var(--size-smallish);
+  gap: 70px;
+}
+
+.nftContractContent {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
+
+.nftContentLabel {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
+
+.nftContentValue {
+  composes: inlineEllipsis from '~styles/text.css';
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.nftContractAvatar {
+  flex-shrink: 0;
+  margin-right: 7px;
+}
+
+.nftImageContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.nftImage {
+  margin-top: 7px;
+  margin-right: 25px;
+  height: 120px;
+  width: 120px;
+}
+
+.nftImage div {
+  border-radius: 0;
+}
+
+.nftName {
+  composes: inlineEllipsis from '~styles/text.css';
+}
+
+.notFound {
+  display: flex;
+  justify-content: center;
+  color: var(--pink);
+}
+
+.loading,
+.error {
+  display: flex;
+  justify-content: center;
+}

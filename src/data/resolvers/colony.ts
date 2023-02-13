@@ -62,6 +62,7 @@ import { createAddress } from '~utils/web3';
 import { log } from '~utils/debug';
 import { parseSubgraphEvent } from '~utils/events';
 import { Address } from '~types/index';
+import { sortMetadataHistory } from '~utils/colonyActions';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { getAllUserRolesForDomain } from '~modules/transformers';
@@ -118,9 +119,19 @@ export const getProcessedColony = async (
   let tokenAddresses: Array<Address> = [];
   let whitelistedAddresses: Array<Address> = [];
   let whitelistActivated = false;
+  let safes: Array<{
+    safeName: string;
+    contractAddress: string;
+    chainId: string;
+  }> = [];
 
-  const prevIpfsHash = metadataHistory.slice(-1).pop();
-  const ipfsHash = metadata || prevIpfsHash?.metadata || null;
+  const sortedMetadataHistory = sortMetadataHistory(metadataHistory);
+  const currentMetadataIndex = sortedMetadataHistory.findIndex(
+    ({ metadata: metadataHash }) => metadataHash === metadata,
+  );
+  const prevMetadata = sortedMetadataHistory[currentMetadataIndex - 1];
+  const ipfsHash = metadata || prevMetadata?.metadata || null;
+
   /*
    * Fetch the colony's metadata
    */
@@ -149,6 +160,7 @@ export const getProcessedColony = async (
           colonyTokens = [],
           verifiedAddresses = [],
           isWhitelistActivated = null,
+          colonySafes = [],
         } = JSON.parse(ipfsMetadata);
 
         displayName = colonyDisplayName;
@@ -158,6 +170,7 @@ export const getProcessedColony = async (
         if (isWhitelistActivated !== null) {
           whitelistActivated = isWhitelistActivated;
         }
+        safes = colonySafes;
       } else {
         /*
          * new metadata format
@@ -170,6 +183,7 @@ export const getProcessedColony = async (
         if (colonyMetadata?.isWhitelistActivated) {
           whitelistActivated = colonyMetadata.isWhitelistActivated;
         }
+        safes = colonyMetadata?.colonySafes || [];
       }
 
       /*
@@ -231,6 +245,7 @@ export const getProcessedColony = async (
     extensionAddresses: colonyExtensions.map(({ address }) => address),
     whitelistedAddresses,
     isWhitelistActivated: whitelistActivated,
+    safes,
   };
 };
 

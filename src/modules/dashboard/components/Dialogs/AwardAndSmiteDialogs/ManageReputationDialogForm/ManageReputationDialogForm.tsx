@@ -14,11 +14,16 @@ import Button from '~core/Button';
 import { ItemDataType } from '~core/OmniPicker';
 import { ActionDialogProps } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
-import { Select, Input, Annotations, SelectOption } from '~core/Fields';
+import {
+  Select,
+  Input,
+  Annotations,
+  SelectOption,
+  ForceToggle,
+} from '~core/Fields';
 import Heading from '~core/Heading';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
-import ForceToggle from '~core/Fields/ForceToggle';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import PermissionsLabel from '~core/PermissionsLabel';
@@ -305,13 +310,16 @@ const ManageReputationDialogForm = ({
               <MotionDomainSelect
                 colony={colony}
                 onDomainChange={handleMotionDomainChange}
-                disabled={values.forceAction}
+                // @NOTE: When rewarding rep, we can only create motions in the root domain
+                disabled={isSmiteAction ? values.forceAction : true}
                 /*
                  * @NOTE We can only create a motion to vote in a subdomain if we
                  * change reputation in that subdomain
                  */
                 filterDomains={handleFilterMotionDomains}
-                initialSelectedDomain={domainId}
+                initialSelectedDomain={
+                  isSmiteAction ? domainId : ROOT_DOMAIN_ID
+                }
               />
             </div>
           )}

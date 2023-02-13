@@ -5,12 +5,14 @@ import { ColonyRole } from '@colony/colony-js';
 import { ActionTypes } from '~redux/index';
 import { Address, WithKey } from '~types/index';
 import { Color } from '~core/ColorTag';
+import { ColonySafe, SafeTransaction } from '~data/index';
 
 import {
   ErrorActionType,
   UniqueActionType,
   ActionTypeWithMeta,
   MetaWithHistory,
+  ActionType,
 } from './index';
 
 /*
@@ -88,6 +90,7 @@ export type ColonyActionsActionTypes =
         verifiedAddresses?: Address[];
         annotationMessage?: string;
         isWhitelistActivated?: boolean;
+        colonySafes?: ColonySafe[];
         /*
          * @TODO I think this will also store the subscribed-to tokens list
          */
@@ -247,4 +250,40 @@ export type ColonyActionsActionTypes =
   | ActionTypeWithMeta<
       ActionTypes.ACTION_MANAGE_REPUTATION_SUCCESS,
       MetaWithHistory<object>
-    >;
+    >
+  | UniqueActionType<
+      ActionTypes.ACTION_MANAGE_EXISTING_SAFES,
+      {
+        colonyName: string;
+        colonyAddress: Address;
+        safeList: ColonySafe[];
+        annotationMessage?: string;
+        isRemovingSafes?: boolean;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.ACTION_MANAGE_EXISTING_SAFES_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.ACTION_MANAGE_EXISTING_SAFES_SUCCESS,
+      MetaWithHistory<object>
+    >
+  | UniqueActionType<
+      ActionTypes.ACTION_INITIATE_SAFE_TRANSACTION,
+      {
+        safe: Omit<ColonySafe, 'safeName'>;
+        transactionsTitle: string;
+        transactions: SafeTransaction[];
+        colonyAddress: Address;
+        colonyName: string;
+        annotationMessage: string | null;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.ACTION_INITIATE_SAFE_TRANSACTION_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.ACTION_INITIATE_SAFE_TRANSACTION_SUCCESS,
+      MetaWithHistory<object>
+    >
+  | ActionType<typeof ActionTypes.ACTION_GENERIC>
+  | ActionType<typeof ActionTypes.ACTION_GENERIC_SUCCESS>
+  | ErrorActionType<typeof ActionTypes.ACTION_GENERIC_ERROR, object>;

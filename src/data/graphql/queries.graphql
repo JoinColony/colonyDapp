@@ -222,6 +222,7 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
     amount
     tokenAddress
     annotationHash
+    annotationMessage
     newVersion
     oldVersion
     colonyDisplayName
@@ -241,6 +242,16 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
     reputationChange
     isWhitelistActivated
     verifiedAddresses
+    colonySafes {
+      safeName
+      contractAddress
+      chainId
+      moduleContractAddress
+    }
+    safeData
+    safeTransactions
+    transactionsTitle
+    safeTransactionStatuses
   }
 }
 
@@ -339,6 +350,11 @@ query SubgraphColony($address: String!) {
     metadataHistory {
       id
       metadata
+      transaction {
+        block {
+          timestamp
+        }
+      }
     }
     token {
       tokenAddress: id
@@ -365,6 +381,11 @@ query SubgraphColonies($colonyAddresses: [String!]!) {
     metadataHistory {
       id
       metadata
+      transaction {
+        block {
+          timestamp
+        }
+      }
     }
     token {
       tokenAddress: id

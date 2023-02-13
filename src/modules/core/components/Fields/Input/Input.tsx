@@ -5,7 +5,7 @@ import { MessageDescriptor, useIntl } from 'react-intl';
 import { useField } from 'formik';
 import { nanoid } from 'nanoid';
 
-import { SimpleMessageValues } from '~types/index';
+import { ComplexMessageValues, SimpleMessageValues } from '~types/index';
 
 import InputLabel from '../InputLabel';
 import InputStatus from '../InputStatus';
@@ -55,7 +55,7 @@ export interface Props extends Omit<InputComponentProps, 'placeholder'> {
   label?: string | MessageDescriptor;
 
   /** Label text values for intl interpolation */
-  labelValues?: SimpleMessageValues;
+  labelValues?: SimpleMessageValues | ComplexMessageValues;
 
   /** Placeholder text */
   placeholder?: string | MessageDescriptor;
@@ -116,6 +116,7 @@ const Input = ({
   maxButtonParams,
   dataTest,
   onChange,
+  onBlur,
 }: Props) => {
   const [id] = useState(idProp || nanoid());
   const { formatMessage } = useIntl();
@@ -143,6 +144,12 @@ const Input = ({
       inputFieldProps.onChange(event);
       if (onChange) {
         onChange(event);
+      }
+    },
+    onBlur: (event) => {
+      inputFieldProps.onBlur(event);
+      if (onBlur) {
+        onBlur(event);
       }
     },
   };

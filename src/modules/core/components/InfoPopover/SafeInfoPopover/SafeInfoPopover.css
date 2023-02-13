@@ -1,0 +1,38 @@
+@value reputationColor: rgb(255, 176, 0);
+@value query700 from '~styles/queries.css';
+
+.main {
+  padding: 20px 0 15px 0;
+  width: 455px;
+  text-align: left;
+  letter-spacing: normal;
+  cursor: auto;
+}
+
+.section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 25px 0 25px;
+}
+
+.section:first-of-type {
+  padding-top: 0;
+  padding-bottom: 20px;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.section:last-of-type {
+  padding-bottom: 0;
+}
+
+.safeLink {
+  color: var(--dark-blue);
+}
+
+@media screen and query700 {
+  .main {
+    padding-left: 15px;
+    max-width: calc(100vw - 28px);
+  }
+}

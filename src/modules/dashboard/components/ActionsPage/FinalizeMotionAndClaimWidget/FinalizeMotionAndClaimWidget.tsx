@@ -16,12 +16,11 @@ import {
   useLoggedInUser,
   useMotionVoteResultsQuery,
   useMotionCurrentUserVotedQuery,
-  useMotionFinalizedQuery,
   useMotionStakerRewardQuery,
   useDomainBalanceQuery,
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
-import { ColonyMotions } from '~types/index';
+import { ColonyExtendedMotions, ColonyMotions } from '~types/index';
 import { mapPayload } from '~utils/actions';
 import { getMainClasses } from '~utils/css';
 import { MotionVote, MotionState } from '~utils/colonyMotions';
@@ -34,12 +33,16 @@ interface Props {
   colony: Colony;
   motionId: number;
   actionType: string;
-  scrollToRef?: RefObject<HTMLInputElement>;
   motionState: MotionState;
   fromDomain: number;
   motionAmount: string;
   tokenAddress: string;
+  transactionTitle: string;
+  loadingMotionFinalized: boolean;
+  motionFinalized: boolean | undefined;
+  safeChainId: string;
   isDecision?: boolean;
+  scrollToRef?: RefObject<HTMLInputElement>;
 }
 
 export const MSG = defineMessages({
@@ -52,6 +55,7 @@ export const MSG = defineMessages({
    */
   title: {
     id: 'dashboard.ActionsPage.FinalizeMotionAndClaimWidget.title',
+    /* eslint-disable max-len */
     defaultMessage: `Should "{actionType, select,
       ${ColonyMotions.MintTokensMotion} {Mint tokens}
       ${ColonyMotions.PaymentMotion} {Payment}
@@ -65,8 +69,10 @@ export const MSG = defineMessages({
       ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite}
       ${ColonyMotions.EmitDomainReputationRewardMotion} {Award}
       ${ColonyMotions.CreateDecisionMotion} {Proposal}
+      ${ColonyExtendedMotions.SafeTransactionInitiatedMotion} {{transactionTitle}}
       other {Generic Action}
     }" be approved?`,
+    /* eslint-enable max-len */
   },
   finalizeLabel: {
     id: 'dashboard.ActionsPage.FinalizeMotionAndClaimWidget.finalizeLabel',
@@ -137,6 +143,10 @@ const FinalizeMotionAndClaimWidget = ({
   motionAmount,
   tokenAddress,
   isDecision = false,
+  transactionTitle,
+  loadingMotionFinalized,
+  motionFinalized,
+  safeChainId,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const {
@@ -157,17 +167,6 @@ const FinalizeMotionAndClaimWidget = ({
     variables: {
       colonyAddress,
       userAddress: walletAddress,
-      motionId,
-    },
-    fetchPolicy: 'network-only',
-  });
-
-  const {
-    data: finalized,
-    loading: loadingFinalized,
-  } = useMotionFinalizedQuery({
-    variables: {
-      colonyAddress,
       motionId,
     },
     fetchPolicy: 'network-only',
@@ -218,6 +217,7 @@ const FinalizeMotionAndClaimWidget = ({
       colonyAddress,
       userAddress: walletAddress,
       motionId,
+      safeChainId,
     })),
     [walletAddress],
   );
@@ -264,7 +264,7 @@ const FinalizeMotionAndClaimWidget = ({
   if (
     loadingVoteResults ||
     loadingUserVoted ||
-    loadingFinalized ||
+    loadingMotionFinalized ||
     loadingStakerRewards
   ) {
     return (
@@ -290,7 +290,7 @@ const FinalizeMotionAndClaimWidget = ({
   const showFinalizeButton = isDecision
     ? false
     : voteResults?.motionVoteResults &&
-      !finalized?.motionFinalized &&
+      !motionFinalized &&
       !motionNotFinalizable;
 
   const canClaimStakes =
@@ -300,7 +300,7 @@ const FinalizeMotionAndClaimWidget = ({
 
   const showClaimButton = isDecision
     ? true
-    : finalized?.motionFinalized || (motionNotFinalizable && canClaimStakes);
+    : motionFinalized || (motionNotFinalizable && canClaimStakes);
 
   const yaySideWon = bigNumberify(
     voteResults?.motionVoteResults?.yayVotes || 0,
@@ -472,7 +472,7 @@ const FinalizeMotionAndClaimWidget = ({
           <>
             <Heading
               text={MSG.title}
-              textValues={{ actionType }}
+              textValues={{ actionType, transactionTitle }}
               appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
             />
             <VoteResults

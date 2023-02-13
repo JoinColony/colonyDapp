@@ -2,6 +2,7 @@ import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import Decimal from 'decimal.js';
 import { useMediaQuery } from 'react-responsive';
+import { useLocation } from 'react-router';
 
 import Tag, { Appearance as TagAppareance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
@@ -9,11 +10,14 @@ import { EventValue } from '~data/resolvers/colonyActions';
 import { parseDomainMetadata } from '~utils/colonyActions';
 import Numeral from '~core/Numeral';
 import { useTitle } from '~utils/hooks/useTitle';
+import { isEmpty } from '~utils/lodash';
 
 import ActionsPageFeed, {
   ActionsPageFeedItemWithIPFS,
 } from '~dashboard/ActionsPageFeed';
+import ColonyHomeInfo from '~dashboard/ColonyHome/ColonyHomeInfo';
 import { CommentInput } from '~core/Comment';
+import MaskedAddress from '~core/MaskedAddress';
 
 import {
   useLoggedInUser,
@@ -23,24 +27,37 @@ import {
   ColonyActionQuery,
   TokenInfoQuery,
   AnyUser,
+  SafeTransaction,
 } from '~data/index';
-import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
+import {
+  ColonyActions,
+  ColonyAndExtensionsEvents,
+  ColonyExtendedActions,
+} from '~types/index';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
-import useColonyMetadataChecks from '~modules/dashboard/hooks/useColonyMetadataChecks';
+import {
+  useColonyMetadataChecks,
+  useExtendedColonyActionType,
+} from '~modules/dashboard/hooks';
+import { SafeTxData } from '~modules/dashboard/sagas/utils/safeHelpers';
 import {
   getFormattedTokenValue,
   getTokenDecimalsWithFallback,
 } from '~utils/tokens';
 import { useDataFetcher } from '~utils/hooks';
 import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
+import { TRANSACTION_STATUS } from '~utils/safes/getTransactionStatuses';
+import { ETHEREUM_NETWORK, SAFE_NAMES_MAP } from '~constants';
+
 import { ipfsDataFetcher } from '../../../../core/fetchers';
 
-import DetailsWidget from '../DetailsWidget';
+import DetailsWidget from '../DetailsWidget/DetailsWidget';
+import { unknownContractMSG } from '../DetailsWidget/DetailsWidgetSafeTransaction';
+import SafeTransactionBanner from '../SafeTransactionBanner';
 
 import { query700 as query } from '~styles/queries.css';
 import styles from './DefaultAction.css';
-import ColonyHomeInfo from '~dashboard/ColonyHome/ColonyHomeInfo';
 
 const displayName = 'dashboard.ActionsPage.DefaultAction';
 
@@ -55,7 +72,7 @@ interface Props {
 
 const DefaultAction = ({
   colony,
-  colony: { colonyAddress, domains },
+  colony: { colonyAddress, domains, safes },
   token,
   token: { decimals, symbol },
   colonyAction: {
@@ -66,17 +83,24 @@ const DefaultAction = ({
     fromDomain,
     toDomain,
     annotationHash,
+    annotationMessage,
     newVersion,
     oldVersion,
     colonyDisplayName,
     roles,
     reputationChange,
+    transactionsTitle,
+    safeTransactions,
+    safeData,
+    safeTransactionStatuses,
   },
   colonyAction,
   transactionHash,
   recipient,
   initiator,
 }: Props) => {
+  const { formatMessage } = useIntl();
+  const { state: locationState } = useLocation<SafeTxData>();
   const { username: currentUserName, ethereal } = useLoggedInUser();
 
   const { isVotingExtensionEnabled } = useEnabledExtensions({ colonyAddress });
@@ -100,7 +124,19 @@ const DefaultAction = ({
   );
 
   let domainMetadata;
-  const { verifiedAddressesChanged, tokensChanged } = useColonyMetadataChecks(
+  const {
+    verifiedAddressesChanged,
+    tokensChanged,
+    removedSafes,
+    addedSafe,
+  } = useColonyMetadataChecks(
+    actionType,
+    colony,
+    transactionHash,
+    colonyAction,
+  );
+
+  const extendedActionType = useExtendedColonyActionType(
     actionType,
     colony,
     transactionHash,
@@ -144,6 +180,47 @@ const DefaultAction = ({
     new Decimal(reputationChange).abs().toString(),
     decimals,
   );
+
+  const removedSafesString = removedSafes?.reduce(
+    (acc, { chainId, contractAddress, safeName }, index) => {
+      const removedSafe = (
+        <>
+          <span>{`${safeName} (${SAFE_NAMES_MAP[chainId]}) `}</span>
+          <MaskedAddress address={contractAddress} />
+        </>
+      );
+      if (index === 0) {
+        return removedSafe;
+      }
+      if (index === removedSafes.length - 1) {
+        return (
+          <>
+            {acc} and {removedSafe}
+          </>
+        );
+      }
+      return (
+        <>
+          {acc}, {removedSafe}
+        </>
+      );
+    },
+    <></>,
+  );
+
+  const firstSafeTransaction: SafeTransaction | undefined =
+    safeTransactions[0] || locationState?.transactions[0];
+
+  const safeTransactionSafe = safes.find((safe) => {
+    const safeContractAddress =
+      safeData?.contractAddress || locationState?.safeData.contractAddress;
+    const safeChainId = safeData?.chainId || locationState?.safeData.chainId;
+    return (
+      safe.contractAddress === safeContractAddress &&
+      safe.chainId === safeChainId
+    );
+  });
+
   /*
    * @NOTE We need to convert the action type name into a forced camel-case string
    *
@@ -151,7 +228,7 @@ const DefaultAction = ({
    * doesn't like that...
    */
   const actionAndEventValues = {
-    actionType,
+    actionType: extendedActionType,
     initiator: (
       <span className={styles.titleDecoration}>
         <FriendlyName user={initiator} autoShrinkAddress />
@@ -191,10 +268,62 @@ const DefaultAction = ({
     reputationChange: formattedReputationChange,
     reputationChangeNumeral: <Numeral value={formattedReputationChange} />,
     isSmiteAction: new Decimal(reputationChange).isNegative(),
+    removedSafes,
+    removedSafesString,
+    addedSafeAddress: addedSafe && (
+      <MaskedAddress address={addedSafe.contractAddress} />
+    ),
+    chainName: addedSafe && SAFE_NAMES_MAP[addedSafe.chainId],
+    safeName: addedSafe?.safeName || (
+      <span className={styles.user}>@{safeTransactionSafe?.safeName}</span>
+    ),
+    moduleAddress: addedSafe && (
+      <MaskedAddress address={addedSafe.moduleContractAddress} />
+    ),
+    safeTransactionTitle: transactionsTitle || locationState?.title,
+    safeTransactions: !isEmpty(safeTransactions)
+      ? safeTransactions
+      : locationState?.transactions,
+    /*
+     * The following references to firstSafeTransaction are only used in the event that there's only one safe transaction.
+     * Multiple transactions has its own message.
+     */
+    safeTransactionAmount: (
+      <>
+        <Numeral value={firstSafeTransaction?.amount || ''} />
+        <span> {firstSafeTransaction?.tokenData?.symbol}</span>
+      </>
+    ),
+    safeTransactionRecipient: (
+      <span className={styles.user}>
+        @{firstSafeTransaction?.recipient?.profile.username}
+      </span>
+    ),
+    safeTransactionNftToken: (
+      <span className={styles.user}>
+        {firstSafeTransaction?.nftData?.name ||
+          firstSafeTransaction?.nftData?.tokenName}
+      </span>
+    ),
+    safeTransactionFunctionName: firstSafeTransaction?.contractFunction || '',
+    safeTransactionContractName:
+      firstSafeTransaction?.contract?.profile.displayName ||
+      formatMessage(unknownContractMSG),
+    safeTransactionAddress: (
+      <MaskedAddress
+        address={firstSafeTransaction?.recipient?.profile.walletAddress || ''}
+      />
+    ),
+    safeTransactionSafe,
+    // id will be filterValue if an address was manually entered into the picker
+    isSafeTransactionRecipientUser: !(
+      firstSafeTransaction?.recipient?.id === 'filterValue'
+    ),
+    safeTransactionStatuses,
   };
 
   const actionAndEventValuesForDocumentTitle = {
-    actionType,
+    actionType: extendedActionType,
     initiator:
       initiator.profile?.displayName ??
       initiator.profile?.username ??
@@ -212,11 +341,12 @@ const DefaultAction = ({
     roles: roleTitle,
     reputationChange: actionAndEventValues.reputationChange,
     reputationChangeNumeral: actionAndEventValues.reputationChangeNumeral,
+    chainName: addedSafe && SAFE_NAMES_MAP[addedSafe.chainId],
+    safeTransactionTitle: transactionsTitle || locationState?.title,
   };
 
   const motionStyles = MOTION_TAG_MAP[MotionState.Forced];
 
-  const { formatMessage } = useIntl();
   useTitle(
     `${formatMessage(
       { id: roleMessageDescriptorId || 'action.title' },
@@ -225,8 +355,22 @@ const DefaultAction = ({
   );
 
   const isMobile = useMediaQuery({ query });
+  const hasPendingSafeTransactions = !!safeTransactionStatuses.find(
+    (status) => status === TRANSACTION_STATUS.PENDING,
+  );
   return (
     <div className={styles.main}>
+      {hasPendingSafeTransactions &&
+        extendedActionType ===
+          ColonyExtendedActions.SafeTransactionInitiated && (
+          <SafeTransactionBanner
+            chainId={
+              safeTransactionSafe?.chainId ||
+              ETHEREUM_NETWORK.chainId.toString()
+            }
+            transactionHash={transactionHash}
+          />
+        )}
       {isMobile && <ColonyHomeInfo colony={colony} showNavigation isMobile />}
       {isVotingExtensionEnabled && (
         <div className={styles.upperContainer}>
@@ -261,21 +405,30 @@ const DefaultAction = ({
               }
               values={{
                 ...actionAndEventValues,
+                actionType: extendedActionType,
                 fromDomain: actionAndEventValues.fromDomain?.name,
                 toDomain: actionAndEventValues.toDomain?.name,
                 roles: roleTitle,
               }}
             />
           </h1>
-          {actionType !== ColonyActions.Generic && annotationHash && (
-            <ActionsPageFeedItemWithIPFS
-              colony={colony}
-              createdAt={createdAt}
-              user={initiator}
-              annotation
-              hash={annotationHash}
-            />
-          )}
+          {actionType !== ColonyActions.Generic &&
+            (annotationHash ||
+              annotationMessage ||
+              locationState?.annotationMessage) && (
+              <ActionsPageFeedItemWithIPFS
+                colony={colony}
+                createdAt={createdAt}
+                user={initiator}
+                annotation
+                comment={
+                  annotationMessage ||
+                  locationState?.annotationMessage ||
+                  undefined
+                }
+                hash={annotationHash || undefined}
+              />
+            )}
           <ActionsPageFeed
             actionType={actionType}
             transactionHash={transactionHash as string}
@@ -299,7 +452,7 @@ const DefaultAction = ({
         </div>
         <div className={styles.details}>
           <DetailsWidget
-            actionType={actionType as ColonyActions}
+            actionType={extendedActionType as ColonyActions}
             recipient={recipient}
             transactionHash={transactionHash}
             values={actionAndEventValues}

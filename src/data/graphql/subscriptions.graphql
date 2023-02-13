@@ -92,6 +92,7 @@ subscription SubgraphEventsThatAreActions($skip: Int = 0, $first: Int = 1000, $c
         "ArbitraryReputationUpdate(address,address,uint256,int256)",
         "TokenUnlocked(address)",
         "TokenUnlocked()",
+        "ArbitraryTransaction(address,bytes,bool)",
       ]
     }) {
     id
@@ -131,6 +132,7 @@ subscription SubgraphEventsThatAreActions($skip: Int = 0, $first: Int = 1000, $c
       newVersion
       storageSlot
       storageSlotValue
+      txHash
     }
   }
 }

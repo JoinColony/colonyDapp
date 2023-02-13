@@ -10,7 +10,7 @@ import {
   AnyUser,
   Colony,
   ColonyActionQuery,
-  useEventsForMotionQuery,
+  EventsForMotionQuery,
   useMotionObjectionAnnotationQuery,
   useMotionsSystemMessagesQuery,
   useUser,
@@ -32,7 +32,9 @@ interface Props {
   bottomElementRef: React.RefObject<HTMLInputElement>;
   motionId: number;
   createdAt: number;
+  eventsForMotion: EventsForMotionQuery['eventsForMotion'] | undefined;
   roleMessageDescriptorId?: string | null;
+  annotationMessage?: string | null;
 }
 
 const ActionPageMotionContent = ({
@@ -49,17 +51,14 @@ const ActionPageMotionContent = ({
   bottomElementRef,
   createdAt,
   roleMessageDescriptorId,
+  annotationMessage,
+  eventsForMotion,
 }: Props) => {
   const { data: objectionAnnotation } = useMotionObjectionAnnotationQuery({
     variables: {
       motionId,
       colonyAddress: colony.colonyAddress,
     },
-    fetchPolicy: 'network-only',
-  });
-
-  const { data: motionEventsData } = useEventsForMotionQuery({
-    variables: { colonyAddress: colony.colonyAddress, motionId },
     fetchPolicy: 'network-only',
   });
 
@@ -97,7 +96,17 @@ const ActionPageMotionContent = ({
           />
         </h1>
       )}
-
+      {!isDecision && (annotationHash || annotationMessage) && (
+        <div className={styles.annotation}>
+          <ActionsPageFeedItemWithIPFS
+            colony={colony}
+            user={initiator}
+            annotation
+            comment={annotationMessage || undefined}
+            hash={annotationHash || undefined}
+          />
+        </div>
+      )}
       {isDecision
         ? objectionAnnotation?.motionObjectionAnnotation?.metadata && (
             <div className={styles.annotation}>
@@ -125,10 +134,7 @@ const ActionPageMotionContent = ({
       <ActionsPageFeed
         actionType={actionType}
         transactionHash={transactionHash as string}
-        networkEvents={[
-          ...events,
-          ...(motionEventsData?.eventsForMotion || []),
-        ]}
+        networkEvents={[...events, ...(eventsForMotion || [])]}
         systemMessages={
           motionsSystemMessagesData?.motionsSystemMessages as SystemMessage[]
         }

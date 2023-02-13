@@ -21,7 +21,8 @@ import { useSelector } from '~utils/hooks';
 import { useAutoLogin, getLastWallet } from '~utils/autoLogin';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
 import { getUserTokenBalanceData } from '~utils/tokens';
-
+import { WalletMethod } from '~immutable/Wallet';
+import { ActionTypes } from '~redux/actionTypes';
 import {
   useUserNotificationsQuery,
   useLoggedInUser,
@@ -117,6 +118,20 @@ const UserNavigation = () => {
 
   const { formatMessage } = useIntl();
   const isMobile = useMediaQuery({ query });
+
+  useEffect(() => {
+    // @NOTE: .ethereum can exist in window unlike what TS believes.
+    // @ts-ignore
+    if (window.ethereum) {
+      // @ts-ignore
+      window.ethereum.on('chainChanged', () => {
+        dispatch({
+          type: ActionTypes.WALLET_CREATE,
+          payload: { method: WalletMethod.MetaMask },
+        });
+      });
+    }
+  }, [dispatch]);
 
   useEffect(() => {
     if (!userDataLoading && !ethereal) {

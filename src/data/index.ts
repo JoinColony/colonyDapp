@@ -21,6 +21,7 @@ import {
   ParsedEvent,
   TransactionMessagesCountQuery,
   ProcessedColonyQuery,
+  SafeBalanceToken,
 } from './generated';
 import {
   loggedInUserResolvers,
@@ -112,13 +113,13 @@ export type AnyTokens = (
   | UserToken
 )[];
 
-// Almost all tokens with 'address' and 'iconHash'
 export type AnyToken =
   | ColonyTokens[0]
   | UserTokens[0]
   | OneToken
   | FixedToken
-  | UserToken;
+  | UserToken
+  | SafeBalanceToken;
 
 export type TransactionMessage = TransactionMessageFragment;
 export type TransactionsMessagesCount = TransactionMessagesCountQuery['transactionMessagesCount'];

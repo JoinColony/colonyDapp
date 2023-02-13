@@ -7,12 +7,15 @@ import {
 } from '@colony/colony-js';
 
 import {
+  getAnnotationMsgFromResponse,
   getColonyMetadataFromResponse,
   getDomainMetadataFromResponse,
   getEventMetadataVersion,
 } from '@colony/colony-event-metadata-parser';
 import { bigNumberify, BigNumberish, hexStripZeros } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
+import { ApolloClient } from '@apollo/client';
+
 import ColonyManagerClass from '~lib/ColonyManager';
 import {
   ColonyActions,
@@ -22,8 +25,17 @@ import {
   Address,
   FormattedAction,
   ActionUserRoles,
+  AddedActions,
+  AddedMotions,
 } from '~types/index';
-import { ParsedEvent } from '~data/index';
+import {
+  ColonySafe,
+  ParsedEvent,
+  ColonyAction,
+  SubgraphAnnotationEventsQuery,
+  SubgraphAnnotationEventsQueryVariables,
+  SubgraphAnnotationEventsDocument,
+} from '~data/index';
 import { ProcessedEvent } from '~data/resolvers/colonyActions';
 
 import {
@@ -33,9 +45,12 @@ import {
 import ipfs from '~context/ipfsWithFallbackContext';
 import { log } from '~utils/debug';
 import { ACTION_DECISION_MOTION_CODE } from '~constants';
+import { availableRoles } from '~dialogs/PermissionManagementDialog';
 
 import { getMotionRequiredStake, MotionState } from '../colonyMotions';
-import { availableRoles } from '~dialogs/PermissionManagementDialog';
+
+import { getAnnotationFromSubgraph } from './getAnnotationFromSubgraph';
+import { parseSubgraphEvent } from './subgraphEvents';
 
 interface ActionValues {
   recipient: Address;
@@ -48,6 +63,10 @@ interface ActionValues {
   address: Address;
   roles: ActionUserRoles[];
   reputationChange: BigNumberish;
+  safeData: ColonyAction['safeData'];
+  safeTransactions: ColonyAction['safeTransactions'];
+  transactionsTitle: ColonyAction['transactionsTitle'];
+  annotationMessage: ColonyAction['annotationMessage'];
   actionInitiator?: Address;
 }
 
@@ -184,6 +203,19 @@ export const formatEventName = (
   rawEventName: string,
 ): ColonyAndExtensionsEvents =>
   rawEventName.split('(')[0] as ColonyAndExtensionsEvents;
+
+export const getSafeTransactionFromAnnotation = async (ipfsHash: string) => {
+  try {
+    const ipfsMetadata = await ipfs.getString(ipfsHash);
+    return getAnnotationMsgFromResponse(ipfsMetadata);
+  } catch (error) {
+    log.verbose(
+      'Could not fetch IPFS safe transactions metadata with hash:',
+      ipfsHash,
+    );
+    return null;
+  }
+};
 
 const getPaymentActionValues = async (
   processedEvents: ProcessedEvent[],
@@ -488,6 +520,7 @@ const getColonyEditActionValues = async (
     colonyTokens?: string[];
     isWhitelistActivated?: boolean;
     verifiedAddresses?: string[];
+    colonySafes: ColonySafe[] | null;
   } = {
     address,
     colonyDisplayName: null,
@@ -495,6 +528,7 @@ const getColonyEditActionValues = async (
     colonyTokens: [],
     isWhitelistActivated: false,
     verifiedAddresses: [],
+    colonySafes: [],
   };
 
   /*
@@ -523,6 +557,7 @@ const getColonyEditActionValues = async (
           colonyTokens,
           isWhitelistActivated,
           verifiedAddresses,
+          colonySafes,
         } = JSON.parse(ipfsMetadata);
 
         colonyEditValues.colonyDisplayName = colonyDisplayName;
@@ -530,6 +565,7 @@ const getColonyEditActionValues = async (
         colonyEditValues.colonyTokens = colonyTokens;
         colonyEditValues.isWhitelistActivated = isWhitelistActivated;
         colonyEditValues.verifiedAddresses = verifiedAddresses;
+        colonyEditValues.colonySafes = colonySafes;
       } else {
         /*
          * new metadata format
@@ -544,7 +580,8 @@ const getColonyEditActionValues = async (
         colonyEditValues.verifiedAddresses =
           colonyMetadata?.verifiedAddresses || [];
         colonyEditValues.isWhitelistActivated =
-          colonyMetadata?.isWhitelistActivated;
+          colonyMetadata?.isWhitelistActivated || false;
+        colonyEditValues.colonySafes = colonyMetadata?.colonySafes || [];
       }
     }
   } catch (error) {
@@ -704,6 +741,73 @@ const getEmitDomainReputationPenaltyAndRewardValues = async (
   }
 
   return domainReputationChangeAction;
+};
+
+const getSafeTransactionInitiatedValues = async (
+  processedEvents: ProcessedEvent[],
+  apolloClient: ApolloClient<object>,
+): Promise<Partial<ActionValues>> => {
+  const arbitraryTransactionEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.ArbitraryTransaction,
+  ) as ProcessedEvent;
+  const { address: colonyAddress, transactionHash } = arbitraryTransactionEvent;
+
+  const initiateSafeTransactionValues: {
+    address: Address;
+    safeData: ColonyAction['safeData'];
+    safeTransactions: ColonyAction['safeTransactions'];
+    transactionsTitle: ColonyAction['transactionsTitle'];
+    annotationMessage: ColonyAction['annotationMessage'];
+    actionInitiator?: ColonyAction['actionInitiator'];
+  } = {
+    address: colonyAddress,
+    safeData: null,
+    safeTransactions: [],
+    transactionsTitle: '',
+    annotationMessage: null,
+  };
+
+  const { data: subgraphEvents } = await apolloClient.query<
+    SubgraphAnnotationEventsQuery,
+    SubgraphAnnotationEventsQueryVariables
+  >({
+    query: SubgraphAnnotationEventsDocument,
+    variables: {
+      transactionHash,
+      sortDirection: 'desc',
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  const [safeTransactionsAnnotation] = (
+    subgraphEvents?.annotationEvents || []
+  ).map(parseSubgraphEvent);
+
+  if (safeTransactionsAnnotation) {
+    const safeTxMetadata = await getSafeTransactionFromAnnotation(
+      safeTransactionsAnnotation.values?.metadata,
+    );
+
+    if (safeTxMetadata) {
+      const parsedAnnotation = JSON.parse(safeTxMetadata);
+      if (parsedAnnotation) {
+        initiateSafeTransactionValues.transactionsTitle =
+          parsedAnnotation.title || '';
+        initiateSafeTransactionValues.annotationMessage =
+          parsedAnnotation.annotationMessage || '';
+        initiateSafeTransactionValues.safeTransactions =
+          parsedAnnotation.transactions || [];
+        initiateSafeTransactionValues.safeData = parsedAnnotation.safeData;
+      }
+    }
+
+    if (safeTransactionsAnnotation.values.agent) {
+      initiateSafeTransactionValues.actionInitiator =
+        safeTransactionsAnnotation.values.agent;
+    }
+  }
+
+  return initiateSafeTransactionValues;
 };
 
 // Motions
@@ -1144,14 +1248,20 @@ const getEmitDomainReputationPenaltyAndRewardMotionValues = async (
 
   const reputationChange = (values.args[4] || values.args[2]).toString();
   const recipient = values.args[3] || values.args[1];
+  const fromDomain = (bigNumberify(reputationChange).lt(0)
+    ? values.args[2]
+    : values.args[0]
+  ).toNumber();
 
   const domainReputationChangeAction: {
     reputationChange: BigNumberish;
     recipient: Address;
+    fromDomain: number;
   } = {
     ...motionDefaultValues,
     reputationChange,
     recipient,
+    fromDomain,
   };
 
   return domainReputationChangeAction;
@@ -1173,12 +1283,75 @@ const getCreateDecisionMotionValues = async (
   return getMotionValues(processedEvents, votingClient, colonyClient);
 };
 
+const getSafeTransactionInitiatedMotionValues = async (
+  processedEvents: ProcessedEvent[],
+  votingClient: ExtensionClient,
+  colonyClient: ColonyClient,
+  apolloClient: ApolloClient<object>,
+): Promise<Partial<ActionValues>> => {
+  const motionCreatedEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
+  ) as ProcessedEvent;
+  const { address, transactionHash } = motionCreatedEvent;
+
+  const motionDefaultValues = await getMotionValues(
+    processedEvents,
+    votingClient,
+    colonyClient,
+  );
+
+  const annotation = await getAnnotationFromSubgraph(
+    motionDefaultValues.actionInitiator || address,
+    transactionHash,
+    apolloClient,
+  );
+
+  const initiateSafeTransactionValues: Partial<MotionValues> & {
+    address: Address;
+    actionInitiator?: ColonyAction['actionInitiator'];
+    safeData: ColonyAction['safeData'];
+    safeTransactions: ColonyAction['safeTransactions'];
+    transactionsTitle: ColonyAction['transactionsTitle'];
+    annotationMessage: ColonyAction['annotationMessage'];
+  } = {
+    ...motionDefaultValues,
+    address,
+    safeData: null,
+    safeTransactions: [],
+    transactionsTitle: '',
+    annotationMessage: null,
+  };
+
+  if (annotation) {
+    const ipfsMetadata = await getSafeTransactionFromAnnotation(
+      annotation.values?.metadata,
+    );
+
+    if (ipfsMetadata) {
+      // We storing the safeTxData in the annotation message to avoid storing in colony metadata
+      const safeTxData = JSON.parse(ipfsMetadata);
+      if (safeTxData) {
+        initiateSafeTransactionValues.safeData = safeTxData.safeData;
+        initiateSafeTransactionValues.safeTransactions =
+          safeTxData.transactions || [];
+        initiateSafeTransactionValues.transactionsTitle =
+          safeTxData.title || '';
+        initiateSafeTransactionValues.annotationMessage =
+          safeTxData.annotationMessage || '';
+      }
+    }
+  }
+
+  return initiateSafeTransactionValues;
+};
+
 export const getActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
   votingClient: ExtensionClient,
   oneTxPaymentClient: ExtensionClient,
-  actionType: ColonyActions | ColonyMotions,
+  apolloClient: ApolloClient<object>,
+  actionType: ColonyActions | ColonyMotions | AddedActions | AddedMotions,
 ): Promise<ActionValues> => {
   const fallbackValues = {
     recipient: AddressZero,
@@ -1191,6 +1364,10 @@ export const getActionValues = async (
     address: AddressZero,
     roles: [{ id: 0, setTo: false }],
     reputationChange: '0',
+    safeData: null,
+    safeTransactions: [],
+    transactionsTitle: '',
+    annotationMessage: '',
   };
 
   switch (actionType) {
@@ -1298,6 +1475,17 @@ export const getActionValues = async (
       return {
         ...fallbackValues,
         ...emitDomainReputationPenaltyAndRewardActionValues,
+      };
+    }
+    case AddedActions.SafeTransactionInitiated: {
+      // eslint-disable-next-line max-len
+      const safeTransactionInitiatedActionValues = await getSafeTransactionInitiatedValues(
+        processedEvents,
+        apolloClient,
+      );
+      return {
+        ...fallbackValues,
+        ...safeTransactionInitiatedActionValues,
       };
     }
     case ColonyMotions.MintTokensMotion: {
@@ -1423,6 +1611,19 @@ export const getActionValues = async (
       return {
         ...fallbackValues,
         ...unlockTokenMotionValues,
+      };
+    }
+    case AddedMotions.SafeTransactionInitiatedMotion: {
+      // eslint-disable-next-line max-len
+      const safeTransactionInitiatedMotionValues = await getSafeTransactionInitiatedMotionValues(
+        processedEvents,
+        votingClient,
+        colonyClient,
+        apolloClient,
+      );
+      return {
+        ...fallbackValues,
+        ...safeTransactionInitiatedMotionValues,
       };
     }
     default: {

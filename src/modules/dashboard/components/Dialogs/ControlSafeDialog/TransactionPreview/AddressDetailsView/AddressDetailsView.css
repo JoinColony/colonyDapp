@@ -1,0 +1,24 @@
+.main {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.avatar {
+  flex-shrink: 0;
+}
+
+.name {
+  composes: inlineEllipsis from '~styles/text.css';
+  margin: 0 10px;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
+
+.main > span:last-child {
+  margin-top: 3px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-medium);
+  color: var(--temp-grey-blue-7);
+}

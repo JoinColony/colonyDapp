@@ -1,6 +1,11 @@
 /* eslint-disable max-len */
 
-import { ColonyActions, ColonyMotions } from '~types/index';
+import {
+  ColonyActions,
+  ColonyMotions,
+  ColonyExtendedActions,
+  ColonyExtendedMotions,
+} from '~types/index';
 
 const actionsMessageDescriptors = {
   'action.title': `{actionType, select,
@@ -26,6 +31,10 @@ const actionsMessageDescriptors = {
       ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite {recipient} with a {reputationChangeNumeral} {reputationChange, plural, one {pt} other {pts}} reputation penalty}
       ${ColonyActions.EmitDomainReputationReward} {Award {recipient} with a {reputationChangeNumeral} {reputationChange, plural, one {pt} other {pts}} reputation reward}
       ${ColonyMotions.EmitDomainReputationRewardMotion} {Award {recipient} with a {reputationChangeNumeral} {reputationChange, plural, one {pt} other {pts}} reputation reward}
+      ${ColonyExtendedActions.SafeRemoved} {Remove Safe}
+      ${ColonyExtendedActions.SafeAdded} {Add Safe from {chainName}}
+      ${ColonyExtendedActions.SafeTransactionInitiated} {Safe transaction: {safeTransactionTitle}}
+      ${ColonyExtendedMotions.SafeTransactionInitiatedMotion} {Safe transaction: {safeTransactionTitle}}
       ${ColonyMotions.CreateDecisionMotion} {Create Decision}
       other {Generic action we don't have information about}
     }`,
@@ -37,6 +46,8 @@ const actionsMessageDescriptors = {
   [`action.${ColonyMotions.SetUserRolesMotion}.assignAndRemove`]: `{roles} in {fromDomain} to/from {recipient}`,
   [`action.${ColonyActions.ColonyEdit}.verifiedAddresses`]: `Address book was updated`,
   [`action.${ColonyActions.ColonyEdit}.tokens`]: `Colony tokens were updated`,
+  [`action.${ColonyExtendedActions.SafeTransactionInitiated}.fallback`]: `Initiate Safe transaction`,
+  [`action.${ColonyExtendedMotions.SafeTransactionInitiatedMotion}.fallback`]: `Initiate Safe transaction`,
   'action.type': `{actionType, select,
       ${ColonyActions.WrongColony} {Not part of the Colony}
       ${ColonyActions.Payment} {Payment}
@@ -51,8 +62,17 @@ const actionsMessageDescriptors = {
       ${ColonyActions.Recovery} {Recovery}
       ${ColonyActions.EmitDomainReputationPenalty} {Smite}
       ${ColonyActions.EmitDomainReputationReward} {Award}
+      ${ColonyExtendedActions.SafeAdded} {Add Safe}
+      ${ColonyExtendedActions.SafeRemoved} {Remove Safe}
+      ${ColonyExtendedActions.TokensUpdated} {Update Tokens}
+      ${ColonyExtendedActions.AddressBookUpdated} {Update Address Book}
       other {Generic}
     }`,
+  [`action.type.${ColonyExtendedActions.SafeTransactionInitiated}.rawTransaction`]: `Raw transaction`,
+  [`action.type.${ColonyExtendedActions.SafeTransactionInitiated}.transferFunds`]: `Transfer funds`,
+  [`action.type.${ColonyExtendedActions.SafeTransactionInitiated}.transferNFT`]: `Transfer NFT`,
+  [`action.type.${ColonyExtendedActions.SafeTransactionInitiated}.contractInteraction`]: `Contract interaction`,
+  [`action.type.${ColonyExtendedActions.SafeTransactionInitiated}.multipleTransactions`]: `Multiple transactions`,
 };
 
 export default actionsMessageDescriptors;

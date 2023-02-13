@@ -35,19 +35,9 @@
   color: var(--temp-grey-blue-7);
 }
 
-.tokenAmount label,
 .domainSelects label {
   font-size: var(--size-smallish);
   color: var(--dark);
-}
-
-.tokenAmount input {
-  font-weight: var(--weight-normal);
-  color: var(--dark);
-}
-
-.tokenAmountInputContainer {
-  width: 100%;
 }
 
 .singleUserContainer label {

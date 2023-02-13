@@ -17,7 +17,6 @@ import Icon from '~core/Icon';
 import FriendlyName from '~core/FriendlyName';
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import CountDownTimer from '~dashboard/ActionsPage/CountDownTimer';
-import useColonyMetadataChecks from '~modules/dashboard/hooks/useColonyMetadataChecks';
 
 import { getMainClasses, removeValueUnits } from '~utils/css';
 import {
@@ -37,16 +36,24 @@ import {
   ColonyActions,
   ColonyMotions,
   DecisionDetails,
+  ColonyExtendedActions,
 } from '~types/index';
 import { useDataFetcher } from '~utils/hooks';
 import { parseColonyMetadata, parseDomainMetadata } from '~utils/colonyActions';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
+import { useFetchSafeTransactionData } from '~modules/dashboard/hooks/useFetchSafeTransactionData';
 import {
   getUpdatedDecodedMotionRoles,
   MotionState,
   MOTION_TAG_MAP,
 } from '~utils/colonyMotions';
+import { TRANSACTION_STATUS } from '~utils/safes/getTransactionStatuses';
+import {
+  useColonyMetadataChecks,
+  useExtendedColonyActionType,
+} from '~modules/dashboard/hooks';
+import { SAFE_NAMES_MAP } from '~constants';
 
 import { ipfsDataFetcher } from '../../../core/fetchers';
 
@@ -117,6 +124,7 @@ const ActionsListItem = ({
     reputationChange,
     isDecision,
     annotationHash,
+    transactionTitle: fallbackTransactionTitle,
   },
   colony,
   handleOnClick,
@@ -160,12 +168,35 @@ const ActionsListItem = ({
   const [fetchTokenInfo, { data: tokenData }] = useTokenInfoLazyQuery();
 
   const colonyObject = parseColonyMetadata(metadataJSON);
-  const { tokensChanged, verifiedAddressesChanged } = useColonyMetadataChecks(
+
+  const {
+    verifiedAddressesChanged,
+    tokensChanged,
+    addedSafe,
+  } = useColonyMetadataChecks(
     actionType,
     colony,
     transactionHash,
     colonyObject,
   );
+  const extendedActionType = useExtendedColonyActionType(
+    actionType,
+    colony,
+    transactionHash,
+    colonyObject,
+  );
+  const {
+    transactionTitle,
+    safeTransactionStatus,
+  } = useFetchSafeTransactionData(
+    transactionHash,
+    metadata,
+    actionType,
+    colony.colonyAddress,
+    motionId,
+  );
+  const safeTransactionTitle = transactionTitle || fallbackTransactionTitle;
+
   useEffect(() => {
     if (transactionTokenAddress) {
       fetchTokenInfo({ variables: { address: transactionTokenAddress } });
@@ -202,6 +233,11 @@ const ActionsListItem = ({
     actionType === ColonyMotions.SetUserRolesMotion ? updatedRoles : roles,
     actionType,
   );
+
+  const fallbackTransactionTitleId =
+    actionType.includes(ColonyExtendedActions.SafeTransactionInitiated) &&
+    !safeTransactionTitle &&
+    `action.${actionType}.fallback`;
 
   const popoverPlacement = useMemo(() => {
     const offsetSkid = (-1 * removeValueUnits(popoverWidth)) / 2;
@@ -350,10 +386,11 @@ const ActionsListItem = ({
                     (tokensChanged &&
                       `action.${ColonyActions.ColonyEdit}.tokens`) ||
                     roleMessageDescriptorId ||
+                    fallbackTransactionTitleId ||
                     'action.title'
                   }
                   values={{
-                    actionType,
+                    actionType: extendedActionType,
                     initiator: (
                       <span className={styles.titleDecoration}>
                         <FriendlyName
@@ -396,26 +433,43 @@ const ActionsListItem = ({
                     reputationChangeNumeral: (
                       <Numeral value={formattedReputationChange} />
                     ),
+                    chainName: addedSafe && SAFE_NAMES_MAP[addedSafe.chainId],
+                    safeTransactionTitle,
                   }}
                 />
               )}
             </span>
             {(motionState || isVotingExtensionEnabled) && (
-              <>
-                <div className={styles.motionTagWrapper}>
-                  <Tag
-                    text={motionStyles.name}
-                    appearance={{
-                      theme: motionStyles.theme as TagAppearance['theme'],
-                      /*
-                       * @NOTE Prettier is being stupid
-                       */
-                      // eslint-disable-next-line max-len
-                      colorSchema: motionStyles.colorSchema as TagAppearance['colorSchema'],
-                    }}
-                  />
-                </div>
-              </>
+              <div className={styles.tagWrapper}>
+                <Tag
+                  text={motionStyles.name}
+                  appearance={{
+                    theme: motionStyles.theme as TagAppearance['theme'],
+                    /*
+                     * @NOTE Prettier is being stupid
+                     */
+                    // eslint-disable-next-line max-len
+                    colorSchema: motionStyles.colorSchema as TagAppearance['colorSchema'],
+                  }}
+                />
+              </div>
+            )}
+            {safeTransactionStatus && (
+              <div
+                // eslint-disable-next-line max-len
+                className={`${styles.tagWrapper} ${styles.safeTransactionTagWrapper}`}
+              >
+                <Tag
+                  text={safeTransactionStatus}
+                  appearance={{
+                    theme:
+                      safeTransactionStatus === TRANSACTION_STATUS.PENDING
+                        ? 'golden'
+                        : 'primary',
+                    colorSchema: 'fullColor',
+                  }}
+                />
+              </div>
             )}
           </div>
           <div className={styles.meta}>

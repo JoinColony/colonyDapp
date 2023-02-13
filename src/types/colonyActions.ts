@@ -3,9 +3,9 @@ import { ColonyRole } from '@colony/colony-js';
 import { ItemStatus } from '~core/ActionsList';
 import { MotionTimeoutPeriods } from '~data/generated';
 import { MotionState } from '~utils/colonyMotions';
+import { ExtendedActions } from '~utils/colonyActions';
 
 import { Address, ActionUserRoles } from './index';
-import { ColonyMotions } from './colonyMotions';
 
 export enum ColonyActions {
   Generic = 'Generic',
@@ -23,6 +23,16 @@ export enum ColonyActions {
   EmitDomainReputationPenalty = 'EmitDomainReputationPenalty',
   EmitDomainReputationReward = 'EmitDomainReputationReward',
 }
+
+export enum AddedActions {
+  AddressBookUpdated = 'AddressBookUpdated',
+  TokensUpdated = 'TokensUpdated',
+  SafeRemoved = 'SafeRemoved',
+  SafeAdded = 'SafeAdded',
+  SafeTransactionInitiated = 'SafeTransactionInitiated',
+}
+
+export const ColonyExtendedActions = { ...ColonyActions, ...AddedActions };
 
 export enum ColonyAndExtensionsEvents {
   Generic = 'Generic',
@@ -63,6 +73,7 @@ export enum ColonyAndExtensionsEvents {
   PaymentFinalized = 'PaymentFinalized',
   TokensBurned = 'TokensBurned',
   ArbitraryReputationUpdate = 'ArbitraryReputationUpdate',
+  ArbitraryTransaction = 'ArbitraryTransaction',
   /*
    * Network events
    */
@@ -122,7 +133,7 @@ export enum ColonyAndExtensionsEvents {
 export interface FormattedAction {
   id: string;
   status?: ItemStatus;
-  actionType: ColonyActions | ColonyMotions;
+  actionType: ExtendedActions;
   initiator: Address;
   recipient: Address;
   amount: string;
@@ -148,6 +159,8 @@ export interface FormattedAction {
   reputationChange?: string;
   isDecision?: boolean;
   annotationHash?: string;
+  transactionTitle?: string;
+  safeTransactionsStatuses?: string[];
 }
 
 export interface FormattedEvent {

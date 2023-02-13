@@ -40,6 +40,18 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
             "name": "TransactionMessageEvent"
           }
         ]
+      },
+      {
+        "kind": "UNION",
+        "name": "SafeBalanceToken",
+        "possibleTypes": [
+          {
+            "name": "ERC20Token"
+          },
+          {
+            "name": "SafeNativeToken"
+          }
+        ]
       }
     ]
   }
@@ -254,6 +266,7 @@ export type Query = {
   motionCurrentUserVoted: Scalars['Boolean'];
   motionFinalized: Scalars['Boolean'];
   motionObjectionAnnotation: MotionObjectionAnnotation;
+  motionSafeTransactionStatuses: Array<Scalars['String']>;
   motionStakerReward: MotionStakerRewards;
   motionStakes: MotionStakes;
   motionStatus: Scalars['String'];
@@ -446,6 +459,12 @@ export type QueryMotionFinalizedArgs = {
 export type QueryMotionObjectionAnnotationArgs = {
   motionId: Scalars['Int'];
   colonyAddress: Scalars['String'];
+};
+
+
+export type QueryMotionSafeTransactionStatusesArgs = {
+  finalizeMotionEventTxHash: Scalars['String'];
+  safeChainId: Scalars['String'];
 };
 
 
@@ -827,7 +846,7 @@ export type LoggedInUser = {
   networkId?: Maybe<Scalars['Int']>;
 };
 
-export type SugraphEventProcessedValues = {
+export type SubgraphEventProcessedValues = {
   agent: Scalars['String'];
   who: Scalars['String'];
   fromPot: Scalars['String'];
@@ -845,6 +864,7 @@ export type SugraphEventProcessedValues = {
   newVersion: Scalars['String'];
   storageSlot: Scalars['String'];
   storageSlotValue: Scalars['String'];
+  txHash: Scalars['String'];
 };
 
 export type SubgraphEvent = {
@@ -855,7 +875,7 @@ export type SubgraphEvent = {
   args: Scalars['String'];
   timestamp: Scalars['String'];
   associatedColony: SubgraphColony;
-  processedValues: SugraphEventProcessedValues;
+  processedValues: SubgraphEventProcessedValues;
 };
 
 export type SubgraphMotion = {
@@ -889,6 +909,79 @@ export type ColonyActionRoles = {
   setTo: Scalars['Boolean'];
 };
 
+export type SimpleUserProfile = {
+  avatarHash?: Maybe<Scalars['String']>;
+  displayName?: Maybe<Scalars['String']>;
+  username?: Maybe<Scalars['String']>;
+  walletAddress: Scalars['String'];
+};
+
+export type SimpleUser = {
+  id: Scalars['String'];
+  profile: SimpleUserProfile;
+};
+
+export type Nft = {
+  id: Scalars['String'];
+  profile: NftProfile;
+};
+
+export type NftProfile = {
+  displayName: Scalars['String'];
+  walletAddress: Scalars['String'];
+};
+
+export type NftData = {
+  address: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  imageUri?: Maybe<Scalars['String']>;
+  logoUri: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
+  tokenName: Scalars['String'];
+  tokenSymbol: Scalars['String'];
+  uri: Scalars['String'];
+};
+
+export type SafeBalanceToken = Erc20Token | SafeNativeToken;
+
+export type Erc20Token = {
+  name: Scalars['String'];
+  decimals: Scalars['Int'];
+  symbol: Scalars['String'];
+  logoUri: Scalars['String'];
+  address: Scalars['String'];
+};
+
+export type SafeNativeToken = {
+  name: Scalars['String'];
+  decimals: Scalars['Int'];
+  symbol: Scalars['String'];
+  address: Scalars['String'];
+  networkName: Scalars['String'];
+};
+
+export type FunctionParamType = {
+  name: Scalars['String'];
+  type: Scalars['String'];
+};
+
+export type SafeTransaction = {
+  transactionType: Scalars['String'];
+  tokenAddress?: Maybe<Scalars['String']>;
+  tokenData?: Maybe<SafeBalanceToken>;
+  amount?: Maybe<Scalars['String']>;
+  rawAmount?: Maybe<Scalars['String']>;
+  recipient?: Maybe<SimpleUser>;
+  data: Scalars['String'];
+  contract?: Maybe<SimpleUser>;
+  abi: Scalars['String'];
+  contractFunction: Scalars['String'];
+  nft?: Maybe<Nft>;
+  nftData?: Maybe<NftData>;
+  functionParamTypes?: Maybe<Array<FunctionParamType>>;
+};
+
 export type ColonyAction = {
   hash: Scalars['String'];
   actionInitiator: Scalars['String'];
@@ -903,6 +996,7 @@ export type ColonyAction = {
   tokenAddress: Scalars['String'];
   roles: Array<ColonyActionRoles>;
   annotationHash?: Maybe<Scalars['String']>;
+  annotationMessage?: Maybe<Scalars['String']>;
   oldVersion: Scalars['String'];
   newVersion: Scalars['String'];
   colonyDisplayName: Scalars['String'];
@@ -918,6 +1012,11 @@ export type ColonyAction = {
   reputationChange: Scalars['String'];
   isWhitelistActivated: Scalars['Boolean'];
   verifiedAddresses: Array<Scalars['String']>;
+  colonySafes: Array<ColonySafe>;
+  safeData?: Maybe<SafeData>;
+  safeTransactions: Array<SafeTransaction>;
+  transactionsTitle: Scalars['String'];
+  safeTransactionStatuses: Array<Scalars['String']>;
 };
 
 export type NetworkContractsInput = {
@@ -1152,6 +1251,18 @@ export type ProcessedTokensProcessedBalancesArgs = {
   colonyAddress: Scalars['String'];
 };
 
+export type ColonySafe = {
+  safeName: Scalars['String'];
+  contractAddress: Scalars['String'];
+  chainId: Scalars['String'];
+  moduleContractAddress: Scalars['String'];
+};
+
+export type SafeData = {
+  chainId: Scalars['String'];
+  contractAddress: Scalars['String'];
+};
+
 export type ProcessedColony = {
   id: Scalars['Int'];
   colonyAddress: Scalars['String'];
@@ -1162,6 +1273,7 @@ export type ProcessedColony = {
   nativeTokenAddress: Scalars['String'];
   tokenAddresses: Array<Maybe<Scalars['String']>>;
   extensionAddresses?: Maybe<Array<Scalars['String']>>;
+  safes: Array<ColonySafe>;
   domains: Array<ProcessedDomain>;
   roles: Array<ProcessedRoles>;
   tokens: Array<ProcessedTokens>;
@@ -1399,7 +1511,7 @@ export type TokensFragment = (
 
 export type DomainFieldsFragment = Pick<ProcessedDomain, 'id' | 'color' | 'description' | 'ethDomainId' | 'name' | 'ethParentDomainId'>;
 
-export type ColonyProfileFragment = Pick<ProcessedColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL' | 'extensionAddresses' | 'whitelistedAddresses' | 'isWhitelistActivated'>;
+export type ColonyProfileFragment = Pick<ProcessedColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL' | 'extensionAddresses' | 'whitelistedAddresses' | 'isWhitelistActivated' | 'safes'>;
 
 export type FullColonyFragment = (
   Pick<ProcessedColony, 'version' | 'canColonyMintNativeToken' | 'canColonyUnlockNativeToken' | 'isInRecoveryMode' | 'isNativeTokenLocked' | 'isDeploymentFinished'>
@@ -1712,8 +1824,8 @@ export type ColonyActionQueryVariables = Exact<{
 
 
 export type ColonyActionQuery = { colonyAction: (
-    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionState' | 'motionDomain' | 'blockNumber' | 'rootHash' | 'reputationChange' | 'isWhitelistActivated' | 'verifiedAddresses'>
-    & { events: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'transactionHash'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>> }
+    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'annotationMessage' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionState' | 'motionDomain' | 'blockNumber' | 'rootHash' | 'reputationChange' | 'isWhitelistActivated' | 'verifiedAddresses' | 'safeData' | 'safeTransactions' | 'transactionsTitle' | 'safeTransactionStatuses'>
+    & { events: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'transactionHash'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>>, colonySafes: Array<Pick<ColonySafe, 'safeName' | 'contractAddress' | 'chainId' | 'moduleContractAddress'>> }
   ) };
 
 export type MetaColonyQueryVariables = Exact<{ [key: string]: never; }>;
@@ -1788,7 +1900,10 @@ export type SubgraphColonyQueryVariables = Exact<{
 
 export type SubgraphColonyQuery = { colony: (
     Pick<SubgraphColony, 'id' | 'colonyChainId' | 'ensName' | 'metadata'>
-    & { metadataHistory: Array<Pick<SubgraphColonyMetadata, 'id' | 'metadata'>>, token: (
+    & { metadataHistory: Array<(
+      Pick<SubgraphColonyMetadata, 'id' | 'metadata'>
+      & { transaction: { block: Pick<SubgraphBlock, 'timestamp'> } }
+    )>, token: (
       Pick<SubgraphToken, 'decimals' | 'symbol'>
       & { tokenAddress: SubgraphToken['id'] }
     ), extensions?: Maybe<Array<(
@@ -1804,7 +1919,10 @@ export type SubgraphColoniesQueryVariables = Exact<{
 
 export type SubgraphColoniesQuery = { colonies: Array<(
     Pick<SubgraphColony, 'id' | 'colonyChainId' | 'ensName' | 'metadata'>
-    & { metadataHistory: Array<Pick<SubgraphColonyMetadata, 'id' | 'metadata'>>, token: (
+    & { metadataHistory: Array<(
+      Pick<SubgraphColonyMetadata, 'id' | 'metadata'>
+      & { transaction: { block: Pick<SubgraphBlock, 'timestamp'> } }
+    )>, token: (
       Pick<SubgraphToken, 'decimals' | 'symbol'>
       & { tokenAddress: SubgraphToken['id'] }
     ) }
@@ -2362,6 +2480,14 @@ export type MotionTimeoutPeriodsQueryVariables = Exact<{
 
 export type MotionTimeoutPeriodsQuery = { motionTimeoutPeriods: Pick<MotionTimeoutPeriods, 'timeLeftToStake' | 'timeLeftToSubmit' | 'timeLeftToReveal' | 'timeLeftToEscalate'> };
 
+export type MotionSafeTransactionStatusesQueryVariables = Exact<{
+  finalizeMotionEventTxHash: Scalars['String'];
+  safeChainId: Scalars['String'];
+}>;
+
+
+export type MotionSafeTransactionStatusesQuery = Pick<Query, 'motionSafeTransactionStatuses'>;
+
 export type SubgraphLatestSyncedBlockQueryVariables = Exact<{
   blockNumber: Scalars['Int'];
 }>;
@@ -2643,7 +2769,7 @@ export type SubgraphEventsThatAreActionsSubscription = { events: Array<(
     ), transaction: (
       { hash: SubgraphTransaction['id'] }
       & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
-    ), processedValues: Pick<SugraphEventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user' | 'oldVersion' | 'newVersion' | 'storageSlot' | 'storageSlotValue'> }
+    ), processedValues: Pick<SubgraphEventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user' | 'oldVersion' | 'newVersion' | 'storageSlot' | 'storageSlotValue' | 'txHash'> }
   )> };
 
 export type SubgraphMotionsSubscriptionVariables = Exact<{
@@ -2748,6 +2874,7 @@ export const ColonyProfileFragmentDoc = gql`
   extensionAddresses
   whitelistedAddresses
   isWhitelistActivated
+  safes
 }
     `;
 export const TokensFragmentDoc = gql`
@@ -4087,6 +4214,7 @@ export const ColonyActionDocument = gql`
     amount
     tokenAddress
     annotationHash
+    annotationMessage
     newVersion
     oldVersion
     colonyDisplayName
@@ -4106,6 +4234,16 @@ export const ColonyActionDocument = gql`
     reputationChange
     isWhitelistActivated
     verifiedAddresses
+    colonySafes {
+      safeName
+      contractAddress
+      chainId
+      moduleContractAddress
+    }
+    safeData
+    safeTransactions
+    transactionsTitle
+    safeTransactionStatuses
   }
 }
     `;
@@ -4417,6 +4555,11 @@ export const SubgraphColonyDocument = gql`
     metadataHistory {
       id
       metadata
+      transaction {
+        block {
+          timestamp
+        }
+      }
     }
     token {
       tokenAddress: id
@@ -4466,6 +4609,11 @@ export const SubgraphColoniesDocument = gql`
     metadataHistory {
       id
       metadata
+      transaction {
+        block {
+          timestamp
+        }
+      }
     }
     token {
       tokenAddress: id
@@ -6389,6 +6537,38 @@ export function useMotionTimeoutPeriodsLazyQuery(baseOptions?: Apollo.LazyQueryH
 export type MotionTimeoutPeriodsQueryHookResult = ReturnType<typeof useMotionTimeoutPeriodsQuery>;
 export type MotionTimeoutPeriodsLazyQueryHookResult = ReturnType<typeof useMotionTimeoutPeriodsLazyQuery>;
 export type MotionTimeoutPeriodsQueryResult = Apollo.QueryResult<MotionTimeoutPeriodsQuery, MotionTimeoutPeriodsQueryVariables>;
+export const MotionSafeTransactionStatusesDocument = gql`
+    query MotionSafeTransactionStatuses($finalizeMotionEventTxHash: String!, $safeChainId: String!) {
+  motionSafeTransactionStatuses(finalizeMotionEventTxHash: $finalizeMotionEventTxHash, safeChainId: $safeChainId) @client
+}
+    `;
+
+/**
+ * __useMotionSafeTransactionStatusesQuery__
+ *
+ * To run a query within a React component, call `useMotionSafeTransactionStatusesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionSafeTransactionStatusesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionSafeTransactionStatusesQuery({
+ *   variables: {
+ *      finalizeMotionEventTxHash: // value for 'finalizeMotionEventTxHash'
+ *      safeChainId: // value for 'safeChainId'
+ *   },
+ * });
+ */
+export function useMotionSafeTransactionStatusesQuery(baseOptions?: Apollo.QueryHookOptions<MotionSafeTransactionStatusesQuery, MotionSafeTransactionStatusesQueryVariables>) {
+        return Apollo.useQuery<MotionSafeTransactionStatusesQuery, MotionSafeTransactionStatusesQueryVariables>(MotionSafeTransactionStatusesDocument, baseOptions);
+      }
+export function useMotionSafeTransactionStatusesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionSafeTransactionStatusesQuery, MotionSafeTransactionStatusesQueryVariables>) {
+          return Apollo.useLazyQuery<MotionSafeTransactionStatusesQuery, MotionSafeTransactionStatusesQueryVariables>(MotionSafeTransactionStatusesDocument, baseOptions);
+        }
+export type MotionSafeTransactionStatusesQueryHookResult = ReturnType<typeof useMotionSafeTransactionStatusesQuery>;
+export type MotionSafeTransactionStatusesLazyQueryHookResult = ReturnType<typeof useMotionSafeTransactionStatusesLazyQuery>;
+export type MotionSafeTransactionStatusesQueryResult = Apollo.QueryResult<MotionSafeTransactionStatusesQuery, MotionSafeTransactionStatusesQueryVariables>;
 export const SubgraphLatestSyncedBlockDocument = gql`
     query SubgraphLatestSyncedBlock($blockNumber: Int!) {
   domain(id: 1, block: {number: $blockNumber}) {
@@ -7202,7 +7382,7 @@ export type SubgraphOneTxSubscriptionHookResult = ReturnType<typeof useSubgraphO
 export type SubgraphOneTxSubscriptionResult = Apollo.SubscriptionResult<SubgraphOneTxSubscription>;
 export const SubgraphEventsThatAreActionsDocument = gql`
     subscription SubgraphEventsThatAreActions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $sortDirection: String = asc) {
-  events(skip: $skip, first: $first, orderBy: "timestamp", orderDirection: $sortDirection, where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)", "DomainMetadata(address,uint256,string)", "ColonyRoleSet(address,address,uint256,uint8,bool)", "ColonyUpgraded(address,uint256,uint256)", "ColonyUpgraded(uint256,uint256)", "RecoveryModeEntered(address)", "ArbitraryReputationUpdate(address,address,uint256,int256)", "TokenUnlocked(address)", "TokenUnlocked()"]}) {
+  events(skip: $skip, first: $first, orderBy: "timestamp", orderDirection: $sortDirection, where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)", "DomainMetadata(address,uint256,string)", "ColonyRoleSet(address,address,uint256,uint8,bool)", "ColonyUpgraded(address,uint256,uint256)", "ColonyUpgraded(uint256,uint256)", "RecoveryModeEntered(address)", "ArbitraryReputationUpdate(address,address,uint256,int256)", "TokenUnlocked(address)", "TokenUnlocked()", "ArbitraryTransaction(address,bytes,bool)"]}) {
     id
     address
     associatedColony {
@@ -7240,6 +7420,7 @@ export const SubgraphEventsThatAreActionsDocument = gql`
       newVersion
       storageSlot
       storageSlotValue
+      txHash
     }
   }
 }

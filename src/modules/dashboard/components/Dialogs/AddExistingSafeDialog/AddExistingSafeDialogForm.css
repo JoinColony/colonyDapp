@@ -1,0 +1,240 @@
+@value wideButton: 160px;
+
+.main {
+  display: flex;
+  flex-direction: column;
+  row-gap: 18px;
+}
+
+.main a {
+  color: var(--action-secondary);
+}
+
+.main i {
+  cursor: pointer;
+}
+
+.main input {
+  font-size: 14px;
+}
+
+.main label {
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.step1Subtitle {
+  margin-top: 13px;
+}
+
+.chainSelect {
+  margin-bottom: 12px;
+}
+
+.chainSelect label {
+  font-size: var(--size-smallish);
+  color: var(--dark);
+}
+
+.headingContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 32px;
+}
+
+.instructions {
+  padding-bottom: 18px;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+  color: var(--temp-grey-blue-7);
+}
+
+.step3Instructions {
+  margin-bottom: -20px;
+  padding-bottom: 0;
+  border: none;
+}
+
+.moduleLinkSection {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 0;
+  border: none;
+}
+
+.copyable {
+  composes: colorSchemaGrey from '~core/Fields/Input/InputComponent.css';
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 11px;
+  font-size: 14px;
+  line-height: normal;
+}
+
+.fat {
+  composes: themeFat from '~core/Fields/Input/InputComponent.css';
+}
+
+.copyableContainer {
+  display: flex;
+  flex-direction: column;
+  row-gap: 5px;
+}
+
+.copyable use {
+  fill: var(--temp-grey-blue-7);
+}
+
+.copied use {
+  fill: var(--primary);
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  row-gap: 30px;
+}
+
+.warning {
+  display: flex;
+  justify-content: center;
+  padding: 14px;
+  border-radius: 5px;
+  background-color: color-mod(var(--golden) alpha(15%));
+  line-height: 18px;
+  color: var(--dark);
+  column-gap: 5px;
+}
+
+.warning span {
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-top: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+  font-size: var(--size-smallish);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
+.summaryRow span {
+  line-height: unset;
+}
+
+.summaryRow:last-child {
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.summaryRow:last-child span {
+  transform: translateY(2px);
+}
+
+.chainName {
+  color: color-mod(var(--dark) alpha(85%));
+}
+
+.safe {
+  display: flex;
+  align-items: center;
+  column-gap: 9px;
+}
+
+.moduleLabel {
+  composes: subtitle;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: var(--size-smallish);
+}
+
+.avatarIcon {
+  position: relative;
+}
+
+.avatarIcon input {
+  font-size: var(--size-normal);
+}
+
+.avatarIcon figure {
+  position: absolute;
+  right: 10px;
+  bottom: 28px;
+}
+
+.learnMoreLink {
+  margin-right: 4px;
+  position: relative;
+  top: 1px;
+}
+
+.moduleContractAddressContainer {
+  margin-top: 10px;
+  padding-top: 20px;
+  border-top: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.warningIcon {
+  margin-right: 5px;
+  height: 18px;
+  width: 18px;
+  fill: var(--golden);
+}
+
+.moduleAddressSubtitle {
+  margin-bottom: 10px;
+}
+
+.safeNameContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tooltip {
+  width: 220px;
+}
+
+.callout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px;
+  border-radius: 5px;
+  background-color: color-mod(var(--golden) alpha(15%));
+  font-size: var(--size-normal);
+  line-height: 18px;
+  color: var(--dark);
+}
+
+.calloutContainer {
+  display: flex;
+  align-items: center;
+}
+
+.calloutWarning {
+  margin-right: 4px;
+  position: relative;
+  top: 1px;
+  font-weight: var(--weight-bold);
+}
+
+.calloutLink {
+  margin-right: 4px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+}
+
+.warningIconCheckSafe {
+  margin-right: 15px;
+}

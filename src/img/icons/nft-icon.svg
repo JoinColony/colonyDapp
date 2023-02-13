@@ -1,0 +1,89 @@
+<svg
+   version="1.1"
+   viewBox="0 0 30 30"
+   xml:space="preserve"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+<g
+   style="opacity:1;fill:none;fill-rule:nonzero;stroke:none;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none"
+   transform="matrix(0.31359746,0,0,0.32961518,0.8882711,0.15033141)">
+	<path
+   d="M 81.736,23.718 44.994,2.456 8.264,23.73 v 42.477 l 36.8,21.25 36.672,-21.262 V 23.718 Z"
+   style="opacity:1;fill:#ffffff;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none"
+   stroke-linecap="round" />
+	<radialGradient
+   id="SVGID_4"
+   gradientUnits="userSpaceOnUse"
+   cx="44.910099"
+   cy="46.859501"
+   r="43.973202"
+   fx="44.910099"
+   fy="46.859501">
+<stop
+   offset="0%"
+   style="stop-color:rgb(63,201,168);stop-opacity: 1" />
+<stop
+   offset="100%"
+   style="stop-color:rgb(28,162,196);stop-opacity: 1" />
+</radialGradient>
+<path
+   d="M 24.473,45.997 C 22.739,40.407 18.741,27.49 18.741,27.181 L 14.629,29.5 v 32.99 l 4.113,2.363 V 41.947 l 7.219,27.062 3.5,2.013 V 20.094 l -4.944,2.713 z"
+   style="opacity:1;fill:url(#SVGID_4);fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none"
+   stroke-linecap="round" />
+	<radialGradient
+   id="SVGID_5"
+   gradientUnits="userSpaceOnUse"
+   cx="44.910099"
+   cy="46.859501"
+   r="43.973301"
+   fx="44.910099"
+   fy="46.859501">
+<stop
+   offset="0%"
+   style="stop-color:rgb(63,201,168);stop-opacity: 1" />
+<stop
+   offset="100%"
+   style="stop-color:rgb(28,162,196);stop-opacity: 1" />
+</radialGradient>
+<polygon
+   points="55.58,47.83 55.58,42.1 38.3,42.1 38.3,19.66 45.01,15.85 56.67,22.63 59.34,18.48 45.01,10.07 33.66,16.86 33.66,73.21 38.3,76.27 38.3,47.83 "
+   style="opacity:1;fill:url(#SVGID_5);fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none" />
+	<radialGradient
+   id="SVGID_6"
+   gradientUnits="userSpaceOnUse"
+   cx="44.91"
+   cy="46.859501"
+   r="43.973099"
+   fx="44.91"
+   fy="46.859501">
+<stop
+   offset="0%"
+   style="stop-color:rgb(63,201,168);stop-opacity: 1" />
+<stop
+   offset="100%"
+   style="stop-color:rgb(28,162,196);stop-opacity: 1" />
+</radialGradient>
+<polygon
+   points="70.37,30.77 76.71,35.1 76.71,29.68 61.62,20.14 59.08,23.94 65.25,27.97 65.25,69.23 70.37,66.38 "
+   style="opacity:1;fill:url(#SVGID_6);fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none" />
+	<radialGradient
+   id="SVGID_7"
+   gradientUnits="userSpaceOnUse"
+   cx="44.910099"
+   cy="46.859501"
+   r="43.973301"
+   fx="44.910099"
+   fy="46.859501">
+<stop
+   offset="0%"
+   style="stop-color:rgb(63,201,168);stop-opacity: 1" />
+<stop
+   offset="100%"
+   style="stop-color:rgb(28,162,196);stop-opacity: 1" />
+</radialGradient>
+<path
+   d="M 44.994,0 5.969,22.631 V 67.478 L 45.06,90 84.03,67.467 V 22.62 Z M 10.604,64.853 V 25.081 L 44.994,5.163 79.396,25.07 V 64.842 L 45.06,84.75 Z"
+   style="opacity:1;fill:url(#SVGID_7);fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none"
+   stroke-linecap="round" />
+</g>
+</svg>

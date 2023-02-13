@@ -14,9 +14,7 @@ import {
   VotingReputationExtensionVersion,
 } from '@colony/colony-js';
 import { isConfusing } from '@colony/unicode-confusables-noascii';
-import { AddressZero } from 'ethers/constants';
 
-import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
 import PermissionsLabel from '~core/PermissionsLabel';
 import Button from '~core/Button';
@@ -24,11 +22,11 @@ import ConfusableWarning from '~core/ConfusableWarning';
 import { ItemDataType } from '~core/OmniPicker';
 import { ActionDialogProps } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
-import { Select, Input, Annotations, TokenSymbolSelector } from '~core/Fields';
+import { Select, Annotations, AmountTokens, ForceToggle } from '~core/Fields';
+import { calculateFee } from '~core/Fields/AmountTokens';
 import Heading from '~core/Heading';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
-import ForceToggle from '~core/Fields/ForceToggle';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
@@ -133,29 +131,6 @@ const UserAvatar = HookedUserAvatar({ fetchUser: false });
 const supRenderAvatar = (address: Address, item: ItemDataType<AnyUser>) => (
   <UserAvatar address={address} user={item} size="xs" notSet={false} />
 );
-
-// NOTE: The equation to calculate totalToPay is as following (in Wei)
-// totalToPay = (receivedAmount + 1) * (feeInverse / (feeInverse -1))
-// The network adds 1 wei extra fee after the percentage calculation
-// For more info check out
-// https://github.com/JoinColony/colonyNetwork/blob/806e4d5750dc3a6b9fa80f6e007773b28327c90f/contracts/colony/ColonyFunding.sol#L656
-
-export const calculateFee = (
-  receivedAmount: string, // amount that the recipient finally receives
-  feeInverse: string,
-  decimals: number,
-): { feesInWei: string; totalToPay: string } => {
-  const amountInWei = moveDecimal(receivedAmount, decimals);
-  const totalToPayInWei = bigNumberify(amountInWei)
-    .add(1)
-    .mul(feeInverse)
-    .div(bigNumberify(feeInverse).sub(1));
-  const feesInWei = totalToPayInWei.sub(amountInWei);
-  return {
-    feesInWei: feesInWei.toString(),
-    totalToPay: moveDecimal(totalToPayInWei, -1 * decimals),
-  }; // NOTE: seems like moveDecimal does not have strict typing
-};
 
 const CreatePaymentDialogForm = ({
   back,
@@ -488,92 +463,14 @@ const CreatePaymentDialogForm = ({
           )}
       </DialogSection>
       <DialogSection>
-        <div className={styles.tokenAmount}>
-          <div className={styles.tokenAmountInputContainer}>
-            <Input
-              label={MSG.amount}
-              name="amount"
-              appearance={{
-                theme: 'minimal',
-                align: 'right',
-              }}
-              formattingOptions={{
-                delimiter: ',',
-                numeral: true,
-                numeralDecimalScale: getTokenDecimalsWithFallback(
-                  selectedToken && selectedToken.decimals,
-                ),
-              }}
-              disabled={inputDisabled}
-              /*
-               * Force the input component into an error state
-               * This is needed for our custom error state to work
-               */
-              forcedFieldError={customAmountError}
-              dataTest="paymentAmountInput"
-            />
-            {networkFeeInverse &&
-              customAmountError === undefined &&
-              values.amount &&
-              Number(values.amount) > 0 && (
-                <div className={styles.networkFee}>
-                  <FormattedMessage
-                    {...MSG.fee}
-                    values={{
-                      fee: (
-                        <Numeral
-                          appearance={{
-                            size: 'small',
-                            theme: 'grey',
-                          }}
-                          value={
-                            calculateFee(
-                              values.amount,
-                              networkFeeInverse,
-                              getTokenDecimalsWithFallback(
-                                selectedToken?.decimals,
-                              ),
-                            ).feesInWei
-                          }
-                          unit={getTokenDecimalsWithFallback(
-                            selectedToken && selectedToken.decimals,
-                          )}
-                        />
-                      ),
-                      symbol: (selectedToken && selectedToken.symbol) || '???',
-                    }}
-                  />
-                </div>
-              )}
-          </div>
-          <div className={styles.tokenAmountContainer}>
-            <div className={styles.tokenAmountSelect}>
-              <TokenSymbolSelector
-                label={MSG.token}
-                tokens={tokens}
-                name="tokenAddress"
-                elementOnly
-                appearance={{ alignOptions: 'right', theme: 'grey' }}
-                disabled={inputDisabled}
-              />
-            </div>
-            {values.tokenAddress === AddressZero && (
-              <div className={styles.tokenAmountUsd}>
-                <EthUsd
-                  appearance={{ theme: 'grey' }}
-                  value={
-                    /*
-                     * @NOTE Set value to 0 if amount is only the decimal point
-                     * Just entering the decimal point will pass it through to EthUsd
-                     * and that will try to fetch the balance for, which, obviously, will fail
-                     */
-                    values.amount && values.amount !== '.' ? values.amount : '0'
-                  }
-                />
-              </div>
-            )}
-          </div>
-        </div>
+        <AmountTokens
+          values={values}
+          networkFeeInverse={networkFeeInverse}
+          customAmountError={customAmountError}
+          selectedToken={selectedToken}
+          tokens={tokens}
+          disabledInput={inputDisabled}
+        />
       </DialogSection>
       <DialogSection>
         <Annotations

@@ -7,15 +7,31 @@ import DetailsWidgetUser from '~core/DetailsWidgetUser';
 import TransactionLink from '~core/TransactionLink';
 import Numeral from '~core/Numeral';
 import TokenIcon from '~dashboard/HookedTokenIcon';
-import { AnyUser, Colony } from '~data/index';
-import { ColonyActions, ColonyMotions } from '~types/index';
+import { AnyUser, Colony, ColonySafe, SafeTransaction } from '~data/index';
+import {
+  AddedActions,
+  AddedMotions,
+  ColonyActions,
+  ColonyExtendedMotions,
+  ColonyMotions,
+} from '~types/index';
 import { splitTransactionHash } from '~utils/strings';
-import { getDetailsForAction } from '~utils/colonyActions';
+import { getSafeTransactionActionMessageId } from '~utils/safes';
+import {
+  ExtendedActions,
+  getDetailsForAction,
+  getSafeTransactionActionType,
+} from '~utils/colonyActions';
 import { EventValues } from '../../ActionsPageFeed/ActionsPageFeed';
 import { ACTION_TYPES_ICONS_MAP } from '../../ActionsPage/staticMaps';
 
-import DetailsWidgetTeam from './DetailsWidgetTeam';
-import DetailsWidgetRoles from './DetailsWidgetRoles';
+import {
+  DetailsWidgetTeam,
+  DetailsWidgetAddSafe,
+  DetailsWidgetRoles,
+  DetailsWidgetSafe,
+  DetailsWidgetSafeTransaction,
+} from './index';
 
 import styles from './DetailsWidget.css';
 
@@ -77,16 +93,75 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.DetailsWidget.colonyName',
     defaultMessage: 'Author',
   },
+  safe: {
+    id: 'dashboard.ActionsPage.DetailsWidget.safe',
+    defaultMessage: 'Safe',
+  },
+  chain: {
+    id: 'dashboard.ActionsPage.DetailsWidget.chain',
+    defaultMessage: 'Chain',
+  },
+  safeAddress: {
+    id: 'dashboard.ActionsPage.DetailsWidget.safeAddress',
+    defaultMessage: 'Safe Address',
+  },
+  safeName: {
+    id: 'dashboard.ActionsPage.DetailsWidget.safeName',
+    defaultMessage: 'Safe Name',
+  },
+  contract: {
+    id: 'dashboard.ActionsPage.DetailsWidget.contract',
+    defaultMessage: 'Contract',
+  },
 });
 
+export const { toRecipient: toRecipientMSG, value: valueMSG } = MSG;
+export interface SafeInfo {
+  safeTransactions: SafeTransaction[];
+  safe: ColonySafe;
+}
+
 interface Props {
-  actionType: ColonyActions | ColonyMotions;
+  actionType: ExtendedActions;
+  colony: Colony;
   recipient?: AnyUser;
   values?: EventValues;
   transactionHash?: string;
-  colony: Colony;
 }
 
+const getMessageId = (
+  actionType: ExtendedActions,
+  safeTransactions?: SafeTransaction[] | null,
+) => {
+  if (ColonyMotions[actionType]) {
+    return 'motion.type';
+  }
+
+  if (AddedMotions[actionType]) {
+    const motionSubtype = getSafeTransactionActionType(
+      actionType,
+      safeTransactions || [],
+    );
+    return motionSubtype
+      ? `motion.type.${ColonyExtendedMotions.SafeTransactionInitiatedMotion}.${
+          motionSubtype[0].toLowerCase() + motionSubtype.substring(1)
+        }`
+      : 'motion.type';
+  }
+
+  if (
+    actionType === AddedActions.SafeTransactionInitiated &&
+    safeTransactions
+  ) {
+    return getSafeTransactionActionMessageId(
+      actionType,
+      safeTransactions,
+      'type',
+    );
+  }
+
+  return 'action.type';
+};
 const DetailsWidget = ({
   actionType = ColonyActions.Generic,
   recipient,
@@ -95,8 +170,7 @@ const DetailsWidget = ({
   colony,
 }: Props) => {
   const { formatMessage } = useIntl();
-
-  const messageId = ColonyMotions[actionType] ? 'motion.type' : 'action.type';
+  const messageId = getMessageId(actionType, values?.safeTransactions);
   const showFullDetails = actionType !== ColonyActions.Generic;
 
   const splitHash = splitTransactionHash(transactionHash as string);
@@ -115,6 +189,10 @@ const DetailsWidget = ({
   const Symbol = () => values?.tokenSymbol as ReactElement;
 
   const detailsForAction = getDetailsForAction(actionType);
+  const safeAdded =
+    detailsForAction.Chain &&
+    detailsForAction.SafeAddress &&
+    detailsForAction.SafeName;
 
   return (
     <div>
@@ -127,7 +205,7 @@ const DetailsWidget = ({
             title={formatMessage(
               { id: messageId },
               {
-                actionType: values?.actionType,
+                actionType,
               },
             )}
             appearance={{ size: 'small' }}
@@ -142,7 +220,9 @@ const DetailsWidget = ({
                * of two separate strings (apparently you can't pass it just a plain
                * string with spaces...)
                */
-              values={{ actionType: values?.actionType }}
+              values={{
+                actionType,
+              }}
             />
           </div>
         </div>
@@ -156,6 +236,16 @@ const DetailsWidget = ({
             <DetailsWidgetTeam domain={values.motionDomain} />
           </div>
         </div>
+      )}
+      {safeAdded && (
+        <DetailsWidgetAddSafe
+          addedSafe={{
+            address: values?.addedSafeAddress,
+            chainName: values?.chainName,
+            safeName: values?.safeName as string,
+            moduleAddress: values?.moduleAddress,
+          }}
+        />
       )}
       {detailsForAction.FromDomain && values?.fromDomain && (
         <div className={styles.item}>
@@ -179,7 +269,7 @@ const DetailsWidget = ({
             {recipient && detailsForAction.ToRecipient && (
               <DetailsWidgetUser
                 colony={colony}
-                walletAddress={recipient?.profile.walletAddress}
+                walletAddress={recipient?.profile.walletAddress as string}
               />
             )}
           </div>
@@ -278,6 +368,29 @@ const DetailsWidget = ({
           <div className={styles.value}>{values.colonyName}</div>
         </div>
       )}
+      {detailsForAction.Safe &&
+        (values?.removedSafes || []).length > 0 &&
+        values?.removedSafes?.map((safe, index) => (
+          <div className={styles.item} key={index}>
+            <div className={styles.label}>
+              <FormattedMessage {...MSG.safe} />
+            </div>
+            <div className={styles.value}>
+              <DetailsWidgetSafe safe={safe} />
+            </div>
+          </div>
+        ))}
+      {detailsForAction.SafeTransaction &&
+        values?.safeTransactionSafe &&
+        values.safeTransactions &&
+        values.safeTransactionStatuses && (
+          <DetailsWidgetSafeTransaction
+            safe={values.safeTransactionSafe}
+            safeTransactions={values.safeTransactions}
+            colony={colony}
+            safeTransactionStatuses={values.safeTransactionStatuses}
+          />
+        )}
       {!!shortenedHash && (
         <div className={styles.item}>
           <div className={styles.label}>

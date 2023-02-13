@@ -4,6 +4,7 @@ import { Resolvers } from '@apollo/client';
 
 import { createAddress } from '~utils/web3';
 import { log } from '~utils/debug';
+import { parseSubgraphEvent } from '~utils/events';
 import {
   RecoveryAllEnteredEventsQuery,
   RecoveryAllEnteredEventsQueryVariables,
@@ -12,6 +13,9 @@ import {
   RecoveryRolesAndApprovalsForSessionQueryVariables,
   RecoveryRolesAndApprovalsForSessionDocument,
   ParsedEvent,
+  SubgraphAnnotationEventsQuery,
+  SubgraphAnnotationEventsQueryVariables,
+  SubgraphAnnotationEventsDocument,
 } from '~data/index';
 import { Context } from '~context/index';
 import { ColonyAndExtensionsEvents } from '~types/index';
@@ -136,6 +140,7 @@ export const eventsResolvers = ({
     async processedValues({
       args,
       name,
+      transaction,
       associatedColony: { colonyAddress = AddressZero },
     }) {
       try {
@@ -157,7 +162,30 @@ export const eventsResolvers = ({
           );
           initialValues.fromDomain = fromDomain.toString();
           initialValues.toDomain = toDomain.toString();
+        } else if (
+          name.includes(ColonyAndExtensionsEvents.ArbitraryTransaction)
+        ) {
+          const { data: subgraphEvents } = await apolloClient.query<
+            SubgraphAnnotationEventsQuery,
+            SubgraphAnnotationEventsQueryVariables
+          >({
+            query: SubgraphAnnotationEventsDocument,
+            variables: {
+              transactionHash: transaction.hash,
+              sortDirection: 'desc',
+            },
+            fetchPolicy: 'network-only',
+          });
+          const [safeTransactionsAnnotation] = (
+            subgraphEvents?.annotationEvents || []
+          ).map(parseSubgraphEvent);
+          if (safeTransactionsAnnotation) {
+            initialValues.metadata =
+              safeTransactionsAnnotation.values?.metadata;
+            initialValues.agent = safeTransactionsAnnotation.values.agent;
+          }
         }
+
         return initialValues;
       } catch (error) {
         log.verbose(`Could not get the event args from: ${args}`);

@@ -18,6 +18,8 @@ import {
   useLoggedInUser,
   useCommentsSubscription,
   TokenInfoQuery,
+  ColonySafe,
+  SafeTransaction,
 } from '~data/index';
 import { ActionUserRoles, ColonyActions, Address } from '~types/index';
 import { MotionVote } from '~utils/colonyMotions';
@@ -69,6 +71,21 @@ export interface EventValues {
   objectionTag?: ReactElement;
   reputationChange?: string;
   isSmiteAction?: boolean;
+  removedSafes?: ColonySafe[];
+  addedSafeAddress?: JSX.Element | null;
+  chainName?: string | null;
+  safeName?: string | JSX.Element;
+  moduleAddress?: JSX.Element | null;
+  safeTransactionSafe?: ColonySafe | null;
+  safeTransactionTitle?: string;
+  safeTransactions?: SafeTransaction[] | null;
+  safeTransactionAmount?: JSX.Element;
+  safeTransactionRecipient?: JSX.Element;
+  safeTransactionNftToken?: JSX.Element;
+  safeTransactionFunctionName?: string;
+  safeTransactionContractName?: string;
+  safeTransactionRawTransactionAddress?: JSX.Element;
+  safeTransactionStatuses?: string[];
 }
 
 export type FeedItemWithId<T> = T & { uniqueId: string };

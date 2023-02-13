@@ -29,6 +29,8 @@ const eventsMessageDescriptors = {
   [`event.${ColonyAndExtensionsEvents.ColonyMetadata}.logo`]: `{initiator} changed this colony's logo`,
   [`event.${ColonyAndExtensionsEvents.ColonyMetadata}.tokens`]: `{initiator} changed this colony's tokens`,
   [`event.${ColonyAndExtensionsEvents.ColonyMetadata}.verifiedAddresses`]: `{initiator} updated this colony's address book`,
+  [`event.${ColonyAndExtensionsEvents.ColonyMetadata}.safeRemoved`]: `{initiator} removed {removedSafesString} using the Root permission`,
+  [`event.${ColonyAndExtensionsEvents.ColonyMetadata}.safeAdded`]: `{initiator} added the Safe {addedSafeAddress} from {chainName} using the Root permission`,
   [`event.${ColonyAndExtensionsEvents.ColonyMetadata}.fallback`]: `{initiator} changed this colony's metadata, but the values are the same`,
   [`event.${ColonyAndExtensionsEvents.DomainMetadata}.all`]: `{initiator} changed teams's name, description, color from {oldName}, {oldDescription}, {oldColor} to {domainName}, {domainPurpose}, {domainColor}`,
   [`event.${ColonyAndExtensionsEvents.DomainMetadata}.nameDescription`]: `{initiator} changed teams's name and description from {oldName}, {oldDescription} to {domainName}, {domainPurpose}`,
@@ -38,6 +40,21 @@ const eventsMessageDescriptors = {
   [`event.${ColonyAndExtensionsEvents.DomainMetadata}.name`]: `{initiator} changed teams's name from {oldName} to {domainName}`,
   [`event.${ColonyAndExtensionsEvents.DomainMetadata}.color`]: `{initiator} changed teams's color from {oldColor} to {domainColor}`,
   [`event.${ColonyAndExtensionsEvents.DomainMetadata}.fallback`]: `{initiator} changed this team, but values are the same`,
+  [`event.${ColonyAndExtensionsEvents.ArbitraryTransaction}.rawTransaction`]: `{safeName} initiated a transaction with {isSafeTransactionRecipientUser, select, 
+    true {{safeTransactionRecipient}}
+    other {{safeTransactionRawTransactionAddress}}
+  }`,
+  [`event.${ColonyAndExtensionsEvents.ArbitraryTransaction}.transferFunds`]: `{safeName} made a payment using the Root permission to pay {safeTransactionAmount} to {isSafeTransactionRecipientUser, select, 
+    true {{safeTransactionRecipient}}
+    other {{safeTransactionAddress}}
+  }`,
+  [`event.${ColonyAndExtensionsEvents.ArbitraryTransaction}.transferNFT`]: `{safeName} made a payment using the Root permission to pay with NFT token called {safeTransactionNftToken} to {isSafeTransactionRecipientUser, select, 
+    true {{safeTransactionRecipient}}
+    other {{safeTransactionAddress}}
+  }`,
+  [`event.${ColonyAndExtensionsEvents.ArbitraryTransaction}.contractInteraction`]: `{safeName} called the {safeTransactionFunctionName} function on the {safeTransactionContractName} contract`,
+  [`event.${ColonyAndExtensionsEvents.ArbitraryTransaction}.multipleTransactions`]: `{safeName} initiated multiple transactions`,
+  [`event.${ColonyAndExtensionsEvents.ArbitraryTransaction}.fallback`]: `{safeName} initiated a transaction`,
   [`event.${ColonyAndExtensionsEvents.ColonyRoleSet}.assign`]: `{initiator} assigned the {role} permission in the {fromDomain} team to {recipient}`,
   [`event.${ColonyAndExtensionsEvents.ColonyRoleSet}.remove`]: `{initiator} removed the {role} permission in the {fromDomain} team from {recipient}`,
   [`event.${ColonyAndExtensionsEvents.ArbitraryReputationUpdate}.title`]: `{initiator} {isSmiteAction, select,
@@ -74,6 +91,7 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.RecoveryStorageSlotSet} {{agent} set storage slot {storageSlot} to {storageSlotValue}}
       ${ColonyAndExtensionsEvents.RecoveryModeExitApproved} {{agent} approved exiting the Recovery Mode}
       ${ColonyAndExtensionsEvents.RecoveryModeExited} {{agent} exited the colony from Recovery Mode}
+      ${ColonyAndExtensionsEvents.ArbitraryTransaction} {{agent} made an arbitrary transaction}
       ${ColonyAndExtensionsEvents.MotionCreated} {{agent} created motion {motionId} in {domain}}
       ${ColonyAndExtensionsEvents.MotionStaked} {{agent} {voteSide} motion {motionId} for {amount} {tokenSymbol}}
       ${ColonyAndExtensionsEvents.MotionVoteSubmitted} {{agent} voted in motion {motionId}}

@@ -4,6 +4,7 @@ import { ColonyRole } from '@colony/colony-js';
 import { ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
 import { Color } from '~core/ColorTag';
+import { ColonySafe, SafeTransaction } from '~data/generated';
 
 import {
   ErrorActionType,
@@ -69,6 +70,7 @@ export type MotionActionTypes =
         userAddress: Address;
         colonyAddress: Address;
         motionId: BigNumber;
+        safeChainId: string;
       },
       MetaWithHistory<object>
     >
@@ -267,5 +269,23 @@ export type MotionActionTypes =
   | ErrorActionType<ActionTypes.MOTION_CREATE_DECISION_ERROR, object>
   | ActionTypeWithMeta<
       ActionTypes.MOTION_CREATE_DECISION_SUCCESS,
+      MetaWithHistory<object>
+    >
+  | UniqueActionType<
+      ActionTypes.MOTION_INITIATE_SAFE_TRANSACTION,
+      {
+        safe: Omit<ColonySafe, 'safeName'>;
+        transactionsTitle: string;
+        transactions: SafeTransaction[];
+        colonyAddress: Address;
+        colonyName: string;
+        motionDomainId: string;
+        annotationMessage: string | null;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.MOTION_INITIATE_SAFE_TRANSACTION_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.MOTION_INITIATE_SAFE_TRANSACTION_SUCCESS,
       MetaWithHistory<object>
     >;
