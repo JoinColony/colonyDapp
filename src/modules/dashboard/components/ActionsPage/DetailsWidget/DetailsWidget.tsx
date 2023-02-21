@@ -25,13 +25,10 @@ import {
 import { EventValues } from '../../ActionsPageFeed/ActionsPageFeed';
 import { ACTION_TYPES_ICONS_MAP } from '../../ActionsPage/staticMaps';
 
-import {
-  DetailsWidgetTeam,
-  DetailsWidgetAddSafe,
-  DetailsWidgetRoles,
-  DetailsWidgetSafe,
-  DetailsWidgetSafeTransaction,
-} from './index';
+import DetailsWidgetTeam from './DetailsWidgetTeam';
+import DetailsWidgetRoles from './DetailsWidgetRoles';
+import DetailsWidgetSafe, { DetailsWidgetAddSafe } from './DetailsWidgetSafe';
+import DetailsWidgetSafeTransaction from './DetailsWidgetSafeTransaction';
 
 import styles from './DetailsWidget.css';
 
