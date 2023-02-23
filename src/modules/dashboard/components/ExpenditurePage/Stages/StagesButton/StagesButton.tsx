@@ -44,7 +44,6 @@ const StagesButton = ({
   expenditureType,
 }: Props) => {
   const { formatMessage } = useIntl();
-
   if (!activeStage) {
     return null;
   }

@@ -31,7 +31,7 @@ const IncorporationPage = () => {
   const sidebarRef = useRef<HTMLElement>(null);
 
   const handleSubmit = useCallback(() => {
-    setActiveStageId(StagesEnum.Created);
+    setShouldValidate(true);
   }, []);
 
   const handleProceed = useCallback(() => {
@@ -45,7 +45,7 @@ const IncorporationPage = () => {
   const buttonAction = useMemo(() => {
     switch (activeStageId) {
       case StagesEnum.Draft: {
-        return undefined;
+        return handleSubmit;
       }
       case StagesEnum.Created: {
         return handleProceed;
@@ -57,7 +57,7 @@ const IncorporationPage = () => {
         return () => {};
       }
     }
-  }, [activeStageId, handlePay, handleProceed]);
+  }, [activeStageId, handlePay, handleProceed, handleSubmit]);
 
   const handleValidate = useCallback(() => {
     if (!shouldValidate) {
@@ -112,6 +112,7 @@ const IncorporationPage = () => {
                       colony={colonyData.processedColony}
                       setFormValues={setFormValues}
                       handleCancelExpenditure={() => {}}
+                      isIncorporation
                     />
                   ) : (
                     <Stages
