@@ -152,7 +152,6 @@ const IncorporationPaymentDialog = ({
                      */
                     disabled
                   />
-                  {/* I'm not sure if 'isVotingExtensionEnabled' is the only condition that should be added here */}
                   {isVotingExtensionEnabled && (
                     <Toggle
                       label={{ id: 'label.force' }}
