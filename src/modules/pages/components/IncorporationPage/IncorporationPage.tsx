@@ -6,6 +6,7 @@ import { useColonyFromNameQuery } from '~data/generated';
 import { getMainClasses } from '~utils/css';
 import { SpinnerLoader } from '~core/Preloaders';
 import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
+import DescriptionForm from '~dashboard/Incorporation/DescriptionForm';
 
 import { initialValues } from './constants';
 import styles from './IncorporationPage.css';
@@ -44,7 +45,11 @@ const IncorporationPage = () => {
               )
             )}
           </aside>
-          <div />
+          <div className={styles.mainContainer}>
+            <main className={styles.mainContent}>
+              <DescriptionForm />
+            </main>
+          </div>
         </div>
       )}
     </Formik>

@@ -10,4 +10,5 @@ export const initialValues = {
   protectors: [{ key: nanoid(), user: undefined }],
   mainContact: undefined,
   signOption: SignOption.Individual,
+  description: undefined,
 };

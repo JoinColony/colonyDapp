@@ -1,20 +1,35 @@
 @value sidebarWidth: 449px;
 @value navBarHeight: 70px;
 
+.main {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+}
+
+.mainContainer {
+  padding-bottom: 50px;
+  height: 600px;
+  min-height: 100%;
+  min-height: calc(100vh - navBarHeight);
+  width: calc(100% - sidebarWidth);
+  overflow-y: auto;
+  background-color: var(--colony-white);
+}
+
+.mainContent {
+  display: flex;
+  justify-content: space-between;
+  padding: 54px 85px 70px 40px;
+  max-width: 500px;
+}
+
 .sidebar {
   height: 600px;
   min-height: calc(100vh - navBarHeight);
   width: sidebarWidth;
   overflow-y: auto;
   background-color: var(--grey-blue-3);
-}
-
-.wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  width: 100%;
 }
 
 .spinnerContainer {
