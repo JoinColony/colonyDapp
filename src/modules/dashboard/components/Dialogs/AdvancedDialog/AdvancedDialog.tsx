@@ -83,6 +83,14 @@ const MSG = defineMessages({
     defaultMessage:
       'Want to interact with DeFi, or govern an external smart contract?',
   },
+  incorporationTitle: {
+    id: 'dashboard.AdvancedDialog.incorporationTitle',
+    defaultMessage: 'DAO Incorporation',
+  },
+  incorporationDesc: {
+    id: 'dashboard.AdvancedDialog.incorporationDesc',
+    defaultMessage: `Setup a legal entity to extend functionality and protect contributors.`,
+  },
 });
 
 interface CustomWizardDialogProps extends ActionDialogProps {
@@ -90,6 +98,7 @@ interface CustomWizardDialogProps extends ActionDialogProps {
   nextStepRecovery: string;
   nextStepEditDetails: string;
   nextStepVersionUpgrade: string;
+  nextStepDAOIncorporation: string;
   prevStep: string;
   colony: Colony;
 }
@@ -107,6 +116,7 @@ const AdvancedDialog = ({
   nextStepRecovery,
   nextStepEditDetails,
   nextStepVersionUpgrade,
+  nextStepDAOIncorporation,
   colony,
   colony: { version: colonyVersion },
   isVotingExtensionEnabled,
@@ -186,6 +196,12 @@ const AdvancedDialog = ({
       description: MSG.makeArbitraryTransactionDescription,
       icon: 'emoji-dna',
       comingSoon: true,
+    },
+    {
+      title: MSG.incorporationTitle,
+      description: MSG.incorporationDesc,
+      icon: 'flag',
+      onClick: () => callStep(nextStepDAOIncorporation),
     },
   ];
   return (

@@ -38,6 +38,7 @@ import {
   colonyMustBeUpgraded,
   oneTxMustBeUpgraded,
 } from '~modules/dashboard/checks';
+import DAOIncorporationDialog from '~dashboard/Dialogs/DAOIncorporationDialog';
 
 const displayName = 'dashboard.ColonyHomeCreateActionsButton';
 
@@ -208,6 +209,7 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         nextStepRecovery: 'dashboard.RecoveryModeDialog',
         nextStepEditDetails: 'dashboard.EditColonyDetailsDialog',
         nextStepVersionUpgrade: 'dashboard.NetworkContractUpgradeDialog',
+        nextStepDAOIncorporation: 'dashboard.DAOIncorporationDialog',
         colony,
         isVotingExtensionEnabled,
       },
@@ -259,6 +261,9 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         colony,
         isVotingExtensionEnabled,
       },
+    },
+    {
+      component: DAOIncorporationDialog,
     },
   ]);
 
