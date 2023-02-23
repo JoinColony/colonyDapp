@@ -7,6 +7,7 @@ import { getMainClasses } from '~utils/css';
 import { SpinnerLoader } from '~core/Preloaders';
 import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
 import Stages, { FormStages } from '~dashboard/ExpenditurePage/Stages';
+import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
 
 import {
   initialValues,
@@ -16,7 +17,6 @@ import {
 } from './constants';
 import { ValuesType } from './types';
 import styles from './IncorporationPage.css';
-import LockedIncorporationForm from '~dashboard/DAOIncorporation/IncorporationForm/LockedIncorporationForm';
 
 const displayName = 'pages.IncorporationPage';
 
@@ -102,38 +102,19 @@ const IncorporationPage = () => {
             <main className={styles.mainContent}>
               <div />
               {colonyData && (
-                <>
-                  {activeStageId === StagesEnum.Draft ? (
-                    <FormStages
-                      activeStageId={activeStageId}
-                      stages={stages.map((stage) => ({
-                        ...stage,
-                        id: stage.id.toString(),
-                        label: stage.title,
-                        buttonAction,
-                      }))}
-                      setActiveStageId={setActiveStageId}
-                      colony={colonyData.processedColony}
-                      setFormValues={setFormValues}
-                      handleCancelExpenditure={() => {}}
-                    />
-                  ) : (
-                    <Stages
-                      activeStageId={activeStageId}
-                      stages={stages.map((stage) => ({
-                        ...stage,
-                        id: stage.id.toString(),
-                        label: stage.title,
-                        buttonAction,
-                      }))}
-                      appearance={{ size: 'medium' }}
-                      handleButtonClick={buttonAction}
-                      handleSaveDraft={handleSubmit}
-                      colony={colonyData?.processedColony}
-                      viewFor="incorporation"
-                    />
-                  )}
-                </>
+                <FormStages
+                  activeStageId={activeStageId}
+                  stages={stages.map((stage) => ({
+                    ...stage,
+                    id: stage.id.toString(),
+                    label: stage.title,
+                    buttonAction,
+                  }))}
+                  setActiveStageId={setActiveStageId}
+                  colony={colonyData.processedColony}
+                  setFormValues={setFormValues}
+                  handleCancelExpenditure={() => {}}
+                />
               )}
             </main>
           </div>
@@ -160,11 +141,21 @@ const IncorporationPage = () => {
       <div className={styles.mainContainer}>
         <main className={styles.mainContent}>
           <div />
-          <Stages
-            activeStageId={activeStageId}
-            stages={stages}
-            buttonAction={buttonAction}
-          />
+          {colonyData && (
+            <Stages
+              activeStageId={activeStageId}
+              stages={stages.map((stage) => ({
+                ...stage,
+                id: stage.id.toString(),
+                label: stage.title,
+                buttonAction,
+              }))}
+              appearance={{ size: 'medium' }}
+              handleButtonClick={buttonAction || (() => {})}
+              colony={colonyData?.processedColony}
+              viewFor="incorporation"
+            />
+          )}
         </main>
       </div>
     </div>
