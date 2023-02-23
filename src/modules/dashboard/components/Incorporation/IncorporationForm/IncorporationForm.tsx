@@ -4,9 +4,9 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { FormSection, Input, Textarea, InputLabel } from '~core/Fields';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import { Colony } from '~data/index';
-import TokenIcon from '~dashboard/HookedTokenIcon';
 import Numeral from '~core/Numeral';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import Icon from '~core/Icon';
 
 import Protectors from './Protectors';
 import { cost } from './constants';
@@ -71,11 +71,7 @@ const IncorporationForm = ({ colony, sidebarRef }: Props) => (
           <FormattedMessage {...MSG.initialCost} />
         </div>
         <div className={styles.cost}>
-          <TokenIcon
-            token={cost.initial.token}
-            name={cost.initial.token.name}
-            size="xs"
-          />
+          <Icon name="usd-coin" appearance={{ size: 'medium' }} />
           <Numeral
             value={cost.initial.amount || 0}
             unit={getTokenDecimalsWithFallback(
@@ -92,11 +88,7 @@ const IncorporationForm = ({ colony, sidebarRef }: Props) => (
           <FormattedMessage {...MSG.ongoingCost} />
         </div>
         <div className={styles.cost}>
-          <TokenIcon
-            token={cost.reneval.token}
-            name={cost.reneval.token.name}
-            size="xs"
-          />
+          <Icon name="usd-coin" appearance={{ size: 'medium' }} />
           <Numeral
             value={cost.reneval.amount || 0}
             unit={getTokenDecimalsWithFallback(

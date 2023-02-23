@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 import { nanoid } from 'nanoid';
 
-import { FormSection, InputLabel } from '~core/Fields';
+import { FormSection, InputLabel, Radio } from '~core/Fields';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import { AnyUser, Colony, useMembersSubscription } from '~data/index';
 import Icon from '~core/Icon';
@@ -15,7 +15,6 @@ import { supRenderAvatar } from '~dashboard/ExpenditurePage/Recipient/Recipient'
 import { Protector } from '~pages/IncorporationPage/types';
 import Button from '~core/Button';
 
-import Radio from '../Radio';
 import { SignOption } from '../types';
 import SingleUserPicker from '../SingleUserPicker';
 
@@ -56,7 +55,7 @@ export const MSG = defineMessages({
   },
   mainContactTooltip: {
     id: `dashboard.Incorporation.IncorporationForm.Protectors.mainContactTooltip`,
-    defaultMessage: `The main contact is required during the incorporation process and is also required to use their delivery address details for the registration.`,
+    defaultMessage: `The main contact is required during the incorporation process for administration purposes.`,
   },
 });
 
@@ -161,7 +160,7 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
                     appearance={{ theme: 'blue' }}
                   >
                     <Icon
-                      name="circle-plus-2"
+                      name="circle-plus"
                       className={styles.circlePlusIcon}
                     />
                   </Button>
@@ -209,18 +208,34 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
             <InputLabel label={MSG.signOptionLabel} />
             <QuestionMarkTooltip tooltipText={MSG.signOptionTooltip} />
           </div>
-          <Radio
-            checked={signOption === SignOption.Individual}
-            name="signOption"
-            label={MSG.individual}
-            value={SignOption.Individual}
-          />
-          <Radio
-            checked={signOption === SignOption.Multiple}
-            name="signOption"
-            label={MSG.multiple}
-            value={SignOption.Multiple}
-          />
+          <div
+            className={classNames(styles.radioWrapper, {
+              [styles.selected]: signOption === SignOption.Individual,
+            })}
+          >
+            <Radio
+              checked={signOption === SignOption.Individual}
+              name="signOption"
+              value={SignOption.Individual}
+              elementOnly
+            >
+              <FormattedMessage {...MSG.individual} />
+            </Radio>
+          </div>
+          <div
+            className={classNames(styles.radioWrapper, {
+              [styles.selected]: signOption === SignOption.Multiple,
+            })}
+          >
+            <Radio
+              checked={signOption === SignOption.Multiple}
+              name="signOption"
+              value={SignOption.Multiple}
+              elementOnly
+            >
+              <FormattedMessage {...MSG.multiple} />
+            </Radio>
+          </div>
         </div>
       )}
     </>

@@ -29,6 +29,10 @@
   margin-right: 8px;
 }
 
+.cost i {
+  margin-right: 8px;
+}
+
 .labelWrapper {
   display: flex;
   align-items: center;

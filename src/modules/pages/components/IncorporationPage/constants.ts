@@ -7,10 +7,7 @@ export const initialValues = {
   alternativeName1: undefined,
   alternativeName2: undefined,
   purpose: undefined,
-  protectors: [
-    { key: nanoid(), user: undefined },
-    { key: nanoid(), user: undefined },
-  ],
+  protectors: [{ key: nanoid(), user: undefined }],
   mainContact: undefined,
   signOption: SignOption.Individual,
 };
