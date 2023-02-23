@@ -1,12 +1,12 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { RouteChildrenProps, useParams } from 'react-router';
+import { useParams } from 'react-router';
 import { Formik } from 'formik';
 
 import { useColonyFromNameQuery } from '~data/generated';
 import { getMainClasses } from '~utils/css';
 import { SpinnerLoader } from '~core/Preloaders';
-import Stages from '~dashboard/Incorporation/Stages';
 import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
+import Stages from '~dashboard/ExpenditurePage/Stages';
 
 import { initialValues, stages, Stages as StagesEnum } from './constants';
 import styles from './IncorporationPage.css';
@@ -14,8 +14,6 @@ import styles from './IncorporationPage.css';
 const displayName = 'pages.IncorporationPage';
 
 export type InitialValuesType = typeof initialValues;
-
-type Props = RouteChildrenProps<{ colonyName: string }>;
 
 const IncorporationPage = () => {
   const { colonyName } = useParams<{
@@ -78,11 +76,22 @@ const IncorporationPage = () => {
           <div className={styles.mainContainer}>
             <main className={styles.mainContent}>
               <div />
-              <Stages
-                activeStageId={activeStageId}
-                stages={stages}
-                buttonAction={buttonAction}
-              />
+              {colonyData && (
+                <Stages
+                  activeStageId={activeStageId}
+                  stages={stages.map((stage) => ({
+                    ...stage,
+                    id: stage.id.toString(),
+                    label: stage.title,
+                    buttonAction,
+                  }))}
+                  appearance={{ size: 'medium' }}
+                  handleButtonClick={buttonAction}
+                  handleSaveDraft={handleSubmit}
+                  colony={colonyData?.processedColony}
+                  viewFor="incorporation"
+                />
+              )}
             </main>
           </div>
         </div>

@@ -1,6 +1,0 @@
-.button {
-  composes: themePrimary main from '~core/Button/Button.css';
-  padding: 0;
-  height: 29px;
-  width: 100px;
-}

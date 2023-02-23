@@ -1,24 +1,33 @@
 import React, { ReactNode } from 'react';
-import { MessageDescriptor, useIntl } from 'react-intl';
+import { FormattedMessage, MessageDescriptor, useIntl } from 'react-intl';
 import classNames from 'classnames';
 
+import { Appearance } from '../Stages';
 import styles from './StageItem.css';
 
 interface Props {
   label?: string | MessageDescriptor;
   isActive: boolean;
-  isFirst?: boolean;
+  isLast?: boolean;
   isCancelled: boolean;
   labelComponent?: ReactNode;
+  description?: MessageDescriptor;
+  isActiveLine?: boolean;
+  appearance?: Appearance;
+  viewFor?: 'incorporation' | 'expenditure';
 }
 const displayName = 'dashboard.ExpenditurePage.Stages.StageItem';
 
 const StageItem = ({
   label,
   isActive,
-  isFirst,
+  isLast,
   isCancelled,
   labelComponent,
+  description,
+  isActiveLine,
+  appearance,
+  viewFor,
 }: Props) => {
   const { formatMessage } = useIntl();
 
@@ -33,25 +42,34 @@ const StageItem = ({
           [styles.cancelled]: isCancelled && isActive,
         })}
       />
-      {!isFirst && (
+      {!isLast && (
         <div
           className={classNames(styles.verticalLine, {
-            [styles.verticalLineActive]: isActive,
+            [styles.verticalLineActive]: isActiveLine,
+            [styles.shortLine]: viewFor,
           })}
         />
       )}
-      {!labelComponent ? (
-        <div
-          className={classNames(styles.label, {
-            [styles.activeLabel]: isActive,
-            [styles.cancelledLabel]: !isActive && isCancelled,
-          })}
-        >
-          {labelText}
-        </div>
-      ) : (
-        labelComponent
-      )}
+      <div>
+        {!labelComponent ? (
+          <div
+            className={classNames(styles.label, {
+              [styles.activeLabel]: isActive,
+              [styles.cancelledLabel]: !isActive && isCancelled,
+              [styles.labelMedium]: appearance?.size === 'medium',
+            })}
+          >
+            {labelText}
+          </div>
+        ) : (
+          labelComponent
+        )}
+        {description && (
+          <div className={styles.description}>
+            <FormattedMessage {...description} />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

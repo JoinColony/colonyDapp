@@ -71,11 +71,11 @@ export const initialValues = {
 };
 
 export enum Stages {
-  Draft,
-  Created,
-  Payment,
-  Processing,
-  Complete,
+  Draft = 'Draft',
+  Created = 'Created',
+  Payment = 'Payment',
+  Processing = 'Processing',
+  Complete = 'Complete',
 }
 
 export const stages: StageObject[] = [

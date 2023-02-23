@@ -1,5 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  MessageDescriptor,
+} from 'react-intl';
 import copyToClipboard from 'copy-to-clipboard';
 import classNames from 'classnames';
 
@@ -12,6 +16,7 @@ import {
   ValuesType,
 } from '~pages/ExpenditurePage/types';
 import { Colony } from '~data/index';
+import { Stages as StagesEnum } from '~pages/IncorporationPage/constants';
 
 import StageItem from './StageItem';
 import { Motion, MotionStatus, Stage, Status } from './constants';
@@ -39,19 +44,15 @@ const MSG = defineMessages({
   },
   tooltipDeleteText: {
     id: 'dashboard.ExpenditurePage.Stages.tooltipDeleteText',
-    defaultMessage: 'Delete the expenditure',
+    defaultMessage: 'Delete the {viewFor}',
   },
   tooltipShareText: {
     id: 'dashboard.ExpenditurePage.Stages.tooltipShareText',
-    defaultMessage: 'Share expenditure URL',
+    defaultMessage: 'Share {viewFor} URL',
   },
   tooltipCancelText: {
     id: 'dashboard.ExpenditurePage.Stages.tooltipCancelText',
-    defaultMessage: 'Click to cancel expenditure',
-  },
-  tooltipLockValuesText: {
-    id: 'dashboard.ExpenditurePage.Stages.tooltipLockValuesText',
-    defaultMessage: `This will lock the values of the expenditure. To change values after locking will require the right permissions or a motion.`,
+    defaultMessage: 'Click to cancel {viewFor}',
   },
   tooltipForcedUpdate: {
     id: 'dashboard.ExpenditurePage.Stages.tooltipForcedUpdate',
@@ -71,9 +72,19 @@ export const buttonStyles = {
   padding: 0,
 };
 
+export interface Appearance {
+  size?: 'small' | 'medium';
+}
+
+interface StageType extends Omit<StageObject, 'buttonText'> {
+  buttonText?: MessageDescriptor | string;
+  buttonAction: VoidFunction;
+  description?: MessageDescriptor;
+}
+
 export interface Props {
-  stages: StageObject[];
-  activeStageId?: string;
+  stages: StageType[];
+  activeStageId?: string | StagesEnum;
   handleDeleteDraft?: () => void;
   handleSaveDraft?: () => void;
   handleButtonClick: () => void;
@@ -83,6 +94,9 @@ export interface Props {
   colony: Colony;
   buttonDisabled?: boolean;
   formValues?: ValuesType;
+  activeLine?: boolean;
+  appearance?: Appearance;
+  viewFor?: 'incorporation' | 'expenditure';
 }
 
 const Stages = ({
@@ -97,6 +111,9 @@ const Stages = ({
   colony,
   buttonDisabled,
   formValues,
+  activeLine,
+  appearance,
+  viewFor = 'expenditure',
 }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
@@ -167,7 +184,12 @@ const Stages = ({
               <Button className={styles.iconButton} onClick={handleDeleteDraft}>
                 <Tooltip
                   placement="top-start"
-                  content={<FormattedMessage {...MSG.tooltipDeleteText} />}
+                  content={
+                    <FormattedMessage
+                      {...MSG.tooltipDeleteText}
+                      values={{ viewFor }}
+                    />
+                  }
                   popperOptions={{
                     modifiers: [
                       {
@@ -210,7 +232,12 @@ const Stages = ({
                 ) : (
                   <Tooltip
                     placement="top-start"
-                    content={<FormattedMessage {...MSG.tooltipShareText} />}
+                    content={
+                      <FormattedMessage
+                        {...MSG.tooltipShareText}
+                        values={{ viewFor }}
+                      />
+                    }
                     popperOptions={{
                       modifiers: [
                         {
@@ -235,7 +262,12 @@ const Stages = ({
                 >
                   <Tooltip
                     placement="top-start"
-                    content={<FormattedMessage {...MSG.tooltipDeleteText} />}
+                    content={
+                      <FormattedMessage
+                        {...MSG.tooltipDeleteText}
+                        values={{ viewFor }}
+                      />
+                    }
                     popperOptions={{
                       modifiers: [
                         {
@@ -283,7 +315,10 @@ const Stages = ({
                       <Tooltip
                         placement="top-start"
                         content={
-                          <FormattedMessage {...MSG.tooltipCancelText} />
+                          <FormattedMessage
+                            {...MSG.tooltipCancelText}
+                            values={{ viewFor }}
+                          />
                         }
                         popperOptions={{
                           modifiers: [
@@ -298,7 +333,11 @@ const Stages = ({
                       >
                         <div className={styles.iconWrapper}>
                           <Icon
-                            name="circle-minus"
+                            name={
+                              viewFor === 'incorporation'
+                                ? 'trash'
+                                : 'circle-minus'
+                            }
                             appearance={{ size: 'normal' }}
                             style={{ fill: styles.iconColor }}
                           />
@@ -320,17 +359,21 @@ const Stages = ({
           )}
         </div>
       </div>
-      {stages.map(({ id, label }, index) => (
+      {stages.map(({ id, label, description }, index) => (
         <StageItem
           key={id}
           label={label}
-          isFirst={index === 0}
+          description={description}
+          isLast={stages.length === index + 1}
           isActive={activeStage ? index <= activeIndex : false}
           isCancelled={isCancelled && status === Status.ForceCancelled}
           labelComponent={
             status === Status.ForceEdited &&
             index === activeIndex && <Label label={label} />
           }
+          isActiveLine={activeLine && index <= activeIndex - 1}
+          appearance={appearance}
+          viewFor={viewFor}
         />
       ))}
     </div>
