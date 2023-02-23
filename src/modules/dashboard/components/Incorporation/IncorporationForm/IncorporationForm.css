@@ -1,0 +1,108 @@
+@value paddingTop: 46px;
+@value lockedPaddingTop: 75px;
+
+.container {
+  padding: paddingTop 54px 75px;
+}
+
+.costRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 42px;
+}
+
+.cost {
+  display: flex;
+  align-items: center;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--dark) alpha(85%));
+  letter-spacing: var(--spacing-medium);
+}
+
+.cost figure {
+  margin-right: 8px;
+}
+
+.cost > span {
+  margin-right: 8px;
+}
+
+.cost i {
+  margin-right: 8px;
+}
+
+.labelWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.labelWrapper label {
+  margin-right: 8px;
+  width: auto;
+}
+
+.labelWrapper > div {
+  max-width: 250px;
+}
+
+.nameInputs {
+  padding: 12px 0 0 0;
+}
+
+.nameInputs input {
+  height: 44px;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: var(--spacing-normal);
+}
+
+.altNameWrapper {
+  margin-bottom: 12px;
+}
+
+.nameInputs label {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--dark) alpha(85%));
+}
+
+.textareaWrapper {
+  margin-top: 8px;
+}
+
+.textareaWrapper textarea {
+  height: 88px;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: var(--spacing-normal);
+}
+
+.textareaWrapper label {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--dark) alpha(85%));
+}
+
+.title {
+  margin-bottom: 16px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--dark) alpha(85%));
+  letter-spacing: var(--spacing-medium);
+}
+
+.label {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+  letter-spacing: var(--spacing-medium);
+}
+
+.hiddenSubmit {
+  visibility: hidden;
+}

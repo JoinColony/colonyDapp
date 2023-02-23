@@ -56,12 +56,15 @@ import {
   UNWRAP_TOKEN_ROUTE,
   CLAIM_TOKEN_ROUTE,
   EXPENDITURE_ROUTE,
+  INCORPORATION_ROUTE,
+  COLONY_INCORPORATION_ROUTE,
 } from './routeConstants';
 
 import AlwaysAccesibleRoute from './AlwaysAccesibleRoute';
 import WalletRequiredRoute from './WalletRequiredRoute';
 import { useTitle } from '~utils/hooks/useTitle';
 import ExpenditurePage from '~pages/ExpenditurePage';
+import IncorporationPage from '~pages/IncorporationPage';
 
 const MSG = defineMessages({
   userProfileEditBack: {
@@ -266,6 +269,17 @@ const Routes = () => {
           routeProps={({ colonyName }) => ({
             backText: '',
             backRoute: generatePath(COLONY_EXPENDITURE_ROUTE, {
+              colonyName,
+            }),
+          })}
+        />
+        <AlwaysAccesibleRoute
+          path={INCORPORATION_ROUTE}
+          component={IncorporationPage}
+          layout={WrappedNavBar}
+          routeProps={({ colonyName }) => ({
+            backText: '',
+            backRoute: generatePath(COLONY_INCORPORATION_ROUTE, {
               colonyName,
             }),
           })}

@@ -15,7 +15,7 @@ export interface Appearance {
   theme?: 'buttonGroup' | 'fakeCheckbox' | 'colorPicker';
 }
 
-interface Props {
+export interface Props {
   /** Appearance object */
   appearance?: Appearance;
   /** If the input is checked */

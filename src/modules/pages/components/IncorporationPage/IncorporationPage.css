@@ -1,0 +1,26 @@
+@value sidebarWidth: 449px;
+@value navBarHeight: 70px;
+
+.sidebar {
+  height: 600px;
+  min-height: calc(100vh - navBarHeight);
+  width: sidebarWidth;
+  overflow-y: auto;
+  background-color: var(--grey-blue-3);
+}
+
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.spinnerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
