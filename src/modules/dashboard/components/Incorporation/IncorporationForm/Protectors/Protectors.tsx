@@ -16,8 +16,8 @@ import { Protector } from '~pages/IncorporationPage/types';
 import Button from '~core/Button';
 import Link from '~core/Link';
 
-import { SignOption } from '../types';
 import SingleUserPicker from '../SingleUserPicker';
+import { SignOption } from '../constants';
 
 import styles from './Protectors.css';
 
