@@ -9,6 +9,7 @@ import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
 import Stages, { FormStages } from '~dashboard/ExpenditurePage/Stages';
 import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
 import IncorporationPaymentDialog from '~dashboard/Dialogs/IncorporationPaymentDialog';
+import { useDialog } from '~core/Dialog';
 
 import {
   initialValues,
