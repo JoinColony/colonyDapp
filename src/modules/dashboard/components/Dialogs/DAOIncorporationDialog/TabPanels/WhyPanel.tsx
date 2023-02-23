@@ -13,7 +13,7 @@ const MSG = defineMessages({
   },
   description: {
     id: 'dashboard.DAOIncorporationDialog.TabPanels.WhyPanel.description',
-    defaultMessage: `Setup a legal wrapper for you DAO to extend it's functionality and help protect contributors. Incorporation is done in Panama through a service provided by Korporatio. Who is specifically focused on helping to support smart companies built and run on-chain.`,
+    defaultMessage: `Setup a legal wrapper for your DAO to extend it's functionality and help protect contributors. Incorporation is done in Panama through a service provided by Korporatio. Who is specifically focused on helping to support smart companies built and run on-chain.`,
   },
   note: {
     id: 'dashboard.DAOIncorporationDialog.TabPanels.WhyPanel.note',
