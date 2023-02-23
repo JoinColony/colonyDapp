@@ -10,13 +10,6 @@ import {
   InputLabel,
   InputStatus,
 } from '~core/Fields';
-import {
-  FormSection,
-  Input,
-  Textarea,
-  InputLabel,
-  InputStatus,
-} from '~core/Fields';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import { Colony } from '~data/index';
 import Numeral from '~core/Numeral';
