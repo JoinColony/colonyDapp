@@ -1,0 +1,110 @@
+@keyframes activeColor {
+  from {
+    background-color: var(--action-secondary);
+  }
+
+  to {
+    background-color: var(--primary);
+  }
+}
+@keyframes textColor {
+  from {
+    color: var(--temp-grey-blue-7);
+  }
+
+  to {
+    color: var(--dark);
+  }
+}
+
+.wrapper {
+  display: flex;
+  min-height: 525px;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--pad-large);
+  width: 263px;
+}
+
+.content {
+  width: 670px;
+  background-color: rgb(0, 40, 75);
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  font-size: var(--size-normal);
+  color: var(--temp-grey-blue-7);
+  letter-spacing: 0.1px;
+}
+
+.tab:hover {
+  cursor: pointer;
+}
+
+.marker {
+  margin-right: 18px;
+  height: 42px;
+  width: 5px;
+  border-radius: var(--radius-normal);
+  background-color: var(--action-secondary);
+}
+
+.active {
+  background-color: var(--primary);
+  animation-name: activeColor;
+  animation-duration: 500ms;
+}
+
+.textActive {
+  color: var(--dark);
+  animation-name: textColor;
+  animation-duration: 500ms;
+}
+
+.dialogWrapper div {
+  max-width: unset;
+}
+
+.buttonsWrapper {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+}
+
+.buttonsWrapper > button {
+  height: 29px;
+  width: 48%;
+}
+
+.buttonPrevious {
+  composes: main from "~modules/core/components/Button/Button.css";
+  background-color: var(--temp-grey-blue-7);
+  color: var(--colony-white);
+}
+
+.buttonPrevious:hover {
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(80%));
+}
+
+.divider {
+  margin: 0 0 30px 0;
+  background-color: var(--colony-light-blue);
+}
+
+.title {
+  margin-bottom: 18px;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
