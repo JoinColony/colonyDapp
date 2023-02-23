@@ -1,5 +1,8 @@
+import { MessageDescriptor } from 'react-intl';
 import { SignOption } from '~dashboard/Incorporation/IncorporationForm/types';
 import { AnyUser } from '~data/index';
+
+import { Stages } from './constants';
 
 export interface Protector {
   user?: AnyUser;
@@ -7,7 +10,6 @@ export interface Protector {
   removed?: boolean;
   created?: boolean;
 }
-
 export interface ValuesType {
   name: string;
   alternativeName1: string;
@@ -16,4 +18,11 @@ export interface ValuesType {
   protectors?: Protector[];
   mainContact?: AnyUser;
   signOption: SignOption;
+}
+
+export interface StageObject {
+  id: Stages;
+  title: MessageDescriptor;
+  description: MessageDescriptor;
+  buttonText?: MessageDescriptor;
 }

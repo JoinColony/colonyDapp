@@ -117,6 +117,7 @@ const LockedStages = ({
             colony,
             expenditureType,
           }}
+          activeLine
         />
       )}
       {motion && (

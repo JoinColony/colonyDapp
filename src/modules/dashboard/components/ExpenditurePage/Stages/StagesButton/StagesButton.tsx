@@ -25,7 +25,7 @@ const MSG = defineMessages({
 const displayName = 'dashboard.ExpenditurePage.Stages.StagesButton';
 
 interface Props {
-  activeStage?: StageObject;
+  activeStage?: Partial<StageObject>;
   canReleaseFunds: boolean;
   handleButtonClick: () => void;
   status?: Status;
@@ -44,14 +44,19 @@ const StagesButton = ({
   expenditureType,
 }: Props) => {
   const { formatMessage } = useIntl();
-  const buttonText =
-    typeof activeStage?.buttonText === 'string'
-      ? activeStage.buttonText
-      : activeStage?.buttonText && formatMessage(activeStage.buttonText);
 
   if (!activeStage) {
     return null;
   }
+
+  if (!activeStage.buttonText) {
+    return null;
+  }
+
+  const buttonText =
+    typeof activeStage?.buttonText === 'string'
+      ? activeStage.buttonText
+      : activeStage?.buttonText && formatMessage(activeStage.buttonText);
 
   if (status === Status.Cancelled || status === Status.ForceCancelled) {
     return <Tag text={MSG.cancelled} className={styles.claimed} />;
