@@ -76,7 +76,7 @@ export interface Appearance {
   size?: 'small' | 'medium';
 }
 
-interface StageType extends Omit<StageObject, 'buttonText'> {
+export interface StageType extends Omit<StageObject, 'buttonText'> {
   buttonText?: MessageDescriptor | string;
   buttonAction: VoidFunction;
   description?: MessageDescriptor;

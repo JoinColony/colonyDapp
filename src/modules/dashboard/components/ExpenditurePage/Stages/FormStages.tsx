@@ -7,15 +7,12 @@ import DeleteDraftDialog from '~dashboard/Dialogs/DeleteDraftDialog/DeleteDraftD
 import StakeExpenditureDialog from '~dashboard/Dialogs/StakeExpenditureDialog';
 import StartStreamDialog from '~dashboard/Dialogs/StartStreamDialog';
 import { Colony } from '~data/index';
-import {
-  ExpenditureTypes,
-  StageObject,
-  ValuesType,
-} from '~pages/ExpenditurePage/types';
+import { ExpenditureTypes, ValuesType } from '~pages/ExpenditurePage/types';
+import { ValuesType as IncorporationValuesType } from '~pages/IncorporationPage/types';
 import { FIX_TRIGGER_EVENT_NAME } from '~pages/ExpenditurePage/constants';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
-import Stages from './Stages';
+import Stages, { StageType } from './Stages';
 import StreamingStages from './StreamingStages';
 import { Stage } from './constants';
 import { flattenObject } from './utils';
@@ -39,10 +36,12 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  stages: StageObject[];
+  stages: StageType[];
   activeStageId?: string;
   setActiveStageId: React.Dispatch<React.SetStateAction<string | undefined>>;
-  setFormValues: React.Dispatch<React.SetStateAction<ValuesType | undefined>>;
+  setFormValues: React.Dispatch<
+    React.SetStateAction<ValuesType | IncorporationValuesType | undefined>
+  >;
   colony: Colony;
   handleCancelExpenditure: () => void;
 }
@@ -151,8 +150,7 @@ const FormStages = ({
     if (!formikErrors.length) return;
 
     const firstError = document.getElementsByName(formikErrors[0])?.[0];
-
-    if (firstError?.tagName.toLowerCase() === 'input') {
+    if (['textarea', 'input'].includes(firstError?.tagName.toLowerCase())) {
       (firstError as HTMLElement).focus();
     } else {
       const customEvent = new CustomEvent(FIX_TRIGGER_EVENT_NAME, {
