@@ -109,7 +109,7 @@ function* initiateSafeTransactionAction({
       }
 
       /* eslint-disable-next-line max-len */
-      const txDataToBeSentToAMB = yield homeBridge.interface.functions.requireToPassMessage.encode(
+      const txDataToBeSentToAMB = yield homeBridge?.interface.functions.requireToPassMessage.encode(
         [zodiacBridgeModule.address, txDataToBeSentToZodiacModule, 1000000],
       );
 
@@ -142,7 +142,7 @@ function* initiateSafeTransactionAction({
       methodName: 'makeArbitraryTransactions',
       identifier: colonyAddress,
       params: [
-        fill(Array(transactionData.length), homeBridge.address),
+        fill(Array(transactionData.length), homeBridge?.address),
         transactionData,
         true,
       ],

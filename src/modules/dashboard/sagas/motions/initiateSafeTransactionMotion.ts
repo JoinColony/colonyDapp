@@ -152,7 +152,7 @@ function* initiateSafeTransactionMotion({
       }
 
       /* eslint-disable-next-line max-len */
-      const txDataToBeSentToAMB = yield homeBridge.interface.functions.requireToPassMessage.encode(
+      const txDataToBeSentToAMB = yield homeBridge?.interface.functions.requireToPassMessage.encode(
         [zodiacBridgeModule.address, txDataToBeSentToZodiacModule, 1000000],
       );
 
@@ -167,7 +167,7 @@ function* initiateSafeTransactionMotion({
          * All the transactions will be send to the home bridge, therefore we just generate an array filled with the corresponding address.
          *
          */
-        fill(Array(transactionData.length), homeBridge.address),
+        fill(Array(transactionData.length), homeBridge?.address),
         transactionData,
         true,
       ],
