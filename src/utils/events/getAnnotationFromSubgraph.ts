@@ -26,7 +26,6 @@ export const getAnnotationFromSubgraph = async (
     fetchPolicy: 'network-only',
   });
 
-  console.log('subgraphEvents', subgraphEvents);
   const [mostRecentAnnotation] =
     subgraphEvents?.annotationEvents
       .map(parseSubgraphEvent)
@@ -36,19 +35,11 @@ export const getAnnotationFromSubgraph = async (
        * be filtering these out, and show the most recent annotation, no matter
        * who sent it
        */
-      .filter(({ address, values: { agent }, values }) => {
-        console.log('getAnnotationFromSubgraph address', address);
-        console.log('getAnnotationFromSubgraph values', values);
-        console.log('getAnnotationFromSubgraph agent', agent);
-        console.log('userAddress', userAddress);
-        const userAddressLowered = userAddress.toLowerCase();
-        return (
-          agent.toLowerCase() === userAddressLowered ||
-          address?.toLowerCase() === userAddressLowered ||
-          values.address?.toLowerCase() === userAddressLowered
-        );
-      }) || [];
-  console.log('mostRecentAnnotation', mostRecentAnnotation);
+      .filter(
+        ({ values: { agent, address } }) =>
+          agent.toLowerCase() === userAddress.toLowerCase() ||
+          address.toLowerCase() === userAddress.toLowerCase(),
+      ) || [];
 
   return mostRecentAnnotation;
 };

@@ -85,11 +85,16 @@ export const useFetchSafeTransactionData = (
               parsedAnnotation.safeData.chainId,
               transactionReceipt,
             );
-            const safeTransactionStatus = safeTransactionStatuses.find(
-              (status) => status === TRANSACTION_STATUS.PENDING,
-            )
-              ? TRANSACTION_STATUS.PENDING
-              : TRANSACTION_STATUS.SUCCESS;
+            let safeTransactionStatus;
+            if (safeTransactionStatuses.includes(TRANSACTION_STATUS.PENDING)) {
+              safeTransactionStatus = TRANSACTION_STATUS.PENDING;
+            } else if (
+              safeTransactionStatuses.includes(TRANSACTION_STATUS.SUCCESS)
+            ) {
+              safeTransactionStatus = TRANSACTION_STATUS.SUCCESS;
+            } else {
+              safeTransactionStatus = null;
+            }
             setSafeTransactionData({
               transactionTitle: parsedAnnotation.title,
               safeTransactionStatus,

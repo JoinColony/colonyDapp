@@ -50,6 +50,9 @@ export const onLocalDevEnvironment =
   process.env.NODE_ENV === 'development';
 
 export const getHomeProvider = () => {
+  if (!Web3.givenProvider) {
+    return null;
+  }
   return onLocalDevEnvironment
     ? new ethers.providers.JsonRpcProvider(LOCAL_HOME_CHAIN)
     : new ethers.providers.Web3Provider(Web3.givenProvider); // Metamask
@@ -87,7 +90,7 @@ export const getForeignBridgeByChain = (safeChainId: string) => {
 
 export const getHomeBridgeByChain = (safeChainId: string) => {
   const homeProvider = getHomeProvider();
-  const homeSigner = homeProvider.getSigner();
+  const homeSigner = homeProvider?.getSigner();
   const homeBridgeAddress: string | undefined = onLocalDevEnvironment
     ? LOCAL_HOME_BRIDGE_ADDRESS
     : GNOSIS_AMB_BRIDGES[safeChainId]?.homeAMB;
@@ -98,7 +101,9 @@ export const getHomeBridgeByChain = (safeChainId: string) => {
     );
   }
   // @ts-ignore abi type is wrong.
-  return new ethers.Contract(homeBridgeAddress, HomeAMB, homeSigner);
+  return homeSigner
+    ? new ethers.Contract(homeBridgeAddress, HomeAMB, homeSigner)
+    : null;
 };
 
 const getErc721 = (

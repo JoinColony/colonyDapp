@@ -110,28 +110,31 @@ export const getTransactionStatuses = async (
   const homeAMBContract = getHomeBridgeByChain(safeChainId);
   const foreignAMBContract = getForeignBridgeByChain(safeChainId);
 
-  const messageIds = getMessageIds(
-    transactionReceipt,
-    homeAMBContract,
-    homeAMBContract.address,
-  );
+  if (homeAMBContract) {
+    const messageIds = getMessageIds(
+      transactionReceipt,
+      homeAMBContract,
+      homeAMBContract?.address,
+    );
+    const transactionStatuses = await Promise.all(
+      messageIds.map(async (messageId) => {
+        const wasTheMessageDelivered = await checkIfTheMessageWasDelivered(
+          foreignAMBContract,
+          networkApiURI,
+          messageId,
+          safeChainId,
+        );
 
-  const transactionStatuses = await Promise.all(
-    messageIds.map(async (messageId) => {
-      const wasTheMessageDelivered = await checkIfTheMessageWasDelivered(
-        foreignAMBContract,
-        networkApiURI,
-        messageId,
-        safeChainId,
-      );
+        // @NOTE: Safe transactions will always be executed automatically on the local env
+        if (wasTheMessageDelivered || onLocalDevEnvironment) {
+          return TRANSACTION_STATUS.SUCCESS;
+        }
+        return TRANSACTION_STATUS.PENDING;
+      }),
+    );
 
-      // @NOTE: Safe transactions will always be executed automatically on the local env
-      if (wasTheMessageDelivered || onLocalDevEnvironment) {
-        return TRANSACTION_STATUS.SUCCESS;
-      }
-      return TRANSACTION_STATUS.PENDING;
-    }),
-  );
+    return transactionStatuses;
+  }
 
-  return transactionStatuses;
+  return [];
 };
