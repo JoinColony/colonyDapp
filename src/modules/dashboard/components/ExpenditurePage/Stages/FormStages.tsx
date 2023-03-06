@@ -139,7 +139,7 @@ const FormStages = ({
 
     if (!hasErrors) {
       handleSubmit(values as any);
-      activeStage?.buttonAction();
+      activeStage?.buttonAction?.();
     }
   }, [activeStage, handleSubmit, setTouched, validateForm, values]);
 

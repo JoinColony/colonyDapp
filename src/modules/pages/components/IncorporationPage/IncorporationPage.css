@@ -7,6 +7,10 @@
   height: 100%;
 }
 
+.titleCommentsContainer {
+  min-width: 458px;
+}
+
 .sidebar {
   height: 600px;
   min-height: calc(100vh - navBarHeight);
@@ -44,6 +48,9 @@
 .mainContent {
   display: flex;
   justify-content: space-between;
-  padding: 76px 100px 70px 25px;
   min-height: calc(100vh - navBarHeight);
+}
+
+.smallerPadding {
+  padding: 36px 100px 80px 25px;
 }

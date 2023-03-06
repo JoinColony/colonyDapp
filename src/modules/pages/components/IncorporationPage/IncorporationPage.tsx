@@ -1,18 +1,25 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 import { Formik } from 'formik';
+import classNames from 'classnames';
 
 import { useColonyFromNameQuery } from '~data/generated';
 import { getMainClasses } from '~utils/css';
 import { SpinnerLoader } from '~core/Preloaders';
 import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
 import Stages, { FormStages } from '~dashboard/ExpenditurePage/Stages';
+import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
+import VerificationBanner from '~dashboard/Incorporation/VerificationBanner';
+import IncorporationPaymentDialog from '~dashboard/Dialogs/IncorporationPaymentDialog';
+import { useDialog } from '~core/Dialog';
 
 import {
   initialValues,
   stages,
   validationSchema,
   Stages as StagesEnum,
+  formValuesMock,
+  userMock,
 } from './constants';
 import { ValuesType } from './types';
 import styles from './IncorporationPage.css';
@@ -25,12 +32,23 @@ const IncorporationPage = () => {
   const { colonyName } = useParams<{
     colonyName: string;
   }>();
-  const [, setFormValues] = useState<ValuesType>();
+
+  const { data: colonyData, loading } = useColonyFromNameQuery({
+    variables: { name: colonyName, address: '' },
+  });
+  const [isFormEditable, setFormEditable] = useState(false);
+  const [formValues, setFormValues] = useState<ValuesType>(formValuesMock);
   const [shouldValidate, setShouldValidate] = useState(false);
-  const [activeStageId, setActiveStageId] = useState(StagesEnum.Draft);
+  const [activeStageId, setActiveStageId] = useState(StagesEnum.Payment);
   const sidebarRef = useRef<HTMLElement>(null);
 
-  const handleSubmit = useCallback(() => {
+  const notVerified = true; // temporary valule
+
+  const openPayDialog = useDialog(IncorporationPaymentDialog);
+
+  const handleSubmit = useCallback((values) => {
+    setFormValues(values);
+    setFormEditable(false);
     setActiveStageId(StagesEnum.Created);
   }, []);
 
@@ -39,13 +57,22 @@ const IncorporationPage = () => {
   }, []);
 
   const handlePay = useCallback(() => {
-    setActiveStageId(StagesEnum.Processing);
-  }, []);
+    if (!colonyData) return;
+
+    openPayDialog({
+      onClick: () => {
+        // add a logic to pay for incorporation
+        setActiveStageId(StagesEnum.Processing);
+      },
+      isVotingExtensionEnabled: true,
+      colony: colonyData.processedColony,
+    });
+  }, [colonyData, openPayDialog]);
 
   const buttonAction = useMemo(() => {
     switch (activeStageId) {
       case StagesEnum.Draft: {
-        return handleSubmit;
+        return undefined;
       }
       case StagesEnum.Created: {
         return handleProceed;
@@ -57,7 +84,7 @@ const IncorporationPage = () => {
         return () => {};
       }
     }
-  }, [activeStageId, handlePay, handleProceed, handleSubmit]);
+  }, [activeStageId, handlePay, handleProceed]);
 
   const handleValidate = useCallback(() => {
     if (!shouldValidate) {
@@ -65,13 +92,9 @@ const IncorporationPage = () => {
     }
   }, [shouldValidate]);
 
-  const { data: colonyData, loading } = useColonyFromNameQuery({
-    variables: { name: colonyName, address: '' },
-  });
-
-  return (
+  return isFormEditable ? (
     <Formik
-      initialValues={initialValues}
+      initialValues={initialValues} // mock values are used here to fill in the form
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
       validateOnBlur={shouldValidate}
@@ -98,44 +121,69 @@ const IncorporationPage = () => {
             <main className={styles.mainContent}>
               <div />
               {colonyData && (
-                <>
-                  {activeStageId === StagesEnum.Draft ? (
-                    <FormStages
-                      activeStageId={activeStageId}
-                      stages={stages.map((stage) => ({
-                        ...stage,
-                        id: stage.id.toString(),
-                        label: stage.title,
-                        buttonAction,
-                      }))}
-                      setActiveStageId={setActiveStageId}
-                      colony={colonyData.processedColony}
-                      setFormValues={setFormValues}
-                      handleCancelExpenditure={() => {}}
-                    />
-                  ) : (
-                    <Stages
-                      activeStageId={activeStageId}
-                      stages={stages.map((stage) => ({
-                        ...stage,
-                        id: stage.id.toString(),
-                        label: stage.title,
-                        buttonAction,
-                      }))}
-                      appearance={{ size: 'medium' }}
-                      handleButtonClick={buttonAction}
-                      handleSaveDraft={handleSubmit}
-                      colony={colonyData?.processedColony}
-                      viewFor="incorporation"
-                    />
-                  )}
-                </>
+                <FormStages
+                  activeStageId={activeStageId}
+                  stages={stages.map((stage) => ({
+                    ...stage,
+                    id: stage.id.toString(),
+                    label: stage.title,
+                    buttonAction,
+                  }))}
+                  setActiveStageId={setActiveStageId}
+                  colony={colonyData.processedColony}
+                  setFormValues={setFormValues}
+                  handleCancelExpenditure={() => {}}
+                />
               )}
             </main>
           </div>
         </div>
       )}
     </Formik>
+  ) : (
+    <div className={getMainClasses({}, styles)}>
+      <aside className={styles.sidebar} ref={sidebarRef}>
+        {loading ? (
+          <div className={styles.spinnerContainer}>
+            <SpinnerLoader appearance={{ size: 'medium' }} />
+          </div>
+        ) : (
+          colonyData &&
+          formValues && (
+            <LockedIncorporationForm
+              formValues={formValues}
+              activeStageId={activeStageId}
+            />
+          )
+        )}
+      </aside>
+      <div
+        className={classNames(styles.mainContainer, {
+          [styles.smallerPadding]: notVerified,
+        })}
+      >
+        {/* user passed to VerifiactionBanner is a mock */}
+        {notVerified && <VerificationBanner user={userMock} />}
+        <main className={styles.mainContent}>
+          <div />
+          {colonyData && (
+            <Stages
+              activeStageId={activeStageId}
+              stages={stages.map((stage) => ({
+                ...stage,
+                id: stage.id.toString(),
+                label: stage.title,
+                buttonAction,
+              }))}
+              appearance={{ size: 'medium' }}
+              handleButtonClick={buttonAction || (() => {})}
+              colony={colonyData?.processedColony}
+              viewFor="incorporation"
+            />
+          )}
+        </main>
+      </div>
+    </div>
   );
 };
 

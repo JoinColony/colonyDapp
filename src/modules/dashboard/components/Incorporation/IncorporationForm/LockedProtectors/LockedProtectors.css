@@ -1,0 +1,106 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.wrapper {
+  margin-top: 32px;
+}
+
+.protectorsLabelWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.protectorsLabelWrapper span {
+  display: inline-block;
+  height: 16px;
+}
+
+.label {
+  margin-right: 8px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
+.userAvatarContainer {
+  display: flex;
+  align-items: center;
+}
+
+.userName {
+  margin-left: 8px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.row label {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
+.row > span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 20px;
+  width: 94px;
+  border-radius: 5px;
+}
+
+.mainContactRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.labelWrapper {
+  display: flex;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
+.labelWrapper > span {
+  margin-left: 8px;
+}
+
+.labelWrapper > div {
+  max-width: 250px;
+}
+
+.protectorsLabelWrapper > div {
+  max-width: 250px;
+}
+
+.signOptionWrapper {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 9px 0;
+}
+
+.signing {
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--dark) alpha(85%));
+  letter-spacing: var(--spacing-medium);
+}
+
+.mianContactWrapper {
+  animation-name: fadeIn;
+  animation-duration: 500ms;
+}

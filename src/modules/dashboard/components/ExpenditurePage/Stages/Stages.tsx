@@ -76,9 +76,10 @@ export interface Appearance {
   size?: 'small' | 'medium';
 }
 
-export interface StageType extends Omit<StageObject, 'buttonText'> {
+export interface StageType
+  extends Omit<StageObject, 'buttonText' | 'buttonAction'> {
   buttonText?: MessageDescriptor | string;
-  buttonAction: VoidFunction;
+  buttonAction?: VoidFunction;
   description?: MessageDescriptor;
 }
 

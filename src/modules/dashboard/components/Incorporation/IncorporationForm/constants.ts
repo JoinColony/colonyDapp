@@ -1,3 +1,12 @@
+export enum SignOption {
+  Individual = 'Individual',
+  Multiple = 'Multiple',
+}
+
+export enum VerificationStatus {
+  Verified = 'Verified',
+  Unverified = 'Unverified',
+}
 // this is a mock data
 export const cost = {
   initial: {

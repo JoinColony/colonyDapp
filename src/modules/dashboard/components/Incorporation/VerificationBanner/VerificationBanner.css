@@ -1,0 +1,53 @@
+.wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 14px 28px;
+  min-height: 94px;
+  width: 100%;
+  border-radius: 5px;
+  gap: 100px;
+  box-shadow: 0px 2px 12px rgba(62, 118, 244, 0.25);
+}
+
+.buttonsWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.title > span {
+  margin-right: 8px;
+}
+
+.description {
+  font-size: var(--size-normal);
+  color: var(--temp-grey-blue-7);
+  letter-spacing: var(0.1px);
+}
+
+.removeButton {
+  composes: main from '~core/Button/Button.css';
+  height: 44px;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
+
+.verifyButton {
+  composes: themePrimary main from '~core/Button/Button.css';
+  height: 44px;
+  width: 160px;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+}
