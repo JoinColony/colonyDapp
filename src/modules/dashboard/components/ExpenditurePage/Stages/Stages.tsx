@@ -179,7 +179,7 @@ const Stages = ({
           )}
         </div>
         <div className={styles.buttonsContainer}>
-          {!activeStageId ? (
+          {!activeStageId || activeStageId === StagesEnum.Draft ? (
             <>
               <Button className={styles.iconButton} onClick={handleDeleteDraft}>
                 <Tooltip

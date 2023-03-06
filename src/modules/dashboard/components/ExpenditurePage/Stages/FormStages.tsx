@@ -11,12 +11,14 @@ import { ExpenditureTypes, ValuesType } from '~pages/ExpenditurePage/types';
 import { ValuesType as IncorporationValuesType } from '~pages/IncorporationPage/types';
 import { FIX_TRIGGER_EVENT_NAME } from '~pages/ExpenditurePage/constants';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
+import { Stages as StagesEnum } from '~pages/IncorporationPage/constants';
 
 import Stages, { StageType } from './Stages';
 import StreamingStages from './StreamingStages';
 import { Stage } from './constants';
 import { flattenObject } from './utils';
 import styles from './FormStages.css';
+import StakeApplicationDialog from '~dashboard/Dialogs/StakeApplicationDialog';
 
 const displayName = 'dashboard.ExpenditurePage.Stages.FormStages';
 
@@ -44,6 +46,7 @@ interface Props {
   >;
   colony: Colony;
   handleCancelExpenditure: () => void;
+  isIncorporation?: boolean;
 }
 
 const FormStages = ({
@@ -53,6 +56,7 @@ const FormStages = ({
   setFormValues,
   colony,
   handleCancelExpenditure,
+  isIncorporation,
 }: Props) => {
   const {
     values,
@@ -65,6 +69,7 @@ const FormStages = ({
   const openDeleteDraftDialog = useDialog(DeleteDraftDialog);
   const openDraftConfirmDialog = useDialog(StakeExpenditureDialog);
   const openStartStreamDialog = useDialog(StartStreamDialog);
+  const openStartApplicationDialog = useDialog(StakeApplicationDialog);
 
   const { isVotingExtensionEnabled } = useEnabledExtensions({
     colonyAddress: colony.colonyAddress,
@@ -96,6 +101,17 @@ const FormStages = ({
       );
     }
 
+    if (isIncorporation) {
+      return openStartApplicationDialog({
+        onClick: () => {
+          handleSubmit(values as any);
+          setActiveStageId(StagesEnum.Created);
+        },
+        isVotingExtensionEnabled,
+        colony,
+      });
+    }
+
     return (
       !errorsLength &&
       colony &&
@@ -111,8 +127,10 @@ const FormStages = ({
   }, [
     colony,
     handleSubmit,
+    isIncorporation,
     isVotingExtensionEnabled,
     openDraftConfirmDialog,
+    openStartApplicationDialog,
     openStartStreamDialog,
     setActiveStageId,
     setTouched,

@@ -31,7 +31,7 @@ const IncorporationPage = () => {
   const sidebarRef = useRef<HTMLElement>(null);
 
   const handleSubmit = useCallback(() => {
-    setActiveStageId(StagesEnum.Created);
+    setShouldValidate(true);
   }, []);
 
   const handleProceed = useCallback(() => {
@@ -112,6 +112,7 @@ const IncorporationPage = () => {
                       colony={colonyData.processedColony}
                       setFormValues={setFormValues}
                       handleCancelExpenditure={() => {}}
+                      isIncorporation
                     />
                   ) : (
                     <Stages
