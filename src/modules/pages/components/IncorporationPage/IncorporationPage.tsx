@@ -93,7 +93,7 @@ const IncorporationPage = () => {
 
   return isFormEditable ? (
     <Formik
-      initialValues={initialValues}
+      initialValues={initialValues} // mock values are used here to fill in the form
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
       validateOnBlur={shouldValidate}
@@ -140,7 +140,7 @@ const IncorporationPage = () => {
       )}
     </Formik>
   ) : (
-    <div className={getMainClasses({}, styles)} id="expenditurePage">
+    <div className={getMainClasses({}, styles)}>
       <aside className={styles.sidebar} ref={sidebarRef}>
         {loading ? (
           <div className={styles.spinnerContainer}>
@@ -161,6 +161,7 @@ const IncorporationPage = () => {
           [styles.smallerPadding]: notVerified,
         })}
       >
+        // user passed to VerifiactionBanner is a mock
         {notVerified && <VerificationBanner user={userMock} />}
         <main className={styles.mainContent}>
           <div />
