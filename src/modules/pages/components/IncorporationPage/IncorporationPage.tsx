@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 import { Formik } from 'formik';
+import classNames from 'classnames';
 
 import { useColonyFromNameQuery } from '~data/generated';
 import { getMainClasses } from '~utils/css';
@@ -8,6 +9,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
 import Stages, { FormStages } from '~dashboard/ExpenditurePage/Stages';
 import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
+import VerificationBanner from '~dashboard/Incorporation/VerificationBanner';
 import IncorporationPaymentDialog from '~dashboard/Dialogs/IncorporationPaymentDialog';
 import { useDialog } from '~core/Dialog';
 
@@ -17,6 +19,7 @@ import {
   validationSchema,
   Stages as StagesEnum,
   formValuesMock,
+  userMock,
 } from './constants';
 import { ValuesType } from './types';
 import styles from './IncorporationPage.css';
@@ -38,6 +41,8 @@ const IncorporationPage = () => {
   const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStageId, setActiveStageId] = useState(StagesEnum.Payment);
   const sidebarRef = useRef<HTMLElement>(null);
+
+  const notVerified = true; // temporary valule
 
   const openPayDialog = useDialog(IncorporationPaymentDialog);
 
@@ -89,7 +94,7 @@ const IncorporationPage = () => {
 
   return isFormEditable ? (
     <Formik
-      initialValues={initialValues}
+      initialValues={initialValues} // mock values are used here to fill in the form
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
       validateOnBlur={shouldValidate}
@@ -136,7 +141,7 @@ const IncorporationPage = () => {
       )}
     </Formik>
   ) : (
-    <div className={getMainClasses({}, styles)} id="expenditurePage">
+    <div className={getMainClasses({}, styles)}>
       <aside className={styles.sidebar} ref={sidebarRef}>
         {loading ? (
           <div className={styles.spinnerContainer}>
@@ -152,7 +157,13 @@ const IncorporationPage = () => {
           )
         )}
       </aside>
-      <div className={styles.mainContainer}>
+      <div
+        className={classNames(styles.mainContainer, {
+          [styles.smallerPadding]: notVerified,
+        })}
+      >
+        {/* user passed to VerifiactionBanner is a mock */}
+        {notVerified && <VerificationBanner user={userMock} />}
         <main className={styles.mainContent}>
           <div />
           {colonyData && (

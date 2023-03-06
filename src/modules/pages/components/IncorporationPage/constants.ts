@@ -208,7 +208,7 @@ export const userMock = {
   profile: {
     avatarHash: null,
     displayName: null,
-    username: 'ajarosik',
+    username: 'Storm',
     walletAddress: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
   },
 };
