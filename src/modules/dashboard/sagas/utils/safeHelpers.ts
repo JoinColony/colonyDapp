@@ -393,5 +393,5 @@ export const getContractInteractionData = async (
 };
 
 export const getChainNameFromSafe = (safeDisplayName: string) => {
-  return safeDisplayName.match(/\((.*)\)/)?.pop() || '';
+  return safeDisplayName.match(/\(([^()]*)\)$/)?.pop() || '';
 };
