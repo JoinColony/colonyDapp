@@ -19,6 +19,7 @@ import {
   validationSchema,
   Stages as StagesEnum,
   formValuesMock,
+  userMock,
 } from './constants';
 import { ValuesType } from './types';
 import styles from './IncorporationPage.css';
@@ -161,7 +162,7 @@ const IncorporationPage = () => {
           [styles.smallerPadding]: notVerified,
         })}
       >
-        // user passed to VerifiactionBanner is a mock
+        {/* user passed to VerifiactionBanner is a mock */}
         {notVerified && <VerificationBanner user={userMock} />}
         <main className={styles.mainContent}>
           <div />
