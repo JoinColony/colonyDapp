@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid';
 import { defineMessages } from 'react-intl';
+import * as yup from 'yup';
 
 import { SignOption } from '~dashboard/Incorporation/IncorporationForm/types';
 
@@ -58,6 +59,26 @@ const MSG = defineMessages({
     id: 'dashboard.IncorporationPage.completeDesc',
     defaultMessage: 'Such DAO! So Incorporate!',
   },
+  nameRequiredError: {
+    id: 'dashboard.IncorporationPage.nameRequiredError',
+    defaultMessage: 'Corporation name is required',
+  },
+  altNamesRequiredError: {
+    id: 'dashboard.IncorporationPage.altNamesRequiredError',
+    defaultMessage: 'Please provide alternative names',
+  },
+  purposeRequiredError: {
+    id: 'dashboard.IncorporationPage.altNamesRequiredError',
+    defaultMessage: 'Please explain the purpose of your DAO',
+  },
+  protectorRequiredError: {
+    id: 'dashboard.IncorporationPage.altNamesRequiredError',
+    defaultMessage: 'You need to nominate a protector',
+  },
+  lengthError: {
+    id: 'dashboard.IncorporationPage.altNamesRequiredError',
+    defaultMessage: 'Must have more than 2 letters',
+  },
 });
 
 export const initialValues = {
@@ -69,6 +90,45 @@ export const initialValues = {
   mainContact: undefined,
   signOption: SignOption.Individual,
 };
+
+export const validationSchema = yup.object().shape({
+  name: yup.string().required(() => MSG.nameRequiredError),
+  alternativeName1: yup
+    .string()
+    .min(2, () => MSG.lengthError)
+    .required(() => MSG.altNamesRequiredError),
+  alternativeName2: yup
+    .string()
+    .min(2, () => MSG.lengthError)
+    .required(() => MSG.altNamesRequiredError),
+  purpose: yup
+    .string()
+    .min(3, () => MSG.lengthError)
+    .max(90)
+    .required(() => MSG.purposeRequiredError),
+  protectors: yup
+    .array()
+    .of(
+      yup.object().shape({
+        user: yup.object().required(() => MSG.protectorRequiredError),
+      }),
+    )
+    .min(1)
+    .max(5),
+  mainContact: yup.object().when('protectors', {
+    is: (protectors) => {
+      const selectedProtectors = protectors.filter(
+        (protector) => !!protector.user,
+      );
+      return protectors?.length > 1 && selectedProtectors?.length > 1;
+    },
+    then: yup.object().required(() => MSG.protectorRequiredError),
+  }),
+  signOption: yup.string().when('protectors', {
+    is: (protectors) => protectors?.length > 1,
+    then: yup.string().required(() => MSG.protectorRequiredError),
+  }),
+});
 
 export enum Stages {
   Draft = 'Draft',
