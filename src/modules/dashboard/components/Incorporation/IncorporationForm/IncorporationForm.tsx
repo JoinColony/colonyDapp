@@ -54,6 +54,10 @@ export const MSG = defineMessages({
     id: 'dashboard.Incorporation.IncorporationForm.descriptionLabel',
     defaultMessage: 'Describe the purpose of the DAO',
   },
+  year: {
+    id: 'dashboard.Incorporation.IncorporationForm.year',
+    defaultMessage: '{token} / year',
+  },
 });
 
 const displayName = 'dashboard.Incorporation.IncorporationForm';
@@ -96,13 +100,16 @@ const IncorporationForm = ({ colony, sidebarRef }: Props) => {
             <FormattedMessage {...MSG.ongoingCost} />
           </div>
           <div className={styles.cost}>
+            <Icon name="usd-coin" appearance={{ size: 'medium' }} />
+            <Numeral
+              value={cost.reneval.amount || 0}
+              unit={getTokenDecimalsWithFallback(
+                cost.reneval.token && cost.reneval.token.decimals,
+              )}
+            />
             <FormattedMessage
-              {...MSG.cost}
-              values={{
-                icon: <Icon name="usd-coin" appearance={{ size: 'medium' }} />,
-                amount: '3,800 / year',
-                currency: 'USDC',
-              }}
+              {...MSG.year}
+              values={{ token: cost.reneval.token.symbol }}
             />
           </div>
         </div>
@@ -137,6 +144,7 @@ const IncorporationForm = ({ colony, sidebarRef }: Props) => {
           <div
             className={classNames(styles.altNameWrapper, {
               [styles.error]: errors.alternativeName2,
+              [styles.marginSmall]: errors.alternativeName2,
             })}
           >
             <Input name="alternativeName2" elementOnly />
