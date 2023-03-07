@@ -35,7 +35,7 @@ interface Props {
   activeStageId?: string;
   motion?: Motion;
   status?: Status;
-  handleCancelExpenditure?: () => void;
+  handleCancel?: () => void;
   colony: Colony;
   expenditureType?: ExpenditureTypes;
   formValues?: ValuesType;
@@ -47,7 +47,7 @@ const LockedStages = ({
   setActiveStageId,
   motion,
   status,
-  handleCancelExpenditure,
+  handleCancel,
   formValues,
   colony,
   expenditureType,
@@ -100,7 +100,7 @@ const LockedStages = ({
           motion={motion}
           colony={colony}
           activeStageId={activeStageId}
-          handleCancelExpenditure={handleCancelExpenditure}
+          handleCancel={handleCancel}
           fundingSources={formValues?.streaming?.fundingSources}
         />
       ) : (
@@ -112,7 +112,7 @@ const LockedStages = ({
             handleButtonClick,
             motion,
             status,
-            handleCancelExpenditure,
+            handleCancel,
             formValues,
             colony,
             expenditureType,

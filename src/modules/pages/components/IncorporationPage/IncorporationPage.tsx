@@ -10,14 +10,15 @@ import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
 import Stages, { FormStages } from '~dashboard/ExpenditurePage/Stages';
 import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
 import VerificationBanner from '~dashboard/Incorporation/VerificationBanner';
-import IncorporationPaymentDialog from '~dashboard/Dialogs/IncorporationPaymentDialog';
-import { useDialog } from '~core/Dialog';
 import {
   Motion,
   MotionStatus,
   MotionType,
   Status,
 } from '~dashboard/ExpenditurePage/Stages/constants';
+import { useDialog } from '~core/Dialog';
+import CancelIncorporationDialog from '~dashboard/Dialogs/CancelIncorporationDialog';
+import IncorporationPaymentDialog from '~dashboard/Dialogs/IncorporationPaymentDialog';
 
 import {
   initialValues,
@@ -29,9 +30,6 @@ import {
 } from './constants';
 import { ValuesType } from './types';
 import styles from './IncorporationPage.css';
-import { useDialog } from '~core/Dialog';
-import CancelIncorporationDialog from '~dashboard/Dialogs/CancelIncorporationDialog';
-import IncorporationPaymentDialog from '~dashboard/Dialogs/IncorporationPaymentDialog';
 
 const displayName = 'pages.IncorporationPage';
 
@@ -51,8 +49,8 @@ const IncorporationPage = () => {
   const [activeStageId, setActiveStageId] = useState(StagesEnum.Payment);
   const sidebarRef = useRef<HTMLElement>(null);
   const openCancelIncorporationDialog = useDialog(CancelIncorporationDialog);
-  const [motion, setMotion] = useState<Motion>();
-  const [status, setStatus] = useState<Status>();
+  const [, setMotion] = useState<Motion>();
+  const [, setStatus] = useState<Status>();
 
   const notVerified = true; // temporary valule
 
@@ -179,7 +177,7 @@ const IncorporationPage = () => {
                   setActiveStageId={setActiveStageId}
                   colony={colonyData.processedColony}
                   setFormValues={setFormValues}
-                  handleCancelExpenditure={() => {}}
+                  handleCancel={handleCancelIncorporation}
                 />
               )}
             </main>
@@ -226,6 +224,7 @@ const IncorporationPage = () => {
               handleButtonClick={buttonAction || (() => {})}
               colony={colonyData?.processedColony}
               viewFor="incorporation"
+              handleCancel={handleCancelIncorporation}
             />
           )}
         </main>

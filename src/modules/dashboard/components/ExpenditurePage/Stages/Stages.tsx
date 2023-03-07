@@ -91,7 +91,7 @@ export interface Props {
   handleButtonClick: () => void;
   status?: Status;
   motion?: Motion;
-  handleCancelExpenditure?: () => void;
+  handleCancel?: () => void;
   colony: Colony;
   buttonDisabled?: boolean;
   formValues?: ValuesType;
@@ -108,7 +108,7 @@ const Stages = ({
   handleButtonClick,
   status,
   motion,
-  handleCancelExpenditure,
+  handleCancel,
   colony,
   buttonDisabled,
   formValues,
@@ -301,7 +301,7 @@ const Stages = ({
                       [styles.iconButtonDisabled]:
                         motion?.status === MotionStatus.Pending,
                     })}
-                    onClick={handleCancelExpenditure}
+                    onClick={handleCancel}
                     disabled={
                       isCancelled || motion?.status === MotionStatus.Pending
                     }

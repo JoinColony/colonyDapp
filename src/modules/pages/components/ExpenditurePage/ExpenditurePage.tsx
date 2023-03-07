@@ -587,7 +587,7 @@ const ExpenditurePage = ({ match }: Props) => {
                     activeStageId={activeStageId}
                     setActiveStageId={setActiveStageId}
                     setFormValues={setFormValues}
-                    handleCancelExpenditure={handleCancelExpenditure}
+                    handleCancel={handleCancelExpenditure}
                     colony={colonyData.processedColony}
                   />
                 )
@@ -638,7 +638,7 @@ const ExpenditurePage = ({ match }: Props) => {
               stages={stages}
               activeStageId={activeStageId}
               setActiveStageId={setActiveStageId}
-              handleCancelExpenditure={handleCancelExpenditure}
+              handleCancel={handleCancelExpenditure}
               colony={colonyData.processedColony}
               expenditureType={formValues?.expenditure}
             />
