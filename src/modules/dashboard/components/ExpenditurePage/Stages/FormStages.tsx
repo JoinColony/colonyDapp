@@ -43,7 +43,7 @@ interface Props {
     React.SetStateAction<ValuesType | IncorporationValuesType | undefined>
   >;
   colony: Colony;
-  handleCancelExpenditure: () => void;
+  handleCancel: () => void;
 }
 
 const FormStages = ({
@@ -52,7 +52,7 @@ const FormStages = ({
   setActiveStageId,
   setFormValues,
   colony,
-  handleCancelExpenditure,
+  handleCancel,
 }: Props) => {
   const {
     values,
@@ -195,7 +195,7 @@ const FormStages = ({
             handleButtonClick,
             handleDeleteDraft,
             handleSaveDraft,
-            handleCancelExpenditure,
+            handleCancel,
             colony,
           }}
         />

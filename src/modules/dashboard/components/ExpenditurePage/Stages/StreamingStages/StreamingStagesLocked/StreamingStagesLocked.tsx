@@ -102,7 +102,7 @@ export interface Props {
   motion?: Motion;
   colony?: Colony;
   activeStageId?: string;
-  handleCancelExpenditure?: () => void;
+  handleCancel?: () => void;
   fundingSources?: FundingSource[];
 }
 
@@ -111,7 +111,7 @@ const StreamingStagesLocked = ({
   motion,
   colony,
   activeStageId,
-  handleCancelExpenditure,
+  handleCancel,
   fundingSources,
 }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
@@ -290,7 +290,7 @@ const StreamingStagesLocked = ({
                 [styles.iconButtonDisabled]:
                   motion?.status === MotionStatus.Pending || isCancelled,
               })}
-              onClick={handleCancelExpenditure}
+              onClick={handleCancel}
               disabled={isCancelled || motion?.status === MotionStatus.Pending}
             >
               {motion?.status === MotionStatus.Pending || isCancelled ? (

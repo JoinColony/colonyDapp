@@ -10,8 +10,15 @@ import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
 import Stages, { FormStages } from '~dashboard/ExpenditurePage/Stages';
 import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
 import VerificationBanner from '~dashboard/Incorporation/VerificationBanner';
-import IncorporationPaymentDialog from '~dashboard/Dialogs/IncorporationPaymentDialog';
+import {
+  Motion,
+  MotionStatus,
+  MotionType,
+  Status,
+} from '~dashboard/ExpenditurePage/Stages/constants';
 import { useDialog } from '~core/Dialog';
+import CancelIncorporationDialog from '~dashboard/Dialogs/CancelIncorporationDialog';
+import IncorporationPaymentDialog from '~dashboard/Dialogs/IncorporationPaymentDialog';
 
 import {
   initialValues,
@@ -41,6 +48,9 @@ const IncorporationPage = () => {
   const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStageId, setActiveStageId] = useState(StagesEnum.Payment);
   const sidebarRef = useRef<HTMLElement>(null);
+  const openCancelIncorporationDialog = useDialog(CancelIncorporationDialog);
+  const [, setMotion] = useState<Motion>();
+  const [, setStatus] = useState<Status>();
 
   const notVerified = true; // temporary valule
 
@@ -92,6 +102,41 @@ const IncorporationPage = () => {
     }
   }, [shouldValidate]);
 
+  const handleCancel = (isForce: boolean) => {
+    if (isForce) {
+      // temporary action
+      setStatus(Status.ForceCancelled);
+    } else {
+      // setTimeout is temporary, call to backend should be added here
+      setMotion({
+        type: MotionType.Cancel,
+        status: MotionStatus.Pending,
+      });
+      setTimeout(() => {
+        setStatus(Status.Cancelled);
+        setMotion({
+          type: MotionType.Cancel,
+          status: MotionStatus.Passed,
+        });
+      }, 5000);
+    }
+  };
+
+  const handleCancelIncorporation = useCallback(() => {
+    if (!colonyData) {
+      return null;
+    }
+
+    return (
+      colonyData &&
+      openCancelIncorporationDialog({
+        onCancelIncorporation: (isForce: boolean) => handleCancel(isForce),
+        colony: colonyData.processedColony,
+        isVotingExtensionEnabled: true, // temporary value
+      })
+    );
+  }, [colonyData, openCancelIncorporationDialog]);
+
   return isFormEditable ? (
     <Formik
       initialValues={initialValues} // mock values are used here to fill in the form
@@ -132,7 +177,7 @@ const IncorporationPage = () => {
                   setActiveStageId={setActiveStageId}
                   colony={colonyData.processedColony}
                   setFormValues={setFormValues}
-                  handleCancelExpenditure={() => {}}
+                  handleCancel={handleCancelIncorporation}
                 />
               )}
             </main>
@@ -179,6 +224,7 @@ const IncorporationPage = () => {
               handleButtonClick={buttonAction || (() => {})}
               colony={colonyData?.processedColony}
               viewFor="incorporation"
+              handleCancel={handleCancelIncorporation}
             />
           )}
         </main>
