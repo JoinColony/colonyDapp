@@ -93,7 +93,7 @@ then
     # Build network
     log "Building '${NETWORK}' submodule"
     cd "${ROOT_PATH}/${LIB_PATH}/${NETWORK}"
-    $YARN --pure-lockfile
+    npm ci
     DISABLE_DOCKER=true $YARN provision:token:contracts
     cd ${ROOT_PATH}
 else
