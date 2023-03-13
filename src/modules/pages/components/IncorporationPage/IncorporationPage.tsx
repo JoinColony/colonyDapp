@@ -20,6 +20,7 @@ import {
   stages,
   validationSchema,
   Stages as StagesEnum,
+  formValuesMock,
 } from './constants';
 import { ValuesType } from './types';
 import styles from './IncorporationPage.css';
@@ -36,8 +37,8 @@ const IncorporationPage = () => {
   const { data: colonyData, loading } = useColonyFromNameQuery({
     variables: { name: colonyName, address: '' },
   });
-  const [isFormEditable, setFormEditable] = useState(true);
-  const [formValues, setFormValues] = useState<ValuesType>();
+  const [isFormEditable, setFormEditable] = useState(false);
+  const [formValues, setFormValues] = useState<ValuesType>(formValuesMock);
   const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStageId, setActiveStageId] = useState(StagesEnum.Payment);
   const sidebarRef = useRef<HTMLElement>(null);
@@ -61,7 +62,7 @@ const IncorporationPage = () => {
         return {
           id: protector.user?.id,
           walletAddress: protector.user?.profile?.walletAddress,
-          verified: VerificationStatus.Unverified,
+          verified: VerificationStatus.Submitted,
         };
       }),
     [formValues],
