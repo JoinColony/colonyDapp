@@ -18,7 +18,6 @@ import {
   stages,
   validationSchema,
   Stages as StagesEnum,
-  formValuesMock,
   userMock,
 } from './constants';
 import { ValuesType } from './types';
@@ -36,10 +35,10 @@ const IncorporationPage = () => {
   const { data: colonyData, loading } = useColonyFromNameQuery({
     variables: { name: colonyName, address: '' },
   });
-  const [isFormEditable, setFormEditable] = useState(false);
-  const [formValues, setFormValues] = useState<ValuesType>(formValuesMock);
+  const [isFormEditable, setFormEditable] = useState(true);
+  const [formValues, setFormValues] = useState<ValuesType>();
   const [shouldValidate, setShouldValidate] = useState(false);
-  const [activeStageId, setActiveStageId] = useState(StagesEnum.Payment);
+  const [activeStageId, setActiveStageId] = useState(StagesEnum.Draft);
   const sidebarRef = useRef<HTMLElement>(null);
 
   const notVerified = true; // temporary valule
