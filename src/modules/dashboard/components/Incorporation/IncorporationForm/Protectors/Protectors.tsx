@@ -15,7 +15,6 @@ import { supRenderAvatar } from '~dashboard/ExpenditurePage/Recipient/Recipient'
 import { Protector } from '~pages/IncorporationPage/types';
 import Button from '~core/Button';
 import Link from '~core/Link';
-import { Protector } from '~pages/IncorporationPage/types';
 
 import SingleUserPicker from '../SingleUserPicker';
 import { SignOption } from '../constants';
@@ -181,71 +180,82 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
           />
         </div>
       </FormSection>
-      <div className={styles.mianContactWrapper}>
-        {shouldShowMainContact && mainContactData && (
-          <FormSection appearance={{ border: 'bottom' }}>
-            <div className={styles.wrapper}>
-              <div
-                className={classNames(
-                  styles.labelWrapper,
-                  styles.additionalPaddign,
-                )}
-              >
-                <InputLabel label={MSG.mainContact} />
-                <QuestionMarkTooltip tooltipText={MSG.mainContactTooltip} />
-              </div>
-              <div className={styles.mainContactWrapper}>
-                <div className={styles.selectWrapper}>
-                  <UserPickerWithSearch
-                    data={mainContactData}
-                    label=""
-                    name="mainContact"
-                    filter={filterUserSelection}
-                    renderAvatar={supRenderAvatar}
-                    placeholder="Search"
-                    sidebarRef={sidebarRef}
-                    disabled={!protectors}
-                  />
-                  {error && typeof error === 'object' && touched && (
-                    <div className={styles.error}>{formatMessage(error)}</div>
-                  )}
-                </div>
-                <Icon
-                  name="trash"
-                  className={styles.deleteIcon}
-                  onClick={() => setMainContact(undefined)}
-                  title={MSG.deleteIconTitle}
-                />
-              </div>
-            </div>
-          </FormSection>
-        )}
-        {shouldShowMainContact && (
-          <div className={styles.signOptionWrapper}>
+      {shouldShowMainContact && mainContactData && (
+        <FormSection appearance={{ border: 'bottom' }}>
+          <div className={styles.wrapper}>
             <div
               className={classNames(
                 styles.labelWrapper,
-                styles.additionalMargin,
+                styles.additionalPaddign,
               )}
             >
-              <InputLabel label={MSG.signOptionLabel} />
-              <QuestionMarkTooltip tooltipText={MSG.signOptionTooltip} />
+              <InputLabel label={MSG.mainContact} />
+              <QuestionMarkTooltip tooltipText={MSG.mainContactTooltip} />
             </div>
+            <div className={styles.mainContactWrapper}>
+              <div className={styles.selectWrapper}>
+                <UserPickerWithSearch
+                  data={mainContactData}
+                  label=""
+                  name="mainContact"
+                  filter={filterUserSelection}
+                  renderAvatar={supRenderAvatar}
+                  placeholder="Search"
+                  sidebarRef={sidebarRef}
+                  disabled={!protectors}
+                />
+                {error && typeof error === 'object' && touched && (
+                  <div className={styles.error}>{formatMessage(error)}</div>
+                )}
+              </div>
+              <Icon
+                name="trash"
+                className={styles.deleteIcon}
+                onClick={() => setMainContact(undefined)}
+                title={MSG.deleteIconTitle}
+              />
+            </div>
+          </div>
+        </FormSection>
+      )}
+      {shouldShowMainContact && (
+        <div className={styles.signOptionWrapper}>
+          <div
+            className={classNames(styles.labelWrapper, styles.additionalMargin)}
+          >
+            <InputLabel label={MSG.signOptionLabel} />
+            <QuestionMarkTooltip tooltipText={MSG.signOptionTooltip} />
+          </div>
+          <div
+            className={classNames(styles.radioWrapper, {
+              [styles.selected]: signOption === SignOption.Individual,
+            })}
+          >
             <Radio
               checked={signOption === SignOption.Individual}
               name="signOption"
-              label={MSG.individual}
               value={SignOption.Individual}
-            />
+              elementOnly
+            >
+              <FormattedMessage {...MSG.individual} />
+            </Radio>
+          </div>
+          <div
+            className={classNames(styles.radioWrapper, {
+              [styles.selected]: signOption === SignOption.Multiple,
+            })}
+          >
             <Radio
               checked={signOption === SignOption.Multiple}
               name="signOption"
-              label={MSG.multiple}
               value={SignOption.Multiple}
-            />
+              elementOnly
+            >
+              <FormattedMessage {...MSG.multiple} />
+            </Radio>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </>
   );
 };

@@ -19,6 +19,9 @@ import {
 } from '~dashboard/ExpenditurePage/Stages/constants';
 import { Motion } from '~pages/ExpenditurePage/types';
 import { useLoggedInUser } from '~data/helpers';
+import VerificationBanner from '~dashboard/Incorporation/VerificationBanner';
+import IncorporationPaymentDialog from '~dashboard/Dialogs/IncorporationPaymentDialog';
+import Stages, { FormStages } from '~dashboard/ExpenditurePage/Stages';
 
 import {
   initialValues,
@@ -32,7 +35,6 @@ import {
 import { findDifferences, updateValues } from './utils';
 import { ValuesType } from './types';
 import styles from './IncorporationPage.css';
-import VerificationBanner from '~dashboard/Incorporation/VerificationBanner';
 
 const MSG = defineMessages({
   editMode: {
@@ -60,7 +62,7 @@ const IncorporationPage = () => {
   const [isFormEditable, setFormEditable] = useState(false);
   const [formValues, setFormValues] = useState<ValuesType>(formValuesMock);
   const [shouldValidate, setShouldValidate] = useState(false);
-  const [activeStageId, setActiveStageId] = useState(StagesEnum.Draft);
+  const [activeStageId, setActiveStageId] = useState(StagesEnum.Created);
   const [inEditMode, setInEditMode] = useState(false);
   const oldValues = useRef<ValuesType>();
   const sidebarRef = useRef<HTMLElement>(null);
@@ -68,13 +70,9 @@ const IncorporationPage = () => {
   const notVerified = true; // temporary valule
 
   const openPayDialog = useDialog(IncorporationPaymentDialog);
-  const [motion, setMotion] = useState<Motion>();
+  const [, setMotion] = useState<Motion>();
 
   const openEditIncorporationDialog = useDialog(EditIncorporationDialog);
-
-  const { data: colonyData, loading } = useColonyFromNameQuery({
-    variables: { name: colonyName, address: '' },
-  });
 
   const { walletAddress } = useLoggedInUser();
 
@@ -248,9 +246,24 @@ const IncorporationPage = () => {
                   handleEditSubmit={() =>
                     handleEditSubmit(values, validateForm)
                   }
+                  handleEditCancel={handleEditCancel}
                 />
               ) : (
-                <FormStages activeStageId={activeStageId} stages={stages} />
+                colonyData && (
+                  <FormStages
+                    activeStageId={activeStageId}
+                    stages={stages.map((stage) => ({
+                      ...stage,
+                      id: stage.id.toString(),
+                      label: stage.title,
+                      buttonAction,
+                    }))}
+                    setActiveStageId={setActiveStageId}
+                    colony={colonyData.processedColony}
+                    setFormValues={setFormValues}
+                    handleCancelExpenditure={() => {}}
+                  />
+                )
               )}
             </main>
           </div>
@@ -277,11 +290,14 @@ const IncorporationPage = () => {
       </aside>
       <div
         className={classNames(styles.mainContainer, {
-          [styles.smallerPadding]: notVerified,
+          [styles.smallerPadding]:
+            notVerified && activeStageId === StagesEnum.Created,
         })}
       >
         {/* user passed to VerifiactionBanner is a mock */}
-        {notVerified && <VerificationBanner user={userMock} />}
+        {notVerified && activeStageId === StagesEnum.Created && (
+          <VerificationBanner user={userMock} />
+        )}
         <main className={styles.mainContent}>
           <div className={styles.titleCommentsContainer}>
             <FormattedMessage {...MSG.title} />

@@ -7,10 +7,6 @@
   height: 100%;
 }
 
-.titleCommentsContainer {
-  min-width: 458px;
-}
-
 .sidebar {
   height: 600px;
   min-height: calc(100vh - navBarHeight);
@@ -36,6 +32,7 @@
 }
 
 .mainContainer {
+  padding: 52px 100px 70px 25px;
   padding-bottom: 50px;
   height: 600px;
   min-height: 100%;
@@ -49,6 +46,10 @@
   display: flex;
   justify-content: space-between;
   min-height: calc(100vh - navBarHeight);
+}
+
+.smallerPadding {
+  padding: 36px 100px 80px 25px;
 }
 
 .tagWrapper {

@@ -13,5 +13,3 @@ export const additionalText: string;
 export const additionalMargin: string;
 export const radioWrapper: string;
 export const selected: string;
-export const mianContactWrapper: string;
-export const fadeIn: string;

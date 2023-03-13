@@ -143,3 +143,7 @@
   border-radius: 12px;
   text-align: center;
 }
+
+.paddingSmall {
+  padding-top: 0;
+}
