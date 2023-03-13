@@ -40,7 +40,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
 
     - name: npm
-      run: npm i -g npm@8 --registry=https://registry.npmjs.org
+      run: npm i -g npm@8.1.4 --registry=https://registry.npmjs.org
 
     - run: npm install --legacy-peer-deps
     - run: npm run typecheck

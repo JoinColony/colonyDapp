@@ -25,7 +25,7 @@ jobs:
           ssh-private-key: ${{ secrets.DEPLOY_KEY }}
 
       - name: npm
-        run: npm i -g npm@8 --registry=https://registry.npmjs.org
+        run: npm i -g npm@8.1.4 --registry=https://registry.npmjs.org
 
       - name: Install and Build 🔧
         run: |
