@@ -3,7 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
 import UserMention from '~core/UserMention';
-import { AnyUser } from '~data/index';
+import { LoggedInUser } from '~data/index';
 import { useDialog } from '~core/Dialog';
 import RemoveNominationDialog from '~dashboard/Dialogs/RemoveNominationDialog';
 
