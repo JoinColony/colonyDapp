@@ -16,3 +16,4 @@ export const buttonTooltip: string;
 export const cancelIcon: string;
 export const claimed: string;
 export const tagStagesWrapper: string;
+export const paddingSmall: string;

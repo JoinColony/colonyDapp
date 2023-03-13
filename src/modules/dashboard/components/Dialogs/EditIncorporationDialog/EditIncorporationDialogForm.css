@@ -1,0 +1,98 @@
+@value submitButtonWidth: 160px;
+
+.title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 0 22px;
+  width: 100%;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.withoutPadding {
+  padding: 0;
+}
+
+.forceRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: 16px;
+  white-space: nowrap;
+}
+
+.contentWrapper {
+  padding: 16px 20px 54px;
+}
+
+.descriptionWrapper {
+  font-size: var(--size-normal);
+  letter-spacing: 0.1px;
+}
+
+.noChanges {
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
+
+.annotationsWrapper {
+  margin-bottom: 11px;
+}
+
+.toggleContainer span div {
+  margin-left: 0;
+}
+
+/* this selector is for tooltip wrapper */
+.toggleContainer > div > div:last-child {
+  max-width: 250px;
+  white-space: normal;
+}
+
+.toggleContainer > div > div:first-of-type {
+  margin-right: 11px;
+  height: 16px;
+}
+
+.toggleContainer label {
+  margin-bottom: 0;
+}
+
+.toggleContainer i {
+  transform: translate(0, -1px);
+}
+
+.link {
+  font-weight: 600;
+  color: var(--action-secondary);
+}
+
+.link:hover {
+  color: var(--action-secondary);
+}
+
+.buttonWrappper {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.discard {
+  composes: main from '~core/Button/Button.css';
+  padding: 0;
+  height: auto;
+  font-size: var(--size-smallish);
+  font-weight: 600;
+  color: var(--action-secondary);
+}
+
+.subheader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  padding: 6px 0;
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}

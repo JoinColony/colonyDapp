@@ -142,7 +142,11 @@ const Stages = ({
     status !== Status.Cancelled;
 
   return (
-    <div className={styles.mainContainer}>
+    <div
+      className={classNames(styles.mainContainer, {
+        [styles.paddingSmall]: viewFor === 'incorporation',
+      })}
+    >
       {claimFundsVisible && formValues && (
         <>
           {formValues.expenditure === ExpenditureTypes.Advanced ? (

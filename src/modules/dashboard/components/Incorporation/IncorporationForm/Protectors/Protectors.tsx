@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { FieldArray, useField } from 'formik';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
@@ -70,9 +70,12 @@ export interface Props {
 const Protectors = ({ colony, sidebarRef }: Props) => {
   const [, { value: protectors }] = useField<Protector[]>('protectors');
   const [, { value: signOption }] = useField('signOption');
-  const [, { value: mainContact }, { setValue: setMainContact }] = useField(
-    'mainContact',
-  );
+  const [
+    ,
+    { value: mainContact, error, touched },
+    { setValue: setMainContact },
+  ] = useField('mainContact');
+  const { formatMessage } = useIntl();
 
   const { data: colonyMembers, loading } = useMembersSubscription({
     variables: { colonyAddress: colony.colonyAddress || '' },
@@ -180,12 +183,17 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
       {shouldShowMainContact && mainContactData && (
         <FormSection appearance={{ border: 'bottom' }}>
           <div className={styles.wrapper}>
-            <div className={styles.labelWrapper}>
+            <div
+              className={classNames(
+                styles.labelWrapper,
+                styles.additionalPaddign,
+              )}
+            >
               <InputLabel label={MSG.mainContact} />
               <QuestionMarkTooltip tooltipText={MSG.mainContactTooltip} />
             </div>
             <div className={styles.mainContactWrapper}>
-              <div>
+              <div className={styles.selectWrapper}>
                 <UserPickerWithSearch
                   data={mainContactData}
                   label=""
@@ -196,6 +204,9 @@ const Protectors = ({ colony, sidebarRef }: Props) => {
                   sidebarRef={sidebarRef}
                   disabled={!protectors}
                 />
+                {error && typeof error === 'object' && touched && (
+                  <div className={styles.error}>{formatMessage(error)}</div>
+                )}
               </div>
               <Icon
                 name="trash"
