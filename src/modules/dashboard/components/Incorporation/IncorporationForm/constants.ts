@@ -6,6 +6,7 @@ export enum SignOption {
 export enum VerificationStatus {
   Verified = 'Verified',
   Unverified = 'Unverified',
+  Submitted = 'Submitted',
 }
 // this is a mock data
 export const cost = {

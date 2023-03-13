@@ -3,13 +3,16 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { FormSection, InputLabel } from '~core/Fields';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
-import { ValuesType } from '~pages/IncorporationPage/types';
+import { ValuesType, VerificationStatus } from '~pages/IncorporationPage/types';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
 import Tag from '~core/Tag';
 import Link from '~core/Link';
 
-import { SignOption, VerificationStatus } from '../constants';
+import {
+  SignOption,
+  VerificationStatus as VerificationType,
+} from '../constants';
 
 import styles from './LockedProtectors.css';
 
@@ -60,9 +63,10 @@ const displayName = `dashboard.Incorporation.IncorporationForm.LockedProtectors`
 
 export interface Props {
   formValues: ValuesType;
+  verificationStatuses: VerificationStatus[] | undefined;
 }
 
-const LockedProtectors = ({ formValues }: Props) => {
+const LockedProtectors = ({ formValues, verificationStatuses }: Props) => {
   const signLabel = useMemo(() => {
     return formValues.signOption === SignOption.Individual
       ? MSG.individual
@@ -93,18 +97,23 @@ const LockedProtectors = ({ formValues }: Props) => {
           const { profile } = user || {};
           const { walletAddress, username, displayName: userDispalyName } =
             profile || {};
+          const verificationStatus = verificationStatuses?.find(
+            (item) =>
+              item.walletAddress === protector.user?.profile?.walletAddress,
+          )?.verified;
 
           return (
             <div className={styles.row}>
               <Tag
                 appearance={{
                   colorSchema: 'fullColor',
-                  theme: protector.verified ? 'primary' : 'danger',
+                  theme:
+                    verificationStatus === VerificationType.Unverified
+                      ? 'danger'
+                      : 'primary',
                 }}
               >
-                {protector.verified
-                  ? VerificationStatus.Verified
-                  : VerificationStatus.Unverified}
+                {verificationStatus}
               </Tag>
               <div className={styles.userAvatarContainer}>
                 <UserAvatar

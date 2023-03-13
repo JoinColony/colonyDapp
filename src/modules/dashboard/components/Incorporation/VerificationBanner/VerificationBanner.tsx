@@ -3,7 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
 import UserMention from '~core/UserMention';
-import { AnyUser } from '~data/index';
+import { LoggedInUser } from '~data/index';
 import { useDialog } from '~core/Dialog';
 import RemoveNominationDialog from '~dashboard/Dialogs/RemoveNominationDialog';
 
@@ -31,7 +31,10 @@ const MSG = defineMessages({
 const displayName = 'dashboard.Incorporation.VerificationBanner';
 
 export interface Props {
-  user: AnyUser;
+  user: Pick<
+    LoggedInUser,
+    'walletAddress' | 'balance' | 'username' | 'ethereal' | 'networkId'
+  >;
 }
 
 const VerificationBanner = ({ user }: Props) => {
@@ -54,13 +57,7 @@ const VerificationBanner = ({ user }: Props) => {
           <FormattedMessage
             {...MSG.title}
             values={{
-              user: (
-                <UserMention
-                  username={
-                    user.profile.username || user.profile.displayName || ''
-                  }
-                />
-              ),
+              user: <UserMention username={user.username || ''} />,
             }}
           />
         </div>

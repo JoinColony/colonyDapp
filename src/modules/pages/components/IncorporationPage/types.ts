@@ -2,7 +2,7 @@ import { MessageDescriptor } from 'react-intl';
 
 import {
   SignOption,
-  VerificationStatus,
+  VerificationStatus as VerificationStatusType,
 } from '~dashboard/Incorporation/IncorporationForm/constants';
 import { AnyUser } from '~data/index';
 
@@ -13,7 +13,6 @@ export interface Protector {
   key: string;
   removed?: boolean;
   created?: boolean;
-  verified?: VerificationStatus;
 }
 export interface ValuesType {
   name: string;
@@ -30,4 +29,10 @@ export interface StageObject {
   title: MessageDescriptor;
   description: MessageDescriptor;
   buttonText?: MessageDescriptor;
+}
+
+export interface VerificationStatus {
+  id?: string;
+  walletAddress?: string;
+  verified: VerificationStatusType;
 }
