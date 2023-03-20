@@ -12,6 +12,7 @@ import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/
 import VerificationBanner from '~dashboard/Incorporation/VerificationBanner';
 import IncorporationPaymentDialog from '~dashboard/Dialogs/IncorporationPaymentDialog';
 import { useDialog } from '~core/Dialog';
+import InfoBanner from '~dashboard/Incorporation/InfoBanner';
 
 import {
   initialValues,
@@ -34,10 +35,8 @@ const IncorporationPage = () => {
   const { data: colonyData, loading } = useColonyFromNameQuery({
     variables: { name: colonyName, address: '' },
   });
-  const [isFormEditable, setFormEditable] = useState(false);
   const [formValues, setFormValues] = useState<ValuesType>(formValuesMock);
-  const [isFormEditable, setFormEditable] = useState(true);
-  const [formValues, setFormValues] = useState<ValuesType>();
+  const [isFormEditable, setFormEditable] = useState(false);
   const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStageId, setActiveStageId] = useState(StagesEnum.Payment);
   const sidebarRef = useRef<HTMLElement>(null);
@@ -46,9 +45,6 @@ const IncorporationPage = () => {
 
   const openPayDialog = useDialog(IncorporationPaymentDialog);
 
-  const handleSubmit = useCallback((values) => {
-    setFormValues(values);
-    setFormEditable(false);
   const handleSubmit = useCallback((values) => {
     setFormValues(values);
     setFormEditable(false);
@@ -95,13 +91,9 @@ const IncorporationPage = () => {
     }
   }, [shouldValidate]);
 
-  const { data: colonyData, loading } = useColonyFromNameQuery({
-    variables: { name: colonyName, address: '' },
-  });
-
   return isFormEditable ? (
     <Formik
-      initialValues={initialValues} // mock values are used here to fill in the form
+      initialValues={initialValues}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
       validateOnBlur={shouldValidate}
@@ -148,44 +140,6 @@ const IncorporationPage = () => {
       )}
     </Formik>
   ) : (
-    <div className={getMainClasses({}, styles)} id="expenditurePage">
-      <aside className={styles.sidebar} ref={sidebarRef}>
-        {loading ? (
-          <div className={styles.spinnerContainer}>
-            <SpinnerLoader appearance={{ size: 'medium' }} />
-          </div>
-        ) : (
-          colonyData && (
-            <LockedIncorporationForm
-              sidebarRef={sidebarRef.current}
-              colony={colonyData.processedColony}
-              formValues={formValues}
-            />
-          )
-        )}
-      </aside>
-      <div
-        className={classNames(styles.mainContainer, {
-          [styles.smallerPadding]:
-            activeStageId === StagesEnum.Processing ||
-            activeStageId === StagesEnum.Complete,
-        })}
-      >
-        {(activeStageId === StagesEnum.Processing ||
-          activeStageId === StagesEnum.Complete) && (
-          <InfoBanner activeStageId={activeStageId} />
-        )}
-        <main className={styles.mainContent}>
-          <div />
-          <Stages
-            activeStageId={activeStageId}
-            stages={stages}
-            buttonAction={buttonAction}
-          />
-        </main>
-      </div>
-    </div>
-  ) : (
     <div className={getMainClasses({}, styles)}>
       <aside className={styles.sidebar} ref={sidebarRef}>
         {loading ? (
@@ -204,11 +158,22 @@ const IncorporationPage = () => {
       </aside>
       <div
         className={classNames(styles.mainContainer, {
-          [styles.smallerPadding]: notVerified,
+          [styles.smallerPadding]:
+            activeStageId === StagesEnum.Processing ||
+            activeStageId === StagesEnum.Complete ||
+            notVerified,
         })}
       >
         {/* user passed to VerifiactionBanner is a mock */}
-        {notVerified && <VerificationBanner user={userMock} />}
+        {notVerified &&
+          activeStageId !== StagesEnum.Processing &&
+          activeStageId !== StagesEnum.Complete && (
+            <VerificationBanner user={userMock} />
+          )}
+        {(activeStageId === StagesEnum.Processing ||
+          activeStageId === StagesEnum.Complete) && (
+          <InfoBanner activeStageId={activeStageId} />
+        )}
         <main className={styles.mainContent}>
           <div />
           {colonyData && (
