@@ -83,6 +83,8 @@ const LockedIncorporationForm = ({ formValues, activeStageId }: Props) => {
             )}
           </div>
           {hasPermissions && (
+            // This button now does nothing.
+            // It has to be connected wiht proper action (added in Stage 2).
             <Button
               text={MSG.manageApplication}
               appearance={{ theme: 'blue' }}

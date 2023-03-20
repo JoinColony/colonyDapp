@@ -100,7 +100,7 @@
 
 .title {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   margin-bottom: 16px;
   font-size: var(--size-smallish);
