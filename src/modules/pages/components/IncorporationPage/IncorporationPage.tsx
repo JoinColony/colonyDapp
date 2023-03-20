@@ -12,6 +12,7 @@ import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/
 import VerificationBanner from '~dashboard/Incorporation/VerificationBanner';
 import IncorporationPaymentDialog from '~dashboard/Dialogs/IncorporationPaymentDialog';
 import { useDialog } from '~core/Dialog';
+import InfoBanner from '~dashboard/Incorporation/InfoBanner';
 
 import {
   initialValues,
@@ -26,8 +27,6 @@ import styles from './IncorporationPage.css';
 
 const displayName = 'pages.IncorporationPage';
 
-export type InitialValuesType = typeof initialValues;
-
 const IncorporationPage = () => {
   const { colonyName } = useParams<{
     colonyName: string;
@@ -36,8 +35,8 @@ const IncorporationPage = () => {
   const { data: colonyData, loading } = useColonyFromNameQuery({
     variables: { name: colonyName, address: '' },
   });
-  const [isFormEditable, setFormEditable] = useState(false);
   const [formValues, setFormValues] = useState<ValuesType>(formValuesMock);
+  const [isFormEditable, setFormEditable] = useState(false);
   const [shouldValidate, setShouldValidate] = useState(false);
   const [activeStageId, setActiveStageId] = useState(StagesEnum.Payment);
   const sidebarRef = useRef<HTMLElement>(null);
@@ -94,7 +93,7 @@ const IncorporationPage = () => {
 
   return isFormEditable ? (
     <Formik
-      initialValues={initialValues} // mock values are used here to fill in the form
+      initialValues={initialValues}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
       validateOnBlur={shouldValidate}
@@ -159,11 +158,22 @@ const IncorporationPage = () => {
       </aside>
       <div
         className={classNames(styles.mainContainer, {
-          [styles.smallerPadding]: notVerified,
+          [styles.smallerPadding]:
+            activeStageId === StagesEnum.Processing ||
+            activeStageId === StagesEnum.Complete ||
+            notVerified,
         })}
       >
         {/* user passed to VerifiactionBanner is a mock */}
-        {notVerified && <VerificationBanner user={userMock} />}
+        {notVerified &&
+          activeStageId !== StagesEnum.Processing &&
+          activeStageId !== StagesEnum.Complete && (
+            <VerificationBanner user={userMock} />
+          )}
+        {(activeStageId === StagesEnum.Processing ||
+          activeStageId === StagesEnum.Complete) && (
+          <InfoBanner activeStageId={activeStageId} />
+        )}
         <main className={styles.mainContent}>
           <div />
           {colonyData && (
