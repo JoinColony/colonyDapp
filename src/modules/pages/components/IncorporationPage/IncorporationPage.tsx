@@ -40,7 +40,7 @@ const IncorporationPage = () => {
   const [isFormEditable, setFormEditable] = useState(false);
   const [formValues, setFormValues] = useState<ValuesType>(formValuesMock);
   const [shouldValidate, setShouldValidate] = useState(false);
-  const [activeStageId, setActiveStageId] = useState(StagesEnum.Payment);
+  const [activeStageId, setActiveStageId] = useState(StagesEnum.Created);
   const sidebarRef = useRef<HTMLElement>(null);
 
   const user = useLoggedInUser();
@@ -62,11 +62,15 @@ const IncorporationPage = () => {
         return {
           id: protector.user?.id,
           walletAddress: protector.user?.profile?.walletAddress,
-          verified: VerificationStatus.Submitted,
+          verified: VerificationStatus.Verified,
         };
       }),
     [formValues],
   );
+
+  // Mock data
+  const isOwner = false;
+  const hasPermissions = isNominated || isOwner;
 
   const isVerified = useMemo(() => {
     const verificationStatus = verificationStatuses?.find(
@@ -109,13 +113,13 @@ const IncorporationPage = () => {
         return handleProceed;
       }
       case StagesEnum.Payment: {
-        return handlePay;
+        return hasPermissions ? handlePay : undefined;
       }
       default: {
         return () => {};
       }
     }
-  }, [activeStageId, handlePay, handleProceed]);
+  }, [activeStageId, handlePay, handleProceed, hasPermissions]);
 
   const handleValidate = useCallback(() => {
     if (!shouldValidate) {
