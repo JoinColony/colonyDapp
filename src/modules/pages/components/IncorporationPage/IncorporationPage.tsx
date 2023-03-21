@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useParams, useHistory } from 'react-router';
 import { Formik } from 'formik';
+import classNames from 'classnames';
 
 import { useColonyFromNameQuery } from '~data/generated';
 import { getMainClasses } from '~utils/css';
@@ -10,7 +11,6 @@ import Stages, { FormStages } from '~dashboard/ExpenditurePage/Stages';
 import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
 import VerificationBanner from '~dashboard/Incorporation/VerificationBanner';
 import IncorporationPaymentDialog from '~dashboard/Dialogs/IncorporationPaymentDialog';
-import InfoBanner from '~dashboard/Incorporation/InfoBanner';
 import { useDialog } from '~core/Dialog';
 
 import {
@@ -169,10 +169,6 @@ const IncorporationPage = () => {
       >
         {/* user passed to VerifiactionBanner is a mock */}
         {notVerified && <VerificationBanner user={userMock} />}
-        {(activeStageId === StagesEnum.Processing ||
-          activeStageId === StagesEnum.Complete) && (
-          <InfoBanner activeStageId={activeStageId} />
-        )}
         <main className={styles.mainContent}>
           <div />
           {colonyData && (
