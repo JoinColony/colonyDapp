@@ -20,6 +20,7 @@ import {
   stages,
   validationSchema,
   Stages as StagesEnum,
+  formValuesMock,
 } from './constants';
 import { ValuesType } from './types';
 import styles from './IncorporationPage.css';
@@ -39,20 +40,10 @@ const IncorporationPage = () => {
   const [isFormEditable, setFormEditable] = useState(false);
   const [formValues, setFormValues] = useState<ValuesType>(formValuesMock);
   const [shouldValidate, setShouldValidate] = useState(false);
-  const [activeStageId, setActiveStageId] = useState(StagesEnum.Draft);
+  const [activeStageId, setActiveStageId] = useState(StagesEnum.Created);
   const sidebarRef = useRef<HTMLElement>(null);
 
   const user = useLoggedInUser();
-
-  const isNominated = useMemo(
-    () =>
-      user.walletAddress &&
-      formValues?.protectors?.find(
-        (protector) =>
-          user.walletAddress === protector?.user?.profile?.walletAddress,
-      ),
-    [formValues, user],
-  );
 
   const isNominated = useMemo(
     () =>
