@@ -11,6 +11,8 @@ import { AnyUser, Colony } from '~data/index';
 import { ColonyActions, ColonyMotions } from '~types/index';
 import { splitTransactionHash } from '~utils/strings';
 import { getDetailsForAction } from '~utils/colonyActions';
+import LinkedIncorporation from '~dashboard/Incorporation/LinkedIncorporation';
+
 import { EventValues } from '../../ActionsPageFeed/ActionsPageFeed';
 import { ACTION_TYPES_ICONS_MAP } from '../../ActionsPage/staticMaps';
 
@@ -73,6 +75,14 @@ const MSG = defineMessages({
       false {reward}
     }`,
   },
+  source: {
+    id: 'dashboard.ActionsPage.DetailsWidget.source',
+    defaultMessage: 'Source',
+  },
+  cost: {
+    id: 'dashboard.ActionsPage.DetailsWidget.cost',
+    defaultMessage: 'Cost',
+  },
 });
 
 interface Props {
@@ -109,6 +119,7 @@ const DetailsWidget = ({
    */
   const Amount = () => values?.amount as ReactElement;
   const Symbol = () => values?.tokenSymbol as ReactElement;
+  const Cost = () => values?.cost as ReactElement;
 
   const detailsForAction = getDetailsForAction(actionType);
 
@@ -143,16 +154,17 @@ const DetailsWidget = ({
           </div>
         </div>
       </div>
-      {values?.motionDomain && (
-        <div className={styles.item}>
-          <div className={styles.label}>
-            <FormattedMessage {...MSG.motionDomain} />
+      {values?.motionDomain &&
+        actionType !== ColonyMotions.DAOIncorporationMotion && (
+          <div className={styles.item}>
+            <div className={styles.label}>
+              <FormattedMessage {...MSG.motionDomain} />
+            </div>
+            <div className={styles.value}>
+              <DetailsWidgetTeam domain={values.motionDomain} />
+            </div>
           </div>
-          <div className={styles.value}>
-            <DetailsWidgetTeam domain={values.motionDomain} />
-          </div>
-        </div>
-      )}
+        )}
       {detailsForAction.FromDomain && values?.fromDomain && (
         <div className={styles.item}>
           <div className={styles.label}>
@@ -259,6 +271,33 @@ const DetailsWidget = ({
           <div className={styles.value}>{values.colonyName}</div>
         </div>
       )}
+      {detailsForAction.Source && values?.source && (
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG.source} />
+          </div>
+          <DetailsWidgetTeam domain={values.source} />
+        </div>
+      )}
+      {values?.cost && detailsForAction.Cost && (
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG.cost} />
+          </div>
+          <div className={styles.tokenContainer}>
+            {values?.token && (
+              <TokenIcon
+                token={values.token}
+                name={values.token.name || undefined}
+                size="xxs"
+              />
+            )}
+            <div className={styles.value}>
+              <Cost /> <Symbol />
+            </div>
+          </div>
+        </div>
+      )}
       {!!shortenedHash && (
         <div className={styles.item}>
           <div className={styles.label}>
@@ -273,6 +312,12 @@ const DetailsWidget = ({
             />
           </div>
         </div>
+      )}
+      {detailsForAction.LinkedIncorporation && values?.incorporationName && (
+        <LinkedIncorporation
+          link={`/colony/${colony.displayName}/incorporation/create`} // Replace with correct redirection. This is a mock.
+          name={values.incorporationName}
+        />
       )}
     </div>
   );

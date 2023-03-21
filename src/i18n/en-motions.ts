@@ -24,6 +24,7 @@ const motionsMessageDescriptors = {
           other {pts}
         } reputation reward}
       ${ColonyMotions.UnlockTokenMotion} {Unlock native token {tokenSymbol}}
+      ${ColonyMotions.DAOIncorporationMotion} {Incorporate this DAO}
       other {Generic motion we don't have information about}
     }`,
   [`motion.${ColonyMotions.SetUserRolesMotion}.assign`]: `Assign the {roles} in {fromDomainName} to {recipient}`,
@@ -41,6 +42,7 @@ const motionsMessageDescriptors = {
       ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite}
       ${ColonyMotions.EmitDomainReputationRewardMotion} {Award}
       ${ColonyMotions.UnlockTokenMotion} {Unlock Token}
+      ${ColonyMotions.DAOIncorporationMotion} {DAO Incorporation}
       other {Generic}
     }`,
 };

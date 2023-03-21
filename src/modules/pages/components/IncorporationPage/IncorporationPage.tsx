@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { useParams } from 'react-router';
+import { useParams, useHistory } from 'react-router';
 import { Formik } from 'formik';
 import classNames from 'classnames';
 
@@ -26,8 +26,6 @@ import styles from './IncorporationPage.css';
 
 const displayName = 'pages.IncorporationPage';
 
-export type InitialValuesType = typeof initialValues;
-
 const IncorporationPage = () => {
   const { colonyName } = useParams<{
     colonyName: string;
@@ -36,6 +34,7 @@ const IncorporationPage = () => {
   const { data: colonyData, loading } = useColonyFromNameQuery({
     variables: { name: colonyName, address: '' },
   });
+  const history = useHistory();
   const [isFormEditable, setFormEditable] = useState(false);
   const [formValues, setFormValues] = useState<ValuesType>(formValuesMock);
   const [shouldValidate, setShouldValidate] = useState(false);
@@ -56,18 +55,22 @@ const IncorporationPage = () => {
     setActiveStageId(StagesEnum.Payment);
   }, []);
 
+  const handleConfirmPayment = useCallback(() => {
+    // Redirection to the Actions page is a mock action.
+    const txHash = 'DAOIncorporation';
+    history.push(`/colony/${colonyName}/tx/${txHash}`);
+    setActiveStageId(StagesEnum.Processing);
+  }, [colonyName, history]);
+
   const handlePay = useCallback(() => {
     if (!colonyData) return;
 
     openPayDialog({
-      onClick: () => {
-        // add a logic to pay for incorporation
-        setActiveStageId(StagesEnum.Processing);
-      },
+      onClick: handleConfirmPayment,
       isVotingExtensionEnabled: true,
       colony: colonyData.processedColony,
     });
-  }, [colonyData, openPayDialog]);
+  }, [colonyData, openPayDialog, handleConfirmPayment]);
 
   const buttonAction = useMemo(() => {
     switch (activeStageId) {
@@ -159,7 +162,9 @@ const IncorporationPage = () => {
       </aside>
       <div
         className={classNames(styles.mainContainer, {
-          [styles.smallerPadding]: notVerified,
+          [styles.smallerPadding]:
+            activeStageId === StagesEnum.Processing ||
+            activeStageId === StagesEnum.Complete,
         })}
       >
         {/* user passed to VerifiactionBanner is a mock */}

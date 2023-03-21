@@ -53,7 +53,7 @@ const MSG = defineMessages({
   },
   complete: {
     id: 'dashboard.IncorporationPage.complete',
-    defaultMessage: 'Create Application',
+    defaultMessage: 'Complete',
   },
   completeDesc: {
     id: 'dashboard.IncorporationPage.completeDesc',
