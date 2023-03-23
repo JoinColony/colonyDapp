@@ -10,7 +10,6 @@ import Heading from '~core/Heading';
 import Numeral from '~core/Numeral';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
-import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
 import Avatar from '~core/Avatar';
@@ -210,7 +209,7 @@ interface Props
   extends Pick<FormProps, 'colony' | 'selectedContractMethods'>,
     Pick<TransactionSectionProps, 'handleValidation'> {
   isVotingExtensionEnabled: boolean;
-  userHasPermission: boolean;
+  canManageAndControlSafes: boolean;
   onlyForceAction: boolean;
 }
 
@@ -219,7 +218,7 @@ const SafeTransactionPreview = ({
   values,
   selectedContractMethods,
   isVotingExtensionEnabled,
-  userHasPermission,
+  canManageAndControlSafes,
   isSubmitting,
   onlyForceAction,
   handleValidation,
@@ -299,7 +298,7 @@ const SafeTransactionPreview = ({
               disabled
             />
           )}
-          {userHasPermission && isVotingExtensionEnabled && (
+          {canManageAndControlSafes && isVotingExtensionEnabled && (
             <ForceToggle disabled={isSubmitting} />
           )}
         </div>
@@ -453,9 +452,6 @@ const SafeTransactionPreview = ({
             disabled={onlyForceAction}
           />
         </DialogSection>
-        {onlyForceAction && (
-          <NotEnoughReputation appearance={{ marginTop: 'negative' }} />
-        )}
       </div>
     </>
   );

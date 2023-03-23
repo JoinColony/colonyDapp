@@ -7,6 +7,7 @@ import { useLoggedInUser } from '~data/index';
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot } from '~modules/users/checks';
 import { useTransformer, WizardDialogType } from '~utils/hooks';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 const MSG = defineMessages({
   dialogHeader: {
@@ -73,10 +74,13 @@ const ManageSafeDialog = ({
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
-  const hasRegisteredProfile = !!username && !ethereal;
-  const canManageAndControlSafes =
-    hasRegisteredProfile && hasRoot(allUserRoles);
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
 
+  const hasRegisteredProfile = !!username && !ethereal;
+  const canManageSafes = hasRegisteredProfile && hasRoot(allUserRoles);
+  const canControlSafes = canManageSafes || isVotingExtensionEnabled;
   const items = [
     {
       title: MSG.addExistingSafeTitle,
@@ -84,7 +88,7 @@ const ManageSafeDialog = ({
       icon: 'plus-heavy',
       dataTest: 'addExistingSafeItem',
       onClick: () => callStep(nextStepAddExistingSafe),
-      permissionRequired: !canManageAndControlSafes,
+      permissionRequired: !canManageSafes,
       permissionInfoText: MSG.permissionText,
       permissionInfoTextValues: {
         permission: <FormattedMessage {...MSG.manageSafePermission} />,
@@ -96,7 +100,7 @@ const ManageSafeDialog = ({
       icon: 'trash-can',
       dataTest: 'removeSafeItem',
       onClick: () => callStep(nextStepRemoveSafe),
-      permissionRequired: !canManageAndControlSafes,
+      permissionRequired: !canManageSafes,
       permissionInfoText: MSG.permissionText,
       permissionInfoTextValues: {
         permission: <FormattedMessage {...MSG.manageSafePermission} />,
@@ -108,7 +112,7 @@ const ManageSafeDialog = ({
       icon: 'joystick',
       dataTest: 'controlSafeItem',
       onClick: () => callStep(nextStepControlSafe),
-      permissionRequired: !canManageAndControlSafes,
+      permissionRequired: !canControlSafes,
       permissionInfoText: MSG.permissionText,
       permissionInfoTextValues: {
         permission: <FormattedMessage {...MSG.manageSafePermission} />,
