@@ -122,26 +122,23 @@ const AdvancedDialog = ({
   colony,
   colony: { version: colonyVersion },
 }: Props) => {
-  const { walletAddress, username, ethereal } = useLoggedInUser();
-
-  const hasRegisteredProfile = !!username && !ethereal;
+  const { walletAddress } = useLoggedInUser();
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
-  const hasRootPermission = hasRegisteredProfile && hasRoot(allUserRoles);
+  const hasRootPermission = hasRoot(allUserRoles);
 
-  const canEnterRecovery =
-    hasRegisteredProfile && canEnterRecoveryMode(allUserRoles);
+  const canEnterRecovery = canEnterRecoveryMode(allUserRoles);
   const isSupportedColonyVersion =
     parseInt(colonyVersion, 10) > ColonyVersion.LightweightSpaceship;
 
   const canEnterPermissionManagement =
-    (hasRegisteredProfile && canArchitect(allUserRoles)) || hasRootPermission;
+    canArchitect(allUserRoles) || hasRootPermission;
 
   const { isVotingExtensionEnabled } = useEnabledExtensions({
     colonyAddress: colony.colonyAddress,
   });
   const canManageOrControlSafes =
-    (hasRegisteredProfile && hasRoot(allUserRoles)) || isVotingExtensionEnabled;
+    hasRoot(allUserRoles) || isVotingExtensionEnabled;
 
   const items = [
     {

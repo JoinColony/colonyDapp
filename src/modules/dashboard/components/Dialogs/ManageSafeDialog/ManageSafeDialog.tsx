@@ -71,15 +71,14 @@ const ManageSafeDialog = ({
   nextStepRemoveSafe,
   nextStepControlSafe,
 }: Props) => {
-  const { walletAddress, username, ethereal } = useLoggedInUser();
+  const { walletAddress } = useLoggedInUser();
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   const { isVotingExtensionEnabled } = useEnabledExtensions({
     colonyAddress: colony.colonyAddress,
   });
 
-  const hasRegisteredProfile = !!username && !ethereal;
-  const canManageSafes = hasRegisteredProfile && hasRoot(allUserRoles);
+  const canManageSafes = hasRoot(allUserRoles);
   const canControlSafes = canManageSafes || isVotingExtensionEnabled;
   const items = [
     {
