@@ -140,7 +140,8 @@ const AdvancedDialog = ({
   const { isVotingExtensionEnabled } = useEnabledExtensions({
     colonyAddress: colony.colonyAddress,
   });
-  const canManageSafes = hasRegisteredProfile && hasRoot(allUserRoles);
+  const canManageOrControlSafes =
+    (hasRegisteredProfile && hasRoot(allUserRoles)) || isVotingExtensionEnabled;
 
   const items = [
     {
@@ -203,7 +204,7 @@ const AdvancedDialog = ({
       icon: 'safe-logo',
       dataTest: 'manageSafeItem',
       onClick: () => callStep(nextStepManageSafe),
-      permissionRequired: !canManageSafes,
+      permissionRequired: !canManageOrControlSafes,
       permissionInfoText: MSG.permissionsText,
       permissionInfoTextValues: {
         permission: <FormattedMessage {...MSG.rootActionsPermission} />,
