@@ -152,7 +152,28 @@ export const getColonyUnclaimedTransfers = async (
 
   return Promise.resolve(
     tokenTransferLogs.reduce(async (transferLogs, transferLog) => {
-      const event = tokenClient.interface.parseLog(transferLog);
+      let event;
+      try {
+        /*
+         * @NOTE Guard parsing the `Transfer` logs into events
+         * This is needed because NFT transfers (ERC-721's) emit the same event as ERC-20's
+         * just with the last argument changed (wad vs. id), meaning that if someone would
+         * send a NFT to a colony's address, it would break this logic (since `parseLog` will error out),
+         * and none of the subsequent token transfers in would show up.
+         *
+         * For more reading, have a look at the `Transfer` even from the two standards:
+         * - https://eips.ethereum.org/EIPS/eip-20#events
+         * - https://eips.ethereum.org/EIPS/eip-721#specification
+         *
+         * The approach to fix this is pretty naive as it doesn't attempt to do any logic detection,
+         * it just drops the log that can't be parsed and moves on.
+         *
+         * Have ever told you how much I hate ERC-20/721 standards?
+         */
+        event = tokenClient.interface.parseLog(transferLog);
+      } catch (error) {
+        return transferLogs;
+      }
       const date = transferLog.blockHash
         ? await getBlockTime(provider, transferLog.blockHash)
         : 0;
