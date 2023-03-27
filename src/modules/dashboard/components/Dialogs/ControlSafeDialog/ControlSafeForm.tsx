@@ -32,6 +32,7 @@ import { debounce, isEmpty, isEqual, omit } from '~utils/lodash';
 import { hasRoot } from '~modules/users/checks';
 import { getAllUserRoles } from '~modules/transformers';
 import { useTransformer } from '~utils/hooks';
+import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 
 import SafeTransactionPreview from './SafeTransactionPreview';
 import {
@@ -615,10 +616,16 @@ const ControlSafeForm = ({
           values={values}
           selectedContractMethods={selectedContractMethods}
           isVotingExtensionEnabled={isVotingExtensionEnabled}
-          userHasPermission={userHasPermission}
+          canManageAndControlSafes={canManageAndControlSafes}
           onlyForceAction={onlyForceAction}
           handleValidation={handleValidation}
           setFieldValue={setFieldValue}
+        />
+      )}
+      {onlyForceAction && (!canManageAndControlSafes || showPreview) && (
+        <NotEnoughReputation
+          appearance={{ marginTop: 'negative' }}
+          includeForceCopy={showPreview}
         />
       )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
