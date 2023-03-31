@@ -8,6 +8,10 @@ import { AnyUser } from '~data/index';
 
 import { Stages } from './constants';
 
+type Protector = AnyUser & {
+  verified?: VerificationStatus;
+};
+
 export interface Protector {
   user?: AnyUser;
   key: string;
