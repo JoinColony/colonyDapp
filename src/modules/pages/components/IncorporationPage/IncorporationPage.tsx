@@ -7,18 +7,18 @@ import { useColonyFromNameQuery } from '~data/generated';
 import { getMainClasses } from '~utils/css';
 import { SpinnerLoader } from '~core/Preloaders';
 import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
-import Stages, { FormStages } from '~dashboard/ExpenditurePage/Stages';
+import { FormStages, LockedStages } from '~dashboard/ExpenditurePage/Stages';
 import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
 import VerificationBanner from '~dashboard/Incorporation/VerificationBanner';
 import {
   Motion,
   MotionStatus,
   MotionType,
-  Status,
 } from '~dashboard/ExpenditurePage/Stages/constants';
 import { useDialog } from '~core/Dialog';
 import CancelIncorporationDialog from '~dashboard/Dialogs/CancelIncorporationDialog';
 import IncorporationPaymentDialog from '~dashboard/Dialogs/IncorporationPaymentDialog';
+import { ViewFor } from '~dashboard/ExpenditurePage/Stages/LinkedMotions/LinkedMotions';
 
 import {
   initialValues,
@@ -26,9 +26,6 @@ import {
   validationSchema,
   Stages as StagesEnum,
   formValuesMock,
-  Motion,
-  MotionType,
-  MotionStatus,
   userMock,
 } from './constants';
 import { ValuesType } from './types';
@@ -56,8 +53,7 @@ const IncorporationPage = () => {
   const notVerified = true; // temporary valule
 
   const openPayDialog = useDialog(IncorporationPaymentDialog);
-  const [motions, setMotions] = useState<Motion[]>([]);
-  const [status, setStatus] = useState<Status>();
+  const [motion, setMotions] = useState<Motion[]>([]);
 
   const handleSubmit = useCallback((values) => {
     setFormValues(values);
@@ -94,9 +90,13 @@ const IncorporationPage = () => {
             return motionItem;
           }),
         );
+        if (passed) {
+          setActiveStageId(StagesEnum.Processing);
+        }
       },
       isVotingExtensionEnabled: true,
-      colony: colonyData?.processedColony,});
+      colony: colonyData?.processedColony,
+    });
   }, [colonyData, openPayDialog]);
 
   const buttonAction = useMemo(() => {
@@ -244,19 +244,20 @@ const IncorporationPage = () => {
         <main className={styles.mainContent}>
           <div />
           {colonyData && (
-            <Stages
+            <LockedStages
               activeStageId={activeStageId}
               stages={stages.map((stage) => ({
                 ...stage,
                 id: stage.id.toString(),
                 label: stage.title,
-                buttonAction,
+                buttonAction: buttonAction || (() => {}),
+                buttonText: stage.buttonText || '',
               }))}
               appearance={{ size: 'medium' }}
-              handleButtonClick={buttonAction || (() => {})}
               colony={colonyData?.processedColony}
-              viewFor="incorporation"
+              viewFor={ViewFor.INCORPORATION}
               handleCancel={handleCancelIncorporation}
+              motion={motion}
             />
           )}
         </main>

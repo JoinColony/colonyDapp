@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   defineMessages,
   FormattedMessage,
@@ -19,10 +19,12 @@ import { Colony } from '~data/index';
 import { Stages as StagesEnum } from '~pages/IncorporationPage/constants';
 
 import StageItem from './StageItem';
-import { Motion, MotionStatus, Stage, Status } from './constants';
+import { Motion, MotionStatus, MotionType, Stage, Status } from './constants';
 import Label from './StageItem/Label';
 import StagesButton from './StagesButton';
+import StagesButtonIncorporation from './StagesButtonIncorporation';
 import { ClaimFundsOther, ClaimFundsRecipients } from './ClaimFunds';
+import { ViewFor } from './LinkedMotions/LinkedMotions';
 import styles from './Stages.css';
 
 const MSG = defineMessages({
@@ -90,7 +92,7 @@ export interface Props {
   handleSaveDraft?: () => void;
   handleButtonClick: () => void;
   status?: Status;
-  motion?: Motion;
+  motion?: Motion | Motion[];
   handleCancel?: () => void;
   colony: Colony;
   buttonDisabled?: boolean;
@@ -133,13 +135,36 @@ const Stages = ({
   const activeStage = stages.find((stage) => stage.id === activeStageId);
   const isLogedIn = true;
 
-  const isCancelled =
-    status === Status.Cancelled || status === Status.ForceCancelled;
-
   const claimFundsVisible =
     isLogedIn &&
     activeStageId === Stage.Released &&
     status !== Status.Cancelled;
+
+  const isCancelled = useMemo(
+    () =>
+      Array.isArray(motion)
+        ? motion?.find(
+            (motionItem) =>
+              motionItem.type === MotionType.Cancel &&
+              motionItem.status === MotionStatus.Passed,
+          )
+        : (motion?.type === MotionType.Cancel &&
+            motion?.status === MotionStatus.Passed) ||
+          status === Status.Cancelled ||
+          status === Status.ForceCancelled,
+    [motion, status],
+  );
+
+  // searching for motion in pending state is a mock. Will be replaced with call to backend
+  const pendingMotion = useMemo(
+    () =>
+      Array.isArray(motion)
+        ? motion?.find(
+            (motionItem) => motionItem.status === MotionStatus.Pending,
+          )
+        : motion?.status === MotionStatus.Pending,
+    [motion],
+  );
 
   return (
     <div className={styles.mainContainer}>
@@ -151,7 +176,7 @@ const Stages = ({
               colony={colony}
               buttonAction={activeStage?.buttonAction}
               buttonText={activeStage?.buttonText}
-              isDisabled={motion?.status === MotionStatus.Pending}
+              isDisabled={!!pendingMotion}
             />
           ) : (
             <ClaimFundsOther
@@ -159,14 +184,14 @@ const Stages = ({
               colony={colony}
               buttonAction={activeStage?.buttonAction}
               buttonText={activeStage?.buttonText}
-              isDisabled={motion?.status === MotionStatus.Pending}
+              isDisabled={!!pendingMotion}
             />
           )}
         </>
       )}
       <div
         className={classNames(styles.statusContainer, {
-          [styles.withTag]: motion?.status === MotionStatus.Pending,
+          [styles.withTag]: pendingMotion,
         })}
       >
         <div className={styles.stagesText}>
@@ -296,17 +321,13 @@ const Stages = ({
                 activeStageId !== Stage.Claimed && (
                   <Button
                     className={classNames(styles.iconButton, {
-                      [styles.cancelIcon]:
-                        motion?.status !== MotionStatus.Pending,
-                      [styles.iconButtonDisabled]:
-                        motion?.status === MotionStatus.Pending,
+                      [styles.cancelIcon]: pendingMotion,
+                      [styles.iconButtonDisabled]: pendingMotion,
                     })}
                     onClick={handleCancel}
-                    disabled={
-                      isCancelled || motion?.status === MotionStatus.Pending
-                    }
+                    disabled={isCancelled || !!pendingMotion}
                   >
-                    {motion?.status === MotionStatus.Pending ? (
+                    {pendingMotion ? (
                       <Icon
                         name="circle-minus"
                         appearance={{ size: 'normal' }}
@@ -347,15 +368,23 @@ const Stages = ({
                     )}
                   </Button>
                 )}
-              <StagesButton
-                activeStage={activeStage}
-                handleButtonClick={handleButtonClick}
-                motion={motion}
-                status={status}
-                buttonDisabled={buttonDisabled}
-                canReleaseFunds // it's temporary value
-                expenditureType={formValues?.expenditure}
-              />
+              {viewFor === ViewFor.EXPENDITURE ? (
+                <StagesButton
+                  activeStage={activeStage}
+                  handleButtonClick={handleButtonClick}
+                  motion={Array.isArray(motion) ? undefined : motion}
+                  status={status}
+                  buttonDisabled={buttonDisabled}
+                  canReleaseFunds // it's temporary value
+                  expenditureType={formValues?.expenditure}
+                />
+              ) : (
+                <StagesButtonIncorporation
+                  activeStage={activeStage}
+                  buttonDisabled={!!buttonDisabled}
+                  buttonAction={activeStage?.buttonAction}
+                />
+              )}
             </>
           )}
         </div>
@@ -367,7 +396,7 @@ const Stages = ({
           description={description}
           isLast={stages.length === index + 1}
           isActive={activeStage ? index <= activeIndex : false}
-          isCancelled={isCancelled && status === Status.ForceCancelled}
+          isCancelled={!!isCancelled}
           labelComponent={
             status === Status.ForceEdited &&
             index === activeIndex && <Label label={label} />
