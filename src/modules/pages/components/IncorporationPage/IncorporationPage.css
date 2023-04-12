@@ -70,11 +70,3 @@
   color: white;
   letter-spacing: var(--spacing-medium);
 }
-
-.titleCommentsContainer {
-  min-width: 458px;
-  font-size: var(--size-medium-l);
-  font-weight: var(--weight-bold);
-  color: var(--dark);
-  letter-spacing: var(--spacing-medium);
-}
