@@ -7,18 +7,18 @@ import { useColonyFromNameQuery } from '~data/generated';
 import { getMainClasses } from '~utils/css';
 import { SpinnerLoader } from '~core/Preloaders';
 import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
-import Stages, { FormStages } from '~dashboard/ExpenditurePage/Stages';
+import { FormStages, LockedStages } from '~dashboard/ExpenditurePage/Stages';
 import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
 import VerificationBanner from '~dashboard/Incorporation/VerificationBanner';
 import {
   Motion,
   MotionStatus,
   MotionType,
-  Status,
 } from '~dashboard/ExpenditurePage/Stages/constants';
 import { useDialog } from '~core/Dialog';
 import CancelIncorporationDialog from '~dashboard/Dialogs/CancelIncorporationDialog';
 import IncorporationPaymentDialog from '~dashboard/Dialogs/IncorporationPaymentDialog';
+import { ViewFor } from '~dashboard/ExpenditurePage/Stages/LinkedMotions/LinkedMotions';
 
 import {
   initialValues,
@@ -49,12 +49,11 @@ const IncorporationPage = () => {
   const [activeStageId, setActiveStageId] = useState(StagesEnum.Payment);
   const sidebarRef = useRef<HTMLElement>(null);
   const openCancelIncorporationDialog = useDialog(CancelIncorporationDialog);
-  const [, setMotion] = useState<Motion>();
-  const [, setStatus] = useState<Status>();
 
   const notVerified = true; // temporary valule
 
   const openPayDialog = useDialog(IncorporationPaymentDialog);
+  const [motion, setMotions] = useState<Motion[]>([]);
 
   const handleSubmit = useCallback((values) => {
     setFormValues(values);
@@ -69,13 +68,34 @@ const IncorporationPage = () => {
   const handlePay = useCallback(() => {
     if (!colonyData) return;
 
+    setMotions((prevState) => [
+      ...prevState,
+      { status: MotionStatus.Pending, type: MotionType.Payment },
+    ]);
+
     openPayDialog({
       onClick: () => {
-        // add a logic to pay for incorporation
-        setActiveStageId(StagesEnum.Processing);
+        const passed = Math.floor(Math.random() * 10) > 5;
+        setMotions((prevState) =>
+          prevState.map((motionItem) => {
+            if (
+              motionItem.type === MotionType.Payment &&
+              motionItem.status === MotionStatus.Pending
+            ) {
+              return {
+                ...motionItem,
+                status: passed ? MotionStatus.Passed : MotionStatus.Failed,
+              };
+            }
+            return motionItem;
+          }),
+        );
+        if (passed) {
+          setActiveStageId(StagesEnum.Processing);
+        }
       },
       isVotingExtensionEnabled: true,
-      colony: colonyData.processedColony,
+      colony: colonyData?.processedColony,
     });
   }, [colonyData, openPayDialog]);
 
@@ -105,19 +125,31 @@ const IncorporationPage = () => {
   const handleCancel = (isForce: boolean) => {
     if (isForce) {
       // temporary action
-      setStatus(Status.ForceCancelled);
-    } else {
-      // setTimeout is temporary, call to backend should be added here
-      setMotion({
-        type: MotionType.Cancel,
-        status: MotionStatus.Pending,
-      });
-      setTimeout(() => {
-        setStatus(Status.Cancelled);
-        setMotion({
+      setMotions((prevState) => [
+        ...prevState,
+        {
           type: MotionType.Cancel,
           status: MotionStatus.Passed,
-        });
+        },
+      ]);
+    } else {
+      // setTimeout is temporary, call to backend should be added here
+      setMotions((prevState) => [
+        ...prevState,
+        {
+          type: MotionType.Cancel,
+          status: MotionStatus.Pending,
+        },
+      ]);
+      setTimeout(() => {
+        setMotions((prevState) =>
+          prevState.map((motionItem) => {
+            if (motionItem.type !== MotionType.Cancel) {
+              return motionItem;
+            }
+            return { ...motionItem, status: MotionStatus.Passed };
+          }),
+        );
       }, 5000);
     }
   };
@@ -212,19 +244,20 @@ const IncorporationPage = () => {
         <main className={styles.mainContent}>
           <div />
           {colonyData && (
-            <Stages
+            <LockedStages
               activeStageId={activeStageId}
               stages={stages.map((stage) => ({
                 ...stage,
                 id: stage.id.toString(),
                 label: stage.title,
-                buttonAction,
+                buttonAction: buttonAction || (() => {}),
+                buttonText: stage.buttonText || '',
               }))}
               appearance={{ size: 'medium' }}
-              handleButtonClick={buttonAction || (() => {})}
               colony={colonyData?.processedColony}
-              viewFor="incorporation"
+              viewFor={ViewFor.INCORPORATION}
               handleCancel={handleCancelIncorporation}
+              motion={motion}
             />
           )}
         </main>

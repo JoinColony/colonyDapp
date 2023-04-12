@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 
+import { isEmpty } from 'lodash';
 import Tag from '~core/Tag';
 import { Colony } from '~data/index';
 import {
@@ -8,12 +9,12 @@ import {
   StageObject,
   ValuesType,
 } from '~pages/ExpenditurePage/types';
-import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
 
 import { Motion, MotionStatus, MotionType, Status } from './constants';
 import LinkedMotions from './LinkedMotions';
-import Stages from './Stages';
+import Stages, { Appearance } from './Stages';
 import StreamingStagesLocked from './StreamingStages/StreamingStagesLocked';
+import { ViewFor } from './LinkedMotions/LinkedMotions';
 import styles from './Stages.css';
 
 const MSG = defineMessages({
@@ -33,12 +34,14 @@ interface Props {
   stages: StageObject[];
   setActiveStageId?: React.Dispatch<React.SetStateAction<string | undefined>>;
   activeStageId?: string;
-  motion?: Motion;
+  motion?: Motion[] | Motion;
   status?: Status;
   handleCancel?: () => void;
   colony: Colony;
   expenditureType?: ExpenditureTypes;
   formValues?: ValuesType;
+  appearance?: Appearance;
+  viewFor?: ViewFor;
 }
 
 const LockedStages = ({
@@ -51,6 +54,7 @@ const LockedStages = ({
   formValues,
   colony,
   expenditureType,
+  viewFor,
 }: Props) => {
   const activeStage = stages.find((stage) => stage.id === activeStageId);
   const { formatMessage } = useIntl();
@@ -77,17 +81,29 @@ const LockedStages = ({
     [formatMessage],
   );
 
+  // searching for motion in pending state is a mock. Will be replaced with call to backend
+  const pendingMotion = useMemo(
+    () =>
+      Array.isArray(motion)
+        ? motion?.find(
+            (motionItem) => motionItem.status === MotionStatus.Pending,
+          )
+        : motion?.status === MotionStatus.Pending,
+    [motion],
+  );
+
   return (
     <div className={styles.tagStagesWrapper}>
-      {motion?.status === MotionStatus.Pending && !isStreamingPaymentType && (
+      {pendingMotion && !isStreamingPaymentType && (
         <Tag
           appearance={{
             theme: 'golden',
             colorSchema: 'fullColor',
           }}
         >
-          {motion.type === MotionType.Edit &&
-          motion.status === MotionStatus.Pending
+          {typeof pendingMotion === 'object' &&
+          'type' in pendingMotion &&
+          pendingMotion.type === MotionType.Edit
             ? formatMessage(MSG.activeMotion)
             : formatMessage(MSG.motion, {
                 action: formattedLabel(activeStage?.buttonText),
@@ -97,7 +113,7 @@ const LockedStages = ({
       {isStreamingPaymentType ? (
         <StreamingStagesLocked
           status={status}
-          motion={motion}
+          motion={Array.isArray(motion) ? undefined : motion}
           colony={colony}
           activeStageId={activeStageId}
           handleCancel={handleCancel}
@@ -120,15 +136,8 @@ const LockedStages = ({
           activeLine
         />
       )}
-      {motion && (
-        <LinkedMotions
-          status={motion.status}
-          motion={motion.type}
-          // The id and the link are hardcoded, they should be replaced with actual values.
-          // Link should redirect to the motion page
-          motionLink={LANDING_PAGE_ROUTE}
-          id="25"
-        />
+      {motion && !isEmpty(motion) && (
+        <LinkedMotions motion={motion} viewFor={viewFor} />
       )}
     </div>
   );

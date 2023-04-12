@@ -64,6 +64,10 @@
   margin-bottom: 12px;
 }
 
+.marginSmall > div:last-of-type {
+  margin-bottom: 4px;
+}
+
 .nameInputs label {
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
@@ -86,6 +90,13 @@
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: color-mod(var(--dark) alpha(85%));
+}
+
+.inputWrapper p {
+  margin-bottom: 8px;
+  font-size: var(--size-tiny);
+  color: var(--danger);
+  letter-spacing: var(--spacing-medium);
 }
 
 .title {

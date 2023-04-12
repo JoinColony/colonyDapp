@@ -7,61 +7,51 @@ import {
 
 import Link from '~core/Link';
 import Tag from '~core/Tag';
-
-import { Motion, MotionStatus, MotionType } from '../constants';
-
-import styles from './LinkedMotions.css';
+import {
+  Motion,
+  MotionStatus,
+  MotionType,
+} from '~pages/IncorporationPage/constants';
 import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
 
+import styles from './LinkedMotions.css';
+
 const MSG = defineMessages({
-  linkedMotionExpenditure: {
-    id: 'dashboard.ExpenditurePage.Stages.LinkedMotions.linkedMotions',
-    defaultMessage: 'Linked motions',
-  },
-  linkedMotionIncorporation: {
+  linkedMotion: {
     id: 'dashboard.Incorporation.LinkedMotions.linkedMotion',
     defaultMessage: 'Relates to motion',
   },
-  foundExp: {
-    id: 'dashboard.ExpenditurePage.Stages.LinkedMotions.foundExp',
-    defaultMessage: '{motion} Exp - {id}',
-  },
   passed: {
-    id: 'dashboard.ExpenditurePage.Stages.LinkedMotions.passed',
+    id: 'dashboard.Incorporation.LinkedMotions.passed',
     defaultMessage: 'Passed',
   },
   failed: {
-    id: 'dashboard.ExpenditurePage.Stages.LinkedMotions.failed',
+    id: 'dashboard.Incorporation.LinkedMotions.failed',
     defaultMessage: 'Failed',
   },
   motion: {
-    id: 'dashboard.ExpenditurePage.Stages.LinkedMotions.motion',
+    id: 'dashboard.Incorporation.LinkedMotions.motion',
     defaultMessage: 'Motion',
   },
   payment: {
-    id: 'dashboard.ExpenditurePage.Stages.LinkedMotions.motion',
+    id: 'dashboard.Incorporation.LinkedMotions.motion',
     defaultMessage: 'Pay Incorporation Fee',
   },
   edit: {
-    id: 'dashboard.ExpenditurePage.Stages.LinkedMotions.edit',
+    id: 'dashboard.Incorporation.LinkedMotions.edit',
     defaultMessage: 'Edit Incorporation',
   },
   cancel: {
-    id: 'dashboard.ExpenditurePage.Stages.LinkedMotions.cancel',
+    id: 'dashboard.Incorporation.LinkedMotions.cancel',
     defaultMessage: 'Cancel Incorporation',
   },
   motionText: {
-    id: 'dashboard.ExpenditurePage.Stages.LinkedMotions.motionText',
+    id: 'dashboard.Incorporation.LinkedMotions.motionText',
     defaultMessage: '{text} {count}',
   },
 });
 
-const displayName = 'dashboard.ExpenditurePage.Stages.LinkedMotions';
-
-export enum ViewFor {
-  INCORPORATION = 'incorporation',
-  EXPENDITURE = 'expenditure',
-}
+const displayName = 'dashboard.Incorporation.LinkedMotions';
 
 type MotionSettins = {
   text?: MessageDescriptor;
@@ -70,20 +60,19 @@ type MotionSettins = {
 };
 
 interface Props {
-  motion: Motion | Motion[];
-  viewFor?: ViewFor;
+  motions: Motion[];
 }
 
-const LinkedMotions = ({ motion, viewFor = ViewFor.EXPENDITURE }: Props) => {
+const LinkedMotions = ({ motions }: Props) => {
   const motionSettings = useMemo(
-    () => (motionItem: Motion) => {
+    () => (motion: Motion) => {
       const settings: MotionSettins = {
         text: undefined,
         tagText: undefined,
         tagColor: undefined,
       };
 
-      switch (motionItem.type) {
+      switch (motion.type) {
         case MotionType.Payment:
           settings.text = MSG.payment;
           break;
@@ -97,7 +86,7 @@ const LinkedMotions = ({ motion, viewFor = ViewFor.EXPENDITURE }: Props) => {
           break;
       }
 
-      switch (motionItem.status) {
+      switch (motion.status) {
         case MotionStatus.Pending:
           settings.tagText = MSG.motion;
           settings.tagColor = undefined;
@@ -121,11 +110,9 @@ const LinkedMotions = ({ motion, viewFor = ViewFor.EXPENDITURE }: Props) => {
 
   // mocks, needed to display correct UI, must be adjusted to display data from the backend
   const multiplePayments =
-    Array.isArray(motion) &&
-    motion.filter((motionItem) => motionItem.type === MotionType.Payment)
+    motions.filter((motionItem) => motionItem.type === MotionType.Payment)
       ?.length > 1;
   let paymentCount = 0;
-  const motionsArr = Array.isArray(motion) ? motion : [motion];
 
   return (
     <div className={styles.wrapper}>
@@ -134,26 +121,22 @@ const LinkedMotions = ({ motion, viewFor = ViewFor.EXPENDITURE }: Props) => {
         <div className={styles.dot} />
         <div className={styles.line} />
         <div className={styles.title}>
-          <FormattedMessage
-            {...(viewFor === ViewFor.EXPENDITURE
-              ? MSG.linkedMotionExpenditure
-              : MSG.linkedMotionIncorporation)}
-          />
+          <FormattedMessage {...MSG.linkedMotion} />
         </div>
       </div>
       {/* The link is hardcoded. Link should redirect to the motion page */}
-      {motionsArr.map((motionItem) => {
-        const motionData = motionSettings(motionItem);
+      {motions.map((motionItem) => {
+        const motion = motionSettings(motionItem);
         if (motionItem.type === MotionType.Payment) paymentCount += 1;
 
         return (
           <div className={styles.statusWrapper}>
             <Link to={LANDING_PAGE_ROUTE} className={styles.link}>
-              {motionData.text && (
+              {motion.text && (
                 <FormattedMessage
                   {...MSG.motionText}
                   values={{
-                    text: <FormattedMessage {...motionData.text} />,
+                    text: <FormattedMessage {...motion.text} />,
                     count: (
                       <span>
                         {multiplePayments &&
@@ -166,9 +149,9 @@ const LinkedMotions = ({ motion, viewFor = ViewFor.EXPENDITURE }: Props) => {
               )}
             </Link>
             <Tag
-              text={motionData.tagText}
+              text={motion.tagText}
               style={{
-                color: motionData.tagColor,
+                color: motion.tagColor,
               }}
               appearance={{
                 theme:

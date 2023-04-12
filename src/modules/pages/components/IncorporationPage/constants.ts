@@ -212,3 +212,20 @@ export const userMock = {
     walletAddress: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
   },
 };
+
+export enum MotionStatus {
+  Passed = 'passed',
+  Failed = 'failed',
+  Pending = 'pending',
+}
+
+export enum MotionType {
+  Cancel = 'Cancel',
+  Edit = 'Edit',
+  Payment = 'Payment',
+}
+
+export interface Motion {
+  type: MotionType;
+  status: MotionStatus;
+}
