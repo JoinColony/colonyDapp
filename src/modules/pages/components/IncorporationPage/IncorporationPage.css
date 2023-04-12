@@ -55,3 +55,18 @@
 .smallerPadding {
   padding: 36px 100px 80px 25px;
 }
+
+.tagWrapper {
+  margin-bottom: -30px;
+  padding: 34px 54px 0;
+}
+
+.tagWrapper > span {
+  height: 21px;
+  width: 100%;
+  border-radius: 12px;
+  background-color: var(--temp-grey-blue-7);
+  text-align: center;
+  color: white;
+  letter-spacing: var(--spacing-medium);
+}
