@@ -9,4 +9,3 @@ export const mainContainer: string;
 export const mainContent: string;
 export const smallerPadding: string;
 export const tagWrapper: string;
-export const titleCommentsContainer: string;

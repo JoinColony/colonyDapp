@@ -2,21 +2,14 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useParams, useHistory } from 'react-router';
 import { Formik, FormikErrors } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import classNames from 'classnames';
 
 import { useColonyFromNameQuery } from '~data/generated';
 import { getMainClasses } from '~utils/css';
 import { SpinnerLoader } from '~core/Preloaders';
 import IncorporationForm from '~dashboard/Incorporation/IncorporationForm';
-import Stages, { FormStages } from '~dashboard/ExpenditurePage/Stages';
-import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
-import VerificationBanner from '~dashboard/Incorporation/VerificationBanner';
-import IncorporationPaymentDialog from '~dashboard/Dialogs/IncorporationPaymentDialog';
-<<<<<<< HEAD
 import { useDialog } from '~core/Dialog';
-=======
-import Stages, { FormStages } from '~dashboard/Incorporation/Stages';
 import LockedIncorporationForm from '~dashboard/Incorporation/IncorporationForm/LockedIncorporationForm';
-import { useDialog } from '~core/Dialog';
 import IncorporationPaymentDialog from '~dashboard/Dialogs/IncorporationPaymentDialog';
 import EditButtons from '~dashboard/ExpenditurePage/EditButtons/EditButtons';
 import EditIncorporationDialog from '~dashboard/Dialogs/EditIncorporationDialog';
@@ -40,6 +33,9 @@ import {
 import { findDifferences, updateValues } from './utils';
 import { ValuesType } from './types';
 import styles from './IncorporationPage.css';
+import { FormStages } from '~dashboard/ExpenditurePage/Stages';
+import VerificationBanner from '~dashboard/Incorporation/VerificationBanner/VerificationBanner';
+import Stages from '~dashboard/ExpenditurePage/Stages/Stages';
 
 const MSG = defineMessages({
   editMode: {
@@ -74,7 +70,7 @@ const IncorporationPage = () => {
   const notVerified = true; // temporary valule
 
   const openPayDialog = useDialog(IncorporationPaymentDialog);
-  const [motion, setMotion] = useState<Motion>();
+  const [, setMotion] = useState<Motion>();
 
   const openEditIncorporationDialog = useDialog(EditIncorporationDialog);
 
@@ -230,7 +226,6 @@ const IncorporationPage = () => {
 
   return isFormEditable ? (
     <Formik
-
       initialValues={formValues || initialValues}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
@@ -265,21 +260,6 @@ const IncorporationPage = () => {
           </aside>
           <div className={styles.mainContainer}>
             <main className={styles.mainContent}>
-
-              <div />
-              {colonyData && (
-                <FormStages
-                  activeStageId={activeStageId}
-                  stages={stages.map((stage) => ({
-                    ...stage,
-                    id: stage.id.toString(),
-                    label: stage.title,
-                    buttonAction,
-                  }))}
-                  setActiveStageId={setActiveStageId}
-                  colony={colonyData.processedColony}
-                  setFormValues={setFormValues}
-                  handleCancelExpenditure={() => {}}
               <div className={styles.titleCommentsContainer}>
                 <FormattedMessage {...MSG.title} />
               </div>
@@ -290,7 +270,21 @@ const IncorporationPage = () => {
                   }
                 />
               ) : (
-                <FormStages activeStageId={activeStageId} stages={stages} />
+                colonyData && (
+                  <FormStages
+                    activeStageId={activeStageId}
+                    stages={stages.map((stage) => ({
+                      ...stage,
+                      id: stage.id.toString(),
+                      label: stage.title,
+                      buttonAction,
+                    }))}
+                    setActiveStageId={setActiveStageId}
+                    colony={colonyData.processedColony}
+                    setFormValues={setFormValues}
+                    handleCancelExpenditure={() => {}}
+                  />
+                )
               )}
             </main>
           </div>
@@ -325,7 +319,9 @@ const IncorporationPage = () => {
         {/* user passed to VerifiactionBanner is a mock */}
         {notVerified && <VerificationBanner user={userMock} />}
         <main className={styles.mainContent}>
-          <div />
+          <div className={styles.titleCommentsContainer}>
+            <FormattedMessage {...MSG.title} />
+          </div>
           {colonyData && (
             <Stages
               activeStageId={activeStageId}
@@ -341,15 +337,6 @@ const IncorporationPage = () => {
               viewFor="incorporation"
             />
           )}
-          <div className={styles.titleCommentsContainer}>
-            <FormattedMessage {...MSG.title} />
-          </div>
-          <Stages
-            activeStageId={activeStageId}
-            stages={stages}
-            buttonAction={buttonAction}
-            motion={motion}
-          />
         </main>
       </div>
     </div>
