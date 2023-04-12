@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 import { Formik } from 'formik';
 import classNames from 'classnames';
+import { isEmpty } from 'lodash';
 
 import { useColonyFromNameQuery } from '~data/generated';
 import { getMainClasses } from '~utils/css';
@@ -53,7 +54,7 @@ const IncorporationPage = () => {
   const notVerified = true; // temporary valule
 
   const openPayDialog = useDialog(IncorporationPaymentDialog);
-  const [motion, setMotions] = useState<Motion[]>([]);
+  const [motions, setMotions] = useState<Motion[]>([]);
 
   const handleSubmit = useCallback((values) => {
     setFormValues(values);
@@ -264,7 +265,7 @@ const IncorporationPage = () => {
               colony={colonyData?.processedColony}
               viewFor={ViewFor.INCORPORATION}
               handleCancel={handleCancelIncorporation}
-              motion={motion}
+              motion={motions}
             />
           )}
         </main>
