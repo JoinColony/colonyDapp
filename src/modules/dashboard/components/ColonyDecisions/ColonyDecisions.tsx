@@ -61,6 +61,7 @@ type Props = {
 };
 
 const ITEMS_PER_PAGE = 10;
+const NUM_FETCH_ITEMS = 50;
 
 const ColonyDecisions = ({
   colony,
@@ -96,6 +97,23 @@ const ColonyDecisions = ({
     ({ extensionId }) => extensionId === Extension.VotingReputation,
   );
 
+  /*
+   * Slapfix intended to limit the number of items fetched at once from
+   * The subpgraph. You can tinker with the NUM_FETCH_ITEMS and BATCH_THRESHOLD
+   * values to get more milage out of this
+   *
+   * Also note, that this is a poor place to store this method, but it was
+   * added under a time crunch.
+   */
+  const getNumbersOfEntriesToFetch = () => {
+    const BATCH_THRESHOLD = 10;
+    let noOfFetches = 1;
+    if (dataPage * ITEMS_PER_PAGE >= NUM_FETCH_ITEMS - BATCH_THRESHOLD) {
+      noOfFetches += 1;
+    }
+    return noOfFetches * NUM_FETCH_ITEMS;
+  };
+
   const {
     data: motions,
     loading: decisionsLoading,
@@ -107,6 +125,8 @@ const ColonyDecisions = ({
        */
       colonyAddress: colonyAddress?.toLowerCase() || '',
       extensionAddress: votingReputationExtension?.address?.toLowerCase() || '',
+      sortDirection: 'desc',
+      first: getNumbersOfEntriesToFetch(),
     },
   });
 
