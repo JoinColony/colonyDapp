@@ -15,9 +15,6 @@ import {
   Colony,
   useSubgraphOneTxSubscription,
   useSubgraphEventsThatAreActionsSubscription,
-  useActionsThatNeedAttentionQuery,
-  useLoggedInUser,
-  ActionThatNeedsAttention,
   useSubgraphMotionsSubscription,
   useColonyExtensionsQuery,
   useCommentCountSubscription,
@@ -91,7 +88,6 @@ const ColonyActions = ({
   );
   const [dataPage, setDataPage] = useState<number>(1);
 
-  const { walletAddress } = useLoggedInUser();
   const history = useHistory();
   const { data: extensions } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
@@ -133,16 +129,6 @@ const ColonyActions = ({
     variables: { colonyAddress },
   });
 
-  const {
-    data: actionStatuses,
-    loading: actionStatusesLoading,
-  } = useActionsThatNeedAttentionQuery({
-    variables: {
-      colonyAddress,
-      walletAddress,
-    },
-  });
-
   const votingReputationExtension = installedExtensions?.find(
     ({ extensionId }) => extensionId === Extension.VotingReputation,
   );
@@ -173,14 +159,6 @@ const ColonyActions = ({
     commentCount?.transactionMessagesCount,
     {
       extensionAddresses: extensionAddresses as Address[],
-      /*
-       * Prettier is being stupid again
-       *
-       * Just try it! Remove the disable below and see for yourself what stupid
-       * suggestions it gives up
-       */
-      // eslint-disable-next-line max-len
-      actionsThatNeedAttention: actionStatuses?.actionsThatNeedAttention as ActionThatNeedsAttention[],
     },
   ]);
 
@@ -256,7 +234,6 @@ const ColonyActions = ({
     oneTxActionsLoading ||
     eventsActionsLoading ||
     commentCountLoading ||
-    actionStatusesLoading ||
     !commentCount ||
     !oneTxActions ||
     !eventsActions

@@ -24,7 +24,6 @@ import { TEMP_getContext, ContextModule } from '~context/index';
 import { createAddress, toHex } from '~utils/web3';
 import { formatEventName, groupSetUserRolesActions } from '~utils/events';
 import { log } from '~utils/debug';
-import { ItemStatus } from '~core/ActionsList';
 import { shouldDisplayMotion } from '~utils/colonyMotions';
 import { uniqWith } from '~utils/lodash';
 
@@ -41,7 +40,6 @@ interface ActionsThatNeedAttention {
 
 interface ActionsTransformerMetadata {
   extensionAddresses?: Address[];
-  actionsThatNeedAttention?: ActionsThatNeedAttention[];
 }
 
 export const getActionsListData = (
@@ -52,10 +50,7 @@ export const getActionsListData = (
     motions?: SubgraphMotionsSubscription['motions'];
   },
   transactionsCommentsCount?: TransactionsMessagesCount,
-  {
-    extensionAddresses,
-    actionsThatNeedAttention,
-  }: ActionsTransformerMetadata = {},
+  { extensionAddresses }: ActionsTransformerMetadata = {},
 ): FormattedAction[] => {
   let formattedActions = [];
   /*
@@ -123,9 +118,9 @@ export const getActionsListData = (
             return acc;
           }
 
-          /* 
+          /*
             @NOTE: Filter out ArbitraryTransactions/Safe transactions that don't have an agent.
-            This means that the transaction was created by finalizing a motion, therefore, 
+            This means that the transaction was created by finalizing a motion, therefore,
             no data was stored in IPFS associated with this transaction hash (Like the agent).
           */
           if (
@@ -434,35 +429,6 @@ export const getActionsListData = (
     },
   );
 
-  /*
-   * Assign the NeedsAction status to whichever action needs it
-   *
-   * I wish I could merge this extra map with the other processing steps
-   * but for one it's kinda complex and would make the code read harder
-   * and second, we need to wait until we've processed everything else in order
-   * to determine which actions need a status change.
-   *
-   * The good part is, that this will trigger **only** if we have actions that
-   * need actions, otherwise, it will skip the extra map
-   */
-  if (actionsThatNeedAttention?.length) {
-    return filteredActions.map((action) => {
-      const { transactionHash: currentActionTransactionHash } = action;
-      const potentialNeedsAction = actionsThatNeedAttention.find(
-        ({ transactionHash }) =>
-          transactionHash === currentActionTransactionHash,
-      );
-      if (potentialNeedsAction) {
-        return {
-          ...action,
-          status: potentialNeedsAction.needsAction
-            ? ItemStatus.NeedAction
-            : undefined,
-        };
-      }
-      return action;
-    });
-  }
   return filteredActions;
 };
 
