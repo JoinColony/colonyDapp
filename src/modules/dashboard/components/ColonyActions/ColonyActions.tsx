@@ -162,6 +162,7 @@ const ColonyActions = ({
       colonyAddress: colonyAddress?.toLowerCase(),
       extensionAddress: votingReputationExtension?.address?.toLowerCase() || '',
       motionActionNot: ACTION_DECISION_MOTION_CODE,
+      sortDirection: 'desc',
       first: getNumbersOfEntriesToFetch(),
     },
   });

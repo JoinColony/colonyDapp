@@ -2778,6 +2778,7 @@ export type SubgraphMotionsSubscriptionVariables = Exact<{
   colonyAddress: Scalars['String'];
   extensionAddress: Scalars['String'];
   motionActionNot?: Maybe<Scalars['String']>;
+  sortDirection?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -2809,6 +2810,7 @@ export type SubgraphDecisionsSubscriptionVariables = Exact<{
   first?: Maybe<Scalars['Int']>;
   colonyAddress: Scalars['String'];
   extensionAddress: Scalars['String'];
+  sortDirection?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -7451,8 +7453,8 @@ export function useSubgraphEventsThatAreActionsSubscription(baseOptions?: Apollo
 export type SubgraphEventsThatAreActionsSubscriptionHookResult = ReturnType<typeof useSubgraphEventsThatAreActionsSubscription>;
 export type SubgraphEventsThatAreActionsSubscriptionResult = Apollo.SubscriptionResult<SubgraphEventsThatAreActionsSubscription>;
 export const SubgraphMotionsDocument = gql`
-    subscription SubgraphMotions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $extensionAddress: String!, $motionActionNot: String) {
-  motions(skip: $skip, first: $first, where: {associatedColony: $colonyAddress, extensionAddress: $extensionAddress, action_not: $motionActionNot}) {
+    subscription SubgraphMotions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $extensionAddress: String!, $motionActionNot: String, $sortDirection: String = asc) {
+  motions(skip: $skip, first: $first, orderBy: "timestamp", orderDirection: $sortDirection, where: {associatedColony: $colonyAddress, extensionAddress: $extensionAddress, action_not: $motionActionNot}) {
     id
     fundamentalChainId
     associatedColony {
@@ -7518,6 +7520,7 @@ export const SubgraphMotionsDocument = gql`
  *      colonyAddress: // value for 'colonyAddress'
  *      extensionAddress: // value for 'extensionAddress'
  *      motionActionNot: // value for 'motionActionNot'
+ *      sortDirection: // value for 'sortDirection'
  *   },
  * });
  */
@@ -7527,8 +7530,8 @@ export function useSubgraphMotionsSubscription(baseOptions?: Apollo.Subscription
 export type SubgraphMotionsSubscriptionHookResult = ReturnType<typeof useSubgraphMotionsSubscription>;
 export type SubgraphMotionsSubscriptionResult = Apollo.SubscriptionResult<SubgraphMotionsSubscription>;
 export const SubgraphDecisionsDocument = gql`
-    subscription SubgraphDecisions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $extensionAddress: String!) {
-  motions(skip: $skip, first: $first, where: {associatedColony: $colonyAddress, extensionAddress: $extensionAddress, action: "0x12345678"}) {
+    subscription SubgraphDecisions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $extensionAddress: String!, $sortDirection: String = asc) {
+  motions(skip: $skip, first: $first, orderBy: "timestamp", orderDirection: $sortDirection, where: {associatedColony: $colonyAddress, extensionAddress: $extensionAddress, action: "0x12345678"}) {
     id
     fundamentalChainId
     associatedColony {
@@ -7594,6 +7597,7 @@ export const SubgraphDecisionsDocument = gql`
  *      first: // value for 'first'
  *      colonyAddress: // value for 'colonyAddress'
  *      extensionAddress: // value for 'extensionAddress'
+ *      sortDirection: // value for 'sortDirection'
  *   },
  * });
  */
