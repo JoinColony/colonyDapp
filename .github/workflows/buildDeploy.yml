@@ -79,7 +79,9 @@ jobs:
 
     env:
       NAMESPACE: default
-      KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+      CLUSTER_NAME: qa
+      ENVIRONMENT_TAG: qa
+      REPOSITORY_NAME: app-frontend
 
     steps:
 
@@ -90,18 +92,16 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
 
-    - name: Deploy to Kubernetes cluster                                                                            
-      uses: kodermax/kubectl-aws-eks@c18ef8acdb80d5311a7dd3611c57fcc70e954b37                                                                            
+    - name: Deploy to Kubernetes cluster
       env:                                                                                                          
         RELEASE_IMAGE: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
-      with:                                                                                                         
-        args: set image deployment/dapp-qa-network-100 dapp=${{ env.RELEASE_IMAGE }} --record -n $NAMESPACE
+      run: |
+        kubectl set image deployment/dapp-${{ env.ENVIRONMENT_TAG }}-network-100 dapp=${{ env.RELEASE_IMAGE }} --record -n $NAMESPACE
           
-    - name: Verify Kubernetes deployment                               
-      uses: kodermax/kubectl-aws-eks@c18ef8acdb80d5311a7dd3611c57fcc70e954b37                              
-      with:                                                            
-        args: rollout status deployment/dapp-qa-network-100 -n $NAMESPACE
-    
+    - name: Validate Kubernetes deployment
+      run: |
+        kubectl rollout status deployment/dapp-${{ env.ENVIRONMENT_TAG }}-network-100 -n ${{ env.NAMESPACE }}
+  
     - uses: sarisia/actions-status-discord@c193626e5ce172002b8161e116aa897de7ab5383
       if: always()
       with:
@@ -119,7 +119,9 @@ jobs:
 
     env:
       NAMESPACE: staging
-      KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA_PROD }}
+      CLUSTER_NAME: prod
+      ENVIRONMENT_TAG: staging
+      REPOSITORY_NAME: app-frontend
 
     steps:
 
@@ -130,17 +132,19 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}
         aws-region: ${{ env.AWS_REGION }}
 
-    - name: Deploy to Kubernetes cluster                                                                            
-      uses: kodermax/kubectl-aws-eks@c18ef8acdb80d5311a7dd3611c57fcc70e954b37                                                                        
+    - name: Configure AWS EKS
+      run: |
+        aws eks --region ${{ env.AWS_REGION }} update-kubeconfig --name ${{ env.CLUSTER_NAME }}
+  
+    - name: Deploy to Kubernetes cluster
       env:                                                                                                          
         RELEASE_IMAGE: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
-      with:                                                                                                         
-        args: set image deployment/dapp-staging-network-100 dapp=${{ env.RELEASE_IMAGE }} --record -n $NAMESPACE
+      run: |
+        kubectl set image deployment/dapp-${{ env.ENVIRONMENT_TAG }}-network-100 dapp=${{ env.RELEASE_IMAGE }} --record -n $NAMESPACE
           
-    - name: Verify Kubernetes deployment                               
-      uses: kodermax/kubectl-aws-eks@c18ef8acdb80d5311a7dd3611c57fcc70e954b37                          
-      with:                                                            
-        args: rollout status deployment/dapp-staging-network-100 -n $NAMESPACE
+    - name: Validate Kubernetes deployment
+      run: |
+        kubectl rollout status deployment/dapp-${{ env.ENVIRONMENT_TAG }}-network-100 -n ${{ env.NAMESPACE }}
     
     - name: Repository Dispatch
       uses: peter-evans/repository-dispatch@f2696244ec00ed5c659a5cc77f7138ad0302dffb
@@ -148,7 +152,7 @@ jobs:
         token: ${{ secrets.COLONY_INFRASTRUCTURE_PROD_TO_STAGING_TOKEN }}
         repository: JoinColony/colonyInfrastructure
         event-type: data-sync
-    
+
     - uses: sarisia/actions-status-discord@c193626e5ce172002b8161e116aa897de7ab5383
       if: always()
       with:
@@ -166,7 +170,9 @@ jobs:
 
     env:
       NAMESPACE: prod
-      KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA_PROD }}
+      CLUSTER_NAME: prod
+      ENVIRONMENT_TAG: prod
+      REPOSITORY_NAME: app-frontend
 
     steps:
 
@@ -177,18 +183,16 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}
         aws-region: ${{ env.AWS_REGION }}
 
-    - name: Deploy to Kubernetes cluster                                                                            
-      uses: kodermax/kubectl-aws-eks@c18ef8acdb80d5311a7dd3611c57fcc70e954b37                                                                         
+    - name: Deploy to Kubernetes cluster
       env:                                                                                                          
         RELEASE_IMAGE: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
-      with:                                                                                                         
-        args: set image deployment/dapp-prod-network-100 dapp=${{ env.RELEASE_IMAGE }} --record -n $NAMESPACE
-          
-    - name: Verify Kubernetes deployment                               
-      uses: kodermax/kubectl-aws-eks@c18ef8acdb80d5311a7dd3611c57fcc70e954b37                            
-      with:                                                            
-        args: rollout status deployment/dapp-prod-network-100 -n $NAMESPACE
-    
+      run: |
+        kubectl set image deployment/dapp-${{ env.ENVIRONMENT_TAG }}-network-100 dapp=${{ env.RELEASE_IMAGE }} --record -n $NAMESPACE
+            
+    - name: Validate Kubernetes deployment
+      run: |
+        kubectl rollout status deployment/dapp-${{ env.ENVIRONMENT_TAG }}-network-100 -n ${{ env.NAMESPACE }}
+  
     - uses: sarisia/actions-status-discord@c193626e5ce172002b8161e116aa897de7ab5383
       if: always()
       with:
