@@ -95,6 +95,10 @@ jobs:
         role-duration-seconds: 1200
         aws-region: ${{ env.AWS_REGION }}
 
+    - name: Configure AWS EKS
+      run: |
+        aws eks --region ${{ env.AWS_REGION }} update-kubeconfig --name ${{ env.CLUSTER_NAME }}
+
     - name: Deploy to Kubernetes cluster
       env:                                                                                                          
         RELEASE_IMAGE: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
