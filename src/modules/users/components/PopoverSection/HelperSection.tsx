@@ -1,13 +1,19 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import Button from '~core/Button';
 
 import { DropdownMenuItem, DropdownMenuSection } from '~core/DropdownMenu';
 import ExternalLink from '~core/ExternalLink';
-import { FEEDBACK, HELP } from '~externalUrls';
+import { BEAMER_BUGS, BEAMER_NEWS, HELP } from '~externalUrls';
+import { getBeamerId } from '~utils/external';
 
 import styles from './HelperSection.css';
 
 const MSG = defineMessages({
+  whatsNew: {
+    id: 'users.PopoverSection.HelperSection.whatsNew',
+    defaultMessage: `What's New`,
+  },
   reportBugs: {
     id: 'users.PopoverSection.HelperSection.reportBugs',
     defaultMessage: 'Report Bugs',
@@ -20,13 +26,42 @@ const MSG = defineMessages({
 
 const displayName = 'users.PopoverSection.HelperSection';
 
+const handleWhatsNew = () => {
+  if (getBeamerId) {
+    // Ignored undefined third party script, this should be implemented better in future
+    // @ts-ignore
+    // eslint-disable-next-line no-undef
+    Beamer.show();
+  } else {
+    window.open(BEAMER_NEWS, '_blank');
+  }
+};
+
+const handleReportBugs = () => {
+  if (getBeamerId) {
+    // Ignored undefined third party script, this should be implemented better in future
+    // @ts-ignore
+    // eslint-disable-next-line no-undef
+    Beamer.show();
+  } else {
+    window.open(BEAMER_BUGS, '_blank');
+  }
+};
+
 const HelperSection = () => (
   <DropdownMenuSection separator>
     <DropdownMenuItem>
-      <ExternalLink
-        href={FEEDBACK}
+      <Button
+        appearance={{ theme: 'no-style' }}
+        text={MSG.whatsNew}
+        onClick={handleWhatsNew}
+      />
+    </DropdownMenuItem>
+    <DropdownMenuItem>
+      <Button
+        appearance={{ theme: 'no-style' }}
         text={MSG.reportBugs}
-        className={styles.externalLink}
+        onClick={handleReportBugs}
       />
     </DropdownMenuItem>
     <DropdownMenuItem>

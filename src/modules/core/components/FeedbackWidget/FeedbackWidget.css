@@ -14,7 +14,10 @@
 
 .link {
   padding: 9px;
+  border: 0;
+  background: none;
   color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+  cursor: pointer;
 }
 
 .link:hover {

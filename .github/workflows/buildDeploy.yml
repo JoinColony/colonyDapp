@@ -152,13 +152,11 @@ jobs:
         token: ${{ secrets.COLONY_INFRASTRUCTURE_PROD_TO_STAGING_TOKEN }}
         repository: JoinColony/colonyInfrastructure
         event-type: data-sync
-
     - uses: sarisia/actions-status-discord@c193626e5ce172002b8161e116aa897de7ab5383
       if: always()
       with:
         webhook: ${{ env.DISCORD_WEBHOOK }}
         title: "Deploy to Staging"
-
   # Deploy dapp frontend to production environment
   deployProd:
 
