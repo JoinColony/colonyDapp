@@ -85,11 +85,14 @@ jobs:
 
     steps:
 
-    - name: Configure AWS credentials                          
-      uses: aws-actions/configure-aws-credentials@v1           
+    - name: Configure AWS credentials for EKS                         
+      uses: aws-actions/configure-aws-credentials@v2           
       with:                                                    
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}        
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/eks-admin
+        role-session-name: github-cicd
+        role-duration-seconds: 1200
         aws-region: ${{ env.AWS_REGION }}
 
     - name: Deploy to Kubernetes cluster
