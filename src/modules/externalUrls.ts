@@ -16,7 +16,7 @@ export const TOKEN_LOGOS_REPO = `https://raw.githubusercontent.com/trustwallet/a
 export const NETWORK_RELEASES = `https://github.com/JoinColony/colonyNetwork/releases/tag`;
 export const ETHERSCAN_CONVERSION_RATE = `https://api.etherscan.io/api?module=stats&action=ethprice`;
 export const ETH_GAS_STATION = `https://ethgasstation.info/json/ethgasAPI.json`;
-export const XDAI_GAS_STATION = `https://blockscout.com/xdai/mainnet/api/v1/gas-price-oracle`;
+export const XDAI_GAS_STATION = `https://gnosis.blockscout.com/api/v1/gas-price-oracle`;
 export const getBlockscoutUserURL = (userAddress: string) =>
   `https://blockscout.com/xdai/mainnet/address/${userAddress}/transactions`;
 
