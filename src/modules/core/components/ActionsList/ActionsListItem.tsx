@@ -428,7 +428,7 @@ const ActionsListItem = ({
                       domainName || (fromDomain ? fromDomain?.name : ''),
                     toDomain: toDomain ? toDomain?.name : '',
                     roles: roleTitle,
-                    newVersion: newVersion || '0',
+                    newVersion: newVersion || amount || '0',
                     reputationChange: formattedReputationChange,
                     reputationChangeNumeral: (
                       <Numeral value={formattedReputationChange} />
