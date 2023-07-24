@@ -5,6 +5,7 @@ import {
   getBlockTime,
   getLogs,
 } from '@colony/colony-js';
+import { Log } from 'ethers/providers';
 import { bigNumberify } from 'ethers/utils';
 import { HashZero } from 'ethers/constants';
 import { ApolloClient } from '@apollo/client';
@@ -132,6 +133,7 @@ export const getColonyUnclaimedTransfers = async (
       colonyAddress: colonyClient.address.toLowerCase(),
     },
   });
+
   const colonyFundsClaimedEvents =
     colonyFundsClaimedEventsData?.colonyFundsClaimedEvents || [];
 
@@ -145,10 +147,16 @@ export const getColonyUnclaimedTransfers = async (
     colonyClient.address,
     null,
   );
-  const tokenTransferLogs = await getLogs(colonyClient, {
-    // Do not limit it to the tokenClient. We want all transfers to the colony
-    topics: tokenTransferFilter.topics,
-  });
+
+  let tokenTransferLogs: Log[] = [];
+  try {
+    tokenTransferLogs = await getLogs(colonyClient, {
+      // Do not limit it to the tokenClient. We want all transfers to the colony
+      topics: tokenTransferFilter.topics,
+    });
+  } catch (error) {
+    //
+  }
 
   return Promise.resolve(
     tokenTransferLogs.reduce(async (transferLogs, transferLog) => {
