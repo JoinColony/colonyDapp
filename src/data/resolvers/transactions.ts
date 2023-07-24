@@ -3,7 +3,6 @@ import {
   ColonyNetworkClient,
   FundingPotAssociatedType,
   getBlockTime,
-  getLogs,
 } from '@colony/colony-js';
 import { Log } from 'ethers/providers';
 import { bigNumberify } from 'ethers/utils';
@@ -148,12 +147,42 @@ export const getColonyUnclaimedTransfers = async (
     null,
   );
 
-  let tokenTransferLogs: Log[] = [];
+  const tokenTransferLogs: Log[] = [];
   try {
-    tokenTransferLogs = await getLogs(colonyClient, {
-      // Do not limit it to the tokenClient. We want all transfers to the colony
-      topics: tokenTransferFilter.topics,
-    });
+    const BLOCK_CHUNK_SIZE = 500000;
+    const latestBlock = await colonyClient.provider.getBlock();
+    /* eslint-disable no-await-in-loop */
+    for (let index = 0; index < latestBlock.number; index += BLOCK_CHUNK_SIZE) {
+      const transferLogsCallResponse = await fetch(
+        colonyClient.provider.connection.url,
+        {
+          body: JSON.stringify({
+            id: index,
+            jsonrpc: '2.0',
+            method: 'eth_getLogs',
+            params: [
+              {
+                fromBlock: index,
+                toBlock:
+                  index + BLOCK_CHUNK_SIZE > latestBlock.number
+                    ? latestBlock.number
+                    : index + BLOCK_CHUNK_SIZE,
+                topics: tokenTransferFilter.topics,
+              },
+            ],
+          }),
+          method: 'POST',
+          mode: 'cors',
+          credentials: 'omit',
+        },
+      );
+      const {
+        result: transferLogsChunk,
+      } = await transferLogsCallResponse.json();
+      tokenTransferLogs.push(...transferLogsChunk);
+      await new Promise((resolve) => setTimeout(resolve, 200));
+    }
+    /* eslint-enable no-await-in-loop */
   } catch (error) {
     //
   }
