@@ -1,5 +1,7 @@
-query SubgraphRoleEvents($colonyAddress: String!, $toBlock: Int!, $sortDirection: String = asc) {
+query SubgraphRoleEvents($colonyAddress: String!, $toBlock: Int!, $sortDirection: String = asc, $first: Int = 10, $skip: Int = 0) {
   colonyRoleSetEvents: events(
+    first: $first,
+    skip: $skip,
     orderBy: "timestamp",
     orderDirection: $sortDirection,
     block: { number: $toBlock }
@@ -24,6 +26,8 @@ query SubgraphRoleEvents($colonyAddress: String!, $toBlock: Int!, $sortDirection
     timestamp
   }
   recoveryRoleSetEvents: events(
+    first: $first,
+    skip: $skip,
     orderBy: "timestamp",
     orderDirection: $sortDirection,
     block: { number: $toBlock }

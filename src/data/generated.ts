@@ -2625,6 +2625,8 @@ export type SubgraphRoleEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   toBlock: Scalars['Int'];
   sortDirection?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
 }>;
 
 
@@ -7024,8 +7026,8 @@ export type LegacyNumberOfRecoveryRolesQueryHookResult = ReturnType<typeof useLe
 export type LegacyNumberOfRecoveryRolesLazyQueryHookResult = ReturnType<typeof useLegacyNumberOfRecoveryRolesLazyQuery>;
 export type LegacyNumberOfRecoveryRolesQueryResult = Apollo.QueryResult<LegacyNumberOfRecoveryRolesQuery, LegacyNumberOfRecoveryRolesQueryVariables>;
 export const SubgraphRoleEventsDocument = gql`
-    query SubgraphRoleEvents($colonyAddress: String!, $toBlock: Int!, $sortDirection: String = asc) {
-  colonyRoleSetEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, block: {number: $toBlock}, where: {name_contains: "ColonyRoleSet", address: $colonyAddress}) {
+    query SubgraphRoleEvents($colonyAddress: String!, $toBlock: Int!, $sortDirection: String = asc, $first: Int = 10, $skip: Int = 0) {
+  colonyRoleSetEvents: events(first: $first, skip: $skip, orderBy: "timestamp", orderDirection: $sortDirection, block: {number: $toBlock}, where: {name_contains: "ColonyRoleSet", address: $colonyAddress}) {
     id
     address
     name
@@ -7041,7 +7043,7 @@ export const SubgraphRoleEventsDocument = gql`
     }
     timestamp
   }
-  recoveryRoleSetEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, block: {number: $toBlock}, where: {name_contains: "RecoveryRoleSet", address: $colonyAddress}) {
+  recoveryRoleSetEvents: events(first: $first, skip: $skip, orderBy: "timestamp", orderDirection: $sortDirection, block: {number: $toBlock}, where: {name_contains: "RecoveryRoleSet", address: $colonyAddress}) {
     id
     address
     name
@@ -7075,6 +7077,8 @@ export const SubgraphRoleEventsDocument = gql`
  *      colonyAddress: // value for 'colonyAddress'
  *      toBlock: // value for 'toBlock'
  *      sortDirection: // value for 'sortDirection'
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
  *   },
  * });
  */

@@ -9,7 +9,6 @@ import {
   extensions,
   getExtensionHash,
   ROOT_DOMAIN_ID,
-  getHistoricColonyRoles,
   formatColonyRoles,
   ColonyRole,
 } from '@colony/colony-js';
@@ -659,15 +658,69 @@ export const colonyResolvers = ({
       }
     },
     async historicColonyRoles(_, { colonyAddress, blockNumber }) {
+      const BATCH_SIZE = 50;
       try {
-        const colonyClient = await colonyManager.getClient(
-          ClientType.ColonyClient,
-          colonyAddress,
+        let shouldFetchMoreEvents = true;
+        let roleSetEvents = [];
+        let recoveryRoleEvents = [];
+
+        /* eslint-disable no-await-in-loop */
+        while (shouldFetchMoreEvents) {
+          const {
+            data: { colonyRoleSetEvents = [], recoveryRoleSetEvents = [] } = {},
+          } = await apolloClient.query<
+            SubgraphRoleEventsQuery,
+            SubgraphRoleEventsQueryVariables
+          >({
+            query: SubgraphRoleEventsDocument,
+            variables: {
+              /*
+               * Subgraph addresses are not checksummed
+               */
+              colonyAddress: colonyAddress.toLowerCase(),
+              toBlock: blockNumber,
+              first: BATCH_SIZE,
+              skip: roleSetEvents.length,
+            },
+            fetchPolicy: 'network-only',
+          });
+
+          if (colonyRoleSetEvents.length || recoveryRoleSetEvents.length) {
+            if (colonyRoleSetEvents.length) {
+              // @ts-ignore
+              roleSetEvents = [...roleSetEvents, ...colonyRoleSetEvents];
+            }
+            if (recoveryRoleSetEvents.length) {
+              // @ts-ignore
+              recoveryRoleEvents = [
+                ...recoveryRoleEvents,
+                ...recoveryRoleSetEvents,
+              ];
+            }
+          } else {
+            shouldFetchMoreEvents = false;
+          }
+
+          await new Promise((resolve) => setTimeout(resolve, 200));
+        }
+        /* eslint-enable no-await-in-loop */
+
+        /*
+         * Parse events coming from the subgraph
+         */
+        const parsedColonyRoleEvents = roleSetEvents.map(parseSubgraphEvent);
+        const parsedRecoveryRoleEvents = recoveryRoleEvents.map(
+          parseSubgraphEvent,
         );
-        return getHistoricColonyRoles(colonyClient, 0, blockNumber);
+
+        const roles = await formatColonyRoles(
+          (parsedColonyRoleEvents as unknown) as LogDescription[],
+          (parsedRecoveryRoleEvents as unknown) as LogDescription[],
+        );
+
+        return roles;
       } catch (error) {
-        console.error(error);
-        return null;
+        return [];
       }
     },
     async verifiedUsers(_, { verifiedAddresses }) {
@@ -829,6 +882,7 @@ export const colonyResolvers = ({
       }
     },
     async roles({ colonyAddress }) {
+      const BATCH_SIZE = 50;
       try {
         const colonyClient = await colonyManager.getClient(
           ClientType.ColonyClient,
@@ -840,54 +894,73 @@ export const colonyResolvers = ({
           throw new Error(`Not supported in this version of Colony`);
         }
 
-        const { data } = await apolloClient.query<
-          SubgraphRoleEventsQuery,
-          SubgraphRoleEventsQueryVariables
-        >({
-          query: SubgraphRoleEventsDocument,
-          variables: {
-            /*
-             * Subgraph addresses are not checksummed
-             */
-            colonyAddress: colonyAddress.toLowerCase(),
-            toBlock: latestBlockNumber,
-          },
-          fetchPolicy: 'network-only',
-        });
+        let shouldFetchMoreEvents = true;
+        let roleSetEvents = [];
+        let recoveryRoleEvents = [];
 
-        if (data?.colonyRoleSetEvents && data?.recoveryRoleSetEvents) {
+        /* eslint-disable no-await-in-loop */
+        while (shouldFetchMoreEvents) {
           const {
-            colonyRoleSetEvents: colonyRoleSetSubgraphEvents,
-            recoveryRoleSetEvents: recoveryRoleSetSubgraphEvents,
-          } = data;
+            data: { colonyRoleSetEvents = [], recoveryRoleSetEvents = [] } = {},
+          } = await apolloClient.query<
+            SubgraphRoleEventsQuery,
+            SubgraphRoleEventsQueryVariables
+          >({
+            query: SubgraphRoleEventsDocument,
+            variables: {
+              /*
+               * Subgraph addresses are not checksummed
+               */
+              colonyAddress: colonyAddress.toLowerCase(),
+              toBlock: latestBlockNumber,
+              first: BATCH_SIZE,
+              skip: roleSetEvents.length,
+            },
+            fetchPolicy: 'network-only',
+          });
 
-          /*
-           * Parse events coming from the subgraph
-           */
-          const colonyRoleEvents = colonyRoleSetSubgraphEvents.map(
-            parseSubgraphEvent,
-          );
-          const recoveryRoleEvents = recoveryRoleSetSubgraphEvents.map(
-            parseSubgraphEvent,
-          );
+          if (colonyRoleSetEvents.length || recoveryRoleSetEvents.length) {
+            if (colonyRoleSetEvents.length) {
+              // @ts-ignore
+              roleSetEvents = [...roleSetEvents, ...colonyRoleSetEvents];
+            }
+            if (recoveryRoleSetEvents.length) {
+              // @ts-ignore
+              recoveryRoleEvents = [
+                ...recoveryRoleEvents,
+                ...recoveryRoleSetEvents,
+              ];
+            }
+          } else {
+            shouldFetchMoreEvents = false;
+          }
 
-          const roles = await formatColonyRoles(
-            (colonyRoleEvents as unknown) as LogDescription[],
-            (recoveryRoleEvents as unknown) as LogDescription[],
-          );
-
-          return roles.map((userRoles) => ({
-            ...userRoles,
-            domains: userRoles.domains.map((domainRoles) => ({
-              ...domainRoles,
-              __typename: 'DomainRoles',
-            })),
-            __typename: 'UserRoles',
-          }));
+          await new Promise((resolve) => setTimeout(resolve, 200));
         }
-        return [];
+        /* eslint-enable no-await-in-loop */
+
+        /*
+         * Parse events coming from the subgraph
+         */
+        const parsedColonyRoleEvents = roleSetEvents.map(parseSubgraphEvent);
+        const parsedRecoveryRoleEvents = recoveryRoleEvents.map(
+          parseSubgraphEvent,
+        );
+
+        const roles = await formatColonyRoles(
+          (parsedColonyRoleEvents as unknown) as LogDescription[],
+          (parsedRecoveryRoleEvents as unknown) as LogDescription[],
+        );
+
+        return roles.map((userRoles) => ({
+          ...userRoles,
+          domains: userRoles.domains.map((domainRoles) => ({
+            ...domainRoles,
+            __typename: 'DomainRoles',
+          })),
+          __typename: 'UserRoles',
+        }));
       } catch (error) {
-        console.error(error);
         return [];
       }
     },

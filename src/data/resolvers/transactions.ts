@@ -177,7 +177,7 @@ export const getColonyUnclaimedTransfers = async (
                   index + BLOCK_CHUNK_SIZE > latestBlock.number
                     ? latestBlock.number
                     : index + BLOCK_CHUNK_SIZE,
-                topics: tokenTransferFilter.topics,
+                ...tokenTransferFilter,
               },
             ],
           }),
