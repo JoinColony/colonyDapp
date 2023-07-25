@@ -53,7 +53,7 @@ const UnclaimedTransfersItem = ({
 
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
-  if (!tokenData) return null;
+  if (!tokenData || !tokenData.token) return null;
 
   const { token } = tokenData;
 
