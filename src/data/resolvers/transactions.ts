@@ -140,6 +140,9 @@ export const getColonyUnclaimedTransfers = async (
     parseSubgraphEvent(event),
   );
 
+  const latestClaimedEvent =
+    parsedClaimedTransferEvents[parsedClaimedTransferEvents.length - 1];
+
   // Get logs & events for token transfer to this colony
   const tokenTransferFilter = tokenClient.filters.Transfer(
     null,
@@ -149,10 +152,17 @@ export const getColonyUnclaimedTransfers = async (
 
   const tokenTransferLogs: Log[] = [];
   try {
-    const BLOCK_CHUNK_SIZE = 500000;
+    const BLOCK_CHUNK_SIZE = 700000;
     const latestBlock = await colonyClient.provider.getBlock();
     /* eslint-disable no-await-in-loop */
-    for (let index = 0; index < latestBlock.number; index += BLOCK_CHUNK_SIZE) {
+    for (
+      let index =
+        latestClaimedEvent && latestClaimedEvent.blockNumber
+          ? latestClaimedEvent.blockNumber + 1
+          : 0;
+      index < latestBlock.number;
+      index += BLOCK_CHUNK_SIZE
+    ) {
       const transferLogsCallResponse = await fetch(
         colonyClient.provider.connection.url,
         {
@@ -245,17 +255,17 @@ export const getColonyUnclaimedTransfers = async (
         source.toLowerCase() === networkClient.address.toLowerCase() &&
         amount.isZero();
 
-      const { blockNumber } = transferLog;
+      // const { blockNumber } = transferLog;
 
-      const transferClaimed = !!parsedClaimedTransferEvents.find(
-        ({ values: { token }, blockNumber: eventBlockNumber }) =>
-          token === transferLog.address.toLowerCase() &&
-          blockNumber &&
-          eventBlockNumber &&
-          eventBlockNumber > blockNumber,
-      );
+      // const transferClaimed = !!parsedClaimedTransferEvents.find(
+      //   ({ values: { token }, blockNumber: eventBlockNumber }) =>
+      //     token === transferLog.address.toLowerCase() &&
+      //     blockNumber &&
+      //     eventBlockNumber &&
+      //     eventBlockNumber > blockNumber,
+      // );
 
-      if (!transferClaimed && !isMiningCycleTransfer) {
+      if (!isMiningCycleTransfer) {
         return [
           ...(await transferLogs),
           {
