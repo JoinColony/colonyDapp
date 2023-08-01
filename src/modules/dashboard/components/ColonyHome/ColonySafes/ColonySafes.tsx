@@ -40,7 +40,10 @@ const ColonySafes = ({ colony: { safes }, colony }: Props) => {
       </Heading>
       <ul>
         {safes.map((safe) => (
-          <li className={styles.safeItem}>
+          <li
+            className={styles.safeItem}
+            key={`${safe.chainId}-${safe.contractAddress}`}
+          >
             <InfoPopover
               key={`${safe.chainId}-${safe.contractAddress}`}
               safe={safe}
