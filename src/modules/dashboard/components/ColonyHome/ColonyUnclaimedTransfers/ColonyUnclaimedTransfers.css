@@ -2,11 +2,6 @@
   margin-bottom: 40px;
 }
 
-.main a:hover, .main a:active {
-  text-decoration: underline;
-  color: var(--colony-blue);
-}
-
 .main h4 {
   font-size: var(--size-smallish);
   color: var(--dark);
@@ -56,4 +51,15 @@
 
 .manageFundsLink {
   color: var(--colony-blue);
+}
+
+.loading {
+  display: inline-block;
+  width: 240px;
+  cursor: pointer;
+}
+
+.estimatedTimeTooltip {
+  width: 200px;
+  text-align: center;
 }

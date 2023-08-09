@@ -21,3 +21,14 @@
     align-items: stretch;
   }
 }
+
+.loading {
+  display: inline-block;
+  width: 240px;
+  cursor: pointer;
+}
+
+.estimatedTimeTooltip {
+  width: 200px;
+  text-align: center;
+}

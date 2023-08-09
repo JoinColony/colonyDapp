@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useColonyTransfersQuery, Colony } from '~data/index';
 
 import { MiniSpinnerLoader } from '~core/Preloaders';
 import UnclaimedTransfersItem from './UnclaimedTransfersItem';
+import { Tooltip } from '~core/Popover';
 
 import styles from './UnclaimedTransfers.css';
 
@@ -20,22 +21,63 @@ const MSG = defineMessages({
   },
   loadingData: {
     id: 'dashboard.UnclaimedTransfers.title',
-    defaultMessage: 'Loading token transfers...',
+    defaultMessage: 'Fetching incoming token transfers...',
+  },
+  timeLeftTooltip: {
+    id: 'dashboard.UnclaimedTransfers.timeLeftTooltip',
+    defaultMessage: 'Estimated time remaining: {timeLeft}',
   },
 });
 
-const UnclaimedTransfers = ({ colony }: Props) => {
+const UnclaimedTransfers = ({ colony, colony: { tokens } }: Props) => {
+  const ESTIMATED_SECS_TO_FETCH_TOKEN_TRANSFERS = 20;
+  const [secsLeft, updateSecsLeft] = useState(
+    ESTIMATED_SECS_TO_FETCH_TOKEN_TRANSFERS * (tokens.length || 1),
+  );
+
   const { data, error, loading } = useColonyTransfersQuery({
     variables: { address: colony.colonyAddress },
   });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      updateSecsLeft(secsLeft - 1);
+    }, 1000);
+    if (secsLeft < 0) {
+      clearInterval(timer);
+    }
+    return () => clearInterval(timer);
+  }, [loading, secsLeft]);
+
   if (error) console.warn(error);
 
   if (loading) {
     return (
-      <MiniSpinnerLoader
-        className={styles.main}
-        loadingText={MSG.loadingData}
-      />
+      <>
+        <Tooltip
+          content={
+            <div className={styles.estimatedTimeTooltip}>
+              <FormattedMessage
+                {...MSG.timeLeftTooltip}
+                values={{
+                  timeLeft: `${String(Math.floor(secsLeft / 60)).padStart(
+                    2,
+                    '0',
+                  )}:${String(secsLeft % 60).padStart(2, '0')}`,
+                }}
+              />
+            </div>
+          }
+          trigger={secsLeft >= 0 ? 'hover' : null}
+        >
+          <div className={styles.loading}>
+            <MiniSpinnerLoader
+              className={styles.main}
+              loadingText={MSG.loadingData}
+            />
+          </div>
+        </Tooltip>
+      </>
     );
   }
 

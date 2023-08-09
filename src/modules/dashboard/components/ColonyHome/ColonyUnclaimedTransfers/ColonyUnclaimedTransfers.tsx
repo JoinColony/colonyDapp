@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import {
@@ -9,11 +9,11 @@ import {
 } from '~data/index';
 
 import { ActionButton } from '~core/Button';
-import Heading from '~core/Heading';
-import NavLink from '~core/NavLink';
 import Numeral from '~core/Numeral';
 import { Tooltip } from '~core/Popover';
 import Link from '~core/Link';
+import { MiniSpinnerLoader } from '~core/Preloaders';
+import ClickableHeading from '~core/ClickableHeading';
 
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
@@ -49,13 +49,26 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.ColonyUnclaimedTransfers.unknownToken',
     defaultMessage: 'Unknown Token',
   },
+  loadingData: {
+    id: 'dashboard.ColonyHome.ColonyUnclaimedTransfers.title',
+    defaultMessage: 'Fetching incoming token transfers...',
+  },
+  timeLeftTooltip: {
+    id: 'dashboard.ColonyHome.ColonyUnclaimedTransfers.timeLeftTooltip',
+    defaultMessage: 'Estimated time remaining: {timeLeft}',
+  },
 });
 
 const ColonyUnclaimedTransfers = ({
   colony,
-  colony: { colonyAddress, colonyName },
+  colony: { colonyAddress, colonyName, tokens },
 }: Props) => {
-  const { data, error } = useColonyTransfersQuery({
+  const ESTIMATED_SECS_TO_FETCH_TOKEN_TRANSFERS = 20;
+  const [secsLeft, updateSecsLeft] = useState(
+    ESTIMATED_SECS_TO_FETCH_TOKEN_TRANSFERS * (tokens.length || 1),
+  );
+
+  const { data, error, loading } = useColonyTransfersQuery({
     variables: { address: colony.colonyAddress },
   });
 
@@ -81,13 +94,51 @@ const ColonyUnclaimedTransfers = ({
 
   const token = tokenData?.token;
 
+  useEffect(() => {
+    const timer = setInterval(() => {
+      updateSecsLeft(secsLeft - 1);
+    }, 1000);
+    if (secsLeft < 0) {
+      clearInterval(timer);
+    }
+    return () => clearInterval(timer);
+  }, [loading, secsLeft]);
+
+  if (loading) {
+    return (
+      <div className={styles.main}>
+        <ClickableHeading linkTo={`/colony/${colonyName}/funds`}>
+          <FormattedMessage {...MSG.title} />
+        </ClickableHeading>
+        <Tooltip
+          content={
+            <div className={styles.estimatedTimeTooltip}>
+              <FormattedMessage
+                {...MSG.timeLeftTooltip}
+                values={{
+                  timeLeft: `${String(Math.floor(secsLeft / 60)).padStart(
+                    2,
+                    '0',
+                  )}:${String(secsLeft % 60).padStart(2, '0')}`,
+                }}
+              />
+            </div>
+          }
+          trigger={secsLeft >= 0 ? 'hover' : null}
+        >
+          <div className={styles.loading}>
+            <MiniSpinnerLoader loadingText={MSG.loadingData} />
+          </div>
+        </Tooltip>
+      </div>
+    );
+  }
+
   return claimsLength ? (
     <div className={styles.main}>
-      <Heading appearance={{ size: 'normal', weight: 'bold' }}>
-        <NavLink to={`/colony/${colonyName}/funds`}>
-          <FormattedMessage {...MSG.title} />
-        </NavLink>
-      </Heading>
+      <ClickableHeading linkTo={`/colony/${colonyName}/funds`}>
+        <FormattedMessage {...MSG.title} />
+      </ClickableHeading>
       <ul>
         <li className={styles.firstLineContainer}>
           <div className={styles.tokenItem}>

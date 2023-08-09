@@ -6,3 +6,5 @@ export const firstLineContainer: string;
 export const button: string;
 export const tooltip: string;
 export const manageFundsLink: string;
+export const loading: string;
+export const estimatedTimeTooltip: string;
