@@ -351,7 +351,11 @@ query SubgraphColony($address: String!) {
       id
       metadata
       transaction {
+        id
+        transactionHash: id
         block {
+          id
+          number: id
           timestamp
         }
       }

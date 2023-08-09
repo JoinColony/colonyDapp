@@ -17,9 +17,14 @@ import {
   SubgraphPayoutClaimedEventsDocument,
   SubgraphPayoutClaimedEventsQuery,
   SubgraphPayoutClaimedEventsQueryVariables,
+  SubgraphColonyQuery,
+  SubgraphColonyQueryVariables,
+  SubgraphColonyDocument,
 } from '~data/index';
 import { notUndefined } from '~utils/arrays';
 import { parseSubgraphEvent } from '~utils/events';
+import { sortMetadataHistory } from '~utils/colonyActions';
+import { IpfsWithFallbackSkeleton } from '~context/index';
 
 export const getColonyFundsClaimedTransfers = async (
   apolloClient: ApolloClient<object>,
@@ -119,6 +124,7 @@ export const getColonyUnclaimedTransfers = async (
   apolloClient: ApolloClient<object>,
   colonyClient: ColonyClient,
   networkClient: ColonyNetworkClient,
+  ipfsClient: IpfsWithFallbackSkeleton,
 ): Promise<Transfer[]> => {
   const { provider } = colonyClient;
   const { tokenClient } = colonyClient;
@@ -133,15 +139,61 @@ export const getColonyUnclaimedTransfers = async (
     },
   });
 
+  const { data: colonyData } = await apolloClient.query<
+    SubgraphColonyQuery,
+    SubgraphColonyQueryVariables
+  >({
+    query: SubgraphColonyDocument,
+    variables: {
+      address: colonyClient.address.toLowerCase(),
+    },
+  });
+
+  const { metadata = '', metadataHistory = [] } = colonyData?.colony || {};
+
+  const sortedMetadataHistory = sortMetadataHistory(metadataHistory);
+  const currentMetadataIndex = sortedMetadataHistory.findIndex(
+    ({ metadata: metadataHash }) => metadataHash === metadata,
+  );
+  const prevMetadata = sortedMetadataHistory[currentMetadataIndex - 1];
+  const ipfsHash = metadata || prevMetadata?.metadata || null;
+
+  const [firstMetadataEvent] = sortedMetadataHistory;
+  const approxFirstColonyBlock = parseInt(
+    firstMetadataEvent?.transaction?.block?.number.replace('block_', '') || '1',
+    10,
+  );
+
+  /*
+   * Fetch the colony's metadata
+   */
+  let ipfsMetadata: string | null = null;
+  try {
+    ipfsMetadata = await ipfsClient.getString(ipfsHash);
+  } catch (error) {
+    // ipfs fetch error
+  }
+
+  let potentialUnclaimedTokenAddresses = [tokenClient.address];
+
+  try {
+    const parsedMetadata = JSON.parse(ipfsMetadata || '{}');
+    const colonyAdditionalTokens =
+      parsedMetadata?.colonyTokens || parsedMetadata?.data?.colonyTokens || [];
+    potentialUnclaimedTokenAddresses = [
+      ...potentialUnclaimedTokenAddresses,
+      ...colonyAdditionalTokens,
+    ];
+  } catch (error) {
+    // metadata parse error
+  }
+
   const colonyFundsClaimedEvents =
     colonyFundsClaimedEventsData?.colonyFundsClaimedEvents || [];
 
   const parsedClaimedTransferEvents = colonyFundsClaimedEvents.map((event) =>
     parseSubgraphEvent(event),
   );
-
-  const latestClaimedEvent =
-    parsedClaimedTransferEvents[parsedClaimedTransferEvents.length - 1];
 
   // Get logs & events for token transfer to this colony
   const tokenTransferFilter = tokenClient.filters.Transfer(
@@ -152,14 +204,14 @@ export const getColonyUnclaimedTransfers = async (
 
   const tokenTransferLogs: Log[] = [];
   try {
-    const BLOCK_CHUNK_SIZE = 700000;
+    // dynamic chunk size, otherwise you run into the 20sec timeout of the RPC endpoint
+    const BLOCK_CHUNK_SIZE = Math.floor(
+      700_000 / potentialUnclaimedTokenAddresses.length,
+    );
     const latestBlock = await colonyClient.provider.getBlock();
     /* eslint-disable no-await-in-loop */
     for (
-      let index =
-        latestClaimedEvent && latestClaimedEvent.blockNumber
-          ? latestClaimedEvent.blockNumber + 1
-          : 0;
+      let index = approxFirstColonyBlock;
       index < latestBlock.number;
       index += BLOCK_CHUNK_SIZE
     ) {
@@ -177,7 +229,8 @@ export const getColonyUnclaimedTransfers = async (
                   index + BLOCK_CHUNK_SIZE > latestBlock.number
                     ? latestBlock.number
                     : index + BLOCK_CHUNK_SIZE,
-                ...tokenTransferFilter,
+                address: potentialUnclaimedTokenAddresses,
+                topics: tokenTransferFilter.topics,
               },
             ],
           }),
@@ -255,17 +308,17 @@ export const getColonyUnclaimedTransfers = async (
         source.toLowerCase() === networkClient.address.toLowerCase() &&
         amount.isZero();
 
-      // const { blockNumber } = transferLog;
+      const { blockNumber } = transferLog;
 
-      // const transferClaimed = !!parsedClaimedTransferEvents.find(
-      //   ({ values: { token }, blockNumber: eventBlockNumber }) =>
-      //     token === transferLog.address.toLowerCase() &&
-      //     blockNumber &&
-      //     eventBlockNumber &&
-      //     eventBlockNumber > blockNumber,
-      // );
+      const transferClaimed = !!parsedClaimedTransferEvents.find(
+        ({ values: { token }, blockNumber: eventBlockNumber }) =>
+          token === transferLog.address.toLowerCase() &&
+          blockNumber &&
+          eventBlockNumber &&
+          eventBlockNumber > blockNumber,
+      );
 
-      if (!isMiningCycleTransfer) {
+      if (!transferClaimed && !isMiningCycleTransfer) {
         return [
           ...(await transferLogs),
           {

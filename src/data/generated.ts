@@ -1902,7 +1902,14 @@ export type SubgraphColonyQuery = { colony: (
     Pick<SubgraphColony, 'id' | 'colonyChainId' | 'ensName' | 'metadata'>
     & { metadataHistory: Array<(
       Pick<SubgraphColonyMetadata, 'id' | 'metadata'>
-      & { transaction: { block: Pick<SubgraphBlock, 'timestamp'> } }
+      & { transaction: (
+        Pick<SubgraphTransaction, 'id'>
+        & { transactionHash: SubgraphTransaction['id'] }
+        & { block: (
+          Pick<SubgraphBlock, 'id' | 'timestamp'>
+          & { number: SubgraphBlock['id'] }
+        ) }
+      ) }
     )>, token: (
       Pick<SubgraphToken, 'decimals' | 'symbol'>
       & { tokenAddress: SubgraphToken['id'] }
@@ -4560,7 +4567,11 @@ export const SubgraphColonyDocument = gql`
       id
       metadata
       transaction {
+        id
+        transactionHash: id
         block {
+          id
+          number: id
           timestamp
         }
       }

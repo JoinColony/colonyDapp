@@ -1037,6 +1037,7 @@ export const colonyResolvers = ({
         apolloClient,
         colonyClient,
         networkClient,
+        ipfsWithFallback,
       );
       // Get ether balance and add a fake transaction if there's any unclaimed
       const colonyEtherBalance = await colonyClient.provider.getBalance(
