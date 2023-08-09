@@ -1,6 +1,5 @@
 import { Resolvers, ApolloClient } from '@apollo/client';
 import { AddressZero, HashZero } from 'ethers/constants';
-import { LogDescription } from 'ethers/utils';
 import {
   ClientType,
   ColonyVersion,
@@ -9,7 +8,6 @@ import {
   extensions,
   getExtensionHash,
   ROOT_DOMAIN_ID,
-  formatColonyRoles,
   ColonyRole,
 } from '@colony/colony-js';
 import {
@@ -329,6 +327,52 @@ export const getProcessedDomain = async (
     color: color || Color.LightPink,
     description,
   };
+};
+
+const formatColonyRoles = (events) => {
+  // ColonyRoleSet (both old and new) and RecoveryRoleSet events
+  const rolesMap = events
+    // sort the events chronologicallly acording to block number
+    .sort(
+      ({ blockNumber: blockNumberA = 0 }, { blockNumber: blockNumberB = 0 }) =>
+        blockNumberA - blockNumberB,
+    )
+    .reduce((colonyRoles, { values }) => {
+      const {
+        user,
+        domainId = ROOT_DOMAIN_ID,
+        role = ColonyRole.Recovery,
+        setTo,
+      } = values;
+      if (!colonyRoles[user]) {
+        const userRole = setTo ? new Set([role]) : new Set();
+        // eslint-disable-next-line no-param-reassign
+        colonyRoles[user] = { [domainId]: userRole };
+      }
+      if (!colonyRoles[user][domainId] && setTo) {
+        // eslint-disable-next-line no-param-reassign
+        colonyRoles[user][domainId] = new Set([role]);
+      }
+      if (setTo) {
+        colonyRoles[user][domainId].add(role);
+      } else {
+        colonyRoles[user][domainId].delete(role);
+      }
+      return colonyRoles;
+    }, {});
+
+  return Object.entries(rolesMap).map(([address, userRoles]) => {
+    const domains = Object.entries(userRoles as any).map(
+      ([domainId, domainRoles]) => ({
+        domainId: parseInt(domainId, 10),
+        roles: Array.from(domainRoles as any),
+      }),
+    );
+    return {
+      address,
+      domains,
+    };
+  });
 };
 
 export const colonyResolvers = ({
@@ -713,10 +757,10 @@ export const colonyResolvers = ({
           parseSubgraphEvent,
         );
 
-        const roles = await formatColonyRoles(
-          (parsedColonyRoleEvents as unknown) as LogDescription[],
-          (parsedRecoveryRoleEvents as unknown) as LogDescription[],
-        );
+        const roles = formatColonyRoles([
+          ...parsedColonyRoleEvents,
+          ...parsedRecoveryRoleEvents,
+        ]);
 
         return roles;
       } catch (error) {
@@ -947,10 +991,10 @@ export const colonyResolvers = ({
           parseSubgraphEvent,
         );
 
-        const roles = await formatColonyRoles(
-          (parsedColonyRoleEvents as unknown) as LogDescription[],
-          (parsedRecoveryRoleEvents as unknown) as LogDescription[],
-        );
+        const roles = formatColonyRoles([
+          ...parsedColonyRoleEvents,
+          ...parsedRecoveryRoleEvents,
+        ]);
 
         return roles.map((userRoles) => ({
           ...userRoles,
