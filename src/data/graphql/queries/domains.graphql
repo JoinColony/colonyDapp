@@ -1,0 +1,28 @@
+query SubgraphDomainAddedEvents($colonyAddress: String!, $toBlock: Int!, $sortDirection: String = asc, $first: Int = 10, $skip: Int = 0) {
+  domainAddedEvents: events(
+    first: $first,
+    skip: $skip,
+    orderBy: "timestamp",
+    orderDirection: $sortDirection,
+    block: { number: $toBlock }
+    where: {
+      name_contains: "DomainAdded"
+      address: $colonyAddress
+    }
+  ) {
+    id
+    address
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+    timestamp
+  }
+}

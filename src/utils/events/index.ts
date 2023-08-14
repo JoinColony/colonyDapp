@@ -3,7 +3,6 @@ import {
   ClientType,
   ExtensionClient,
   MotionState as NetworkMotionState,
-  getEvents,
 } from '@colony/colony-js';
 
 import {
@@ -35,6 +34,9 @@ import {
   SubgraphAnnotationEventsQuery,
   SubgraphAnnotationEventsQueryVariables,
   SubgraphAnnotationEventsDocument,
+  SubgraphDomainAddedEventsQuery,
+  SubgraphDomainAddedEventsQueryVariables,
+  SubgraphDomainAddedEventsDocument,
 } from '~data/index';
 import { ProcessedEvent } from '~data/resolvers/colonyActions';
 
@@ -51,6 +53,7 @@ import { getMotionRequiredStake, MotionState } from '../colonyMotions';
 
 import { getAnnotationFromSubgraph } from './getAnnotationFromSubgraph';
 import { parseSubgraphEvent } from './subgraphEvents';
+import { getLatestSubgraphBlock } from '~data/resolvers/colony';
 
 interface ActionValues {
   recipient: Address;
@@ -695,16 +698,59 @@ const getRecoveryActionValues = async (
 const getEmitDomainReputationPenaltyAndRewardValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
+  apolloClient: ApolloClient<object>,
 ): Promise<Partial<ActionValues>> => {
+  const BATCH_SIZE = 50;
+  const latestBlockNumber = await getLatestSubgraphBlock(apolloClient);
+
   const domainReputationChange = processedEvents.find(
     ({ name }) => name === ColonyAndExtensionsEvents.ArbitraryReputationUpdate,
   ) as ProcessedEvent;
 
-  const domainAddedFilter = colonyClient.filters.DomainAdded(null, null);
-  const domainAddedEvents = await getEvents(colonyClient, domainAddedFilter);
+  let shouldFetchMoreEvents = true;
+  let colonyDomainAddedEvents: any[] = [];
+
+  /* eslint-disable no-await-in-loop */
+  while (shouldFetchMoreEvents) {
+    const { data: { domainAddedEvents = [] } = {} } = await apolloClient.query<
+      SubgraphDomainAddedEventsQuery,
+      SubgraphDomainAddedEventsQueryVariables
+    >({
+      query: SubgraphDomainAddedEventsDocument,
+      variables: {
+        /*
+         * Subgraph addresses are not checksummed
+         */
+        colonyAddress: colonyClient.address.toLowerCase(),
+        toBlock: latestBlockNumber,
+        first: BATCH_SIZE,
+        skip: colonyDomainAddedEvents.length,
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    if (domainAddedEvents.length) {
+      colonyDomainAddedEvents = [
+        ...colonyDomainAddedEvents,
+        ...domainAddedEvents,
+      ];
+    } else {
+      shouldFetchMoreEvents = false;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 200));
+  }
+  /* eslint-enable no-await-in-loop */
+
+  /*
+   * Parse events coming from the subgraph
+   */
+  const parsedDomainAddedEvents = colonyDomainAddedEvents.map(
+    parseSubgraphEvent,
+  );
 
   const colonyDomains = await Promise.all(
-    domainAddedEvents.map(async (domain) => {
+    parsedDomainAddedEvents.map(async (domain) => {
       const domainId = parseInt(domain.values.domainId.toString(), 10);
       const { skillId } = await colonyClient.getDomain(domainId);
       return {
@@ -1471,6 +1517,7 @@ export const getActionValues = async (
       const emitDomainReputationPenaltyAndRewardActionValues = await getEmitDomainReputationPenaltyAndRewardValues(
         processedEvents,
         colonyClient,
+        apolloClient,
       );
       return {
         ...fallbackValues,

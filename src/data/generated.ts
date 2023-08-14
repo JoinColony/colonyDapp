@@ -2106,6 +2106,27 @@ export type BannedUsersQuery = { bannedUsers: Array<Maybe<(
     & { profile?: Maybe<Pick<UserProfile, 'walletAddress' | 'username' | 'displayName'>>, event?: Maybe<{ context: Pick<TransactionMessageEvent, 'type' | 'transactionHash' | 'message' | 'colonyAddress' | 'deleted' | 'adminDelete'> }> }
   )>> };
 
+export type SubgraphDomainAddedEventsQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  toBlock: Scalars['Int'];
+  sortDirection?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type SubgraphDomainAddedEventsQuery = { domainAddedEvents: Array<(
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args' | 'timestamp'>
+    & { transaction: (
+      Pick<SubgraphTransaction, 'id'>
+      & { transactionHash: SubgraphTransaction['id'] }
+      & { block: (
+        Pick<SubgraphBlock, 'id' | 'timestamp'>
+        & { number: SubgraphBlock['id'] }
+      ) }
+    ) }
+  )> };
+
 export type ColonyExtensionsQueryVariables = Exact<{
   address: Scalars['String'];
 }>;
@@ -5334,6 +5355,56 @@ export function useBannedUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type BannedUsersQueryHookResult = ReturnType<typeof useBannedUsersQuery>;
 export type BannedUsersLazyQueryHookResult = ReturnType<typeof useBannedUsersLazyQuery>;
 export type BannedUsersQueryResult = Apollo.QueryResult<BannedUsersQuery, BannedUsersQueryVariables>;
+export const SubgraphDomainAddedEventsDocument = gql`
+    query SubgraphDomainAddedEvents($colonyAddress: String!, $toBlock: Int!, $sortDirection: String = asc, $first: Int = 10, $skip: Int = 0) {
+  domainAddedEvents: events(first: $first, skip: $skip, orderBy: "timestamp", orderDirection: $sortDirection, block: {number: $toBlock}, where: {name_contains: "DomainAdded", address: $colonyAddress}) {
+    id
+    address
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+    timestamp
+  }
+}
+    `;
+
+/**
+ * __useSubgraphDomainAddedEventsQuery__
+ *
+ * To run a query within a React component, call `useSubgraphDomainAddedEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphDomainAddedEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubgraphDomainAddedEventsQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      toBlock: // value for 'toBlock'
+ *      sortDirection: // value for 'sortDirection'
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
+ *   },
+ * });
+ */
+export function useSubgraphDomainAddedEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphDomainAddedEventsQuery, SubgraphDomainAddedEventsQueryVariables>) {
+        return Apollo.useQuery<SubgraphDomainAddedEventsQuery, SubgraphDomainAddedEventsQueryVariables>(SubgraphDomainAddedEventsDocument, baseOptions);
+      }
+export function useSubgraphDomainAddedEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphDomainAddedEventsQuery, SubgraphDomainAddedEventsQueryVariables>) {
+          return Apollo.useLazyQuery<SubgraphDomainAddedEventsQuery, SubgraphDomainAddedEventsQueryVariables>(SubgraphDomainAddedEventsDocument, baseOptions);
+        }
+export type SubgraphDomainAddedEventsQueryHookResult = ReturnType<typeof useSubgraphDomainAddedEventsQuery>;
+export type SubgraphDomainAddedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphDomainAddedEventsLazyQuery>;
+export type SubgraphDomainAddedEventsQueryResult = Apollo.QueryResult<SubgraphDomainAddedEventsQuery, SubgraphDomainAddedEventsQueryVariables>;
 export const ColonyExtensionsDocument = gql`
     query ColonyExtensions($address: String!) {
   processedColony(address: $address) @client {
