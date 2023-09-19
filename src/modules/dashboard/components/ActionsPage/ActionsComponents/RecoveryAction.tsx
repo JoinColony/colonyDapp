@@ -32,7 +32,7 @@ import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
 
 import MultisigWidget from '../MultisigWidget';
 import InputStorageWidget from '../InputStorageWidget';
-import DetailsWidget from '../DetailsWidget';
+import DetailsWidget from '../DetailsWidget/DetailsWidget';
 import ApproveExitWidget from '../ApproveExitWidget';
 
 import styles from './DefaultAction.css';
