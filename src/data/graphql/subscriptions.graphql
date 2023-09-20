@@ -32,13 +32,16 @@ subscription SubgraphEvents($skip: Int = 0, $first: Int = 1000, $colonyAddress: 
   }
 }
 
-subscription SubgraphOneTx($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $sortDirection: String = asc) {
+subscription SubgraphOneTx($colonyAddress: String!, $subgraphDomainId: String = "", $skip: Int = 0, $first: Int = 1000, $sortDirection: String = asc) {
   oneTxPayments(
     skip: $skip,
     first: $first,
     orderBy: "timestamp",
     orderDirection: $sortDirection,
-    where: { payment_contains: $colonyAddress }
+    where: {
+      payment_contains: $colonyAddress,
+      domain_contains: $subgraphDomainId,
+    }
   ) {
     id
     agent
@@ -71,7 +74,7 @@ subscription SubgraphOneTx($skip: Int = 0, $first: Int = 1000, $colonyAddress: S
   }
 }
 
-subscription SubgraphEventsThatAreActions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $sortDirection: String = asc) {
+subscription SubgraphEventsThatAreActions($colonyAddress: String!, $subgraphDomainId: String = "", $skip: Int = 0, $first: Int = 1000, $sortDirection: String = asc) {
   events(
     skip: $skip,
     first: $first,
@@ -93,7 +96,8 @@ subscription SubgraphEventsThatAreActions($skip: Int = 0, $first: Int = 1000, $c
         "TokenUnlocked(address)",
         "TokenUnlocked()",
         "ArbitraryTransaction(address,bytes,bool)",
-      ]
+      ],
+      domain_contains: $subgraphDomainId,
     }) {
     id
     address
@@ -137,7 +141,7 @@ subscription SubgraphEventsThatAreActions($skip: Int = 0, $first: Int = 1000, $c
   }
 }
 
-subscription SubgraphMotions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $extensionAddress: String!, $motionActionNot: String, $sortDirection: String = asc) {
+subscription SubgraphMotions($colonyAddress: String!, $subgraphDomainId: String = "",$skip: Int = 0, $first: Int = 1000, $extensionAddress: String!, $motionActionNot: String, $sortDirection: String = asc) {
   motions(
     skip: $skip,
     first: $first,
@@ -147,6 +151,7 @@ subscription SubgraphMotions($skip: Int = 0, $first: Int = 1000, $colonyAddress:
       associatedColony: $colonyAddress,
       extensionAddress: $extensionAddress,
       action_not: $motionActionNot,
+      domain_contains: $subgraphDomainId,
   }) {
     id
     fundamentalChainId

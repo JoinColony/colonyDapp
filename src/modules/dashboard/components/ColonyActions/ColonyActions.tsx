@@ -23,12 +23,12 @@ import { SortOptions, SortSelectOptions } from '../shared/sortOptions';
 import { getActionsListData } from '~modules/dashboard/transformers';
 import { useTransformer } from '~utils/hooks';
 import { createAddress } from '~utils/web3';
+import { FormattedAction, Address } from '~types/index';
+
 import {
-  ColonyActions as ColonyActionTypes,
-  FormattedAction,
-  Address,
-} from '~types/index';
-import { ACTION_DECISION_MOTION_CODE } from '~constants';
+  ACTION_DECISION_MOTION_CODE,
+  COLONY_TOTAL_BALANCE_DOMAIN_ID,
+} from '~constants';
 
 import styles from './ColonyActions.css';
 
@@ -112,6 +112,13 @@ const ColonyActions = ({
     return noOfFetches * NUM_FETCH_ITEMS;
   };
 
+  const getSubgraphDomainIdFilter = () => {
+    if (ethDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) {
+      return '';
+    }
+    return `${colonyAddress?.toLowerCase()}_domain_${ethDomainId}`;
+  };
+
   const {
     data: oneTxActions,
     loading: oneTxActionsLoading,
@@ -122,6 +129,7 @@ const ColonyActions = ({
        * items exist and we show the "load more" button
        */
       colonyAddress: colonyAddress?.toLowerCase(),
+      subgraphDomainId: getSubgraphDomainIdFilter(),
       sortDirection: 'desc',
       first: getNumbersOfEntriesToFetch(),
     },
@@ -137,6 +145,7 @@ const ColonyActions = ({
        * items exist and we show the "load more" button
        */
       colonyAddress: colonyAddress?.toLowerCase(),
+      subgraphDomainId: getSubgraphDomainIdFilter(),
       sortDirection: 'desc',
       first: getNumbersOfEntriesToFetch(),
     },
@@ -160,6 +169,7 @@ const ColonyActions = ({
        * items exist and we show the "load more" button
        */
       colonyAddress: colonyAddress?.toLowerCase(),
+      subgraphDomainId: getSubgraphDomainIdFilter(),
       extensionAddress: votingReputationExtension?.address?.toLowerCase() || '',
       motionActionNot: ACTION_DECISION_MOTION_CODE,
       sortDirection: 'desc',
@@ -186,18 +196,6 @@ const ColonyActions = ({
 
   /* Needs to be tested when all action types are wired up & reflected in the list */
   const filteredActions = useMemo(() => {
-    const filterActions = !ethDomainId
-      ? actions
-      : actions.filter(
-          (action) =>
-            Number(action.fromDomain) === ethDomainId ||
-            /* when no specific domain in the action it is displayed in Root */
-            (ethDomainId === 1 && action.fromDomain === undefined) ||
-            /* when transfering funds the list shows both sender & recipient */
-            (action.actionType === ColonyActionTypes.MoveFunds &&
-              Number(action.toDomain) === ethDomainId),
-        );
-
     /* filter out duplicate action items on passed motions */
     if (motions && motions.motions?.length > 0) {
       const motionExtensionAddresses =
@@ -205,7 +203,7 @@ const ColonyActions = ({
           .filter((motion) => motion.extensionAddress)
           .map((motion) => createAddress(motion.extensionAddress)) || [];
       if (motionExtensionAddresses.length > 0) {
-        return filterActions.filter((action) => {
+        return actions.filter((action) => {
           return !motionExtensionAddresses.includes(
             createAddress(action.initiator),
           );
@@ -213,8 +211,8 @@ const ColonyActions = ({
       }
     }
 
-    return filterActions;
-  }, [ethDomainId, actions, motions]);
+    return actions;
+  }, [actions, motions]);
 
   const handleDataPagination = useCallback(() => {
     setDataPage(dataPage + 1);
