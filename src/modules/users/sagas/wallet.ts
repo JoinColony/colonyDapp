@@ -54,7 +54,7 @@ export function* metamaskSwitchNetwork() {
     DEFAULT_NETWORK === Network.XdaiFork
   ) {
     const {
-      name: chainName,
+      // name: chainName,
       chainId,
       blockExplorerUrl = '',
       rpcUrl = '',
@@ -69,14 +69,14 @@ export function* metamaskSwitchNetwork() {
      */
     yield addChain({
       chainId,
-      chainName,
+      chainName: `Gnosis Chain (Colony Hosted)`,
       nativeCurrency: {
         name,
         symbol,
         decimals,
       },
       blockExplorerUrls: [blockExplorerUrl],
-      rpcUrls: [rpcUrl],
+      rpcUrls: [process.env.RPC_URL || rpcUrl],
     });
   }
 }
