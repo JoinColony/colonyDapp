@@ -79,7 +79,7 @@ jobs:
 
     env:
       NAMESPACE: default
-      CLUSTER_NAME: qa
+      CLUSTER_NAME: qa-cluster
       ENVIRONMENT_TAG: qa
       REPOSITORY_NAME: app-frontend
 
