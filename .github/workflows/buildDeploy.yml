@@ -78,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      NAMESPACE: default
+      NAMESPACE: dapp
       CLUSTER_NAME: qa-cluster
       ENVIRONMENT_TAG: qa
       REPOSITORY_NAME: app-frontend
@@ -125,8 +125,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      NAMESPACE: staging
-      CLUSTER_NAME: prod
+      NAMESPACE: dapp-staging
+      CLUSTER_NAME: prod-cluster
       ENVIRONMENT_TAG: staging
       REPOSITORY_NAME: app-frontend
 
