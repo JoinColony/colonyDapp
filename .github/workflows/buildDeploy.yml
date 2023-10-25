@@ -164,6 +164,7 @@ jobs:
       with:
         webhook: ${{ env.DISCORD_WEBHOOK }}
         title: "Deploy to Staging"
+
   # Deploy dapp frontend to production environment
   deployProd:
 
@@ -175,7 +176,7 @@ jobs:
 
     env:
       NAMESPACE: prod
-      CLUSTER_NAME: prod
+      CLUSTER_NAME: prod-cluster
       ENVIRONMENT_TAG: prod
       REPOSITORY_NAME: app-frontend
 
