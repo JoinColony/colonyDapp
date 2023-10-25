@@ -164,6 +164,7 @@ jobs:
       with:
         webhook: ${{ env.DISCORD_WEBHOOK }}
         title: "Deploy to Staging"
+
   # Deploy dapp frontend to production environment
   deployProd:
 
