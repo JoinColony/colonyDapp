@@ -25,11 +25,6 @@ jobs:
 
     steps:
 
-      - name: Cancel Previous Runs               
-        uses: styfle/cancel-workflow-action@0.4.1
-        with:                                    
-          access_token: ${{ github.token }}
-
       - name: Echo Env Vars through Context
         run: |
           echo "$GITHUB_CONTEXT"                 
@@ -57,14 +52,17 @@ jobs:
         uses: docker/setup-buildx-action@v2
         
       - name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: ${{ github.workspace }}
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com/app-frontend:${{ env.IMAGE_TAG }}
-      
-      - uses: sarisia/actions-status-discord@c193626e5ce172002b8161e116aa897de7ab5383
+          cache-from: type=gha
+          cache-to: type=gha,mode=max,image-manifest=true
+
+      - name: Send discord notification
+        uses: sarisia/actions-status-discord@c193626e5ce172002b8161e116aa897de7ab5383
         if: always()
         with:
           webhook: ${{ env.DISCORD_WEBHOOK }}
@@ -109,7 +107,8 @@ jobs:
       run: |
         kubectl rollout status deployment/dapp-${{ env.ENVIRONMENT_TAG }}-network-100 -n ${{ env.NAMESPACE }}
   
-    - uses: sarisia/actions-status-discord@c193626e5ce172002b8161e116aa897de7ab5383
+    - name: Send discord notification
+      uses: sarisia/actions-status-discord@c193626e5ce172002b8161e116aa897de7ab5383
       if: always()
       with:
         webhook: ${{ env.DISCORD_WEBHOOK }}
@@ -132,11 +131,14 @@ jobs:
 
     steps:
 
-    - name: Configure AWS credentials                          
-      uses: aws-actions/configure-aws-credentials@v1           
+    - name: Configure AWS credentials for EKS                         
+      uses: aws-actions/configure-aws-credentials@v2           
       with:                                                    
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_PROD }}        
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}
+        role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/eks-admin
+        role-session-name: github-cicd
+        role-duration-seconds: 1200
         aws-region: ${{ env.AWS_REGION }}
 
     - name: Configure AWS EKS
@@ -153,13 +155,15 @@ jobs:
       run: |
         kubectl rollout status deployment/dapp-${{ env.ENVIRONMENT_TAG }}-network-100 -n ${{ env.NAMESPACE }}
     
-    - name: Repository Dispatch
+    - name: Clone production data to staging
       uses: peter-evans/repository-dispatch@f2696244ec00ed5c659a5cc77f7138ad0302dffb
       with:
         token: ${{ secrets.COLONY_INFRASTRUCTURE_PROD_TO_STAGING_TOKEN }}
         repository: JoinColony/colonyInfrastructure
         event-type: data-sync
-    - uses: sarisia/actions-status-discord@c193626e5ce172002b8161e116aa897de7ab5383
+
+    - name: Send discord notification
+      uses: sarisia/actions-status-discord@c193626e5ce172002b8161e116aa897de7ab5383
       if: always()
       with:
         webhook: ${{ env.DISCORD_WEBHOOK }}
@@ -182,11 +186,14 @@ jobs:
 
     steps:
 
-    - name: Configure AWS credentials                          
-      uses: aws-actions/configure-aws-credentials@v1           
+    - name: Configure AWS credentials for EKS                         
+      uses: aws-actions/configure-aws-credentials@v2           
       with:                                                    
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_PROD }}        
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}
+        role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/eks-admin
+        role-session-name: github-cicd
+        role-duration-seconds: 1200
         aws-region: ${{ env.AWS_REGION }}
 
     - name: Configure AWS EKS
@@ -203,7 +210,8 @@ jobs:
       run: |
         kubectl rollout status deployment/dapp-${{ env.ENVIRONMENT_TAG }}-network-100 -n ${{ env.NAMESPACE }}
   
-    - uses: sarisia/actions-status-discord@c193626e5ce172002b8161e116aa897de7ab5383
+    - name: Send discord notification
+      uses: sarisia/actions-status-discord@c193626e5ce172002b8161e116aa897de7ab5383
       if: always()
       with:
         webhook: ${{ env.DISCORD_WEBHOOK }}
