@@ -117,15 +117,15 @@ const TransferNFTSection = ({
       const address = chosenSafe.profile.walletAddress;
       try {
         const response = await fetch(
-          `${baseUrl}/v1/safes/${address}/collectibles/`,
+          `${baseUrl}/v2/safes/${address}/collectibles/`,
         );
         if (response.status === 200) {
           const data = await response.json();
           setSavedNFTs((nfts) => ({
             ...nfts,
-            [address]: data,
+            [address]: data.results,
           }));
-          setAvailableNFTs(data);
+          setAvailableNFTs(data.results);
         }
       } catch (e) {
         log.error(e);
