@@ -7,6 +7,7 @@ import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 import Heading from '~core/Heading';
 import { SpinnerLoader } from '~core/Preloaders';
 
+import { GNOSIS_NETWORK } from '~constants';
 import { CREATE_COLONY_ROUTE } from '~routes/index';
 import { useLoggedInUser, useMetaColonyQuery } from '~data/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
@@ -20,7 +21,7 @@ const MSG = defineMessages({
   },
   wrongNetwork: {
     id: 'pages.LandingPage.wrongNetwork',
-    defaultMessage: `You're connected to the wrong network. Please connect to the appriopriate Ethereum network.`,
+    defaultMessage: `You're connected to the wrong network. Please connect to ${GNOSIS_NETWORK.name} network.`,
   },
   createColony: {
     id: 'pages.LandingPage.createColony',
