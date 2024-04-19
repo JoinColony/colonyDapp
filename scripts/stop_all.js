@@ -40,7 +40,43 @@ const downWithDockerCompose = async () => {
 
     removeProcess.on('exit', errorCode => {
       if (errorCode) {
-        return reject(new Error(`docker-compose "rm" process exited with code ${errorCode}`));
+        return reject(new Error(`docker-compose "rm" process for graph exited with code ${errorCode}`));
+      }
+      resolve();
+    });
+  });
+}
+
+const downWithDockerComposeNetwork = async () => {
+  await new Promise((resolve, reject) => {
+    const stopProcess = spawn('docker-compose', ["--file","orchestration.yaml", "down"], {
+      cwd: path.resolve(__dirname, 'docker')
+    });
+
+    stopProcess.stdout.pipe(process.stdout);
+    stopProcess.stderr.pipe(process.stderr);
+
+    stopProcess.on('exit', errorCode => {
+      if (errorCode) {
+        return reject(new Error(`docker-compose "stop" process for network exited with code ${errorCode}`));
+      }
+      resolve();
+    });
+  });
+  /*
+   * Removed stopped docker containers
+   */
+  await new Promise((resolve, reject) => {
+    const removeProcess = spawn('docker-compose', ["--file","orchestration.yaml", 'rm', '-f'], {
+      cwd: path.resolve(__dirname, 'docker')
+    });
+
+    removeProcess.stdout.pipe(process.stdout);
+    removeProcess.stderr.pipe(process.stderr);
+
+    removeProcess.on('exit', errorCode => {
+      if (errorCode) {
+        return reject(new Error(`docker-compose "rm" process for network exited with code ${errorCode}`));
       }
       resolve();
     });
@@ -81,6 +117,14 @@ const teardown = async () => {
     console.log(chalk.yellowBright('Note that this might take longer, depending on your machine,'));
     console.log(chalk.yellowBright('and might finish after the node process has existed.'));
     await downWithDockerCompose();
+  }
+
+  if (!!pids['network']) {
+    console.log();
+    console.log('Taking down "network"\'s docker instances...');
+    console.log(chalk.yellowBright('Note that this might take longer, depending on your machine,'));
+    console.log(chalk.yellowBright('and might finish after the node process has existed.'));
+    await downWithDockerComposeNetwork();
   }
 };
 

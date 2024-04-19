@@ -4,6 +4,7 @@ const { spawn } = require('child_process');
 const path = require('path');
 const waitOn = require('wait-on');
 const fs = require('fs');
+const os = require('os');
 const args = require('minimist')(process.argv);
 const chalk = require('chalk');
 var sudo = require('sudo-prompt');
@@ -14,6 +15,7 @@ const deployContracts = require('./deploy_contracts');
 
 const { PID_FILE, NETWORK_PACKAGES, DAPP_LIBS, GANACHE_ACCOUNTS, ETHERROUTER_ADDRESS } = require('./paths');
 const { getStaticDevResource, injectEnvironmentVariables } = require('./utils');
+const { validate } = require('graphql');
 
 injectEnvironmentVariables('NODE_ENV');
 
@@ -23,58 +25,130 @@ const addProcess = (name, startFn) => {
   processes.push({ name, startFn });
 };
 
-addProcess('ganache', startGanache);
-
-addProcess('truffle', () =>
-  new Promise((resolve, reject) => {
-    const contractProcess = deployContracts();
-    contractProcess.on(
-      'exit',
-      code =>
-        code ? reject(new Error('Contract deployment failed')) : resolve(contractProcess),
-    );
-    contractProcess.on('error', reject);
-  })
-);
-
-addProcess('oracle', async () => {
-  const { private_keys: ganacheAccounts } = require(GANACHE_ACCOUNTS);
-  const { etherRouterAddress: networkAddress } = require(ETHERROUTER_ADDRESS);
-  /*
-   * Same account network uses for their end to end tests
-   */
-  const minerAccount = Object.keys(ganacheAccounts)[5];
-  const minerProcess = spawn('babel-node', [
-    '--presets', '@babel/preset-env',
-    './reputation-miner/bin/index.js',
-    '--minerAddress', minerAccount,
-    '--syncFrom', 1,
-    '--colonyNetworkAddress', networkAddress,
-    '--oracle',
-    '--auto',
-    '--dbPath', './reputation-miner/reputationStates.sqlite',
-    '--oraclePort', 3002,
-    '--processingDelay', 1,
-  ], {
-    cwd: NETWORK_PACKAGES,
+addProcess('network', async () => {
+  const dockerProcess = spawn('docker', ['compose', '--file', './docker/orchestration.yaml', 'up'], {
+    cwd: path.resolve(__dirname),
     stdio: 'pipe',
   });
 
   if (args.foreground) {
-    minerProcess.stdout.pipe(process.stdout);
-    minerProcess.stderr.pipe(process.stderr);
+    dockerProcess.stdout.pipe(process.stdout);
+    dockerProcess.stderr.pipe(process.stderr);
   }
-  minerProcess.on('error', error => {
-    minerProcess.kill();
+
+  dockerProcess.on('error', error => {
+    dockerProcess.kill();
     /*
-     * @NOTE Just stop the startup orchestration process is something goes wrong
+     * @NOTE Just stop if something goes wrong
      */
     console.error(error);
     process.exit(1);
   });
-  await waitOn({ resources: ['tcp:3002'] });
-  return minerProcess;
+
+  console.log('Waiting for network to be ready...')
+
+  await waitOn({
+    resources: ['http://127.0.0.1:3002', 'tcp:8545', 'http://127.0.0.1:3004'],
+  });
+
+  const deleteProcess = spawn('rm', ['-rf', './src/lib/colonyNetwork/'], {
+    cwd: path.resolve(__dirname, '..'),
+    stdio: 'pipe',
+  });
+
+  if (args.foreground) {
+    deleteProcess.stdout.pipe(process.stdout);
+    deleteProcess.stderr.pipe(process.stderr);
+  }
+
+  await new Promise((resolve, reject) => {
+    deleteProcess.on('exit', code => {
+      if (code) {
+        reject(new Error('Failed to delete files in colonyNetwork'));
+      } else {
+        resolve();
+      }
+    });
+  })
+
+  // Now copy files out of the container and put them in the right place
+
+  const copyProcess = spawn('docker', ['cp', 'network:/network-files/colonyNetworkArtifacts/', './src/lib/colonyNetwork/'], {
+    cwd: path.resolve(__dirname, '..'),
+    stdio: 'pipe',
+  });
+
+  if (args.foreground) {
+    copyProcess.stdout.pipe(process.stdout);
+    copyProcess.stderr.pipe(process.stderr);
+  }
+
+  await new Promise((resolve, reject) => {
+    copyProcess.on('exit', code => {
+      if (code) {
+        reject(new Error('Failed to copy files out of the container'));
+      } else {
+        resolve();
+      }
+    });
+  });
+
+  return dockerProcess;
 });
+
+
+// addProcess('ganache', startGanache);
+
+// addProcess('truffle', () =>
+//   new Promise((resolve, reject) => {
+//     const contractProcess = deployContracts();
+//     contractProcess.on(
+//       'exit',
+//       code =>
+//         code ? reject(new Error('Contract deployment failed')) : resolve(contractProcess),
+//     );
+//     contractProcess.on('error', reject);
+//   })
+// );
+
+// addProcess('oracle', async () => {
+//   const { private_keys: ganacheAccounts } = require(GANACHE_ACCOUNTS);
+//   const { etherRouterAddress: networkAddress } = require(ETHERROUTER_ADDRESS);
+//   /*
+//    * Same account network uses for their end to end tests
+//    */
+//   const minerAccount = Object.keys(ganacheAccounts)[5];
+//   const minerProcess = spawn('babel-node', [
+//     '--presets', '@babel/preset-env',
+//     './reputation-miner/bin/index.js',
+//     '--minerAddress', minerAccount,
+//     '--syncFrom', 1,
+//     '--colonyNetworkAddress', networkAddress,
+//     '--oracle',
+//     '--auto',
+//     '--dbPath', './reputation-miner/reputationStates.sqlite',
+//     '--oraclePort', 3002,
+//     '--processingDelay', 1,
+//   ], {
+//     cwd: NETWORK_PACKAGES,
+//     stdio: 'pipe',
+//   });
+
+//   if (args.foreground) {
+//     minerProcess.stdout.pipe(process.stdout);
+//     minerProcess.stderr.pipe(process.stderr);
+//   }
+//   minerProcess.on('error', error => {
+//     minerProcess.kill();
+//     /*
+//      * @NOTE Just stop the startup orchestration process is something goes wrong
+//      */
+//     console.error(error);
+//     process.exit(1);
+//   });
+//   await waitOn({ resources: ['tcp:3002'] });
+//   return minerProcess;
+// });
 
 addProcess('reputationMonitor', async () => {
   const { etherRouterAddress: networkAddress } = require(ETHERROUTER_ADDRESS);
@@ -100,47 +174,51 @@ addProcess('reputationMonitor', async () => {
   return monitorProcess;
 });
 
-addProcess('metaTxBroadcast', async () => {
-  const { etherRouterAddress: networkAddress } = require(ETHERROUTER_ADDRESS);
-  const { private_keys: ganacheAccounts } = require(GANACHE_ACCOUNTS);
-  /*
-   * Use the last ganache account for sending metatransactions
-   */
-  const privateKey = ganacheAccounts[Object.keys(ganacheAccounts).pop()];
-  const metatransactionProcess = spawn('node',
-    [
-      './metatransaction-broadcaster/bin/index.js',
-      '--privateKey', privateKey,
-      '--gasPrice', 1,
-      '--gasLimit', 6000000,
-      '--colonyNetworkAddress', networkAddress,
-      '--port', 3004
-    ], {
-    cwd: NETWORK_PACKAGES,
-    stdio: 'pipe',
-  });
+// addProcess('metaTxBroadcast', async () => {
+//   const { etherRouterAddress: networkAddress } = require(ETHERROUTER_ADDRESS);
+//   const { private_keys: ganacheAccounts } = require(GANACHE_ACCOUNTS);
+//   /*
+//    * Use the last ganache account for sending metatransactions
+//    */
+//   const privateKey = ganacheAccounts[Object.keys(ganacheAccounts).pop()];
+//   const metatransactionProcess = spawn('node',
+//     [
+//       './metatransaction-broadcaster/bin/index.js',
+//       '--privateKey', privateKey,
+//       '--gasPrice', 1,
+//       '--gasLimit', 6000000,
+//       '--colonyNetworkAddress', networkAddress,
+//       '--port', 3004
+//     ], {
+//     cwd: NETWORK_PACKAGES,
+//     stdio: 'pipe',
+//   });
 
-  if (args.foreground) {
-    metatransactionProcess.stdout.pipe(process.stdout);
-    metatransactionProcess.stderr.pipe(process.stderr);
-  }
-  metatransactionProcess.on('error', error => {
-    metatransactionProcess.kill();
-    /*
-     * @NOTE Just stop the startup orchestration process is something goes wrong
-     */
-    console.error(error);
-    process.exit(1);
-  });
-  await waitOn({ resources: ['tcp:3004'] });
+//   if (args.foreground) {
+//     metatransactionProcess.stdout.pipe(process.stdout);
+//     metatransactionProcess.stderr.pipe(process.stderr);
+//   }
+//   metatransactionProcess.on('error', error => {
+//     metatransactionProcess.kill();
+//     /*
+//      * @NOTE Just stop the startup orchestration process is something goes wrong
+//      */
+//     console.error(error);
+//     process.exit(1);
+//   });
+//   await waitOn({ resources: ['tcp:3004'] });
 
-  return metatransactionProcess;
-});
+//   return metatransactionProcess;
+// });
 
 addProcess('db', async () => {
   const dbProcess = spawn('npm', ['run', 'db:start'], {
     cwd: path.resolve(__dirname, '..', 'src/lib/colonyServer'),
     stdio: 'pipe',
+    env: {
+      ...process.env,
+      MONGOMS_DOWNLOAD_URL: os.platform() === 'linux' ? "https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.2.7.tgz" : ""
+    }
   });
   if (args.foreground) {
     dbProcess.stdout.pipe(process.stdout);
@@ -154,6 +232,10 @@ addProcess('db', async () => {
   const cleanProcess = spawn('npm', ['run', 'db:clean'], {
     cwd: path.resolve(__dirname, '..', 'src/lib/colonyServer'),
     stdio: 'pipe',
+    env: {
+      ...process.env,
+      MONGOMS_DOWNLOAD_URL: os.platform() === 'linux' ? "https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.2.7.tgz" : ""
+    }
   });
   if (args.foreground) {
     cleanProcess.stdout.pipe(process.stdout);
@@ -167,6 +249,11 @@ addProcess('db', async () => {
       }
       const setupProcess = spawn('npm', ['run', 'db:setup'], {
         cwd: path.resolve(__dirname, '..', 'src/lib/colonyServer'),
+        stdio: 'pipe',
+        env: {
+          ...process.env,
+          MONGOMS_DOWNLOAD_URL: os.platform() === 'linux' ? "https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.2.7.tgz" : ""
+        }
       });
       setupProcess.on('exit', setupCode => {
         if (setupCode) {
@@ -184,6 +271,12 @@ addProcess('server', async () => {
   const serverProcess = spawn('npm', ['run', 'dev'], {
     cwd: path.resolve(__dirname, '..', 'src/lib/colonyServer'),
     stdio: 'pipe',
+    env: {
+      ...process.env,
+      // If you're not running one of a few supported linux distros, the automated download won't work
+      // So on linux, let's just use a manual download URL; the ubuntu tgz is generic enough (probably).
+      MONGOMS_DOWNLOAD_URL: os.platform() === 'linux' ? "https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.2.7.tgz" : ""
+    },
   });
   if (args.foreground) {
     serverProcess.stdout.pipe(process.stdout);
