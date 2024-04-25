@@ -17,8 +17,7 @@ RUN apt-get install -y \
   libusb-1.0-0-dev \
   libudev-dev
 
-ENV NETWORK_HASH=0cf80f156bd2160ba83ee40a36db2ffc4298aeaf
-
+ENV NETWORK_HASH=3c6ae143e991097b469e1cc37582f8b0e6610a1a
 # Declare volumes to set up metadata
 # VOLUME [ "/network-files" ]
 

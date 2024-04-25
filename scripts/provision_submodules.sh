@@ -3,9 +3,6 @@ set -e
 
 while [ $# -gt 0 ]; do
   case "$1" in
-    --skip-colony-network-build)
-      SKIP_COLONY_NETWORK_BUILD=true
-      ;;
     --skip-server-build)
       SKIP_SERVER_BUILD=true
       ;;
@@ -29,7 +26,6 @@ done
 LIB_PATH="src/lib"
 ENV_FILE="./.env"
 
-NETWORK="colonyNetwork"
 SERVER="colonyServer"
 SUBGRAPH="subgraph"
 GRAPH_NODE="graph-node"
@@ -92,14 +88,10 @@ git submodule update --init --recursive
 if [ "$SKIP_COLONY_NETWORK_BUILD" != true ]
 then
     # Build network
-    log "Building '${NETWORK}' submodule"
-    cd "${ROOT_PATH}/${LIB_PATH}/${NETWORK}"
-    $YARN --pure-lockfile --ignore-engines
-    $YARN add -W truffle@5.5.25 --ignore-engines # Accommodate bad lockfile in colonyNetwork
-    DISABLE_DOCKER=true $YARN provision:token:contracts
-    cd ${ROOT_PATH}
+    log "Building colonyNetwork docker image"
+    docker build --file ./scripts/docker/dev-env-network . --tag colony-dapp-dev-env/network:latest
 else
-    warn "Skipping '${NETWORK}' submodule provision"
+    warn "Skipping building colonyNetwork docker image"
 fi
 
 if [ "$SKIP_SERVER_BUILD" != true ]
