@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -93,7 +94,8 @@ then
     # Build network
     log "Building '${NETWORK}' submodule"
     cd "${ROOT_PATH}/${LIB_PATH}/${NETWORK}"
-    $YARN --pure-lockfile
+    $YARN --pure-lockfile --ignore-engines
+    $YARN add -W truffle@5.5.25 --ignore-engines # Accommodate bad lockfile in colonyNetwork
     DISABLE_DOCKER=true $YARN provision:token:contracts
     cd ${ROOT_PATH}
 else
