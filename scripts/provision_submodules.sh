@@ -126,6 +126,8 @@ then
     cd "${ROOT_PATH}/${LIB_PATH}/${GRAPH_NODE}"
     log "Installing the '${GRAPH_NODE}' submodule node_modules"
     npm install
+    # Update the docker-compose file to fix default encoding issues
+    yq -i '.services.postgres.environment.POSTGRES_INITDB_ARGS |= "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"' ./docker/docker-compose.yml
     cd ${ROOT_PATH}
 else
     warn "Skipping '${GRAPH_NODE}' submodule provision"
