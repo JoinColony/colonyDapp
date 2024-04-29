@@ -19,9 +19,12 @@ const getLocalContractAddress = (contractName: string) => {
   // process.env.DEV is set by the QA server in case we want to have a debug build. We don't have access to the compiled contracts hen
   if (process.env.NODE_ENV === 'development' && !process.env.DEV) {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires, max-len, global-require, import/no-dynamic-require
-      const contractABI: LocalContractABI = require(`~lib/colonyNetwork/build/contracts/${contractName}.json`);
-      return Object.values(contractABI.networks)[0].address;
+      const {
+        etherRouterAddress,
+        // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
+      } = require('~lib/colonyNetwork/etherrouter-address.json');
+
+      return etherRouterAddress;
     } catch {
       throw new Error(
         `Could not get local contract address for ${contractName}. Please deploy contracts first`,

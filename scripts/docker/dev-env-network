@@ -1,0 +1,68 @@
+FROM node:16.20.2
+
+# Update the apt cache
+RUN apt-get clean
+RUN apt-get update
+
+# Adding various nicities and libraries we use through the container
+RUN apt-get install -y \
+  apt-utils \
+  locales \
+  build-essential \
+  curl \
+  file \
+  zip \
+  jq \
+  netcat \
+  libusb-1.0-0-dev \
+  libudev-dev
+
+ENV NETWORK_HASH=3c6ae143e991097b469e1cc37582f8b0e6610a1a
+# Declare volumes to set up metadata
+# VOLUME [ "/network-files" ]
+
+#
+# Colony Network
+#
+
+# Add dependencies from the host
+# Note: these are listed individually so that if they change, they won't affect
+# the build of the other images
+ADD scripts/docker/files/network/run.sh.base /run.sh
+
+WORKDIR /
+
+# Clone the network repo
+RUN git clone https://github.com/JoinColony/colonyNetwork.git --depth 1
+WORKDIR /colonyNetwork
+
+# Fetch the correct network repo commit/branch/tag
+RUN git fetch origin $NETWORK_HASH --depth 1
+RUN git checkout $NETWORK_HASH
+RUN git submodule update --init --recursive --depth 1
+
+# Install required network dependencies
+RUN npm ci
+
+# Compile network contracts
+# RUN DISABLE_DOCKER=true yarn provision:token:contracts
+
+# Initialize the justification tree cache
+# To avoid the error spewed by the miner at startup
+RUN echo "{}" > ./packages/reputation-miner/justificationTreeCache.json
+
+WORKDIR /
+
+# Open up ports to the docker image
+# Ganache
+EXPOSE 8545
+# Reputation Oracle
+EXPOSE 3002
+# Broadcaster Service
+EXPOSE 3004
+
+# Make the run script executable
+RUN chmod +x ./run.sh
+
+# Battlecruiser Operational!
+CMD [ "./run.sh" ]

@@ -1,0 +1,13 @@
+name: colony-capp-dev-env
+services:
+  network-contracts:
+    container_name: 'network'
+    image: colony-dapp-dev-env/network:latest
+    ports:
+      - '8545:8545'
+      - '3002:3002'
+      - '3004:3004'
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3002']
+      interval: 5s
+      retries: 1000

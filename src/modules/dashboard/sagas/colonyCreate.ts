@@ -94,6 +94,7 @@ function* colonyCreate({
   channelNames.push('deployOneTx');
   channelNames.push('setOneTxRoleAdministration');
   channelNames.push('setOneTxRoleFunding');
+  channelNames.push('setOneTxRoleArbitration');
 
   /*
    * Define a manifest of transaction ids and their respective channels.
@@ -108,6 +109,7 @@ function* colonyCreate({
     deployOneTx,
     setOneTxRoleAdministration,
     setOneTxRoleFunding,
+    setOneTxRoleArbitration,
     deployTokenAuthority,
     setTokenAuthority,
     setOwner,
@@ -207,6 +209,15 @@ function* colonyCreate({
         context: ClientType.ColonyClient,
         methodContext: 'setOneTxRoles',
         methodName: 'setFundingRoleWithProofs',
+        ready: false,
+      });
+    }
+
+    if (setOneTxRoleArbitration) {
+      yield createGroupedTransaction(setOneTxRoleArbitration, {
+        context: ClientType.ColonyClient,
+        methodContext: 'setOneTxRoles',
+        methodName: 'setArbitrationRoleWithProofs',
         ready: false,
       });
     }
@@ -355,6 +366,7 @@ function* colonyCreate({
         deployOneTx,
         setOneTxRoleAdministration,
         setOneTxRoleFunding,
+        setOneTxRoleArbitration,
       ]
         .filter(Boolean)
         .map(({ id }) => put(transactionAddIdentifier(id, colonyAddress))),
@@ -488,6 +500,25 @@ function* colonyCreate({
 
       yield takeFrom(
         setOneTxRoleFunding.channel,
+        ActionTypes.TRANSACTION_SUCCEEDED,
+      );
+
+      /*
+       * Set OneTx arbitration role
+       */
+      yield put(
+        transactionAddParams(setOneTxRoleArbitration.id, [
+          extensionAddress,
+          ROOT_DOMAIN_ID,
+          true,
+        ]),
+      );
+      yield put(transactionReady(setOneTxRoleArbitration.id));
+
+      yield colonyManager.setColonyClient(colonyAddress);
+
+      yield takeFrom(
+        setOneTxRoleArbitration.channel,
         ActionTypes.TRANSACTION_SUCCEEDED,
       );
     }
