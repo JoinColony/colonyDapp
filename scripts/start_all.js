@@ -329,7 +329,7 @@ addProcess('graph-node', async () => {
     });
   });
 
-  const graphNodeProcess = spawn('docker-compose', ['up'], {
+  const graphNodeProcess = spawn('docker', ['compose', 'up'], {
     cwd: path.resolve(__dirname, '..', 'src/lib/graph-node/docker'),
   });
 
