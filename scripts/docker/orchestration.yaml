@@ -1,14 +1,5 @@
 name: colony-capp-dev-env
 services:
-  # amplify-setup:
-  #   container_name: 'amplify-setup'
-  #   image: colony-cdapp-dev-env/base:latest
-  #   volumes:
-  #     - 'amplify-backend:/backend'
-  #     - 'amplify-mock-data:/mock-data'
-  #     - '../amplify/backend/:/backend-repo'
-  #   command: '/bin/bash -c "rm -rf /backend/* && rm -rf /mock-data/* && touch /backend/.initialized && touch /mock-data/.initialized && cp -r /backend-repo/* /backend/ && chown -R $(id -u node):$(id -g node) /backend && chown -R $(id -u node):$(id -g node) /mock-data"'
-
   network-contracts:
     container_name: 'network'
     image: colony-dapp-dev-env/network:latest
@@ -20,6 +11,3 @@ services:
       test: ['CMD', 'curl', '-f', 'http://localhost:3002']
       interval: 5s
       retries: 1000
-    # depends_on:
-    #   amplify-setup:
-    #     condition: service_completed_successfully

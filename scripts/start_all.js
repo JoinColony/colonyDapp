@@ -10,12 +10,8 @@ const chalk = require('chalk');
 var sudo = require('sudo-prompt');
 const fetchRetry = require('@adobe/node-fetch-retry');
 
-const startGanache = require('./start_ganache');
-const deployContracts = require('./deploy_contracts');
-
-const { PID_FILE, NETWORK_PACKAGES, DAPP_LIBS, GANACHE_ACCOUNTS, ETHERROUTER_ADDRESS } = require('./paths');
+const { PID_FILE, DAPP_LIBS, ETHERROUTER_ADDRESS } = require('./paths');
 const { getStaticDevResource, injectEnvironmentVariables } = require('./utils');
-const { validate } = require('graphql');
 
 injectEnvironmentVariables('NODE_ENV');
 
@@ -96,60 +92,6 @@ addProcess('network', async () => {
   return dockerProcess;
 });
 
-
-// addProcess('ganache', startGanache);
-
-// addProcess('truffle', () =>
-//   new Promise((resolve, reject) => {
-//     const contractProcess = deployContracts();
-//     contractProcess.on(
-//       'exit',
-//       code =>
-//         code ? reject(new Error('Contract deployment failed')) : resolve(contractProcess),
-//     );
-//     contractProcess.on('error', reject);
-//   })
-// );
-
-// addProcess('oracle', async () => {
-//   const { private_keys: ganacheAccounts } = require(GANACHE_ACCOUNTS);
-//   const { etherRouterAddress: networkAddress } = require(ETHERROUTER_ADDRESS);
-//   /*
-//    * Same account network uses for their end to end tests
-//    */
-//   const minerAccount = Object.keys(ganacheAccounts)[5];
-//   const minerProcess = spawn('babel-node', [
-//     '--presets', '@babel/preset-env',
-//     './reputation-miner/bin/index.js',
-//     '--minerAddress', minerAccount,
-//     '--syncFrom', 1,
-//     '--colonyNetworkAddress', networkAddress,
-//     '--oracle',
-//     '--auto',
-//     '--dbPath', './reputation-miner/reputationStates.sqlite',
-//     '--oraclePort', 3002,
-//     '--processingDelay', 1,
-//   ], {
-//     cwd: NETWORK_PACKAGES,
-//     stdio: 'pipe',
-//   });
-
-//   if (args.foreground) {
-//     minerProcess.stdout.pipe(process.stdout);
-//     minerProcess.stderr.pipe(process.stderr);
-//   }
-//   minerProcess.on('error', error => {
-//     minerProcess.kill();
-//     /*
-//      * @NOTE Just stop the startup orchestration process is something goes wrong
-//      */
-//     console.error(error);
-//     process.exit(1);
-//   });
-//   await waitOn({ resources: ['tcp:3002'] });
-//   return minerProcess;
-// });
-
 addProcess('reputationMonitor', async () => {
   const { etherRouterAddress: networkAddress } = require(ETHERROUTER_ADDRESS);
   const monitorProcess = spawn('node', ['./reputationMonitor/index.js', networkAddress], {
@@ -173,43 +115,6 @@ addProcess('reputationMonitor', async () => {
 
   return monitorProcess;
 });
-
-// addProcess('metaTxBroadcast', async () => {
-//   const { etherRouterAddress: networkAddress } = require(ETHERROUTER_ADDRESS);
-//   const { private_keys: ganacheAccounts } = require(GANACHE_ACCOUNTS);
-//   /*
-//    * Use the last ganache account for sending metatransactions
-//    */
-//   const privateKey = ganacheAccounts[Object.keys(ganacheAccounts).pop()];
-//   const metatransactionProcess = spawn('node',
-//     [
-//       './metatransaction-broadcaster/bin/index.js',
-//       '--privateKey', privateKey,
-//       '--gasPrice', 1,
-//       '--gasLimit', 6000000,
-//       '--colonyNetworkAddress', networkAddress,
-//       '--port', 3004
-//     ], {
-//     cwd: NETWORK_PACKAGES,
-//     stdio: 'pipe',
-//   });
-
-//   if (args.foreground) {
-//     metatransactionProcess.stdout.pipe(process.stdout);
-//     metatransactionProcess.stderr.pipe(process.stderr);
-//   }
-//   metatransactionProcess.on('error', error => {
-//     metatransactionProcess.kill();
-//     /*
-//      * @NOTE Just stop the startup orchestration process is something goes wrong
-//      */
-//     console.error(error);
-//     process.exit(1);
-//   });
-//   await waitOn({ resources: ['tcp:3004'] });
-
-//   return metatransactionProcess;
-// });
 
 addProcess('db', async () => {
   const dbProcess = spawn('npm', ['run', 'db:start'], {
