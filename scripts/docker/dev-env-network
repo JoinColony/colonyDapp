@@ -1,4 +1,4 @@
-FROM node:16.20.2
+FROM node:20.11.0-buster
 
 # Update the apt cache
 RUN apt-get clean
@@ -17,7 +17,7 @@ RUN apt-get install -y \
   libusb-1.0-0-dev \
   libudev-dev
 
-ENV NETWORK_HASH=3c6ae143e991097b469e1cc37582f8b0e6610a1a
+ENV NETWORK_HASH=158e1464145844ed73dd1a88c653d655ca8a130b
 # Declare volumes to set up metadata
 # VOLUME [ "/network-files" ]
 
